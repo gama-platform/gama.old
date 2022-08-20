@@ -44,7 +44,6 @@ import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.Variable;
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.resources.GamaColors;
@@ -503,10 +502,6 @@ public abstract class AbstractEditor<T>
 			Runnable run = () -> {
 				internalModification = true;
 				if (!parent.isDisposed()) {
-					if (param.getName().contains("monitor")) {
-						//
-						DEBUG.OUT("");
-					}
 					editorControl.updateAmongValues(param.getAmongValue(getScope()));
 					computeMaxMinAndStepValues();
 					editorLabel.signalChanged(isValueModified());

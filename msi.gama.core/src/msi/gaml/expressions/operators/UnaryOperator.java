@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UnaryOperator.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * UnaryOperator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -22,6 +22,7 @@ import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 import java.util.function.Predicate;
 
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -48,16 +49,19 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	/** The child. */
 	final protected IExpression child;
-	
+
 	/** The prototype. */
 	protected final OperatorProto prototype;
 
 	/**
 	 * Creates the.
 	 *
-	 * @param proto the proto
-	 * @param context the context
-	 * @param child the child
+	 * @param proto
+	 *            the proto
+	 * @param context
+	 *            the context
+	 * @param child
+	 *            the child
 	 * @return the i expression
 	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression child) {
@@ -76,9 +80,12 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	/**
 	 * Instantiates a new unary operator.
 	 *
-	 * @param proto the proto
-	 * @param context the context
-	 * @param child the child
+	 * @param proto
+	 *            the proto
+	 * @param context
+	 *            the context
+	 * @param child
+	 *            the child
 	 */
 	public UnaryOperator(final OperatorProto proto, final IDescription context, final IExpression... child) {
 		// setName(proto.getName());
@@ -145,8 +152,10 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	/**
 	 * Compute type.
 	 *
-	 * @param theType the the type
-	 * @param def the def
+	 * @param theType
+	 *            the the type
+	 * @param def
+	 *            the def
 	 * @return the i type
 	 */
 	private IType computeType(final int theType, final IType def) {
@@ -237,11 +246,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return i == 0 ? child : null;
 	}
 
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// prototype.collectMetaInformation(meta);
-	// child.collectMetaInformation(meta);
-	// }
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		prototype.collectMetaInformation(meta);
+		child.collectMetaInformation(meta);
+	}
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species,

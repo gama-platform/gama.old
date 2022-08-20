@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ReleaseStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ReleaseStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -29,6 +29,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.FlowStatus;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
@@ -47,6 +48,8 @@ import msi.gaml.types.Types;
 		name = { IKeyword.RELEASE },
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		breakable = true,
+		continuable = true,
 		remote_context = true,
 		concept = { IConcept.MULTI_LEVEL })
 @inside (
@@ -133,13 +136,13 @@ public class ReleaseStatement extends AbstractStatementSequence {
 
 	/** The target. */
 	private final IExpression target;
-	
+
 	/** The as expr. */
 	private final IExpression asExpr;
-	
+
 	/** The in expr. */
 	private final IExpression inExpr;
-	
+
 	/** The return string. */
 	private final String returnString;
 
@@ -149,7 +152,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	/**
 	 * Instantiates a new release statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public ReleaseStatement(final IDescription desc) {
 		super(desc);
@@ -161,9 +165,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 
 	@Override
 	public void enterScope(final IScope stack) {
-		if (returnString != null) {
-			stack.addVarWithValue(returnString, null);
-		}
+		if (returnString != null) { stack.addVarWithValue(returnString, null); }
 		super.enterScope(stack);
 	}
 
@@ -186,30 +188,23 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			final IList<IAgent> microAgents = GamaListFactory.create(Types.AGENT);
 			if (t instanceof IContainer) {
 				for (final Object o : ((IContainer) t).iterable(scope)) {
-					if (o instanceof IAgent) {
-						microAgents.add((IAgent) o);
-					}
+					if (o instanceof IAgent) { microAgents.add((IAgent) o); }
 				}
-			} else if (t instanceof IAgent) {
-				microAgents.add((IAgent) t);
-			}
+			} else if (t instanceof IAgent) { microAgents.add((IAgent) t); }
 			microAgents.removeIf(each -> !each.getHost().equals(macroAgent));
 			releasedMicroAgents = releaseExistingAgents(scope, macroAgent, microAgents);
 		}
-		if (!releasedMicroAgents.isEmpty()) {
-			// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
-			if (!sequence.isEmpty()) {
-				for (final IAgent releasedA : releasedMicroAgents) {
-					if (!scope.execute(sequence, releasedA, null).passed()) {
-						break;
-					}
+		// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
+		if (!releasedMicroAgents.isEmpty() && !sequence.isEmpty()) {
+			for (final IAgent releasedA : releasedMicroAgents) {
+				if (!scope.execute(sequence, releasedA, null).passed()
+						|| scope.getAndClearFlowStatus() == FlowStatus.BREAK) {
+					break;
 				}
 			}
 		}
 
-		if (returnString != null) {
-			scope.setVarValue(returnString, releasedMicroAgents);
-		}
+		if (returnString != null) { scope.setVarValue(returnString, releasedMicroAgents); }
 
 		return releasedMicroAgents;
 	}
@@ -217,9 +212,12 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	/**
 	 * Release agent prototype.
 	 *
-	 * @param scope the scope
-	 * @param macroAgent the macro agent
-	 * @param saved the saved
+	 * @param scope
+	 *            the scope
+	 * @param macroAgent
+	 *            the macro agent
+	 * @param saved
+	 *            the saved
 	 * @return the list
 	 */
 	private List<IAgent> releaseAgentPrototype(final IScope scope, final IAgent macroAgent, final SavedAgent saved) {
@@ -235,9 +233,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			targetAgent = macroAgent.getHost();
 			while (targetAgent != null) {
 				microSpecies = targetAgent.getSpecies().getMicroSpecies(microSpeciesName);
-				if (microSpecies != null) {
-					break;
-				}
+				if (microSpecies != null) { break; }
 				targetAgent = targetAgent.getHost();
 			}
 		} else {
@@ -265,9 +261,12 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	/**
 	 * Release existing agents.
 	 *
-	 * @param scope the scope
-	 * @param macroAgent the macro agent
-	 * @param microAgents the micro agents
+	 * @param scope
+	 *            the scope
+	 * @param macroAgent
+	 *            the macro agent
+	 * @param microAgents
+	 *            the micro agents
 	 * @return the list
 	 */
 	public List<IAgent> releaseExistingAgents(final IScope scope, final IAgent macroAgent,
@@ -287,9 +286,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			targetAgent = macroAgent.getHost();
 			while (targetAgent != null) {
 				microSpecies = targetAgent.getSpecies().getMicroSpecies(microSpeciesName);
-				if (microSpecies != null) {
-					break;
-				}
+				if (microSpecies != null) { break; }
 				targetAgent = targetAgent.getHost();
 			}
 			if (microSpecies != null && targetAgent != null) {
@@ -316,9 +313,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 				macroOfMacro = macroAgent.getHost();
 				while (macroOfMacro != null) {
 					microSpecies = macroOfMacro.getSpecies().getMicroSpecies(microAgentSpec.getName());
-					if (microSpecies != null) {
-						break;
-					}
+					if (microSpecies != null) { break; }
 
 					macroOfMacro = macroOfMacro.getHost();
 				}

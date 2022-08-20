@@ -51,14 +51,6 @@ public class SelfExpression extends VariableExpression {
 	@Override
 	public boolean isConst() { return false; }
 
-	/**
-	 * Method collectPlugins()
-	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {}
-
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species,
 			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {

@@ -1,20 +1,22 @@
 /*******************************************************************************************************
  *
- * SymbolProto.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SymbolProto.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -24,6 +26,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
@@ -50,73 +53,105 @@ public class SymbolProto extends AbstractProto {
 
 	/** The constructor. */
 	private final ISymbolConstructor constructor;
-	
+
 	/** The validator. */
 	private IValidator validator;
-	
+
 	/** The serializer. */
 	private SymbolSerializer serializer;
-	
+
 	/** The factory. */
 	private final SymbolFactory factory;
 
 	/** The kind. */
 	private final int kind;
-	
+
 	/** The is unique in context. */
 	private final boolean hasSequence, hasArgs, hasScope, isRemoteContext, isUniqueInContext;
-	
+
 	/** The context keywords. */
 	private final ImmutableSet<String> contextKeywords;
-	
+
 	/** The context kinds. */
 	private final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
-	
+
 	/** The possible facets. */
 	private final Map<String, FacetProto> possibleFacets;
-	
+
 	/** The mandatory facets. */
 	private final ImmutableSet<String> mandatoryFacets;
-	
+
 	/** The omissible facet. */
 	private final String omissibleFacet;
-	
+
 	/** The is primitive. */
 	private final boolean isPrimitive;
-	
+
+	/** The is breakable. */
+	private final boolean isBreakable;
+
+	/** The is continuable. */
+	private final boolean isContinuable;
+
 	/** The is var. */
 	private final boolean isVar;
 
 	/** The Constant ids. */
 	static final List<Integer> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID);
 
+	/** The Constant BREAKABLE_STATEMENTS. */
+	public static final Set<String> BREAKABLE_STATEMENTS = new HashSet();
+	
+	/** The Constant CONTINUABLE_STATEMENTS. */
+	public static final Set<String> CONTINUABLE_STATEMENTS = new HashSet();
+
 	/**
 	 * Instantiates a new symbol proto.
 	 *
-	 * @param clazz the clazz
-	 * @param hasSequence the has sequence
-	 * @param hasArgs the has args
-	 * @param kind the kind
-	 * @param doesNotHaveScope the does not have scope
-	 * @param possibleFacets the possible facets
-	 * @param omissible the omissible
-	 * @param contextKeywords the context keywords
-	 * @param parentKinds the parent kinds
-	 * @param isRemoteContext the is remote context
-	 * @param isUniqueInContext the is unique in context
-	 * @param nameUniqueInContext the name unique in context
-	 * @param constr the constr
-	 * @param name the name
-	 * @param plugin the plugin
+	 * @param clazz
+	 *            the clazz
+	 * @param hasSequence
+	 *            the has sequence
+	 * @param hasArgs
+	 *            the has args
+	 * @param kind
+	 *            the kind
+	 * @param doesNotHaveScope
+	 *            the does not have scope
+	 * @param possibleFacets
+	 *            the possible facets
+	 * @param omissible
+	 *            the omissible
+	 * @param contextKeywords
+	 *            the context keywords
+	 * @param parentKinds
+	 *            the parent kinds
+	 * @param isRemoteContext
+	 *            the is remote context
+	 * @param isUniqueInContext
+	 *            the is unique in context
+	 * @param nameUniqueInContext
+	 *            the name unique in context
+	 * @param constr
+	 *            the constr
+	 * @param name
+	 *            the name
+	 * @param plugin
+	 *            the plugin
 	 */
-	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
-			final boolean doesNotHaveScope, final FacetProto[] possibleFacets, final String omissible,
-			final String[] contextKeywords, final int[] parentKinds, final boolean isRemoteContext,
-			final boolean isUniqueInContext, final boolean nameUniqueInContext, final ISymbolConstructor constr,
-			final String name, final String plugin) {
+	public SymbolProto(final Class clazz, final boolean isBreakable, final boolean isContinuable,
+			final boolean hasSequence, final boolean hasArgs, final int kind, final boolean doesNotHaveScope,
+			final FacetProto[] possibleFacets, final String omissible, final String[] contextKeywords,
+			final int[] parentKinds, final boolean isRemoteContext, final boolean isUniqueInContext,
+			final boolean nameUniqueInContext, final ISymbolConstructor constr, final String name,
+			final String plugin) {
 		super(name, clazz, plugin);
 		factory = DescriptionFactory.getFactory(kind);
 		constructor = constr;
+		this.isBreakable = isBreakable;
+		this.isContinuable = isContinuable;
+		if (isContinuable) { CONTINUABLE_STATEMENTS.add(name); }
+		if (isBreakable) { BREAKABLE_STATEMENTS.add(name); }
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
 		this.isPrimitive = IKeyword.PRIMITIVE.equals(name);
@@ -162,7 +197,8 @@ public class SymbolProto extends AbstractProto {
 	/**
 	 * Checks if is label.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return true, if is label
 	 */
 	public boolean isLabel(final String s) {
@@ -174,7 +210,8 @@ public class SymbolProto extends AbstractProto {
 	/**
 	 * Checks if is id.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return true, if is id
 	 */
 	public boolean isId(final String s) {
@@ -303,9 +340,17 @@ public class SymbolProto extends AbstractProto {
 	 * @return
 	 */
 	public boolean isBreakable() {
-		final String name = getName();
-		return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
+		return isBreakable;
+		// final String name = getName();
+		// return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
 	}
+
+	/**
+	 * Checks if is continuable.
+	 *
+	 * @return true, if is continuable
+	 */
+	public boolean isContinuable() { return isContinuable; }
 
 	/**
 	 * Gets the validator.
@@ -342,7 +387,8 @@ public class SymbolProto extends AbstractProto {
 	/**
 	 * Sets the serializer.
 	 *
-	 * @param serializer the new serializer
+	 * @param serializer
+	 *            the new serializer
 	 */
 	public void setSerializer(final SymbolSerializer serializer) { this.serializer = serializer; }
 
@@ -365,7 +411,8 @@ public class SymbolProto extends AbstractProto {
 	/**
 	 * Should be defined in.
 	 *
-	 * @param context the context
+	 * @param context
+	 *            the context
 	 * @return true, if successful
 	 */
 	public boolean shouldBeDefinedIn(final String context) {
@@ -413,10 +460,10 @@ public class SymbolProto extends AbstractProto {
 		}
 		return getName() + " " + sb.toString();
 	}
-	//
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// meta.put(GamlProperties.STATEMENTS, name);
-	// }
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.STATEMENTS, name);
+	}
 
 }

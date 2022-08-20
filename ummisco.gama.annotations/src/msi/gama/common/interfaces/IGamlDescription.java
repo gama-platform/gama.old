@@ -1,14 +1,16 @@
 /*******************************************************************************************************
  *
- * IGamlDescription.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IGamlDescription.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
+
+import msi.gama.precompiler.GamlProperties;
 
 /**
  * The interface IGamlDescription. Represents objects that can be presented in the online documentation.
@@ -24,18 +26,14 @@ public interface IGamlDescription extends INamed {
 	 *
 	 * @return a string representing the title of this object (default is its name)
 	 */
-	default String getTitle() {
-		return getName();
-	}
+	default String getTitle() { return getName(); }
 
 	/**
 	 * Returns the documentation attached to this object
 	 *
 	 * @return a string that represents the documentation of this object
 	 */
-	default String getDocumentation() {
-		return "";
-	}
+	default String getDocumentation() { return ""; }
 
 	/**
 	 * Returns the plugin in which this object has been defined (if it has one)
@@ -45,6 +43,12 @@ public interface IGamlDescription extends INamed {
 	default String getDefiningPlugin() {
 		// Null by default
 		return null;
+	}
+
+	// void collectMetaInformation(final GamlProperties meta);
+
+	default void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.PLUGINS, getDefiningPlugin());
 	}
 
 }

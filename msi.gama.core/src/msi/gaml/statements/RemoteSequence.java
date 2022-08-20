@@ -1,18 +1,20 @@
 /*******************************************************************************************************
  *
- * RemoteSequence.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * RemoteSequence.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.FlowStatus;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 
@@ -28,7 +30,8 @@ public class RemoteSequence extends AbstractStatementSequence {
 	/**
 	 * Instantiates a new remote sequence.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public RemoteSequence(final IDescription desc) {
 		super(desc);
@@ -39,10 +42,9 @@ public class RemoteSequence extends AbstractStatementSequence {
 	 *
 	 * @return the myself
 	 */
-	public IAgent getMyself() {
-		return myself.get();
-	}
+	public IAgent getMyself() { return myself.get(); }
 
+	@Override
 	public void setMyself(final IAgent agent) {
 		myself.set(agent);
 	}
@@ -53,10 +55,27 @@ public class RemoteSequence extends AbstractStatementSequence {
 		super.leaveScope(scope);
 	}
 
+	// @Override
+	// public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+	// scope.addVarWithValue(IKeyword.MYSELF, myself.get());
+	// return super.privateExecuteIn(scope);
+	// }
+
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		scope.addVarWithValue(IKeyword.MYSELF, myself.get());
-		final Object result = super.privateExecuteIn(scope);
-		return result;
+		Object lastResult = null;
+		for (final IStatement command : commands) {
+			final ExecutionResult result = scope.execute(command);
+			if (!result.passed()) return lastResult;
+			FlowStatus fs = scope.getAndClearFlowStatus();
+			if (fs == IScope.FlowStatus.BREAK) {
+				scope.setFlowStatus(IScope.FlowStatus.BREAK); // we set it again for the outer statement
+				return lastResult;
+			}
+			if (scope.getAndClearFlowStatus() == IScope.FlowStatus.CONTINUE) { continue; }
+			lastResult = result.getValue();
+		}
+		return lastResult;
 	}
 }

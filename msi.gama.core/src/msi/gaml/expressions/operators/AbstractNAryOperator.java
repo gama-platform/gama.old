@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractNAryOperator.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractNAryOperator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -25,6 +25,7 @@ import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -50,15 +51,17 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	/** The exprs. */
 	public final IExpression[] exprs;
-	
+
 	/** The prototype. */
 	protected OperatorProto prototype;
 
 	/**
 	 * Instantiates a new abstract N ary operator.
 	 *
-	 * @param proto the proto
-	 * @param expressions the expressions
+	 * @param proto
+	 *            the proto
+	 * @param expressions
+	 *            the expressions
 	 */
 	public AbstractNAryOperator(final OperatorProto proto, final IExpression... expressions) {
 		// Copy introduced in order to circumvent issue 1060
@@ -69,6 +72,12 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		}
 		this.prototype = proto;
 		type = computeType();
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		prototype.collectMetaInformation(meta);
+		if (exprs != null) { for (IExpression expr : exprs) { expr.collectMetaInformation(meta); } }
 	}
 
 	@Override
@@ -94,10 +103,14 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	/**
 	 * Compute type.
 	 *
-	 * @param tp the tp
-	 * @param contentTypeProvider the content type provider
-	 * @param defaultType the default type
-	 * @param kind the kind
+	 * @param tp
+	 *            the tp
+	 * @param contentTypeProvider
+	 *            the content type provider
+	 * @param defaultType
+	 *            the default type
+	 * @param kind
+	 *            the kind
 	 * @return the i type
 	 */
 	protected IType computeType(final int tp, final int contentTypeProvider, final IType defaultType, final int kind) {

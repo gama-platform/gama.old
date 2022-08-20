@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -20,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
@@ -49,42 +49,36 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	/** The id. */
 	protected int id;
-	
+
 	/** The name. */
 	protected String name;
-	
+
 	/** The support. */
 	protected Class<Support> support;
-	
+
 	/** The getters. */
 	Map<String, OperatorProto> getters;
-	
+
 	/** The parent. */
 	protected IType<? super Support> parent;
-	
+
 	/** The parented. */
 	protected boolean parented;
-	
+
 	/** The var kind. */
 	protected int varKind;
-	
+
 	/** The plugin. */
 	protected String plugin;
 
 	@Override
-	public String getTitle() {
-		return getName();
-	}
+	public String getTitle() { return getName(); }
 
 	@Override
-	public int getNumberOfParameters() {
-		return 0;
-	}
+	public int getNumberOfParameters() { return 0; }
 
 	@Override
-	public String getDefiningPlugin() {
-		return plugin;
-	}
+	public String getDefiningPlugin() { return plugin; }
 
 	@Override
 	public String getDocumentation() {
@@ -94,9 +88,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 			final type t = getClass().getAnnotation(type.class);
 			if (t != null) {
 				final doc[] docs = t.doc();
-				if (docs != null && docs.length > 0) {
-					documentation = docs[0];
-				}
+				if (docs != null && docs.length > 0) { documentation = docs[0]; }
 			}
 		}
 		String result;
@@ -113,9 +105,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 *
 	 * @return the support name
 	 */
-	public String getSupportName() {
-		return ", wraps Java objects of class " + support.getSimpleName();
-	}
+	public String getSupportName() { return ", wraps Java objects of class " + support.getSimpleName(); }
 
 	/**
 	 * Gets the field documentation.
@@ -123,7 +113,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 * @return the field documentation
 	 */
 	public String getFieldDocumentation() {
-		if (getters == null) { return ""; }
+		if (getters == null) return "";
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append("<b><br/>Fields :</b><ul>");
 		for (final OperatorProto f : getters.values()) {
@@ -139,7 +129,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * Gets the field documentation.
 	 *
-	 * @param prototype the prototype
+	 * @param prototype
+	 *            the prototype
 	 * @return the field documentation
 	 */
 	private String getFieldDocumentation(final OperatorProto prototype) {
@@ -150,9 +141,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 			final variable[] allVars = annot.value();
 			for (final variable v : allVars) {
 				if (v.name().equals(prototype.getName())) {
-					if (v.doc().length > 0) {
-						sb.append(", ").append(v.doc()[0].value());
-					}
+					if (v.doc().length > 0) { sb.append(", ").append(v.doc()[0].value()); }
 					break;
 				}
 			}
@@ -161,9 +150,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 
 	@Override
 	public void setName(final String name) {
@@ -191,9 +178,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public int getVarKind() {
-		return varKind;
-	}
+	public int getVarKind() { return varKind; }
 
 	@Override
 	public void setParent(final IType<? super Support> p) {
@@ -202,9 +187,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public IType<? super Support> getParent() {
-		return parent;
-	}
+	public IType<? super Support> getParent() { return parent; }
 
 	@Override
 	public void setFieldGetters(final Map<String, OperatorProto> map) {
@@ -218,14 +201,12 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public OperatorProto getGetter(final String field) {
-		if (getters == null) { return null; }
+		if (getters == null) return null;
 		return getters.get(field);
 	}
 
 	@Override
-	public Map<String, OperatorProto> getFieldGetters() {
-		return getters == null ? Collections.EMPTY_MAP : getters;
-	}
+	public Map<String, OperatorProto> getFieldGetters() { return getters == null ? Collections.EMPTY_MAP : getters; }
 
 	@Override
 	public abstract Support cast(IScope scope, final Object obj, final Object param, boolean copy)
@@ -250,7 +231,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public boolean equals(final Object c) {
-		if (c instanceof IType) { return ((IType<?>) c).id() == id; }
+		if (c instanceof IType) return ((IType<?>) c).id() == id;
 		return false;
 	}
 
@@ -271,54 +252,39 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public boolean isAgentType() {
-		return false;
-	}
+	public boolean isAgentType() { return false; }
 
 	@Override
-	public boolean isSkillType() {
-		return false;
-	}
+	public boolean isSkillType() { return false; }
 
 	@Override
-	public IType<?> getContentType() {
-		return Types.NO_TYPE;
-	}
+	public IType<?> getContentType() { return Types.NO_TYPE; }
 
 	@Override
-	public IType<?> getKeyType() {
-		return Types.NO_TYPE;
-	}
+	public IType<?> getKeyType() { return Types.NO_TYPE; }
 
 	@Override
-	public String getSpeciesName() {
-		return null;
-	}
+	public String getSpeciesName() { return null; }
 
 	@Override
-	public SpeciesDescription getSpecies() {
-		return null;
-	}
+	public SpeciesDescription getSpecies() { return null; }
 
 	@Override
-	public SpeciesDescription getDenotedSpecies() {
-		return getSpecies();
-	}
+	public SpeciesDescription getDenotedSpecies() { return getSpecies(); }
 
 	@Override
-	public boolean isParented() {
-		return parented;
-	}
+	public boolean isParented() { return parented; }
 
 	/**
 	 * Checks if is super type of.
 	 *
-	 * @param type the type
+	 * @param type
+	 *            the type
 	 * @return true, if is super type of
 	 */
 	protected boolean isSuperTypeOf(final IType<?> type) {
-		if (type == null) { return false; }
-		if (parented && type.isParented()) { return type == this || isSuperTypeOf(type.getParent()); }
+		if (type == null) return false;
+		if (parented && type.isParented()) return type == this || isSuperTypeOf(type.getParent());
 		final Class<?> remote = type.toClass();
 		return support.isAssignableFrom(remote);
 	}
@@ -335,14 +301,12 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object c) {
-		if (c == null) { return acceptNullInstances(); }
+		if (c == null) return acceptNullInstances();
 		return support.isAssignableFrom(c.getClass());
 	}
 
 	@Override
-	public boolean isParametricType() {
-		return false;
-	}
+	public boolean isParametricType() { return false; }
 
 	@Override
 	public boolean isParametricFormOf(final IType<?> l) {
@@ -364,60 +328,58 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public int distanceTo(final IType<?> type) {
-		if (type == this) { return 0; }
-		if (type == null) { return Integer.MAX_VALUE; }
+		if (type == this) return 0;
+		if (type == null) return Integer.MAX_VALUE;
 		if (parented) {
-			if (isSuperTypeOf(type)) { return 1 + distanceTo(type.getParent()); }
+			if (isSuperTypeOf(type)) return 1 + distanceTo(type.getParent());
 			return 1 + getParent().distanceTo(type);
 		}
-		if (isTranslatableInto(type)) { return 1; }
-		if (isAssignableFrom(type)) { return 1; }
+		if (isTranslatableInto(type) || isAssignableFrom(type)) return 1;
 		return Integer.MAX_VALUE;
 	}
 
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
 	public IType<? super Support> findCommonSupertypeWith(final IType<?> type) {
-		if (type == this) { return this; }
-		if (type == Types.NO_TYPE) { return getDefault() == null ? this : (GamaNoType) type; }
-		if (type.isTranslatableInto(this)) { return this; }
-		if (this.isTranslatableInto(type)) { return (IType) type; }
+		if (type == this) return this;
+		if (type == Types.NO_TYPE) return getDefault() == null ? this : (GamaNoType) type;
+		if (type.isTranslatableInto(this)) return this;
+		if (this.isTranslatableInto(type)) return (IType) type;
 		return getParent().findCommonSupertypeWith(type.getParent());
 	}
 
 	@Override
-	public boolean isContainer() {
-		return false;
-	}
+	public boolean isContainer() { return false; }
 
 	@Override
-	public boolean isNumber() {
-		return false;
-	}
+	public boolean isNumber() { return false; }
 
 	@Override
-	public boolean isFixedLength() {
-		return true;
-	}
+	public boolean isFixedLength() { return true; }
 
 	/**
 	 * To type.
 	 *
-	 * @param scope the scope
-	 * @param value the value
-	 * @param type the type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @param type
+	 *            the type
+	 * @param copy
+	 *            the copy
 	 * @return the object
 	 */
 	public static Object toType(final IScope scope, final Object value, final IType<?> type, final boolean copy) {
-		if (type == null || type.id() == IType.NONE) { return value; }
+		if (type == null || type.id() == IType.NONE) return value;
 		return type.cast(scope, value, null, copy);
 	}
 
 	/**
 	 * Key type if casting.
 	 *
-	 * @param exp the exp
+	 * @param exp
+	 *            the exp
 	 * @return the i type
 	 */
 	public IType<?> keyTypeIfCasting(final IExpression exp) {
@@ -427,7 +389,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * Contents type if casting.
 	 *
-	 * @param exp the exp
+	 * @param exp
+	 *            the exp
 	 * @return the i type
 	 */
 	public IType<?> contentsTypeIfCasting(final IExpression exp) {
@@ -435,9 +398,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public IType<Support> getGamlType() {
-		return this;
-	}
+	public IType<Support> getGamlType() { return this; }
 
 	@Override
 	public IType<?> typeIfCasting(final IExpression exp) {
@@ -447,7 +408,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * From.
 	 *
-	 * @param species the species
+	 * @param species
+	 *            the species
 	 * @return the i type
 	 */
 	public static IType<?> from(final TypeDescription species) {
@@ -457,16 +419,18 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * From.
 	 *
-	 * @param t the t
-	 * @param keyType the key type
-	 * @param contentType the content type
+	 * @param t
+	 *            the t
+	 * @param keyType
+	 *            the key type
+	 * @param contentType
+	 *            the content type
 	 * @return the i container type
 	 */
 	public static IContainerType<?> from(final IContainerType<IContainer<?, ?>> t, final IType<?> keyType,
 			final IType<?> contentType) {
-		if ((keyType == null || keyType == Types.NO_TYPE) && (contentType == null || contentType == Types.NO_TYPE)) {
+		if ((keyType == null || keyType == Types.NO_TYPE) && (contentType == null || contentType == Types.NO_TYPE))
 			return t;
-		}
 		final IType<?> kt = keyType == Types.NO_TYPE ? t.getGamlType().getKeyType() : keyType;
 		final IType<?> ct = contentType == Types.NO_TYPE ? t.getGamlType().getContentType() : contentType;
 		return ParametricType.createParametricType(t.getGamlType(), kt, ct);
@@ -475,20 +439,21 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * From.
 	 *
-	 * @param t the t
-	 * @param keyType the key type
-	 * @param contentType the content type
+	 * @param t
+	 *            the t
+	 * @param keyType
+	 *            the key type
+	 * @param contentType
+	 *            the content type
 	 * @return the i type
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public static IType<?> from(final IType<?> t, final IType<?> keyType, final IType<?> contentType) {
-		if (keyType == null || contentType == null) { return t; }
+		if (keyType == null || contentType == null) return t;
 		if (t instanceof IContainerType) {
-			if (!(t instanceof GamaSpeciesType)) {
-				if (contentType.isAssignableFrom(t.getContentType()) && keyType.isAssignableFrom(t.getKeyType())) {
-					return t;
-				}
-			}
+			if (!(t instanceof GamaSpeciesType)
+					&& (contentType.isAssignableFrom(t.getContentType()) && keyType.isAssignableFrom(t.getKeyType())))
+				return t;
 			return from((IContainerType) t, keyType, contentType);
 		}
 		return t;
@@ -496,34 +461,34 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	/** The Constant TYPE. */
 	public static final int TYPE = 0;
-	
+
 	/** The Constant CONTENT. */
 	public static final int CONTENT = 1;
-	
+
 	/** The Constant KEY. */
 	public static final int KEY = 2;
-	
+
 	/** The Constant DENOTED. */
 	public static final int DENOTED = 3;
 
 	/**
 	 * Find common type.
 	 *
-	 * @param elements the elements
-	 * @param kind the kind
+	 * @param elements
+	 *            the elements
+	 * @param kind
+	 *            the kind
 	 * @return the i type
 	 */
 	public static IType<?> findCommonType(final IExpression[] elements, final int kind) {
 		final IType<?> result = Types.NO_TYPE;
-		if (elements.length == 0) { return result; }
+		if (elements.length == 0) return result;
 		try (final ICollector<IType<?>> types = Collector.getOrderedSet()) {
 			for (final IExpression e : elements) {
 				// TODO Indicates a previous error in compiling expressions. Maybe
 				// we should cut this
 				// part
-				if (e == null) {
-					continue;
-				}
+				if (e == null) { continue; }
 				final IType<?> eType = e.getGamlType();
 				types.add(kind == TYPE ? eType : kind == CONTENT ? eType.getContentType() : eType.getKeyType());
 			}
@@ -535,20 +500,19 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * Find common type.
 	 *
-	 * @param types the types
+	 * @param types
+	 *            the types
 	 * @return the i type
 	 */
 	public static IType<?> findCommonType(final IType<?>... types) {
 		IType<?> result = Types.NO_TYPE;
-		if (types.length == 0) { return result; }
+		if (types.length == 0) return result;
 		result = types[0];
-		if (types.length == 1) { return result; }
+		if (types.length == 1) return result;
 		for (int i = 1; i < types.length; i++) {
 			final IType<?> currentType = types[i];
 			if (currentType == Types.NO_TYPE) {
-				if (result.getDefault() != null) {
-					result = Types.NO_TYPE;
-				}
+				if (result.getDefault() != null) { result = Types.NO_TYPE; }
 			} else {
 				result = result.findCommonSupertypeWith(currentType);
 			}
@@ -563,9 +527,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 * @return
 	 */
 	public static IType<?> of(final Object obj) {
-		if (obj instanceof IValue) { return ((IValue) obj).getGamlType(); }
-		if (obj instanceof IExpression) { return ((IExpression) obj).getGamlType(); }
-		if (obj == null) { return Types.NO_TYPE; }
+		if (obj instanceof IValue) return ((IValue) obj).getGamlType();
+		if (obj instanceof IExpression) return ((IExpression) obj).getGamlType();
+		if (obj == null) return Types.NO_TYPE;
 		return Types.get(obj.getClass());
 	}
 
@@ -579,43 +543,36 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * Requires casting.
 	 *
-	 * @param castingType the casting type
-	 * @param originalType the original type
+	 * @param castingType
+	 *            the casting type
+	 * @param originalType
+	 *            the original type
 	 * @return true, if successful
 	 */
 	public static boolean requiresCasting(final IType<?> castingType, final IType<?> originalType) {
-		if (castingType == null || castingType == Types.NO_TYPE || castingType.isAssignableFrom(originalType)) {
+		if (castingType == null || castingType == Types.NO_TYPE || castingType.isAssignableFrom(originalType))
 			return false;
-		}
 		return true;
 	}
 
 	@Override
-	public void setDefiningPlugin(final String plugin) {
-		this.plugin = plugin;
-	}
-
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// if (plugin != null) {
-	// meta.put(GamlProperties.PLUGINS, this.plugin);
-	// meta.put(GamlProperties.TYPES, this.name);
-	// }
-	// }
+	public void setDefiningPlugin(final String plugin) { this.plugin = plugin; }
 
 	@Override
-	public boolean isDrawable() {
-		return false;
+	public void collectMetaInformation(final GamlProperties meta) {
+		if (plugin != null) {
+			meta.put(GamlProperties.PLUGINS, this.plugin);
+			meta.put(GamlProperties.TYPES, this.name);
+		}
 	}
 
 	@Override
-	public IType<?> getWrappedType() {
-		return Types.NO_TYPE;
-	}
+	public boolean isDrawable() { return false; }
 
 	@Override
-	public boolean isCompoundType() {
-		return false;
-	}
+	public IType<?> getWrappedType() { return Types.NO_TYPE; }
+
+	@Override
+	public boolean isCompoundType() { return false; }
 
 }

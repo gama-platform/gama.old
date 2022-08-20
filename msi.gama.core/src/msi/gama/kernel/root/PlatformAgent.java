@@ -354,9 +354,6 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	@Override
 	public String getDefiningPlugin() { return "msi.gama.core"; }
-	//
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {

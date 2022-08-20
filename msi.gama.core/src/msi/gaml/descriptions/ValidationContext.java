@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ValidationContext.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ValidationContext.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -22,9 +22,11 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.Collector;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import one.util.streamex.StreamEx;
 
 /**
@@ -34,28 +36,31 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 
 	/** The Constant MAX_SIZE. */
 	final static int MAX_SIZE = 1000;
-	
+
 	/** The Constant NULL. */
 	public static final ValidationContext NULL = new ValidationContext(null, false, IDocManager.NULL);
-	
+
 	/** The resource URI. */
 	final URI resourceURI;
-	
+
 	/** The imported errors. */
 	final Collector.AsList<GamlCompilationError> importedErrors = Collector.getList();
-	
+
 	/** The no experiment. */
 	private boolean noWarning, noInfo, hasSyntaxErrors, noExperiment;
-	
+
 	/** The doc delegate. */
 	private final IDocManager docDelegate;
 
 	/**
 	 * Instantiates a new validation context.
 	 *
-	 * @param uri the uri
-	 * @param syntax the syntax
-	 * @param delegate the delegate
+	 * @param uri
+	 *            the uri
+	 * @param syntax
+	 *            the syntax
+	 * @param delegate
+	 *            the delegate
 	 */
 	public ValidationContext(final URI uri, final boolean syntax, final IDocManager delegate) {
 		this.resourceURI = uri;
@@ -80,10 +85,10 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 
 	/** The Constant IS_INFO. */
 	public static final Predicate<GamlCompilationError> IS_INFO = GamlCompilationError::isInfo;
-	
+
 	/** The Constant IS_WARNING. */
 	public static final Predicate<GamlCompilationError> IS_WARNING = GamlCompilationError::isWarning;
-	
+
 	/** The Constant IS_ERROR. */
 	public static final Predicate<GamlCompilationError> IS_ERROR = GamlCompilationError::isError;
 
@@ -99,7 +104,8 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 	/**
 	 * Checks for internal syntax errors.
 	 *
-	 * @param errors the errors
+	 * @param errors
+	 *            the errors
 	 */
 	public void hasInternalSyntaxErrors(final boolean errors) {
 		hasSyntaxErrors = errors;
@@ -240,7 +246,8 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 	/**
 	 * Checks for error on.
 	 *
-	 * @param objects the objects
+	 * @param objects
+	 *            the objects
 	 * @return true, if successful
 	 */
 	public boolean hasErrorOn(final EObject... objects) {
@@ -262,4 +269,21 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 	 */
 	public boolean getNoExperiment() { return noExperiment; }
 
+	/**
+	 * Verify plugins. Returns true if all the plugins are present in the current platform
+	 *
+	 * @param list
+	 *            the list
+	 * @return true, if successful
+	 */
+	public boolean verifyPlugins(final List<String> list) {
+		for (String s : list) {
+			if (!GamaBundleLoader.gamlPluginExists(s)) {
+				add(new GamlCompilationError("Missing plugin: " + s, IGamlIssue.MISSING_PLUGIN, resourceURI,
+						GamaBundleLoader.isDisplayPlugin(s), false));
+				return false;
+			}
+		}
+		return true;
+	}
 }

@@ -35,6 +35,7 @@ import com.google.common.collect.Sets;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GamlCompilationError;
@@ -97,17 +98,19 @@ public class ModelAssembler {
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
 		Facets globalFacets = null;
-		if (source.hasFacet(IKeyword.PRAGMA)) {
-			final Facets facets = source.copyFacets(null);
-			final List<String> pragmas = (List<String>) facets.get(IKeyword.PRAGMA).getExpression().getConstValue();
-			collector.resetInfoAndWarning();
-			if (pragmas != null) {
-				if (pragmas.contains(IKeyword.NO_INFO)) { collector.setNoInfo(); }
-				if (pragmas.contains(IKeyword.NO_WARNING)) { collector.setNoWarning(); }
-				if (pragmas.contains(IKeyword.NO_EXPERIMENT)) { collector.setNoExperiment(); }
-			}
 
+		final Map<String, List<String>> pragmas = source.getPragmas();
+		collector.resetInfoAndWarning();
+		if (pragmas != null) {
+			if (pragmas.containsKey(IKeyword.PRAGMA_NO_INFO)) { collector.setNoInfo(); }
+			if (pragmas.containsKey(IKeyword.PRAGMA_NO_WARNING)) { collector.setNoWarning(); }
+			if (pragmas.containsKey(IKeyword.PRAGMA_NO_EXPERIMENT)) { collector.setNoExperiment(); }
+			if (GamaPreferences.Experimental.REQUIRED_PLUGINS.getValue()
+					&& pragmas.containsKey(IKeyword.PRAGMA_REQUIRES)
+					&& !collector.verifyPlugins(pragmas.get(IKeyword.PRAGMA_REQUIRES)))
+				return null;
 		}
+
 		final Map<String, SpeciesDescription> tempSpeciesCache = GamaMapFactory.createUnordered();
 
 		for (final ISyntacticElement cm : models.reverse()) {

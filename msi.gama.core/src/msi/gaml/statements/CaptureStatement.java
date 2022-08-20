@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.FlowStatus;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
@@ -52,6 +53,8 @@ import msi.gaml.types.Types;
 		name = IKeyword.CAPTURE,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		breakable = true,
+		continuable = true,
 		concept = { IConcept.MULTI_LEVEL },
 		remote_context = true)
 @inside (
@@ -248,7 +251,11 @@ public class CaptureStatement extends AbstractStatementSequence {
 					if (microSpecies != null) {
 						capturedAgent = macroAgent.captureMicroAgent(scope, microSpecies, c);
 
-						if (sequence != null && !sequence.isEmpty()) { scope.execute(sequence, capturedAgent, null); }
+						if (sequence != null && !sequence.isEmpty()) {
+							scope.execute(sequence, capturedAgent, null);
+							FlowStatus s = scope.getAndClearFlowStatus();
+							if (s == FlowStatus.BREAK) { break; }
+						}
 
 						capturedAgents.add(capturedAgent);
 					} else {

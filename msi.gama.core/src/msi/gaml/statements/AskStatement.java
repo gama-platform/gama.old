@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AskStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AskStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -43,6 +43,8 @@ import msi.gaml.types.Types;
 		name = IKeyword.ASK,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		breakable = true,
+		continuable = true,
 		remote_context = true,
 		concept = { IConcept.SPECIES })
 @facets (
@@ -180,17 +182,18 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 
 	/** The sequence. */
 	private RemoteSequence sequence = null;
-	
+
 	/** The target. */
 	private final IExpression target;
-	
+
 	/** The parallel. */
 	private final IExpression parallel;
 
 	/**
 	 * Instantiates a new ask statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AskStatement(final IDescription desc) {
 		super(desc);
@@ -208,7 +211,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 
 	@Override
 	public void leaveScope(final IScope scope) {
-		scope.popLoop();
+		// scope.popLoop();
 		super.leaveScope(scope);
 	}
 
@@ -220,15 +223,15 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 			GamaExecutorService.execute(scope, sequence,
 					((IContainer<?, IAgent>) t).listValue(scope, Types.AGENT, false), parallel);
 			return this;
-		} else if (t instanceof IAgent) {
+		}
+		if (t instanceof IAgent) {
 			final ExecutionResult result = scope.execute(sequence, (IAgent) t, null);
 			return result.getValue();
-		} else {
-			final IAgent agent = Cast.asAgent(scope, t);
-			if (agent == null) throw GamaRuntimeException.error("Can not execute ask on a nil agent", scope);
-			final ExecutionResult result = scope.execute(sequence, agent, null);
-			return result.getValue();
 		}
+		final IAgent agent = Cast.asAgent(scope, t);
+		if (agent == null) throw GamaRuntimeException.error("Can not execute ask on a nil agent", scope);
+		final ExecutionResult result = scope.execute(sequence, agent, null);
+		return result.getValue();
 	}
 
 }

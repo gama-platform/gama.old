@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import msi.gama.util.IModifiableContainer;
@@ -162,13 +163,13 @@ public class ParametricFileType extends ParametricType {
 		return alias;
 	}
 
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// if (plugin != null) {
-	// meta.put(GamlProperties.PLUGINS, this.plugin);
-	// meta.put(GamlProperties.TYPES, this.getName());
-	// }
-	// }
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		if (plugin != null) {
+			meta.put(GamlProperties.PLUGINS, this.plugin);
+			meta.put(GamlProperties.TYPES, this.getName());
+		}
+	}
 
 	/**
 	 * Creates the file.

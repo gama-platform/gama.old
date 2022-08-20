@@ -155,6 +155,7 @@ public class GamaPreferences {
 		 */
 		public static final String SIMULATIONS = "Simulations";
 
+		/** The Constant CORE_MONITOR_PARAMETERS. */
 		public static final Pref<Boolean> CORE_MONITOR_PARAMETERS = create("pref_monitors_in_parameters",
 				"Display monitors in the experiment parameters view", false, IType.BOOL, true).in(NAME, SIMULATIONS);
 
@@ -524,6 +525,7 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CHART_GRIDLINES =
 				create("pref_chart_display_gridlines", "Display grid lines", true, IType.BOOL, true).in(NAME, CHARTS);
 
+		/** The Constant CHART_QUALITY. */
 		public static final Pref<Double> CHART_QUALITY = create("pref_chart_quality",
 				"Size of the chart rendering (from 0, very small but fast, to 1, best but more resource consuming)",
 				0.8, IType.FLOAT, true).in(NAME, CHARTS).between(0.1, 1.0);
@@ -745,15 +747,16 @@ public class GamaPreferences {
 				"Optimize the path computation operators and goto action (but with possible 'jump' issues)", false,
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 
-		/** The Constant QUADTREE_OPTIMIZATION. */
-		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
-				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
-				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+		// /** The Constant QUADTREE_OPTIMIZATION. */
+		// public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
+		// "Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
+		// IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 
-		/** The Constant QUADTREE_SYNCHRONIZATION. */
-		public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
-				"Forces the spatial index to synchronize its operations. Useful for interactive models where the user may interfere.",
-				true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
+		// /** The Constant QUADTREE_SYNCHRONIZATION. */
+		// public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
+		// "Forces the spatial index to synchronize its operations. Useful for interactive models where the user may
+		// interfere.",
+		// true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 
 		/** The Constant USE_POOLING. */
 		public static final Pref<Boolean> USE_POOLING =
@@ -850,6 +853,41 @@ public class GamaPreferences {
 		// if (isLinux()) return "/usr/local/lib/libjri.so";
 		// return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
 		// }
+	}
+
+	/**
+	 * The Class Experimental.
+	 */
+	public static class Experimental {
+
+		/** The Constant NAME. */
+		public static final String NAME = "Experimental";
+		/**
+		 * Http connections
+		 */
+		public static final String CATEGORY =
+				" These features have not been fully tested. Enable them at your own risks.";
+
+		/** The Constant REQUIRED_PLUGINS. */
+		public static final Pref<Boolean> REQUIRED_PLUGINS = create("pref_required_plugins",
+				"Automatically add the plugins required to compile and run a model when editing it", false, IType.BOOL,
+				false).in(NAME, CATEGORY);
+
+		/** The Constant MISSING_PLUGINS. */
+		public static final Pref<Boolean> MISSING_PLUGINS =
+				create("pref_missing_plugins", "Verify that the required plugins are present before compiling a model",
+						false, IType.BOOL, false).in(NAME, CATEGORY);
+
+		/** The Constant QUADTREE_OPTIMIZATION. */
+		public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
+				"Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
+				IType.BOOL, true).in(NAME, CATEGORY);
+
+		/** The Constant QUADTREE_SYNCHRONIZATION. */
+		public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
+				"Forces the spatial index to synchronize its operations. Useful for interactive models where the user may interfere.",
+				true, IType.BOOL, true).in(NAME, CATEGORY);
+
 	}
 
 	/** The prefs. */
@@ -1080,5 +1118,8 @@ public class GamaPreferences {
 
 	/** The ext. */
 	static External ext_ = new External();
+
+	/** The exp. */
+	static Experimental exp_ = new Experimental();
 
 }

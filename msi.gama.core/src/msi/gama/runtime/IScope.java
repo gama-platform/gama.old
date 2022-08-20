@@ -43,6 +43,19 @@ import msi.gaml.types.IType;
 public interface IScope extends Closeable, IBenchmarkable {
 
 	/**
+	 * The Enum LoopStatus.
+	 */
+	enum FlowStatus {
+
+		/** The break. */
+		BREAK,
+		/** The continue. */
+		CONTINUE,
+		/** The normal. */
+		NORMAL;
+	}
+
+	/**
 	 * The Interface IGraphicsScope.
 	 */
 	public interface IGraphicsScope extends IScope {
@@ -96,172 +109,6 @@ public interface IScope extends Closeable, IBenchmarkable {
 		@Override
 		default boolean isGraphics() { return true; }
 	}
-
-	// /**
-	// * Use this class to accumulate a series of execution results. Only the last one marked as 'passed' will be
-	// returned
-	// *
-	// * @author drogoul
-	// *
-	// */
-	// public static class MutableResult extends ExecutionResultWithValue {
-	//
-	// /**
-	// * Instantiates a new mutable result.
-	// */
-	// public MutableResult() {
-	// super(true, null);
-	// }
-	//
-	// /**
-	// * Accepts an execution result
-	// *
-	// * @param e
-	// * the execution result
-	// * @return true, if successful
-	// */
-	// public boolean accept(final ExecutionResult e) {
-	// passed = passed && e.passed();
-	// if (passed) {
-	// this.value = e.getValue();
-	// }
-	// return passed;
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.runtime.IScope.ExecutionResultWithValue#getValue()
-	// */
-	// @Override
-	// public Object getValue() {
-	// return value;
-	// }
-	//
-	// }
-	//
-	// /**
-	// * The result of executions. 'passed' represents the success or failure of the computation, value its result
-	// *
-	// * @author drogoul
-	// *
-	// */
-	//
-	// public abstract static class ExecutionResult {
-	//
-	// /**
-	// * Passed.
-	// *
-	// * @return true, if successful
-	// */
-	// public abstract boolean passed();
-	//
-	// /**
-	// * Gets the value.
-	// *
-	// * @return the value
-	// */
-	// public Object getValue() {
-	// return passed();
-	// }
-	//
-	// }
-	//
-	// /**
-	// * The Class FailedExecutionResult.
-	// */
-	// public static class FailedExecutionResult extends ExecutionResult {
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.runtime.IScope.ExecutionResult#passed()
-	// */
-	// @Override
-	// public boolean passed() {
-	// return false;
-	// }
-	//
-	// }
-	//
-	// /**
-	// * The Class SuccessfulExecutionResult.
-	// */
-	// public static class SuccessfulExecutionResult extends ExecutionResult {
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.runtime.IScope.ExecutionResult#passed()
-	// */
-	// @Override
-	// public boolean passed() {
-	// return true;
-	// }
-	//
-	// }
-	//
-	// /**
-	// * The Class ExecutionResultWithValue.
-	// */
-	// public static class ExecutionResultWithValue extends ExecutionResult {
-	//
-	// /** The value. */
-	// protected Object value;
-	//
-	// /** The passed. */
-	// protected boolean passed;
-	//
-	// /**
-	// * Instantiates a new execution result with a given value.
-	// *
-	// * @param value
-	// * the value
-	// */
-	// public ExecutionResultWithValue(final Object value) {
-	// this(true, value);
-	// }
-	//
-	// /**
-	// * Instantiates a new execution result with a flag indicating if the execution is a sucess and an object
-	// *
-	// * @param passed
-	// * the passed
-	// * @param value
-	// * the value
-	// */
-	// public ExecutionResultWithValue(final boolean passed, final Object value) {
-	// this.passed = passed;
-	// this.value = value;
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.runtime.IScope.ExecutionResult#getValue()
-	// */
-	// @Override
-	// public Object getValue() {
-	// return value;
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.runtime.IScope.ExecutionResult#passed()
-	// */
-	// @Override
-	// public boolean passed() {
-	// return passed;
-	// }
-	//
-	// }
-	//
-	// /** The Constant PASSED. */
-	// public final static ExecutionResult PASSED = new SuccessfulExecutionResult();
-	//
-	// /** The Constant FAILED. */
-	// public final static ExecutionResult FAILED = new FailedExecutionResult();
 
 	/**
 	 * Management of the scope state.
@@ -819,7 +666,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	/**
 	 * Indicates that a loop is finishing : should clear any _loop_halted status present.
 	 */
-	void popLoop();
+	// void popLoop();
 
 	/**
 	 * Indicates that an action is finishing : should clear any _action_halted status present.
@@ -839,7 +686,15 @@ public interface IScope extends Closeable, IBenchmarkable {
 	/**
 	 * Should set the _loop_halted flag to true.
 	 */
-	void interruptLoop();
+	// void interruptLoop();
+	void setFlowStatus(FlowStatus status);
+
+	/**
+	 * Gets the flow status.
+	 *
+	 * @return the flow status
+	 */
+	FlowStatus getAndClearFlowStatus();
 
 	/**
 	 * Inits the.

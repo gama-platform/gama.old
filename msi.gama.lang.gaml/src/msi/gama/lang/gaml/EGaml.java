@@ -19,6 +19,7 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
@@ -404,13 +405,10 @@ public class EGaml implements IGamlEcoreUtils {
 		if (n != null) return NodeModelUtils.getTokenText(n);
 		if (o instanceof VariableRef) return ((VariableRef) o).getRef().getName();
 		if (o instanceof UnitName) return ((UnitName) o).getRef().getName();
-		if (o instanceof ActionRef)
-			return ((ActionRef) o).getRef().getName();
-		else if (o instanceof SkillRef)
-			return ((SkillRef) o).getRef().getName();
-		else if (o instanceof EquationRef)
-			return ((EquationRef) o).getRef().getName();
-		else if (o instanceof TypeRef)
+		if (o instanceof ActionRef) return ((ActionRef) o).getRef().getName();
+		if (o instanceof SkillRef) return ((SkillRef) o).getRef().getName();
+		if (o instanceof EquationRef) return ((EquationRef) o).getRef().getName();
+		if (o instanceof TypeRef)
 			return ((TypeRef) o).getRef().getName();
 		else
 			return "";
@@ -439,7 +437,6 @@ public class EGaml implements IGamlEcoreUtils {
 
 		if (!(expr instanceof Expression)) return expr.toString();
 		final StringBuilder serializer = new StringBuilder(100);
-		serializer.setLength(0);
 		serialize(serializer, (Expression) expr);
 		return serializer.toString();
 	}
@@ -487,6 +484,10 @@ public class EGaml implements IGamlEcoreUtils {
 			serializer.append(")");
 		} else if (expr instanceof Function) {
 			function(serializer, (Function) expr);
+		} else if (expr instanceof Access access) {
+			serialize(serializer, access.getLeft());
+			serializer.append('.');
+			serialize(serializer, access.getRight());
 		}
 		// else if ( expr instanceof FunctionRef ) {
 		// function((FunctionRef) expr);

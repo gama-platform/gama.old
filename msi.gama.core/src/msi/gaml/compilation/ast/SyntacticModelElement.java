@@ -1,16 +1,18 @@
 /*******************************************************************************************************
  *
- * SyntacticModelElement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SyntacticModelElement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.ast;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -47,7 +49,7 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see msi.gaml.compilation.ast.SyntacticComposedElement#addChild(msi.gaml.compilation.ast.ISyntacticElement)
 		 */
 		@Override
@@ -61,9 +63,7 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		 *
 		 * @return the experiment
 		 */
-		public SyntacticExperimentElement getExperiment() {
-			return (SyntacticExperimentElement) children[0];
-		}
+		public SyntacticExperimentElement getExperiment() { return (SyntacticExperimentElement) children[0]; }
 	}
 
 	/**
@@ -99,17 +99,15 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see msi.gaml.compilation.ast.SyntacticSpeciesElement#isSpecies()
 	 */
 	@Override
-	public boolean isSpecies() {
-		return false;
-	}
+	public boolean isSpecies() { return false; }
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * msi.gaml.compilation.ast.AbstractSyntacticElement#visitExperiments(msi.gaml.compilation.ast.ISyntacticElement.
 	 * SyntacticVisitor)
@@ -122,7 +120,7 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	/**
 	 * The compacter.
 	 */
-	static SyntacticVisitor compacter = element -> element.compact();
+	static SyntacticVisitor compacter = ISyntacticElement::compact;
 
 	/**
 	 * Compact model.
@@ -136,8 +134,18 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	 *
 	 * @return the path
 	 */
-	public String getPath() {
-		return path;
+	public String getPath() { return path; }
+
+	/**
+	 * Gets the pragmas.
+	 *
+	 * @return the pragmas
+	 */
+	@SuppressWarnings ("unchecked")
+	public Map<String, List<String>> getPragmas() {
+		if (hasFacet(IKeyword.PRAGMA))
+			return (Map<String, List<String>>) this.getExpressionAt(IKeyword.PRAGMA).getExpression().getConstValue();
+		return null;
 	}
 
 }

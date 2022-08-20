@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * BreakStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * ContinueStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -28,44 +28,45 @@ import msi.gaml.descriptions.StatementWithChildrenDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.SymbolSerializer;
-import msi.gaml.statements.BreakStatement.BreakSerializer;
-import msi.gaml.statements.BreakStatement.BreakValidator;
+import msi.gaml.statements.ContinueStatement.ContinueSerializer;
+import msi.gaml.statements.ContinueStatement.ContinueValidator;
 
 /**
- * The class BreakCommand.
+ * The class ContinueStatement.
  *
  * @author drogoul
  * @since 22 avr. 2012
  *
  */
 @symbol (
-		name = IKeyword.BREAK,
+		name = IKeyword.CONTINUE,
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		with_sequence = false,
 		concept = { IConcept.LOOP })
 @inside (
 		kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @doc (
-		value = "`" + IKeyword.BREAK + "` allows to interrupt the current sequence of statements.")
-@validator (BreakValidator.class)
-@serializer (BreakSerializer.class)
-public class BreakStatement extends AbstractStatement {
+		value = "`" + IKeyword.CONTINUE
+				+ "` allows to skip the remaining statements inside a loop and an ask and directly move to the next element. Inside a switch, it has the same effect as break.")
+@validator (ContinueValidator.class)
+@serializer (ContinueSerializer.class)
+public class ContinueStatement extends AbstractStatement {
 
 	/**
 	 * The Class BreakSerializer.
 	 */
-	public static class BreakSerializer extends SymbolSerializer<StatementDescription> {
+	public static class ContinueSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
-			sb.append(BREAK).append(";");
+			sb.append(CONTINUE).append(";");
 		}
 	}
 
 	/**
 	 * The Class BreakValidator.
 	 */
-	public static class BreakValidator implements IDescriptionValidator<StatementDescription> {
+	public static class ContinueValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
 		 * Method validate()
@@ -76,10 +77,10 @@ public class BreakStatement extends AbstractStatement {
 		public void validate(final StatementDescription description) {
 			IDescription superDesc = description.getEnclosingDescription();
 			while (superDesc instanceof StatementWithChildrenDescription) {
-				if (((StatementWithChildrenDescription) superDesc).isBreakable()) return;
+				if (((StatementWithChildrenDescription) superDesc).isContinuable()) return;
 				superDesc = superDesc.getEnclosingDescription();
 			}
-			description.error("'break' must be used in the context of " + SymbolProto.BREAKABLE_STATEMENTS,
+			description.error("'continue' must be used in the context of " + SymbolProto.CONTINUABLE_STATEMENTS,
 					IGamlIssue.WRONG_CONTEXT);
 		}
 	}
@@ -87,7 +88,7 @@ public class BreakStatement extends AbstractStatement {
 	/**
 	 * @param desc
 	 */
-	public BreakStatement(final IDescription desc) {
+	public ContinueStatement(final IDescription desc) {
 		super(desc);
 	}
 
@@ -96,7 +97,7 @@ public class BreakStatement extends AbstractStatement {
 	 */
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		scope.setFlowStatus(IScope.FlowStatus.BREAK);
+		scope.setFlowStatus(IScope.FlowStatus.CONTINUE);
 		return null; // How to return the last object ??
 	}
 

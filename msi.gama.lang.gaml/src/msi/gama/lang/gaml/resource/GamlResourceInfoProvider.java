@@ -98,7 +98,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 			final EObject e = tree.next();
 			if (e instanceof Pragma) {
 				final String s = ((Pragma) e).getName();
-				if (IKeyword.NO_EXPERIMENT.equals(s)) { processExperiments = false; }
+				if (IKeyword.PRAGMA_NO_EXPERIMENT.equals(s)) { processExperiments = false; }
 			} else if (e instanceof StringLiteral) {
 				final String s = ((StringLiteral) e).getOp();
 				if (s.length() > 4) {

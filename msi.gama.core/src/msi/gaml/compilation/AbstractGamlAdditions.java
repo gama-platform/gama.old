@@ -71,6 +71,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public void _display(final String string, final IDisplayCreator d) {
 		GAML.CONSTANTS.add(string);
 		IGui.DISPLAYS.put(string, new DisplayDescription(d, string, CURRENT_PLUGIN_NAME));
+		GamaBundleLoader.addDisplayPlugin(CURRENT_PLUGIN_NAME);
 	}
 
 	/**
@@ -173,15 +174,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 *            the c
 	 * @param sKind
 	 *            the s kind
-	 * @param remote
+	 * @param isRemoteContext
 	 *            the remote
-	 * @param args
+	 * @param hasArguments
 	 *            the args
 	 * @param scope
 	 *            the scope
-	 * @param sequence
+	 * @param isSequence
 	 *            the sequence
-	 * @param unique
+	 * @param isUnique
 	 *            the unique
 	 * @param name_unique
 	 *            the name unique
@@ -196,10 +197,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 * @param sc
 	 *            the sc
 	 */
-	protected void _symbol(final String[] names, final Class c, final int sKind, final boolean remote,
-			final boolean args, final boolean scope, final boolean sequence, final boolean unique,
-			final boolean name_unique, final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd,
-			final String omissible, final ISymbolConstructor sc) {
+	protected void _symbol(final String[] names, final Class c, final int sKind, final boolean isBreakable,
+			final boolean isContinuable, final boolean isRemoteContext, final boolean hasArguments, final boolean scope,
+			final boolean isSequence, final boolean isUnique, final boolean name_unique, final String[] contextKeywords,
+			final int[] contextKinds, final FacetProto[] fmd, final String omissible, final ISymbolConstructor sc) {
 		final Collection<String> keywords;
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {
 			keywords = GAML.VARTYPE2KEYWORDS.get(sKind);
@@ -207,8 +208,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		} else {
 			keywords = Arrays.asList(names);
 		}
-		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, fmd, omissible, contextKeywords,
-				contextKinds, remote, unique, name_unique, sc,
+		final SymbolProto md = new SymbolProto(c, isBreakable, isContinuable, isSequence, hasArguments, sKind, !scope,
+				fmd, omissible, contextKeywords, contextKinds, isRemoteContext, isUnique, name_unique, sc,
 				names == null || names.length == 0 ? "variable declaration" : names[0], CURRENT_PLUGIN_NAME);
 		DescriptionFactory.addProto(md, keywords);
 	}

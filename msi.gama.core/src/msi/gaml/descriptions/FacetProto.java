@@ -260,14 +260,6 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 				+ (types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";
 	}
 
-	/**
-	 * Method collectPlugins()
-	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {}
-
 	public void buildDoc() {
 		if (docBuilt) return;
 		docBuilt = true;

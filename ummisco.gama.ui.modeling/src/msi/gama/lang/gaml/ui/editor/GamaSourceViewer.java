@@ -1,15 +1,16 @@
 /*******************************************************************************************************
  *
- * GamaSourceViewer.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaSourceViewer.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.swt.widgets.Composite;
@@ -51,8 +52,17 @@ public class GamaSourceViewer extends XtextSourceViewer {
 	 *
 	 * @return true, if is overview visible
 	 */
-	public boolean isOverviewVisible() {
-		return isOverviewVisible;
+	public boolean isOverviewVisible() { return isOverviewVisible; }
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	public int find(final String string) {
+		return super.findAndSelect(0, string, true, true, false, false);
 	}
+
+	@Override
+	public FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() { return super.getFindReplaceDocumentAdapter(); }
 
 }

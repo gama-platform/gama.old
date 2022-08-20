@@ -66,6 +66,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 // import org.eclipse.text.templates.TemplatePersistenceData;
@@ -83,6 +84,7 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.XtextUIMessages;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
+import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.XtextDocument;
 import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider;
@@ -125,8 +127,11 @@ import msi.gama.lang.gaml.ui.editor.toolbar.RevalidateModelSelectionListener;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
+import msi.gaml.operators.Strings;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.controls.FlatButton;
@@ -153,9 +158,14 @@ import ummisco.gama.ui.views.toolbar.Selector;
  *
  * @since 4 mars 2012
  */
+
 @SuppressWarnings ("all")
 public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGamlEditor, IBoxEnabledEditor,
 		IToolbarDecoratedView /* IToolbarDecoratedView.Sizable, ITooltipDisplayer */ {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The images. */
 	static Map<String, Image> images = new HashMap();
@@ -169,7 +179,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	/** The button padding. How much space between each experiment button */
 	static int buttonPadding = 4;
 	static {
-		DEBUG.OFF();
 		final var store = EditorsUI.getPreferenceStore();
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
 		store.setDefault("spellingEnabled", false);
@@ -699,7 +708,34 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	}
 
 	@Override
-	public void validationEnded(final Iterable<? extends IDescription> newExperiments, final ValidationContext status) {
+	public void validationEnded(final ModelDescription model, final Iterable<? extends IDescription> newExperiments,
+			final ValidationContext status) {
+		if (GamaPreferences.Experimental.REQUIRED_PLUGINS.getValue() && model != null && !status.hasErrors()) {
+			String requires = "@" + IKeyword.PRAGMA_REQUIRES;
+			GamlProperties meta = new GamlProperties();
+			model.collectMetaInformation(meta);
+			String newLine = requires + " " + meta.get(GamlProperties.PLUGINS);
+			GamaSourceViewer viewer = getInternalSourceViewer();
+			IXtextDocument document = getDocument();
+			WorkbenchHelper.asyncRun(() -> {
+				int offset;
+				try {
+					offset = document.search(0, requires, true, true, false);
+					if (offset > -1) {
+						int length = document.getLineInformationOfOffset(offset).getLength();
+						if (!newLine.equals(document.get(offset, length))) {
+							new ReplaceEdit(offset, length, newLine).apply(document);
+						}
+					} else {
+						new InsertEdit(0, Strings.LN + newLine + Strings.LN + Strings.LN).apply(getDocument());
+					}
+				} catch (BadLocationException e) {}
+			});
+		}
+
+		// }
+		// });
+
 		if (newExperiments == null && state != null) {
 			updateToolbar(state, true);
 		} else {

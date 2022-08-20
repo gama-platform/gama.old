@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LoopStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * LoopStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -44,10 +44,32 @@ import msi.gaml.types.Types;
 /**
  * The Class LoopStatement.
  */
+
+/**
+ * The Class LoopStatement.
+ */
+
+/**
+ * The Class LoopStatement.
+ */
+
+/**
+ * The Class LoopStatement.
+ */
+
+/**
+ * The Class LoopStatement.
+ */
+
+/**
+ * The Class LoopStatement.
+ */
 @symbol (
 		name = IKeyword.LOOP,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		breakable = true,
+		continuable = true,
 		concept = { IConcept.LOOP })
 @facets (
 		value = { @facet (
@@ -308,7 +330,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		@Override
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
-			if (key.equals(NAME)) { if (s.hasFacet(TIMES) || s.hasFacet(WHILE)) return null; }
+			if (NAME.equals(key) && (s.hasFacet(TIMES) || s.hasFacet(WHILE))) return null;
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
@@ -316,7 +338,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	/** The executer. */
 	private final LoopExecuter executer;
-	
+
 	/** The var name. */
 	private final String varName;
 	// private final Object[] result = new Object[1];
@@ -324,7 +346,8 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	/**
 	 * Instantiates a new loop statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public LoopStatement(final IDescription desc) {
 		super(desc);
@@ -347,7 +370,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	public void leaveScope(final IScope scope) {
 		// Should clear any _loop_halted status present
 		// if (varName != null) { scope.removeAllVars(); }
-		scope.popLoop();
+		// scope.popLoop();
 	}
 
 	@Override
@@ -358,18 +381,22 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	/**
 	 * Loop body.
 	 *
-	 * @param scope the scope
-	 * @param var the var
-	 * @param result the result
+	 * @param scope
+	 *            the scope
+	 * @param var
+	 *            the var
+	 * @param result
+	 *            the result
 	 * @return true, if successful
 	 */
-	protected boolean loopBody(final IScope scope, final Object var, final Object[] result) {
+	protected IScope.FlowStatus loopBody(final IScope scope, final Object var, final Object[] result) {
 		scope.push(this);
 		// We set it explicitely to the newly created scope
 		if (varName != null) { scope.setVarValue(varName, var, true); }
 		result[0] = super.privateExecuteIn(scope);
 		scope.pop(this);
-		return !scope.interrupted();
+		// return !scope.interrupted();
+		return scope.getAndClearFlowStatus();
 	}
 
 	/**
@@ -380,7 +407,8 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		/**
 		 * Run in.
 		 *
-		 * @param scope the scope
+		 * @param scope
+		 *            the scope
 		 * @return the object
 		 */
 		Object runIn(final IScope scope);
@@ -393,23 +421,24 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 		/** The from. */
 		private final IExpression from = getFacet(IKeyword.FROM);
-		
+
 		/** The to. */
 		private final IExpression to = getFacet(IKeyword.TO);
-		
+
 		/** The step. */
 		private final IExpression step = getFacet(IKeyword.STEP);
-		
+
 		/** The constant step. */
 		private Integer constantFrom, constantTo, constantStep;
-		
+
 		/** The step defined. */
 		private final boolean stepDefined;
 
 		/**
 		 * Instantiates a new bounded.
 		 *
-		 * @throws GamaRuntimeException the gama runtime exception
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
 		 */
 		Bounded() throws GamaRuntimeException {
 			final IScope scope = null;
@@ -435,16 +464,33 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
 			final boolean negative = f - t > 0;
 			// if ( f == t ) { return null; }
+			boolean shouldBreak = false;
 			if (negative) {
 				if (s > 0) {
-					if (!stepDefined) {
-						s = -s;
-					} else
-						return null;
+					if (stepDefined) return null;
+					s = -s;
 				}
-				for (int i = f, n = t - 1; i > n && loopBody(scope, i, result); i += s) {}
+				for (int i = f, n = t - 1; i > n && !shouldBreak; i += s) {
+					switch (loopBody(scope, i, result)) {
+						case CONTINUE:
+							continue;
+						case BREAK:
+							shouldBreak = true;
+							break;
+						default:
+					}
+				}
 			} else {
-				for (int i = f, n = t + 1; i < n && loopBody(scope, i, result); i += s) {}
+				for (int i = f, n = t + 1; i < n && !shouldBreak; i += s) {
+					switch (loopBody(scope, i, result)) {
+						case CONTINUE:
+							continue;
+						case BREAK:
+							shouldBreak = true;
+							break;
+						default:
+					}
+				}
 			}
 			return result[0];
 		}
@@ -464,8 +510,23 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			final Object obj = over.value(scope);
 			final Iterable list_ =
 					!(obj instanceof IContainer) ? Cast.asList(scope, obj) : ((IContainer) obj).iterable(scope);
+			boolean shouldBreak = false;
+
 			for (final Object each : list_) {
-				if (!loopBody(scope, each, result)) { break; }
+
+				switch (loopBody(scope, each, result)) {
+					case CONTINUE:
+						continue;
+					case BREAK:
+						shouldBreak = true;
+						break;
+					default:
+						;
+				}
+				if (shouldBreak) {
+					break;
+					// if (!loopBody(scope, each, result)) { break; } }
+				}
 			}
 			return result[0];
 		}
@@ -478,14 +539,15 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 		/** The times. */
 		private final IExpression times = getFacet(IKeyword.TIMES);
-		
+
 		/** The constant times. */
 		private Integer constantTimes;
 
 		/**
 		 * Instantiates a new times.
 		 *
-		 * @throws GamaRuntimeException the gama runtime exception
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
 		 */
 		Times() throws GamaRuntimeException {
 			if (times.isConst()) { constantTimes = Types.INT.cast(null, times.getConstValue(), null, false); }
@@ -495,7 +557,18 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object[] result = new Object[1];
 			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
-			for (int i = 0; i < max && loopBody(scope, null, result); i++) {}
+			boolean shouldBreak = false;
+			for (int i = 0; i < max && !shouldBreak; i++) {
+				switch (loopBody(scope, null, result)) {
+					case CONTINUE:
+						continue;
+					case BREAK:
+						shouldBreak = true;
+						break;
+					default:
+						;
+				}
+			}
 			return result[0];
 		}
 
@@ -512,7 +585,18 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object[] result = new Object[1];
-			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null, result)) {}
+			boolean shouldBreak = false;
+			while (Cast.asBool(scope, cond.value(scope)) && !shouldBreak) {
+				switch (loopBody(scope, null, result)) {
+					case CONTINUE:
+						continue;
+					case BREAK:
+						shouldBreak = true;
+						break;
+					default:
+						;
+				}
+			}
 			return result[0];
 		}
 	}

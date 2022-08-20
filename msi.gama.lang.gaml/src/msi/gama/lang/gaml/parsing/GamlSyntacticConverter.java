@@ -59,6 +59,7 @@ import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.common.interfaces.IKeyword.ZERO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -104,7 +105,8 @@ import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.Collector;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
@@ -183,11 +185,11 @@ public class GamlSyntacticConverter {
 		}
 		if (!(root instanceof Model)) return null;
 		final ModelImpl m = (ModelImpl) root;
-		final List<String> prgm = collectPragmas(m);
 
 		final String path = getAbsoluteContainerFolderPathOf(root.eResource());
 		final SyntacticModelElement model =
 				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.getInstance().hasChildren(m), path);
+		final Map<String, List<String>> prgm = collectPragmas(m);
 		if (prgm != null) { model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm)); }
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
 		convStatements(model, EGaml.getInstance().getStatementsOf(m), errors);
@@ -203,17 +205,22 @@ public class GamlSyntacticConverter {
 	 *            the m
 	 * @return the list
 	 */
-	private List<String> collectPragmas(final ModelImpl m) {
+	private Map<String, List<String>> collectPragmas(final ModelImpl m) {
 		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) return null;
 		final List<Pragma> pragmas = m.getPragmas();
 		if (pragmas.isEmpty()) return null;
-		try (final Collector.AsList<String> result = Collector.getList()) {
-			for (final Pragma pragma2 : pragmas) {
-				final String pragma = pragma2.getName();
-				result.add(pragma);
+		Map<String, List<String>> result = GamaMapFactory.create();
+		for (final Pragma p : pragmas) {
+			ExpressionList plugins = p.getPlugins();
+			if (plugins != null) {
+				List<String> list = GamaListFactory.create();
+				for (Expression exp : plugins.getExprs()) { list.add(EGaml.getInstance().toString(exp)); }
+				result.put(p.getName(), list);
+			} else {
+				result.put(p.getName(), null);
 			}
-			return result.items();
 		}
+		return result;
 	}
 
 	/**

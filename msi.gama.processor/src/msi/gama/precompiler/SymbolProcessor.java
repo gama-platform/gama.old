@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SymbolProcessor.java, in msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SymbolProcessor.java, in msi.gama.processor, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.precompiler;
 
@@ -25,7 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
  * The Class SymbolProcessor.
  */
 public class SymbolProcessor extends ElementProcessor<symbol> {
-	
+
 	/** The temp. */
 	Set<String> temp = new HashSet<>();
 
@@ -39,8 +39,10 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 
 		sb.append(in).append("_symbol(");
 		toArrayOfStrings(symbol.name(), sb).append(',').append(toClassObject(clazz));
-		sb.append(",").append(symbol.kind()).append(',').append(toBoolean(symbol.remote_context())).append(',')
-				.append(toBoolean(symbol.with_args())).append(',').append(toBoolean(symbol.with_scope())).append(',');
+		sb.append(",").append(symbol.kind()).append(',').append(toBoolean(symbol.breakable())).append(',')
+				.append(toBoolean(symbol.continuable())).append(',').append(toBoolean(symbol.remote_context()))
+				.append(',').append(toBoolean(symbol.with_args())).append(',').append(toBoolean(symbol.with_scope()))
+				.append(',');
 		sb.append(toBoolean(symbol.with_sequence())).append(',').append(toBoolean(symbol.unique_in_context()))
 				.append(',').append(toBoolean(symbol.unique_name())).append(',');
 		final inside inside = e.getAnnotation(inside.class);
@@ -90,9 +92,7 @@ public class SymbolProcessor extends ElementProcessor<symbol> {
 	}
 
 	@Override
-	protected Class<symbol> getAnnotationClass() {
-		return symbol.class;
-	}
+	protected Class<symbol> getAnnotationClass() { return symbol.class; }
 
 	@Override
 	protected boolean validateElement(final ProcessorContext context, final Element e) {

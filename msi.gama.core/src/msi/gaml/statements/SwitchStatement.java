@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SwitchStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SwitchStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -28,6 +28,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.FlowStatus;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
@@ -48,6 +49,7 @@ import msi.gaml.types.Types;
 		name = IKeyword.SWITCH,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		breakable = true,
 		concept = { IConcept.CONDITION })
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
@@ -268,10 +270,10 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 
 	/** The matches. */
 	public MatchStatement[] matches;
-	
+
 	/** The default match. */
 	public MatchStatement defaultMatch;
-	
+
 	/** The value. */
 	final IExpression value;
 
@@ -310,7 +312,13 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 		final Object switchValue = value.value(scope);
 		Object lastResult = null;
 		for (final MatchStatement matche : matches) {
+			FlowStatus fs = scope.getAndClearFlowStatus();
+			if (fs == FlowStatus.BREAK) return lastResult;
+			if (fs == FlowStatus.CONTINUE) {
+				scope.setFlowStatus(FlowStatus.CONTINUE); // we put it again as it has just been erased
+			}
 			if (scope.interrupted()) return lastResult;
+
 			if (matche.matches(scope, switchValue)) {
 				final ExecutionResult er = scope.execute(matche);
 				if (!er.passed()) return lastResult;
@@ -325,7 +333,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 	@Override
 	public void leaveScope(final IScope scope) {
 		// Clears any _loop_halted status
-		scope.popLoop();
+		// scope.popLoop();
 		super.leaveScope(scope);
 	}
 }

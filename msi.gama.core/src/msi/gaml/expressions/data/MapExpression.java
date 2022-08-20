@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MapExpression.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * MapExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.data;
 
@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
@@ -46,7 +47,8 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	/**
 	 * Creates the.
 	 *
-	 * @param elements the elements
+	 * @param elements
+	 *            the elements
 	 * @return the i expression
 	 */
 	public static IExpression create(final Iterable<? extends IExpression> elements) {
@@ -65,7 +67,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	/** The keys. */
 	private final IExpression[] keys;
-	
+
 	/** The vals. */
 	private final IExpression[] vals;
 	// private final GamaMap values;
@@ -74,7 +76,8 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	/**
 	 * Instantiates a new map expression.
 	 *
-	 * @param pairs the pairs
+	 * @param pairs
+	 *            the pairs
 	 */
 	MapExpression(final Iterable<? extends IExpression> pairs) {
 		final int size = Iterables.size(pairs);
@@ -82,8 +85,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 		vals = new IExpression[size];
 		int i = 0;
 		for (final IExpression e : pairs) {
-			if (e instanceof BinaryOperator) {
-				final BinaryOperator pair = (BinaryOperator) e;
+			if (e instanceof BinaryOperator pair) {
 				keys[i] = pair.exprs[0];
 				vals[i] = pair.exprs[1];
 			} else if (e instanceof ConstantExpression && e.getGamlType().getGamlType() == Types.PAIR) {
@@ -105,7 +107,8 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	/**
 	 * Instantiates a new map expression.
 	 *
-	 * @param pairs the pairs
+	 * @param pairs
+	 *            the pairs
 	 */
 	MapExpression(final IMap<IExpression, IExpression> pairs) {
 		keys = new IExpression[pairs.size()];
@@ -223,20 +226,11 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	 *
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// for (final IExpression e : keys) {
-	// if (e != null) {
-	// e.collectMetaInformation(meta);
-	// }
-	// }
-	//
-	// for (final IExpression e : vals) {
-	// if (e != null) {
-	// e.collectMetaInformation(meta);
-	// }
-	// }
-	// }
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		for (final IExpression e : keys) { if (e != null) { e.collectMetaInformation(meta); } }
+		for (final IExpression e : vals) { if (e != null) { e.collectMetaInformation(meta); } }
+	}
 
 	@Override
 	public boolean isContextIndependant() {

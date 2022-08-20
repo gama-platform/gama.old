@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.LabelExpressionDescription;
@@ -157,11 +158,11 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	public boolean shouldBeParenthesized() {
 		return false;
 	}
-	//
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// meta.put(GamlProperties.CONSTANTS, name);
-	// }
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		meta.put(GamlProperties.CONSTANTS, name);
+	}
 
 	@Override
 	public void setExpression(final IExpression expr) {}

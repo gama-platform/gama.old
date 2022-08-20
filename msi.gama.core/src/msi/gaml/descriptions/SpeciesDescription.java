@@ -31,6 +31,7 @@ import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GamlGridAgent;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.MinimalGridAgent;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -1061,14 +1062,12 @@ public class SpeciesDescription extends TypeDescription {
 	public Iterable<StatementDescription> getBehaviors() {
 		return Iterables.transform(getBehaviorNames(), this::getBehavior);
 	}
-	//
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// super.collectMetaInformation(meta);
-	// if (isBuiltIn()) {
-	// meta.put(GamlProperties.SPECIES, getName());
-	// }
-	// }
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		super.collectMetaInformation(meta);
+		if (isBuiltIn()) { meta.put(GamlProperties.SPECIES, getName()); }
+	}
 
 	/**
 	 * Belongs to A micro model.

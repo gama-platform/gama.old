@@ -73,8 +73,11 @@ public class ExecutionScope implements IScope {
 	protected final SpecialContext additionalContext = new SpecialContext();
 
 	/** The errors disabled. */
-	private volatile boolean _action_halted, _loop_halted, _agent_halted, _trace, _in_try_mode, _interrupted,
+	private volatile boolean _action_halted, /* _loop_halted, */ _agent_halted, _trace, _in_try_mode, _interrupted,
 			_errors_disabled;
+
+	/** The flow status. */
+	private volatile FlowStatus flowStatus = FlowStatus.NORMAL;
 
 	/** The current symbol. */
 	private ISymbol currentSymbol;
@@ -270,7 +273,8 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public final boolean interrupted() {
-		return _root_interrupted() || _action_halted || _loop_halted || _agent_halted;
+		return _root_interrupted() || _action_halted || /* _loop_halted || */_agent_halted
+				|| flowStatus == FlowStatus.BREAK || flowStatus == FlowStatus.CONTINUE;
 	}
 
 	@Override
@@ -305,10 +309,13 @@ public class ExecutionScope implements IScope {
 		_action_halted = true;
 	}
 
-	@Override
-	public final void interruptLoop() {
-		_loop_halted = true;
-	}
+	/**
+	 * Interrupt loop.
+	 */
+	// @Override
+	// public final void interruptLoop() {
+	// _loop_halted = true;
+	// }
 
 	@Override
 	public final void interruptAgent() {
@@ -390,10 +397,13 @@ public class ExecutionScope implements IScope {
 		this.getGui().getConsole().informConsole(sb.toString(), getRoot());
 	}
 
-	@Override
-	public void popLoop() {
-		_loop_halted = false;
-	}
+	/**
+	 * Pop loop.
+	 */
+	// @Override
+	// public void popLoop() {
+	// // _loop_halted = false;
+	// }
 
 	@Override
 	public void popAction() {
@@ -1010,5 +1020,22 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public GamaRuntimeException getCurrentError() { return additionalContext.currentError; }
+
+	@Override
+	public void setFlowStatus(final FlowStatus status) { flowStatus = status; }
+
+	/**
+	 * Gets the and clear flow status.
+	 *
+	 * @return the and clear flow status
+	 */
+	@Override
+	public FlowStatus getAndClearFlowStatus() {
+		try {
+			return flowStatus;
+		} finally {
+			flowStatus = FlowStatus.NORMAL;
+		}
+	}
 
 }

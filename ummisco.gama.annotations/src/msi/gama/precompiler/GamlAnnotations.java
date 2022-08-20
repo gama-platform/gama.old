@@ -134,6 +134,11 @@ public final class GamlAnnotations {
 		 */
 		int of()
 
+		/**
+		 * Index.
+		 *
+		 * @return the int
+		 */
 		default 0;
 
 		/**
@@ -144,6 +149,11 @@ public final class GamlAnnotations {
 		 */
 		int index()
 
+		/**
+		 * Values.
+		 *
+		 * @return the string[]
+		 */
 		default 0;
 
 		/**
@@ -162,6 +172,11 @@ public final class GamlAnnotations {
 
 		boolean optional()
 
+		/**
+		 * Internal.
+		 *
+		 * @return true, if successful
+		 */
 		default false;
 
 		/**
@@ -171,6 +186,11 @@ public final class GamlAnnotations {
 		 */
 		boolean internal()
 
+		/**
+		 * Doc.
+		 *
+		 * @return the doc[]
+		 */
 		default false;
 
 		/**
@@ -736,6 +756,20 @@ public final class GamlAnnotations {
 		boolean remote_context() default false;
 
 		/**
+		 * Breakable.
+		 *
+		 * @return true, if this statement can be interrupted by 'break'. False by default.
+		 */
+		boolean breakable() default false;
+
+		/**
+		 * Continuable.
+		 *
+		 * @return true, if this statement can be interrupted by 'continue'. False by default.
+		 */
+		boolean continuable() default false;
+
+		/**
 		 * Doc.
 		 *
 		 * @return the documentation attached to this symbol.
@@ -807,13 +841,17 @@ public final class GamlAnnotations {
 		 *         used inside)
 		 */
 
-		boolean iterator() default false;
+		boolean iterator()
+
+		default false;
 
 		/**
 		 * @return whether or not the operator can be evaluated as a constant if its child (resp. children) is (resp.
 		 *         are) constant.
 		 */
-		boolean can_be_const() default false;
+		boolean can_be_const()
+
+		default false;
 
 		/**
 		 * @return the type of the content if the returned value is a container. Can be directly a type in IType or one
@@ -822,7 +860,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type() default ITypeProvider.NONE;
+		int content_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return the content type of the content if the returned value is a container of container (ex. a list of
@@ -831,7 +871,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type_content_type() default ITypeProvider.NONE;
+		int content_type_content_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return the type of the index if the returned value is a container. Can be directly a type in IType or one of
@@ -840,7 +882,9 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int index_type() default ITypeProvider.NONE;
+		int index_type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents. Should be an array of
@@ -858,14 +902,18 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int type() default ITypeProvider.NONE;
+		int type()
+
+		default ITypeProvider.NONE;
 
 		/**
 		 * internal.
 		 *
 		 * @return whether this operator is for internal use only.
 		 */
-		boolean internal() default false;
+		boolean internal()
+
+		default false;
 
 		/**
 		 * Doc.
@@ -993,7 +1041,9 @@ public final class GamlAnnotations {
 		 *
 		 * @return
 		 */
-		String side_effects() default "";
+		String side_effects()
+
+		default "";
 
 		/**
 		 * Value.

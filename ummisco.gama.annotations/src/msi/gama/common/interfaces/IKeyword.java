@@ -740,9 +740,9 @@ public interface IKeyword {
 
 	/** The monitor. */
 	String MONITOR = "monitor";
-	
-	/**The Morris method */
-	String MORRIS= "morris";
+
+	/** The Morris method */
+	String MORRIS = "morris";
 
 	/** The mouse clicked. */
 	String MOUSE_CLICKED = "mouse_click";
@@ -802,13 +802,16 @@ public interface IKeyword {
 	String NEIGHBOURS = "neighbours";
 
 	/** The no experiment. */
-	String NO_EXPERIMENT = "no_experiment";
+	String PRAGMA_NO_EXPERIMENT = "no_experiment";
 
 	/** The no info. */
-	String NO_INFO = "no_info";
+	String PRAGMA_NO_INFO = "no_info";
 
 	/** The no warning. */
-	String NO_WARNING = "no_warning";
+	String PRAGMA_NO_WARNING = "no_warning";
+
+	/** The pragma requires. */
+	String PRAGMA_REQUIRES = "requires";
 
 	/** The node. */
 	String NODE = "node";
@@ -1390,6 +1393,7 @@ public interface IKeyword {
 	String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 
 	/** The methods. */
-	String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL, MORRIS };
+	String[] METHODS =
+			{ GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL, MORRIS };
 
 }

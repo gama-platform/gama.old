@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * HeadlessSimulationLoader.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * HeadlessSimulationLoader.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.core;
 
@@ -56,9 +56,7 @@ public class HeadlessSimulationLoader {
 	 *
 	 * @return the injector
 	 */
-	public static Injector getInjector() {
-		return INSTANCE.configureInjector();
-	}
+	public static Injector getInjector() { return INSTANCE.configureInjector(); }
 
 	/**
 	 * Preload GAMA.
@@ -158,8 +156,7 @@ public class HeadlessSimulationLoader {
 			throw new GamaHeadlessException(
 					"Model cannot be compiled. See list of attached errors \n" + StreamEx.of(errors).joining("\n"));
 		}
-		// if (metaProperties != null)
-		// model.getDescription().collectMetaInformation(metaProperties);
+		if (metaProperties != null) { model.getDescription().collectMetaInformation(metaProperties); }
 		return model;
 	}
 

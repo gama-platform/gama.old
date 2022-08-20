@@ -327,8 +327,12 @@ public abstract class GamaExecutorService {
 		if (array.length <= threshold) { threshold = 0; }
 		switch (threshold) {
 			case 0:
-				for (final A agent : array) { scope.execute(executable, (IAgent) agent, null); }
+				for (final A agent : array) {
+					scope.execute(executable, (IAgent) agent, null);
+					if (scope.getAndClearFlowStatus() == IScope.FlowStatus.BREAK) { break; }
+				}
 				return;
+			// Break doesnt really make sense for parallel execution
 			case 1:
 				for (final A agent : array) { executeThreaded(() -> scope.execute(executable, (IAgent) agent, null)); }
 				return;

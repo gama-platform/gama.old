@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * StatementWithChildrenDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * StatementWithChildrenDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -36,20 +36,27 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	/** The temps. */
 	protected IMap<String, IVarExpression> temps;
-	
+
 	/** The children. */
 	protected final Collector.AsList<IDescription> children = Collector.getList();
 
 	/**
 	 * Instantiates a new statement with children description.
 	 *
-	 * @param keyword the keyword
-	 * @param superDesc the super desc
-	 * @param cp the cp
-	 * @param hasArgs the has args
-	 * @param source the source
-	 * @param facets the facets
-	 * @param alreadyComputedArgs the already computed args
+	 * @param keyword
+	 *            the keyword
+	 * @param superDesc
+	 *            the super desc
+	 * @param cp
+	 *            the cp
+	 * @param hasArgs
+	 *            the has args
+	 * @param source
+	 *            the source
+	 * @param facets
+	 *            the facets
+	 * @param alreadyComputedArgs
+	 *            the already computed args
 	 */
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
@@ -60,17 +67,14 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
-		for (final IDescription d : children) {
-			if (!visitor.process(d)) return false;
-		}
+		for (final IDescription d : children) { if (!visitor.process(d)) return false; }
 		return true;
 	}
 
 	@Override
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
 		for (final IDescription d : children) {
-			if (!visitor.process(d)) return false;
-			if (!d.visitOwnChildrenRecursively(visitor)) return false;
+			if (!visitor.process(d) || !d.visitOwnChildrenRecursively(visitor)) return false;
 		}
 		return true;
 
@@ -78,16 +82,12 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
-		for (final IDescription d : children) {
-			if (!visitor.process(d)) return false;
-		}
+		for (final IDescription d : children) { if (!visitor.process(d)) return false; }
 		return true;
 	}
 
 	@Override
-	public Iterable<IDescription> getOwnChildren() {
-		return children;
-	}
+	public Iterable<IDescription> getOwnChildren() { return children; }
 
 	@Override
 	public void dispose() {
@@ -125,24 +125,28 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	/**
 	 * Adds the temp.
 	 *
-	 * @param declaration the declaration
-	 * @param name the name
-	 * @param type the type
+	 * @param declaration
+	 *            the declaration
+	 * @param name
+	 *            the name
+	 * @param type
+	 *            the type
 	 * @return the i expression
 	 */
 	public IExpression addTemp(final IDescription declaration, final String name, final IType<?> type) {
 		// TODO Should separate validation from execution, here.
 
 		if (!getMeta().hasScope() /* canHaveTemps */) {
-			if (getEnclosingDescription() == null) return null;
-			if (!(getEnclosingDescription() instanceof StatementWithChildrenDescription)) return null;
+			if (getEnclosingDescription() == null
+					|| !(getEnclosingDescription() instanceof StatementWithChildrenDescription))
+				return null;
 
 			return ((StatementWithChildrenDescription) getEnclosingDescription()).addTemp(declaration, name, type);
 		}
 		final String kw = getKeyword();
 		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
 		if (temps == null) { temps = GamaMapFactory.createUnordered(); }
-		if (!name.equals(MYSELF)) {
+		if (!MYSELF.equals(name)) {
 			IVarDescriptionProvider description = getDescriptionDeclaringVar(name);
 			if (description != null) {
 				if (description instanceof SpeciesDescription) {
@@ -175,7 +179,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		// IGamlIssue.SHADOWS_NAME, facet);
 		// }
 		final IExpression result =
-				name.equals(MYSELF) ? getExpressionFactory().createVar(name, type, false, IVarExpression.MYSELF, this)
+				MYSELF.equals(name) ? getExpressionFactory().createVar(name, type, false, IVarExpression.MYSELF, this)
 						: getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
 		temps.put(name, (IVarExpression) result);
 		return result;
@@ -207,16 +211,21 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	/**
 	 * @return
 	 */
-	public boolean isBreakable() {
-		return getMeta().isBreakable();
-	}
+	public boolean isBreakable() { return getMeta().isBreakable(); }
 
 	@Override
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type) {
-		if (getKeyword().equals(LOOP) && facetName.equals(NAME)) // Case of loops: the variable is inside the loop (not
+		if (LOOP.equals(getKeyword()) && NAME.equals(facetName)) // Case of loops: the variable is inside the loop (not
 																	// outside)
 			return (IVarExpression) addTemp(this, getLitteral(facetName), type);
 		return super.addNewTempIfNecessary(facetName, type);
 	}
+
+	/**
+	 * Checks if is continuable.
+	 *
+	 * @return true, if is continuable
+	 */
+	public boolean isContinuable() { return getMeta().isContinuable(); }
 
 }

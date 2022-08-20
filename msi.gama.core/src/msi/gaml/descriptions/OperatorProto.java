@@ -26,6 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
@@ -216,8 +217,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 		if (lazy == null) {
 			lazy = new boolean[signature.size()];
 			if (lazy.length == 0) return lazy;
-			if (support instanceof Method) {
-				final Method m = (Method) support;
+			if (support instanceof Method m) {
 				final Class[] classes = m.getParameterTypes();
 				if (classes.length == 0) return lazy;
 				int begin = 0;
@@ -369,11 +369,11 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 		return aName + "(" + signature.asPattern(withVariables) + ")";
 	}
 
-	// @Override
-	// public void collectMetaInformation(final GamlProperties meta) {
-	// super.collectMetaInformation(meta);
-	// meta.put(GamlProperties.OPERATORS, name);
-	// }
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
+		super.collectMetaInformation(meta);
+		meta.put(GamlProperties.OPERATORS, name);
+	}
 
 	/**
 	 * Copy with signature.

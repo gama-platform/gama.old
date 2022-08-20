@@ -65,8 +65,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("The author of the model")),
 				@facet (
 						name = IKeyword.PRAGMA,
-						type = IType.LIST,
-						of = IType.STRING,
+						type = IType.MAP,
+						index = IType.STRING,
+						of = IType.LIST,
 						optional = true,
 						internal = true,
 						doc = @doc ("For internal use only")),
@@ -173,7 +174,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			e = titledExperiments.get(s);
 			// Finally, if the string is an int, we try to get the n-th
 			// experiment
-			if ((e == null) && StringUtils.isNumeric(s)) {
+			if (e == null && StringUtils.isNumeric(s)) {
 				final int i = Integer.parseInt(s);
 				final List<String> names = new ArrayList(experiments.keySet());
 				if (names.size() > 0) { e = getExperiment(names.get(i)); }

@@ -1,15 +1,16 @@
 /*******************************************************************************************************
  *
- * ISyntacticElement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ISyntacticElement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.ast;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -50,7 +51,7 @@ public interface ISyntacticElement extends INamed, IDisposable {
 	/**
 	 * The Constant DISPOSE_VISITOR.
 	 */
-	SyntacticVisitor DISPOSE_VISITOR = each -> each.dispose();
+	SyntacticVisitor DISPOSE_VISITOR = ISyntacticElement::dispose;
 
 	/**
 	 * The Constant SPECIES_FILTER.
@@ -65,7 +66,7 @@ public interface ISyntacticElement extends INamed, IDisposable {
 	/**
 	 * The Constant EXPERIMENT_FILTER.
 	 */
-	Predicate<ISyntacticElement> EXPERIMENT_FILTER = each -> each.isExperiment();
+	Predicate<ISyntacticElement> EXPERIMENT_FILTER = ISyntacticElement::isExperiment;
 
 	/**
 	 * The Constant OTHER_FILTER.
@@ -245,5 +246,12 @@ public interface ISyntacticElement extends INamed, IDisposable {
 	 *            the syntactic visitor
 	 */
 	void visitAllChildren(SyntacticVisitor syntacticVisitor);
+
+	/**
+	 * Gets the pragmas.
+	 *
+	 * @return the pragmas
+	 */
+	default Map<String, List<String>> getPragmas() { return null; }
 
 }

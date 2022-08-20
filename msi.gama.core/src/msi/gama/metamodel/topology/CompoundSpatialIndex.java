@@ -88,7 +88,9 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed || agent == null) return;
 		IPopulation<? extends IAgent> pop = agent.getPopulation();
 		ISpatialIndex index = spatialIndexes.getOrDefault(pop.getSpecies(), null);
-		if (index == null && !GamaPreferences.External.QUADTREE_OPTIMIZATION.getValue()) { index = add(pop, false); }
+		if (index == null && !GamaPreferences.Experimental.QUADTREE_OPTIMIZATION.getValue()) {
+			index = add(pop, false);
+		}
 		if (index != null) { index.insert(agent); }
 	}
 

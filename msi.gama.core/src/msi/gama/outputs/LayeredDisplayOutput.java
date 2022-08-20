@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.google.common.collect.Iterables;
 
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Display;
@@ -41,6 +42,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -391,21 +393,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		 * @see msi.gaml.descriptions.SymbolSerializer#collectPluginsInFacetValue(msi.gaml.descriptions.SymbolDescription,
 		 *      java.lang.String, java.util.Set)
 		 */
-		// @Override
-		// protected void collectMetaInformationInFacetValue(final SymbolDescription desc, final String key,
-		// final GamlProperties plugins) {
-		// super.collectMetaInformationInFacetValue(desc, key, plugins);
-		// if (key.equals(TYPE)) {
-		// final IExpressionDescription exp = desc.getFacet(TYPE);
-		// if (exp.getExpression() != null) {
-		// final String type = exp.getExpression().literalValue();
-		// final DisplayDescription dd = msi.gama.runtime.GAMA.getGui().getDisplayDescriptionFor(type);
-		// if (dd != null) {
-		// plugins.put(GamlProperties.PLUGINS, dd.getDefiningPlugin());
-		// }
-		// }
-		// }
-		// }
+		@Override
+		protected void collectMetaInformationInFacetValue(final SymbolDescription desc, final String key,
+				final GamlProperties plugins) {
+			super.collectMetaInformationInFacetValue(desc, key, plugins);
+			if (TYPE.equals(key)) {
+				final IExpressionDescription exp = desc.getFacet(TYPE);
+				if (exp.getExpression() != null) {
+					final String type = exp.getExpression().literalValue();
+					final DisplayDescription dd = msi.gama.runtime.GAMA.getGui().getDisplayDescriptionFor(type);
+					if (dd != null) { plugins.put(GamlProperties.PLUGINS, dd.getDefiningPlugin()); }
+				}
+			}
+		}
 
 	}
 

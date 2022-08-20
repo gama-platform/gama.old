@@ -93,6 +93,7 @@ import msi.gaml.types.Types;
 		kind = SEQUENCE_STATEMENT,
 		with_sequence = true,
 		with_args = true,
+		breakable = true,
 		concept = { IConcept.SPECIES },
 		remote_context = true)
 @inside (
@@ -437,8 +438,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		IPopulation pop = executor.getPopulationFor(s);
 		// hqnghi population of micro-model's experiment is not exist, we
 		// must create the new one
-		if (pop == null && s instanceof ExperimentPlan && executor instanceof IMacroAgent) {
-			final ExperimentPlan ep = (ExperimentPlan) s;
+		if (pop == null && s instanceof ExperimentPlan ep && executor instanceof IMacroAgent) {
 			pop = ep.new ExperimentPopulation(s);
 			final IScope sc = ep.getExperimentScope();
 			pop.initializeFor(sc);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PerceiveStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * PerceiveStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gaml.architecture.simplebdi;
@@ -26,8 +26,8 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.ExecutionResult;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -49,6 +49,7 @@ import msi.gaml.types.Types;
 		name = { PerceiveStatement.PERCEIVE },
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		breakable = true, // ?
 		remote_context = true,
 		concept = { IConcept.BDI })
 @inside (
@@ -120,10 +121,10 @@ public class PerceiveStatement extends AbstractStatementSequence {
 
 	/** The Constant PERCEIVE. */
 	public static final String PERCEIVE = "perceive";
-	
+
 	/** The Constant EMOTION. */
 	public static final String EMOTION = "emotion";
-	
+
 	/** The Constant THRESHOLD. */
 	public static final String THRESHOLD = "threshold";
 
@@ -132,19 +133,19 @@ public class PerceiveStatement extends AbstractStatementSequence {
 
 	/** The when. */
 	final IExpression _when;
-	
+
 	/** The in. */
 	final IExpression _in;
-	
+
 	/** The emotion. */
 	final IExpression emotion;
-	
+
 	/** The threshold. */
 	final IExpression threshold;
-	
+
 	/** The parallel. */
 	final IExpression parallel;
-	
+
 	/** The target. */
 	private final IExpression target = getFacet(IKeyword.TARGET);
 	// AD Dangerous as it may still contain a value after the execution. Better
@@ -156,18 +157,14 @@ public class PerceiveStatement extends AbstractStatementSequence {
 	 *
 	 * @return the when
 	 */
-	public IExpression getWhen() {
-		return _when;
-	}
+	public IExpression getWhen() { return _when; }
 
 	/**
 	 * Gets the in.
 	 *
 	 * @return the in
 	 */
-	public IExpression getIn() {
-		return _in;
-	}
+	public IExpression getIn() { return _in; }
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> com) {
@@ -178,14 +175,15 @@ public class PerceiveStatement extends AbstractStatementSequence {
 
 	@Override
 	public void leaveScope(final IScope scope) {
-		scope.popLoop();
+		// scope.popLoop();
 		super.leaveScope(scope);
 	}
 
 	/**
 	 * Instantiates a new perceive statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public PerceiveStatement(final IDescription desc) {
 		super(desc);
@@ -195,9 +193,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 		} else {
 			_in = null;
 		}
-		if (hasFacet(IKeyword.NAME)) {
-			setName(getLiteral(IKeyword.NAME));
-		}
+		if (hasFacet(IKeyword.NAME)) { setName(getLiteral(IKeyword.NAME)); }
 		emotion = getFacet(PerceiveStatement.EMOTION);
 		threshold = getFacet(PerceiveStatement.THRESHOLD);
 		parallel = getFacet(IKeyword.PARALLEL);
@@ -210,9 +206,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 			final Object obj = target.value(scope);
 			Object inArg = null;
 			final IAgent ag = scope.getAgent();
-			if (_in != null) {
-				inArg = _in.value(scope);
-			}
+			if (_in != null) { inArg = _in.value(scope); }
 			if (emotion == null || SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotion.value(scope))) {
 				if (threshold == null || emotion != null && threshold != null && SimpleBdiArchitecture.getEmotion(scope,
 						(Emotion) emotion.value(scope)).intensity >= (Double) threshold.value(scope)) {
@@ -222,38 +216,32 @@ public class PerceiveStatement extends AbstractStatementSequence {
 						if (obj instanceof IContainer) {
 							temp = msi.gaml.operators.Spatial.Queries.at_distance(scope, (IContainer) obj,
 									Cast.asFloat(scope, inArg));
-						} else if (obj instanceof IAgent) {
-							if (ag.euclidianDistanceTo((IAgent) obj) <= dist) {
-								temp.add(obj);
-							}
+						} else if (obj instanceof IAgent && ag.euclidianDistanceTo((IAgent) obj) <= dist) {
+							temp.add(obj);
 						}
 						GamaExecutorService.execute(scope, sequence, temp.listValue(scope, Types.AGENT, false), null);
 						return this;
 
-					} else if (inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape) {
+					}
+					if (inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape) {
 						IList temp = GamaListFactory.create();
 						final IShape geom = Cast.asGeometry(scope, inArg);
 						if (obj instanceof IContainer) {
 							temp = msi.gaml.operators.Spatial.Queries.overlapping(scope, (IContainer) obj,
 									Cast.asGeometry(scope, inArg));
-						} else if (obj instanceof IAgent) {
-							if (geom.intersects((IShape) obj)) {
-								temp.add(obj);
-							}
-						}
+						} else if (obj instanceof IAgent && geom.intersects((IShape) obj)) { temp.add(obj); }
 						GamaExecutorService.execute(scope, sequence, temp.listValue(scope, Types.AGENT, false), null);
 						return this;
-					} else {
-						ExecutionResult result = null;
-						final Iterator<IAgent> runners =
-								obj instanceof IContainer ? ((IContainer) obj).iterable(scope).iterator()
-										: obj instanceof IAgent ? transformAgentToList((IAgent) obj, scope) : null;
-						if (runners != null) {
-							while (runners.hasNext()
-									&& (result = scope.execute(sequence, runners.next(), null)).passed()) {}
-						}
-						if (result != null) { return result.getValue(); }
 					}
+					ExecutionResult result = null;
+					final Iterator<IAgent> runners =
+							obj instanceof IContainer ? ((IContainer) obj).iterable(scope).iterator()
+									: obj instanceof IAgent ? transformAgentToList((IAgent) obj, scope) : null;
+					if (runners != null) {
+						while (runners.hasNext()
+								&& (result = scope.execute(sequence, runners.next(), null)).passed()) {}
+					}
+					if (result != null) return result.getValue();
 				}
 			}
 		}
@@ -265,8 +253,10 @@ public class PerceiveStatement extends AbstractStatementSequence {
 	/**
 	 * Transform agent to list.
 	 *
-	 * @param temp the temp
-	 * @param scope the scope
+	 * @param temp
+	 *            the temp
+	 * @param scope
+	 *            the scope
 	 * @return the iterator
 	 */
 	Iterator<IAgent> transformAgentToList(final IAgent temp, final IScope scope) {
@@ -280,8 +270,6 @@ public class PerceiveStatement extends AbstractStatementSequence {
 	 *
 	 * @return the parallel
 	 */
-	public IExpression getParallel() {
-		return parallel;
-	}
+	public IExpression getParallel() { return parallel; }
 
 }
