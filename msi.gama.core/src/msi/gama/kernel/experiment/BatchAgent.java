@@ -16,10 +16,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.util.stream.DoubleStream;
 
@@ -245,7 +243,7 @@ public class BatchAgent extends ExperimentAgent {
 		// killed.
 		scope.getGui().getStatus().informStatus(endStatus());
 		// Issue #2426: the agent is killed too soon
-		getScope().setInterrupted();
+		getScope().setFlowStatus(IScope.FlowStatus.CLOSE);
 		// dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
 		return true;
@@ -309,7 +307,7 @@ public class BatchAgent extends ExperimentAgent {
 
 		int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
 		if (numberOfCores == 0) { numberOfCores = 1; }
-		
+
 		// The values present in the solution are passed to the parameters of
 		// the experiment
 		// @Patrick What this set was for ?
@@ -322,7 +320,7 @@ public class BatchAgent extends ExperimentAgent {
 				sims.add(sim);
 			}
 		}
-		
+
 		int nb = Math.min(sims.size(), numberOfCores);
 
 		List<Map<String, Object>> simsToRun = new Vector<>();
@@ -341,12 +339,12 @@ public class BatchAgent extends ExperimentAgent {
 				currentSolution = new ParametersSet(ps);
 
 				// test the condition first in case it is paused
-				final boolean stopConditionMet =
-						dead || Cast.asBool(agent.getScope(), agent.getScope().evaluate(stopCondition, agent).getValue());
+				final boolean stopConditionMet = dead
+						|| Cast.asBool(agent.getScope(), agent.getScope().evaluate(stopCondition, agent).getValue());
 				final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 				if (mustStop) {
 					pop.unscheduleSimulation(agent);
-					//pop.remove(agent);
+					// pop.remove(agent);
 					IMap<String, Object> localRes = manageOutputAndCloseSimulation(agent, ps, false, simDispose);
 
 					if (!res.containsKey(ps)) { res.put(ps, GamaMapFactory.create()); }
@@ -354,9 +352,9 @@ public class BatchAgent extends ExperimentAgent {
 						if (!res.get(ps).containsKey(output)) { res.get(ps).put(output, GamaListFactory.create()); }
 						res.get(ps).get(output).add(localRes.get(output));
 					}
-					
+
 					if (!sims.isEmpty()) { createSimulation(sims.remove(0), simToParameter); }
-				
+
 				}
 			}
 			// We then verify that the front scheduler has not been paused
@@ -654,7 +652,7 @@ public class BatchAgent extends ExperimentAgent {
 	public void closeSimulations() {
 		// We interrupt the simulation scope directly (as it cannot be
 		// interrupted by the global scheduler)
-		if (getSimulation() != null) { getSimulation().getScope().setInterrupted(); }
+		if (getSimulation() != null) { getSimulation().getScope().setFlowStatus(IScope.FlowStatus.CLOSE); }
 	}
 
 }

@@ -45,8 +45,9 @@ public class ExperimentController implements IExperimentController {
 	protected final Semaphore lock = new Semaphore(1);
 
 	/** The execution thread. */
-	private final Thread executionThread =
-			new Thread(() -> { while (experimentAlive) { step(); } }, "Front end scheduler");
+	private final Thread executionThread = new Thread(() -> {
+		while (experimentAlive) { step(); }
+	}, "Front end scheduler");
 
 	/** The experiment. */
 	private final IExperimentPlan experiment;
@@ -277,7 +278,7 @@ public class ExperimentController implements IExperimentController {
 		scope = agent.getScope();
 		try {
 			if (!scope.init(agent).passed()) {
-				scope.setInterrupted();
+				scope.setFlowStatus(IScope.FlowStatus.CLOSE);
 			} else if (agent.getSpecies().isAutorun()) { userStart(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
@@ -316,7 +317,7 @@ public class ExperimentController implements IExperimentController {
 		try {
 			if (scope == null) return;
 			if (!scope.step(agent).passed()) {
-				scope.setInterrupted();
+				scope.setFlowStatus(IScope.FlowStatus.CLOSE);
 				this.pause();
 			}
 		} catch (RuntimeException e) {

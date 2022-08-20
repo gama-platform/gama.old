@@ -62,6 +62,8 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
 		super(keyword, superDesc, hasArgs, /* cp, */source, facets, alreadyComputedArgs);
+		setIf(Flag.Breakable, getMeta().isBreakable());
+		setIf(Flag.Continuable, getMeta().isContinuable());
 		addChildren(cp);
 	}
 
@@ -211,7 +213,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	/**
 	 * @return
 	 */
-	public boolean isBreakable() { return getMeta().isBreakable(); }
+	public boolean isBreakable() { return isSet(Flag.Breakable); }
 
 	@Override
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type) {
@@ -226,6 +228,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	 *
 	 * @return true, if is continuable
 	 */
-	public boolean isContinuable() { return getMeta().isContinuable(); }
+	public boolean isContinuable() { return isSet(Flag.Continuable); }
 
 }

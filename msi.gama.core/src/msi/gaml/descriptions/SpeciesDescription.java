@@ -83,10 +83,10 @@ public class SpeciesDescription extends TypeDescription {
 	protected Class javaBase;
 
 	/** The can use minimal agents. */
-	protected boolean canUseMinimalAgents = true;
+	// protected boolean canUseMinimalAgents = true;
 
 	/** The control finalized. */
-	protected boolean controlFinalized;
+	// protected boolean controlFinalized;
 
 	/**
 	 * Instantiates a new species description.
@@ -136,6 +136,9 @@ public class SpeciesDescription extends TypeDescription {
 			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
 			final Facets facets, final Set<String> skills) {
 		super(keyword, clazz, macroDesc, parent, cp, source, facets, null);
+		set(Flag.CanUseMinimalAgents);
+		setIf(Flag.isMirror, hasFacet(MIRRORS));
+		setIf(Flag.isGrid, GRID.equals(getKeyword()));
 		setJavaBase(clazz);
 		setSkills(getFacet(SKILLS), skills);
 	}
@@ -148,6 +151,9 @@ public class SpeciesDescription extends TypeDescription {
 			final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff,
 			final String plugin) {
 		super(SPECIES, clazz, superDesc, null, null, null, new Facets(NAME, name), plugin);
+		set(Flag.CanUseMinimalAgents);
+		setIf(Flag.isMirror, hasFacet(MIRRORS));
+		setIf(Flag.isGrid, GRID.equals(getKeyword()));
 		setJavaBase(clazz);
 		setParent(parent);
 		setSkills(ff == null ? null : ff.get(SKILLS), skills2);
@@ -381,7 +387,8 @@ public class SpeciesDescription extends TypeDescription {
 	 * Invalidate minimal agents.
 	 */
 	protected void invalidateMinimalAgents() {
-		canUseMinimalAgents = false;
+		unSet(Flag.CanUseMinimalAgents);
+		// canUseMinimalAgents = false;
 		if (parent != null && parent != this && !parent.isBuiltIn()) { getParent().invalidateMinimalAgents(); }
 	}
 
@@ -391,7 +398,8 @@ public class SpeciesDescription extends TypeDescription {
 	 * @return true, if successful
 	 */
 	protected boolean useMinimalAgents() {
-		if (!canUseMinimalAgents || parent != null && parent != this && !getParent().useMinimalAgents()) return false;
+		if (!isSet(Flag.CanUseMinimalAgents) || parent != null && parent != this && !getParent().useMinimalAgents())
+			return false;
 		return !hasFacet("use_regular_agents") || FALSE.equals(getLitteral("use_regular_agents"));
 	}
 
@@ -634,7 +642,7 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 * @return true, if is grid
 	 */
-	public boolean isGrid() { return GRID.equals(getKeyword()); }
+	public boolean isGrid() { return isSet(Flag.isGrid); }
 
 	@Override
 	public String getTitle() { return getKeyword() + " " + getName(); }
@@ -717,7 +725,8 @@ public class SpeciesDescription extends TypeDescription {
 			super.setParent(null);
 			return;
 		}
-		if (parent instanceof SpeciesDescription && parent != this && !canUseMinimalAgents && !parent.isBuiltIn()) {
+		if (parent instanceof SpeciesDescription && parent != this && !isSet(Flag.CanUseMinimalAgents)
+				&& !parent.isBuiltIn()) {
 			((SpeciesDescription) parent).invalidateMinimalAgents();
 		}
 	}
@@ -869,8 +878,8 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 */
 	private void finalizeControl() {
-		if (controlFinalized) return;
-		controlFinalized = true;
+		if (isSet(Flag.ControlFinalized)) return;
+		set(Flag.ControlFinalized);
 
 		if (control == null && parent != this && parent instanceof SpeciesDescription) {
 			((SpeciesDescription) parent).finalizeControl();
@@ -943,7 +952,7 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 * @return true, if is mirror
 	 */
-	public boolean isMirror() { return hasFacet(MIRRORS); }
+	public boolean isMirror() { return isSet(Flag.isMirror); }
 
 	/**
 	 * Returns whether or not a species implements (directly or indirectly through its parents) a skill named after the

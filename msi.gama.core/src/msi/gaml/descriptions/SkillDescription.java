@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SkillDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SkillDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -27,27 +27,31 @@ public class SkillDescription extends TypeDescription {
 
 	/** The instance. */
 	Skill instance;
-	
+
 	/** The is control. */
-	final boolean isControl;
-	
+	// final boolean isControl;
+
 	/** The java base. */
 	final Class<? extends ISkill> javaBase;
 
 	/**
 	 * Instantiates a new skill description.
 	 *
-	 * @param name the name
-	 * @param support the support
-	 * @param children the children
-	 * @param plugin the plugin
+	 * @param name
+	 *            the name
+	 * @param support
+	 *            the support
+	 * @param children
+	 *            the children
+	 * @param plugin
+	 *            the plugin
 	 */
 	public SkillDescription(final String name, final Class<? extends ISkill> support,
 			final Iterable<IDescription> children, final String plugin) {
 		super(IKeyword.SKILL, support, null, null, children, null, null, plugin);
 		this.name = name;
 		this.javaBase = support;
-		this.isControl = IArchitecture.class.isAssignableFrom(support);
+		setIf(Flag.IsControl, IArchitecture.class.isAssignableFrom(support));
 
 	}
 
@@ -110,7 +114,7 @@ public class SkillDescription extends TypeDescription {
 	 *
 	 * @return true, if is control
 	 */
-	public boolean isControl() { return isControl; }
+	public boolean isControl() { return isSet(Flag.IsControl); }
 
 	@Override
 	public String getTitle() { return "skill " + getName(); }

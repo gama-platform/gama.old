@@ -34,10 +34,10 @@ import msi.gaml.types.Types;
 public class ActionDescription extends StatementWithChildrenDescription {
 
 	/** The is abstract. */
-	protected final boolean isAbstract;
+	// protected final boolean isAbstract;
 
 	/** The is synthetic. */
-	protected final boolean isSynthetic;
+	// protected final boolean isSynthetic;
 
 	/** The Constant NULL_ARGS. */
 	public static final Arguments NULL_ARGS = new Arguments();
@@ -59,8 +59,11 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	public ActionDescription(final String keyword, final IDescription superDesc, final Iterable<IDescription> cp,
 			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, true, source, facets, null);
-		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
-		isSynthetic = getName() != null && getName().startsWith(SYNTHETIC);
+		setIf(Flag.Abstract, TRUE.equals(getLitteral(VIRTUAL)));
+		if (getName() != null && getName().startsWith(SYNTHETIC)) {
+			set(Flag.Synthetic);
+			unSet(Flag.BuiltIn);
+		}
 		removeFacets(VIRTUAL);
 	}
 
@@ -76,13 +79,13 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	 *
 	 * @return true, if is abstract
 	 */
-	public boolean isAbstract() { return isAbstract; }
+	public boolean isAbstract() { return isSet(Flag.Abstract); }
+
+	// @Override
+	// public boolean isBuiltIn() { return super.isBuiltIn() && !isSynthetic(); }
 
 	@Override
-	public boolean isBuiltIn() { return super.isBuiltIn() && !isSynthetic; }
-
-	@Override
-	protected boolean isSynthetic() { return isSynthetic; }
+	protected boolean isSynthetic() { return isSet(Flag.Synthetic); }
 
 	/**
 	 * @return

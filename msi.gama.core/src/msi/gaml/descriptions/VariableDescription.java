@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
+import static msi.gaml.descriptions.IDescription.Flag.Unmodifiable;
+import static msi.gaml.descriptions.IDescription.Flag.Updatable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,14 +72,15 @@ public class VariableDescription extends SymbolDescription {
 	/** The plugin. */
 	private String plugin;
 
+	/** The built in doc. */
 	String builtInDoc;
 
 	/** The is not modifiable. */
-	private final boolean _isGlobal, _isNotModifiable;
+	// private final boolean _isGlobal, _isNotModifiable;
 
 	/** The is synthetic species container. */
 	// for variables automatically added to species for containing micro-agents
-	private boolean _isSyntheticSpeciesContainer;
+	// private boolean _isSyntheticSpeciesContainer;
 
 	/** The set. */
 	private IGamaHelper<?> get, init, set;
@@ -100,9 +104,13 @@ public class VariableDescription extends SymbolDescription {
 		if (facets != null && !facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
 		}
-		_isGlobal = superDesc instanceof ModelDescription;
-		_isNotModifiable =
-				facets != null && (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE)) && !isParameter();
+		setIf(Flag.isFunction, hasFacet(FUNCTION));
+		setIf(Flag.isContextualType, computesContextualType());
+		setIf(Flag.IsParameter, isExperimentParameter() || hasFacet(PARAMETER));
+		setIf(Flag.Global, superDesc instanceof ModelDescription);
+		setIf(Unmodifiable,
+				facets != null && (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE)) && !isParameter());
+		setIf(Updatable, !isSet(Unmodifiable) && (hasFacet(VALUE) || hasFacet(UPDATE)));
 		if (isBuiltIn() && hasFacet("depends_on")) {
 			final IExpressionDescription desc = getFacet("depends_on");
 			final Collection<String> strings = desc.getStrings(this, false);
@@ -123,7 +131,7 @@ public class VariableDescription extends SymbolDescription {
 	 * Sets the synthetic species container.
 	 */
 	public void setSyntheticSpeciesContainer() {
-		_isSyntheticSpeciesContainer = true;
+		set(Flag.Synthetic);
 	}
 
 	/**
@@ -131,14 +139,14 @@ public class VariableDescription extends SymbolDescription {
 	 *
 	 * @return true, if is synthetic species container
 	 */
-	public boolean isSyntheticSpeciesContainer() { return _isSyntheticSpeciesContainer; }
+	public boolean isSyntheticSpeciesContainer() { return isSet(Flag.Synthetic); }
 
 	/**
 	 * Checks if is function.
 	 *
 	 * @return true, if is function
 	 */
-	public boolean isFunction() { return hasFacet(FUNCTION); }
+	public boolean isFunction() { return isSet(Flag.isFunction); }
 
 	/**
 	 * Checks if is defined in experiment.
@@ -197,7 +205,7 @@ public class VariableDescription extends SymbolDescription {
 	 *
 	 * @return
 	 */
-	public boolean isContextualType() {
+	private boolean computesContextualType() {
 		String type = getLitteral(TYPE);
 		int provider = GamaIntegerType.staticCast(null, type, null, false);
 		if (provider < 0) return true;
@@ -303,21 +311,21 @@ public class VariableDescription extends SymbolDescription {
 	 *
 	 * @return true, if is updatable
 	 */
-	public boolean isUpdatable() { return !_isNotModifiable && (hasFacet(VALUE) || hasFacet(UPDATE)); }
+	public boolean isUpdatable() { return isSet(Flag.Updatable); }
 
 	/**
 	 * Checks if is not modifiable.
 	 *
 	 * @return true, if is not modifiable
 	 */
-	public boolean isNotModifiable() { return _isNotModifiable; }
+	public boolean isNotModifiable() { return isSet(Flag.Unmodifiable); }
 
 	/**
 	 * Checks if is parameter.
 	 *
 	 * @return true, if is parameter
 	 */
-	public boolean isParameter() { return isExperimentParameter() || hasFacet(PARAMETER); }
+	public boolean isParameter() { return isSet(Flag.IsParameter); }
 
 	/**
 	 * Gets the var expr.
@@ -328,7 +336,7 @@ public class VariableDescription extends SymbolDescription {
 	 */
 	// If asField is true, should not try to build a GlobalVarExpr
 	public IExpression getVarExpr(final boolean asField) {
-		final boolean asGlobal = _isGlobal && !asField;
+		final boolean asGlobal = isGlobal() && !asField;
 
 		return GAML.getExpressionFactory().createVar(getName(), getGamlType(), isNotModifiable(),
 				asGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
@@ -489,7 +497,7 @@ public class VariableDescription extends SymbolDescription {
 	 *
 	 * @return true, if is global
 	 */
-	public boolean isGlobal() { return _isGlobal; }
+	public boolean isGlobal() { return isSet(Flag.Global); }
 
 	@Override
 	public String getDefiningPlugin() { return plugin; }
@@ -513,5 +521,12 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public Iterable<IDescription> getOwnChildren() { return Collections.EMPTY_LIST; }
+
+	/**
+	 * Checks if is contextual type.
+	 *
+	 * @return true, if is contextual type
+	 */
+	public boolean isContextualType() { return isSet(Flag.isContextualType); }
 
 }

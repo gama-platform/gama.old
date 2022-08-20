@@ -312,12 +312,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 		final Object switchValue = value.value(scope);
 		Object lastResult = null;
 		for (final MatchStatement matche : matches) {
-			FlowStatus fs = scope.getAndClearFlowStatus();
-			if (fs == FlowStatus.BREAK) return lastResult;
-			if (fs == FlowStatus.CONTINUE) {
-				scope.setFlowStatus(FlowStatus.CONTINUE); // we put it again as it has just been erased
-			}
-			if (scope.interrupted()) return lastResult;
+			if ((scope.getAndClearBreakStatus() == FlowStatus.BREAK) || scope.interrupted()) return lastResult;
 
 			if (matche.matches(scope, switchValue)) {
 				final ExecutionResult er = scope.execute(matche);

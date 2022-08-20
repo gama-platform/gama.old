@@ -64,6 +64,10 @@ import msi.gaml.types.Types;
 /**
  * The Class LoopStatement.
  */
+
+/**
+ * The Class LoopStatement.
+ */
 @symbol (
 		name = IKeyword.LOOP,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -375,7 +379,11 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		return executer.runIn(scope);
+		try {
+			return executer.runIn(scope);
+		} finally {
+			scope.getAndClearBreakStatus();
+		}
 	}
 
 	/**
@@ -396,7 +404,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		result[0] = super.privateExecuteIn(scope);
 		scope.pop(this);
 		// return !scope.interrupted();
-		return scope.getAndClearFlowStatus();
+		return scope.getAndClearContinueStatus();
 	}
 
 	/**

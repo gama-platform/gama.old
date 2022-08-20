@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TypeDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * TypeDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -61,7 +61,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected TypeDescription parent;
 
 	/** The is abstract. */
-	protected final boolean isAbstract;
+	// protected final boolean isAbstract;
 
 	/**
 	 * Instantiates a new type description.
@@ -87,7 +87,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			final TypeDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
 			final Facets facets, final String plugin) {
 		super(keyword, macroDesc, source, /* cp, */ facets);
-		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
+		setIf(Flag.Abstract, TRUE.equals(getLitteral(VIRTUAL)));
 		addChildren(cp);
 		// parent can be null
 		if (parent != null) { setParent(parent); }
@@ -605,7 +605,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	 * @return true, if is abstract
 	 */
 	public final boolean isAbstract() {
-		if (isAbstract) return true;
+		if (isSet(Flag.Abstract)) return true;
 		for (final ActionDescription a : getActions()) { if (a.isAbstract()) return true; }
 		return false;
 	}
@@ -852,7 +852,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated) return this;
+		if (isSet(Flag.Validated)) return this;
 		final IDescription result = super.validate();
 		if (result != null && !verifyAttributeCycles()) return null;
 		return result;

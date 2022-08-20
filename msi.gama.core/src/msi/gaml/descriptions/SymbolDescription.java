@@ -12,6 +12,7 @@ package msi.gaml.descriptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +51,9 @@ public abstract class SymbolDescription implements IDescription {
 	protected static Set<String> typeProviderFacets = ImmutableSet
 			.copyOf(Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX, FUNCTION, UPDATE, INIT, DEFAULT));
 
+	/** The state. */
+	private final EnumSet<Flag> state = EnumSet.noneOf(Flag.class);
+
 	/** The order. */
 	private final int order = COUNTER.GET();
 
@@ -75,7 +79,7 @@ public abstract class SymbolDescription implements IDescription {
 	private IType<?> type;
 
 	/** The validated. */
-	protected boolean validated;
+	// protected boolean validated;
 
 	/** The proto. */
 	final SymbolProto proto;
@@ -97,12 +101,63 @@ public abstract class SymbolDescription implements IDescription {
 		this.keyword = keyword;
 		this.facets = facets;
 		element = source;
+		setIf(Flag.BuiltIn, element == null);
 		if (facets != null && facets.containsKey(ORIGIN)) {
 			originName = facets.getLabel(ORIGIN);
 			facets.remove(ORIGIN);
 		} else if (superDesc != null) { originName = superDesc.getName(); }
 		setEnclosingDescription(superDesc);
 		proto = DescriptionFactory.getProto(getKeyword(), getSpeciesContext());
+
+	}
+
+	// ---- State management
+
+	/**
+	 * Sets the.
+	 *
+	 * @param flag
+	 *            the flag
+	 */
+	protected void set(final Flag flag) {
+		state.add(flag);
+	}
+
+	/**
+	 * Sets the if.
+	 *
+	 * @param flag
+	 *            the flag
+	 * @param condition
+	 *            the condition
+	 */
+	protected void setIf(final Flag flag, final boolean condition) {
+		if (condition) {
+			set(flag);
+		} else {
+			unSet(flag);
+		}
+	}
+
+	/**
+	 * Un set.
+	 *
+	 * @param flag
+	 *            the flag
+	 */
+	protected void unSet(final Flag flag) {
+		state.remove(flag);
+	}
+
+	/**
+	 * Checks if is sets the.
+	 *
+	 * @param flag
+	 *            the flag
+	 * @return true, if is sets the
+	 */
+	protected boolean isSet(final Flag flag) {
+		return state.contains(flag);
 	}
 
 	@Override
@@ -617,14 +672,14 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public boolean isBuiltIn() { return element == null; }
+	public boolean isBuiltIn() { return state.contains(Flag.BuiltIn); }
 
 	/**
 	 * Checks if is synthetic.
 	 *
 	 * @return true, if is synthetic
 	 */
-	protected boolean isSynthetic() { return false; }
+	protected boolean isSynthetic() { return state.contains(Flag.Synthetic); }
 
 	@Override
 	public String getOriginName() { return originName; }
@@ -642,8 +697,8 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public IDescription validate() {
 
-		if (validated) return this;
-		validated = true;
+		if (state.contains(Flag.Validated)) return this;
+		set(Flag.Validated);
 
 		if (isBuiltIn()) {
 			// We simply make sure that the facets are correctly compiled

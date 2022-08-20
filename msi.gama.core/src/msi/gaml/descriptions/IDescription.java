@@ -46,6 +46,81 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		IVarDescriptionUser, IBenchmarkable {
 
 	/**
+	 * The Enum Flag.
+	 */
+	enum Flag {
+
+		/** The Abstract. */
+		Abstract,
+
+		/** The Validated. */
+		Validated,
+
+		/** The Documenting. */
+		Documenting,
+
+		/** The Synthetic. */
+		Synthetic,
+
+		/** The Starting date defined. */
+		StartingDateDefined,
+
+		/** The Is control. */
+		IsControl,
+
+		/** The Control finalized. */
+		ControlFinalized,
+
+		/** The Can use minimal agents. */
+		CanUseMinimalAgents,
+
+		/** The Is invocation. */
+		IsInvocation,
+
+		/** The Is super invocation. */
+		IsSuperInvocation,
+
+		/** The Breakable. */
+		Breakable,
+
+		/** The Continuable. */
+		Continuable,
+
+		/** The Built in. */
+		BuiltIn,
+
+		/** The Globat. */
+		Global,
+
+		/** The Unmodifiable. */
+		Unmodifiable,
+
+		/** The Updatable. */
+		Updatable,
+
+		/** The Is parameter. */
+		IsParameter,
+
+		/** The is mirror. */
+		isMirror,
+
+		/** The is grid. */
+		isGrid,
+
+		/** The is contextual type. */
+		isContextualType,
+
+		/** The is function. */
+		isFunction,
+
+		/** The is batch. */
+		isBatch,
+		
+		/** The is memorize. */
+		isMemorize
+	}
+
+	/**
 	 * The Constant SYMBOL_SERIALIZER.
 	 */
 	SymbolSerializer<SymbolDescription> SYMBOL_SERIALIZER = new SymbolSerializer<>();

@@ -63,6 +63,8 @@ public class StatementDescription extends SymbolDescription {
 	public StatementDescription(final String keyword, final IDescription superDesc, final boolean hasArgs,
 			final EObject source, final Facets facets, final Arguments alreadyComputedArgs) {
 		super(keyword, superDesc, source, /* children, */ facets);
+		setIf(Flag.IsInvocation, DO.equals(keyword) || INVOKE.equals(keyword));
+		setIf(Flag.IsSuperInvocation, INVOKE.equals(keyword));
 		passedArgs = alreadyComputedArgs != null ? alreadyComputedArgs : hasArgs ? createArgs() : null;
 	}
 
@@ -75,7 +77,6 @@ public class StatementDescription extends SymbolDescription {
 	public void dispose() {
 		if (isBuiltIn()) return;
 		super.dispose();
-
 		if (passedArgs != null) { passedArgs.dispose(); }
 	}
 
@@ -108,14 +109,14 @@ public class StatementDescription extends SymbolDescription {
 	 *
 	 * @return true, if is super invocation
 	 */
-	public boolean isSuperInvocation() { return INVOKE.equals(keyword); }
+	public boolean isSuperInvocation() { return isSet(Flag.IsSuperInvocation); }
 
 	/**
 	 * Checks if is invocation.
 	 *
 	 * @return true, if is invocation
 	 */
-	private boolean isInvocation() { return DO.equals(keyword) || isSuperInvocation(); }
+	private boolean isInvocation() { return isSet(Flag.IsInvocation); }
 
 	/**
 	 * Gets the action.
@@ -148,11 +149,9 @@ public class StatementDescription extends SymbolDescription {
 				final IExpressionDescription desc = equation.getFacet(EQUATION_LEFT);
 				desc.compile(equation);
 				final IExpression exp = desc.getExpression();
-				if (exp instanceof IOperator) {
-					final IOperator op = (IOperator) exp;
-					if (op.arg(0).getName().equals(nm) || op.arg(1) != null && op.arg(1).getName().equals(nm))
-						return true;
-				}
+				if (exp instanceof IOperator op
+						&& (op.arg(0).getName().equals(nm) || op.arg(1) != null && op.arg(1).getName().equals(nm)))
+					return true;
 			}
 		}
 		return false;
@@ -230,7 +229,7 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated) return this;
+		if (isSet(Flag.Validated)) return this;
 		final IDescription result = super.validate();
 		if (passedArgs != null) { validatePassedArgs(); }
 		return result;

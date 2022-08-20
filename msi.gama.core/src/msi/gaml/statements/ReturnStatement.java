@@ -1,17 +1,23 @@
 /*******************************************************************************************************
  *
- * ReturnStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ReturnStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.facet;
+import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -27,37 +33,76 @@ import msi.gaml.types.IType;
  *
  */
 
-@symbol(name = IKeyword.RETURN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_in_context = true, concept = { IConcept.ACTION })
-@inside(symbols = IKeyword.ACTION, kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(
-	value = { @facet(name = IKeyword.VALUE,
-		type = IType.NONE,
-		optional = true,
-		doc = @doc("an expression that is returned") ) },
-	omissible = IKeyword.VALUE)
-@doc(
-	value = "Allows to immediately stop and tell which value to return from the evaluation of the surrounding action or top-level statement (reflex, init, etc.). Usually used within the declaration of an action. For more details about actions, see the following [Section161 section].",
-	usages = {
-		@usage(value = "Example:",
-			examples = { @example(value = "string foo {", isExecutable = false),
-				@example(value = "     return \"foo\";", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "", isExecutable = false),
-				@example(value = "reflex {", isExecutable = false),
-				@example(value = "    string foo_result <- foo(); 	// foos_result is now equals to \"foo\"",
-					isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(
-			value = "In the specific case one wants an agent to ask another agent to execute a statement with a return, it can be done similarly to:",
-			examples = { @example(value = "// In Species A:", isExecutable = false),
-				@example(value = "string foo_different {", isExecutable = false),
-				@example(value = "     return \"foo_not_same\";", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "/// ....", isExecutable = false),
-				@example(value = "// In Species B:", isExecutable = false),
-				@example(value = "reflex writing {", isExecutable = false),
-				@example(
-					value = "    string temp <- some_agent_A.foo_different []; 	// temp is now equals to \"foo_not_same\" ",
-					isExecutable = false),
-				@example(value = "}", isExecutable = false), }) })
+@symbol (
+		name = IKeyword.RETURN,
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		with_sequence = false,
+		unique_in_context = true,
+		concept = { IConcept.ACTION })
+@inside (
+		symbols = IKeyword.ACTION,
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@facets (
+		value = { @facet (
+				name = IKeyword.VALUE,
+				type = IType.NONE,
+				optional = true,
+				doc = @doc ("an expression that is returned")) },
+		omissible = IKeyword.VALUE)
+@doc (
+		value = "Allows to immediately stop and tell which value to return from the evaluation of the surrounding action or top-level statement (reflex, init, etc.). Usually used within the declaration of an action. For more details about actions, see the following [Section161 section].",
+		usages = { @usage (
+				value = "Example:",
+				examples = { @example (
+						value = "string foo {",
+						isExecutable = false),
+						@example (
+								value = "     return \"foo\";",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "reflex {",
+								isExecutable = false),
+						@example (
+								value = "    string foo_result <- foo(); 	// foos_result is now equals to \"foo\"",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false) }),
+				@usage (
+						value = "In the specific case one wants an agent to ask another agent to execute a statement with a return, it can be done similarly to:",
+						examples = { @example (
+								value = "// In Species A:",
+								isExecutable = false),
+								@example (
+										value = "string foo_different {",
+										isExecutable = false),
+								@example (
+										value = "     return \"foo_not_same\";",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false),
+								@example (
+										value = "/// ....",
+										isExecutable = false),
+								@example (
+										value = "// In Species B:",
+										isExecutable = false),
+								@example (
+										value = "reflex writing {",
+										isExecutable = false),
+								@example (
+										value = "    string temp <- some_agent_A.foo_different []; 	// temp is now equals to \"foo_not_same\" ",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false), }) })
 public class ReturnStatement extends AbstractStatement {
 
 	/** The value. */
@@ -66,7 +111,8 @@ public class ReturnStatement extends AbstractStatement {
 	/**
 	 * Instantiates a new return statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public ReturnStatement(final IDescription desc) {
 		super(desc);
@@ -76,7 +122,7 @@ public class ReturnStatement extends AbstractStatement {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final Object result = value == null ? null : value.value(scope);
-		scope.interruptAction();
+		scope.setFlowStatus(IScope.FlowStatus.RETURN);
 		return result;
 	}
 	//

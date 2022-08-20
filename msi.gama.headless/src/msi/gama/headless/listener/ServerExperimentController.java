@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * ExperimentController.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * ServerExperimentController.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -16,19 +16,18 @@ import java.util.concurrent.Semaphore;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.job.ManualExperimentJob; 
+import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.experiment.ExperimentController;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.FlowStatus;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ExperimentController.
@@ -55,10 +54,11 @@ public class ServerExperimentController implements IExperimentController {
 	protected final Semaphore lock = new Semaphore(1);
 
 	/** The execution thread. */
-//	private final Thread executionThread =
-//			new Thread(() -> { while (experimentAlive) { step(); } }, "Front end scheduler");
+	// private final Thread executionThread =
+	// new Thread(() -> { while (experimentAlive) { step(); } }, "Front end scheduler");
 
 	public MyRunnable executionThread;
+
 	/**
 	 * The Class OwnRunnable.
 	 */
@@ -70,7 +70,8 @@ public class ServerExperimentController implements IExperimentController {
 		/**
 		 * Instantiates a new own runnable.
 		 *
-		 * @param s the s
+		 * @param s
+		 *            the s
 		 */
 		MyRunnable(final ManualExperimentJob s) {
 			mexp = s;
@@ -80,24 +81,23 @@ public class ServerExperimentController implements IExperimentController {
 		 * Run.
 		 */
 		@Override
-		public void run() { 
+		public void run() {
 			while (experimentAlive) {
-				if (mexp.simulator.isInterrupted()) {
-					break;
-				}
+				if (mexp.simulator.isInterrupted()) { break; }
 				final SimulationAgent sim = mexp.simulator.getSimulation();
-			 
+
 				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
 				if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
-					if(!mexp.endCond.equals("")) {mexp.socket.send("finish");}
+					if (!"".equals(mexp.endCond)) { mexp.socket.send("finish"); }
 					break;
-				} 
+				}
 				step();
-			} 
+			}
 		}
 	}
-	
-	public  ManualExperimentJob _job;
+
+	/** The job. */
+	public ManualExperimentJob _job;
 	/** The experiment. */
 	private IExperimentPlan experiment;
 
@@ -125,18 +125,18 @@ public class ServerExperimentController implements IExperimentController {
 	 * @param experiment
 	 *            the experiment
 	 */
-	public ServerExperimentController(ManualExperimentJob j) { 
+	public ServerExperimentController(final ManualExperimentJob j) {
 		commands = new ArrayBlockingQueue<>(10);
-		_job=j;
+		_job = j;
 		executionThread = new MyRunnable(j);
-//		this.experiment = experiment;
-//		executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+		// this.experiment = experiment;
+		// executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		try {
 			lock.acquire();
 		} catch (final InterruptedException e) {}
 		commandThread.start();
-//		executionThread.start();
+		// executionThread.start();
 	}
 
 	@Override
@@ -144,9 +144,15 @@ public class ServerExperimentController implements IExperimentController {
 
 	@Override
 	public IExperimentPlan getExperiment() { return experiment; }
-	
-	public void setExperiment(final IExperimentPlan exp) { this.experiment=exp; }
-	
+
+	/**
+	 * Sets the experiment.
+	 *
+	 * @param exp
+	 *            the new experiment
+	 */
+	public void setExperiment(final IExperimentPlan exp) { this.experiment = exp; }
+
 	/**
 	 * Offer.
 	 *
@@ -161,114 +167,115 @@ public class ServerExperimentController implements IExperimentController {
 	/**
 	 * Process user command.
 	 *
-	 * @param command the command
+	 * @param command
+	 *            the command
 	 */
 	private void processUserCommand(final int command) {
 		switch (command) {
-		case _OPEN:
-			try {
-				_job.loadAndBuildWithJson();
-////				this.getSimulation().getExperimentPlan().open();
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
-					| GamaHeadlessException e) {
-				e.printStackTrace();
-			}
-//			scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
-//			try {
-//				load();
-//				simulator.setup(experimentName, this.seed, params);
-//
-////				this.getSimulation().getExperimentPlan().open();
-////				new Thread(() -> experiment.open()).start();
-//			} catch (final Exception e) {
-////				DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
-//				closeExperiment(e);
-//			}
-			break;
-		case _START:
-			try {
-				start();
-			} catch (final GamaRuntimeException e) {
-				e.printStackTrace();
-				closeExperiment(e);
-			} finally {
-//				scope.getGui().updateExperimentState(scope, IGui.RUNNING);
-			}
-			break;
-		case _PAUSE:
-//			if (!disposing) {
-//				scope.getGui().updateExperimentState(scope, IGui.PAUSED);
-//			}
-			pause();
-			break;
-		case _STEP:
-//			scope.getGui().updateExperimentState(scope, IGui.PAUSED);
-			stepByStep();
-			break;
-		case _BACK:
-//			scope.getGui().updateExperimentState(scope, IGui.PAUSED);
-//			stepBack();
-			pause();
-			getExperiment().getAgent().backward(getScope());// ?? scopes[0]);
-			break;
-		case _RELOAD:
-//			scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
-//			try {
-//				lock.acquire();
-//			} catch (final InterruptedException e) {
-//				e.printStackTrace();
-//			}
-			try {
-//				final boolean wasRunning = !isPaused() && !this.getSimulation().getExperimentPlan().isAutorun();
-
-//				scope.getGui().getStatus().waitStatus("Reloading...");
-//				this.getSimulation().getExperimentPlan().getAgent().dispose();
-//				initParam(params);
-				experiment.dispose();
-				_job.simulator.dispose();
-
-//				this.getSimulation().getExperimentPlan().open();
-//				this.getSimulation().getExperimentPlan().reload();
-
-//				this.loadAndBuild(params);
-
-				_job.loadAndBuildWithJson();
-				executionThread=null;
-				commandThread.interrupt();
-				commandThread = null;
-				executionThread = new MyRunnable(_job);
-				commandThread = new Thread(() -> {
-					while (acceptingCommands) {
-						try {
-							processUserCommand(commands.take());
-						} catch (final Exception e) {
-						}
-					}
-				}, "Front end controller");
-				commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+			case _OPEN:
 				try {
-					lock.acquire();
-				} catch (final InterruptedException e) {}
-				experimentAlive=true;acceptingCommands=true;
-				disposing = false;
-				commandThread.start();
-//				_job.simulator.setup(_job.experimentName, _job.seed, _job.params, _job);
-				_job.server.getDefaultApp().processorQueue.execute(executionThread);
-				_job.socket.send("reload");
-//				if (wasRunning) {
-//					processUserCommand(_START);
-//				} else {
-////					scope.getGui().getStatus().informStatus("Experiment reloaded");
-//				}
-			} catch (final GamaRuntimeException e) {
-				e.printStackTrace();
-				closeExperiment(e);
-			} catch (final Throwable e) {
-				closeExperiment(GamaRuntimeException.create(e, scope));
-			} finally {
-//				scope.getGui().updateExperimentState(scope);
-			}
-			break;
+					_job.loadAndBuildWithJson();
+					//// this.getSimulation().getExperimentPlan().open();
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
+						| GamaHeadlessException e) {
+					e.printStackTrace();
+				}
+				// scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
+				// try {
+				// load();
+				// simulator.setup(experimentName, this.seed, params);
+				//
+				//// this.getSimulation().getExperimentPlan().open();
+				//// new Thread(() -> experiment.open()).start();
+				// } catch (final Exception e) {
+				//// DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
+				// closeExperiment(e);
+				// }
+				break;
+			case _START:
+				try {
+					start();
+				} catch (final GamaRuntimeException e) {
+					e.printStackTrace();
+					closeExperiment(e);
+				} finally {
+					// scope.getGui().updateExperimentState(scope, IGui.RUNNING);
+				}
+				break;
+			case _PAUSE:
+				// if (!disposing) {
+				// scope.getGui().updateExperimentState(scope, IGui.PAUSED);
+				// }
+				pause();
+				break;
+			case _STEP:
+				// scope.getGui().updateExperimentState(scope, IGui.PAUSED);
+				stepByStep();
+				break;
+			case _BACK:
+				// scope.getGui().updateExperimentState(scope, IGui.PAUSED);
+				// stepBack();
+				pause();
+				getExperiment().getAgent().backward(getScope());// ?? scopes[0]);
+				break;
+			case _RELOAD:
+				// scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
+				// try {
+				// lock.acquire();
+				// } catch (final InterruptedException e) {
+				// e.printStackTrace();
+				// }
+				try {
+					// final boolean wasRunning = !isPaused() && !this.getSimulation().getExperimentPlan().isAutorun();
+
+					// scope.getGui().getStatus().waitStatus("Reloading...");
+					// this.getSimulation().getExperimentPlan().getAgent().dispose();
+					// initParam(params);
+					experiment.dispose();
+					_job.simulator.dispose();
+
+					// this.getSimulation().getExperimentPlan().open();
+					// this.getSimulation().getExperimentPlan().reload();
+
+					// this.loadAndBuild(params);
+
+					_job.loadAndBuildWithJson();
+					executionThread = null;
+					commandThread.interrupt();
+					commandThread = null;
+					executionThread = new MyRunnable(_job);
+					commandThread = new Thread(() -> {
+						while (acceptingCommands) {
+							try {
+								processUserCommand(commands.take());
+							} catch (final Exception e) {}
+						}
+					}, "Front end controller");
+					commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+					try {
+						lock.acquire();
+					} catch (final InterruptedException e) {}
+					experimentAlive = true;
+					acceptingCommands = true;
+					disposing = false;
+					commandThread.start();
+					// _job.simulator.setup(_job.experimentName, _job.seed, _job.params, _job);
+					_job.server.getDefaultApp().processorQueue.execute(executionThread);
+					_job.socket.send("reload");
+					// if (wasRunning) {
+					// processUserCommand(_START);
+					// } else {
+					//// scope.getGui().getStatus().informStatus("Experiment reloaded");
+					// }
+				} catch (final GamaRuntimeException e) {
+					e.printStackTrace();
+					closeExperiment(e);
+				} catch (final Throwable e) {
+					closeExperiment(GamaRuntimeException.create(e, scope));
+				} finally {
+					// scope.getGui().updateExperimentState(scope);
+				}
+				break;
 		}
 	}
 
@@ -383,7 +390,7 @@ public class ServerExperimentController implements IExperimentController {
 		scope = agent.getScope();
 		try {
 			if (!scope.init(agent).passed()) {
-				scope.setInterrupted();
+				scope.setFlowStatus(FlowStatus.CLOSE);
 			} else if (agent.getSpecies().isAutorun()) { userStart(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
@@ -420,11 +427,11 @@ public class ServerExperimentController implements IExperimentController {
 			}
 		}
 		try {
-//			if (scope == null) return;
-//			if (!scope.step(agent).passed()) {
-//				scope.setInterrupted();
-//				this.pause();
-//			}
+			// if (scope == null) return;
+			// if (!scope.step(agent).passed()) {
+			// scope.setInterrupted();
+			// this.pause();
+			// }
 			_job.doStep();
 
 		} catch (RuntimeException e) {

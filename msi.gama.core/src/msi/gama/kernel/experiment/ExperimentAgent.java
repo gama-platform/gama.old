@@ -132,7 +132,7 @@ import ummisco.gama.dev.utils.DEBUG;
 						comment = "Always terminated with a trailing separator")),
 		@variable (
 				name = IKeyword.PARAMETERS,
-				type = IType.MAP, 
+				type = IType.MAP,
 				doc = @doc ("A parameters set of this experiment agent")),
 		@variable (
 				name = ExperimentAgent.PROJECT_PATH,
@@ -528,7 +528,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			initializer = true)
 	public String getWorkspacePath() { return GAMA.getPlatformAgent().getWorkspacePath(); }
 
-
 	/**
 	 * Gets the parameters.
 	 *
@@ -786,19 +785,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 *
 	 */
 	public class ExperimentAgentScope extends ExecutionScope {
-
-		/** The interrupted. */
-		volatile boolean interrupted = false;
-
-		@Override
-		public boolean _root_interrupted() {
-			return interrupted || ExperimentAgent.this.dead();
-		}
-
-		@Override
-		public void setInterrupted() {
-			this.interrupted = true;
-		}
 
 		/**
 		 * Method getRandom()

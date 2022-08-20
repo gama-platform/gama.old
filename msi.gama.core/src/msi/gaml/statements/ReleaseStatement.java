@@ -198,7 +198,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		if (!releasedMicroAgents.isEmpty() && !sequence.isEmpty()) {
 			for (final IAgent releasedA : releasedMicroAgents) {
 				if (!scope.execute(sequence, releasedA, null).passed()
-						|| scope.getAndClearFlowStatus() == FlowStatus.BREAK) {
+						|| scope.getAndClearBreakStatus() == FlowStatus.BREAK) {
 					break;
 				}
 			}

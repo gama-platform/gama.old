@@ -68,12 +68,11 @@ public class RemoteSequence extends AbstractStatementSequence {
 		for (final IStatement command : commands) {
 			final ExecutionResult result = scope.execute(command);
 			if (!result.passed()) return lastResult;
-			FlowStatus fs = scope.getAndClearFlowStatus();
-			if (fs == IScope.FlowStatus.BREAK) {
-				scope.setFlowStatus(IScope.FlowStatus.BREAK); // we set it again for the outer statement
+			FlowStatus fs = scope.getAndClearContinueStatus();
+			if (fs == IScope.FlowStatus.BREAK) // scope.setFlowStatus(IScope.FlowStatus.BREAK); // we set it again for
+												// the outer statement
 				return lastResult;
-			}
-			if (scope.getAndClearFlowStatus() == IScope.FlowStatus.CONTINUE) { continue; }
+			if (fs == IScope.FlowStatus.CONTINUE) { continue; }
 			lastResult = result.getValue();
 		}
 		return lastResult;

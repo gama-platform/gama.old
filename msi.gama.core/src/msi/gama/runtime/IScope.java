@@ -10,6 +10,7 @@
 package msi.gama.runtime;
 
 import java.io.Closeable;
+import java.util.EnumSet;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IBenchmarkable;
@@ -49,11 +50,24 @@ public interface IScope extends Closeable, IBenchmarkable {
 
 		/** The break. */
 		BREAK,
+		/** The return. */
+		RETURN,
 		/** The continue. */
 		CONTINUE,
+		/** The die status: when the agent running in the scope is dead. */
+		DIE,
+		/** The close. When the simulations/experiments are closing */
+		CLOSE,
 		/** The normal. */
 		NORMAL;
 	}
+
+	/** The interrupting statuses. */
+	EnumSet<FlowStatus> INTERRUPTING_STATUSES =
+			EnumSet.of(FlowStatus.BREAK, FlowStatus.RETURN, FlowStatus.CONTINUE, FlowStatus.DIE, FlowStatus.CLOSE);
+
+	/** The root interrupting statuses. */
+	EnumSet<FlowStatus> ROOT_INTERRUPTING_STATUSES = EnumSet.of(FlowStatus.CLOSE);
 
 	/**
 	 * The Interface IGraphicsScope.
@@ -223,7 +237,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	/**
 	 * Sets the interrupted.
 	 */
-	void setInterrupted();
+	// void setInterrupted();
 
 	/**
 	 * Keeping track of symbols.
@@ -671,17 +685,17 @@ public interface IScope extends Closeable, IBenchmarkable {
 	/**
 	 * Indicates that an action is finishing : should clear any _action_halted status present.
 	 */
-	void popAction();
+	// void popAction();
 
 	/**
 	 * Should set the _action_halted flag to true.
 	 */
-	void interruptAction();
+	// void interruptAction();
 
 	/**
 	 * Should set the _agent_halted flag to true.
 	 */
-	void interruptAgent();
+	// void interruptAgent();
 
 	/**
 	 * Should set the _loop_halted flag to true.
@@ -694,7 +708,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *
 	 * @return the flow status
 	 */
-	FlowStatus getAndClearFlowStatus();
+	// FlowStatus getAndClearFlowStatus();
 
 	/**
 	 * Inits the.
@@ -800,5 +814,49 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	ExecutionResult execute(IExecutable statement, IAgent target, boolean useTargetScopeForExecution, Arguments args);
+
+	/**
+	 * Gets the and clear break status.
+	 *
+	 * @return the and clear break status
+	 */
+	default FlowStatus getAndClearBreakStatus() { return getAndClearFlowStatus(FlowStatus.BREAK); }
+
+	/**
+	 * Gets the and clear continue status.
+	 *
+	 * @return the and clear continue status
+	 */
+	default FlowStatus getAndClearContinueStatus() { return getAndClearFlowStatus(FlowStatus.CONTINUE); }
+
+	/**
+	 * Gets the and clear return status.
+	 *
+	 * @return the and clear return status
+	 */
+	default FlowStatus getAndClearReturnStatus() { return getAndClearFlowStatus(FlowStatus.RETURN); }
+
+	/**
+	 * Gets the and clear death status.
+	 *
+	 * @return the and clear death status
+	 */
+	default FlowStatus getAndClearDeathStatus() { return getAndClearFlowStatus(FlowStatus.DIE); }
+
+	/**
+	 * Gets the and clear flow status.
+	 *
+	 * @param comparison
+	 *            the comparison
+	 * @return the and clear flow status
+	 */
+	FlowStatus getAndClearFlowStatus(final FlowStatus comparison);
+
+	/**
+	 * Checks if is closed.
+	 *
+	 * @return true, if is closed
+	 */
+	boolean isClosed();
 
 }

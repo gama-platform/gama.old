@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -41,38 +41,53 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	/** The parameters. */
 	private IMap<String, VariableDescription> parameters;
-	
+
 	/** The output. */
 	private StatementDescription output;
-	
+
 	/** The permanent. */
 	private StatementDescription permanent;
 
 	/**
 	 * Instantiates a new experiment description.
 	 *
-	 * @param keyword the keyword
-	 * @param enclosing the enclosing
-	 * @param cp the cp
-	 * @param source the source
-	 * @param facets the facets
+	 * @param keyword
+	 *            the keyword
+	 * @param enclosing
+	 *            the enclosing
+	 * @param cp
+	 *            the cp
+	 * @param source
+	 *            the source
+	 * @param facets
+	 *            the facets
 	 */
 	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing,
 			final Iterable<IDescription> cp, final EObject source, final Facets facets) {
 		super(keyword, null, enclosing, null, cp, source, facets);
+		setIf(Flag.isBatch, IKeyword.BATCH.equals(getLitteral(IKeyword.TYPE)));
+		setIf(Flag.isMemorize, IKeyword.MEMORIZE.equals(getLitteral(IKeyword.TYPE)));
 	}
 
 	/**
 	 * Instantiates a new experiment description.
 	 *
-	 * @param name the name
-	 * @param clazz the clazz
-	 * @param superDesc the super desc
-	 * @param parent the parent
-	 * @param helper the helper
-	 * @param skills2 the skills 2
-	 * @param ff the ff
-	 * @param plugin the plugin
+	 * @param name
+	 *            the name
+	 * @param clazz
+	 *            the clazz
+	 * @param superDesc
+	 *            the super desc
+	 * @param parent
+	 *            the parent
+	 * @param helper
+	 *            the helper
+	 * @param skills2
+	 *            the skills 2
+	 * @param ff
+	 *            the ff
+	 * @param plugin
+	 *            the plugin
 	 */
 	public ExperimentDescription(final String name, final Class<?> clazz, final SpeciesDescription superDesc,
 			final SpeciesDescription parent, final IAgentConstructor<? extends IAgent> helper,
@@ -83,7 +98,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * Adds the parameter.
 	 *
-	 * @param var the var
+	 * @param var
+	 *            the var
 	 */
 	private void addParameter(final VariableDescription var) {
 		if (parameters == null) { parameters = GamaMapFactory.create(); }
@@ -122,7 +138,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * Checks for parameter.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return true, if successful
 	 */
 	public boolean hasParameter(final String name) {
@@ -133,7 +150,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * Gets the parameter.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return the parameter
 	 */
 	public VariableDescription getParameter(final String name) {
@@ -144,20 +162,20 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * Inherit parameters from.
 	 *
-	 * @param p the p
+	 * @param p
+	 *            the p
 	 */
 	public void inheritParametersFrom(final ExperimentDescription p) {
 		if (p.parameters != null) {
-			for (final VariableDescription v : p.parameters.values()) {
-				addInheritedParameter(v);
-			}
+			for (final VariableDescription v : p.parameters.values()) { addInheritedParameter(v); }
 		}
 	}
 
 	/**
 	 * Adds the inherited parameter.
 	 *
-	 * @param vd the vd
+	 * @param vd
+	 *            the vd
 	 */
 	public void addInheritedParameter(final VariableDescription vd) {
 
@@ -195,23 +213,17 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public String getTitle() {
-		return "experiment " + getName();
-	}
+	public String getTitle() { return "experiment " + getName(); }
 
 	/**
 	 * Gets the experiment title facet.
 	 *
 	 * @return the experiment title facet
 	 */
-	public String getExperimentTitleFacet() {
-		return getLitteral(TITLE);
-	}
+	public String getExperimentTitleFacet() { return getLitteral(TITLE); }
 
 	@Override
-	public boolean isExperiment() {
-		return true;
-	}
+	public boolean isExperiment() { return true; }
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
@@ -259,16 +271,12 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * @return
 	 */
-	public Boolean isBatch() {
-		return IKeyword.BATCH.equals(getLitteral(IKeyword.TYPE));
-	}
+	public Boolean isBatch() { return isSet(Flag.isBatch); }
 
 	/**
 	 * @return
 	 */
-	public Boolean isMemorize() {
-		return IKeyword.MEMORIZE.equals(getLitteral(IKeyword.TYPE));
-	}
+	public Boolean isMemorize() { return isSet(Flag.isMemorize); }
 
 	/**
 	 * Gets the experiment type.
@@ -299,7 +307,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * Inherit outputs from.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 */
 	private void inheritOutputsFrom(final ExperimentDescription parent) {
 		if (parent.output != null) {
@@ -321,8 +330,10 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * Merge outputs.
 	 *
-	 * @param inherited the inherited
-	 * @param defined the defined
+	 * @param inherited
+	 *            the inherited
+	 * @param defined
+	 *            the defined
 	 */
 	private void mergeOutputs(final StatementDescription inherited, final StatementDescription defined) {
 		inherited.visitChildren(in -> {

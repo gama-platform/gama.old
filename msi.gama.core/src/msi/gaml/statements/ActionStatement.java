@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ActionStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ActionStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -169,7 +169,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		@Override
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
-			if (key.equals(TYPE)) return null;
+			if (TYPE.equals(key)) return null;
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
@@ -188,7 +188,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			String type = desc.getGamlType().serialize(includingBuiltIn);
-			if (type.equals(UNKNOWN)) { type = ACTION; }
+			if (UNKNOWN.equals(type)) { type = ACTION; }
 			sb.append(type).append(" ");
 		}
 
@@ -213,35 +213,30 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		/**
 		 * Assert returned value is ok.
 		 *
-		 * @param cd the cd
+		 * @param cd
+		 *            the cd
 		 */
 		private void assertReturnedValueIsOk(final ActionDescription cd) {
 			final IType at = cd.getGamlType();
 			if (at == Types.NO_TYPE) return;
 			try (final ICollector<StatementDescription> returns = getOrderedSet()) {
-				final DescriptionVisitor<IDescription> finder = (desc) -> {
-					if (desc.getKeyword().equals(RETURN)) { returns.add((StatementDescription) desc); }
+				final DescriptionVisitor<IDescription> finder = desc -> {
+					if (RETURN.equals(desc.getKeyword())) { returns.add((StatementDescription) desc); }
 					return true;
 				};
 				cd.visitOwnChildrenRecursively(finder);
-				if (returns.isEmpty()) {
-					if (!cd.isAbstract()) {
-						cd.error("Action " + cd.getName() + " must return a result of type " + at,
-								IGamlIssue.MISSING_RETURN);
-						return;
-					}
+				if (returns.isEmpty() && !cd.isAbstract()) {
+					cd.error("Action " + cd.getName() + " must return a result of type " + at,
+							IGamlIssue.MISSING_RETURN);
+					return;
 				}
 				for (final StatementDescription ret : returns) {
 					final IExpression ie = ret.getFacetExpr(VALUE);
 					if (ie == null) { continue; }
 					if (ie.equals(IExpressionFactory.NIL_EXPR)) {
-						if (at.getDefault() != null) {
-							ret.error(
-									"'nil' is not an acceptable return value. A valid " + at + " is expected instead.",
-									IGamlIssue.WRONG_TYPE, VALUE);
-						} else {
-							continue;
-						}
+						if (at.getDefault() == null) { continue; }
+						ret.error("'nil' is not an acceptable return value. A valid " + at + " is expected instead.",
+								IGamlIssue.WRONG_TYPE, VALUE);
 					} else {
 						final IType<?> rt = ie.getGamlType();
 						if (!rt.isTranslatableInto(at)) {
@@ -284,7 +279,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 	@Override
 	public void leaveScope(final IScope scope) {
 		// Clears any _action_halted status present
-		scope.popAction();
+		scope.getAndClearReturnStatus();
 		super.leaveScope(scope);
 	}
 

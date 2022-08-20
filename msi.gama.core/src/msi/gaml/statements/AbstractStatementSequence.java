@@ -1,24 +1,22 @@
 /*******************************************************************************************************
  *
- * AbstractStatementSequence.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractStatementSequence.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
 import com.google.common.collect.FluentIterable;
 
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import one.util.streamex.StreamEx;
 
 /**
  * The Class AbstractStatementSequence.
@@ -27,14 +25,15 @@ public class AbstractStatementSequence extends AbstractStatement {
 
 	/** The commands. */
 	protected IStatement[] commands;
-	
+
 	/** The is top level. */
 	final boolean isTopLevel;
 
 	/**
 	 * Instantiates a new abstract statement sequence.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AbstractStatementSequence(final IDescription desc) {
 		super(desc);
@@ -51,9 +50,7 @@ public class AbstractStatementSequence extends AbstractStatement {
 	 *
 	 * @return true, if is empty
 	 */
-	public boolean isEmpty() {
-		return commands.length == 0;
-	}
+	public boolean isEmpty() { return commands.length == 0; }
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
@@ -70,7 +67,7 @@ public class AbstractStatementSequence extends AbstractStatement {
 		Object lastResult = null;
 		for (final IStatement command : commands) {
 			final ExecutionResult result = scope.execute(command);
-			if (!result.passed()) { return lastResult; }
+			if (!result.passed()) return lastResult;
 			lastResult = result.getValue();
 		}
 		return lastResult;
@@ -79,21 +76,21 @@ public class AbstractStatementSequence extends AbstractStatement {
 	/**
 	 * Leave scope.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void leaveScope(final IScope scope) {
 		// Clears any action_halted status in case we are a top-level behavior
 		// (reflex, init, state, etc.)
-		if (isTopLevel) {
-			scope.popAction();
-		}
+		if (isTopLevel) { scope.getAndClearReturnStatus(); }
 		scope.pop(this);
 	}
 
 	/**
 	 * Enter scope.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	public void enterScope(final IScope scope) {
 		scope.push(this);
@@ -104,8 +101,6 @@ public class AbstractStatementSequence extends AbstractStatement {
 	 *
 	 * @return the commands
 	 */
-	public IStatement[] getCommands() {
-		return commands;
-	}
+	public IStatement[] getCommands() { return commands; }
 
 }

@@ -329,7 +329,7 @@ public abstract class GamaExecutorService {
 			case 0:
 				for (final A agent : array) {
 					scope.execute(executable, (IAgent) agent, null);
-					if (scope.getAndClearFlowStatus() == IScope.FlowStatus.BREAK) { break; }
+					if (scope.getAndClearBreakStatus() == IScope.FlowStatus.BREAK) { break; }
 				}
 				return;
 			// Break doesnt really make sense for parallel execution
