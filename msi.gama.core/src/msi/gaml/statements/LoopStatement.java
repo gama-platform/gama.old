@@ -251,71 +251,19 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			final IExpressionDescription over = description.getFacet(OVER);
 			final IExpressionDescription from = description.getFacet(FROM);
 			final IExpressionDescription to = description.getFacet(TO);
-			// final IExpressionDescription step = description.getFacet(STEP);
 			final IExpressionDescription cond = description.getFacet(WHILE);
 			IExpressionDescription name = description.getFacet(NAME);
 			if (name != null && name.isConst() && name.toString().startsWith(INTERNAL)) { name = null; }
 			// See Issue #3085
 			if (name != null) { Assert.nameIsValid(description); }
 			if (times != null) {
-				if (over != null) {
-					description.error("'times' and 'over' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
-							OVER);
-					return;
-				}
-				if (cond != null) {
-					description.error("'times' and 'while' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
-							WHILE);
-					return;
-				}
-				if (from != null) {
-					description.error("'times' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
-							FROM);
-					return;
-				}
-				if (to != null) {
-					description.error("'times' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES, TO);
-					return;
-				}
-				if (name != null) { description.error("No variable should be declared", IGamlIssue.UNUSED, NAME); }
+				processTimes(description, over, from, to, cond, name);
 			} else if (over != null) {
-				if (cond != null) {
-					description.error("'over' and 'while' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER,
-							WHILE);
-					return;
-				}
-				if (from != null) {
-					description.error("'over' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER,
-							FROM);
-					return;
-				}
-				if (to != null) {
-					description.error("'over' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER, TO);
-					return;
-				}
-				if (name == null) { description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER); }
+				processOver(description, from, to, cond, name);
 			} else if (cond != null) {
-				if (from != null) {
-					description.error("'while' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE,
-							FROM);
-					return;
-				}
-				if (to != null) {
-					description.error("'while' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE, TO);
-					return;
-				}
-				if (name != null) {
-					description.error("No variable should be declared", IGamlIssue.UNUSED, WHILE, NAME);
-				}
+				processCond(description, from, to, name);
 			} else if (from != null) {
-				if (name == null) {
-					description.error("No variable has been declared", IGamlIssue.MISSING_NAME, NAME);
-					return;
-				}
-				if (to == null) {
-					description.error("'loop' is missing the 'to:' facet", IGamlIssue.MISSING_FACET,
-							description.getUnderlyingElement(), TO, "0");
-				}
+				processFromTo(description, to, name);
 			} else if (to != null) {
 				description.error("'loop' is missing the 'from:' facet", IGamlIssue.MISSING_FACET,
 						description.getUnderlyingElement(), FROM, "0");
@@ -323,6 +271,96 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				description.error("Missing the definition of the kind of loop to perform (times, over, while, from/to)",
 						IGamlIssue.MISSING_FACET);
 			}
+		}
+
+		private void processFromTo(final IDescription description, final IExpressionDescription to,
+				IExpressionDescription name) {
+			if (name == null) {
+				description.error("No variable has been declared", IGamlIssue.MISSING_NAME, NAME);
+				return;
+			}
+			if (to == null) {
+				description.error("'loop' is missing the 'to:' facet", IGamlIssue.MISSING_FACET,
+						description.getUnderlyingElement(), TO, "0");
+			}
+		}
+
+		/**
+		 * Process from to.
+		 *
+		 * @param description the description
+		 * @param from the from
+		 * @param to the to
+		 * @param name the name
+		 */
+		private void processCond(final IDescription description, final IExpressionDescription from,
+				final IExpressionDescription to, final IExpressionDescription name) {
+			if (from != null) {
+				description.error("'while' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE, FROM);
+			}
+			if (to != null) {
+				description.error("'while' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE, TO);
+			}
+			if (name != null) { description.error("No variable should be declared", IGamlIssue.UNUSED, WHILE, NAME); }
+		}
+
+		/**
+		 * Process over.
+		 *
+		 * @param description
+		 *            the description
+		 * @param from
+		 *            the from
+		 * @param to
+		 *            the to
+		 * @param cond
+		 *            the cond
+		 * @param name
+		 *            the name
+		 */
+		private void processOver(final IDescription description, final IExpressionDescription from,
+				final IExpressionDescription to, final IExpressionDescription cond, final IExpressionDescription name) {
+			if (cond != null) {
+				description.error("'over' and 'while' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER, WHILE);
+			} else if (from != null) {
+				description.error("'over' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER, FROM);
+			} else if (to != null) {
+				description.error("'over' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER, TO);
+			}
+			if (name == null) { description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER); }
+		}
+
+		/**
+		 * Process times.
+		 *
+		 * @param description
+		 *            the description
+		 * @param over
+		 *            the over
+		 * @param from
+		 *            the from
+		 * @param to
+		 *            the to
+		 * @param cond
+		 *            the cond
+		 * @param name
+		 *            the name
+		 * @return true, if successful
+		 */
+		private void processTimes(final IDescription description, final IExpressionDescription over,
+				final IExpressionDescription from, final IExpressionDescription to, final IExpressionDescription cond,
+				final IExpressionDescription name) {
+			if (over != null) {
+				description.error("'times' and 'over' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES, OVER);
+			} else if (cond != null) {
+				description.error("'times' and 'while' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES,
+						WHILE);
+			} else if (from != null) {
+				description.error("'times' and 'from' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES, FROM);
+			} else if (to != null) {
+				description.error("'times' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES, TO);
+			}
+			if (name != null) { description.error("No variable should be declared", IGamlIssue.UNUSED, NAME); }
 		}
 
 	}

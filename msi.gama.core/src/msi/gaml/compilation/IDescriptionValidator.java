@@ -103,34 +103,18 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 		public static void typesAreCompatibleForAssignment(final String facetName, final IDescription context,
 				final String receiverDescription, final IType<?> receiverType, final IExpressionDescription assigned) {
 			if (assigned == null) return;
-			// IExpression expr1 = receiver.getExpression();
-			final IExpression expr2 = assigned.getExpression();
-			if (expr2 == null) return;
-			// IType receiverType = expr1.getType();
-			final IType assignedType = expr2.getGamlType();
-
-			// AD: 6/9/13 special case for int and float (see Issue 590) and for
-			// empty lists and maps
-			if ((expr2 != IExpressionFactory.NIL_EXPR
-					&& !assignedType.getGamlType().isTranslatableInto(receiverType.getGamlType())
-					|| Types.intFloatCase(receiverType, assignedType))
-					&& !Types.isEmptyContainerCase(receiverType, expr2)) {
-				final EObject target = assigned.getTarget();
-				final String msg = receiverDescription + " of type " + receiverType.getGamlType()
-						+ " is assigned a value of type " + assignedType.getGamlType() + ", which will be casted to "
-						+ receiverType.getGamlType();
-				if (target == null) {
-					context.warning(msg, IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
-				} else {
-					context.warning(msg, IGamlIssue.SHOULD_CAST, target, receiverType.toString());
-				}
-			}
+			final IExpression value = assigned.getExpression();
+			if (value == null) return;
+			final IType assignedType = value.getGamlType();
+			verifyIntFloatAndEmptyContainers(facetName, context, receiverDescription, receiverType, assigned, value,
+					assignedType);
 			// Contents Type
 			if (receiverType.isContainer() && assignedType.isContainer()) {
 				final IType receiverContentType = receiverType.getContentType();
 				IType<?> contentType = assignedType.getContentType();
 				// Special cases for the empty lists and maps
-				if (Types.isEmptyContainerCase(receiverType, expr2) || speciesAreIncompatible(context, receiverType, assigned, expr2, receiverContentType, contentType))
+				if (Types.isEmptyContainerCase(receiverType, value) || speciesAreIncompatible(context, receiverType,
+						assigned, value, receiverContentType, contentType))
 					return;
 				// Special case for maps and lists of pairs (Issue 846)
 				if (receiverType.id() == IType.MAP && assignedType.id() == IType.LIST
@@ -145,34 +129,75 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 			}
 		}
 
+		private static void verifyIntFloatAndEmptyContainers(final String facetName, final IDescription context,
+				final String receiverDescription, final IType<?> receiverType, final IExpressionDescription assigned,
+				final IExpression value, final IType assignedType) {
+			// AD: 6/9/13 special case for int and float (see Issue 590) and for
+			// empty lists and maps
+			if ((value != IExpressionFactory.NIL_EXPR
+					&& !assignedType.getGamlType().isTranslatableInto(receiverType.getGamlType())
+					|| Types.intFloatCase(receiverType, assignedType))
+					&& !Types.isEmptyContainerCase(receiverType, value)) {
+				final EObject target = assigned.getTarget();
+				final String msg = receiverDescription + " of type " + receiverType.getGamlType()
+						+ " is assigned a value of type " + assignedType.getGamlType() + ", which will be casted to "
+						+ receiverType.getGamlType();
+				if (target == null) {
+					context.warning(msg, IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
+				} else {
+					context.warning(msg, IGamlIssue.SHOULD_CAST, target, receiverType.toString());
+				}
+			}
+		}
+
+		/**
+		 * Emit casting warning.
+		 *
+		 * @param facetName
+		 *            the facet name
+		 * @param context
+		 *            the context
+		 * @param receiverDescription
+		 *            the receiver description
+		 * @param receiverType
+		 *            the receiver type
+		 * @param assigned
+		 *            the assigned
+		 * @param receiverContentType
+		 *            the receiver content type
+		 * @param contentType
+		 *            the content type
+		 */
 		private static void emitCastingWarning(final String facetName, final IDescription context,
 				final String receiverDescription, final IType<?> receiverType, final IExpressionDescription assigned,
-				final IType receiverContentType, IType<?> contentType) {
+				final IType receiverContentType, final IType<?> contentType) {
 			final EObject target = assigned.getTarget();
 			if (target == null) {
-				context.warning(
-						"Elements of " + receiverDescription + " are of type " + receiverContentType
-								+ " but are assigned elements of type " + contentType
-								+ ", which will be casted to " + receiverContentType,
-						IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
+				context.warning("Elements of " + receiverDescription + " are of type " + receiverContentType
+						+ " but are assigned elements of type " + contentType + ", which will be casted to "
+						+ receiverContentType, IGamlIssue.SHOULD_CAST, facetName, receiverType.toString());
 			} else {
-				context.warning(
-						"Elements of " + receiverDescription + " are of type " + receiverContentType
-								+ " but are assigned elements of type " + contentType
-								+ ", which will be casted to " + receiverContentType,
-						IGamlIssue.SHOULD_CAST, target, receiverType.toString());
+				context.warning("Elements of " + receiverDescription + " are of type " + receiverContentType
+						+ " but are assigned elements of type " + contentType + ", which will be casted to "
+						+ receiverContentType, IGamlIssue.SHOULD_CAST, target, receiverType.toString());
 			}
 		}
 
 		/**
 		 * Species are incompatible.
 		 *
-		 * @param context the context
-		 * @param receiverType the receiver type
-		 * @param assigned the assigned
-		 * @param expr2 the expr 2
-		 * @param receiverContentType the receiver content type
-		 * @param contentType the content type
+		 * @param context
+		 *            the context
+		 * @param receiverType
+		 *            the receiver type
+		 * @param assigned
+		 *            the assigned
+		 * @param expr2
+		 *            the expr 2
+		 * @param receiverContentType
+		 *            the receiver content type
+		 * @param contentType
+		 *            the content type
 		 * @return true, if successful
 		 */
 		private static boolean speciesAreIncompatible(final IDescription context, final IType<?> receiverType,
