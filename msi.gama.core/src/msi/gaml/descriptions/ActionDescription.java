@@ -116,37 +116,12 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		// If the names were not known at the time of the creation of the
 		// caller, only the order
 		if ((DO.equals(caller.getKeyword()) || INVOKE.equals(caller.getKeyword())) && names.containsKey("0")) {
-			int index = 0;
-			for (final String the_name : allArgs) {
-				final String key = String.valueOf(index++);
-				final IExpressionDescription old = names.get(key);
-				if (old != null) {
-					names.put(the_name, old);
-					names.remove(key);
-				}
-			}
+			replaceNumberedArgs(names, allArgs);
 		}
 
 		// We compute the list of mandatory args
 
-		if (formalArgs != null) {
-			for (final IDescription c : formalArgs) {
-				final String n = c.getName();
-				if (c.hasFacet(DEFAULT)) {
-					// AD: we compile the default (which is, otherwise, not
-					// computed before validation
-					c.getFacet(DEFAULT).compile(this);
-					continue;
-				}
-				if ((c.hasFacet(OPTIONAL) && c.getFacet(OPTIONAL).equalsString(FALSE) || !c.hasFacet(OPTIONAL))
-						&& !names.containsKey(n)) {
-					caller.error(
-							"Missing argument " + n + " in call to " + getName() + ". Arguments passed are : " + names,
-							IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(), n);
-					return false;
-				}
-			}
-		}
+		if ((formalArgs != null) && !verifyMandatoryArgs(caller, names, formalArgs)) return false;
 
 		for (final Facet arg : names.getFacets()) {
 			// A null value indicates a previous compilation error in the
@@ -179,6 +154,52 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Verify mandatory args.
+	 *
+	 * @param caller the caller
+	 * @param names the names
+	 * @param formalArgs the formal args
+	 * @return true, if successful
+	 */
+	private boolean verifyMandatoryArgs(final IDescription caller, final Arguments names,
+			final Iterable<IDescription> formalArgs) {
+		for (final IDescription c : formalArgs) {
+			final String n = c.getName();
+			if (c.hasFacet(DEFAULT)) {
+				// AD: we compile the default (which is, otherwise, not
+				// computed before validation
+				c.getFacet(DEFAULT).compile(this);
+				continue;
+			}
+			if ((c.hasFacet(OPTIONAL) && c.getFacet(OPTIONAL).equalsString(FALSE) || !c.hasFacet(OPTIONAL))
+					&& !names.containsKey(n)) {
+				caller.error("Missing argument " + n + " in call to " + getName() + ". Arguments passed are : " + names,
+						IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(), n);
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Replace numbered args.
+	 *
+	 * @param names the names
+	 * @param allArgs the all args
+	 */
+	private void replaceNumberedArgs(final Arguments names, final List<String> allArgs) {
+		int index = 0;
+		for (final String the_name : allArgs) {
+			final String key = String.valueOf(index++);
+			final IExpressionDescription old = names.get(key);
+			if (old != null) {
+				names.put(the_name, old);
+				names.remove(key);
+			}
+		}
 	}
 
 	/**

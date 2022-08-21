@@ -287,18 +287,7 @@ public class GamlSyntacticConverter {
 				convertArgs(def.getArgs(), elt, errors);
 			}
 		} else if (stm instanceof S_Do) {
-			// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1:
-			// V1, ID2:V2)"
-			final Expression e = stm.getExpr();
-			addFacet(elt, ACTION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
-			// Systematically adds the internal function (see #2915) in order to have the right documentation
-			// TODO AD: verify that 'ACTION' is still necessary in that case
-			addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
-			if (e instanceof Function f) {
-				final ExpressionList list = f.getRight();
-				if (list != null) { addFacet(elt, WITH, convExpr(list, errors), errors); }
-
-			}
+			processDo(stm, errors, elt);
 		} else if (stm instanceof S_If) {
 			// If the statement is "if", we convert its potential "else" part
 			// and put it as a child
@@ -316,31 +305,13 @@ public class GamlSyntacticConverter {
 			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
 		} else if (stm instanceof S_Try) {
 			convCatch((S_Try) stm, elt, errors);
-		} else if (IKeyword.PARAMETER.equals(keyword)) {
-			// As the description of parameters does not accept children, we move the block to the
-			// 'on_change' facet.
-			Block b = stm.getBlock();
-			if (b != null) {
-				final ISyntacticElement blockElt =
-						SyntacticFactory.create(ACTION, new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
-				convertBlock(blockElt, b, errors);
-				IExpressionDescription fexpr = convExpr(blockElt, errors);
-				addFacet(elt, IKeyword.ON_CHANGE, fexpr, errors);
-			}
-		}
+		} else if (IKeyword.PARAMETER.equals(keyword)) { processParameter(stm, errors, elt); }
 
 		// We apply some conversions to the facets expressed in the statement
 		convertFacets(stm, keyword, elt, errors);
 
 		if (stm instanceof S_Experiment) {
-			// We do it also for experiments, and change their name
-			final IExpressionDescription type = elt.getExpressionAt(TYPE);
-			if (type == null) { elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_)); }
-			// We modify the names of experiments so as not to confuse them with
-			// species
-			final String name = elt.getName();
-			elt.setFacet(TITLE, convertToLabel(null, "Experiment " + name));
-			elt.setFacet(NAME, convertToLabel(null, name));
+			processExperiment(elt);
 		} else if (METHOD.equals(keyword)) {
 			// We apply some conversion for methods (to get the name instead of
 			// the "method" keyword)
@@ -350,6 +321,70 @@ public class GamlSyntacticConverter {
 		// We convert the block of statements (if any)
 		if (!IKeyword.PARAMETER.equals(keyword)) { convertBlock(elt, stm.getBlock(), errors); }
 		return elt;
+	}
+
+	/**
+	 * Process experiment.
+	 *
+	 * @param elt the elt
+	 */
+	private void processExperiment(final ISyntacticElement elt) {
+		// We do it also for experiments, and change their name
+		final IExpressionDescription type = elt.getExpressionAt(TYPE);
+		if (type == null) { elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_)); }
+		// We modify the names of experiments so as not to confuse them with
+		// species
+		final String name = elt.getName();
+		elt.setFacet(TITLE, convertToLabel(null, "Experiment " + name));
+		elt.setFacet(NAME, convertToLabel(null, name));
+	}
+
+	/**
+	 * Process parameter.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param errors
+	 *            the errors
+	 * @param elt
+	 *            the elt
+	 */
+	private void processParameter(final Statement stm, final Set<Diagnostic> errors, final ISyntacticElement elt) {
+		// As the description of parameters does not accept children, we move the block to the
+		// 'on_change' facet.
+		Block b = stm.getBlock();
+		if (b != null) {
+			final ISyntacticElement blockElt =
+					SyntacticFactory.create(ACTION, new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
+			convertBlock(blockElt, b, errors);
+			IExpressionDescription fexpr = convExpr(blockElt, errors);
+			addFacet(elt, IKeyword.ON_CHANGE, fexpr, errors);
+		}
+	}
+
+	/**
+	 * Process do.
+	 *
+	 * @param stm
+	 *            the stm
+	 * @param errors
+	 *            the errors
+	 * @param elt
+	 *            the elt
+	 */
+	private void processDo(final Statement stm, final Set<Diagnostic> errors, final ISyntacticElement elt) {
+		// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1:
+		// V1, ID2:V2)"
+		final Expression e = stm.getExpr();
+		addFacet(elt, ACTION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
+		// Systematically adds the internal function (see #2915) in order to have the right documentation
+		// TODO AD: verify that 'ACTION' is still necessary in that case
+		addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
+		if (e instanceof Function f) {
+			final ExpressionList list = f.getRight();
+			if (list != null) { addFacet(elt, WITH, convExpr(list, errors), errors); }
+
+		}
 	}
 
 	/**
@@ -475,71 +510,127 @@ public class GamlSyntacticConverter {
 		final IExpressionDescription value = convExpr(stm.getValue(), errors);
 		String keyword = originalKeyword;
 		if (keyword.endsWith("<-") || SET.equals(keyword)) {
-			// Translation of "container[index] <- value" to
-			// "put item: value in: container at: index"
-			// 20/1/14: Translation of container[index] +<- value" to
-			// "add item: value in: container at: index"
-			if (expr instanceof Access && "[".equals(((Access) expr).getOp())) {
-				final String kw = "+<-".equals(keyword) ? ADD : PUT;
-				final String to = "+<-".equals(keyword) ? TO : IN;
-				elt.setKeyword(kw);
-				addFacet(elt, ITEM, value, errors);
-				addFacet(elt, to, convExpr(((Access) expr).getLeft(), errors), errors);
-				final List<Expression> args = EGaml.getInstance().getExprsOf(((Access) expr).getRight());
-				if (args.size() == 0) {
-					// Add facet all: true when no index is provided
-					addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
-				} else if (args.size() == 1) { // Integer index -- or pair index see #3099
-					addFacet(elt, AT, convExpr(args.get(0), errors), errors);
-				} else { // Point index
-					final IExpressionDescription p = new OperatorExpressionDescription("internal_list",
-							convExpr(args.get(0), errors), convExpr(args.get(1), errors));
-					addFacet(elt, AT, p, errors);
-				}
-				keyword = kw;
-			} else {
-				// Translation of "var <- value" to "set var value: value"
-				elt.setKeyword(SET);
-				addFacet(elt, VALUE, value, errors);
-				keyword = SET;
-			}
+			keyword = processBasicAssignment(elt, expr, errors, value, keyword);
 		} else if (keyword.startsWith("<<") || "<+".equals(keyword)) {
 			// Translation of "container <+ item" or "container << item" to "add
 			// item: item to: container"
 			// 08/01/14: Addition of the "<<+" (add all)
-			elt.setKeyword(ADD);
-			addFacet(elt, TO, convExpr(expr, errors), errors);
-			addFacet(elt, ITEM, value, errors);
-			if ("<<+".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors); }
-			keyword = ADD;
-
+			keyword = processAdditiveAssignment(elt, expr, errors, value, keyword);
 		} else if (keyword.startsWith(">>") || ">-".equals(keyword)) {
-			// Translation of "container >> item" or "container >- item" to
-			// "remove item: item from: container"
-			// 08/01/14: Addition of the ">>-" keyword (remove all)
-			elt.setKeyword(REMOVE);
-			// 20/01/14: Addition of the access [] to remove from the index
-			if (expr instanceof Access && "[".equals(((Access) expr).getOp())
-					&& EGaml.getInstance().getExprsOf(((Access) expr).getRight()).size() == 0) {
-				addFacet(elt, FROM, convExpr(((Access) expr).getLeft(), errors), errors);
-				addFacet(elt, INDEX, value, errors);
-			} else {
-				addFacet(elt, FROM, convExpr(expr, errors), errors);
-				addFacet(elt, ITEM, value, errors);
+			keyword = processRemovalAssignment(elt, expr, errors, value, keyword);
+		} else if (EQUATION_OP.equals(keyword)) { processEquationAssignment(elt, expr, errors, value); }
+		return keyword;
+	}
+
+	/**
+	 * Process equation assignment.
+	 *
+	 * @param elt the elt
+	 * @param expr the expr
+	 * @param errors the errors
+	 * @param value the value
+	 */
+	private void processEquationAssignment(final ISyntacticElement elt, final Expression expr,
+			final Set<Diagnostic> errors, final IExpressionDescription value) {
+		// conversion of left member (either a var or a function)
+		IExpressionDescription left = null;
+		if (expr instanceof VariableRef) {
+			left = new OperatorExpressionDescription(ZERO, convExpr(expr, errors));
+		} else {
+			left = convExpr(expr, errors);
+		}
+		addFacet(elt, EQUATION_LEFT, left, errors);
+		// Translation of right member
+		addFacet(elt, EQUATION_RIGHT, value, errors);
+	}
+
+	/**
+	 * Process removal assignment.
+	 *
+	 * @param elt the elt
+	 * @param expr the expr
+	 * @param errors the errors
+	 * @param value the value
+	 * @param keyword the keyword
+	 * @return the string
+	 */
+	private String processRemovalAssignment(final ISyntacticElement elt, final Expression expr,
+			final Set<Diagnostic> errors, final IExpressionDescription value, String keyword) {
+		// Translation of "container >> item" or "container >- item" to
+		// "remove item: item from: container"
+		// 08/01/14: Addition of the ">>-" keyword (remove all)
+		elt.setKeyword(REMOVE);
+		// 20/01/14: Addition of the access [] to remove from the index
+		if (expr instanceof Access && "[".equals(((Access) expr).getOp())
+				&& EGaml.getInstance().getExprsOf(((Access) expr).getRight()).size() == 0) {
+			addFacet(elt, FROM, convExpr(((Access) expr).getLeft(), errors), errors);
+			addFacet(elt, INDEX, value, errors);
+		} else {
+			addFacet(elt, FROM, convExpr(expr, errors), errors);
+			addFacet(elt, ITEM, value, errors);
+		}
+		if (">>-".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors); }
+		return REMOVE;
+	}
+
+	/**
+	 * Process additive assignment.
+	 *
+	 * @param elt the elt
+	 * @param expr the expr
+	 * @param errors the errors
+	 * @param value the value
+	 * @param keyword the keyword
+	 * @return the string
+	 */
+	private String processAdditiveAssignment(final ISyntacticElement elt, final Expression expr,
+			final Set<Diagnostic> errors, final IExpressionDescription value, String keyword) {
+		elt.setKeyword(ADD);
+		addFacet(elt, TO, convExpr(expr, errors), errors);
+		addFacet(elt, ITEM, value, errors);
+		if ("<<+".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors); }
+		return ADD;
+	}
+
+	/**
+	 * Process basic assignment.
+	 *
+	 * @param elt the elt
+	 * @param expr the expr
+	 * @param errors the errors
+	 * @param value the value
+	 * @param keyword the keyword
+	 * @return the string
+	 */
+	private String processBasicAssignment(final ISyntacticElement elt, final Expression expr,
+			final Set<Diagnostic> errors, final IExpressionDescription value, String keyword) {
+		// Translation of "container[index] <- value" to
+		// "put item: value in: container at: index"
+		// 20/1/14: Translation of container[index] +<- value" to
+		// "add item: value in: container at: index"
+		if (expr instanceof Access && "[".equals(((Access) expr).getOp())) {
+			final String kw = "+<-".equals(keyword) ? ADD : PUT;
+			final String to = "+<-".equals(keyword) ? TO : IN;
+			elt.setKeyword(kw);
+			addFacet(elt, ITEM, value, errors);
+			addFacet(elt, to, convExpr(((Access) expr).getLeft(), errors), errors);
+			final List<Expression> args = EGaml.getInstance().getExprsOf(((Access) expr).getRight());
+			if (args.size() == 0) {
+				// Add facet all: true when no index is provided
+				addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
+			} else if (args.size() == 1) { // Integer index -- or pair index see #3099
+				addFacet(elt, AT, convExpr(args.get(0), errors), errors);
+			} else { // Point index
+				final IExpressionDescription p = new OperatorExpressionDescription("internal_list",
+						convExpr(args.get(0), errors), convExpr(args.get(1), errors));
+				addFacet(elt, AT, p, errors);
 			}
-			if (">>-".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors); }
-			keyword = REMOVE;
-		} else if (EQUATION_OP.equals(keyword)) {
-			// conversion of left member (either a var or a function)
-			IExpressionDescription left = null;
-			if (expr instanceof VariableRef) {
-				left = new OperatorExpressionDescription(ZERO, convExpr(expr, errors));
-			} else {
-				left = convExpr(expr, errors);
-			}
-			addFacet(elt, EQUATION_LEFT, left, errors);
-			// Translation of right member
-			addFacet(elt, EQUATION_RIGHT, value, errors);
+			keyword = kw;
+		} else {
+			// Translation of "var <- value" to "set var value: value"
+			elt.setKeyword(SET);
+			addFacet(elt, VALUE, value, errors);
+			keyword = SET;
 		}
 		return keyword;
 	}

@@ -129,60 +129,17 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 					result = GamaType.findCommonType(exprs, kind);
 					break;
 				case FIRST_CONTENT_TYPE_OR_TYPE:
-					final IType leftType = exprs[0].getGamlType();
-					final IType t2 = leftType.getContentType();
-					if (t2 == Types.NO_TYPE) {
-						result = leftType;
-					} else {
-						result = t2;
-					}
+					result = processFirstContentTypeOrType();
 					break;
 				case SECOND_DENOTED_TYPE:
 					result = exprs[1].getDenotedType();
 					break;
 				case SECOND_CONTENT_TYPE_OR_TYPE:
-					final IType rightType = exprs[1].getGamlType();
-					final IType t3 = rightType.getContentType();
-					if (t3 == Types.NO_TYPE) {
-						result = rightType;
-					} else {
-						result = t3;
-					}
+					result = processSecondContentTypeOrType();
 					break;
 				default:
 					if (typeProvider < INDEXED_TYPES) {
-						int index = -1;
-						int kindOfIndex = -1;
-						if (typeProvider > TYPE_AT_INDEX) {
-							index = typeProvider - TYPE_AT_INDEX - 1;
-							kindOfIndex = GamaType.TYPE;
-						} else if (typeProvider > CONTENT_TYPE_AT_INDEX) {
-							index = typeProvider - CONTENT_TYPE_AT_INDEX - 1;
-							kindOfIndex = GamaType.CONTENT;
-						} else if (typeProvider > DENOTED_TYPE_AT_INDEX) {
-							index = typeProvider - DENOTED_TYPE_AT_INDEX - 1;
-							kindOfIndex = GamaType.DENOTED;
-						} else if (typeProvider > KEY_TYPE_AT_INDEX) {
-							index = typeProvider - KEY_TYPE_AT_INDEX - 1;
-							kindOfIndex = GamaType.KEY;
-						}
-						if (index > -1 && index < exprs.length) {
-							final IExpression expr = exprs[index];
-							switch (kindOfIndex) {
-								case GamaType.TYPE:
-									result = expr.getGamlType();
-									break;
-								case GamaType.CONTENT:
-									result = expr.getGamlType().getContentType();
-									break;
-								case GamaType.KEY:
-									result = expr.getGamlType().getKeyType();
-									break;
-								case GamaType.DENOTED:
-									result = expr.getDenotedType();
-									break;
-							}
-						}
+						result = processIndexedTypeProvider(result, typeProvider);
 					}
 			}
 		}
@@ -193,6 +150,66 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 			if (c != Types.NO_TYPE) { result = ((IContainerType<?>) result).of(c); }
 		}
 		if (returnFloatsInsteadOfInts && result == Types.INT) return Types.FLOAT;
+		return result;
+	}
+
+	private IType processIndexedTypeProvider(IType result, int typeProvider) {
+		int index = -1;
+		int kindOfIndex = -1;
+		if (typeProvider > TYPE_AT_INDEX) {
+			index = typeProvider - TYPE_AT_INDEX - 1;
+			kindOfIndex = GamaType.TYPE;
+		} else if (typeProvider > CONTENT_TYPE_AT_INDEX) {
+			index = typeProvider - CONTENT_TYPE_AT_INDEX - 1;
+			kindOfIndex = GamaType.CONTENT;
+		} else if (typeProvider > DENOTED_TYPE_AT_INDEX) {
+			index = typeProvider - DENOTED_TYPE_AT_INDEX - 1;
+			kindOfIndex = GamaType.DENOTED;
+		} else if (typeProvider > KEY_TYPE_AT_INDEX) {
+			index = typeProvider - KEY_TYPE_AT_INDEX - 1;
+			kindOfIndex = GamaType.KEY;
+		}
+		if (index > -1 && index < exprs.length) {
+			final IExpression expr = exprs[index];
+			switch (kindOfIndex) {
+				case GamaType.TYPE:
+					result = expr.getGamlType();
+					break;
+				case GamaType.CONTENT:
+					result = expr.getGamlType().getContentType();
+					break;
+				case GamaType.KEY:
+					result = expr.getGamlType().getKeyType();
+					break;
+				case GamaType.DENOTED:
+					result = expr.getDenotedType();
+					break;
+			}
+		}
+		return result;
+	}
+
+	private IType processSecondContentTypeOrType() {
+		IType result;
+		final IType rightType = exprs[1].getGamlType();
+		final IType t3 = rightType.getContentType();
+		if (t3 == Types.NO_TYPE) {
+			result = rightType;
+		} else {
+			result = t3;
+		}
+		return result;
+	}
+
+	private IType processFirstContentTypeOrType() {
+		IType result;
+		final IType leftType = exprs[0].getGamlType();
+		final IType t2 = leftType.getContentType();
+		if (t2 == Types.NO_TYPE) {
+			result = leftType;
+		} else {
+			result = t2;
+		}
 		return result;
 	}
 

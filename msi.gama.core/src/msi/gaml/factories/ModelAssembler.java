@@ -97,50 +97,15 @@ public class ModelAssembler {
 		final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes = new IMap[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
-		Facets globalFacets = null;
 
-		final Map<String, List<String>> pragmas = source.getPragmas();
-		collector.resetInfoAndWarning();
-		if (pragmas != null) {
-			if (pragmas.containsKey(IKeyword.PRAGMA_NO_INFO)) { collector.setNoInfo(); }
-			if (pragmas.containsKey(IKeyword.PRAGMA_NO_WARNING)) { collector.setNoWarning(); }
-			if (pragmas.containsKey(IKeyword.PRAGMA_NO_EXPERIMENT)) { collector.setNoExperiment(); }
-			if (GamaPreferences.Experimental.REQUIRED_PLUGINS.getValue()
-					&& pragmas.containsKey(IKeyword.PRAGMA_REQUIRES)
-					&& !collector.verifyPlugins(pragmas.get(IKeyword.PRAGMA_REQUIRES)))
-				return null;
-		}
+		if (!applyPragmas(collector, source)) return null;
 
 		final Map<String, SpeciesDescription> tempSpeciesCache = GamaMapFactory.createUnordered();
 
+		Facets globalFacets = null;
 		for (final ISyntacticElement cm : models.reverse()) {
-			final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
-			if (currentModel != null) {
-				if (currentModel.hasFacets()) {
-					if (globalFacets == null) {
-						globalFacets = currentModel.copyFacets(null);
-					} else {
-						globalFacets.putAll(currentModel.copyFacets(null));
-					}
-				}
-				currentModel.visitChildren(element -> {
-					element.setFacet(IKeyword.ORIGIN, ConstantExpressionDescription.create(currentModel.getName()));
-					globalNodes.addChild(element);
-				});
-				SyntacticVisitor visitor = element -> addSpeciesNode(element, speciesNodes, collector);
-				currentModel.visitSpecies(visitor);
-
-				// We input the species so that grids are always the last ones
-				// (see DiffusionStatement)
-				currentModel.visitGrids(visitor);
-				visitor = element -> {
-					if (experimentNodes[0] == null) { experimentNodes[0] = GamaMapFactory.create(); }
-					addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
-
-				};
-				currentModel.visitExperiments(visitor);
-
-			}
+			globalFacets = extractAndAssembleElementsOf(collector, speciesNodes, experimentNodes, globalNodes,
+					globalFacets, cm);
 		}
 
 		final String modelName = buildModelName(source.getName());
@@ -149,31 +114,10 @@ public class ModelAssembler {
 		// be able to look for resources. These working paths come from the
 		// imported models
 
-		Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null : ImmutableSet
-				.copyOf(Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
+		Set<String> absoluteAlternatePathAsStrings = buildWorkingPaths(mm, models);
 
-		if (mm != null) {
-			for (final ModelDescription m1 : mm.values()) {
-				for (final String im : m1.getAlternatePaths()) {
-					absoluteAlternatePathAsStrings =
-							Sets.union(absoluteAlternatePathAsStrings, Collections.singleton(im));
-				}
-			}
-		}
-
-		ModelDescription parent = ROOT;
-		if (globalFacets != null && globalFacets.containsKey(PARENT)) {
-			String parentModel = globalFacets.getLabel(PARENT);
-			if (BUILT_IN_MODELS.containsKey(parentModel)) { parent = BUILT_IN_MODELS.get(parentModel); }
-		}
-		final ModelDescription model =
-				new ModelDescription(modelName, null, projectPath, modelPath, source.getElement(), null, parent, null,
-						globalFacets, collector, absoluteAlternatePathAsStrings, parent.getAgentConstructor());
-
-		final Collection<String> allModelNames = models.size() == 1 ? null : ImmutableSet
-				.copyOf(Iterables.transform(Iterables.skip(models, 1), each -> buildModelName(each.getName())));
-		model.setImportedModelNames(allModelNames);
-		model.isDocumenting(document);
+		final ModelDescription model = buildPrimaryModel(projectPath, modelPath, collector, document, models, source,
+				globalFacets, modelName, absoluteAlternatePathAsStrings);
 
 		// hqnghi add micro-models
 		if (mm != null) {
@@ -183,36 +127,11 @@ public class ModelAssembler {
 		// end-hqnghi
 		// recursively add user-defined species to world and down on to the
 		// hierarchy
-		speciesNodes.forEachValue(speciesNode -> {
-			addMicroSpecies(model, speciesNode, tempSpeciesCache);
-			return true;
-		});
-		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachPair((s, b) -> {
-				b.forEachValue(experimentNode -> {
-					addExperiment(s, model, experimentNode, tempSpeciesCache);
-					return true;
-				});
-				return true;
-			});
-		}
+		addSpeciesAndExperiments(speciesNodes, experimentNodes, tempSpeciesCache, model);
 
 		// Parent the species and the experiments of the model (all are now
 		// known).
-		speciesNodes.forEachValue(speciesNode -> {
-			parentSpecies(model, speciesNode, model, tempSpeciesCache);
-			return true;
-		});
-
-		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachPair((s, b) -> {
-				b.forEachValue(experimentNode -> {
-					parentExperiment(model, experimentNode);
-					return true;
-				});
-				return true;
-			});
-		}
+		parentSpeciesAndExperiments(speciesNodes, experimentNodes, tempSpeciesCache, model);
 
 		// Initialize the hierarchy of types
 		model.buildTypes();
@@ -226,20 +145,7 @@ public class ModelAssembler {
 		// actions....
 		complementSpecies(model, globalNodes);
 
-		speciesNodes.forEachValue(speciesNode -> {
-			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
-			return true;
-		});
-
-		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachPair((s, b) -> {
-				b.forEachValue(experimentNode -> {
-					complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
-					return true;
-				});
-				return true;
-			});
-		}
+		complementSpeciesAndExperiments(speciesNodes, experimentNodes, model);
 
 		// Complement recursively the different species (incl. the world). The
 		// recursion is hierarchical
@@ -259,6 +165,173 @@ public class ModelAssembler {
 		if (document) { collector.document(model); }
 		return model;
 
+	}
+
+	private void complementSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
+			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes, final ModelDescription model) {
+		speciesNodes.forEachValue(speciesNode -> {
+			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
+			return true;
+		});
+
+		if (experimentNodes[0] != null) {
+			experimentNodes[0].forEachPair((s, b) -> {
+				b.forEachValue(experimentNode -> {
+					complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
+					return true;
+				});
+				return true;
+			});
+		}
+	}
+
+	private void addSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
+			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
+			final Map<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
+		speciesNodes.forEachValue(speciesNode -> {
+			addMicroSpecies(model, speciesNode, tempSpeciesCache);
+			return true;
+		});
+		if (experimentNodes[0] != null) {
+			experimentNodes[0].forEachPair((s, b) -> {
+				b.forEachValue(experimentNode -> {
+					addExperiment(s, model, experimentNode, tempSpeciesCache);
+					return true;
+				});
+				return true;
+			});
+		}
+	}
+
+	private void parentSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
+			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
+			final Map<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
+		speciesNodes.forEachValue(speciesNode -> {
+			parentSpecies(model, speciesNode, model, tempSpeciesCache);
+			return true;
+		});
+
+		if (experimentNodes[0] != null) {
+			experimentNodes[0].forEachPair((s, b) -> {
+				b.forEachValue(experimentNode -> {
+					parentExperiment(model, experimentNode);
+					return true;
+				});
+				return true;
+			});
+		}
+	}
+
+	private ModelDescription buildPrimaryModel(final String projectPath, final String modelPath,
+			final ValidationContext collector, final boolean document, final ImmutableList<ISyntacticElement> models,
+			final ISyntacticElement source, Facets globalFacets, final String modelName,
+			Set<String> absoluteAlternatePathAsStrings) {
+		ModelDescription parent = ROOT;
+		if (globalFacets != null && globalFacets.containsKey(PARENT)) {
+			String parentModel = globalFacets.getLabel(PARENT);
+			if (BUILT_IN_MODELS.containsKey(parentModel)) { parent = BUILT_IN_MODELS.get(parentModel); }
+		}
+		final ModelDescription model =
+				new ModelDescription(modelName, null, projectPath, modelPath, source.getElement(), null, parent, null,
+						globalFacets, collector, absoluteAlternatePathAsStrings, parent.getAgentConstructor());
+
+		final Collection<String> allModelNames = models.size() == 1 ? null : ImmutableSet
+				.copyOf(Iterables.transform(Iterables.skip(models, 1), each -> buildModelName(each.getName())));
+		model.setImportedModelNames(allModelNames);
+		model.isDocumenting(document);
+		return model;
+	}
+
+	/**
+	 * Builds the working paths.
+	 *
+	 * @param mm the mm
+	 * @param models the models
+	 * @return the sets the
+	 */
+	private Set<String> buildWorkingPaths(final Map<String, ModelDescription> mm,
+			final ImmutableList<ISyntacticElement> models) {
+		Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null : ImmutableSet
+				.copyOf(Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
+
+		if (mm != null) {
+			for (final ModelDescription m1 : mm.values()) {
+				for (final String im : m1.getAlternatePaths()) {
+					absoluteAlternatePathAsStrings =
+							Sets.union(absoluteAlternatePathAsStrings, Collections.singleton(im));
+				}
+			}
+		}
+		return absoluteAlternatePathAsStrings;
+	}
+
+	/**
+	 * Extract and assemble elements of.
+	 *
+	 * @param collector the collector
+	 * @param speciesNodes the species nodes
+	 * @param experimentNodes the experiment nodes
+	 * @param globalNodes the global nodes
+	 * @param globalFacets the global facets
+	 * @param cm the cm
+	 * @return the facets
+	 */
+	private Facets extractAndAssembleElementsOf(final ValidationContext collector,
+			final IMap<String, ISyntacticElement> speciesNodes,
+			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes, final ISyntacticElement globalNodes,
+			Facets globalFacets, final ISyntacticElement cm) {
+		final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
+		if (currentModel != null) {
+			if (currentModel.hasFacets()) {
+				if (globalFacets == null) {
+					globalFacets = currentModel.copyFacets(null);
+				} else {
+					globalFacets.putAll(currentModel.copyFacets(null));
+				}
+			}
+			currentModel.visitChildren(element -> {
+				element.setFacet(IKeyword.ORIGIN, ConstantExpressionDescription.create(currentModel.getName()));
+				globalNodes.addChild(element);
+			});
+			SyntacticVisitor visitor = element -> addSpeciesNode(element, speciesNodes, collector);
+			currentModel.visitSpecies(visitor);
+
+			// We input the species so that grids are always the last ones
+			// (see DiffusionStatement)
+			currentModel.visitGrids(visitor);
+			visitor = element -> {
+				if (experimentNodes[0] == null) { experimentNodes[0] = GamaMapFactory.create(); }
+				addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
+
+			};
+			currentModel.visitExperiments(visitor);
+
+		}
+		return globalFacets;
+	}
+
+	/**
+	 * Apply pragmas.
+	 *
+	 * @param collector
+	 *            the collector
+	 * @param source
+	 *            the source
+	 * @return true, if successful
+	 */
+	private boolean applyPragmas(final ValidationContext collector, final ISyntacticElement source) {
+		final Map<String, List<String>> pragmas = source.getPragmas();
+		collector.resetInfoAndWarning();
+		if (pragmas != null) {
+			if (pragmas.containsKey(IKeyword.PRAGMA_NO_INFO)) { collector.setNoInfo(); }
+			if (pragmas.containsKey(IKeyword.PRAGMA_NO_WARNING)) { collector.setNoWarning(); }
+			if (pragmas.containsKey(IKeyword.PRAGMA_NO_EXPERIMENT)) { collector.setNoExperiment(); }
+			if (GamaPreferences.Experimental.REQUIRED_PLUGINS.getValue()
+					&& pragmas.containsKey(IKeyword.PRAGMA_REQUIRES)
+					&& !collector.verifyPlugins(pragmas.get(IKeyword.PRAGMA_REQUIRES)))
+				return false;
+		}
+		return true;
 	}
 
 	/**

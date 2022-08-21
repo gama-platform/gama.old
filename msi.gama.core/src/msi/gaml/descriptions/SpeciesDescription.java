@@ -314,38 +314,42 @@ public class SpeciesDescription extends TypeDescription {
 		Iterable<Class<? extends ISkill>> skillClasses = transform(getSkills(), TO_CLASS);
 		Iterable<IDescription> javaChildren = GAML.getAllChildrenOf(javaBase, skillClasses);
 		for (final IDescription v : javaChildren) {
-			if (isBuiltIn()) { v.setOriginName("built-in species " + getName()); }
-			if (v instanceof VariableDescription) {
-				boolean toAdd = false;
-				if (this.isBuiltIn() && !hasAttribute(v.getName()) || ((VariableDescription) v).isContextualType()) {
-					toAdd = true;
-				} else if (parent != null && parent != this) {
-					final VariableDescription existing = parent.getAttribute(v.getName());
-					if (existing == null || !existing.getOriginName().equals(v.getOriginName())) { toAdd = true; }
-				} else {
-					toAdd = true;
-				}
-				if (toAdd) {
-					// Fixes a problem where built-in attributes were not linked with their declaring class
-					// Class<?> c = VariableDescription.CLASS_DEFINITIONS.remove(v);
-					final VariableDescription var = (VariableDescription) v.copy(this);
-					addOwnAttribute(var);
-					var.builtInDoc = ((VariableDescription) v).getBuiltInDoc();
-					// VariableDescription.CLASS_DEFINITIONS.put(var, c);
-				}
+			addJavaChild(v);
+		}
+	}
 
+	private void addJavaChild(final IDescription v) {
+		if (isBuiltIn()) { v.setOriginName("built-in species " + getName()); }
+		if (v instanceof VariableDescription) {
+			boolean toAdd = false;
+			if (this.isBuiltIn() && !hasAttribute(v.getName()) || ((VariableDescription) v).isContextualType()) {
+				toAdd = true;
+			} else if (parent != null && parent != this) {
+				final VariableDescription existing = parent.getAttribute(v.getName());
+				if (existing == null || !existing.getOriginName().equals(v.getOriginName())) { toAdd = true; }
 			} else {
-				boolean toAdd = false;
-				if (parent == null) {
-					toAdd = true;
-				} else if (parent != this) {
-					final StatementDescription existing = parent.getAction(v.getName());
-					if (existing == null || !existing.getOriginName().equals(v.getOriginName())) { toAdd = true; }
-				}
-				if (toAdd) {
-					v.setEnclosingDescription(this);
-					addAction((ActionDescription) v);
-				}
+				toAdd = true;
+			}
+			if (toAdd) {
+				// Fixes a problem where built-in attributes were not linked with their declaring class
+				// Class<?> c = VariableDescription.CLASS_DEFINITIONS.remove(v);
+				final VariableDescription var = (VariableDescription) v.copy(this);
+				addOwnAttribute(var);
+				var.builtInDoc = ((VariableDescription) v).getBuiltInDoc();
+				// VariableDescription.CLASS_DEFINITIONS.put(var, c);
+			}
+
+		} else {
+			boolean toAdd = false;
+			if (parent == null) {
+				toAdd = true;
+			} else if (parent != this) {
+				final StatementDescription existing = parent.getAction(v.getName());
+				if (existing == null || !existing.getOriginName().equals(v.getOriginName())) { toAdd = true; }
+			}
+			if (toAdd) {
+				v.setEnclosingDescription(this);
+				addAction((ActionDescription) v);
 			}
 		}
 	}

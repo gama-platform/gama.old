@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlSpecies.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlSpecies.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -243,30 +243,19 @@ public class GamlSpecies extends AbstractSpecies {
 		@Override
 		public void validate(final IDescription desc) {
 
-			final IExpression width = desc.getFacetExpr(WIDTH);
-			final IExpression height = desc.getFacetExpr(HEIGHT);
-
 			final SpeciesDescription sd = (SpeciesDescription) desc;
-			final IExpression cellWidth = desc.getFacetExpr(CELL_WIDTH);
-			final IExpression cellHeight = desc.getFacetExpr(CELL_HEIGHT);
+
+			final IExpression neighbours = processNeighbors(sd);
+			// Issue 1311
+			final IExpression cellWidth = sd.getFacetExpr(CELL_WIDTH);
+			final IExpression cellHeight = sd.getFacetExpr(CELL_HEIGHT);
 			if (cellWidth != null == (cellHeight == null)) {
 				sd.error("'cell_width' and 'cell_height' must be defined together", IGamlIssue.CONFLICTING_FACETS,
 						cellWidth == null ? CELL_HEIGHT : CELL_WIDTH);
 				return;
 			}
-			final IExpression neighbours = desc.getFacetExpr(IKeyword.NEIGHBOURS);
-			final IExpression neighbors = desc.getFacetExpr(IKeyword.NEIGHBORS);
-
-			if (neighbours != null && neighbors != null) {
-				sd.error("'neighbours' and 'neighbors' cannot be defined at the same time",
-						IGamlIssue.CONFLICTING_FACETS, NEIGHBOURS);
-				return;
-			}
-			if (neighbours != null && neighbors == null) {
-				sd.setFacet(NEIGHBORS, neighbours);
-				sd.removeFacets(NEIGHBOURS);
-			}
-			// Issue 1311
+			final IExpression width = sd.getFacetExpr(WIDTH);
+			final IExpression height = sd.getFacetExpr(HEIGHT);
 			if (cellWidth != null && width != null) {
 				sd.error("'cell_width' and 'width' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,
 						WIDTH);
@@ -278,45 +267,46 @@ public class GamlSpecies extends AbstractSpecies {
 				return;
 			}
 
-			if (cellHeight != null || cellWidth != null || width != null || height != null || neighbors != null
-					|| neighbours != null) {
-				if (!IKeyword.GRID.equals(desc.getKeyword())) {
+			if (cellHeight != null || cellWidth != null || width != null || height != null || neighbours != null) {
+				if (!IKeyword.GRID.equals(sd.getKeyword())) {
 					sd.warning("Facets related to dimensions and neighboring can only be defined in 'grids' definition",
 							IGamlIssue.CONFLICTING_FACETS);
 				}
 			}
-
-			final IExpression file = desc.getFacetExpr(FILE);
-			final IExpression files = desc.getFacetExpr(FILES);
-			if (file != null && files != null) {
-				sd.error(
-						"The use of the 'files' facet prohibits the use of the 'files' facet: if several files have to be loaded in the grid, use the 'files' facet, otherwise use the 'file' facet",
-						IGamlIssue.CONFLICTING_FACETS, FILE);
-			}
-			if ((file != null || files != null)
-					&& (height != null || width != null || cellWidth != null || cellHeight != null)) {
-
-				sd.error(
-						"The use of the 'file' and 'files' facets prohibit the use of dimension facets ('width', 'height', 'cell_width', 'cell_height')",
-						IGamlIssue.CONFLICTING_FACETS, FILE);
-			}
-
+			verifyFiles(sd, width, height, cellWidth, cellHeight);
 			// Issue 1138
-			final IExpression freq = desc.getFacetExpr(FREQUENCY);
-			if (freq != null && freq.isConst() && Integer.valueOf(0).equals(freq.getConstValue())) {
-				for (final VariableDescription vd : sd.getAttributes()) {
-					if (vd.getFacet(UPDATE, VALUE) != null) {
-						vd.warning(vd.getName() + " will never be updated because " + desc.getName()
-								+ " has a scheduling frequency of 0", IGamlIssue.WRONG_CONTEXT);
-					}
-				}
-				for (final IDescription bd : sd.getBehaviors()) {
-					bd.warning(bd.getName() + " will never be run because " + desc.getName()
-							+ " has a scheduling frequency of 0", IGamlIssue.WRONG_CONTEXT);
+			verifyFrequency(sd);
+			verifyTorus(sd);
 
-				}
+			final String name = sd.getName();
+			if (GAML.isUnaryOperator(name)) {
+				sd.error("The name '" + name + "' cannot be used for naming this " + sd.getKeyword()
+						+ ", as the derived casting operator (" + name
+						+ "(...)) would conflict with an existing unary operator");
 			}
 
+		}
+
+		private IExpression processNeighbors(final SpeciesDescription sd) {
+			if (sd.hasFacet(IKeyword.NEIGHBORS) && sd.hasFacet(IKeyword.NEIGHBOURS)) {
+				sd.error("'neighbours' and 'neighbors' cannot be defined at the same time",
+						IGamlIssue.CONFLICTING_FACETS, NEIGHBOURS);
+			}
+			final IExpression neighbours = sd.getFacetExpr(IKeyword.NEIGHBOURS, IKeyword.NEIGHBORS);
+			if (neighbours != null) {
+				sd.setFacet(NEIGHBORS, neighbours);
+				sd.removeFacets(NEIGHBOURS);
+			}
+			return neighbours;
+		}
+
+		/**
+		 * Verify torus.
+		 *
+		 * @param desc
+		 *            the desc
+		 */
+		private void verifyTorus(final IDescription desc) {
 			// If torus is declared on a species other than "global", emit a
 			// warning
 			final IExpression torus = desc.getFacetExpr(TORUS);
@@ -325,29 +315,81 @@ public class GamlSpecies extends AbstractSpecies {
 				desc.warning("The 'torus' facet can only be specified for the model topology (i.e. in 'global')",
 						IGamlIssue.WRONG_CONTEXT, TORUS);
 			}
-			final String name = desc.getName();
-			if (GAML.isUnaryOperator(name)) {
-				desc.error("The name '" + name + "' cannot be used for naming this " + desc.getKeyword()
-						+ ", as the derived casting operator (" + name
-						+ "(...)) would conflict with an existing unary operator");
-			}
+		}
 
+		/**
+		 * Verify files.
+		 *
+		 * @param desc
+		 *            the desc
+		 * @param width
+		 *            the width
+		 * @param height
+		 *            the height
+		 * @param sd
+		 *            the sd
+		 * @param cellWidth
+		 *            the cell width
+		 * @param cellHeight
+		 *            the cell height
+		 */
+		private void verifyFiles(final SpeciesDescription sd, final IExpression width, final IExpression height,
+				final IExpression cellWidth, final IExpression cellHeight) {
+			final IExpression file = sd.getFacetExpr(FILE);
+			final IExpression files = sd.getFacetExpr(FILES);
+			if (file != null && files != null) {
+				sd.error(
+						"The use of the 'files' facet prohibits the use of the 'files' facet: if several files have to be loaded in the grid, use the 'files' facet, otherwise use the 'file' facet",
+						IGamlIssue.CONFLICTING_FACETS, FILE);
+			}
+			if ((file != null || files != null)
+					&& (height != null || width != null || cellWidth != null || cellHeight != null)) {
+				sd.error(
+						"The use of the 'file' and 'files' facets prohibit the use of dimension facets ('width', 'height', 'cell_width', 'cell_height')",
+						IGamlIssue.CONFLICTING_FACETS, FILE);
+			}
+		}
+
+		/**
+		 * Verify frequency.
+		 *
+		 * @param desc
+		 *            the desc
+		 * @param sd
+		 *            the sd
+		 */
+		private void verifyFrequency(final SpeciesDescription sd) {
+			final IExpression freq = sd.getFacetExpr(FREQUENCY);
+			if (freq != null && freq.isConst() && Integer.valueOf(0).equals(freq.getConstValue())) {
+				for (final VariableDescription vd : sd.getAttributes()) {
+					if (vd.getFacet(UPDATE, VALUE) != null) {
+						vd.warning(vd.getName() + " will never be updated because " + sd.getName()
+								+ " has a scheduling frequency of 0", IGamlIssue.WRONG_CONTEXT);
+					}
+				}
+				for (final IDescription bd : sd.getBehaviors()) {
+					bd.warning(bd.getName() + " will never be run because " + sd.getName()
+							+ " has a scheduling frequency of 0", IGamlIssue.WRONG_CONTEXT);
+
+				}
+			}
 		}
 	}
 
 	/** The concurrency. */
 	private final IExpression concurrency;
-	
+
 	/** The schedule. */
 	private final IExpression schedule;
-	
+
 	/** The frequency. */
 	private final IExpression frequency;
 
 	/**
 	 * Instantiates a new gaml species.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
@@ -358,10 +400,7 @@ public class GamlSpecies extends AbstractSpecies {
 				final IList<IAgent> agents = GamaListFactory.create();
 				for (final IAgent agent : getPopulation(scope)) {
 					final Object obj = agent.getDirectVarValue(scope, IKeyword.TARGET);
-					if (obj instanceof IAgent) {
-						final IAgent target = (IAgent) obj;
-						if (!target.dead()) { agents.add(agent); }
-					}
+					if (obj instanceof IAgent target && !target.dead()) { agents.add(agent); }
 
 				}
 				return agents;
