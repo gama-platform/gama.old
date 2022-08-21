@@ -258,56 +258,89 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	 *            the y
 	 */
 	void drawText(final TextDrawingAttributes attributes, final double y) {
-		final AxisAngle rotation = attributes.getRotation();
+
 		final GamaPoint p = attributes.getLocation();
 
 		Color previous = null;
 		gl.pushMatrix();
 		try {
 			GamaPoint anchor = attributes.getAnchor();
-			if (rotation != null) {
-				gl.translateBy(p.x, p.y, p.z);
-				final GamaPoint axis = rotation.getAxis();
-				// AD Change to a negative rotation to fix Issue #1514
-				gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
-				// Voids the location so as to make only one translation
-				p.setLocation(0, 0, 0);
-			}
+			applyRotation(attributes, p);
 			final float scale = 1f / (float) gl.getRatios().y;
 			gl.translateBy(p.x - width * scale * anchor.x, p.y + y * scale * anchor.y, p.z);
 			gl.scaleBy(scale, scale, scale);
 			if (!gl.isWireframe()) {
-				// Solid case
-				drawFace(depth == 0);
-				if (depth > 0) {
-					gl.translateBy(0, 0, depth);
-					drawFace(true);
-					gl.translateBy(0, 0, -depth);
-					drawSide();
-				}
-				if (border != null) {
-					previous = gl.getCurrentColor();
-					gl.setCurrentColor(border);
-					gl.translateBy(0, 0, depth + 5 * gl.getCurrentZIncrement());
-					drawBorder();
-					gl.translateBy(0, 0, -depth - 5 * gl.getCurrentZIncrement());
-				}
+				previous = drawFacesAndBorder(previous);
 			} else {
-				// Wireframe case
-				if (border != null) {
-					previous = gl.getCurrentColor();
-					gl.setCurrentColor(border);
-				}
-				if (depth == 0) {
-					// We use the quads side buffer to render only the top (lines)
-					drawBorder();
-				} else {
-					drawSide();
-				}
+				previous = drawWireframe(previous);
 			}
 		} finally {
 			if (previous != null) { gl.setCurrentColor(previous); }
 			gl.popMatrix();
+		}
+	}
+
+	/**
+	 * Draw wireframe.
+	 *
+	 * @param previous the previous
+	 * @return the color
+	 */
+	private Color drawWireframe(Color previous) {
+		// Wireframe case
+		if (border != null) {
+			previous = gl.getCurrentColor();
+			gl.setCurrentColor(border);
+		}
+		if (depth == 0) {
+			// We use the quads side buffer to render only the top (lines)
+			drawBorder();
+		} else {
+			drawSide();
+		}
+		return previous;
+	}
+
+	/**
+	 * Draw faces and border.
+	 *
+	 * @param previous the previous
+	 * @return the color
+	 */
+	private Color drawFacesAndBorder(Color previous) {
+		// Solid case
+		drawFace(depth == 0);
+		if (depth > 0) {
+			gl.translateBy(0, 0, depth);
+			drawFace(true);
+			gl.translateBy(0, 0, -depth);
+			drawSide();
+		}
+		if (border != null) {
+			previous = gl.getCurrentColor();
+			gl.setCurrentColor(border);
+			gl.translateBy(0, 0, depth + 5 * gl.getCurrentZIncrement());
+			drawBorder();
+			gl.translateBy(0, 0, -depth - 5 * gl.getCurrentZIncrement());
+		}
+		return previous;
+	}
+
+	/**
+	 * Apply rotation.
+	 *
+	 * @param attributes the attributes
+	 * @param p the p
+	 */
+	private void applyRotation(final TextDrawingAttributes attributes, final GamaPoint p) {
+		final AxisAngle rotation = attributes.getRotation();
+		if (rotation != null) {
+			gl.translateBy(p.x, p.y, p.z);
+			final GamaPoint axis = rotation.getAxis();
+			// AD Change to a negative rotation to fix Issue #1514
+			gl.rotateBy(-rotation.getAngle(), axis.x, axis.y, axis.z);
+			// Voids the location so as to make only one translation
+			p.setLocation(0, 0, 0);
 		}
 	}
 

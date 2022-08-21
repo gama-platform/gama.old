@@ -195,50 +195,64 @@ public class LegacyMeshDrawer extends ObjectDrawer<MeshObject> {
 	 */
 	public void fillBuffers() {
 		if (triangles) {
-			var realIndex = 0;
-			for (var j = 0; j < rows; j++) {
-				var y = j * cy;
-				for (var i = 0; i < cols; i++) {
-					var x = i * cx;
-					var index = j * cols + i;
-					var z = data[index];
-					realIndexes[index] = z == noData ? -1 : realIndex++;
-					if (z == noData) { continue; }
-					vertexBuffer.put(x).put(-y).put(z);
-					colorize(z, i, j);
-					surface.setTo(x - cx, y - cy, get(data, i - 1, j - 1), x, y - cy, get(data, i, j - 1), x + cx,
-							y - cy, get(data, i + 1, j - 1), x + cx, y, get(data, i + 1, j), x + cx, y + cy,
-							get(data, i + 1, j + 1), x, y + cy, get(data, i, j + 1), x - cx, y + cy,
-							get(data, i - 1, j + 1), x - cx, y, get(data, i - 1, j), x - cx, y - cy,
-							get(data, i - 1, j - 1)).getNormal(true, 1, normal);
-					normalBuffer.put(normal.x).put(normal.y).put(normal.z);
-					if (j > 0 && i > 0) {
-						var current = realIndexes[index];
-						var minus1 = realIndexes[index - 1];
-						var minusCols = realIndexes[index - cols];
-						var minusColsAnd1 = realIndexes[index - cols - 1];
-						if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
-						indexBuffer.put(current).put(minus1).put(minusCols);
-						indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
-					}
-				}
-			}
+			fillBuffersWithTriangles();
 		} else {
-			int index = 0;
-			for (var i = 0; i < cols - 1; ++i) {
-				double x1 = i * cx, x2 = (i + 1) * cx;
-				for (var j = 0; j < rows - 1; ++j) {
-					double y1 = -j * cy, y2 = -(j + 1) * cy, z = data[j * cols + i];
-					if (z == noData) { continue; }
-					vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
-					colorize(z, i, j);
-					colorize(z, i + 1, j);
-					colorize(z, i + 1, j + 1);
-					colorize(z, i, j + 1);
-					normalBuffer.put(quadNormals);
-					indexBuffer.put(index).put(index + 1).put(index + 3);
-					indexBuffer.put(index + 1).put(index + 2).put(index + 3);
-					index += 4;
+			fillBuffersWithRectangles();
+		}
+	}
+
+	/**
+	 * Fill buffers with rectangles.
+	 */
+	private void fillBuffersWithRectangles() {
+		int index = 0;
+		for (var i = 0; i < cols - 1; ++i) {
+			double x1 = i * cx, x2 = (i + 1) * cx;
+			for (var j = 0; j < rows - 1; ++j) {
+				double y1 = -j * cy, y2 = -(j + 1) * cy, z = data[j * cols + i];
+				if (z == noData) { continue; }
+				vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
+				colorize(z, i, j);
+				colorize(z, i + 1, j);
+				colorize(z, i + 1, j + 1);
+				colorize(z, i, j + 1);
+				normalBuffer.put(quadNormals);
+				indexBuffer.put(index).put(index + 1).put(index + 3);
+				indexBuffer.put(index + 1).put(index + 2).put(index + 3);
+				index += 4;
+			}
+		}
+	}
+
+	/**
+	 * Fill buffers with triangles.
+	 */
+	private void fillBuffersWithTriangles() {
+		var realIndex = 0;
+		for (var j = 0; j < rows; j++) {
+			var y = j * cy;
+			for (var i = 0; i < cols; i++) {
+				var x = i * cx;
+				var index = j * cols + i;
+				var z = data[index];
+				realIndexes[index] = z == noData ? -1 : realIndex++;
+				if (z == noData) { continue; }
+				vertexBuffer.put(x).put(-y).put(z);
+				colorize(z, i, j);
+				surface.setTo(x - cx, y - cy, get(data, i - 1, j - 1), x, y - cy, get(data, i, j - 1), x + cx, y - cy,
+						get(data, i + 1, j - 1), x + cx, y, get(data, i + 1, j), x + cx, y + cy,
+						get(data, i + 1, j + 1), x, y + cy, get(data, i, j + 1), x - cx, y + cy,
+						get(data, i - 1, j + 1), x - cx, y, get(data, i - 1, j), x - cx, y - cy,
+						get(data, i - 1, j - 1)).getNormal(true, 1, normal);
+				normalBuffer.put(normal.x).put(normal.y).put(normal.z);
+				if (j > 0 && i > 0) {
+					var current = realIndexes[index];
+					var minus1 = realIndexes[index - 1];
+					var minusCols = realIndexes[index - cols];
+					var minusColsAnd1 = realIndexes[index - cols - 1];
+					if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
+					indexBuffer.put(current).put(minus1).put(minusCols);
+					indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
 				}
 			}
 		}
