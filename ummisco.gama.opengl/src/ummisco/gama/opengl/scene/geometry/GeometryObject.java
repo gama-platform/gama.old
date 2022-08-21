@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GeometryObject.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GeometryObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.geometry;
 
@@ -26,8 +26,10 @@ public class GeometryObject extends AbstractObject<Geometry, DrawingAttributes> 
 	/**
 	 * Instantiates a new geometry object.
 	 *
-	 * @param geometry the geometry
-	 * @param attributes the attributes
+	 * @param geometry
+	 *            the geometry
+	 * @param attributes
+	 *            the attributes
 	 */
 	public GeometryObject(final Geometry geometry, final DrawingAttributes attributes) {
 		super(geometry, attributes, DrawerType.GEOMETRY);
@@ -63,42 +65,6 @@ public class GeometryObject extends AbstractObject<Geometry, DrawingAttributes> 
 					case BOX:
 					case CUBE:
 						p.z += depth / 2;
-						break;
-					case CIRCLE:
-						break;
-					case GRIDLINE:
-						break;
-					case LINEARRING:
-						break;
-					case LINECYLINDER:
-						break;
-					case LINESTRING:
-						break;
-					case MULTILINESTRING:
-						break;
-					case MULTIPOINT:
-						break;
-					case MULTIPOLYGON:
-						break;
-					case NULL:
-						break;
-					case PLAN:
-						break;
-					case POINT:
-						break;
-					case POLYGON:
-						break;
-					case POLYHEDRON:
-						break;
-					case POLYPLAN:
-						break;
-					case ROUNDED:
-						break;
-					case SQUARE:
-						break;
-					case TEAPOT:
-						break;
-					case THREED_FILE:
 						break;
 					default:
 						break;
