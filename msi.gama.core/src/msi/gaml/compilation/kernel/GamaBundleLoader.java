@@ -190,7 +190,7 @@ public class GamaBundleLoader {
 	public static void preBuildContributions() throws Exception {
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 45, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
-		findFeatures();
+		//findFeatures();
 		DEBUG.TIMER(DEBUG.PAD("> GAMA: all plugins", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			final IExtensionRegistry registry = Platform.getExtensionRegistry();
 			// We retrieve the elements declared as extensions to the GAML language,
