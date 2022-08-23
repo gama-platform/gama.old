@@ -405,14 +405,21 @@ public class EGaml implements IGamlEcoreUtils {
 	 * @return the key of type ref
 	 */
 	private String getKeyOfTypeRef(final TypeRef object) {
-		String s;
-		s = object.getRef().getName();
+		String s = getNameOfRef(object);
 		if (s.contains("<")) {
 			s = s.split("<")[0];
 			// Special case for the 'species<xxx>' case
 			if ("species".equals(s)) { s = SyntacticFactory.SPECIES_VAR; }
 		}
 		return s;
+
+		// s = getNameOfRef(object);
+		// if (s.contains("<")) {
+		// s = s.split("<")[0];
+		// // Special case for the 'species<xxx>' case
+		// if ("species".equals(s)) { s = SyntacticFactory.SPECIES_VAR; }
+		// }
+		// return s;
 	}
 
 	/**
