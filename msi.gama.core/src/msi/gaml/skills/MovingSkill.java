@@ -665,7 +665,7 @@ public class MovingSkill extends Skill {
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final double dist = computeDistance(scope, agent);
-		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.BOOL);
+		final Boolean returnPath = scope.getBoolArg("return_path");
 		final IMap weigths = (IMap) computeMoveWeights(scope);
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.PATH) : null;
 		if (path != null && !path.getEdgeList().isEmpty()) {
@@ -1530,18 +1530,18 @@ public class MovingSkill extends Skill {
 	protected GamaPoint computeLocationForward(final IScope scope, final double dist, final GamaPoint loc,
 			final IShape geom) {
 		final IList pts = GamaListFactory.create(Types.POINT);
-		pts.add(scope.getAgent().getLocation());
+		pts.add(scope.getAgent().getLocation(scope));
 		pts.add(loc);
 		final IShape line = Spatial.Creation.line(scope, pts);
 		// line = Spatial.Operators.inter(scope, line, geom);
 
-		if (line == null) return getCurrentAgent(scope).getLocation();
+		if (line == null) return getCurrentAgent(scope).getLocation(scope);
 		if (geom.covers(line)) return loc;
 
 		// final GamaPoint computedPt = line.getPoints().lastValue(scope);
 
 		final GamaPoint computedPt = Spatial.Punctal.closest_points_with(line, geom.getExteriorRing(scope)).get(0);
 		if (computedPt != null && computedPt.intersects(geom)) return computedPt;
-		return getCurrentAgent(scope).getLocation();
+		return getCurrentAgent(scope).getLocation(scope);
 	}
 }

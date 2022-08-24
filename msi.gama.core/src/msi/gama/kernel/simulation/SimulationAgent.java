@@ -443,18 +443,18 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public boolean isMicroSimulation() { return getSpecies().getDescription().belongsToAMicroModel(); }
 
 	@Override
-	public GamaPoint setLocation(final GamaPoint p) {
+	public GamaPoint setLocation(final IScope scope, final GamaPoint p) {
 		return p;
 	}
 
 	@Override
-	public GamaPoint getLocation() {
+	public GamaPoint getLocation(final IScope scope) {
 		if (geometry == null || geometry.getInnerGeometry() == null) return new GamaPoint(0, 0);
-		return super.getLocation();
+		return super.getLocation(scope);
 	}
 
 	@Override
-	public void setGeometry(final IShape g) {
+	public void setGeometry(final IScope scope, final IShape g) {
 		// FIXME : AD 5/15 Revert the commit by PT:
 		// getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
@@ -471,19 +471,17 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		}
 
 		final Envelope3D env = geom.getEnvelope();
-		if (getProjectionFactory().getWorld() == null) {
-			projectionFactory.setWorldProjectionEnv(GAMA.getRuntimeScope(), env);
-		}
+		if (getProjectionFactory().getWorld() == null) { projectionFactory.setWorldProjectionEnv(scope, env); }
 
 		((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
 		((WorldProjection) getProjectionFactory().getWorld()).updateUnit(getProjectionFactory().getUnitConverter());
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
-		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
+		geometry.setGeometry(Transformations.translated_by(scope, geom, p));
 		if (getProjectionFactory().getUnitConverter() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).convertUnit(geometry.getInnerGeometry());
 
 		}
-		setTopology(getScope(), geometry);
+		setTopology(scope, geometry);
 
 	}
 

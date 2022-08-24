@@ -265,16 +265,18 @@ public abstract class AbstractAgent implements IAgent {
 	public void setName(final String name) {}
 
 	@Override
-	public GamaPoint getLocation() { return getGeometry().getLocation(); }
-
-	@Override
-	public GamaPoint setLocation(final GamaPoint l) {
-		return getGeometry().setLocation(l);
+	public GamaPoint getLocation(final IScope scope) {
+		return getGeometry().getLocation();
 	}
 
 	@Override
-	public void setGeometry(final IShape newGeometry) {
-		getGeometry().setGeometry(newGeometry);
+	public GamaPoint setLocation(final IScope scope, final GamaPoint l) {
+		return getGeometry(scope).setLocation(l);
+	}
+
+	@Override
+	public void setGeometry(final IScope scope, final IShape newGeometry) {
+		getGeometry(scope).setGeometry(newGeometry);
 	}
 
 	@Override

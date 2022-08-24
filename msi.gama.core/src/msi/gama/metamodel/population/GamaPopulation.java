@@ -505,7 +505,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 					}
 					init.remove(SHAPE);
 				} else if (init.containsKey(LOCATION)) {
-					a.setLocation((GamaPoint) init.get(LOCATION));
+					a.setLocation(scope, (GamaPoint) init.get(LOCATION));
 					init.remove(LOCATION);
 				}
 			}

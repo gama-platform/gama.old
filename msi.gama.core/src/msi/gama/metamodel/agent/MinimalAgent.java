@@ -88,10 +88,12 @@ public class MinimalAgent extends AbstractAgent {
 	public IPopulation<? extends IAgent> getPopulation() { return population; }
 
 	@Override
-	public IShape getGeometry() { return geometry; }
+	public IShape getGeometry(final IScope scope) {
+		return geometry;
+	}
 
 	@Override
-	public/* synchronized */void setGeometry(final IShape newGeometry) {
+	public/* synchronized */void setGeometry(final IScope scope, final IShape newGeometry) {
 		// Addition to address Issue 817: if the new geometry is exactly the one
 		// possessed by the agent, no need to change anything.
 		if (newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead()
@@ -99,7 +101,7 @@ public class MinimalAgent extends AbstractAgent {
 			return;
 
 		final ITopology topology = getTopology();
-		final GamaPoint newGeomLocation = newGeometry.getLocation().copy(getScope());
+		final GamaPoint newGeomLocation = newGeometry.getLocation().copy(scope);
 
 		// if the old geometry is "shared" with another agent, we create a new
 		// one. otherwise, we copy it directly.
@@ -148,9 +150,9 @@ public class MinimalAgent extends AbstractAgent {
 
 	@SuppressWarnings ("rawtypes")
 	@Override
-	public/* synchronized */GamaPoint setLocation(final GamaPoint point) {
+	public/* synchronized */GamaPoint setLocation(final IScope scope, final GamaPoint point) {
 		if (point == null || dead() || this.getSpecies().isGrid()) return getLocation();
-		final GamaPoint newLocation = point.copy(getScope());
+		final GamaPoint newLocation = point.copy(scope);
 		final ITopology topology = getTopology();
 		if (topology == null) return getLocation();
 		topology.normalizeLocation(newLocation, false);
@@ -188,9 +190,8 @@ public class MinimalAgent extends AbstractAgent {
 	}
 
 	@Override
-	public/* synchronized */GamaPoint getLocation() {
+	public/* synchronized */GamaPoint getLocation(final IScope scope) {
 		if (geometry == null || geometry.getInnerGeometry() == null) {
-			final IScope scope = this.getScope();
 			final ITopology t = getTopology();
 			final GamaPoint randomLocation = t == null ? null : t.getRandomLocation(scope);
 			if (randomLocation == null) return null;

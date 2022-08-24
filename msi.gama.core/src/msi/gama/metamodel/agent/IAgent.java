@@ -72,8 +72,8 @@ import msi.gaml.variables.IVariable;
 @doc ("The species hierarchy derives from a single built-in species, which is 'agent'. All its components (attributes, actions) will then be inherited by all direct "
 		+ "or indirect children species (including 'model' and 'experiment' except species that explicitly set 'use_minimal_agents' facet to 'true', which inherit from"
 		+ " a stripped-down version of 'agent'. ")
-public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>, IStepable,
-		IContainer.Addressable<String, Object>, IVarAndActionSupport, IScoped {
+public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, IContainer.Addressable<String, Object>,
+		IVarAndActionSupport, IScoped {
 
 	/**
 	 * Returns the topology which manages this agent.
@@ -125,11 +125,31 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 *
 	 * @return the location
 	 */
+
 	@Override
+	default GamaPoint getLocation() { return getLocation(getScope()); }
+
+	/**
+	 * Gets the location.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the location
+	 */
 	@getter (
 			value = IKeyword.LOCATION,
 			initializer = true)
-	GamaPoint getLocation();
+	GamaPoint getLocation(IScope scope);
+
+	/**
+	 * Sets the location.
+	 *
+	 * @param l
+	 *            the l
+	 * @return the gama point
+	 */
+	@setter (IKeyword.LOCATION)
+	GamaPoint setLocation(IScope scope, final GamaPoint l);
 
 	/**
 	 * Sets the location.
@@ -139,17 +159,26 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * @return the gama point
 	 */
 	@Override
-	@setter (IKeyword.LOCATION)
-	GamaPoint setLocation(final GamaPoint l);
+	default GamaPoint setLocation(final GamaPoint l) {
+		return setLocation(getScope(), l);
+	}
 
 	/**
 	 * Gets the getGeometry().
 	 *
 	 * @return the geometry
 	 */
-	@Override
+
 	@getter (IKeyword.SHAPE)
-	IShape getGeometry();
+	IShape getGeometry(IScope scope);
+
+	/**
+	 * Gets the geometry.
+	 *
+	 * @return the geometry
+	 */
+	@Override
+	default IShape getGeometry() { return getGeometry(getScope()); }
 
 	/**
 	 * Sets the getGeometry().
@@ -157,9 +186,19 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * @param newGeometry
 	 *            the new geometry
 	 */
-	@Override
 	@setter (IKeyword.SHAPE)
-	void setGeometry(final IShape newGeometry);
+	void setGeometry(IScope scope, final IShape newGeometry);
+
+	/**
+	 * Sets the geometry.
+	 *
+	 * @param newGeometry
+	 *            the new geometry
+	 */
+	@Override
+	default void setGeometry(final IShape newGeometry) {
+		setGeometry(getScope(), newGeometry);
+	}
 
 	/**
 	 * Dead.
@@ -574,7 +613,8 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	/**
 	 * Sets the geometrical type.
 	 *
-	 * @param t the new geometrical type
+	 * @param t
+	 *            the new geometrical type
 	 */
 	@Override
 	default void setGeometricalType(final Type t) {

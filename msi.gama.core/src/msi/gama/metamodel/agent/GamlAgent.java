@@ -34,7 +34,7 @@ import msi.gaml.variables.IVariable;
 
 /**
  * The Class GamlAgent. Represents agents that can be manipulated in GAML. They are provided with everything their
- * species defines .
+ * species defines. Adds the possibility for these agents to become 'macro-agents', i.e. to manage micro-populations
  */
 @SuppressWarnings ("unchecked")
 public class GamlAgent extends MinimalAgent implements IMacroAgent {

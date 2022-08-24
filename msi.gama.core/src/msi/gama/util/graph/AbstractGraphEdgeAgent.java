@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractGraphEdgeAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractGraphEdgeAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -41,13 +41,16 @@ import msi.gaml.types.IType;
 				doc = @doc ("The target agent of this edge")) })
 @doc ("A species that represents an edge of a graph made of agents. The source and the target of the edge should be agents")
 public class AbstractGraphEdgeAgent extends GamlAgent {
-	
+
 	/**
 	 * Instantiates a new abstract graph edge agent.
 	 *
-	 * @param s the s
-	 * @param index the index
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param s
+	 *            the s
+	 * @param index
+	 *            the index
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public AbstractGraphEdgeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
@@ -58,8 +61,8 @@ public class AbstractGraphEdgeAgent extends GamlAgent {
 		// if ( scope.interrupted() || dead() ) { return null; }
 		final IAgent s = (IAgent) getAttribute(IKeyword.SOURCE);
 		final IAgent t = (IAgent) getAttribute(IKeyword.TARGET);
-		if (s == null || t == null) { return null; }
-		setGeometry(GamaGeometryType.buildLine(s.getLocation(), t.getLocation()));
+		if (s == null || t == null) return null;
+		setGeometry(GamaGeometryType.buildLine(s.getLocation(scope), t.getLocation(scope)));
 		return super._step_(scope);
 	}
 

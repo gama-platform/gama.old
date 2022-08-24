@@ -102,7 +102,14 @@ public class ReferenceAgent implements IReference, IAgent {
 		if (o == this) return true;
 		return false;
 	}
-	
+
+	/**
+	 * Gets the referenced agent.
+	 *
+	 * @param sim
+	 *            the sim
+	 * @return the referenced agent
+	 */
 	public IAgent getReferencedAgent(final SimulationAgent sim) {
 		return attributeValue.getReferencedAgent(sim);
 	}
@@ -372,168 +379,113 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public Object getFromIndicesList(final IScope scope, final IList<String> indices) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IScope getScope() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public IScope getScope() { return null; }
 
 	@Override
-	public ITopology getTopology() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public ITopology getTopology() { return null; }
 
 	@Override
 	public void setPeers(final IList<IAgent> peers) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public IList<IAgent> getPeers() throws GamaRuntimeException { return null; }
 
 	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String getName() { return null; }
 
 	@Override
 	public void setName(final String name) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public GamaPoint getLocation() {
-		// TODO Auto-generated method stub
+	public GamaPoint getLocation(final IScope scope) {
 		return null;
 	}
 
 	@Override
-	public GamaPoint setLocation(final GamaPoint l) {
+	public GamaPoint setLocation(final IScope scope, final GamaPoint l) {
 		return l;
 	}
 
 	@Override
-	public IShape getGeometry() {
-		// TODO Auto-generated method stub
+	public IShape getGeometry(final IScope scope) {
 		return null;
 	}
 
 	@Override
-	public void setGeometry(final IShape newGeometry) {
-		// TODO Auto-generated method stub
-
-	}
+	public void setGeometry(final IScope scope, final IShape newGeometry) {}
 
 	@Override
 	public boolean dead() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public IMacroAgent getHost() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public IMacroAgent getHost() { return null; }
 
 	@Override
-	public void setHost(final IMacroAgent macroAgent) {
-		// TODO Auto-generated method stub
-
-	}
+	public void setHost(final IMacroAgent macroAgent) {}
 
 	@Override
-	public void schedule(final IScope scope) {
-		// TODO Auto-generated method stub
-
-	}
+	public void schedule(final IScope scope) {}
 
 	@Override
-	public int getIndex() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public int getIndex() { return 0; }
 
 	@Override
-	public String getSpeciesName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String getSpeciesName() { return null; }
 
 	@Override
-	public ISpecies getSpecies() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public ISpecies getSpecies() { return null; }
 
 	@Override
-	public IPopulation<? extends IAgent> getPopulation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public IPopulation<? extends IAgent> getPopulation() { return null; }
 
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String s) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public List<IAgent> getMacroAgents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public List<IAgent> getMacroAgents() { return null; }
 
 	@Override
-	public IModel getModel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public IModel getModel() { return null; }
 
 	@Override
 	public boolean isInstanceOf(final String skill, final boolean direct) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies microSpecies) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final String speciesName) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void updateWith(final IScope s, final SavedAgent sa) {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -2311,7 +2311,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			public IPopulation getPopulation() { return GridPopulation.this; }
 
 			@Override
-			public IShape getGeometry() { return geometry; }
+			public IShape getGeometry(final IScope scope) {
+				return geometry;
+			}
 
 			@Override
 			public IList<IAgent> getNeighbors(final IScope scope) {
