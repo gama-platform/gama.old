@@ -134,15 +134,29 @@ public class AspectStatement extends AbstractStatementSequence {
 					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
 					final GamaPoint point = agent.getLocation(scope);
 
-					ag = switch (SHAPES.get(defaultShape)) {
-						case 1 -> GamaGeometryType.buildCircle(defaultSize, point);
-						case 2 -> GamaGeometryType.buildSquare(defaultSize, point);
-						case 3 -> GamaGeometryType.buildTriangle(defaultSize, point);
-						case 4 -> GamaGeometryType.buildSphere(defaultSize, point);
-						case 5 -> GamaGeometryType.buildCube(defaultSize, point);
-						case 6 -> GamaGeometryType.createPoint(point);
-						default -> agent.getGeometry();
-					};
+
+					switch (SHAPES.get(defaultShape)) {
+						case 1:
+							ag = GamaGeometryType.buildCircle(defaultSize, point);
+							break;
+						case 2:
+							ag = GamaGeometryType.buildSquare(defaultSize, point);
+							break;
+						case 3:
+							ag = GamaGeometryType.buildTriangle(defaultSize, point);
+							break;
+						case 4:
+							ag = GamaGeometryType.buildSphere(defaultSize, point);
+							break;
+						case 5:
+							ag = GamaGeometryType.buildCube(defaultSize, point);
+							break;
+						case 6:
+							ag = GamaGeometryType.createPoint(point);
+							break;
+						default:
+							ag = agent.getGeometry();
+					}
 				} else {
 					ag = agent.getGeometry();
 				}
