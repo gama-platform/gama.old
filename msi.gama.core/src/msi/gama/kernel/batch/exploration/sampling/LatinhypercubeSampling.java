@@ -37,7 +37,7 @@ public class LatinhypercubeSampling extends SamplingUtils{
     }
 
 
-    public static void shuffle(List<Double> array,Random r) {
+    public List<Double> shuffle(List<Double> array,Random r) {
         for (int i = array.size() - 1; i >= 1; i--) {
             int j = nextInt(i + 1,r);
             if (i != j) {
@@ -46,6 +46,7 @@ public class LatinhypercubeSampling extends SamplingUtils{
                 array.set(j,temp);
             }
         }
+        return array;
     }
 
     /**
@@ -63,9 +64,14 @@ public class LatinhypercubeSampling extends SamplingUtils{
             for (int j = 0; j < N; j++) {
                 temp.add(nextDouble(j * d, (j + 1) * d,r));
             }
-            shuffle(temp,r);
-            results.put(names.get(i),temp);
         }
+        for(int i=0; i<names.size();i++){
+            //System.out.println(temp);
+            List new_temp= new ArrayList<>(shuffle(temp,r));
+            results.put(names.get(i),new_temp);
+
+        }
+        
         return results;
     }
 
