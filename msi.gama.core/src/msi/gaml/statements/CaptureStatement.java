@@ -253,7 +253,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 						if (sequence != null && !sequence.isEmpty()) {
 							scope.execute(sequence, capturedAgent, null);
-							if (scope.getAndClearBreakStatus() == FlowStatus.BREAK) { break; }
+							if (scope.interrupted() || scope.getAndClearBreakStatus() == FlowStatus.BREAK) { break; }
 						}
 
 						capturedAgents.add(capturedAgent);

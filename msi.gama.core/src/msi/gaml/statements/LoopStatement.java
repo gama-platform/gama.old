@@ -273,8 +273,18 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			}
 		}
 
+		/**
+		 * Process from to.
+		 *
+		 * @param description
+		 *            the description
+		 * @param to
+		 *            the to
+		 * @param name
+		 *            the name
+		 */
 		private void processFromTo(final IDescription description, final IExpressionDescription to,
-				IExpressionDescription name) {
+				final IExpressionDescription name) {
 			if (name == null) {
 				description.error("No variable has been declared", IGamlIssue.MISSING_NAME, NAME);
 				return;
@@ -288,10 +298,14 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		/**
 		 * Process from to.
 		 *
-		 * @param description the description
-		 * @param from the from
-		 * @param to the to
-		 * @param name the name
+		 * @param description
+		 *            the description
+		 * @param from
+		 *            the from
+		 * @param to
+		 *            the to
+		 * @param name
+		 *            the name
 		 */
 		private void processCond(final IDescription description, final IExpressionDescription from,
 				final IExpressionDescription to, final IExpressionDescription name) {
@@ -518,10 +532,14 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					s = -s;
 				}
 				for (int i = f, n = t - 1; i > n && !shouldBreak; i += s) {
-					switch (loopBody(scope, i, result)) {
+					FlowStatus status = loopBody(scope, i, result);
+					switch (status) {
 						case CONTINUE:
 							continue;
 						case BREAK:
+						case RETURN:
+						case DIE:
+						case DISPOSE:
 							shouldBreak = true;
 							break;
 						default:
@@ -529,10 +547,14 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				}
 			} else {
 				for (int i = f, n = t + 1; i < n && !shouldBreak; i += s) {
-					switch (loopBody(scope, i, result)) {
+					FlowStatus status = loopBody(scope, i, result);
+					switch (status) {
 						case CONTINUE:
 							continue;
 						case BREAK:
+						case RETURN:
+						case DIE:
+						case DISPOSE:
 							shouldBreak = true;
 							break;
 						default:
@@ -565,6 +587,9 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					case CONTINUE:
 						continue;
 					case BREAK:
+					case RETURN:
+					case DIE:
+					case DISPOSE:
 						shouldBreak = true;
 						break;
 					default:
@@ -610,6 +635,9 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					case CONTINUE:
 						continue;
 					case BREAK:
+					case RETURN:
+					case DIE:
+					case DISPOSE:
 						shouldBreak = true;
 						break;
 					default:
@@ -638,6 +666,9 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					case CONTINUE:
 						continue;
 					case BREAK:
+					case RETURN:
+					case DIE:
+					case DISPOSE:
 						shouldBreak = true;
 						break;
 					default:
