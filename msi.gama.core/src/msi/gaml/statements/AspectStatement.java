@@ -132,7 +132,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 				if (index != null) {
 					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
-					final GamaPoint point = agent.getLocation(scope);
+					final GamaPoint point = agent.getLocation();
 
 
 					switch (SHAPES.get(defaultShape)) {
