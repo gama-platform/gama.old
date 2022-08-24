@@ -62,12 +62,6 @@ import msi.gaml.factories.ModelFactory;
  */
 public class GamlResource extends LazyLinkingResource {
 
-	/** The memoize description. */
-	private static boolean MEMOIZE_DESCRIPTION = false;
-
-	/** The description. */
-	ModelDescription description;
-
 	/** The element. */
 	ISyntacticElement element;
 
@@ -192,12 +186,10 @@ public class GamlResource extends LazyLinkingResource {
 	 * @return the model description
 	 */
 	public ModelDescription buildCompleteDescription() {
-		if (MEMOIZE_DESCRIPTION && description != null) return description;
+		// if (MEMOIZE_DESCRIPTION && description != null) return description;
 		final LinkedHashMultimap<String, GamlResource> imports = GamlResourceIndexer.validateImportsOf(this);
-		if (hasErrors() || hasSemanticErrors()) {
-			setDescription(null);
+		if (hasErrors() || hasSemanticErrors()) // setDescription(null);
 			return null;
-		}
 		final ModelDescription model = buildModelDescription(imports);
 		// If, for whatever reason, the description is null, we stop the
 		// semantic validation
@@ -211,7 +203,7 @@ public class GamlResource extends LazyLinkingResource {
 			GamlCompilationError error = new GamlCompilationError(s, IGamlIssue.GENERAL, o, false, true);
 			getValidationContext().add(error);
 		});
-		setDescription(model);
+		// setDescription(model);
 		return model;
 	}
 
@@ -240,13 +232,12 @@ public class GamlResource extends LazyLinkingResource {
 			model.validate(edited);
 			updateWith(model, true);
 		} finally {
-			if (!MEMOIZE_DESCRIPTION) {
-				if (edited) {
-					GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
-				} else {
-					model.dispose();
-				}
+			if (edited) {
+				GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
+			} else {
+				model.dispose();
 			}
+			// }
 		}
 	}
 
@@ -254,33 +245,19 @@ public class GamlResource extends LazyLinkingResource {
 	protected void updateInternalState(final IParseResult oldParseResult, final IParseResult newParseResult) {
 		super.updateInternalState(oldParseResult, newParseResult);
 		setElement(null);
-		setDescription(null);
+		// setDescription(null);
 	}
 
 	@Override
 	protected void clearInternalState() {
 		super.clearInternalState();
 		setElement(null);
-		setDescription(null);
 	}
 
 	@Override
 	protected void doUnload() {
 		super.doUnload();
 		setElement(null);
-		setDescription(null);
-	}
-
-	/**
-	 * Sets the description.
-	 *
-	 * @param model
-	 *            the new description
-	 */
-	private void setDescription(final ModelDescription model) {
-		if (!MEMOIZE_DESCRIPTION || model == description) return;
-		if (description != null) { description.dispose(); }
-		description = model;
 	}
 
 	/**
