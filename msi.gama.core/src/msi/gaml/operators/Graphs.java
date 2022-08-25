@@ -1937,7 +1937,7 @@ public class Graphs {
 			masterDoc = true,
 			comment = "",
 			examples = @example (
-					value = "my_cell_graph<-grid_cells_to_graph(cells_list)",
+					value = "my_cell_graph <- grid_cells_to_graph(cells_list);",
 					isExecutable = false),
 			see = {})
 	@no_test
@@ -2236,7 +2236,7 @@ public class Graphs {
 			comment = "WARNING / side effect: this operator modifies the operand and does not create a new graph",
 			value = "adds a node in a graph.",
 			examples = @example (
-					value = "graph add_node node(0) ",
+					value = "graph add_node node(0)",
 					equals = "the graph, to which node(0) has been added",
 
 					isExecutable = false),
@@ -2812,8 +2812,8 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc (
-			value = "layouts a Gama graph based on a grid latice. usage: layoutForce(graph, bounds, coeff_nb_cells). graph is the graph to which \"\r\n"
-					+ "					+ \"applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_nb_cells"
+			value = "layouts a Gama graph based on a grid latice. usage: layoutForce(graph, bounds, coeff_nb_cells). graph is the graph to which"
+					+ "	applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_nb_cells"
 					+ "the coefficient for the number of cells to locate the vertices (nb of places = coeff_nb_cells * nb of vertices). ",
 			examples = { @example (
 					value = "layout_grid(graph, world.shape);",

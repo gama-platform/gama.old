@@ -62,7 +62,7 @@ import msi.gaml.types.IType;
 		value = "The statement makes the agent output an arbitrary message in the console.",
 		usages = { @usage (
 				value = "Outputting a message",
-				examples = { @example ("write 'This is a message from ' + self;") }) })
+				examples = { @example ("write \"This is a message from \" + self;") }) })
 public class WriteStatement extends AbstractStatement {
 
 	@Override

@@ -104,13 +104,13 @@ import msi.gaml.types.Types;
 		usages = { @usage (
 				value = "the basic syntax to perceive agents inside a circle of perception",
 				examples = { @example (
-						value = "perceive name_of-perception target: the_agents_you_want_to_perceive in: a_distance when: a_certain_condition {",
+						value = "perceive name_of_perception target: the_agents_you_want_to_perceive in: distance when: condition {",
 						isExecutable = false),
 						@example (
-								value = "Here you are in the context of the perceived agents. To refer to the agent who does the perception, use myself.",
+								value = "	//Here you are in the context of the perceived agents. To refer to the agent who does the perception, use myself.",
 								isExecutable = false),
 						@example (
-								value = "If you want to make an action (such as adding a belief for example), use ask myself{ do the_action}",
+								value = "	//If you want to make an action (such as adding a belief for example), use ask myself{ do the_action}",
 								isExecutable = false),
 						@example (
 								value = "}",

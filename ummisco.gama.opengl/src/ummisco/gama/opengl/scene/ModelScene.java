@@ -139,7 +139,8 @@ public class ModelScene {
 				} catch (final RuntimeException r) {
 					DEBUG.ERR("Runtime error " + r.getMessage() + " in OpenGL loop");
 					r.printStackTrace();
-				} finally {
+				}
+				finally {
 					if (layer.isOverlay()) { gl.pop(GLMatrixFunc.GL_MODELVIEW); }
 				}
 			}

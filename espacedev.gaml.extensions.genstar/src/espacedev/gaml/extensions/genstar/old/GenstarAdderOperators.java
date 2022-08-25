@@ -317,7 +317,7 @@ public class GenstarAdderOperators {
 	 */
 	@operator(value = "add_marginals", category = { "Gen*" }, concept = { "Gen*" })
 	@doc(value = "add a list of marginals (name of the attributes) to fit the population with, in any CO based algorithm",
-			examples = @example(value = "add_marginals(pop_gen, [\"gender\",\"age\"])"))
+			examples = @example(value = "add_marginals(pop_gen, [\"gender\",\"age\"]);"))
 	@no_test
 	public static GamaPopGenerator addMarginals(IScope scope, GamaPopGenerator gen, IList names) {
 		if (gen == null) { gen = new GamaPopGenerator(); }

@@ -47,7 +47,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to socialize only with a certain condition"))
 }, omissible = IKeyword.NAME)
 @doc(value = "enables to directly add a social link from a perceived agent.", examples = {
-		@example("socialize;") })
+		@example("do socialize;") })
 
 public class SocializeStatement extends AbstractStatement{
 	

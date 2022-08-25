@@ -76,9 +76,9 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The positive sanction to apply if the norm has been followed")) })
 @doc (
-		value = "applay a sanction if the norm specified is violated, or a reward if the norm is applied by the perceived agent",
+		value = "apply a sanction if the norm specified is violated, or a reward if the norm is applied by the perceived agent",
 		examples = {
-				@example ("focus var:speed /*where speed is a variable from a species that is being perceived*/") })
+				@example ("focus var:speed; //where speed is a variable from a species that is being perceived") })
 
 // statement servant à controler les normes pour appliquer des sanctions, sur le moodèle du focus
 public class EnforcementStatement extends AbstractStatement {

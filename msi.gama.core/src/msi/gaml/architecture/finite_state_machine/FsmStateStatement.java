@@ -82,49 +82,49 @@ import msi.gaml.types.IType;
 		usages = { @usage (
 				value = "Here is an exemple integrating 2 states and the statements in the FSM architecture:",
 				examples = { @example (
-						value = "	state s_init initial: true {",
+						value = "state s_init initial: true {",
 						isExecutable = false),
 						@example (
-								value = "		enter { write \"Enter in\" + state; }",
+								value = "	enter { ",
 								isExecutable = false),
 						@example (
-								value = "			write \"Enter in\" + state;",
-								isExecutable = false),
-						@example (
-								value = "		}",
-								isExecutable = false),
-						@example (
-								value = "",
-								isExecutable = false),
-						@example (
-								value = "		write state;",
-								isExecutable = false),
-						@example (
-								value = "",
-								isExecutable = false),
-						@example (
-								value = "		transition to: s1 when: (cycle > 2) {",
-								isExecutable = false),
-						@example (
-								value = "			write \"transition s_init -> s1\";",
-								isExecutable = false),
-						@example (
-								value = "		}",
-								isExecutable = false),
-						@example (
-								value = "",
-								isExecutable = false),
-						@example (
-								value = "		exit {",
-								isExecutable = false),
-						@example (
-								value = "			write \"EXIT from \"+state;",
-								isExecutable = false),
-						@example (
-								value = "		}",
+								value = "		write \"Enter in\" + state;",
 								isExecutable = false),
 						@example (
 								value = "	}",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "	write state;",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "	transition to: s1 when: (cycle > 2) {",
+								isExecutable = false),
+						@example (
+								value = "		write \"transition s_init -> s1\";",
+								isExecutable = false),
+						@example (
+								value = "	}",
+								isExecutable = false),
+						@example (
+								value = "",
+								isExecutable = false),
+						@example (
+								value = "	exit {",
+								isExecutable = false),
+						@example (
+								value = "		write \"EXIT from \"+state;",
+								isExecutable = false),
+						@example (
+								value = "	}",
+								isExecutable = false),
+						@example (
+								value = "}",
 								isExecutable = false),
 						@example (
 								value = "	state s1 {",

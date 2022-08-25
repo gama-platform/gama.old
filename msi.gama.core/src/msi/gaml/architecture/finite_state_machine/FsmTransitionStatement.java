@@ -69,22 +69,22 @@ import msi.gaml.types.IType;
 		usages = { @usage (
 				value = "In the following example, the transition is executed when after 2 steps:",
 				examples = { @example (
-						value = "	state s_init initial: true {",
+						value = "state s_init initial: true {",
 						isExecutable = false),
 						@example (
-								value = "		write state;",
+								value = "	write state;",
 								isExecutable = false),
 						@example (
-								value = "		transition to: s1 when: (cycle > 2) {",
+								value = "	transition to: s1 when: (cycle > 2) {",
 								isExecutable = false),
 						@example (
-								value = "			write \"transition s_init -> s1\";",
-								isExecutable = false),
-						@example (
-								value = "		}",
+								value = "		write \"transition s_init -> s1\";",
 								isExecutable = false),
 						@example (
 								value = "	}",
+								isExecutable = false),
+						@example (
+								value = "}",
 								isExecutable = false) }) },
 		see = { FsmStateStatement.ENTER, FsmStateStatement.STATE, FsmStateStatement.EXIT })
 public class FsmTransitionStatement extends AbstractStatementSequence {

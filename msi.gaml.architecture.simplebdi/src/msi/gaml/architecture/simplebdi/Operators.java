@@ -343,7 +343,7 @@ public class Operators {
 	@doc (
 			value = "add a new value to the map of the given predicate",
 			examples = @example (
-					value = "predicate add_values [\"time\"::10]",
+					value = "predicate add_values [\"time\"::10];",
 					isExecutable = false))
 	@no_test
 	public static Predicate addValues(final Predicate predicate, final IMap values) throws GamaRuntimeException {

@@ -43,7 +43,7 @@ import msi.gaml.types.IType;
 @facets(value = {
 		@facet(name = IKeyword.VALUE, type = IType.NONE, optional = false, doc = @doc("The agent, list of agents, geometry to focus on")) }, omissible = IKeyword.VALUE)
 @doc(value = "Allows to focus on the passed parameter in all available displays. Passing 'nil' for the parameter will make all screens return to their normal zoom", usages = {
-		@usage(value = "Focuses on an agent, a geometry, a set of agents, etc...)", examples = {
+		@usage(value = "Focuses on an agent, a geometry, a set of agents, etc...", examples = {
 				@example("focus_on my_species(0);") }) })
 public class FocusStatement extends AbstractStatement {
 

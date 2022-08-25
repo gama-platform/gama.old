@@ -109,7 +109,7 @@ import msi.gaml.types.IType;
 @doc (
 		value = "enables to add a desire or a belief or to remove a belief, a desire or an intention if the agent gets the belief or/and desire or/and condition mentioned.",
 		examples = {
-				@example ("rule belief: new_predicate(\"test\") when: flip(0.5) new_desire: new_predicate(\"test\")") })
+				@example ("rule belief: new_predicate(\"test\") when: flip(0.5) new_desire: new_predicate(\"test\");") })
 
 public class LawStatement extends AbstractStatement {
 

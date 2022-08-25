@@ -104,7 +104,9 @@ import msi.gaml.types.Types;
 								isExecutable = false) }),
 				@usage (
 						value = "Case of a list, the expression in the facet at: should be an integer.",
-						examples = { @example ("list<int> workingList <- [];"), @example (
+						examples = { 
+								@example ("list<int> workingList <- [];"), 
+								@example (
 								value = "add 0 at: 0 to: workingList ;",
 								var = "workingList",
 								equals = "[0]",
@@ -149,7 +151,8 @@ import msi.gaml.types.Types;
 				@usage (
 						value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. "
 								+ "It is important to note that the behavior of the statement is slightly different, in particular in the use of the at facet, which denotes the key of the pair.",
-						examples = { @example ("map<string,string> workingMap <- [];"), @example (
+						examples = { @example ("map<string,string> workingMap <- [];"), 
+								@example (
 								value = "add \"val1\" at: \"x\" to: workingMap;",
 								var = "workingMap",
 								equals = "[\"x\"::\"val1\"]",
@@ -158,7 +161,7 @@ import msi.gaml.types.Types;
 															// equals
 															// [x::val1]";
 				@usage (
-						value = "If the at facet is omitted, a pair expr_item::expr_item will be added to the map. "
+						value = "If the at facet is omitted, a pair (expr_item::expr_item) will be added to the map. "
 								+ "An important exception is the case where the expr_item is a pair: in this case the pair is added.",
 						examples = { @example (
 								value = "add \"val2\" to: workingMap;",

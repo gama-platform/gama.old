@@ -269,7 +269,7 @@ import msi.gaml.types.IType;
 @doc (
 		value = "enables to add or remove mantal states depending on the emotions of the agent, after the emotional engine and before the cognitive or normative engine.",
 		examples = {
-				@example ("coping emotion: new_emotion(\"fear\") when: flip(0.5) new_desire: new_predicate(\"test\")") })
+				@example ("coping emotion: new_emotion(\"fear\") when: flip(0.5) new_desire: new_predicate(\"test\");") })
 
 public class CopingStatement extends AbstractStatementSequence{
 	

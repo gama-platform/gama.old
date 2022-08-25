@@ -220,7 +220,7 @@ public class Strings {
 			usages = @usage (
 					value = "if both operands are strings, returns the index within the left-hand string of the first occurrence of the given right-hand string",
 					examples = @example (
-							value = " \"abcabcabc\" index_of \"ca\"",
+							value = "\"abcabcabc\" index_of \"ca\"",
 							equals = "2")))
 	public static Integer opIndexOf(final String target, final String pattern) {
 		return target.indexOf(pattern);
@@ -646,7 +646,7 @@ public class Strings {
 			usages = @usage (
 					value = "if it is a string, length returns the number of characters",
 					examples = @example (
-							value = "length ('I am an agent')",
+							value = "length (\"I am an agent\")",
 							equals = "13")))
 	static public Integer length(final String s) {
 		if (s == null) return 0;

@@ -109,7 +109,7 @@ import msi.gaml.types.IType;
 				@usage (
 						value = "For example: ",
 						examples = { @example (
-								value = "method pso iter_max: 50 num_particles: 10 weight_inertia:0.7 weight_cognitive: 1.5 weight_social: 1.5 maximize: food_gathered ; ",
+								value = "method pso iter_max: 50 num_particles: 10 weight_inertia:0.7 weight_cognitive: 1.5 weight_social: 1.5 maximize: food_gathered; ",
 								isExecutable = false) }) })
 public class Swarm extends AOptimizationAlgorithm {
 

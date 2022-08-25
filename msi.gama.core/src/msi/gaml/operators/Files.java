@@ -143,13 +143,13 @@ public class Files {
 					value = "string file_name <-\"../includes/buildings.shp\";",
 					isExecutable = false),
 					@example (
-							value = "		if file_exists(file_name){",
+							value = "if file_exists(file_name){",
 							isExecutable = false),
 					@example (
-							value = "			write \"File exists in the computer\";",
+							value = "	write \"File exists in the computer\";",
 							isExecutable = false),
 					@example (
-							value = "	}",
+							value = "}",
 							isExecutable = false) })
 	@no_test
 	public static boolean exist_file(final IScope scope, final String s) {
@@ -182,13 +182,13 @@ public class Files {
 					value = "string file_name <-\"../includes/\";",
 					isExecutable = false),
 					@example (
-							value = "		if folder_exists(file_name){",
+							value = "if folder_exists(file_name){",
 							isExecutable = false),
 					@example (
-							value = "			write \"Folder exists in the computer\";",
+							value = "	write \"Folder exists in the computer\";",
 							isExecutable = false),
 					@example (
-							value = "	}",
+							value = "}",
 							isExecutable = false) })
 	@no_test
 	public static boolean zip_files(final IScope scope, final String zipfile, final IList<String> s) {
@@ -537,13 +537,13 @@ public class Files {
 					value = "string file_name <-\"../includes/\";",
 					isExecutable = false),
 					@example (
-							value = "		if folder_exists(file_name){",
+							value = "if folder_exists(file_name){",
 							isExecutable = false),
 					@example (
-							value = "			write \"Folder exists in the computer\";",
+							value = "	write \"Folder exists in the computer\";",
 							isExecutable = false),
 					@example (
-							value = "	}",
+							value = "}",
 							isExecutable = false) })
 	@no_test
 	public static boolean exist_folder(final IScope scope, final String s) {

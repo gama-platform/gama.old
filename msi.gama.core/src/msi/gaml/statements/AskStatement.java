@@ -73,7 +73,8 @@ import msi.gaml.types.Types;
 		usages = { @usage (
 				name = "Ask agents",
 				value = "Ask  a set of receiver agents, stored in a container, to perform a block of statements. The block is evaluated in the context of the agents' species",
-				examples = { @example (
+				examples = { 
+						@example (
 						value = "ask ${receiver_agents} {",
 						isExecutable = false,
 						isPattern = true),
@@ -106,7 +107,7 @@ import msi.gaml.types.Types;
 						name = "Ask agents and force their species",
 						value = "If the species of the receiver agent(s) cannot be determined, it is possible to force it using the `as` facet. An error is thrown if an agent is not a direct or undirect instance of this species",
 						examples = { @example (
-								value = "ask${receiver_agent(s)} as: ${a_species_expression} {",
+								value = "ask ${receiver_agent(s)} as: ${a_species_expression} {",
 								isExecutable = false,
 								isPattern = true),
 								@example (

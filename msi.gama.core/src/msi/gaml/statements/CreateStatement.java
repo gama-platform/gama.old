@@ -150,13 +150,14 @@ import msi.gaml.types.Types;
 						@example (
 								value = "create species_of(self) number: 5 returns: list5Agents;",
 								isTestOnly = false),
-						@example (
-								var = "list5Agents",
-								returnType = "list",
-								value = "5",
-								isExecutable = false) }),
+//						@example (
+//								var = "list5Agents",
+//								returnType = "list",
+//								value = "5",
+//								isExecutable = false) 
+				}),
 				@usage ("If `number` equals 0 or species is not a species, the statement is ignored."), @usage (
-						value = "In GAML modelers can create agents of species `a_species  (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
+						value = "In GAML modelers can create agents of species `a_species` (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
 						examples = @example (
 								value = "create a_species from: the_shapefile with: [type:: read('TYPE_OCC'), nature::read('NATURE')];",
 								isExecutable = false)),
@@ -174,9 +175,9 @@ import msi.gaml.types.Types;
 				@usage (
 						value = "Similarly to the creation from shapefile, modelers can create agents from a set of geometries. In this case, one agent per geometry will be created (with the geometry as shape)",
 						examples = { @example (
-								value = "create species_of(self) from: [square(4),circle(4)]; 	// 2 agents have been created, with shapes respectively square(4) and circle(4)"),
+								value = "create species_of(self) from: [square(4), circle(4)]; 	// 2 agents have been created, with shapes respectively square(4) and circle(4)"),
 								@example (
-										value = "create species_of(self) from: [square(4),circle(4)] returns: new_agt;",
+										value = "create species_of(self) from: [square(4), circle(4)] returns: new_agt;",
 										isTestOnly = true),
 								@example (
 										value = "new_agt[0].shape",
@@ -235,9 +236,9 @@ import msi.gaml.types.Types;
 								@example (
 										value = "create species: a_species number: an_int;",
 										isExecutable = false),
-								@example (
-										value = "",
-										isExecutable = false) }) })
+								}
+						) 
+		})
 @validator (CreateValidator.class)
 @serializer (CreateSerializer.class)
 @SuppressWarnings ({ "unchecked", "rawtypes" })

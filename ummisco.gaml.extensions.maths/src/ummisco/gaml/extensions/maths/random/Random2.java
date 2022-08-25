@@ -109,7 +109,7 @@ public class Random2 {
 	@doc (
 			value = "returns a random value from a Log-Normal distribution with specified values of the shape (alpha) and scale (beta) parameters. See https://en.wikipedia.org/wiki/Log-normal_distribution for more details. ",
 			examples = { @example (
-					value = "lognormal_rnd(2,3) ",
+					value = "lognormal_rnd(2,3)",
 					equals = "0.731",
 					test = false) },
 			see = { "binomial", "gamma_rnd", "gauss_rnd", "poisson", "rnd", "skew_gauss", "truncated_gauss",

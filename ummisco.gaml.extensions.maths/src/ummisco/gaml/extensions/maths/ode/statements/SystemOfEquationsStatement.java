@@ -145,7 +145,7 @@ import msi.gaml.types.Types;
 										value = "equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu];",
 										isExecutable = false),
 								@example (
-										value = "equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;",
+										value = "equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma];",
 										isExecutable = false) }),
 				@usage (
 						value = "If the simultaneously: facet is used, system of all the agents will be solved simultaneously.") },

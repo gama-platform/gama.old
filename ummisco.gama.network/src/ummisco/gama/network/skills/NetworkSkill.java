@@ -176,7 +176,7 @@ public class NetworkSkill extends MessagingSkill {
 							doc = @doc ("For UDP connection, it sets the maximum size of received packets (default = 1024bits).")) },
 			doc = @doc (
 					value = "Action used by a networking agent to connect to a server or to create a server.",
-					examples = { @example (" do connect  with_name:\"any_name\";"),
+					examples = { @example (" do connect with_name:\"any_name\";"),
 							@example (" do connect to:\"localhost\" port:9876 with_name:\"any_name\";"),
 							@example (" do connect to:\"localhost\" protocol:\"MQTT\" port:9876 with_name:\"any_name\";"),
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
@@ -476,7 +476,6 @@ public class NetworkSkill extends MessagingSkill {
 			name = INetworkSkill.FETCH_MESSAGE_FROM_NETWORK,
 			doc = @doc (
 					value = "Fetch all messages from network to mailbox. Use this in specific case only, this action is done at the end of each step. ",
-					returns = "nothing",
 					examples = { @example ("do fetch_message_from_network;//forces gama to get all the new messages since the begining of the cycle\n"
 						+ "loop while:has_more_message(){ \n" 
 						+ "		message mess <- fetch_message();\n"

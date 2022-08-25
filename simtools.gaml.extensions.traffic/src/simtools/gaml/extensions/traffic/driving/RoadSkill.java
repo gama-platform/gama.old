@@ -483,7 +483,7 @@ public class RoadSkill extends Skill {
 							doc = @doc ("the lane index on which to register; if lane index >= number of lanes, then register on the linked road")) },
 			doc = @doc (
 					value = "register the agent on the road at the given lane",
-					examples = { @example ("do register agent: the_driver lane: 0") }))
+					examples = { @example ("do register agent: the_driver lane: 0;") }))
 	public boolean primRegister(final IScope scope) throws GamaRuntimeException {
 		final IAgent road = getCurrentAgent(scope);
 		final IAgent driver = (IAgent) scope.getArg("agent", IType.AGENT);
@@ -550,7 +550,7 @@ public class RoadSkill extends Skill {
 					doc = @doc ("the agent to unregister on the road.")) },
 			doc = @doc (
 					value = "unregister the agent on the road",
-					examples = { @example ("do unregister agent: the_driver") },
+					examples = { @example ("do unregister agent: the_driver;") },
 					deprecated = "use the `unregister` action in advanced_driving skill instead"))
 	@Deprecated
 	public boolean primUnregister(final IScope scope) throws GamaRuntimeException {

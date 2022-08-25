@@ -40,7 +40,7 @@ concept = { IConcept.SYSTEM })
 	omissible = IKeyword.MESSAGE)
 @doc(value = "The statement makes the agent output an arbitrary message in the error view as a warning.",
 	usages = {
-		@usage(value = "Emmitting a warning", examples = { @example("warn 'This is a warning from ' + self;") }) })
+		@usage(value = "Emmitting a warning", examples = { @example("warn \"This is a warning from \" + self;") }) })
 public class WarnStatement extends AbstractStatement {
 
 	/** The message. */

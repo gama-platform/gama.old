@@ -27,12 +27,12 @@ import msi.gaml.statements.AbstractStatementSequence;
 @inside(symbols = { FsmStateStatement.STATE })
 @doc(value="In an FSM architecture, `"+FsmStateStatement.ENTER+"` introduces a sequence of statements to execute upon entering a state.", usages = {
 	@usage(value="In the following example, at the step it enters into the state s_init, the message 'Enter in s_init' is displayed followed by the display of the state name:", examples = {
-			@example(value="	state s_init {", isExecutable=false),
-			@example(value="		enter { write \"Enter in\" + state; }", isExecutable=false),
-			@example(value="			write \"Enter in\" + state;", isExecutable=false),
-			@example(value="		}", isExecutable=false),
-			@example(value="		write state;", isExecutable=false),
-			@example(value="	}", isExecutable=false)})},			
+			@example(value="state s_init {", isExecutable=false),
+			@example(value="	enter { ", isExecutable=false),
+			@example(value="		write \"Enter in\" + state;", isExecutable=false),
+			@example(value="	}", isExecutable=false),
+			@example(value="	write state;", isExecutable=false),
+			@example(value="}", isExecutable=false)})},			
 	see={FsmStateStatement.STATE,FsmStateStatement.EXIT,FsmTransitionStatement.TRANSITION})
 public class FsmEnterStatement extends AbstractStatementSequence {
 

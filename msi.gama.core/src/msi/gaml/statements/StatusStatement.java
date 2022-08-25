@@ -58,7 +58,7 @@ import msi.gaml.types.IType;
 		value = "The statement makes the agent output an arbitrary message in the status box.",
 		usages = { @usage (
 				value = "Outputting a message",
-				examples = { @example ("status ('This is my status ' + self) color: #yellow;") }) })
+				examples = { @example ("status (\"This is my status \" + self) color: #yellow;") }) })
 public class StatusStatement extends AbstractStatement {
 
 	@Override

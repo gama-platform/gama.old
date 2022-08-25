@@ -147,13 +147,13 @@ import msi.gaml.types.IType;
 		usages = { @usage (
 				value = "The general syntax is:",
 				examples = { @example (
-						value = "light 1 type:point location:{20,20,20} color:255, linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false",
+						value = "light 1 type:point location:{20,20,20} color:255, linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false;",
 						isExecutable = false),
 						@example (
-								value = "light 'spot1' type: #spot location:{20,20,20} direction:{0,0,-1} color:255 angle:25 linear_attenuation:0.01 quadratic_attenuation:0.0001 draw:true dynamic: false",
+								value = "light 'spot1' type: #spot location:{20,20,20} direction:{0,0,-1} color:255 angle:25 linear_attenuation:0.01 quadratic_attenuation:0.0001 draw:true dynamic: false;",
 								isExecutable = false),
 						@example (
-								value = "light 'point2' type: #point direction:{1,1,-1} color:255 draw:true dynamic: false",
+								value = "light 'point2' type: #point direction:{1,1,-1} color:255 draw:true dynamic: false;",
 								isExecutable = false) }) },
 		see = { IKeyword.DISPLAY })
 

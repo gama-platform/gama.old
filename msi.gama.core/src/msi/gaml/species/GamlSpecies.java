@@ -210,22 +210,22 @@ import one.util.streamex.StreamEx;
 		usages = { @usage (
 				value = "Here is an example of a species definition with a FSM architecture and the additional skill moving:",
 				examples = { @example (
-						value = "species ant skills: [moving] control: fsm {",
+						value = "species ant skills: [moving] control: fsm { }",
 						isExecutable = false) }),
 				@usage (
 						value = "In the case of a species aiming at mirroring another one:",
 						examples = { @example (
-								value = "species node_agent mirrors: list(bug) parent: graph_node edge_species: edge_agent {",
+								value = "species node_agent mirrors: list(bug) parent: graph_node edge_species: edge_agent { }",
 								isExecutable = false) }),
 				@usage (
 						value = "The definition of the single grid of a model will automatically create gridwidth x gridheight agents:",
 						examples = { @example (
-								value = "grid ant_grid width: gridwidth height: gridheight file: grid_file neighbors: 8 use_regular_agents: false { ",
+								value = "grid ant_grid width: gridwidth height: gridheight file: grid_file neighbors: 8 use_regular_agents: false { }",
 								isExecutable = false) }),
 				@usage (
 						value = "Using a file to initialize the grid can replace width/height facets:",
 						examples = { @example (
-								value = "grid ant_grid file: grid_file neighbors: 8 use_regular_agents: false { ",
+								value = "grid ant_grid file: grid_file neighbors: 8 use_regular_agents: false { }",
 								isExecutable = false) }) })
 @validator (SpeciesValidator.class)
 public class GamlSpecies extends AbstractSpecies {
