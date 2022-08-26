@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.kernel.batch.exploration;
+package msi.gama.kernel.batch.exploration.morris;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,6 +45,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
+import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 
 /**

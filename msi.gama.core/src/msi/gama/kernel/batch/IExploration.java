@@ -14,8 +14,8 @@ import java.util.List;
 
 import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
 import msi.gama.kernel.batch.exploration.ExplicitExploration;
-import msi.gama.kernel.batch.exploration.SobolExploration;
-import msi.gama.kernel.batch.exploration.MorrisExploration;
+import msi.gama.kernel.batch.exploration.morris.MorrisExploration;
+import msi.gama.kernel.batch.exploration.sobol.SobolExploration;
 import msi.gama.kernel.batch.optimization.HillClimbing;
 import msi.gama.kernel.batch.optimization.SimulatedAnnealing;
 import msi.gama.kernel.batch.optimization.Swarm;

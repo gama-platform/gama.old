@@ -1,8 +1,7 @@
-package msi.gama.kernel.batch.exploration;
+package msi.gama.kernel.batch.exploration.morris;
 
 import java.io.*;
 import java.util.*;
-import java.lang.Integer;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;

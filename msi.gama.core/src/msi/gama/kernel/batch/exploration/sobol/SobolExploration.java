@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.kernel.batch.exploration;
+package msi.gama.kernel.batch.exploration.sobol;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
-import msi.gama.kernel.batch.exploration.Sobol;
+import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gaml.types.IType;
 
 /**
