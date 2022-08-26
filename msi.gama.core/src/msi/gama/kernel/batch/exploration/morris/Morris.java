@@ -187,10 +187,12 @@ public class Morris {
             Map<String,Double> tmp2= result_lo.get(i);
             Map<String,Double> tmp1= result_up.get(i);
             Map<String,Double> tmpFin= new HashMap<>();
-            IntStream.range(0,ParametersNames.size()).forEach(z->{
+            IntStream.range(0,ParametersNames.size()).forEach( z -> 
+            {
                 double val= tmp1.get(ParametersNames.get(z))-tmp2.get(ParametersNames.get(z));
                 tmpFin.put(ParametersNames.get(z),val);
-            });
+            }
+            );
             resutat_calc.add(tmpFin);
         }
         return resutat_calc;

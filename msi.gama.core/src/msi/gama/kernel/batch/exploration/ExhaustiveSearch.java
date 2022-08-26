@@ -128,28 +128,29 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	@Override
 	public void explore(final IScope scope) throws GamaRuntimeException {
 		if(hasFacet(ExhaustiveSearch.METHODS)){
-			IExpression methods_name= getFacet(METHODS);
-			String method= Cast.asString(scope, methods_name.value(scope));
-			switch(method) {
-			case IKeyword.MORRIS:
-				MorrisExhaustive(scope);
-				break;
-				
-			case IKeyword.SALTELLI:
-				SaltelliExhaustive(scope);
-				break;
-				
-			case IKeyword.LHS:
-				LatinHypercubeExhaustive(scope);
-				break;
-				
-			case IKeyword.ORTHOGONAL:
-				OrthogonalExhaustive(scope);
-				break;
-				
-			default:
-				throw GamaRuntimeException.error("Method "+method+" is not known by the Exhaustive method",scope);
 			
+			List<Batch> params = currentExperiment.getSpecies().getParameters().values().stream()
+					.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
+					.map(p-> (Batch) p)
+					.collect(Collectors.toList());
+			
+			parameters = parameters == null ? params : parameters;
+	        List<ParametersSet> sets;
+			
+			String method= Cast.asString(scope, getFacet(METHODS).value(scope));
+			switch(method) {
+				case IKeyword.MORRIS: sets = MorrisExhaustive(scope); break;
+				case IKeyword.SALTELLI: sets = SaltelliExhaustive(scope); break;
+				case IKeyword.LHS: sets = LatinHypercubeExhaustive(scope); break;				
+				case IKeyword.ORTHOGONAL: sets = OrthogonalExhaustive(scope); break;
+					
+				default: throw GamaRuntimeException.error("Method "+method+" is not known by the Exhaustive method",scope);
+			}
+			
+			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+				currentExperiment.launchSimulationsWithSolution(sets);
+			} else {
+				for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
 			}
 			
 		}else {
@@ -260,7 +261,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	
 	
 	
-	private void MorrisExhaustive(final IScope scope) {
+	private List<ParametersSet> MorrisExhaustive(final IScope scope) {
 		System.out.println("Creating Morris sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
@@ -273,84 +274,37 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 			this.nb_levels = 4;
 		}
 		
-		List<Batch> params= currentExperiment.getSpecies().getParameters().values().stream()
-				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
-				.map(p-> (Batch) p)
-				.collect(Collectors.toList());
-		
-		parameters= parameters==null ? params : parameters;
-		List<String> names= new ArrayList<>();
-        for(int i=0;i<parameters.size();i++) {
-        	names.add(parameters.get(i).getName());
-        }
         MorrisSampling morris_samples= new MorrisSampling();
 		
-		List<ParametersSet> sets= morris_samples.MakeMorrisSampling(nb_levels,this.sample_size, parameters,scope);
-		
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-			currentExperiment.launchSimulationsWithSolution(sets);
-		} else {
-			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
-		}	
+		return morris_samples.MakeMorrisSampling(nb_levels,this.sample_size, parameters,scope);
+			
 	}
 	
-	private void LatinHypercubeExhaustive(final IScope scope) {
+	private List<ParametersSet> LatinHypercubeExhaustive(final IScope scope) {
 		System.out.println("Creating Latin Hypercube sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		}else {
 			this.sample_size=132;
 		}
-		List<Batch> params= currentExperiment.getSpecies().getParameters().values().stream()
-				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
-				.map(p-> (Batch) p)
-				.collect(Collectors.toList());
-		parameters= parameters==null ? params : parameters;
-		List<String> names= new ArrayList<>();
-        for(int i=0;i<parameters.size();i++) {
-        	names.add(parameters.get(i).getName());
-        }
-        
+		
         LatinhypercubeSampling LHS=new LatinhypercubeSampling();
-        List<ParametersSet> sets= LHS.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(),scope);
-        
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-			currentExperiment.launchSimulationsWithSolution(sets);
-		} else {
-			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
-		}			
+        return LHS.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(),scope);			
 	}
 	
-	private void SaltelliExhaustive(final IScope scope) {
+	private List<ParametersSet> SaltelliExhaustive(final IScope scope) {
 		System.out.println("Creating Saltelli sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		}else {
 			this.sample_size=132;
 		}
-		List<Batch> params= currentExperiment.getSpecies().getParameters().values().stream()
-				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
-				.map(p-> (Batch) p)
-				.collect(Collectors.toList());
-		parameters= parameters==null ? params : parameters;
-		List<String> names= new ArrayList<>();
-        for(int i=0;i<parameters.size();i++) {
-        	names.add(parameters.get(i).getName());
-        }
+	
         SaltelliSampling saltelli= new SaltelliSampling();
-        
-        List<ParametersSet> sets= saltelli.MakeSaltelliSampling(scope, sample_size, parameters);
-        
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-			currentExperiment.launchSimulationsWithSolution(sets);
-		} else {
-			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
-		}	
-        
-		
+        return saltelli.MakeSaltelliSampling(scope, sample_size, parameters);
 	}
 	
-	private void OrthogonalExhaustive(final IScope scope) {
+	private List<ParametersSet> OrthogonalExhaustive(final IScope scope) {
 		System.out.println("Creating Orthogonal sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
@@ -363,24 +317,10 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		}else {
 			this.iterations=5;
 		}
-		List<Batch> params= currentExperiment.getSpecies().getParameters().values().stream()
-				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
-				.map(p-> (Batch) p)
-				.collect(Collectors.toList());
-		parameters= parameters==null ? params : parameters;
-		List<String> names= new ArrayList<>();
-        for(int i=0;i<parameters.size();i++) {
-        	names.add(parameters.get(i).getName());
-        }
+		
         OrthogonalSampling ortho= new OrthogonalSampling();
-        
-        List<ParametersSet> sets= ortho.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
-        
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-			currentExperiment.launchSimulationsWithSolution(sets);
-		} else {
-			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
-		}	
+        return ortho.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
+        	
 	}
 	
 	// INNER UTILITY METHODS

@@ -26,9 +26,9 @@ public class Betadistribution {
 	Map<ParametersSet,List<Double>> sample;
 	final EmpiricalDistribution Y;
 	
-	public Betadistribution(IMap<ParametersSet,List<Object>> sample, String obj) { this(sample,100,obj); }
+	public Betadistribution(IMap<ParametersSet,List<Object>> sample, List<Batch> inputs, String obj) { this(sample,inputs,100,obj); }
 	
-	public Betadistribution(IMap<ParametersSet,List<Object>> sample, int granularity, String obj) {
+	public Betadistribution(IMap<ParametersSet,List<Object>> sample, List<Batch> inputs, int granularity, String obj) {
 		this.objective = obj;
 		this.sample = new HashMap<>();
 		for (ParametersSet ps : sample.keySet()) { 
@@ -38,7 +38,7 @@ public class Betadistribution {
 			if (min < this.objMin) {this.objMin=min;}
 			if (max > this.objMax) {this.objMax=max;}
 		}
-		
+		this.parameters = inputs;
 		this.empiricalCDFGranularity = granularity(granularity,this.objMin,this.objMax);
 		this.Y = get_empirical_distribution(this.sample.values().stream().flatMap(List::stream).toList());
 	}
