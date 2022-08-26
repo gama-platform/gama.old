@@ -63,6 +63,8 @@ Export-Package: msi.gama.common,
    msi.gaml.descriptions,
    msi.gaml.compilation",
  msi.gama.kernel.batch.exploration,
+ msi.gama.kernel.batch.exploration.morris,
+ msi.gama.kernel.batch.exploration.sobol,
  msi.gama.kernel.batch.optimization,
  msi.gama.kernel.batch.optimization.genetic,
  msi.gama.kernel.experiment;
