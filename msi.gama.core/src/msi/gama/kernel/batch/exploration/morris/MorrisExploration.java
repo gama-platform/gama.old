@@ -12,17 +12,17 @@ package msi.gama.kernel.batch.exploration.morris;
 
 import java.io.BufferedReader;
 import java.io.File;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
+import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -45,8 +45,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
-import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
-import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 
 /**
  * 

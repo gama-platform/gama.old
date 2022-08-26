@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration;
 
-import java.nio.file.Path;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;

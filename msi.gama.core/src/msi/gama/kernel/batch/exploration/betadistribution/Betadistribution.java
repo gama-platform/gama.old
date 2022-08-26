@@ -65,7 +65,7 @@ public class Betadistribution {
 				betas.add(Collections.max(deltas)+Math.abs(Collections.min(deltas)));
 			}
 
-			// TODO : compute expectancy - no differences in weight, then just the average - of all the betaKu to obtain betadKu
+			// compute expectancy - no differences in weight, then just the average - of all the betaKu to obtain betadKu
 			betadKu.put(p, betas.stream().mapToDouble(Double::doubleValue).average().getAsDouble());
 		}
 		

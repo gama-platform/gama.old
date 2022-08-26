@@ -1,8 +1,5 @@
 package msi.gama.kernel.batch.exploration.sampling;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -11,8 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 
-import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 /**

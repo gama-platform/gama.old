@@ -130,6 +130,9 @@ public interface IKeyword {
 	/** The benchmark. */
 	String BENCHMARK = "benchmark";
 
+	/** The beta^d coefficient */
+	String BETAD = "betad";
+	
 	/** The bool. */
 	String BOOL = "bool";
 

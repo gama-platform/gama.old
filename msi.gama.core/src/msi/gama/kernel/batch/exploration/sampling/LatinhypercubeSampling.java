@@ -1,20 +1,19 @@
 package msi.gama.kernel.batch.exploration.sampling;
 
-
-import java.util.*;
-
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-
-import msi.gama.kernel.batch.exploration.sampling.SamplingUtils;
-
-import msi.gama.kernel.experiment.ParametersSet;
-import msi.gama.kernel.experiment.IParameter.Batch;
 /**
 *
 * @author Tom ROY
 *
 */
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.runtime.IScope;
 
 /**
  * 
@@ -24,9 +23,7 @@ import msi.gama.kernel.experiment.IParameter.Batch;
 
 public class LatinhypercubeSampling extends SamplingUtils{
 	
-	public LatinhypercubeSampling() {
-
-	}
+	public LatinhypercubeSampling() { }
 	
 	public static double nextDouble(double min, double max,Random r) {
         return min + r.nextDouble() * (max - min);
@@ -67,7 +64,7 @@ public class LatinhypercubeSampling extends SamplingUtils{
         }
         for(int i=0; i<names.size();i++){
             //System.out.println(temp);
-            List new_temp= new ArrayList<>(shuffle(temp,r));
+            List<Double> new_temp= new ArrayList<>(shuffle(temp,r));
             results.put(names.get(i),new_temp);
 
         }
