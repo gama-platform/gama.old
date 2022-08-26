@@ -61,11 +61,8 @@ public class MorrisSampling extends SamplingUtils {
 	    public List<Double> seed(int k,int p, Random rng){
 	        List<Double> seed=new ArrayList<>();
 	    	double delta= 1/(2*((double)p -1));
-	    	Random r= new Random();
-	        //IntStream.range(0,k).forEach(i->seed.add((double) (rng.nextInt(p - 1)+1) *delta));
-	        IntStream.range(0,k).forEach(i->seed.add((double) (r.nextInt(p - 1)+1) *delta));
-	        
-	        System.out.println(seed);
+	        IntStream.range(0,k).forEach(i->seed.add((double) (rng.nextInt((p*2-1))+1) *delta));
+	
 	        return seed;
 	    }
 	    
@@ -186,7 +183,6 @@ public class MorrisSampling extends SamplingUtils {
 	        for(int i=0;i<parameters.size();i++) {
 	        	nameInputs.add(parameters.get(i).getName());
 	        }
-	        System.out.println(trajectories);
 	        List<Map<String,Double>> MorrisSamples= new ArrayList<>();
 	        trajectories.forEach(t -> {
 	            t.points.forEach(p->{
@@ -198,7 +194,6 @@ public class MorrisSampling extends SamplingUtils {
 	            });
 	        	
 	        });
-	        System.out.println(MorrisSamples);
 	        sampling=BuildParametersSetfromSample(scope,parameters,MorrisSamples);
 	        return sampling;
 	        }

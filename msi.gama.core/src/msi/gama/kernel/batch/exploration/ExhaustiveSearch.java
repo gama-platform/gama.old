@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
 import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
+import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -74,7 +75,12 @@ import msi.gaml.types.IType;
 						name=ExhaustiveSearch.NB_LEVELS,
 						type = IType.INT,
 						optional=true,
-						doc=@doc("The number of levels for morris sampling, 4 by default"))
+						doc=@doc("The number of levels for morris sampling, 4 by default")),
+				@facet (
+						name=ExhaustiveSearch.ITERATIONS,
+						type= IType.INT,
+						optional=true,
+						doc=@doc("The number of iteration for orthogonal sampling, 5 by default"))
 		
 		},
 		omissible = IKeyword.NAME)
@@ -92,20 +98,22 @@ import msi.gaml.types.IType;
 								isExecutable = false) }) })
 public class ExhaustiveSearch extends AExplorationAlgorithm {
 	/** The Constant Method*/
-	protected static final String METHODS = "sampling_method";
+	public static final String METHODS = "sampling";
 	
 	/** The Constant SAMPLE_SIZE */
-	protected static final String SAMPLE_SIZE = "sample_size";
+	public static final String SAMPLE_SIZE = "sample";
 	
 	/** The Constant NB_LEVELS */
-	protected static final String NB_LEVELS = "nb_levels";
+	public static final String NB_LEVELS = "levels";
 	
-	private String method;
+	/**The Constant ITERATIONS*/
+	public static final String ITERATIONS="iterations";
+	
 	private int sample_size;
 	private int nb_levels;
+	private int iterations;
 	
 	private List<Batch> parameters;
-	private List<String> ParametersNames;
 
 	/**
 	 * Instantiates a new exhaustive search.
@@ -123,16 +131,20 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 			IExpression methods_name= getFacet(METHODS);
 			String method= Cast.asString(scope, methods_name.value(scope));
 			switch(method) {
-			case "morris":
+			case IKeyword.MORRIS:
 				MorrisExhaustive(scope);
 				break;
 				
-			case "saltelli":
+			case IKeyword.SALTELLI:
 				SaltelliExhaustive(scope);
 				break;
 				
-			case "latinhypercube":
+			case IKeyword.LHS:
 				LatinHypercubeExhaustive(scope);
+				break;
+				
+			case IKeyword.ORTHOGONAL:
+				OrthogonalExhaustive(scope);
 				break;
 				
 			default:
@@ -243,6 +255,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	 * Morris
 	 * Saltelli
 	 * Latin Hypercube
+	 * Orthogonal Latin Hypercube
 	 */
 	
 	
@@ -271,7 +284,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
         	names.add(parameters.get(i).getName());
         }
         MorrisSampling morris_samples= new MorrisSampling();
-		this.ParametersNames=names;
 		
 		List<ParametersSet> sets= morris_samples.MakeMorrisSampling(nb_levels,this.sample_size, parameters,scope);
 		
@@ -300,7 +312,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
         }
         
         LatinhypercubeSampling LHS=new LatinhypercubeSampling();
-        this.ParametersNames=names;
         List<ParametersSet> sets= LHS.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(),scope);
         
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
@@ -337,6 +348,39 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		}	
         
 		
+	}
+	
+	private void OrthogonalExhaustive(final IScope scope) {
+		System.out.println("Creating Orthogonal sampling...");
+		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
+			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
+		}else {
+			this.sample_size=132;
+		}
+		
+		if(hasFacet(ExhaustiveSearch.ITERATIONS)) {
+			this.iterations= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
+		}else {
+			this.iterations=5;
+		}
+		List<Batch> params= currentExperiment.getSpecies().getParameters().values().stream()
+				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
+				.map(p-> (Batch) p)
+				.collect(Collectors.toList());
+		parameters= parameters==null ? params : parameters;
+		List<String> names= new ArrayList<>();
+        for(int i=0;i<parameters.size();i++) {
+        	names.add(parameters.get(i).getName());
+        }
+        OrthogonalSampling ortho= new OrthogonalSampling();
+        
+        List<ParametersSet> sets= ortho.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
+        
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+			currentExperiment.launchSimulationsWithSolution(sets);
+		} else {
+			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
+		}	
 	}
 	
 	// INNER UTILITY METHODS
