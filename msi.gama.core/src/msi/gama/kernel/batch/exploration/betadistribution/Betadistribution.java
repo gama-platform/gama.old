@@ -11,7 +11,6 @@ import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IMap;
-import smile.stat.distribution.EmpiricalDistribution;
 
 public class Betadistribution {
 	
@@ -105,6 +104,40 @@ public class Betadistribution {
 				+" is not the maximum expected value "+max, null);
 		}
 		return res;
+	}
+	
+	/*
+	 * Empirical distribution based on the implementation of smile API:
+	 * https://github.com/haifengl/smile/blob/master/base/src/main/java/smile/stat/distribution/EmpiricalDistribution.java
+	 */
+	public class EmpiricalDistribution {
+		double[] p;
+		private final double[] cdf;
+		
+		public EmpiricalDistribution(double[] prob) {
+			p = new double[prob.length];
+	        cdf = new double[prob.length];
+			cdf[0] = prob[0];
+			for (int i = 0; i < prob.length; i++) {
+	            if (prob[i] < 0 || prob[i] > 1) {
+	                throw new IllegalArgumentException("Invalid probability " + p[i]);
+	            }
+
+	            p[i] = prob[i];
+
+	            if (i > 0) {
+	                cdf[i] = cdf[i - 1] + p[i];
+	            }
+
+	        }
+
+	        if (Math.abs(cdf[cdf.length - 1] - 1.0) > 1E-7) {
+	            throw new IllegalArgumentException("The sum of probabilities is not 1.");
+	        }
+		}
+		
+	    public int length() { return p.length; }
+	    public double cdf(int k) { return cdf[k]; } 
 	}
 	
 }
