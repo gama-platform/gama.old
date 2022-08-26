@@ -127,7 +127,7 @@ import msi.gaml.types.IType;
 								value = "}",
 								isExecutable = false),
 						@example (
-								value = "	state s1 {",
+								value = "state s1 {",
 								isExecutable = false),
 						@example (
 								value = "",

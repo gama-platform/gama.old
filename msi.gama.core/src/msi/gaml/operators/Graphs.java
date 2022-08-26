@@ -2813,7 +2813,7 @@ public class Graphs {
 			concept = { IConcept.GRAPH })
 	@doc (
 			value = "layouts a Gama graph based on a grid latice. usage: layoutForce(graph, bounds, coeff_nb_cells). graph is the graph to which"
-					+ "	applied the layout;  bounds is the shape (geometry) in which the graph should be located; coeff_nb_cells"
+					+ "	the layout is applied;  bounds is the shape (geometry) in which the graph should be located; coeff_nb_cells"
 					+ "the coefficient for the number of cells to locate the vertices (nb of places = coeff_nb_cells * nb of vertices). ",
 			examples = { @example (
 					value = "layout_grid(graph, world.shape);",

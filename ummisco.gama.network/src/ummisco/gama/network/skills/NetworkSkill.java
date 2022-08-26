@@ -477,9 +477,9 @@ public class NetworkSkill extends MessagingSkill {
 			doc = @doc (
 					value = "Fetch all messages from network to mailbox. Use this in specific case only, this action is done at the end of each step. ",
 					examples = { @example ("do fetch_message_from_network;//forces gama to get all the new messages since the begining of the cycle\n"
-						+ "loop while:has_more_message(){ \n" 
-						+ "		message mess <- fetch_message();\n"
-						+ "		write message.contents;\n"
+						+ "loop while: has_more_message(){ \n" 
+						+ "	message mess <- fetch_message();\n"
+						+ "	write message.contents;\n"
 						+ "}"
 						) 
 					}))

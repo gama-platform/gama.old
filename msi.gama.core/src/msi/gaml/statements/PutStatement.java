@@ -105,8 +105,9 @@ import msi.gaml.types.IType;
 								value = "put all: expr in: expr_container;",
 								isExecutable = false) }),
 				@usage (
-						value = "In the case of a list, the position should an integer in the bound of the list. The facet all: is used to replace all the elements of the list by the given value.",
-						examples = { @example (
+						value = "In the case of a list, the position should be an integer in the bound of the list. The facet all: is used to replace all the elements of the list by the given value.",
+						examples = { 
+								@example (
 								var = "putList",
 								value = "[1,2,3,4,5]",
 								returnType = "list<int>",
