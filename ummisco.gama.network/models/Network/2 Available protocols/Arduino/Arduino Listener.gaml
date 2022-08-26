@@ -2,7 +2,7 @@
 * Name: Arduino Listener 
 * Author: Huynh Quang Nghi, Benoit Gaudou
 * Description: 
-* Tags: Network, Adruino
+* Tags: Network, Arduino
 */
 
 model Arduino_Listener
@@ -10,7 +10,6 @@ model Arduino_Listener
 global {	
 
 	init {
-		
 		create NetworkingAgent number: 1 {
 		   do connect protocol: "arduino" ;
 		}		

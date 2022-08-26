@@ -134,6 +134,7 @@ public class NetworkSkill extends MessagingSkill {
 							+ INetworkSkill.UDP_SERVER + "', '" + INetworkSkill.UDP_CLIENT + "', '"
 							+ INetworkSkill.TCP_SERVER + "', '" + INetworkSkill.TCP_CLIENT + "', '"
 							+ INetworkSkill.WEBSOCKET_SERVER + "', '" + INetworkSkill.WEBSOCKET_CLIENT + "', '"
+							+ INetworkSkill.HTTP_REQUEST  + "', '"
 							+ INetworkSkill.ARDUINO
 							+ "', otherwise the MQTT protocol is used.")),
 					@arg (
@@ -179,11 +180,13 @@ public class NetworkSkill extends MessagingSkill {
 					examples = { @example (" do connect with_name:\"any_name\";"),
 							@example (" do connect to:\"localhost\" port:9876 with_name:\"any_name\";"),
 							@example (" do connect to:\"localhost\" protocol:\"MQTT\" port:9876 with_name:\"any_name\";"),
-							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\"; "),
+							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9876 with_name:\"Server\";"),
 							@example (" do connect to:\"localhost\" protocol:\"udp_client\" port:9876 with_name:\"Client\";"),
 							@example (" do connect to:\"localhost\" protocol:\"udp_server\" port:9877 size_packet: 4096;"),
 							@example (" do connect to:\"localhost\" protocol:\"tcp_client\" port:9876;"),
 							@example (" do connect to:\"localhost\" protocol:\"tcp_server\" port:9876 raw:true;"),
+							@example (" do connect to: \"https://openlibrary.org\" protocol: \"http\" port: 443 raw: true;"),
+							@example (" do connect protocol: \"arduino\";"),
 							}))
 	public boolean connectToServer(final IScope scope) throws GamaRuntimeException {
 		if (!scope.getExperiment().hasAttribute(REGISTRED_SERVER)) { this.startSkill(scope); }
