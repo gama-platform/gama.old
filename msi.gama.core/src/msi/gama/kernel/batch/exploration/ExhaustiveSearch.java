@@ -129,7 +129,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	public void explore(final IScope scope) throws GamaRuntimeException {
 		if(hasFacet(ExhaustiveSearch.METHODS)){
 			
-			List<Batch> params = currentExperiment.getSpecies().getParameters().values().stream()
+			List<Batch> params = currentExperiment.getParametersToExplore().stream()
 					.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
 					.map(p-> (Batch) p)
 					.collect(Collectors.toList());
@@ -164,7 +164,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	@Override
 	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {
 		List<ParametersSet> sets2 = new ArrayList<>();
-		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
+		final List<Batch> variables = currentExperiment.getParametersToExplore();
 		if (variables.isEmpty()) return sets2;
 			
 		final IParameter.Batch var = variables.get(index);
