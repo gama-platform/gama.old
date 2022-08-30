@@ -125,6 +125,24 @@ experiment Exhaustive type: batch repeat: 3 keep_seed: true until: ( time > 5000
 	}
 }
 
+// This experiment iterate over point of the parameter space choosen following
+// Latin Hypercube Sampling
+experiment Exhaustive_with_LHS parent:Exhaustive repeat:3 type: batch until:time>5000 {
+	method exhaustive sampling:"latinhypercube" sample:100;
+	//the permanent section allows to define a output section that will be kept during all the batch experiment
+	permanent {
+		display Comparison {
+			chart "Number of people infected" type: series {
+				//we can access to all the simulations of a run (here composed of 5 simulation -> repeat: 5) by the variable "simulations" of the experiment.
+				//here we display for the 5 simulations, the mean, min and max values of the nb_infected variable.
+				data "Mean" value: mean(simulations collect each.num_dead ) style: spline color: #blue ;
+				data "Min" value:  min(simulations collect each.num_dead ) style: spline color: #darkgreen ;
+				data "Max" value:  max(simulations collect each.num_dead ) style: spline color: #red ;
+			}
+		}	
+	}
+}
+
 // This experiment tests two explicit parameters sets,
 // repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
 experiment Explicit type: batch repeat: 3 keep_seed: true until: ( time > 5000 ) {
