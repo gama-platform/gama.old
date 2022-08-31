@@ -245,10 +245,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
 						}else {
 							int sample= Integer.valueOf(tmpDesc.getLitteral(ExhaustiveSearch.SAMPLE_SIZE));
+							/*
 							System.out.println(sample);
 							if(!((sample & (sample-1)) ==0)) {
 								tmpDesc.error("The sample size should be a power of 2");
 							}
+							*/
 							
 						}
 						if(tmpDesc.hasFacet(ExhaustiveSearch.NB_LEVELS)) {
