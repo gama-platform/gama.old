@@ -1157,6 +1157,9 @@ public interface IKeyword {
 
 	/** The step. */
 	String STEP = "step";
+	
+	/** The Stochasticity Analysis */
+	String STO="stochanalyse";
 
 	/** The stop sound. */
 	String STOP_SOUND = "stop_sound";
@@ -1409,6 +1412,6 @@ public interface IKeyword {
 
 	/** The methods. */
 	String[] METHODS =
-			{ GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL, MORRIS };
+			{ GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL, MORRIS, STO,BETAD };
 
 }
