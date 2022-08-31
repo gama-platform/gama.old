@@ -89,13 +89,7 @@ import msi.gaml.types.IType;
 						type = IType.FLOAT,
 						optional=true,
 						doc=@doc("The threshold for the stochanalysis, 0.01 by default")
-						),
-				@facet(
-				name= StochanalysisExploration.NB_REPLICAT,
-				type = IType.FLOAT,
-				optional=false,
-				doc=@doc("The number of replicat")
-				)
+						)
 		
 		
 		},
@@ -115,7 +109,6 @@ public class StochanalysisExploration extends AExplorationAlgorithm  {
 	
 	public static final String THRESHOLD = "threshold";
 	
-	public static final String NB_REPLICAT ="replicat";
 	
 	/** Theoretical inputs */
 	private List<Batch> parameters;
@@ -163,7 +156,6 @@ public class StochanalysisExploration extends AExplorationAlgorithm  {
 						Cast.asInt(scope, getFacet(ExhaustiveSearch.NB_LEVELS).value(scope)) : 4;
 				sets = new MorrisSampling().MakeMorrisSampling(nbl,this.sample_size, parameters, scope); 
 				break;
-				
 			case IKeyword.SALTELLI:
 				sets = new SaltelliSampling().MakeSaltelliSampling(scope, sample_size, parameters); 
 				break;
@@ -197,8 +189,6 @@ public class StochanalysisExploration extends AExplorationAlgorithm  {
 
 		int res=0;
 		
-		int nb_replicat= Cast.asInt(scope, getFacet(StochanalysisExploration.NB_REPLICAT).value(scope));
-		
 		Stochanalysis sto= new Stochanalysis();
 		
 		for (String out : outputs) {
@@ -207,7 +197,7 @@ public class StochanalysisExploration extends AExplorationAlgorithm  {
 				sp.put(ps, res_outputs.get(ps).get(out));
 			}
 
-			res=res+sto.StochasticityAnalysis(sp, nb_replicat, scope);
+			res=res+sto.StochasticityAnalysis(sp, scope);
 		}
 		
 		res=res/outputs.size();

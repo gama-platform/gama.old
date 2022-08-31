@@ -22,7 +22,6 @@ public class Stochanalysis {
 
 	List<Map<String,Object>> MySample;
 	List<String> ParametersNames;
-	int nb_replicat;
 	double threshold;
 	
 
@@ -94,7 +93,7 @@ public class Stochanalysis {
 		List<Double> CV=new ArrayList<>();
 		for(int i=0;i<mean.size();i++) {
 			if(i==0) {
-				CV.add(1.0);
+				//CV.add(1.0);
 			}else {
 				CV.add(STD.get(i)/mean.get(i));
 			}
@@ -117,24 +116,20 @@ public class Stochanalysis {
 				}
 			}
 		}
+		if(!thresh_ok) {
+			return CV.size();
+		}
 		return id_sample;
 	}
 	
 	
-	public int StochasticityAnalysis(IMap<ParametersSet,List<Object>> sample,int replicat,IScope scope) {
-		System.out.println("In");
-		this.nb_replicat=replicat;
+	public int StochasticityAnalysis(IMap<ParametersSet,List<Object>> sample,IScope scope) {
 		int tmp_replicat=0;
-		
 		for(ParametersSet ps : sample.keySet()) {
-
 			List<Double> mean = computeMean(sample.get(ps),scope);
-
 			List<Double> std = computeSTD(mean,sample.get(ps),scope);
-
 			List<Double> cv = computeCV(std,mean);
 			tmp_replicat= tmp_replicat+FindWithThreshold(cv);
-
 		}
 		min_replicat=tmp_replicat/sample.keySet().size();
 		return min_replicat;
@@ -209,7 +204,6 @@ public class Stochanalysis {
 	}
 	
 	public String StochasticityAnalysis_From_CSV(int replicat,int threshold, String path_to_data,int id_output, IScope scope) {
-		this.nb_replicat=replicat;
 		this.threshold=threshold;
 		Map<String,List<Double>>  Outputs= readSimulation(path_to_data,id_output,scope);
 		
