@@ -78,6 +78,11 @@ import msi.gaml.types.IType;
 					optional = false,
 					doc = @doc ("The list of output variables to analyse")
 			),
+			@facet (
+					name=ExhaustiveSearch.SAMPLE_SIZE ,
+					type = IType.INT,
+					optional=true,
+					doc=@doc("The number of sample required.")),
 			@facet(
 					name = IKeyword.BATCH_OUTPUT,
 					type = IType.STRING,
@@ -122,7 +127,7 @@ public class BetaExploration extends AExplorationAlgorithm {
 	@Override
 	public void explore(IScope scope) {
 		// TODO Auto-generated method stub
-		List<Batch> params = currentExperiment.getSpecies().getParameters().values().stream()
+		List<Batch> params = currentExperiment.getParametersToExplore().stream()
 				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
 				.map(p-> (Batch) p)
 				.collect(Collectors.toList());
