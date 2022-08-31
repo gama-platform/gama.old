@@ -40,6 +40,7 @@ import cern.jet.stat.Probability;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.batch.exploration.sobol.Sobol;
 import msi.gama.kernel.batch.exploration.morris.Morris;
+import msi.gama.kernel.batch.exploration.stochanalysis.Stochanalysis;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -2357,6 +2358,14 @@ public class Stats {
 		}
 		return s;
 		
+		
+	}
+	
+	public static String Stochanalyse(int replicat,int threshold,String path,int id_firstOutput,IScope scope) {
+		String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
+		Stochanalysis sto= new Stochanalysis();
+		String s =sto.StochasticityAnalysis_From_CSV (replicat,threshold, new_path,id_firstOutput, scope);
+		return s;
 		
 	}
 
