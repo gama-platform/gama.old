@@ -58,7 +58,7 @@ public class MorrisSampling extends SamplingUtils {
 	 public List<Double> seed(int k,int p, Random rng){
 		 List<Double> seed=new ArrayList<>();
 		 double delta= 1/(2*((double)p -1));
-		 IntStream.range(0,k).forEach(i->seed.add((double) (rng.nextInt((p*2-1))+1) *delta));
+		 IntStream.range(0,k).forEach(i->seed.add((double) (rng.nextInt((p*2-2))+1) *delta));
 
 		 return seed;
 	 }
