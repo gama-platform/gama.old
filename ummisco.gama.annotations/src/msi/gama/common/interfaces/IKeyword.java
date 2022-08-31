@@ -1206,6 +1206,9 @@ public interface IKeyword {
 	/** The their. */
 	String THEIR = "their";
 
+	/** The thrad skill. */
+	String THREAD_SKILL = "thread";
+
 	/** The three d. */
 	String THREE_D = "3d";
 
