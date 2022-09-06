@@ -65,6 +65,7 @@ Export-Package: msi.gama.common,
  msi.gama.kernel.batch.exploration,
  msi.gama.kernel.batch.exploration.morris,
  msi.gama.kernel.batch.exploration.sobol,
+ msi.gama.kernel.batch.exploration.stochanalysis,
  msi.gama.kernel.batch.optimization,
  msi.gama.kernel.batch.optimization.genetic,
  msi.gama.kernel.experiment;
