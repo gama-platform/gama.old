@@ -92,11 +92,11 @@ import one.util.streamex.StreamEx;
 						type = IType.NONE,
 						optional = false,
 						doc = @doc ("To specify the input data used to inform the generation process. Various data input can be used: \n"
-								+ "* list of csv_file: can be aggregated or micro data\n"
-								+ "* matrix: describe the joint distribution of two attributes\n"
-								// + "* bayesian network (not yet implem): describe a conditional distribution of three
+								+ "  * list of csv_file: can be aggregated or micro data\n"
+								+ "  * matrix: describe the joint distribution of two attributes\n"
+								// + "  * bayesian network (not yet implem): describe a conditional distribution of three
 								// or more attributes"
-								+ "* genstar generator: a dedicated gaml type to enclose various genstar options all in one")),
+								+ "  * genstar generator: a dedicated gaml type to enclose various genstar options all in one")),
 				@facet (
 						/*
 						 * TODO : make those attributes like in csv map to directly recognize species' attributes rather
@@ -122,16 +122,19 @@ import one.util.streamex.StreamEx;
 
 @doc (
 		value = "Allows to create a synthetic population of agent from a set of given rules",
-		usages = { @usage (
+		usages = { 
+				@usage (
 				value = "The synthax to create a minimal synthetic population from aggregated file is:",
 				examples = { @example (
-						value = "synthesis my_species from: [source_file]; "
-								+ "attributes: [age::[\"below 18\",\"19 to 45\",\"more than 46\"]",
-						isExecutable = false),
-
-						@example (
-								value = "synthesis my_species from: my_matrix " + "number: 5 returns: list5Agents;",
-								isTestOnly = false) }) })
+				value = "generate species:people number: 10000 \n"
+						+ "from:[csv_file(\"../includes/Age & Sexe-Tableau 1.csv\",\";\")] \n"
+						+ "attributes:[\"Age\"::[\"Moins de 5 ans\", \"5 à 9 ans\", \"10 à 14 ans\", \"15 à 19 ans\", \"20 à 24 ans\", \n"
+						+ "\"25 à 29 ans\", \"30 à 34 ans\", \"35 à 39 ans\", \"40 à 44 ans\", \"45 à 49 ans\", \n"
+						+ "\"50 à 54 ans\", \"55 à 59 ans\", \"60 à 64 ans\", \"65 à 69 ans\", \"70 à 74 ans\", \"75 à 79 ans\", \n"
+						+ "\"80 à 84 ans\", \"85 à 89 ans\", \"90 à 94 ans\", \"95 à 99 ans\", \"100 ans ou plus\"],\n"
+						+ "\"Sexe\"::[\"Hommes\", \"Femmes\"]];",
+				isExecutable = false)}
+) })
 @validator (GenerateValidator.class)
 public class GenerateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 

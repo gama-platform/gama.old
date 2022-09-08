@@ -43,7 +43,7 @@ import msi.gaml.types.IType;
 		@facet(name = UnconsciousContagionStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("The threshold value to make the contagion")),
 		@facet(name = UnconsciousContagionStatement.DECAY, type = IType.FLOAT, optional = true, doc = @doc("The decay value of the emotion added to the agent")),
 		@facet(name = UnconsciousContagionStatement.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) }, omissible = IKeyword.NAME)
-@doc(value = "enables to directly copy an emotion presents in the perceived specie.", examples = {
+@doc(value = "enables to directly copy an emotion present in the perceived species.", examples = {
 		@example("unconscious_contagion emotion:fearConfirmed; "),
 		@example("unconscious_contagion emotion:fearConfirmed charisma: 0.5 receptivity: 0.5;") })
 
