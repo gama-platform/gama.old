@@ -70,6 +70,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
@@ -329,6 +330,26 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		this(scope,graph,nodeS,edgeS,null,null);
 	}	
 	
+	
+	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph, final GamaMap<?,IShape> nodes) {
+		this(scope, (nodes == null || nodes.isEmpty())  ? Types.GEOMETRY : (nodes.getValues().get(0) instanceof IAgent ? Types.AGENT : Types.GEOMETRY), Types.GEOMETRY);
+		for (IShape v : nodes.getValues()) {
+			addVertex(v);
+		}
+		
+		for (DefaultEdge e : (Set<DefaultEdge>)graph.edgeSet()) {
+			Object s = graph.getEdgeSource(e);
+			Object t = graph.getEdgeTarget(e);
+			IShape sg = nodes.get(s);
+			IShape tg = nodes.get(t);
+			IList<IShape> points = GamaListFactory.create();
+			points.add(sg.getLocation());
+			points.add(tg.getLocation());
+			IShape eg = Creation.line(scope, points);
+			setEdgeWeight(eg, graph.getEdgeWeight(e));
+			addEdge(sg, tg, eg);	
+		}
+	}
 	/**
 	 * Instantiates a new gama graph, with a specified node and edge attributes to store attributes read in the graph file.
 	 *

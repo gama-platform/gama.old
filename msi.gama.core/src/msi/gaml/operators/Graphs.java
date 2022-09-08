@@ -71,6 +71,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.ICollector;
@@ -3422,7 +3423,46 @@ public class Graphs {
 		return new GamaGraph<>(scope, graph, node_species, edges_species);
 
 	}
+	@operator (
+			value = "generate_barabasi_albert",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
+			masterDoc = false,
+			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
+					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
+					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+			usages = { @usage (
+					value = "\"nbInitNodes\": number of initial nodes; "
+							+ "\"nodes\": list of existing nodes to connect (agents or geometries); "
+							+ "\"nbEdgesAdded\": number of edges of each new node added during the network growth; "
+							+ "\"directed\": is the graph directed or not; ",
+					examples = { @example (
+							value = "graph myGraph <- generate_watts_strogatz(people, 10,1,false);",
+							isExecutable = false) }) },
+			see = { "generate_watts_strogatz" })
+	@no_test
+	public static IGraph generateGraphBarabasiAlbert(final IScope scope, final IContainer nodes,
+			final Integer initNbNodes, final Integer nbEdgesAdded, final Boolean directed) {
+		
+		BarabasiAlbertGraphGenerator gen = new BarabasiAlbertGraphGenerator(initNbNodes, nbEdgesAdded, nodes.length(scope),
+				scope.getSimulation().getRandomGenerator().getGenerator());
+		AbstractBaseGraph<String, DefaultEdge> graph = directed
+				? new DirectedMultigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true)
+				: new Multigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
 
+		gen.generateGraph(graph);
+		IList l = nodes.listValue(scope, Types.NO_TYPE, false);
+		
+		GamaMap nodesM = (GamaMap) GamaMapFactory.create();
+		List vs = new ArrayList<>(graph.vertexSet());
+		for (int i = 0; i < graph.vertexSet().size(); i++) {
+			nodesM.put(vs.get(i), l.get(i));
+		}
+		return new GamaGraph<>(scope, graph, nodesM);
+	}
+	
 	/**
 	 * Generate graph barabasi albert.
 	 *
@@ -3455,6 +3495,7 @@ public class Graphs {
 							+ "\"nbEdgesAdded\": number of edges of each new node added during the network growth; "
 							+ "\"nbNodes\": final number of nodes; " + "\"directed\": is the graph directed or not; "
 							+ "\"node_species\": the species of vertices; \"edges_species\": the species of edges",
+							
 
 					examples = { @example (
 							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
@@ -3723,6 +3764,59 @@ public class Graphs {
 
 		return generateGraphWattsStrogatz(scope, nbNodes, p, k, directed, null, null);
 
+	}
+	
+	@operator (
+			value = "generate_watts_strogatz",
+			concept = { IConcept.ALGORITHM })
+	@doc (
+			value = "returns a random small-world network (following Watts-Strogatz model).",
+			masterDoc = true,
+			comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
+					+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
+					+ "The map operand should includes following elements:",
+			usages = { @usage (
+					value = "\"nodes\": the list of nodes to connect; "
+							+ "\"p\": probability to \"rewire\" an edge (so it must be between 0 and 1, the parameter is often called beta in the literature); "
+							+ "\"k\": the base degree of each node (k must be greater than 2 and even); "
+							+ "\"directed\": is the graph directed or not",
+
+					examples = { @example (
+							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
+							isExecutable = false),
+
+							@example (
+									value = "			people,",
+									isExecutable = false),
+							@example (
+									value = "			0.3,",
+									isExecutable = false),
+							@example (
+									value = "			5,",
+									isExecutable = false),
+							@example (
+									value = "		true);",
+									isExecutable = false) }) },
+			see = { "generate_barabasi_albert" })
+	@no_test
+	public static IGraph generateGraphWattsStrogatz(final IScope scope, final IContainer nodes,
+			final Double p, 
+			final Integer k, final Boolean directed) {
+
+
+		WattsStrogatzGraphGenerator wsg = new WattsStrogatzGraphGenerator(nodes.length(scope), k, p, false,
+				scope.getSimulation().getRandomGenerator().getGenerator());
+		AbstractBaseGraph<String, DefaultEdge> graph = directed
+				? new DirectedMultigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true)
+				: new Multigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
+		wsg.generateGraph(graph);
+		IList l = nodes.listValue(scope, Types.NO_TYPE, false);
+		GamaMap nodesM = (GamaMap) GamaMapFactory.create();
+		List vs = new ArrayList<>(graph.vertexSet());
+		for (int i = 0; i < graph.vertexSet().size(); i++) {
+			nodesM.put(vs.get(i), l.get(i));
+		}
+		return new GamaGraph<>(scope, graph, nodesM);
 	}
 
 	/**
