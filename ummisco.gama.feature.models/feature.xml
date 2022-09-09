@@ -4,7 +4,7 @@
       label="Models"
       version="1.8.2.qualifier"
       provider-name="UMMISCO"
-      plugin="msi.gama.models"
+      plugin="ummisco.gama.feature.models.branding"
       colocation-affinity="ummisco.gama.feature.core">
 
    <description url="http://www.gama-platform.org">
@@ -20,11 +20,17 @@
    </license>
 
    <url>
-      <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+      <update label="Gama 1.8.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
    <plugin
          id="msi.gama.models"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ummisco.gama.feature.models.branding"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

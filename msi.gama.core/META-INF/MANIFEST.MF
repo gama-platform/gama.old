@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Core plugin of GAMA
+Bundle-Name: Core of GAMA
 Bundle-SymbolicName: msi.gama.core;singleton:=true
 Bundle-Version: 1.8.2.qualifier
 Require-Bundle: org.eclipse.core.runtime,
@@ -444,3 +444,4 @@ Bundle-ClassPath: schema/,
 Bundle-Activator: msi.gama.common.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.core
+Bundle-Vendor: UMMISCO

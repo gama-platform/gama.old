@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Adds network capabilities to GAMA models
+Bundle-SymbolicName: ummisco.gama.feature.serialize.branding
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: UMMISCO
+Automatic-Module-Name: ummisco.gama.feature.serialize.branding

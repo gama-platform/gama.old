@@ -4,7 +4,7 @@
       label="Dependencies of GAMA"
       version="1.8.2.qualifier"
       provider-name="UMMISCO"
-      plugin="msi.gama.ext">
+      plugin="ummisco.gama.feature.dependencies.branding">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+      <update label="GAMA 1.8.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
    <plugin
@@ -1433,5 +1433,11 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="ummisco.gama.feature.dependencies.branding"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

@@ -4,7 +4,7 @@
       label="UI Components for running experiments in  GAMA"
       version="1.8.2.qualifier"
       provider-name="UMMISCO"
-      plugin="ummisco.gama.ui.experiment">
+      plugin="ummisco.gama.feature.experiment.ui.branding">
 
    <description url="http://gama-platform.org">
       The UI components for running experiments in GAMA
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+      <update label="Gama 1.8.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
    <requires>
@@ -46,5 +46,11 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="ummisco.gama.feature.experiment.ui.branding"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

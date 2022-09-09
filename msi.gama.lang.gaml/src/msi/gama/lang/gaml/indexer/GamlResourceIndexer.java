@@ -23,7 +23,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.inject.Singleton;
 
 import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
@@ -32,6 +31,7 @@ import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.GamlResource.ImportedResources;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -50,9 +50,9 @@ public class GamlResourceIndexer {
 	static {
 		DEBUG.ON();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.addResourceChangeListener(
-				event -> { if (event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD) { eraseIndex(); } },
-				IResourceChangeEvent.PRE_BUILD);
+		workspace.addResourceChangeListener(event -> {
+			if (event.getBuildKind() == IncrementalProjectBuilder.CLEAN_BUILD) { eraseIndex(); }
+		}, IResourceChangeEvent.PRE_BUILD);
 	}
 
 	/** The Constant EMPTY_MAP. */
@@ -159,7 +159,7 @@ public class GamlResourceIndexer {
 	 * Synchronized method to avoid concurrent errors in the graph in case of a parallel resource loader
 	 */
 	public static synchronized EObject updateImports(final GamlResource r) {
-		final URI baseURI = GamlResourceServices.properlyEncodedURI(r.getURI());
+		final URI baseURI = r.getURI();
 		final Map<URI, String> existingEdges = index.outgoingEdgesOf(baseURI);
 		if (r.getContents().isEmpty()) return null;
 		final EObject contents = r.getContents().get(0);
@@ -193,11 +193,11 @@ public class GamlResourceIndexer {
 	 *            the resource
 	 * @return the linked hash multimap
 	 */
-	public static LinkedHashMultimap<String, GamlResource> validateImportsOf(final GamlResource resource) {
+	public static ImportedResources validateImportsOf(final GamlResource resource) {
 		final Map<URI, String> uris = allImportsOf(resource);
-		LinkedHashMultimap<String, GamlResource> imports = null;
+		ImportedResources imports = null;
 		if (!uris.isEmpty()) {
-			imports = LinkedHashMultimap.create();
+			imports = new ImportedResources();
 			for (Map.Entry<URI, String> entry : uris.entrySet()) {
 				final GamlResource r = (GamlResource) resource.getResourceSet().getResource(entry.getKey(), true);
 				if (r == resource) { continue; }
@@ -205,7 +205,7 @@ public class GamlResourceIndexer {
 					resource.invalidate(r, "Errors detected");
 					return null;
 				}
-				imports.put(entry.getValue(), r);
+				imports.add(entry.getValue(), r);
 			}
 		}
 		return imports;
@@ -219,6 +219,13 @@ public class GamlResourceIndexer {
 	 * @return the i map
 	 */
 	public static Map<URI, String> allImportsOf(final GamlResource r) {
+		// Map<URI, String> imports = r.getImports();
+		// if (imports == null) {
+		// imports = allImportsOf(r.getURI());
+		// r.setImports(imports);
+		// }
+		// return imports;
+
 		return r.getCache().get(IMPORTED_URIS, r, () -> allImportsOf(r.getURI()));
 	}
 
@@ -245,14 +252,14 @@ public class GamlResourceIndexer {
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#directImportersOf(org.eclipse.emf.common.util.URI)
 	 */
 	public static Set<URI> directImportersOf(final URI uri) {
-		return index.predecessorsOf(GamlResourceServices.properlyEncodedURI(uri));
+		return index.predecessorsOf(uri);
 	}
 
 	/**
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#directImportsOf(org.eclipse.emf.common.util.URI)
 	 */
 	public static Set<URI> directImportsOf(final URI uri) {
-		return index.successorsOf(GamlResourceServices.properlyEncodedURI(uri));
+		return index.successorsOf(uri);
 	}
 
 	/**

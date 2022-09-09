@@ -94,8 +94,8 @@ public class GamlResourceServices {
 	 *            the r
 	 * @return the documentation cache
 	 */
-	public static IMap<EObject, IGamlDescription> getDocumentationCache(final Resource r) {
-		return documentationCache.getUnchecked(properlyEncodedURI(r.getURI()));
+	public static IMap<EObject, IGamlDescription> getDocumentationCache(final GamlResource r) {
+		return documentationCache.getUnchecked(r.getURI());
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class GamlResourceServices {
 	 * @return true, if is edited
 	 */
 	public static boolean isEdited(final URI uri) {
-		return resourceListeners.containsKey(properlyEncodedURI(uri));
+		return resourceListeners.containsKey(uri);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class GamlResourceServices {
 	 *            the r
 	 * @return true, if is edited
 	 */
-	public static boolean isEdited(final Resource r) {
+	public static boolean isEdited(final GamlResource r) {
 		return isEdited(r.getURI());
 	}
 
@@ -163,7 +163,7 @@ public class GamlResourceServices {
 			final ValidationContext status) {
 		// DEBUG.LOG("Beginning updating the state of editor in
 		// ResourceServices for " + uri.lastSegment());
-		final URI newURI = properlyEncodedURI(uri);
+		final URI newURI = uri;
 
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
 		if (listener == null) return;
@@ -183,7 +183,7 @@ public class GamlResourceServices {
 	 *            the listener
 	 */
 	public static void addResourceListener(final URI uri, final IGamlBuilderListener listener) {
-		final URI newURI = properlyEncodedURI(uri);
+		final URI newURI = uri; // properlyEncodedURI(uri);
 		resourceListeners.put(newURI, listener);
 	}
 
@@ -223,7 +223,7 @@ public class GamlResourceServices {
 	 * @return the validation context
 	 */
 	public static ValidationContext getValidationContext(final GamlResource r) {
-		final URI newURI = properlyEncodedURI(r.getURI());
+		final URI newURI = r.getURI();
 		if (!resourceErrors.containsKey(newURI)) {
 			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), getResourceDocumenter()));
 		}
@@ -238,8 +238,8 @@ public class GamlResourceServices {
 	 * @param r
 	 *            the r
 	 */
-	public static void discardValidationContext(final Resource r) {
-		resourceErrors.remove(properlyEncodedURI(r.getURI()));
+	public static void discardValidationContext(final GamlResource r) {
+		resourceErrors.remove(r.getURI());
 	}
 
 	/**
@@ -351,6 +351,7 @@ public class GamlResourceServices {
 			final Map<URI, String> uris = GamlResourceIndexer.allImportsOf(r);
 			imports.putAll(uris);
 		}
+		// result.setImports(imports);
 		result.getCache().getOrCreate(result).set(GamlResourceIndexer.IMPORTED_URIS, imports);
 		return result;
 	}

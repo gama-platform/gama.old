@@ -3,4 +3,4 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Models of GAMA
 Bundle-SymbolicName: msi.gama.models
 Bundle-Version: 1.8.2.qualifier
-Bundle-Vendor: MSI
+Bundle-Vendor: GAMA

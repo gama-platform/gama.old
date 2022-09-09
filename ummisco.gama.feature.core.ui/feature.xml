@@ -4,7 +4,7 @@
       label="Common UI Components of GAMA"
       version="1.8.2.qualifier"
       provider-name="UMMISCO"
-      plugin="msi.gama.application">
+      plugin="ummisco.gama.feature.core.ui.branding">
 
    <description url="http://gama-platform.org">
       The common UI components of GAMA
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+      <update label="Gama 1.8.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
    <plugin
@@ -30,6 +30,12 @@
 
    <plugin
          id="ummisco.gama.ui.shared"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ummisco.gama.feature.core.ui.branding"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

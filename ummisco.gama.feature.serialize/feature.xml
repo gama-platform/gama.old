@@ -2,15 +2,12 @@
 <feature
       id="ummisco.gama.feature.serialize"
       label="Serialize"
-      version="1.8.2.qualifier">
+      version="1.8.2.qualifier"
+      plugin="ummisco.gama.feature.serialize.branding">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
    </description>
-   
-   <url>
-      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
-   </url>
 
    <copyright url="http://www.example.com/copyright">
       [Enter Copyright Description here.]
@@ -20,8 +17,18 @@
       [Enter License Description here.]
    </license>
 
+   <url>
+      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+   </url>
+
    <plugin
          id="ummisco.gama.serialize"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ummisco.gama.feature.serialize.branding"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
