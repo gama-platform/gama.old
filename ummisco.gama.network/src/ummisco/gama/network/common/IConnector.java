@@ -95,6 +95,18 @@ public interface IConnector {
 	 * @param b the b
 	 */
 	void forceNetworkUse(boolean b);
+	
+	/**
+	 * 
+	 * @return true if the connection is raw (no addition message-wrapping), false otherwise
+	 */
+	boolean isRaw();
+	
+	/**
+	 * set raw
+	 * @param isRaw
+	 */
+	void setRaw(boolean isRaw);
 
 	/** The server url. */
 	String SERVER_URL = "SERVER_URL";

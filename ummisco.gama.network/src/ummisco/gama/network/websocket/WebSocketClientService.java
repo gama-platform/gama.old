@@ -10,34 +10,26 @@
  ********************************************************************************************************/
 package ummisco.gama.network.websocket;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.MessageFactory.MessageType;
-import ummisco.gama.network.common.socket.SocketService;
 import ummisco.gama.network.tcp.ClientService;
-import ummisco.gama.network.tcp.TCPConnector;
 
 /**
  * The Class ClientService.
  */
 public class WebSocketClientService extends ClientService {
 
-	/** The socket. */
-	protected GamaClient socket;
+	protected GamaClient client;
 
 	public WebSocketClientService(Socket sk, IConnector connector) {
 		super(sk, connector);
@@ -51,9 +43,15 @@ public class WebSocketClientService extends ClientService {
 	public void startService() throws UnknownHostException, IOException {
 		if (socket == null) {
 			try {
-				socket = new GamaClient(new URI("ws://" + this.server + ":" + this.port), this);
-				socket.connect();
+				var address = new URI("ws://" + this.server + ":" + this.port);
+				client = new GamaClient(address, this);
+				client.connectBlocking();
+				socket = client.getSocket();
+				
 			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -99,4 +97,29 @@ public class WebSocketClientService extends ClientService {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	@Override
+	public void sendMessage(String message, String receiver) throws IOException {
+		sendMessage(message);
+	}
+	
+	@Override
+	public void sendMessage(String message) throws IOException {
+		if (socket == null || !isOnline()) return;
+		
+		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);		
+		
+		String msg = message;
+		
+		//If raw connection we do not append an end of line nor escape anything
+		if (! connector.isRaw()) {
+			msg = message	.replaceAll("\n", "@n@")
+							.replaceAll("\b\r", "@b@@r@")
+						+ 	"\n";
+		}
+		client.send(msg);
+		
+	}
+	
 }

@@ -22,10 +22,9 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.network.common.CommandMessage;
+import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.common.MessageFactory;
-import ummisco.gama.network.common.CommandMessage.CommandType;
 import ummisco.gama.network.common.MessageFactory.MessageType;
 import ummisco.gama.network.common.socket.SocketService;
 
@@ -123,7 +122,6 @@ public class ClientService extends Thread implements SocketService {
 		return isAlive;
 	}
 
-	@SuppressWarnings ("unchecked")
 	@Override
 	public void run() {
 		try {
@@ -150,10 +148,11 @@ public class ClientService extends Thread implements SocketService {
 	public void receivedMessage(final String sender, final String message) {
 		final MessageType mte = MessageFactory.identifyMessageType(message);
 		if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-			((TCPConnector)connector).extractAndApplyCommand(sender, message);
+			//TODO: check if it is really only for tcp
+			((TCPConnector)connector).extractAndApplyCommand(sender, message); 
 		} else { 
-			final String r = ((TCPConnector)connector).isRaw() ? message : MessageFactory.unpackReceiverName(message);
-			((TCPConnector)connector).storeMessage(sender, r, message);
+			final String r = connector.isRaw() ? message : MessageFactory.unpackReceiverName(message);
+			((Connector)connector).storeMessage(sender, r, message);
 		}
 	}
 
@@ -163,26 +162,25 @@ public class ClientService extends Thread implements SocketService {
 		if (socket == null || !isOnline()) return;
 		
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);		
-		String msg;
 		
 		//If raw connection we do not append an end of line nor escape anything
-		if (connector instanceof TCPConnector con && con.isRaw()) {
-			msg = message;
-			sender.print(msg);
+		if (connector.isRaw()) {
+			sender.print(message);
+			sender.flush();
 		}
 		else {
-			msg = 		message	.replaceAll("\n", "@n@")
+			String msg = message.replaceAll("\n", "@n@")
 								.replaceAll("\b\r", "@b@@r@")
-					+ 	"\n";
+							+ 	"\n";
+			
 			//TODO: do we really need to append a '\n' while we already use println ?
 			sender.println(msg);
 		}
-		sender.flush();
 	}
 	
 	@Override
 	public void sendMessage(final String message) throws IOException {
-		
+		sendMessage(message, null);
 	}
 
 }

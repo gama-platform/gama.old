@@ -37,8 +37,8 @@ public abstract class Connector implements IConnector {
 	/** The Constant FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION. */
 	private final static int FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION = 5;
 
-	/** The Constant PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION. */
-	private final static int PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION = 8;
+	/** The Constant PUSH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION. */
+	private final static int PUSH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION = 8;
 
 	/** The connection parameter. */
 	// connector Configuration data
@@ -67,7 +67,7 @@ public abstract class Connector implements IConnector {
 	/** The force network use. */
 	boolean forceNetworkUse = false;
 
-	/** TCP message is raw or composite. */
+	/** message is raw or composite. */
 	private boolean isRaw = false;
 
 	/**
@@ -131,12 +131,12 @@ public abstract class Connector implements IConnector {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
 		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(sender, topic, content);
 		if (!this.localMemberNames.containsKey(msg.getSender())) {
-			pushAndFetchthreadSafe(Connector.PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, msg.getReceiver(), msg);
+			pushAndFetchthreadSafe(Connector.PUSH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, msg.getReceiver(), msg);
 		}
 	}
 
 	/**
-	 * Push and fetchthread safe.
+	 * Push and fetch thread safe.
 	 *
 	 * @param action
 	 *            the action
@@ -159,7 +159,7 @@ public abstract class Connector implements IConnector {
 					this.receivedMessage = newBox;
 					return allMessage;
 				}
-				case PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION: {
+				case PUSH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION: {
 					final ArrayList<IAgent> bb = this.boxFollower.get(groupName)==null? this.boxFollower.get("ALL"): this.boxFollower.get(groupName);
 					for (final IAgent agt : bb) {
 						final LinkedList<ConnectorMessage> messages = receivedMessage.get(agt);
@@ -177,7 +177,7 @@ public abstract class Connector implements IConnector {
 		if (!this.forceNetworkUse && this.boxFollower.containsKey(receiver)) {
 			final ConnectorMessage msg =
 					new LocalMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver, content);
-			this.pushAndFetchthreadSafe(PUSCH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, receiver, msg);
+			this.pushAndFetchthreadSafe(PUSH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION, receiver, msg);
 			// Fix for #3335
 			return;
 		}
@@ -252,6 +252,16 @@ public abstract class Connector implements IConnector {
 
 		if (this.receivedMessage.get(agent) == null && !isRaw()) { joinAGroup(agent, netAgent); }
 	}
+	
+	@Override
+	public boolean isRaw() {
+		return isRaw;
+	}
+	
+	@Override
+	public void setRaw(boolean isRaw) {
+		this.isRaw = isRaw;
+	}
 
 	/**
 	 * Connect to server.
@@ -323,12 +333,5 @@ public abstract class Connector implements IConnector {
 	protected abstract void sendMessage(final IAgent sender, final String receiver, final String content)
 			throws GamaNetworkException;
 
-	public boolean isRaw() {
-		return isRaw;
-	}
-
-	public void setRaw(boolean isRaw) {
-		this.isRaw = isRaw;
-	}
 
 }
