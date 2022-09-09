@@ -1,21 +1,21 @@
 /*******************************************************************************************************
  *
- * WrappedProject.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * WrappedProject.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
 import org.eclipse.swt.graphics.Image;
 
@@ -28,19 +28,25 @@ import ummisco.gama.ui.resources.IGamaIcons;
 /**
  * The Class WrappedProject.
  */
-public class WrappedProject extends WrappedContainer<IProject> implements IAdaptable {
+public class WrappedProject extends WrappedContainer<IProject> {
+
+	static {
+		// DEBUG.ON();
+	}
 
 	/** The plugin. */
 	private String plugin;
-	
+
 	/** The is test. */
 	final boolean isTest;
 
 	/**
 	 * Instantiates a new wrapped project.
 	 *
-	 * @param parent the parent
-	 * @param wrapped the wrapped
+	 * @param parent
+	 *            the parent
+	 * @param wrapped
+	 *            the wrapped
 	 */
 	public WrappedProject(final TopLevelFolder parent, final IProject wrapped) {
 		super(parent, wrapped);
@@ -74,16 +80,6 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	@Override
 	public Image getImage() { return GamaIcons.create(IGamaIcons.FOLDER_PROJECT).image(); }
 
-	// @Override
-	// public Color getColor() {
-	// return ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.GRAY_LABEL.color();
-	// }
-	//
-	// @Override
-	// public Font getFont() {
-	// return GamaFonts.getNavigHeaderFont();
-	// }
-
 	@Override
 	public void getSuffix(final StringBuilder sb) {
 		if (!isOpen()) {
@@ -102,7 +98,8 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	/**
 	 * Gets the test suffix.
 	 *
-	 * @param sb the sb
+	 * @param sb
+	 *            the sb
 	 * @return the test suffix
 	 */
 	private void getTestSuffix(final StringBuilder sb) {
@@ -118,7 +115,8 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	/**
 	 * Gets the suffix of test summary.
 	 *
-	 * @param uri the uri
+	 * @param uri
+	 *            the uri
 	 * @return the suffix of test summary
 	 */
 	public String getSuffixOfTestSummary(final org.eclipse.emf.common.util.URI uri) {
@@ -160,11 +158,28 @@ public class WrappedProject extends WrappedContainer<IProject> implements IAdapt
 	/**
 	 * Sets the plugin.
 	 *
-	 * @param plugin the new plugin
+	 * @param plugin
+	 *            the new plugin
 	 */
 	void setPlugin(final String plugin) { this.plugin = plugin; }
 
 	@Override
 	public WrappedProject getProject() { return this; }
 
+	@Override
+	public int findMaxProblemSeverity() {
+		int result = super.findMaxProblemSeverity();
+		if (result == IMarker.SEVERITY_WARNING) {
+			// See Issue #3485 -- this is a temporary fix that needs to be removed on Eclipse 4.25.
+			try {
+				if (getResource().getDefaultCharset(false) == null) {
+					getResource().setDefaultCharset(getResource().getWorkspace().getRoot().getDefaultCharset(), null);
+				}
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+
+	}
 }
