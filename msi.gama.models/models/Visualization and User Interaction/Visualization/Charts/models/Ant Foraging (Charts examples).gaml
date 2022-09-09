@@ -132,12 +132,12 @@ experiment "Experiment" type: gui {
 		{
 			if !(statesnames contains (x.state))
 			{				
-			add [(list(ant) count (each.state=x.state and !each.hasFood)),(list(ant) count (each.state=x.state and each.hasFood))] to: nbants;
+			add [(ant count (each.state=x.state and !each.hasFood)),(ant count (each.state=x.state and each.hasFood))] to: nbants;
 			add (x.state) to:statesnames;				
 			list<int> nl<-list<int>([]);
 			loop d from:0 to:9
 				{
-			add (list(ant) count (each.state=x.state and (((each distance_to center)>gridsize/20*d) and ((each distance_to center)<gridsize/20*(d+1))))) to: nl;
+			add (ant count (each.state=x.state and (((each distance_to center)>gridsize/20*d) and ((each distance_to center)<gridsize/20*(d+1))))) to: nl;
 				}
 			add nl to:nbantsbydist;
 			}
@@ -155,8 +155,8 @@ experiment "Experiment" type: gui {
 		display ProportionCarryFood {
 			chart "Proportions carrying: Pie"  size: {0.5,0.5} position: {0, 0} type:pie
 			{
-				data "empty_ants" value:(list(ant) count (!each.hasFood)) color:°red;
-				data "carry_food_ants" value:(list(ant) count (each.hasFood)) color:°green;
+				data "empty_ants" value:(ant count (!each.hasFood)) color:°red;
+				data "carry_food_ants" value:(ant count (each.hasFood)) color:°green;
 				
 			}
 			
@@ -164,10 +164,10 @@ experiment "Experiment" type: gui {
 			axes:#white
 
 			{
-				data "empty" value:(list(ant) count (!each.hasFood)) 
+				data "empty" value:(ant count (!each.hasFood)) 
 				accumulate_values:true
 				color:°red;				
-				data "carry" value:(list(ant) count (each.hasFood)) 
+				data "carry" value:(ant count (each.hasFood)) 
 				accumulate_values:true
 				color:°blue;				
 			}
@@ -177,7 +177,7 @@ experiment "Experiment" type: gui {
 			style:stack
 			{
 				datalist ["empty","carry"] accumulate_values:true 
-				value:[(list(ant) count (!each.hasFood)),(list(ant) count (each.hasFood))] 
+				value:[(ant count (!each.hasFood)),(ant count (each.hasFood))] 
 				color:[°red,°green];				
 			}
 		}
@@ -185,17 +185,17 @@ experiment "Experiment" type: gui {
 		display CentroidPosition {
 			chart "Positions and History of Centroide and size by Carry state" type:scatter
 			{
-				datalist ["avg-carry","avg-empty"] value:[mean((list(ant) where (each.hasFood)) collect each.location),
-					mean((list(ant) where (!each.hasFood)) collect each.location)
+				datalist ["avg-carry","avg-empty"] value:[mean((ant where (each.hasFood)) collect each.location),
+					mean((ant where (!each.hasFood)) collect each.location)
 				]
-				marker_size: [length(list(ant) where (each.hasFood))/20,length(list(ant) where (!each.hasFood))/20]
+				marker_size: [(ant count (each.hasFood))/20,(ant count (!each.hasFood))/20]
 					 color:[°red,°green] 
 					 fill:false
 					 line_visible:true;				
-				data "empty_ants" value:((list(ant) where (!each.hasFood)) collect each.location) color:°red 
+				data "empty_ants" value:((ant where (!each.hasFood)) collect each.location) color:°red 
 				accumulate_values:false
 				line_visible:false;
-				data "carry_food_ants" value:((list(ant) where (each.hasFood)) collect each.location) 
+				data "carry_food_ants" value:((ant where (each.hasFood)) collect each.location) 
 				accumulate_values:false
 				color:°green line_visible:false;
 
@@ -205,22 +205,22 @@ experiment "Experiment" type: gui {
 			chart "Distribution of the X positions"   size: {0.65,0.3} position: {0.05, 0} type:histogram
 			
 			{
-				datalist (distribution_of(list(ant) collect each.location.x,10,0,100) at "legend") 
-					value:(distribution_of(list(ant) collect each.location.x,10,0,100) at "values");
+				datalist (distribution_of(ant collect each.location.x,10,0,100) at "legend") 
+					value:(distribution_of(ant collect each.location.x,10,0,100) at "values");
 			}
 			chart "Distribution of the Y positions"   size: {0.3,0.7} position: {0.7, 0.28} type:histogram
 			reverse_axes:true
 			
 			{
-				datalist reverse(distribution_of(list(ant) collect each.location.x,10,0,100) at "legend") 
-					value:reverse(distribution_of(list(ant) collect each.location.x,10,0,100) at "values");
+				datalist reverse(distribution_of(ant collect each.location.x,10,0,100) at "legend") 
+					value:reverse(distribution_of(ant collect each.location.x,10,0,100) at "values");
 			}
 
 			chart "Distribution2d of the XvsY positions- heatmap"   size: {0.7,0.7} position: {0, 0.3} type:heatmap
 			series_label_position:none
 			{
 				data  "XYdistrib"
-					value:(distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "values")
+					value:(distribution2d_of(ant collect each.location.x,ant collect each.location.y,10,0,100,10,0,100) at "values")
 					color:[#red];
 			}
 		}
@@ -229,15 +229,15 @@ experiment "Experiment" type: gui {
 			chart "Distribution of the X positions"   size: {0.92,0.3} position: {0, 0} type:histogram
 			
 			{
-				datalist (distribution_of(list(ant) collect each.location.x,10,0,100) at "legend") 
-					value:(distribution_of(list(ant) collect each.location.x,10,0,100) at "values");
+				datalist (distribution_of(ant collect each.location.x,10,0,100) at "legend") 
+					value:(distribution_of(ant collect each.location.x,10,0,100) at "values");
 			}
 			chart "Distribution of the X positions- heatmap"   size: {1.0,0.7} position: {0, 0.3} type:heatmap
-			x_serie_labels: (distribution_of(list(ant) collect each.location.x,10,0,100) at "legend")
+			x_serie_labels: (distribution_of(ant collect each.location.x,10,0,100) at "legend")
 			y_range:50
 			{
 				data  "Xdistrib"
-					value:(distribution_of(list(ant) collect each.location.x,10,0,100) at "values")
+					value:(distribution_of(ant collect each.location.x,10,0,100) at "values")
 					color:[#red];
 			}
 		}	
