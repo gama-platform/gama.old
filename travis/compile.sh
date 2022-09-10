@@ -357,7 +357,6 @@ install1 (){
 		mvn_install ummisco.gaml.extensions.sound
 		mvn_install ummisco.gama.feature.audio.branding		
 		mvn_install ummisco.gama.feature.audio
-		
 	fi
 	
 	
