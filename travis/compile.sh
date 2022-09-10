@@ -59,6 +59,7 @@ compile (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		mvn_install msi.gama.ext
+		mvn_install ummisco.gama.feature.dependencies.branding
 		mvn_install ummisco.gama.feature.dependencies
 	fi
 	
@@ -357,7 +358,6 @@ install1 (){
 		mvn_install ummisco.gaml.extensions.sound
 		mvn_install ummisco.gama.feature.audio.branding		
 		mvn_install ummisco.gama.feature.audio
-		
 	fi
 	
 	
