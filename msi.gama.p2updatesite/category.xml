@@ -39,6 +39,9 @@
    <feature url="features/ummisco.gama.feature.dependencies_1.8.2.qualifier.jar" id="ummisco.gama.feature.dependencies" version="1.8.2.qualifier">
       <category name="gama.core"/>
    </feature>
+   <feature url="features/ummisco.gama.feature.dependencies.ui_1.8.2.qualifier.jar" id="ummisco.gama.feature.dependencies.ui" version="1.8.2.qualifier">
+      <category name="gama.core"/>
+   </feature>
    <category-def name="gama.ui" label="UI components of GAMA"/>
    <category-def name="gama.core" label="Core components of GAMA"/>
    <category-def name="gama.optional" label="Optional components of GAMA"/>
