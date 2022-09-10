@@ -24,7 +24,6 @@
 
    <requires>
       <import plugin="msi.gama.core" version="1.6.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.processor" version="1.4.0" match="greaterOrEqual"/>
       <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
