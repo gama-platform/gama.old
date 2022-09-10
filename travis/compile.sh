@@ -59,6 +59,7 @@ compile (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		mvn_install msi.gama.ext
+		mvn_install ummisco.gama.feature.dependencies.branding
 		mvn_install ummisco.gama.feature.dependencies
 	fi
 	
