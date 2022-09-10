@@ -134,6 +134,8 @@ install1 (){
 		mvn_install msi.gama.ext 
 		mvn_install ummisco.gama.feature.dependencies.branding
 		mvn_install ummisco.gama.feature.dependencies 
+		mvn_install ummisco.gama.feature.dependencies.ui.branding
+		mvn_install ummisco.gama.feature.dependencies.ui
 	fi
 	
 	

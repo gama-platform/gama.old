@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama (runtime)" uid="ummisco.gama.application.runtime.product" id="msi.gama.application.runtime" application="msi.gama.application.GamaApplication" version="1.8.2.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Gama (runtime)" uid="ummisco.gama.application.runtime.product" id="msi.gama.application.runtime" application="msi.gama.application.GamaApplication" version="1.8.2.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="branding_icons/icon128.png"/>
@@ -272,6 +272,7 @@
 
    <features>
       <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies.ui" installMode="root"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.8.2.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.8.2.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core" version="1.8.2.qualifier" installMode="root"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.8.2.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.8.2.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/branding_icons/icon128.png"/>
@@ -267,6 +267,7 @@
 
    <features>
       <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies.ui" installMode="root"/>
       <feature id="ummisco.gama.feature.core.ui" version="1.8.2.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.8.2.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core" version="1.8.2.qualifier" installMode="root"/>
@@ -284,8 +285,8 @@
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.update.configurator" autoStart="true" startLevel="1" />
       <property name="eclipse.buildId" value="${build.id}" />
-      <property name="org.eclipse.update.reconcile" value="false" />
       <property name="version" value="1.8.2" />
+      <property name="org.eclipse.update.reconcile" value="false" />
    </configurations>
 
    <repositories>

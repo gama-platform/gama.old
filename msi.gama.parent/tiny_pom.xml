@@ -193,10 +193,22 @@
 
 		<module>../msi.gama.application</module>
 
-		<module>../ummisco.gama.feature.models</module>
-		<module>../ummisco.gama.feature.dependencies</module>
+		<module>../ummisco.gama.feature.models.branding</module>
+		<module>../ummisco.gama.feature.dependencies.branding</module>
+		<module>../ummisco.gama.feature.dependencies.ui.branding</module>
+		<module>../ummisco.gama.feature.core.branding</module>
+		<module>../ummisco.gama.feature.core.extensions.branding</module>
+		<module>../ummisco.gama.feature.core.ui.branding</module>
+		<module>../ummisco.gama.feature.experiment.ui.branding</module>
+		<module>../ummisco.gama.feature.modeling.ui.branding</module>
+		<module>../ummisco.gama.feature.serialize.branding</module>
+		<module>../ummisco.gama.feature.network.branding</module>
+		
 		
 
+		<module>../ummisco.gama.feature.models</module>
+		<module>../ummisco.gama.feature.dependencies</module>
+		<module>../ummisco.gama.feature.dependencies.ui</module>
 		<module>../ummisco.gama.feature.core</module>
 		<module>../ummisco.gama.feature.core.extensions</module>
 		<module>../ummisco.gama.feature.core.ui</module>
