@@ -19,14 +19,40 @@
    </license>
 
    <url>
-      <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+      <update label="Gama 1.8.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="msi.gama.ext"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="com.google.guava"/>
+      <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.apache.commons.compress"/>
+      <import plugin="org.eclipse.equinox.p2.core"/>
+      <import plugin="org.eclipse.equinox.p2.metadata"/>
+      <import plugin="org.eclipse.equinox.p2.operations"/>
+      <import plugin="org.eclipse.equinox.p2.engine"/>
+      <import plugin="simtools.gaml.extensions.traffic"/>
+      <import plugin="ummisco.gaml.extensions.maths"/>
+      <import plugin="irit.gaml.extensions.database"/>
+      <import plugin="ummisco.gama.network"/>
+      <import plugin="org.eclipse.xtext"/>
+      <import plugin="org.eclipse.xtext.util"/>
+      <import plugin="org.eclipse.emf.common"/>
+      <import plugin="org.eclipse.xtext.xbase.lib"/>
+      <import plugin="org.apache.log4j"/>
+      <import plugin="ummisco.gaml.extensions.maths" version="1.8.2" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.8.2" match="greaterOrEqual"/>
+   </requires>
 
    <plugin
          id="msi.gama.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="msi.gama.headless"
@@ -67,6 +93,7 @@
          id="ummisco.gama.feature.core.branding"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
