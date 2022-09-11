@@ -196,30 +196,6 @@
 		<module>../msi.gama.application</module>
 		
 		
-		<module>../ummisco.gama.feature.models.branding</module>
-		<module>../ummisco.gama.feature.dependencies.branding</module>
-		<module>../ummisco.gama.feature.dependencies.ui.branding</module>
-		<module>../ummisco.gama.feature.core.branding</module>
-		<module>../ummisco.gama.feature.core.extensions.branding</module>
-		<module>../ummisco.gama.feature.core.ui.branding</module>
-		<module>../ummisco.gama.feature.experiment.ui.branding</module>
-		<module>../ummisco.gama.feature.modeling.ui.branding</module>
-		<module>../ummisco.gama.feature.serialize.branding</module>
-		<module>../ummisco.gama.feature.network.branding</module>
-		
-		
-
-		<module>../ummisco.gama.feature.models</module>
-		<module>../ummisco.gama.feature.dependencies</module>
-		<module>../ummisco.gama.feature.dependencies.ui</module>
-		<module>../ummisco.gama.feature.core</module>
-		<module>../ummisco.gama.feature.core.extensions</module>
-		<module>../ummisco.gama.feature.core.ui</module>
-		<module>../ummisco.gama.feature.experiment.ui</module>
-		<module>../ummisco.gama.feature.modeling.ui</module>
-		<module>../ummisco.gama.feature.serialize</module>
-		<module>../ummisco.gama.feature.network</module>
-
 		<module>../msi.gaml.extensions.fipa</module>
 		<module>../msi.gama.headless</module>
 		<module>../miat.gaml.extensions.pedestrian</module>
@@ -236,10 +212,6 @@
 		<module>../espacedev.gaml.extensions.genstar</module>
 
 
-		<module>../ummisco.gama.feature.audio</module>
-
-		<module>../ummisco.gama.feature.stats</module>
-
 		<module>../ummisco.gama.opengl</module>
 		<module>../ummisco.gama.java2d</module>
 		<module>../ummisco.gama.ui.viewers</module>
@@ -249,6 +221,35 @@
 
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
+		
+		
+		<module>../ummisco.gama.feature.audio.branding</module>
+		<module>../ummisco.gama.feature.models.branding</module>
+		<module>../ummisco.gama.feature.dependencies.branding</module>
+		<module>../ummisco.gama.feature.dependencies.ui.branding</module>
+		<module>../ummisco.gama.feature.core.branding</module>
+		<module>../ummisco.gama.feature.core.extensions.branding</module>
+		<module>../ummisco.gama.feature.core.ui.branding</module>
+		<module>../ummisco.gama.feature.experiment.ui.branding</module>
+		<module>../ummisco.gama.feature.modeling.ui.branding</module>
+		<module>../ummisco.gama.feature.serialize.branding</module>
+		<module>../ummisco.gama.feature.network.branding</module>
+		<module>../ummisco.gama.feature.stats.branding</module>
+		
+		
+		<module>../ummisco.gama.feature.audio</module>
+		<module>../ummisco.gama.feature.models</module>
+		<module>../ummisco.gama.feature.dependencies</module>
+		<module>../ummisco.gama.feature.dependencies.ui</module>
+		<module>../ummisco.gama.feature.core</module>
+		<module>../ummisco.gama.feature.core.extensions</module>
+		<module>../ummisco.gama.feature.core.ui</module>
+		<module>../ummisco.gama.feature.experiment.ui</module>
+		<module>../ummisco.gama.feature.modeling.ui</module>
+		<module>../ummisco.gama.feature.serialize</module>
+		<module>../ummisco.gama.feature.network</module>
+		<module>../ummisco.gama.feature.stats</module>
+
 
 		<module>../ummisco.gama.product</module>
 

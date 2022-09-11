@@ -218,6 +218,7 @@
 
 		<module>../msi.gama.application</module>
 		
+		<module>../ummisco.gama.feature.audio.branding</module>
 		<module>../ummisco.gama.feature.models.branding</module>
 		<module>../ummisco.gama.feature.dependencies.branding</module>
 		<module>../ummisco.gama.feature.dependencies.ui.branding</module>
@@ -228,6 +229,7 @@
 		<module>../ummisco.gama.feature.modeling.ui.branding</module>
 		<module>../ummisco.gama.feature.serialize.branding</module>
 		<module>../ummisco.gama.feature.network.branding</module>
+		<module>../ummisco.gama.feature.stats.branding</module>
 		
 		
 
