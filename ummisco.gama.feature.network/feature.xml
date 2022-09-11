@@ -21,6 +21,11 @@
       <update label="GAMA 1.8.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
+   <requires>
+      <import plugin="msi.gama.core"/>
+      <import plugin="ummisco.gama.serialize"/>
+   </requires>
+
    <plugin
          id="ummisco.gama.network"
          download-size="0"

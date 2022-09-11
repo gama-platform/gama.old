@@ -21,6 +21,12 @@
       <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
+   <requires>
+      <import plugin="msi.gama.core"/>
+      <import plugin="msi.gama.ext"/>
+      <import plugin="org.eclipse.osgi"/>
+   </requires>
+
    <plugin
          id="ummisco.gama.serialize"
          download-size="0"

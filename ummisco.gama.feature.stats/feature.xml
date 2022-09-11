@@ -26,6 +26,12 @@ Aditional library:
       <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
+   <requires>
+      <import plugin="msi.gama.core"/>
+      <import plugin="ummisco.gaml.extensions.maths" version="1.8.2" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.8.2" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="ummisco.gaml.extensions.stats"
          download-size="0"
