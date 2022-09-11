@@ -2,6 +2,6 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Adds statistical capabilities to GAMA models
 Bundle-SymbolicName: ummisco.gama.feature.stats.branding
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.8.2.qualifier
 Bundle-Vendor: UMMISCO, ESPACE-DEV
 Automatic-Module-Name: ummisco.gama.feature.stats.branding
