@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ummisco.gama.feature.audio.branding</groupId>
   <artifactId>ummisco.gama.feature.audio.branding</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.8.2-SNAPSHOT</version>
   
   <packaging>eclipse-plugin</packaging>
   <parent>
