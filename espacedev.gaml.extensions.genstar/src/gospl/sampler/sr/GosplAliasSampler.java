@@ -10,9 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
 import core.metamodel.attribute.Attribute;
 import core.metamodel.value.IValue;
 import core.util.random.GenstarRandom;
@@ -22,28 +19,22 @@ import gospl.distribution.matrix.coordinate.ACoordinate;
 import gospl.sampler.IDistributionSampler;
 
 /******************************************************************************
- * File: AliasMethod.java
- * Author: Keith Schwarz (htiek@cs.stanford.edu)
+ * File: AliasMethod.java Author: Keith Schwarz (htiek@cs.stanford.edu)
  *
- * An implementation of the alias method implemented using Vose's algorithm.
- * The alias method allows for efficient sampling of random values from a
- * discrete probability distribution (i.e. rolling a loaded die) in O(1) time
- * each after O(n) preprocessing time.
+ * An implementation of the alias method implemented using Vose's algorithm. The alias method allows for efficient
+ * sampling of random values from a discrete probability distribution (i.e. rolling a loaded die) in O(1) time each
+ * after O(n) preprocessing time.
  *
- * For a complete writeup on the alias method, including the intuition and
- * important proofs, please see the article "Darts, Dice, and Coins: Smpling
- * from a Discrete Distribution" at
+ * For a complete writeup on the alias method, including the intuition and important proofs, please see the article
+ * "Darts, Dice, and Coins: Smpling from a Discrete Distribution" at
  *
- *                 http://www.keithschwarz.com/darts-dice-coins/
- * 
+ * http://www.keithschwarz.com/darts-dice-coins/
+ *
  */
 public class GosplAliasSampler implements IDistributionSampler {
 
-	protected Logger logger = LogManager.getLogger(GosplAliasSampler.class);
-	
 	private List<ACoordinate<Attribute<? extends IValue>, IValue>> indexedKey;
 	private List<Double> initProba;
-	
 
 	/* The probability and alias tables. */
 	private int[] alias;
@@ -52,19 +43,17 @@ public class GosplAliasSampler implements IDistributionSampler {
 	// -------------------- setup methods -------------------- //
 
 	@Override
-	public void setDistribution(AFullNDimensionalMatrix<Double> distribution){
-		if(distribution == null)
-			throw new NullPointerException();
-		if(distribution.getMatrix().isEmpty())
-			throw new IllegalArgumentException("Cannot setup a sampler with an empty distribution matrix "+distribution);
-		
-		Map<ACoordinate<Attribute<? extends IValue>, IValue>, AControl<Double>> orderedDistribution = 
+	public void setDistribution(final AFullNDimensionalMatrix<Double> distribution) {
+		if (distribution == null) throw new NullPointerException();
+		if (distribution.getMatrix().isEmpty()) throw new IllegalArgumentException(
+				"Cannot setup a sampler with an empty distribution matrix " + distribution);
+
+		Map<ACoordinate<Attribute<? extends IValue>, IValue>, AControl<Double>> orderedDistribution =
 				distribution.getOrderedMatrix();
-		
+
 		this.indexedKey = new ArrayList<>(orderedDistribution.keySet());
-		this.initProba = orderedDistribution.values().stream().map(AControl::getValue)
-				.collect(Collectors.toList());
-		
+		this.initProba = orderedDistribution.values().stream().map(AControl::getValue).collect(Collectors.toList());
+
 		/* Allocate space for the probability and alias tables. */
 		probability = new double[distribution.size()];
 		alias = new int[distribution.size()];
@@ -72,69 +61,69 @@ public class GosplAliasSampler implements IDistributionSampler {
 		/* Compute the average probability and cache it for later use. */
 		final double average = 1.0 / distribution.size();
 
-		/* Make a copy of the probabilities list, since we will be making
-		 * changes to it.
+		/*
+		 * Make a copy of the probabilities list, since we will be making changes to it.
 		 */
-		List<Double> probabilities = new ArrayList<Double>(initProba);
+		List<Double> probabilities = new ArrayList<>(initProba);
 
 		/* Create two stacks to act as worklists as we populate the tables. */
-		Deque<Integer> small = new ArrayDeque<Integer>();
-		Deque<Integer> large = new ArrayDeque<Integer>();
+		Deque<Integer> small = new ArrayDeque<>();
+		Deque<Integer> large = new ArrayDeque<>();
 
 		/* Populate the stacks with the input probabilities. */
 		for (int i = 0; i < probabilities.size(); ++i) {
-			/* If the probability is below the average probability, then we add
-			 * it to the small list; otherwise we add it to the large list.
+			/*
+			 * If the probability is below the average probability, then we add it to the small list; otherwise we add
+			 * it to the large list.
 			 */
-			if (probabilities.get(i) >= average)
+			if (probabilities.get(i) >= average) {
 				large.add(i);
-			else
+			} else {
 				small.add(i);
+			}
 		}
 
-		/* As a note: in the mathematical specification of the algorithm, we
-		 * will always exhaust the small list before the big list.  However,
-		 * due to floating point inaccuracies, this is not necessarily true.
-		 * Consequently, this inner loop (which tries to pair small and large
-		 * elements) will have to check that both lists aren't empty.
+		/*
+		 * As a note: in the mathematical specification of the algorithm, we will always exhaust the small list before
+		 * the big list. However, due to floating point inaccuracies, this is not necessarily true. Consequently, this
+		 * inner loop (which tries to pair small and large elements) will have to check that both lists aren't empty.
 		 */
 		while (!small.isEmpty() && !large.isEmpty()) {
 			/* Get the index of the small and the large probabilities. */
 			int less = small.removeLast();
 			int more = large.removeLast();
 
-			/* These probabilities have not yet been scaled up to be such that
-			 * 1/n is given weight 1.0.  We do this here instead.
+			/*
+			 * These probabilities have not yet been scaled up to be such that 1/n is given weight 1.0. We do this here
+			 * instead.
 			 */
 			probability[less] = probabilities.get(less) * probabilities.size();
 			alias[less] = more;
 
-			/* Decrease the probability of the larger one by the appropriate
-			 * amount.
+			/*
+			 * Decrease the probability of the larger one by the appropriate amount.
 			 */
-			probabilities.set(more, 
-					(probabilities.get(more) + probabilities.get(less)) - average);
+			probabilities.set(more, probabilities.get(more) + probabilities.get(less) - average);
 
-			/* If the new probability is less than the average, add it into the
-			 * small list; otherwise add it to the large list.
+			/*
+			 * If the new probability is less than the average, add it into the small list; otherwise add it to the
+			 * large list.
 			 */
-			if (probabilities.get(more) >= 1.0 / probabilities.size())
+			if (probabilities.get(more) >= 1.0 / probabilities.size()) {
 				large.add(more);
-			else
+			} else {
 				small.add(more);
+			}
 		}
 
-		/* At this point, everything is in one list, which means that the
-		 * remaining probabilities should all be 1/n.  Based on this, set them
-		 * appropriately.  Due to numerical issues, we can't be sure which
-		 * stack will hold the entries, so we empty both.
+		/*
+		 * At this point, everything is in one list, which means that the remaining probabilities should all be 1/n.
+		 * Based on this, set them appropriately. Due to numerical issues, we can't be sure which stack will hold the
+		 * entries, so we empty both.
 		 */
-		while (!small.isEmpty())
-			probability[small.removeLast()] = 1.0;
-		while (!large.isEmpty())
-			probability[large.removeLast()] = 1.0;
+		while (!small.isEmpty()) { probability[small.removeLast()] = 1.0; }
+		while (!large.isEmpty()) { probability[large.removeLast()] = 1.0; }
 	}
-	
 
 	// -------------------- main contract -------------------- //
 
@@ -144,10 +133,10 @@ public class GosplAliasSampler implements IDistributionSampler {
 	 * WARNING: make use of {@link Stream#parallel()}
 	 */
 	@Override
-	public final Collection<ACoordinate<Attribute<? extends IValue>, IValue>> draw(int numberOfDraw) {
+	public final Collection<ACoordinate<Attribute<? extends IValue>, IValue>> draw(final int numberOfDraw) {
 		return IntStream.range(0, numberOfDraw).mapToObj(i -> draw()).collect(Collectors.toList());
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -157,41 +146,39 @@ public class GosplAliasSampler implements IDistributionSampler {
 	@Override
 	public ACoordinate<Attribute<? extends IValue>, IValue> draw() {
 		/* Generate a fair die roll to determine which column to inspect. */
-		int column =  GenstarRandom.getInstance().nextInt(probability.length);
+		int column = GenstarRandom.getInstance().nextInt(probability.length);
 
 		/* Generate a biased coin toss to determine which option to pick. */
 		boolean coinToss = GenstarRandom.getInstance().nextDouble() < probability[column];
-		
+
 		return indexedKey.get(coinToss ? column : alias[column]);
 	}
-	
-	
+
 	@Override
-	public String toCsv(String csvSeparator){
-		List<Attribute<? extends IValue>> attributs = new ArrayList<>(indexedKey
-				.parallelStream().flatMap(coord -> coord.getDimensions().stream())
-				.collect(Collectors.toSet()));
-		String s = String.join(csvSeparator, attributs.stream().map(att -> att.getAttributeName()).collect(Collectors.toList()));
-		s += "; Probability\n";
-		for(ACoordinate<Attribute<? extends IValue>, IValue> coord : indexedKey){
+	public String toCsv(final String csvSeparator) {
+		List<Attribute<? extends IValue>> attributs = new ArrayList<>(indexedKey.parallelStream()
+				.flatMap(coord -> coord.getDimensions().stream()).collect(Collectors.toSet()));
+		StringBuilder s = new StringBuilder().append(String.join(csvSeparator,
+				attributs.stream().map(Attribute::getAttributeName).collect(Collectors.toList())));
+		s.append("; Probability\n");
+		for (ACoordinate<Attribute<? extends IValue>, IValue> coord : indexedKey) {
 			String line = "";
-			for(Attribute<? extends IValue> att : attributs){
-				if(coord.getDimensions().contains(att)){
-					if(line.isEmpty())
-						s += csvSeparator+coord.getMap().get(att);
-					else
-						s += csvSeparator+coord.getMap().get(att).getStringValue();
+			for (Attribute<? extends IValue> att : attributs) {
+				if (coord.getDimensions().contains(att)) {
+					if (line.isEmpty()) {
+						s.append(csvSeparator).append(coord.getMap().get(att));
+					} else {
+						s.append(csvSeparator).append(coord.getMap().get(att).getStringValue());
+					}
+				} else if (line.isEmpty()) {
+					s.append(" ");
 				} else {
-					if(line.isEmpty())
-						s += " ";
-					else
-						s += csvSeparator+" ";
+					s.append(csvSeparator).append(" ");
 				}
 			}
-			s += line + csvSeparator + initProba.get(indexedKey.indexOf(coord))+"\n";
+			s.append(line).append(csvSeparator).append(initProba.get(indexedKey.indexOf(coord))).append("\n");
 		}
-		return s;
+		return s.toString();
 	}
 
 }
-

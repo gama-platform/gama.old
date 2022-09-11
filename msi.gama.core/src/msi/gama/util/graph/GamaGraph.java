@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaGraph.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaGraph.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -327,17 +326,16 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 */
 	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph, final ISpecies nodeS,
 			final ISpecies edgeS) {
-		this(scope,graph,nodeS,edgeS,null,null);
-	}	
-	
-	
-	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph, final GamaMap<?,IShape> nodes) {
-		this(scope, (nodes == null || nodes.isEmpty())  ? Types.GEOMETRY : (nodes.getValues().get(0) instanceof IAgent ? Types.AGENT : Types.GEOMETRY), Types.GEOMETRY);
-		for (IShape v : nodes.getValues()) {
-			addVertex(v);
-		}
-		
-		for (DefaultEdge e : (Set<DefaultEdge>)graph.edgeSet()) {
+		this(scope, graph, nodeS, edgeS, null, null);
+	}
+
+	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph,
+			final GamaMap<?, IShape> nodes) {
+		this(scope, nodes == null || nodes.isEmpty() ? Types.GEOMETRY
+				: nodes.getValues().get(0) instanceof IAgent ? Types.AGENT : Types.GEOMETRY, Types.GEOMETRY);
+		for (IShape v : nodes.getValues()) { addVertex(v); }
+
+		for (DefaultEdge e : graph.edgeSet()) {
 			Object s = graph.getEdgeSource(e);
 			Object t = graph.getEdgeTarget(e);
 			IShape sg = nodes.get(s);
@@ -347,11 +345,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			points.add(tg.getLocation());
 			IShape eg = Creation.line(scope, points);
 			setEdgeWeight(eg, graph.getEdgeWeight(e));
-			addEdge(sg, tg, eg);	
+			addEdge(sg, tg, eg);
 		}
 	}
+
 	/**
-	 * Instantiates a new gama graph, with a specified node and edge attributes to store attributes read in the graph file.
+	 * Instantiates a new gama graph, with a specified node and edge attributes to store attributes read in the graph
+	 * file.
 	 *
 	 * @param scope
 	 *            the scope
@@ -364,10 +364,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 * @param nodeAttr
 	 *            the name of the attribute in nodeS species, that will contain the attributes read in the graph file
 	 * @param edgeAttr
-	 *            the name of the attribute in edgeS species, that will contain the attributes read in the graph file        
-	 */	
+	 *            the name of the attribute in edgeS species, that will contain the attributes read in the graph file
+	 */
 	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph, final ISpecies nodeS,
-			final ISpecies edgeS, String nodeAttr, String edgeAttr) {
+			final ISpecies edgeS, final String nodeAttr, final String edgeAttr) {
 		this(scope, nodeS == null ? Types.STRING : Types.AGENT, edgeS == null ? Types.STRING : Types.AGENT);
 		Map<String, IAgent> verticesAg = GamaMapFactory.create();
 		for (Object v : graph.vertexSet()) {
@@ -380,25 +380,24 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				IAgent ag = listAgt.get(0);
 				if (v != null) {
 					ag.setName(v.toString());
-					if(ag.hasAttribute(nodeAttr) && v instanceof GamaGraphMLNodeImporter) {			
-						ag.setAttribute(nodeAttr, 
-							GamaMapFactory.create(scope, Types.STRING, Types.STRING, ((GamaGraphMLNodeImporter) v).getAttributes())
-						);
+					if (ag.hasAttribute(nodeAttr) && v instanceof GamaGraphMLNodeImporter) {
+						ag.setAttribute(nodeAttr, GamaMapFactory.create(scope, Types.STRING, Types.STRING,
+								((GamaGraphMLNodeImporter) v).getAttributes()));
 					}
 					addVertex(ag);
 					verticesAg.put(v.toString(), ag);
 				}
 			}
 		}
-		for (DefaultEdge e : (Set<DefaultEdge>)graph.edgeSet()) {
+		for (DefaultEdge e : graph.edgeSet()) {
 			Object s = graph.getEdgeSource(e);
 			Object t = graph.getEdgeTarget(e);
 
 			if (edgeS == null) {
-				if(nodeS == null) {
-					addEdge(s.toString(),t.toString(), e);
+				if (nodeS == null) {
+					addEdge(s.toString(), t.toString(), e);
 				} else {
-					addEdge(s, t, e);					
+					addEdge(s, t, e);
 				}
 				setEdgeWeight(e, graph.getEdgeWeight(e));
 			} else {
@@ -406,13 +405,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				final IList<IAgent> listAgt =
 						edgeS.getPopulation(scope).createAgents(scope, 1, atts, false, true, null);
 				IAgent ag = listAgt.get(0);
-				if (e != null) { 
-					ag.setName(e.toString()); 
-					if(ag.hasAttribute(edgeAttr) && e instanceof GamaGraphMLEdgeImporter) {			
-						ag.setAttribute(edgeAttr, 
-							GamaMapFactory.create(scope, Types.STRING, Types.STRING, ((GamaGraphMLEdgeImporter) e).getAttributes())
-						);
-					}	
+				if (e != null) {
+					ag.setName(e.toString());
+					if (ag.hasAttribute(edgeAttr) && e instanceof GamaGraphMLEdgeImporter) {
+						ag.setAttribute(edgeAttr, GamaMapFactory.create(scope, Types.STRING, Types.STRING,
+								((GamaGraphMLEdgeImporter) e).getAttributes()));
+					}
 				}
 
 				if (nodeS != null) {
@@ -678,8 +676,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public Object addEdge(final Object e) {
 		incVersion();
 
-		if (e instanceof GamaPair) {
-			final GamaPair p = (GamaPair) e;
+		if (e instanceof GamaPair p) {
 			return addEdge(p.first(), p.last());
 		}
 		if (e instanceof GraphObjectToAdd) {
@@ -692,8 +689,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void addValue(final IScope scope, final msi.gaml.operators.Graphs.GraphObjectToAdd value) {
-		if (value instanceof msi.gaml.operators.Graphs.EdgeToAdd) {
-			final msi.gaml.operators.Graphs.EdgeToAdd edge = (msi.gaml.operators.Graphs.EdgeToAdd) value;
+		if (value instanceof msi.gaml.operators.Graphs.EdgeToAdd edge) {
 			if (edge.object == null) { edge.object = addEdge(edge.source, edge.target); }
 			addEdge(edge.source, edge.target, edge.object);
 			if (edge.weight != null) { setEdgeWeight(edge.object, edge.weight); }
@@ -749,8 +745,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
-		if (value instanceof msi.gaml.operators.Graphs.EdgeToAdd) {
-			final msi.gaml.operators.Graphs.EdgeToAdd edge = (msi.gaml.operators.Graphs.EdgeToAdd) value;
+		if (value instanceof msi.gaml.operators.Graphs.EdgeToAdd edge) {
 			if (edge.object != null) {
 				removeEdge(edge.object);
 			} else if (edge.source != null && edge.target != null) { removeAllEdges(edge.source, edge.target); }
@@ -761,8 +756,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void removeIndex(final IScope scope, final Object index) {
-		if (index instanceof GamaPair) {
-			final GamaPair p = (GamaPair) index;
+		if (index instanceof GamaPair p) {
 			removeAllEdges(p.key, p.value);
 		}
 	}
@@ -794,8 +788,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object addEdge(final Object v1, final Object v2) {
-		if (v1 instanceof GamaPair) {
-			final GamaPair p = (GamaPair) v1;
+		if (v1 instanceof GamaPair p) {
 			if (addEdge(p.first(), p.last(), v2)) return v2;
 			return null;
 		}
@@ -1509,14 +1502,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IPath getCircuit(final IScope scope) {
-		final SimpleWeightedGraph g = new SimpleWeightedGraph<V,E>(null, null);
+		final SimpleWeightedGraph g = new SimpleWeightedGraph<V, E>(null, null);
 		Graphs.addAllEdges(g, this, edgeSet());
 		HamiltonianCycleAlgorithmBase hamilton = new PalmerHamiltonianCycle();
 		final List vertices = hamilton.getTour(this).getVertexList();
 		final int size = vertices.size();
 		final IList edges = GamaListFactory.create(getGamlType().getContentType());
 		for (int i = 0; i < size - 1; i++) { edges.add(this.getEdge(vertices.get(i), vertices.get(i + 1))); }
-		return pathFromEdges(scope, (V) edges.get(0), (V)edges.get(edges.size() - 1), edges);
+		return pathFromEdges(scope, (V) edges.get(0), (V) edges.get(edges.size() - 1), edges);
 	}
 
 	@Override

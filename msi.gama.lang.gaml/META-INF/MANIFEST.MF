@@ -39,4 +39,3 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.gaml.util
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.lang.gaml
-Import-Package: org.apache.log4j

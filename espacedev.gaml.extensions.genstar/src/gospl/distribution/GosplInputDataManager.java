@@ -4,7 +4,7 @@
  * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
- * 
+ *
  *
  **********************************************************************************************/
 package gospl.distribution;
@@ -28,9 +28,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -47,6 +44,7 @@ import core.metamodel.io.GSSurveyWrapper;
 import core.metamodel.io.IGSSurvey;
 import core.metamodel.value.IValue;
 import core.util.GSPerformanceUtil;
+import core.util.GSPerformanceUtil.Level;
 import core.util.data.GSDataParser;
 import core.util.data.GSEnumDataType;
 import core.util.random.GenstarRandomUtils;
@@ -67,21 +65,21 @@ import gospl.io.util.ReadMultiLayerEntityUtils;
 
 /**
  * Main class to setup and harmonize input data. Can handle:
- * <p><ul>
+ * <p>
+ * <ul>
  * <li>Contingency or frequency table => collapse into one distribution of attribute, i.e. {@link INDimensionalMatrix}
  * <li>Sample => convert to population, i.e. {@link IPopulation}
- * </ul><p>
+ * </ul>
+ * <p>
  * TODO: the ability to input statistical moment or custom distribution </br>
  * TODO: move all static method into a factory </br>
  * WARNING: sample size is limited to 5 * 10^6 due to data organization
- * 
+ *
  * @author kevinchapuis
  *
  */
 public class GosplInputDataManager {
 
-	protected final static Logger logger = LogManager.getLogger(GosplInputDataManager.class);
-	
 	protected final static double EPSILON = Math.pow(10d, -3);
 	protected final static double MAX_SAMPLE_SIZE = (int) Math.pow(10, 6);
 
@@ -91,32 +89,28 @@ public class GosplInputDataManager {
 	private Set<GosplMultitypePopulation<ADemoEntity>> multiSamples;
 	private Set<GosplPopulation> samples;
 
-	public GosplInputDataManager(final Path configurationFilePath) 
-			throws IllegalArgumentException, IOException {
-		this.configuration = new GenstarJsonUtil()
-				.unmarchalConfigurationFileFromGenstarJson(configurationFilePath);
+	public GosplInputDataManager(final Path configurationFilePath) throws IllegalArgumentException, IOException {
+		this.configuration = new GenstarJsonUtil().unmarchalConfigurationFileFromGenstarJson(configurationFilePath);
 	}
-	
+
 	public GosplInputDataManager(final GenstarConfigurationFile configurationFile) {
 		this.configuration = configurationFile;
 	}
 
 	/**
 	 * Returns the configuration file used to manage data
-	 * 
+	 *
 	 * @return
 	 */
-	public GenstarConfigurationFile getConfiguration() {
-		return configuration;
-	}
-	
+	public GenstarConfigurationFile getConfiguration() { return configuration; }
+
 	/**
-	 * 
+	 *
 	 * Main methods to parse and get control totals from a {@link GSDataFile} file and with the help of a specified set
 	 * of {@link Attribute}
 	 * <p>
 	 * Method gets all data file from the builder and harmonizes them to one another using line identifier attributes
-	 * 
+	 *
 	 * @return A {@link Set} of {@link INDimensionalMatrix}
 	 * @throws InputFileNotSupportedException
 	 * @throws IOException
@@ -128,46 +122,36 @@ public class GosplInputDataManager {
 		GosplSurveyFactory sf = new GosplSurveyFactory();
 		this.inputData = new HashSet<>();
 		for (final GSSurveyWrapper wrapper : this.configuration.getSurveyWrappers())
-			if (!wrapper.getSurveyType().equals(GSSurveyType.Sample)) {
-				this.inputData.addAll(
-						getDataTables(
-								sf.getSurvey(
-										wrapper, 
-										this.configuration.getBaseDirectory()
-										), 
-						this.configuration.getDictionary()
-						));
+			if (!GSSurveyType.Sample.equals(wrapper.getSurveyType())) {
+				this.inputData.addAll(getDataTables(sf.getSurvey(wrapper, this.configuration.getBaseDirectory()),
+						this.configuration.getDictionary()));
 			}
 	}
 
 	/**
 	 * Main methods to parse and get samples cast into population of according type in Gospl. More precisely, each
 	 * sample is transposed where each individual in the survey is a {@link IEntity} in a synthetic {@link IPopulation}
-	 * 
+	 *
 	 * @return
 	 * @throws IOException
 	 * @throws InvalidFormatException
 	 * @throws InvalidFileTypeException
-	 * 
+	 *
 	 */
 	public void buildSamples() throws IOException, InvalidSurveyFormatException, InvalidFormatException {
 		GosplSurveyFactory sf = new GosplSurveyFactory();
 		samples = new HashSet<>();
 		for (final GSSurveyWrapper wrapper : this.configuration.getSurveyWrappers())
-			if (wrapper.getSurveyType().equals(GSSurveyType.Sample))
-				samples.add(
-						getSample(
-								sf.getSurvey(
-										wrapper, 
-										this.configuration.getBaseDirectory()),
-								this.configuration.getDictionary(), null,
-								Collections.emptyMap()
-						));
+			if (GSSurveyType.Sample.equals(wrapper.getSurveyType())) {
+				samples.add(getSample(sf.getSurvey(wrapper, this.configuration.getBaseDirectory()),
+						this.configuration.getDictionary(), null, Collections.emptyMap()));
+			}
 	}
-	
+
 	/**
-	 * Main methods to parse a multi layered population, based on {@link #getMutliLayerSample(IGSSurvey, Set, Integer, Map)}
-	 * 
+	 * Main methods to parse a multi layered population, based on
+	 * {@link #getMutliLayerSample(IGSSurvey, Set, Integer, Map)}
+	 *
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 * @throws InvalidSurveyFormatException
@@ -175,7 +159,7 @@ public class GosplInputDataManager {
 	public void buildMultiLayerSamples() throws InvalidFormatException, IOException, InvalidSurveyFormatException {
 		this.buildMultiLayerSamples(Collections.emptyMap(), null);
 	}
-	
+
 	/**
 	 * @see #buildMultiLayerSamples(Map, Integer)
 	 * @param sampleLimit
@@ -183,136 +167,131 @@ public class GosplInputDataManager {
 	 * @throws IOException
 	 * @throws InvalidSurveyFormatException
 	 */
-	public void buildMultiLayerSamples(int sampleLimit) throws InvalidFormatException, IOException, InvalidSurveyFormatException {
+	public void buildMultiLayerSamples(final int sampleLimit)
+			throws InvalidFormatException, IOException, InvalidSurveyFormatException {
 		this.buildMultiLayerSamples(Collections.emptyMap(), sampleLimit);
 	}
-	
+
 	/**
 	 * Only keep individual that has certain value for certain attribute (keepOnlyValues is Attribute::Value map)
-	 * 
+	 *
 	 * @param keepOnlyValues
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 * @throws InvalidSurveyFormatException
 	 */
-	public void buildMultiLayerSamples(Map<String,List<String>> keepOnlyValues, Integer sampleLimit) 
+	public void buildMultiLayerSamples(final Map<String, List<String>> keepOnlyValues, final Integer sampleLimit)
 			throws InvalidFormatException, IOException, InvalidSurveyFormatException {
 		GosplSurveyFactory sf = new GosplSurveyFactory();
 		multiSamples = new HashSet<>();
-		for (final GSSurveyWrapper wrapper : this.configuration.getSurveyWrappers()
-				.stream().filter(survey -> survey.getSurveyType().equals(GSSurveyType.Sample))
-				.collect(Collectors.toList())) {
-			multiSamples.add(
-					getMutliLayerSample(
-							sf.getSurvey(wrapper, this.configuration.getBaseDirectory()), 
-							this.configuration.getDictionaries(), sampleLimit, keepOnlyValues)
-					);
+		for (final GSSurveyWrapper wrapper : this.configuration.getSurveyWrappers().stream()
+				.filter(survey -> GSSurveyType.Sample.equals(survey.getSurveyType())).collect(Collectors.toList())) {
+			multiSamples.add(getMutliLayerSample(sf.getSurvey(wrapper, this.configuration.getBaseDirectory()),
+					this.configuration.getDictionaries(), sampleLimit, keepOnlyValues));
 		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// -------------------------------- ACCESSORS -------------------------------- //
 	/////////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Returns an unmodifiable view of input data tables, as a raw set of matrices
+	 *
 	 * @return
 	 */
-	public Set<INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number>> 
-			getRawDataTables() {
+	public Set<INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number>> getRawDataTables() {
 		return Collections.unmodifiableSet(this.inputData);
 	}
-	
+
 	/**
-	 * Returns an unmodifiable view of input contingency tables. If there is not any
-	 * contingency data in input tables, then return an empty set
+	 * Returns an unmodifiable view of input contingency tables. If there is not any contingency data in input tables,
+	 * then return an empty set
+	 *
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public Set<AFullNDimensionalMatrix<Integer>> getContingencyTables(){
-		return this.inputData.stream()
-					.filter(
-							matrix -> matrix.getMetaDataType().equals(GSSurveyType.ContingencyTable))
-					.map(
-							matrix -> (AFullNDimensionalMatrix<Integer>) matrix)
-					.collect(Collectors.toSet());
+	@SuppressWarnings ("unchecked")
+	public Set<AFullNDimensionalMatrix<Integer>> getContingencyTables() {
+		return this.inputData.stream().filter(matrix -> GSSurveyType.ContingencyTable.equals(matrix.getMetaDataType()))
+				.map(matrix -> (AFullNDimensionalMatrix<Integer>) matrix).collect(Collectors.toSet());
 	}
-	
+
 	/**
-	 * Returns an unmodifiable view of input samples 
+	 * Returns an unmodifiable view of input samples
+	 *
 	 * @return
 	 */
-	public Set<IPopulation<ADemoEntity, Attribute<? extends IValue>>> getRawSamples(){
+	public Set<IPopulation<ADemoEntity, Attribute<? extends IValue>>> getRawSamples() {
 		return Collections.unmodifiableSet(this.samples);
 	}
-	
+
 	/**
-	 * Returns an unmodifiable view of input multi layered samples 
+	 * Returns an unmodifiable view of input multi layered samples
+	 *
 	 * @return
 	 */
-	public Collection<GosplMultitypePopulation<ADemoEntity>> getMultiSamples(){
+	public Collection<GosplMultitypePopulation<ADemoEntity>> getMultiSamples() {
 		return Collections.unmodifiableCollection(this.multiSamples);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Create a frequency matrix from all input data tables
-	 * 
+	 *
 	 * @return
 	 * @throws IllegalDistributionCreation
 	 * @throws IllegalControlTotalException
 	 * @throws MatrixCoordinateException
 	 *
 	 */
-	@SuppressWarnings("unlikely-arg-type")
-	public INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> 
-			collapseDataTablesIntoDistribution()
-					throws IllegalDistributionCreation, IllegalControlTotalException {
-		
-		if (inputData.isEmpty())
-			throw new IllegalArgumentException(
-					"To collapse matrices you must build at least one first: "+
-					"see the buildDataTables method");
-		
-		if (inputData.size() == 1)
-			return getFrequency(inputData.iterator().next(), inputData);
-		
+	@SuppressWarnings ("unlikely-arg-type")
+	public INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> collapseDataTablesIntoDistribution()
+			throws IllegalDistributionCreation, IllegalControlTotalException {
+
+		if (inputData.isEmpty()) throw new IllegalArgumentException(
+				"To collapse matrices you must build at least one first: " + "see the buildDataTables method");
+
+		if (inputData.size() == 1) return getFrequency(inputData.iterator().next(), inputData);
+
 		final Set<AFullNDimensionalMatrix<Double>> fullMatrices = new HashSet<>();
-		
-		GSPerformanceUtil gspu = new GSPerformanceUtil("Proceed to distribution collapse", logger);
+
+		GSPerformanceUtil gspu = new GSPerformanceUtil("Proceed to distribution collapse");
 		gspu.sysoStempPerformance(0, this);
-		
+
 		// Matrices that contain a record attribute
 		for (AFullNDimensionalMatrix<? extends Number> recordMatrices : inputData.stream()
-				.filter(mat -> mat.getDimensions().stream().anyMatch(d -> 
-					this.configuration.getDictionary().getRecords().contains(d)))
-				.collect(Collectors.toSet()))
-				fullMatrices.add(getTransposedRecord(this.getConfiguration().getDictionary(), recordMatrices));
-		
+				.filter(mat -> mat.getDimensions().stream()
+						.anyMatch(d -> this.configuration.getDictionary().getRecords().contains(d)))
+				.collect(Collectors.toSet())) {
+			fullMatrices.add(getTransposedRecord(this.getConfiguration().getDictionary(), recordMatrices));
+		}
+
 		gspu.sysoStempPerformance(1, this);
 		gspu.sysoStempMessage("Collapse record attribute: done");
-		
+
 		// Matrices that do not contain any record attribute
 		for (final AFullNDimensionalMatrix<? extends Number> mat : inputData.stream()
-				.filter(mat -> mat.getDimensions().stream().allMatch(d -> !isRecordAttribute(this.getConfiguration().getDictionary(), d)))
-				.collect(Collectors.toSet()))
+				.filter(mat -> mat.getDimensions().stream()
+						.allMatch(d -> !isRecordAttribute(this.getConfiguration().getDictionary(), d)))
+				.collect(Collectors.toSet())) {
 			fullMatrices.add(getFrequency(mat, inputData));
-		
+		}
+
 		gspu.sysoStempPerformance(2, this);
 		gspu.sysoStempMessage("Transpose to frequency: done");
-				
+
 		return new GosplConditionalDistribution(fullMatrices);
 	}
-	
+
 	/////////////////////////////////////////////////////////////////////////////////
 	// -------------------------- inner utility methods -------------------------- //
 	/////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Get the distribution matrix from data files, using provided dictionary
-	 * 
+	 *
 	 * FIXME: must check for record attribute to build data table accordingly
-	 * 
+	 *
 	 * @param survey
 	 * @param dictionary
 	 * @return
@@ -320,55 +299,51 @@ public class GosplInputDataManager {
 	 * @throws InvalidSurveyFormatException
 	 */
 	public static Set<AFullNDimensionalMatrix<? extends Number>> getDataTables(final IGSSurvey survey,
-			final IGenstarDictionary<Attribute<? extends IValue>> dictionary) 
+			final IGenstarDictionary<Attribute<? extends IValue>> dictionary)
 			throws IOException, InvalidSurveyFormatException {
-		
-		GSPerformanceUtil gspu = new GSPerformanceUtil("Retrieve data table from files", logger, Level.TRACE);
-		
+
+		GSPerformanceUtil gspu = new GSPerformanceUtil("Retrieve data table from files", Level.TRACE);
+
 		final Set<AFullNDimensionalMatrix<? extends Number>> cTableSet = new HashSet<>();
 		final GSDataParser dataParser = new GSDataParser();
-		
+
 		// Read headers and store possible variables by line index
 		final Map<Integer, Set<IValue>> rowHeaders = survey.getRowHeaders(dictionary);
-		gspu.sysoStempMessage("detected in "+survey.getName()+" "+
-				rowHeaders.size()+" row headers : "+rowHeaders);
-		
+		gspu.sysoStempMessage(
+				"detected in " + survey.getName() + " " + rowHeaders.size() + " row headers : " + rowHeaders);
+
 		// Read headers and store possible variables by column index
 		final Map<Integer, Set<IValue>> columnHeaders = survey.getColumnHeaders(dictionary);
-		gspu.sysoStempMessage("detected in "+survey.getName()+" "+
-				columnHeaders.size()+" column headers : "+columnHeaders);
+		gspu.sysoStempMessage(
+				"detected in " + survey.getName() + " " + columnHeaders.size() + " column headers : " + columnHeaders);
 
 		// Store column related attributes while keeping unrelated attributes separated
 		// WARNING: Works with attribute name because of record attribute
 		final Set<Set<String>> columnSchemas = new HashSet<>();
-		for(Set<IValue> cValues : columnHeaders.values())
-			columnSchemas.add(cValues.stream()
-										.map(v -> v.getValueSpace().getAttribute().getAttributeName())
-										.collect(Collectors.toSet())
-										);
-						
+		for (Set<IValue> cValues : columnHeaders.values()) {
+			columnSchemas.add(cValues.stream().map(v -> v.getValueSpace().getAttribute().getAttributeName())
+					.collect(Collectors.toSet()));
+		}
+
 		// Remove lower generality schema: e.g. if we have schema [A,B] then [A] or [B] will be skiped
-		columnSchemas.removeAll(columnSchemas.stream().filter(schema -> 
-			columnSchemas.stream()
-						.anyMatch(higherSchema -> schema.stream()
-								.allMatch(att -> higherSchema.contains(att)) 
-									&& higherSchema.size() > schema.size()))
-						.collect(Collectors.toSet()));
-		
+		columnSchemas.removeAll(columnSchemas.stream()
+				.filter(schema -> columnSchemas.stream()
+						.anyMatch(higherSchema -> schema.stream().allMatch(att -> higherSchema.contains(att))
+								&& higherSchema.size() > schema.size()))
+				.collect(Collectors.toSet()));
+
 		// Store line related attributes while keeping unrelated attributes separated
 		// WARNING: Works with attribute name because of record attribute
 		final Set<Set<String>> rowSchemas = new HashSet<>();
-		for(Set<IValue> rValues : rowHeaders.values())
-			rowSchemas.add(rValues.stream()
-									.map(v -> v.getValueSpace().getAttribute().getAttributeName())
-									.collect(Collectors.toSet())
-									);
-		
-		rowSchemas.removeAll(rowSchemas.stream().filter(schema -> 
-			rowSchemas.stream()
-				.anyMatch(higherSchema -> schema.stream()
-						.allMatch(att -> higherSchema.contains(att)) 
-							&& higherSchema.size() > schema.size()))
+		for (Set<IValue> rValues : rowHeaders.values()) {
+			rowSchemas.add(rValues.stream().map(v -> v.getValueSpace().getAttribute().getAttributeName())
+					.collect(Collectors.toSet()));
+		}
+
+		rowSchemas.removeAll(rowSchemas.stream()
+				.filter(schema -> rowSchemas.stream()
+						.anyMatch(higherSchema -> schema.stream().allMatch(att -> higherSchema.contains(att))
+								&& higherSchema.size() > schema.size()))
 				.collect(Collectors.toSet()));
 
 		// Start iterating over each related set of attribute
@@ -377,33 +352,35 @@ public class GosplInputDataManager {
 				// Create a matrix for each set of related attribute
 				AFullNDimensionalMatrix<? extends Number> jDistribution;
 				// Matrix 'dimension / aspect' map
-				final Set<Attribute<? extends IValue>> dimTable = 
-						Stream.concat(
-								rSchema.stream().filter(ra -> dictionary.containsAttribute(ra))
-									.map(ra -> dictionary.getAttribute(ra)), 
-								cSchema.stream().filter(ra -> dictionary.containsAttribute(ra))
-									.map(ra -> dictionary.getAttribute(ra)))
-								.collect(Collectors.toSet());
+				final Set<Attribute<? extends IValue>> dimTable = Stream.concat(
+						rSchema.stream().filter(ra -> dictionary.containsAttribute(ra))
+								.map(ra -> dictionary.getAttribute(ra)),
+						cSchema.stream().filter(ra -> dictionary.containsAttribute(ra))
+								.map(ra -> dictionary.getAttribute(ra)))
+						.collect(Collectors.toSet());
 				// Instantiate either contingency (int and global frame of reference) or frequency (double and either
 				// global or local frame of reference) matrix
-				if (survey.getDataFileType().equals(GSSurveyType.ContingencyTable))
+				if (GSSurveyType.ContingencyTable.equals(survey.getDataFileType())) {
 					jDistribution = new GosplContingencyTable(dimTable);
-				else
+				} else {
 					jDistribution = new GosplJointDistribution(dimTable, survey.getDataFileType());
-				
+				}
+
 				jDistribution.setLabel(survey.getName());
-				jDistribution.addGenesis("from file "+survey.getName());
-				
+				jDistribution.addGenesis("from file " + survey.getName());
+
 				// Fill in the matrix through line & column
 				for (final Integer row : rowHeaders.entrySet().stream()
-						.filter(e -> rSchema.stream().allMatch(att -> e.getValue().stream()
-								.anyMatch(val -> val.getValueSpace().getAttribute().getAttributeName().equals(att))))
-						.map(e -> e.getKey()).collect(Collectors.toSet())) {
-					
+						.filter(e -> rSchema.stream()
+								.allMatch(att -> e.getValue().stream().anyMatch(
+										val -> val.getValueSpace().getAttribute().getAttributeName().equals(att))))
+						.map(Entry::getKey).collect(Collectors.toSet())) {
+
 					for (final Integer col : columnHeaders.entrySet().stream()
-							.filter(e -> cSchema.stream().allMatch(att -> e.getValue().stream()
-									.anyMatch(val -> val.getValueSpace().getAttribute().getAttributeName().equals(att))))
-							.map(e -> e.getKey()).collect(Collectors.toSet())) {
+							.filter(e -> cSchema.stream()
+									.allMatch(att -> e.getValue().stream().anyMatch(
+											val -> val.getValueSpace().getAttribute().getAttributeName().equals(att))))
+							.map(Entry::getKey).collect(Collectors.toSet())) {
 						// The value
 						final String stringVal = survey.read(row, col);
 						// Value type
@@ -411,81 +388,85 @@ public class GosplInputDataManager {
 						// Store coordinate for the value. It is made of all line & column attribute's aspects
 						final Map<Attribute<? extends IValue>, IValue> coordSet =
 								Stream.concat(rowHeaders.get(row).stream(), columnHeaders.get(col).stream())
-									.filter(vals -> dictionary.containsValue(vals.getStringValue())) // Filter record value
-									.collect(Collectors.toMap(
-											val -> dictionary.getAttribute(val.getValueSpace().getAttribute().getAttributeName()), 
-											Function.identity()));
+										.filter(vals -> dictionary.containsValue(vals.getStringValue())) // Filter
+																											// record
+																											// value
+										.collect(Collectors.toMap(
+												val -> dictionary.getAttribute(
+														val.getValueSpace().getAttribute().getAttributeName()),
+												Function.identity()));
 						final ACoordinate<Attribute<? extends IValue>, IValue> coord = new GosplCoordinate(coordSet);
 						// Add the coordinate / parsed value pair into the matrix
-						if (dt.isNumericValue())
-							if (!jDistribution.addValue(coord, jDistribution.parseVal(dataParser, stringVal)))
-								jDistribution.getVal(coord).add(jDistribution.parseVal(dataParser, stringVal));
+						if (dt.isNumericValue()
+								&& !jDistribution.addValue(coord, jDistribution.parseVal(dataParser, stringVal))) {
+							jDistribution.getVal(coord).add(jDistribution.parseVal(dataParser, stringVal));
+						}
 					}
 				}
 				cTableSet.add(jDistribution);
 			}
 		}
-		
+
 		return cTableSet;
 	}
 
 	/**
-	 * Based on a survey wrapping data, and for a given set of expected attributes, 
-	 * creates a GoSPl population.
+	 * Based on a survey wrapping data, and for a given set of expected attributes, creates a GoSPl population.
 	 */
-	public static GosplPopulation getSample(final IGSSurvey survey, 
+	public static GosplPopulation getSample(final IGSSurvey survey,
 			final IGenstarDictionary<Attribute<? extends IValue>> dictionnary)
 			throws IOException, InvalidSurveyFormatException {
 		return getSample(survey, dictionnary, null, Collections.emptyMap());
 	}
-	
-	/**
-	 * Based on a survey wrapping data, and for a given set of expected attributes, 
-	 * creates a GoSPl population.
-	 */
-	public static GosplPopulation getSample(final IGSSurvey survey, 
-			final IGenstarDictionary<Attribute<? extends IValue>> dictionnary, 
-			Integer maxIndividuals,
-			Map<String,String> keepOnlyEqual
-			)
-			throws IOException, InvalidSurveyFormatException {
-		
-		GSPerformanceUtil gspu = new GSPerformanceUtil("Retrieve a sample from a data file", logger, Level.DEBUG);
-		
-		final GosplPopulation sampleSet = new GosplPopulation();
-		
-		// Read headers and store possible variables by column index
-		final Map<Integer, Attribute<? extends IValue>> columnHeaders = 
-				survey.getColumnSample(dictionnary);
 
-		if (columnHeaders.isEmpty()) 
-			throw new RuntimeException("no column header was decoded in survey "+survey+"; are you sure you provided a relevant dictionnary of data?");
-		
+	/**
+	 * Based on a survey wrapping data, and for a given set of expected attributes, creates a GoSPl population.
+	 */
+	public static GosplPopulation getSample(final IGSSurvey survey,
+			final IGenstarDictionary<Attribute<? extends IValue>> dictionnary, final Integer maxIndividuals,
+			final Map<String, String> keepOnlyEqual) throws IOException, InvalidSurveyFormatException {
+
+		GSPerformanceUtil gspu = new GSPerformanceUtil("Retrieve a sample from a data file", Level.DEBUG);
+
+		final GosplPopulation sampleSet = new GosplPopulation();
+
+		// Read headers and store possible variables by column index
+		final Map<Integer, Attribute<? extends IValue>> columnHeaders = survey.getColumnSample(dictionnary);
+
+		if (columnHeaders.isEmpty()) throw new RuntimeException("no column header was decoded in survey " + survey
+				+ "; are you sure you provided a relevant dictionnary of data?");
+
 		int unmatchSize = 0;
-		
-		
+
 		// --------------------------------------------------------
 		// Try with the buffer reader first, only available for csv
 		// --------------------------------------------------------
 		CSVReader surveyReader = null;
 		try {
-			
+
 			surveyReader = survey.getBufferReader(true);
 			String[] l = null;
 
 			double probaJump = MAX_SAMPLE_SIZE / survey.getLastRowIndex();
-			
+
 			while (sampleSet.size() <= maxIndividuals) {
-				
-				try { do {l = surveyReader.readNext();} while (GenstarRandomUtils.flip(probaJump)); } catch (IOException e) { e.printStackTrace(); }
-				if (l==null) {break;}
+
+				try {
+					do { l = surveyReader.readNext(); } while (GenstarRandomUtils.flip(probaJump));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if (l == null) { break; }
 
 				GosplEntity entity = readRecord(Arrays.asList(l), columnHeaders, keepOnlyEqual, gspu);
 
-				if (entity != null) {sampleSet.add(entity);}
-				else {unmatchSize++;}
+				if (entity != null) {
+					sampleSet.add(entity);
+				} else {
+					unmatchSize++;
+				}
 
-			} 
+			}
 
 			try {
 				surveyReader.close();
@@ -495,51 +476,57 @@ public class GosplInputDataManager {
 			}
 		} catch (UnsupportedEncodingException | FileNotFoundException e1) {
 			e1.getStackTrace();
-		} 
+		}
 		// ---------------------------------------------------------------------------------
 		// If trying to do it with other type of data, go through stored-in-memory algorithm
 		// ---------------------------------------------------------------------------------
 		catch (UnsupportedOperationException e) {
 			for (int i = survey.getFirstRowIndex(); i <= survey.getLastRowIndex(); i++) {
 				// too much ?
-				if (sampleSet.size() >= maxIndividuals) break;
+				if (sampleSet.size() >= maxIndividuals) { break; }
 
 				GosplEntity entity = readRecord(survey.readLine(i), columnHeaders, keepOnlyEqual, gspu);
 
-				if (entity != null) {sampleSet.add(entity);}
-				else {unmatchSize++;}
+				if (entity != null) {
+					sampleSet.add(entity);
+				} else {
+					unmatchSize++;
+				}
 			}
 		}
 		if (unmatchSize > 0) {
-			gspu.sysoStempMessage("Input sample has bypass "+new DecimalFormat("#.##").format(unmatchSize/(double)sampleSet.size()*100)
-				+"% ("+unmatchSize+") of entities due to unmatching attribute's value");
+			gspu.sysoStempMessage("Input sample has bypass "
+					+ new DecimalFormat("#.##").format(unmatchSize / (double) sampleSet.size() * 100) + "% ("
+					+ unmatchSize + ") of entities due to unmatching attribute's value");
 		}
-		
+
 		return sampleSet;
 	}
-	
+
 	/**
 	 * The inner reader for individual entities
-	 *  
+	 *
 	 * @param record
-	 * @return null if value have not been correctly read, keepOnlyEqual filter have been activated or number
-	 * of attribute is not coherent with population schema
+	 * @return null if value have not been correctly read, keepOnlyEqual filter have been activated or number of
+	 *         attribute is not coherent with population schema
 	 */
-	private static GosplEntity readRecord(List<String> record, Map<Integer, Attribute<? extends IValue>> columnHeaders,
-			Map<String,String> keepOnlyEqual, GSPerformanceUtil gspu) {
-		
+	private static GosplEntity readRecord(final List<String> record,
+			final Map<Integer, Attribute<? extends IValue>> columnHeaders, final Map<String, String> keepOnlyEqual,
+			final GSPerformanceUtil gspu) {
+
 		final Map<Attribute<? extends IValue>, IValue> entityAttributes = new HashMap<>();
-		for (final Integer idx : columnHeaders.keySet()){
-			
+		for (final Integer idx : columnHeaders.keySet()) {
+
 			String actualStringValue = record.get(idx);
-			
+
 			Attribute<? extends IValue> att = columnHeaders.get(idx);
 			IValue val = null;
-			if(actualStringValue == GosplSurveyFactory.UNKNOWN_VARIABLE)
+			if (actualStringValue == GosplSurveyFactory.UNKNOWN_VARIABLE) {
 				val = att.getValueSpace().getEmptyValue();
-			else
+			} else {
 				val = att.getValueSpace().addValue(actualStringValue);
-			
+			}
+
 			// filter
 			if (val != null) {
 				String expected = keepOnlyEqual.get(att.getAttributeName());
@@ -547,61 +534,60 @@ public class GosplInputDataManager {
 					// skip
 					return null;
 			}
-			
-			if (val!=null)
+
+			if (val != null) {
 				entityAttributes.put(att, val);
-			else if (	att.getEmptyValue().getStringValue() != null 
-						&& att.getEmptyValue().getStringValue().equals(record.get(idx)))
+			} else if (att.getEmptyValue().getStringValue() != null
+					&& att.getEmptyValue().getStringValue().equals(record.get(idx))) {
 				entityAttributes.put(att, att.getValueSpace().getEmptyValue());
-			else {
-				gspu.sysoStempMessage("Data modality "+record.get(idx)+" does not match any value for attribute "
-						+att.getAttributeName());
+			} else {
+				gspu.sysoStempMessage("Data modality " + record.get(idx) + " does not match any value for attribute "
+						+ att.getAttributeName());
 				return null;
 			}
 		}
-		
+
 		return new GosplEntity(entityAttributes);
 	}
-	
+
 	/**
 	 * Retrieve a multi layered sample from a survey (micro-data) and a dictionary per layer
-	 * 
+	 *
 	 * @param survey
 	 * @param layerDicos
 	 * @return
 	 */
-	public static GosplMultitypePopulation<ADemoEntity> getMutliLayerSample(final IGSSurvey survey, 
-			Set<IGenstarDictionary<Attribute<? extends IValue>>> layerDicos,
-			Integer maxIndividuals, Map<String,List<String>> keepOnlyEqual) {
+	public static GosplMultitypePopulation<ADemoEntity> getMutliLayerSample(final IGSSurvey survey,
+			final Set<IGenstarDictionary<Attribute<? extends IValue>>> layerDicos, final Integer maxIndividuals,
+			final Map<String, List<String>> keepOnlyEqual) {
 		GSPerformanceUtil gspu = new GSPerformanceUtil("Retrieve a multi layered sample from a data file", Level.DEBUG);
-		
-		GosplMultitypePopulation<ADemoEntity> population = new GosplMultitypePopulation<>(layerDicos.stream()
-				.map(IGenstarDictionary::getIdentifierAttributeName)
-				.collect(Collectors.toList()));
-		
+
+		GosplMultitypePopulation<ADemoEntity> population = new GosplMultitypePopulation<>(
+				layerDicos.stream().map(IGenstarDictionary::getIdentifierAttributeName).collect(Collectors.toList()));
+
 		// Read dictionary and store attributes according to Layer level
 		Map<Integer, String> layerId = new HashMap<>();
 		Map<Integer, String> layerWgt = new HashMap<>();
-		Map<Attribute<? extends IValue>,Integer> layerAtt = new HashMap<>();
-		
-		Map<Integer,Set<ReadMultiLayerEntityUtils>> layerEntityCollection = new HashMap<>();
-		
+		Map<Attribute<? extends IValue>, Integer> layerAtt = new HashMap<>();
+
+		Map<Integer, Set<ReadMultiLayerEntityUtils>> layerEntityCollection = new HashMap<>();
+
 		// Read headers and store possible variables by column index
 		final Map<Integer, Attribute<? extends IValue>> columnHeaders = new HashMap<>();
 		final Map<String, Integer> idWgtColumnHeaders = new HashMap<>();
 		for (IGenstarDictionary<Attribute<? extends IValue>> dico : layerDicos) {
-			
+
 			layerId.put(dico.getLevel(), dico.getIdentifierAttributeName());
 			layerWgt.put(dico.getLevel(), dico.getWeightAttributeName());
-			
+
 			dico.getAttributes().stream().forEach(a -> layerAtt.put(a, dico.getLevel()));
-			
+
 			columnHeaders.putAll(survey.getColumnSample(dico));
 			idWgtColumnHeaders.putAll(survey.getColumnIdAndWeight(dico));
-			
+
 			layerEntityCollection.put(dico.getLevel(), new HashSet<>());
 		}
-		
+
 		int unmatchSize = 0;
 		int zeroLayerIdx = 0;
 		int sizeLimit = maxIndividuals == null ? (int) MAX_SAMPLE_SIZE : maxIndividuals;
@@ -613,33 +599,37 @@ public class GosplInputDataManager {
 		try {
 			surveyReader = survey.getBufferReader(true);
 			String[] l = null;
-			
+
 			// Only take (max / size) individual record to match MAX_SAMPLE_SIZE
 			int surveySize = survey.getLastRowIndex();
 			double probaJump = surveySize < sizeLimit ? 0.0 : sizeLimit / survey.getLastRowIndex();
-			
+
 			while (zeroLayerIdx <= sizeLimit) {
-				
-				try { do {l = surveyReader.readNext();} while (GenstarRandomUtils.flip(probaJump)); } catch (IOException e) { e.printStackTrace(); }
-				if (l==null) {break;}
-				
-				Map<Integer,Set<ReadMultiLayerEntityUtils>> localEntityCollection = readComplexRecord(Arrays.asList(l),
-						layerDicos, columnHeaders, layerAtt, idWgtColumnHeaders, layerId, layerWgt, keepOnlyEqual);
-				if(localEntityCollection.isEmpty()) { unmatchSize++; continue;}
-				else { 
-					
-					for(Integer localLayer : localEntityCollection.keySet()) { 
-						layerEntityCollection.get(localLayer).addAll(localEntityCollection.get(localLayer)); 
-					}
-					
-					zeroLayerIdx += localEntityCollection.get(Collections.min(layerId.keySet())).size();
-					if(zeroLayerIdx%(sizeLimit/10d)==0) { 
-						gspu.sysoStempMessage(100d*zeroLayerIdx/sizeLimit+"% of total sample has been build"); 
-					}
+
+				try {
+					do { l = surveyReader.readNext(); } while (GenstarRandomUtils.flip(probaJump));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
-			} 
-			
+				if (l == null) { break; }
+
+				Map<Integer, Set<ReadMultiLayerEntityUtils>> localEntityCollection = readComplexRecord(Arrays.asList(l),
+						layerDicos, columnHeaders, layerAtt, idWgtColumnHeaders, layerId, layerWgt, keepOnlyEqual);
+				if (localEntityCollection.isEmpty()) {
+					unmatchSize++;
+					continue;
+				}
+				for (Integer localLayer : localEntityCollection.keySet()) {
+					layerEntityCollection.get(localLayer).addAll(localEntityCollection.get(localLayer));
+				}
+
+				zeroLayerIdx += localEntityCollection.get(Collections.min(layerId.keySet())).size();
+				if (zeroLayerIdx % (sizeLimit / 10d) == 0) {
+					gspu.sysoStempMessage(100d * zeroLayerIdx / sizeLimit + "% of total sample has been build");
+				}
+
+			}
+
 			try {
 				surveyReader.close();
 			} catch (IOException e1) {
@@ -648,78 +638,71 @@ public class GosplInputDataManager {
 			}
 		} catch (UnsupportedEncodingException | FileNotFoundException e1) {
 			e1.getStackTrace();
-		} 
+		}
 		// ---------------------------------------------------------------------------------
 		// If trying to do it with other type of data, go through stored-in-memory algorithm
 		// ---------------------------------------------------------------------------------
 		catch (UnsupportedOperationException e) {
 			for (int i = survey.getFirstRowIndex(); i <= survey.getLastRowIndex(); i++) {
-				
+
 				// too much ?
-				if (zeroLayerIdx >= sizeLimit) break;
-				
+				if (zeroLayerIdx >= sizeLimit) { break; }
+
 				final List<String> indiVals = survey.readLine(i);
-				Map<Integer,Set<ReadMultiLayerEntityUtils>> localEntityCollection = readComplexRecord(indiVals,
+				Map<Integer, Set<ReadMultiLayerEntityUtils>> localEntityCollection = readComplexRecord(indiVals,
 						layerDicos, columnHeaders, layerAtt, idWgtColumnHeaders, layerId, layerWgt, keepOnlyEqual);
-				if(localEntityCollection.isEmpty()) { unmatchSize++; continue;}
-				else { 
+				if (localEntityCollection.isEmpty()) {
+					unmatchSize++;
+				} else {
 					layerEntityCollection.putAll(localEntityCollection);
 					zeroLayerIdx += localEntityCollection.get(Collections.min(layerId.keySet())).size();
 				}
-				
+
 			}
 		}
-		
+
 		// Put lower level entities into upper level entities
-		
-		List<Integer> layers =  layerDicos.stream()
-				.map(IGenstarDictionary::getLevel)
-				.sorted().collect(Collectors.toList());
-	
+
+		List<Integer> layers =
+				layerDicos.stream().map(IGenstarDictionary::getLevel).sorted().collect(Collectors.toList());
+
 		// Start with 0 level
 		int zeroL = Collections.min(layers);
-		Map<ReadMultiLayerEntityUtils,GosplEntity> zeroLayerEntities = layerEntityCollection.get(zeroL)
-				.stream().collect(Collectors.toMap(
-							Function.identity(),
-							ReadMultiLayerEntityUtils::toGosplEntity
-						));
+		Map<ReadMultiLayerEntityUtils, GosplEntity> zeroLayerEntities = layerEntityCollection.get(zeroL).stream()
+				.collect(Collectors.toMap(Function.identity(), ReadMultiLayerEntityUtils::toGosplEntity));
 		population.addAll(layerId.get(zeroL), zeroLayerEntities.values());
 		layers.remove(zeroL);
-		
+
 		// Add upper level and build Parent > Child relationship
-		
-		for( Integer layer : layers ) {
-			Map<ReadMultiLayerEntityUtils,GosplEntity> layerEntities = layerEntityCollection.get(layer).stream()
-					.collect(Collectors.toMap(
-							Function.identity(),
-							ReadMultiLayerEntityUtils::toGosplEntity
-							));
-			Map<String,Set<IEntity<? extends IAttribute<? extends IValue>>>> parentIdToChildEntity = 
-					zeroLayerEntities.entrySet().stream().collect(Collectors.groupingBy(
-								e -> e.getKey().getIDs().get(layer),
-								Collectors.mapping(Entry::getValue, Collectors.toSet())
-							));
-			for(ReadMultiLayerEntityUtils parent : layerEntities.keySet()) {
-				Set<IEntity<? extends IAttribute<? extends IValue>>> children = parentIdToChildEntity.get(parent.getId());
+
+		for (Integer layer : layers) {
+			Map<ReadMultiLayerEntityUtils, GosplEntity> layerEntities = layerEntityCollection.get(layer).stream()
+					.collect(Collectors.toMap(Function.identity(), ReadMultiLayerEntityUtils::toGosplEntity));
+			Map<String, Set<IEntity<? extends IAttribute<? extends IValue>>>> parentIdToChildEntity = zeroLayerEntities
+					.entrySet().stream().collect(Collectors.groupingBy(e -> e.getKey().getIDs().get(layer),
+							Collectors.mapping(Entry::getValue, Collectors.toSet())));
+			for (ReadMultiLayerEntityUtils parent : layerEntities.keySet()) {
+				Set<IEntity<? extends IAttribute<? extends IValue>>> children =
+						parentIdToChildEntity.get(parent.getId());
 				layerEntities.get(parent).addChildren(children);
 				children.stream().forEach(e -> e.setParent(layerEntities.get(parent)));
 			}
 			zeroLayerEntities = layerEntities;
 			population.addAll(layerId.get(layer), layerEntities.values());
 		}
-		
+
 		if (unmatchSize > 0) {
-			gspu.sysoStempMessage("Input sample has bypass "+new DecimalFormat("#.##").format(unmatchSize/(double)population.size()*100)
-				+"% ("+unmatchSize+") of entities due to unmatching attribute's value");
+			gspu.sysoStempMessage("Input sample has bypass "
+					+ new DecimalFormat("#.##").format(unmatchSize / (double) population.size() * 100) + "% ("
+					+ unmatchSize + ") of entities due to unmatching attribute's value");
 		}
-		
+
 		return population;
 	}
-	
-	
+
 	/**
 	 * Inner private multi-layer reader record
-	 * 
+	 *
 	 * @param record
 	 * @param layerDicos
 	 * @param columnHeaders
@@ -730,42 +713,41 @@ public class GosplInputDataManager {
 	 * @param keepOnlyEqual
 	 * @return
 	 */
-	private static Map<Integer,Set<ReadMultiLayerEntityUtils>> readComplexRecord(List<String> record,
-			Set<IGenstarDictionary<Attribute<? extends IValue>>> layerDicos,
-			Map<Integer, Attribute<? extends IValue>> columnHeaders, Map<Attribute<? extends IValue>,Integer> layerAtt, 
-			Map<String, Integer> idWgtColumnHeaders, Map<Integer, String> layerId,  Map<Integer, String> layerWgt, Map<String,List<String>> keepOnlyEqual) {
-		
-		Map<Integer, String> localIDs = layerId.keySet().stream().sorted()
-				.collect(Collectors.toMap(
-						Function.identity(),
-						layer -> record.get(idWgtColumnHeaders.get(layerId.get(layer)))
-						));
-		
-		Map<Integer,Set<ReadMultiLayerEntityUtils>> layerEntityCollection = new HashMap<>();
-		
+	private static Map<Integer, Set<ReadMultiLayerEntityUtils>> readComplexRecord(final List<String> record,
+			final Set<IGenstarDictionary<Attribute<? extends IValue>>> layerDicos,
+			final Map<Integer, Attribute<? extends IValue>> columnHeaders,
+			final Map<Attribute<? extends IValue>, Integer> layerAtt, final Map<String, Integer> idWgtColumnHeaders,
+			final Map<Integer, String> layerId, final Map<Integer, String> layerWgt,
+			final Map<String, List<String>> keepOnlyEqual) {
+
+		Map<Integer, String> localIDs = layerId.keySet().stream().sorted().collect(
+				Collectors.toMap(Function.identity(), layer -> record.get(idWgtColumnHeaders.get(layerId.get(layer)))));
+
+		Map<Integer, Set<ReadMultiLayerEntityUtils>> layerEntityCollection = new HashMap<>();
+
 		// Build Util MultiLayer entity
-		Map<Integer,ReadMultiLayerEntityUtils> localEntities = new HashMap<>();
+		Map<Integer, ReadMultiLayerEntityUtils> localEntities = new HashMap<>();
 		for (IGenstarDictionary<Attribute<? extends IValue>> layer : layerDicos) {
-			ReadMultiLayerEntityUtils localEntity = new ReadMultiLayerEntityUtils(
-					layer.getLevel(), // LAYER LEVEL
-					record.get(idWgtColumnHeaders.get(layerId.get(layer.getLevel()))), // ID 
+			ReadMultiLayerEntityUtils localEntity = new ReadMultiLayerEntityUtils(layer.getLevel(), // LAYER LEVEL
+					record.get(idWgtColumnHeaders.get(layerId.get(layer.getLevel()))), // ID
 					record.get(idWgtColumnHeaders.get(layerWgt.get(layer.getLevel()))), // WEIGHT
 					new HashMap<>()); // ATTRIBUTE :: VALUE
 			localEntity.setIDs(localIDs);
 			localEntities.put(layer.getLevel(), localEntity);
-			layerEntityCollection.put(layer.getLevel(),new HashSet<>());
+			layerEntityCollection.put(layer.getLevel(), new HashSet<>());
 		}
-					
-		for (final Integer idx : columnHeaders.keySet()){
+
+		for (final Integer idx : columnHeaders.keySet()) {
 			String actualStringValue = record.get(idx);
-			
+
 			Attribute<? extends IValue> att = columnHeaders.get(idx);
 			IValue val = null;
-			if(actualStringValue == GosplSurveyFactory.UNKNOWN_VARIABLE)
+			if (actualStringValue == GosplSurveyFactory.UNKNOWN_VARIABLE) {
 				val = att.getValueSpace().getEmptyValue();
-			else
+			} else {
 				val = att.getValueSpace().addValue(actualStringValue);
-			
+			}
+
 			// filter
 			if (val != null) {
 				Collection<String> expected = keepOnlyEqual.get(att.getAttributeName());
@@ -773,56 +755,49 @@ public class GosplInputDataManager {
 					// skip
 					return layerEntityCollection;
 			}
-			
+
 			if (val == null) {
-				if (	att.getEmptyValue().getStringValue() != null 
-							&& att.getEmptyValue().getStringValue().equals(record.get(idx)))
-					val = att.getValueSpace().getEmptyValue();
-				else {
-					// skip because not valide value
+				if (att.getEmptyValue().getStringValue() == null
+						|| !att.getEmptyValue().getStringValue().equals(record.get(idx))) // skip because not valide
+																							// value
 					return null;
-				}
+				val = att.getValueSpace().getEmptyValue();
 			}
-			
-			localEntities.get(layerAtt.get(att)).getEntity().put(att,val);
-			
+
+			localEntities.get(layerAtt.get(att)).getEntity().put(att, val);
+
 		}
-		
-		for (Integer layer : localEntities.keySet()) { 
-			layerEntityCollection.get(layer).add(localEntities.get(layer)); 
-		}
-	
+
+		for (Integer layer : localEntities.keySet()) { layerEntityCollection.get(layer).add(localEntities.get(layer)); }
+
 		return layerEntityCollection;
 	}
-	
+
 	/*
 	 * Transpose any matrix to a frequency based matrix
 	 */
 	protected static AFullNDimensionalMatrix<Double> getFrequency(
 			final AFullNDimensionalMatrix<? extends Number> matrix,
-			final Set<AFullNDimensionalMatrix<? extends Number>> context)
-					throws IllegalControlTotalException {
-		
+			final Set<AFullNDimensionalMatrix<? extends Number>> context) throws IllegalControlTotalException {
+
 		// returned matrix
 		AFullNDimensionalMatrix<Double> freqMatrix = null;
-		
-		if (matrix.getMetaDataType().equals(GSSurveyType.LocalFrequencyTable)) {
+
+		if (GSSurveyType.LocalFrequencyTable.equals(matrix.getMetaDataType())) {
 			// Identify local referent dimension
 			final Map<Attribute<? extends IValue>, List<AControl<? extends Number>>> mappedControls =
 					matrix.getDimensions().stream().collect(Collectors.toMap(d -> d, d -> d.getValueSpace().getValues()
 							.stream().map(a -> matrix.getVal(a)).collect(Collectors.toList())));
-			final Attribute<? extends IValue> localReferentDimension =
-					mappedControls.entrySet().stream()
-							.filter(e -> e.getValue().stream()
-									.allMatch(ac -> ac.equalsCastedVal(e.getValue().get(0), EPSILON)))
-							.map(e -> e.getKey()).findFirst().get();
+			final Attribute<? extends IValue> localReferentDimension = mappedControls.entrySet().stream()
+					.filter(e -> e.getValue().stream().allMatch(ac -> ac.equalsCastedVal(e.getValue().get(0), EPSILON)))
+					.map(Entry::getKey).findFirst().get();
 			final AControl<? extends Number> localReferentControl =
 					mappedControls.get(localReferentDimension).iterator().next();
 
 			// The most appropriate align referent matrix (the one that have most information about matrix to align,
 			// i.e. the highest number of shared dimensions)
 			final Optional<AFullNDimensionalMatrix<? extends Number>> optionalRef = context.stream()
-					.filter(ctFitter -> !ctFitter.getMetaDataType().equals(GSSurveyType.LocalFrequencyTable)
+					.filter(ctFitter -> !GSSurveyType.LocalFrequencyTable.equals(ctFitter.getMetaDataType())
 							&& ctFitter.getDimensions().contains(localReferentDimension))
 					.sorted((jd1,
 							jd2) -> (int) jd2.getDimensions().stream().filter(d -> matrix.getDimensions().contains(d))
@@ -830,101 +805,99 @@ public class GosplInputDataManager {
 									- (int) jd1.getDimensions().stream().filter(d -> matrix.getDimensions().contains(d))
 											.count())
 					.findFirst();
-			
-			if (optionalRef.isPresent()) {
-				freqMatrix = new GosplJointDistribution(matrix.getDimensions(), GSSurveyType.GlobalFrequencyTable);
-				final AFullNDimensionalMatrix<? extends Number> matrixOfReference = optionalRef.get();
-				final double totalControl =
-						matrixOfReference.getVal(localReferentDimension.getValueSpace().getValues()
-								.stream().collect(Collectors.toSet())).getValue().doubleValue();
-				final Map<IValue, Double> freqControls =
-						localReferentDimension.getValueSpace().getValues().stream().collect(Collectors.toMap(lrv -> lrv,
-								lrv -> matrixOfReference.getVal(lrv).getValue().doubleValue() / totalControl));
 
-				for (final ACoordinate<Attribute<? extends IValue>, IValue> controlKey : matrix.getMatrix().keySet()) {
-					freqMatrix.addValue(controlKey,
-							new ControlFrequency(matrix.getVal(controlKey).getValue().doubleValue()
-									/ localReferentControl.getValue().doubleValue()
-									* freqControls.get(controlKey.getMap().get(localReferentDimension))));
-				}
-			} else
-				throw new IllegalControlTotalException("The matrix (" + matrix.getLabel()
-						+ ") must be aligned to global frequency table but lacks of a referent matrix", matrix);
+			if (!optionalRef.isPresent()) throw new IllegalControlTotalException("The matrix (" + matrix.getLabel()
+					+ ") must be aligned to global frequency table but lacks of a referent matrix", matrix);
+			freqMatrix = new GosplJointDistribution(matrix.getDimensions(), GSSurveyType.GlobalFrequencyTable);
+			final AFullNDimensionalMatrix<? extends Number> matrixOfReference = optionalRef.get();
+			final double totalControl = matrixOfReference
+					.getVal(localReferentDimension.getValueSpace().getValues().stream().collect(Collectors.toSet()))
+					.getValue().doubleValue();
+			final Map<IValue, Double> freqControls =
+					localReferentDimension.getValueSpace().getValues().stream().collect(Collectors.toMap(lrv -> lrv,
+							lrv -> matrixOfReference.getVal(lrv).getValue().doubleValue() / totalControl));
+
+			for (final ACoordinate<Attribute<? extends IValue>, IValue> controlKey : matrix.getMatrix().keySet()) {
+				freqMatrix.addValue(controlKey,
+						new ControlFrequency(matrix.getVal(controlKey).getValue().doubleValue()
+								/ localReferentControl.getValue().doubleValue()
+								* freqControls.get(controlKey.getMap().get(localReferentDimension))));
+			}
 		} else {
 			// Init output matrix
 			freqMatrix = new GosplJointDistribution(matrix.getDimensions(), GSSurveyType.GlobalFrequencyTable);
-			freqMatrix.setLabel((matrix.getLabel()==null?"?/joint":matrix.getLabel()+"/joint"));
+			freqMatrix.setLabel(matrix.getLabel() == null ? "?/joint" : matrix.getLabel() + "/joint");
 
-			if (matrix.getMetaDataType().equals(GSSurveyType.GlobalFrequencyTable)) {
-				for (final ACoordinate<Attribute<? extends IValue>, IValue> coord : matrix.getMatrix().keySet())
+			if (GSSurveyType.GlobalFrequencyTable.equals(matrix.getMetaDataType())) {
+				for (final ACoordinate<Attribute<? extends IValue>, IValue> coord : matrix.getMatrix().keySet()) {
 					freqMatrix.addValue(coord, new ControlFrequency(matrix.getVal(coord).getValue().doubleValue()));
+				}
 			} else {
 				final AControl<? extends Number> total = matrix.getVal();
 				for (final Attribute<? extends IValue> attribut : matrix.getDimensions()) {
-					final AControl<? extends Number> controlAtt = matrix.getVal(attribut.getValueSpace().getValues().stream()
-							.collect(Collectors.toSet()));
+					final AControl<? extends Number> controlAtt =
+							matrix.getVal(attribut.getValueSpace().getValues().stream().collect(Collectors.toSet()));
 					if (Math.abs(controlAtt.getValue().doubleValue() - total.getValue().doubleValue())
 							/ controlAtt.getValue().doubleValue() > EPSILON)
 						throw new IllegalControlTotalException(total, controlAtt);
 				}
-				for (final ACoordinate<Attribute<? extends IValue>, IValue> coord : matrix.getMatrix().keySet())
+				for (final ACoordinate<Attribute<? extends IValue>, IValue> coord : matrix.getMatrix().keySet()) {
 					freqMatrix.addValue(coord, new ControlFrequency(
 							matrix.getVal(coord).getValue().doubleValue() / total.getValue().doubleValue()));
+				}
 			}
 		}
-		
+
 		freqMatrix.inheritGenesis(matrix);
 		freqMatrix.addGenesis("converted to frequency GosplDistributionBuilder@@getFrequency");
 
 		return freqMatrix;
 	}
-	
-	
+
 	// --------------------------------------------------- //
 	// ----------- RECORD ATTRIBUTE MANAGEMENT ----------- //
 	// --------------------------------------------------- //
-	
-	
+
 	/*
 	 * Result in the same matrix without any record attribute
 	 */
 	public static AFullNDimensionalMatrix<Double> getTransposedRecord(
-			IGenstarDictionary<Attribute<? extends IValue>> dictionary,
-			AFullNDimensionalMatrix<? extends Number> recordMatrices) {
-		
+			final IGenstarDictionary<Attribute<? extends IValue>> dictionary,
+			final AFullNDimensionalMatrix<? extends Number> recordMatrices) {
+
 		Set<Attribute<? extends IValue>> dims = recordMatrices.getDimensions().stream()
 				.filter(d -> !isRecordAttribute(dictionary, d)).collect(Collectors.toSet());
-		
-		GSPerformanceUtil gspu = new GSPerformanceUtil("Transpose process of matrix "
-				+Arrays.toString(recordMatrices.getDimensions().toArray()), logger, Level.TRACE);
+
+		GSPerformanceUtil gspu = new GSPerformanceUtil(
+				"Transpose process of matrix " + Arrays.toString(recordMatrices.getDimensions().toArray()),
+				Level.TRACE);
 		gspu.sysoStempPerformance(0, GosplInputDataManager.class);
 		gspu.setObjectif(recordMatrices.getMatrix().size());
-		
-		AFullNDimensionalMatrix<Double> freqMatrix = new GosplJointDistribution(dims, GSSurveyType.GlobalFrequencyTable);
+
+		AFullNDimensionalMatrix<Double> freqMatrix =
+				new GosplJointDistribution(dims, GSSurveyType.GlobalFrequencyTable);
 		freqMatrix.inheritGenesis(recordMatrices);
 		freqMatrix.addGenesis("transposted by GosplDistributionBuilder@getTransposedRecord");
 
 		AControl<? extends Number> recordMatrixControl = recordMatrices.getVal();
-		
+
 		int iter = 1;
-		for(ACoordinate<Attribute<? extends IValue>, IValue> oldCoord : recordMatrices.getMatrix().keySet()){
-			if(iter % (gspu.getObjectif()/10) == 0)
-				gspu.sysoStempPerformance(0.1, GosplInputDataManager.class);
+		for (ACoordinate<Attribute<? extends IValue>, IValue> oldCoord : recordMatrices.getMatrix().keySet()) {
+			if (iter % (gspu.getObjectif() / 10) == 0) { gspu.sysoStempPerformance(0.1, GosplInputDataManager.class); }
 			Map<Attribute<? extends IValue>, IValue> newCoord = new HashMap<>(oldCoord.getMap());
 			dims.stream().forEach(dim -> newCoord.remove(dim));
-			freqMatrix.addValue(new GosplCoordinate(newCoord), 
-					new ControlFrequency(recordMatrices.getVal(oldCoord).getValue().doubleValue() 
+			freqMatrix.addValue(new GosplCoordinate(newCoord),
+					new ControlFrequency(recordMatrices.getVal(oldCoord).getValue().doubleValue()
 							/ recordMatrixControl.getValue().doubleValue()));
 		}
-		
+
 		return freqMatrix;
 	}
-	
-	@SuppressWarnings("unlikely-arg-type")
-	public static boolean isRecordAttribute(IGenstarDictionary<Attribute<? extends IValue>> dictionary,
-			Attribute<? extends IValue> attribute){
+
+	@SuppressWarnings ("unlikely-arg-type")
+	public static boolean isRecordAttribute(final IGenstarDictionary<Attribute<? extends IValue>> dictionary,
+			final Attribute<? extends IValue> attribute) {
 		return dictionary.getRecords().contains(attribute);
 	}
-
 
 }

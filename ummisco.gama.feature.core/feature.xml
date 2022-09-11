@@ -42,7 +42,6 @@
       <import plugin="org.eclipse.xtext.util"/>
       <import plugin="org.eclipse.emf.common"/>
       <import plugin="org.eclipse.xtext.xbase.lib"/>
-      <import plugin="org.apache.log4j"/>
       <import plugin="ummisco.gaml.extensions.maths" version="1.8.2" match="greaterOrEqual"/>
       <import plugin="msi.gama.ext" version="1.8.2" match="greaterOrEqual"/>
    </requires>

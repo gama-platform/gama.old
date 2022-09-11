@@ -345,7 +345,7 @@ public class DBaseInputHandler extends AbstractInputHandler {
 				table.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				logger.warn("error while closing the database table "+surveyCompleteFile, e);
+				DEBUG.OUT("error while closing the database table "+surveyCompleteFile, e);
 			}  
 		    table = null;
 		}
@@ -447,12 +447,12 @@ public class DBaseInputHandler extends AbstractInputHandler {
 				try {
 					dt = getGosplDatatypeForDatabaseType(currentField, table);
 				} catch (IllegalArgumentException e) {
-					logger.warn("unable to automatically define the type for field "+currentField+"; will treat it as a Nominal string value", e);
+					DEBUG.OUT("unable to automatically define the type for field "+currentField+"; will treat it as a Nominal string value", e);
 					dt = GSEnumDataType.Nominal;
 				}
 				
 				// update this attribute !
-				logger.info("refining the properties of attribute {} based on database content: its type is now {}", att, dt);
+				DEBUG.INFO("refining the properties of attribute {} based on database content: its type is now {}", att, dt);
 
 				try {
 					Attribute<? extends IValue> updatedAtt = AttributeFactory.getFactory()
@@ -463,7 +463,7 @@ public class DBaseInputHandler extends AbstractInputHandler {
 					name2attribute.put(currentField.getName(), updatedAtt);
 				} catch (GSIllegalRangedData e) {
 					// unable to do that; don't touch this attribute
-					logger.warn("error while trying to refine the definition of attribute {} with type {}; leaving it untouched", att, dt); 
+					DEBUG.OUT("error while trying to refine the definition of attribute {} with type {}; leaving it untouched", att, dt); 
 					e.printStackTrace();
 				}
 				
