@@ -290,12 +290,9 @@
    </configurations>
 
    <repositories>
-      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
-      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
-      <repository location="http://updates.gama-platform.org/1.8.2" enabled="true" />
-      <repository location="http://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
-      <repository location="http://https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
+      <repository location="https://updates.gama-platform.org/1.8.2" enabled="true" />
+      <repository location="https://updates.gama-platform.org/experimental/1.8.2" enabled="true" />
+      <repository location="https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
    </repositories>
 
    <preferencesInfo>

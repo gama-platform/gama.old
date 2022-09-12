@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.8.x Update Site" url="http://updates.gama-platform.org"/>
+      <update label="GAMA 1.8.x Update Site" url="https://updates.gama-platform.org"/>
    </url>
 
    <plugin
