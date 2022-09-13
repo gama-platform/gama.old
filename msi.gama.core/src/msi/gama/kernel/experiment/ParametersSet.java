@@ -25,23 +25,11 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class ParametersSet extends GamaMap<String, Object> {
 
-	/** The fitness. */
-	private final Double fitness;
-
-	/** The current index. */
-	private final int currentIndex;
-
-	public ParametersSet() {
-		this(Double.NaN, 0);
-	}
-
 	/**
-	 * Instantiates a new parameters set.
+	 * Instantiates a new parameters set. A GamaMap with some specialized constructors and a specialisation of put(..)
 	 */
-	private ParametersSet(final Double f, final int i) {
+	public ParametersSet() {
 		super(10, Types.STRING, Types.NO_TYPE);
-		fitness = f;
-		currentIndex = i;
 	}
 
 	/**
@@ -51,7 +39,7 @@ public class ParametersSet extends GamaMap<String, Object> {
 	 *            the solution
 	 */
 	public ParametersSet(final ParametersSet solution) {
-		this(solution.fitness, solution.currentIndex);
+		this();
 		putAll(solution);
 	}
 
