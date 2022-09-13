@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.headless.core;
 
-import java.util.Map;
-
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -105,9 +103,9 @@ public class Experiment implements IExperiment {
 	}
 
 	@Override
-	public void setup(final String expName, final double sd, GamaJsonList params,  ManualExperimentJob ec) {
+	public void setup(final String expName, final double sd, final GamaJsonList params, final ManualExperimentJob ec) {
 		this.seed = sd;
-		this.loadCurrentExperiment(expName,params,ec);
+		this.loadCurrentExperiment(expName, params, ec);
 	}
 
 	/**
@@ -116,45 +114,45 @@ public class Experiment implements IExperiment {
 	 * @param expName
 	 *            the exp name
 	 */
-	private synchronized void loadCurrentExperiment(final String expName, GamaJsonList p,  ManualExperimentJob ec) {
+	private synchronized void loadCurrentExperiment(final String expName, final GamaJsonList p,
+			final ManualExperimentJob ec) {
 		this.experimentName = expName;
 		this.currentStep = 0;
-		
+
 		final ExperimentPlan curExperiment = (ExperimentPlan) model.getExperiment(expName);
 		curExperiment.setHeadless(true);
 		curExperiment.setController(ec.controller);
 
-		if(p!=null) {				
-			for(var O:((GamaJsonList)p).listValue(null, Types.MAP, false)) {
-				IMap<String, Object> m=(IMap<String, Object>)O;
+		if (p != null) {
+			for (var O : p.listValue(null, Types.MAP, false)) {
+				IMap<String, Object> m = (IMap<String, Object>) O;
 				String type = m.get("type") != null ? m.get("type").toString() : "";
 				Object v = m.get("value");
-				if (type.equals("int"))
-					v = (Integer.valueOf("" + m.get("value")));
-				if (type.equals("float"))
-					v = (Double.valueOf("" + m.get("value")));
-				
+				if ("int".equals(type)) { v = Integer.valueOf("" + m.get("value")); }
+				if ("float".equals(type)) { v = Double.valueOf("" + m.get("value")); }
 
 				final IParameter.Batch b = curExperiment.getParameterByTitle(m.get("name").toString());
 				if (b != null) {
-					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
+							v);
 				} else {
-					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(), v);
 				}
 
-//				curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
-// 				.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),m.get("value"));
+				// curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
+				// .setParameterValueByTitle(curExperiment.getExperimentScope(),
+				// m.get("name").toString(),m.get("value"));
 			}
-		} 
+		}
 		curExperiment.open(seed);
-		if(!GAMA.getControllers().contains(curExperiment.getController())) {
+		if (!GAMA.getControllers().contains(curExperiment.getController())) {
 			GAMA.getControllers().add(curExperiment.getController());
 		}
 		this.currentExperiment = curExperiment;
- 		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
+		this.currentSimulation = this.currentExperiment.getAgent().getSimulation();
 		this.currentExperiment.setHeadless(true);
 	}
-	
+
 	/**
 	 * Load current experiment.
 	 *

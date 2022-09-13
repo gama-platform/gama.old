@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Experiment UI for GAMA
+Bundle-SymbolicName: ummisco.gama.feature.experiment.ui.branding
+Bundle-Version: 1.8.2.qualifier
+Bundle-Vendor: UMMISCO
+Automatic-Module-Name: ummisco.gama.feature.experiment.ui.branding

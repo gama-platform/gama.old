@@ -1,16 +1,15 @@
 /*******************************************************************************************************
  *
- * GamlResourceDescription.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlResourceDescription.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescription;
@@ -43,13 +42,17 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 	/**
 	 * Instantiates a new gaml resource description.
 	 *
-	 * @param resource the resource
-	 * @param strategy the strategy
-	 * @param cache the cache
-	 * @param provider default constructor
+	 * @param resource
+	 *            the resource
+	 * @param strategy
+	 *            the strategy
+	 * @param cache
+	 *            the cache
+	 * @param provider
+	 *            default constructor
 	 */
 	@Inject
-	public GamlResourceDescription(final Resource resource, final IDefaultResourceDescriptionStrategy strategy,
+	public GamlResourceDescription(final GamlResource resource, final IDefaultResourceDescriptionStrategy strategy,
 			final IResourceScopeCache cache, final BuiltinGlobalScopeProvider provider) {
 		super(resource, strategy, cache);
 		this.provider = provider;
@@ -60,6 +63,11 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 	public Iterable<QualifiedName> getImportedNames() {
 		final Iterable<QualifiedName> result = super.getImportedNames();
 		return Iterables.filter(result, input -> !provider.contains(input));
+	}
+
+	@Override
+	public GamlResource getResource() { // TODO Auto-generated method stub
+		return (GamlResource) super.getResource();
 	}
 
 }

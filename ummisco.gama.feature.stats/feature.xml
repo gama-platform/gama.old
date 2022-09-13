@@ -21,10 +21,16 @@ Aditional library:
 - colt.jar: LGPL and CERN
 - concurrent.jar: public domain and some classes from SUN Microsystems (using sun-licence)
    </license>
-   
+
    <url>
-      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+      <update label="GAMA 1.8.x Update Site" url="https://updates.gama-platform.org"/>
    </url>
+
+   <requires>
+      <import plugin="msi.gama.core"/>
+      <import plugin="ummisco.gaml.extensions.maths" version="1.8.2" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.8.2" match="greaterOrEqual"/>
+   </requires>
 
    <plugin
          id="ummisco.gaml.extensions.stats"
@@ -32,5 +38,11 @@ Aditional library:
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="ummisco.gama.feature.stats.branding"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlResourceDocumenter.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlResourceDocumenter.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.documentation;
 
@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
@@ -95,7 +95,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	 *            the resource
 	 * @return the documentation cache
 	 */
-	IMap<EObject, IGamlDescription> getDocumentationCache(final Resource resource) {
+	IMap<EObject, IGamlDescription> getDocumentationCache(final GamlResource resource) {
 		if (resource == null) return null;
 		return GamlResourceServices.getDocumentationCache(resource);
 	}
@@ -125,7 +125,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	@Override
 	public IGamlDescription getGamlDocumentation(final EObject object) {
 		if (object == null) return null;
-		final IMap<EObject, IGamlDescription> map = getDocumentationCache(object.eResource());
+		final IMap<EObject, IGamlDescription> map = getDocumentationCache((GamlResource) object.eResource());
 		if (map == null) return null;
 		return map.get(object);
 	}
@@ -139,7 +139,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	 */
 	private static boolean shouldDocument(final EObject object) {
 		if (object == null) return false;
-		final Resource r = object.eResource();
+		final GamlResource r = (GamlResource) object.eResource();
 		if (r == null || !GamlResourceServices.isEdited(r)) return false;
 		return true;
 	}

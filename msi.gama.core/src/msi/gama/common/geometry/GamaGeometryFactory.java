@@ -93,7 +93,7 @@ public class GamaGeometryFactory extends GeometryFactory {
 	@Override
 	public LinearRing createLinearRing(final Coordinate[] coordinates) {
 		Coordinate[] coords = coordinates;
-		if (!isRing(coords)) { coords = (Coordinate[]) ArrayUtils.add(coords, coords[0]); }
+		if (!isRing(coords)) { coords = ArrayUtils.add(coords, coords[0]); }
 		return createLinearRing(JTS_COORDINATES_FACTORY.create(coords));
 	}
 

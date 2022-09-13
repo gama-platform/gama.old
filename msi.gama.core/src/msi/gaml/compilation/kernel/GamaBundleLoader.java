@@ -36,11 +36,9 @@ import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.expression.ExpressionUtil;
-import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
-import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -190,7 +188,7 @@ public class GamaBundleLoader {
 	public static void preBuildContributions() throws Exception {
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 45, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
-		//findFeatures();
+		// findFeatures();
 		DEBUG.TIMER(DEBUG.PAD("> GAMA: all plugins", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			final IExtensionRegistry registry = Platform.getExtensionRegistry();
 			// We retrieve the elements declared as extensions to the GAML language,
@@ -452,36 +450,36 @@ public class GamaBundleLoader {
 	 * @throws ProvisionException
 	 *             the provision exception
 	 */
-	static Set<IInstallableUnit> findFeatures2() throws ProvisionException {
-		ProvisioningUI provisioningUI = ProvisioningUI.getDefaultUI();
-		if (provisioningUI == null) return null;
-
-		String profileId = provisioningUI.getProfileId();
-		ProvisioningSession session = provisioningUI.getSession();
-		if (profileId == null || session == null) return null;
-
-		IProvisioningAgent provisioningAgent = session.getProvisioningAgent();
-		if (provisioningAgent == null) return null;
-
-		IProfileRegistry registry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
-		if (registry == null) return null;
-
-		IProfile profile = registry.getProfile(profileId);
-		if (profile == null) return null;
-
-		// 2. create a query (check QueryUtil for options)
-		IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
-
-		// 3. perform query
-		IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
-		for (IInstallableUnit feature : queryResult) {
-			final String version = feature.getVersion().toString();
-			final String featureId = feature.getId();
-			DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("version", 15) + version);
-		}
-
-		return queryResult.toSet();
-	}
+	// static Set<IInstallableUnit> findFeatures2() throws ProvisionException {
+	// ProvisioningUI provisioningUI = ProvisioningUI.getDefaultUI();
+	// if (provisioningUI == null) return null;
+	//
+	// String profileId = provisioningUI.getProfileId();
+	// ProvisioningSession session = provisioningUI.getSession();
+	// if (profileId == null || session == null) return null;
+	//
+	// IProvisioningAgent provisioningAgent = session.getProvisioningAgent();
+	// if (provisioningAgent == null) return null;
+	//
+	// IProfileRegistry registry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
+	// if (registry == null) return null;
+	//
+	// IProfile profile = registry.getProfile(profileId);
+	// if (profile == null) return null;
+	//
+	// // 2. create a query (check QueryUtil for options)
+	// IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
+	//
+	// // 3. perform query
+	// IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
+	// for (IInstallableUnit feature : queryResult) {
+	// final String version = feature.getVersion().toString();
+	// final String featureId = feature.getId();
+	// DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("version", 15) + version);
+	// }
+	//
+	// return queryResult.toSet();
+	// }
 
 	/**
 	 * Gaml plugin exists.

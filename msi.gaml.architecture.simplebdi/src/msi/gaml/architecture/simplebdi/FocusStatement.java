@@ -117,7 +117,7 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc ("The priority of the created predicate")) })
 @doc (
-		value = "enables to directly add a belief from the variable of a perceived specie.",
+		value = "enables to directly add a belief from the variable of a perceived species.",
 		examples = {
 				@example ("focus var:speed /*where speed is a variable from a species that is being perceived*/") })
 public class FocusStatement extends AbstractStatement {

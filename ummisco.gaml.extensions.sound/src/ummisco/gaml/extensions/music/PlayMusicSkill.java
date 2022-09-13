@@ -1,17 +1,14 @@
 /*******************************************************************************************************
  *
- * PlayMusicSkill.java, in ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * PlayMusicSkill.java, in ummisco.gama.network, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.music;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
@@ -22,6 +19,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gaml.skills.Skill;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class PlayMusicSkill.
@@ -37,7 +35,7 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 
 	/** The synthetiseur. */
 	private Synthesizer synthetiseur;
-	
+
 	/** The canal. */
 	private final MidiChannel canal;
 
@@ -51,7 +49,7 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 			synthetiseur = MidiSystem.getSynthesizer();
 			synthetiseur.open();
 		} catch (final MidiUnavailableException ex) {
-			Logger.getLogger(PlayMusicSkill.class.getName()).log(Level.SEVERE, null, ex);
+			DEBUG.OUT(ex);
 		}
 		canal = synthetiseur.getChannels()[0];
 
@@ -62,7 +60,8 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 	/**
 	 * Note on.
 	 *
-	 * @param note the note
+	 * @param note
+	 *            the note
 	 */
 	// Joue la note dont le numéro est en paramètre
 	public void note_on(final int note) {
@@ -72,7 +71,8 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 	/**
 	 * Note off.
 	 *
-	 * @param note the note
+	 * @param note
+	 *            the note
 	 */
 	// Arrête de jouer la note dont le numéro est en paramètre
 	public void note_off(final int note) {
@@ -82,7 +82,8 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 	/**
 	 * Sets the instrument.
 	 *
-	 * @param instru the new instrument
+	 * @param instru
+	 *            the new instrument
 	 */
 	// Set le type d'instrument dont le numéro MIDI est précisé en paramètre
 	public void set_instrument(final int instru) {
@@ -92,7 +93,8 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 	/**
 	 * The main method.
 	 *
-	 * @param args the arguments
+	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		// TODO Auto-generated method stub

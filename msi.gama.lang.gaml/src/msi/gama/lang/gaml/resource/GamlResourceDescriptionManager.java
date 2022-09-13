@@ -44,7 +44,7 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	@Override
 	protected IResourceDescription internalGetResourceDescription(final Resource resource,
 			final IDefaultResourceDescriptionStrategy strategy) {
-		return new GamlResourceDescription(resource, strategy, getCache(), provider);
+		return new GamlResourceDescription((GamlResource) resource, strategy, getCache(), provider);
 	}
 
 	@Override
@@ -55,8 +55,7 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 			// Seems to happen, although it shouldnt !
 			imports = GamlResourceIndexer.allImportsOf(candidate.getURI());
 		} else {
-			imports = GamlResourceIndexer
-					.allImportsOf((GamlResource) ((GamlResourceDescription) candidate).getResource());
+			imports = GamlResourceIndexer.allImportsOf(((GamlResourceDescription) candidate).getResource());
 		}
 		if (imports.isEmpty()) return false;
 		for (Delta d : deltas) {

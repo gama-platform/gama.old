@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Models Library of GAMA
+Bundle-SymbolicName: ummisco.gama.feature.models.branding
+Bundle-Version: 1.8.2.qualifier
+Bundle-Vendor: UMMISCO, IRIT, MIAT, CTU
+Automatic-Module-Name: ummisco.gama.feature.models.branding

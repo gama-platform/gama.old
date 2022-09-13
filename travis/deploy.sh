@@ -89,6 +89,7 @@ else
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		mvn_deploy msi.gama.ext 
 		mvn_deploy ummisco.gama.feature.dependencies 
+		mvn_deploy ummisco.gama.feature.dependencies.ui
 	fi
 
 

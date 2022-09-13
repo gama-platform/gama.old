@@ -45,7 +45,7 @@ import msi.gaml.types.IType;
 		@facet(name = ConsciousContagionStatement.DECAY, type = IType.FLOAT, optional = true, doc = @doc("The decay value of the emotion added to the agent")),
 		@facet(name = ConsciousContagionStatement.INTENSITY, type = IType.FLOAT, optional = true, doc = @doc("The intensity value of the emotion added to the agent")),
 		@facet(name = ConsciousContagionStatement.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) }, omissible = IKeyword.NAME)
-@doc(value = "enables to directly add an emotion of a perceived specie if the perceived agent ges a patricular emotion.", examples = {
+@doc(value = "enables to directly add an emotion of a perceived species if the perceived agent gets a particular emotion.", examples = {
 		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed;"),
 		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed charisma: 0.5 receptivity: 0.5;") })
 

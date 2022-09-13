@@ -59,6 +59,7 @@ compile (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		mvn_install msi.gama.ext
+		mvn_install ummisco.gama.feature.dependencies.branding
 		mvn_install ummisco.gama.feature.dependencies
 	fi
 	
@@ -131,7 +132,10 @@ install1 (){
 	
 	if [[ ${change} == *"msi.gama.ext"* ]] || [[ $MSG == *"ci ext"* ]]; then
 		mvn_install msi.gama.ext 
+		mvn_install ummisco.gama.feature.dependencies.branding
 		mvn_install ummisco.gama.feature.dependencies 
+		mvn_install ummisco.gama.feature.dependencies.ui.branding
+		mvn_install ummisco.gama.feature.dependencies.ui
 	fi
 	
 	
@@ -194,7 +198,7 @@ install1 (){
 	
 	if [[ ${change} == *"msi.gama.models"* ]] || [[ $MSG == *"ci msi.gama.models"* ]]; then
 		mvn_install msi.gama.models
-		
+		mvn_install ummisco.gama.feature.models.branding		
 		mvn_install ummisco.gama.feature.models
 	fi
 	
@@ -227,12 +231,14 @@ install1 (){
 	
 	if [[ ${change} == *"ummisco.gaml.extensions.stats"* ]] || [[ $MSG == *"ci ummisco.gaml.extensions.stats"* ]]; then
 		mvn_install ummisco.gaml.extensions.stats
+		mvn_install ummisco.gama.feature.stats.branding
 		mvn_install ummisco.gama.feature.stats
 	fi
 	
 	
 	
 	if [[ ${change} == *"msi.gama.core"* ]] || [[ ${change} == *"msi.gama.headless"* ]] || [[ ${change} == *"msi.gama.lang.gaml"* ]] || [[ ${change} == *"msi.gama.processor"* ]] || [[ ${change} == *"ummisco.gama.annotations"* ]] || [[ ${change} == *"ummisco.gama.annotations"* ]] || [[ $MSG == *"ci ummisco.gama.feature.core"* ]]; then
+		mvn_install ummisco.gama.feature.core.branding
 		mvn_install ummisco.gama.feature.core
 	fi
 	
@@ -264,6 +270,7 @@ install1 (){
 	
 	if [[ ${change} == *"ummisco.gama.serialize"* ]] || [[ $MSG == *"ci ummisco.gama.serialize"* ]]; then
 		mvn_install ummisco.gama.serialize
+		mvn_install ummisco.gama.feature.serialize.branding
 		mvn_install ummisco.gama.feature.serialize
 	fi
 	
@@ -271,6 +278,7 @@ install1 (){
 	
 	if [[ ${change} == *"ummisco.gama.network"* ]] || [[ $MSG == *"ci ummisco.gama.network"* ]]; then
 		mvn_install ummisco.gama.network
+		mvn_install ummisco.gama.feature.network.branding
 		mvn_install ummisco.gama.feature.network
 	fi
 	
@@ -278,6 +286,7 @@ install1 (){
 	
 	
 	if [[ ${change} == *"irit.gaml.extensions.database"* ]] || [[ ${change} == *"msi.gaml.extensions.fipa"* ]] || [[ ${change} == *"simtools.gaml.extensions.traffic"* ]] || [[ ${change} == *"msi.gaml.architecture.simplebdi"* ]] || [[ ${change} == *"ummisco.gaml.extensions.maths"* ]] || [[ ${change} == *"simtools.gaml.extensions.physics"* ]] || [[ ${change} == *"ummisco.gama.network"* ]] || [[ ${change} == *"ummisco.gama.serialize"* ]] || [[ $MSG == *"ci ummisco.gama.feature.core.extensions"* ]]; then
+		mvn_install ummisco.gama.feature.core.extensions.branding		
 		mvn_install ummisco.gama.feature.core.extensions
 	fi
 	
@@ -287,6 +296,7 @@ install1 (){
 	
 	
 	if [[ ${change} == *"msi.gama.application"* ]] || [[ ${change} == *"ummisco.gama.ui.shared"* ]] || [[ $MSG == *"ci ummisco.gama.feature.core.ui"* ]]; then
+		mvn_install ummisco.gama.feature.core.ui.branding	
 		mvn_install ummisco.gama.feature.core.ui
 	fi
 	
@@ -312,6 +322,7 @@ install1 (){
 	
 	
 	if [[ ${change} == *"ummisco.gama.java2d"* ]] || [[ ${change} == *"ummisco.gama.ui.experiment"* ]] || [[ ${change} == *"ummisco.gama.opengl"* ]] || [[ $MSG == *"ci ummisco.gama.feature.experiment.ui"* ]]; then
+		mvn_install ummisco.gama.feature.experiment.ui.branding		
 		mvn_install ummisco.gama.feature.experiment.ui
 	fi
 	
@@ -326,6 +337,7 @@ install1 (){
 	
 	
 	if [[ ${change} == *"ummisco.gama.ui.modeling"* ]] || [[ ${change} == *"ummisco.gama.ui.navigator"* ]] || [[ ${change} == *"ummisco.gama.ui.viewers"* ]] || [[ $MSG == *"ci ummisco.gama.feature.modeling.ui"* ]]; then
+		mvn_install ummisco.gama.feature.modeling.ui.branding
 		mvn_install ummisco.gama.feature.modeling.ui
 	fi
 	
@@ -346,8 +358,8 @@ install1 (){
 	
 	if [[ ${change} == *"ummisco.gaml.extensions.sound"* ]] || [[ $MSG == *"ci ummisco.gaml.extensions.sound"* ]]; then
 		mvn_install ummisco.gaml.extensions.sound
+		mvn_install ummisco.gama.feature.audio.branding		
 		mvn_install ummisco.gama.feature.audio
-		
 	fi
 	
 	
