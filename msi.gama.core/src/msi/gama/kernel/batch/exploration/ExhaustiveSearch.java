@@ -21,8 +21,8 @@ import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
 import msi.gama.kernel.experiment.IParameter;
-import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -39,9 +39,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Random;
 import msi.gaml.types.GamaDateType;
+import msi.gaml.types.GamaFloatType;
+import msi.gaml.types.GamaPointType;
 import msi.gaml.types.IType;
 
 /**
@@ -109,6 +111,8 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	/**The Constant ITERATIONS*/
 	public static final String ITERATIONS="iterations";
 	
+	private final int __default_step_factor = 10;
+	
 	private int sample_size;
 	private int nb_levels;
 	private int iterations;
@@ -130,7 +134,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		if(hasFacet(ExhaustiveSearch.METHODS)){
 			
 			List<Batch> params = currentExperiment.getParametersToExplore().stream()
-					.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
 					.map(p-> (Batch) p)
 					.collect(Collectors.toList());
 			
@@ -169,79 +172,12 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 			
 		final IParameter.Batch var = variables.get(index);
 		for (ParametersSet solution : sets) {
-			if (var.getAmongValue(scope) != null) {
-				for (final Object val : var.getAmongValue(scope)) {
-					ParametersSet ps = new ParametersSet(solution);
-					ps.put(var.getName(), val);
-					sets2.add(ps);
-				}
-				
-			} else {
-				
-				
-				
-				switch (var.getType().id()) {
-					case IType.INT:
-						int intValue = Cast.asInt(scope, var.getMinValue(scope));
-						int maxIntValue = Cast.asInt(scope, var.getMaxValue(scope));
-						while (intValue <= maxIntValue) {
-							ParametersSet ps = new ParametersSet(solution);
-							ps.put(var.getName(), intValue);
-							sets2.add(ps);
-							
-							intValue = intValue + Cast.asInt(scope, var.getStepValue(scope));
-						}
-						break;
-					case IType.FLOAT:
-						double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
-						double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
-						while (floatValue <= maxFloatValue) {
-							
-							ParametersSet ps = new ParametersSet(solution);
-							ps.put(var.getName(), floatValue);
-							sets2.add(ps);
-							
-							floatValue = floatValue + Cast.asFloat(scope, var.getStepValue(scope));
-						}
-						break;
-					case IType.DATE:
-						GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
-						GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
-						while (dateValue.isSmallerThan(maxDateValue, false)) {
-							ParametersSet ps = new ParametersSet(solution);
-							ps.put(var.getName(), dateValue);
-							sets2.add(ps);
-							
-							dateValue = dateValue.plus(Cast.asFloat(scope, var.getStepValue(scope)), ChronoUnit.SECONDS);
-						}
-						break;
-					case IType.POINT:
-						GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
-						GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
-						while (pointValue.smallerThanOrEqualTo(maxPointValue)) {
-							ParametersSet ps = new ParametersSet(solution);
-							ps.put(var.getName(), pointValue);
-							sets2.add(ps);
-							
-							pointValue = pointValue.plus(Cast.asPoint(scope, var.getStepValue(scope)));
-						}
-						break;
-					default:
-						double varValue = Cast.asFloat(scope, var.getMinValue(scope));
-						while (varValue <= Cast.asFloat(scope, var.getMaxValue(scope))) {
-							ParametersSet ps = new ParametersSet(solution);
-							if (var.getType().id() == IType.INT) {
-								ps.put(var.getName(), (int) varValue);
-							} else if (var.getType().id() == IType.FLOAT) {
-								ps.put(var.getName(), varValue);
-							} else {
-								continue;
-							}
-							sets2.add(ps);
-							
-							varValue = varValue + Cast.asFloat(scope, var.getStepValue(scope));
-						}
-				}
+			@SuppressWarnings("rawtypes") 
+			List vals = (var.getAmongValue(scope) != null) ? var.getAmongValue(scope) : getParameterSwip(scope, var);
+			for (final Object val : vals) {
+				ParametersSet ps = new ParametersSet(solution);
+				ps.put(var.getName(), val);
+				sets2.add(ps);
 			}
 		}
 		if (index == (variables.size() - 1)) {
@@ -252,17 +188,13 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	
 	//##################### Methods for sampling ######################
 	/**
-	 * 3 methods:
+	 * 4 methods:
 	 * Morris
 	 * Saltelli
 	 * Latin Hypercube
 	 * Orthogonal Latin Hypercube
 	 */
-	
-	
-	
 	private List<ParametersSet> MorrisExhaustive(final IScope scope) {
-		System.out.println("Creating Morris sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		}else {
@@ -281,7 +213,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	}
 	
 	private List<ParametersSet> LatinHypercubeExhaustive(final IScope scope) {
-		System.out.println("Creating Latin Hypercube sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		}else {
@@ -293,7 +224,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	}
 	
 	private List<ParametersSet> SaltelliExhaustive(final IScope scope) {
-		System.out.println("Creating Saltelli sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		}else {
@@ -305,7 +235,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	}
 	
 	private List<ParametersSet> OrthogonalExhaustive(final IScope scope) {
-		System.out.println("Creating Orthogonal sampling...");
 		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		}else {
@@ -439,6 +368,97 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 
 		}
 
+	}
+	
+	/**
+	 * Return all the possible value of a parameter based on 
+	 * @param scope
+	 * @param var
+	 * @return
+	 */
+	private List<Object> getParameterSwip(IScope scope, Batch var) {
+		List<Object> res = new ArrayList<>();
+		switch (var.getType().id()) {
+		case IType.INT:
+			int minValue = Cast.asInt(scope, var.getMinValue(scope));
+			int maxValue = Cast.asInt(scope, var.getMaxValue(scope));
+			double stepValue = 1;
+			if (hasFacet(IKeyword.STEP)) {
+				stepValue = Cast.asInt(scope, var.getStepValue(scope));
+			} else if ((maxValue - minValue) > __default_step_factor) {
+				stepValue = (maxValue - minValue) / __default_step_factor;
+			}
+			   
+			while (minValue <= maxValue) {
+				res.add(minValue);
+				minValue = minValue + (int) stepValue + (Random.opFlip(scope, (stepValue - (int) stepValue)) ? 1 : 0);
+			}
+			break;
+		case IType.FLOAT:
+			double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
+			double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
+			double stepFloatValue = 0.1;
+			if (hasFacet(IKeyword.STEP)) {
+				stepFloatValue = Cast.asFloat(scope, var.getStepValue(scope));
+			} else {
+				stepFloatValue = (maxFloatValue - floatValue) / __default_step_factor;
+			}
+			
+			while (floatValue <= maxFloatValue) {
+				res.add(floatValue); 
+				floatValue = floatValue + stepFloatValue;
+			}
+			break;
+		case IType.DATE:
+			GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
+			GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
+			while (dateValue.isSmallerThan(maxDateValue, false)) {
+				res.add(dateValue);
+				dateValue = dateValue.plus(Cast.asFloat(scope, var.getStepValue(scope)), ChronoUnit.SECONDS);
+			}
+			break;
+		case IType.POINT:
+			GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
+			GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
+			GamaPoint increment = new GamaPoint();
+			if (hasFacet(IKeyword.STEP)) {
+				increment = GamaPointType.staticCast(scope, var.getStepValue(scope), true);
+				if (increment == null) { 
+					Double d = GamaFloatType.staticCast(scope, var.getStepValue(scope), null, false);
+					if (d == null) {GamaRuntimeException.error("Cannot retrieve steps "+var.getStepValue(scope)+" of paramter "+var.getName(), scope);}
+					increment = new GamaPoint(d, d, d);
+				}
+			} else {
+				
+			}
+			while (pointValue.smallerThanOrEqualTo(maxPointValue)) {
+				res.add(pointValue);
+				pointValue = pointValue.plus(Cast.asPoint(scope, increment));
+			}
+			break;
+		default:
+			double varValue = Cast.asFloat(scope, var.getMinValue(scope));
+			double maxVarValue = Cast.asFloat(scope, var.getMaxValue(scope));
+			double floatcrement = 1;
+			if (hasFacet(IKeyword.STEP)) {
+				floatcrement = Cast.asFloat(scope, var.getStepValue(scope));
+			} else {
+				floatcrement = (maxVarValue - varValue) / __default_step_factor;
+			}
+			while (varValue <= Cast.asFloat(scope, var.getMaxValue(scope))) {
+				
+				if (var.getType().id() == IType.INT) {
+					res.add( (int) varValue );
+				} else if (var.getType().id() == IType.FLOAT) {
+					res.add( varValue );
+				} else {
+					continue;
+				}
+				
+				varValue = varValue + floatcrement;
+			}
+		}
+		return res;
 	}
 
 }
