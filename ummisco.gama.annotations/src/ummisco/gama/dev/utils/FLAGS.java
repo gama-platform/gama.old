@@ -54,10 +54,18 @@ public class FLAGS {
 	}
 
 	/**
-	 * Used in DEBUG, set to true to enable logging activities (which will follow the declaration of DEBUG.ON() on the
-	 * classes). Set to false to suppress all logging. True by default.
+	 * Used in DEBUG, set to true to enable logging the debug messages (DEBUG.OUT(...), DEBUG.ERR(...) which will follow
+	 * the declaration of DEBUG.ON() on the classes). Set to false to suppress all debug logging (but regular logging
+	 * using DEBUG.LOG(...) or DEBUG.TIMER(...) will still operate). True by default.
 	 *
 	 * Important to KEEP IT THE FIRST PROPERTY
+	 */
+	public static final boolean ENABLE_DEBUG = get("enable_debug", true);
+
+	/**
+	 * Used in DEBUG, set to true to enable simple logging activities using DEBUG.LOG(...), DEBUG.TIMER(...). Set to
+	 * false to prevent all logging activities (incl. debug ones) True by default.
+	 *
 	 */
 	public static final boolean ENABLE_LOGGING = get("enable_logging", true);
 

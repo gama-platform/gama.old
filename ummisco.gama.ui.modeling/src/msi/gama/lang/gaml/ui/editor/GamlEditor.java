@@ -164,7 +164,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		IToolbarDecoratedView /* IToolbarDecoratedView.Sizable, ITooltipDisplayer */ {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The images. */

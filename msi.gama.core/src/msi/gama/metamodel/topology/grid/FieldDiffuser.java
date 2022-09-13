@@ -32,7 +32,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class FieldDiffuser {
 
 	static {
-		DEBUG.ON();
+		// DEBUG.ON();
 	}
 
 	// static ThreadLocal<FieldDiffuser> CACHE = new ThreadLocal<>();
@@ -140,8 +140,7 @@ public class FieldDiffuser {
 		@Override
 		public boolean equals(final Object obj) {
 			if (obj == this) return true;
-			if (!(obj instanceof DiffusionContext)) return false;
-			final DiffusionContext otherGrid = (DiffusionContext) obj;
+			if (!(obj instanceof DiffusionContext otherGrid)) return false;
 			return otherGrid.varName.equals(varName) && otherGrid.target.equals(target);
 		}
 	}

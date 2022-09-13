@@ -68,7 +68,6 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Defines an instance of a model (a simulation). Serves as the support for model species (whose metaclass is
@@ -171,7 +170,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	static {
-		DEBUG.ON();
+		// DEBUG.ON();
 	}
 
 	/** The Constant DURATION. */

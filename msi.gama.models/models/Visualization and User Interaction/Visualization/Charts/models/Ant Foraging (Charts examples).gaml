@@ -221,7 +221,7 @@ experiment "Experiment" type: gui {
 			{
 				data  "XYdistrib"
 					value:(distribution2d_of(ant collect each.location.x,ant collect each.location.y,10,0,100,10,0,100) at "values")
-					color:[#red];
+					color:[#red]; 
 			}
 		}
 		

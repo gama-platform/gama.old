@@ -54,7 +54,6 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.StreamEx;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class PlatformAgent.
@@ -112,7 +111,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpression {
 
 	static {
-		DEBUG.ON();
+		// DEBUG.ON();
 	}
 
 	/** The Constant WORKSPACE_PATH. */

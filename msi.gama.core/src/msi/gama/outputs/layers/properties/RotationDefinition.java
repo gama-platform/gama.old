@@ -16,7 +16,6 @@ import msi.gama.common.geometry.Rotation3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class CameraDefinition. Holds and updates the position, target and lens of a camera from the GAML definition in
@@ -25,7 +24,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class RotationDefinition extends AbstractDefinition {
 
 	static {
-		DEBUG.ON();
+		// DEBUG.ON();
 	}
 
 	/** The location. */

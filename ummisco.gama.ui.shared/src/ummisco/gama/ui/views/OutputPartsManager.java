@@ -45,14 +45,14 @@ public class OutputPartsManager {
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
 			final IWorkbenchPart part = partRef.getPart(false);
-			//if (part instanceof IGamaView.Display) { DEBUG.LOG("Part Activated: " + part.getTitle()); }
+			// if (part instanceof IGamaView.Display) { DEBUG.LOG("Part Activated: " + part.getTitle()); }
 		}
 
 		@Override
 		public void partClosed(final IWorkbenchPartReference partRef) {
 			final IWorkbenchPart part = partRef.getPart(false);
 			if (part instanceof IGamaView) {
-			//	DEBUG.LOG("Part Closed:" + part.getTitle());
+				// DEBUG.LOG("Part Closed:" + part.getTitle());
 				final IDisplayOutput output = ((IGamaView) part).getOutput();
 				if (output != null) {
 					output.setPaused(true);
@@ -68,7 +68,7 @@ public class OutputPartsManager {
 		public void partOpened(final IWorkbenchPartReference partRef) {
 			final IWorkbenchPart part = partRef.getPart(false);
 			if (part instanceof IGamaView) {
-				DEBUG.LOG("Part Opened:" + part.getTitle());
+				// DEBUG.LOG("Part Opened:" + part.getTitle());
 				final IDisplayOutput output = ((IGamaView) part).getOutput();
 				if (output != null && !output.isOpen()) {
 					output.open();
@@ -81,12 +81,12 @@ public class OutputPartsManager {
 		@Override
 		public void partBroughtToTop(final IWorkbenchPartReference partRef) {
 			final IWorkbenchPart part = partRef.getPart(false);
-			//if (part instanceof IGamaView.Display) { DEBUG.LOG("Part Brought to top: " + part.getTitle()); }
+			// if (part instanceof IGamaView.Display) { DEBUG.LOG("Part Brought to top: " + part.getTitle()); }
 		}
 
 		@Override
 		public void partHidden(final IWorkbenchPartReference partRef) {
-			//final IWorkbenchPart part = partRef.getPart(false);
+			// final IWorkbenchPart part = partRef.getPart(false);
 			// if (part instanceof IGamaView.Display display) {
 			// // See issue #3318
 			// if (PlatformHelper.isMac() && display.hasTab()) {
@@ -98,7 +98,7 @@ public class OutputPartsManager {
 
 		@Override
 		public void partVisible(final IWorkbenchPartReference partRef) {
-			//final IWorkbenchPart part = partRef.getPart(false);
+			// final IWorkbenchPart part = partRef.getPart(false);
 			// See issue #3318
 			// if (part instanceof IGamaView.Display display) {
 			// if (PlatformHelper.isMac() && display.hasTab()) {
