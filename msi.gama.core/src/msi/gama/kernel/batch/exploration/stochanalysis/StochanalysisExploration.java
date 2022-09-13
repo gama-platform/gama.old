@@ -1,13 +1,10 @@
 package msi.gama.kernel.batch.exploration.stochanalysis;
 
-/**
- * The Class ExhaustiveSearch.
- */
-
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
@@ -54,8 +51,8 @@ import msi.gaml.types.IType;
 				@facet (
 						name = ExhaustiveSearch.METHODS,
 						type = IType.ID,
-						optional = false,
-						doc = @doc ("The sampling method to build parameters sets")),
+						optional = true,
+						doc = @doc ("The sampling method to build parameters sets (latinhypercube,orthogonal), latinhypercube by default")),
 				@facet (
 						name = IKeyword.BATCH_VAR_OUTPUTS,
 						type = IType.LIST,
@@ -66,7 +63,7 @@ import msi.gaml.types.IType;
 						name = ExhaustiveSearch.SAMPLE_SIZE,
 						type = IType.INT,
 						optional = true,
-						doc = @doc ("The number of sample required , 132 by default\"")),
+						doc = @doc ("The number of sample required , 10 by default")),
 				@facet (
 						name = IKeyword.BATCH_OUTPUT,
 						type = IType.STRING,
@@ -81,7 +78,7 @@ import msi.gaml.types.IType;
 						name = StochanalysisExploration.THRESHOLD,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("The threshold for the stochanalysis, 0.01 by default"))
+						doc = @doc ("The threshold for the stochanalysis, will perform an automatic analysis by default"))
 
 		},
 		omissible = IKeyword.NAME)
@@ -90,12 +87,17 @@ import msi.gaml.types.IType;
 		usages = { @usage (
 				value = "For example: ",
 				examples = { @example (
-						value = "method stochanalyse sampling:'saltelli' outputs:['my_var'] replicat:10 results:'../path/to/report/file.txt'; ",
+						value = "method stochanalyse sampling:'latinhypercube' outputs:['my_var'] replicat:10 results:'../path/to/report/file.txt'; ",
 						isExecutable = false) }) })
 public class StochanalysisExploration extends AExplorationAlgorithm {
 
 	public static final String THRESHOLD = "threshold";
-
+	
+	public String method = IKeyword.LHS;
+	
+	public int sample_size= 10;
+	
+	public double threshold=-1;
 	/** Theoretical inputs */
 	private List<Batch> parameters;
 	/** Theoretical outputs */
@@ -121,23 +123,16 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 		List<ParametersSet> sets;
 
-		int sample_size = (int) Math.round(Math.pow(params.size(), 2) * 2);
 		if (hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			sample_size = Cast.asInt(scope, getFacet(ExhaustiveSearch.SAMPLE_SIZE).value(scope));
+			this.sample_size = Cast.asInt(scope, getFacet(ExhaustiveSearch.SAMPLE_SIZE).value(scope));
 		}
-		double threshold = 0.01;
 		if (hasFacet(StochanalysisExploration.THRESHOLD)) {
-			threshold = Cast.asFloat(scope, getFacet(StochanalysisExploration.THRESHOLD).value(scope));
+			this.threshold = Cast.asFloat(scope, getFacet(StochanalysisExploration.THRESHOLD).value(scope));
 		}
-
-		String method = Cast.asString(scope, getFacet(ExhaustiveSearch.METHODS).value(scope));
+		if (hasFacet(ExhaustiveSearch.METHODS)) {
+			method=Cast.asString(scope, getFacet(ExhaustiveSearch.METHODS).value(scope));
+		}
 		sets = switch (method) {
-			case IKeyword.MORRIS -> {
-				int nbl = hasFacet(ExhaustiveSearch.NB_LEVELS)
-						? Cast.asInt(scope, getFacet(ExhaustiveSearch.NB_LEVELS).value(scope)) : 4;
-				yield new MorrisSampling().MakeMorrisSampling(nbl, sample_size, parameters, scope);
-			}
-			case IKeyword.SALTELLI -> new SaltelliSampling().MakeSaltelliSampling(scope, sample_size, parameters);
 			case IKeyword.LHS -> new LatinhypercubeSampling().LatinHypercubeSamples(sample_size, parameters,
 					scope.getRandom().getGenerator(), scope);
 			case IKeyword.ORTHOGONAL -> {
@@ -160,25 +155,53 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 		}
 
 		outputs = Cast.asList(scope, getFacet(IKeyword.BATCH_VAR_OUTPUTS).value(scope));
-
-		int res = 0;
-
-		Stochanalysis sto = new Stochanalysis();
-
+		int res=0;
+		Stochanalysis sto= new Stochanalysis();
+		Map<String,Map<Double,List<Object>>> MapOutput= new LinkedHashMap<>();
 		for (String out : outputs) {
-			IMap<ParametersSet, List<Object>> sp = GamaMapFactory.create();
-			for (ParametersSet ps : res_outputs.keySet()) { sp.put(ps, res_outputs.get(ps).get(out)); }
-
-			res = res + sto.StochasticityAnalysis(sp, scope);
+			Map<Double,List<Object>> res_val= new HashMap<>();
+			res_val.put(0.05, null);
+			res_val.put(0.01, null);
+			res_val.put(0.005, null);
+			res_val.put(0.001, null);
+			res_val.put(10.0, null);
+			res_val.put(7.5, null);
+			res_val.put(5.0, null);
+			res_val.put(2.5, null);
+			res_val.put(-1.0, null);
+			IMap<ParametersSet,List<Object>> sp = GamaMapFactory.create();
+			for (ParametersSet ps : res_outputs.keySet()) {
+				sp.put(ps, res_outputs.get(ps).get(out));
+			}
+			if(threshold==-1) {
+				for(int i=0;i<res_val.keySet().size();i++) {
+					double val=res_val.keySet().stream().toList().get(i);
+					List<Object> tmp_list_val= res_val.get(val);
+					List<Object> tmp;
+					if(tmp_list_val==null) {
+						tmp=sto.StochasticityAnalysis(sp,val, scope);
+						res_val.replace(val, tmp);
+					}
+				}
+				MapOutput.put(out, res_val);
+			}else {
+				res=Cast.asInt(scope,sto.StochasticityAnalysis(sp,threshold, scope).get(0));
+			}
 		}
-
-		res = res / outputs.size();
-		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
-			String path = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
-			String new_path = scope.getExperiment().getWorkingPath() + "/" + path;
-			sto.WriteAndTellResult(new_path, res, scope);
+		if(threshold==-1) {
+			if(hasFacet(IKeyword.BATCH_OUTPUT)) {
+				String path= Cast.asString(scope,getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+				String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
+				sto.WriteAndTellResultList(new_path, MapOutput, scope);
+			}
+		}else {
+			res=res/outputs.size();
+			if(hasFacet(IKeyword.BATCH_OUTPUT)) {
+				String path= Cast.asString(scope,getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+				String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
+				sto.WriteAndTellResult(new_path, res, scope);
+			}
 		}
-
 	}
 
 	@Override
