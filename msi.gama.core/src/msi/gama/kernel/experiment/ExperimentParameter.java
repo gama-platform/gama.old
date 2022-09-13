@@ -834,7 +834,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public boolean canBeExplored() {
-		return among != null || min != null && max != null && step != null;
+		return among != null || (min != null && max != null);
 	}
 
 	@Override
