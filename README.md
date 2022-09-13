@@ -15,7 +15,7 @@ Due to several bugfixes in the recent versions of SWT, the _highly recommended c
 [![Sonarcloud](https://sonarcloud.io/api/project_badges/quality_gate?project=gama-platform_gamamsi.gama.parent)](https://sonarcloud.io/organizations/gama-platform/projects)
 
 **Core repository for the GAMA Platform project**
-
+ 
 Please post issues about GAMA here: 
  
 https://github.com/gama-platform/gama/issues 
