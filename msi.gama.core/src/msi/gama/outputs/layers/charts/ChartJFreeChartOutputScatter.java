@@ -59,7 +59,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ChartJFreeChartOutputScatter.
@@ -67,7 +66,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	static {
-		DEBUG.ON();
+		// DEBUG.ON();
 	}
 
 	/**
