@@ -3,7 +3,6 @@ package msi.gama.kernel.batch.exploration.stochanalysis;
  * The Class ExhaustiveSearch.
  */
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,15 +10,12 @@ import java.util.stream.Collectors;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
-import msi.gama.kernel.batch.exploration.betadistribution.Betadistribution;
 import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
 import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
-import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.IParameter.Batch;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -27,6 +23,8 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -57,7 +55,8 @@ import msi.gaml.types.IType;
 						name= ExhaustiveSearch.METHODS,
 						type = IType.ID,
 						optional = false,
-						doc = @doc ("The sampling method to build parameters sets")
+						doc = @doc ("The sampling method to build parameters sets. Available methods are: "
+								+IKeyword.LHS+", "+IKeyword.MORRIS+", "+IKeyword.ORTHOGONAL+", "+IKeyword.SOBOL)
 						),
 				@facet(
 						name = IKeyword.BATCH_VAR_OUTPUTS,

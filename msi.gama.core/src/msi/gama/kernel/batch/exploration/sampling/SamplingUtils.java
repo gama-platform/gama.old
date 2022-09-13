@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -36,24 +37,15 @@ public abstract class SamplingUtils {
 	 * @param scope
 	 * @param set
 	 * @param var
-	 * @param ValFromSampling
+	 * @param valFromSampling
 	 * @return
 	 */
-	private ParametersSet ScaleSamplingAmongValue(IScope scope, ParametersSet set, Batch var, double ValFromSampling) {
+	private ParametersSet ScaleSamplingAmongValue(IScope scope, ParametersSet set, Batch var, double valFromSampling) {
 		int size= var.getAmongValue(scope).size();
-		if(ValFromSampling>=0 && ValFromSampling< 1/(size+1)) {
-			set.put(var.getName(),var.getAmongValue(scope).get(0));
-			return set;
-		}else {
-			for(int i=1;i<size;i++) {
-				if(ValFromSampling >= (i/(size+1)) && ValFromSampling < (i+1)/(size+1)) {
-					set.put(var.getName(), var.getAmongValue(scope).get(i));
-					return set;
-				}
-			} 
-
-		}
-		throw GamaRuntimeException.error("Fail during the scale sampling method for Among Value", scope);
+		int idx = IntStream.range(1,size).filter(i -> valFromSampling <= 1d*i/size )
+				.findFirst().orElse(size);
+		set.put(var.getName(), var.getAmongValue(scope).get(idx-1));
+		return set;
 	}
 	
 	/**
