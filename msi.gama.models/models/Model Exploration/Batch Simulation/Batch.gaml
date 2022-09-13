@@ -103,6 +103,14 @@ experiment 'Run 5 simulations' type: batch repeat: 5 keep_seed: true until: ( ti
 	}
 }
 
+//
+//
+experiment replication_analysis type: batch until: ( time > 5000 ) repeat:10 {
+	parameter 'Infection rate' var: infection_rate min:0.1 max:0.9;
+	parameter 'Probability of dying:' var: dying_proba min: 0.1 max: 0.2 step:0.05;
+	method stochanalyse sampling:"orthogonal" sample:3 outputs:["num_dead"] results:"Results/stochanalysis.txt";
+} 
+
 // This experiment explores two parameters with an exhaustive strategy,
 // repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
 // in order to find the best combination of parameters to minimize the number of infected people
