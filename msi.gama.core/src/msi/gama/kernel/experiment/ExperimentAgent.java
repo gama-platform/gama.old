@@ -358,7 +358,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
 		final IList<Map<String, Object>> list = GamaListFactory.create(Types.MAP);
-		list.add(ps.getElements());
+		list.add(ps);
 		final IList<? extends IAgent> c = pop.createAgents(ownScope, 1, list, false, scheduleIt);
 		return (SimulationAgent) c.get(0);
 	}
@@ -371,7 +371,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ParametersSet getParameterValues() {
 		final Map<String, IParameter> parameters = getSpecies().getParameters();
 		final ParametersSet ps = new ParametersSet(ownScope, parameters, false);
-		ps.getElements().putAll(extraParametersMap);
+		ps.putAll(extraParametersMap);
 		return ps;
 	}
 
@@ -536,7 +536,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@getter (IKeyword.PARAMETERS)
 	@doc ("retuns the map of parameters defined in this experiment")
 	public GamaMap<String, Object> getParameters(final IScope scope) {
-		return getParameterValues().getElements();
+		return getParameterValues();
 	}
 
 	/**
