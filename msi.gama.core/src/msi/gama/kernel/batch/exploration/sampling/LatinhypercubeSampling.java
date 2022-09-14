@@ -63,7 +63,6 @@ public class LatinhypercubeSampling extends SamplingUtils{
             }
         }
         for(int i=0; i<names.size();i++){
-            //System.out.println(temp);
             List<Double> new_temp= new ArrayList<>(shuffle(temp,r));
             results.put(names.get(i),new_temp);
 

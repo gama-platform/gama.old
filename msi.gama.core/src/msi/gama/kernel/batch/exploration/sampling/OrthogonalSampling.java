@@ -222,9 +222,7 @@ public class OrthogonalSampling extends SamplingUtils {
             List<Double> SD= computeSpatialDistance(secondsample,ParametersNames);
 
             double minSD=findMin(SD);
-            System.out.println(minSD);
             if (maxdist< minSD){
-                System.out.println(i);
                 maxdist= minSD;
                 samplingFinal=secondsample;
 

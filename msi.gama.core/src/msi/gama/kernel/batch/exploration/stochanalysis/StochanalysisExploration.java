@@ -51,9 +51,8 @@ import msi.gaml.types.IType;
 				@facet (
 						name = ExhaustiveSearch.METHODS,
 						type = IType.ID,
-						optional = false,
-						doc = @doc ("The sampling method to build parameters sets. Available methods are: "
-								+IKeyword.LHS+", "+IKeyword.MORRIS+", "+IKeyword.ORTHOGONAL+", "+IKeyword.SOBOL)
+						optional = true,
+						doc = @doc ("The sampling method to build parameters sets. Available methods are: "+IKeyword.LHS+", "+IKeyword.ORTHOGONAL)
 						),
 				@facet(
 						name = IKeyword.BATCH_VAR_OUTPUTS,
@@ -118,7 +117,6 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 	public void explore(final IScope scope) throws GamaRuntimeException {
 
 		List<Batch> params = currentExperiment.getParametersToExplore().stream()
-				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
 				.map(p-> (Batch) p)
 				.collect(Collectors.toList());
 
@@ -140,7 +138,7 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 					scope.getRandom().getGenerator(), scope);
 			case IKeyword.ORTHOGONAL -> {
 				int iterations = hasFacet(ExhaustiveSearch.ITERATIONS)
-						? Cast.asInt(scope, getFacet(ExhaustiveSearch.SAMPLE_SIZE).value(scope)) : 5;
+						? Cast.asInt(scope, getFacet(ExhaustiveSearch.ITERATIONS).value(scope)) : 5;
 				yield new OrthogonalSampling().OrthogonalSamples(sample_size, iterations, parameters,
 						scope.getRandom().getGenerator(), scope);
 			}

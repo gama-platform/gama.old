@@ -211,7 +211,6 @@ public class MorrisExploration extends AExplorationAlgorithm{
 	@Override
 	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {		
 		List<Batch> params= currentExperiment.getSpecies().getParameters().values().stream()
-				.filter(p->p.getMinValue(scope)!=null && p.getMaxValue(scope)!=null)
 				.map(p-> (Batch) p)
 				.collect(Collectors.toList());
 		parameters= parameters==null ? params : parameters;
