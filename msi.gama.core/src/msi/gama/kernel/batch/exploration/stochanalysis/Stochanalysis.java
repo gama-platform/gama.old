@@ -55,20 +55,21 @@ public class Stochanalysis {
 	 * @return the median value
 	 */
 	//Need to be test
-	public double findMedian(List<Integer> list, IScope scope) {
+	public int findMedian(List<Integer> list, IScope scope) {
 		List<Integer> list_t=new ArrayList<>();
-		for(int o: list_t) {
+		for(int o: list) {
 			if(o!=-1) {
 				list_t.add(o);
 			}
 		}
+
 		Arrays.sort(list_t.toArray());
 		double median;
 		if (list_t.size() % 2 == 0)
 		    median = ((double)list_t.get(list_t.size()/2) + (double)list_t.get(list_t.size()/2-1))/2;
 		else
 		    median = (double) list_t.get(list.size()/2);
-		return median;
+		return (int) Math.ceil(median);
 	}
 	
 	/**
@@ -104,6 +105,7 @@ public class Stochanalysis {
     		sb.append("## Output : ");
     		sb.append(outputs);
     		sb.append("\n");
+    		sb.append("\n");
         	for(int i=0;i<tmp_map.size();i++) {
         		//Method to write
         		double val=tmp_map.keySet().stream().toList().get(i);
@@ -118,46 +120,66 @@ public class Stochanalysis {
                 	sb.append("\n");
                 	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found \\ Nb failed (> Nb replicat )");
                 	sb.append("\n");
-                	sb.append(n_min);
-                	sb.append(" \\ ");
+
                 	if(nb_failed >=(nb_val.size()/2)) {
+                    	sb.append("Failed");
+                    	sb.append(" \\ ");
                 		sb.append("Failed");
                 	}else {
+                    	sb.append(n_min);
+                    	sb.append(" \\ ");
                 		sb.append(findMedian(nb_val, scope));
                 	}
                 	sb.append(" \\ ");
-                	sb.append(findMax(nb_val, scope));
-                	sb.append(" \\ ");
-                	sb.append(nb_failed);
-                	sb.append(" ");
-                	sb.append((nb_failed/nb_val.size())*100);
-                	sb.append("%");
+                	int max=findMax(nb_val, scope);
+                	if(max!=0) {
+                    	sb.append(findMax(nb_val, scope));
+                    	sb.append(" \\ ");
+                	}else {
+                		sb.append("Failed");
+                		sb.append(" \\ ");
+                	}
+                	if(nb_failed!=0) {
+                		sb.append(nb_failed);
+                		sb.append(" (");
+                		sb.append((nb_failed/nb_val.size())*100);
+                		sb.append("%)");
+                	}
                 	sb.append("\n");
-                	sb.append("All values for each points");
+                	sb.append("All values for each points :");
+                	sb.append("\n");
                 	sb.append(nb_val);
+                	sb.append("\n");
                 	sb.append("\n");
         		}else if(val==-1) {
             		sb.append(" Student method: ");
                 	sb.append("\n");
-                	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found \\ Nb failed (> Nb replicat )");
+                	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found");
                 	sb.append("\n");
-                	sb.append(n_min);
-                	sb.append(" \\ ");
+
                 	if(nb_failed >=(nb_val.size()/2)) {
+                    	sb.append("Failed");
+                    	sb.append(" \\ ");
                 		sb.append("Failed");
                 	}else {
+                    	sb.append(n_min);
+                    	sb.append(" \\ ");
                 		sb.append(findMedian(nb_val, scope));
                 	}
                 	sb.append(" \\ ");
-                	sb.append(findMax(nb_val, scope));
-                	sb.append(" \\ ");
-                	sb.append(nb_failed);
-                	sb.append(" ");
-                	sb.append((nb_failed/nb_val.size())*100);
-                	sb.append("%");
+                	int max=findMax(nb_val, scope);
+                	if(max!=0) {
+                    	sb.append(findMax(nb_val, scope));
+                    	sb.append(" \\ ");
+                	}else {
+                		sb.append("Failed");
+                		sb.append(" \\ ");
+                	}
                 	sb.append("\n");
-                	sb.append("All values for each points");
+                	sb.append("All values for each points:");
+                	sb.append("\n");
                 	sb.append(nb_val);
+                	sb.append("\n");
                 	sb.append("\n");
         		}else if (val>=1) {
             		sb.append(" SE method - Percent : ");
@@ -165,25 +187,36 @@ public class Stochanalysis {
                 	sb.append("% \n");
                 	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found \\ Nb failed (> Nb replicat )");
                 	sb.append("\n");
-                	sb.append(n_min);
-                	sb.append(" \\ ");
+
                 	if(nb_failed >=(nb_val.size()/2)) {
+                    	sb.append("Failed");
+                    	sb.append(" \\ ");
                 		sb.append("Failed");
                 	}else {
+                    	sb.append(n_min);
+                    	sb.append(" \\ ");
                 		sb.append(findMedian(nb_val, scope));
                 	}
                 	sb.append(" \\ ");
-                	sb.append(findMax(nb_val, scope));
-                	sb.append(" \\ ");
+                	int max=findMax(nb_val, scope);
+                	if(max!=0) {
+                    	sb.append(findMax(nb_val, scope));
+                    	sb.append(" \\ ");
+                	}else {
+                		sb.append("Failed");
+                		sb.append(" \\ ");
+                	}
                 	if(nb_failed!=0) {
                        	sb.append(nb_failed);
-                    	sb.append(" ");
+                    	sb.append(" (");
                     	sb.append((nb_failed/nb_val.size())*100);
-                    	sb.append("%");
+                    	sb.append("%)");
                 	}
                 	sb.append("\n");
-                	sb.append("All values for each points");
+                	sb.append("All values for each points :");
+                	sb.append("\n");
                 	sb.append(nb_val);
+                	sb.append("\n");
                 	sb.append("\n");
         		}
         	}
@@ -490,7 +523,7 @@ public class Stochanalysis {
 				int tmp=0;
 				for(int i=0;i<se.size();i++) {
 					if(first && se.get(i)<new_threshold) {
-						tmp=i+2;
+						tmp=i+1;
 						first=false;
 					}
 				}				
