@@ -142,7 +142,7 @@ public class Stochanalysis {
                 	if(nb_failed!=0) {
                 		sb.append(nb_failed);
                 		sb.append(" (");
-                		sb.append((nb_failed/nb_val.size())*100);
+                		sb.append((Cast.asFloat(scope,nb_failed)/Cast.asFloat(scope,nb_val.size()))*100);
                 		sb.append("%)");
                 	}
                 	sb.append("\n");
