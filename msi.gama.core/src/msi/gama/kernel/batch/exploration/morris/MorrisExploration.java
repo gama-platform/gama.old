@@ -13,6 +13,7 @@ package msi.gama.kernel.batch.exploration.morris;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.experiment.IParameter.Batch;
@@ -44,6 +46,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
 
 /**
@@ -86,7 +89,7 @@ import msi.gaml.types.IType;
 						doc =@doc("The list of output variables to analyze through morris method")
 						),
 				@facet (
-						name = IKeyword.BATCH_OUTPUT,
+						name = IKeyword.BATCH_REPORT,
 						type = IType.STRING,
 						optional= true,
 						doc = @doc ("The path to the file where the Morris report will be written")
@@ -96,7 +99,12 @@ import msi.gaml.types.IType;
 						type = IType.STRING,
 						optional = true,
 						doc = @doc("The path of morris sample .csv file. If don't use, automatic morris sampling will be perform and saved in the corresponding file")
-						)
+						),
+				@facet (
+						name = IKeyword.BATCH_OUTPUT,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("The path to the file where the automatic batch report will be written"))
 		},
 		omissible = IKeyword.NAME
 		)
@@ -120,7 +128,7 @@ public class MorrisExploration extends AExplorationAlgorithm{
 	/** The Constant NB_LEVELS */
 	protected static final String NB_LEVELS = "levels";
 	
-	protected static final String PARAMETER_CSV_PATH = "csv_file_parameters";
+	protected static final String PARAMETER_CSV_PATH = "csv";
 	
 	/** Morris object containing all Morris methods */
 	protected Morris morris_analysis;
@@ -170,39 +178,48 @@ public class MorrisExploration extends AExplorationAlgorithm{
 			List<ParametersSet> solutions = buildParameterSets(scope,new ArrayList<>(),0);
 			this.solutions=solutions;
 		}
-			/* Disable repetitions / repeat argument */
-			currentExperiment.setSeeds(new Double[1]);
-			currentExperiment.setKeepSimulations(false);
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-				res_outputs = currentExperiment.launchSimulationsWithSolution(solutions);
-			} else {
-				res_outputs = GamaMapFactory.create();
-				for (ParametersSet sol : solutions) { 
-					res_outputs.put(sol,currentExperiment.launchSimulationsWithSolution(sol)); 
-				}
+		/* Disable repetitions / repeat argument */
+		currentExperiment.setSeeds(new Double[1]);
+		currentExperiment.setKeepSimulations(false);
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+			res_outputs = currentExperiment.launchSimulationsWithSolution(solutions);
+		} else {
+			res_outputs = GamaMapFactory.create();
+			for (ParametersSet sol : solutions) { 
+				res_outputs.put(sol,currentExperiment.launchSimulationsWithSolution(sol)); 
 			}
-			Map<String, List<Double>> rebuilt_output = rebuildOutput(res_outputs);
-			List<String> output_names= rebuilt_output.keySet().stream().toList();
-			boolean firstime=true;
-			if(hasFacet(IKeyword.BATCH_OUTPUT)) {
-				String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
-				String new_path= scope.getExperiment().getWorkingPath() + "/" +path_to+"/MorrisResults.txt";
-				final File f = new File(new_path);
-				final File parent = f.getParentFile();
-				if (!parent.exists()) { parent.mkdirs(); }
-				if (f.exists()) f.delete();
-			}
-			for(int i=0;i<rebuilt_output.size();i++) {
-				String tmp_name= output_names.get(i);
-				morris_analysis.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name));
-				if(hasFacet(IKeyword.BATCH_OUTPUT)){
-					String path= Cast.asString(scope,getFacet(IKeyword.BATCH_OUTPUT).value(scope));
-					String new_path= scope.getExperiment().getWorkingPath() + "/" +path+"/MorrisResults.txt";
-					morris_analysis.WriteAndTellResult(tmp_name,new_path,firstime,scope);
-					firstime=false;	
-				}
-			}	
 		}
+		Map<String, List<Double>> rebuilt_output = rebuildOutput(scope, res_outputs);
+		List<String> output_names= rebuilt_output.keySet().stream().toList();
+		boolean firstime=true;
+		if(hasFacet(IKeyword.BATCH_REPORT)) {
+			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
+			String new_path= scope.getExperiment().getWorkingPath() + "/" +path_to+"/MorrisResults.txt";
+			final File f = new File(new_path);
+			final File parent = f.getParentFile();
+			if (!parent.exists()) { parent.mkdirs(); }
+			if (f.exists()) f.delete();
+		}
+		for(int i=0;i<rebuilt_output.size();i++) {
+			String tmp_name= output_names.get(i);
+			morris_analysis.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name));
+			if(hasFacet(IKeyword.BATCH_REPORT)){
+				String path= Cast.asString(scope,getFacet(IKeyword.BATCH_REPORT).value(scope));
+				String new_path= scope.getExperiment().getWorkingPath() + "/" +path+"/MorrisResults.txt";
+				morris_analysis.WriteAndTellResult(tmp_name,new_path,firstime,scope);
+				firstime=false;	
+			}
+		}	
+		/* Save the simulation values in the provided .csv file (input and corresponding output) */
+		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
+			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+			final File parent = f.getParentFile();
+			if (!parent.exists()) { parent.mkdirs(); }
+			if (f.exists()) { f.delete(); }
+			saveSimulation(rebuilt_output, f, scope);
+		}
+	}
 
 	/**
 	 * Here we create samples for simulations with MorrisSampling Class
@@ -210,7 +227,7 @@ public class MorrisExploration extends AExplorationAlgorithm{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ParametersSet> buildParameterSets(IScope scope, List<ParametersSet> sets, int index) {		
-		List<Batch> params= currentExperiment.getSpecies().getParameters().values().stream()
+		List<Batch> params = currentExperiment.getParametersToExplore().stream()
 				.map(p-> (Batch) p)
 				.collect(Collectors.toList());
 		parameters= parameters==null ? params : parameters;
@@ -232,17 +249,53 @@ public class MorrisExploration extends AExplorationAlgorithm{
 	 * K the name of the output <br>
 	 * V the value of the output
 	 */
-	private Map<String, List<Double>> rebuildOutput(IMap<ParametersSet,Map<String,List<Object>>> res_outputs){
+	private Map<String, List<Double>> rebuildOutput(IScope scope, IMap<ParametersSet,Map<String,List<Object>>> res_outputs){
 		Map<String, List<Double>> rebuilt_output = new HashMap<>();
 		for(String output : outputs) {
 			rebuilt_output.put(output,new ArrayList<>());
 		}
 		for(ParametersSet sol : solutions) {
 			for(String output : outputs) {
-				rebuilt_output.get(output).add((Double)res_outputs.get(sol).get(output).get(0));
+				rebuilt_output.get(output).add(Cast.asFloat(scope, res_outputs.get(sol).get(output).get(0)));
 			}
 		}
 		return rebuilt_output;
+	}
+	
+	private void saveSimulation(Map<String, List<Double>> rebuilt_output, File file, IScope scope) {
+		try {
+			FileWriter fw = new FileWriter(file, false);
+			fw.write(this.buildSimulationCsv(rebuilt_output));
+			fw.close();
+		} catch (Exception e) {
+			throw GamaRuntimeException.error("File " + file.toString() + " not found", scope);
+		}
+	}
+	
+	private String buildSimulationCsv(Map<String, List<Double>> rebuilt_output) {
+		StringBuilder sb = new StringBuilder();
+		String sep = ",";
+		// Headers
+		for(String sol : ParametersNames) {
+			sb.append(sol).append(sep);
+		}
+		for(String output : outputs) {
+			sb.append(output).append(sep);
+		}
+		
+		sb.deleteCharAt(sb.length() - 1).append(Strings.LN); //new line
+		
+		// Values
+		for(ParametersSet ps : res_outputs.keySet().stream().toList()) {
+			for(String sol : ParametersNames) {
+				sb.append(ps.get(sol)).append(sep); // inputs values
+			}
+			for(String output: outputs) {
+				sb.append(res_outputs.get(ps).get(output)).append(sep); // outputs values
+			}
+			sb.deleteCharAt(sb.length() - 1).append(Strings.LN); //new line
+		}
+		return sb.toString();
 	}
 	
 	
