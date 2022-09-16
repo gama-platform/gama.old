@@ -31,14 +31,12 @@ public class OrthogonalSampling extends SamplingUtils {
 	 * @param sample
 	 * @return
 	 */
-	public List<Double> buildCut(int sample){
+	private static List<Double> buildCut(int sample){
         List<Double> tmp= new ArrayList<>();
         for(int i=0;i<sample+1;i++){
             tmp.add(((double)i)/sample);
         }
-
         return tmp;
-
     }
 	/**
 	 * Build the first part of the sample
@@ -48,7 +46,7 @@ public class OrthogonalSampling extends SamplingUtils {
 	 * @param r
 	 * @return
 	 */
-    public List<Map<String,Double>> buildU(int sample, int n,List<String> ParametersNames,Random r){
+    private static List<Map<String,Double>> buildU(int sample, int n,List<String> ParametersNames,Random r){
         List<Map<String,Double>> tmpL= new ArrayList<>();
         for(int i=0;i<sample;i++){
             Map<String,Double> tmpMap=new LinkedHashMap<>();
@@ -66,7 +64,7 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param cut
      * @return
      */
-    public List<Double> buildA(int sample,List<Double> cut){
+    private static List<Double> buildA(int sample,List<Double> cut){
         List<Double> a= new ArrayList<>(cut);
         a.remove(cut.size()-1);
         return a;
@@ -77,7 +75,7 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param cut
      * @return
      */
-    public List<Double> buildB(int sample,List<Double> cut){
+    private static List<Double> buildB(int sample,List<Double> cut){
         List<Double> b= new ArrayList<>(cut);
         b.remove(0);
         return b;
@@ -92,7 +90,7 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param b
      * @return
      */
-    public List<Map<String,Double>> changeValueSample(int sample,List<String> ParametersNames,List<Map<String,Double>> u,List<Double> a, List<Double> b){
+    private static List<Map<String,Double>> changeValueSample(int sample,List<String> ParametersNames,List<Map<String,Double>> u,List<Double> a, List<Double> b){
         List<Map<String,Double>> tmpL= new ArrayList<>();
         for(int i=0;i<sample;i++){
             Map<String,Double> tmpMap=new LinkedHashMap<>();
@@ -105,7 +103,7 @@ public class OrthogonalSampling extends SamplingUtils {
         return tmpL;
     }
 
-    public  List<Map<String,Double>>  transformMapListToListMap(Map<String,List<Double>> MapList,List<String> names){
+    private static List<Map<String,Double>>  transformMapListToListMap(Map<String,List<Double>> MapList,List<String> names){
         List<Map<String,Double>> ListMap= new ArrayList<>();
 
         for(int i=0;i<MapList.get(names.get(0)).size();i++){
@@ -114,12 +112,10 @@ public class OrthogonalSampling extends SamplingUtils {
                 tempMap.put(names.get(j),MapList.get(names.get(j)).get(i));
             }
             ListMap.add(tempMap);
-
         }
-
         return ListMap;
     }
-    public Map<String,List<Double>> transformListMapToMapList(List<Map<String,Double>> ListMap,List<String> ParametersNames){
+    private static Map<String,List<Double>> transformListMapToMapList(List<Map<String,Double>> ListMap,List<String> ParametersNames){
         Map<String,List<Double>> MapList= new HashMap<>();
         for(int i=0;i<ParametersNames.size();i++) {
             List<Double> tmpList = new ArrayList<>();
@@ -139,7 +135,7 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param ParametersNames
      * @return
      */
-    public List<Map<String,Double>> shuffle(List<Map<String,Double>> s,int sample,List<String> ParametersNames){
+    private static List<Map<String,Double>> shuffle(List<Map<String,Double>> s,int sample,List<String> ParametersNames){
         Map<String,List<Double>> tmpMap= transformListMapToMapList(s,ParametersNames);
         Map<String,List<Double>> tmpMap2=new LinkedHashMap<>();
         for(int i=0;i<tmpMap.size();i++){
@@ -149,8 +145,6 @@ public class OrthogonalSampling extends SamplingUtils {
         }
         List<Map<String,Double>> sampleFinal= transformMapListToListMap(tmpMap2,ParametersNames);
         return sampleFinal;
-
-
     }
 
     /**
@@ -159,25 +153,20 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param ParametersNames
      * @return
      */
-    public List<Double> computeSpatialDistance(List<Map<String,Double>> s,List<String> ParametersNames){
+    private static List<Double> computeSpatialDistance(List<Map<String,Double>> s,List<String> ParametersNames){
         List<Double> SD= new ArrayList<>();
         for(int i=0;i<s.size();i++){
             Map<String,Double> p1= s.get(i);
             for(int j=i+1;j<s.size();j++){
                 Map<String,Double> p2=s.get(j);
                 double val=0.0;
-
                 for(int z=0;z<p1.size();z++){
                     val=val + (Math.pow(p1.get(ParametersNames.get(z))-p2.get(ParametersNames.get(z)),2));
                 }
-
                 val=Math.sqrt(val);
                 SD.add(val);
-
-
             }
         }
-
         return SD;
     }
 
@@ -187,7 +176,7 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param list
      * @return
      */
-    public Double findMin(List<Double> list){
+    private static Double findMin(List<Double> list){
         AtomicReference<Double> min= new AtomicReference<>(Double.MAX_VALUE);
         list.forEach(v->{
             if(v< min.get()){
@@ -206,33 +195,24 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param R
      * @return
      */
-    public List<Map<String,Double>> generate(int n, int sample, int iteration,List<String> ParametersNames, Random R){
+    private static List<Map<String,Double>> generate(int n, int sample, int iteration,List<String> ParametersNames, Random R){
         double maxdist=0.0;
         List<Map<String,Double>> samplingFinal=new ArrayList<>();
         for(int i=0;i<iteration;i++){
-
             List<Double> cut= buildCut(sample);
             List<Map<String,Double>> u =buildU(sample,n,ParametersNames,R);
             List<Double> a = buildA(sample,cut);
             List<Double> b = buildB(sample,cut);
             List<Map<String,Double>> firstsample=changeValueSample(sample,ParametersNames,u,a,b);
-
             List<Map<String,Double>> secondsample=shuffle(firstsample,sample,ParametersNames);
-
             List<Double> SD= computeSpatialDistance(secondsample,ParametersNames);
-
             double minSD=findMin(SD);
             if (maxdist< minSD){
                 maxdist= minSD;
                 samplingFinal=secondsample;
-
-
             }
-
-
         }
         return samplingFinal;
-
     }
     
     /**
@@ -244,7 +224,7 @@ public class OrthogonalSampling extends SamplingUtils {
      * @param scope
      * @return
      */
-    public List<ParametersSet> OrthogonalSamples(int N,int iteration, List<Batch> parameters,Random r,IScope scope){
+    public static List<ParametersSet> OrthogonalSamples(int N,int iteration, List<Batch> parameters,Random r,IScope scope){
     	List<ParametersSet>   finalSamp= new ArrayList<>();
         List<String> names= new ArrayList<>();
         for(int i=0;i<parameters.size();i++) {
@@ -253,9 +233,5 @@ public class OrthogonalSampling extends SamplingUtils {
         List<Map<String,Double>> sampletempmap= generate(names.size(),N,iteration,names,r); 
         finalSamp= BuildParametersSetfromSample(scope,parameters,sampletempmap);  
         return finalSamp;
-        
-    }
-    
-    
-
+    }     
 }

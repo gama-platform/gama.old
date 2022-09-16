@@ -134,12 +134,12 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 			method=Cast.asString(scope, getFacet(ExhaustiveSearch.METHODS).value(scope));
 		}
 		sets = switch (method) {
-			case IKeyword.LHS -> new LatinhypercubeSampling().LatinHypercubeSamples(sample_size, parameters,
+			case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters,
 					scope.getRandom().getGenerator(), scope);
 			case IKeyword.ORTHOGONAL -> {
 				int iterations = hasFacet(ExhaustiveSearch.ITERATIONS)
 						? Cast.asInt(scope, getFacet(ExhaustiveSearch.ITERATIONS).value(scope)) : 5;
-				yield new OrthogonalSampling().OrthogonalSamples(sample_size, iterations, parameters,
+				yield OrthogonalSampling.OrthogonalSamples(sample_size, iterations, parameters,
 						scope.getRandom().getGenerator(), scope);
 			}
 			default -> throw GamaRuntimeException.error("Method " + method + " is not known by the Exhaustive method",
@@ -157,7 +157,6 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 		outputs = Cast.asList(scope, getFacet(IKeyword.BATCH_VAR_OUTPUTS).value(scope));
 		int res=0;
-		Stochanalysis sto= new Stochanalysis();
 		Map<String,Map<Double,List<Object>>> MapOutput= new LinkedHashMap<>();
 		for (String out : outputs) {
 			Map<Double,List<Object>> res_val= new HashMap<>();
@@ -180,27 +179,27 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 					List<Object> tmp_list_val= res_val.get(val);
 					List<Object> tmp;
 					if(tmp_list_val==null) {
-						tmp=sto.StochasticityAnalysis(sp,val, scope);
+						tmp=Stochanalysis.StochasticityAnalysis(sp,val, scope);
 						res_val.replace(val, tmp);
 					}
 				}
 				MapOutput.put(out, res_val);
 			}else {
-				res=Cast.asInt(scope,sto.StochasticityAnalysis(sp,threshold, scope).get(0));
+				res=Cast.asInt(scope,Stochanalysis.StochasticityAnalysis(sp,threshold, scope).get(0));
 			}
 		}
 		if(threshold==-1) {
 			if(hasFacet(IKeyword.BATCH_OUTPUT)) {
 				String path= Cast.asString(scope,getFacet(IKeyword.BATCH_OUTPUT).value(scope));
 				String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
-				sto.WriteAndTellResultList(new_path, MapOutput, scope);
+				Stochanalysis.WriteAndTellResultList(new_path, MapOutput, scope);
 			}
 		}else {
 			res=res/outputs.size();
 			if(hasFacet(IKeyword.BATCH_OUTPUT)) {
 				String path= Cast.asString(scope,getFacet(IKeyword.BATCH_OUTPUT).value(scope));
 				String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
-				sto.WriteAndTellResult(new_path, res, scope);
+				Stochanalysis.WriteAndTellResult(new_path, res, scope);
 			}
 		}
 	}

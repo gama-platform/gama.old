@@ -2344,18 +2344,22 @@ public class Stats {
 	public static String morrisAnalysis(final IScope scope, String path, int nb_levels,int id_firstOutput) {
 
 		String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
-		Morris momo= new Morris();
-		Map<String,List<Double>> output= momo.readSimulation(new_path, id_firstOutput,scope);
+		List<Object> morris_simulation= Morris.readSimulation(new_path, id_firstOutput,scope);
+		List<Map<String, Object>> MySamples= Cast.asList(scope, morris_simulation.get(0));
+		//True or false ? Have to be tested
+		Map<String,List<Double>> output = Cast.asMap(scope, morris_simulation,false);
 		List<String> OutputsNames= output.keySet().stream().toList();
-		System.out.println(output.toString());
-		boolean temp= true;
+		boolean temp=true;
 		String s="";
 		
 		for(String name: OutputsNames) {
-			momo.MorrisAggregation_CSV(nb_levels,output.get(name));
-			s=s+momo.buildResultTxt(name, temp);
-			temp=false;
+			List<Map<String,Double>> morris_coefficient = Morris.MorrisAggregation_CSV(nb_levels,output.get(name),MySamples);
+			Map<String,Double> mu=morris_coefficient.get(0);
+			Map<String,Double> mu_star=morris_coefficient.get(1);
+			Map<String,Double> sigma=morris_coefficient.get(2);
+			s= s+ Morris.buildResultTxt(name, temp, mu,mu_star,sigma);
 		}
+
 		return s;
 		
 		

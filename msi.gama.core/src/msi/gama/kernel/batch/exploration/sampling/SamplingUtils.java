@@ -40,7 +40,7 @@ public abstract class SamplingUtils {
 	 * @param valFromSampling
 	 * @return
 	 */
-	private ParametersSet ScaleSamplingAmongValue(IScope scope, ParametersSet set, Batch var, double valFromSampling) {
+	private static ParametersSet ScaleSamplingAmongValue(IScope scope, ParametersSet set, Batch var, double valFromSampling) {
 		int size= var.getAmongValue(scope).size();
 		int idx = IntStream.range(1,size).filter(i -> valFromSampling <= 1d*i/size )
 				.findFirst().orElse(size);
@@ -56,7 +56,7 @@ public abstract class SamplingUtils {
 	 * @param ValFromSampling
 	 * @return
 	 */
-	private ParametersSet ScaleSampling(IScope scope, ParametersSet set, Batch var, double ValFromSampling) {
+	private static ParametersSet ScaleSampling(IScope scope, ParametersSet set, Batch var, double ValFromSampling) {
 		switch (var.getType().id()) {
 		case IType.INT:
 			int intValue = Cast.asInt(scope, var.getMinValue(scope));
@@ -80,7 +80,6 @@ public abstract class SamplingUtils {
 		case IType.POINT:
 			GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
 			GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
-			
 			double samplePXValue = pointValue.getX() + ValFromSampling * (maxPointValue.getX() - pointValue.getX());
 			double samplePYValue = pointValue.getY() + ValFromSampling * (maxPointValue.getY() - pointValue.getY());
 			double samplePZValue = pointValue.getZ() + ValFromSampling * (maxPointValue.getZ() - pointValue.getZ());
@@ -101,7 +100,7 @@ public abstract class SamplingUtils {
 	 * @param SamplingData
 	 * @return
 	 */
-	public List<ParametersSet> BuildParametersSetfromSample(IScope scope,List<Batch> parameters,List<Map<String,Double>> SamplingData){
+	public static List<ParametersSet> BuildParametersSetfromSample(IScope scope,List<Batch> parameters,List<Map<String,Double>> SamplingData){
 		List<ParametersSet> ParameterSet=new ArrayList<>();
 		for(int i=0;i<SamplingData.size();i++) {
 			ParametersSet origi = new ParametersSet();

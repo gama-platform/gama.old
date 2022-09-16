@@ -129,10 +129,7 @@ public class MorrisExploration extends AExplorationAlgorithm{
 	protected static final String NB_LEVELS = "levels";
 	
 	protected static final String PARAMETER_CSV_PATH = "csv";
-	
-	/** Morris object containing all Morris methods */
-	protected Morris morris_analysis;
-	
+		
 	/** The parameters */
 	protected List<Batch> parameters;
 	
@@ -204,11 +201,11 @@ public class MorrisExploration extends AExplorationAlgorithm{
 		}
 		for(int i=0;i<rebuilt_output.size();i++) {
 			String tmp_name= output_names.get(i);
-			morris_analysis.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name),MySamples);
+			List<Map<String,Double>> morris_coefficient = Morris.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name),MySamples);
 			if(hasFacet(IKeyword.BATCH_REPORT)){
 				String path= Cast.asString(scope,getFacet(IKeyword.BATCH_REPORT).value(scope));
 				String new_path= scope.getExperiment().getWorkingPath() + "/" +path+"/MorrisResults.txt";
-				morris_analysis.WriteAndTellResult(tmp_name,new_path,firstime,scope);
+				Morris.WriteAndTellResult(tmp_name,new_path,firstime,scope,morris_coefficient);
 				firstime=false;	
 			}
 		}	
@@ -237,10 +234,9 @@ public class MorrisExploration extends AExplorationAlgorithm{
         for(int i=0;i<parameters.size();i++) {
         	names.add(parameters.get(i).getName());
         }
-        MorrisSampling morris_samples= new MorrisSampling();
 		this.ParametersNames=names;
 		outputs=Cast.asList(scope, getFacet(IKeyword.BATCH_VAR_OUTPUTS).value(scope));
-		List<Object> morris_samplings=morris_samples.MakeMorrisSampling(nb_levels,this.sample, parameters,scope);
+		List<Object> morris_samplings=MorrisSampling.MakeMorrisSampling(nb_levels,this.sample, parameters,scope);
 		this.MySamples=Cast.asList(scope, morris_samplings.get(0));
 		sets= Cast.asList(scope, morris_samplings.get(1));
 		return sets;
@@ -334,7 +330,6 @@ public class MorrisExploration extends AExplorationAlgorithm{
 		    catch(IOException ioe) {
 		    	throw GamaRuntimeException.error("File "+path+" not found",scope);
 		    }
-		morris_analysis= new Morris();
 		MySamples=parameters;
 		//morris_analysis.ParametersNames=parameters.get(0).keySet().stream().toList();
 		for (Map<String, Object> parameterSet : parameters) {

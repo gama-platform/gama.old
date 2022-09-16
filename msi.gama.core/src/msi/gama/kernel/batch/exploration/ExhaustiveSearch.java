@@ -67,7 +67,7 @@ import msi.gaml.types.IType;
 						name = ExhaustiveSearch.METHODS,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("The name of the method you want to use. saltelli/morris/latinhypercube")),
+						doc = @doc ("The name of the method you want to use. saltelli/morris/latinhypercube/orthogonal")),
 				@facet (
 						name = ExhaustiveSearch.SAMPLE_SIZE,
 						type = IType.INT,
@@ -113,9 +113,9 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	
 	private final int __default_step_factor = 10;
 	
-	private int sample_size;
-	private int nb_levels;
-	private int iterations;
+	private int sample_size = 132;
+	private int nb_levels = 4;
+	private int iterations = 5;
 
 	private List<Batch> parameters;
 
@@ -139,13 +139,25 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 
 			parameters = parameters == null ? params : parameters;
 			List<ParametersSet> sets;
+			
+			if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
+				this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
+			}
+			
+			if(hasFacet(ExhaustiveSearch.ITERATIONS)) {
+				this.iterations= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
+			}
+			
+			if (hasFacet(ExhaustiveSearch.NB_LEVELS)) {
+				this.nb_levels = Cast.asInt(scope, getFacet(NB_LEVELS).value(scope));
+			}
 
 			String method = Cast.asString(scope, getFacet(METHODS).value(scope));
 			sets = switch (method) {
-				case IKeyword.MORRIS -> MorrisExhaustive(scope);
-				case IKeyword.SALTELLI -> SaltelliExhaustive(scope);
-				case IKeyword.LHS -> LatinHypercubeExhaustive(scope);
-				case IKeyword.ORTHOGONAL -> OrthogonalExhaustive(scope);
+				case IKeyword.MORRIS -> MorrisSampling.MakeMorrisSamplingOnly(nb_levels, sample_size, parameters, scope);
+				case IKeyword.SALTELLI -> SaltelliSampling.MakeSaltelliSampling(scope, sample_size, parameters);
+				case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(), scope);
+				case IKeyword.ORTHOGONAL -> OrthogonalSampling.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
 				default -> throw GamaRuntimeException.error("Method " + method + " is not known by the Exhaustive method",
 						scope);
 			};
@@ -182,73 +194,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		}
 		if (index == variables.size() - 1) return sets2;
 		return buildParameterSets(scope, sets2, index + 1);
-	}
-
-	// ##################### Methods for sampling ######################
-	/**
-	 * 4 methods:
-	 * Morris
-	 * Saltelli
-	 * Latin Hypercube
-	 * Orthogonal Latin Hypercube
-	 */
-
-	private List<ParametersSet> MorrisExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-		if (hasFacet(ExhaustiveSearch.NB_LEVELS)) {
-			this.nb_levels = Cast.asInt(scope, getFacet(NB_LEVELS).value(scope));
-		} else {
-			this.nb_levels = 4;
-		}
-
-		MorrisSampling morris_samples = new MorrisSampling();
-
-		return Cast.asList(scope,morris_samples.MakeMorrisSampling(nb_levels, sample_size, parameters, scope).get(1));
-
-	}
-
-	private List<ParametersSet> LatinHypercubeExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-
-		LatinhypercubeSampling LHS = new LatinhypercubeSampling();
-		return LHS.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(), scope);
-	}
-
-	private List<ParametersSet> SaltelliExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-
-		SaltelliSampling saltelli = new SaltelliSampling();
-		return saltelli.MakeSaltelliSampling(scope, sample_size, parameters);
-	}
-
-	private List<ParametersSet> OrthogonalExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-		
-		if(hasFacet(ExhaustiveSearch.ITERATIONS)) {
-			this.iterations= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.iterations=5;
-		}
-		
-        OrthogonalSampling ortho= new OrthogonalSampling();
-        return ortho.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
-        	
 	}
 
 	// INNER UTILITY METHODS
@@ -314,7 +259,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 						solution.put(var.getName(), floatValue);
 						if (solution.size() == variables.size()) {
 							currentExperiment.launchSimulationsWithSolution(solution);
-						} else {
+						} else { 
 							testSolutions(scope, solution, index + 1);
 						}
 						floatValue = floatValue + Cast.asFloat(scope, var.getStepValue(scope));
