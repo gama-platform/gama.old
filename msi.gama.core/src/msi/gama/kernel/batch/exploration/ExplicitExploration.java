@@ -208,7 +208,4 @@ public class ExplicitExploration extends AExplorationAlgorithm {
 		return sets;
 	}
 
-	public static void main(String[] args) throws Exception {
-	}
-
 }
