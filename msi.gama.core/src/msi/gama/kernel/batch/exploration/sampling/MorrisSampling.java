@@ -171,7 +171,7 @@ public class MorrisSampling extends SamplingUtils {
 	 *            Parameters of the model. Example: inputs={Var1={Int,[1,200]},Var2={Double,[0,1]}}
 	 * @return samples for simulations. Size: nb_sample * inputs.size()
 	 */
-	public List<ParametersSet> MakeMorrisSampling(final int nb_levels, final int nb_sample,
+	public List<Object> MakeMorrisSampling(final int nb_levels, final int nb_sample,
 			final List<Batch> parameters, final IScope scope) {
 		if (nb_levels % 2 != 0) throw GamaRuntimeException.error("The number of value should be even", scope);
 		List<ParametersSet> sampling = new ArrayList<>();
@@ -189,6 +189,9 @@ public class MorrisSampling extends SamplingUtils {
 			});
 
 		});
-		return BuildParametersSetfromSample(scope, parameters, MorrisSamples);
+		List<Object> result=new ArrayList<>();
+		result.add(MorrisSamples);
+		result.add(BuildParametersSetfromSample(scope, parameters, MorrisSamples));
+		return result;
 	}
 }

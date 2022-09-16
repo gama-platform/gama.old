@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
+import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -53,6 +54,7 @@ public class Morris {
 	 * Example: MySample=[{Var1=1,Var2=1},{Var1=4,Var2=5}] ParametersName=[Var1,Var2]
 	 *
 	 */
+	
 	protected List<Map<String, Object>> MySample;
 	protected List<String> ParametersNames;
 	protected Map<String, Double> mu;
@@ -377,10 +379,18 @@ public class Morris {
 	 *            List of the Output to analyze
 	 *
 	 */
-	public void MorrisAggregation(final int num_levels, final List<Double> Outputs) {
+	
+	
+
+	
+	public void MorrisAggregation(final int num_levels, final List<Double> Outputs,final List<Map<String,Object>> sample) {
 		this.mu = null;
 		this.mu_star = null;
 		this.sigma = null;
+		
+		MySample=sample;
+		ParametersNames= sample.get(0).keySet().stream().toList();
+		
 		List<Map<String, Double>> MySampleTemp = new ArrayList<>();
 		MySample.forEach(m -> {
 			Map<String, Double> maptmp = new LinkedHashMap<>();

@@ -154,6 +154,8 @@ public class MorrisExploration extends AExplorationAlgorithm{
 	
 	private int nb_levels;
 	
+	private List<Map<String,Object>> MySamples;
+	
 	
 	
 	
@@ -202,7 +204,7 @@ public class MorrisExploration extends AExplorationAlgorithm{
 		}
 		for(int i=0;i<rebuilt_output.size();i++) {
 			String tmp_name= output_names.get(i);
-			morris_analysis.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name));
+			morris_analysis.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name),MySamples);
 			if(hasFacet(IKeyword.BATCH_REPORT)){
 				String path= Cast.asString(scope,getFacet(IKeyword.BATCH_REPORT).value(scope));
 				String new_path= scope.getExperiment().getWorkingPath() + "/" +path+"/MorrisResults.txt";
@@ -238,7 +240,9 @@ public class MorrisExploration extends AExplorationAlgorithm{
         MorrisSampling morris_samples= new MorrisSampling();
 		this.ParametersNames=names;
 		outputs=Cast.asList(scope, getFacet(IKeyword.BATCH_VAR_OUTPUTS).value(scope));
-		sets= morris_samples.MakeMorrisSampling(nb_levels,this.sample, parameters,scope);
+		List<Object> morris_samplings=morris_samples.MakeMorrisSampling(nb_levels,this.sample, parameters,scope);
+		this.MySamples=Cast.asList(scope, morris_samplings.get(0));
+		sets= Cast.asList(scope, morris_samplings.get(1));
 		return sets;
 	}
 	
@@ -331,8 +335,8 @@ public class MorrisExploration extends AExplorationAlgorithm{
 		    	throw GamaRuntimeException.error("File "+path+" not found",scope);
 		    }
 		morris_analysis= new Morris();
-		morris_analysis.MySample=parameters;
-		morris_analysis.ParametersNames=parameters.get(0).keySet().stream().toList();
+		MySamples=parameters;
+		//morris_analysis.ParametersNames=parameters.get(0).keySet().stream().toList();
 		for (Map<String, Object> parameterSet : parameters) {
 			ParametersSet p = new ParametersSet();
 			for (String v : parameterSet.keySet()) {
