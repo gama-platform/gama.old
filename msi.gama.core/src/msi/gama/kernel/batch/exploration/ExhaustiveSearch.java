@@ -207,7 +207,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 
 		MorrisSampling morris_samples = new MorrisSampling();
 
-		return morris_samples.MakeMorrisSampling(nb_levels, this.sample_size, parameters, scope);
+		return Cast.asList(scope,morris_samples.MakeMorrisSampling(nb_levels, sample_size, parameters, scope).get(1));
 
 	}
 
