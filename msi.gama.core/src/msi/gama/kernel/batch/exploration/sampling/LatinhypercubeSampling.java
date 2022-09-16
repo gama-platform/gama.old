@@ -23,18 +23,17 @@ import msi.gama.runtime.IScope;
 
 public class LatinhypercubeSampling extends SamplingUtils{
 	
-	public LatinhypercubeSampling() { }
+	//public LatinhypercubeSampling() { }
 	
-	public static double nextDouble(double min, double max,Random r) {
+	private static double nextDouble(double min, double max,Random r) {
         return min + r.nextDouble() * (max - min);
     }
-
-    public static int nextInt(int n,Random r) {
+	
+    private static int nextInt(int n,Random r) {
         return r.nextInt(n);
     }
 
-
-    public List<Double> shuffle(List<Double> array,Random r) {
+    private static List<Double> shuffle(List<Double> array,Random r) {
         for (int i = array.size() - 1; i >= 1; i--) {
             int j = nextInt(i + 1,r);
             if (i != j) {
@@ -53,7 +52,7 @@ public class LatinhypercubeSampling extends SamplingUtils{
      * @param r : Random object
      * @return sample with values between 0 and 1
      */
-    public Map<String,List<Double>> generate(int N, List<String> names,Random r) {
+    private static Map<String,List<Double>> generate(int N, List<String> names,Random r) {
         Map<String,List<Double>> results= new LinkedHashMap<>();
         List<Double> temp=new ArrayList<>();
         double d = 1.0 / N;
@@ -65,9 +64,7 @@ public class LatinhypercubeSampling extends SamplingUtils{
         for(int i=0; i<names.size();i++){
             List<Double> new_temp= new ArrayList<>(shuffle(temp,r));
             results.put(names.get(i),new_temp);
-
         }
-        
         return results;
     }
 
@@ -77,7 +74,7 @@ public class LatinhypercubeSampling extends SamplingUtils{
      * @param names: Names of parameters
      * @return List of map
      */
-    public  List<Map<String,Double>>  transformMapListToListMap(Map<String,List<Double>> MapList,List<String> names){
+    private static List<Map<String,Double>>  transformMapListToListMap(Map<String,List<Double>> MapList,List<String> names){
         List<Map<String,Double>> ListMap= new ArrayList<>();
         for(int i=0;i<MapList.get(names.get(0)).size();i++){
             Map<String,Double> tempMap=new LinkedHashMap<>();
@@ -97,7 +94,7 @@ public class LatinhypercubeSampling extends SamplingUtils{
      * @param r : a Random object
      * @return
      */
-    public List<ParametersSet> LatinHypercubeSamples(int N, List<Batch> parameters,Random r,IScope scope){
+    public static List<ParametersSet> LatinHypercubeSamples(int N, List<Batch> parameters,Random r,IScope scope){
     	List<ParametersSet>   finalSamp= new ArrayList<>();
         List<String> names= new ArrayList<>();
         for(int i=0;i<parameters.size();i++) {

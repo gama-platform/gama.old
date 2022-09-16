@@ -181,8 +181,8 @@ public class SobolExploration extends AExplorationAlgorithm {
 		int sample = Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		// Do not trust getExplorableParameter of the BatchAgent
 		// Needs a step to explore a parameter, also for any sampling methods only min/max is required
-		List<Batch> params = currentExperiment.getSpecies().getParameters().values().stream()
-				.filter(p -> p.getMinValue(scope) != null && p.getMaxValue(scope) != null).map(p -> (Batch) p)
+		List<Batch> params = currentExperiment.getParametersToExplore().stream()
+				.map(p-> (Batch) p)
 				.collect(Collectors.toList());
 		parameters = parameters == null ? params : parameters;
 		/* times 2 the number of parameters for the bootstraping (Saltelli 2002) and +2 because of sample A & B */

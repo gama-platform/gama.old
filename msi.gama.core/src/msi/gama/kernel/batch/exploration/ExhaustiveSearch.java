@@ -37,7 +37,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
-import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
@@ -68,7 +67,7 @@ import msi.gaml.types.IType;
 						name = ExhaustiveSearch.METHODS,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("The name of the method you want to use. saltelli/morris/latinhypercube")),
+						doc = @doc ("The name of the method you want to use. saltelli/morris/latinhypercube/orthogonal")),
 				@facet (
 						name = ExhaustiveSearch.SAMPLE_SIZE,
 						type = IType.INT,
@@ -114,9 +113,9 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	
 	private final int __default_step_factor = 10;
 	
-	private int sample_size;
-	private int nb_levels;
-	private int iterations;
+	private int sample_size = 132;
+	private int nb_levels = 4;
+	private int iterations = 5;
 
 	private List<Batch> parameters;
 
@@ -132,27 +131,40 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 
 	@Override
 	public void explore(final IScope scope) throws GamaRuntimeException {
-		
-		List<Batch> params = currentExperiment.getParametersToExplore();
 
-		parameters = parameters == null ? params : parameters;
-		List<ParametersSet> sets;
+			List<Batch> params = currentExperiment.getParametersToExplore();
 
-		String method = hasFacet(ExhaustiveSearch.METHODS) ? 
-				Cast.asString(scope, getFacet(METHODS).value(scope)) : "";
-		sets = switch (method) {
-			case IKeyword.MORRIS -> MorrisExhaustive(scope);
-			case IKeyword.SALTELLI -> SaltelliExhaustive(scope);
-			case IKeyword.LHS -> LatinHypercubeExhaustive(scope);
-			case IKeyword.ORTHOGONAL -> OrthogonalExhaustive(scope);
-			default -> buildParameterSets(scope, new ArrayList<>(), 0);
-		};
+			parameters = parameters == null ? params : parameters;
+			List<ParametersSet> sets;
+			
+			if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
+				this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
+			}
+			
+			if(hasFacet(ExhaustiveSearch.ITERATIONS)) {
+				this.iterations= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
+			}
+			
+			if (hasFacet(ExhaustiveSearch.NB_LEVELS)) {
+				this.nb_levels = Cast.asInt(scope, getFacet(NB_LEVELS).value(scope));
+			}
 
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-			currentExperiment.launchSimulationsWithSolution(sets);
-		} else {
-			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
-		}
+            String method = hasFacet(ExhaustiveSearch.METHODS) ?
+                Cast.asString(scope, getFacet(METHODS).value(scope)) : "";
+			sets = switch (method) {
+				case IKeyword.MORRIS -> MorrisSampling.MakeMorrisSamplingOnly(nb_levels, sample_size, parameters, scope);
+				case IKeyword.SALTELLI -> SaltelliSampling.MakeSaltelliSampling(scope, sample_size, parameters);
+				case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(), scope);
+				case IKeyword.ORTHOGONAL -> OrthogonalSampling.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
+				default -> buildParameterSets(scope, new ArrayList<>(), 0);
+			};
+
+			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+				currentExperiment.launchSimulationsWithSolution(sets);
+			} else {
+				for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
+			}
+
 
 	}
 
@@ -176,73 +188,6 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		}
 		if (index == variables.size() - 1) return sets2;
 		return buildParameterSets(scope, sets2, index + 1);
-	}
-
-	// ##################### Methods for sampling ######################
-	/**
-	 * 4 methods:
-	 * Morris
-	 * Saltelli
-	 * Latin Hypercube
-	 * Orthogonal Latin Hypercube
-	 */
-
-	private List<ParametersSet> MorrisExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-		if (hasFacet(ExhaustiveSearch.NB_LEVELS)) {
-			this.nb_levels = Cast.asInt(scope, getFacet(NB_LEVELS).value(scope));
-		} else {
-			this.nb_levels = 4;
-		}
-
-		MorrisSampling morris_samples = new MorrisSampling();
-
-		return morris_samples.MakeMorrisSampling(nb_levels, this.sample_size, parameters, scope);
-
-	}
-
-	private List<ParametersSet> LatinHypercubeExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-
-		LatinhypercubeSampling LHS = new LatinhypercubeSampling();
-		return LHS.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(), scope);
-	}
-
-	private List<ParametersSet> SaltelliExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-
-		SaltelliSampling saltelli = new SaltelliSampling();
-		return saltelli.MakeSaltelliSampling(scope, sample_size, parameters);
-	}
-
-	private List<ParametersSet> OrthogonalExhaustive(final IScope scope) {
-		if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.sample_size=132;
-		}
-		
-		if(hasFacet(ExhaustiveSearch.ITERATIONS)) {
-			this.iterations= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
-		}else {
-			this.iterations=5;
-		}
-		
-        OrthogonalSampling ortho= new OrthogonalSampling();
-        return ortho.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
-        	
 	}
 	
 	// ##################### Methods to determine possible values based on exhaustive ######################

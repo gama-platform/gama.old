@@ -24,12 +24,9 @@ import msi.gama.runtime.IScope;
  */
 public class SaltelliSampling extends SamplingUtils{
 	
-	public SaltelliSampling() {
-		
-	}
+
 	
-	
-	public List<Map<String,Double>> transform_into_list(double[][] saltelli,List<String> names,int sample){
+	private static List<Map<String,Double>> transform_into_list(double[][] saltelli,List<String> names,int sample){
 		List<Map<String,Double>> tmpList= new ArrayList<>();
 		for(int i=0;i<sample;i++) {
 			Map<String,Double> tmpMap=new LinkedHashMap<>();
@@ -41,7 +38,7 @@ public class SaltelliSampling extends SamplingUtils{
 		return tmpList;
 		
 	}
-	public List<Map<String,Double>> setRandomSaltelliSampling(int sample, List<Batch> parameters) {
+	private static List<Map<String,Double>> setRandomSaltelliSampling(int sample, List<Batch> parameters) {
 		double[][] saltelli = new Saltelli().generate(sample, parameters.size());
         List<String> nameInputs= new ArrayList<>();
         for(int i=0;i<parameters.size();i++) {
@@ -51,7 +48,7 @@ public class SaltelliSampling extends SamplingUtils{
 		return Saltelli_sequence;
 	}
 	
-	public List<ParametersSet> MakeSaltelliSampling(IScope scope,int sample,List<Batch> parameters){
+	public static List<ParametersSet> MakeSaltelliSampling(IScope scope,int sample,List<Batch> parameters){
 		List<ParametersSet>  sampling= new ArrayList<>();
 		List<Map<String,Double>> saltelli= setRandomSaltelliSampling(sample,parameters);
         sampling=BuildParametersSetfromSample(scope,parameters,saltelli);

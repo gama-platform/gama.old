@@ -139,7 +139,7 @@ public class BetaExploration extends AExplorationAlgorithm {
 			case IKeyword.MORRIS -> {
 				int nbl = hasFacet(ExhaustiveSearch.NB_LEVELS)
 						? Cast.asInt(scope, getFacet(ExhaustiveSearch.NB_LEVELS).value(scope)) : 4;
-				yield new MorrisSampling().MakeMorrisSampling(nbl, sample_size, parameters, scope);
+				yield Cast.asList(scope,new MorrisSampling().MakeMorrisSampling(nbl, sample_size, parameters, scope).get(1));
 			}
 			case IKeyword.SALTELLI -> new SaltelliSampling().MakeSaltelliSampling(scope, sample_size, parameters);
 			case IKeyword.LHS -> new LatinhypercubeSampling().LatinHypercubeSamples(sample_size, parameters,

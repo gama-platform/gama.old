@@ -38,15 +38,12 @@ public class Stochanalysis {
 	 */
 	final static double[] Talpha = {6.314,2.920,2.353,2.132,2.015,1.943,1.895,1.860,1.833,1.812,1.796,1.782,1.771,1.761,1.753,1.746,1.740,1.734,1.729,1.725,1.721,1.717,1.714,1.711,1.708,1.706,1.703,1.701,1.699,1.697,1.684,1.676,1.671,1.664,1.660,1.658,1.645};
 	final static double[] Tbeta = {3.078,1.886,1.638,1.533,1.476,1.440,1.415,1.397,1.383,1.372,1.363,1.356,1.350,1.345,1.341,1.337,1.333,1.330,1.328,1.325,1.323,1.321,1.319,1.318,1.316,1.315,1.314,1.313,1.311,1.310,1.303,1.299,1.296,1.292,1.290,1.289,1.282};
-	Map<String,List<Double>> Outputs;	
-	List<Map<String,Object>> MySample;
-	List<String> ParametersNames;
-	double threshold;
-	int min_replicat;
+	//Map<String,List<Double>> Outputs;	
+	//List<Map<String,Object>> MySample;
+	//List<String> ParametersNames;
+	//double threshold;
+	//int min_replicat;
 	
-	public Stochanalysis() {
-		
-	}
 	
 	/**
 	 * Find the median value of a list (Skipping -1 values)
@@ -54,10 +51,9 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return the median value
 	 */
-	//Need to be test
-	public double findMedian(List<Integer> list, IScope scope) {
+	private static int findMedian(List<Integer> list, IScope scope) {
 		List<Integer> list_t=new ArrayList<>();
-		for(int o: list_t) {
+		for(int o: list) {
 			if(o!=-1) {
 				list_t.add(o);
 			}
@@ -68,7 +64,7 @@ public class Stochanalysis {
 		    median = ((double)list_t.get(list_t.size()/2) + (double)list_t.get(list_t.size()/2-1))/2;
 		else
 		    median = (double) list_t.get(list.size()/2);
-		return median;
+		return (int) Math.ceil(median);
 	}
 	
 	/**
@@ -77,8 +73,8 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return the max value
 	 */
-	//Need to be test
-	public int findMax(List<Integer> list,IScope scope) {
+
+	private static int findMax(List<Integer> list,IScope scope) {
 		int max=0;
 		for(int i=0;i<list.size();i++) {
 			if(list.get(i)!=-1) {
@@ -94,8 +90,8 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return
 	 */
-	//Need to be test
-    public String buildResultMap(Map<String,Map<Double,List<Object>>> Out,IScope scope){
+    @SuppressWarnings("unchecked")
+	private static String buildResultMap(Map<String,Map<Double,List<Object>>> Out,IScope scope){
     	StringBuffer sb= new StringBuffer();
     	sb.append("== STOCHASTICITY ANALYSIS: \n");
     	sb.append("\n");
@@ -103,6 +99,7 @@ public class Stochanalysis {
     		Map<Double,List<Object>> tmp_map=Out.get(outputs);
     		sb.append("## Output : ");
     		sb.append(outputs);
+    		sb.append("\n");
     		sb.append("\n");
         	for(int i=0;i<tmp_map.size();i++) {
         		//Method to write
@@ -118,46 +115,66 @@ public class Stochanalysis {
                 	sb.append("\n");
                 	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found \\ Nb failed (> Nb replicat )");
                 	sb.append("\n");
-                	sb.append(n_min);
-                	sb.append(" \\ ");
+
                 	if(nb_failed >=(nb_val.size()/2)) {
+                    	sb.append("Failed");
+                    	sb.append(" \\ ");
                 		sb.append("Failed");
                 	}else {
+                    	sb.append(n_min);
+                    	sb.append(" \\ ");
                 		sb.append(findMedian(nb_val, scope));
                 	}
                 	sb.append(" \\ ");
-                	sb.append(findMax(nb_val, scope));
-                	sb.append(" \\ ");
-                	sb.append(nb_failed);
-                	sb.append(" ");
-                	sb.append((nb_failed/nb_val.size())*100);
-                	sb.append("%");
+                	int max=findMax(nb_val, scope);
+                	if(max!=0) {
+                    	sb.append(findMax(nb_val, scope));
+                    	sb.append(" \\ ");
+                	}else {
+                		sb.append("Failed");
+                		sb.append(" \\ ");
+                	}
+                	if(nb_failed!=0) {
+                		sb.append(nb_failed);
+                		sb.append(" (");
+                		sb.append((Cast.asFloat(scope,nb_failed)/Cast.asFloat(scope,nb_val.size()))*100);
+                		sb.append("%)");
+                	}
                 	sb.append("\n");
-                	sb.append("All values for each points");
+                	sb.append("All values for each points :");
+                	sb.append("\n");
                 	sb.append(nb_val);
+                	sb.append("\n");
                 	sb.append("\n");
         		}else if(val==-1) {
             		sb.append(" Student method: ");
                 	sb.append("\n");
-                	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found \\ Nb failed (> Nb replicat )");
+                	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found");
                 	sb.append("\n");
-                	sb.append(n_min);
-                	sb.append(" \\ ");
+
                 	if(nb_failed >=(nb_val.size()/2)) {
+                    	sb.append("Failed");
+                    	sb.append(" \\ ");
                 		sb.append("Failed");
                 	}else {
+                    	sb.append(n_min);
+                    	sb.append(" \\ ");
                 		sb.append(findMedian(nb_val, scope));
                 	}
                 	sb.append(" \\ ");
-                	sb.append(findMax(nb_val, scope));
-                	sb.append(" \\ ");
-                	sb.append(nb_failed);
-                	sb.append(" ");
-                	sb.append((nb_failed/nb_val.size())*100);
-                	sb.append("%");
+                	int max=findMax(nb_val, scope);
+                	if(max!=0) {
+                    	sb.append(findMax(nb_val, scope));
+                    	sb.append(" \\ ");
+                	}else {
+                		sb.append("Failed");
+                		sb.append(" \\ ");
+                	}
                 	sb.append("\n");
-                	sb.append("All values for each points");
+                	sb.append("All values for each points:");
+                	sb.append("\n");
                 	sb.append(nb_val);
+                	sb.append("\n");
                 	sb.append("\n");
         		}else if (val>=1) {
             		sb.append(" SE method - Percent : ");
@@ -165,25 +182,36 @@ public class Stochanalysis {
                 	sb.append("% \n");
                 	sb.append("Nb minimum replicat found \\ Nb median \\ Nb max replicat found \\ Nb failed (> Nb replicat )");
                 	sb.append("\n");
-                	sb.append(n_min);
-                	sb.append(" \\ ");
+
                 	if(nb_failed >=(nb_val.size()/2)) {
+                    	sb.append("Failed");
+                    	sb.append(" \\ ");
                 		sb.append("Failed");
                 	}else {
+                    	sb.append(n_min);
+                    	sb.append(" \\ ");
                 		sb.append(findMedian(nb_val, scope));
                 	}
                 	sb.append(" \\ ");
-                	sb.append(findMax(nb_val, scope));
-                	sb.append(" \\ ");
+                	int max=findMax(nb_val, scope);
+                	if(max!=0) {
+                    	sb.append(findMax(nb_val, scope));
+                    	sb.append(" \\ ");
+                	}else {
+                		sb.append("Failed");
+                		sb.append(" \\ ");
+                	}
                 	if(nb_failed!=0) {
                        	sb.append(nb_failed);
-                    	sb.append(" ");
-                    	sb.append((nb_failed/nb_val.size())*100);
-                    	sb.append("%");
+                    	sb.append(" (");
+                    	sb.append((Cast.asFloat(scope,nb_failed)/Cast.asFloat(scope,nb_val.size()))*100);
+                    	sb.append("%)");
                 	}
                 	sb.append("\n");
-                	sb.append("All values for each points");
+                	sb.append("All values for each points :");
+                	sb.append("\n");
                 	sb.append(nb_val);
+                	sb.append("\n");
                 	sb.append("\n");
         		}
         	}
@@ -193,18 +221,18 @@ public class Stochanalysis {
     	
     }
     
-    public void WriteAndTellResultList(String path,Map<String,Map<Double,List<Object>>> Outputs,IScope scope) {
+    public static void WriteAndTellResultList(String path,Map<String,Map<Double,List<Object>>> Outputs,IScope scope) {
         try{
         	File file= new File(path);
             FileWriter fw = new FileWriter(file, false);
-            fw.write(this.buildResultMap(Outputs,scope));
+            fw.write(buildResultMap(Outputs,scope));
             fw.close();
         }catch (IOException e) {
             throw GamaRuntimeException.error("File "+ path+" not found", scope);
         }	
     }
 	
-    public String buildResultTxt(int nb_replicat){
+    private static String buildResultTxt(int nb_replicat){
     	StringBuffer sb= new StringBuffer();
     	sb.append("STOCHASTICITY ANALYSIS: \n");
     	sb.append("\n");
@@ -215,11 +243,11 @@ public class Stochanalysis {
     	
     }
     
-    public void WriteAndTellResult(String path,int val,IScope scope) {
+    public static void WriteAndTellResult(String path,int val,IScope scope) {
         try{
         	File file= new File(path);
             FileWriter fw = new FileWriter(file, false);
-            fw.write(this.buildResultTxt(val));
+            fw.write(buildResultTxt(val));
             fw.close();
         }catch (IOException e) {
             throw GamaRuntimeException.error("File "+ path+" not found", scope);
@@ -232,7 +260,7 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return the mean for each number of replicates
 	 */
-	public List<Double> computeMean(List<Object> val,IScope scope) {
+	private static List<Double> computeMean(List<Object> val,IScope scope) {
 		List<Double> mean=new ArrayList<>();
 		double tmp_mean=0;
 		for(int i=0;i<val.size();i++) {
@@ -250,7 +278,7 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return the standard deviation for each number of replicates (Always 0 for 1).
 	 */
-	public List<Double> computeSTD(List<Double> mean,List<Object> val,IScope scope) {
+	private static List<Double> computeSTD(List<Double> mean,List<Object> val,IScope scope) {
 		List<Double> STD=new ArrayList<>();
 		for(int i=0;i<mean.size();i++) {
 			double sum=0;
@@ -269,7 +297,7 @@ public class Stochanalysis {
 	 * @param mean : the mean for each number of replicates
 	 * @return the coefficient of variation for each number of replicates to 2 at replicate max size
 	 */
-	public List<Double> computeCV(List<Double> STD,List<Double> mean) {
+	private static List<Double> computeCV(List<Double> STD,List<Double> mean) {
 		List<Double> CV=new ArrayList<>();
 		for(int i=1;i<mean.size();i++) {
 			CV.add(STD.get(i)/mean.get(i));
@@ -282,13 +310,13 @@ public class Stochanalysis {
 	 * @param CV : the coefficient of variation for each number of replicates
 	 * @return the minimum replicates size (or -1 if the threshold is not reached)
 	 */
-	public int FindWithThreshold(List<Double> CV){
+	private static int FindWithThreshold(List<Double> CV, double threshold){
 		boolean thresh_ok=false;
 		int id_sample=0;
 		for(int i=0;i<CV.size()-2;i++) {
 			for(int y=i+1;y<CV.size();y++) {
 				double tmp_val=Math.abs(CV.get(i)-CV.get(y));
-				if((tmp_val<=this.threshold) && (!thresh_ok)) {
+				if((tmp_val<=threshold) && (!thresh_ok)) {
 					thresh_ok=true;
 					id_sample=i+1;
 				}
@@ -305,7 +333,7 @@ public class Stochanalysis {
 	 * @param STD : the Standard deviation for each number of replicates
 	 * @return the standard error for each number of replicates
 	 */
-	public List<Double> computeSE(List<Double> STD){
+	private static List<Double> computeSE(List<Double> STD){
 		List<Double> SE= new ArrayList<>();
 		for(int i=1;i<STD.size();i++) {
 			SE.add(STD.get(i)/Math.sqrt(i+1));
@@ -320,7 +348,7 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return the standard deviation of the list
 	 */
-	public double computeS(List<Object> val,double mean,IScope scope) {	
+	private static double computeS(List<Object> val,double mean,IScope scope) {	
 		double tmp_s=0;
 		for(int i=0;i<val.size();i++) {
 			double tmp_val=Cast.asFloat(scope, val.get(i));
@@ -337,7 +365,7 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return the absolute difference in means of the list
 	 */
-	public double computeDelta(List<Object> val,double mean,IScope scope) {
+	private static double computeDelta(List<Object> val,double mean,IScope scope) {
 		double tmp_delta=0;
 		for(int i=0;i<val.size();i++) {
 			double tmp_val=Cast.asFloat(scope, val.get(i));
@@ -353,7 +381,7 @@ public class Stochanalysis {
 	 * @param sample_size : the number of repeat.
 	 * @return return the right alpha or beta value
 	 */
-	public double computeT(boolean isAlpha,int sample_size) {
+	private static double computeT(boolean isAlpha,int sample_size) {
 		if(isAlpha) {
 			if(sample_size <= 30) {
 				return Talpha[sample_size-1];
@@ -411,7 +439,7 @@ public class Stochanalysis {
 	 * @param Tb : Student t beta t statistic
 	 * @return minimum number of replicate found
 	 */
-	public int Student(double S,double delta,double Ta,double Tb) {
+	private static int Student(double S,double delta,double Ta,double Tb) {
 		return (int) Math.ceil(2*(Math.pow(S, 2)/delta)* Math.pow((Ta+Tb), 2)) ;
 	}
 	
@@ -422,8 +450,7 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return a List with 0: The n minimum found // 1: The number of failed (if n_minimum > repeat size) //2: the result for each point of the space
 	 */
-	public List<Object> StochasticityAnalysis(IMap<ParametersSet,List<Object>> sample,double threshold,IScope scope) {
-		this.threshold=threshold;
+	public static List<Object> StochasticityAnalysis(IMap<ParametersSet,List<Object>> sample,double threshold,IScope scope) {
 		int tmp_replicat=0;
 		if(0< threshold &&threshold<1) {
 			//Min nb replicat with CV method
@@ -433,7 +460,7 @@ public class Stochanalysis {
 				List<Double> mean = computeMean(sample.get(ps),scope);
 				List<Double> std = computeSTD(mean,sample.get(ps),scope);
 				List<Double> cv = computeCV(std,mean);
-				int n_tmp=FindWithThreshold(cv);
+				int n_tmp=FindWithThreshold(cv,threshold);
 				if(n_tmp==-1) {
 					compteur_failed++;
 					tmp_replicat=tmp_replicat+mean.size();
@@ -443,7 +470,7 @@ public class Stochanalysis {
 					tmp_replicat= tmp_replicat+n_tmp;
 				}
 			}
-			min_replicat=tmp_replicat/(sample.keySet().size());
+			int min_replicat=tmp_replicat/(sample.keySet().size());
 			if(min_replicat==0) {
 				min_replicat=1;
 			}
@@ -467,7 +494,7 @@ public class Stochanalysis {
 				n_min_list.add(nb_tmp);
 				tmp_replicat=tmp_replicat+nb_tmp;
 			}
-			min_replicat=tmp_replicat/sample.keySet().size();
+			int min_replicat=tmp_replicat/sample.keySet().size();
 			if(min_replicat==0) {
 				min_replicat=1;
 			}			
@@ -490,7 +517,7 @@ public class Stochanalysis {
 				int tmp=0;
 				for(int i=0;i<se.size();i++) {
 					if(first && se.get(i)<new_threshold) {
-						tmp=i+2;
+						tmp=i+1;
 						first=false;
 					}
 				}				
@@ -503,7 +530,7 @@ public class Stochanalysis {
 					n_min_list.add(tmp);
 				}				
 			}
-			min_replicat=tmp_replicat/sample.keySet().size();
+			int min_replicat=tmp_replicat/sample.keySet().size();
 			if(min_replicat==0) {
 				min_replicat=1;
 			}
@@ -525,7 +552,7 @@ public class Stochanalysis {
  */
 //Need to be tested
 	
-	  public Map<String,List<Double>>  readSimulation(String path,int idOutput,IScope scope){
+	  public static List<Object>  readSimulation(String path,int idOutput,IScope scope){
 	      List<Map<String,Object>> parameters = new ArrayList<>();
 	      try {
 	          File file = new File(path);
@@ -575,13 +602,14 @@ public class Stochanalysis {
 	              parameters.get(i).remove(tmpNames.get(y));
 	          }
 	      });
-	      MySample=parameters;
-	      ParametersNames=parameters.get(0).keySet().stream().toList();
-	      return new_Outputs;
+		List<Object> simulation_morris= new ArrayList<>();
+		simulation_morris.add(parameters);
+		simulation_morris.add(new_Outputs);
+	      return simulation_morris;
 	  }
 	  
 	  
-	public String BuildString(Map<String,Object> s) {
+	private static String BuildString(Map<String,Object> s) {
 		String txt="";
 		for(String name: s.keySet()) {
 			txt=txt+s.get(name).toString()+"_";
@@ -590,9 +618,12 @@ public class Stochanalysis {
 	}
 	
 	// Need to be tested and change like the main method if it works
-	public String StochasticityAnalysis_From_CSV(int replicat,double threshold, String path_to_data,int id_output, IScope scope) {
-		this.threshold=threshold;
-		Map<String,List<Double>>  Outputs= readSimulation(path_to_data,id_output,scope);
+	@SuppressWarnings("unchecked")
+	public static String StochasticityAnalysis_From_CSV(int replicat,double threshold, String path_to_data,int id_output, IScope scope) {
+		List<Object>  STO_simu= readSimulation(path_to_data,id_output,scope);
+		List<Map<String,Object>> MySample = Cast.asList(scope, STO_simu.get(0));
+		Map<String,List<Double>> Outputs = Cast.asMap(scope, STO_simu.get(1), false);
+		int min_replicat=1;
 		for(String name: Outputs.keySet()) {
 			Map<String,List<Object>> sample= new HashedMap<>();
 			for(Map<String,Object> m: MySample) {
@@ -612,7 +643,7 @@ public class Stochanalysis {
 				List<Double> mean = computeMean(sample.get(ps),scope);
 				List<Double> std = computeSTD(mean,sample.get(ps),scope);
 				List<Double> cv = computeCV(std,mean);
-				tmp_replicat= tmp_replicat+FindWithThreshold(cv);
+				tmp_replicat= tmp_replicat+FindWithThreshold(cv,threshold);
 				}
 			min_replicat=tmp_replicat/sample.keySet().size();
 			}
