@@ -15,6 +15,7 @@ import "../../Tutorials/Predator Prey/models/Model 13.gaml"
  */
 global {
 	bool is_batch <- true;
+	int end_cycle <- 500;
 	reflex save_result when: (nb_preys > 0) and (nb_predators > 0){ } // Overload method so we do not have any saved output
 	bool stop_sim { return (nb_preys = 0) or (nb_predators = 0); } 
 }
@@ -26,7 +27,7 @@ global {
  * 
  */
  
-experiment batch_abstract type:batch virtual:true until:(time > 200) {
+experiment batch_abstract type:batch virtual:true until:(time > end_cycle) {
 	parameter "Prey max transfer:" var: prey_max_transfer min: 0.05 max: 0.5 step: 0.05;
 	parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
 	parameter "Predator energy transfer:" var: predator_energy_transfer min: 0.1 max: 1.0 step: 0.1;
@@ -35,7 +36,7 @@ experiment batch_abstract type:batch virtual:true until:(time > 200) {
 
 // This experiment runs the simulation 5 times.
 // At the end of each simulation, the people agents are saved in a shapefile
-experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep_seed: true until: world.stop_sim() or (time > 200){
+experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep_seed: true until: world.stop_sim() or (time > end_cycle){
 	
 	// the reflex will be activated at the end of each run; in this experiment a run consists of the execution of 5 simulations (repeat: 5)
 	reflex end_of_runs
@@ -55,14 +56,14 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 // 1. Size effect of one added replicate with student t statistics
 // 2. How increasing the number of replicates dimish the standard error
 // 3. coefficient of variation 
-experiment replication_analysis parent: batch_abstract type: batch until: world.stop_sim() or ( time > 200 ) repeat:10 {
+experiment replication_analysis parent: batch_abstract type: batch until: world.stop_sim() or ( time > end_cycle ) repeat:10 {
 	method stochanalyse outputs:["nb_preys","nb_predators"] results:"Results/stochanalysis.txt";
 } 
 
 // This experiment explores two parameters with an exhaustive strategy,
 // repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
 // in order to find the best combination of parameters to minimize the number of infected people
-experiment Exhaustive parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > 500 ) {
+experiment Exhaustive parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > end_cycle ) {
 	method exhaustive;
 	
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
@@ -81,7 +82,7 @@ experiment Exhaustive parent: batch_abstract type: batch repeat: 3 keep_seed: tr
 
 // This experiment iterate over point of the parameter space choosen following
 // Latin Hypercube Sampling
-experiment Exhaustive_with_LHS  parent:Exhaustive repeat:3 type: batch until:world.stop_sim() or time>1000 {
+experiment Exhaustive_with_LHS  parent:Exhaustive repeat:3 type: batch until:world.stop_sim() or time>end_cycle {
 	method exhaustive sampling:"latinhypercube" sample:100;
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
@@ -99,7 +100,7 @@ experiment Exhaustive_with_LHS  parent:Exhaustive repeat:3 type: batch until:wor
 
 // This experiment tests two explicit parameters sets,
 // repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
-experiment Explicit parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > 1000 ) {
+experiment Explicit parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > end_cycle ) {
 	method explicit parameter_sets: [
 		["prey_max_transfer"::0.1, "predator_energy_transfer":: 0.01],
 		["prey_max_transfer"::0.5, "predator_energy_transfer":: 0.2],
@@ -112,6 +113,10 @@ experiment Explicit parent: batch_abstract type: batch repeat: 3 keep_seed: true
 // Sobol index, i.e. a contribution value of each parameters to 
 // observed variance for outcomes of interest, 
 // more on this see https://www.jasss.org/19/1/5.html and http://moeaframework.org for the API
-experiment Sobol parent: batch_abstract type: batch keep_seed:true until:( time > 5000 ) {
-	method sobol outputs:["nb_preys","nb_predators"] sample:100 path: "Results/saltelli.csv" report:"Results/sobol.txt" results:"Results/sobol_raw.csv";
+experiment Sobol parent: batch_abstract type: batch until:( time > end_cycle ) {
+	method sobol outputs:["nb_preys","nb_predators"] sample:100 report:"Results/sobol.txt" results:"Results/sobol_raw.csv";
+}
+
+experiment Beta_distribution parent: batch_abstract type: batch until:( time > end_cycle ) {
+	method betad outputs:["nb_preys","nb_predators"] sample:10 sampling:"orthogonal" report:"Results/betad.txt" results:"Results/betad_raw.csv";
 }
