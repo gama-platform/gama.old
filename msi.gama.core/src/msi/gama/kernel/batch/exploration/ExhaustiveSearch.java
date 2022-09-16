@@ -37,6 +37,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
@@ -131,37 +132,28 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 
 	@Override
 	public void explore(final IScope scope) throws GamaRuntimeException {
-		if (hasFacet(ExhaustiveSearch.METHODS)) {
+		
+		List<Batch> params = currentExperiment.getParametersToExplore();
 
-			List<Batch> params = currentExperiment.getParametersToExplore().stream()
-					.map(p-> (Batch) p)
-					.collect(Collectors.toList());
+		parameters = parameters == null ? params : parameters;
+		List<ParametersSet> sets;
 
-			parameters = parameters == null ? params : parameters;
-			List<ParametersSet> sets;
+		String method = hasFacet(ExhaustiveSearch.METHODS) ? 
+				Cast.asString(scope, getFacet(METHODS).value(scope)) : "";
+		sets = switch (method) {
+			case IKeyword.MORRIS -> MorrisExhaustive(scope);
+			case IKeyword.SALTELLI -> SaltelliExhaustive(scope);
+			case IKeyword.LHS -> LatinHypercubeExhaustive(scope);
+			case IKeyword.ORTHOGONAL -> OrthogonalExhaustive(scope);
+			default -> buildParameterSets(scope, new ArrayList<>(), 0);
+		};
 
-			String method = Cast.asString(scope, getFacet(METHODS).value(scope));
-			sets = switch (method) {
-				case IKeyword.MORRIS -> MorrisExhaustive(scope);
-				case IKeyword.SALTELLI -> SaltelliExhaustive(scope);
-				case IKeyword.LHS -> LatinHypercubeExhaustive(scope);
-				case IKeyword.ORTHOGONAL -> OrthogonalExhaustive(scope);
-				default -> throw GamaRuntimeException.error("Method " + method + " is not known by the Exhaustive method",
-						scope);
-			};
-
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
-				currentExperiment.launchSimulationsWithSolution(sets);
-			} else {
-				for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
-			}
-
-		} else if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()
-				&& !currentExperiment.getParametersToExplore().isEmpty()) {
-			testSolutionsAll(scope);
+		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+			currentExperiment.launchSimulationsWithSolution(sets);
 		} else {
-			testSolutions(scope, new ParametersSet(), 0);
+			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
 		}
+
 	}
 
 	@Override
@@ -169,6 +161,8 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		List<ParametersSet> sets2 = new ArrayList<>();
 		final List<Batch> variables = currentExperiment.getParametersToExplore();
 		if (variables.isEmpty()) return sets2;
+		if (sets == null) {throw GamaRuntimeException.error("Cannot build a sample with empty parameter set", scope);}
+		if (sets.isEmpty()) { sets.add(new ParametersSet()); }
 
 		final IParameter.Batch var = variables.get(index);
 		for (ParametersSet solution : sets) {
@@ -250,125 +244,9 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
         return ortho.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
         	
 	}
-
-	// INNER UTILITY METHODS
-
-	/**
-	 * Test solutions all.
-	 *
-	 * @param scope the scope
-	 */
-	private void testSolutionsAll(final IScope scope) {
-		List<ParametersSet> sets = new ArrayList<>();
-		sets.add(new ParametersSet());
-		System.out.println("Xp launch = testSolutionAll " + this);
-		final List<ParametersSet> solutions = buildParameterSets(scope, sets, 0);
-		currentExperiment.launchSimulationsWithSolution(solutions);
-	}
-
-	/**
-	 * Test solutions.
-	 *
-	 * @param scope the scope
-	 * @param sol the sol
-	 * @param index the index
-	 * @throws GamaRuntimeException the gama runtime exception
-	 */
-	private void testSolutions(final IScope scope, final ParametersSet sol, final int index)
-			throws GamaRuntimeException {
-		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
-		final ParametersSet solution = new ParametersSet(sol);
-		if (variables.isEmpty()) {
-			currentExperiment.launchSimulationsWithSolution(solution);
-			return;
-		}
-		final IParameter.Batch var = variables.get(index);
-		if (var.getAmongValue(scope) != null) {
-			for (final Object val : var.getAmongValue(scope)) {
-				solution.put(var.getName(), val);
-				if (solution.size() == variables.size()) {
-					currentExperiment.launchSimulationsWithSolution(solution);
-				} else {
-					testSolutions(scope, solution, index + 1);
-				}
-			}
-		} else {
-			switch (var.getType().id()) {
-				case IType.INT:
-					int intValue = Cast.asInt(scope, var.getMinValue(scope));
-					int maxIntValue = Cast.asInt(scope, var.getMaxValue(scope));
-					while (intValue <= maxIntValue) {
-						solution.put(var.getName(), intValue);
-						if (solution.size() == variables.size()) {
-							currentExperiment.launchSimulationsWithSolution(solution);
-						} else {
-							testSolutions(scope, solution, index + 1);
-						}
-						intValue = intValue + Cast.asInt(scope, var.getStepValue(scope));
-					}
-					break;
-				case IType.FLOAT:
-					double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
-					double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
-					while (floatValue <= maxFloatValue) {
-						solution.put(var.getName(), floatValue);
-						if (solution.size() == variables.size()) {
-							currentExperiment.launchSimulationsWithSolution(solution);
-						} else {
-							testSolutions(scope, solution, index + 1);
-						}
-						floatValue = floatValue + Cast.asFloat(scope, var.getStepValue(scope));
-					}
-					break;
-				case IType.DATE:
-					GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
-					GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
-					while (dateValue.isSmallerThan(maxDateValue, false)) {
-						solution.put(var.getName(), dateValue);
-						if (solution.size() == variables.size()) {
-							currentExperiment.launchSimulationsWithSolution(solution);
-						} else {
-							testSolutions(scope, solution, index + 1);
-						}
-						dateValue = dateValue.plus(Cast.asFloat(scope, var.getStepValue(scope)), ChronoUnit.SECONDS);
-					}
-					break;
-				case IType.POINT:
-					GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
-					GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
-					while (pointValue.smallerThanOrEqualTo(maxPointValue)) {
-						solution.put(var.getName(), pointValue);
-						if (solution.size() == variables.size()) {
-							currentExperiment.launchSimulationsWithSolution(solution);
-						} else {
-							testSolutions(scope, solution, index + 1);
-						}
-						pointValue = pointValue.plus(Cast.asPoint(scope, var.getStepValue(scope)));
-					}
-					break;
-				default:
-					double varValue = Cast.asFloat(scope, var.getMinValue(scope));
-					while (varValue <= Cast.asFloat(scope, var.getMaxValue(scope))) {
-						if (var.getType().id() == IType.INT) {
-							solution.put(var.getName(), (int) varValue);
-						} else if (var.getType().id() == IType.FLOAT) {
-							solution.put(var.getName(), varValue);
-						} else {
-							continue;
-						}
-						if (solution.size() == variables.size()) {
-							currentExperiment.launchSimulationsWithSolution(solution);
-						} else {
-							testSolutions(scope, solution, index + 1);
-						}
-						varValue = varValue + Cast.asFloat(scope, var.getStepValue(scope));
-					}
-			}
-
-		}
-
-	}
 	
+	// ##################### Methods to determine possible values based on exhaustive ######################
+
 	/**
 	 * Return all the possible value of a parameter based on 
 	 * @param scope
