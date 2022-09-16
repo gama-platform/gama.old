@@ -443,5 +443,63 @@ public class Morris {
 		this.mu_star = mu_star;
 		this.sigma = sigma;
 	}
+	
+	public void MorrisAggregation_CSV(final int num_levels, final List<Double> Outputs) {
+		this.mu = null;
+		this.mu_star = null;
+		this.sigma = null;
+			
+		List<Map<String, Double>> MySampleTemp = new ArrayList<>();
+		MySample.forEach(m -> {
+			Map<String, Double> maptmp = new LinkedHashMap<>();
+			IntStream.range(0, ParametersNames.size()).forEach(i -> {
+				Object o = m.get(ParametersNames.get(i));
+				if (Objects.equals(o.toString(), "false")) {
+					maptmp.put(ParametersNames.get(i), 0.0);
+				} else if (Objects.equals(o.toString(), "true")) {
+					maptmp.put(ParametersNames.get(i), 1.0);
+				} else {
+					maptmp.put(ParametersNames.get(i), Double.parseDouble(o.toString()));
+				}
+			});
+			MySampleTemp.add(maptmp);
+		});
+
+		double delta = num_levels / (2.0 * ((double) num_levels - 1));
+		int num_vars = MySampleTemp.get(0).size();
+		int number_of_groups = num_vars;
+		int num_trajectories;
+		int trajectory_size;
+		num_trajectories = Math.round(MySample.size() / (number_of_groups + 1));
+		trajectory_size = Math.round(MySample.size() / num_trajectories);
+		List<Map<String, Double>> elementary_effects =
+				compute_elementary_effects(MySampleTemp, Outputs, trajectory_size, delta);
+		Map<String, List<Double>> elementary = transformListMapToMapList(elementary_effects);
+		Map<String, Double> mu = new LinkedHashMap<>();
+		IntStream.range(0, ParametersNames.size()).forEach(i -> {
+			double val = 0;
+			List<Double> listtmp = elementary.get(ParametersNames.get(i));
+			for (Double aDouble : listtmp) { val = val + aDouble; }
+			mu.put(ParametersNames.get(i), val / listtmp.size());
+		});
+		Map<String, Double> mu_star = new LinkedHashMap<>();
+		IntStream.range(0, ParametersNames.size()).forEach(i -> {
+			double val = 0;
+			List<Double> listtmp = elementary.get(ParametersNames.get(i));
+			for (Double aDouble : listtmp) { val = val + abs(aDouble); }
+			mu_star.put(ParametersNames.get(i), val / listtmp.size());
+		});
+		Map<String, Double> sigma = new LinkedHashMap<>();
+		IntStream.range(0, ParametersNames.size()).forEach(i -> {
+			double val = 0;
+			List<Double> listtmp = elementary.get(ParametersNames.get(i));
+			for (Double aDouble : listtmp) { val = val + pow(aDouble - mu.get(ParametersNames.get(i)), 2); }
+			val = Math.sqrt(val / (listtmp.size() - 1));
+			sigma.put(ParametersNames.get(i), val);
+		});
+		this.mu = mu;
+		this.mu_star = mu_star;
+		this.sigma = sigma;
+	}
 
 }

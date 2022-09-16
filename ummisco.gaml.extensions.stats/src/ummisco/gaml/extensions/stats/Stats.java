@@ -2352,7 +2352,7 @@ public class Stats {
 		String s="";
 		
 		for(String name: OutputsNames) {
-			momo.MorrisAggregation(nb_levels,output.get(name));
+			momo.MorrisAggregation_CSV(nb_levels,output.get(name));
 			s=s+momo.buildResultTxt(name, temp);
 			temp=false;
 		}
