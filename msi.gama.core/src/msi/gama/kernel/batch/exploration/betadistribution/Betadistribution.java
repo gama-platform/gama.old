@@ -18,6 +18,8 @@ public class Betadistribution {
 	double objMin = Double.MAX_VALUE; double objMax = Double.MIN_VALUE;
 	double[] empiricalCDFGranularity;
 	
+	double EPSILON = 10^(-6);
+	
 	/** The parameters */
 	List<Batch> parameters;
 	
@@ -95,12 +97,12 @@ public class Betadistribution {
 	// ----- UTILS ----- //
 	
 	private double[] granularity(int bins, double min, double max) {
-		double[] res = new double[bins];
+		double[] res = new double[bins-1];
 		double incr = (max-min)/bins;
 		res[0] = min + incr;
-		for (int i = 1; i < bins; i++) { res[i] = res[i-1] + incr; }
-		if (res[bins]+incr != max) { 
-			throw GamaRuntimeException.error("The bins does not fit max val: "+(res[bins]+incr)
+		for (int i = 1; i < bins-1; i++) { res[i] = res[i-1] + incr; }
+		if (Math.abs(res[bins-2]+incr - max) > EPSILON) { 
+			throw GamaRuntimeException.error("The bins does not fit max val: "+(res[bins-2]+incr)
 				+" is not the maximum expected value "+max, null);
 		}
 		return res;

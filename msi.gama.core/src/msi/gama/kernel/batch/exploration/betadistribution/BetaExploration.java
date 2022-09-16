@@ -117,7 +117,9 @@ public class BetaExploration extends AExplorationAlgorithm {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public void explore(final IScope scope) {
-		// TODO Auto-generated method stub
+		
+		// == Parameters ==
+		
 		List<Batch> params = currentExperiment.getParametersToExplore().stream()
 				.filter(p -> p.getMinValue(scope) != null && p.getMaxValue(scope) != null).map(p -> p)
 				.collect(Collectors.toList());
@@ -129,7 +131,9 @@ public class BetaExploration extends AExplorationAlgorithm {
 		if (hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
 			sample_size = Cast.asInt(scope, getFacet(ExhaustiveSearch.SAMPLE_SIZE).value(scope));
 		}
-
+		
+		// == Build sample of parameter inputs ==
+		
 		String method = Cast.asString(scope, getFacet(ExhaustiveSearch.METHODS).value(scope));
 		sets = switch (method) {
 			case IKeyword.MORRIS -> {
@@ -149,6 +153,9 @@ public class BetaExploration extends AExplorationAlgorithm {
 			default -> throw GamaRuntimeException.error("Method " + method + " is not known by the Exhaustive method", scope);
 		};
 
+		// == Launch simulations ==
+		
+		currentExperiment.setKeepSimulations(false);
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(sets);
 		} else {
