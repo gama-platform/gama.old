@@ -14,7 +14,7 @@ import "../../Tutorials/Predator Prey/models/Model 13.gaml"
  * Change a little bit the behavior of the world agent to fit exploration requirements
  */
 global {
-	bool is_batch <- true;
+
 	int max_step <- 0;
 	
 	reflex save_result when: (nb_preys > 0) and (nb_predators > 0){ } // Overload method so we do not have any saved output
@@ -45,7 +45,7 @@ global {
 	reflex prey_extinction when : (nb_preys=0) and (!prey_extinct) {
 		prey_extinct <- true;
 		species_survive <- 0;
-		preys_exctinction <- cycle;
+		preys_extinction <- cycle;
 	}
 	
 	reflex predators_extinction when : (nb_predators=0) and (!predators_extinct) {
@@ -54,16 +54,16 @@ global {
 		predators_extinction <- cycle;
 	}
 	
-	reflex species_extinction when : ( (nb_predators=0) and (nb_preys=0) and (!species_extinct){
+	reflex species_extinction when : ( (nb_predators=0) and (nb_preys=0) and (!species_extinct) ){
 		species_extinct <- true;
 		species_survive <- 0;
 		cycle_extinction <- cycle;
 	}
 	
-	reflex max_entity when: every(1#cycle) {
-		max_preys <- (max_prey<nb_preys) ? nb_preys : max_preys;
-		max_predatirs <- (max_predatirs<nb_predators) ? nb predators : max_predators;
-	}
+ 	reflex max_entity {
+ 		max_preys <- (max_preys<nb_preys) ? nb_preys : max_preys;
+ 		max_predators <- (max_predators<nb_predators) ? nb_predators : max_predators;
+ 	}
 	
 	// Save input and final state of the simulation into a csv
 	reflex stop_and_save when: (time > 999) {
@@ -271,8 +271,6 @@ experiment Sobol parent: batch_abstract type: batch keep_seed:true until:world.s
 experiment Morris parent: batch_abstract type: batch keep_seed:true until:world.stop_sim() {
 	method morris outputs:["nb_preys","nb_predators"] levels: 4 sample:1 report:"Results/morris.txt" results:"Results/morris_raw.csv";
 }
-
-
 
 
 
