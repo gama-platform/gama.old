@@ -150,12 +150,12 @@ public class ThreadSkill extends Skill {
 		           ISpecies context = agent.getSpecies();
 					
 		           IStatement action = context.getAction("runnable_action");
-		           action.executeOn(agent.getScope());
+		           action.executeOn(agent.getScope().copy("ThreadScope"));
 		      }
 	    	} else {
 	    		 ISpecies context = agent.getSpecies();
 	    		 IStatement action = context.getAction("runnable_action");
-		         action.executeOn(agent.getScope());
+		         action.executeOn(agent.getScope().copy("ThreadScope"));
 		         this.stop();
 		      
 	    	}
