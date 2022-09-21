@@ -15,11 +15,7 @@ commit_wiki_files() {
 	git commit -m "Regenerate operators artifacts on wiki  - $(date)"
 	git push
 	
-
-}
- 
-commit_io_website_files() {
-	echo "Trigger to githubio"
+	echo "Trigger documentation website rebuild"
 	curl -H "Accept: application/vnd.github+json" -H "Authorization: token $BOT_TOKEN" --request POST --data '{"event_type": "automated-generation"}' https://api.github.com/repos/gama-platform/gama-platform.github.io/dispatches 
 }
 
@@ -61,6 +57,9 @@ release_181(){
 release_continuous(){	
 	echo "Upload continuous/on-demand release to github"	
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
+
+	echo "Trigger Docker build"
+	curl -H "Accept: application/vnd.github+json" -H "Authorization: token $BOT_TOKEN" --request POST --data '{"event_type": "automated-generation"}' https://api.github.com/repos/gama-platform/gama.docker/dispatches 
 }
 release_monthly(){	
 	echo "Upload monthly release to github"	
@@ -90,7 +89,6 @@ if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then
 	fi
 
 	commit_wiki_files
-	commit_io_website_files
 else
 	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
 		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
@@ -102,7 +100,6 @@ else
 	fi
 	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 		commit_wiki_files
-		commit_io_website_files
 	fi	
 	if  [[ ${MESSAGE} == *"ci 181"* ]] || [[ $MSG == *"ci 181"* ]]; then
 		release_181
