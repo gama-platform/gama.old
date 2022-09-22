@@ -47,7 +47,7 @@ jobs:
 
       - name: Check if should release version
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" || '${{ ::escapeData::github.event.head_commit.message }}' == *"ci release"* ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || $( echo '::escapeData::${{ github.event.head_commit.message }}' ) == *"ci release"* ]]; then
              echo "The action will continue and create a release"
              echo "CONTINUE=true" >> $GITHUB_ENV
           else
