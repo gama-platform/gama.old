@@ -48,7 +48,7 @@ jobs:
       - name: Protect next job's step
         id: cleanGitMessage
         run: |
-          cleaned=(sed -i /'/ / ${{ github.event.head_commit.message }})
+          cleaned=(echo ${{ github.event.head_commit.message }} | sed -e "s/'/ /g")
           echo '::set-output name=cleaned:: $cleaned'
 
       - name: Check if should release version
