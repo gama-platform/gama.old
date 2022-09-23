@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
@@ -208,54 +211,67 @@ public class WorkspacePreferences {
 	 */
 	public static String checkWorkspaceDirectory(final String workspaceLocation, final boolean askCreate,
 			final boolean fromDialog, final boolean cloning) {
-		final File f = new File(workspaceLocation);
-		if (!f.exists() && askCreate) {
+		final Path workspaceDirectoryPath = Paths.get(workspaceLocation);
+		final Path workspaceIdentifierFilePath = Paths.get(workspaceLocation, WORKSPACE_IDENTIFIER);
+		// final File f = new File(workspaceLocation);
+		if (!Files.exists(workspaceDirectoryPath) && askCreate) {
+			// if (!f.exists() && askCreate) {
 			final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
 					workspaceLocation + " does not exist. Would you like to create a new workspace here"
 							+ (cloning ? ", copy the projects of your current workspace into it," : "")
 							+ " and proceeed ?");
 			if (create) {
 				try {
-					f.mkdirs();
-					final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
-					wsDot.createNewFile();
-					final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
-					dotFile.createNewFile();
+					Files.createDirectories(workspaceDirectoryPath);
+					// f.mkdirs();
+					// final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
+					Files.createFile(workspaceIdentifierFilePath);
+					// wsDot.createNewFile();
+					Path dotPath = Paths.get(workspaceLocation, getModelIdentifier());
+					// final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
+					Files.createFile(dotPath);
+					// dotFile.createNewFile();
 				} catch (final RuntimeException | IOException er) {
 					er.printStackTrace();
 					return "Error creating directories, please check folder permissions";
 				}
 			}
-
-			if (!f.exists()) return "The selected directory does not exist";
+			if (!Files.notExists(workspaceDirectoryPath)) return "The selected directory does not exist";
+			// if (!f.exists()) return "The selected directory does not exist";
 			return null;
 		}
 
-		if (!f.canRead()) return "The selected directory is not readable";
+		if (!Files.isReadable(workspaceDirectoryPath)) return "The selected directory is not readable";
+		// if (!f.canRead()) return "The selected directory is not readable";
 
-		if (!f.isDirectory()) return "The selected path is not a directory";
+		if (!Files.isDirectory(workspaceDirectoryPath)) return "The selected path is not a directory";
+		// if (!f.isDirectory()) return "The selected path is not a directory";
 
-		testWorkspaceSanity(f);
+		testWorkspaceSanity(workspaceDirectoryPath);
 
-		final File wsTest = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
+		// final File wsTest = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
 		if (fromDialog) {
-			if (!wsTest.exists()) {
+			if (Files.notExists(workspaceIdentifierFilePath)) {
+				// if (!wsTest.exists()) {
 				final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
-						"New Workspace", "The directory '" + wsTest.getAbsolutePath()
+						"New Workspace", "The directory '" + workspaceIdentifierFilePath.toAbsolutePath()
 								+ "' exists but is not identified as a GAMA workspace. \n\nWould you like to use it anyway ?");
 				if (!create) return "Please select a directory for your workspace";
 				try {
-					f.mkdirs();
-					final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
-					wsDot.createNewFile();
+					Files.createDirectories(workspaceDirectoryPath);
+					// f.mkdirs();
+					// final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
+					Files.createFile(workspaceIdentifierFilePath);
+					// wsDot.createNewFile();
 				} catch (final Exception err) {
 					return "Error creating directories, please check folder permissions";
 				}
 
-				if (!wsTest.exists()) return "The selected directory does not exist";
+				if (Files.notExists(workspaceIdentifierFilePath)) return "The selected directory does not exist";
 				return null;
 			}
-		} else if (!wsTest.exists()) return "The selected directory is not a workspace directory";
+		} else if (Files.notExists(workspaceIdentifierFilePath))
+			return "The selected directory is not a workspace directory";
 		final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
 		if (!dotFile.exists()) {
 			if (fromDialog) {
@@ -292,8 +308,9 @@ public class WorkspacePreferences {
 	 *            the workspace
 	 * @return true, if successful
 	 */
-	public static boolean testWorkspaceSanity(final File workspace) {
+	public static boolean testWorkspaceSanity(final Path workspacePath) {
 		DEBUG.OUT("[GAMA] Checking for workspace sanity");
+		File workspace = workspacePath.toFile();
 		File[] files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
 		if (files == null || files.length == 0) return true;
 		final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));

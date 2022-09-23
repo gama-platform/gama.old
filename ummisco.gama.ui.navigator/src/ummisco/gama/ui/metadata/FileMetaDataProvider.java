@@ -687,7 +687,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	private void startup() {
 		if (started) return;
 		started = true;
-		DEBUG.TIMER("Reading workspace metadata in ", () -> {
+		DEBUG.TIMER(DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			try {
 				ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
 					if (resource.isAccessible()) {
@@ -719,23 +719,25 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) return;
 				final String[] toSave = new String[1];
-				TIMER_WITH_EXCEPTIONS("Saving workspace metadata in ", () -> {
-					getWorkspace().getRoot().accept(resource -> {
 
-						try {
-							if (resource.isAccessible()) {
-								toSave[0] = (String) resource.getSessionProperty(CACHE_KEY);
-								resource.setPersistentProperty(CACHE_KEY, toSave[0]);
-							}
-							return true;
-						} catch (final Exception e) {
-							ERR("Error for resource " + resource.getName());
-							if (toSave[0] != null) { ERR("Trying to save " + toSave[0].length() + " bytes "); }
-							return true;
-						}
+				TIMER_WITH_EXCEPTIONS(
+						DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" saved in", 15, '_'), () -> {
+							getWorkspace().getRoot().accept(resource -> {
 
-					});
-				});
+								try {
+									if (resource.isAccessible()) {
+										toSave[0] = (String) resource.getSessionProperty(CACHE_KEY);
+										resource.setPersistentProperty(CACHE_KEY, toSave[0]);
+									}
+									return true;
+								} catch (final Exception e) {
+									ERR("Error for resource " + resource.getName());
+									if (toSave[0] != null) { ERR("Trying to save " + toSave[0].length() + " bytes "); }
+									return true;
+								}
+
+							});
+						});
 
 			}
 
