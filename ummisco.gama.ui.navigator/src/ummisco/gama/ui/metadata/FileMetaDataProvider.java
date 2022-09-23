@@ -695,9 +695,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					}
 					return true;
 				});
-			} catch (final CoreException e) {
-				// Nothing
-			}
+			} catch (final CoreException e) {}
 		});
 
 		try {
@@ -718,21 +716,21 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			@Override
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) return;
-				final String[] toSave = new String[1];
 
 				TIMER_WITH_EXCEPTIONS(
 						DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" saved in", 15, '_'), () -> {
 							getWorkspace().getRoot().accept(resource -> {
-
+								String toSave = null;
 								try {
+
 									if (resource.isAccessible()) {
-										toSave[0] = (String) resource.getSessionProperty(CACHE_KEY);
-										resource.setPersistentProperty(CACHE_KEY, toSave[0]);
+										toSave = (String) resource.getSessionProperty(CACHE_KEY);
+										resource.setPersistentProperty(CACHE_KEY, toSave);
 									}
 									return true;
 								} catch (final Exception e) {
 									ERR("Error for resource " + resource.getName());
-									if (toSave[0] != null) { ERR("Trying to save " + toSave[0].length() + " bytes "); }
+									if (toSave != null) { ERR("Trying to save " + toSave.length() + " bytes "); }
 									return true;
 								}
 
