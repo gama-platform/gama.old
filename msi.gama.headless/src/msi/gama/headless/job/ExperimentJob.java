@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentJob.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.job;
 
@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -65,38 +64,38 @@ public class ExperimentJob implements IExperimentJob {
 	 * The Enum OutputType.
 	 */
 	public enum OutputType {
-		
+
 		/** The output. */
-		OUTPUT, 
- /** The experiment attribute. */
- EXPERIMENT_ATTRIBUTE, 
- /** The simulation attribute. */
- SIMULATION_ATTRIBUTE
+		OUTPUT,
+		/** The experiment attribute. */
+		EXPERIMENT_ATTRIBUTE,
+		/** The simulation attribute. */
+		SIMULATION_ATTRIBUTE
 	}
 
 	/**
 	 * Variable listeners
 	 */
 	protected ListenedVariable[] listenedVariables;
-	
+
 	/** The parameters. */
 	protected List<Parameter> parameters;
-	
+
 	/** The outputs. */
 	protected List<Output> outputs;
-	
+
 	/** The output file. */
 	protected Writer outputFile;
-	
+
 	/** The source path. */
 	protected String sourcePath;
-	
+
 	/** The experiment name. */
 	public String experimentName;
-	
+
 	/** The model name. */
 	protected String modelName;
-	
+
 	/** The seed. */
 	public double seed;
 	/**
@@ -108,15 +107,38 @@ public class ExperimentJob implements IExperimentJob {
 	 * id of current experiment
 	 */
 	private String experimentID;
-	
+
 	/** The final step. */
 	public long finalStep;
-	
+
 	/** The until cond. */
 	protected String untilCond;
-	
+
 	/** The end condition. */
 	public IExpression endCondition;
+
+	/**
+	 * Instantiates a new experiment job.
+	 *
+	 * @param clone
+	 *            the clone
+	 */
+	public ExperimentJob(final ExperimentJob clone) {
+		untilCond = "";
+		this.experimentID = clone.experimentID != null ? clone.experimentID : "" + ExperimentJob.generateID();
+		this.sourcePath = clone.sourcePath;
+		this.finalStep = clone.finalStep;
+		this.experimentName = clone.experimentName;
+		this.modelName = clone.modelName;
+		this.parameters = new ArrayList<>();
+		this.outputs = new ArrayList<>();
+		this.listenedVariables = clone.listenedVariables;
+		this.step = clone.step;
+		this.seed = clone.seed;
+		for (final Parameter p : clone.parameters) { this.addParameter(new Parameter(p)); }
+		for (final Output o : clone.outputs) { this.addOutput(new Output(o)); }
+
+	}
 
 	/**
 	 * simulator to be loaded
@@ -128,18 +150,14 @@ public class ExperimentJob implements IExperimentJob {
 	 *
 	 * @return the simulation
 	 */
-	public IRichExperiment getSimulation() {
-		return simulator;
-	}
+	public IRichExperiment getSimulation() { return simulator; }
 
 	/**
 	 * Gets the source path.
 	 *
 	 * @return the source path
 	 */
-	public String getSourcePath() {
-		return sourcePath;
-	}
+	public String getSourcePath() { return sourcePath; }
 
 	/**
 	 * Generate ID.
@@ -153,11 +171,10 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * Sets the buffered writer.
 	 *
-	 * @param w the new buffered writer
+	 * @param w
+	 *            the new buffered writer
 	 */
-	public void setBufferedWriter(final Writer w) {
-		this.outputFile = w;
-	}
+	public void setBufferedWriter(final Writer w) { this.outputFile = w; }
 
 	@Override
 	public void addParameter(final Parameter p) {
@@ -172,65 +189,43 @@ public class ExperimentJob implements IExperimentJob {
 
 	/**
 	 * Instantiates a new experiment job.
-	 */
-	private ExperimentJob() {
-		initialize();
-
-	}
-
-	/**
-	 * Instantiates a new experiment job.
 	 *
-	 * @param clone the clone
-	 */
-	public ExperimentJob(final ExperimentJob clone) {
-		this();
-		this.experimentID = clone.experimentID != null ? clone.experimentID : "" + ExperimentJob.generateID();
-		this.sourcePath = clone.sourcePath;
-		this.finalStep = clone.finalStep;
-		this.experimentName = clone.experimentName;
-		this.modelName = clone.modelName;
-		this.parameters = new ArrayList<>();
-		this.outputs = new ArrayList<>();
-		this.listenedVariables = clone.listenedVariables;
-		this.step = clone.step;
-		this.seed = clone.seed;
-		for (final Parameter p : clone.parameters) {
-			this.addParameter(new Parameter(p));
-		}
-		for (final Output o : clone.outputs) {
-			this.addOutput(new Output(o));
-		}
-
-	}
-
-	/**
-	 * Instantiates a new experiment job.
-	 *
-	 * @param sourcePath the source path
-	 * @param exp the exp
-	 * @param max the max
-	 * @param untilCond the until cond
-	 * @param s the s
+	 * @param sourcePath
+	 *            the source path
+	 * @param exp
+	 *            the exp
+	 * @param max
+	 *            the max
+	 * @param untilCond
+	 *            the until cond
+	 * @param s
+	 *            the s
 	 */
 	public ExperimentJob(final String sourcePath, final String exp, final long max, final String untilCond,
 			final double s) {
-		this(sourcePath, new Long(ExperimentJob.generateID()).toString(), exp, max, untilCond, s);
+		this(sourcePath, Long.toString(ExperimentJob.generateID()), exp, max, untilCond, s);
 	}
 
 	/**
 	 * Instantiates a new experiment job.
 	 *
-	 * @param sourcePath the source path
-	 * @param expId the exp id
-	 * @param exp the exp
-	 * @param max the max
-	 * @param untilCond the until cond
-	 * @param s the s
+	 * @param sourcePath
+	 *            the source path
+	 * @param expId
+	 *            the exp id
+	 * @param exp
+	 *            the exp
+	 * @param max
+	 *            the max
+	 * @param untilCond
+	 *            the until cond
+	 * @param s
+	 *            the s
 	 */
 	public ExperimentJob(final String sourcePath, final String expId, final String exp, final long max,
 			final String untilCond, final double s) {
-		this();
+		parameters = new ArrayList<>();
+		outputs = new ArrayList<>();
 		this.experimentID = expId;
 		this.sourcePath = sourcePath;
 		this.finalStep = max;
@@ -278,11 +273,16 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * Load.
 	 *
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
+	 * @throws InstantiationException
+	 *             the instantiation exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
+	 * @throws ClassNotFoundException
+	 *             the class not found exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
 			GamaHeadlessException {
@@ -334,8 +334,14 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void dispose() {
-		if (this.simulator != null) { this.simulator.dispose(); }
-		if (this.outputFile != null) { this.outputFile.close(); }
+		if (this.simulator != null) {
+			this.simulator.dispose();
+			this.simulator = null;
+		}
+		if (this.outputFile != null) {
+			this.outputFile.close();
+			this.outputFile = null;
+		}
 	}
 
 	@Override
@@ -345,24 +351,18 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	@Override
-	public String getExperimentID() {
-		return experimentID;
-	}
+	public String getExperimentID() { return experimentID; }
 
 	/**
 	 * Sets the id of current experiment.
 	 *
-	 * @param experimentID the new id of current experiment
+	 * @param experimentID
+	 *            the new id of current experiment
 	 */
-	public void setExperimentID(final String experimentID) {
-		this.experimentID = experimentID;
-	}
+	public void setExperimentID(final String experimentID) { this.experimentID = experimentID; }
 
-	
-	public ListenedVariable[] getListenedVariables() {
-		return listenedVariables;
-	}
-	
+	public ListenedVariable[] getListenedVariables() { return listenedVariables; }
+
 	/**
 	 * Export variables.
 	 */
@@ -387,30 +387,18 @@ public class ExperimentJob implements IExperimentJob {
 
 	}
 
-	/**
-	 * Initialize.
-	 */
-	public void initialize() {
-		parameters = new Vector<>();
-		outputs = new Vector<>();
-		if (simulator != null) {
-			simulator.dispose();
-			simulator = null;
-		}
-		untilCond = "";
-	}
-
 	@Override
-	public long getStep() {
-		return step;
-	}
+	public long getStep() { return step; }
 
 	/**
 	 * Write image in file.
 	 *
-	 * @param img the img
-	 * @param name the name
-	 * @param outputPath the output path
+	 * @param img
+	 *            the img
+	 * @param name
+	 *            the name
+	 * @param outputPath
+	 *            the output path
 	 * @return the display 2 D
 	 */
 	protected Display2D writeImageInFile(final BufferedImage img, final String name, final String outputPath) {
@@ -433,14 +421,10 @@ public class ExperimentJob implements IExperimentJob {
 	}
 
 	@Override
-	public void setSeed(final double s) {
-		this.seed = s;
-	}
+	public void setSeed(final double s) { this.seed = s; }
 
 	@Override
-	public double getSeed() {
-		return this.seed;
-	}
+	public double getSeed() { return this.seed; }
 
 	@Override
 	public Element asXMLDocument(final Document doc) {
@@ -455,11 +439,11 @@ public class ExperimentJob implements IExperimentJob {
 		simulation.setAttributeNode(attr3);
 
 		final Attr attr2 = doc.createAttribute(XmlTAG.FINAL_STEP_TAG);
-		attr2.setValue(new Long(this.finalStep).toString());
+		attr2.setValue(Long.toString(this.finalStep));
 		simulation.setAttributeNode(attr2);
 
 		final Attr attr5 = doc.createAttribute(XmlTAG.SEED_TAG);
-		attr5.setValue(new Float(this.seed).toString());
+		attr5.setValue(Float.toString((float) this.seed));
 		simulation.setAttributeNode(attr5);
 
 		final Attr attr4 = doc.createAttribute(XmlTAG.EXPERIMENT_NAME_TAG);
@@ -506,7 +490,7 @@ public class ExperimentJob implements IExperimentJob {
 			aOutput.setAttributeNode(o1);
 
 			final Attr o2 = doc.createAttribute(XmlTAG.FRAMERATE_TAG);
-			o2.setValue(new Integer(o.getFrameRate()).toString());
+			o2.setValue(Integer.toString(o.getFrameRate()));
 			aOutput.setAttributeNode(o2);
 		}
 		return simulation;
@@ -515,9 +499,12 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * Load and build job.
 	 *
-	 * @param expD the exp D
-	 * @param path the path
-	 * @param model the model
+	 * @param expD
+	 *            the exp D
+	 * @param path
+	 *            the path
+	 * @param model
+	 *            the model
 	 * @return the experiment job
 	 */
 	public static ExperimentJob loadAndBuildJob(final ExperimentDescription expD, final String path,
@@ -525,18 +512,14 @@ public class ExperimentJob implements IExperimentJob {
 		final String expName = expD.getName();
 		final IExpressionDescription seedDescription = expD.getFacet(IKeyword.SEED);
 		double mseed = 0.0;
-		if (seedDescription != null) {
-			mseed = Double.valueOf(seedDescription.getExpression().literalValue()).doubleValue();
-		}
+		if (seedDescription != null) { mseed = Double.parseDouble(seedDescription.getExpression().literalValue()); }
 		final IDescription d = expD.getChildWithKeyword(IKeyword.OUTPUT);
 		final ExperimentJob expJob =
-				new ExperimentJob(path, new Long(ExperimentJob.generateID()).toString(), expName, 0, "", mseed);
+				new ExperimentJob(path, Long.toString(ExperimentJob.generateID()), expName, 0, "", mseed);
 
 		if (d != null) {
 			final Iterable<IDescription> monitors = d.getChildrenWithKeyword(IKeyword.MONITOR);
-			for (final IDescription moni : monitors) {
-				expJob.addOutput(Output.loadAndBuildOutput(moni));
-			}
+			for (final IDescription moni : monitors) { expJob.addOutput(Output.loadAndBuildOutput(moni)); }
 
 			final Iterable<IDescription> displays = d.getChildrenWithKeyword(IKeyword.DISPLAY);
 			for (final IDescription disp : displays) {
@@ -563,38 +546,32 @@ public class ExperimentJob implements IExperimentJob {
 	/**
 	 * Gets the parameter.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return the parameter
 	 */
 	private Parameter getParameter(final String name) {
-		for (final Parameter p : parameters) {
-			if (p.getName().equals(name)) return p;
-		}
+		for (final Parameter p : parameters) { if (p.getName().equals(name)) return p; }
 		return null;
 	}
 
 	@Override
-	public List<Parameter> getParameters() {
-		return this.parameters;
-	}
+	public List<Parameter> getParameters() { return this.parameters; }
 
 	/**
 	 * Gets the output.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return the output
 	 */
 	private Output getOutput(final String name) {
-		for (final Output p : outputs) {
-			if (p.getName().equals(name)) return p;
-		}
+		for (final Output p : outputs) { if (p.getName().equals(name)) return p; }
 		return null;
 	}
 
 	@Override
-	public List<Output> getOutputs() {
-		return this.outputs;
-	}
+	public List<Output> getOutputs() { return this.outputs; }
 
 	@Override
 	public void setParameterValueOf(final String name, final Object val) {
@@ -614,9 +591,7 @@ public class ExperimentJob implements IExperimentJob {
 	@Override
 	public List<String> getOutputNames() {
 		final List<String> res = new ArrayList<>();
-		for (final Output o : outputs) {
-			res.add(o.getName());
-		}
+		for (final Output o : outputs) { res.add(o.getName()); }
 		return res;
 	}
 
@@ -625,18 +600,12 @@ public class ExperimentJob implements IExperimentJob {
 	 *
 	 * @return the final step
 	 */
-	public long getFinalStep() {
-		return finalStep;
-	}
+	public long getFinalStep() { return finalStep; }
 
 	@Override
-	public void setFinalStep(final long finalStep) {
-		this.finalStep = finalStep;
-	}
+	public void setFinalStep(final long finalStep) { this.finalStep = finalStep; }
 
 	@Override
-	public String getModelName() {
-		return this.modelName;
-	}
+	public String getModelName() { return this.modelName; }
 
 }

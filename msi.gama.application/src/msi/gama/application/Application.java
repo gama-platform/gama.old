@@ -48,6 +48,7 @@ import msi.gama.application.workspace.PickWorkspaceDialog;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
@@ -73,17 +74,6 @@ public class Application implements IApplication {
 	public static void ClearWorkspace(final boolean clear) {
 		getInternalPreferenceStore().setValue(CLEAR_WORKSPACE, Boolean.toString(clear));
 		saveInternalPrefs();
-	}
-
-	/**
-	 * Checks if is clear workspace.
-	 *
-	 * @return true, if successful
-	 */
-	public static boolean IsClearWorkspace() {
-		final boolean result = getInternalPreferenceStore().getBoolean(CLEAR_WORKSPACE);
-		DEBUG.OUT("Value of clearWorkspace pref: " + result);
-		return result;
 	}
 
 	/**
@@ -115,35 +105,31 @@ public class Application implements IApplication {
 		@Override
 		public void catchUp(final Display display) {
 			if (filesToOpen.isEmpty()) return;
-
 			final String[] filePaths = filesToOpen.toArray(new String[filesToOpen.size()]);
 			filesToOpen.clear();
-
 			for (final String path : filePaths) { WorkspaceModelsManager.instance.openModelPassedAsArgument(path); }
 		}
 	}
 
 	/**
 	 * Creates the processor.
+	 *
+	 * @param display2
 	 */
-	public static void createProcessor() {
-		DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
+	public static void createProcessor(final Display display) {
+		// DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
 		System.setProperty("swt.autoScale", "integer"); // cf DPIUtil
-
-		final Display display = Display.getDefault();
-
-		DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"),
-				false);
+		// DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"),
+		// false);
 		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
-		DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
-
+		// DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
 		if (display == null) return;
 		processor = new OpenDocumentEventProcessor(display);
 	}
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-
+		FLAGS.load();
 		setDefaultUncaughtExceptionHandler((t, e) -> {
 			if (e instanceof OutOfMemoryError) {
 				final boolean close = openConfirm(null, "Out of memory",
@@ -155,40 +141,28 @@ public class Application implements IApplication {
 		});
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion("1.8.2");
-		// DEBUG.OUT(System.getProperties());
-		createProcessor();
-		final Object check = checkWorkspace();
-		if (EXIT_OK.equals(check)) return EXIT_OK;
-		Display display = null;
-		try {
-			display = PlatformUI.createDisplay();
-			checkWorkbenchXMI();
-
+		if (!EXIT_OK.equals(checkWorkspace())) {
+			Display display = null;
 			try {
-				final int returnCode = Workbench.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
-				if (returnCode == RETURN_RESTART) return EXIT_RESTART;
-			} catch (Throwable t) {
-				DEBUG.OUT("Error in application: " + t.getMessage());
+				display = PlatformUI.createDisplay();
+				createProcessor(display);
+				if (getInternalPreferenceStore().getBoolean(CLEAR_WORKSPACE)) {
+					setProperty(CLEAR_PERSISTED_STATE, "true");
+					ClearWorkspace(false);
+				}
+				try {
+					final int returnCode = Workbench.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+					if (returnCode == RETURN_RESTART) return EXIT_RESTART;
+				} catch (Throwable t) {
+					DEBUG.ERR("Error in application", t);
+				}
+			} finally {
+				if (display != null) { display.dispose(); }
+				final Location instanceLoc = Platform.getInstanceLocation();
+				if (instanceLoc != null) { instanceLoc.release(); }
 			}
-
-			return EXIT_OK;
-		} finally {
-			if (display != null) { display.dispose(); }
-			final Location instanceLoc = Platform.getInstanceLocation();
-			if (instanceLoc != null) { instanceLoc.release(); }
 		}
-
-	}
-
-	/**
-	 * Check workbench XMI.
-	 */
-	private void checkWorkbenchXMI() {
-		final boolean removeWorkbenchXMI = IsClearWorkspace();
-		if (removeWorkbenchXMI) {
-			setProperty(CLEAR_PERSISTED_STATE, "true");
-			ClearWorkspace(false);
-		}
+		return EXIT_OK;
 
 	}
 

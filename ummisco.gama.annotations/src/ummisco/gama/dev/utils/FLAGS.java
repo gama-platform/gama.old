@@ -21,7 +21,7 @@ package ummisco.gama.dev.utils;
  *
  *
  *
- * DEFAULTS: -Denable_logging=true -Duse_old_animator=true -Duse_old_sync_strategy=false
+ * DEFAULTS: -Denable_debug=true -Denable_logging=true -Duse_old_animator=true -Duse_old_sync_strategy=false
  * -Duse_global_preference_store=true -Duse_precise_autoscale=false -Dread_only=false -Duse_old_tabs=true
  * -Duse_legacy_drawers=false -Duse_delayed_resize=false -Duse_native_opengl_window=true
  *
@@ -31,9 +31,13 @@ package ummisco.gama.dev.utils;
  */
 public class FLAGS {
 
-	static {
+	public static void load() {
 		DEBUG.OFF();
 	}
+	//
+	// static {
+	//
+	// }
 
 	/**
 	 * Returns the value of a named system property if it is set in the system/VM properties/arguments, and otherwise
@@ -49,7 +53,8 @@ public class FLAGS {
 	private static boolean get(final String name, final boolean def) {
 		String v = System.getProperty(name);
 		if (v == null) return def;
-		// DEBUG.LOG("Reading flag " + name + " with value " + v);
+		// DEBUG.LOG("> FLAG " + name + " with value " + v);
+		System.out.println(DEBUG.PAD("> FLAG: " + name, 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " " + v);
 		return Boolean.parseBoolean(v);
 	}
 

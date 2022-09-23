@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RichExperiment.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * RichExperiment.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.core;
 
@@ -20,18 +20,18 @@ import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * The Class RichExperiment.
  */
 public class RichExperiment extends Experiment implements IRichExperiment {
-	
+
 	/**
 	 * Instantiates a new rich experiment.
 	 *
-	 * @param mdl the mdl
+	 * @param mdl
+	 *            the mdl
 	 */
 	public RichExperiment(final IModel mdl) {
 		super(mdl);
@@ -48,9 +48,9 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 	@Override
 	public RichOutput getRichOutput(final ListenedVariable v) {
 		final String parameterName = v.getName();
-		if (currentSimulation.dead()) return null;
+		if (getSimulation() == null || getSimulation().dead()) return null;
 		final IOutput output =
-				((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
+				((AbstractOutputManager) getSimulation().getOutputManager()).getOutputWithOriginalName(parameterName);
 		if (output == null)
 			throw GamaRuntimeException.error("Output unresolved", currentExperiment.getExperimentScope());
 		output.update();
@@ -71,8 +71,4 @@ public class RichExperiment extends Experiment implements IRichExperiment {
 		return new RichOutput(parameterName, this.currentStep, val, tpe);
 	}
 
-	@Override
-	public void dispose() {
-		GAMA.closeExperiment(currentExperiment);
-	}
 }
