@@ -27,7 +27,6 @@ import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
-import org.geotools.referencing.CRS;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -42,6 +41,7 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
+
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;
@@ -61,29 +61,29 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+/// TODO AD: WHAT IS THIS CLASS ???
+
 public class SaveHelper {// extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	public static IProjection defineProjection2(final IScope scope, final String gis_code) {
-//		String code = gis_code==null||"".equals(gis_code)?"EPSG:4326":gis_code;
-//		if (crsCode != null) {
-//			final IType type = crsCode.getGamlType();
-//			if (type.id() == IType.INT || type.id() == IType.FLOAT) {
-//				code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
-//			} else if (type.id() == IType.STRING) { code = (String) crsCode.value(scope); }
-//		}
-//		IProjection gis; 
-//		try {
-//			gis = scope.getSimulation().getProjectionFactory().getWorld();
-//			gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
-//		} catch (final FactoryException e1) {
-//			throw GamaRuntimeException.error(
-//					"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ", scope);
-//		}
+		// String code = gis_code==null||"".equals(gis_code)?"EPSG:4326":gis_code;
+		// if (crsCode != null) {
+		// final IType type = crsCode.getGamlType();
+		// if (type.id() == IType.INT || type.id() == IType.FLOAT) {
+		// code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
+		// } else if (type.id() == IType.STRING) { code = (String) crsCode.value(scope); }
+		// }
+		// IProjection gis;
+		// try {
+		// gis = scope.getSimulation().getProjectionFactory().getWorld();
+		// gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
+		// } catch (final FactoryException e1) {
+		// throw GamaRuntimeException.error(
+		// "The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ", scope);
+		// }
 
 		String code = null;
-		if (gis_code != null) {
-			code = gis_code;
-		}
+		if (gis_code != null) { code = gis_code; }
 		IProjection gis;
 		if (code == null) {
 			final boolean useNoSpecific = GamaPreferences.External.LIB_USE_DEFAULT.getValue();
@@ -116,8 +116,7 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 
 		} else {
 			if (code.startsWith("GAMA")) {
-				if ("GAMA".equals(code))
-					return null;
+				if ("GAMA".equals(code)) return null;
 				final String[] cs = code.split("::");
 				if (cs.length == 2) {
 					final Double val = Double.parseDouble(cs[1]);
@@ -141,7 +140,8 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 	/**
 	 * To clean string.
 	 *
-	 * @param o the o
+	 * @param o
+	 *            the o
 	 * @return the string
 	 */
 	public String toCleanString(final Object o) {
@@ -159,22 +159,19 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 	}
 
 	public static String type2(final ITyped var) {
-		switch (var.getGamlType().id()) {
-		case IType.BOOL:
-			return "Boolean";
-		case IType.INT:
-			return "Integer";
-		case IType.FLOAT:
-			return "Double";
-		default:
-			return "String";
-		}
+		return switch (var.getGamlType().id()) {
+			case IType.BOOL -> "Boolean";
+			case IType.INT -> "Integer";
+			case IType.FLOAT -> "Double";
+			default -> "String";
+		};
 	}
 
 	/**
 	 * Gets the geometry type.
 	 *
-	 * @param agents the agents
+	 * @param agents
+	 *            the agents
 	 * @return the geometry type
 	 */
 	public static String getGeometryType(final List<? extends IShape> agents) {
@@ -189,17 +186,13 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 						geomType = Point.class.getSimpleName();
 					} else if (g2.getGeometryN(0).getClass() == LineString.class) {
 						geomType = LineString.class.getSimpleName();
-					} else if (g2.getGeometryN(0).getClass() == Polygon.class)
-						return Polygon.class.getSimpleName();
+					} else if (g2.getGeometryN(0).getClass() == Polygon.class) return Polygon.class.getSimpleName();
 
 				} else {
 					String geomType_tmp = geom.getInnerGeometry().getClass().getSimpleName();
-					if (geom.getInnerGeometry() instanceof Polygon)
-						return geomType_tmp;
+					if (geom.getInnerGeometry() instanceof Polygon) return geomType_tmp;
 					if (!isLine) {
-						if (geom.getInnerGeometry() instanceof LineString) {
-							isLine = true;
-						}
+						if (geom.getInnerGeometry() instanceof LineString) { isLine = true; }
 						geomType = geomType_tmp;
 
 					}
@@ -207,24 +200,21 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 				}
 			}
 		}
-		if ("DynamicLineString".equals(geomType)) {
-			geomType = LineString.class.getSimpleName();
-		}
+		if ("DynamicLineString".equals(geomType)) { geomType = LineString.class.getSimpleName(); }
 		return geomType;
 	}
 
 	/**
 	 * Fixes polygon CWS.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return the geometry
 	 */
 	private static Geometry fixesPolygonCWS(final Geometry g) {
-		if (g instanceof Polygon) {
-			final Polygon p = (Polygon) g;
+		if (g instanceof Polygon p) {
 			final boolean clockwise = Orientation.isCCW(p.getExteriorRing().getCoordinates());
-			if (p.getNumInteriorRing() == 0)
-				return g;
+			if (p.getNumInteriorRing() == 0) return g;
 			boolean change = false;
 			final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
 			final GeometryFactory geomFact = new GeometryFactory();
@@ -241,10 +231,8 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 					holes[i] = hole;
 				}
 			}
-			if (change)
-				return geomFact.createPolygon(p.getExteriorRing(), holes);
-		} else if (g instanceof GeometryCollection) {
-			final GeometryCollection gc = (GeometryCollection) g;
+			if (change) return geomFact.createPolygon(p.getExteriorRing(), holes);
+		} else if (g instanceof GeometryCollection gc) {
 			boolean change = false;
 			final GeometryFactory geomFact = new GeometryFactory();
 			final Geometry[] geometries = new Geometry[gc.getNumGeometries()];
@@ -257,8 +245,7 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 					geometries[i] = gg;
 				}
 			}
-			if (change)
-				return geomFact.createGeometryCollection(geometries);
+			if (change) return geomFact.createGeometryCollection(geometries);
 		}
 		return g;
 	}
@@ -266,24 +253,28 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 	/**
 	 * Builds the feature.
 	 *
-	 * @param scope           the scope
-	 * @param ff              the ff
-	 * @param ag              the ag
-	 * @param gis             the gis
-	 * @param attributeValues the attribute values
+	 * @param scope
+	 *            the scope
+	 * @param ff
+	 *            the ff
+	 * @param ag
+	 *            the ag
+	 * @param gis
+	 *            the gis
+	 * @param attributeValues
+	 *            the attribute values
 	 * @return true, if successful
 	 */
 	public static boolean buildFeature(final IScope scope, final SimpleFeature ff, final IShape ag,
 			final IProjection gis, final Collection<IExpression> attributeValues) {
 		final List<Object> values = new ArrayList<>();
 		// geometry is by convention (in specs) at position 0
-		if (ag.getInnerGeometry() == null)
-			return false;
+		if (ag.getInnerGeometry() == null) return false;
 		Geometry g = null;
 		try {
 			g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
 		} catch (IllegalArgumentException e) {
-//			e.printStackTrace(); 
+			// e.printStackTrace();
 			System.out.println(e.getMessage());
 			g = gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry());
 		}
@@ -339,26 +330,24 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 		final String geomType = getGeometryType(agents);
 		specs.append("geometry:" + geomType);
 		try {
-			final SpeciesDescription species = agents instanceof IPopulation
-					? ((IPopulation) agents).getSpecies().getDescription()
-					: agents.getGamlType().getContentType().getSpecies();
+			final SpeciesDescription species =
+					agents instanceof IPopulation ? ((IPopulation) agents).getSpecies().getDescription()
+							: agents.getGamlType().getContentType().getSpecies();
 			final Map<String, IExpression> attributes = GamaMapFactory.create();
 			// if (species != null) {
-//			if (withFacet != null) {
-//				computeInitsFromWithFacet(scope, withFacet, attributes, species);
-//			} else if (attributesFacet != null) { computeInitsFromAttributesFacet(scope, attributes, species); }
+			// if (withFacet != null) {
+			// computeInitsFromWithFacet(scope, withFacet, attributes, species);
+			// } else if (attributesFacet != null) { computeInitsFromAttributesFacet(scope, attributes, species); }
 
 			for (final String var : species.getAttributeNames()) {
-//				System.out.println(var);
-//				if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false)); }
+				// System.out.println(var);
+				// if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false)); }
 				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var) && filterAttr.contains(var)) {
 					attributes.put(var, species.getVarExpr(var, false));
 				}
 			}
 			for (final String e : attributes.keySet()) {
-				if (e == null) {
-					continue;
-				}
+				if (e == null) { continue; }
 				final IExpression var = attributes.get(e);
 				String name = e.replace("\"", "");
 				name = name.replace("'", "");
@@ -370,8 +359,7 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 			final IProjection proj = defineProjection2(scope, gis_code);
 
 			// AD 11/02/15 Added to allow saving to new directories
-			if (agents == null || agents.isEmpty())
-				return "";
+			if (agents == null || agents.isEmpty()) return "";
 
 			// The name of the type and the name of the feature source shoud now be
 			// the same.
@@ -380,16 +368,14 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 			final DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
 
 			// AD Builds once the list of agent attributes to evaluate
-			final Collection<IExpression> attributeValues = attributes == null ? Collections.EMPTY_LIST
-					: attributes.values();
+			final Collection<IExpression> attributeValues =
+					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			int i = 0;
 			for (final IShape ag : agents) {
 				final SimpleFeature ff = builder.buildFeature(i + "");
 				i++;
 				final boolean ok = buildFeature(scope, ff, ag, proj, attributeValues);
-				if (!ok) {
-					continue;
-				}
+				if (!ok) { continue; }
 				featureCollection.add(ff);
 			}
 
@@ -406,7 +392,8 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 	/**
 	 * Geometry collection to simple management.
 	 *
-	 * @param gg the gg
+	 * @param gg
+	 *            the gg
 	 * @return the geometry
 	 */
 	private static Geometry geometryCollectionToSimpleManagement(final Geometry gg) {
@@ -422,38 +409,27 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 					polys.add((Polygon) g);
 				} else if (g instanceof LineString) {
 					lines.add((LineString) g);
-				} else if (g instanceof Point) {
-					points.add((Point) g);
-				}
+				} else if (g instanceof Point) { points.add((Point) g); }
 			}
 			if (!polys.isEmpty()) {
-				if (polys.size() == 1)
-					return polys.get(0);
+				if (polys.size() == 1) return polys.get(0);
 				Polygon[] ps = new Polygon[polys.size()];
-				for (int i = 0; i < ps.length; i++) {
-					ps[i] = polys.get(i);
-				}
+				for (int i = 0; i < ps.length; i++) { ps[i] = polys.get(i); }
 
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(ps);
 			}
 			if (!lines.isEmpty()) {
 
-				if (lines.size() == 1)
-					return lines.get(0);
+				if (lines.size() == 1) return lines.get(0);
 				LineString[] ps = new LineString[lines.size()];
-				for (int i = 0; i < ps.length; i++) {
-					ps[i] = lines.get(i);
-				}
+				for (int i = 0; i < ps.length; i++) { ps[i] = lines.get(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(ps);
 			}
 			if (!points.isEmpty()) {
-				if (points.size() == 1)
-					return points.get(0);
+				if (points.size() == 1) return points.get(0);
 
 				Point[] ps = new Point[points.size()];
-				for (int i = 0; i < ps.length; i++) {
-					ps[i] = points.get(i);
-				}
+				for (int i = 0; i < ps.length; i++) { ps[i] = points.get(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(ps);
 			}
 		}
@@ -463,7 +439,8 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 	/**
 	 * Geometry collection management.
 	 *
-	 * @param gg the gg
+	 * @param gg
+	 *            the gg
 	 * @return the geometry
 	 */
 	private static Geometry geometryCollectionManagement(final Geometry gg) {
@@ -475,36 +452,24 @@ public class SaveHelper {// extends AbstractStatementSequence implements IStatem
 
 			for (int i = 0; i < nb; i++) {
 				final Geometry g = ((GeometryCollection) gg).getGeometryN(i);
-				if (!(g instanceof Polygon)) {
-					isMultiPolygon = false;
-				}
-				if (!(g instanceof LineString)) {
-					isMultiLine = false;
-				}
-				if (!(g instanceof Point)) {
-					isMultiPoint = false;
-				}
+				if (!(g instanceof Polygon)) { isMultiPolygon = false; }
+				if (!(g instanceof LineString)) { isMultiLine = false; }
+				if (!(g instanceof Point)) { isMultiPoint = false; }
 			}
 
 			if (isMultiPolygon) {
 				final Polygon[] polygons = new Polygon[nb];
-				for (int i = 0; i < nb; i++) {
-					polygons[i] = (Polygon) ((GeometryCollection) gg).getGeometryN(i);
-				}
+				for (int i = 0; i < nb; i++) { polygons[i] = (Polygon) ((GeometryCollection) gg).getGeometryN(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polygons);
 			}
 			if (isMultiLine) {
 				final LineString[] lines = new LineString[nb];
-				for (int i = 0; i < nb; i++) {
-					lines[i] = (LineString) ((GeometryCollection) gg).getGeometryN(i);
-				}
+				for (int i = 0; i < nb; i++) { lines[i] = (LineString) ((GeometryCollection) gg).getGeometryN(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
 			}
 			if (isMultiPoint) {
 				final Point[] points = new Point[nb];
-				for (int i = 0; i < nb; i++) {
-					points[i] = (Point) ((GeometryCollection) gg).getGeometryN(i);
-				}
+				for (int i = 0; i < nb; i++) { points[i] = (Point) ((GeometryCollection) gg).getGeometryN(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(points);
 			}
 		}

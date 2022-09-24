@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentationPlanFactory.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentationPlanFactory.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.script;
 
@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
 
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.IExperimentJob;
-import msi.gama.headless.job.JobPlan;
+import msi.gama.headless.job.JobListFactory;
 import msi.gama.headless.xml.XmlTAG;
 
 /**
@@ -43,41 +43,47 @@ public class ExperimentationPlanFactory {
 
 	/** The default headless directory in workspace. */
 	public static String DEFAULT_HEADLESS_DIRECTORY_IN_WORKSPACE = ".headless";
-	
+
 	/** The default model directory in workspace. */
 	public static String DEFAULT_MODEL_DIRECTORY_IN_WORKSPACE = "models";
-	
+
 	/** The default seed. */
 	public static long DEFAULT_SEED = 1l;
-	
+
 	/** The default final step. */
 	public static long DEFAULT_FINAL_STEP = 1000;
 
 	/**
 	 * Analyse workspace.
 	 *
-	 * @param directoryPath the directory path
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws ParserConfigurationException the parser configuration exception
-	 * @throws TransformerException the transformer exception
+	 * @param directoryPath
+	 *            the directory path
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws TransformerException
+	 *             the transformer exception
 	 */
 	public static void analyseWorkspace(final String directoryPath)
 			throws IOException, ParserConfigurationException, TransformerException {
 		final ArrayList<String> modelFileNames =
 				readDirectory(directoryPath + "./" + DEFAULT_MODEL_DIRECTORY_IN_WORKSPACE);
-		for (final String nm : modelFileNames) {
-			analyseModelInWorkspace(new File(nm));
-		}
+		for (final String nm : modelFileNames) { analyseModelInWorkspace(new File(nm)); }
 
 	}
 
 	/**
 	 * Analyse model in workspace.
 	 *
-	 * @param modelFile the model file
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws ParserConfigurationException the parser configuration exception
-	 * @throws TransformerException the transformer exception
+	 * @param modelFile
+	 *            the model file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws TransformerException
+	 *             the transformer exception
 	 */
 	public static void analyseModelInWorkspace(final File modelFile)
 			throws IOException, ParserConfigurationException, TransformerException {
@@ -125,61 +131,66 @@ public class ExperimentationPlanFactory {
 	/**
 	 * Analyse model.
 	 *
-	 * @param modelFileName the model file name
-	 * @param output the output
-	 * @param err the err
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws TransformerException the transformer exception
+	 * @param modelFileName
+	 *            the model file name
+	 * @param output
+	 *            the output
+	 * @param err
+	 *            the err
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws TransformerException
+	 *             the transformer exception
 	 */
 	public static void analyseModel(final String modelFileName, final OutputStreamWriter output,
 			final OutputStreamWriter err) throws IOException, TransformerException {
-		final JobPlan jb = new JobPlan();
 		try {
-			jb.loadModelAndCompileJob(modelFileName);
+			final long[] seeds = { DEFAULT_SEED };
+			final List<IExperimentJob> jobs = JobListFactory.constructAllJobs(modelFileName, seeds, DEFAULT_FINAL_STEP);
+			Document dd;
+			try {
+				dd = buildXmlDocument(jobs);
+			} catch (final ParserConfigurationException e) {
+				err.write("Error building xml: " + modelFileName);
+				return;
+			}
+			final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer;
+			transformer = transformerFactory.newTransformer();
+			final DOMSource source = new DOMSource(dd);
+			final StreamResult result = new StreamResult(output);
+			transformer.transform(source, result);
 		} catch (final Exception e) {
 			err.write("Error building plan: " + modelFileName);
 		}
-		final long[] seeds = { DEFAULT_SEED };
-		final List<IExperimentJob> jobs = jb.constructAllJobs(seeds, DEFAULT_FINAL_STEP);
-		Document dd;
-		try {
-			dd = buildXmlDocument(jobs);
-		} catch (final ParserConfigurationException e) {
-			err.write("Error building xml: " + modelFileName);
-			return;
-		}
-		final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer;
-		transformer = transformerFactory.newTransformer();
-		final DOMSource source = new DOMSource(dd);
-		final StreamResult result = new StreamResult(output);
-		transformer.transform(source, result);
 
 	}
 
 	/**
 	 * Builds the experiment.
 	 *
-	 * @param modelFileName the model file name
+	 * @param modelFileName
+	 *            the model file name
 	 * @return the list
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
 	public static List<IExperimentJob> buildExperiment(final String modelFileName)
 			throws IOException, GamaHeadlessException {
-		final JobPlan jb = new JobPlan();
-		jb.loadModelAndCompileJob(modelFileName);
 		final long[] seeds = { DEFAULT_SEED };
-		final List<IExperimentJob> jobs = jb.constructAllJobs(seeds, DEFAULT_FINAL_STEP);
-		return jobs;
+		return JobListFactory.constructAllJobs(modelFileName, seeds, DEFAULT_FINAL_STEP);
 	}
 
 	/**
 	 * Builds the xml document.
 	 *
-	 * @param jobs the jobs
+	 * @param jobs
+	 *            the jobs
 	 * @return the document
-	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
 	 */
 	public static Document buildXmlDocument(final List<IExperimentJob> jobs) throws ParserConfigurationException {
 		final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -199,9 +210,11 @@ public class ExperimentationPlanFactory {
 	/**
 	 * Builds the xml document for model library.
 	 *
-	 * @param jobs the jobs
+	 * @param jobs
+	 *            the jobs
 	 * @return the document
-	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
 	 */
 	public static Document buildXmlDocumentForModelLibrary(final List<IExperimentJob> jobs)
 			throws ParserConfigurationException {
@@ -241,7 +254,8 @@ public class ExperimentationPlanFactory {
 	/**
 	 * Read directory.
 	 *
-	 * @param dir the dir
+	 * @param dir
+	 *            the dir
 	 * @return the array list
 	 */
 	public static ArrayList<String> readDirectory(final String dir) {
@@ -257,9 +271,7 @@ public class ExperimentationPlanFactory {
 					listFiles.addAll(newList);
 				}
 			}
-		} else {
-			if ("gaml".equals(getFileExtension(rep.getAbsolutePath()))) { listFiles.add(rep.getAbsolutePath()); }
-		}
+		} else if ("gaml".equals(getFileExtension(rep.getAbsolutePath()))) { listFiles.add(rep.getAbsolutePath()); }
 
 		return listFiles;
 	}
@@ -267,7 +279,8 @@ public class ExperimentationPlanFactory {
 	/**
 	 * Gets the file extension.
 	 *
-	 * @param fileName the file name
+	 * @param fileName
+	 *            the file name
 	 * @return the file extension
 	 */
 	public static String getFileExtension(final String fileName) {
