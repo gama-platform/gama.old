@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.headless.runtime;
 
+import static java.lang.Integer.parseInt;
+import static msi.gama.headless.runtime.SimulationRuntime.DEFAULT_NB_THREADS;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -187,7 +190,7 @@ public class Application implements IApplication {
 	 *            the apply
 	 * @return true, if successful
 	 */
-	private boolean checkParameters(final List<String> args, final boolean apply) {
+	private boolean checkParameters(final List<String> args) {
 
 		int size = args.size();
 		boolean mustContainInFile = true;
@@ -197,47 +200,34 @@ public class Application implements IApplication {
 		// ========================
 		if (args.contains(VERBOSE_PARAMETER)) {
 			size = size - 1;
-			if (apply) {
-				this.verbose = true;
-				DEBUG.ON();
-				DEBUG.LOG("Log active", true);
-			}
+			this.verbose = true;
+			DEBUG.ON();
+			DEBUG.LOG("Log active", true);
 		}
 
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
-
-			// Change value only if function should apply parameter
-			this.consoleMode = apply;
+			this.consoleMode = true;
 		}
 		if (args.contains(TUNNELING_PARAMETER)) {
 			size = size - 1;
 			mustContainOutFolder = false;
-
-			// Change value only if function should apply parameter
-			this.tunnelingMode = apply;
+			this.tunnelingMode = true;
 		}
 		if (args.contains(SOCKET_PARAMETER)) {
 			size = size - 2;
 			mustContainOutFolder = mustContainInFile = false;
-
-			// Change value only if function should apply parameter
-			this.socket = apply ? Integer.parseInt(after(args, SOCKET_PARAMETER)) : -1;
+			this.socket = Integer.parseInt(after(args, SOCKET_PARAMETER));
 		}
 		if (args.contains(SSOCKET_PARAMETER)) {
 			size = size - 2;
 			mustContainOutFolder = mustContainInFile = false;
-
-			// Change value only if function should apply parameter
-			this.socket = apply ? Integer.parseInt(after(args, SSOCKET_PARAMETER)) : -1;
+			this.socket = Integer.parseInt(after(args, SSOCKET_PARAMETER));
 		}
 		if (args.contains(THREAD_PARAMETER)) {
 			size = size - 2;
-
-			// Change value only if function should apply parameter
-			processorQueue.setNumberOfThreads(
-					apply ? Integer.parseInt(after(args, THREAD_PARAMETER)) : SimulationRuntime.DEFAULT_NB_THREADS);
+			processorQueue.setNumberOfThreads(Integer.parseInt(after(args, THREAD_PARAMETER)));
 		}
 
 		// Commands
@@ -307,7 +297,7 @@ public class Application implements IApplication {
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 
 		// Check and apply parameters
-		if (!checkParameters(args, true)) { System.exit(-1); }
+		if (!checkParameters(args)) { System.exit(-1); }
 
 		// ========================
 		// No GAMA run
@@ -613,13 +603,8 @@ public class Application implements IApplication {
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
 		selectedJob.setBufferedWriter(new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + ".xml"));
-		int numberOfThreads;
-		if (args.contains(THREAD_PARAMETER)) {
-			numberOfThreads = Integer.parseInt(after(args, THREAD_PARAMETER));
-		} else {
-			numberOfThreads = SimulationRuntime.DEFAULT_NB_THREADS;
-		}
-		processorQueue.setNumberOfThreads(numberOfThreads);
+		processorQueue.setNumberOfThreads(
+				args.contains(THREAD_PARAMETER) ? parseInt(after(args, THREAD_PARAMETER)) : DEFAULT_NB_THREADS);
 		processorQueue.execute(selectedJob);
 		processorQueue.shutdown();
 		while (!processorQueue.awaitTermination(100, TimeUnit.MILLISECONDS)) {}

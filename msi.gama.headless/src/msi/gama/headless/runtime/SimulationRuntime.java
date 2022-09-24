@@ -53,13 +53,6 @@ public class SimulationRuntime extends ThreadPoolExecutor implements RejectedExe
 	}
 
 	/**
-	 * Checks if is performing simulation.
-	 *
-	 * @return true, if is performing simulation
-	 */
-	public boolean isPerformingSimulation() { return getActiveCount() > 0; }
-
-	/**
 	 * Rejected execution.
 	 *
 	 * @param r
