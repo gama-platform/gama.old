@@ -45,15 +45,16 @@ jobs:
         env:
           MSG: ${ github.event.head_commit.message }
 
-      - name: Protect next job's step
+      - name: Clean latest git message for next job's step
         id: cleanGitMessage
         run: |
-          cleaned=(echo "${github.event.head_commit.message//$'\n'/}" | tr -d '\n' | sed -e "s/'/ /g")
-          echo '::set-output name=cleaned:: $cleaned'
+          export commitMessage=$( echo ${{ toJSON(github.event.head_commit.message)}} | sed -e "s/'/ /g" | sed -e 's/"/ /g')
+          echo "::set-output name=cleaned:: $commitMessage"
+          echo $commitMessage
 
       - name: Check if should release version
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" || '${{ steps.cleanGitMessage.outputs.cleaned }}' == *"ci release"* ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ steps.cleanGitMessage.outputs.cleaned }}" == *"ci release"* ]]; then
              echo "The action will continue and create a release"
              echo "CONTINUE=true" >> $GITHUB_ENV
           else

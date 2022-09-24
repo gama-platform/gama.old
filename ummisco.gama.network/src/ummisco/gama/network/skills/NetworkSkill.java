@@ -95,6 +95,7 @@ public class NetworkSkill extends MessagingSkill {
 					type = IType.STRING,
 					doc = @doc ("command to execute")) },
 			doc = @doc (
+					value = "Action that executes a command in the OS, as if it is executed from a terminal.",
 					returns = "The error message if any"))
 	public String systemExec(final IScope scope) {
 		// final IAgent agent = scope.getAgent();
@@ -312,15 +313,15 @@ public class NetworkSkill extends MessagingSkill {
 	 * @return the gama message
 	 */
 	@action (
-			name = INetworkSkill.FETCH_MESSAGE)
-	@doc (
+		name = INetworkSkill.FETCH_MESSAGE,
+		doc = @doc (
 			value = "Fetch the first message from the mailbox (and remove it from the mailing box). If the mailbox is empty, it returns a nil message.",
 			examples = { 
 					@example ("message mess <- fetch_message();"), 
 					@example ("loop while:has_more_message(){ \n"
 								+ "	message mess <- fetch_message();\n" 
 								+ "	write message.contents;\n" 
-								+ "}") })
+								+ "}") }))
 	public GamaMessage fetchMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox<GamaMessage> box = getMailbox(scope, agent);
@@ -340,14 +341,14 @@ public class NetworkSkill extends MessagingSkill {
 	 * @return true, if successful
 	 */
 	@action (
-			name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX)
-	@doc (
+		name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX,
+		doc = @doc (
 			value = "Check whether the mailbox contains any message.",
 			examples = { @example ("bool mailbox_contain_messages <- has_more_message();"),
 					@example ("loop while:has_more_message(){ \n" 
 								+ "	message mess <- fetch_message();\n"
 								+ "	write message.contents;\n" 
-								+ "}") })
+								+ "}") }))
 	public boolean hasMoreMessage(final IScope scope) {
 		final IAgent agent = scope.getAgent();
 		final GamaMailbox box = getMailbox(scope, agent);
