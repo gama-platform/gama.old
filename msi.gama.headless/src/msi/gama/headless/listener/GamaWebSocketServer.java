@@ -362,7 +362,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 				ex.printStackTrace();
 			}
 		}
-		((GamaWebSocketServer) server).getDefaultApp().processorQueue.pushSimulation(selectedJob);
+		((GamaWebSocketServer) server).getDefaultApp().processorQueue.execute(selectedJob);
 
 	}
 

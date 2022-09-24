@@ -44,7 +44,7 @@ public class Experiment implements IExperiment {
 	protected ParametersSet params = new ParametersSet();
 
 	/** The model. */
-	protected IModel model = null;
+	final protected IModel model;
 
 	/** The experiment name. */
 	protected String experimentName = null;
@@ -183,7 +183,6 @@ public class Experiment implements IExperiment {
 	public void dispose() {
 		GAMA.closeExperiment(currentExperiment);
 		currentExperiment = null;
-		model = null;
 	}
 
 	@Override

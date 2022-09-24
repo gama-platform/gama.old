@@ -31,7 +31,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-import msi.gaml.descriptions.ModelDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -169,7 +168,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 			// AD ? if (experiment != null) { experiment.dispose(); }
 		}
 
-		for (final String expName : ((ModelDescription) mdl.getDescription()).getExperimentNames()) {
+		for (final String expName : mdl.getDescription().getExperimentNames()) {
 			final IExperimentPlan exp = mdl.getExperiment(expName);
 			if (!exp.isBatch() || !expGUIOnly) {
 				DEBUG.OUT("*********** Run experiment " + exp + " from model: " + mdl.getName());

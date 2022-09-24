@@ -10,79 +10,69 @@
  ********************************************************************************************************/
 package msi.gama.headless.runtime;
 
-import static msi.gama.headless.common.Globals.CONSOLE_OUTPUT_FILENAME;
-import static msi.gama.headless.common.Globals.OUTPUT_PATH;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import msi.gama.headless.job.IExperimentJob;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
- * The Interface SimulationRuntime.
+ * The Class LocalSimulationRuntime.
  */
-public interface SimulationRuntime {
+public class SimulationRuntime extends ThreadPoolExecutor implements RejectedExecutionHandler {
 
 	/** The undefined queue size. */
-	int UNDEFINED_QUEUE_SIZE = 32; // Integer.MAX_VALUE;
+	static int DEFAULT_NB_THREADS = 32;
 
 	/**
-	 * The Class DebugStream.
+	 * Instantiates a new executor based simulation runtime.
 	 */
-	class DebugStream extends FileOutputStream {
-
-		/**
-		 * Instantiates a new debug stream.
-		 *
-		 * @throws FileNotFoundException
-		 *             the file not found exception
-		 */
-		DebugStream(final IExperimentJob si) throws FileNotFoundException {
-			super(OUTPUT_PATH + "/" + CONSOLE_OUTPUT_FILENAME + "-" + si.getExperimentID() + ".txt");
-			DEBUG.REGISTER_LOG_WRITER(this);
-		}
-
-		@Override
-		public void close() throws IOException {
-			super.close();
-			DEBUG.UNREGISTER_LOG_WRITER();
-		}
-
+	public SimulationRuntime() {
+		super(DEFAULT_NB_THREADS, DEFAULT_NB_THREADS, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		setRejectedExecutionHandler(this);
 	}
 
 	/**
-	 * execute Runnable.
+	 * Sets the number of threads.
 	 *
-	 * @param s
-	 *            the s
+	 * @param n
+	 *            the new number of threads
 	 */
-	void execute(final Runnable r);
-
-	/**
-	 * Push simulation.
-	 *
-	 * @param s
-	 *            the s
-	 */
-	void pushSimulation(IExperimentJob s);
+	public void setNumberOfThreads(final int n) {
+		int oldN = getCorePoolSize();
+		if (n == oldN) return;
+		if (n < oldN) {
+			setCorePoolSize(n);
+			setMaximumPoolSize(n);
+		} else {
+			setMaximumPoolSize(n);
+			setCorePoolSize(n);
+		}
+	}
 
 	/**
 	 * Checks if is performing simulation.
 	 *
 	 * @return true, if is performing simulation
 	 */
-	boolean isPerformingSimulation();
+	public boolean isPerformingSimulation() { return getActiveCount() > 0; }
 
 	/**
-	 * Sets the number of threads.
+	 * Rejected execution.
 	 *
-	 * @param numberOfThread
-	 *            the new number of threads
+	 * @param r
+	 *            the r
+	 * @param executor
+	 *            the executor
 	 */
-	void setNumberOfThreads(int numberOfThread);
-
-	int getNumberOfThreads();
+	@Override
+	public void rejectedExecution(final Runnable r, final ThreadPoolExecutor executor) {
+		if (r instanceof IExperimentJob or) {
+			DEBUG.ON();
+			DEBUG.ERR("The execution of  " + or.getExperimentID() + " has been rejected");
+		}
+	}
 
 }
