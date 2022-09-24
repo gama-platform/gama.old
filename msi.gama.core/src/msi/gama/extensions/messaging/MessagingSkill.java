@@ -21,6 +21,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -106,8 +107,10 @@ public class MessagingSkill extends Skill {
 						type = IType.NONE,
 						optional = false,
 						doc = @doc ("The contents of the message, an arbitrary object")
-					) 
-			})
+					) },
+			doc = @doc(
+				value = "Action used to send a message (that can be of any kind of object) to an agent or a server.",
+				examples = {@example("do send to:dest contents:\"This message is sent by \" + name + \" to \" + dest;")}))
 	public GamaMessage primSendMessage(final IScope scope) throws GamaRuntimeException {
 		final IAgent sender = scope.getAgent();
 		Object receiver = scope.getArg("to", IType.NONE);
