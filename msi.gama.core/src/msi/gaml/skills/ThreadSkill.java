@@ -10,7 +10,10 @@
  ********************************************************************************************************/
 package msi.gaml.skills;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.AbstractAgent;
@@ -22,6 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
@@ -42,14 +46,20 @@ import msi.gaml.types.IType;
 		concept = { IConcept.SKILL, IConcept.SYSTEM })
 public class ThreadSkill extends Skill {
 
+	/** The executor. */
+	ScheduledExecutorService executor = Executors.newScheduledThreadPool(GamaExecutorService.THREADS_NUMBER.getValue());
+
 	/** The Constant ACTION_NAME. */
 	private static final String ACTION_NAME = "thread_action";
 
 	/** The Constant START_THREAD. */
-	private static final String START_THREAD = "start_thread";
+	private static final String START_THREAD = "run_thread";
 
 	/** The Constant END_THREAD. */
 	private static final String END_THREAD = "end_thread";
+
+	/** The Constant INTERVAL. */
+	private static final String INTERVAL = "every";
 
 	/** The Constant THREAD_MEMORY. */
 	private static final String THREAD_MEMORY = "%%thread_memory%%";
@@ -65,23 +75,18 @@ public class ThreadSkill extends Skill {
 	@action (
 			name = START_THREAD,
 			args = { @arg (
-					name = "continuous",
-					type = IType.BOOL,
+					name = INTERVAL,
+					type = IType.FLOAT,
 					optional = true,
-					doc = @doc ("if the thread should run continuously or just once")),
-					@arg (
-							name = "interval",
-							type = IType.FLOAT,
-							optional = true,
-							doc = @doc ("Interval of machine time between two executions of the action. Default unit is in seconds, use explicit units to specify another, like 10 #ms")) },
+					doc = @doc ("Interval of machine time between two executions of the action. Default unit is in seconds, use explicit units to specify another, like 10 #ms. If no interval is specified, the action is run once. If the action takes longer than the interval to run ")) },
 
 			doc = @doc (
-					examples = { @example ("do start_thread continuous: true;") },
+					examples = { @example ("do run_thread every: 10#ms;") },
 					returns = "true if the thread was well created and started, false otherwise",
-					value = "Start a new thread that will run the runnable_action action (continuously by default)."))
+					value = "Start a new thread that will run the 'thread_action' action every 10#ms. This interval might not be respected if the action takes more time to run."))
 	public Boolean primStartThread(final IScope scope) throws GamaRuntimeException {
-		Boolean continuous = !scope.hasArg("continuous") ? true : (Boolean) scope.getArg("continuous", IType.BOOL);
-		Double interval = !scope.hasArg("interval") ? 0.1 : scope.getFloatArg("interval");
+		boolean continuous = scope.hasArg(INTERVAL);
+		double interval = continuous ? scope.getFloatArg(INTERVAL) : 0d;
 		ControlSubThread currentThread = (ControlSubThread) scope.getAgent().getAttribute(THREAD_MEMORY);
 		if (currentThread == null) {
 			currentThread = new ControlSubThread(scope.getAgent(), continuous, (int) (interval * 1000));
@@ -154,11 +159,8 @@ public class ThreadSkill extends Skill {
 	 */
 	public class ControlSubThread implements Runnable {
 
-		/** The worker. */
-		private Thread worker;
-
-		/** The running. */
-		private final AtomicBoolean running = new AtomicBoolean(false);
+		/** The sf. */
+		ScheduledFuture sf;
 
 		/** The interval. */
 		private final int interval;
@@ -179,7 +181,7 @@ public class ThreadSkill extends Skill {
 		 * @param sleepInterval
 		 *            the sleep interval
 		 */
-		public ControlSubThread(final IAgent ag, final Boolean cont, final int sleepInterval) {
+		public ControlSubThread(final IAgent ag, final boolean cont, final int sleepInterval) {
 			interval = sleepInterval;
 			agent = ag;
 			continuous = cont;
@@ -189,39 +191,33 @@ public class ThreadSkill extends Skill {
 		 * Start.
 		 */
 		public void start() {
-			worker = new Thread(this);
-			worker.start();
+			if (continuous) {
+				sf = executor.scheduleAtFixedRate(this, 0, interval, TimeUnit.MILLISECONDS);
+			} else {
+				executor.execute(this);
+			}
 		}
 
 		/**
 		 * Stop.
 		 */
 		public void stop() {
-			running.set(false);
-			Thread.currentThread().interrupt();
-
+			if (sf != null && !sf.isCancelled()) { sf.cancel(true); }
 		}
 
 		@Override
 		public void run() {
-			if (continuous) {
-				running.set(true);
-				while (running.get() && !agent.dead() && !agent.getScope().interrupted()) {
-					try {
-						Thread.sleep(interval);
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-						System.out.println("Thread was interrupted, Failed to complete operation");
-					}
-
-					ISpecies context = agent.getSpecies();
-					IStatement action = context.getAction(ACTION_NAME);
-					agent.getScope().copy("ThreadScope").execute(action, agent, null);
-				}
-			} else {
+			if (agent.dead()) {
+				stop();
+				return;
+			}
+			IScope scope = agent.getScope();
+			if (scope != null && !scope.interrupted()) {
 				ISpecies context = agent.getSpecies();
 				IStatement action = context.getAction(ACTION_NAME);
-				agent.getScope().copy("ThreadScope").execute(action, agent, null);
+				scope.copy("ThreadScope").execute(action, agent, null);
+			} else {
+				stop();
 			}
 		}
 

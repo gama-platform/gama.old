@@ -21,7 +21,7 @@ global skills: [thread]{
 		if (create_agents) {
 			create thread_agent number: 2;
 		} else {
-			do start_thread continuous: true interval: 1#s;
+			do run_thread every: 1#s;
 		}	
 	}
 	
@@ -35,7 +35,7 @@ global skills: [thread]{
 
 species thread_agent skills: [thread] {
 	init {
-		do start_thread continuous: true interval: 1#s;
+		do run_thread every: 1#s;
 	}
 	
 	action thread_action {
