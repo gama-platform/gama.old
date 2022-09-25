@@ -28,8 +28,8 @@ import msi.gaml.types.IType;
 
 /**
  * ThreadSkill : This class is intended to define the minimal set of behaviours required from an agent that is able to
- * run an action in a thread. Each member that has a meaning in GAML is annotated with the respective tags (vars, getter, setter, init,
- * action & args)
+ * run an action in a thread. Each member that has a meaning in GAML is annotated with the respective tags (vars,
+ * getter, setter, init, action & args)
  *
  * @author taillandier 30 August 2022
  */
@@ -40,8 +40,9 @@ import msi.gaml.types.IType;
 		concept = { IConcept.SKILL, IConcept.SYSTEM })
 public class ThreadSkill extends Skill {
 
-
+	/** The current thread. */
 	private static ControlSubThread currentThread;
+
 	/**
 	 * primStartThread
 	 *
@@ -52,32 +53,41 @@ public class ThreadSkill extends Skill {
 	 */
 	@action (
 			name = "start_thread",
-					args = { @arg (
-							name = "continuous",
-							type = IType.BOOL,
-							optional = true,
-							doc = @doc ("is the thread should run continuously or just once" )),
-							@arg (
+			args = { @arg (
+					name = "continuous",
+					type = IType.BOOL,
+					optional = true,
+					doc = @doc ("if the thread should run continuously or just once")),
+					@arg (
 							name = "interval",
-							type = IType.INT,
+							type = IType.FLOAT,
 							optional = true,
-							doc = @doc ("interval of time between two executions of the action" )) },
-					
+							doc = @doc ("Interval of machine time between two executions of the action. Default unit is in seconds, use explicit units to specify another, like 10 #ms")) },
+
 			doc = @doc (
 					examples = { @example ("do start_thread continuous: true;") },
 					returns = "true if the thread was well created and started, false otherwise",
 					value = "Start a new thread that will run the runnable_action action (continuously by default)."))
 	public Boolean primStartThread(final IScope scope) throws GamaRuntimeException {
-		Boolean continuous = (!scope.hasArg("continuous")) ? true : (Boolean) scope.getArg("continuous", IType.BOOL);
-		Integer interval = (!scope.hasArg("interval")) ? 100 : (Integer) scope.getIntArg("interval"); 
+		Boolean continuous = !scope.hasArg("continuous") ? true : (Boolean) scope.getArg("continuous", IType.BOOL);
+		Double interval = !scope.hasArg("interval") ? 0.1 : scope.getFloatArg("interval");
 		if (currentThread == null) {
-			currentThread = new ControlSubThread(scope.getAgent(), continuous, interval);
+			currentThread = new ControlSubThread(scope.getAgent(), continuous, (int) (interval * 1000));
 			currentThread.start();
 			return true;
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Prim end thread.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the boolean
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@action (
 			name = "end_thread",
 			doc = @doc (
@@ -86,13 +96,13 @@ public class ThreadSkill extends Skill {
 					value = "End the current thread."))
 	public Boolean primEndThread(final IScope scope) throws GamaRuntimeException {
 		if (currentThread != null) {
-			currentThread.stop(); 
+			currentThread.stop();
 			currentThread = null;
 			return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * primExternalFactorOnRemainingTime
 	 *
@@ -103,67 +113,90 @@ public class ThreadSkill extends Skill {
 	 *             the gama runtime exception
 	 */
 	@action (
-			name = "runnable_action"
-			)
+			name = "runnable_action")
 	public Object primExternalFactorOnRemainingTime(final IScope scope) throws GamaRuntimeException {
 		return null;
 	}
-	
-	
+
+	/**
+	 * The Class ControlSubThread.
+	 */
 	public class ControlSubThread implements Runnable {
 
-	    private Thread worker;
-	    private final AtomicBoolean running = new AtomicBoolean(false);
-	    private int interval;
-	    private IAgent agent;
-	    private Boolean continuous;
+		/** The worker. */
+		private Thread worker;
 
-	    public ControlSubThread(IAgent ag, Boolean cont, int sleepInterval) {
-	        interval = sleepInterval;
-	        agent = ag;
-	        continuous = cont;
-	    }
-	 
-	    public void start() {
-	        worker = new Thread(this);
-	        worker.start();
-	    }
-	 
-	    public void stop() {
-	        running.set(false);
-	        Thread.currentThread().interrupt();
-            
-	    }
+		/** The running. */
+		private final AtomicBoolean running = new AtomicBoolean(false);
 
-	    public void run() { 
-	    	if (continuous) {
-		    	running.set(true);
-		        while (running.get()) {
-		            try { 
-		                Thread.sleep(interval); 
-		            } catch (InterruptedException e){ 
-		                Thread.currentThread().interrupt();
-		                System.out.println(
-		                  "Thread was interrupted, Failed to complete operation");
-		            }
-		           
-		           ISpecies context = agent.getSpecies();
-					
-		           IStatement action = context.getAction("runnable_action");
-		           action.executeOn(agent.getScope().copy("ThreadScope"));
-		      }
-	    	} else {
-	    		 ISpecies context = agent.getSpecies();
-	    		 IStatement action = context.getAction("runnable_action");
-		         action.executeOn(agent.getScope().copy("ThreadScope"));
-		         this.stop();
-		      
-	    	}
-	    } 
-	    
-	    
+		/** The interval. */
+		private final int interval;
+
+		/** The agent. */
+		private final IAgent agent;
+
+		/** The continuous. */
+		private final Boolean continuous;
+
+		/**
+		 * Instantiates a new control sub thread.
+		 *
+		 * @param ag
+		 *            the ag
+		 * @param cont
+		 *            the cont
+		 * @param sleepInterval
+		 *            the sleep interval
+		 */
+		public ControlSubThread(final IAgent ag, final Boolean cont, final int sleepInterval) {
+			interval = sleepInterval;
+			agent = ag;
+			continuous = cont;
+		}
+
+		/**
+		 * Start.
+		 */
+		public void start() {
+			worker = new Thread(this);
+			worker.start();
+		}
+
+		/**
+		 * Stop.
+		 */
+		public void stop() {
+			running.set(false);
+			Thread.currentThread().interrupt();
+
+		}
+
+		@Override
+		public void run() {
+			if (continuous) {
+				running.set(true);
+				while (running.get()) {
+					try {
+						Thread.sleep(interval);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						System.out.println("Thread was interrupted, Failed to complete operation");
+					}
+
+					ISpecies context = agent.getSpecies();
+
+					IStatement action = context.getAction("runnable_action");
+					action.executeOn(agent.getScope().copy("ThreadScope"));
+				}
+			} else {
+				ISpecies context = agent.getSpecies();
+				IStatement action = context.getAction("runnable_action");
+				action.executeOn(agent.getScope().copy("ThreadScope"));
+				this.stop();
+
+			}
+		}
+
 	}
 
-
-	
 }
