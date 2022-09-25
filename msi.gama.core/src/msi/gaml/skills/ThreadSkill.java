@@ -16,7 +16,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -59,7 +58,10 @@ public class ThreadSkill extends Skill {
 	private static final String END_THREAD = "end_thread";
 
 	/** The Constant INTERVAL. */
-	private static final String INTERVAL = "every";
+	private static final String EVERY = "every";
+
+	/** The Constant INTERVAL. */
+	private static final String INTERVAL = "interval";
 
 	/** The Constant THREAD_MEMORY. */
 	private static final String THREAD_MEMORY = "%%thread_memory%%";
@@ -75,24 +77,30 @@ public class ThreadSkill extends Skill {
 	@action (
 			name = START_THREAD,
 			args = { @arg (
-					name = INTERVAL,
+					name = EVERY,
 					type = IType.FLOAT,
 					optional = true,
-					doc = @doc ("Interval of machine time between two executions of the action. Default unit is in seconds, use explicit units to specify another, like 10 #ms. If no interval is specified, the action is run once. If the action takes longer than the interval to run ")) },
+					doc = @doc ("Rate in machine time at which this action is run. Default unit is in seconds, use explicit units to specify another, like 10 #ms. If no rate (and no interval) is specified, the action is run once. If the action takes longer than the interval to run, it it run immediately after the previous execution")),
+					@arg (
+							name = INTERVAL,
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("Interval -- or delay -- between two executions of the action. Default unit is in seconds, use explicit units to specify another, like 10 #ms. If no interval (and no rate) is specified, the action is run once. An interval of 0 will make the action run continuously without delays")) },
 
 			doc = @doc (
 					examples = { @example ("do run_thread every: 10#ms;") },
 					returns = "true if the thread was well created and started, false otherwise",
-					value = "Start a new thread that will run the 'thread_action' action every 10#ms. This interval might not be respected if the action takes more time to run."))
+					value = "Start a new thread that will run the 'thread_action' action every 10#ms. This rate might not be respected if the action takes more time to run."))
 	public Boolean primStartThread(final IScope scope) throws GamaRuntimeException {
-		boolean continuous = scope.hasArg(INTERVAL);
-		double interval = continuous ? scope.getFloatArg(INTERVAL) : 0d;
-		ControlSubThread currentThread = (ControlSubThread) scope.getAgent().getAttribute(THREAD_MEMORY);
-		if (currentThread == null) {
-			currentThread = new ControlSubThread(scope.getAgent(), continuous, (int) (interval * 1000));
-			scope.getAgent().setAttribute(THREAD_MEMORY, currentThread);
-			currentThread.start();
-		}
+		// First we kill every existing task
+		primEndThread(scope);
+		double interval = scope.hasArg(INTERVAL) ? scope.getFloatArg(INTERVAL) : -1d;
+		double rate = scope.hasArg(EVERY) ? scope.getFloatArg(EVERY) : -1d;
+		ControlSubThread currentThread =
+				new ControlSubThread(scope.getAgent(), (int) (interval * 1000), (int) (rate * 1000));
+		scope.getAgent().setAttribute(THREAD_MEMORY, currentThread);
+		currentThread.start();
+
 		return true;
 	}
 
@@ -122,24 +130,6 @@ public class ThreadSkill extends Skill {
 	}
 
 	/**
-	 * Prim die.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @return the object
-	 * @throws GamaRuntimeException
-	 *             the gama runtime exception
-	 */
-	@action (
-			name = "die",
-			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
-	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		primEndThread(scope);
-		((AbstractAgent) scope.getAgent()).primDie(scope);
-		return null;
-	}
-
-	/**
 	 * primExternalFactorOnRemainingTime
 	 *
 	 * @param scope
@@ -163,13 +153,10 @@ public class ThreadSkill extends Skill {
 		ScheduledFuture sf;
 
 		/** The interval. */
-		private final int interval;
+		private final int interval, rate;
 
 		/** The agent. */
 		private final IAgent agent;
-
-		/** The continuous. */
-		private final Boolean continuous;
 
 		/**
 		 * Instantiates a new control sub thread.
@@ -181,18 +168,22 @@ public class ThreadSkill extends Skill {
 		 * @param sleepInterval
 		 *            the sleep interval
 		 */
-		public ControlSubThread(final IAgent ag, final boolean cont, final int sleepInterval) {
-			interval = sleepInterval;
+		public ControlSubThread(final IAgent ag, final int interval, final int rate) {
+			this.interval = interval;
+			this.rate = rate;
 			agent = ag;
-			continuous = cont;
 		}
 
 		/**
 		 * Start.
 		 */
 		public void start() {
-			if (continuous) {
-				sf = executor.scheduleAtFixedRate(this, 0, interval, TimeUnit.MILLISECONDS);
+			if (rate > 0) {
+				sf = executor.scheduleAtFixedRate(this, 0, rate, TimeUnit.MILLISECONDS);
+			} else if (interval > 0) {
+				sf = executor.scheduleWithFixedDelay(this, 0, interval, TimeUnit.MILLISECONDS);
+			} else if (interval == 0) {
+				sf = executor.scheduleWithFixedDelay(this, 0, 1, TimeUnit.NANOSECONDS);
 			} else {
 				executor.execute(this);
 			}
