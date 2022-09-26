@@ -90,7 +90,7 @@ public class ThreadSkill extends Skill {
 			doc = @doc (
 					examples = { @example ("do run_thread every: 10#ms;") },
 					returns = "true if the thread was well created and started, false otherwise",
-					value = "Start a new thread that will run the 'thread_action' action every 10#ms. This rate might not be respected if the action takes more time to run."))
+					value = "Start a new thread that will run the 'thread_action' either once if no facets are defined, of at a fixed rate if 'every:' is defined or with a fixed delay if 'interval:' is defined."))
 	public Boolean primStartThread(final IScope scope) throws GamaRuntimeException {
 		// First we kill every existing task
 		primEndThread(scope);
@@ -139,7 +139,8 @@ public class ThreadSkill extends Skill {
 	 *             the gama runtime exception
 	 */
 	@action (
-			name = ACTION_NAME)
+			name = ACTION_NAME,
+			virtual = true)
 	public Object primExternalFactorOnRemainingTime(final IScope scope) throws GamaRuntimeException {
 		return null;
 	}

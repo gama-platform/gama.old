@@ -515,8 +515,8 @@ public class ModelDescription extends SpeciesDescription {
 		if (!super.finalizeDescription()) return false;
 		if (actions != null) {
 			for (final ActionDescription action : actions.values()) {
-				if (action.isAbstract()
-						&& !action.getUnderlyingElement().eResource().equals(getUnderlyingElement().eResource())) {
+				if (action.isAbstract() && (action.getUnderlyingElement() == null
+						|| !action.getUnderlyingElement().eResource().equals(getUnderlyingElement().eResource()))) {
 					this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()
 							+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
 					return false;
