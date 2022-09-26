@@ -102,7 +102,8 @@ public class PrimitiveDescription extends ActionDescription {
 			documentation = d.value() + Strings.LN + Strings.LN + d.deprecated() + Strings.LN;
 		}
 		// Only arguments
-		return documentation + getArgDocumentation();
+		documentation = documentation + getArgDocumentation();
+		return documentation;
 	}
 
 	@Override

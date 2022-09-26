@@ -33,12 +33,6 @@ import msi.gaml.types.Types;
  */
 public class ActionDescription extends StatementWithChildrenDescription {
 
-	/** The is abstract. */
-	// protected final boolean isAbstract;
-
-	/** The is synthetic. */
-	// protected final boolean isSynthetic;
-
 	/** The Constant NULL_ARGS. */
 	public static final Arguments NULL_ARGS = new Arguments();
 
@@ -121,7 +115,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 		// We compute the list of mandatory args
 
-		if ((formalArgs != null) && !verifyMandatoryArgs(caller, names, formalArgs)) return false;
+		if (formalArgs != null && !verifyMandatoryArgs(caller, names, formalArgs)) return false;
 
 		for (final Facet arg : names.getFacets()) {
 			// A null value indicates a previous compilation error in the
@@ -159,9 +153,12 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	/**
 	 * Verify mandatory args.
 	 *
-	 * @param caller the caller
-	 * @param names the names
-	 * @param formalArgs the formal args
+	 * @param caller
+	 *            the caller
+	 * @param names
+	 *            the names
+	 * @param formalArgs
+	 *            the formal args
 	 * @return true, if successful
 	 */
 	private boolean verifyMandatoryArgs(final IDescription caller, final Arguments names,
@@ -187,8 +184,10 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	/**
 	 * Replace numbered args.
 	 *
-	 * @param names the names
-	 * @param allArgs the all args
+	 * @param names
+	 *            the names
+	 * @param allArgs
+	 *            the all args
 	 */
 	private void replaceNumberedArgs(final Arguments names, final List<String> allArgs) {
 		int index = 0;
@@ -230,7 +229,10 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	}
 
 	@Override
-	public String getDocumentation() { return getArgDocumentation() + super.getDocumentation(); }
+	public String getDocumentation() {
+		String d = super.getDocumentation();
+		return d + getArgDocumentation();
+	}
 
 	/**
 	 * Gets the arg documentation.
