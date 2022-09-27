@@ -48,9 +48,10 @@ import msi.gama.util.file.json.GamaJsonList;
 import msi.gama.util.file.json.Jsoner;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class GamaWebSocketServer extends WebSocketServer {
-
+	
 	private GamaListener _listener;
 
 	public GamaListener get_listener() {
@@ -65,6 +66,9 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	public GamaWebSocketServer(final int port, final Application a, final GamaListener l, final boolean ssl) {
 		super(new InetSocketAddress(port));
+		if(a.verbose) {
+			DEBUG.ON();
+		}
 		if (ssl) {
 			// load up the key store
 			String STORETYPE = "JKS";
@@ -107,7 +111,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 		// broadcast("new connection: " + handshake.getResourceDescriptor()); // This method sends a message to all
 		// clients
 		// connected
-		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+		DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
 		conn.send("" + conn.hashCode());
 		// String path = URI.create(handshake.getResourceDescriptor()).getPath();
 	}
@@ -124,17 +128,17 @@ public class GamaWebSocketServer extends WebSocketServer {
 			_listener.getLaunched_experiments().get("" + conn.hashCode()).clear();
 		}
 		// broadcast(conn + " has left the room!");
-		System.out.println(conn + " has left the room!");
+		DEBUG.OUT(conn + " has left the room!");
 	}
 
 	@Override
 	public void onMessage(final WebSocket socket, final String message) {
 		// server.get_listener().broadcast(message);
 		String socket_id;// = "" + socket.hashCode();
-		// System.out.println(socket + ": " + message);
+		// DEBUG.OUT(socket + ": " + message);
 		final IMap<String, Object> map;
 		try {
-			// System.out.println(socket + ": " + Jsoner.deserialize(message));
+			// DEBUG.OUT(socket + ": " + Jsoner.deserialize(message));
 			final Object o = Jsoner.deserialize(message);
 			if (o instanceof IMap) {
 				map = (IMap<String, Object>) o;
@@ -143,15 +147,15 @@ public class GamaWebSocketServer extends WebSocketServer {
 				map.put(IKeyword.CONTENTS, o);
 			}
 
-			// System.out.println(map.get("type"));
+			// DEBUG.OUT(map.get("type"));
 			String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 			socket_id = map.get("socket_id").toString();
 			final String cmd_type = map.get("type").toString();
 			switch (cmd_type) {
 				case "launch":
-					System.out.println("launch");
-					System.out.println(map.get("model"));
-					System.out.println(map.get("experiment"));
+					DEBUG.OUT("launch");
+					DEBUG.OUT(map.get("model"));
+					DEBUG.OUT(map.get("experiment"));
 					try {
 						launchGamlSimulation(socket,
 								Arrays.asList("-gaml", ".", map.get("experiment").toString(),
@@ -164,7 +168,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					}
 					break;
 				case "play":
-					System.out.println("play " + exp_id);
+					DEBUG.OUT("play " + exp_id);
 					if (get_listener().getExperiment(socket_id, exp_id) != null
 							&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 						get_listener().getExperiment(socket_id, exp_id).controller.userStart();
@@ -173,7 +177,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					}
 					break;
 				case "step":
-					System.out.println("step " + exp_id);
+					DEBUG.OUT("step " + exp_id);
 					if (get_listener().getExperiment(socket_id, exp_id) != null
 							&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 						get_listener().getExperiment(socket_id, exp_id).controller.userStep();
@@ -181,7 +185,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					socket.send(cmd_type);
 					break;
 				case "stepBack":
-					System.out.println("stepBack " + exp_id);
+					DEBUG.OUT("stepBack " + exp_id);
 					if (get_listener().getExperiment(socket_id, exp_id) != null
 							&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 						get_listener().getExperiment(socket_id, exp_id).controller.userStepBack();
@@ -189,7 +193,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					socket.send(cmd_type);
 					break;
 				case "pause":
-					System.out.println("pause " + exp_id);
+					DEBUG.OUT("pause " + exp_id);
 					if (get_listener().getExperiment(socket_id, exp_id) != null
 							&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 						get_listener().getExperiment(socket_id, exp_id).controller.directPause();
@@ -197,7 +201,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					socket.send(cmd_type);
 					break;
 				case "stop":
-					System.out.println("stop " + exp_id);
+					DEBUG.OUT("stop " + exp_id);
 					if (get_listener().getExperiment(socket_id, exp_id) != null
 							&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 						get_listener().getExperiment(socket_id, exp_id).controller.directPause();
@@ -206,7 +210,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					socket.send(cmd_type);
 					break;
 				case "reload":
-					System.out.println("reload " + exp_id);
+					DEBUG.OUT("reload " + exp_id);
 					if (get_listener().getExperiment(socket_id, exp_id) != null
 							&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 						ManualExperimentJob job = get_listener().getExperiment(socket_id, exp_id);
@@ -219,7 +223,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					}
 					break;
 				case "output":
-					System.out.println("output" + exp_id);
+					DEBUG.OUT("output" + exp_id);
 					if (get_listener().getExperiment(socket_id, exp_id) != null
 							&& get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 						final boolean wasPaused = get_listener().getExperiment(socket_id, exp_id).controller.isPaused();
@@ -303,7 +307,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onStart() {
-		System.out.println("Gama Listener started on port: " + getPort());
+		DEBUG.OUT("Gama Listener started on port: " + getPort());
 		// setConnectionLostTimeout(0);
 		// setConnectionLostTimeout(100);
 	}
@@ -383,15 +387,15 @@ public class GamaWebSocketServer extends WebSocketServer {
 		final String pathToModel = args.get(args.size() - 1);
 
 		File ff = new File(pathToModel);
-		// System.out.println(ff.getAbsoluteFile().toString());
+		// DEBUG.OUT(ff.getAbsoluteFile().toString());
 		if (!ff.exists()) {
-			System.out.println(ff.getAbsolutePath() + " does not exist");
+			DEBUG.OUT(ff.getAbsolutePath() + " does not exist");
 			socket.send("gaml file does not exist");
 			return;
 		}
 		if (!GamlFileExtension.isGaml(ff.getAbsoluteFile().toString())) {
 			// System.exit(-1);
-			System.out.println(ff.getAbsolutePath() + " is not a gaml file");
+			DEBUG.OUT(ff.getAbsolutePath() + " is not a gaml file");
 			socket.send(pathToModel + "is not a gaml file");
 			return;
 		}
@@ -437,7 +441,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 				// + " \"lat\": \""+ geom.getLocation().x +"\","
 				// + " \"lon\": \""+ geom.getLocation().y +"\""
 				+ "	}";
-		// System.out.println("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
+		// DEBUG.OUT("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 		// + geom.getLocation().x + "@" + geom.getLocation().y);
 		// socket.send("exp@" + "" + socket.hashCode() + "@" + selectedJob.getExperimentID() + "@" + size + "@"
 		// + geom.getLocation().x + "@" + geom.getLocation().y);
