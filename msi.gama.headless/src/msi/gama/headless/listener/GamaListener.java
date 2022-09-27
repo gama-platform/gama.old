@@ -71,12 +71,12 @@ public class GamaListener {
 		try {
 
 			while (true) {
-				String in = sysin.readLine();
-//				instance.broadcast(in);
-				if ("exit".equals(in)) {
-					instance.stop(1000);
-					break;
-				}
+//				String in = sysin.readLine();
+////				instance.broadcast(in);
+//				if ("exit".equals(in)) {
+//					instance.stop(1000);
+//					break;
+//				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
