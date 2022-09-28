@@ -17,7 +17,7 @@ public class GamaServerMessage implements Jsonable {
 	public String toJson() {
 		return "{ "
 				+ "\"type\": \"" + type + "\","
-				+ "\"content\": " + Jsoner.serialize(content) + ","		
+				+ "\"content\": " + Jsoner.serialize(content) 	
 				+ "}";
 	}
 	

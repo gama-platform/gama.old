@@ -21,7 +21,7 @@ public class CommandResponse  extends GamaServerMessage {
 		return "{ "
 				+ "\"type\": \"" + type + "\","
 				+ "\"content\": " + ((isJson)?content:Jsoner.serialize(content)) + ","	 
-				+ "\"command\": " + Jsoner.serialize(params).toString() + ""
+				+ "\"command\": " + Jsoner.serialize(params).toString() 
 				+ "}";
 	}
 
