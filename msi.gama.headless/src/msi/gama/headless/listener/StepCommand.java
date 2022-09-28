@@ -5,9 +5,10 @@ import org.java_websocket.WebSocket;
 import msi.gama.util.IMap;
 import ummisco.gama.dev.utils.DEBUG;
 
-public class StepCommand extends SocketCommand {
+public class StepCommand implements ISocketCommand {
+	
 	@Override
-	public void execute(final WebSocket socket, IMap<String, Object> map) {
+	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		final String	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		final String 	socket_id 	= map.get("socket_id").toString();
@@ -23,7 +24,12 @@ public class StepCommand extends SocketCommand {
 			for (int i = 0 ; i < nb_step ; i++) {
 				gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.userStep();				
 			}
+			return new CommandResponse(	GamaServerMessageType.CommandExecutedSuccessfully,
+										"",
+										map);
 		}
-		socket.send(cmd_type);
+		else {
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+		}	
 	}
 }

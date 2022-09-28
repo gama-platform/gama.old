@@ -44,6 +44,7 @@ import msi.gaml.types.Types;
  * The Class ExperimentJob.
  */
 public class ManualExperimentJob extends ExperimentJob {
+	
 	public GamaWebSocketServer server;
 	public WebSocket socket;
 	public GamaJsonList params;

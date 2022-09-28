@@ -20,9 +20,10 @@ import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
 import ummisco.gama.dev.utils.DEBUG;
 
-public class OutputCommand extends SocketCommand {
+public class OutputCommand implements ISocketCommand {
+	
 	@Override
-	public void execute(final WebSocket socket, IMap<String, Object> map) {
+	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		String socket_id = map.get("socket_id").toString();
@@ -44,17 +45,22 @@ public class OutputCommand extends SocketCommand {
 			final IList ll = map.get("attributes") != null ? (IList) map.get("attributes") : GamaListFactory.EMPTY_LIST;
 			final String crs = map.get("crs") != null ? map.get("crs").toString() : "";
 			String res = "";
+			GamaServerMessageType status = GamaServerMessageType.CommandExecutedSuccessfully;
 			try {
 				res = SaveHelper.buildGeoJSon(gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id)
 						.getSimulation().getExperimentPlan().getAgent().getScope(), agents, ll, crs);
 			} catch (Exception ex) {
 				res = ex.getMessage();
+				status = GamaServerMessageType.RuntimeError;
 			}
-			socket.send(res);
-
+			
 			if (!wasPaused) {
 				gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.userStart();
 			}
+			return new CommandResponse(status, res, map);
+		}
+		else {
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
 		}
 	}
 }

@@ -3,12 +3,14 @@ package msi.gama.headless.listener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.job.ManualExperimentJob;
-import msi.gama.headless.runtime.Application; 
+import msi.gama.headless.runtime.Application;
+import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.network.websocket.WebSocketPrintStream;
 
 public class GamaListener {
@@ -20,7 +22,8 @@ public class GamaListener {
 		return launched_experiments;
 	}
 
-	private static WebSocketPrintStream bufferStream;
+//	private static PrintStream bufferStream;
+	private static PrintStream errorStream;
 
 	public GamaListener(final int p, final Application a, final boolean secure) {
 		File currentJavaJarFile = new File(
@@ -63,11 +66,29 @@ public class GamaListener {
 	public void createSocketServer(final int port, final Application a, final boolean ssl) {
 		instance = new GamaWebSocketServer(port, a, this, ssl);
 		instance.start();
-//		System.out.println("Gama Listener started on port: " + instance.getPort());
-		bufferStream = new WebSocketPrintStream(System.out, instance);
-		// System.setOut(bufferStream);
+		System.out.println("Gama Listener started on port: " + instance.getPort());
+//		bufferStream =  new PrintStream(System.out) {
+//			
+//			@Override
+//			public void println(String x) {
+//				super.println(x);
+//				instance.broadcast(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationOutput , x)));
+//			}
+//		};
+//		System.setOut(bufferStream);
+		
+		errorStream =  new PrintStream(System.err) {
+			
+			@Override
+			public void println(String x) {
+				super.println(x);
+				instance.broadcast(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.RuntimeError , x)));
+			}
+		};
+		System.setErr(errorStream);
+		
 
-		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+//		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
 		try {
 
 			while (true) {

@@ -7,13 +7,14 @@ import java.util.Map;
 import org.java_websocket.WebSocket;
 
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.Jsoner;
 
 public class CommandExecutor {
 
-	private final Map<String, SocketCommand> COMMANDS;
+	private final Map<String, ISocketCommand> COMMANDS;
 
 	public CommandExecutor() {
-		final Map<String, SocketCommand> cmds = new HashMap<>();
+		final Map<String, ISocketCommand> cmds = new HashMap<>();
 		cmds.put("launch", new LaunchCommand());
 
 		cmds.put("play", new PlayCommand());
@@ -33,13 +34,14 @@ public class CommandExecutor {
 
 	public void process(final WebSocket socket, final IMap<String, Object> map) {
 		final String cmd_type = map.get("type").toString();
-		SocketCommand command = COMMANDS.get(cmd_type);
+		ISocketCommand command = COMMANDS.get(cmd_type);
 
 		if (command == null) {
 			throw new IllegalArgumentException("Invalid player type: " + cmd_type);
 		}
 
-		command.execute(socket, map);
+		var res = command.execute(socket, map);
+		socket.send(Jsoner.serialize(res));
 	}
 
 }

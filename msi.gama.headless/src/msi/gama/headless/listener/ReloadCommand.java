@@ -16,9 +16,10 @@ import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
 import ummisco.gama.dev.utils.DEBUG;
 
-public class ReloadCommand extends SocketCommand {
+public class ReloadCommand implements ISocketCommand {
+	
 	@Override
-	public void execute(final WebSocket socket, IMap<String, Object> map) {
+	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		String socket_id = map.get("socket_id").toString();
@@ -33,8 +34,11 @@ public class ReloadCommand extends SocketCommand {
 			ManualExperimentJob job = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id);
 			job.params = (GamaJsonList) map.get("parameters");
 			job.endCond = map.get("until") != null ? map.get("until").toString() : "";
-			job.controller.userReload();
+			job.controller.userReload();			
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map);
 		}
-		socket.send(cmd_type);
+		else {
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+		}	
 	}
 }

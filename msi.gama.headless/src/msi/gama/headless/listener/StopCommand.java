@@ -1,24 +1,14 @@
 package msi.gama.headless.listener;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.java_websocket.WebSocket;
 
-import msi.gama.common.GamlFileExtension;
-import msi.gama.headless.common.Globals;
-import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import ummisco.gama.dev.utils.DEBUG;
 
-public class StopCommand extends SocketCommand {
+public class StopCommand implements ISocketCommand {
+	
 	@Override
-	public void execute(final WebSocket socket, IMap<String, Object> map) {
+	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		String socket_id = map.get("socket_id").toString();
@@ -32,7 +22,10 @@ public class StopCommand extends SocketCommand {
 				&& gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 			gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.directPause();
 			gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.dispose();
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map);
 		}
-		socket.send(cmd_type);
+		else {
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+		}	
 	}
 }
