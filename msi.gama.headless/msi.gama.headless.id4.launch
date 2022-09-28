@@ -15,18 +15,19 @@
     <setAttribute key="deselected_workspace_bundles"/>
     <booleanAttribute key="includeOptional" value="true"/>
     <stringAttribute key="location" value="${workspace_loc}/../runtime-msi.gama.headless.id4"/>
+    <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.JAVA_COMMAND" value="java"/>
-    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-17.0.1"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-17.0.2"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog  -v  /Applications/Gama.app/Contents/headless/samples/predatorPrey.xml   /tmp/out"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <booleanAttribute key="pde.generated.config" value="false"/>
     <stringAttribute key="pde.version" value="3.3"/>
     <stringAttribute key="product" value="msi.gama.application.product"/>
     <setAttribute key="selected_target_bundles">
-        <setEntry value="com.google.guava*27.1.0.v20190517-1946@default:default"/>
+        <setEntry value="com.google.guava@default:default"/>
         <setEntry value="com.google.inject@default:default"/>
         <setEntry value="com.jcraft.jsch@default:default"/>
         <setEntry value="javax.annotation@default:default"/>
@@ -40,24 +41,22 @@
         <setEntry value="org.apache.commons.cli@default:default"/>
         <setEntry value="org.apache.commons.io@default:default"/>
         <setEntry value="org.apache.commons.jxpath@default:default"/>
-        <setEntry value="org.apache.commons.lang@default:default"/>
         <setEntry value="org.apache.commons.logging@default:default"/>
         <setEntry value="org.apache.log4j@default:default"/>
         <setEntry value="org.apache.xml.resolver@default:default"/>
         <setEntry value="org.apache.xmlgraphics@default:default"/>
-        <setEntry value="org.apiguardian@default:default"/>
         <setEntry value="org.eclipse.ant.core@default:default"/>
         <setEntry value="org.eclipse.compare.core@default:default"/>
-        <setEntry value="org.eclipse.core.commands@default:default"/>
-        <setEntry value="org.eclipse.core.contenttype@default:default"/>
+        <setEntry value="org.eclipse.core.commands*3.10.200.v20220512-0851@default:default"/>
+        <setEntry value="org.eclipse.core.contenttype*3.8.200.v20220817-1539@default:default"/>
+        <setEntry value="org.eclipse.core.databinding*1.11.100.v20220817-1444@default:default"/>
         <setEntry value="org.eclipse.core.databinding.observable@default:default"/>
         <setEntry value="org.eclipse.core.databinding.property@default:default"/>
-        <setEntry value="org.eclipse.core.databinding@default:default"/>
-        <setEntry value="org.eclipse.core.expressions@default:default"/>
+        <setEntry value="org.eclipse.core.expressions*3.8.200.v20220613-1047@default:default"/>
         <setEntry value="org.eclipse.core.filesystem@default:default"/>
-        <setEntry value="org.eclipse.core.jobs@default:default"/>
+        <setEntry value="org.eclipse.core.jobs*3.13.100.v20220817-1539@default:default"/>
         <setEntry value="org.eclipse.core.resources@default:default"/>
-        <setEntry value="org.eclipse.core.runtime@default:true"/>
+        <setEntry value="org.eclipse.core.runtime*3.26.0.v20220813-0916@default:true"/>
         <setEntry value="org.eclipse.core.variables@default:default"/>
         <setEntry value="org.eclipse.debug.core@default:default"/>
         <setEntry value="org.eclipse.e4.core.contexts@default:default"/>
@@ -70,21 +69,21 @@
         <setEntry value="org.eclipse.e4.ui.widgets@default:default"/>
         <setEntry value="org.eclipse.emf.codegen.ecore@default:default"/>
         <setEntry value="org.eclipse.emf.codegen@default:default"/>
-        <setEntry value="org.eclipse.emf.common@default:default"/>
+        <setEntry value="org.eclipse.emf.common*2.26.0.v20220817-1401@default:default"/>
+        <setEntry value="org.eclipse.emf.ecore*2.28.0.v20220817-1401@default:default"/>
         <setEntry value="org.eclipse.emf.ecore.change@default:default"/>
-        <setEntry value="org.eclipse.emf.ecore.xmi@default:default"/>
-        <setEntry value="org.eclipse.emf.ecore@default:default"/>
+        <setEntry value="org.eclipse.emf.ecore.xmi*2.17.0.v20220817-1334@default:default"/>
         <setEntry value="org.eclipse.emf.mwe.core@default:default"/>
         <setEntry value="org.eclipse.emf.mwe.utils@default:default"/>
         <setEntry value="org.eclipse.emf.mwe2.language@default:default"/>
         <setEntry value="org.eclipse.emf.mwe2.launch@default:default"/>
         <setEntry value="org.eclipse.emf.mwe2.lib@default:default"/>
         <setEntry value="org.eclipse.emf.mwe2.runtime@default:default"/>
-        <setEntry value="org.eclipse.equinox.app@default:default"/>
+        <setEntry value="org.eclipse.equinox.app*1.6.200.v20220720-2012@default:default"/>
         <setEntry value="org.eclipse.equinox.bidi@default:default"/>
-        <setEntry value="org.eclipse.equinox.common@2:true"/>
-        <setEntry value="org.eclipse.equinox.preferences@default:default"/>
-        <setEntry value="org.eclipse.equinox.registry@default:default"/>
+        <setEntry value="org.eclipse.equinox.common*3.16.200.v20220817-1601@2:true"/>
+        <setEntry value="org.eclipse.equinox.preferences*3.10.100.v20220710-1223@default:default"/>
+        <setEntry value="org.eclipse.equinox.registry*3.11.200.v20220817-1601@default:default"/>
         <setEntry value="org.eclipse.help@default:default"/>
         <setEntry value="org.eclipse.jdt.apt.core@default:default"/>
         <setEntry value="org.eclipse.jdt.compiler.apt@default:false"/>
@@ -94,30 +93,23 @@
         <setEntry value="org.eclipse.jdt.launching@default:default"/>
         <setEntry value="org.eclipse.jface.databinding@default:default"/>
         <setEntry value="org.eclipse.jface@default:default"/>
+        <setEntry value="org.eclipse.osgi*3.18.100.v20220817-1601@-1:true"/>
         <setEntry value="org.eclipse.osgi.compatibility.state@default:false"/>
-        <setEntry value="org.eclipse.osgi.services@default:default"/>
-        <setEntry value="org.eclipse.osgi.util@default:default"/>
-        <setEntry value="org.eclipse.osgi@-1:true"/>
+        <setEntry value="org.eclipse.osgi.services*3.11.0.v20220618-0838@default:default"/>
+        <setEntry value="org.eclipse.osgi.util*3.7.100.v20220615-1601@default:default"/>
         <setEntry value="org.eclipse.swt@default:default"/>
         <setEntry value="org.eclipse.team.core@default:default"/>
         <setEntry value="org.eclipse.text@default:default"/>
-        <setEntry value="org.eclipse.xpand@default:default"/>
         <setEntry value="org.eclipse.xtend.lib.macro@default:default"/>
         <setEntry value="org.eclipse.xtend.lib@default:default"/>
-        <setEntry value="org.eclipse.xtend.typesystem.emf@default:default"/>
-        <setEntry value="org.eclipse.xtend@default:default"/>
         <setEntry value="org.eclipse.xtext.common.types@default:default"/>
         <setEntry value="org.eclipse.xtext.ecore@default:default"/>
-        <setEntry value="org.eclipse.xtext.generator@default:default"/>
         <setEntry value="org.eclipse.xtext.logging@default:false"/>
         <setEntry value="org.eclipse.xtext.util@default:default"/>
         <setEntry value="org.eclipse.xtext.xbase.lib@default:default"/>
         <setEntry value="org.eclipse.xtext.xtext.generator@default:default"/>
         <setEntry value="org.eclipse.xtext@default:default"/>
         <setEntry value="org.hamcrest.core@default:default"/>
-        <setEntry value="org.junit.platform.commons@default:default"/>
-        <setEntry value="org.junit.platform.engine@default:default"/>
-        <setEntry value="org.junit.platform.launcher@default:default"/>
         <setEntry value="org.junit@default:default"/>
         <setEntry value="org.opentest4j@default:default"/>
         <setEntry value="org.tukaani.xz@default:default"/>

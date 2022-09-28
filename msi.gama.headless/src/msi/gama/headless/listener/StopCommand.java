@@ -22,10 +22,10 @@ public class StopCommand implements ISocketCommand {
 				&& gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 			gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.directPause();
 			gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.dispose();
-			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map);
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
 		}
 		else {
-			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map, false);
 		}	
 	}
 }

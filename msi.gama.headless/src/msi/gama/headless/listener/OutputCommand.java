@@ -21,7 +21,7 @@ import msi.gama.util.file.json.GamaJsonList;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class OutputCommand implements ISocketCommand {
-	
+
 	@Override
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
@@ -53,14 +53,14 @@ public class OutputCommand implements ISocketCommand {
 				res = ex.getMessage();
 				status = GamaServerMessageType.RuntimeError;
 			}
-			
+
 			if (!wasPaused) {
 				gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.userStart();
 			}
-			return new CommandResponse(status, res, map);
-		}
-		else {
-			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+			return new CommandResponse(status, res, map, true);
+		} else {
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,
+					"Unable to find the experiment or simulation", map, false);
 		}
 	}
 }

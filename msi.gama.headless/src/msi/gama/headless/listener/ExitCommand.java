@@ -22,6 +22,6 @@ public class ExitCommand implements ISocketCommand {
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 		//TODO: just for compilation purposes, but makes no sense
 		System.exit(0);
-		return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "" , map);
+		return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "" , map, false);
 	}
 }

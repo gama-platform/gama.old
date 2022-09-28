@@ -35,10 +35,10 @@ public class ReloadCommand implements ISocketCommand {
 			job.params = (GamaJsonList) map.get("parameters");
 			job.endCond = map.get("until") != null ? map.get("until").toString() : "";
 			job.controller.userReload();			
-			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map);
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
 		}
 		else {
-			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map, false);
 		}	
 	}
 }

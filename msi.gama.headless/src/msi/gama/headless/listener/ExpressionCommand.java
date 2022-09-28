@@ -7,6 +7,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Jsoner;
 import msi.gaml.compilation.GAML;
@@ -31,17 +32,19 @@ public class ExpressionCommand implements ISocketCommand {
 			final boolean wasPaused = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller
 					.isPaused();
 			gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.directPause();
-			String res = "{\"result\":" + Jsoner.serialize(
+
+			IMap<String, Object> res = GamaMapFactory.create();
+			res.put("result",
 					processInput(gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller
-							.getExperiment().getAgent(), map.get("expr").toString()))
-					+ "}";
+							.getExperiment().getAgent(), map.get("expr").toString()));
 			if (!wasPaused) {
 				gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.userStart();
-			}			
-			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map);
+			}
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, res, map, false);
 
 		} else {
-			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Wrong socket_id or exp_id " + socket_id + " " + exp_id, map);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,
+					"Wrong socket_id or exp_id " + socket_id + " " + exp_id, map, false);
 		}
 	}
 

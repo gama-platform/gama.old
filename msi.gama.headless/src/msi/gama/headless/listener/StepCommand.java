@@ -26,10 +26,10 @@ public class StepCommand implements ISocketCommand {
 			}
 			return new CommandResponse(	GamaServerMessageType.CommandExecutedSuccessfully,
 										"",
-										map);
+										map, false);
 		}
 		else {
-			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map, false);
 		}	
 	}
 }

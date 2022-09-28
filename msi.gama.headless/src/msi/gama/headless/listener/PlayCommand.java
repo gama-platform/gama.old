@@ -36,10 +36,10 @@ public class PlayCommand implements ISocketCommand {
 //			if ("".equals(job.endCond)) {
 //				socket.send(cmd_type);
 //			}
-			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map);
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
 		}
 		else {
-			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map, false);
 		}	
 	}
 }

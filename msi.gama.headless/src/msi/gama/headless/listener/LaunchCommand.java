@@ -10,11 +10,14 @@ import java.util.stream.Collector;
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ManualExperimentJob;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
+import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class LaunchCommand implements ISocketCommand {
@@ -26,19 +29,17 @@ public class LaunchCommand implements ISocketCommand {
 		DEBUG.OUT(map.get("model"));
 		DEBUG.OUT(map.get("experiment"));
 		try {
-			return launchGamlSimulation(gamaWebSocketServer, 
-										socket,
-										Arrays.asList("-gaml", ".", map.get("experiment").toString(), map.get("model").toString()),
-										(GamaJsonList) map.get("parameters"), 
-										map.get("until") != null ? map.get("until").toString() : "", 
-										map);
+			return launchGamlSimulation(gamaWebSocketServer, socket,
+					Arrays.asList("-gaml", ".", map.get("experiment").toString(), map.get("model").toString()),
+					(GamaJsonList) map.get("parameters"), map.get("until") != null ? map.get("until").toString() : "",
+					map);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new CommandResponse(GamaServerMessageType.RuntimeError, e, map);
+			return new CommandResponse(GamaServerMessageType.RuntimeError, e, map, false);
 		}
 	}
 
-	//TODO: would be cleaner without the socket
+	// TODO: would be cleaner without the socket
 	public CommandResponse launchGamlSimulation(final GamaWebSocketServer gamaWebSocketServer, final WebSocket socket,
 			final List<String> args, final GamaJsonList params, final String end, IMap<String, Object> map)
 			throws IOException, GamaHeadlessException {
@@ -48,25 +49,20 @@ public class LaunchCommand implements ISocketCommand {
 		// DEBUG.OUT(ff.getAbsoluteFile().toString());
 		if (!ff.exists()) {
 			DEBUG.OUT(ff.getAbsolutePath() + " does not exist");
-			return new CommandResponse(	GamaServerMessageType.UnableToExecuteRequest, 
-										ff.getAbsolutePath() + " does not exist", 
-										map);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,
+					ff.getAbsolutePath() + " does not exist", map, false);
 		}
 		if (!GamlFileExtension.isGaml(ff.getAbsoluteFile().toString())) {
 			// System.exit(-1);
 			DEBUG.OUT(ff.getAbsolutePath() + " is not a gaml file");
-			return new CommandResponse(	GamaServerMessageType.UnableToExecuteRequest, 
-										pathToModel + "is not a gaml file", 
-										map);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, pathToModel + "is not a gaml file",
+					map, false);
 		}
 		final String argExperimentName = args.get(args.size() - 2);
 
 		ManualExperimentJob selectedJob = null;
-		selectedJob = new ManualExperimentJob(	ff.getAbsoluteFile().toString(), 
-												argExperimentName, 
-												gamaWebSocketServer,
-												socket, 
-												params);
+		selectedJob = new ManualExperimentJob(ff.getAbsoluteFile().toString(), argExperimentName, gamaWebSocketServer,
+				socket, params);
 
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 		selectedJob.endCond = end;
@@ -76,17 +72,14 @@ public class LaunchCommand implements ISocketCommand {
 			gamaWebSocketServer.get_listener().getAllExperiments().put("" + socket.hashCode(), exps);
 
 		}
-		gamaWebSocketServer.get_listener().getExperimentsOf("" + socket.hashCode()).put(selectedJob.getExperimentID(), selectedJob);
+		gamaWebSocketServer.get_listener().getExperimentsOf("" + socket.hashCode()).put(selectedJob.getExperimentID(),
+				selectedJob);
 
-		String res = "{" 
-						+ " \"type\": \"exp\"," 
-						+ " \"socket_id\": \"" + socket.hashCode() + "\"," 
-						+ " \"exp_id\": \"" + selectedJob.getExperimentID() + "\""
-				+ "	}";
-		
+		IMap<String, Object> res = GamaMapFactory.create();
+		res.put("type", "exp");
+		res.put("socket_id", socket.hashCode());
+		res.put("exp_id", selectedJob.getExperimentID());
 		gamaWebSocketServer.getDefaultApp().processorQueue.execute(selectedJob.controller.executionThread);
-		return new CommandResponse(	GamaServerMessageType.CommandExecutedSuccessfully,
-									res,
-									map);
+		return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, res, map, false);
 	}
 }
