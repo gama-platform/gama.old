@@ -1,6 +1,7 @@
 package msi.gama.headless.listener;
 
 import msi.gama.util.file.json.Jsonable;
+import msi.gama.util.file.json.Jsoner;
 
 public class GamaServerMessage implements Jsonable {
 	
@@ -16,7 +17,7 @@ public class GamaServerMessage implements Jsonable {
 	public String toJson() {
 		return "{ "
 				+ "\"type\": \"" + type + "\","
-				+ "\"content\": \"" + content + "\","	
+				+ "\"content\": " + Jsoner.serialize(content) + ","		
 				+ "}";
 	}
 	

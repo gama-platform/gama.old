@@ -1,6 +1,7 @@
 package msi.gama.headless.listener;
 
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.Jsoner;
 
 public class CommandResponse  extends GamaServerMessage {
 
@@ -13,10 +14,12 @@ public class CommandResponse  extends GamaServerMessage {
 	
 	@Override
 	public String toJson() {
+		var params = commandParameters.copy(null);
+		params.remove("server");
 		return "{ "
 				+ "\"type\": \"" + type + "\","
-				+ "\"content\": \"" + content + "\","	
-				+ "\"command\": {" + commandParameters.toString() + "},"
+				+ "\"content\": " + Jsoner.serialize(content) + ","	
+				+ "\"command\": " + Jsoner.serialize(params).toString() + ","
 				+ "}";
 	}
 
