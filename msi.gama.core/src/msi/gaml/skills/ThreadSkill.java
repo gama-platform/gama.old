@@ -139,6 +139,8 @@ public class ThreadSkill extends Skill {
 	 *             the gama runtime exception
 	 */
 	@action (
+			doc = @doc (
+					value = "A virtual action, which contains what to execute in the thread. It needs to be redefined in the species that implement the `thread` skill"),
 			name = ACTION_NAME,
 			virtual = true)
 	public Object primExternalFactorOnRemainingTime(final IScope scope) throws GamaRuntimeException {

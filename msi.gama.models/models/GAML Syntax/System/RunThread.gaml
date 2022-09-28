@@ -11,26 +11,25 @@
 ***/
 
 
-model testThread
+model testThread 
 
 global skills: [thread]{
-	bool create_agents <- false;
+	bool create_agents <- false; 
 	init {			
 		//create and start a new thread - the thread_action will be activated continuously with a delay of 2#s between each execution
 		
 		if (create_agents) {
 			create thread_agent number: 2;
-		} else {
-			do run_thread interval: 2#s;
-		}	
+		}
+		do run_thread interval: 2#s;
 	}
+	  
+  
 	
-
-	
-	//the action run in the thread
+	//the action run in the thread 
 	action thread_action {
 		write "current time: " + #now;
-	}	
+	}	 
 }
 
 species thread_agent skills: [thread] {
