@@ -12,7 +12,7 @@ public class StepCommand extends SocketCommand {
 		final String	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		final String 	socket_id 	= map.get("socket_id").toString();
 		final String 	cmd_type 	= map.get("type").toString();
-		final int 		nb_step		= map.get("nb_step") != null ? (int) map.get("nb_step") : 0 ;
+		final int 		nb_step		= map.get("nb_step") != null ? (int) map.get("nb_step") : 1 ;
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("launch");
 		DEBUG.OUT(map.get("model"));

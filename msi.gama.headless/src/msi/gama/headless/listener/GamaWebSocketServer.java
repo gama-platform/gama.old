@@ -11,13 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -29,28 +23,15 @@ import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.common.GamlFileExtension;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.StringUtils;
-import msi.gama.headless.common.Globals;
-import msi.gama.headless.common.SaveHelper;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.runtime.Application;
 import msi.gama.headless.script.ExperimentationPlanFactory;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.runtime.ExecutionScope;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
-import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import msi.gama.util.file.json.Jsoner;
-import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.GamlIdiomsProvider;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class GamaWebSocketServer extends WebSocketServer {
