@@ -79,16 +79,6 @@ public class HeadlessListener implements IGui {
 		GAMA.setHeadlessGui(new HeadlessListener());
 	}
 
-	/**
-	 * Log.
-	 *
-	 * @param s
-	 *            the s
-	 */
-	private static void log(final String s) {
-		DEBUG.LOG(s);
-	}
-
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final List<IParameter> parameters, final GamaFont font, final GamaColor color, final Boolean showTitle) {
@@ -154,12 +144,12 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void tell(final String message) {
-		log("Message: " + message);
+		logger.log("Message: " + message);
 	}
 
 	@Override
 	public void error(final String error) {
-		log("Error: " + error);
+		logger.log("Error: " + error);
 	}
 
 	@Override
@@ -167,7 +157,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
-		log("Runtime error: " + g.getMessage());
+		logger.log("Runtime error: " + g.getMessage());
 	}
 
 	@Override
@@ -390,16 +380,7 @@ public class HeadlessListener implements IGui {
 
 		@Override
 		public void informConsole(final String s, final ITopLevelAgent root) {
-			DEBUG.ON();
-			DEBUG.LOG(s);
-			// if (outputWriter.get() != null) {
-			// try {
-			// outputWriter.get().write(s + Strings.LN);
-			// // outputWriter.get().flush();
-			// } catch (final IOException e) {
-			// e.printStackTrace();
-			// }
-			// }
+			logger.log(s);
 		}
 
 		@Override
@@ -409,6 +390,31 @@ public class HeadlessListener implements IGui {
 		public void eraseConsole(final boolean setToNull) {}
 
 	};
+
+	/** The logger. */
+	private IHeadlessLogger logger = DEBUG::LOG;
+
+	/**
+	 * The Interface IHeadlessLogger.
+	 */
+	public interface IHeadlessLogger {
+
+		/**
+		 * Log.
+		 *
+		 * @param message
+		 *            the message
+		 */
+		void log(String message);
+	}
+
+	/**
+	 * Sets the headless logger.
+	 *
+	 * @param logger
+	 *            the new headless logger
+	 */
+	public void setHeadlessLogger(final IHeadlessLogger logger) { this.logger = logger; }
 
 	@Override
 	public IStatusDisplayer getStatus() { return status; }
@@ -477,7 +483,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void displayTestsResults(final IScope scope, final CompoundSummary<?, ?> summary) {
-		log(summary.toString());
+		logger.log(summary.toString());
 	}
 
 	@Override
@@ -499,8 +505,5 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public IDisplaySurface getFrontmostDisplaySurface() { return null; }
-
-	// @Override
-	// public boolean isSynchronized() { return false; }
 
 }
