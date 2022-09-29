@@ -428,7 +428,8 @@ public class WorkspaceModelsManager {
 			} catch (final InterruptedException e) {}
 		}
 		if (GamaBundleLoader.ERRORED) {
-			GAMA.getGui().tell("Error in loading GAML language subsystem. Please consult the logs");
+			GAMA.getGui().openErrorDialog(GAMA.getRuntimeScope(),
+					"Error in loading GAML language subsystem. Please consult the logs");
 			return;
 		}
 		// DEBUG.OUT("Synchronous link of models library...");

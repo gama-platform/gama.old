@@ -57,15 +57,15 @@ public abstract class GamaExecutorService {
 					msg = msg == null ? "" : msg.toLowerCase();
 					if (GamaPreferences.Runtime.CORE_MEMORY_ACTION.getValue() && GAMA.getExperiment() != null
 							&& msg.contains("heap")) {
-						GAMA.getGui().tell(
+						GAMA.getGui().openMessageDialog(GAMA.getRuntimeScope(),
 								"GAMA is out of memory. Experiment will be closed now. Please consult: https://gama-platform.org/wiki/Troubleshooting#memory-problems");
 						GAMA.closeAllExperiments(true, true);
 					} else {
 						if (GAMA.getExperiment() != null && !msg.contains("heap")) {
-							GAMA.getGui().tell(
+							GAMA.getGui().openMessageDialog(GAMA.getRuntimeScope(),
 									"GAMA cannot allocate more memory for displaying this experiment. The platform will exit now. Please try to quit other applications and relaunch it");
 						} else {
-							GAMA.getGui().tell(
+							GAMA.getGui().openMessageDialog(GAMA.getRuntimeScope(),
 									"Your system is running out of memory. GAMA will exit now. Please try to quit other applications and relaunch it");
 						}
 						System.exit(0);
