@@ -156,6 +156,10 @@ public class ExecutionScope implements IScope {
 		 *            the value
 		 */
 		void setData(final String key, final Object value) {
+			if (value == null) {
+				if (data == null) return;
+				data.remove(key);
+			}
 			if (data == null) { data = new HashMap<>(); }
 			data.put(key, value);
 		}
