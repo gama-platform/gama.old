@@ -876,4 +876,25 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 */
 	boolean isClosed();
 
+	/**
+	 * Gets the data.
+	 *
+	 * @param key
+	 *            the key
+	 * @return the data
+	 */
+	default Object getData(final String key) {
+		return null;
+	}
+
+	/**
+	 * Sets the data.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
+	default void setData(final String key, final Object value) {}
+
 }
