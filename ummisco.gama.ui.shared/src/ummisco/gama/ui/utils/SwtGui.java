@@ -109,6 +109,7 @@ public class SwtGui implements IGui {
 	/** The mouse location in model. */
 	private GamaPoint mouseLocationInModel;
 
+	/** The parameters view. */
 	private IGamaView parametersView = null;
 
 	static {
@@ -133,12 +134,12 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void tell(final String msg) {
+	public void openMessageDialog(final IScope scope, final String msg) {
 		Messages.tell(msg);
 	}
 
 	@Override
-	public void error(final String err) {
+	public void openErrorDialog(final IScope scope, final String err) {
 		Messages.error(err);
 	}
 
@@ -515,6 +516,9 @@ public class SwtGui implements IGui {
 		});
 	}
 
+	/**
+	 * Initialize open GL.
+	 */
 	private static void initializeOpenGL() {
 		final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
 		if (initializer != null && !initializer.isDone()) { new Thread(initializer).start(); }

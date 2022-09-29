@@ -143,12 +143,12 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void tell(final String message) {
+	public void openMessageDialog(final IScope scope, final String message) {
 		logger.log("Message: " + message);
 	}
 
 	@Override
-	public void error(final String error) {
+	public void openErrorDialog(final IScope scope, final String error) {
 		logger.log("Error: " + error);
 	}
 
