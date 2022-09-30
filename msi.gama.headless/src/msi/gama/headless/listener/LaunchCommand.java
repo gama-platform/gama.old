@@ -29,7 +29,7 @@ public class LaunchCommand implements ISocketCommand {
 		DEBUG.OUT(experiment);
 
 		if (model == null || experiment == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'launch', mandatory parameters are: 'model' and 'experiment'", null, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'launch', mandatory parameters are: 'model' and 'experiment'", map, false);
 		}
 		try {
 			return launchGamlSimulation(gamaWebSocketServer, socket,

@@ -21,7 +21,7 @@ public class StepCommand implements ISocketCommand {
 		DEBUG.OUT(socket_id);
 
 		if (exp_id == "" || socket_id == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'step', mandatory parameters are: 'exp_id' and 'socket_id' ", null, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'step', mandatory parameters are: 'exp_id' and 'socket_id' ", map, false);
 		}
 
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 

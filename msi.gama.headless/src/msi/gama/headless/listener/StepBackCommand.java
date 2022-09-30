@@ -21,7 +21,7 @@ public class StepBackCommand implements ISocketCommand {
 		
 
 		if (exp_id == "" || socket_id == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'stepBack', mandatory parameters are: 'exp_id' and 'socket_id' ", null, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'stepBack', mandatory parameters are: 'exp_id' and 'socket_id' ", map, false);
 		}
 
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 

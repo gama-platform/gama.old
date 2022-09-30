@@ -18,7 +18,7 @@ public class StopCommand implements ISocketCommand {
 		DEBUG.OUT(socket_id);
 
 		if (exp_id == "" || socket_id == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'stop', mandatory parameters are: 'exp_id' and 'socket_id' ", null, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'stop', mandatory parameters are: 'exp_id' and 'socket_id' ", map, false);
 		}
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 
 		if (gama_exp != null && gama_exp.getSimulation() != null) {

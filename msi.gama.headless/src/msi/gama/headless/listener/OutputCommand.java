@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.SchemaException;
@@ -46,7 +47,7 @@ public class OutputCommand implements ISocketCommand {
 		
 
 		if (exp_id == "" || socket_id == null || species == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'output', mandatory parameters are: 'exp_id', 'socket_id' and 'species' ", null, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'output', mandatory parameters are: 'exp_id', 'socket_id' and 'species' ", map, false);
 		}
 
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 

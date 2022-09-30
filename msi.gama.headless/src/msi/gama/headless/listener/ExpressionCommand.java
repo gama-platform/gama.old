@@ -29,7 +29,7 @@ public class ExpressionCommand implements ISocketCommand {
 		DEBUG.OUT(experiment);
 
 		if (exp_id == "" || socket_id == null || model == null || experiment == null || expr == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'expression', mandatory parameters are: 'exp_id', 'socket_id', 'model', 'experiment' and 'expr'", null, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'expression', mandatory parameters are: 'exp_id', 'socket_id', 'model', 'experiment' and 'expr'", map, false);
 		}
 		
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id);
