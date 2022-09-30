@@ -5,19 +5,16 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collector;
 
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.GamlFileExtension;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
-import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class LaunchCommand implements ISocketCommand {
@@ -25,12 +22,18 @@ public class LaunchCommand implements ISocketCommand {
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
+		final Object model 		= map.get("model");
+		final Object experiment	= map.get("experiment");
 		DEBUG.OUT("launch");
-		DEBUG.OUT(map.get("model"));
-		DEBUG.OUT(map.get("experiment"));
+		DEBUG.OUT(model);
+		DEBUG.OUT(experiment);
+
+		if (model == null || experiment == null) {
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'launch', mandatory parameters are: 'model' and 'experiment'", null, false);
+		}
 		try {
 			return launchGamlSimulation(gamaWebSocketServer, socket,
-					Arrays.asList("-gaml", ".", map.get("experiment").toString(), map.get("model").toString()),
+					Arrays.asList("-gaml", ".", experiment.toString(), model.toString()),
 					(GamaJsonList) map.get("parameters"), map.get("until") != null ? map.get("until").toString() : "",
 					map);
 		} catch (Exception e) {

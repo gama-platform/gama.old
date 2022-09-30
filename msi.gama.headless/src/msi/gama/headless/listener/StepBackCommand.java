@@ -10,19 +10,24 @@ public class StepBackCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
-		final String 	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final String 	socket_id 	= map.get("socket_id").toString();
-		final String 	cmd_type 	= map.get("type").toString();
-		final int		nb_step		= map.get("nb_step") != null ? (int) map.get("nb_step") : 1 ;
-		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
-		DEBUG.OUT("launch");
-		DEBUG.OUT(map.get("model"));
-		DEBUG.OUT(map.get("experiment"));
 
-		if (gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id) != null
-				&& gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
+		final String 	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
+		final Object 	socket_id 	= map.get("socket_id");
+		final int		nb_step		= map.get("nb_step") != null ? (int) map.get("nb_step") : 1; 
+		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
+		DEBUG.OUT("stepBack");
+		DEBUG.OUT(exp_id);
+		DEBUG.OUT(socket_id);
+		
+
+		if (exp_id == "" || socket_id == null) {
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'stepBack', mandatory parameters are: 'exp_id' and 'socket_id' ", null, false);
+		}
+
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 
+		if (gama_exp != null && gama_exp.getSimulation() != null) {
 			for (int i = 0 ; i < nb_step ; i++) {
-				gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.userStepBack();
+				gama_exp.controller.userStepBack();
 			}
 			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
 		}

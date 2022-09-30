@@ -18,27 +18,30 @@ public class ExpressionCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
-		String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		String socket_id = map.get("socket_id").toString();
-		final String cmd_type = map.get("type").toString();
+		final String exp_id 	= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
+		final Object socket_id 	= map.get("socket_id");
+		final Object model 		= map.get("model");
+		final Object experiment	= map.get("experiment");
+		final Object expr		= map.get("expr");
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
-		DEBUG.OUT("launch");
-		DEBUG.OUT(map.get("model"));
-		DEBUG.OUT(map.get("experiment"));
+		DEBUG.OUT("expresion");
+		DEBUG.OUT(model);
+		DEBUG.OUT(experiment);
 
-		if (gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id) != null
-				&& gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
+		if (exp_id == "" || socket_id == null || model == null || experiment == null || expr == null) {
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'expression', mandatory parameters are: 'exp_id', 'socket_id', 'model', 'experiment' and 'expr'", null, false);
+		}
+		
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id);
+		if (gama_exp != null && gama_exp.getSimulation() != null) {
 
-			final boolean wasPaused = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller
-					.isPaused();
-			gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.directPause();
+			final boolean wasPaused = gama_exp.controller.isPaused();
+			gama_exp.controller.directPause();
 
 			IMap<String, Object> res = GamaMapFactory.create();
-			res.put("result",
-					processInput(gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller
-							.getExperiment().getAgent(), map.get("expr").toString()));
+			res.put("result", processInput(gama_exp.controller.getExperiment().getAgent(), expr.toString()));
 			if (!wasPaused) {
-				gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.userStart();
+				gama_exp.controller.userStart();
 			}
 			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, res, map, false);
 
