@@ -94,7 +94,7 @@ public class GamlResourceServices {
 	 *            the r
 	 * @return the documentation cache
 	 */
-	public static IMap<EObject, IGamlDescription> getDocumentationCache(final GamlResource r) {
+	public static IMap<EObject, IGamlDescription> getDocumentationCache(final Resource r) {
 		return documentationCache.getUnchecked(r.getURI());
 	}
 
@@ -143,7 +143,7 @@ public class GamlResourceServices {
 	 *            the r
 	 * @return true, if is edited
 	 */
-	public static boolean isEdited(final GamlResource r) {
+	public static boolean isEdited(final Resource r) {
 		return isEdited(r.getURI());
 	}
 
