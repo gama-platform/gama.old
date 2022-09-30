@@ -1127,7 +1127,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
-	private static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
+	public static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
 			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
 
 	/**
