@@ -17,13 +17,14 @@ import msi.gama.util.file.json.GamaJsonList;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class PlayCommand implements ISocketCommand {
-	
+
 	@Override
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		String socket_id = map.get("socket_id").toString();
 		final String cmd_type = map.get("type").toString();
+		final boolean sync = map.get("sync") != null ? (boolean) map.get("sync") : false;
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("launch");
 		DEBUG.OUT(map.get("model"));
@@ -33,13 +34,20 @@ public class PlayCommand implements ISocketCommand {
 				&& gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).getSimulation() != null) {
 			gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id).controller.userStart();
 			ManualExperimentJob job = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id);
-//			if ("".equals(job.endCond)) {
-//				socket.send(cmd_type);
-//			}
-			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
+
+			if (!"".equals(job.endCond) && sync) {
+				return null;
+			} else {
+				return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
+			}
+		} else {
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,
+					"Unable to find the experiment or simulation", map, false);
 		}
-		else {
-			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, "Unable to find the experiment or simulation", map, false);
-		}	
 	}
 }
+
+//unt sync nre
+//nou sync ret
+//nou async ret
+//unt async ret

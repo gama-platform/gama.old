@@ -41,7 +41,9 @@ public class CommandExecutor {
 		}
 
 		var res = command.execute(socket, map);
-		socket.send(Jsoner.serialize(res));
+		if(res!=null) {			
+			socket.send(Jsoner.serialize(res));
+		}
 	}
 
 }
