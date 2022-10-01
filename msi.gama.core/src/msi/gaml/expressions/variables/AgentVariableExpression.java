@@ -61,19 +61,16 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 	}
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
-		String doc = null;
-		String s = "Type " + type.getTitle();
-		if (desc == null) return s;
+		if (desc == null) return new ConstantDoc("Type " + type.getTitle());
+		Doc doc = new RegularDoc(new StringBuilder());
 		final VariableDescription var = desc.getSpeciesContext().getAttribute(name);
-		if (var != null) { doc = var.getBuiltInDoc(); }
-		if (doc != null) { s += "<br>" + doc; }
-		final String quality =
-				(desc.isBuiltIn() ? "<br>Built In " : doc == null ? "<br>Defined in " : "<br>Redefined in ")
-						+ desc.getTitle();
-
-		return s + quality;
+		doc.append("Type ").append(type.getTitle()).append("<br>");
+		if (var != null) { doc.append(var.getBuiltInDoc()).append("<br>"); }
+		doc.append(desc.isBuiltIn() ? "Built in " : var == null ? "Defined in " : "Redefined in ")
+				.append(desc.getTitle());
+		return doc;
 	}
 
 	/**

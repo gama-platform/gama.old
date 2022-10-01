@@ -401,15 +401,15 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 				final IType<?> kt = keyType.findCommonSupertypeWith(pType.getKeyType());
 				final IType<?> ct = contentsType.findCommonSupertypeWith(pType.getContentType());
 				return (IType<? super IContainer<?, ?>>) GamaType.from(cType, kt, ct);
-			} else
-				return (IType<? super IContainer<?, ?>>) cType;
+			}
+			return (IType<? super IContainer<?, ?>>) cType;
 		}
 		if (iType.isContainer()) {
 			final IType<?> cType = type.findCommonSupertypeWith(iType);
 			return (IType<? super IContainer<?, ?>>) cType;
 			// dont we need to use the key and contents type here ?
-		} else
-			return type.findCommonSupertypeWith(iType);
+		}
+		return type.findCommonSupertypeWith(iType);
 	}
 
 	/**
@@ -490,7 +490,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() { return getTitle(); }
+	public Doc getDocumentation() { return new ConstantDoc(getTitle()); }
 
 	/**
 	 * Method getName()

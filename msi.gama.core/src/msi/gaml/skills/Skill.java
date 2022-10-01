@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Skill.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Skill.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.skills;
 
@@ -35,21 +34,16 @@ public class Skill implements ISkill {
 	/**
 	 * Sets the description.
 	 *
-	 * @param desc the new description
+	 * @param desc
+	 *            the new description
 	 */
-	public void setDescription(final SkillDescription desc) {
-		description = desc;
-	}
+	public void setDescription(final SkillDescription desc) { description = desc; }
 
 	@Override
-	public String getDocumentation() {
-		return description.getDocumentation();
-	}
+	public Doc getDocumentation() { return description.getDocumentation(); }
 
 	@Override
-	public SkillDescription getDescription() {
-		return description;
-	}
+	public SkillDescription getDescription() { return description; }
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
@@ -59,7 +53,8 @@ public class Skill implements ISkill {
 	/**
 	 * Gets the current agent.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the current agent
 	 */
 	protected IAgent getCurrentAgent(final IScope scope) {
@@ -69,7 +64,8 @@ public class Skill implements ISkill {
 	/**
 	 * Gets the topology.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the topology
 	 */
 	protected ITopology getTopology(final IAgent agent) {
@@ -77,18 +73,12 @@ public class Skill implements ISkill {
 	}
 
 	@Override
-	public String getTitle() {
-		return description.getTitle();
-	}
+	public String getTitle() { return description.getTitle(); }
 
 	@Override
-	public String getDefiningPlugin() {
-		return description.getDefiningPlugin();
-	}
+	public String getDefiningPlugin() { return description.getDefiningPlugin(); }
 
 	@Override
-	public String getName() {
-		return description.getName();
-	}
+	public String getName() { return description.getName(); }
 
 }

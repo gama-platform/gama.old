@@ -120,7 +120,7 @@ public class SkillDescription extends TypeDescription {
 	public String getTitle() { return "skill " + getName(); }
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final doc d = getDocAnnotation();
 		final StringBuilder sb = new StringBuilder(200);
 		if (d != null) {
@@ -141,7 +141,7 @@ public class SkillDescription extends TypeDescription {
 		sb.append("<br/>");
 		sb.append(getActionDocumentation());
 		sb.append("<br/>");
-		return sb.toString();
+		return new RegularDoc(sb);
 
 	}
 

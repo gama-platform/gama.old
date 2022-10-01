@@ -229,10 +229,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	}
 
 	@Override
-	public String getDocumentation() {
-		String d = super.getDocumentation();
-		return d + getArgDocumentation();
-	}
+	public Doc getDocumentation() { return super.getDocumentation().append(getArgDocumentation()); }
 
 	/**
 	 * Gets the arg documentation.

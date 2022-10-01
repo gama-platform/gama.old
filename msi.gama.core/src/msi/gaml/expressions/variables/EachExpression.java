@@ -46,8 +46,8 @@ public class EachExpression extends VariableExpression {
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() {
-		return "Represents the current object, of type " + type.getTitle() + ", in the iteration";
+	public Doc getDocumentation() {
+		return new ConstantDoc("Represents the current object, of type " + type.getTitle() + ", in the iteration");
 	}
 
 	@Override

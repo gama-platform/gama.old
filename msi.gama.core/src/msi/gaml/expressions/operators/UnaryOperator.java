@@ -147,7 +147,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String getDocumentation() { return prototype.getDocumentation(); }
+	public Doc getDocumentation() { return prototype.getDocumentation(); }
 
 	/**
 	 * Compute type.

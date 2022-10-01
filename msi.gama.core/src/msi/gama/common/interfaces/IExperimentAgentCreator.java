@@ -93,14 +93,6 @@ public interface IExperimentAgentCreator {
 		public String getTitle() { return "Experiment Agent supported by " + getName() + " technology"; }
 
 		/**
-		 * Method getDocumentation()
-		 *
-		 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
-		 */
-		@Override
-		public String getDocumentation() { return ""; }
-
-		/**
 		 * Method getDefiningPlugin()
 		 *
 		 * @see msi.gama.common.interfaces.IGamlDescription#getDefiningPlugin()

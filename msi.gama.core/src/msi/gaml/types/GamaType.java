@@ -81,8 +81,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public String getDefiningPlugin() { return plugin; }
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		doc documentation;
+		final StringBuilder sb = new StringBuilder(200);
 		documentation = getClass().getAnnotation(doc.class);
 		if (documentation == null) {
 			final type t = getClass().getAnnotation(type.class);
@@ -91,13 +92,24 @@ public abstract class GamaType<Support> implements IType<Support> {
 				if (docs != null && docs.length > 0) { documentation = docs[0]; }
 			}
 		}
-		String result;
 		if (documentation == null) {
-			result = "Type " + getName() + getSupportName();
+			sb.append("Type " + getName() + getSupportName());
 		} else {
-			result = documentation.value();
+			sb.append(documentation.value());
 		}
-		return result + getFieldDocumentation();
+
+		if (getters != null) {
+			sb.append("<b><br/>Fields :</b><ul>");
+			for (final OperatorProto f : getters.values()) {
+				sb.append("<li> ").append(f.getName()).append(" of type ").append(f.returnType);
+				getFieldDocumentation(sb, f);
+				sb.append("</li>");
+			}
+
+			sb.append("</ul>");
+		}
+
+		return new RegularDoc(sb);
 	}
 
 	/**
@@ -110,31 +122,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	/**
 	 * Gets the field documentation.
 	 *
-	 * @return the field documentation
-	 */
-	public String getFieldDocumentation() {
-		if (getters == null) return "";
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append("<b><br/>Fields :</b><ul>");
-		for (final OperatorProto f : getters.values()) {
-			sb.append("<li> ").append(f.getName()).append(" of type ").append(f.returnType)
-					.append(getFieldDocumentation(f));
-			sb.append("</li>");
-		}
-
-		sb.append("</ul>");
-		return sb.toString();
-	}
-
-	/**
-	 * Gets the field documentation.
-	 *
 	 * @param prototype
 	 *            the prototype
 	 * @return the field documentation
 	 */
-	private String getFieldDocumentation(final OperatorProto prototype) {
-		final StringBuilder sb = new StringBuilder(200);
+	private void getFieldDocumentation(final StringBuilder sb, final OperatorProto prototype) {
 
 		final vars annot = prototype.getSupport().getAnnotation(vars.class);
 		if (annot != null) {
@@ -146,7 +138,6 @@ public abstract class GamaType<Support> implements IType<Support> {
 				}
 			}
 		}
-		return sb.toString();
 	}
 
 	@Override
@@ -451,8 +442,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public static IType<?> from(final IType<?> t, final IType<?> keyType, final IType<?> contentType) {
 		if (keyType == null || contentType == null) return t;
 		if (t instanceof IContainerType) {
-			if (!(t instanceof GamaSpeciesType)
-					&& (contentType.isAssignableFrom(t.getContentType()) && keyType.isAssignableFrom(t.getKeyType())))
+			if (!(t instanceof GamaSpeciesType) && contentType.isAssignableFrom(t.getContentType())
+					&& keyType.isAssignableFrom(t.getKeyType()))
 				return t;
 			return from((IContainerType) t, keyType, contentType);
 		}

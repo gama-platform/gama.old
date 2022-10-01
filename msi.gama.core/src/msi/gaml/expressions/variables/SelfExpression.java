@@ -43,7 +43,9 @@ public class SelfExpression extends VariableExpression {
 	public String getTitle() { return "pseudo-variable self of type " + getGamlType().getTitle(); }
 
 	@Override
-	public String getDocumentation() { return "Represents the current agent, instance of species " + type.getTitle(); }
+	public Doc getDocumentation() {
+		return new ConstantDoc("Represents the current agent, instance of species " + type.getTitle());
+	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) {}

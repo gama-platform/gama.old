@@ -367,12 +367,12 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final String doc = getBuiltInDoc();
-		if (isBuiltIn()) return doc == null ? "Not yet documented" : doc;
+		if (isBuiltIn()) return new ConstantDoc(doc == null ? "Not yet documented" : doc);
 		StringBuilder s = new StringBuilder();
 		if (doc != null) { s.append(doc).append("<br/>"); }
-		return s.append(getMeta().getFacetsDocumentation()).toString();
+		return new RegularDoc(s).append(getMeta().getFacetsDocumentation());
 	}
 
 	/**

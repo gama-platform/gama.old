@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlHoverProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlHoverProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
@@ -40,21 +40,29 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ActionDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
+import msi.gama.lang.gaml.gaml.ArgumentPair;
+import msi.gama.lang.gaml.gaml.Array;
+import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.Import;
+import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Do;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
+import msi.gama.lang.gaml.gaml.VarDefinition;
+import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.statements.DoStatement;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -247,6 +255,68 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		final Statement s = EGaml.getInstance().getStatement(o);
 		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o)
 			return getFirstLine(s);
+
+		// All the cases corresponding to #3495 -- arguments to actions and primitives
+		// CASE do run_thread interval: 2#s;
+		if (o instanceof Facet f && f.eContainer() instanceof S_Do sdo) {
+			String key = EGaml.getInstance().getKeyOf(f);
+			if (!DoStatement.DO_FACETS.contains(key)) {
+				String result = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
+				return "<b>" + result + "</b>";
+			}
+		}
+
+		// CASE do run_thread with: [interval::2#s];
+		if (o instanceof ArgumentPair pair && pair.eContainer() instanceof ExpressionList el
+				&& el.eContainer() instanceof Array array && array.eContainer() instanceof Facet facet) {
+			if (facet.eContainer() instanceof S_Do sdo) {
+				String key = pair.getOp();
+				if (!DoStatement.DO_FACETS.contains(key)) {
+					String result = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
+					return "<b>" + result + "</b>";
+				}
+
+			}
+		}
+
+		// CASE do run_thread with: (interval::2#s);
+		if (o instanceof VariableRef vr && vr.eContainer() instanceof Parameter pair
+				&& pair.eContainer() instanceof ExpressionList el && el.eContainer() instanceof Facet facet
+				&& facet.eContainer() instanceof S_Do sdo) {
+			String key = EGaml.getInstance().getKeyOf(pair);
+			if (!DoStatement.DO_FACETS.contains(key)) {
+				String result = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
+				return "<b>" + result + "</b>";
+			}
+
+		}
+
+		// CASE do run_thread (interval: 2#s); unknown aa <- self.run_thread (interval: 2#s); aa <- run_thread
+		// (interval: 2#s);
+		if (o instanceof VariableRef) {
+			if (o.eContainer() instanceof Parameter param && param.eContainer() instanceof ExpressionList el
+					&& el.eContainer() instanceof Function function) {
+				final IGamlDescription description =
+						GamlResourceServices.getResourceDocumenter().getGamlDocumentation(function);
+				if (description != null) {
+					VarDefinition vd = ((VariableRef) o).getRef();
+					String result = "Argument " + vd.getName() + " of action "
+							+ EGaml.getInstance().getNameOfRef(function.getLeft());
+					return "<b>" + result + "</b>";
+				}
+			}
+
+			// Case of do xxx;
+			// if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
+			VarDefinition vd = ((VariableRef) o).getRef();
+			IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
+			if (description != null) {
+				String result = description.getTitle();
+				if (result == null) return "";
+				return result;
+			}
+		}
+
 		// Case of do xxx;
 		// if (o instanceof VariableRef && o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
 		// final VarDefinition vd = ((VariableRef) o).getRef();

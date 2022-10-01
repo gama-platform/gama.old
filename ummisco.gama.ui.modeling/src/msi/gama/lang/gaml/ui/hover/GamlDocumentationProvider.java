@@ -31,6 +31,7 @@ import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.UnitName;
+import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
@@ -94,7 +95,6 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		}
 
 		String comment = super.getDocumentation(o);
-		if (comment == null) { comment = ""; }
 		if (o instanceof VariableRef) {
 			comment = super.getDocumentation(((VariableRef) o).getRef());
 		} else if (o instanceof ActionRef) { comment = super.getDocumentation(((ActionRef) o).getRef()); }
@@ -108,37 +108,34 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			if (s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
 				final IDocManager dm = GamlResourceServices.getResourceDocumenter();
 				final IGamlDescription gd = dm.getGamlDocumentation(s);
-				if (gd != null) return gd.getDocumentation();
+				if (gd != null) return gd.getDocumentation().get();
 			}
-		} else if (o instanceof Function) {
-			final Function f = (Function) o;
+		} else if (o instanceof Function f) {
 			if (f.getLeft() instanceof ActionRef) {
 				final ActionRef ref = (ActionRef) f.getLeft();
 				final String temp = getDocumentation(ref.getRef());
-				if (!temp.contains("No documentation")) return temp;
+				if (temp != null && !temp.contains("No documentation")) return temp;
 			}
 		} else if (o instanceof UnitName) {
 			final String name = ((UnitName) o).getRef().getName();
 			final UnitConstantExpression exp = GAML.UNITS.get(name);
-			if (exp != null) return exp.getDocumentation();
+			if (exp != null) return exp.getDocumentation().get();
 		}
 
-		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
-
-		// TODO Add a swtich for constants
+		IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 
 		if (description == null) {
-			// if (o instanceof VariableRef) {
-			// Case of do xxx;
-			// if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
-			// VarDefinition vd = ((VariableRef) o).getRef();
-			// final IGamlDescription description =
-			// GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
-			// if (description != null) {
-			// String result = description.getDocumentation();
-			// if (result == null) { return ""; }
-			// return result;
-			// }
+			if (o instanceof VariableRef) {
+				// Case of do xxx;
+				// if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
+				VarDefinition vd = ((VariableRef) o).getRef();
+				description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
+				if (description != null) {
+					String result = description.getDocumentation().get();
+					if (result == null) return "";
+					return result;
+				}
+			}
 			// }
 			// final VarDefinition vd = ((VariableRef) o).getRef();
 			// if (vd != null && vd.eContainer() == null) {

@@ -108,14 +108,6 @@ public interface IDisplayCreator {
 		public String getTitle() { return "Display supported by " + getName() + ""; }
 
 		/**
-		 * Method getDocumentation()
-		 *
-		 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
-		 */
-		@Override
-		public String getDocumentation() { return ""; }
-
-		/**
 		 * Method getDefiningPlugin()
 		 *
 		 * @see msi.gama.common.interfaces.IGamlDescription#getDefiningPlugin()

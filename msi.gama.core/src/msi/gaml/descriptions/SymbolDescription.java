@@ -654,7 +654,7 @@ public abstract class SymbolDescription implements IDescription {
 	public String getTitle() { return "statement " + getKeyword(); }
 
 	@Override
-	public String getDocumentation() { return getMeta().getDocumentation(); }
+	public Doc getDocumentation() { return getMeta().getDocumentation(); }
 
 	@Override
 	public String getDefiningPlugin() { return getMeta().getDefiningPlugin(); }

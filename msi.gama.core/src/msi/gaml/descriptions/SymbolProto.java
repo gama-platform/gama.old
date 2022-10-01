@@ -101,7 +101,7 @@ public class SymbolProto extends AbstractProto {
 
 	/** The Constant BREAKABLE_STATEMENTS. */
 	public static final Set<String> BREAKABLE_STATEMENTS = new HashSet();
-	
+
 	/** The Constant CONTINUABLE_STATEMENTS. */
 	public static final Set<String> CONTINUABLE_STATEMENTS = new HashSet();
 
@@ -311,11 +311,11 @@ public class SymbolProto extends AbstractProto {
 	 * @return
 	 */
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append(super.getDocumentation());
 		sb.append(getFacetsDocumentation());
-		return sb.toString();
+		return new RegularDoc(sb);
 	}
 
 	/**

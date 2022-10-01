@@ -56,9 +56,9 @@ public abstract class AbstractProto implements IGamlDescription {
 	}
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final doc d = getDocAnnotation();
-		if (d == null) return "";
+		if (d == null) return EMPTY_DOC;
 		final StringBuilder sb = new StringBuilder(200);
 		String s = d.value();
 		if (s != null && !s.isEmpty()) {
@@ -73,7 +73,7 @@ public abstract class AbstractProto implements IGamlDescription {
 			sb.append("</i><br/>");
 		}
 
-		return sb.toString();
+		return new RegularDoc(sb);
 	}
 
 	/**

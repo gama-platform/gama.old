@@ -127,7 +127,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	}
 
 	@Override
-	public String getDocumentation() { return "Constant string: " + getName(); }
+	public Doc getDocumentation() { return new ConstantDoc("Constant string: " + getName()); }
 
 	@Override
 	public String getTitle() { return "constant string '" + getName() + "'"; }

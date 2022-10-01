@@ -80,6 +80,14 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		parameters = args;
 	}
 
+	/**
+	 * Instantiates a new primitive operator.
+	 *
+	 * @param action the action.
+	 * @param target the target.
+	 * @param args the args
+	 * @param targetSpecies the target species.
+	 */
 	public PrimitiveOperator(final StatementDescription action, final IExpression target, final Arguments args,
 			final String targetSpecies) {
 		this.target = target;
@@ -143,7 +151,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	}
 
 	@Override
-	public String getDocumentation() { return action.getDocumentation(); }
+	public Doc getDocumentation() { return action.getDocumentation(); }
 
 	@Override
 	public String getDefiningPlugin() { return action.getDefiningPlugin(); }

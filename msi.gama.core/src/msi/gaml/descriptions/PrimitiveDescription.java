@@ -45,7 +45,7 @@ public class PrimitiveDescription extends ActionDescription {
 	private String plugin;
 
 	/** The documentation. */
-	private String documentation;
+	private Doc documentation;
 
 	/**
 	 * Instantiates a new primitive description.
@@ -91,18 +91,19 @@ public class PrimitiveDescription extends ActionDescription {
 	}
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		if (documentation != null) return documentation;
 		final doc d = getDocAnnotation();
+		String s;
 		if (d == null) {
-			documentation = "";
+			s = "";
 		} else if (d.deprecated().isEmpty()) {
-			documentation = d.value() + Strings.LN;
+			s = d.value() + Strings.LN;
 		} else {
-			documentation = d.value() + Strings.LN + Strings.LN + d.deprecated() + Strings.LN;
+			s = d.value() + Strings.LN + Strings.LN + d.deprecated() + Strings.LN;
 		}
 		// Only arguments
-		documentation = documentation + getArgDocumentation();
+		documentation = new RegularDoc(s).append(getArgDocumentation());
 		return documentation;
 	}
 

@@ -185,8 +185,9 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	public String getTitle() { return "literal list of type " + getGamlType().getTitle(); }
 
 	@Override
-	public String getDocumentation() {
-		return "Constant " + isConst() + "<br>Contains elements of type " + type.getContentType().getTitle();
+	public Doc getDocumentation() {
+		return new ConstantDoc(
+				"Constant " + isConst() + "<br>Contains elements of type " + type.getContentType().getTitle());
 	}
 
 	/**

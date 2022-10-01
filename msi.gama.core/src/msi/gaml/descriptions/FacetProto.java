@@ -210,7 +210,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final StringBuilder sb = new StringBuilder(100);
 		sb.append("<b>").append(name).append("</b>, ")
 				.append(getDeprecated() != null ? "deprecated" : optional ? "optional" : "required").append("")
@@ -222,7 +222,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 			sb.append(getDeprecated());
 			sb.append("]</b>");
 		}
-		return sb.toString();
+		return new RegularDoc(sb);
 	}
 
 	/**
@@ -260,6 +260,9 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 				+ (types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";
 	}
 
+	/**
+	 * Builds the doc.
+	 */
 	public void buildDoc() {
 		if (docBuilt) return;
 		docBuilt = true;

@@ -138,9 +138,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 					result = processSecondContentTypeOrType();
 					break;
 				default:
-					if (typeProvider < INDEXED_TYPES) {
-						result = processIndexedTypeProvider(result, typeProvider);
-					}
+					if (typeProvider < INDEXED_TYPES) { result = processIndexedTypeProvider(result, typeProvider); }
 			}
 		}
 
@@ -153,7 +151,14 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return result;
 	}
 
-	private IType processIndexedTypeProvider(IType result, int typeProvider) {
+	/**
+	 * Process indexed type provider.
+	 *
+	 * @param result the result
+	 * @param typeProvider the type provider
+	 * @return the i type
+	 */
+	private IType processIndexedTypeProvider(IType result, final int typeProvider) {
 		int index = -1;
 		int kindOfIndex = -1;
 		if (typeProvider > TYPE_AT_INDEX) {
@@ -189,6 +194,11 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return result;
 	}
 
+	/**
+	 * Process second content type or type.
+	 *
+	 * @return the i type
+	 */
 	private IType processSecondContentTypeOrType() {
 		IType result;
 		final IType rightType = exprs[1].getGamlType();
@@ -201,6 +211,11 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return result;
 	}
 
+	/**
+	 * Process first content type or type.
+	 *
+	 * @return the i type
+	 */
 	private IType processFirstContentTypeOrType() {
 		IType result;
 		final IType leftType = exprs[0].getGamlType();
@@ -291,7 +306,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
-	public String getDocumentation() { return prototype.getDocumentation(); }
+	public Doc getDocumentation() { return prototype.getDocumentation(); }
 
 	@Override
 	public String getDefiningPlugin() { return prototype.getDefiningPlugin(); }

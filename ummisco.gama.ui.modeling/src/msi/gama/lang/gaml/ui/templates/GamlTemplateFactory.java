@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlTemplateFactory.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlTemplateFactory.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
 
@@ -63,8 +63,10 @@ public class GamlTemplateFactory {
 	/**
 	 * From.
 	 *
-	 * @param u the u
-	 * @param sp the sp
+	 * @param u
+	 *            the u
+	 * @param sp
+	 *            the sp
 	 * @return the template persistence data
 	 */
 	public static TemplatePersistenceData from(final usage u, final AbstractProto sp) {
@@ -97,7 +99,7 @@ public class GamlTemplateFactory {
 			// Trying to build something that makes sense..
 			desc = menu + " " + name;
 			desc += Strings.LN;
-			final String doc = sp.getDocumentation();
+			final String doc = sp.getDocumentation().get();
 			int index = doc.indexOf(". ");
 			if (index == -1) { index = doc.length(); }
 			desc += doc.substring(0, Math.min(index, 150)) + " [...]";
@@ -111,26 +113,27 @@ public class GamlTemplateFactory {
 
 	/** The begin comment. */
 	static String beginComment = "/**" + Strings.LN;
-	
+
 	/** The end comment. */
 	static String endComment = "*/" + Strings.LN;
-	
+
 	/** The comment line. */
 	static String commentLine = Strings.LN + "* " + Strings.TAB + Strings.TAB;
-	
+
 	/** The inherited attributes. */
 	static String inheritedAttributes = "* Inherited attributes:";
-	
+
 	/** The inherited actions. */
 	static String inheritedActions = "* Inherited actions:";
-	
+
 	/** The available behaviors. */
 	static String availableBehaviors = "* Available behaviors:";
 
 	/**
 	 * Body.
 	 *
-	 * @param body the body
+	 * @param body
+	 *            the body
 	 * @return the string
 	 */
 	private static String body(final String body) {
@@ -145,9 +148,12 @@ public class GamlTemplateFactory {
 	/**
 	 * Dump.
 	 *
-	 * @param title the title
-	 * @param descs the descs
-	 * @param sb the sb
+	 * @param title
+	 *            the title
+	 * @param descs
+	 *            the descs
+	 * @param sb
+	 *            the sb
 	 */
 	private static void dump(final String title, final Iterable<? extends INamed> descs, final StringBuilder sb) {
 		if (!Iterables.isEmpty(descs)) {
@@ -162,7 +168,8 @@ public class GamlTemplateFactory {
 	/**
 	 * Species with skill.
 	 *
-	 * @param skill the skill
+	 * @param skill
+	 *            the skill
 	 * @return the template
 	 */
 	public static Template speciesWithSkill(final String skill) {
@@ -179,7 +186,8 @@ public class GamlTemplateFactory {
 	/**
 	 * Attribute with type.
 	 *
-	 * @param type the type
+	 * @param type
+	 *            the type
 	 * @return the template
 	 */
 	public static Template attributeWithType(final String type) {
@@ -190,7 +198,8 @@ public class GamlTemplateFactory {
 	/**
 	 * Species with control.
 	 *
-	 * @param skill the skill
+	 * @param skill
+	 *            the skill
 	 * @return the template
 	 */
 	public static Template speciesWithControl(final String skill) {
@@ -210,7 +219,8 @@ public class GamlTemplateFactory {
 	/**
 	 * Species with parent.
 	 *
-	 * @param species the species
+	 * @param species
+	 *            the species
 	 * @return the template
 	 */
 	public static Template speciesWithParent(final TypeDescription species) {
@@ -228,7 +238,8 @@ public class GamlTemplateFactory {
 	/**
 	 * Call to action.
 	 *
-	 * @param sd the sd
+	 * @param sd
+	 *            the sd
 	 * @return the template
 	 */
 	public static Template callToAction(final StatementDescription sd) {

@@ -313,11 +313,15 @@ public class SpeciesDescription extends TypeDescription {
 		Class<? extends IAgent> javaBase = getJavaBase();
 		Iterable<Class<? extends ISkill>> skillClasses = transform(getSkills(), TO_CLASS);
 		Iterable<IDescription> javaChildren = GAML.getAllChildrenOf(javaBase, skillClasses);
-		for (final IDescription v : javaChildren) {
-			addJavaChild(v);
-		}
+		for (final IDescription v : javaChildren) { addJavaChild(v); }
 	}
 
+	/**
+	 * Adds the java child.
+	 *
+	 * @param v
+	 *            the v
+	 */
 	private void addJavaChild(final IDescription v) {
 		if (isBuiltIn()) { v.setOriginName("built-in species " + getName()); }
 		if (v instanceof VariableDescription) {
@@ -652,11 +656,11 @@ public class SpeciesDescription extends TypeDescription {
 	public String getTitle() { return getKeyword() + " " + getName(); }
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append(getDocumentationWithoutMeta());
 		sb.append(getMeta().getDocumentation());
-		return sb.toString();
+		return new RegularDoc(sb);
 	}
 
 	/**
