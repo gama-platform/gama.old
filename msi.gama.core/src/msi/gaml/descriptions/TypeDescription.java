@@ -100,37 +100,27 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	/**
-	 * Gets the attribute documentation.
+	 * Documents attributes.
 	 *
-	 * @return the attribute documentation
+	 * @param result
+	 *            the result
 	 */
-	public String getAttributeDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append("<b><br/>Attributes :</b><ul>");
+	public void documentAttributes(final Doc result) {
 		for (final VariableDescription f : getAttributes()) {
-			sb.append("<li>").append("<b>").append(f.getName()).append("</b>").append(f.getShortDescription());
-			sb.append("</li>");
+			result.set("Attributes:", f.getName(), f.getShortDocumentation());
 		}
-
-		sb.append("</ul>");
-		return sb.toString();
 	}
 
 	/**
-	 * Gets the action documentation.
+	 * Documents actions.
 	 *
-	 * @return the action documentation
+	 * @param result
+	 *            the result
 	 */
-	public String getActionDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append("<b><br/>Actions :</b><ul>");
+	public void documentActions(final Doc result) {
 		for (final ActionDescription f : getActions()) {
-			sb.append("<li>").append("<b>").append(f.getName()).append("</b>").append(f.getShortDescription());
-			sb.append("</li>");
+			result.set("Actions:", f.getName(), f.getShortDocumentation(true));
 		}
-
-		sb.append("</ul>");
-		return sb.toString();
 	}
 
 	@Override
@@ -732,8 +722,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		String added = null;
 		boolean differentName = false;
 		String differentType = null;
-		while (myIt.hasNext()) {
-			final IDescription myArg = myIt.next();
+		for (IDescription myArg : myArgs) {
 			if (!parentIt.hasNext()) {
 				added = myArg.getName();
 				break;

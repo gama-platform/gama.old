@@ -115,16 +115,6 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		isId = isLabel && types[0] != IType.LABEL;
 		isType = types[0] == IType.TYPE_ID;
 		this.values = values.length == 0 ? null : ImmutableSet.copyOf(values);
-		// if (doc != null) {
-		// final String[] strings = doc.split(GamlProperties.SEPARATOR, -1);
-		// this.doc = strings[0];
-		// if (strings.length > 1) {
-		// this.deprecated = strings[1];
-		// if (deprecated.length() == 0) {
-		// deprecated = null;
-		// }
-		// }
-		// }
 	}
 
 	/**
@@ -211,18 +201,19 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 */
 	@Override
 	public Doc getDocumentation() {
-		final StringBuilder sb = new StringBuilder(100);
-		sb.append("<b>").append(name).append("</b>, ")
-				.append(getDeprecated() != null ? "deprecated" : optional ? "optional" : "required").append("")
-				.append(", expects ").append(typesToString());
-		if (values != null && values.size() > 0) { sb.append(", takes values in ").append(values).append(". "); }
+		final Doc sb = new RegularDoc();
+		sb.append(getDeprecated() != null ? "Deprecated" : optional ? "Optional" : "Required").append(", expects ")
+				.append(typesToString());
+		if (values != null && values.size() > 0) {
+			sb.append(", takes values in ").append(values.toString()).append(". ");
+		}
 		if (getDoc() != null && getDoc().length() > 0) { sb.append(" - ").append(getDoc()); }
 		if (getDeprecated() != null) {
 			sb.append(" <b>[");
 			sb.append(getDeprecated());
 			sb.append("]</b>");
 		}
-		return new RegularDoc(sb);
+		return sb;
 	}
 
 	/**

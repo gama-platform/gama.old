@@ -332,9 +332,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void _var(final Class clazz, final IDescription desc, final IGamaHelper get, final IGamaHelper init,
 			final IGamaHelper set) {
 		GAML.ADDITIONS.put(clazz, desc);
-		((VariableDescription) desc).addHelpers(clazz, get, init, set);
-		((VariableDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		VariableDescription.CLASS_DEFINITIONS.put((VariableDescription) desc, clazz);
+		VariableDescription vd = (VariableDescription) desc;
+		vd.addHelpers(clazz, get, init, set);
+		vd.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		vd.setDefinitionClass(clazz);
 	}
 
 	/**

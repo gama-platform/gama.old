@@ -339,7 +339,7 @@ public class SpeciesDescription extends TypeDescription {
 				// Class<?> c = VariableDescription.CLASS_DEFINITIONS.remove(v);
 				final VariableDescription var = (VariableDescription) v.copy(this);
 				addOwnAttribute(var);
-				var.builtInDoc = ((VariableDescription) v).getBuiltInDoc();
+				// var.builtInDoc = ((VariableDescription) v).getBuiltInDoc();
 				// VariableDescription.CLASS_DEFINITIONS.put(var, c);
 			}
 
@@ -657,10 +657,10 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public Doc getDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append(getDocumentationWithoutMeta());
-		sb.append(getMeta().getDocumentation());
-		return new RegularDoc(sb);
+		final Doc result = new RegularDoc();
+		documentThis(result);
+		result.append("<hr/>").append(getMeta().getDocumentation().get());
+		return result;
 	}
 
 	/**
@@ -668,19 +668,15 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 * @return the documentation without meta
 	 */
-	public String getDocumentationWithoutMeta() {
-		final StringBuilder sb = new StringBuilder(200);
+	public void documentThis(final Doc sb) {
 		final String parentName = getParent() == null ? "nil" : getParent().getName();
 		final String hostName = getMacroSpecies() == null ? null : getMacroSpecies().getName();
 		sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
 		if (hostName != null) { sb.append("<b>Microspecies of:</b> ").append(hostName).append("<br>"); }
 		final Iterable<String> skills = getSkillsNames();
-		if (!Iterables.isEmpty(skills)) { sb.append("<b>Skills:</b> ").append(skills).append("<br>"); }
-		sb.append(getAttributeDocumentation());
-		sb.append("<br/>");
-		sb.append(getActionDocumentation());
-		sb.append("<br/>");
-		return sb.toString();
+		if (!Iterables.isEmpty(skills)) { sb.append("<b>Skills:</b> ").append(skills.toString()).append("<br>"); }
+		documentAttributes(sb);
+		documentActions(sb);
 	}
 
 	/**

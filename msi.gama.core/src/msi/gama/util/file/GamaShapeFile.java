@@ -520,13 +520,7 @@ public class GamaShapeFile extends GamaGisFile {
 				throw GamaRuntimeException.create(e2, scope);
 			}
 		}
-		// finally {
-		// if (store != null) { store.dispose(); }
-		// }
-		// if (size > list.size()) {
-		// reportError(scope, warning("Problem with file " + getFile(scope) + ": only " + list.size() + " of the "
-		// + size + " geometries could be added", scope), false);
-		// }
+
 	}
 
 	@Override
@@ -554,13 +548,6 @@ public class GamaShapeFile extends GamaGisFile {
 	public int length(final IScope scope) {
 		if (getBuffer() == null) return getFeatureCollection(scope).size();
 		return super.length(scope);
-	}
-
-	@Override
-	public void invalidateContents() {
-		super.invalidateContents();
-		// if (store != null) { store.dispose(); }
-		// store = null;
 	}
 
 }

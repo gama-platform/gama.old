@@ -82,8 +82,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public Doc getDocumentation() {
+		Doc result = new RegularDoc();
 		doc documentation;
-		final StringBuilder sb = new StringBuilder(200);
 		documentation = getClass().getAnnotation(doc.class);
 		if (documentation == null) {
 			final type t = getClass().getAnnotation(type.class);
@@ -93,23 +93,25 @@ public abstract class GamaType<Support> implements IType<Support> {
 			}
 		}
 		if (documentation == null) {
-			sb.append("Type " + getName() + getSupportName());
+			result.append("Datatype " + getName() + getSupportName());
 		} else {
-			sb.append(documentation.value());
+			result.append("Datatype ").append(getName()).append(getSupportName()).append("<br/>")
+					.append(documentation.value());
 		}
 
+		documentFields(result);
+
+		return result;
+	}
+
+	@Override
+	public void documentFields(final Doc result) {
 		if (getters != null) {
-			sb.append("<b><br/>Fields :</b><ul>");
-			for (final OperatorProto f : getters.values()) {
-				sb.append("<li> ").append(f.getName()).append(" of type ").append(f.returnType);
-				getFieldDocumentation(sb, f);
-				sb.append("</li>");
-			}
+			// sb.append("<b><br/>Fields :</b><ul>");
+			for (final OperatorProto f : getters.values()) { getFieldDocumentation(result, f); }
 
-			sb.append("</ul>");
+			result.append("</ul>");
 		}
-
-		return new RegularDoc(sb);
 	}
 
 	/**
@@ -126,14 +128,16 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 *            the prototype
 	 * @return the field documentation
 	 */
-	private void getFieldDocumentation(final StringBuilder sb, final OperatorProto prototype) {
+	void getFieldDocumentation(final Doc sb, final OperatorProto prototype) {
 
 		final vars annot = prototype.getSupport().getAnnotation(vars.class);
 		if (annot != null) {
 			final variable[] allVars = annot.value();
 			for (final variable v : allVars) {
 				if (v.name().equals(prototype.getName())) {
-					if (v.doc().length > 0) { sb.append(", ").append(v.doc()[0].value()); }
+					if (v.doc().length > 0) {
+						sb.set("Accessible fields: ", v.name(), new ConstantDoc(v.doc()[0].value()));
+					}
 					break;
 				}
 			}

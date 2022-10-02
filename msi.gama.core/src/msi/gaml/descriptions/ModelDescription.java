@@ -26,7 +26,6 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -282,22 +281,13 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public String getDocumentationWithoutMeta() {
-		final StringBuilder sb = new StringBuilder(200);
+	public void documentThis(final Doc sb) {
 		final String parentName = getParent() == null ? "nil" : getParent().getName();
-		if (!IKeyword.MODEL.equals(parentName)) {
-			sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
-		}
+		sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
 		final Iterable<String> skills = getSkillsNames();
-		if (!Iterables.isEmpty(skills)) { sb.append("<b>Skills:</b> ").append(skills).append("<br>"); }
-		sb.append("<br>").append(
-				"The following attributes and actions will be accessible using 'world' (in the model) and 'simulation' (in an experiment)")
-				.append("<br>");
-		sb.append(getAttributeDocumentation());
-		sb.append("<br/>");
-		sb.append(getActionDocumentation());
-		sb.append("<br/>");
-		return sb.toString();
+		if (!Iterables.isEmpty(skills)) { sb.append("<b>Skills:</b> ").append(skills.toString()).append("<br>"); }
+		documentAttributes(sb);
+		documentActions(sb);
 	}
 
 	/**

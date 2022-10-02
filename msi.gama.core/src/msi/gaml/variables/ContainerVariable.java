@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ContainerVariable.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ContainerVariable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -46,7 +46,14 @@ import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("The initial value of the attribute")),
+						doc = @doc ("The initial value of the attribute. Same as <- ")),
+				@facet (
+						name = "<-",
+						internal = true,
+						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("The initial value of the attribute. Same as init:")),
 				@facet (
 						name = IKeyword.VALUE,
 						type = IType.NONE,
@@ -65,7 +72,13 @@ import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. Equivalent to '->'. This facet is incompatible with both 'init:', 'update:' and 'on_change:' (or the equivalent final block)")),
+				@facet (
+						name = "->",
+						internal = true,
+						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
+						optional = true,
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. Equivalent to 'function:'. This facet is incompatible with both 'init:' and 'update:' and 'on_change:' (or the equivalent final block)")),
 				@facet (
 						name = IKeyword.CONST,
 						type = IType.BOOL,
@@ -118,7 +131,7 @@ import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 		concept = { IConcept.CONTAINER })
 @inside (
 		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@doc ("Allows to declare an attribute of a species or an experiment")
+@doc ("Declaration of an attribute of a species or an experiment")
 @validator (ContainerVarValidator.class)
 public class ContainerVariable extends Variable {
 
@@ -139,9 +152,7 @@ public class ContainerVariable extends Variable {
 			if (vd.hasFacet(SIZE)) {
 				final IExpression size = vd.getFacetExpr(SIZE);
 				IExpression fill = vd.getFacetExpr(FILL_WITH);
-				if (fill == null) {
-					fill = IExpressionFactory.NIL_EXPR;
-				}
+				if (fill == null) { fill = IExpressionFactory.NIL_EXPR; }
 				final IType<?> type = vd.getGamlType();
 				switch (type.id()) {
 					case IType.LIST:
@@ -179,7 +190,8 @@ public class ContainerVariable extends Variable {
 	/**
 	 * Instantiates a new container variable.
 	 *
-	 * @param sd the sd
+	 * @param sd
+	 *            the sd
 	 */
 	public ContainerVariable(final IDescription sd) {
 		super(sd);

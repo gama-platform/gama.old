@@ -36,8 +36,8 @@ public class DocumentationNode implements IGamlDescription {
 	DocumentationNode(final IGamlDescription desc) throws IOException {
 		title = desc.getTitle();
 		doc = desc.getDocumentation();
-		final String plugin = desc.getDefiningPlugin();
-		if (plugin != null) { doc.append("\n<p/><i> [defined in " + plugin + "] </i>"); }
+		// final String plugin = desc.getDefiningPlugin();
+		// if (plugin != null && !plugin.isBlank()) { doc.append("\n<p/><i> [defined in " + plugin + "] </i>"); }
 	}
 
 	@Override

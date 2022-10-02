@@ -203,16 +203,6 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	}
 
 	/**
-	 * Method getFieldDescriptions()
-	 *
-	 * @see msi.gaml.types.IType#getFieldDescriptions(msi.gaml.descriptions.ModelDescription)
-	 */
-	// @Override
-	// public Map getFieldDescriptions(final ModelDescription model) {
-	// return type.getFieldDescriptions(model);
-	// }
-
-	/**
 	 * Method isSpeciesType()
 	 *
 	 * @see msi.gaml.types.IType#isSpeciesType()
@@ -490,7 +480,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
-	public Doc getDocumentation() { return new ConstantDoc(getTitle()); }
+	public Doc getDocumentation() { return type.getDocumentation(); }
 
 	/**
 	 * Method getName()

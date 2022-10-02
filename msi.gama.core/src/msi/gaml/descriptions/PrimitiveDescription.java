@@ -13,13 +13,9 @@ package msi.gaml.descriptions;
 import java.lang.reflect.AccessibleObject;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -28,6 +24,10 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
+
+/**
+ * The Class PrimitiveDescription.
+ */
 
 /**
  * The Class PrimitiveDescription.
@@ -45,7 +45,7 @@ public class PrimitiveDescription extends ActionDescription {
 	private String plugin;
 
 	/** The documentation. */
-	private Doc documentation;
+	private RegularDoc documentation;
 
 	/**
 	 * Instantiates a new primitive description.
@@ -93,50 +93,24 @@ public class PrimitiveDescription extends ActionDescription {
 	@Override
 	public Doc getDocumentation() {
 		if (documentation != null) return documentation;
-		final doc d = getDocAnnotation();
-		String s;
-		if (d == null) {
-			s = "";
-		} else if (d.deprecated().isEmpty()) {
-			s = d.value() + Strings.LN;
-		} else {
-			s = d.value() + Strings.LN + Strings.LN + d.deprecated() + Strings.LN;
-		}
+		String s = getBuiltInDoc();
 		// Only arguments
-		documentation = new RegularDoc(s).append(getArgDocumentation());
-		return documentation;
-	}
-
-	@Override
-	public String getArgDocumentation() {
+		documentation = new RegularDoc(s);
 		if (getArgNames().size() > 0) {
-			final StringBuilder sb = new StringBuilder(200);
 			Map<String, arg> argAnnotations = getArgs();
-			final List<String> args = ImmutableList.copyOf(Iterables.transform(getFormalArgs(), desc -> {
-
+			getFormalArgs().forEach(arg -> {
 				final StringBuilder sb1 = new StringBuilder(100);
-
-				String name = desc.getName();
-				sb1.append("<li><b>").append(Strings.TAB).append(name).append("</b>, type ").append(desc.getGamlType());
-				if (desc.hasFacet(IKeyword.DEFAULT) && desc.getFacetExpr(IKeyword.DEFAULT) != null) {
-					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
-							.append(")</i>");
+				String name = arg.getName();
+				sb1.append(arg.getGamlType());
+				if (arg.hasFacet(DEFAULT) && arg.getFacetExpr(DEFAULT) != null) {
+					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serialize(false)).append(")</i>");
 				}
 				arg a = argAnnotations.get(name);
-				if (a != null) {
-					doc[] d = a.doc();
-					if (d.length > 0) { sb1.append("; ").append(d[0].value()); }
-				}
-				sb1.append("</li>");
-
-				return sb1.toString();
-			}));
-			sb.append("Arguments accepted: ").append("<br/><ul>");
-			for (final String a : args) { sb.append(a); }
-			sb.append("</ul><br/>");
-			return sb.toString();
+				if (a != null && a.doc().length > 0) { sb1.append("; ").append(a.doc()[0].value()); }
+				documentation.set("Arguments accepted: ", name, new ConstantDoc(sb1.toString()));
+			});
 		}
-		return "";
+		return documentation;
 	}
 
 	/**
@@ -150,6 +124,20 @@ public class PrimitiveDescription extends ActionDescription {
 		String deprecated = d.deprecated();
 		if (deprecated.isEmpty()) return null;
 		return deprecated;
+	}
+
+	@Override
+	public String getBuiltInDoc() {
+		final doc d = getDocAnnotation();
+		String s;
+		if (d == null) {
+			s = "";
+		} else if (d.deprecated().isEmpty()) {
+			s = d.value() + Strings.LN;
+		} else {
+			s = d.value() + Strings.LN + Strings.LN + d.deprecated() + Strings.LN;
+		}
+		return s;
 	}
 
 	/**

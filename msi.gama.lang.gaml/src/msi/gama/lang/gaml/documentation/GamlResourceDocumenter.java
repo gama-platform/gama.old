@@ -113,7 +113,7 @@ public class GamlResourceDocumenter implements IDocManager {
 
 	@Override
 	public IGamlDescription getGamlDocumentation(final IGamlDescription o) {
-		if (o == null) return null;
+		if (o == null || o instanceof DocumentationNode) return o;
 		try {
 			return new DocumentationNode(o);
 		} catch (final IOException e) {

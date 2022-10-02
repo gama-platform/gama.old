@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import msi.gama.precompiler.GamlProperties;
 
 /**
@@ -28,36 +31,35 @@ public interface IGamlDescription extends INamed {
 	public interface Doc {
 
 		/**
-		 * Gets the.
+		 * Gets the string value of the documentation. Never null.
 		 *
 		 * @return the string
 		 */
 		String get();
 
 		/**
-		 * Gets the.
+		 * Gets the string value of the documentation of the sub-element corresponding to the key.
 		 *
 		 * @param key
 		 *            the key
 		 * @return the string
 		 */
-		default String get(final String key) {
-			return get();
+		default Doc get(final String key) {
+			return EMPTY_DOC;
 		}
 
 		/**
-		 * Append.
+		 * Append a string to the current string value of the documentation.
 		 *
 		 * @param string
 		 *            the string
 		 */
 		default Doc append(final String string) {
-			// Nothing by default;
 			return this;
 		}
 
 		/**
-		 * Prepend.
+		 * Prepend a string to the current string value of the documentation.
 		 *
 		 * @param string
 		 *            the string
@@ -66,10 +68,21 @@ public interface IGamlDescription extends INamed {
 		default Doc prepend(final String string) {
 			return this;
 		}
+
+		/**
+		 * Adds a subdocumentation at the specific key.
+		 *
+		 * @param key
+		 *            the key
+		 * @param doc
+		 *            the doc
+		 */
+		default void set(final String header, final String key, final Doc doc) {}
+
 	}
 
 	/**
-	 * The ConstantDoc.
+	 * Constant documentation that cannot change once instantiated
 	 */
 	record ConstantDoc(String value) implements Doc {
 
@@ -86,12 +99,15 @@ public interface IGamlDescription extends INamed {
 	}
 
 	/**
-	 * The Class RegularDoc.
+	 * A documentation built around a StringBuilder, allowing to append and prepend elements
 	 */
 	class RegularDoc implements Doc {
 
 		/** The builder. */
 		final StringBuilder builder;
+
+		/** The subdocs. */
+		final Map<String, Map<String, Doc>> subdocs = new LinkedHashMap<>();
 
 		/**
 		 * Instantiates a new regular doc.
@@ -99,19 +115,15 @@ public interface IGamlDescription extends INamed {
 		 * @param sb
 		 *            the sb
 		 */
-		public RegularDoc(final StringBuilder sb) {
-			builder = sb;
+		public RegularDoc(final CharSequence sb) {
+			builder = new StringBuilder(sb);
 		}
 
 		/**
 		 * Instantiates a new regular doc.
-		 *
-		 * @param value
-		 *            the value
 		 */
-		public RegularDoc(final String value) {
-			builder = new StringBuilder(200);
-			append(value);
+		public RegularDoc() {
+			this("");
 		}
 
 		@Override
@@ -128,12 +140,48 @@ public interface IGamlDescription extends INamed {
 
 		@Override
 		public String get() {
-			return builder.toString();
+			if (subdocs.isEmpty()) return builder.toString();
+			StringBuilder sb = new StringBuilder(builder.toString());
+			for (String header : subdocs.keySet()) {
+				sb.append("<hr/>").append(header).append("<br/><ul>");
+				subdocs.get(header).forEach((name, doc) -> {
+					sb.append("<li><b>").append(name).append("</b>: ").append(doc.toString());
+				});
+				sb.append("</ul><br/>");
+			}
+			return sb.toString();
 		}
 
 		@Override
 		public String toString() {
 			return get();
+		}
+
+		/**
+		 * Sets a sub-documentation
+		 *
+		 * @param key
+		 *            the key
+		 * @param doc
+		 *            the doc
+		 */
+		@Override
+		public void set(final String header, final String key, final Doc doc) {
+			Map<String, Doc> category = subdocs.get(header);
+			if (category == null) {
+				category = new LinkedHashMap<>();
+				subdocs.put(header, category);
+			}
+			category.put(key, doc);
+		}
+
+		@Override
+		public Doc get(final String key) {
+			for (String s : subdocs.keySet()) {
+				Doc doc = subdocs.get(s).get(key);
+				if (doc != null) return doc;
+			}
+			return EMPTY_DOC;
 		}
 
 	}
@@ -149,7 +197,7 @@ public interface IGamlDescription extends INamed {
 	default String getTitle() { return getName(); }
 
 	/**
-	 * Returns the documentation attached to this object. Never null
+	 * Returns the documentation attached to this object. Never null. Default is an empty documentation
 	 *
 	 * @return a string that represents the documentation of this object
 	 */
@@ -158,12 +206,10 @@ public interface IGamlDescription extends INamed {
 	/**
 	 * Returns the plugin in which this object has been defined (if it has one)
 	 *
-	 * @return a string containing the identifier of the plugin in which this object has been defined, or null
+	 * @return a string containing the identifier of the plugin in which this object has been defined, or null. Default
+	 *         is null
 	 */
-	default String getDefiningPlugin() {
-		// Null by default
-		return null;
-	}
+	default String getDefiningPlugin() { return null; }
 
 	/**
 	 * Collect meta information.

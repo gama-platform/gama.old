@@ -60,9 +60,8 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	public static final int NOT_FOUND = -1;
 
 	/** The Constant SPECIES. */
-	public final static GamlIdiomsProvider<SpeciesDescription> SPECIES =
-			new GamlIdiomsProvider<SpeciesDescription>("species", IKeyword.SPECIES, "Built-in species",
-					Types.getBuiltInSpecies()).withStringProvider(SpeciesDescription::getDocumentationWithoutMeta);
+	public final static GamlIdiomsProvider<SpeciesDescription> SPECIES = new GamlIdiomsProvider<>(
+			"species", IKeyword.SPECIES, "Built-in species", Types.getBuiltInSpecies());
 
 	/** The Constant SPECIES_ATTRIBUTES. */
 	public final static GamlIdiomsProvider<VariableDescription> SPECIES_ATTRIBUTES = new GamlIdiomsProvider<>(

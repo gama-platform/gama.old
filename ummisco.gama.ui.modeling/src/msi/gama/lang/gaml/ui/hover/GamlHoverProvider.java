@@ -58,7 +58,9 @@ import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.FacetProto;
+import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -69,16 +71,6 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * The Class GamlHoverProvider.
  */
 public class GamlHoverProvider extends DefaultEObjectHoverProvider {
-
-	// public static class NonXRefEObjectAtOffset extends EObjectAtOffsetHelper {
-	//
-	// @Override
-	// protected EObject resolveCrossReferencedElement(final INode node) {
-	// final EObject referenceOwner = NodeModelUtils.findActualSemanticObjectFor(node);
-	// return referenceOwner;
-	// }
-	//
-	// }
 
 	/**
 	 * The Class GamlDispatchingEObjectTextHover.
@@ -114,24 +106,16 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			}
 			// /BUGFIX
 			if (o != null) {
-				// scope.getGui().debug("Object under hover:" + o.toString());
 				if (o instanceof ActionRef) {
 					final EObject container = o.eContainer();
-					// scope.getGui().debug("Found " + ((ActionRef)
-					// o).getRef().getName());
 					if (container instanceof Function) {
-						// scope.getGui().debug("---> Is a function");
 						o = container;
 						region = locationInFileProvider.getFullTextRegion(o);
 					}
 				}
 				if (region == null) { region = locationInFileProvider.getSignificantTextRegion(o); }
 				final IRegion region2 = new Region(region.getOffset(), region.getLength());
-				/*
-				 * if ( TextUtilities.overlaps(region2, new Region(offset, 0)) )
-				 */ {
-					return Tuples.create(o, region2);
-				}
+				return Tuples.create(o, region2);
 			}
 			final ILeafNode node = NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(), offset);
 			if (node != null && node.getGrammarElement() instanceof Keyword) {
@@ -198,12 +182,9 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 			final String tooltipAffordanceString = EditorsUI.getTooltipAffordanceString();
 			if (BrowserInformationControl.isAvailable(parent)) {
-				final String font = "org.eclipse.jdt.ui.javadocfont"; // FIXME:
-																		// PreferenceConstants.APPEARANCE_JAVADOC_FONT;
+				final String font = "org.eclipse.jdt.ui.javadocfont";
 				final IXtextBrowserInformationControl iControl =
-						new GamlInformationControl(parent, font, tooltipAffordanceString) {
-
-						};
+						new GamlInformationControl(parent, font, tooltipAffordanceString);
 				addLinkListener(iControl);
 				return iControl;
 			}
@@ -221,26 +202,8 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	}
 
 	@Override
-	public IInformationControlCreatorProvider getHoverInfo(final EObject first, final ITextViewer textViewer,
-			final IRegion hoverRegion) {
-
-		return super.getHoverInfo(first, textViewer, hoverRegion);
-
-	}
-
-	//
-	// @Override
-	// protected String getHoverInfoAsHtml(final EObject o) {
-	// String s = super.getHoverInfoAsHtml(o);
-	// if ( s == null || s.trim().isEmpty() ) { return null; }
-	// return s;
-	// }
-
-	@Override
 	protected boolean hasHover(final EObject o) {
 		return true;
-		// String s = getFirstLine(o);
-		// return s != null && !s.isEmpty();
 	}
 
 	@Override
@@ -279,6 +242,18 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			}
 		}
 
+		// CASE create xxx with: [var::yyy]
+		if (o instanceof ArgumentPair pair && pair.eContainer() instanceof ExpressionList el
+				&& el.eContainer() instanceof Array array && array.eContainer() instanceof Facet facet) {
+			if (facet.eContainer() instanceof Statement sdo && "create".equals(sdo.getKey())) {
+				String key = pair.getOp();
+				IGamlDescription species =
+						GamlResourceServices.getResourceDocumenter().getGamlDocumentation(sdo.getExpr());
+				if (species != null) return "<b>" + "Attribute " + key + " defined in " + species.getTitle() + "</b>";
+
+			}
+		}
+
 		// CASE do run_thread with: (interval::2#s);
 		if (o instanceof VariableRef vr && vr.eContainer() instanceof Parameter pair
 				&& pair.eContainer() instanceof ExpressionList el && el.eContainer() instanceof Facet facet
@@ -294,6 +269,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		// CASE do run_thread (interval: 2#s); unknown aa <- self.run_thread (interval: 2#s); aa <- run_thread
 		// (interval: 2#s);
 		if (o instanceof VariableRef) {
+
 			if (o.eContainer() instanceof Parameter param && param.eContainer() instanceof ExpressionList el
 					&& el.eContainer() instanceof Function function) {
 				final IGamlDescription description =
@@ -306,34 +282,25 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 				}
 			}
 
-			// Case of do xxx;
-			// if (o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
+			// Case of species xxx skills: [skill]
+			if (o.eContainer() instanceof ExpressionList el && el.eContainer() instanceof Array array
+					&& array.eContainer() instanceof Facet facet && facet.getKey().startsWith("skills")) {
+				VarDefinition vd = ((VariableRef) o).getRef();
+				String name = vd.getName();
+				SkillDescription skill = GamaSkillRegistry.INSTANCE.get(name);
+				if (skill != null) return "<b>" + skill.getTitle() + "</b>";
+
+			}
+
 			VarDefinition vd = ((VariableRef) o).getRef();
 			IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
 			if (description != null) {
 				String result = description.getTitle();
 				if (result == null) return "";
-				return result;
+				return "<b>" + result + "</b>";
 			}
 		}
 
-		// Case of do xxx;
-		// if (o instanceof VariableRef && o.eContainer() instanceof S_Do && ((S_Do) o.eContainer()).getExpr() == o) {
-		// final VarDefinition vd = ((VariableRef) o).getRef();
-		// final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
-		// if (description != null) {
-		// String result = description.getTitle();
-		// if (result == null || result.isEmpty()) return "";
-		// return "<b>" + result + "</b>";
-		// }
-		// if (vd != null && vd.eContainer() == null) {
-		// final IEObjectDescription desc = BuiltinGlobalScopeProvider.getVar(vd.getName());
-		// if (desc != null) {
-		// String userData = desc.getUserData("title");
-		// if (userData != null && !userData.isEmpty()) return "<b>" + userData + "</b>";
-		// }
-		// }
-		// }
 		if (o instanceof Function) {
 			final ActionRef ref = getActionFrom((Function) o);
 			if (ref != null) {
@@ -384,9 +351,8 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	 * @return
 	 */
 	private String getFirstLineOf(final Facet o) {
-
 		String facetName = o.getKey();
-		facetName = facetName.substring(0, facetName.length() - 1);
+		if (facetName.endsWith(":")) { facetName = facetName.substring(0, facetName.length() - 1); }
 		final EObject cont = o.eContainer();
 		final String key = EGaml.getInstance().getKeyOf(cont);
 		final SymbolProto p = DescriptionFactory.getProto(key, null);

@@ -98,7 +98,14 @@ import msi.gaml.types.Types;
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("The initial value of the attribute")),
+						doc = @doc ("The initial value of the attribute. Same as <- ")),
+				@facet (
+						name = "<-",
+						internal = true,
+						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("The initial value of the attribute. Same as init:")),
 				@facet (
 						name = IKeyword.VALUE,
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
@@ -127,6 +134,13 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:', 'update:' and 'on_change:' (or the equivalent final block)")),
 				@facet (
+						name = "->",
+						internal = true,
+						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
+						optional = true,
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. Equivalent to 'function:'. This facet is incompatible with both 'init:' and 'update:' and 'on_change:' (or the equivalent final block)")),
+
+				@facet (
 						name = IKeyword.CONST,
 						type = IType.BOOL,
 						optional = true,
@@ -153,7 +167,7 @@ import msi.gaml.types.Types;
 		concept = { IConcept.ATTRIBUTE })
 @inside (
 		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@doc ("Allows to declare an attribute of a species or an experiment")
+@doc ("Declaration of an attribute of a species or an experiment")
 @validator (msi.gaml.variables.Variable.VarValidator.class)
 @SuppressWarnings ({ "rawtypes" })
 public class Variable extends Symbol implements IVariable {
