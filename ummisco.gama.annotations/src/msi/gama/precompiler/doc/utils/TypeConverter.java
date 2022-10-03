@@ -241,7 +241,7 @@ public class TypeConverter {
 		hm.put(17, "path");
 		hm.put(18, "topology");
 		hm.put(19, "font");
-		hm.put(20,  "image");
+		hm.put(20, "image");
 		hm.put(21, "regression");
 		hm.put(23, "date");
 		hm.put(24, "message");
@@ -253,6 +253,9 @@ public class TypeConverter {
 		hm.put(99, "message");
 		hm.put(100, "species_types");
 
+		hm.put(-27, "agent");		// a simulation agent
+		hm.put(-29, "agent");		// a host agent
+		hm.put(-199, "agent");		// agent / linked road
 		hm.put(-200, "a label");
 		hm.put(-201, "an identifier");
 		hm.put(-202, "a datatype identifier");
