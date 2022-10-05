@@ -13,6 +13,7 @@ package msi.gaml.expressions.operators;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -83,10 +84,14 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	/**
 	 * Instantiates a new primitive operator.
 	 *
-	 * @param action the action.
-	 * @param target the target.
-	 * @param args the args
-	 * @param targetSpecies the target species.
+	 * @param action
+	 *            the action.
+	 * @param target
+	 *            the target.
+	 * @param args
+	 *            the args
+	 * @param targetSpecies
+	 *            the target species.
 	 */
 	public PrimitiveOperator(final StatementDescription action, final IExpression target, final Arguments args,
 			final String targetSpecies) {
@@ -121,6 +126,11 @@ public class PrimitiveOperator implements IExpression, IOperator {
 			//
 			return scope.execute(executer, target, useTargetScopeForExecution, getRuntimeArgs(scope)).getValue();
 		}
+		// the executer is not available. Can happen in rare cases (like the one evoked in Issue #3493).
+		GAMA.reportError(scope,
+				GamaRuntimeException.warning(
+						"The operator " + getName() + " is not available in the context of " + scope.getAgent(), scope),
+				false);
 		return null;
 	}
 

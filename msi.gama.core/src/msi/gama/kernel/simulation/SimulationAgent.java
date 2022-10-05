@@ -934,9 +934,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	 * @param s
 	 *            the s
 	 */
-	public void prepareGuiForSimulation(final IScope s) {
-		s.getGui().clearErrors(s);
-	}
+	// public void prepareGuiForSimulation(final IScope s) {
+	// s.getGui().clearErrors(s);
+	// }
 
 	/**
 	 * Inits the outputs.

@@ -335,6 +335,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public boolean init(final IScope scope) {
+		scope.getGui().clearErrors(scope);
 		super.init(scope);
 		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) { outputs.init(scope); }

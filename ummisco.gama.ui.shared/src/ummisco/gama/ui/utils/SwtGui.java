@@ -156,8 +156,10 @@ public class SwtGui implements IGui {
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> exceptions) {
 		if (exceptions == null) {
+//			DEBUG.OUT("Hiding errors view");
 			hideView(ERROR_VIEW_ID);
 		} else {
+//			DEBUG.OUT("Showing errors view with new exceptions");
 			final IGamaView.Error v = (Error) showView(scope, ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			if (v != null) { v.displayErrors(); }
 		}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RuntimeExceptionHandler.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * RuntimeExceptionHandler.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
@@ -39,13 +39,13 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 	/** The incoming exceptions. */
 	volatile BlockingQueue<GamaRuntimeException> incomingExceptions = new LinkedBlockingQueue<>();
-	
+
 	/** The clean exceptions. */
 	volatile List<GamaRuntimeException> cleanExceptions = new ArrayList<>();
-	
+
 	/** The running. */
 	volatile boolean running;
-	
+
 	/** The remaining time. */
 	volatile int remainingTime = 5000;
 
@@ -73,7 +73,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 					return Status.OK_STATUS;
 				}
 			}
-			if (!running) { return Status.CANCEL_STATUS; }
+			if (!running) return Status.CANCEL_STATUS;
 			if (remainingTime <= 0) {
 				stop();
 				return Status.OK_STATUS;
@@ -117,15 +117,11 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 					boolean toAdd = true;
 					for (final GamaRuntimeException oldEx : oldExcp.toArray(new GamaRuntimeException[oldExcp.size()])) {
 						if (oldEx.equivalentTo(newEx)) {
-							if (oldEx != newEx) {
-								oldEx.addAgents(newEx.getAgentsNames());
-							}
+							if (oldEx != newEx) { oldEx.addAgents(newEx.getAgentsNames()); }
 							toAdd = false;
 						}
 					}
-					if (toAdd) {
-						oldExcp.add(newEx);
-					}
+					if (toAdd) { oldExcp.add(newEx); }
 
 				}
 			}
@@ -137,11 +133,12 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	/**
 	 * Update UI.
 	 *
-	 * @param newExceptions the new exceptions
+	 * @param newExceptions
+	 *            the new exceptions
 	 */
 	public void updateUI(final List<GamaRuntimeException> newExceptions) {
 		if (newExceptions != null) {
-			newExceptions.removeIf((e) -> e.isInvalid());
+			newExceptions.removeIf(GamaRuntimeException::isInvalid);
 			cleanExceptions = new ArrayList<>(newExceptions);
 		}
 
@@ -156,9 +153,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	}
 
 	@Override
-	public boolean isRunning() {
-		return running;
-	}
+	public boolean isRunning() { return running; }
 
 	@Override
 	public void remove(final GamaRuntimeException obj) {
@@ -166,8 +161,6 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	}
 
 	@Override
-	public List<GamaRuntimeException> getCleanExceptions() {
-		return cleanExceptions;
-	}
+	public List<GamaRuntimeException> getCleanExceptions() { return cleanExceptions; }
 
 }
