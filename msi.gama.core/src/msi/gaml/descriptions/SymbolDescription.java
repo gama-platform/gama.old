@@ -339,7 +339,7 @@ public abstract class SymbolDescription implements IDescription {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	private void flagError(final String s, final String code, final boolean warning, final boolean info,
+	protected void flagError(final String s, final String code, final boolean warning, final boolean info,
 			final EObject source, final String... data) throws GamaRuntimeException {
 
 		if (warning && !info && !GamaPreferences.Modeling.WARNINGS_ENABLED.getValue()) return;
@@ -787,12 +787,30 @@ public abstract class SymbolDescription implements IDescription {
 					if (!compatible) {
 						emitFacetTypesIncompatibilityWarning(facet, fp, actualType, contentType, keyType);
 					}
+					// verifyFacetExprEnclosingContext(facet, fp, exp);
 				}
 			}
 			return true;
 		});
 
 	}
+
+	/**
+	 * Verify facet expr enclosing context.
+	 *
+	 * @param facet
+	 *            the facet
+	 * @param fp
+	 *            the fp
+	 * @param exp
+	 *            the exp
+	 */
+	// private void verifyFacetExprEnclosingContext(final String facet, final FacetProto fp, final IExpression exp) {
+	// if (!exp.isValidInContext(enclosing)) {
+	// warning("Facet '" + facet + "' cannot be compiled in the context of " + enclosing, IGamlIssue.WRONG_CONTEXT,
+	// facet);
+	// }
+	// }
 
 	/**
 	 * Special case for point and date.

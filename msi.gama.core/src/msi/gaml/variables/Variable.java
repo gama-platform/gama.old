@@ -395,7 +395,7 @@ public class Variable extends Symbol implements IVariable {
 
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " must have an initial value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(NAME, false),
+				cd.error(p + " must have an initial value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(),
 						Cast.toGaml(cd.getGamlType().getDefault()));
 				return;
 			}

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -27,6 +28,7 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
@@ -530,5 +532,20 @@ public class VariableDescription extends SymbolDescription {
 	 *            the new built in doc
 	 */
 	public void setDefinitionClass(final Class definitionClass) { this.definitionClass = definitionClass; }
+
+	@Override
+	protected void flagError(final String s, final String code, final boolean warning, final boolean info,
+			final EObject source, final String... data) throws GamaRuntimeException {
+		if (isExperimentParameter()) {
+			EObject param = getUnderlyingElement();
+			if (EcoreUtil.isAncestor(param, source)) {
+				super.flagError(s, code, warning, info, source, data);
+			} else {
+				super.flagError(s, code, warning, info, param, data);
+			}
+		} else {
+			super.flagError(s, code, warning, info, source, data);
+		}
+	}
 
 }
