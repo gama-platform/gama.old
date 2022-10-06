@@ -108,7 +108,12 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		if (scope == null) return null;
 		final IAgent target = this.target == null ? scope.getAgent() : Cast.asAgent(scope, this.target.value(scope));
-		if (target == null) return null;
+		if (target == null) {
+			// Problem is that it is not shown at the very beginning as there is no agent available
+			GAMA.reportError(scope,
+					GamaRuntimeException.error("No agent is available to execute operator " + getName(), scope), false);
+			return null;
+		}
 		// AD 13/05/13 The target should not be pushed so early to the scope, as
 		// the arguments will be (incorrectly)
 		// evaluated in its context, but how to prevent it ? See Issue 401.
