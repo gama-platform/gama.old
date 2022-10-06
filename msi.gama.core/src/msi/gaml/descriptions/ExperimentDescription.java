@@ -117,13 +117,14 @@ public class ExperimentDescription extends SpeciesDescription {
 				// Possibily different resources
 				final Resource newResource =
 						var.getUnderlyingElement() == null ? null : var.getUnderlyingElement().eResource();
-				final Resource existingResource = vd.getUnderlyingElement().eResource();
+				final Resource existingResource =
+						vd.getUnderlyingElement() == null ? null : vd.getUnderlyingElement().eResource();
 				if (Objects.equals(newResource, existingResource)) {
 					var.info("'" + vName + "' supersedes the parameter declaration in " + vd.getOriginName(), REDEFINES,
 							NAME);
 					vd.info("Parameter '" + vName + "' is redefined in experiment "
 							+ var.getEnclosingDescription().getName(), DUPLICATE_DEFINITION, NAME);
-				} else {
+				} else if (existingResource != null) {
 					var.info("This definition of '" + vName + "' supersedes the one in imported file "
 							+ existingResource.getURI().lastSegment(), REDEFINES, NAME);
 				}
