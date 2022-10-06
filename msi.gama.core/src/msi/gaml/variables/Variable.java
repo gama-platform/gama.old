@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -67,6 +68,10 @@ import msi.gaml.types.Types;
  *
  * FIXME FOR THE MOMENT SPECIES_WIDE CONSTANTS ARE NOT CONSIDERED (TOO MANY THINGS TO CONSIDER AND POSSIBILITIES TO MAKE
  * FALSE POSITIVE)
+ */
+
+/**
+ * The Class Variable.
  */
 
 /**
@@ -376,6 +381,10 @@ public class Variable extends Symbol implements IVariable {
 							IGamlIssue.REMOVE_CONST);
 				}
 			}
+
+			/**
+			 * Assert value facets types.
+			 */
 			assertValueFacetsTypes(cd, cd.getGamlType());
 			// AD 6/2/22 Restriction removed: min and max facets are not supposed to be constants anymore in parameters.
 			// Their value can only be updated through the 'updates' facet of another parameter, though
@@ -399,6 +408,22 @@ public class Variable extends Symbol implements IVariable {
 						Cast.toGaml(cd.getGamlType().getDefault()));
 				return;
 			}
+			// Cf. #3493
+			IDescription oneExperiment = Iterables.getFirst(cd.getModelDescription().getExperiments(), null);
+			if (oneExperiment != null) {
+				for (String f : VariableDescription.INIT_DEPENDENCIES_FACETS) {
+					IExpressionDescription initExpr = cd.getFacet(f);
+					if (initExpr != null) {
+						IExpressionDescription ed = initExpr.cleanCopy();
+						if (GAML.getExpressionFactory().getParser().compile(ed, oneExperiment) == null) {
+							cd.error(
+									"This expression cannot be used in the context of experiments. Please use a constant expression or redeclare this parameter in the experiments",
+									IGamlIssue.WRONG_CONTEXT, f);
+						}
+					}
+				}
+			}
+
 			// AD 6/2/22 Restriction removed: non-boolean vars can "enable" or "disable" others based on the cast of
 			// their value to bool
 			// if (cd.hasFacet(ENABLES) && !cd.getGamlType().equals(Types.BOOL)) {
