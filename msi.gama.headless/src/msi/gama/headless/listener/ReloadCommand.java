@@ -2,6 +2,7 @@ package msi.gama.headless.listener;
 
 import org.java_websocket.WebSocket;
 
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;

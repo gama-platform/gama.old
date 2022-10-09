@@ -962,8 +962,12 @@ public class Jsoner {
 			writableDestination.write("\"exception\": \"" + ex.getClass().getName() + "\",");
 			writableDestination.write("\"message\": \"" + escape(ex.getMessage()) + "\",");
 			writableDestination.write("\"stack\": [" );
+			int i = 0;
 			for(var trace : ex.getStackTrace()) {
-				writableDestination.write("\"" + escape(trace.toString()) + "\"," );
+				writableDestination.write("\"" + escape(trace.toString()) + "\""
+											+ ( i < ex.getStackTrace().length - 1 ? "," : "") // add trailing comma
+											);
+				i++;
 			}
 			writableDestination.write("]" );
 			writableDestination.write("}" );

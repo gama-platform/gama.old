@@ -24,6 +24,8 @@ import org.java_websocket.server.WebSocketServer;
 import msi.gama.common.GamlFileExtension;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.core.GamaHeadlessException;
+import msi.gama.headless.core.GamaServerMessage;
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.job.ManualExperimentJob;
@@ -168,7 +170,6 @@ public class GamaWebSocketServer extends WebSocketServer {
 			runCompiledSimulation(this, message);
 		} catch (IOException | GamaHeadlessException e) {
 			DEBUG.OUT(e);			
-			//e1.printStackTrace();
 			conn.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.RuntimeError, e)));
 
 		}

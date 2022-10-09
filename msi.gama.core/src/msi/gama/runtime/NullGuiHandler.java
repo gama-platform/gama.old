@@ -59,7 +59,7 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  * @see HeadlessEvent
  */
-public class HeadlessListener implements IGui {
+public class NullGuiHandler implements IGui {
 
 	// See #2996: simplification of the logging done in this class
 	// static Logger LOGGER = LogManager.getLogManager().getLogger("");
@@ -76,7 +76,7 @@ public class HeadlessListener implements IGui {
 		// }
 		// LOGGER.setLevel(Level.ALL);
 		// }
-		GAMA.setHeadlessGui(new HeadlessListener());
+		GAMA.setHeadlessGui(new NullGuiHandler());
 	}
 
 	@Override
@@ -361,35 +361,7 @@ public class HeadlessListener implements IGui {
 	};
 
 	/** The console. */
-	IConsoleDisplayer console = new IConsoleDisplayer() {
-
-		@Override
-		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
-			informConsole(s, root);
-		}
-
-		@Override
-		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
-			informConsole(s, root);
-		}
-
-		@Override
-		public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
-			informConsole(s, root);
-		}
-
-		@Override
-		public void informConsole(final String s, final ITopLevelAgent root) {
-			logger.log(s);
-		}
-
-		@Override
-		public void showConsoleView(final ITopLevelAgent agent) {}
-
-		@Override
-		public void eraseConsole(final boolean setToNull) {}
-
-	};
+	protected IConsoleDisplayer console = null;
 
 	/** The logger. */
 	private IHeadlessLogger logger = DEBUG::LOG;
@@ -420,7 +392,40 @@ public class HeadlessListener implements IGui {
 	public IStatusDisplayer getStatus() { return status; }
 
 	@Override
-	public IConsoleDisplayer getConsole() { return console; }
+	public IConsoleDisplayer getConsole() { 
+	
+		if (console == null) {
+			console = new IConsoleDisplayer() {
+
+				@Override
+				public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
+				}
+
+				@Override
+				public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
+					informConsole(s, root);
+				}
+
+				@Override
+				public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
+					informConsole(s, root);
+				}
+
+				@Override
+				public void informConsole(final String s, final ITopLevelAgent root) {
+					logger.log(s);
+				}
+
+				@Override
+				public void showConsoleView(final ITopLevelAgent agent) {}
+
+				@Override
+				public void eraseConsole(final boolean setToNull) {}
+
+			};
+		}
+		return console; 
+	}
 
 	@Override
 	public void clearErrors(final IScope scope) {}

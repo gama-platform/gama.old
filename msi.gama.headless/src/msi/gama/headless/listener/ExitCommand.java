@@ -12,6 +12,7 @@ import msi.gama.common.GamlFileExtension;
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;

@@ -1,28 +1,35 @@
 package msi.gama.headless.listener;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import msi.gama.headless.common.Globals;
+import msi.gama.headless.core.GamaServerMessage;
+import msi.gama.headless.core.GamaServerMessageType;
+import msi.gama.headless.core.GamaServerGUIHandler;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.runtime.Application;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.file.json.Jsoner;
-import ummisco.gama.network.websocket.WebSocketPrintStream;
 
+
+/**
+ * Class in charge of creating the socket server and handling top-level exceptions for gama-server
+ *
+ */
 public class GamaListener {
+	
 	/** The instance. */
 	private GamaWebSocketServer instance;
+	
 	/** The simulations. */
 	final private ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>> launched_experiments = new ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>>();
 	public ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>> getLaunched_experiments() {
 		return launched_experiments;
 	}
 
-//	private static PrintStream bufferStream;
 	private static PrintStream errorStream;
 
 	public GamaListener(final int p, final Application a, final boolean secure) {
@@ -33,9 +40,11 @@ public class GamaListener {
 		Globals.TEMP_PATH = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "../temp";
 
 		Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
+		GAMA.setHeadLessMode(true, new GamaServerGUIHandler()); //todo: done here and in headless simulation loader, should be refactored
 		createSocketServer(p, a, secure);
 	}
 
+	//TODO: delete ?
 	void deleteFolder(File file) {
 		if (file.listFiles() != null) {
 			for (File subFile : file.listFiles()) {
@@ -58,15 +67,6 @@ public class GamaListener {
 		instance = new GamaWebSocketServer(port, a, this, ssl);
 		instance.start();
 		System.out.println("Gama Listener started on port: " + instance.getPort());
-//		bufferStream =  new PrintStream(System.out) {
-//			
-//			@Override
-//			public void println(String x) {
-//				super.println(x);
-//				instance.broadcast(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationOutput , x)));
-//			}
-//		};
-//		System.setOut(bufferStream);
 		
 		errorStream =  new PrintStream(System.err) {
 			
@@ -78,20 +78,14 @@ public class GamaListener {
 		};
 		System.setErr(errorStream);
 		
-
-//		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
 		try {
 
+			//empty loop to keep alive the server and catch exceptions
 			while (true) {
-//				String in = sysin.readLine();
-////				instance.broadcast(in);
-//				if ("exit".equals(in)) {
-//					instance.stop(1000);
-//					break;
-//				}
 			}
+			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			ex.printStackTrace(); //will be broadcasted to every client
 		}
 	}
 

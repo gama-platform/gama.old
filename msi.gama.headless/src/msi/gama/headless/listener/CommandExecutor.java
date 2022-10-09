@@ -15,7 +15,7 @@ public class CommandExecutor {
 
 	public CommandExecutor() {
 		final Map<String, ISocketCommand> cmds = new HashMap<>();
-		cmds.put("launch", new LaunchCommand());
+		cmds.put("load", new LoadCommand());
 
 		cmds.put("play", new PlayCommand());
 
@@ -37,7 +37,7 @@ public class CommandExecutor {
 		ISocketCommand command = COMMANDS.get(cmd_type);
 
 		if (command == null) {
-			throw new IllegalArgumentException("Invalid player type: " + cmd_type);
+			throw new IllegalArgumentException("Invalid command type: " + cmd_type);
 		}
 
 		var res = command.execute(socket, map);

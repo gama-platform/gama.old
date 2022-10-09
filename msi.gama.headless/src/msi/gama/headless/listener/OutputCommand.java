@@ -17,6 +17,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;

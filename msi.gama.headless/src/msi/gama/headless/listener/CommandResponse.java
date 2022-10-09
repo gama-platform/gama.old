@@ -1,5 +1,7 @@
 package msi.gama.headless.listener;
 
+import msi.gama.headless.core.GamaServerMessage;
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Jsoner;
 
@@ -21,7 +23,7 @@ public class CommandResponse  extends GamaServerMessage {
 		return "{ "
 				+ "\"type\": \"" + type + "\","
 				+ "\"content\": " + ((isJson)?content:Jsoner.serialize(content)) + ","	 
-				+ "\"command\": " + Jsoner.serialize(params).toString() 
+				+ "\"command\": " + Jsoner.serialize(params) 
 				+ "}";
 	}
 

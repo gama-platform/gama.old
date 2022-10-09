@@ -1,4 +1,4 @@
-package msi.gama.headless.listener;
+package msi.gama.headless.core;
 
 public enum GamaServerMessageType {
 	
@@ -12,12 +12,21 @@ public enum GamaServerMessageType {
 	 */
 	SimulationOutput, 
 	
+	/**
+	 * Used to describe the content printed using the debug statement in a running simulation
+	 */
+	SimulationDebug,
 	
 	/**
-	 * Warnings of a simulation that would be found in the console in normal gama mode
+	 * Used to describe the content printed in dialogs in a running simulation
 	 */
-	SimulationWarning,
-
+	SimulationDialog,
+	
+	/**
+	 * Used to describe the content printed in error dialogs in a running simulation
+	 */
+	SimulationErrorDialog,
+	
 	/**
 	 * Errors of a simulation that would be found in the console in normal gama mode, either at compilation or during runtime
 	 */

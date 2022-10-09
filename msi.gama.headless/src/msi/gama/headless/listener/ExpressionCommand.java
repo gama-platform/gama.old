@@ -3,6 +3,7 @@ package msi.gama.headless.listener;
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.util.StringUtils;
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
