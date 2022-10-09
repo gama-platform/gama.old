@@ -42,7 +42,7 @@ experiment "Show heatmap" type: gui {
 			mesh heatmap scale: 0 color: palette([#white, #orange, #red, #red]);
 		}
 		
-		display Other type: opengl background: #black {
+		display Other type: opengl background: #black camera: #from_up_front{
 			// Bumps appear due to the values increasing
 			mesh heatmap scale: 0.1 color: brewer_colors("Reds") triangulation: true;
 		}

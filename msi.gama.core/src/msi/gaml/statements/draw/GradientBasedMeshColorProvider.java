@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GradientBasedMeshColorProvider.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GradientBasedMeshColorProvider.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -55,7 +55,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
 		double[] result = rgb;
 		if (result == null) { result = new double[3]; }
-
+		if (z <= min || max <= min) return components;
 		double position = (z - min) / (max - min);
 		// DEBUG.OUT("Position " + position + " corresponds to slot ", false);
 		for (int s = 0; s < size - 1; s++) {

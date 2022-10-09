@@ -10,11 +10,14 @@ model BuildingHeatmap
 import "3D Visualization/models/Building Elevation.gaml"
 
 global {
-	int size <- 400;
-	field heatmap <- field(size, size);
+	int size <- 300;
+	field instant_heatmap <- field(size, size);
+	field history_heatmap <- field(size, size);
 	reflex update {
+		instant_heatmap[] <- 0 ;
 		ask people {
-			heatmap[location] <- heatmap[location] + 10;
+			instant_heatmap[location] <- instant_heatmap[location] + 10;
+			history_heatmap[location] <- history_heatmap[location] + 1;
 		}
 	}
 }
@@ -22,24 +25,13 @@ global {
 experiment "Show heatmap" type: gui {
 	output {
 		layout #split;
-		display HeatmapPalette type: opengl axes: false background: #black {
-			// The field is displayed  without 3D rendering, a palettre of warm colors and a smoothness of 3 (meaning three passes of box blur are being done to "spread" the values)
-			mesh heatmap scale: 0 color: palette([ #black, #yellow, #yellow, #orange, #orange, #red, #red]) smooth: 3 ;
+		display "Instant heatmap with palette" type: opengl axes: false background: #black  {
+			// The field is displayed  without 3D rendering, a palettre of warm colors and a smoothness of 2 (meaning two passes of box blur are being done to "spread" the values)
+			mesh instant_heatmap scale: 0 color: palette([ #black, #black, #orange, #orange, #red, #red, #red]) smooth: 2 ;
 		}
-		display HeatmapGradient type: opengl axes: false background: #black camera: #from_up_front {
-			species building refresh: false {
-				draw shape border: #white wireframe: true width: 3;
-			}
-
-			species road refresh: false {
-				draw shape color: #white width: 3;
-			}
-
-			species people {
-				draw circle(1) color: #white at: {location.x, location.y};
-			}
-			// The field is displayed a little bit above the other layers, with a slight 3D rendering, and a smoothness of 1 (meaning one passe of box blur are being done to "spread" the values). The colors are provided by a gradient with three stops
-			mesh heatmap scale: 0.01 color: gradient([#black::0, #cyan::0.1, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth: 1 ;
+		display "History heatmap with gradient" type: opengl axes: false background: #black camera: #from_up_front {
+			// The field is displayed a little bit above the other layers, with a slight 3D rendering, and a smoothness of 1 (meaning one pass of box blur is being done to "spread" the values). The colors are provided by a gradient with three stops
+			mesh history_heatmap scale: 0.01 color: gradient([#black::0, #cyan::0.5, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth:1 ;
 		 }
 		
 
