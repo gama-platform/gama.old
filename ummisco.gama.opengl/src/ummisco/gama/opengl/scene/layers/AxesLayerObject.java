@@ -103,11 +103,11 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	@Override
 	public void draw(final OpenGL gl) {
 		boolean previous = gl.setObjectWireframe(false);
-		if (renderer.getOpenGLHelper().isInRotationMode()) {
+		if (gl.isInRotationMode()) {
 			final GamaPoint pivotPoint = renderer.getCameraTarget();
 			setOffset(pivotPoint.yNegated());
-			final double size = renderer.getOpenGLHelper().sizeOfRotationElements();
-			final double ratio = size / renderer.getMaxEnvDim();
+			final double size = gl.sizeOfRotationElements();
+			final double ratio = size / gl.getMaxEnvDim();
 			setScale(new GamaPoint(ratio, ratio, ratio));
 		} else {
 			setOffset(null);

@@ -666,33 +666,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public void changed(final Changes property, final Object value) {
 		if (renderer == null) return;
 		switch (property) {
-
-			// case CHANGE_CAMERA:
-			// renderer.getCameraHelper().setupCamera();
-			// break;
-			// case SPLIT_LAYER:
-			// final double gap = (Double) value;
-			// if (DEBUG.IS_ON()) {
-			// DEBUG.OUT("Value received by SWTOpenGLDisplaySurface= " + value);
-			// }
-			// double currentElevation = 0;
-
-			// for (final ILayer layer : this.getManager().getItems()) {
-			// layer.getData().addElevation(currentElevation);
-			// currentElevation += gap;
-			// }
-			// renderer.getSceneHelper().layerOffsetChanged();
-
-			// break;
-			// case CAMERA_POS:
-			// renderer.getCameraHelper().updatePosition();
-			// break;
-			// case CAMERA_TARGET:
-			// renderer.getCameraHelper().updateTarget();
-			// break;
-			// case CAMERA_PRESET:
-			// renderer.getCameraHelper().applyPreset((String) value);
-			// break;
 			case ZOOM:
 				renderer.getCameraHelper().zoom((Double) value);
 				break;

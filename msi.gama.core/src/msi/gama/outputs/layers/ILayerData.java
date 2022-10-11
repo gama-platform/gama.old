@@ -242,4 +242,11 @@ public interface ILayerData {
 	 */
 	Double getRotation();
 
+	/**
+	 * Checks for structurally changed.
+	 *
+	 * @return true, if successful
+	 */
+	boolean hasStructurallyChanged();
+
 }

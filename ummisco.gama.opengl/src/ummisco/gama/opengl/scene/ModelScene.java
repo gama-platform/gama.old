@@ -28,6 +28,7 @@ import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.scene.layers.AxesLayerObject;
 import ummisco.gama.opengl.scene.layers.FrameLayerObject;
 import ummisco.gama.opengl.scene.layers.LayerObject;
+import ummisco.gama.opengl.scene.layers.LayerObjectWithTrace;
 import ummisco.gama.opengl.scene.layers.OverlayLayerObject;
 
 /**
@@ -42,7 +43,7 @@ import ummisco.gama.opengl.scene.layers.OverlayLayerObject;
 public class ModelScene {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The Constant AXES_KEY. */
@@ -70,13 +71,16 @@ public class ModelScene {
 	private volatile double zIncrement;
 
 	/** The current layer trace. */
-	private volatile int currentLayerTrace;
+	private volatile int currentLayerTraceNumber;
 
 	/** The max Z. */
 	final double maxZ;
 
 	/** The index. */
-	int index = 0;
+	private static int INDEX = 0;
+
+	/** The my index. */
+	private final int myIndex = INDEX++;
 
 	/**
 	 * Instantiates a new model scene.
@@ -107,8 +111,7 @@ public class ModelScene {
 	 *            Called every new iteration when updateDisplay() is called on the surface
 	 */
 	public void wipe(final OpenGL gl) {
-		layers.forEach((name, obj) -> { if (obj != null && (!obj.isStatic() || obj.isInvalid())) { obj.clear(gl); } });
-
+		layers.forEach((name, layer) -> { if (layer != null && !layer.isStatic()) { layer.clear(gl); } });
 		// Wipe the textures.
 		gl.deleteVolatileTextures();
 	}
@@ -130,17 +133,17 @@ public class ModelScene {
 		// AD called here so that it is inside the keystone drawing. See #3285
 		gl.rotateModel();
 		for (LayerObject layer : layers.values()) {
-			if (layer != null && !layer.isInvalid()) {
+			// AD Added
+			if (layer != null && layer.isVisible()) {
 				// AD added to prevent overlays to rotate
 				if (layer.isOverlay()) { gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW); }
 				try {
-					layer.lock();
+					if (renderer.getPickingHelper().isPicking() && !layer.isPickable()) { continue; }
 					layer.draw(gl);
 				} catch (final RuntimeException r) {
 					DEBUG.ERR("Runtime error " + r.getMessage() + " in OpenGL loop");
 					r.printStackTrace();
-				}
-				finally {
+				} finally {
 					if (layer.isOverlay()) { gl.pop(GLMatrixFunc.GL_MODELVIEW); }
 				}
 			}
@@ -172,7 +175,7 @@ public class ModelScene {
 	 */
 	private boolean increment() {
 		if (currentLayer == null) return false;
-		objectNumber += currentLayerTrace;
+		objectNumber += currentLayerTraceNumber;
 		return true;
 	}
 
@@ -240,6 +243,7 @@ public class ModelScene {
 	 * Dispose.
 	 */
 	public void dispose() {
+		// DEBUG.OUT("ModelScene #" + myIndex + ": Layers keys before disposing = " + layers.keySet());
 		layers.clear();
 		currentLayer = null;
 	}
@@ -248,7 +252,7 @@ public class ModelScene {
 	 * Begin drawing layers.
 	 */
 	public void beginDrawingLayers() {
-		currentLayerTrace = 0;
+		currentLayerTraceNumber = 0;
 	}
 
 	/**
@@ -271,16 +275,8 @@ public class ModelScene {
 	 * Reload.
 	 */
 	public void reload() {
-		unlock();
 		dispose();
 		initWorld();
-	}
-
-	/**
-	 * Unlock.
-	 */
-	public void unlock() {
-		for (final LayerObject l : layers.values()) { l.unlock(); }
 	}
 
 	/**
@@ -295,12 +291,17 @@ public class ModelScene {
 		final String key = layer.getName() + layer.getDefinition().getOrder();
 		currentLayer = layers.get(key);
 		if (currentLayer == null) {
-			currentLayer =
-					layer.isOverlay() ? new OverlayLayerObject(renderer, layer) : new LayerObject(renderer, layer);
+			// DEBUG.OUT("ModelScene #" + myIndex + ": Layer " + layer.getName() + " is not present in the scene");
+			currentLayer = layer.isOverlay() ? new OverlayLayerObject(renderer, layer)
+					: layer.getData().getTrace() > 0 ? new LayerObjectWithTrace(renderer, layer)
+					: new LayerObject(renderer, layer);
+			// DEBUG.OUT("ModelScene #" + myIndex + ": Creating layer " + " : static " + currentLayer.isStatic()
+			// + "; trace " + currentLayer.hasTrace());
 			layers.put(key, currentLayer);
 		}
+		// DEBUG.OUT("ModelScene #" + myIndex + ": Layers keys after creation = " + layers.keySet());
 		currentLayer.setAlpha(alpha);
-		currentLayerTrace = currentLayer.numberOfTraces();
+		currentLayerTraceNumber = currentLayer.numberOfActualTraces();
 	}
 
 	/**
@@ -309,22 +310,18 @@ public class ModelScene {
 	public ModelScene copyStatic() {
 		// DEBUG.OUT("Creating static scene");
 		final ModelScene newScene = new ModelScene(renderer, false);
+		// DEBUG.OUT("ModelScene #" + myIndex + ": layers keys before copying to static = " + layers.keySet());
 		layers.forEach((name, layer) -> {
-			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) {
+
+			// DEBUG.OUT("ModelScene #" + myIndex + ": Examining layer " + name + " : static " + layer.isStatic()
+			// + "; trace " + layer.hasTrace());
+			if (layer.isStatic() || layer.hasTrace()) {
 				// DEBUG.OUT("===>> Adding " + name + " as static ");
 				newScene.layers.put(name, layer);
 			}
 		});
 
 		return newScene;
-	}
-
-	/**
-	 *
-	 */
-	public void invalidateLayers() {
-		// DEBUG.OUT("Invalidating all layers");
-		layers.forEach((name, layer) -> { layer.invalidate(); });
 	}
 
 }

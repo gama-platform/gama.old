@@ -67,6 +67,7 @@ public class OverlayLayerObject extends LayerObject {
 	 * @param gl
 	 *            the gl
 	 */
+	@Override
 	protected void addFrame(final OpenGL gl) {
 		GamaPoint size = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
 		final IScope scope = renderer.getSurface().getScope();
@@ -97,7 +98,7 @@ public class OverlayLayerObject extends LayerObject {
 	 * Increase Z.
 	 */
 	@Override
-	protected void increaseZ(final Trace list) {}
+	protected void computeZ(final Trace list) {}
 
 	@Override
 	protected void prepareDrawing(final OpenGL gl, final Trace list) {
@@ -124,14 +125,11 @@ public class OverlayLayerObject extends LayerObject {
 
 	@Override
 	protected void doDrawing(final OpenGL gl) {
-		if (!renderer.getPickingHelper().isPicking()) {
-
-			drawObjects(gl, currentList, alpha, false);
-		}
+		drawObjects(gl, currentList, alpha, false);
 	}
 
 	@Override
-	protected boolean isPickable() { return false; }
+	public boolean isPickable() { return false; }
 
 	@Override
 	protected void stopDrawing(final OpenGL gl) {

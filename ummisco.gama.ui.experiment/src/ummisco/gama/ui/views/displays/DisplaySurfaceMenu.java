@@ -51,6 +51,7 @@ import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.SpeciesLayerStatement;
 import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.outputs.layers.charts.ChartLayerStatement;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
@@ -358,15 +359,19 @@ public class DisplaySurfaceMenu {
 				}
 				Menu transparency =
 						GamaMenu.sub(submenu, "Transparency", "", GamaIcons.create("layer.transparency").image());
+				transparency.setEnabled(layer.getData().isDynamic());
+				Double td = layer.getData().getTransparency(GAMA.getRuntimeScope());
+				int ti = (int) (td == null ? 0 : Math.round(td * 10) * 10);
 				for (int i = 0; i <= 100; i += 10) {
 					double value = i;
-					GamaMenu.action(transparency, "" + i + "%", t -> {
+					GamaMenu.check(transparency, " " + i + "%", ti == i, t -> {
 						layer.getData().setTransparency(value / 100d);
 						surface.updateDisplay(true);
 					}, null);
 				}
 				if (definition instanceof SpeciesLayerStatement spec) {
 					Menu aspectMenu = GamaMenu.sub(submenu, "Aspect", "", GamaIcons.create("menu.agent2").image());
+					aspectMenu.setEnabled(layer.getData().isDynamic());
 					String current = spec.getAspectName();
 					for (String aspect : spec.getAspects()) {
 						GamaMenu.check(aspectMenu, aspect, aspect.equals(current), t -> {
