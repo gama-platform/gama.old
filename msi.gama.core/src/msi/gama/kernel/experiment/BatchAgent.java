@@ -241,7 +241,7 @@ public class BatchAgent extends ExperimentAgent {
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
-		scope.getGui().getStatus().informStatus(endStatus());
+		scope.getGui().getStatus().informStatus(endStatus(), scope);
 		// Issue #2426: the agent is killed too soon
 		getScope().setDisposeStatus();
 		// dispose();
@@ -481,7 +481,8 @@ public class BatchAgent extends ExperimentAgent {
 							.setStatus(
 									"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
 											+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
-									"small.batch" + i / 5);
+									"small.batch" + i / 5,
+									getScope());
 				}
 				if (++i == 20) { i = 0; }
 				// We then verify that the front scheduler has not been paused

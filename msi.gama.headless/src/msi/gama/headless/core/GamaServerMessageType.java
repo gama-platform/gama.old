@@ -8,6 +8,25 @@ public enum GamaServerMessageType {
 	ConnectionSuccessful,
 	
 	/**
+	 * Represents a message in the status bar during an experiment 
+	 */
+	SimulationStatus,
+	
+	/**
+	 * Represents an informStatus message during an experiment 
+	 */
+	SimulationStatusInform,
+	/**
+	 * Represents an error message in the status bar during an experiment 
+	 */
+	SimulationStatusError,
+	
+	/**
+	 * Represents a neutral message in the status bar during an experiment 
+	 */
+	SimulationStatusNeutral,
+	
+	/**
 	 * Used to describe the content printed using the write statement in a running simulation
 	 */
 	SimulationOutput, 

@@ -323,42 +323,8 @@ public class NullGuiHandler implements IGui {
 	public void updateDecorator(final String string) {}
 
 	/** The status. */
-	IStatusDisplayer status = new IStatusDisplayer() {
+	protected IStatusDisplayer status = null;
 
-		@Override
-		public void resumeStatus() {}
-
-		@Override
-		public void waitStatus(final String string) {}
-
-		@Override
-		public void informStatus(final String string) {}
-
-		@Override
-		public void errorStatus(final String message) {}
-
-		@Override
-		public void setSubStatusCompletion(final double status) {}
-
-		@Override
-		public void setStatus(final String msg, final GamaColor color) {}
-
-		@Override
-		public void informStatus(final String message, final String icon) {}
-
-		@Override
-		public void setStatus(final String msg, final String icon) {}
-
-		@Override
-		public void beginSubStatus(final String name) {}
-
-		@Override
-		public void endSubStatus(final String name) {}
-
-		@Override
-		public void neutralStatus(final String string) {}
-
-	};
 
 	/** The console. */
 	protected IConsoleDisplayer console = null;
@@ -389,8 +355,56 @@ public class NullGuiHandler implements IGui {
 	public void setHeadlessLogger(final IHeadlessLogger logger) { this.logger = logger; }
 
 	@Override
-	public IStatusDisplayer getStatus() { return status; }
+	public IStatusDisplayer getStatus() { 
+	
+		if (status == null) {
+			status = new IStatusDisplayer() {
 
+				@Override
+				public void resumeStatus(IScope scope) {}
+
+				@Override
+				public void waitStatus(final String string, IScope scope) {}
+
+				@Override
+				public void informStatus(final String string, IScope scope) {
+				}
+
+				@Override
+				public void errorStatus(final String message, IScope scope) {
+				}
+
+				@Override
+				public void setSubStatusCompletion(final double status, IScope scope) {}
+
+				@Override
+				public void setStatus(final String msg, final GamaColor color, IScope scope) {
+				}
+
+				@Override
+				public void informStatus(final String message, final String icon, IScope scope) {
+				}
+
+				@Override
+				public void setStatus(final String msg, final String icon, IScope scope) {
+				}
+
+				@Override
+				public void beginSubStatus(final String name, IScope scope) {}
+
+				@Override
+				public void endSubStatus(final String name, IScope scope) {}
+
+				@Override
+				public void neutralStatus(final String string, IScope scope) {			
+				}
+
+			};
+		}
+		return status; 
+	}
+
+	
 	@Override
 	public IConsoleDisplayer getConsole() { 
 	

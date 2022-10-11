@@ -611,7 +611,7 @@ public class SwtGui implements IGui {
 				PerspectiveHelper.openModelingPerspective(immediately, false);
 			}
 
-			getStatus().neutralStatus("No simulation running");
+			getStatus().neutralStatus("No simulation running", scope);
 		});
 
 	}

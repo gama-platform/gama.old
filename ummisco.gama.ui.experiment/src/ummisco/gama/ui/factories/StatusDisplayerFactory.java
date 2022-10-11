@@ -19,6 +19,7 @@ import msi.gama.common.UserStatusMessage;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.interfaces.IStatusMessage;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.StatusControlContribution;
 import ummisco.gama.ui.utils.ThreadedUpdater;
@@ -47,22 +48,22 @@ public class StatusDisplayerFactory extends AbstractServiceFactory {
 		}
 
 		@Override
-		public void waitStatus(final String string) {
-			setStatus(string, IGui.WAIT);
+		public void waitStatus(final String string, IScope scope) {
+			setStatus(string, IGui.WAIT, scope);
 		}
 
 		@Override
-		public void informStatus(final String string) {
-			setStatus(string, IGui.INFORM);
+		public void informStatus(final String string, IScope scope) {
+			setStatus(string, IGui.INFORM, scope);
 		}
 
 		@Override
-		public void errorStatus(final String error) {
-			setStatus(error, IGui.ERROR);
+		public void errorStatus(final String error, IScope scope) {
+			setStatus(error, IGui.ERROR, scope);
 		}
 
-		public void neutralStatus(final String message) {
-			setStatus(message, IGui.NEUTRAL);
+		public void neutralStatus(final String message, IScope scope) {
+			setStatus(message, IGui.NEUTRAL, scope);
 		}
 
 		/**
@@ -71,37 +72,37 @@ public class StatusDisplayerFactory extends AbstractServiceFactory {
 		 * @param msg the msg
 		 * @param code the code
 		 */
-		public void setStatus(final String msg, final int code) {
+		public void setStatus(final String msg, final int code, IScope scope) {
 			status.updateWith(new StatusMessage(msg, code));
 		}
 
 		@Override
-		public void setStatus(final String msg, final String icon) {
-			setStatusInternal(msg, null, icon);
+		public void setStatus(final String msg, final String icon, IScope scope) {
+			setStatusInternal(msg, null, icon, scope);
 		}
 
 		@Override
-		public void resumeStatus() {
+		public void resumeStatus(IScope scope) {
 			status.resume();
 		}
 
 		@Override
-		public void setSubStatusCompletion(final double s) {
+		public void setSubStatusCompletion(final double s, IScope scope) {
 			status.updateWith(new SubTaskMessage(s));
 		}
 
 		@Override
-		public void informStatus(final String string, final String icon) {
+		public void informStatus(final String string, final String icon, IScope scope) {
 			status.updateWith(new StatusMessage(string, IGui.INFORM, icon));
 		}
 
 		@Override
-		public void beginSubStatus(final String name) {
+		public void beginSubStatus(final String name, IScope scope) {
 			status.updateWith(new SubTaskMessage(name, true));
 		}
 
 		@Override
-		public void endSubStatus(final String name) {
+		public void endSubStatus(final String name, IScope scope) {
 			status.updateWith(new SubTaskMessage(name, false));
 		}
 
@@ -112,16 +113,16 @@ public class StatusDisplayerFactory extends AbstractServiceFactory {
 		 * @param color the color
 		 * @param icon the icon
 		 */
-		private void setStatusInternal(final String msg, final GamaColor color, final String icon) {
+		private void setStatusInternal(final String msg, final GamaColor color, final String icon, IScope scope) {
 			status.updateWith(new UserStatusMessage(msg, color, icon));
 		}
 
 		@Override
-		public void setStatus(final String message, final GamaColor color) {
+		public void setStatus(final String message, final GamaColor color, IScope scope) {
 			if (message == null) {
-				resumeStatus();
+				resumeStatus(scope);
 			} else {
-				setStatusInternal(message, color, null);
+				setStatusInternal(message, color, null, scope);
 			}
 
 		}

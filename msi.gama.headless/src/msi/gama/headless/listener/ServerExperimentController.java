@@ -345,7 +345,7 @@ public class ServerExperimentController implements IExperimentController {
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage()); }
+		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage(), scope); }
 		experiment.dispose(); // will call own dispose() later
 	}
 

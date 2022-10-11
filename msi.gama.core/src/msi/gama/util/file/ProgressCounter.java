@@ -58,12 +58,12 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void complete() {
-		getDisplayer().setSubStatusCompletion(1d);
+		getDisplayer().setSubStatusCompletion(1d, scope);
 	}
 
 	@Override
 	public void dispose() {
-		getDisplayer().endSubStatus(name.toString());
+		getDisplayer().endSubStatus(name.toString(), scope);
 	}
 
 	@Override
@@ -83,12 +83,12 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 	@Override
 	public void progress(final float p) {
 		progress = p;
-		getDisplayer().setSubStatusCompletion(progress);
+		getDisplayer().setSubStatusCompletion(progress, scope);
 	}
 
 	@Override
 	public void setCanceled(final boolean cancel) {
-		getDisplayer().endSubStatus(name.toString());
+		getDisplayer().endSubStatus(name.toString(), scope);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void started() {
-		getDisplayer().beginSubStatus(name.toString());
+		getDisplayer().beginSubStatus(name.toString(), scope);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void imageStarted(final ImageReader source, final int imageIndex) {
-		getDisplayer().beginSubStatus(name.toString());
+		getDisplayer().beginSubStatus(name.toString(), scope);
 	}
 
 	@Override
@@ -122,8 +122,8 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void imageComplete(final ImageReader source) {
-		getDisplayer().setSubStatusCompletion(1d);
-		getDisplayer().endSubStatus(name.toString());
+		getDisplayer().setSubStatusCompletion(1d, scope);
+		getDisplayer().endSubStatus(name.toString(), scope);
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void readAborted(final ImageReader source) {
-		getDisplayer().endSubStatus(name.toString());
+		getDisplayer().endSubStatus(name.toString(), scope);
 	}
 
 }
