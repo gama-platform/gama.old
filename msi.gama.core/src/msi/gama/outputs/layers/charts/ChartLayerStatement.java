@@ -170,9 +170,9 @@ import msi.gaml.types.Types;
 				@facet (
 						name = IKeyword.STYLE,
 						type = IType.ID,
-						values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
-								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
-								IKeyword.EXPLODED, IKeyword.DEFAULT },
+						values = { IKeyword.LINE, /* IKeyword.WHISKER, */ IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
+								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, "'" + IKeyword.THREE_D + "'",
+								IKeyword.RING, IKeyword.EXPLODED, IKeyword.DEFAULT },
 						doc = @doc ("The sub-style style, also default style for the series."),
 						optional = true),
 				@facet (
@@ -194,7 +194,7 @@ import msi.gaml.types.Types;
 						name = ChartLayerStatement.XTICKUNIT,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
+						doc = @doc ("the tick unit for the y-axis (distance between horizontal lines and values on the left of the axis).")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.STRING,

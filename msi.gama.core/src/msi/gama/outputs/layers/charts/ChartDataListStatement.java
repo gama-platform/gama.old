@@ -119,9 +119,9 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.STYLE,
 						type = IType.ID,
-						values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
-								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
-								IKeyword.EXPLODED },
+						values = { IKeyword.LINE, /* IKeyword.WHISKER, */ IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
+								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, "'" + IKeyword.THREE_D + "'",
+								IKeyword.RING, IKeyword.EXPLODED },
 						optional = true,
 						doc = @doc ("Style for the serie (if not the default one sepecified on chart statement)")) },
 		omissible = IKeyword.LEGEND)
