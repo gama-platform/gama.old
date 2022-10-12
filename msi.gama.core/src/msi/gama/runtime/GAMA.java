@@ -325,7 +325,7 @@ public class GAMA {
 		if (isInTryMode) throw g;
 		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if (shouldStop) {
-			if (isInHeadLessMode()) throw g;
+			if (isInHeadLessMode() && !isInServerMode()) throw g;
 			pauseFrontmostExperiment();
 			throw g;
 		}
