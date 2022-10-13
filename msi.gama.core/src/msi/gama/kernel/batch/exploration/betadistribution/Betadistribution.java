@@ -1,6 +1,7 @@
 package msi.gama.kernel.batch.exploration.betadistribution;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +19,6 @@ public class Betadistribution {
 	double objMin = Double.MAX_VALUE; double objMax = Double.MIN_VALUE;
 	double[] empiricalCDFGranularity;
 	
-	double EPSILON = 10^(-6);
-	
 	/** The parameters */
 	List<Batch> parameters;
 	
@@ -28,7 +27,7 @@ public class Betadistribution {
 	Map<ParametersSet,List<Double>> sample;
 	final EmpiricalDistribution Y;
 	
-	public Betadistribution(IMap<ParametersSet,List<Object>> sample, List<Batch> inputs, String obj) { this(sample,inputs,100,obj); }
+	public Betadistribution(IMap<ParametersSet,List<Object>> sample, List<Batch> inputs, String obj) { this(sample,inputs,10,obj); }
 	
 	public Betadistribution(IMap<ParametersSet,List<Object>> sample, List<Batch> inputs, int granularity, String obj) {
 		this.objective = obj;
@@ -55,7 +54,7 @@ public class Betadistribution {
 			for (ParametersSet ps : this.sample.keySet()) {
 				Object o = ps.get(p.getName());
 				if (!conditional_in_out.containsKey(o)) { conditional_in_out.put(o, new ArrayList<>()); }
-				conditional_in_out.get(o).addAll(sample.get(o));
+				conditional_in_out.get(o).addAll(sample.get(ps));
 			}
 			List<Double> betas = new ArrayList<>();
 			
@@ -83,12 +82,17 @@ public class Betadistribution {
 		for (int i = 0; i < prob.length; i++) {
 			final int idx = i;
 			if (i==0) {
-				prob[i] = as.stream().filter(v -> v < empiricalCDFGranularity[idx]).count() / as.size(); 
+				prob[i] = as.stream().filter(v -> v.doubleValue() < empiricalCDFGranularity[idx]).count() * 1d / as.size(); 
 			} else if (i==prob.length-1) {
-				prob[i] = as.stream().filter(v -> v > empiricalCDFGranularity[idx]).count() / as.size();
+				prob[i] = as.stream().filter(v -> v.doubleValue() >= empiricalCDFGranularity[idx]).count() * 1d / as.size();
 			} else {
-				prob[i] = as.stream().filter(v -> v > empiricalCDFGranularity[idx-1] && v < empiricalCDFGranularity[idx]).count() / as.size();
+				prob[i] = as.stream().filter(v -> v.doubleValue() >= empiricalCDFGranularity[idx-1] && 
+						v.doubleValue() < empiricalCDFGranularity[idx]).count() * 1d / as.size();
 			}
+		}
+		
+		if (Math.ulp(Arrays.stream(prob).sum()) != Math.ulp(1.0)) {
+			throw new IllegalArgumentException("The sum of probability does not sum to 1: "+Arrays.stream(prob).sum());
 		}
 		
 		return new EmpiricalDistribution(prob);
@@ -101,9 +105,9 @@ public class Betadistribution {
 		double incr = (max-min)/bins;
 		res[0] = min + incr;
 		for (int i = 1; i < bins-1; i++) { res[i] = res[i-1] + incr; }
-		if (Math.abs(res[bins-2]+incr - max) > EPSILON) { 
+		if (Math.ulp(res[bins-2]+incr) > Math.ulp(max)) { 
 			throw GamaRuntimeException.error("The bins does not fit max val: "+(res[bins-2]+incr)
-				+" is not the maximum expected value "+max, null);
+				+" is not the maximum expected value "+max+" (diff = "+Math.abs(res[bins-2]+incr - max)+")", null);
 		}
 		return res;
 	}
@@ -134,7 +138,7 @@ public class Betadistribution {
 	        }
 
 	        if (Math.abs(cdf[cdf.length - 1] - 1.0) > 1E-7) {
-	            throw new IllegalArgumentException("The sum of probabilities is not 1.");
+	            throw new IllegalArgumentException("The sum of probabilities is not 1: "+cdf[cdf.length - 1]);
 	        }
 		}
 		

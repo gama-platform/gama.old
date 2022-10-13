@@ -10,10 +10,11 @@ import java.util.stream.Collectors;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
-import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
+import msi.gama.kernel.batch.exploration.Exploration;
 import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
 import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
+import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -65,10 +66,10 @@ import msi.gaml.types.IType;
 				internal = true,
 				doc = @doc ("The name of the method. For internal use only")),
 				@facet (
-						name = ExhaustiveSearch.METHODS,
+						name = Exploration.METHODS,
 						type = IType.ID,
 						optional = false,
-						doc = @doc ("The sampling method to build parameters sets")),
+						doc = @doc ("The sampling method to build parameters sets - default is uniform")),
 				@facet (
 						name = IKeyword.BATCH_VAR_OUTPUTS,
 						type = IType.LIST,
@@ -76,7 +77,7 @@ import msi.gaml.types.IType;
 						optional = false,
 						doc = @doc ("The list of output variables to analyse")),
 				@facet (
-						name = ExhaustiveSearch.SAMPLE_SIZE,
+						name = Exploration.SAMPLE_SIZE,
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("The number of sample required.")),
@@ -128,33 +129,33 @@ public class BetaExploration extends AExplorationAlgorithm {
 		List<ParametersSet> sets;
 
 		int sample_size = (int) Math.round(Math.pow(params.size(), 2) * 2);
-		if (hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			sample_size = Cast.asInt(scope, getFacet(ExhaustiveSearch.SAMPLE_SIZE).value(scope));
+		if (hasFacet(Exploration.SAMPLE_SIZE)) {
+			sample_size = Cast.asInt(scope, getFacet(Exploration.SAMPLE_SIZE).value(scope));
 		}
 		
 		// == Build sample of parameter inputs ==
 		
-		String method = Cast.asString(scope, getFacet(ExhaustiveSearch.METHODS).value(scope));
+		String method = Cast.asString(scope, getFacet(Exploration.METHODS).value(scope));
 		sets = switch (method) {
 			case IKeyword.MORRIS -> {
-				int nbl = hasFacet(ExhaustiveSearch.NB_LEVELS)
-						? Cast.asInt(scope, getFacet(ExhaustiveSearch.NB_LEVELS).value(scope)) : 4;
-				yield Cast.asList(scope,new MorrisSampling().MakeMorrisSampling(nbl, sample_size, parameters, scope).get(1));
+				int nbl = hasFacet(Exploration.NB_LEVELS)
+						? Cast.asInt(scope, getFacet(Exploration.NB_LEVELS).value(scope)) : 4;
+				yield Cast.asList(scope, MorrisSampling.MakeMorrisSampling(nbl, sample_size, parameters, scope).get(1));
 			}
-			case IKeyword.SALTELLI -> new SaltelliSampling().MakeSaltelliSampling(scope, sample_size, parameters);
-			case IKeyword.LHS -> new LatinhypercubeSampling().LatinHypercubeSamples(sample_size, parameters,
+			case IKeyword.SALTELLI -> SaltelliSampling.MakeSaltelliSampling(scope, sample_size, parameters);
+			case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters,
 									scope.getRandom().getGenerator(), scope);
 			case IKeyword.ORTHOGONAL -> {
-				int iterations = hasFacet(ExhaustiveSearch.ITERATIONS)
-						? Cast.asInt(scope, getFacet(ExhaustiveSearch.SAMPLE_SIZE).value(scope)) : 5;
-				yield new OrthogonalSampling().OrthogonalSamples(sample_size, iterations, parameters,
+				int iterations = hasFacet(Exploration.ITERATIONS)
+						? Cast.asInt(scope, getFacet(Exploration.SAMPLE_SIZE).value(scope)) : 5;
+				yield OrthogonalSampling.OrthogonalSamples(sample_size, iterations, parameters,
 										scope.getRandom().getGenerator(), scope);
 			}
-			default -> throw GamaRuntimeException.error("Method " + method + " is not known by the Exhaustive method", scope);
+			default -> RandomSampling.UniformSampling(scope, sample_size, parameters);
 		};
 
 		// == Launch simulations ==
-		
+		currentExperiment.setSeeds(new Double[1]);
 		currentExperiment.setKeepSimulations(false);
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(sets);
@@ -203,11 +204,11 @@ public class BetaExploration extends AExplorationAlgorithm {
 		String sep = "; ";
 		sb.append("BETA b Kuiper based estimator :\n");
 		sb.append("##############################\n");
-		sb.append("inputs" + sep + String.join("; ", outputs)).append(Strings.LN);
+		sb.append("inputs" + sep + String.join(sep, outputs)).append(Strings.LN);
 		String line = "";
 		for (Batch param : parameters) {
-			line = line.concat(param.getName()).concat(sep);
-			for (String output_name : outputs) { line = line + res.get(output_name).get(param).toString(); }
+			line = param.getName();
+			for (String output_name : outputs) { line = line + sep + res.get(output_name).get(param).toString(); }
 			sb.append(line).append(Strings.LN);
 		}
 		return sb.toString();
