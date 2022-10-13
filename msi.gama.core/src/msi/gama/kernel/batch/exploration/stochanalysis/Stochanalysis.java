@@ -4,9 +4,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import org.apache.commons.collections4.map.HashedMap;
+
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -43,6 +53,9 @@ public class Stochanalysis {
 	//List<String> ParametersNames;
 	//double threshold;
 	//int min_replicat;
+	
+	// 90, 95 and 99% CI interval
+	final static double[] CI = {1.645,1.980,2.576};
 	
 	
 	/**
@@ -91,10 +104,25 @@ public class Stochanalysis {
 	 * @return
 	 */
     @SuppressWarnings("unchecked")
-	private static String buildResultMap(Map<String,Map<Double,List<Object>>> Out,IScope scope){
+	private static String buildResultMap(Map<String,Map<Double,List<Object>>> Out, IScope scope){
     	StringBuffer sb= new StringBuffer();
     	sb.append("== STOCHASTICITY ANALYSIS: \n");
     	sb.append("\n");
+    	sb.append("--- Summary of required number of replications ---\n");
+    	List<Integer> all_vals = new ArrayList<>();
+    	for(String i : Out.keySet()) { 
+    		for (List<Object> l : Out.get(i).values()) { 
+    			all_vals.addAll(
+    					Cast.asList(scope,l.get(2))
+    					.stream().mapToInt(o -> Integer.valueOf(o.toString()))
+    					.filter(d -> d > 0).boxed().toList()
+    					);
+    			} 
+    	}
+    	sb.append("On average requires: "+all_vals.stream().mapToDouble(i -> i*1d).average().orElse(0.0));
+    	sb.append("\tHighest requirements: "+Collections.max(all_vals));  
+    	sb.append("\tLowest requirements: "+Collections.min(all_vals));
+    	sb.append("\n\n");
     	for( String outputs: Out.keySet()) {
     		Map<Double,List<Object>> tmp_map=Out.get(outputs);
     		sb.append("## Output : ");
@@ -103,12 +131,12 @@ public class Stochanalysis {
     		sb.append("\n");
         	for(int i=0;i<tmp_map.size();i++) {
         		//Method to write
-        		double val=tmp_map.keySet().stream().toList().get(i);
+        		double val=tmp_map.keySet().stream().sorted().toList().get(i);
         		//Minimum size to print
         		int n_min=Cast.asInt(scope,tmp_map.get(val).get(0));
         		//Number of point failed. (Nb_min > Nb repeat used) 
         		int nb_failed=Cast.asInt(scope,tmp_map.get(val).get(1));
-        		List<Integer> nb_val=Cast.asList(scope,tmp_map.get(val).get(2));
+        		List<Integer> nb_val = Cast.asList(scope,tmp_map.get(val).get(2));
         		if(0<val&& val<1) {
             		sb.append(" CV method - Threshold : ");
             		sb.append(val);
@@ -222,9 +250,13 @@ public class Stochanalysis {
     }
     
     public static void WriteAndTellResultList(String path,Map<String,Map<Double,List<Object>>> Outputs,IScope scope) {
+    	
         try{
-        	File file= new File(path);
-            FileWriter fw = new FileWriter(file, false);
+			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
+			final File parent = f.getParentFile();
+			if (!parent.exists()) { parent.mkdirs(); }
+			if (f.exists()) { f.delete(); }
+			FileWriter fw = new FileWriter(f, false);
             fw.write(buildResultMap(Outputs,scope));
             fw.close();
         }catch (IOException e) {
@@ -245,8 +277,11 @@ public class Stochanalysis {
     
     public static void WriteAndTellResult(String path,int val,IScope scope) {
         try{
-        	File file= new File(path);
-            FileWriter fw = new FileWriter(file, false);
+        	final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
+			final File parent = f.getParentFile();
+			if (!parent.exists()) { parent.mkdirs(); }
+			if (f.exists()) { f.delete(); }
+            FileWriter fw = new FileWriter(f, false);
             fw.write(buildResultTxt(val));
             fw.close();
         }catch (IOException e) {
@@ -260,7 +295,7 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return the mean for each number of replicates
 	 */
-	private static List<Double> computeMean(List<Object> val,IScope scope) {
+	private static List<Double> computeMean(List<Object> val, IScope scope) {
 		List<Double> mean=new ArrayList<>();
 		double tmp_mean=0;
 		for(int i=0;i<val.size();i++) {
@@ -270,6 +305,41 @@ public class Stochanalysis {
 		}	
 		return mean;
 	}
+	
+	/*
+	 * Compute all possible means of combinationSize elements of the list
+	 * @param val : List of value (data of each replicates)
+	 * @param scope
+	 * @param combinationSize : size of the local mean to assess
+	 * @return return the mean for each number of replicates
+	 */
+	private static List<Double> computeMeanCombination(List<Object> val, IScope scope) {
+		List<Double> mean=new ArrayList<>();
+		final double rm = val.stream().mapToDouble(o -> Cast.asFloat(scope, o))
+				.boxed().collect(Collectors.averagingDouble(Double::doubleValue));
+		for(int i = 1; i < val.size();i++) {
+			Double localMean = 0.0;
+			int combinationSize = i+1;
+			for (Object r : val) {
+				List<Object> remainings = new ArrayList<>(val);
+				remainings.remove(r);
+				List<Double> currentMean = new ArrayList<>();
+				while (remainings.size() < combinationSize-1) {
+					Collections.shuffle(remainings);
+					List<Object> sample = remainings.stream().limit(combinationSize-1).toList();				
+					currentMean.add(sample.stream()
+							.mapToDouble(e ->  Cast.asFloat(scope, e).doubleValue()).boxed()
+							.collect(Collectors.averagingDouble(Double::doubleValue)));
+					remainings.removeAll(sample);
+				}
+				double ct = -1.0;
+				for (Double cm : currentMean) { double lt = Math.abs(cm-rm); if (lt > ct) { localMean = cm; ct = lt; } }
+			}
+			mean.add(localMean);
+		}
+		return mean;
+	}
+	
 	
 	/**
 	 * Compute the Standard Deviation of a list
@@ -333,10 +403,10 @@ public class Stochanalysis {
 	 * @param STD : the Standard deviation for each number of replicates
 	 * @return the standard error for each number of replicates
 	 */
-	private static List<Double> computeSE(List<Double> STD){
+	private static List<Double> computeSE(List<Double> STD, double z){
 		List<Double> SE= new ArrayList<>();
 		for(int i=1;i<STD.size();i++) {
-			SE.add(STD.get(i)/Math.sqrt(i+1));
+			SE.add(z * STD.get(i) / Math.sqrt(i+1));
 		}
 		return SE;
 	}
@@ -369,7 +439,7 @@ public class Stochanalysis {
 		double tmp_delta=0;
 		for(int i=0;i<val.size();i++) {
 			double tmp_val=Cast.asFloat(scope, val.get(i));
-			tmp_delta=tmp_delta+Math.abs(tmp_val-mean);
+			tmp_delta += Math.abs(tmp_val-mean);
 		}
 		double delta=tmp_delta/val.size();
 		return delta;
@@ -440,7 +510,7 @@ public class Stochanalysis {
 	 * @return minimum number of replicate found
 	 */
 	private static int Student(double S,double delta,double Ta,double Tb) {
-		return (int) Math.ceil(2*(Math.pow(S, 2)/delta)* Math.pow((Ta+Tb), 2)) ;
+		return (int) Math.ceil(2*(Math.pow(S, 2)/Math.pow(delta,2))* Math.pow((Ta+Tb), 2)) ;
 	}
 	
 	/**
@@ -450,14 +520,16 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return a List with 0: The n minimum found // 1: The number of failed (if n_minimum > repeat size) //2: the result for each point of the space
 	 */
-	public static List<Object> StochasticityAnalysis(IMap<ParametersSet,List<Object>> sample,double threshold,IScope scope) {
+	public static List<Object> StochasticityAnalysis(IMap<ParametersSet,List<Object>> sample, double threshold, IScope scope) {
 		int tmp_replicat=0;
-		if(0< threshold &&threshold<1) {
+		if(0 < threshold && threshold < 1) {
 			//Min nb replicat with CV method
 			int compteur_failed=0;
 			List<Integer> n_min_list=new ArrayList<>();
 			for(ParametersSet ps : sample.keySet()) {
-				List<Double> mean = computeMean(sample.get(ps),scope);
+				List<Object> currentXp = sample.get(ps);
+				Collections.shuffle(currentXp);
+				List<Double> mean = computeMeanCombination(currentXp, scope);
 				List<Double> std = computeSTD(mean,sample.get(ps),scope);
 				List<Double> cv = computeCV(std,mean);
 				int n_tmp=FindWithThreshold(cv,threshold);
@@ -474,49 +546,44 @@ public class Stochanalysis {
 			if(min_replicat==0) {
 				min_replicat=1;
 			}
-			List<Object> List_Val=new ArrayList<>();
-			List_Val.add(min_replicat);
-			List_Val.add(compteur_failed);
-			List_Val.add(n_min_list);
-			return List_Val;
+			return Arrays.asList(min_replicat,compteur_failed,n_min_list);
 		}else if(threshold==-1) {
 			//Min nb replicat with Student method
 			int compteur_failed=0;
 			List<Integer> n_min_list=new ArrayList<>();
 			for(ParametersSet ps : sample.keySet()) {
 				List<Double> mean = computeMean(sample.get(ps),scope);
-				double val_mean=mean.get(mean.size()-1);				
-				double s= computeS(sample.get(ps),val_mean,scope);
-				double delta= computeDelta(sample.get(ps),val_mean,scope);
-				double t1= computeT(true,mean.size());
-				double t2= computeT(false,mean.size());
-				int nb_tmp=Student(s,delta,t1,t2);
+				double val_mean = mean.get(mean.size()-1);				
+				double s = computeS(sample.get(ps),val_mean,scope);
+				double delta = computeDelta(sample.get(ps),val_mean,scope);
+				double t1 = computeT(true,mean.size());
+				double t2 = computeT(false,mean.size());
+				int nb_tmp = Student(s,delta,t1,t2);
 				n_min_list.add(nb_tmp);
-				tmp_replicat=tmp_replicat+nb_tmp;
+				tmp_replicat += nb_tmp;
 			}
-			int min_replicat=tmp_replicat/sample.keySet().size();
-			if(min_replicat==0) {
-				min_replicat=1;
-			}			
-			List<Object> List_Val=new ArrayList<>();
-			List_Val.add(min_replicat);
-			List_Val.add(compteur_failed);
-			List_Val.add(n_min_list);
-			return List_Val;
+			int min_replicat = tmp_replicat/sample.keySet().size();
+			if(min_replicat==0) { min_replicat=1; }
+			return Arrays.asList(min_replicat,compteur_failed,n_min_list);
 			
 		}else if(threshold>=1) {
-			//Min nb replicat with SE method			
+			//Min nb replicat with SE method	
+			// hypothesis of normally distributed samples around the mean
+			// ==> means that a SE have to fit into a given confident interval
 			int compteur_failed=0;
 			List<Integer> n_min_list=new ArrayList<>();			
-			double new_threshold=threshold/100;			
-			for(ParametersSet ps : sample.keySet()) {			
-				List<Double> mean = computeMean(sample.get(ps),scope);	
-				List<Double> std = computeSTD(mean,sample.get(ps),scope);	
-				List<Double> se = computeSE(std);
+			for(ParametersSet ps : sample.keySet()) {
+				List<Object> currentXp = sample.get(ps);
+				Collections.shuffle(currentXp);
+				List<Double> mean = computeMeanCombination(currentXp, scope);	
+				List<Double> std = computeSTD(mean,currentXp,scope);
+				double ci = threshold == 90 ? CI[0] : (threshold == 95 ? CI[1] : CI[2]);
+				double new_threshold = ci * std.get(std.size()-1) / Math.sqrt(std.size());
+				List<Double> se = computeSE(std,ci);
 				boolean first=true;
 				int tmp=0;
 				for(int i=0;i<se.size();i++) {
-					if(first && se.get(i)<new_threshold) {
+					if(first && se.get(i) < new_threshold) {
 						tmp=i+1;
 						first=false;
 					}
@@ -534,11 +601,7 @@ public class Stochanalysis {
 			if(min_replicat==0) {
 				min_replicat=1;
 			}
-			List<Object> List_Val=new ArrayList<>();
-			List_Val.add(min_replicat);
-			List_Val.add(compteur_failed);
-			List_Val.add(n_min_list);
-			return List_Val;			
+			return Arrays.asList(min_replicat,compteur_failed,n_min_list);			
 		}else {
 			throw GamaRuntimeException.error("Wrong value for threshold", scope);
 		}

@@ -1,17 +1,18 @@
 package msi.gama.kernel.batch.exploration.stochanalysis;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
-import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
+import msi.gama.kernel.batch.exploration.Exploration;
 import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
-import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
-import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
+import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -31,6 +32,7 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
@@ -49,7 +51,7 @@ import msi.gaml.types.IType;
 				internal = true,
 				doc = @doc ("The name of the method. For internal use only")),
 				@facet (
-						name = ExhaustiveSearch.METHODS,
+						name = Exploration.METHODS,
 						type = IType.ID,
 						optional = true,
 						doc = @doc ("The sampling method to build parameters sets. Available methods are: "+IKeyword.LHS+", "+IKeyword.ORTHOGONAL)
@@ -57,11 +59,10 @@ import msi.gaml.types.IType;
 				@facet(
 						name = IKeyword.BATCH_VAR_OUTPUTS,
 						type = IType.LIST,
-						of = IType.STRING,
 						optional = false,
 						doc = @doc ("The list of output variables to analyse")),
 				@facet (
-						name = ExhaustiveSearch.SAMPLE_SIZE,
+						name = Exploration.SAMPLE_SIZE,
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("The number of sample required , 10 by default")),
@@ -71,7 +72,7 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The path to the file where the automatic batch report will be written")),
 				@facet (
-						name = ExhaustiveSearch.NB_LEVELS,
+						name = Exploration.NB_LEVELS,
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("The number of level required, 4 by default")),
@@ -102,7 +103,7 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 	/** Theoretical inputs */
 	private List<Batch> parameters;
 	/** Theoretical outputs */
-	private IList<String> outputs;
+	private IList<Object> outputs;
 	/** Actual input / output map */
 	protected IMap<ParametersSet, Map<String, List<Object>>> res_outputs;
 
@@ -124,26 +125,25 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 		List<ParametersSet> sets;
 
-		if (hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
-			this.sample_size = Cast.asInt(scope, getFacet(ExhaustiveSearch.SAMPLE_SIZE).value(scope));
+		if (hasFacet(Exploration.SAMPLE_SIZE)) {
+			this.sample_size = Cast.asInt(scope, getFacet(Exploration.SAMPLE_SIZE).value(scope));
 		}
 		if (hasFacet(StochanalysisExploration.THRESHOLD)) {
 			this.threshold = Cast.asFloat(scope, getFacet(StochanalysisExploration.THRESHOLD).value(scope));
 		}
-		if (hasFacet(ExhaustiveSearch.METHODS)) {
-			method=Cast.asString(scope, getFacet(ExhaustiveSearch.METHODS).value(scope));
+		if (hasFacet(Exploration.METHODS)) {
+			method=Cast.asString(scope, getFacet(Exploration.METHODS).value(scope));
 		}
 		sets = switch (method) {
 			case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters,
 					scope.getRandom().getGenerator(), scope);
 			case IKeyword.ORTHOGONAL -> {
-				int iterations = hasFacet(ExhaustiveSearch.ITERATIONS)
-						? Cast.asInt(scope, getFacet(ExhaustiveSearch.ITERATIONS).value(scope)) : 5;
+				int iterations = hasFacet(Exploration.ITERATIONS)
+						? Cast.asInt(scope, getFacet(Exploration.ITERATIONS).value(scope)) : 5;
 				yield OrthogonalSampling.OrthogonalSamples(sample_size, iterations, parameters,
 						scope.getRandom().getGenerator(), scope);
 			}
-			default -> throw GamaRuntimeException.error("Method " + method + " is not known by the Exhaustive method",
-					scope);
+			default -> RandomSampling.UniformSampling(scope, sample_size, params);
 		};
 
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
@@ -155,37 +155,29 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 			}
 		}
 
-		outputs = Cast.asList(scope, getFacet(IKeyword.BATCH_VAR_OUTPUTS).value(scope));
+		IExpression outputFacet = getFacet(IKeyword.BATCH_VAR_OUTPUTS);
+		outputs = Cast.asList(scope, scope.evaluate(outputFacet, currentExperiment).getValue());
 		int res=0;
 		Map<String,Map<Double,List<Object>>> MapOutput= new LinkedHashMap<>();
-		for (String out : outputs) {
-			Map<Double,List<Object>> res_val= new HashMap<>();
-			res_val.put(0.05, null);
-			res_val.put(0.01, null);
-			res_val.put(0.005, null);
-			res_val.put(0.001, null);
-			res_val.put(10.0, null);
-			res_val.put(7.5, null);
-			res_val.put(5.0, null);
-			res_val.put(2.5, null);
-			res_val.put(-1.0, null);
+		for (Object out : outputs) {
+			Map<Double,List<Object>> res_val= new HashMap<>(
+					Map.of(0.05, Collections.emptyList(), 0.01, Collections.emptyList(), 0.001, Collections.emptyList(), 
+					90.0, Collections.emptyList(), 95.0, Collections.emptyList(), 99.0, Collections.emptyList(), 
+					-1.0, Collections.emptyList()));
 			IMap<ParametersSet,List<Object>> sp = GamaMapFactory.create();
 			for (ParametersSet ps : res_outputs.keySet()) {
-				sp.put(ps, res_outputs.get(ps).get(out));
+				sp.put(ps, res_outputs.get(ps).get(out.toString()));
 			}
 			if(threshold==-1) {
-				for(int i=0;i<res_val.keySet().size();i++) {
-					double val=res_val.keySet().stream().toList().get(i);
-					List<Object> tmp_list_val= res_val.get(val);
-					List<Object> tmp;
-					if(tmp_list_val==null) {
-						tmp=Stochanalysis.StochasticityAnalysis(sp,val, scope);
-						res_val.replace(val, tmp);
+				List<Double> keys = res_val.keySet().stream().toList();
+				for(Double thresh : keys) {
+					if(res_val.get(thresh).isEmpty()) {
+						res_val.replace(thresh, Stochanalysis.StochasticityAnalysis(sp,thresh,scope));
 					}
 				}
-				MapOutput.put(out, res_val);
+				MapOutput.put(out.toString(), res_val);
 			}else {
-				res=Cast.asInt(scope,Stochanalysis.StochasticityAnalysis(sp,threshold, scope).get(0));
+				res=Cast.asInt(scope,Stochanalysis.StochasticityAnalysis(sp,threshold,scope).get(0));
 			}
 		}
 		if(threshold==-1) {
