@@ -29,7 +29,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.IExploration;
-import msi.gama.kernel.batch.exploration.ExhaustiveSearch;
+import msi.gama.kernel.batch.exploration.Exploration;
 import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -212,27 +212,27 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 						METHOD);
 			}
 			
-			if(desc.getChildWithKeyword(EXHAUSTIVE)!=null) {
+			if(desc.getChildWithKeyword(EXPLORATION)!=null) {
 
-				IDescription tmpDesc=desc.getChildWithKeyword(EXHAUSTIVE);
-				if(tmpDesc.hasFacet(ExhaustiveSearch.METHODS)) {
+				IDescription tmpDesc=desc.getChildWithKeyword(EXPLORATION);
+				if(tmpDesc.hasFacet(Exploration.METHODS)) {
 					
-					switch(tmpDesc.getLitteral(ExhaustiveSearch.METHODS)) {
+					switch(tmpDesc.getLitteral(Exploration.METHODS)) {
 					
 					case IKeyword.MORRIS:
-						if(!tmpDesc.hasFacet(ExhaustiveSearch.NB_LEVELS)) {
+						if(!tmpDesc.hasFacet(Exploration.NB_LEVELS)) {
 							tmpDesc.warning("levels not defined for Morris sampling, will be 4 by default",IGamlIssue.MISSING_FACET);
 						}else {
-							int levels= Integer.valueOf(tmpDesc.getLitteral(ExhaustiveSearch.NB_LEVELS));
+							int levels= Integer.valueOf(tmpDesc.getLitteral(Exploration.NB_LEVELS));
 							System.out.println(levels);
 							if(levels<=0) {
 								tmpDesc.error("Levels should be positive");
 							}
 						}
-						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
 							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
 						}else {
-							int sample= Integer.valueOf(tmpDesc.getLitteral(ExhaustiveSearch.SAMPLE_SIZE));
+							int sample= Integer.valueOf(tmpDesc.getLitteral(Exploration.SAMPLE_SIZE));
 							System.out.println(sample);
 							if(sample%2!=0) {
 								tmpDesc.error("The sample size should be even");
@@ -241,10 +241,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 						}
 						break;
 					case IKeyword.SALTELLI:
-						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
 							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
 						}else {
-							int sample= Integer.valueOf(tmpDesc.getLitteral(ExhaustiveSearch.SAMPLE_SIZE));
+							int sample= Integer.valueOf(tmpDesc.getLitteral(Exploration.SAMPLE_SIZE));
 							/*
 							System.out.println(sample);
 							if(!((sample & (sample-1)) ==0)) {
@@ -253,33 +253,33 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 							*/
 							
 						}
-						if(tmpDesc.hasFacet(ExhaustiveSearch.NB_LEVELS)) {
+						if(tmpDesc.hasFacet(Exploration.NB_LEVELS)) {
 							tmpDesc.warning("Saltelli sampling doesn't need the levels facet",IGamlIssue.MISSING_FACET);
 						}
 						break;
 						
 					case IKeyword.LHS:
-						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
 							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
 						}
 						break;
 						
 					case IKeyword.ORTHOGONAL:
-						if(!tmpDesc.hasFacet(ExhaustiveSearch.SAMPLE_SIZE )) {
+						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
 							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
 						}
-						if(!tmpDesc.hasFacet(ExhaustiveSearch.ITERATIONS )) {
+						if(!tmpDesc.hasFacet(Exploration.ITERATIONS )) {
 							tmpDesc.warning("Number of Iterations not defined, will be 5 by default",IGamlIssue.MISSING_FACET);
 						}
 						break;
 						
 					case IKeyword.SOBOL:
-						tmpDesc.warning("The sampling "+tmpDesc.getLitteral(ExhaustiveSearch.METHODS)+" doesn't exist yet, do you perhaps mean 'saltelli' ?",IGamlIssue.MISSING_FACET);
+						tmpDesc.warning("The sampling "+tmpDesc.getLitteral(Exploration.METHODS)+" doesn't exist yet, do you perhaps mean 'saltelli' ?",IGamlIssue.MISSING_FACET);
 						break;
 						
 						
 					default:
-						tmpDesc.error("The sampling "+tmpDesc.getLitteral(ExhaustiveSearch.METHODS)+" doesn't exist yet",IGamlIssue.MISSING_FACET);
+						tmpDesc.error("The sampling "+tmpDesc.getLitteral(Exploration.METHODS)+" doesn't exist yet",IGamlIssue.MISSING_FACET);
 					}
 				}
 
@@ -437,7 +437,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		experimentType = description.getLitteral(IKeyword.TYPE);
 		// final String type = description.getFacets().getLabel(IKeyword.TYPE);
 		if (IKeyword.BATCH.equals(experimentType) || IKeyword.TEST.equals(experimentType)) {
-			exploration = new ExhaustiveSearch(null);
+			exploration = new Exploration(null);
 		} else if (IKeyword.HEADLESS_UI.equals(experimentType)) { setHeadless(true); }
 		final IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if (expr != null && expr.isConst()) {
