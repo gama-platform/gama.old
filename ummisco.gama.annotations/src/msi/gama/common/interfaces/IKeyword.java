@@ -364,17 +364,14 @@ public interface IKeyword {
 	/** The event. */
 	String EVENT = "event";
 
-	/** The exhaustive. */
-	String EXHAUSTIVE = "exhaustive";
-
 	/** The exists. */
 	String EXISTS = "exists";
 
 	/** The experiment. */
 	String EXPERIMENT = "experiment";
 
-	/** The explicit. */
-	String EXPLICIT = "explicit";
+	/** The exploration. */
+	String EXPLORATION = "exploration";
 
 	/** The exploded. */
 	String EXPLODED = "exploded";
@@ -1159,7 +1156,7 @@ public interface IKeyword {
 	String STEP = "step";
 	
 	/** The Stochasticity Analysis */
-	String STO="stochanalyse";
+	String STO = "stochanalyse";
 
 	/** The stop sound. */
 	String STOP_SOUND = "stop_sound";
@@ -1259,7 +1256,10 @@ public interface IKeyword {
 
 	/** The type. */
 	String TYPE = "type";
-
+	
+	/** Uniform sampling */
+	String UNIFORM = "uniform";
+	
 	/** The unit. */
 	String UNIT = "unit";
 
@@ -1412,6 +1412,6 @@ public interface IKeyword {
 
 	/** The methods. */
 	String[] METHODS =
-			{ GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE, PSO, EXPLICIT, SOBOL, MORRIS, STO,BETAD };
+			{ GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXPLORATION, PSO, SOBOL, MORRIS, STO, BETAD };
 
 }
