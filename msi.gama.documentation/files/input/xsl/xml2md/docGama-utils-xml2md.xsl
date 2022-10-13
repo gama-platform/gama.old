@@ -9,11 +9,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wiki="www.google.fr">
 			<xsl:choose>
 				<xsl:when test="@equals">
 			<xsl:choose>
-			<xsl:when test="@var">
-			<xsl:if test="@type != 'null'">
-<xsl:value-of select="@type" /><xsl:text> 
+			<xsl:when test="@var">				
+			<xsl:text> 
 </xsl:text>
-			<xsl:value-of select="@var" /> &lt;- </xsl:if><xsl:value-of select="@code" /><xsl:if test="@type != 'null'">; </xsl:if>//<xsl:value-of select="@var" /> equals <xsl:value-of select="@equals" /><xsl:text></xsl:text>
+			<xsl:if test="@type != 'null'">
+			<xsl:value-of select="@type" /> <xsl:value-of select="@var" /> &lt;- </xsl:if><xsl:value-of select="@code" /><xsl:if test="@type != 'null'">; </xsl:if> // <xsl:value-of select="@var" /> equals <xsl:value-of select="@equals" /><xsl:text></xsl:text>
 			</xsl:when>
 			<xsl:otherwise><xsl:text> 
 </xsl:text>
