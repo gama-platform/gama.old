@@ -600,7 +600,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   {
     super(eNS_URI, GamlFactory.eINSTANCE);
   }
-
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

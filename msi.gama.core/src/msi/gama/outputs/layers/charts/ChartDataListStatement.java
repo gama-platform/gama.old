@@ -120,7 +120,7 @@ import msi.gaml.types.IType;
 						name = IKeyword.STYLE,
 						type = IType.ID,
 						values = { IKeyword.LINE, /* IKeyword.WHISKER, */ IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
-								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, "'" + IKeyword.THREE_D + "'",
+								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D,
 								IKeyword.RING, IKeyword.EXPLODED },
 						optional = true,
 						doc = @doc ("Style for the serie (if not the default one sepecified on chart statement)")) },

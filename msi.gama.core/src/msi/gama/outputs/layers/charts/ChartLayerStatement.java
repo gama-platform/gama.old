@@ -171,7 +171,7 @@ import msi.gaml.types.Types;
 						name = IKeyword.STYLE,
 						type = IType.ID,
 						values = { IKeyword.LINE, /* IKeyword.WHISKER, */ IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
-								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, "'" + IKeyword.THREE_D + "'",
+								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D,
 								IKeyword.RING, IKeyword.EXPLODED, IKeyword.DEFAULT },
 						doc = @doc ("The sub-style style, also default style for the series."),
 						optional = true),
