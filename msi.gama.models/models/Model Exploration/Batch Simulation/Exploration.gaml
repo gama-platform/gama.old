@@ -56,15 +56,16 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 // 1. Size effect of one added replicate with student t statistics
 // 2. How increasing the number of replicates dimish the standard error
 // 3. coefficient of variation 
-experiment replication_analysis parent: batch_abstract type: batch until: world.stop_sim() or ( time > end_cycle ) repeat:10 {
-	method stochanalyse outputs:["nb_preys","nb_predators"] results:"Results/stochanalysis.txt";
+experiment replication_analysis parent: batch_abstract type: batch until: world.stop_sim() or ( time > end_cycle ) 
+	repeat:40 keep_simulations:false {
+	method stochanalyse outputs:["nb_preys", "nb_predators"] results:"Results/stochanalysis.txt" sample:3;
 } 
 
-// This experiment explores two parameters with an exhaustive strategy,
+// This experiment explores two parameters with an exhaustive strategy (default sampling method for exploration),
 // repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
 // in order to find the best combination of parameters to minimize the number of infected people
-experiment Exhaustive parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > end_cycle ) {
-	method exhaustive;
+experiment exhaustive_exploration parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > end_cycle ) {
+	method exploration;
 	
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
@@ -80,10 +81,21 @@ experiment Exhaustive parent: batch_abstract type: batch repeat: 3 keep_seed: tr
 	}
 }
 
+// This experiment tests two explicit parameters sets,
+// repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
+experiment explicit_exploration parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > end_cycle ) {
+	method exploration with: [
+		["prey_max_transfer"::0.1, "predator_energy_transfer":: 0.01],
+		["prey_max_transfer"::0.5, "predator_energy_transfer":: 0.2],
+		["prey_max_transfer"::1.0, "predator_energy_transfer":: 0.05],
+		["prey_max_transfer"::0.5, "predator_energy_transfer":: 0.1]
+	];
+}
+
 // This experiment iterate over point of the parameter space choosen following
 // Latin Hypercube Sampling
-experiment Exhaustive_with_LHS  parent:Exhaustive repeat:3 type: batch until:world.stop_sim() or time>end_cycle {
-	method exhaustive sampling:"latinhypercube" sample:100;
+experiment exploration_with_sampling  parent: batch_abstract repeat:3 type: batch until:world.stop_sim() or time>end_cycle {
+	method exploration sampling:"latinhypercube" sample:100;
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
 		display Comparison {
@@ -98,17 +110,6 @@ experiment Exhaustive_with_LHS  parent:Exhaustive repeat:3 type: batch until:wor
 	}
 }
 
-// This experiment tests two explicit parameters sets,
-// repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
-experiment Explicit parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > end_cycle ) {
-	method explicit parameter_sets: [
-		["prey_max_transfer"::0.1, "predator_energy_transfer":: 0.01],
-		["prey_max_transfer"::0.5, "predator_energy_transfer":: 0.2],
-		["prey_max_transfer"::1.0, "predator_energy_transfer":: 0.05],
-		["prey_max_transfer"::0.5, "predator_energy_transfer":: 0.1]
-	];
-}
-
 // This experiment samples from the parameter space (Saltelli methods) to establish
 // Sobol index, i.e. a contribution value of each parameters to 
 // observed variance for outcomes of interest, 
@@ -117,6 +118,16 @@ experiment Sobol parent: batch_abstract type: batch until:( time > end_cycle ) {
 	method sobol outputs:["nb_preys","nb_predators"] sample:100 report:"Results/sobol.txt" results:"Results/sobol_raw.csv";
 }
 
+// This experiment perform a Morris analysis (see Morris 1991, doi:10.1080/00401706.1991.10484804)
+// to screen and rank parameters based on elementary effect (changes on outputs due to a small modification of 
+// one paameter value)
+experiment Morris parent: batch_abstract type: batch until:( time > end_cycle ) {
+	method morris outputs:["nb_preys","nb_predators"] sample:100 levels:4 report:"Results/morris.txt" results:"Results/morris_raw.csv";
+}
+
+// This experiment computed beta d kuiper statistics to estimate the impact of parameters
+// on the distribution of outputs. It has been retro-engineered based on the description in
+// Borgonovo et al. 2022 doi:10.1007/s10588-021-09358-5
 experiment Beta_distribution parent: batch_abstract type: batch until:( time > end_cycle ) {
-	method betad outputs:["nb_preys","nb_predators"] sample:10 sampling:"orthogonal" report:"Results/betad.txt" results:"Results/betad_raw.csv";
+	method betad outputs:["nb_preys","nb_predators"] sample:100 sampling:"uniform" report:"Results/betad.txt" results:"Results/betad_raw.csv";
 }
