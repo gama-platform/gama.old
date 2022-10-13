@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -72,6 +73,10 @@ import msi.gaml.types.Types;
 /**
  * The Class Variable.
  */
+
+/**
+ * The Class Variable.
+ */
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,
@@ -98,7 +103,14 @@ import msi.gaml.types.Types;
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("The initial value of the attribute")),
+						doc = @doc ("The initial value of the attribute. Same as <- ")),
+				@facet (
+						name = "<-",
+						internal = true,
+						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("The initial value of the attribute. Same as init:")),
 				@facet (
 						name = IKeyword.VALUE,
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
@@ -127,6 +139,13 @@ import msi.gaml.types.Types;
 						optional = true,
 						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:', 'update:' and 'on_change:' (or the equivalent final block)")),
 				@facet (
+						name = "->",
+						internal = true,
+						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
+						optional = true,
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. Equivalent to 'function:'. This facet is incompatible with both 'init:' and 'update:' and 'on_change:' (or the equivalent final block)")),
+
+				@facet (
 						name = IKeyword.CONST,
 						type = IType.BOOL,
 						optional = true,
@@ -153,7 +172,7 @@ import msi.gaml.types.Types;
 		concept = { IConcept.ATTRIBUTE })
 @inside (
 		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@doc ("Allows to declare an attribute of a species or an experiment")
+@doc ("Declaration of an attribute of a species or an experiment")
 @validator (msi.gaml.variables.Variable.VarValidator.class)
 @SuppressWarnings ({ "rawtypes" })
 public class Variable extends Symbol implements IVariable {
@@ -362,6 +381,10 @@ public class Variable extends Symbol implements IVariable {
 							IGamlIssue.REMOVE_CONST);
 				}
 			}
+
+			/**
+			 * Assert value facets types.
+			 */
 			assertValueFacetsTypes(cd, cd.getGamlType());
 			// AD 6/2/22 Restriction removed: min and max facets are not supposed to be constants anymore in parameters.
 			// Their value can only be updated through the 'updates' facet of another parameter, though
@@ -381,10 +404,26 @@ public class Variable extends Symbol implements IVariable {
 
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " must have an initial value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(NAME, false),
+				cd.error(p + " must have an initial value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(),
 						Cast.toGaml(cd.getGamlType().getDefault()));
 				return;
 			}
+			// Cf. #3493
+			IDescription oneExperiment = Iterables.getFirst(cd.getModelDescription().getExperiments(), null);
+			if (oneExperiment != null) {
+				for (String f : VariableDescription.INIT_DEPENDENCIES_FACETS) {
+					IExpressionDescription initExpr = cd.getFacet(f);
+					if (initExpr != null) {
+						IExpressionDescription ed = initExpr.cleanCopy();
+						if (GAML.getExpressionFactory().getParser().compile(ed, oneExperiment) == null) {
+							cd.error(
+									"This expression cannot be used in the context of experiments. Please use a constant expression or redeclare this parameter in the experiments",
+									IGamlIssue.WRONG_CONTEXT, f);
+						}
+					}
+				}
+			}
+
 			// AD 6/2/22 Restriction removed: non-boolean vars can "enable" or "disable" others based on the cast of
 			// their value to bool
 			// if (cd.hasFacet(ENABLES) && !cd.getGamlType().equals(Types.BOOL)) {

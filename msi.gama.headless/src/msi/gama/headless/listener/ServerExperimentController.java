@@ -14,8 +14,12 @@ import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import org.java_websocket.WebSocket;
+
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
+import msi.gama.headless.core.GamaServerMessage;
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentAgent;
@@ -26,7 +30,9 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Jsoner;
 import msi.gaml.operators.Cast;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ExperimentController.
@@ -53,9 +59,6 @@ public class ServerExperimentController implements IExperimentController {
 	protected final Semaphore lock = new Semaphore(1);
 
 	/** The execution thread. */
-	// private final Thread executionThread =
-	// new Thread(() -> { while (experimentAlive) { step(); } }, "Front end scheduler");
-
 	public MyRunnable executionThread;
 
 	/**
@@ -105,6 +108,8 @@ public class ServerExperimentController implements IExperimentController {
 
 	/** The disposing. */
 	private boolean disposing;
+	
+	private WebSocket socket;
 
 	/** The commands. */
 	protected volatile ArrayBlockingQueue<Integer> commands;
@@ -120,11 +125,13 @@ public class ServerExperimentController implements IExperimentController {
 
 	/**
 	 * Instantiates a new experiment controller.
+	 * @param socket 
 	 *
 	 * @param experiment
 	 *            the experiment
 	 */
-	public ServerExperimentController(final ManualExperimentJob j) {
+	public ServerExperimentController(final ManualExperimentJob j, WebSocket sock) {
+		socket = sock;
 		commands = new ArrayBlockingQueue<>(10);
 		_job = j;
 		executionThread = new MyRunnable(j);
@@ -150,7 +157,9 @@ public class ServerExperimentController implements IExperimentController {
 	 * @param exp
 	 *            the new experiment
 	 */
-	public void setExperiment(final IExperimentPlan exp) { this.experiment = exp; }
+	public void setExperiment(final IExperimentPlan exp) { 
+		this.experiment = exp; 
+	}
 
 	/**
 	 * Offer.
@@ -174,28 +183,18 @@ public class ServerExperimentController implements IExperimentController {
 			case _OPEN:
 				try {
 					_job.loadAndBuildWithJson();
-					//// this.getSimulation().getExperimentPlan().open();
 				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
 						| GamaHeadlessException e) {
-					e.printStackTrace();
+					DEBUG.OUT(e);
+					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 				}
-				// scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
-				// try {
-				// load();
-				// simulator.setup(experimentName, this.seed, params);
-				//
-				//// this.getSimulation().getExperimentPlan().open();
-				//// new Thread(() -> experiment.open()).start();
-				// } catch (final Exception e) {
-				//// DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
-				// closeExperiment(e);
-				// }
 				break;
 			case _START:
 				try {
 					start();
 				} catch (final GamaRuntimeException e) {
-					e.printStackTrace();
+					DEBUG.OUT(e);
+					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 					closeExperiment(e);
 				} finally {
 					// scope.getGui().updateExperimentState(scope, IGui.RUNNING);
@@ -218,25 +217,11 @@ public class ServerExperimentController implements IExperimentController {
 				getExperiment().getAgent().backward(getScope());// ?? scopes[0]);
 				break;
 			case _RELOAD:
-				// scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
-				// try {
-				// lock.acquire();
-				// } catch (final InterruptedException e) {
-				// e.printStackTrace();
-				// }
-				try {
-					// final boolean wasRunning = !isPaused() && !this.getSimulation().getExperimentPlan().isAutorun();
 
-					// scope.getGui().getStatus().waitStatus("Reloading...");
-					// this.getSimulation().getExperimentPlan().getAgent().dispose();
-					// initParam(params);
+				try {
+
 					experiment.dispose();
 					_job.simulator.dispose();
-
-					// this.getSimulation().getExperimentPlan().open();
-					// this.getSimulation().getExperimentPlan().reload();
-
-					// this.loadAndBuild(params);
 
 					_job.loadAndBuildWithJson();
 					executionThread = null;
@@ -258,19 +243,16 @@ public class ServerExperimentController implements IExperimentController {
 					acceptingCommands = true;
 					disposing = false;
 					commandThread.start();
-					// _job.simulator.setup(_job.experimentName, _job.seed, _job.params, _job);
 					_job.server.getDefaultApp().processorQueue.execute(executionThread);
-					_job.socket.send("reload");
-					// if (wasRunning) {
-					// processUserCommand(_START);
-					// } else {
-					//// scope.getGui().getStatus().informStatus("Experiment reloaded");
-					// }
+
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
 					closeExperiment(e);
+					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 				} catch (final Throwable e) {
 					closeExperiment(GamaRuntimeException.create(e, scope));
+					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+
 				} finally {
 					// scope.getGui().updateExperimentState(scope);
 				}
@@ -363,7 +345,7 @@ public class ServerExperimentController implements IExperimentController {
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage()); }
+		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage(), scope); }
 		experiment.dispose(); // will call own dispose() later
 	}
 
@@ -387,6 +369,8 @@ public class ServerExperimentController implements IExperimentController {
 	public void schedule(final ExperimentAgent agent) {
 		this.agent = agent;
 		scope = agent.getScope();
+		scope.setData("socket", socket);
+		scope.setData("exp_id", _job.getExperimentID());
 		try {
 			if (!scope.init(agent).passed()) {
 				scope.setDisposeStatus();
@@ -426,13 +410,7 @@ public class ServerExperimentController implements IExperimentController {
 			}
 		}
 		try {
-			// if (scope == null) return;
-			// if (!scope.step(agent).passed()) {
-			// scope.setInterrupted();
-			// this.pause();
-			// }
 			_job.doStep();
-
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -443,15 +421,6 @@ public class ServerExperimentController implements IExperimentController {
 	 */
 	private void pause() {
 		paused = true;
-	}
-
-	/**
-	 * Step back.
-	 */
-	// TODO : c'est moche .....
-	private void stepBack() {
-		pause();
-		experiment.getAgent().backward(getScope());// ?? scopes[0]);
 	}
 
 	/**

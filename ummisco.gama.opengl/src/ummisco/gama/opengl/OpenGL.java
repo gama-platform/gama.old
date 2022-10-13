@@ -22,6 +22,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
@@ -67,10 +69,8 @@ import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.geometry.GeometryDrawer;
 import ummisco.gama.opengl.scene.mesh.LegacyMeshDrawer;
 import ummisco.gama.opengl.scene.mesh.MeshDrawer;
-import ummisco.gama.opengl.scene.mesh.MeshObject;
 import ummisco.gama.opengl.scene.resources.ResourceDrawer;
 import ummisco.gama.opengl.scene.text.LegacyTextDrawer;
-import ummisco.gama.opengl.scene.text.StringObject;
 import ummisco.gama.opengl.scene.text.TextDrawer;
 import ummisco.gama.ui.utils.DPIHelper;
 
@@ -99,18 +99,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	/** The Constant NO_ANISOTROPY. */
 	public static final float NO_ANISOTROPY = -1f;
 
-	/** The geometry drawer. */
-	// Special drawers
-	private final GeometryDrawer geometryDrawer;
-
-	/** The string drawer. */
-	private final ObjectDrawer<StringObject> stringDrawer;
-
-	/** The field drawer. */
-	private final ObjectDrawer<MeshObject> fieldDrawer;
-
-	/** The resource drawer. */
-	private final ResourceDrawer resourceDrawer;
+	/** The drawers. */
+	final Map<DrawerType, ObjectDrawer<?>> drawers = new HashMap<>();
 
 	/** The viewport. */
 	// Matrices of the display
@@ -240,10 +230,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, this);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
-		geometryDrawer = new GeometryDrawer(this);
-		fieldDrawer = FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : new MeshDrawer(this);
-		stringDrawer = FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : new TextDrawer(this);
-		resourceDrawer = new ResourceDrawer(this);
+		drawers.put(DrawerType.STRING, FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : new TextDrawer(this));
+		drawers.put(DrawerType.GEOMETRY, new GeometryDrawer(this));
+		drawers.put(DrawerType.MESH, FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : new MeshDrawer(this));
+		drawers.put(DrawerType.RESOURCE, new ResourceDrawer(this));
 	}
 
 	/**
@@ -254,17 +244,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @return the drawer for
 	 */
 	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final DrawerType type) {
-		switch (type) {
-			case STRING:
-				return stringDrawer;
-			case GEOMETRY:
-				return geometryDrawer;
-			case MESH:
-				return fieldDrawer;
-			case RESOURCE:
-				return resourceDrawer;
-		}
-		return null;
+		return drawers.get(type);
 	}
 
 	/**
@@ -272,16 +252,13 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *
 	 * @return the geometry drawer
 	 */
-	public GeometryDrawer getGeometryDrawer() { return geometryDrawer; }
+	public GeometryDrawer getGeometryDrawer() { return (GeometryDrawer) drawers.get(DrawerType.GEOMETRY); }
 
 	/**
 	 * Dispose.
 	 */
 	public void dispose() {
-		stringDrawer.dispose();
-		fieldDrawer.dispose();
-		resourceDrawer.dispose();
-		geometryDrawer.dispose();
+		for (ObjectDrawer<?> o : drawers.values()) { o.dispose(); }
 		geometryCache.dispose();
 		textureCache.dispose();
 		gl = null;
@@ -1055,7 +1032,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the alpha
 	 */
 	public void setCurrentColor(final double red, final double green, final double blue, final double alpha) {
-		currentColor = new Color((float) red, (float) green, (float) blue, (float) alpha);
+		currentColor = new Color((float) Math.max(red, 0), (float) Math.max(green, 0), (float) Math.max(blue, 0),
+				(float) alpha);
 		gl.glColor4d(red, green, blue, alpha);
 	}
 
@@ -1693,7 +1671,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the do it
 	 */
 	public void drawROI(final boolean doIt) {
-		if (doIt) { geometryDrawer.drawROIHelper(renderer.getCameraHelper().getROIEnvelope()); }
+		if (doIt) { getGeometryDrawer().drawROIHelper(renderer.getCameraHelper().getROIEnvelope()); }
 	}
 
 	/**
@@ -1715,7 +1693,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (doIt) {
 			final GamaPoint target = getData().getCameraTarget();
 			final double distance = getData().getCameraPos().minus(target).norm();
-			geometryDrawer.drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 8d));
+			getGeometryDrawer().drawRotationHelper(target, distance, Math.min(getMaxEnvDim() / 4d, distance / 8d));
 		}
 	}
 

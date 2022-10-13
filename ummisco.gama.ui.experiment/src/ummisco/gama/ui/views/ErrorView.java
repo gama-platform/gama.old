@@ -209,7 +209,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		WorkbenchHelper.run(() -> {
 			ErrorView.super.reset();
 			displayItems();
-			getParentComposite().layout(true, true);
+			if (getParentComposite() != null && !getParentComposite().isDisposed()) {
+				getParentComposite().layout(true, true);
+			}
 		});
 
 	}
@@ -242,11 +244,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	protected boolean needsOutput() {
 		return false;
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
 	}
 
 }

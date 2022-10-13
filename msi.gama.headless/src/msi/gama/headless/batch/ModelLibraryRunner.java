@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ModelLibraryRunner.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ModelLibraryRunner.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.batch;
 
@@ -31,7 +31,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-import msi.gaml.descriptions.ModelDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -131,13 +130,20 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 	/**
 	 * Validate and run.
 	 *
-	 * @param builder the builder
-	 * @param executionErrors the execution errors
-	 * @param countOfModelsValidated the count of models validated
-	 * @param returnCode the return code
-	 * @param pathToModel the path to model
-	 * @param expGUIOnly the exp GUI only
-	 * @param nbCycles the nb cycles
+	 * @param builder
+	 *            the builder
+	 * @param executionErrors
+	 *            the execution errors
+	 * @param countOfModelsValidated
+	 *            the count of models validated
+	 * @param returnCode
+	 *            the return code
+	 * @param pathToModel
+	 *            the path to model
+	 * @param expGUIOnly
+	 *            the exp GUI only
+	 * @param nbCycles
+	 *            the nb cycles
 	 */
 	private void validateAndRun(final GamlModelBuilder builder, final Map<String, Exception> executionErrors,
 			final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel, final boolean expGUIOnly,
@@ -159,9 +165,10 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 			experiment = new Experiment(mdl);
 		} catch (final Exception ex) {
 			executionErrors.put(pathToModel.getPath() + "\n", ex);
+			// AD ? if (experiment != null) { experiment.dispose(); }
 		}
 
-		for (final String expName : ((ModelDescription) mdl.getDescription()).getExperimentNames()) {
+		for (final String expName : mdl.getDescription().getExperimentNames()) {
 			final IExperimentPlan exp = mdl.getExperiment(expName);
 			if (!exp.isBatch() || !expGUIOnly) {
 				DEBUG.OUT("*********** Run experiment " + exp + " from model: " + mdl.getName());

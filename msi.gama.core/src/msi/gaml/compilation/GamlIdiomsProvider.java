@@ -28,6 +28,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.interfaces.IGamlDescription.ConstantDoc;
+import msi.gama.common.interfaces.IGamlDescription.Doc;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
@@ -58,9 +60,8 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	public static final int NOT_FOUND = -1;
 
 	/** The Constant SPECIES. */
-	public final static GamlIdiomsProvider<SpeciesDescription> SPECIES =
-			new GamlIdiomsProvider<SpeciesDescription>("species", IKeyword.SPECIES, "Built-in species",
-					Types.getBuiltInSpecies()).with(SpeciesDescription::getDocumentationWithoutMeta);
+	public final static GamlIdiomsProvider<SpeciesDescription> SPECIES = new GamlIdiomsProvider<>(
+			"species", IKeyword.SPECIES, "Built-in species", Types.getBuiltInSpecies());
 
 	/** The Constant SPECIES_ATTRIBUTES. */
 	public final static GamlIdiomsProvider<VariableDescription> SPECIES_ATTRIBUTES = new GamlIdiomsProvider<>(
@@ -131,7 +132,7 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 
 	/** The documenter. */
 	// default
-	public Function<T, String> documenter = IGamlDescription::getDocumentation;
+	public Function<T, Doc> documenter = IGamlDescription::getDocumentation;
 
 	/**
 	 * Instantiates a new gaml idioms provider.
@@ -182,7 +183,7 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	 */
 	@SuppressWarnings ("unchecked")
 	public String document(final IGamlDescription element) {
-		return documenter.apply((T) element);
+		return documenter.apply((T) element).get();
 	}
 
 	/**
@@ -192,8 +193,8 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	 *            the doc
 	 * @return the gaml idioms provider
 	 */
-	public GamlIdiomsProvider<T> with(final Function<T, String> doc) {
-		documenter = doc;
+	public GamlIdiomsProvider<T> withStringProvider(final Function<T, String> doc) {
+		documenter = t -> new ConstantDoc(doc.apply(t));
 		return this;
 	}
 

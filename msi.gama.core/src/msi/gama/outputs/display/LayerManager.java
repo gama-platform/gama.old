@@ -57,32 +57,20 @@ public class LayerManager implements ILayerManager {
 	 * @return the i layer
 	 */
 	public static ILayer createLayer(final LayeredDisplayOutput output, final ILayerStatement layer) {
-		switch (layer.getType(output)) {
-			case GRID:
-				return new GridLayer(layer);
-			case AGENTS:
-				return new AgentLayer(layer);
-			case GRID_AGENTS:
-				return new GridAgentLayer(layer);
-			case SPECIES:
-				return new SpeciesLayer(layer);
-			case IMAGE:
-				return new ImageLayer(output.getScope(), layer);
-			case GIS:
-				return new GisLayer(layer);
-			case CHART:
-				return new ChartLayer(layer);
-			case EVENT:
-				return new EventLayer(layer);
-			case GRAPHICS:
-				return new GraphicLayer(layer);
-			case OVERLAY:
-				return new OverlayLayer(layer);
-			case MESH:
-				return new MeshLayer(layer);
-			default:
-				return null;
-		}
+		return switch (layer.getType(output)) {
+			case GRID -> new GridLayer(layer);
+			case AGENTS -> new AgentLayer(layer);
+			case GRID_AGENTS -> new GridAgentLayer(layer);
+			case SPECIES -> new SpeciesLayer(layer);
+			case IMAGE -> new ImageLayer(output.getScope(), layer);
+			case GIS -> new GisLayer(layer);
+			case CHART -> new ChartLayer(layer);
+			case EVENT -> new EventLayer(layer);
+			case GRAPHICS -> new GraphicLayer(layer);
+			case OVERLAY -> new OverlayLayer(layer);
+			case MESH -> new MeshLayer(layer);
+			default -> null;
+		};
 	}
 
 	/** The enabled layers. */
@@ -291,6 +279,12 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public boolean isItemVisible(final ILayer obj) {
 		return obj.getData().isVisible();
+	}
+
+	@Override
+	public boolean hasStructurallyChanged() {
+		for (final ILayer i : layers) { if (i.getData().hasStructurallyChanged()) return true; }
+		return false;
 	}
 
 }

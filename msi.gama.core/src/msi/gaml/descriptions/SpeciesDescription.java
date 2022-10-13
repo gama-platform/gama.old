@@ -313,11 +313,15 @@ public class SpeciesDescription extends TypeDescription {
 		Class<? extends IAgent> javaBase = getJavaBase();
 		Iterable<Class<? extends ISkill>> skillClasses = transform(getSkills(), TO_CLASS);
 		Iterable<IDescription> javaChildren = GAML.getAllChildrenOf(javaBase, skillClasses);
-		for (final IDescription v : javaChildren) {
-			addJavaChild(v);
-		}
+		for (final IDescription v : javaChildren) { addJavaChild(v); }
 	}
 
+	/**
+	 * Adds the java child.
+	 *
+	 * @param v
+	 *            the v
+	 */
 	private void addJavaChild(final IDescription v) {
 		if (isBuiltIn()) { v.setOriginName("built-in species " + getName()); }
 		if (v instanceof VariableDescription) {
@@ -335,7 +339,7 @@ public class SpeciesDescription extends TypeDescription {
 				// Class<?> c = VariableDescription.CLASS_DEFINITIONS.remove(v);
 				final VariableDescription var = (VariableDescription) v.copy(this);
 				addOwnAttribute(var);
-				var.builtInDoc = ((VariableDescription) v).getBuiltInDoc();
+				// var.builtInDoc = ((VariableDescription) v).getBuiltInDoc();
 				// VariableDescription.CLASS_DEFINITIONS.put(var, c);
 			}
 
@@ -652,11 +656,11 @@ public class SpeciesDescription extends TypeDescription {
 	public String getTitle() { return getKeyword() + " " + getName(); }
 
 	@Override
-	public String getDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append(getDocumentationWithoutMeta());
-		sb.append(getMeta().getDocumentation());
-		return sb.toString();
+	public Doc getDocumentation() {
+		final Doc result = new RegularDoc();
+		documentThis(result);
+		result.append("<hr/>").append(getMeta().getDocumentation().get());
+		return result;
 	}
 
 	/**
@@ -664,19 +668,15 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 * @return the documentation without meta
 	 */
-	public String getDocumentationWithoutMeta() {
-		final StringBuilder sb = new StringBuilder(200);
+	public void documentThis(final Doc sb) {
 		final String parentName = getParent() == null ? "nil" : getParent().getName();
 		final String hostName = getMacroSpecies() == null ? null : getMacroSpecies().getName();
 		sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
 		if (hostName != null) { sb.append("<b>Microspecies of:</b> ").append(hostName).append("<br>"); }
 		final Iterable<String> skills = getSkillsNames();
-		if (!Iterables.isEmpty(skills)) { sb.append("<b>Skills:</b> ").append(skills).append("<br>"); }
-		sb.append(getAttributeDocumentation());
-		sb.append("<br/>");
-		sb.append(getActionDocumentation());
-		sb.append("<br/>");
-		return sb.toString();
+		if (!Iterables.isEmpty(skills)) { sb.append("<b>Skills:</b> ").append(skills.toString()).append("<br>"); }
+		documentAttributes(sb);
+		documentActions(sb);
 	}
 
 	/**

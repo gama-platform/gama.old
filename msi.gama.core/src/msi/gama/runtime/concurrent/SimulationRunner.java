@@ -123,7 +123,9 @@ public class SimulationRunner {
 	public void step() {
 		try {
 			getExecutor().invokeAll(runnables.values());
-		} catch (final InterruptedException e) {}
+		} catch (final InterruptedException e) {
+			
+		}
 
 	}
 

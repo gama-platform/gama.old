@@ -14,14 +14,11 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.statements.Facets.Facet;
@@ -32,12 +29,6 @@ import msi.gaml.types.Types;
  * The Class ActionDescription.
  */
 public class ActionDescription extends StatementWithChildrenDescription {
-
-	/** The is abstract. */
-	// protected final boolean isAbstract;
-
-	/** The is synthetic. */
-	// protected final boolean isSynthetic;
 
 	/** The Constant NULL_ARGS. */
 	public static final Arguments NULL_ARGS = new Arguments();
@@ -81,9 +72,6 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	 */
 	public boolean isAbstract() { return isSet(Flag.Abstract); }
 
-	// @Override
-	// public boolean isBuiltIn() { return super.isBuiltIn() && !isSynthetic(); }
-
 	@Override
 	protected boolean isSynthetic() { return isSet(Flag.Synthetic); }
 
@@ -121,7 +109,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 		// We compute the list of mandatory args
 
-		if ((formalArgs != null) && !verifyMandatoryArgs(caller, names, formalArgs)) return false;
+		if (formalArgs != null && !verifyMandatoryArgs(caller, names, formalArgs)) return false;
 
 		for (final Facet arg : names.getFacets()) {
 			// A null value indicates a previous compilation error in the
@@ -159,9 +147,12 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	/**
 	 * Verify mandatory args.
 	 *
-	 * @param caller the caller
-	 * @param names the names
-	 * @param formalArgs the formal args
+	 * @param caller
+	 *            the caller
+	 * @param names
+	 *            the names
+	 * @param formalArgs
+	 *            the formal args
 	 * @return true, if successful
 	 */
 	private boolean verifyMandatoryArgs(final IDescription caller, final Arguments names,
@@ -187,8 +178,10 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	/**
 	 * Replace numbered args.
 	 *
-	 * @param names the names
-	 * @param allArgs the all args
+	 * @param names
+	 *            the names
+	 * @param allArgs
+	 *            the all args
 	 */
 	private void replaceNumberedArgs(final Arguments names, final List<String> allArgs) {
 		int index = 0;
@@ -230,61 +223,58 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	}
 
 	@Override
-	public String getDocumentation() { return getArgDocumentation() + super.getDocumentation(); }
-
-	/**
-	 * Gets the arg documentation.
-	 *
-	 * @return the arg documentation
-	 */
-	public String getArgDocumentation() {
+	public Doc getDocumentation() {
+		Doc documentation = getShortDocumentation(false);
 
 		if (getArgNames().size() > 0) {
-			final StringBuilder sb = new StringBuilder(200);
-			final List<String> args = ImmutableList.copyOf(Iterables.transform(getFormalArgs(), desc -> {
+			getFormalArgs().forEach(arg -> {
 				final StringBuilder sb1 = new StringBuilder(100);
-				sb1.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b>, type ")
-						.append(desc.getGamlType());
-				if (desc.hasFacet(IKeyword.DEFAULT) && desc.getFacetExpr(IKeyword.DEFAULT) != null) {
-					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
-							.append(")</i>");
+				String name = arg.getName();
+				sb1.append(arg.getGamlType());
+				if (arg.hasFacet(DEFAULT) && arg.getFacetExpr(DEFAULT) != null) {
+					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serialize(false)).append(")</i>");
 				}
-				sb1.append("</li>");
-
-				return sb1.toString();
-			}));
-			sb.append("Arguments accepted: ").append("<br/><ul>");
-			for (final String a : args) { sb.append(a); }
-			sb.append("</ul><br/>");
-			return sb.toString();
+				documentation.set("Arguments accepted: ", name, new ConstantDoc(sb1.toString()));
+			});
 		}
-		return "";
+		return documentation;
+
 	}
-
-	// @Override
-	// public TypeDescription getEnclosingDescription() {
-	// return (TypeDescription) super.getEnclosingDescription();
-	// }
-
-	@Override
-	public String getTitle() { return super.getTitle() + getShortDescription(); }
 
 	/**
-	 * Gets the short description.
+	 * Gets the short documentation.
 	 *
-	 * @return the short description
+	 * @return the short documentation
 	 */
-	public String getShortDescription() {
+	public Doc getShortDocumentation(final boolean withArgs) {
+		Doc result = new RegularDoc();
+		Iterable<IDescription> args = getFormalArgs();
+		if (withArgs && Iterables.size(args) > 0) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("(");
+			for (final IDescription desc : args) {
+				sb.append(desc.getGamlType().toString()).append(" ").append(desc.getName()).append(", ");
+			}
+			if (sb.length() > 0) { sb.setLength(sb.length() - 2); }
+			sb.append(")");
+			result.append(sb.toString());
+		} else {
+			result.append("no arguments");
+		}
 		final String returns = getGamlType().equals(Types.NO_TYPE) ? ", no value returned"
 				: ", returns a result of type " + getGamlType().getTitle();
-		final StringBuilder args = new StringBuilder();
-		for (final IDescription desc : getFormalArgs()) {
-			args.append(desc.getGamlType()).append(" ").append(desc.getName()).append(", ");
-		}
-		if (args.length() > 0) { args.setLength(args.length() - 2); }
-
-		return "(" + args.toString() + ")" + returns;
-
+		result.append(returns);
+		final String doc = getBuiltInDoc();
+		if (doc != null && !doc.isBlank()) { result.append(". ").append(doc); }
+		result.append("<br/>");
+		return result;
 	}
+
+	/**
+	 * Gets the built in doc.
+	 *
+	 * @return the built in doc
+	 */
+	protected String getBuiltInDoc() { return null; }
 
 }

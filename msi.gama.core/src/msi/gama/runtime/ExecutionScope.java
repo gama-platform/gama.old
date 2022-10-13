@@ -15,6 +15,7 @@ import static msi.gama.runtime.ExecutionResult.PASSED;
 import static msi.gama.runtime.ExecutionResult.withValue;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IGui;
@@ -35,7 +36,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
@@ -85,11 +85,11 @@ public class ExecutionScope implements IScope {
 	 */
 	static class SpecialContext {
 
+		/** The data map. A structure that can store arbitrary data */
+		Map<String, Object> data;
+
 		/** The each. */
 		Object each;
-
-		/** The graphics. */
-		// IGraphics graphics;
 
 		/** The topology. */
 		public ITopology topology;
@@ -105,16 +105,13 @@ public class ExecutionScope implements IScope {
 
 		/** The current error. */
 		GamaRuntimeException currentError;
-		//
-		// /** The horizontal pixel context. */
-		// boolean horizontalPixelContext = false;
 
 		/**
 		 * Clear.
 		 */
 		void clear() {
 			each = null;
-			// graphics = null;
+			data = null;
 			topology = null;
 			rootAgent = null;
 			gui = null;
@@ -131,12 +128,40 @@ public class ExecutionScope implements IScope {
 		public void copyFrom(final SpecialContext specialContext) {
 			if (specialContext == null) return;
 			each = specialContext.each;
-			// graphics = specialContext.graphics;
+			data = specialContext.data;
 			topology = specialContext.topology;
 			rootAgent = specialContext.rootAgent;
 			gui = specialContext.gui;
 			types = specialContext.types;
 			currentError = specialContext.currentError;
+		}
+
+		/**
+		 * Gets the data.
+		 *
+		 * @param key
+		 *            the key
+		 * @return the data
+		 */
+		Object getData(final String key) {
+			return data == null ? null : data.get(key);
+		}
+
+		/**
+		 * Sets the data.
+		 *
+		 * @param key
+		 *            the key
+		 * @param value
+		 *            the value
+		 */
+		void setData(final String key, final Object value) {
+			if (value == null) {
+				if (data == null) return;
+				data.remove(key);
+			}
+			if (data == null) { data = new HashMap<>(); }
+			data.put(key, value);
 		}
 
 	}
@@ -895,8 +920,7 @@ public class ExecutionScope implements IScope {
 	@Override
 	public IType getType(final String name) {
 		if (additionalContext.types == null) {
-			additionalContext.types =
-					((ModelDescription) getExperiment().getSpecies().getModel().getDescription()).getTypesManager();
+			additionalContext.types = getExperiment().getSpecies().getModel().getDescription().getTypesManager();
 		}
 		return additionalContext.types.get(name);
 	}
@@ -1047,6 +1071,31 @@ public class ExecutionScope implements IScope {
 		} finally {
 			if (flowStatus == comparison) { flowStatus = FlowStatus.NORMAL; }
 		}
+	}
+
+	/**
+	 * Gets the data.
+	 *
+	 * @param key
+	 *            the key
+	 * @return the data
+	 */
+	@Override
+	public Object getData(final String key) {
+		return additionalContext.getData(key);
+	}
+
+	/**
+	 * Sets the data.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
+	@Override
+	public void setData(final String key, final Object value) {
+		additionalContext.setData(key, value);
 	}
 
 }

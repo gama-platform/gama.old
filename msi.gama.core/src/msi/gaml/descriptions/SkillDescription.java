@@ -120,9 +120,9 @@ public class SkillDescription extends TypeDescription {
 	public String getTitle() { return "skill " + getName(); }
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final doc d = getDocAnnotation();
-		final StringBuilder sb = new StringBuilder(200);
+		final Doc sb = new RegularDoc();
 		if (d != null) {
 			String s = d.value();
 			if (s != null && !s.isEmpty()) {
@@ -131,17 +131,13 @@ public class SkillDescription extends TypeDescription {
 			}
 			String deprecated = d.deprecated();
 			if (deprecated != null && !deprecated.isEmpty()) {
-				sb.append("<b>Deprecated</b>: ");
-				sb.append("<i>");
-				sb.append(deprecated);
-				sb.append("</i><br/>");
+				sb.append("<b>Deprecated</b>: ").append("<i>").append(deprecated).append("</i><br/>");
 			}
 		}
-		sb.append(getAttributeDocumentation());
-		sb.append("<br/>");
-		sb.append(getActionDocumentation());
-		sb.append("<br/>");
-		return sb.toString();
+		documentAttributes(sb);
+		documentActions(sb);
+
+		return sb;
 
 	}
 

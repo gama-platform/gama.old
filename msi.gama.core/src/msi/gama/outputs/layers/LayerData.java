@@ -87,6 +87,9 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	/** The visible. */
 	Attribute<Boolean> visible;
 
+	/** The structural change by user. */
+	volatile boolean structuralChangeByUser;
+
 	/**
 	 * Instantiates a new layer data.
 	 *
@@ -128,7 +131,10 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	}
 
 	@Override
-	public void setTransparency(final double f) { transparency = create(TRANSPARENCY, Math.min(Math.max(f, 0d), 1d)); }
+	public void setTransparency(final double f) {
+		transparency = create(TRANSPARENCY, Math.min(Math.max(f, 0d), 1d));
+		structuralChangeByUser = true;
+	}
 
 	@Override
 	public void setSize(final GamaPoint p) {
@@ -290,7 +296,23 @@ public class LayerData extends AttributeHolder implements ILayerData {
 	@Override
 	public void setVisible(final Boolean b) {
 		// TODO AD We should maybe force it to a constant ?
-		if (isVisible() != b) { visible = create(VISIBLE, BOOL, b); }
+		if (isVisible() != b) {
+			visible = create(VISIBLE, BOOL, b);
+			structuralChangeByUser = true;
+		}
+	}
+
+	/**
+	 * Checks for structurally changed.
+	 *
+	 * @return true, if successful
+	 */
+	@Override
+	public boolean hasStructurallyChanged() {
+		boolean result = transparency.changed() || trace.changed() || refresh.changed() || visible.changed()
+				|| structuralChangeByUser;
+		structuralChangeByUser = false;
+		return result;
 	}
 
 }

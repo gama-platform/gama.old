@@ -311,18 +311,24 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 		boolean hasMatched = false;
 		final Object switchValue = value.value(scope);
 		Object lastResult = null;
-		for (final MatchStatement matche : matches) {
-			if ((scope.getAndClearBreakStatus() == FlowStatus.BREAK) || scope.interrupted()) return lastResult;
 
-			if (matche.matches(scope, switchValue)) {
-				final ExecutionResult er = scope.execute(matche);
-				if (!er.passed()) return lastResult;
-				lastResult = er.getValue();
-				hasMatched = true;
+		try {
+			for (final MatchStatement matche : matches) {
+
+				if (matche.matches(scope, switchValue)) {
+					final ExecutionResult er = scope.execute(matche);
+					if (!er.passed()) return lastResult;
+					lastResult = er.getValue();
+					hasMatched = true;
+				}
+
+				if (scope.getAndClearBreakStatus() == FlowStatus.BREAK || scope.interrupted()) return lastResult;
 			}
+			if (!hasMatched && defaultMatch != null) return scope.execute(defaultMatch).getValue();
+			return lastResult;
+		} finally {
+			scope.getAndClearBreakStatus();
 		}
-		if (!hasMatched && defaultMatch != null) return scope.execute(defaultMatch).getValue();
-		return lastResult;
 	}
 
 	@Override

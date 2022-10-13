@@ -7,6 +7,14 @@
             class="ummisco.gama.java2d.Java2DDisplaySurface"
             keyword="java2D">
       </implementation>
+      <implementation
+            class="ummisco.gama.java2d.Java2DDisplaySurface"
+            keyword="2d">
+      </implementation>
+      <implementation
+            class="ummisco.gama.java2d.Java2DDisplaySurface"
+            keyword="2D">
+      </implementation>
    </extension>
    <extension
          point="org.eclipse.ui.views">

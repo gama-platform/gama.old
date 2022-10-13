@@ -73,8 +73,10 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	}
 
 	@Override
-	public String getDocumentation() {
-		return getGamlType().getContentType().getSpecies().getDocumentationWithoutMeta();
+	public Doc getDocumentation() {
+		Doc result = new RegularDoc("");
+		getGamlType().getContentType().getSpecies().documentThis(result);
+		return result;
 	}
 
 	/**

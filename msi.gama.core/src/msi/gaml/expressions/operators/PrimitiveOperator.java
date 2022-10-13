@@ -13,6 +13,7 @@ package msi.gaml.expressions.operators;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
@@ -80,6 +81,18 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		parameters = args;
 	}
 
+	/**
+	 * Instantiates a new primitive operator.
+	 *
+	 * @param action
+	 *            the action.
+	 * @param target
+	 *            the target.
+	 * @param args
+	 *            the args
+	 * @param targetSpecies
+	 *            the target species.
+	 */
 	public PrimitiveOperator(final StatementDescription action, final IExpression target, final Arguments args,
 			final String targetSpecies) {
 		this.target = target;
@@ -95,7 +108,12 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		if (scope == null) return null;
 		final IAgent target = this.target == null ? scope.getAgent() : Cast.asAgent(scope, this.target.value(scope));
-		if (target == null) return null;
+		if (target == null) {
+			// Problem is that it is not shown at the very beginning as there is no agent available
+			GAMA.reportError(scope,
+					GamaRuntimeException.error("No agent is available to execute operator " + getName(), scope), false);
+			return null;
+		}
 		// AD 13/05/13 The target should not be pushed so early to the scope, as
 		// the arguments will be (incorrectly)
 		// evaluated in its context, but how to prevent it ? See Issue 401.
@@ -113,6 +131,11 @@ public class PrimitiveOperator implements IExpression, IOperator {
 			//
 			return scope.execute(executer, target, useTargetScopeForExecution, getRuntimeArgs(scope)).getValue();
 		}
+		// the executer is not available. Can happen in rare cases (like the one evoked in Issue #3493).
+		GAMA.reportError(scope,
+				GamaRuntimeException.warning(
+						"The operator " + getName() + " is not available in the context of " + scope.getAgent(), scope),
+				false);
 		return null;
 	}
 
@@ -143,7 +166,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	}
 
 	@Override
-	public String getDocumentation() { return action.getDocumentation(); }
+	public Doc getDocumentation() { return action.getDocumentation(); }
 
 	@Override
 	public String getDefiningPlugin() { return action.getDefiningPlugin(); }

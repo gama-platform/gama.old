@@ -48,7 +48,7 @@ public final class GamlAnnotations {
 		 *
 		 * @return
 		 */
-		String value();
+		String[] value();
 	}
 
 	/**

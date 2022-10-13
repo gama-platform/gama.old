@@ -14,7 +14,7 @@ global {
 	geometry shape <- envelope(shape_file_bounds);
 	float step <- 10 #mn;
 	date starting_date <- date("2019-09-01-00-00-00");	
-	int nb_people <- 100;
+	int nb_people <- 10;
 	int min_work_start <- 6;
 	int max_work_start <- 8;
 	int min_work_end <- 16; 

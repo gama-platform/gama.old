@@ -450,8 +450,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		// If the right-hand expression is a list of expression, then we have a
 		// n-ary operator
-		if (rightMember instanceof ExpressionList) {
-			final ExpressionList el = (ExpressionList) rightMember;
+		if (rightMember instanceof ExpressionList el) {
 			final List<Expression> list = EGaml.getInstance().getExprsOf(el);
 			final int size = list.size();
 			if (size > 1) {
@@ -480,13 +479,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 * @return the string
 	 */
 	private String findIteratorArgName(final Expression e2) {
-		if (!(e2 instanceof ExpressionList)) return IKeyword.EACH;
-		final ExpressionList params = (ExpressionList) e2;
+		if (!(e2 instanceof ExpressionList params)) return IKeyword.EACH;
 		final List<Expression> exprs = EGaml.getInstance().getExprsOf(params);
 		if (exprs == null || exprs.isEmpty()) return IKeyword.EACH;
 		final Expression arg = exprs.get(0);
-		if (!(arg instanceof Parameter)) return IKeyword.EACH;
-		final Parameter p = (Parameter) arg;
+		if (!(arg instanceof Parameter p)) return IKeyword.EACH;
 		return EGaml.getInstance().getKeyOf(p);
 	}
 
@@ -498,13 +495,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 * @return the expression
 	 */
 	private Expression findIteratorExpr(final Expression e2) {
-		if (!(e2 instanceof ExpressionList)) return e2;
-		final ExpressionList params = (ExpressionList) e2;
+		if (!(e2 instanceof ExpressionList params)) return e2;
 		final List<Expression> exprs = EGaml.getInstance().getExprsOf(params);
 		if (exprs == null || exprs.isEmpty()) return e2;
 		final Expression arg = exprs.get(0);
-		if (!(arg instanceof Parameter)) return arg;
-		final Parameter p = (Parameter) arg;
+		if (!(arg instanceof Parameter p)) return arg;
 		return p.getRight();
 	}
 
@@ -659,11 +654,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IType type = owner.getGamlType();
 		if (type.isParametricFormOf(Types.SPECIES)) {
 			final SpeciesDescription sd = type.getContentType().getSpecies();
-			if (sd instanceof ModelDescription) {
-				final ModelDescription md = (ModelDescription) sd;
-				if (md.hasExperiment(name))
-					return getFactory().createConst(name, GamaType.from(md.getExperiment(name)));
-			}
+			if ((sd instanceof ModelDescription md) && md.hasExperiment(name))
+				return getFactory().createConst(name, GamaType.from(md.getExperiment(name)));
 		}
 		getContext().error("Only experiments can be accessed using their plain name", IGamlIssue.UNKNOWN_FIELD);
 		return null;
@@ -1075,6 +1067,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final boolean allPairs = !list.isEmpty() && Iterables.all(list,
 				each -> each instanceof ArgumentPair || "::".equals(EGaml.getInstance().getKeyOf(each)));
 		final Iterable<IExpression> result = Iterables.transform(list, this::compile);
+		if (Iterables.any(result, t -> t == null)) return null;
 		return allPairs ? getFactory().createMap(result) : getFactory().createList(result);
 	}
 
@@ -1086,6 +1079,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		exprs[0] = compile(object.getLeft());
 		exprs[1] = compile(object.getRight());
 		exprs[2] = compile(z);
+		if (exprs[0] == null || exprs[1] == null || exprs[2] == null) return null;
 		return getFactory().createOperator(POINT, getContext(), object, exprs);
 	}
 	//
@@ -1116,18 +1110,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		result = tryActionCall(op, object);
 		if (result != null) return result;
 		final List<Expression> args = EGaml.getInstance().getExprsOf(object.getRight());
-		switch (args.size()) {
-			case 0:
+		return switch (args.size()) {
+			case 0 -> {
 				getContext().error("Unknown operator or action: " + op, IGamlIssue.UNKNOWN_ACTION, object);
-				return null;
-			case 1:
-				return unary(op, args.get(0));
-			case 2:
-				return binary(op, args.get(0), args.get(1));
-			default:
-				return getFactory().createOperator(op, getContext(), object,
-						toArray(transform(args, this::compile), IExpression.class));
-		}
+				yield null;
+			}
+			case 1 -> unary(op, args.get(0));
+			case 2 -> binary(op, args.get(0), args.get(1));
+			default -> getFactory().createOperator(op, getContext(), object,
+					toArray(transform(args, this::compile), IExpression.class));
+		};
 	}
 
 	/**

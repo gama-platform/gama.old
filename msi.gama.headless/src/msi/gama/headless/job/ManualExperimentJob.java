@@ -44,6 +44,7 @@ import msi.gaml.types.Types;
  * The Class ExperimentJob.
  */
 public class ManualExperimentJob extends ExperimentJob {
+	
 	public GamaWebSocketServer server;
 	public WebSocket socket;
 	public GamaJsonList params;
@@ -58,7 +59,7 @@ public class ManualExperimentJob extends ExperimentJob {
 		server = gamaWebSocketServer;
 		socket = sk;
 		params = p;
-		controller = new ServerExperimentController(this);
+		controller = new ServerExperimentController(this, socket);
 	}
 
 	@Override
@@ -81,7 +82,6 @@ public class ManualExperimentJob extends ExperimentJob {
 
 		this.load();
 		this.setup();
-		// initParam(p);
 		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
 		initEndContion(endCond);

@@ -101,7 +101,7 @@ public class SymbolProto extends AbstractProto {
 
 	/** The Constant BREAKABLE_STATEMENTS. */
 	public static final Set<String> BREAKABLE_STATEMENTS = new HashSet();
-	
+
 	/** The Constant CONTINUABLE_STATEMENTS. */
 	public static final Set<String> CONTINUABLE_STATEMENTS = new HashSet();
 
@@ -311,29 +311,16 @@ public class SymbolProto extends AbstractProto {
 	 * @return
 	 */
 	@Override
-	public String getDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append(super.getDocumentation());
-		sb.append(getFacetsDocumentation());
-		return sb.toString();
-	}
-
-	/**
-	 * Gets the facets documentation.
-	 *
-	 * @return the facets documentation
-	 */
-	public String getFacetsDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-		sb.append("<b><br/>Possible facets :</b><ul>");
-		final List<FacetProto> protos = new ArrayList(getPossibleFacets().values());
-		Collections.sort(protos);
-		for (final FacetProto f : protos) {
-			if (!f.internal) { sb.append("<li>").append(f.getDocumentation()); }
-			sb.append("</li>");
+	public Doc getDocumentation() {
+		if (documentation == null) {
+			documentation = new RegularDoc(super.getDocumentation().get());
+			final List<FacetProto> protos = new ArrayList(getPossibleFacets().values());
+			Collections.sort(protos);
+			for (final FacetProto f : protos) {
+				if (!f.internal) { documentation.set("Possible facets: ", f.name, f.getDocumentation()); }
+			}
 		}
-		return sb.toString();
-
+		return documentation;
 	}
 
 	/**

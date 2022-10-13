@@ -288,19 +288,19 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	}
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		if (!isVarOrField) return super.getDocumentation();
 		final vars annot = getSupport().getAnnotation(vars.class);
 		if (annot != null) {
 			final variable[] allVars = annot.value();
 			for (final variable v : allVars) {
 				if (v.name().equals(getName())) {
-					if (v.doc().length > 0) return v.doc()[0].value();
+					if (v.doc().length > 0) return new ConstantDoc(v.doc()[0].value());
 					break;
 				}
 			}
 		}
-		return getTitle();
+		return this::getTitle;
 	}
 
 	/**

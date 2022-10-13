@@ -333,44 +333,24 @@ public class EGaml implements IGamlEcoreUtils {
 	@Override
 	public String getKeyOf(final EObject object, final EClass clazz) {
 		final int id = clazz.getClassifierID();
-		switch (id) {
-			case GamlPackage.UNARY:
-				return ((Unary) object).getOp();
-			case GamlPackage.BINARY_OPERATOR:
-				return ((BinaryOperator) object).getOp();
-			case GamlPackage.ARGUMENT_PAIR:
-				return getKeyOfArgumentPair((ArgumentPair) object);
-			case GamlPackage.PARAMETER:
-				return getKeyOfParameter(object);
-			case GamlPackage.MODEL:
-				return IKeyword.MODEL;
-			case GamlPackage.STATEMENT:
-				return getKeyOfStatement(object);
-			case GamlPackage.FACET:
-				return getKeyOfFacet((Facet) object);
-			case GamlPackage.FUNCTION:
-				return getKeyOf(((Function) object).getLeft());
-			case GamlPackage.TYPE_REF:
-				return getKeyOfTypeRef((TypeRef) object);
-			case GamlPackage.IF:
-				return "?";
-			case GamlPackage.VARIABLE_REF:
-			case GamlPackage.UNIT_NAME:
-			case GamlPackage.ACTION_REF:
-			case GamlPackage.SKILL_REF:
-			case GamlPackage.EQUATION_REF:
-				return this.getNameOfRef(object);
-			case GamlPackage.INT_LITERAL:
-			case GamlPackage.STRING_LITERAL:
-			case GamlPackage.DOUBLE_LITERAL:
-			case GamlPackage.RESERVED_LITERAL:
-			case GamlPackage.BOOLEAN_LITERAL:
-			case GamlPackage.TERMINAL_EXPRESSION:
-				return ((TerminalExpression) object).getOp();
-			default:
+		return switch (id) {
+			case GamlPackage.UNARY -> ((Unary) object).getOp();
+			case GamlPackage.BINARY_OPERATOR -> ((BinaryOperator) object).getOp();
+			case GamlPackage.ARGUMENT_PAIR -> getKeyOfArgumentPair((ArgumentPair) object);
+			case GamlPackage.PARAMETER -> getKeyOfParameter((Parameter) object);
+			case GamlPackage.MODEL -> IKeyword.MODEL;
+			case GamlPackage.STATEMENT -> getKeyOfStatement(object);
+			case GamlPackage.FACET -> getKeyOfFacet((Facet) object);
+			case GamlPackage.FUNCTION -> getKeyOf(((Function) object).getLeft());
+			case GamlPackage.TYPE_REF -> getKeyOfTypeRef((TypeRef) object);
+			case GamlPackage.IF -> "?";
+			case GamlPackage.VARIABLE_REF, GamlPackage.UNIT_NAME, GamlPackage.ACTION_REF, GamlPackage.SKILL_REF, GamlPackage.EQUATION_REF -> this.getNameOfRef(object);
+			case GamlPackage.INT_LITERAL, GamlPackage.STRING_LITERAL, GamlPackage.DOUBLE_LITERAL, GamlPackage.RESERVED_LITERAL, GamlPackage.BOOLEAN_LITERAL, GamlPackage.TERMINAL_EXPRESSION -> ((TerminalExpression) object).getOp();
+			default -> {
 				final List<EClass> eSuperTypes = clazz.getESuperTypes();
-				return eSuperTypes.isEmpty() ? null : getKeyOf(object, eSuperTypes.get(0));
-		}
+				yield eSuperTypes.isEmpty() ? null : getKeyOf(object, eSuperTypes.get(0));
+			}
+		};
 	}
 
 	/**
@@ -429,9 +409,9 @@ public class EGaml implements IGamlEcoreUtils {
 	 *            the object
 	 * @return the key of parameter
 	 */
-	private String getKeyOfParameter(final EObject object) {
+	private String getKeyOfParameter(final Parameter object) {
 		String s;
-		final Parameter p = (Parameter) object;
+		final Parameter p = object;
 		s = getKeyOf(p.getLeft());
 		if (s == null) { s = p.getBuiltInFacetKey(); }
 		return s.endsWith(":") ? s.substring(0, s.length() - 1) : s;

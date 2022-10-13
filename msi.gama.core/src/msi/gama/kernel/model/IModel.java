@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IModel.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IModel.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.model;
 
@@ -35,7 +34,8 @@ public interface IModel extends ISpecies {
 	/**
 	 * Gets the species.
 	 *
-	 * @param speciesName the species name
+	 * @param speciesName
+	 *            the species name
 	 * @return the species
 	 */
 	ISpecies getSpecies(String speciesName);
@@ -43,8 +43,10 @@ public interface IModel extends ISpecies {
 	/**
 	 * Gets the species.
 	 *
-	 * @param speciesName the species name
-	 * @param specDes the spec des
+	 * @param speciesName
+	 *            the species name
+	 * @param specDes
+	 *            the spec des
 	 * @return the species
 	 */
 	ISpecies getSpecies(String speciesName, SpeciesDescription specDes);
@@ -52,7 +54,8 @@ public interface IModel extends ISpecies {
 	/**
 	 * Gets the experiment.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the experiment
 	 */
 	IExperimentPlan getExperiment(final String s);
@@ -99,6 +102,9 @@ public interface IModel extends ISpecies {
 	 */
 	List<TestStatement> getAllTests();
 
+	@Override
+	ModelDescription getDescription();
+
 	/**
 	 * Gets the uri.
 	 *
@@ -106,12 +112,12 @@ public interface IModel extends ISpecies {
 	 */
 	@Override
 	default URI getURI() {
-		final ModelDescription md = (ModelDescription) getDescription();
-		if (md == null) { return null; }
+		final ModelDescription md = getDescription();
+		if (md == null) return null;
 		final EObject o = md.getUnderlyingElement();
-		if (o == null) { return null; }
+		if (o == null) return null;
 		final Resource r = o.eResource();
-		if (r == null) { return null; }
+		if (r == null) return null;
 		return r.getURI();
 	}
 

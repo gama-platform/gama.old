@@ -12,6 +12,7 @@ package msi.gaml.statements.draw;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import msi.gama.runtime.IScope;
@@ -60,6 +61,13 @@ public abstract class AttributeHolder {
 		 * @return the v
 		 */
 		V get();
+
+		/**
+		 * Changed.
+		 *
+		 * @return true, if successful
+		 */
+		boolean changed();
 
 	}
 
@@ -123,6 +131,11 @@ public abstract class AttributeHolder {
 			return value;
 		}
 
+		@Override
+		public boolean changed() {
+			return false;
+		}
+
 	}
 
 	/**
@@ -143,6 +156,9 @@ public abstract class AttributeHolder {
 
 		/** The value. */
 		private volatile V value;
+
+		/** The changed. */
+		private volatile boolean changed;
 
 		/**
 		 * Instantiates a new expression attribute.
@@ -173,12 +189,20 @@ public abstract class AttributeHolder {
 		 */
 		@Override
 		public void refresh(final String name, final IScope scope) {
+			changed = false;
+			V old = value;
 			value = value(scope);
+			changed = !Objects.equals(old, value);
 		}
 
 		@Override
 		public V get() {
 			return value;
+		}
+
+		@Override
+		public boolean changed() {
+			return changed;
 		}
 
 	}
@@ -199,6 +223,9 @@ public abstract class AttributeHolder {
 
 		/** The value. */
 		private V value;
+
+		/** The changed. */
+		boolean changed;
 
 		/**
 		 * Instantiates a new expression evaluator.
@@ -226,12 +253,20 @@ public abstract class AttributeHolder {
 		 */
 		@Override
 		public void refresh(final String name, final IScope scope) {
+			changed = false;
+			V old = value;
 			value = value(scope);
+			changed = !Objects.equals(old, value);
 		}
 
 		@Override
 		public V get() {
 			return value;
+		}
+
+		@Override
+		public boolean changed() {
+			return changed;
 		}
 
 	}

@@ -213,7 +213,7 @@ public class DEBUG {
 		if (!ENABLE_LOGGING) return supplier.get();
 		final long start = System.currentTimeMillis();
 		final T result = supplier.get();
-		LOG(title + ": " + (System.currentTimeMillis() - start) + "ms");
+		LOG(title + " " + (System.currentTimeMillis() - start) + "ms");
 		return result;
 	}
 

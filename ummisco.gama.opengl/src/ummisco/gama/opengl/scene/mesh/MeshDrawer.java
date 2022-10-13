@@ -28,6 +28,7 @@ import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.IMeshColorProvider;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 
@@ -40,6 +41,10 @@ import ummisco.gama.opengl.scene.ObjectDrawer;
  *
  */
 public class MeshDrawer extends ObjectDrawer<MeshObject> {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The Constant BLACK. */
 	static final double[] BLACK = { 0, 0, 0 };
@@ -92,6 +97,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	// An array used for the transfer of colors from the color provider
 	double[] rgb = new double[3];
 
+	/** The min max. */
+	double[] minMax = new double[2];
+
 	/** The fill. */
 	// The provider of color for the vertices
 	private IMeshColorProvider fill;
@@ -134,9 +142,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	@Override
 	protected void _draw(final MeshObject object) {
 		var attributes = object.getAttributes();
-		var minMax = object.getObject().getMinMax(null);
-		max = minMax[1];
-		min = minMax[0];
 
 		this.cols = (int) attributes.getXYDimension().x;
 		this.rows = (int) attributes.getXYDimension().y;
@@ -158,6 +163,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		this.withText = attributes.isWithText();
 		this.triangles = attributes.isTriangulated();
 		data = smooth(object.getObject().getMatrix(), attributes.getSmooth());
+		getMinMax(data, minMax);
+		max = minMax[1];
+		min = minMax[0];
 		initializeBuffers();
 		fillBuffers();
 		finalizeBuffers();
@@ -172,6 +180,30 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		} finally {
 			gl.popMatrix();
 		}
+	}
+
+	/**
+	 * Gets the min max.
+	 *
+	 * @param data
+	 *            the data
+	 * @param result
+	 *            the result
+	 * @return the min max
+	 */
+	public double[] getMinMax(final double[] data, final double[] result) {
+		double min = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
+		for (double f : data) {
+			if (f == noData) { continue; }
+			if (f > max) {
+				max = f;
+			} else if (f < min) { min = f; }
+		}
+		if (result == null) return new double[] { min, max };
+		result[0] = min;
+		result[1] = max;
+		return result;
 	}
 
 	/**
@@ -289,7 +321,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	private void colorize(final double z, final int x, final int y) {
 		// Outputs either a texture coordinate or the color of the vertex
 		if (outputsTextures) { texBuffer.put((double) x / cols).put((double) y / rows); }
-		if (outputsColors) { colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb)); }
+		if (outputsColors) { colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb), 0, 3); }
 		// If the line color is specified, outputs it
 		if (outputsLines) {
 			if (useFillForLines) {
@@ -327,7 +359,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			int one = i * 3, two = i * 3 + 1, three = i * 3 + 2;
 			if (!gl.isWireframe() && outputsColors) {
 				// TODO Bug when using a gradient: some color components are outside the range
-				gl.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three), 1);
+				try {
+					gl.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three), 1);
+				} catch (IllegalArgumentException e) {
+					DEBUG.OUT("Problem with following colors: " + colorBuffer.get(one) + " " + colorBuffer.get(two)
+							+ " " + colorBuffer.get(three));
+				}
 			}
 			if (outputsTextures) { gl.outputTexCoord(texBuffer.get(i * 2), texBuffer.get(i * 2 + 1)); }
 			gl.outputNormal(normalBuffer.get(one), normalBuffer.get(two), normalBuffer.get(three));

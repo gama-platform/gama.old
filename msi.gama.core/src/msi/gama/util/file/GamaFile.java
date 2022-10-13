@@ -181,7 +181,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	protected void sendToURL(final IScope scope) throws GamaRuntimeException {
 		final String urlPath = url.toExternalForm();
 		final String status = "Uploading file to " + urlPath;
-		scope.getGui().getStatus().beginSubStatus(status);
+		scope.getGui().getStatus().beginSubStatus(status, scope);
 		final Webb web = Webb.create();
 		try {
 			web.post(urlPath).ensureSuccess().connectTimeout(20000).retry(1, false)
@@ -189,7 +189,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 		} catch (final WebbException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			scope.getGui().getStatus().endSubStatus(status);
+			scope.getGui().getStatus().endSubStatus(status, scope);
 		}
 	}
 

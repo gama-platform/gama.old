@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.headless.runtime;
 
+import static java.lang.Integer.parseInt;
+import static msi.gama.headless.runtime.SimulationRuntime.DEFAULT_NB_THREADS;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,9 +21,9 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
@@ -83,7 +86,7 @@ public class Application implements IApplication {
 
 	/** The Constant SOCKET_PARAMETER. */
 	final public static String SOCKET_PARAMETER = "-socket";
-	
+
 	/** The Constant SECURE_SSL_SOCKET_PARAMETER. */
 	final public static String SSOCKET_PARAMETER = "-ssocket";
 
@@ -118,9 +121,6 @@ public class Application implements IApplication {
 	/** The head less simulation. */
 	public static boolean headLessSimulation = false;
 
-	// /** The number of thread. */
-	// public int numberOfThread = -1;
-
 	/** The socket. */
 	public int socket = -1;
 
@@ -134,7 +134,7 @@ public class Application implements IApplication {
 	public boolean verbose = false;
 
 	/** The processor queue. */
-	public final SimulationRuntime processorQueue = new ExecutorBasedSimulationRuntime();
+	public final SimulationRuntime processorQueue = new SimulationRuntime();
 
 	/** The socket server. */
 	public GamaWebSocketServer socketServer;
@@ -177,7 +177,7 @@ public class Application implements IApplication {
 				+ "\n\t\t                             -- build an xml parameter file from a model"
 				+ "\n\t\t[xmlHeadlessFile.xml] [outputDirectory]"
 				+ "\n\t\t                             -- default usage of GAMA headless");
-				// + "\n\t\t" + WRITE_XMI  + " -- write scope provider resource files to disk");
+		// + "\n\t\t" + WRITE_XMI + " -- write scope provider resource files to disk");
 		DEBUG.OFF();
 	}
 
@@ -190,7 +190,7 @@ public class Application implements IApplication {
 	 *            the apply
 	 * @return true, if successful
 	 */
-	private boolean checkParameters(final List<String> args, final boolean apply) {
+	private boolean checkParameters(final List<String> args) {
 
 		int size = args.size();
 		boolean mustContainInFile = true;
@@ -200,47 +200,34 @@ public class Application implements IApplication {
 		// ========================
 		if (args.contains(VERBOSE_PARAMETER)) {
 			size = size - 1;
-			if (apply) {
-				this.verbose = true;
-				DEBUG.ON();
-				DEBUG.LOG("Log active", true);
-			}
+			this.verbose = true;
+			DEBUG.ON();
+			DEBUG.LOG("Log active", true);
 		}
 
 		if (args.contains(CONSOLE_PARAMETER)) {
 			size = size - 1;
 			mustContainInFile = false;
-
-			// Change value only if function should apply parameter
-			this.consoleMode = apply;
+			this.consoleMode = true;
 		}
 		if (args.contains(TUNNELING_PARAMETER)) {
 			size = size - 1;
 			mustContainOutFolder = false;
-
-			// Change value only if function should apply parameter
-			this.tunnelingMode = apply;
+			this.tunnelingMode = true;
 		}
 		if (args.contains(SOCKET_PARAMETER)) {
 			size = size - 2;
 			mustContainOutFolder = mustContainInFile = false;
-
-			// Change value only if function should apply parameter
-			this.socket = apply ? Integer.parseInt(after(args, SOCKET_PARAMETER)) : -1;
+			this.socket = Integer.parseInt(after(args, SOCKET_PARAMETER));
 		}
 		if (args.contains(SSOCKET_PARAMETER)) {
 			size = size - 2;
 			mustContainOutFolder = mustContainInFile = false;
-
-			// Change value only if function should apply parameter
-			this.socket = apply ? Integer.parseInt(after(args, SSOCKET_PARAMETER)) : -1;
+			this.socket = Integer.parseInt(after(args, SSOCKET_PARAMETER));
 		}
 		if (args.contains(THREAD_PARAMETER)) {
 			size = size - 2;
-
-			// Change value only if function should apply parameter
-			processorQueue.setNumberOfThreads(
-					apply ? Integer.parseInt(after(args, THREAD_PARAMETER)) : SimulationRuntime.UNDEFINED_QUEUE_SIZE);
+			processorQueue.setNumberOfThreads(Integer.parseInt(after(args, THREAD_PARAMETER)));
 		}
 
 		// Commands
@@ -310,7 +297,7 @@ public class Application implements IApplication {
 		final List<String> args = Arrays.asList(mm.get("application.args"));
 
 		// Check and apply parameters
-		if (!checkParameters(args, true)) { System.exit(-1); }
+		if (!checkParameters(args)) { System.exit(-1); }
 
 		// ========================
 		// No GAMA run
@@ -491,22 +478,10 @@ public class Application implements IApplication {
 	 *            the xml path
 	 * @throws FileNotFoundException
 	 *             the file not found exception
+	 * @throws InterruptedException
 	 */
-	public void runXMLForModelLibrary(final String xmlPath) throws FileNotFoundException {
-
-		// processorQueue = new ExecutorBasedSimulationRuntime();
-		final Reader in = new Reader(xmlPath);
-		in.parseXmlFile();
-		this.buildAndRunSimulation(in.getSimulation());
-		in.dispose();
-		while (processorQueue.isPerformingSimulation()) {
-			try {
-				Thread.sleep(1000);
-			} catch (final InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	public void runXMLForModelLibrary(final String xmlPath) throws FileNotFoundException, InterruptedException {
+		runXML(new Reader(xmlPath));
 	}
 
 	/**
@@ -520,22 +495,25 @@ public class Application implements IApplication {
 	 *             the interrupted exception
 	 */
 	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
-		// processorQueue.setNumberOfThreads(this.numberOfThread);
-
-		Reader in = null;
 		if (this.verbose && !this.tunnelingMode) { DEBUG.ON(); }
+		runXML(consoleMode ? new Reader(ConsoleReader.readOnConsole()) : new Reader(args.get(args.size() - 2)));
+		System.exit(0);
+	}
 
-		if (this.consoleMode) {
-			in = new Reader(ConsoleReader.readOnConsole());
-		} else {
-			in = new Reader(args.get(args.size() - 2));
-		}
+	/**
+	 * Run XML.
+	 *
+	 * @param in
+	 *            the in
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 */
+	private void runXML(final Reader in) throws InterruptedException {
 		in.parseXmlFile();
 		this.buildAndRunSimulation(in.getSimulation());
 		in.dispose();
-		while (processorQueue.isPerformingSimulation()) { Thread.sleep(1000); }
-
-		System.exit(0);
+		processorQueue.shutdown();
+		while (!processorQueue.awaitTermination(100, TimeUnit.MILLISECONDS)) {}
 	}
 
 	/**
@@ -545,9 +523,7 @@ public class Application implements IApplication {
 	 *            the sims
 	 */
 	public void buildAndRunSimulation(final Collection<ExperimentJob> sims) {
-		final Iterator<ExperimentJob> it = sims.iterator();
-		while (it.hasNext()) {
-			final ExperimentJob sim = it.next();
+		for (ExperimentJob sim : sims) {
 			try {
 				XMLWriter ou = null;
 				if (tunnelingMode) {
@@ -557,8 +533,7 @@ public class Application implements IApplication {
 							Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + sim.getExperimentID() + ".xml");
 				}
 				sim.setBufferedWriter(ou);
-
-				processorQueue.pushSimulation(sim);
+				processorQueue.execute(sim);
 			} catch (final Exception e) {
 				e.printStackTrace();
 				System.exit(-1);
@@ -590,7 +565,7 @@ public class Application implements IApplication {
 		final IModel mdl = builder.compile(URI.createURI(pathToModel), errors);
 
 		GamaExecutorService.CONCURRENCY_SIMULATIONS.set(true);
-		GamaExecutorService.THREADS_NUMBER.set(processorQueue.getNumberOfThreads());
+		GamaExecutorService.THREADS_NUMBER.set(processorQueue.getCorePoolSize());
 
 		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
 
@@ -606,8 +581,10 @@ public class Application implements IApplication {
 	 *
 	 * @param experimentName
 	 * @param pathToModel
+	 * @throws InterruptedException
 	 */
-	public void runGamlSimulation(final List<String> args) throws IOException, GamaHeadlessException {
+	public void runGamlSimulation(final List<String> args)
+			throws IOException, GamaHeadlessException, InterruptedException {
 		final String pathToModel = args.get(args.size() - 1);
 
 		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
@@ -626,16 +603,11 @@ public class Application implements IApplication {
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
 		selectedJob.setBufferedWriter(new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + ".xml"));
-		int numberOfThreads;
-		if (args.contains(THREAD_PARAMETER)) {
-			numberOfThreads = Integer.parseInt(after(args, THREAD_PARAMETER));
-		} else {
-			numberOfThreads = SimulationRuntime.UNDEFINED_QUEUE_SIZE;
-		}
-		processorQueue.setNumberOfThreads(numberOfThreads);
-
-		processorQueue.pushSimulation(selectedJob);
-
+		processorQueue.setNumberOfThreads(
+				args.contains(THREAD_PARAMETER) ? parseInt(after(args, THREAD_PARAMETER)) : DEFAULT_NB_THREADS);
+		processorQueue.execute(selectedJob);
+		processorQueue.shutdown();
+		while (!processorQueue.awaitTermination(100, TimeUnit.MILLISECONDS)) {}
 		System.exit(0);
 	}
 

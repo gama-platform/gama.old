@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import java.lang.reflect.Constructor;
+
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
@@ -101,6 +105,62 @@ public class ParametricFileType extends ParametricType {
 	public int hashCode() {
 		return id;
 	}
+
+	@Override
+	public Doc getDocumentation() {
+		Doc result = new RegularDoc();
+		doc documentation;
+		documentation = support.getAnnotation(doc.class);
+		if (documentation == null) {
+			final file t = support.getAnnotation(file.class);
+			if (t != null) {
+				final doc[] docs = t.doc();
+				if (docs != null && docs.length > 0) { documentation = docs[0]; }
+			}
+		}
+		if (documentation == null) {
+			result.append("File type " + getName() + getSupportName());
+		} else {
+			result.append("File type ").append(getName()).append(", ").append(getSupportName()).append(", ")
+					.append(getWrappedName()).append("<br/>").append(documentation.value());
+		}
+		documentConstructors(result);
+		getGamlType().documentFields(result);
+		return result;
+	}
+
+	/**
+	 * Document constructors.
+	 *
+	 * @param result
+	 *            the result
+	 */
+	private void documentConstructors(final Doc result) {
+		Constructor[] constructors = support.getConstructors();
+		if (constructors.length == 0) return;
+		result.append("<br/>").append("File constructors:").append("<br/><ul>");
+		for (Constructor<?> c : constructors) {
+			doc annotation = c.getAnnotation(doc.class);
+			String signature =
+					"(" + new Signature(c.getParameterTypes()).asPattern(false).replace("unknown,", "") + ")";
+			String doc = annotation == null ? "" : annotation.value();
+			result.set("File constructors:", alias + signature, new ConstantDoc(doc));
+		}
+	}
+
+	/**
+	 * Gets the support name.
+	 *
+	 * @return the support name
+	 */
+	public String getWrappedName() { return "stores its contents as a  " + bufferType.getTitle(); }
+
+	/**
+	 * Gets the support name.
+	 *
+	 * @return the support name
+	 */
+	public String getSupportName() { return "wraps files of Java class " + support.getSimpleName(); }
 
 	@Override
 	public boolean equals(final Object c) {

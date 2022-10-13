@@ -83,7 +83,7 @@ experiment Terrain type: gui {
 		gama.pref_experiment_expand_params <- previous;
 	}
 
-	list<rgb> land_and_sea <- palette(reverse([#darkgreen, #darkgreen, #green, rgb(32, 176, 0), rgb(224, 224, 0), rgb(192, 192, 192), rgb(128, 128, 255), #blue, rgb(224, 224, 224)]));
+	list<rgb> land_and_sea <- palette(reverse([#darkgreen, #darkgreen, #green, rgb(32, 176, 0), rgb(224, 224, 0), rgb(128, 128, 255), #blue, #blue]));
 	list<rgb> field_and_forest <- palette(reverse([#sienna, #olive, #darkgreen, #green, #forestgreen,  #lightgreen]));
 	output {
 		layout #split consoles: false controls: false toolbars: false;

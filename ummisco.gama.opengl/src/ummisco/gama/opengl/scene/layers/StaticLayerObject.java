@@ -52,10 +52,7 @@ public class StaticLayerObject extends LayerObject {
 
 		@Override
 		public void draw(final OpenGL gl) {
-			if (renderer.getPickingHelper().isPicking()) return;
-
 			if (currentList.isEmpty()) { fillWithObjects(currentList); }
-
 			gl.suspendZTranslation();
 			final boolean previous = gl.setDisplayLighting(false);
 			super.draw(gl);
@@ -63,9 +60,6 @@ public class StaticLayerObject extends LayerObject {
 			gl.resumeZTranslation();
 
 		}
-
-		@Override
-		protected boolean isPickable() { return false; }
 
 		/**
 		 * Fill with objects.
@@ -91,5 +85,8 @@ public class StaticLayerObject extends LayerObject {
 
 	@Override
 	public void clear(final OpenGL gl) {}
+
+	@Override
+	public boolean isPickable() { return false; }
 
 }

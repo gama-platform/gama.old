@@ -31,5 +31,13 @@
              class="ummisco.gama.opengl.view.SWTOpenGLDisplaySurface"
              keyword="opengl">
        </implementation>
+       <implementation
+             class="ummisco.gama.opengl.view.SWTOpenGLDisplaySurface"
+             keyword="3d">
+       </implementation>
+       <implementation
+             class="ummisco.gama.opengl.view.SWTOpenGLDisplaySurface"
+             keyword="3D">
+       </implementation>
     </extension>
 </plugin>

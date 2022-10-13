@@ -93,7 +93,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	/** The documentation. */
-	String documentation;
+	Doc documentation;
 
 	/** The alternate names. */
 	final List<String> alternateNames;
@@ -119,7 +119,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 			final String[] names) {
 		super(val, t);
 		this.name = name;
-		documentation = doc;
+		documentation = new ConstantDoc(doc);
 		alternateNames = new ArrayList<>();
 		alternateNames.add(name);
 		if (names != null) { alternateNames.addAll(Arrays.asList(names)); }
@@ -131,7 +131,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public String getDocumentation() { return documentation; }
+	public Doc getDocumentation() { return documentation; }
 
 	@Override
 	public String getName() { return name; }
@@ -214,7 +214,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	 */
 	public void setDeprecated(final String deprecated) {
 		isDeprecated = true;
-		documentation = "Deprecated: " + deprecated + ". " + documentation;
+		documentation.prepend("Deprecated: " + deprecated + ". ");
 	}
 
 	/**

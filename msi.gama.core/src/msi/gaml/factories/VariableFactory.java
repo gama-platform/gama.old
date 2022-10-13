@@ -52,7 +52,10 @@ public class VariableFactory extends SymbolFactory {
 				for (final String key : possibleFacets.keySet()) {
 					if (ON_CHANGE.equals(key)) { continue; }
 					final IExpressionDescription expr = targetedVar.getFacet(key);
-					if (expr != null) { facets.putIfAbsent(key, expr); }
+					if (expr != null) {
+						IExpressionDescription copy = expr.cleanCopy();
+						facets.putIfAbsent(key, copy);
+					}
 				}
 
 			}

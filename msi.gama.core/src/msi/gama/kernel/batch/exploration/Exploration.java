@@ -10,15 +10,22 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
 import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
+import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.IParameter.Batch;
@@ -39,6 +46,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Random;
 import msi.gaml.types.GamaDateType;
@@ -50,7 +58,7 @@ import msi.gaml.types.IType;
  * The Class ExhaustiveSearch.
  */
 @symbol (
-		name = { IKeyword.EXHAUSTIVE },
+		name = { IKeyword.EXPLORATION },
 		kind = ISymbolKind.BATCH_METHOD,
 		with_sequence = false,
 		concept = { IConcept.BATCH, IConcept.ALGORITHM })
@@ -64,22 +72,35 @@ import msi.gaml.types.IType;
 				internal = true,
 				doc = @doc ("The name of the method. For internal use only")),
 				@facet (
-						name = ExhaustiveSearch.METHODS,
+						name = Exploration.METHODS,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("The name of the method you want to use. saltelli/morris/latinhypercube/orthogonal")),
+						doc = @doc ("The name of the method (among saltelli/morris/latinhypercube/orthogonal/uniform)")),
 				@facet (
-						name = ExhaustiveSearch.SAMPLE_SIZE,
+						name = IKeyword.FROM,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("a path to a file where each lines correspond to one parameter set and each colon a parameter")
+						),
+				@facet (						
+						name = IKeyword.WITH,
+						type = IType.LIST,
+						of = IType.MAP,
+						optional = true,
+						doc = @doc ("the list of parameter sets to explore; a parameter set is defined by a map: key: name of the variable, value: expression for the value of the variable")
+						),	
+				@facet (
+						name = Exploration.SAMPLE_SIZE,
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("The number of sample required, 132 by default")),
 				@facet (
-						name = ExhaustiveSearch.NB_LEVELS,
+						name = Exploration.NB_LEVELS,
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("The number of levels for morris sampling, 4 by default")),
 				@facet (
-						name = ExhaustiveSearch.ITERATIONS,
+						name = Exploration.ITERATIONS,
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("The number of iteration for orthogonal sampling, 5 by default"))
@@ -88,17 +109,36 @@ import msi.gaml.types.IType;
 		omissible = IKeyword.NAME)
 @doc (
 		value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. You can also choose a sampling method for the exploration. See [batch161 the batch dedicated page].",
-		usages = { @usage (
-				value = "As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ",
-				examples = { @example (
-						value = "method exhaustive [facet: value];",
-						isExecutable = false) }),
+		usages = { 
 				@usage (
-						value = "For example: ",
+						value = "As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ",
 						examples = { @example (
-								value = "method exhaustive maximize: food_gathered;",
-								isExecutable = false) }) })
-public class ExhaustiveSearch extends AExplorationAlgorithm {
+								value = "method exhaustive [facet: value];",
+								isExecutable = false) }),
+				@usage (
+						value = "Simplest example: ",
+						examples = { @example (
+								value = "method exploration;",
+								isExecutable = false) }),
+				@usage (
+						value = "Using sampling facet: ",
+						examples = { @example (
+								value = "method exploration sampling:latinhypercube sample:100; ",
+								isExecutable = false) }),
+				@usage (
+						value = "Using from facet: ",
+						examples = { @example (
+								value = "method exploration from:\"../path/to/my/exploration/plan.csv\"; ",
+								isExecutable = false) }),
+				@usage (
+						value = "Using with facet: ",
+						examples = { @example (
+								value = "method exploration with:[[\"a\"::0.5, \"b\"::10],[\"a\"::0.1, \"b\"::100]]; ",
+								isExecutable = false)} 
+						)
+				}
+		)
+public class Exploration extends AExplorationAlgorithm {
 	/** The Constant Method */
 	public static final String METHODS = "sampling";
 
@@ -110,6 +150,9 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	
 	/**The Constant ITERATIONS*/
 	public static final String ITERATIONS="iterations";
+	
+	public static final String FROM_FILE = "FROMFILE";
+	public static final String FROM_LIST = "FROMLIST";
 	
 	private final int __default_step_factor = 10;
 	
@@ -124,7 +167,7 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 	 *
 	 * @param desc the desc
 	 */
-	public ExhaustiveSearch(final IDescription desc) { super(desc); }
+	public Exploration(final IDescription desc) { super(desc); }
 	
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {}
@@ -137,25 +180,33 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 			parameters = parameters == null ? params : parameters;
 			List<ParametersSet> sets;
 			
-			if(hasFacet(ExhaustiveSearch.SAMPLE_SIZE)) {
+			if(hasFacet(Exploration.SAMPLE_SIZE)) {
 				this.sample_size= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 			}
 			
-			if(hasFacet(ExhaustiveSearch.ITERATIONS)) {
+			if(hasFacet(Exploration.ITERATIONS)) {
 				this.iterations= Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 			}
 			
-			if (hasFacet(ExhaustiveSearch.NB_LEVELS)) {
+			if (hasFacet(Exploration.NB_LEVELS)) {
 				this.nb_levels = Cast.asInt(scope, getFacet(NB_LEVELS).value(scope));
 			}
 
-            String method = hasFacet(ExhaustiveSearch.METHODS) ?
+            String method = hasFacet(Exploration.METHODS) ?
                 Cast.asString(scope, getFacet(METHODS).value(scope)) : "";
+            
+            if (hasFacet(IKeyword.FROM)) { method = FROM_FILE; }
+            else if (hasFacet(IKeyword.WITH)) { method = FROM_LIST; }
+            
 			sets = switch (method) {
 				case IKeyword.MORRIS -> MorrisSampling.MakeMorrisSamplingOnly(nb_levels, sample_size, parameters, scope);
 				case IKeyword.SALTELLI -> SaltelliSampling.MakeSaltelliSampling(scope, sample_size, parameters);
 				case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters, scope.getRandom().getGenerator(), scope);
 				case IKeyword.ORTHOGONAL -> OrthogonalSampling.OrthogonalSamples(sample_size,iterations, parameters,scope.getRandom().getGenerator(),scope);
+				case IKeyword.UNIFORM -> RandomSampling.UniformSampling(scope,sample_size,parameters);
+				case FROM_LIST -> buildParameterFromMap(scope, new ArrayList<>(), 0);
+				case FROM_FILE -> buildParametersFromCSV(scope, 
+						Cast.asString(scope, getFacet(IKeyword.FROM).value(scope)), new ArrayList<>());
 				default -> buildParameterSets(scope, new ArrayList<>(), 0);
 			};
 
@@ -188,6 +239,86 @@ public class ExhaustiveSearch extends AExplorationAlgorithm {
 		}
 		if (index == variables.size() - 1) return sets2;
 		return buildParameterSets(scope, sets2, index + 1);
+	}
+	
+	/**
+	 * Build a parameter set (a sample of the parameter space) based on explicit point given either
+	 * with a gaml map or written in a file 
+	 * 
+	 * @param scope
+	 * @param sets
+	 * @param index
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private List<ParametersSet> buildParameterFromMap(final IScope scope, final List<ParametersSet> sets, final int index) {
+		IExpression psexp = getFacet(IKeyword.WITH);
+		List<Map<String, Object>> parameterSets = Cast.asList(scope, psexp.value(scope));
+
+		for (Map<String, Object> parameterSet : parameterSets) {
+			ParametersSet p = new ParametersSet();
+			for (String v : parameterSet.keySet()) {
+				Object val = parameterSet.get(v);
+				p.put(v, val instanceof IExpression ? ((IExpression) val).value(scope) : val);
+			}
+			sets.add(p);
+		}
+		return sets;
+	
+	}
+	
+	/**
+	 * Create a List of Parameters Set with values contains in a CSV file
+	 * @param scope
+	 * @param path
+	 * @param sets
+	 * @return
+	 */
+	private List<ParametersSet> buildParametersFromCSV(final IScope scope,final String path,final List<ParametersSet> sets) {
+		List<Map<String,Object>> parameters = new ArrayList<>();
+		try {
+		      File file = new File(path);
+		      FileReader fr = new FileReader(file);
+		      BufferedReader br = new BufferedReader(fr);
+		      String line = " ";
+		      String[] tempArr;
+		      List<String> list_name= new ArrayList<>();
+		      int i=0;
+		      while ((line = br.readLine()) != null) {
+		        tempArr = line.split(",");
+		        for (String tempStr: tempArr) {
+		        	if (i==0) {
+		        		list_name.add(tempStr);
+		        	}
+		        }
+		        if(i>0) {
+		        	Map<String,Object> temp_map= new HashMap<>();
+		        	for(int y=0;y<tempArr.length;y++) {
+		        		temp_map.put(list_name.get(y),tempArr[y]);
+		        	}
+		        	parameters.add(temp_map);
+		        }
+		        i++;
+		      }
+		      br.close();
+		    }
+			catch(FileNotFoundException nfe) {
+				throw GamaRuntimeException.error("CSV file not found: "+path, scope);
+			}
+		    catch(IOException ioe) {
+		    	throw GamaRuntimeException.error("Error during the reading of the CSV file", scope);
+		    }
+		
+		for (Map<String, Object> parameterSet : parameters) {
+			ParametersSet p = new ParametersSet();
+			for (String v : parameterSet.keySet()) {
+				Object val = parameterSet.get(v);
+				p.put(v, val instanceof IExpression ? ((IExpression) val).value(scope) : val);
+			}
+			sets.add(p);
+		}
+
+		return sets;
 	}
 	
 	// ##################### Methods to determine possible values based on exhaustive ######################

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * NumberVariable.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * NumberVariable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.variables;
 
@@ -52,7 +52,14 @@ import msi.gaml.types.IType;
 						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
 						optional = true,
-						doc = @doc ("The initial value of the attribute")),
+						doc = @doc ("The initial value of the attribute. Same as '<-'")),
+				@facet (
+						name = "<-",
+						internal = true,
+						// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
+						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
+						optional = true,
+						doc = @doc ("The initial value of the attribute. Same as 'init:'")),
 				@facet (
 						name = IKeyword.VALUE,
 						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
@@ -69,7 +76,13 @@ import msi.gaml.types.IType;
 						name = IKeyword.FUNCTION,
 						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
 						optional = true,
-						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. Equivalent to '->'. This facet is incompatible with both 'init:' and 'update:'")),
+				@facet (
+						name = "->",
+						internal = true,
+						type = { IType.INT, IType.FLOAT, IType.POINT, IType.DATE },
+						optional = true,
+						doc = @doc ("Used to specify an expression that will be evaluated each time the attribute is accessed. Equivalent to 'function:'. This facet is incompatible with both 'init:' and 'update:' and 'on_change:' (or the equivalent final block)")),
 				@facet (
 						name = IKeyword.CONST,
 						type = IType.BOOL,
@@ -117,7 +130,7 @@ import msi.gaml.types.IType;
 		concept = { IConcept.ATTRIBUTE, IConcept.ARITHMETIC })
 @inside (
 		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@doc ("Allows to declare an attribute of a species or experiment; this type of attributes accepts "
+@doc ("Declaration of an attribute of a species or an experiment; this type of attributes accepts "
 		+ "min:, max: and step: facets, automatically clamping the value if it is lower than min or higher than max.")
 public class NumberVariable<T extends Comparable, Step extends Comparable> extends Variable {
 
@@ -201,18 +214,13 @@ public class NumberVariable<T extends Comparable, Step extends Comparable> exten
 	@Override
 	public Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		final Object val = super.coerce(agent, scope, v);
-		switch (type.id()) {
-			case IType.INT:
-				return checkMinMax(agent, scope, (Integer) val);
-			case IType.FLOAT:
-				return checkMinMax(agent, scope, (Double) val);
-			case IType.DATE:
-				return checkMinMax(agent, scope, (GamaDate) val);
-			case IType.POINT:
-				return checkMinMax(agent, scope, (GamaPoint) val);
-			default:
-				throw GamaRuntimeException.error("Impossible to create " + getName(), scope);
-		}
+		return switch (type.id()) {
+			case IType.INT -> checkMinMax(agent, scope, (Integer) val);
+			case IType.FLOAT -> checkMinMax(agent, scope, (Double) val);
+			case IType.DATE -> checkMinMax(agent, scope, (GamaDate) val);
+			case IType.POINT -> checkMinMax(agent, scope, (GamaPoint) val);
+			default -> throw GamaRuntimeException.error("Impossible to create " + getName(), scope);
+		};
 
 	}
 

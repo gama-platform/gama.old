@@ -11,7 +11,6 @@
 package ummisco.gama.opengl.scene.layers;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import org.locationtech.jts.geom.Geometry;
 
@@ -147,20 +146,11 @@ public class LayerObject {
 	/** The layer. */
 	public final ILayer layer;
 
-	/** The is invalid. */
-	volatile boolean isInvalid;
-
-	/** The locked. */
-	private volatile boolean locked;
-
 	/** The is animated. */
 	volatile boolean isAnimated;
 
 	/** The renderer. */
 	protected final IOpenGLRenderer renderer;
-
-	/** The traces. */
-	protected final LinkedList<Trace> traces;
 
 	/** The current list. */
 	protected Trace currentList;
@@ -183,17 +173,6 @@ public class LayerObject {
 		this.renderer = renderer2;
 		this.layer = layer;
 		currentList = new Trace();
-		if (layer == null) {
-			traces = null;
-		} else {
-			Integer number = layer.getData().getTrace();
-			if (number == null || number == 0) {
-				traces = null;
-			} else {
-				traces = new LinkedList();
-				traces.add(currentList);
-			}
-		}
 	}
 
 	/**
@@ -241,15 +220,14 @@ public class LayerObject {
 			// if (offset.y < 0) { offset.y = renderer.getEnvHeight() - offset.y; }
 
 		}
-		increaseZ(list);
+		computeZ(list);
 	}
 
 	/**
 	 * Increase Z.
 	 */
-	protected void increaseZ(final Trace list) {
+	protected void computeZ(final Trace list) {
 		double currentZLayer = renderer.getMaxEnvDim() * layer.getData().getPosition().getZ();
-		// currentZLayer += layer.getData().getAddedElevation() * renderer.getMaxEnvDim();
 		list.offset.z = currentZLayer;
 	}
 
@@ -265,7 +243,7 @@ public class LayerObject {
 	 *
 	 * @return true, if is pickable
 	 */
-	protected boolean isPickable() { return layer != null && layer.getData().isSelectable(); }
+	public boolean isPickable() { return layer != null && layer.getData().isSelectable(); }
 
 	/**
 	 * Draw.
@@ -274,7 +252,6 @@ public class LayerObject {
 	 *            the gl
 	 */
 	public void draw(final OpenGL gl) {
-		if (isInvalid()) return;
 		if (hasDepth()) {
 			gl.getGL().glEnable(GL.GL_DEPTH_TEST);
 		} else {
@@ -300,7 +277,7 @@ public class LayerObject {
 	 */
 	protected void doDrawing(final OpenGL gl) {
 		if (renderer.getPickingHelper().isPicking()) {
-			if (isPickable()) { gl.runWithNames(() -> drawAllObjects(gl, true)); }
+			gl.runWithNames(() -> drawAllObjects(gl, true));
 		} else if (isAnimated) {
 			drawAllObjects(gl, false);
 		} else {
@@ -333,6 +310,12 @@ public class LayerObject {
 		addFrame(gl);
 	}
 
+	/**
+	 * Adds the frame.
+	 *
+	 * @param gl
+	 *            the gl
+	 */
 	protected void addFrame(final OpenGL gl) {
 		if (layer == null) return;
 		ILayerData d = layer.getData();
@@ -395,20 +378,7 @@ public class LayerObject {
 	 *            the picking
 	 */
 	protected void drawAllObjects(final OpenGL gl, final boolean picking) {
-		if (traces != null) {
-			double delta = 0;
-			if (isFading) {
-				final int size = traces.size();
-				delta = size == 0 ? 0 : 1d / size;
-			}
-			double alpha = 0d;
-			for (final Trace list : traces) {
-				alpha = delta == 0d ? this.alpha : this.alpha * (alpha + delta);
-				drawObjects(gl, list, alpha, picking);
-			}
-		} else {
-			drawObjects(gl, currentList, alpha, picking);
-		}
+		drawObjects(gl, currentList, alpha, picking);
 	}
 
 	/**
@@ -548,11 +518,7 @@ public class LayerObject {
 	 *
 	 * @return the trace
 	 */
-	protected int getTrace() {
-		if (layer == null) return 0;
-		final Integer trace = layer.getData().getTrace();
-		return trace == null ? 0 : trace;
-	}
+	protected int getTrace() { return 0; }
 
 	/**
 	 * Gets the fading.
@@ -572,16 +538,7 @@ public class LayerObject {
 	 *            the gl
 	 */
 	public void clear(final OpenGL gl) {
-		if (traces != null) {
-			final int sizeLimit = getTrace();
-			isFading = getFading();
-			final int size = traces.size();
-			for (int i = 0, n = size - sizeLimit; i < n; i++) { traces.poll(); }
-			currentList = new Trace();
-			traces.offer(currentList);
-		} else {
-			currentList.clear();
-		}
+		currentList.clear();
 		final Integer index = openGLListIndex;
 		if (index != null) {
 			gl.deleteList(index);
@@ -591,47 +548,12 @@ public class LayerObject {
 	}
 
 	/**
-	 * Checks if is invalid.
-	 *
-	 * @return true, if is invalid
-	 */
-	public boolean isInvalid() { return isInvalid; }
-
-	/**
-	 * Invalidate.
-	 */
-	public void invalidate() {
-		isInvalid = true;
-	}
-
-	/**
 	 * Checks for trace.
 	 *
 	 * @return true, if successful
 	 */
 	public boolean hasTrace() {
-		return getTrace() > 0;
-	}
-
-	/**
-	 * Checks if is locked.
-	 *
-	 * @return true, if is locked
-	 */
-	public boolean isLocked() { return locked; }
-
-	/**
-	 * Lock.
-	 */
-	public void lock() {
-		locked = true;
-	}
-
-	/**
-	 * Unlock.
-	 */
-	public void unlock() {
-		locked = false;
+		return false;
 	}
 
 	/**
@@ -646,8 +568,8 @@ public class LayerObject {
 	 *
 	 * @return the int
 	 */
-	public int numberOfTraces() {
-		return traces == null ? 1 : traces.size();
+	public int numberOfActualTraces() {
+		return 1;
 	}
 
 	/**
@@ -665,5 +587,12 @@ public class LayerObject {
 	public void recomputeOffset() {
 		computeOffset(currentList);
 	}
+
+	/**
+	 * Checks if is visible.
+	 *
+	 * @return true, if is visible
+	 */
+	public boolean isVisible() { return layer == null || layer.getData().isVisible(); }
 
 }

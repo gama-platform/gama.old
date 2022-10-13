@@ -68,11 +68,14 @@ public class GAMA {
 	/** The is in headless mode. */
 	private static boolean isInHeadlessMode;
 
+	/** The is in headless mode. */
+	private static boolean isInServerMode;
+
 	/** The regular gui. */
 	private static IGui regularGui;
 
 	/** The headless gui. */
-	private static IGui headlessGui = new HeadlessListener();
+	private static IGui headlessGui = new NullGuiHandler();
 
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
@@ -322,7 +325,7 @@ public class GAMA {
 		if (isInTryMode) throw g;
 		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if (shouldStop) {
-			if (isInHeadLessMode()) throw g;
+			if (isInHeadLessMode() && !isInServerMode()) throw g;
 			pauseFrontmostExperiment();
 			throw g;
 		}
@@ -558,14 +561,16 @@ public class GAMA {
 	 */
 	public static boolean isInHeadLessMode() { return isInHeadlessMode; }
 
+	
+	public static boolean isInServerMode() { return isInServerMode; }
 	/**
 	 *
 	 */
-	public static IGui setHeadLessMode() {
-		isInHeadlessMode = true;
-		final IGui gui = new HeadlessListener();
-		setHeadlessGui(gui);
-		return gui;
+	public static IGui setHeadLessMode(boolean isServer,final IGui guiHandler) {
+		isInHeadlessMode	= true;
+		isInServerMode		= isServer;
+		setHeadlessGui(guiHandler);
+		return guiHandler;			
 	}
 
 	/**
@@ -646,5 +651,4 @@ public class GAMA {
 		getExperiment().synchronizeAllOutputs();
 
 	}
-
 }

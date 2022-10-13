@@ -390,7 +390,7 @@ public abstract class AbstractAgent implements IAgent {
 		IPopulation<? extends IAgent> pop = getPopulationFor(microSpecies.getName());
 		if (pop == null) {
 			final ModelDescription micro = microSpecies.getDescription().getModelDescription();
-			final ModelDescription main = (ModelDescription) this.getModel().getDescription();
+			final ModelDescription main = this.getModel().getDescription();
 			if (main.getMicroModel(micro.getAlias()) != null && getHost() != null) {
 				pop = getHost().getExternMicroPopulationFor(micro.getAlias() + "." + microSpecies.getName());
 			}
@@ -469,7 +469,7 @@ public abstract class AbstractAgent implements IAgent {
 					doc = @doc ("The message to display")) })
 	public final Object primError(final IScope scope) throws GamaRuntimeException {
 		final String error = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().error(error);
+		scope.getGui().openErrorDialog(scope, error);
 		return error;
 	}
 
@@ -496,7 +496,7 @@ public abstract class AbstractAgent implements IAgent {
 	public final Object primTell(final IScope scope) throws GamaRuntimeException {
 		boolean addName = !scope.hasArg("add_name") || Cast.asBool(scope, scope.getArg("add_name", IType.BOOL));
 		final String s = (addName ? getName() + " says : " : "") + scope.getArg("msg", IType.STRING);
-		scope.getGui().tell(s);
+		scope.getGui().openMessageDialog(scope, s);
 		return s;
 	}
 

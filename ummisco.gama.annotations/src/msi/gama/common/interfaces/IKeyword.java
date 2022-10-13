@@ -132,7 +132,7 @@ public interface IKeyword {
 
 	/** The beta^d coefficient */
 	String BETAD = "betad";
-	
+
 	/** The bool. */
 	String BOOL = "bool";
 
@@ -630,9 +630,9 @@ public interface IKeyword {
 
 	/** The let. */
 	String LET = "let";
-	
-	/**Latin Hypercube Sampling*/
-	String LHS="latinhypercube";
+
+	/** Latin Hypercube Sampling */
+	String LHS = "latinhypercube";
 
 	/** The lighted. */
 	String LIGHTED = "lighted";
@@ -851,9 +851,9 @@ public interface IKeyword {
 
 	/** The origin. */
 	String ORIGIN = "**origin**";
-	
-	/** The orthogonal sampling*/
-	String ORTHOGONAL="orthogonal";
+
+	/** The orthogonal sampling */
+	String ORTHOGONAL = "orthogonal";
 
 	/** The orthographic projection. */
 	String ORTHOGRAPHIC_PROJECTION = "orthographic_projection";
@@ -1049,9 +1049,9 @@ public interface IKeyword {
 
 	/** The rounded. */
 	String ROUNDED = "rounded";
-	
+
 	/** Saltelli */
-	String SALTELLI= "saltelli";
+	String SALTELLI = "saltelli";
 
 	/** The save. */
 	String SAVE = "save";
@@ -1154,7 +1154,7 @@ public interface IKeyword {
 
 	/** The step. */
 	String STEP = "step";
-	
+
 	/** The Stochasticity Analysis */
 	String STO = "stochanalyse";
 
@@ -1413,5 +1413,22 @@ public interface IKeyword {
 	/** The methods. */
 	String[] METHODS =
 			{ GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXPLORATION, PSO, SOBOL, MORRIS, STO, BETAD };
+
+	// DISPLAYS
+
+	/** The Constant JAVA2D. */
+	String _2D = "2d";
+
+	/** The Constant OPENGL. */
+	String _3D = "3d";
+
+	/** The Constant WEB. */
+	String WEB = "web";
+
+	/** The Constant JAVA2D. */
+	String JAVA2D = "java2D";
+
+	/** The Constant OPENGL. */
+	String OPENGL = "opengl";
 
 }

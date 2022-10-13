@@ -57,9 +57,9 @@ class DocumentationTask {
 		final GamlResource key = (GamlResource) object.eResource();
 		if (key == null) return;
 
-		DocumentationNode node = null;
+		IGamlDescription node = null;
 		try {
-			node = new DocumentationNode(description);
+			node = description instanceof DocumentationNode ? description : new DocumentationNode(description);
 		} catch (final Exception e) {
 			DEBUG.ERR("DocumentationTask.process()" + e.getMessage() + " for " + description.getTitle());
 		}

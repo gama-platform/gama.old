@@ -123,6 +123,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	/** The polling. */
 	private final Timer polling = new Timer();
 
+	/** The prefs to restore. */
 	Map<String, Object> prefsToRestore = GamaMapFactory.create();
 
 	/** The basic scope. */
@@ -347,8 +348,8 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public String getTitle() { return "gama platform agent"; }
 
 	@Override
-	public String getDocumentation() {
-		return "The unique instance of the platform species. Used to access GAMA platform properties.";
+	public Doc getDocumentation() {
+		return new ConstantDoc("The unique instance of the platform species. Used to access GAMA platform properties.");
 	}
 
 	@Override
@@ -380,12 +381,23 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	@Override
 	public IType<?> getGamlType() { return Types.get(IKeyword.PLATFORM); }
 
+	/**
+	 * Save pref to restore.
+	 *
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
 	public void savePrefToRestore(final String key, final Object value) {
 		// DEBUG.OUT("Save preference to restor" + key + " with value " + value);
 		// In order to not restore a previous value if it has already been set
 		prefsToRestore.putIfAbsent(key, value);
 	}
 
+	/**
+	 * Restore prefs.
+	 */
 	public void restorePrefs() {
 		// DEBUG.OUT("Restoring preferences" + prefsToRestore);
 		prefsToRestore.forEach((key, value) -> {

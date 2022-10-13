@@ -39,9 +39,9 @@ public class SuperExpression extends VariableExpression {
 	public String getTitle() { return "pseudo-variable super of type " + getGamlType().getTitle(); }
 
 	@Override
-	public String getDocumentation() {
-		return "Represents the current agent, instance of species " + type.getTitle()
-				+ ", indicating a redirection to the parent species in case of calling an action";
+	public Doc getDocumentation() {
+		return new ConstantDoc("Represents the current agent, instance of species " + type.getTitle()
+				+ ", indicating a redirection to the parent species in case of calling an action");
 	}
 
 	@Override

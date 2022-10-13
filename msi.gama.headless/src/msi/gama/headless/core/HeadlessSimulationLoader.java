@@ -24,6 +24,7 @@ import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import one.util.streamex.StreamEx;
@@ -38,8 +39,9 @@ public class HeadlessSimulationLoader {
 		DEBUG.ON();
 	}
 
-	/** The injector. */
-	// The injector to use in headless mode
+	/**  
+	 * The injector to use in headless mode
+	 */
 	Injector injector;
 
 	/** The instance. */
@@ -74,7 +76,8 @@ public class HeadlessSimulationLoader {
 		if (injector != null) return injector;
 		DEBUG.LOG("GAMA configuring and loading...");
 		System.setProperty("java.awt.headless", "true");
-		GAMA.setHeadLessMode();
+		var isServer = GAMA.isInServerMode();
+		GAMA.setHeadLessMode(isServer, isServer ? new GamaServerGUIHandler() : new NullGuiHandler());
 		try {
 			// We initialize XText and Gaml.
 			injector = GamlStandaloneSetup.doSetup();
@@ -120,7 +123,7 @@ public class HeadlessSimulationLoader {
 	 */
 	public static synchronized IModel loadModel(final File myFile, final List<GamlCompilationError> errors)
 			throws IOException, GamaHeadlessException {
-		return loadModel(myFile, errors, null, true);
+		return loadModel(myFile, errors, null, true); 
 	}
 
 	/**

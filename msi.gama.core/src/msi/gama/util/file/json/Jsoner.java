@@ -954,7 +954,25 @@ public class Jsoner {
 			}  catch (SchemaException e) {
 				e.printStackTrace();
 			}			
-		} else {
+		} else if (jsonSerializable instanceof Exception) {
+			var ex = (Exception) jsonSerializable;
+
+			writableDestination.write('{');
+
+			writableDestination.write("\"exception\": \"" + ex.getClass().getName() + "\",");
+			writableDestination.write("\"message\": \"" + escape(ex.getMessage()) + "\",");
+			writableDestination.write("\"stack\": [" );
+			int i = 0;
+			for(var trace : ex.getStackTrace()) {
+				writableDestination.write("\"" + escape(trace.toString()) + "\""
+											+ ( i < ex.getStackTrace().length - 1 ? "," : "") // add trailing comma
+											);
+				i++;
+			}
+			writableDestination.write("]" );
+			writableDestination.write("}" );
+		}
+		else {
 			try {
 				writableDestination.write(streamConverter.convertObjectToJSONStream(null,jsonSerializable));
 			} catch(Exception e) {

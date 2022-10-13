@@ -163,7 +163,6 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	 * Creates the descriptions.
 	 */
 	public BuiltinGlobalScopeProvider() {
-		// DEBUG.OUT("Instantiation of BuiltinGlobalScopeProvider by " + DEBUG.CALLER());
 		eType = GamlPackage.eINSTANCE.getTypeDefinition();
 		eVar = GamlPackage.eINSTANCE.getVarDefinition();
 		eSkill = GamlPackage.eINSTANCE.getSkillFakeDefinition();

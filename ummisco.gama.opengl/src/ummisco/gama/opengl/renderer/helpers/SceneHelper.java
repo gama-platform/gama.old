@@ -66,14 +66,6 @@ public class SceneHelper extends AbstractRendererHelper {
 	public void initialize() {}
 
 	/**
-	 * Layer offset changed.
-	 */
-	// public void layerOffsetChanged() {
-	// if (getSceneToRender() == null) return;
-	// getSceneToRender().layerOffsetChanged();
-	// }
-
-	/**
 	 * Begin drawing layer.
 	 *
 	 * @param layer
@@ -127,14 +119,17 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * End updating scene.
 	 */
 	public void endUpdatingScene() {
+
 		// If there is no scene to update, it means it has been cancelled by
 		// another thread (hiding/showing layers, most probably) so we just skip
 		// this step
 		if (backScene == null) return;
 		// We ask the backScene to stop updating
+
 		backScene.endDrawingLayers();
 		// We create the static scene from it if it does not exist yet or if it
 		// has been discarded
+		if (hasStructurallyChanged()) { discardStaticScene(); }
 		if (staticScene == null) {
 			// DEBUG.LOG("Creating static scene from scene " +
 			// backScene.getId());
@@ -155,6 +150,15 @@ public class SceneHelper extends AbstractRendererHelper {
 		frontScene = backScene;
 		// ... and clear the backScene
 		backScene = null;
+	}
+
+	/**
+	 * Checks for structurally changed.
+	 *
+	 * @return true, if successful
+	 */
+	private boolean hasStructurallyChanged() {
+		return getSurface().getManager().hasStructurallyChanged();
 	}
 
 	/**
@@ -224,16 +228,22 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * invalidated.
 	 */
 	public void layersChanged() {
-		if (staticScene != null) {
-			garbage.add(staticScene);
-			staticScene.invalidateLayers();
-			staticScene = null;
-		}
+		discardStaticScene();
 		if (backScene != null) {
 			garbage.add(backScene);
 			backScene = null;
 		}
-		frontScene.unlock();
+	}
+
+	/**
+	 * Discard static scene.
+	 */
+	protected void discardStaticScene() {
+		if (staticScene != null) {
+			garbage.add(staticScene);
+			// staticScene.invalidateLayers();
+			staticScene = null;
+		}
 	}
 
 	/**

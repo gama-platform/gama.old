@@ -44,9 +44,9 @@ public interface ISymbolKind {
 		/** The kinds as string. */
 		Map<Integer, String> KINDS_AS_STRING = new HashMap<>() {
 			{
-				put(NUMBER, "number");
-				put(CONTAINER, "container");
-				put(REGULAR, "regular");
+				put(NUMBER, "number variable");
+				put(CONTAINER, "container variable");
+				put(REGULAR, "variable");
 			}
 		};
 	}

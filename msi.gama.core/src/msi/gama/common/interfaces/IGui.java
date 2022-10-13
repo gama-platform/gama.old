@@ -23,6 +23,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -163,7 +164,19 @@ public interface IGui {
 	 * @param message
 	 *            the message
 	 */
-	void tell(String message);
+	default void tell(final String message) {
+		openMessageDialog(GAMA.getRuntimeScope(), message);
+	}
+
+	/**
+	 * Open message dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param error
+	 *            the error
+	 */
+	void openMessageDialog(IScope scope, String error);
 
 	/**
 	 * Error.
@@ -171,7 +184,19 @@ public interface IGui {
 	 * @param error
 	 *            the error
 	 */
-	void error(String error);
+	default void error(final String error) {
+		openErrorDialog(GAMA.getRuntimeScope(), error);
+	}
+
+	/**
+	 * Open error dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param error
+	 *            the error
+	 */
+	void openErrorDialog(IScope scope, String error);
 
 	/**
 	 * Show parameter view.
@@ -611,6 +636,32 @@ public interface IGui {
 	 */
 	default void updateParameterView(final IScope scope) {}
 
+	/**
+	 * Arrange experiment views.
+	 *
+	 * @param myScope
+	 *            the my scope
+	 * @param experimentPlan
+	 *            the experiment plan
+	 * @param keepTabs
+	 *            the keep tabs
+	 * @param keepToolbars
+	 *            the keep toolbars
+	 * @param showParameters
+	 *            the show parameters
+	 * @param showConsoles
+	 *            the show consoles
+	 * @param showNavigator
+	 *            the show navigator
+	 * @param showControls
+	 *            the show controls
+	 * @param keepTray
+	 *            the keep tray
+	 * @param color
+	 *            the color
+	 * @param showEditors
+	 *            the show editors
+	 */
 	default void arrangeExperimentViews(final IScope myScope, final IExperimentPlan experimentPlan,
 			final Boolean keepTabs, final Boolean keepToolbars, final Boolean showParameters,
 			final Boolean showConsoles, final Boolean showNavigator, final Boolean showControls, final Boolean keepTray,

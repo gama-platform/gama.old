@@ -59,7 +59,7 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  * @see HeadlessEvent
  */
-public class HeadlessListener implements IGui {
+public class NullGuiHandler implements IGui {
 
 	// See #2996: simplification of the logging done in this class
 	// static Logger LOGGER = LogManager.getLogManager().getLogger("");
@@ -76,17 +76,7 @@ public class HeadlessListener implements IGui {
 		// }
 		// LOGGER.setLevel(Level.ALL);
 		// }
-		GAMA.setHeadlessGui(new HeadlessListener());
-	}
-
-	/**
-	 * Log.
-	 *
-	 * @param s
-	 *            the s
-	 */
-	private static void log(final String s) {
-		DEBUG.LOG(s);
+		GAMA.setHeadlessGui(new NullGuiHandler());
 	}
 
 	@Override
@@ -153,13 +143,13 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void tell(final String message) {
-		log("Message: " + message);
+	public void openMessageDialog(final IScope scope, final String message) {
+		logger.log("Message: " + message);
 	}
 
 	@Override
-	public void error(final String error) {
-		log("Error: " + error);
+	public void openErrorDialog(final IScope scope, final String error) {
+		logger.log("Error: " + error);
 	}
 
 	@Override
@@ -167,7 +157,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
-		log("Runtime error: " + g.getMessage());
+		logger.log("Runtime error: " + g.getMessage());
 	}
 
 	@Override
@@ -333,88 +323,123 @@ public class HeadlessListener implements IGui {
 	public void updateDecorator(final String string) {}
 
 	/** The status. */
-	IStatusDisplayer status = new IStatusDisplayer() {
+	protected IStatusDisplayer status = null;
 
-		@Override
-		public void resumeStatus() {}
-
-		@Override
-		public void waitStatus(final String string) {}
-
-		@Override
-		public void informStatus(final String string) {}
-
-		@Override
-		public void errorStatus(final String message) {}
-
-		@Override
-		public void setSubStatusCompletion(final double status) {}
-
-		@Override
-		public void setStatus(final String msg, final GamaColor color) {}
-
-		@Override
-		public void informStatus(final String message, final String icon) {}
-
-		@Override
-		public void setStatus(final String msg, final String icon) {}
-
-		@Override
-		public void beginSubStatus(final String name) {}
-
-		@Override
-		public void endSubStatus(final String name) {}
-
-		@Override
-		public void neutralStatus(final String string) {}
-
-	};
 
 	/** The console. */
-	IConsoleDisplayer console = new IConsoleDisplayer() {
+	protected IConsoleDisplayer console = null;
 
-		@Override
-		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
-			informConsole(s, root);
-		}
+	/** The logger. */
+	private IHeadlessLogger logger = DEBUG::LOG;
 
-		@Override
-		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
-			informConsole(s, root);
-		}
+	/**
+	 * The Interface IHeadlessLogger.
+	 */
+	public interface IHeadlessLogger {
 
-		@Override
-		public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
-			informConsole(s, root);
-		}
+		/**
+		 * Log.
+		 *
+		 * @param message
+		 *            the message
+		 */
+		void log(String message);
+	}
 
-		@Override
-		public void informConsole(final String s, final ITopLevelAgent root) {
-			DEBUG.ON();
-			DEBUG.LOG(s);
-			// if (outputWriter.get() != null) {
-			// try {
-			// outputWriter.get().write(s + Strings.LN);
-			// // outputWriter.get().flush();
-			// } catch (final IOException e) {
-			// e.printStackTrace();
-			// }
-			// }
-		}
-
-		@Override
-		public void showConsoleView(final ITopLevelAgent agent) {}
-
-		@Override
-		public void eraseConsole(final boolean setToNull) {}
-
-	};
+	/**
+	 * Sets the headless logger.
+	 *
+	 * @param logger
+	 *            the new headless logger
+	 */
+	public void setHeadlessLogger(final IHeadlessLogger logger) { this.logger = logger; }
 
 	@Override
-	public IStatusDisplayer getStatus() { return status; }
+	public IStatusDisplayer getStatus() { 
+	
+		if (status == null) {
+			status = new IStatusDisplayer() {
 
+				@Override
+				public void resumeStatus(IScope scope) {}
+
+				@Override
+				public void waitStatus(final String string, IScope scope) {}
+
+				@Override
+				public void informStatus(final String string, IScope scope) {
+				}
+
+				@Override
+				public void errorStatus(final String message, IScope scope) {
+				}
+
+				@Override
+				public void setSubStatusCompletion(final double status, IScope scope) {}
+
+				@Override
+				public void setStatus(final String msg, final GamaColor color, IScope scope) {
+				}
+
+				@Override
+				public void informStatus(final String message, final String icon, IScope scope) {
+				}
+
+				@Override
+				public void setStatus(final String msg, final String icon, IScope scope) {
+				}
+
+				@Override
+				public void beginSubStatus(final String name, IScope scope) {}
+
+				@Override
+				public void endSubStatus(final String name, IScope scope) {}
+
+				@Override
+				public void neutralStatus(final String string, IScope scope) {			
+				}
+
+			};
+		}
+		return status; 
+	}
+
+	
 	@Override
-	public IConsoleDisplayer getConsole() { return console; }
+	public IConsoleDisplayer getConsole() { 
+	
+		if (console == null) {
+			console = new IConsoleDisplayer() {
+
+				@Override
+				public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
+				}
+
+				@Override
+				public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
+					informConsole(s, root);
+				}
+
+				@Override
+				public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
+					informConsole(s, root);
+				}
+
+				@Override
+				public void informConsole(final String s, final ITopLevelAgent root) {
+					logger.log(s);
+				}
+
+				@Override
+				public void showConsoleView(final ITopLevelAgent agent) {}
+
+				@Override
+				public void eraseConsole(final boolean setToNull) {}
+
+			};
+		}
+		return console; 
+	}
 
 	@Override
 	public void clearErrors(final IScope scope) {}
@@ -477,7 +502,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void displayTestsResults(final IScope scope, final CompoundSummary<?, ?> summary) {
-		log(summary.toString());
+		logger.log(summary.toString());
 	}
 
 	@Override
@@ -499,8 +524,5 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public IDisplaySurface getFrontmostDisplaySurface() { return null; }
-
-	// @Override
-	// public boolean isSynchronized() { return false; }
 
 }

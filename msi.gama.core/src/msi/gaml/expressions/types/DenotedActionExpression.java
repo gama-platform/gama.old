@@ -43,7 +43,7 @@ public class DenotedActionExpression extends VariableExpression {
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() { return getDefinitionDescription().getDocumentation(); }
+	public Doc getDocumentation() { return getDefinitionDescription().getDocumentation(); }
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) {}

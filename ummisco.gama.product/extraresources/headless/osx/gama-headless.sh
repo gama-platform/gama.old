@@ -25,7 +25,7 @@ done
 
 workspaceCreate=0
 case "$@" in 
-  *-help*|*-version*|*-validate*|*-test*|*-xml*|*-batch*|*-write-xmi*)
+  *-help*|*-version*|*-validate*|*-test*|*-xml*|*-batch*|*-write-xmi*|*-socket*)
     workspaceCreate=1
     ;;
 esac

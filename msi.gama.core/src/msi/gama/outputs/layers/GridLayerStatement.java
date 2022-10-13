@@ -287,7 +287,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	 * @return true, if is open GL flat grid
 	 */
 	boolean isOpenGLFlatGrid(final LayeredDisplayOutput out) {
-		final boolean isOpenGL = out.getData().isOpenGL();
+		final boolean isOpenGL = out.getData().is3D();
 		return isOpenGL && isFlatGrid;
 	}
 

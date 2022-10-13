@@ -38,7 +38,7 @@ public class SkillConstantExpression extends ConstantExpression {
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
 	 */
 	@Override
-	public String getDocumentation() { return ((ISkill) value).getDocumentation(); }
+	public Doc getDocumentation() { return ((ISkill) value).getDocumentation(); }
 
 	@Override
 	public String getTitle() { return ((ISkill) value).getTitle(); }

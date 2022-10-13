@@ -119,8 +119,7 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 
 <xsl:if test="documentation/usagesExamples[node()]">
 * Other examples of use: 
-```
-<xsl:for-each select="documentation/usagesExamples/usage">
+```<xsl:for-each select="documentation/usagesExamples/usage">
 <xsl:call-template name="generateExamples"/> </xsl:for-each>
 ``` 
   </xsl:if>

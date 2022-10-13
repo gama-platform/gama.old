@@ -279,7 +279,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (!getSpecies().isBatch()) {
 			ownScope.getGui().setSelectedAgent(null);
 			ownScope.getGui().setHighlightedAgent(null);
-			ownScope.getGui().getStatus().resumeStatus();
+			ownScope.getGui().getStatus().resumeStatus(ownScope);
 			// AD: Fix for issue #1342 -- verify that it does not break
 			// something else in the dynamics of closing/opening
 			ownScope.getGui().closeDialogs(ownScope);
@@ -335,10 +335,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public boolean init(final IScope scope) {
+		scope.getGui().clearErrors(scope);
 		super.init(scope);
 		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) { outputs.init(scope); }
-		scope.getGui().getStatus().informStatus("Experiment ready");
+		scope.getGui().getStatus().informStatus("Experiment ready", scope);
 		scope.getGui().updateExperimentState(scope);
 		return true;
 	}
@@ -758,8 +759,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public void informStatus() {
-		if (isHeadless() || isBatch() || getSimulation() == null) return;
-		ownScope.getGui().getStatus().informStatus(null, "status.clock");
+		//TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
+		if (isHeadless() || isBatch() || getSimulation() == null) return; 
+		ownScope.getGui().getStatus().informStatus(null, "status.clock", ownScope);
 	}
 
 	/**

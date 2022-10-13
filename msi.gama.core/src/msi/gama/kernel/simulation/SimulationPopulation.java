@@ -108,7 +108,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
 
 		for (int i = 0; i < number; i++) {
-			scope.getGui().getStatus().waitStatus("Initializing simulation");
+			scope.getGui().getStatus().waitStatus("Initializing simulation", scope);
 			// Model do not only rely on SimulationAgent
 			final IAgentConstructor<SimulationAgent> constr = species.getDescription().getAgentConstructor();
 
@@ -148,8 +148,8 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	private void initSimulation(final IScope scope, final SimulationAgent sim,
 			final List<? extends Map<String, Object>> initialValues, final int index, final boolean isRestored,
 			final boolean toBeScheduled, final RemoteSequence sequence) {
-		scope.getGui().getStatus().waitStatus("Instantiating agents");
-		if (toBeScheduled) { sim.prepareGuiForSimulation(scope); }
+		scope.getGui().getStatus().waitStatus("Instantiating agents", scope);
+		// if (toBeScheduled) { sim.prepareGuiForSimulation(scope); }
 
 		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);
 		final Object firstValue =
@@ -172,13 +172,10 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	@Override
 	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable var) {
-		switch (var.getName()) {
-			case IKeyword.SEED:
-			case IKeyword.RNG:
-				return !var.hasFacet(IKeyword.INIT);
-			default:
-				return true;
-		}
+		return switch (var.getName()) {
+			case IKeyword.SEED, IKeyword.RNG -> !var.hasFacet(IKeyword.INIT);
+			default -> true;
+		};
 	}
 
 	@Override
@@ -217,7 +214,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	public void unscheduleSimulation(final SimulationAgent sim) {
 		runner.remove(sim);
 	}
-	
+
 	/**
 	 * Gets the number of active stepables.
 	 *

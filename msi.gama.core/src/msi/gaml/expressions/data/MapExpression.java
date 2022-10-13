@@ -217,8 +217,9 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	 */
 
 	@Override
-	public String getDocumentation() {
-		return "Constant " + isConst() + "<br>Contains elements of type " + type.getContentType().getTitle();
+	public Doc getDocumentation() {
+		return new ConstantDoc(
+				"Constant " + isConst() + "<br>Contains elements of type " + type.getContentType().getTitle());
 	}
 
 	/**

@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -29,133 +28,137 @@ import msi.gaml.expressions.IExpression;
 public interface IType<Support> extends IGamlDescription, ITyped {
 
 	/** The vowels. */
-	String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
+	String[] vowels = { "a", "e", "i", "o", "u", "y" };
 
 	/** Constant fields to indicate the types of facets */
 	int LABEL = -200;
-	
+
 	/** The id. */
 	int ID = -201;
-	
+
 	/** The type id. */
 	int TYPE_ID = -202;
-	
+
 	/** The new var id. */
 	int NEW_VAR_ID = -203;
-	
+
 	/** The new temp id. */
 	int NEW_TEMP_ID = -204;
 
 	/** The none. */
 	int NONE = 0;
-	
+
 	/** The int. */
 	int INT = 1;
-	
+
 	/** The float. */
 	int FLOAT = 2;
-	
+
 	/** The bool. */
 	int BOOL = 3;
-	
+
 	/** The string. */
 	int STRING = 4;
-	
+
 	/** The list. */
 	int LIST = 5;
-	
+
 	/** The color. */
 	int COLOR = 6;
-	
+
 	/** The point. */
 	int POINT = 7;
-	
+
 	/** The matrix. */
 	int MATRIX = 8;
-	
+
 	/** The pair. */
 	int PAIR = 9;
-	
+
 	/** The map. */
 	int MAP = 10;
-	
+
 	/** The agent. */
 	int AGENT = 11;
-	
+
 	/** The file. */
 	int FILE = 12;
 
 	/** The geometry. */
 	int GEOMETRY = 13;
-	
+
 	/** The species. */
 	int SPECIES = 14;
-	
+
 	/** The graph. */
 	int GRAPH = 15;
-	
+
 	/** The container. */
 	int CONTAINER = 16;
-	
+
 	/** The path. */
 	int PATH = 17;
-	
+
 	/** The topology. */
 	int TOPOLOGY = 18;
-	
+
 	/** The font. */
 	int FONT = 19;
-	
+
 	/** The image. */
 	int IMAGE = 20;
-	
+
 	/** The regression. */
 	int REGRESSION = 21;
-	
+
 	/** The skill. */
 	int SKILL = 22;
-	
+
 	/** The date. */
 	int DATE = 23;
-	
+
 	/** The message. */
 	int MESSAGE = 24;
-	
+
 	/** The material. */
 	int MATERIAL = 25;
-	
+
 	/** The action. */
 	int ACTION = 26;
-	
+
 	/** The attributes. */
 	int ATTRIBUTES = 27;
 
 	/** The type. */
 	// Represents the meta-type (type of values type)
 	int TYPE = 28;
-	
+
 	/** The kml. */
 	int KML = 29;
-	
+
 	/** The directory. */
 	int DIRECTORY = 30;
-	
+
 	/** The field. */
 	int FIELD = 31;
 
 	/** The available types. */
 	int AVAILABLE_TYPES = 50;
-	
+
 	/** The species types. */
 	int SPECIES_TYPES = 100;
 
 	/**
 	 * Cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param copy
+	 *            the copy
 	 * @return the support
 	 */
 	Support cast(IScope scope, Object obj, Object param, boolean copy);
@@ -163,12 +166,18 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param keyType the key type
-	 * @param contentType the content type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param keyType
+	 *            the key type
+	 * @param contentType
+	 *            the content type
+	 * @param copy
+	 *            the copy
 	 * @return the support
 	 */
 	Support cast(IScope scope, Object obj, Object param, IType<?> keyType, IType<?> contentType, boolean copy);
@@ -204,7 +213,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Gets the getter.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return the getter
 	 */
 	OperatorProto getGetter(String name);
@@ -240,7 +250,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Checks if is parametric form of.
 	 *
-	 * @param l the l
+	 * @param l
+	 *            the l
 	 * @return true, if is parametric form of
 	 */
 	boolean isParametricFormOf(final IType<?> l);
@@ -262,7 +273,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Checks if is assignable from.
 	 *
-	 * @param l the l
+	 * @param l
+	 *            the l
 	 * @return true, if is assignable from
 	 */
 	boolean isAssignableFrom(IType<?> l);
@@ -270,7 +282,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Checks if is translatable into.
 	 *
-	 * @param t the t
+	 * @param t
+	 *            the t
 	 * @return true, if is translatable into
 	 */
 	boolean isTranslatableInto(IType<?> t);
@@ -278,7 +291,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Sets the parent.
 	 *
-	 * @param p the new parent
+	 * @param p
+	 *            the new parent
 	 */
 	void setParent(IType<? super Support> p);
 
@@ -292,8 +306,10 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Coerce.
 	 *
-	 * @param expr the expr
-	 * @param context the context
+	 * @param expr
+	 *            the expr
+	 * @param context
+	 *            the context
 	 * @return the i type
 	 */
 	IType<?> coerce(IType<?> expr, IDescription context);
@@ -321,10 +337,14 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Inits the.
 	 *
-	 * @param varKind the var kind
-	 * @param id the id
-	 * @param name the name
-	 * @param clazz the clazz
+	 * @param varKind
+	 *            the var kind
+	 * @param id
+	 *            the id
+	 * @param name
+	 *            the name
+	 * @param clazz
+	 *            the clazz
 	 */
 	void init(int varKind, final int id, final String name, final Class<Support> clazz);
 
@@ -363,7 +383,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	/**
 	 * Sets the support.
 	 *
-	 * @param clazz the new support
+	 * @param clazz
+	 *            the new support
 	 */
 	void setSupport(Class<Support> clazz);
 
@@ -423,9 +444,7 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 *
 	 * @return true, if is comparable
 	 */
-	default boolean isComparable() {
-		return Comparable.class.isAssignableFrom(toClass());
-	}
+	default boolean isComparable() { return Comparable.class.isAssignableFrom(toClass()); }
 
 	/**
 	 * Gets the wrapped type.
@@ -456,5 +475,12 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 * @return
 	 */
 	int getNumberOfParameters();
+
+	/**
+	 * Document fields.
+	 *
+	 * @param result the result
+	 */
+	default void documentFields(final Doc result) {}
 
 }

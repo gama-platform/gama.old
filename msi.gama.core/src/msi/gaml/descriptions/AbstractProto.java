@@ -39,6 +39,9 @@ public abstract class AbstractProto implements IGamlDescription {
 	/** The deprecated. */
 	protected String deprecated;
 
+	/** The documentation. */
+	protected Doc documentation;
+
 	/**
 	 * Instantiates a new abstract proto.
 	 *
@@ -56,24 +59,22 @@ public abstract class AbstractProto implements IGamlDescription {
 	}
 
 	@Override
-	public String getDocumentation() {
-		final doc d = getDocAnnotation();
-		if (d == null) return "";
-		final StringBuilder sb = new StringBuilder(200);
-		String s = d.value();
-		if (s != null && !s.isEmpty()) {
-			sb.append(s);
-			sb.append("<br/>");
+	public Doc getDocumentation() {
+		if (documentation == null) {
+			final doc d = getDocAnnotation();
+			if (d == null) {
+				documentation = EMPTY_DOC;
+			} else {
+				documentation = new RegularDoc(new StringBuilder(200));
+				String s = d.value();
+				if (s != null && !s.isEmpty()) { documentation.append(s).append("<br/>"); }
+				s = d.deprecated();
+				if (s != null && !s.isEmpty()) {
+					documentation.append("<b>Deprecated</b>: ").append("<i>").append(s).append("</i><br/>");
+				}
+			}
 		}
-		s = d.deprecated();
-		if (s != null && !s.isEmpty()) {
-			sb.append("<b>Deprecated</b>: ");
-			sb.append("<i>");
-			sb.append(s);
-			sb.append("</i><br/>");
-		}
-
-		return sb.toString();
+		return documentation;
 	}
 
 	/**
@@ -160,9 +161,7 @@ public abstract class AbstractProto implements IGamlDescription {
 	 * @return the doc annotation
 	 */
 	public doc getDocAnnotation() {
-		doc d = null;
-		if (support != null && support.isAnnotationPresent(doc.class)) { d = support.getAnnotation(doc.class); }
-		return d;
+		return support != null && support.isAnnotationPresent(doc.class) ? support.getAnnotation(doc.class) : null;
 	}
 
 	/**

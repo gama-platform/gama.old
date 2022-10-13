@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -27,6 +28,7 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
@@ -63,9 +65,6 @@ public class VariableDescription extends SymbolDescription {
 	public final static Set<String> FUNCTION_DEPENDENCIES_FACETS =
 			ImmutableSet.<String> builder().add(FUNCTION).build();
 
-	/** The Constant CLASS_DEFINITIONS. */
-	public static final Map<VariableDescription, Class<?>> CLASS_DEFINITIONS = new HashMap<>();
-
 	/** The Constant PREF_DEFINITIONS. */
 	public static final Map<String, String> PREF_DEFINITIONS = new HashMap<>();
 
@@ -73,18 +72,9 @@ public class VariableDescription extends SymbolDescription {
 	private String plugin;
 
 	/** The built in doc. */
-	String builtInDoc;
-
-	/** The is not modifiable. */
-	// private final boolean _isGlobal, _isNotModifiable;
-
-	/** The is synthetic species container. */
-	// for variables automatically added to species for containing micro-agents
-	// private boolean _isSyntheticSpeciesContainer;
-
+	private Class<?> definitionClass;
 	/** The set. */
 	private IGamaHelper<?> get, init, set;
-	// private GamaHelper<?>[] listeners;
 
 	/**
 	 * Instantiates a new variable description.
@@ -101,21 +91,20 @@ public class VariableDescription extends SymbolDescription {
 	public VariableDescription(final String keyword, final IDescription superDesc, final EObject source,
 			final Facets facets) {
 		super(keyword, superDesc, source, /* null, */facets);
-		if (facets != null && !facets.containsKey(TYPE) && !isExperimentParameter()) {
-			facets.putAsLabel(TYPE, keyword);
-		}
-		setIf(Flag.isFunction, hasFacet(FUNCTION));
-		setIf(Flag.isContextualType, computesContextualType());
-		setIf(Flag.IsParameter, isExperimentParameter() || hasFacet(PARAMETER));
-		setIf(Flag.Global, superDesc instanceof ModelDescription);
-		setIf(Unmodifiable,
-				facets != null && (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE)) && !isParameter());
-		setIf(Updatable, !isSet(Unmodifiable) && (hasFacet(VALUE) || hasFacet(UPDATE)));
-		if (isBuiltIn() && hasFacet("depends_on")) {
-			final IExpressionDescription desc = getFacet("depends_on");
-			final Collection<String> strings = desc.getStrings(this, false);
-			dependencies.put(getName(), strings);
-			removeFacets("depends_on");
+		if (facets != null) {
+			if (!hasFacet(TYPE) && !isExperimentParameter()) { facets.putAsLabel(TYPE, keyword); }
+			setIf(Flag.isFunction, hasFacet(FUNCTION));
+			setIf(Flag.isContextualType, computesContextualType());
+			setIf(Flag.IsParameter, isExperimentParameter() || hasFacet(PARAMETER) && facets.equals(PARAMETER, TRUE));
+			setIf(Flag.Global, superDesc instanceof ModelDescription);
+			setIf(Unmodifiable, (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE)) && !isParameter());
+			setIf(Updatable, !isSet(Unmodifiable) && (hasFacet(VALUE) || hasFacet(UPDATE)));
+			if (isBuiltIn() && hasFacet("depends_on")) {
+				final IExpressionDescription desc = getFacet("depends_on");
+				final Collection<String> strings = desc.getStrings(this, false);
+				dependencies.put(getName(), strings);
+				removeFacets("depends_on");
+			}
 		}
 
 	}
@@ -182,6 +171,7 @@ public class VariableDescription extends SymbolDescription {
 		if (get == null) { get = v2.get; }
 		if (set == null) { set = v2.set; }
 		if (init == null) { init = v2.init; }
+		definitionClass = v2.definitionClass;
 		// if (listeners == null) { listeners = v2.listeners; }
 	}
 
@@ -191,6 +181,7 @@ public class VariableDescription extends SymbolDescription {
 		vd.addHelpers(get, init, set);
 		// vd.listeners = listeners;
 		vd.originName = getOriginName();
+		vd.setDefinitionClass(definitionClass);
 		return vd;
 	}
 
@@ -360,31 +351,35 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public String getTitle() {
-		final String title = getGamlType().getTitle()
-				+ (isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
+		final String title = (isParameter() ? "Parameter " : isNotModifiable() ? "Constant " : "Attribute ") + getName()
+				+ ", of type " + getGamlType().getTitle() + ", ";
 		if (getEnclosingDescription() == null) return title;
-		return title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
+		return title + "defined in " + this.getEnclosingDescription().getTitle() + "<br/>";
 	}
 
 	@Override
-	public String getDocumentation() {
+	public Doc getDocumentation() {
 		final String doc = getBuiltInDoc();
-		if (isBuiltIn()) return doc == null ? "Not yet documented" : doc;
+		if (isBuiltIn()) return new ConstantDoc(doc == null ? "Not yet documented" : doc);
 		StringBuilder s = new StringBuilder();
 		if (doc != null) { s.append(doc).append("<br/>"); }
-		return s.append(getMeta().getFacetsDocumentation()).toString();
+		Doc result = new RegularDoc(s).append(getMeta().getDocumentation().get());
+		result.append("<hr/>").append("<b>").append("Datatype ").append(getGamlType().getTitle()).append("</b>")
+				.append("<br/>").append(getGamlType().getDocumentation().get());
+		return result;
 	}
 
 	/**
-	 * Gets the short description.
+	 * Gets the short documentation.
 	 *
-	 * @return the short description
+	 * @return the short documentation
 	 */
-	public String getShortDescription() {
-		StringBuilder s = new StringBuilder(", of type ").append(getGamlType().getTitle());
+	public Doc getShortDocumentation() {
+		Doc result = new RegularDoc(isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ")
+				.append("of type ").append(getGamlType().getTitle());
 		final String doc = getBuiltInDoc();
-		if (doc != null) { s.append(": ").append(doc); }
-		return s.toString();
+		if (doc != null) { result.append(". ").append(doc).append("<br/>"); }
+		return result;
 	}
 
 	/**
@@ -393,13 +388,13 @@ public class VariableDescription extends SymbolDescription {
 	 * @return the built in doc
 	 */
 	public String getBuiltInDoc() {
-		if (builtInDoc != null) return builtInDoc;
-		builtInDoc = "";
+		// if (builtInDoc != null) return builtInDoc;
+
 		final VariableDescription builtIn = getBuiltInAncestor();
-		if (builtIn == null) { builtInDoc = null; }
-		Class<?> clazz = CLASS_DEFINITIONS.get(builtIn);
-		if (clazz == null) return PREF_DEFINITIONS.get(getName());
-		final vars vars = clazz.getAnnotationsByType(vars.class)[0];
+		if (builtIn == null) return null;
+		String builtInDoc = "";
+		if (definitionClass == null) return PREF_DEFINITIONS.get(getName());
+		final vars vars = definitionClass.getAnnotationsByType(vars.class)[0];
 		for (final msi.gama.precompiler.GamlAnnotations.variable v : vars.value()) {
 			if (v.name().equals(name)) {
 				final doc[] docs = v.doc();
@@ -528,5 +523,28 @@ public class VariableDescription extends SymbolDescription {
 	 * @return true, if is contextual type
 	 */
 	public boolean isContextualType() { return isSet(Flag.isContextualType); }
+
+	/**
+	 * Sets the built in doc.
+	 *
+	 * @param definitionClass
+	 *            the new built in doc
+	 */
+	public void setDefinitionClass(final Class definitionClass) { this.definitionClass = definitionClass; }
+
+	@Override
+	protected void flagError(final String s, final String code, final boolean warning, final boolean info,
+			final EObject source, final String... data) throws GamaRuntimeException {
+		if (isExperimentParameter()) {
+			EObject param = getUnderlyingElement();
+			if (EcoreUtil.isAncestor(param, source)) {
+				super.flagError(s, code, warning, info, source, data);
+			} else {
+				super.flagError(s, code, warning, info, param, data);
+			}
+		} else {
+			super.flagError(s, code, warning, info, source, data);
+		}
+	}
 
 }

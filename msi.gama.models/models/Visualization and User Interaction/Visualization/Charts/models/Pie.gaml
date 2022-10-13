@@ -32,7 +32,7 @@ experiment "Different Pies" type: gui
 
 		display "data_3Dpie_chart" type: java2D
 		{
-			chart "data_3Dpie_chart" type: pie style: "3d"
+			chart "data_3Dpie_chart" type: pie style: 3d
 			{
 				data "BCC" value: 2 * cycle color: # black;
 				data "ABC" value: cycle * cycle color: # blue;
@@ -41,7 +41,7 @@ experiment "Different Pies" type: gui
 
 		}
 
-		display "datalist_pie_chart" type: java2D
+		display "datalist_pie_chart" type: 2d
 		{
 			chart "datalist_pie_chart" type: pie style: exploded  series_label_position: "none" 
 			{

@@ -175,10 +175,10 @@ public class TypeConverter {
 
 		// FIPA
 		hm.put("msi.gaml.extensions.fipa.Conversation", "conversation");
-		hm.put("msi.gaml.extensions.fipa.Message", "message");
 		
+		hm.put("msi.gaml.extensions.fipa.Message", "message");	
 		hm.put("msi.gama.extensions.messaging.GamaMessage", "message");
-		
+		hm.put("msi.gaml.extensions.fipa.FIPAMessage", "message");
 
 		hm.put("msi.gama.util.IPath", "path");
 		hm.put("msi.gama.util.path.IPath", "path");
@@ -240,10 +240,22 @@ public class TypeConverter {
 		hm.put(16, "container");
 		hm.put(17, "path");
 		hm.put(18, "topology");
+		hm.put(19, "font");
+		hm.put(20, "image");
+		hm.put(21, "regression");
+		hm.put(23, "date");
+		hm.put(24, "message");
+		hm.put(25, "material");
+		hm.put(29, "kml");
+		hm.put(30, "directory");
+		hm.put(31, "field");
 		hm.put(50, "available_types");
 		hm.put(99, "message");
 		hm.put(100, "species_types");
 
+		hm.put(-27, "agent");		// a simulation agent
+		hm.put(-29, "agent");		// a host agent
+		hm.put(-199, "agent");		// agent / linked road
 		hm.put(-200, "a label");
 		hm.put(-201, "an identifier");
 		hm.put(-202, "a datatype identifier");

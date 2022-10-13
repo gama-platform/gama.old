@@ -1,26 +1,36 @@
 package msi.gama.headless.listener;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import msi.gama.headless.common.Globals;
+import msi.gama.headless.core.GamaServerMessage;
+import msi.gama.headless.core.GamaServerMessageType;
+import msi.gama.headless.core.GamaServerGUIHandler;
 import msi.gama.headless.job.ManualExperimentJob;
-import msi.gama.headless.runtime.Application; 
-import ummisco.gama.network.websocket.WebSocketPrintStream;
+import msi.gama.headless.runtime.Application;
+import msi.gama.runtime.GAMA;
+import msi.gama.util.file.json.Jsoner;
 
+
+/**
+ * Class in charge of creating the socket server and handling top-level exceptions for gama-server
+ *
+ */
 public class GamaListener {
+	
 	/** The instance. */
 	private GamaWebSocketServer instance;
+	
 	/** The simulations. */
 	final private ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>> launched_experiments = new ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>>();
 	public ConcurrentHashMap<String, ConcurrentHashMap<String, ManualExperimentJob>> getLaunched_experiments() {
 		return launched_experiments;
 	}
 
-	private static WebSocketPrintStream bufferStream;
+	private static PrintStream errorStream;
 
 	public GamaListener(final int p, final Application a, final boolean secure) {
 		File currentJavaJarFile = new File(
@@ -30,18 +40,11 @@ public class GamaListener {
 		Globals.TEMP_PATH = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "../temp";
 
 		Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
-//		File f = new File(Globals.TEMP_PATH);
-//		deleteFolder(f);
-//		// check if the directory can be created
-//		// using the abstract path name
-//		if (f.mkdir()) {
-//			System.out.println("TEMP Directory is created");
-//		} else {
-//			System.out.println("TEMP Directory cannot be created");
-//		}
+		GAMA.setHeadLessMode(true, new GamaServerGUIHandler()); //todo: done here and in headless simulation loader, should be refactored
 		createSocketServer(p, a, secure);
 	}
 
+	//TODO: delete ?
 	void deleteFolder(File file) {
 		if (file.listFiles() != null) {
 			for (File subFile : file.listFiles()) {
@@ -63,23 +66,26 @@ public class GamaListener {
 	public void createSocketServer(final int port, final Application a, final boolean ssl) {
 		instance = new GamaWebSocketServer(port, a, this, ssl);
 		instance.start();
-//		System.out.println("Gama Listener started on port: " + instance.getPort());
-		bufferStream = new WebSocketPrintStream(System.out, instance);
-		// System.setOut(bufferStream);
-
-		BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Gama Listener started on port: " + instance.getPort());
+		
+		errorStream =  new PrintStream(System.err) {
+			
+			@Override
+			public void println(String x) {
+				super.println(x);
+				instance.broadcast(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.GamaServerError , x)));
+			}
+		};
+		System.setErr(errorStream);
+		
 		try {
 
+			//empty loop to keep alive the server and catch exceptions
 			while (true) {
-				String in = sysin.readLine();
-//				instance.broadcast(in);
-				if ("exit".equals(in)) {
-					instance.stop(1000);
-					break;
-				}
 			}
+			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			ex.printStackTrace(); //will be broadcasted to every client
 		}
 	}
 

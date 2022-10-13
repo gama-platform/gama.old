@@ -24,6 +24,7 @@ public interface IDisplayCreator {
 	 */
 	public static class DisplayDescription implements IDisplayCreator, IGamlDescription {
 
+
 		/** The original. */
 		private final IDisplayCreator original;
 
@@ -40,7 +41,8 @@ public interface IDisplayCreator {
 		 * @param plugin
 		 *            the plugin
 		 */
-		public DisplayDescription(final IDisplayCreator original, final String name, final String plugin) {
+		public DisplayDescription(final IDisplayCreator original, final String name, 
+				final String plugin) {
 			this.original = original;
 			this.name = name;
 			this.plugin = plugin;
@@ -106,14 +108,6 @@ public interface IDisplayCreator {
 		 */
 		@Override
 		public String getTitle() { return "Display supported by " + getName() + ""; }
-
-		/**
-		 * Method getDocumentation()
-		 *
-		 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
-		 */
-		@Override
-		public String getDocumentation() { return ""; }
 
 		/**
 		 * Method getDefiningPlugin()
