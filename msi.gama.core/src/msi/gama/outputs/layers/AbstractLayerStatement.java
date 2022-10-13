@@ -71,10 +71,10 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 			// Are we in OpenGL world ?
 			IDescription display = d;
 			final String type = display.getLitteral(TYPE);
-			final boolean isOpenGLDefault = !"Java2D".equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
 
-			if (type != null) return LayeredDisplayData.OPENGL.equals(type);
+			if (type != null) return IKeyword._3D.equals(type) || IKeyword.OPENGL.equals(type);
 			final String parent = display.getLitteral(PARENT);
+			final boolean isOpenGLDefault = !IKeyword._2D.equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
 			if (parent == null) return isOpenGLDefault;
 			display = StreamEx.of(display.getEnclosingDescription().getChildrenWithKeyword(DISPLAY).iterator())
 					.findFirst(dspl -> dspl.getName().equals(parent)).get();

@@ -432,10 +432,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 			// Are we in OpenGL world ?
 			IExpressionDescription type = d.getFacet(TYPE);
-			final boolean isOpenGLDefault = !"Java2D".equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
+			final boolean isOpenGLDefault = !IKeyword._2D.equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
 			if (type == null) {
-				type = LabelExpressionDescription
-						.create(isOpenGLDefault ? LayeredDisplayData.OPENGL : LayeredDisplayData.JAVA2D);
+				type = LabelExpressionDescription.create(isOpenGLDefault ? IKeyword._3D : IKeyword._2D);
 				d.setFacet(TYPE, type);
 			}
 			String cand = "";
@@ -643,7 +642,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (scope.getExperiment().isHeadless()) {
 			// If in headless mode, we need to get the 'image' surface
 			getData().setDisplayType(IKeyword.IMAGE);
-		} else if (getData().isOpenGL()) // The surface will be crezated later
+		} else if (getData().is3D()) // The surface will be created later
 			return;
 		surface = scope.getGui().createDisplaySurfaceFor(this);
 	}
@@ -652,7 +651,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public String getViewId() {
 		if (getData().isWeb()) return IGui.GL_LAYER_VIEW_ID3;
 		if (getData().isOpenGL2()) return IGui.GL_LAYER_VIEW_ID2;
-		if (getData().isOpenGL()) return IGui.GL_LAYER_VIEW_ID;
+		if (getData().is3D()) return IGui.GL_LAYER_VIEW_ID;
 		return IGui.LAYER_VIEW_ID;
 	}
 
@@ -742,7 +741,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final boolean wasPaused = isPaused();
 		super.setPaused(paused);
 		if (surface == null) return;
-		if (getData().isOpenGL()) { ((IDisplaySurface.OpenGL) surface).setPaused(paused); }
+		if (getData().is3D()) { ((IDisplaySurface.OpenGL) surface).setPaused(paused); }
 		if (wasPaused && !paused) { surface.updateDisplay(false); }
 	}
 
@@ -830,6 +829,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public IGraphicsScope getScope() { return (IGraphicsScope) super.getScope(); }
 
+	/**
+	 * Link scope with graphics.
+	 */
 	public void linkScopeWithGraphics() {
 		IGraphicsScope scope = getScope();
 		IDisplaySurface surface = getSurface();

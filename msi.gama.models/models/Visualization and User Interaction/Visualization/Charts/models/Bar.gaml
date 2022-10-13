@@ -42,7 +42,7 @@ experiment "Multiple displays" type: gui {
 					marker_shape:marker_circle ;
 			}
 		} 
-		display "data_cumulative_bar_chart" type:java2D {
+		display "data_cumulative_bar_chart" type:2d {
 			chart "data_cumulative_bar_chart" type:histogram 
 			style:stack
 			x_serie_labels:("cycle"+cycle)
@@ -60,7 +60,7 @@ experiment "Multiple displays" type: gui {
 			}
 		} 
  		
-		display "data_non_cumulative_bar_chart" type:java2D {
+		display "data_non_cumulative_bar_chart" type: 2d {
 			chart "data_non_cumulative_bar_chart" type:histogram 
 			x_serie_labels: ["categ1","categ2"]
 			style:"3d"
@@ -78,7 +78,7 @@ experiment "Multiple displays" type: gui {
 			}
 		} 
  		
-		display "datalist_bar_cchart" type:java2D {
+		display "datalist_bar_cchart" type:2d {
 			chart "datalist_bar" type:histogram 
 			series_label_position: onchart
 			{
@@ -89,7 +89,7 @@ experiment "Multiple displays" type: gui {
 			}
 		}
 
-		display "onvalue_cumulative_bar_chart" type:java2D {
+		display "onvalue_cumulative_bar_chart" type:2d {
 			chart "onvalue_cumulative_bar_chart" type:histogram 
 			series_label_position: yaxis
 			x_label: "my_time_label"
@@ -100,7 +100,7 @@ experiment "Multiple displays" type: gui {
 					color: #red;
 			}
 		}
-		display "data_cumulative_style_chart" type:java2D {
+		display "data_cumulative_style_chart" type:2d {
 			chart "Style Cumulative chart" type:histogram style:stack
 			 	{ 
 				data "Step" value:cos(100*cycle+40)

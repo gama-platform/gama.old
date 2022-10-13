@@ -81,7 +81,8 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
  * @since 25 mars 2015
  *
  */
-@display ("opengl")
+@display (
+		value = { "opengl", "3d" })
 @doc ("Displays that uses the OpenGL technology to display their layers in 3D")
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 

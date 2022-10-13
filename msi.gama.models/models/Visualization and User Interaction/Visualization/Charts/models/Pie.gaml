@@ -41,7 +41,7 @@ experiment "Different Pies" type: gui
 
 		}
 
-		display "datalist_pie_chart" type: java2D
+		display "datalist_pie_chart" type: 2d
 		{
 			chart "datalist_pie_chart" type: pie style: exploded  series_label_position: "none" 
 			{

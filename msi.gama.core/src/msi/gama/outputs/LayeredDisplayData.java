@@ -10,9 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.outputs;
 
-import static msi.gama.common.interfaces.IKeyword.DEFAULT;
-import static msi.gama.outputs.layers.properties.ILightDefinition.ambient;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,20 +66,11 @@ public class LayeredDisplayData {
 		ZOOM
 	}
 
-	/** The Constant JAVA2D. */
-	public static final String JAVA2D = "java2D";
-
-	/** The Constant OPENGL. */
-	public static final String OPENGL = "opengl";
-
 	/** The Constant OPENGL2. */
 	public static final String OPENGL2 = "opengl2";
 
 	/** The Constant WEB. */
 	public static final String WEB = "web";
-
-	/** The Constant THREED. */
-	public static final String THREED = "3D";
 
 	/** The Constant INITIAL_ZOOM. */
 	public static final Double INITIAL_ZOOM = 1.0;
@@ -172,8 +160,8 @@ public class LayeredDisplayData {
 	// private boolean isSynchronized = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
 	/** The display type. */
-	private String displayType =
-			JAVA2D.equalsIgnoreCase(GamaPreferences.Displays.CORE_DISPLAY.getValue()) ? JAVA2D : OPENGL;
+	private String displayType = IKeyword._2D.equalsIgnoreCase(GamaPreferences.Displays.CORE_DISPLAY.getValue())
+			? IKeyword._2D : IKeyword._3D;
 
 	/** The env width. */
 	private double envWidth = 0d;
@@ -198,7 +186,7 @@ public class LayeredDisplayData {
 	private final ICoordinates keystone = (ICoordinates) KEYSTONE_IDENTITY.clone();
 
 	/** The is open GL. */
-	private boolean isOpenGL;
+	private boolean is3D;
 
 	/**
 	 * OpenGL
@@ -362,7 +350,7 @@ public class LayeredDisplayData {
 	 */
 	public void setDisplayType(final String displayType) {
 		this.displayType = displayType;
-		isOpenGL = OPENGL.equals(displayType) || THREED.equals(displayType) || OPENGL2.equals(displayType);
+		is3D = IKeyword.OPENGL.equals(displayType) || IKeyword._3D.equals(displayType) || OPENGL2.equals(displayType);
 
 	}
 
@@ -538,7 +526,7 @@ public class LayeredDisplayData {
 		SimulationAgent sim = scope.getSimulation();
 		// hqnghi if layer come from micro-model
 		final ModelDescription micro = desc.getModelDescription();
-		final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
+		final ModelDescription main = scope.getModel().getDescription();
 		final boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 		if (fromMicroModel) {
 			final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
@@ -732,7 +720,9 @@ public class LayeredDisplayData {
 	 *
 	 * @return true, if is open GL
 	 */
-	public boolean isOpenGL() { return isOpenGL; }
+	public boolean is3D() {
+		return is3D;
+	}
 
 	// ************************************************************************************************
 	// ************************************************************************************************
@@ -1009,9 +999,9 @@ public class LayeredDisplayData {
 	/** The lights. */
 	private final Map<String, ILightDefinition> lights = new LinkedHashMap<>() {
 		{
-			put(ambient, new GenericLightDefinition(ambient, -1,
+			put(ILightDefinition.ambient, new GenericLightDefinition(ILightDefinition.ambient, -1,
 					GamaPreferences.Displays.OPENGL_DEFAULT_LIGHT_INTENSITY.getValue()));
-			put(DEFAULT, new GenericLightDefinition(DEFAULT, 0,
+			put(IKeyword.DEFAULT, new GenericLightDefinition(IKeyword.DEFAULT, 0,
 					GamaPreferences.Displays.OPENGL_DEFAULT_LIGHT_INTENSITY.getValue()));
 		}
 	};

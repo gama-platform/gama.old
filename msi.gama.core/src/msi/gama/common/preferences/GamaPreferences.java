@@ -537,8 +537,8 @@ public class GamaPreferences {
 
 		/** The Constant CORE_DISPLAY. */
 		public static final Pref<String> CORE_DISPLAY =
-				create("pref_display_default", "Default rendering method (Java2D for 2D, OpenGL for 3D)", "Java2D",
-						IType.STRING, true).among("Java2D", "OpenGL").in(NAME, DRAWING);
+				create("pref_display_default", "Default rendering method", IKeyword._2D, IType.STRING, true)
+						.among(IKeyword._2D, IKeyword._3D).in(NAME, DRAWING);
 
 		/** The Constant CORE_ANTIALIAS. */
 		public static final Pref<Boolean> CORE_ANTIALIAS =

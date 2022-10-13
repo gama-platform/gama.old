@@ -64,7 +64,12 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 /**
  * The Class Java2DDisplaySurface.
  */
-@display ("java2D")
+
+/**
+ * The Class Java2DDisplaySurface.
+ */
+@display (
+		value = { "java2D", "2d" })
 @doc ("Display that uses the Java2D technology to draw the layers in a SWT view")
 public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
@@ -818,8 +823,15 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	}
 
+	/** The visibility block. */
 	java.util.function.Supplier<Boolean> visibilityBlock;
 
+	/**
+	 * Sets the visibility.
+	 *
+	 * @param visibilityBlock
+	 *            the new visibility
+	 */
 	public void setVisibility(final java.util.function.Supplier<Boolean> visibilityBlock) {
 		this.visibilityBlock = visibilityBlock;
 	}
