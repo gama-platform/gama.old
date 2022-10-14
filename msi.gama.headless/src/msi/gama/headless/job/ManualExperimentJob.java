@@ -52,14 +52,14 @@ public class ManualExperimentJob extends ExperimentJob {
 	public ServerExperimentController controller;
 
 	public ManualExperimentJob(final String sourcePath, final String exp, final GamaWebSocketServer gamaWebSocketServer,
-			final WebSocket sk, final GamaJsonList p) {
+			final WebSocket sk, final GamaJsonList p, boolean console, boolean status, boolean dialog) {
 		// (final String sourcePath, final String exp, final long max, final String untilCond,
 		// final double s)
 		super(sourcePath, exp, 0, "", 0);
 		server = gamaWebSocketServer;
 		socket = sk;
 		params = p;
-		controller = new ServerExperimentController(this, socket);
+		controller = new ServerExperimentController(this, socket, console, status, dialog);
 	}
 
 	@Override
@@ -85,7 +85,6 @@ public class ManualExperimentJob extends ExperimentJob {
 		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
 		initEndContion(endCond);
-
 	}
 
 	public void initParam(final GamaJsonList p) {

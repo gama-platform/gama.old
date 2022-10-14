@@ -111,6 +111,11 @@ public class ServerExperimentController implements IExperimentController {
 	
 	private WebSocket socket;
 
+
+	public final boolean redirectConsole;
+	public final boolean redirectStatus;
+	public final boolean redirectDialog;
+	
 	/** The commands. */
 	protected volatile ArrayBlockingQueue<Integer> commands;
 
@@ -130,13 +135,16 @@ public class ServerExperimentController implements IExperimentController {
 	 * @param experiment
 	 *            the experiment
 	 */
-	public ServerExperimentController(final ManualExperimentJob j, WebSocket sock) {
-		socket = sock;
-		commands = new ArrayBlockingQueue<>(10);
-		_job = j;
+	public ServerExperimentController(final ManualExperimentJob j, WebSocket sock, boolean console, boolean status, boolean dialog) {
+		
+		_job 			= j;
+		socket 			= sock;
+		redirectConsole = console;
+		redirectStatus	= status;
+		redirectDialog	= dialog;
+		commands 		= new ArrayBlockingQueue<>(10);
 		executionThread = new MyRunnable(j);
-		// this.experiment = experiment;
-		// executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		try {
 			lock.acquire();
@@ -369,8 +377,11 @@ public class ServerExperimentController implements IExperimentController {
 	public void schedule(final ExperimentAgent agent) {
 		this.agent = agent;
 		scope = agent.getScope();
-		scope.setData("socket", socket);
+		scope.setData("socket",	socket);
 		scope.setData("exp_id", _job.getExperimentID());
+		scope.setData("console",redirectConsole);
+		scope.setData("status", redirectStatus);
+		scope.setData("dialog", redirectDialog);
 		try {
 			if (!scope.init(agent).passed()) {
 				scope.setDisposeStatus();

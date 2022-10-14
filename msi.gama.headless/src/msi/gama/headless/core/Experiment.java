@@ -117,10 +117,13 @@ public class Experiment implements IExperiment {
 
 				final IParameter.Batch b = curExperiment.getParameterByTitle(m.get("name").toString());
 				if (b != null) {
-					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
-							v);
+					curExperiment.setParameterValueByTitle(	curExperiment.getExperimentScope(), 
+															m.get("name").toString(),
+															v);
 				} else {
-					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(), v);
+					curExperiment.setParameterValue(	curExperiment.getExperimentScope(), 
+														m.get("name").toString(), 
+														v);
 				}
 
 				// curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);

@@ -43,20 +43,6 @@ public class GamaListener {
 		GAMA.setHeadLessMode(true, new GamaServerGUIHandler()); //todo: done here and in headless simulation loader, should be refactored
 		createSocketServer(p, a, secure);
 	}
-
-	//TODO: delete ?
-	void deleteFolder(File file) {
-		if (file.listFiles() != null) {
-			for (File subFile : file.listFiles()) {
-				if (subFile.isDirectory()) {
-					deleteFolder(subFile);
-				} else {
-					subFile.delete();
-				}
-			}
-			file.delete();
-		}
-	} 
 	
 	/**
 	 * Creates the socket server.

@@ -62,18 +62,26 @@ public class LoadCommand implements ISocketCommand {
 		if (!GamlFileExtension.isGaml(ff.getAbsoluteFile().toString())) {
 			DEBUG.OUT(ff.getAbsolutePath() + " is not a gaml file");
 			return new CommandResponse(	GamaServerMessageType.UnableToExecuteRequest, 
-										pathToModel + "is not a gaml file",
+										pathToModel + " is not a gaml file",
 										map, 
 										false);
 		}
 		final String argExperimentName = map.get("experiment").toString(); 
 
 		ManualExperimentJob selectedJob = null;
+
+		var console = map.get("console") != null? (boolean) map.get("console") : true;
+		var status 	= map.get("status") != null	? (boolean) map.get("status") : false;
+		var dialog 	= map.get("dialog") != null	? (boolean) map.get("dialog") : false;
+		
 		selectedJob = new ManualExperimentJob(	ff.getAbsoluteFile().toString(), 
 												argExperimentName, 
 												gamaWebSocketServer,
 												socket, 
-												params);
+												params,
+												console,
+												status,
+												dialog);
 
 		Globals.OUTPUT_PATH = ".";//TODO: why ?
 

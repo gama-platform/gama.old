@@ -16,7 +16,7 @@ public class PlayCommand implements ISocketCommand {
 		final Object 	socket_id 	= map.get("socket_id");
 		final boolean 	sync 		= map.get("sync") != null ? (boolean) map.get("sync") : false;
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
-		DEBUG.OUT("launch");
+		DEBUG.OUT("play");
 		DEBUG.OUT(map.get("model"));
 		DEBUG.OUT(map.get("experiment"));
 		

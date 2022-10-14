@@ -46,16 +46,30 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 		}
 	}
 	
+	
+	private boolean canSendDialogMessages(IScope scope) {
+		return 		(scope != null && scope.getData("dialog") != null) 
+				? 	(boolean) scope.getData("dialog")
+				:	true;
+	}
+	
 	@Override
 	public void openMessageDialog(final IScope scope, final String message) {
 		DEBUG.OUT(message);
+		if ( ! canSendDialogMessages(scope)) {
+			return;
+		}
 		sendMessage(scope.getExperiment(), message, GamaServerMessageType.SimulationDialog);
 	}
 
 	@Override
 	public void openErrorDialog(final IScope scope, final String error) {
+		
 		DEBUG.OUT(error);
-		sendMessage(scope.getExperiment(), error, GamaServerMessageType.SimulationError);
+		if ( ! canSendDialogMessages(scope)) {
+			return;
+		}
+		sendMessage(scope.getExperiment(), error, GamaServerMessageType.SimulationErrorDialog);
 	}
 
 	@Override
@@ -70,6 +84,15 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 		if (status == null) {
 			status = new IStatusDisplayer() {
 
+				
+				private boolean canSendMessage(IExperimentAgent exp) {
+					var scope = exp.getScope();
+					return 		(scope != null && scope.getData("status") != null)
+							? (boolean) scope.getData("status") 
+							: true;
+				}
+				
+				
 				@Override
 				public void resumeStatus(IScope scope) {}
 
@@ -79,6 +102,10 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				@Override
 				public void informStatus(final String string, IScope scope) {
 
+					if ( ! canSendMessage(scope.getExperiment())) {
+						return ;
+					}
+					
 					try {
 						sendMessage(scope.getExperiment(),
 									Jsoner.deserialize(
@@ -101,6 +128,10 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				@Override
 				public void errorStatus(final String message, IScope scope) {
 
+					if ( ! canSendMessage(scope.getExperiment())) {
+						return ;
+					}
+					
 					try {
 						sendMessage(scope.getExperiment(),
 									Jsoner.deserialize(
@@ -126,6 +157,10 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				@Override
 				public void setStatus(final String msg, final GamaColor color, IScope scope) {
 
+					if ( ! canSendMessage(scope.getExperiment())) {
+						return ;
+					}
+					
 					try {
 						sendMessage(scope.getExperiment(),
 									Jsoner.deserialize(
@@ -149,6 +184,10 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				@Override
 				public void informStatus(final String message, final String icon, IScope scope) {
 
+					if ( ! canSendMessage(scope.getExperiment())) {
+						return ;
+					}
+					
 					try {
 						sendMessage(scope.getExperiment(),
 									Jsoner.deserialize(
@@ -172,6 +211,12 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 
 				@Override
 				public void setStatus(final String msg, final String icon, IScope scope) {
+
+					if ( ! canSendMessage(scope.getExperiment())) {
+						return ;
+					}
+					
+					
 					try {
 						sendMessage(scope.getExperiment(),
 									Jsoner.deserialize(
@@ -201,6 +246,10 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				@Override
 				public void neutralStatus(final String string, IScope scope) {		
 
+					if ( ! canSendMessage(scope.getExperiment())) {
+						return ;
+					}
+					
 					try {
 						sendMessage(scope.getExperiment(),
 									Jsoner.deserialize(
@@ -232,6 +281,13 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 			
 			console = new IConsoleDisplayer() {
 				
+				private boolean canSendMessage(IExperimentAgent exp) {
+					var scope = exp.getScope();
+					return 		(scope != null && scope.getData("console") != null)
+							? (boolean) scope.getData("console") 
+							: true;
+				}
+				
 				@Override
 				public void showConsoleView(ITopLevelAgent agent) {
 					//nothing to do
@@ -244,6 +300,11 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				
 				@Override
 				public void informConsole(String s, ITopLevelAgent root, GamaColor color) {
+
+					if ( ! canSendMessage(root.getExperiment()) )
+						return;
+					
+					
 					try {
 						sendMessage(root.getExperiment(),
 									Jsoner.deserialize(
@@ -276,6 +337,10 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				
 				@Override
 				public void debugConsole(int cycle, String s, ITopLevelAgent root, GamaColor color) {
+					
+					if ( ! canSendMessage(root.getExperiment()) )
+						return;
+					
 					try {
 						sendMessage(root.getExperiment(), 
 									Jsoner.deserialize("{" 
