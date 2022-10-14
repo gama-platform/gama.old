@@ -89,7 +89,7 @@ experiment "Load OSM" type: gui
 	parameter "File:" var: osmfile <- file<geometry> (osm_file("../includes/rouen.gz", filtering));
 	output
 	{
-		display map type: opengl
+		display map type: 3d
 		{
 			species building refresh: false;
 			species road refresh: false;

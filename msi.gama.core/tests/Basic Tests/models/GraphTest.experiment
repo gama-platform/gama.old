@@ -47,7 +47,7 @@ draw string(self as int) color: #black font: font("Helvetica", 14 , #bold) at: m
 experiment loadgraph type: gui {
 	
 	output {
-		display map type: opengl{
+		display map type: 3d{
 			species edge_agent ;
 			species node_agent ;
 		}

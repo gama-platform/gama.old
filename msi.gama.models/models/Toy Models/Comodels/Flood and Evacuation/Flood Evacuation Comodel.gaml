@@ -85,7 +85,7 @@ experiment simple type: gui
 {
 	output
 	{
-		display "Comodel Display"  type:opengl
+		display "Comodel Display"  type:3d
 		{
 			agents "building" value: Evacuation."Adapter of Evacuation"  accumulate each.get_building();
 			agents "people" value:  Evacuation."Adapter of Evacuation"  accumulate each.get_people();

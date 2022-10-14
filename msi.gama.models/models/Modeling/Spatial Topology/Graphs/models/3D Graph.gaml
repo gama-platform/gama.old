@@ -84,7 +84,7 @@ species node_agent skills: [moving3D] {
 
 experiment Display type: gui {
 	output {
-		display WanderingSphere type: opengl { 
+		display WanderingSphere type: 3d { 
 			species node_agent aspect: dynamic;
 			graphics "edges" {
 				//Creation of the edges of adjacence
@@ -104,7 +104,7 @@ experiment Display type: gui {
 
 experiment SimpleDisplay type: gui {
 	output {
-		display WanderingSphere type: opengl { 
+		display WanderingSphere type: 3d { 
 			species node_agent aspect: base;
 			graphics "edges" {
 				if (my_graph != nil) {

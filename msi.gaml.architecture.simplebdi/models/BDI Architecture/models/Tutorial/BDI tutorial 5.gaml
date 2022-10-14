@@ -327,14 +327,14 @@ species socialLinkRepresentation{
 
 experiment GoldBdi type: gui {
 	output {
-		display map type: opengl {
+		display map type: 3d {
 			species market ;
 			species gold_mine ;
 			species miner;
 			species policeman aspect:base;
 		}	
 		
-        display socialLinks type: opengl{
+        display socialLinks type: 3d{
         	species socialLinkRepresentation aspect: base;
     	}
 

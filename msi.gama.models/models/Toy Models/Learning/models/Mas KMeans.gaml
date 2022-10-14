@@ -207,7 +207,7 @@ experiment clustering3D type: gui
 	// The display is explicitly synchronized to avoid concurrency issues (if the points are changed in the simulation while being displayed)
 	output synchronized: true
 	{
-		display map_kmeans type: opengl
+		display map_kmeans type: 3d
 		{
 			species datapoints aspect: kmeans_aspect3D transparency:0.4;
 			species centroids aspect: kmeans_aspect3D;

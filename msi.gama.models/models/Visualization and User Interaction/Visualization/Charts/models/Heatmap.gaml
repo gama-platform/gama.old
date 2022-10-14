@@ -68,7 +68,7 @@ experiment "Different heatmaps" type: gui
 		tabs: false
 		;	
 		
-		display "Nice Heatmap" type: opengl
+		display "Nice Heatmap" type: 3d
 		{
 			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: font('Serif', 32.0, #italic) tick_font:
 			font('Monospaced', 14, #bold) label_font: font('Serif', 18, #plain) legend_font: font('SanSerif', 18, #bold) x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'
@@ -77,7 +77,7 @@ experiment "Different heatmaps" type: gui
 			}
 		}
 
-		display "listOflist_heatmap" type: java2D
+		display "listOflist_heatmap" type: 2d
 		{
 			chart "listOflist_heatmap" type: heatmap
 			{
@@ -87,7 +87,7 @@ experiment "Different heatmaps" type: gui
 
 		}
 
-		display "list_heatmap" type: java2D
+		display "list_heatmap" type: 2d
 		{
 			chart "list_heatmap" type: heatmap
 			{
@@ -96,7 +96,7 @@ experiment "Different heatmaps" type: gui
 
 		}
 
-		display "simple_heatmap2" type: java2D
+		display "simple_heatmap2" type: 2d
 		{
 			chart "simple heatmap2" type: heatmap
 			{
@@ -113,7 +113,7 @@ experiment Heatmap type: gui
 {
 	output synchronized: true
 	{
-		display "list_heatmap" type: java2D
+		display "list_heatmap" type: 2d
 		{
 			chart "list_heatmap" type: heatmap
 			{

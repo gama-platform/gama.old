@@ -112,13 +112,13 @@ experiment main type: gui {
 			species people aspect:circle;			
 		}
 	
-		display chart_display type: java2D refresh: every(10 #cycles) {
+		display chart_display type: 2d refresh: every(10 #cycles) {
 			chart "Disease spreading" type: series {
 				data "susceptible" value: nb_people_not_infected color: #green;
 				data "infected" value: nb_people_infected color: #red;
 			}
 		}
-		display view3D type: opengl antialias: false {
+		display view3D type: 3d antialias: false {
 			light #ambient intensity: 80;
 			image "../includes/luneray.jpg" refresh:false; 
 			species building aspect:geom3D refresh: false;

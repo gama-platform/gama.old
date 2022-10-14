@@ -54,7 +54,7 @@ grid cell file: dem neighbors: neighborhood_type optimizer: algorithm;
 
 experiment goto_grid type: gui {
 	output {
-		display objects_display type: opengl{
+		display objects_display type: 3d{
 			grid cell border: #black;
 			graphics "elements" {
 				draw circle(1) color: #green at: source border: #black;

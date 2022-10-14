@@ -47,7 +47,7 @@ grid cells height: size width: size neighbors: 8 {
 
 experiment diffusion type: gui {
 	output {
-		display a type: opengl {
+		display a type: 3d {
 			// Display the grid with elevation
 			grid cells elevation: true triangulation: true;
 		}

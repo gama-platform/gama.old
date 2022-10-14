@@ -59,7 +59,7 @@ experiment loadgraph type: gui {
 	parameter "Number of edges added per novel node" var: m min: 1 max: 10 category: "scale-free";
 	
 	output {
-		display map type: opengl{
+		display map type: 3d{
 			species edge_agent ;
 			species node_agent ;
 		}

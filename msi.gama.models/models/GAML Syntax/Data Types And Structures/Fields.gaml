@@ -78,16 +78,16 @@ experiment Fields type: gui {
 experiment Field_view type:gui{
 	output {
 		layout #split;
-		display "field through mesh" type:opengl {
+		display "field through mesh" type:3d {
 			mesh field_display grayscale:true scale: 0.05 triangulation: true smooth: true refresh: false;
 		}
-		display "rgb field through mesh" type:opengl {
+		display "rgb field through mesh" type:3d {
 			mesh field_display color:field_display.bands scale: 0.1 triangulation: true smooth: 4 refresh: false;
 		}
-		display "rnd field with palette mesh"  type:opengl {
+		display "rnd field with palette mesh"  type:3d {
 			mesh field_display.bands[2] color:scale([#red::100, #yellow::115, #green::101, #darkgreen::105]) scale:0.2 refresh: false ;
 		}
-		display "var field" type:opengl  {
+		display "var field" type:3d  {
 			mesh var_field color:(brewer_colors("RdBu")) scale:0.0;
 		}
 	}

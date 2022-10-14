@@ -40,7 +40,7 @@ grid cells height: size width: size  {
 
 experiment diffusion type: gui {
 	output {
-		display a type: opengl {
+		display a type: 3d {
 			grid cells elevation: true triangulation: true;
 		}
 	}

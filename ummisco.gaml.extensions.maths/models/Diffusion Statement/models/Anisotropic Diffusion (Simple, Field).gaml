@@ -44,23 +44,23 @@ global {
 experiment diffusion type: gui {
 	output {
 		layout #split;
-		display "Brewer" type: opengl  background: #black antialias:true  {
+		display "Brewer" type: 3d  background: #black antialias:true  {
 			mesh cells scale: 5 grayscale: true color:(brewer_colors("Set3")) triangulation: true;
 		}
 
-		display "HSB Smoothed 2" type: opengl background: #black {
+		display "HSB Smoothed 2" type: 3d background: #black {
 			mesh cells scale: 5 color: cells collect hsb(float(each)/5,1,1) triangulation: true smooth: true;
 		}
-		display "One Color Smoothed 4 with Lines" type: opengl background: #black {
+		display "One Color Smoothed 4 with Lines" type: 3d background: #black {
 			mesh cells scale: 5 color:  palette([#lightblue, #blue, #blue, #darkblue]) triangulation: true border: #yellow smooth: 4;
 		}
 		
 		
-		display "Scale" type: opengl background: #black {
+		display "Scale" type: 3d background: #black {
 			mesh cells scale:5 color: scale([#red::1, #yellow::2, #green::3, #blue::6])  ;
 		}
 		
-		display "Simple gradient" type: opengl background: #white antialias:true { 
+		display "Simple gradient" type: 3d background: #white antialias:true { 
 			mesh cells scale:0 color: palette([#lightblue, #blue, #blue, #darkblue]) ;
 			
 		}

@@ -27,7 +27,7 @@ global {
 experiment "Ripples and Fish" type: gui {
 	
 	output synchronized: true{
-		display Ripples  type: opengl camera: #from_up_front
+		display Ripples  type: 3d camera: #from_up_front
 		{
 			species fish position: {0,0,0.05};
 			graphics world transparency: 0.4{ 

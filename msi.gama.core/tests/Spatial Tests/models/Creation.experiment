@@ -52,7 +52,7 @@ experiment Visualisation type: gui {
 				draw curve({0,0},{0,10},{10,10}) color:#black;
 			}
 		}
-		display "3D" type:opengl {
+		display "3D" type:3d {
 			graphics cylinder {
 				draw cylinder(10,10) at:{25,25} color:#deepskyblue;
 				draw sphere(10) at:{25,50} color:#darkturquoise;

@@ -105,7 +105,7 @@ species intersection {
 
 experiment fromOSMtoShapefiles type: gui {
 	output {
-		display map type: opengl {
+		display map type: 3d {
 			graphics "world" {
 				draw world.shape.contour;
 			}

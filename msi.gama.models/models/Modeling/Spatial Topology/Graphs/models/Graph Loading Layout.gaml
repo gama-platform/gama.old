@@ -63,7 +63,7 @@ species node_agent {
 experiment loadgraph type: gui {
 	parameter "Layout type" var: layout_type among:["Force FR","Force FR Indexed" , "Force", "Circular", "Grid"] init:"Force FR";
 	output {
-		display map type: opengl{
+		display map type: 3d{
 			species edge_agent ;
 			species node_agent ;
 		}

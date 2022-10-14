@@ -25,11 +25,11 @@ global {
 experiment "Show heatmap" type: gui {
 	output {
 		layout #split;
-		display "Instant heatmap with palette" type: opengl axes: false background: #black  {
+		display "Instant heatmap with palette" type: 3d axes: false background: #black  {
 			// The field is displayed  without 3D rendering, a palettre of warm colors and a smoothness of 2 (meaning two passes of box blur are being done to "spread" the values)
 			mesh instant_heatmap scale: 0 color: palette([ #black, #black, #orange, #orange, #red, #red, #red]) smooth: 2 ;
 		}
-		display "History heatmap with gradient" type: opengl axes: false background: #black camera: #from_up_front {
+		display "History heatmap with gradient" type: 3d axes: false background: #black camera: #from_up_front {
 			// The field is displayed a little bit above the other layers, with a slight 3D rendering, and a smoothness of 1 (meaning one pass of box blur is being done to "spread" the values). The colors are provided by a gradient with three stops
 			mesh history_heatmap scale: 0.01 color: gradient([#black::0, #cyan::0.5, #red::1]) transparency: 0.2 position: {0, 0, 0.001} smooth:1 ;
 		 }

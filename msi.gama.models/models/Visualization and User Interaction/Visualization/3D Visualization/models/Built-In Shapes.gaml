@@ -115,7 +115,7 @@ experiment "3D Shapes"  type: gui {
 		gama.pref_display_slice_number <- old_pref;
 	}
 	output {
-		display View1 type:opengl background:rgb(10,40,55)   {
+		display View1 type:3d background:rgb(10,40,55)   {
 			species Geometry2D aspect:default;
 			species TexturedGeometry2D aspect:default;
 			species Geometry3D aspect:default;

@@ -108,7 +108,7 @@ experiment Run type: gui {
 	parameter "nb people" var: nb_people min: 1 max: 1000;
 	float minimum_cycle_duration <- 0.04; 
 	output {
-		display map type: opengl    {
+		display map type: 3d    {
 			species building refresh: false;
 			species people;
 			graphics "exit" refresh: false {

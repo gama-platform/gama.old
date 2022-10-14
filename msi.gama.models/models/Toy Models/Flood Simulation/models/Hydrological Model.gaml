@@ -282,7 +282,7 @@ experiment Run type: gui {
    parameter "Diffusion rate" var:diffusion_rate category:"Water dynamic";
    output { 
    //layout vertical([0::5000,1::5000]) tabs:false editors: false;
-      display map type: opengl {
+      display map type: 3d {
          grid cell triangulation: true;
          species buildings aspect: geometry refresh: false;
          species dyke aspect: geometry ;

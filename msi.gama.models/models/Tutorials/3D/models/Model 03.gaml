@@ -43,7 +43,7 @@ species cell skills: [moving3D] {
 experiment Tuto3D type: gui {
 	parameter "Initial number of cells: " var: nb_cells min: 1 max: 1000 category: "Cells";
 	output {
-		display View1 type: opengl background: rgb(10, 40, 55) {
+		display View1 type: 3d background: rgb(10, 40, 55) {
 			graphics "env" {
 				draw cube(environment_size) color: #black wireframe: true;
 			}

@@ -40,7 +40,7 @@ experiment Display
 	 
 	output
 	{
-		display "Google Map" type: opengl
+		display "Google Map" type: 3d
 		{
 			image static_map_request;
 		}

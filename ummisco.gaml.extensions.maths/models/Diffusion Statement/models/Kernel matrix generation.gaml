@@ -111,7 +111,7 @@ experiment my_experiment type:gui {
 		minimum_cycle_duration <- 200#ms;
 	}
 	output {
-		display my_display type: opengl {
+		display my_display type: 3d {
 			species cells aspect:base;
 		}
 	}

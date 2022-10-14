@@ -111,7 +111,7 @@ experiment MondrianGenerator type: gui {
 	parameter "Nb max of columns: " var: nb_max_columns;
 	
 	output {
-		display map type: opengl {
+		display map type: 3d {
 			species lines ;											
 			species squares ;	
 		}

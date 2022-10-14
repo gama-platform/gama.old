@@ -20,7 +20,7 @@ experiment "Different series" type: gui
 	output synchronized: true
 	{
 		layout #split toolbars: false;
-		display "data_cumulative_serie_spline_chart" type: java2D
+		display "data_cumulative_serie_spline_chart" type: 2d
 		{
 			chart "Nice cumulative series chart" type: series background: # darkblue color: # lightgreen axes: # lightgreen title_font: font( 'Serif' , 32.0, #italic)
 			 tick_font: font('Monospaced' , 14 #bold) label_font: font('Serif', 18 #plain) legend_font: font('SanSerif', 18 #bold) x_range: 50 x_tick_unit: 5 x_serie_labels: ("T+" + cycle) x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'
@@ -32,7 +32,7 @@ experiment "Different series" type: gui
 
 		}
 
-		display "style_cumulative_style_chart" type: java2D
+		display "style_cumulative_style_chart" type: 2d
 		{
 			chart "Style Cumulative chart" type: series
 			{
@@ -43,7 +43,7 @@ experiment "Different series" type: gui
 
 		}
 
-		display "style_cumulative_style_chart_without_axes" type: java2D
+		display "style_cumulative_style_chart_without_axes" type: 2d
 		{
 			chart "Style Cumulative chart Without axes" type: series 
 				y_tick_values_visible: false y_tick_line_visible: false x_tick_values_visible: false x_tick_line_visible: false
@@ -55,7 +55,7 @@ experiment "Different series" type: gui
 
 		}
 
-		display "datalist_xy_chart" type: java2D
+		display "datalist_xy_chart" type: 2d
 		{
 			chart "datalist_xy_cumulative_chart" type: xy
 			{
@@ -67,7 +67,7 @@ experiment "Different series" type: gui
 
 		}
 
-		display "datalist_xy_line_chart" type: java2D
+		display "datalist_xy_line_chart" type: 2d
 		{
 			chart "datalist_xy_cumulative_chart" type: xy
 			{
@@ -78,7 +78,7 @@ experiment "Different series" type: gui
 
 		}
 
-		display "datalist_xy_non_cumulative_chart" type: java2D
+		display "datalist_xy_non_cumulative_chart" type: 2d
 		{
 			chart "datalist_xy_non_cumulative_chart" type: xy
 			{
@@ -91,7 +91,7 @@ experiment "Different series" type: gui
 
 		}
 
-		display "data_cumulative_serie_chart" type: java2D
+		display "data_cumulative_serie_chart" type: 2d
 		{
 			chart "data_cumulative_serie_chart" type: series x_serie_labels: (cycle * cycle)
 			{
@@ -103,7 +103,7 @@ experiment "Different series" type: gui
 
 		}
 
-		display "my_data_cumulative_xy" type: java2D
+		display "my_data_cumulative_xy" type: 2d
 		{
 			chart "my_data_cumulative_xy" type: xy
 			{

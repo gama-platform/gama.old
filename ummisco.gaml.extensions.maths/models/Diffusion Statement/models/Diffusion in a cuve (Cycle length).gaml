@@ -75,11 +75,11 @@ grid quick_cells height: size width: size {
 experiment diffusion type: gui {
 	output {
 		layout #horizontal;
-		display a type: opengl {
+		display a type: 3d {
 			// Display the grid with elevation
 			grid cells elevation: phero*10 triangulation: true;
 		}
-		display quick type: opengl {
+		display quick type: 3d {
 			// Display the grid with elevation
 			grid quick_cells elevation: phero*10 triangulation: true;
 		}

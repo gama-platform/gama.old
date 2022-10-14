@@ -43,7 +43,7 @@ experiment Display
 	 
 	output
 	{
-		display "Bing Map" type: opengl
+		display "Bing Map" type: 3d
 		{
 			image static_map_request;
 		}

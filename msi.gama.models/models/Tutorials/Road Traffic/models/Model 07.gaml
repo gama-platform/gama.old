@@ -133,7 +133,7 @@ experiment road_traffic type: gui {
 	parameter "Number of hours between two road repairs" var: repair_time category: "Road" ;
 	
 	output {
-		display city_display type:opengl {
+		display city_display type:3d {
 			species building aspect: base ;
 			species road aspect: base ;
 			species people aspect: base ;

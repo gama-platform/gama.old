@@ -182,7 +182,7 @@ species people skills: [pedestrian]{
 experiment normal_sim type: gui {
 	float minimum_cycle_duration <- 0.02;
 		output {
-		display map type: opengl{
+		display map type: 3d{
 			species wall refresh: false;
 			species pedestrian_path aspect:free_area_aspect transparency: 0.5 ;
 			species pedestrian_path refresh: false;

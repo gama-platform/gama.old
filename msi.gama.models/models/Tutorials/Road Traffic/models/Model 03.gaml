@@ -108,7 +108,7 @@ experiment road_traffic type: gui {
 	parameter "maximal speed" var: max_speed category: "People" max: 10 #km/#h;
 	
 	output {
-		display city_display type: opengl {
+		display city_display type: 3d {
 			species building aspect: base ;
 			species road aspect: base ;
 			species people aspect: base ;

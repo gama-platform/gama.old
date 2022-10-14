@@ -66,7 +66,7 @@ experiment BrewerPalette type: gui {
 	parameter "Diverging Palettes" var:divergingPalette category:"Brewer";
 	parameter "Qualitatives Palettes" var:qualitativePalette category:"Brewer";
 	output {
-		display View1 type:opengl axes:false{
+		display View1 type:3d axes:false{
 			graphics "brewer"{
 				//Sequential
 				draw "Sequential" at:{-world.shape.width*0.2,0} color:#black perspective:true;

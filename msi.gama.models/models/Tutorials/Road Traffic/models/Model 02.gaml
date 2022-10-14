@@ -61,7 +61,7 @@ experiment road_traffic type: gui {
 	parameter "Number of people agents" var: nb_people category: "People" ;
 	
 	output {
-		display city_display type:opengl {
+		display city_display type:3d {
 			species building aspect: base ;
 			species road aspect: base ;
 			species people aspect: base ;

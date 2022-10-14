@@ -62,7 +62,7 @@ species node_graph {
 
 experiment import_graph type: gui {
 	output {
-		display graph_display type: opengl axes: false{
+		display graph_display type: 3d axes: false{
 			graphics "graph " {
 				
 				loop v over: g.vertices {

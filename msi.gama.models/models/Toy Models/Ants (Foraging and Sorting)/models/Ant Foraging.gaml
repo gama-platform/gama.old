@@ -184,7 +184,7 @@ experiment "With Inspector" type: gui {
 	parameter 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
 	output {
 		layout #split editors: false;
-		display Ants type: opengl {
+		display Ants type: 3d {
 			image terrain position: {0.05, 0.05} size: {0.9, 0.9} refresh: false;
 			agents "agents" transparency: 0.7 position: {0.05, 0.05} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: {0.05, 0.05, 0.05} size: {0.9, 0.9} aspect: icon_svg;
@@ -213,7 +213,7 @@ experiment "Classic" type: gui {
 	
 	
 	output {
-		display Ants antialias: false type: opengl {
+		display Ants antialias: false type: 3d {
 			light #ambient intensity: 127;
 			light #default intensity: 127;
 			image terrain refresh: true;
@@ -233,7 +233,7 @@ experiment "3D View" type: gui {
 	output {
 		
 
-		display Ants3D type: opengl show_fps: true antialias: false{
+		display Ants3D type: 3d show_fps: true antialias: false{
 			grid ant_grid elevation: grid_values triangulation: true texture: terrain refresh: false;
 			agents "Trail" transparency: 0.7 position: {0.05, 0.05, 0.02} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: {0.05, 0.05, 0.025} size: {0.9, 0.9} aspect: threeD;
@@ -271,7 +271,7 @@ experiment "3 Simulations" type: gui {
 
 	output {
 		layout #split editors: false consoles: false toolbars: true tabs: false tray: false;
-		display Ants background: color type: opengl toolbar: color axes: false {
+		display Ants background: color type: 3d toolbar: color axes: false {
 			image terrain position: {0.05, 0.05} size: {0.9, 0.9} refresh: false;
 			agents "agents" transparency: 0.5 position: {0.05, 0.05} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: {0.05, 0.05} size: {0.9, 0.9} aspect: icon;

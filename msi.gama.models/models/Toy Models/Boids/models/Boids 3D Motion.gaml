@@ -152,7 +152,7 @@ experiment "3D" type: gui {
 	
 	output synchronized: true {
 		
-		display Sky1 type:opengl {
+		display Sky1 type:3d {
 			species boids aspect: image;
 			species boids_goal;	
 		}

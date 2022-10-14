@@ -30,7 +30,7 @@ species countries {
 
 experiment Display  type: gui {
 	output {
-		display Countries type: opengl{	
+		display Countries type: 3d{	
 			species countries;			
 		}
 	}

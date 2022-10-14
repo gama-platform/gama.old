@@ -86,7 +86,7 @@ experiment "Gas Chamber" type: gui {
 		}
 	}
 	output {
-		display Cube type:opengl background:#white axes:false camera: "1" {
+		display Cube type:3d background:#white axes:false camera: "1" {
 			camera "1" location: {236.9814,1275.9964,799.6291} target: {250.0,250.0,150.0};
 			camera "2" location: {236.9814,-1275.9964,799.6291} target: {250.0,250.0,150.0};
 			species wall;

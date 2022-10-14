@@ -247,23 +247,23 @@ experiment multicriteria type: gui {
 	parameter "max rejection of the area criterion" var:v2c_area category: "Evidence Theory";
 	output {
 		layout #split;
-		display Map_Weighted_Means type: opengl{
+		display Map_Weighted_Means type: 3d{
 			species house aspect: weighted_means_aspect;
 			species people;
 		}
-		display Map_Electre type: opengl{
+		display Map_Electre type: 3d{
 			species house aspect: electre_aspect;
 			species people;
 		}
-		display Map_Promethee type: opengl{
+		display Map_Promethee type: 3d{
 			species house aspect: promethee_aspect;
 			species people;
 		}
-		display Map_Evidence_theory type: opengl{
+		display Map_Evidence_theory type: 3d{
 			species house aspect: evidence_theory_aspect;
 			species people;
 		}
-		display Map_Choquet type: opengl{
+		display Map_Choquet type: 3d{
 			species house aspect: choquet_aspect;
 			species people;
 		}
