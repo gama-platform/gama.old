@@ -10,11 +10,14 @@
  ********************************************************************************************************/
 package msi.gama.doc;
 
+import java.io.File;
 import msi.gama.doc.transform.XmlToWiki;
+import msi.gama.doc.transform.XmlTransform;
 import msi.gama.doc.util.CheckConcepts;
 import msi.gama.doc.util.GenerateCategoryXML;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
+import msi.gama.precompiler.doc.utils.Constants;
 
 /**
  * The Class MainGenerateWiki.
@@ -50,7 +53,14 @@ public class MainGenerateWiki {
 
 			// check the concept used, print a report and write it in the file
 			// "website generation"
-			CheckConcepts.DoCheckConcepts();
+			CheckConcepts.DoCheckConcepts();			
+			
+			System.out.print("GENERATION of the prism highlight JS file.....");
+			// Creation of the DOM source
+			XmlTransform.transformXML(Constants.DOCGAMA_GLOBAL_FILE, 
+					Constants.XSL_XML2PRISM_FOLDER + File.separator + "docGama-xml2prism.xsl", 
+					Constants.PRISM_GEN_FOLDER + File.separator + "prism-gaml.js");	
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

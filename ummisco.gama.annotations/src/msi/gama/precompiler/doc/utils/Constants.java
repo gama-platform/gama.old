@@ -98,6 +98,9 @@ public class Constants {
 	/** The Constant CATALOG_GEN_FOLDER. */
 	public final static String CATALOG_GEN_FOLDER 		= GEN_FOLDER + File.separator + "catalog";
 
+	/** The Constant PRISM_GEN_FOLDER. */
+	public final static String PRISM_GEN_FOLDER 		= GEN_FOLDER + File.separator + "prism";	
+	
 	/** The Constant TOC_FILE_PATH. */
 	public final static String TOC_FILE_PATH  			= TOC_GEN_FOLDER + File.separatorChar +  "toc"+GAMA_VERSION+".xml";
 
@@ -117,6 +120,10 @@ public class Constants {
 	
 	/** The Constant XSL_XML2KEYWORDS_XML_FOLDER. */
 	public final static String XSL_XML2KEYWORDS_XML_FOLDER 	= INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2keywordsXml";
+
+	/** The Constant XSL_XML2PRISM_FOLDER. */
+	public final static String XSL_XML2PRISM_FOLDER 		= INPUT_FOLDER + File.separator + "xsl" + File.separator + "xml2prism";
+	
 	
 	/** The Constant PANDOC_FOLDER. */
 	public final static String PANDOC_FOLDER 					= INPUT_FOLDER + File.separator + "pandocPDF";
