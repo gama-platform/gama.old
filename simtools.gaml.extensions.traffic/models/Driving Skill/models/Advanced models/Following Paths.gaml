@@ -71,7 +71,7 @@ species vehicle_following_path parent: base_vehicle {
 
 experiment city type: gui {
 	output synchronized: true {
-		display map type: opengl background: #gray {
+		display map type: 3d background: #gray {
 			species road aspect: base;
 			species vehicle_following_path aspect: base;
 			species intersection aspect: base;

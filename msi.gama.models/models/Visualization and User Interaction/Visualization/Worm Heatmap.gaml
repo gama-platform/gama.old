@@ -37,12 +37,12 @@ experiment "Show heatmap" type: gui {
 	output {
 		layout #split;
 		
-		display Heatmap type: opengl background: #black {
+		display Heatmap type: 3d background: #black {
 			// The display is 2D only, and defining a fixed palette makes the color slowly slide as the values increase
 			mesh heatmap scale: 0 color: palette([#white, #orange, #red, #red]);
 		}
 		
-		display Other type: opengl background: #black camera: #from_up_front{
+		display Other type: 3d background: #black camera: #from_up_front{
 			// Bumps appear due to the values increasing
 			mesh heatmap scale: 0.1 color: brewer_colors("Reds") triangulation: true;
 		}

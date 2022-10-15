@@ -66,7 +66,7 @@ species wall {
 
 experiment normal_sim type: gui {
 		output {
-		display map type: opengl{
+		display map type: 3d{
 			species wall refresh: false;
 			graphics "open_area" {
 				draw open_area color: #lightpink;

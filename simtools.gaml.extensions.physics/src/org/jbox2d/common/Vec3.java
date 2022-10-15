@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * Vec3.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.common;
 
 import java.io.Serializable;
@@ -16,50 +29,26 @@ import java.io.Serializable;
  * @author Daniel Murphy
  */
 public class Vec3 implements Serializable {
-  
-  /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
 
-  /** The z. */
   public float x, y, z;
 
-  /**
-   * Instantiates a new vec 3.
-   */
   public Vec3() {
     x = y = z = 0f;
   }
 
-  /**
-   * Instantiates a new vec 3.
-   *
-   * @param argX the arg X
-   * @param argY the arg Y
-   * @param argZ the arg Z
-   */
   public Vec3(float argX, float argY, float argZ) {
     x = argX;
     y = argY;
     z = argZ;
   }
 
-  /**
-   * Instantiates a new vec 3.
-   *
-   * @param copy the copy
-   */
   public Vec3(Vec3 copy) {
     x = copy.x;
     y = copy.y;
     z = copy.z;
   }
 
-  /**
-   * Sets the.
-   *
-   * @param vec the vec
-   * @return the vec 3
-   */
   public Vec3 set(Vec3 vec) {
     x = vec.x;
     y = vec.y;
@@ -67,14 +56,6 @@ public class Vec3 implements Serializable {
     return this;
   }
 
-  /**
-   * Sets the.
-   *
-   * @param argX the arg X
-   * @param argY the arg Y
-   * @param argZ the arg Z
-   * @return the vec 3
-   */
   public Vec3 set(float argX, float argY, float argZ) {
     x = argX;
     y = argY;
@@ -82,12 +63,6 @@ public class Vec3 implements Serializable {
     return this;
   }
 
-  /**
-   * Adds the local.
-   *
-   * @param argVec the arg vec
-   * @return the vec 3
-   */
   public Vec3 addLocal(Vec3 argVec) {
     x += argVec.x;
     y += argVec.y;
@@ -95,22 +70,10 @@ public class Vec3 implements Serializable {
     return this;
   }
 
-  /**
-   * Adds the.
-   *
-   * @param argVec the arg vec
-   * @return the vec 3
-   */
   public Vec3 add(Vec3 argVec) {
     return new Vec3(x + argVec.x, y + argVec.y, z + argVec.z);
   }
 
-  /**
-   * Sub local.
-   *
-   * @param argVec the arg vec
-   * @return the vec 3
-   */
   public Vec3 subLocal(Vec3 argVec) {
     x -= argVec.x;
     y -= argVec.y;
@@ -118,22 +81,10 @@ public class Vec3 implements Serializable {
     return this;
   }
 
-  /**
-   * Sub.
-   *
-   * @param argVec the arg vec
-   * @return the vec 3
-   */
   public Vec3 sub(Vec3 argVec) {
     return new Vec3(x - argVec.x, y - argVec.y, z - argVec.z);
   }
 
-  /**
-   * Mul local.
-   *
-   * @param argScalar the arg scalar
-   * @return the vec 3
-   */
   public Vec3 mulLocal(float argScalar) {
     x *= argScalar;
     y *= argScalar;
@@ -141,30 +92,14 @@ public class Vec3 implements Serializable {
     return this;
   }
 
-  /**
-   * Mul.
-   *
-   * @param argScalar the arg scalar
-   * @return the vec 3
-   */
   public Vec3 mul(float argScalar) {
     return new Vec3(x * argScalar, y * argScalar, z * argScalar);
   }
 
-  /**
-   * Negate.
-   *
-   * @return the vec 3
-   */
   public Vec3 negate() {
     return new Vec3(-x, -y, -z);
   }
 
-  /**
-   * Negate local.
-   *
-   * @return the vec 3
-   */
   public Vec3 negateLocal() {
     x = -x;
     y = -y;
@@ -172,9 +107,6 @@ public class Vec3 implements Serializable {
     return this;
   }
 
-  /**
-   * Sets the zero.
-   */
   public void setZero() {
     x = 0;
     y = 0;
@@ -211,35 +143,14 @@ public class Vec3 implements Serializable {
     return true;
   }
 
-  /**
-   * Dot.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the float
-   */
   public final static float dot(Vec3 a, Vec3 b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
   }
 
-  /**
-   * Cross.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the vec 3
-   */
   public final static Vec3 cross(Vec3 a, Vec3 b) {
     return new Vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
   }
 
-  /**
-   * Cross to out.
-   *
-   * @param a the a
-   * @param b the b
-   * @param out the out
-   */
   public final static void crossToOut(Vec3 a, Vec3 b, Vec3 out) {
     final float tempy = a.z * b.x - a.x * b.z;
     final float tempz = a.x * b.y - a.y * b.x;
@@ -248,13 +159,6 @@ public class Vec3 implements Serializable {
     out.z = tempz;
   }
   
-  /**
-   * Cross to out unsafe.
-   *
-   * @param a the a
-   * @param b the b
-   * @param out the out
-   */
   public final static void crossToOutUnsafe(Vec3 a, Vec3 b, Vec3 out) {
     assert(out != b);
     assert(out != a);

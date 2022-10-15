@@ -172,7 +172,7 @@ experiment Aspects type: gui {
 	float minimum_cycle_duration <- 0.01;
 	output {
 		layout #split;
-		display displ_openGL type: opengl {
+		display displ_openGL type: 3d {
 			species people aspect: big_circle_with_transparency;
 			//		
 			agents "layer simple" value: [people(1)] aspect: simple;
@@ -192,7 +192,7 @@ experiment Aspects type: gui {
 			species people;
 		}
 
-		//		display displ_2D type: java2D {
+		//		display displ_2D type: 2d {
 		//			species people aspect: big_circle_with_transparency;
 		//			//		
 		//			agents "layer simple" value: [people(1)] aspect: simple;

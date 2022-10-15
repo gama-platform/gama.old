@@ -70,7 +70,7 @@ experiment "Color sort" type: gui{
 	parameter "Number of agents:" var: ants category: "Agents" ;
 	
 	output {
-		display OpenGL type: opengl  {
+		display OpenGL type: 3d  {
 			grid ant_grid ;
 			species ant transparency: 0.2 {
 				draw circle(5) wireframe: true color: color;

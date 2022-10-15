@@ -146,7 +146,7 @@ experiment main_experiment type: gui {
 	output {
 		monitor "Current hour" value: current_date.hour;
 		monitor "Infected people rate" value: infected_rate;
-		display map_3D type: opengl {
+		display map_3D type: 3d {
 			light #ambient intensity: 20;
 			light #default intensity:(is_night ? 127 : 255);
 			image "../includes/soil.jpg";

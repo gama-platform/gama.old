@@ -622,10 +622,9 @@ Require-Bundle: com.google.guava;visibility:=reexport,
  org.eclipse.xsd;bundle-version="2.18.0"
 Bundle-ClassPath: .,
  protobuf-java-3.6.1.jar,
- jts 1.18.1/jts-core-1.18.1.jar,
- jts 1.18.1/jts-io-common-1.18.1.jar,
- streamex/streamex-0.7.3.jar,
  jfreechart/jfreechart-1.5.3.jar,
+ jts/jts-core-1.19.0.jar,
+ jts/jts-io-common-1.19.0.jar,
  geotools/batik-transcoder-1.14.jar,
  geotools/commons-collections4-4.4.jar,
  geotools/commons-dbcp-1.4.jar,
@@ -759,6 +758,7 @@ Bundle-ClassPath: .,
  svgsalamander1.1.1/svgSalamander-v1.1.1.jar,
  moeaframework-2.13.jar,
  Java-WebSocket-1.5.2.jar,
- commons-math3-3.6.1.jar
+ commons-math3-3.6.1.jar,
+ streamex/streamex-0.8.1.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.ext

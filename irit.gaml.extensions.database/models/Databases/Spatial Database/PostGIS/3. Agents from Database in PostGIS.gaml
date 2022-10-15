@@ -53,7 +53,7 @@ species buildings {
 
 experiment DB2agentPOSTGIS type: gui {
 	output {
-		display fullView type:opengl{
+		display fullView type:3d{
 			species buildings aspect: default;
 		}
 	}

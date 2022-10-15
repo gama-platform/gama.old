@@ -125,7 +125,7 @@ experiment Displays type: gui
 			
 		}
 
-		display View_change_shape type: opengl
+		display View_change_shape type: 3d
 		{
 			light #ambient active: false;
 			species cell;

@@ -68,7 +68,7 @@ species vehicle skills: [advanced_driving] {
 
 experiment city type: gui {
 	output synchronized: true {
-		display map type: opengl background: #gray {
+		display map type: 3d background: #gray {
 			species road aspect: base;
 			species vehicle aspect: base;		}
 	}

@@ -61,7 +61,7 @@ species people skills: [moving]
 	}
 
 	// The default aspect will be used when no other aspect is invoked in displays
-	aspect opengl
+	aspect 3d
 	{ 
 		// We draw the image corresponding to the path, with a size given by 'size' and we use the heading of the people to rotate it
 		draw 	sphere(size/4) 
@@ -88,15 +88,15 @@ experiment Icons
 	{
 		layout #split;
 		
-		display "Colorful in 3D" type: opengl 
+		display "Colorful in 3D" type: 3d 
 		{
-			// We simply display people, which will use their aspect named opengl
-			species people aspect: opengl;
+			// We simply display people, which will use their aspect named 3d
+			species people aspect: 3d;
 		}
 		
-		display "Colorful in 2D" type:  java2D {
+		display "Colorful in 2D" type:  2d {
 			
-			// Idem for java2D
+			// Idem for 2d
 			species people aspect: java2d;
 		}
 

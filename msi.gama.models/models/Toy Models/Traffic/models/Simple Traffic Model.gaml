@@ -124,7 +124,7 @@ grid cell height: 50 width: 50 neighbors: 8{
 experiment traffic type: gui {
 	float minimum_cycle_duration <- 0.01;
 	output {
-		display carte type: opengl{
+		display carte type: 3d{
 			species building;
 			species road ;
 			species people ;

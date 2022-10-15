@@ -46,7 +46,7 @@ species edge_agent {
 
 experiment spatialGraph type: gui {
 	output {	
-	 display graph_view type: opengl {
+	 display graph_view type: 3d {
 	 	    species bug aspect:base;
 			species node_agent aspect: base position:{0,0,0.1};
 			species edge_agent aspect: base position:{0,0,0.1};

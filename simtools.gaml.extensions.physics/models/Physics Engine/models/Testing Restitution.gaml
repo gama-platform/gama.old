@@ -142,7 +142,7 @@ experiment "Test Restitution !" type: gui {
 
 	output { 
 		layout #split;
-		display "Restitution" type: opengl antialias: true {
+		display "Restitution" type: 3d antialias: true {
 			graphics "Title"  refresh: false {
 				draw library_name + " (click to move the balls)" font: custom color: #cadetblue at: {5, 0, 20} depth: 5 precision: 0.001;
 				draw shape color: #khaki;

@@ -40,7 +40,7 @@ experiment Display type: gui autorun: true {
 		layout #split;
 		// display using spot lights
 		// we set the ambient light to 0 to see better the directional lights (as if we were at night time)
-		display SpotLights type: opengl background: rgb(10, 40, 55) {
+		display SpotLights type: 3d background: rgb(10, 40, 55) {
 		// we define 3 lights : the blue and red turn around the scene, changing their orientation so that the scene is always lightened
 		// the green light does not change its position, but the angle of the spot changes
 			light #ambient intensity: 0;
@@ -55,7 +55,7 @@ experiment Display type: gui autorun: true {
 		}
 		// display using point lights
 		// we set the ambient light to 0 to see better the directional lights (as if we were at night time)
-		display PointLights type: opengl background: rgb(10, 40, 55) {
+		display PointLights type: 3d background: rgb(10, 40, 55) {
 		// we define 3 lights : the blue and red turn around the scene
 		// the green light change its location up and down, we can see the quadratic_attenuation effect : the farther the light is, the less power it has			
 			light #ambient intensity: 0;
@@ -70,7 +70,7 @@ experiment Display type: gui autorun: true {
 		}
 		// display using direction lights
 		// we set the ambient light to 0 to see better the directional lights (as if we were at night time)
-		display DirectionLights type: opengl background: rgb(10, 40, 55) {
+		display DirectionLights type: 3d background: rgb(10, 40, 55) {
 		// we define 3 lights : the blue and red change their direction
 		// the green light change its intensity
 			light #ambient intensity: 0;

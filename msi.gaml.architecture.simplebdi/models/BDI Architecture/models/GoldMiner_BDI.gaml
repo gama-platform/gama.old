@@ -161,7 +161,7 @@ species base {
 experiment GoldBdi type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
-		display map background:#gamablue type:opengl
+		display map background:#gamablue type:3d
 		{
 			species base ;
 			species miner aspect:default;

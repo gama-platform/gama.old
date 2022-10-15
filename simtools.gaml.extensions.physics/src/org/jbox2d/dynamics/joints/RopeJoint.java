@@ -1,13 +1,3 @@
-/*******************************************************************************************************
- *
- * RopeJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
- ********************************************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.MathUtils;
@@ -27,69 +17,28 @@ import org.jbox2d.pooling.IWorldPool;
  * @author Daniel Murphy
  */
 public class RopeJoint extends Joint {
-  
-  /** The m local anchor A. */
   // Solver shared
   private final Vec2 m_localAnchorA = new Vec2();
-  
-  /** The m local anchor B. */
   private final Vec2 m_localAnchorB = new Vec2();
-  
-  /** The m max length. */
   private float m_maxLength;
-  
-  /** The m length. */
   private float m_length;
-  
-  /** The m impulse. */
   private float m_impulse;
 
-  /** The m index A. */
   // Solver temp
   private int m_indexA;
-  
-  /** The m index B. */
   private int m_indexB;
-  
-  /** The m u. */
   private final Vec2 m_u = new Vec2();
-  
-  /** The m r A. */
   private final Vec2 m_rA = new Vec2();
-  
-  /** The m r B. */
   private final Vec2 m_rB = new Vec2();
-  
-  /** The m local center A. */
   private final Vec2 m_localCenterA = new Vec2();
-  
-  /** The m local center B. */
   private final Vec2 m_localCenterB = new Vec2();
-  
-  /** The m inv mass A. */
   private float m_invMassA;
-  
-  /** The m inv mass B. */
   private float m_invMassB;
-  
-  /** The m inv IA. */
   private float m_invIA;
-  
-  /** The m inv IB. */
   private float m_invIB;
-  
-  /** The m mass. */
   private float m_mass;
-  
-  /** The m state. */
   private LimitState m_state;
 
-  /**
-   * Instantiates a new rope joint.
-   *
-   * @param worldPool the world pool
-   * @param def the def
-   */
   protected RopeJoint(IWorldPool worldPool, RopeJointDef def) {
     super(worldPool, def);
     m_localAnchorA.set(def.localAnchorA);
@@ -306,47 +255,22 @@ public class RopeJoint extends Joint {
     return 0f;
   }
 
-  /**
-   * Gets the local anchor A.
-   *
-   * @return the local anchor A
-   */
   public Vec2 getLocalAnchorA() {
     return m_localAnchorA;
   }
 
-  /**
-   * Gets the local anchor B.
-   *
-   * @return the local anchor B
-   */
   public Vec2 getLocalAnchorB() {
     return m_localAnchorB;
   }
 
-  /**
-   * Gets the max length.
-   *
-   * @return the max length
-   */
   public float getMaxLength() {
     return m_maxLength;
   }
 
-  /**
-   * Sets the max length.
-   *
-   * @param maxLength the new max length
-   */
   public void setMaxLength(float maxLength) {
     this.m_maxLength = maxLength;
   }
 
-  /**
-   * Gets the limit state.
-   *
-   * @return the limit state
-   */
   public LimitState getLimitState() {
     return m_state;
   }

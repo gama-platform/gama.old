@@ -132,7 +132,7 @@ experiment "Road Traffic" type: gui {
 	}
 
 	output {
-		display city_display type: opengl {
+		display city_display type: 3d {
 			light #ambient intensity: 180;
 			light #default intensity: 180 direction: {0.5, 0.5, -1};
 			species building aspect: base refresh: false;
@@ -171,7 +171,7 @@ experiment "Multiple Layers" type: gui {
 	}
 
 	output {
-		display city_display type: opengl {
+		display city_display type: 3d {
 			species road aspect: base;
 			species building aspect: base position: {0, 0, 0.25};
 			species people position: {0, 0, 0.5};

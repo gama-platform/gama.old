@@ -2,7 +2,7 @@
 * Name: Luneray's flu 5
 * Author: Patrick Taillandier
 * Description: Define a 3D display
-* Tags: 3D, obj, opengl, tutorial
+* Tags: 3D, obj, 3d, tutorial
 */
 
 model model5
@@ -112,7 +112,7 @@ experiment main type: gui {
 				data "infected" value: nb_people_infected color: #red;
 			}
 		}
-		display view3D type: opengl antialias: false {
+		display view3D type: 3d antialias: false {
 			light #ambient intensity: 80;
 			image "../includes/luneray.jpg" refresh: false; 
 			species building aspect: geom3D refresh: false;

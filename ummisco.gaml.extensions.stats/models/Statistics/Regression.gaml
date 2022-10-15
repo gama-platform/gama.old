@@ -58,7 +58,7 @@ experiment main type: gui {
 	parameter "Point to test, x value" var: x_val ;
 	parameter "Point to test, y value" var: y_val ;
 	output {
-		display map type: opengl {
+		display map type: 3d {
 			species dummy;
 			graphics "new Point " {
 				if (location_fct != nil) {

@@ -125,7 +125,7 @@ experiment "Corridor" type: gui autorun: true {
 		button_location <- {simulation.corridor_left_bounds + 100, 100};  
 	}
 	output {
-		display defaut_display type: java2D background: #black fullscreen: true toolbar: false {
+		display defaut_display type: 2d background: #black fullscreen: true toolbar: false {
 			graphics back {
 				draw shape color: #black wireframe: false;
 				draw corridor_wall_0_display color: #gray wireframe: true;

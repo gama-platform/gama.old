@@ -38,7 +38,7 @@ species market {
 experiment GoldBdi type: gui {
 
 	output {
-		display map type: opengl {
+		display map type: 3d {
 			species market ;
 			species gold_mine ;
 		}

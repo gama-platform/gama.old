@@ -180,7 +180,7 @@ experiment "Play !" type: gui autorun: true   {
 	}
 	
 	output {
-		display Pool type: opengl antialias: false axes: false{
+		display Pool type: 3d antialias: false axes: false{
 			camera #default location: {100.0,400.0,300.0} target: {width/2,height/2,-20.0};
 			light #ambient intensity: 180;
 			light #default intensity: 180 direction: {0.5, 0.5, -1};

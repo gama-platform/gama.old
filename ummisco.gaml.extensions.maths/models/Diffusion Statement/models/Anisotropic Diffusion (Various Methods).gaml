@@ -63,11 +63,11 @@ grid cells_convol height: size width: size {
 
 experiment diffusion type: gui {
 	output {
-		display dot type: opengl {
+		display dot type: 3d {
 			// Display the grid with elevation
 			grid cells_dot elevation: true triangulation: true;
 		}
-		display convol type: opengl {
+		display convol type: 3d {
 			// Display the grid with elevation
 			grid cells_convol elevation: true triangulation: true;
 		}

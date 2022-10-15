@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * WeldJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 /**
  * Created at 3:38:38 AM Jan 15, 2011
  */
@@ -44,72 +57,31 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public class WeldJoint extends Joint {
 
-  /** The m frequency hz. */
   private float m_frequencyHz;
-  
-  /** The m damping ratio. */
   private float m_dampingRatio;
-  
-  /** The m bias. */
   private float m_bias;
 
-  /** The m local anchor A. */
   // Solver shared
   private final Vec2 m_localAnchorA;
-  
-  /** The m local anchor B. */
   private final Vec2 m_localAnchorB;
-  
-  /** The m reference angle. */
   private float m_referenceAngle;
-  
-  /** The m gamma. */
   private float m_gamma;
-  
-  /** The m impulse. */
   private final Vec3 m_impulse;
 
 
-  /** The m index A. */
   // Solver temp
   private int m_indexA;
-  
-  /** The m index B. */
   private int m_indexB;
-  
-  /** The m r A. */
   private final Vec2 m_rA = new Vec2();
-  
-  /** The m r B. */
   private final Vec2 m_rB = new Vec2();
-  
-  /** The m local center A. */
   private final Vec2 m_localCenterA = new Vec2();
-  
-  /** The m local center B. */
   private final Vec2 m_localCenterB = new Vec2();
-  
-  /** The m inv mass A. */
   private float m_invMassA;
-  
-  /** The m inv mass B. */
   private float m_invMassB;
-  
-  /** The m inv IA. */
   private float m_invIA;
-  
-  /** The m inv IB. */
   private float m_invIB;
-  
-  /** The m mass. */
   private final Mat33 m_mass = new Mat33();
 
-  /**
-   * Instantiates a new weld joint.
-   *
-   * @param argWorld the arg world
-   * @param def the def
-   */
   protected WeldJoint(IWorldPool argWorld, WeldJointDef def) {
     super(argWorld, def);
     m_localAnchorA = new Vec2(def.localAnchorA);
@@ -122,65 +94,30 @@ public class WeldJoint extends Joint {
     m_impulse.setZero();
   }
   
-  /**
-   * Gets the reference angle.
-   *
-   * @return the reference angle
-   */
   public float getReferenceAngle() {
     return m_referenceAngle;
   }
 
-  /**
-   * Gets the local anchor A.
-   *
-   * @return the local anchor A
-   */
   public Vec2 getLocalAnchorA() {
     return m_localAnchorA;
   }
 
-  /**
-   * Gets the local anchor B.
-   *
-   * @return the local anchor B
-   */
   public Vec2 getLocalAnchorB() {
     return m_localAnchorB;
   }
 
-  /**
-   * Gets the frequency.
-   *
-   * @return the frequency
-   */
   public float getFrequency() {
     return m_frequencyHz;
   }
 
-  /**
-   * Sets the frequency.
-   *
-   * @param frequencyHz the new frequency
-   */
   public void setFrequency(float frequencyHz) {
     this.m_frequencyHz = frequencyHz;
   }
 
-  /**
-   * Gets the damping ratio.
-   *
-   * @return the damping ratio
-   */
   public float getDampingRatio() {
     return m_dampingRatio;
   }
 
-  /**
-   * Sets the damping ratio.
-   *
-   * @param dampingRatio the new damping ratio
-   */
   public void setDampingRatio(float dampingRatio) {
     this.m_dampingRatio = dampingRatio;
   }

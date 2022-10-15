@@ -86,7 +86,7 @@ species road  {
 
 experiment multigraph type: gui {
 	output {
-		display friendship type: opengl{
+		display friendship type: 3d{
 			species road ;
 			species friendship_link ;
 			species people;

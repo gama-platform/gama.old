@@ -173,7 +173,7 @@ experiment exp {
 		// Each of them can be set using the one of the following constants:
 		// #horizontal, #vertical, #stack, #split (displays split in a grid-like structure) or #none (no split).	
 		layout #split;
-		display "Strings OpenGL" type: opengl {
+		display "Strings OpenGL" type: 3d {
 			graphics Strings {
 				draw world.shape wireframe: true color: #black;
 				int y <- 7;
@@ -192,7 +192,7 @@ experiment exp {
 
 		}
 
-		display "Strings Java2D" type: opengl {
+		display "Strings Java2D" type: 3d {
 			// #pixels (or #px) corresponds to the value of one pixel, depending on the display, zoom...
 			// So pixel is used to define the dimension of an overlay in order to keep it size constant.
             overlay position: { 0, 0 } size: { 300 #pixels, 130 #px } background: #grey transparency: 0.2 border: #black rounded: true {

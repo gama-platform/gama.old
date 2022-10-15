@@ -132,7 +132,7 @@ species miner skills: [moving] control:simple_bdi {
 experiment GoldBdi type: gui {
 
     output {
-        display map type: opengl {
+        display map type: 3d {
             species market ;
             species gold_mine ;
             species miner;

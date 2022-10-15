@@ -84,7 +84,7 @@ experiment Display type: gui autorun:true{
 	parameter 'alarm Minutes' var: alarm_minutes;
 	parameter 'alarm Seconds' var: alarm_seconds;
 	output {
-		display ClockView type: opengl { 
+		display ClockView type: 3d { 
 			species clock ;
 		}
 	}

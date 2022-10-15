@@ -38,7 +38,7 @@ species boat skills: [moving]{
 
 experiment Display  type: gui {
 	output synchronized: true {
-		display ComplexObject type: opengl background: #black{
+		display ComplexObject type: 3d background: #black{
 			light #ambient intensity: 100;
 			species boat aspect:obj;	
 			graphics world transparency: 0.4 { 

@@ -51,7 +51,7 @@ species triangle_ag {
 
 experiment contour_lines_import type: gui {
 	output {
-		display map type: opengl {
+		display map type: 3d {
 			species triangle_ag refresh: false;
 			species contour_line refresh: false;
 		}

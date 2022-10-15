@@ -1,13 +1,3 @@
-/*******************************************************************************************************
- *
- * BroadPhaseStrategy.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
- ********************************************************************************************************/
 package org.jbox2d.collision.broadphase;
 
 import org.jbox2d.callbacks.DebugDraw;
@@ -17,9 +7,6 @@ import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.RayCastInput;
 import org.jbox2d.common.Vec2;
 
-/**
- * The Interface BroadPhaseStrategy.
- */
 public interface BroadPhaseStrategy {
 
   /**
@@ -46,20 +33,8 @@ public interface BroadPhaseStrategy {
    */
   boolean moveProxy(int proxyId, AABB aabb, Vec2 displacement);
   
-  /**
-   * Gets the user data.
-   *
-   * @param proxyId the proxy id
-   * @return the user data
-   */
   Object getUserData(int proxyId);
 
-  /**
-   * Gets the fat AABB.
-   *
-   * @param proxyId the proxy id
-   * @return the fat AABB
-   */
   AABB getFatAABB(int proxyId);
 
   /**
@@ -109,10 +84,5 @@ public interface BroadPhaseStrategy {
    */
   float getAreaRatio();
 
-  /**
-   * Draw tree.
-   *
-   * @param draw the draw
-   */
   void drawTree(DebugDraw draw);
 }

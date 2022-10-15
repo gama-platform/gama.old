@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * Rot.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.common;
 
 import java.io.Serializable;
@@ -18,34 +31,18 @@ import java.io.Serializable;
  * @author Daniel
  */
 public class Rot implements Serializable {
-  
-  /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
 
-  /** The c. */
   public float s, c; // sin and cos
 
-  /**
-   * Instantiates a new rot.
-   */
   public Rot() {
     setIdentity();
   }
 
-  /**
-   * Instantiates a new rot.
-   *
-   * @param angle the angle
-   */
   public Rot(float angle) {
     set(angle);
   }
 
-  /**
-   * Gets the sin.
-   *
-   * @return the sin
-   */
   public float getSin() {
     return s;
   }
@@ -55,75 +52,36 @@ public class Rot implements Serializable {
     return "Rot(s:" + s + ", c:" + c + ")";
   }
 
-  /**
-   * Gets the cos.
-   *
-   * @return the cos
-   */
   public float getCos() {
     return c;
   }
 
-  /**
-   * Sets the.
-   *
-   * @param angle the angle
-   * @return the rot
-   */
   public Rot set(float angle) {
     s = MathUtils.sin(angle);
     c = MathUtils.cos(angle);
     return this;
   }
 
-  /**
-   * Sets the.
-   *
-   * @param other the other
-   * @return the rot
-   */
   public Rot set(Rot other) {
     s = other.s;
     c = other.c;
     return this;
   }
 
-  /**
-   * Sets the identity.
-   *
-   * @return the rot
-   */
   public Rot setIdentity() {
     s = 0;
     c = 1;
     return this;
   }
 
-  /**
-   * Gets the angle.
-   *
-   * @return the angle
-   */
   public float getAngle() {
     return MathUtils.atan2(s, c);
   }
 
-  /**
-   * Gets the x axis.
-   *
-   * @param xAxis the x axis
-   * @return the x axis
-   */
   public void getXAxis(Vec2 xAxis) {
     xAxis.set(c, s);
   }
 
-  /**
-   * Gets the y axis.
-   *
-   * @param yAxis the y axis
-   * @return the y axis
-   */
   public void getYAxis(Vec2 yAxis) {
     yAxis.set(-s, c);
   }
@@ -136,26 +94,12 @@ public class Rot implements Serializable {
     return copy;
   }
 
-  /**
-   * Mul.
-   *
-   * @param q the q
-   * @param r the r
-   * @param out the out
-   */
   public static final void mul(Rot q, Rot r, Rot out) {
     float tempc = q.c * r.c - q.s * r.s;
     out.s = q.s * r.c + q.c * r.s;
     out.c = tempc;
   }
 
-  /**
-   * Mul unsafe.
-   *
-   * @param q the q
-   * @param r the r
-   * @param out the out
-   */
   public static final void mulUnsafe(Rot q, Rot r, Rot out) {
     assert (r != out);
     assert (q != out);
@@ -167,26 +111,12 @@ public class Rot implements Serializable {
     out.c = q.c * r.c - q.s * r.s;
   }
 
-  /**
-   * Mul trans.
-   *
-   * @param q the q
-   * @param r the r
-   * @param out the out
-   */
   public static final void mulTrans(Rot q, Rot r, Rot out) {
     final float tempc = q.c * r.c + q.s * r.s;
     out.s = q.c * r.s - q.s * r.c;
     out.c = tempc;
   }
 
-  /**
-   * Mul trans unsafe.
-   *
-   * @param q the q
-   * @param r the r
-   * @param out the out
-   */
   public static final void mulTransUnsafe(Rot q, Rot r, Rot out) {
     // [ qc qs] * [rc -rs] = [qc*rc+qs*rs -qc*rs+qs*rc]
     // [-qs qc] [rs rc] [-qs*rc+qc*rs qs*rs+qc*rc]
@@ -196,51 +126,23 @@ public class Rot implements Serializable {
     out.c = q.c * r.c + q.s * r.s;
   }
 
-  /**
-   * Mul to out.
-   *
-   * @param q the q
-   * @param v the v
-   * @param out the out
-   */
   public static final void mulToOut(Rot q, Vec2 v, Vec2 out) {
     float tempy = q.s * v.x + q.c * v.y;
     out.x = q.c * v.x - q.s * v.y;
     out.y = tempy;
   }
 
-  /**
-   * Mul to out unsafe.
-   *
-   * @param q the q
-   * @param v the v
-   * @param out the out
-   */
   public static final void mulToOutUnsafe(Rot q, Vec2 v, Vec2 out) {
     out.x = q.c * v.x - q.s * v.y;
     out.y = q.s * v.x + q.c * v.y;
   }
 
-  /**
-   * Mul trans.
-   *
-   * @param q the q
-   * @param v the v
-   * @param out the out
-   */
   public static final void mulTrans(Rot q, Vec2 v, Vec2 out) {
     final float tempy = -q.s * v.x + q.c * v.y;
     out.x = q.c * v.x + q.s * v.y;
     out.y = tempy;
   }
 
-  /**
-   * Mul trans unsafe.
-   *
-   * @param q the q
-   * @param v the v
-   * @param out the out
-   */
   public static final void mulTransUnsafe(Rot q, Vec2 v, Vec2 out) {
     out.x = q.c * v.x + q.s * v.y;
     out.y = -q.s * v.x + q.c * v.y;

@@ -248,14 +248,14 @@ grey is neutral."
 			species button aspect:modern ;
 			event mouse_down action:activate_act;    
 		}
-		display LV name: "Time series" refresh: every(1#cycle) type: java2D toolbar: false{
+		display LV name: "Time series" refresh: every(1#cycle) type: 2d toolbar: false{
 			chart "Population size" type: series background: rgb('white') x_range: 200 x_tick_line_visible: false{
 				loop i from: 0 to: max_species-1{
 					data "Species "+i value: first(solver_and_scheduler).pop[i] color: (species_list[i] != nil)?color_list[i]:rgb(0,0,0,0) marker: false;
 				}
 			}
 		}
-		display "Interaction graph" type: java2D {
+		display "Interaction graph" type: 2d {
 			graphics "edges" {
 				loop edge over: the_graph.edges {
 					float angle <- (pair<animal,animal>(edge)).key towards (pair<animal,animal>(edge)).value;

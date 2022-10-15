@@ -144,7 +144,7 @@ experiment Moving  type: gui {
 	parameter "Agent Aspect" var:agentAspect <- "direction";
 	parameter "Effect type" var:effectType <- "" among:["","firework"];
 	output {	
-		display MovingAgent type:opengl  background:rgb(10,40,55) {
+		display MovingAgent type:3d  background:rgb(10,40,55) {
 			species movingAgent trace:trace;
 		}
 	}
@@ -155,7 +155,7 @@ experiment Wandering  type: gui {
 	parameter "Movement" var:movingType <- "wander";
 	parameter "Agent Aspect" var:agentAspect <- "direction";
 	output {	
-		display WanderingAgent type:opengl  background:rgb(10,40,55) {
+		display WanderingAgent type:3d  background:rgb(10,40,55) {
 			species wanderAgent trace:trace;
 		}
 	}
@@ -167,7 +167,7 @@ experiment Goto  type: gui {
 	parameter "Agent Aspect" var:agentAspect <- "direction";
 	parameter "Effect Type" var:effectType <- "" among:["","blob"];
 	output {	
-		display GotoAgent type:opengl  background:rgb(10,40,55) {
+		display GotoAgent type:3d  background:rgb(10,40,55) {
 			species gotoAgent trace:trace;
 		}
 	}
@@ -179,7 +179,7 @@ experiment GotoOnNetwork  type: gui {
 	parameter "Agent Aspect" var:agentAspect <- "direction";
 	output {
 			
-		display GotoOnNetworkAgent type:opengl background:rgb(10,40,55) {
+		display GotoOnNetworkAgent type:3d background:rgb(10,40,55) {
 			species gotoAgentOnNetwork trace:trace;
 			species cell aspect:myPoint;
 			species edge_agent aspect: base2 ;
@@ -193,7 +193,7 @@ experiment Complete  type: gui {
 	parameter "Agent Aspect" var:agentAspect <- "direction";
 	output {
 			
-		display GotoOnNetworkAgent type:opengl background:rgb(10,40,55) {
+		display GotoOnNetworkAgent type:3d background:rgb(10,40,55) {
 			species movingAgent position:{0,0,0} trace:trace;
 			species wanderAgent position:{envSize,0,0} trace:trace;
 			species gotoAgent position:{envSize*2,0,0} trace:trace;

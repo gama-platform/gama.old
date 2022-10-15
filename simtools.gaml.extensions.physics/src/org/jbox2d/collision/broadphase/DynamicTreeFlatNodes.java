@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * DynamicTreeFlatNodes.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *  * Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.collision.broadphase;
 
 import org.jbox2d.callbacks.DebugDraw;
@@ -21,56 +34,26 @@ import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Settings;
 import org.jbox2d.common.Vec2;
 
-/**
- * The Class DynamicTreeFlatNodes.
- */
 public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
-  
-  /** The Constant MAX_STACK_SIZE. */
   public static final int MAX_STACK_SIZE = 64;
-  
-  /** The Constant NULL_NODE. */
   public static final int NULL_NODE = -1;
-  
-  /** The Constant INITIAL_BUFFER_LENGTH. */
   public static final int INITIAL_BUFFER_LENGTH = 16;
 
-  /** The m root. */
   public int m_root;
-  
-  /** The m aabb. */
   public AABB[] m_aabb;
-  
-  /** The m user data. */
   public Object[] m_userData;
-  
-  /** The m parent. */
   protected int[] m_parent;
-  
-  /** The m child 1. */
   protected int[] m_child1;
-  
-  /** The m child 2. */
   protected int[] m_child2;
-  
-  /** The m height. */
   protected int[] m_height;
 
-  /** The m node count. */
   private int m_nodeCount;
-  
-  /** The m node capacity. */
   private int m_nodeCapacity;
 
-  /** The m free list. */
   private int m_freeList;
 
-  /** The draw vecs. */
   private final Vec2[] drawVecs = new Vec2[4];
 
-  /**
-   * Instantiates a new dynamic tree flat nodes.
-   */
   public DynamicTreeFlatNodes() {
     m_root = NULL_NODE;
     m_nodeCount = 0;
@@ -82,12 +65,6 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     }
   }
 
-  /**
-   * Expand buffers.
-   *
-   * @param oldSize the old size
-   * @param newSize the new size
-   */
   private void expandBuffers(int oldSize, int newSize) {
     m_aabb = BufferUtils.reallocateBuffer(AABB.class, m_aabb, oldSize, newSize);
     m_userData = BufferUtils.reallocateBuffer(Object.class, m_userData, oldSize, newSize);
@@ -186,10 +163,7 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     return m_aabb[proxyId];
   }
 
-  /** The node stack. */
   private int[] nodeStack = new int[20];
-  
-  /** The node stack index. */
   private int nodeStackIndex;
 
   @Override
@@ -222,13 +196,8 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     }
   }
 
-  /** The r. */
   private final Vec2 r = new Vec2();
-  
-  /** The aabb. */
   private final AABB aabb = new AABB();
-  
-  /** The sub input. */
   private final RayCastInput subInput = new RayCastInput();
 
   @Override
@@ -343,12 +312,6 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     return computeHeight(m_root);
   }
 
-  /**
-   * Compute height.
-   *
-   * @param node the node
-   * @return the int
-   */
   private final int computeHeight(int node) {
     assert (0 <= node && node < m_nodeCapacity);
 
@@ -496,11 +459,6 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
   // validate();
   // }
 
-  /**
-   * Allocate node.
-   *
-   * @return the int
-   */
   private final int allocateNode() {
     if (m_freeList == NULL_NODE) {
       assert (m_nodeCount == m_nodeCapacity);
@@ -529,14 +487,8 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     m_nodeCount--;
   }
 
-  /** The combined AABB. */
   private final AABB combinedAABB = new AABB();
 
-  /**
-   * Insert leaf.
-   *
-   * @param leaf the leaf
-   */
   private final void insertLeaf(int leaf) {
     if (m_root == NULL_NODE) {
       m_root = leaf;
@@ -650,11 +602,6 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     // validate();
   }
 
-  /**
-   * Removes the leaf.
-   *
-   * @param leaf the leaf
-   */
   private final void removeLeaf(int leaf) {
     if (leaf == m_root) {
       m_root = NULL_NODE;
@@ -705,12 +652,6 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
   }
 
   // Perform a left or right rotation if node A is imbalanced.
-  /**
-   * Balance.
-   *
-   * @param iA the i A
-   * @return the int
-   */
   // Returns the new root index.
   private int balance(int iA) {
     assert (iA != NULL_NODE);
@@ -835,11 +776,6 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     return iA;
   }
 
-  /**
-   * Validate structure.
-   *
-   * @param node the node
-   */
   private void validateStructure(int node) {
     if (node == NULL_NODE) {
       return;
@@ -869,11 +805,6 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     validateStructure(child2);
   }
 
-  /**
-   * Validate metrics.
-   *
-   * @param node the node
-   */
   private void validateMetrics(int node) {
     if (node == NULL_NODE) {
       return;
@@ -917,20 +848,9 @@ public class DynamicTreeFlatNodes implements BroadPhaseStrategy {
     drawTree(argDraw, m_root, 0, height);
   }
 
-  /** The color. */
   private final Color3f color = new Color3f();
-  
-  /** The text vec. */
   private final Vec2 textVec = new Vec2();
 
-  /**
-   * Draw tree.
-   *
-   * @param argDraw the arg draw
-   * @param node the node
-   * @param spot the spot
-   * @param height the height
-   */
   public void drawTree(DebugDraw argDraw, int node, int spot, int height) {
     AABB a = m_aabb[node];
     a.getVertices(drawVecs);

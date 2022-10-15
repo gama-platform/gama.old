@@ -148,7 +148,7 @@ experiment "Experiment" type: gui {
 	output {
 	    layout horizontal([vertical([0::6721,2::3279])::5000,vertical([1::5000,horizontal([3::5000,4::5000])::5000])::5000]) tabs:true toolbars:true;
 		
-		display Ants type: opengl {
+		display Ants type: 3d {
 			grid ant_grid ;
 			species ant  ;
 		}

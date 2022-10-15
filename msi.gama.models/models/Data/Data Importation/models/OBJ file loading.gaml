@@ -31,7 +31,7 @@ species object skills:[moving]{
 
 experiment Display  type: gui {
 	output {
-		display complex  background:#gray type: opengl{
+		display complex  background:#gray type: 3d{
 		  species object aspect:obj;				
 		}
 	}

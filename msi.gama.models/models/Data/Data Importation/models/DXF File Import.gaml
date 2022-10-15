@@ -48,12 +48,12 @@ experiment DXFAgents type: gui
 {   
 	output
 	{	layout #split;
-		display map type: opengl
+		display map type: 3d
 		{
 			species house_element;
 		}
 
-		display "As_Image" type: opengl
+		display "As_Image" type: 3d
 		{
 			graphics "House"
 			{

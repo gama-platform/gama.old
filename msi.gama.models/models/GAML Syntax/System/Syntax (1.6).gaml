@@ -336,7 +336,7 @@ grid my_grid width: 100 height: 100 {
 
 experiment exp1 type: gui {
 	output {
-		display Display type: opengl {
+		display Display type: 3d {
 		// Layers include a new keyword, "graphics", that allows to draw arbitrary shapes using the syntax found in the aspects of species
 		// The same capability will be soon added to species/agents layers (in order to define on-the-fly aspects without changing the species itself)
 			graphics 'G' {

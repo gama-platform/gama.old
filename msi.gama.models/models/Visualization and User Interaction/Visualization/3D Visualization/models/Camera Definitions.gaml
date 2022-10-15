@@ -35,7 +35,7 @@ experiment Display type: gui autorun: true {
 	float minimum_cycle_duration <- 0.01;
 	output {
 		layout #split;
-		display shared type: opengl virtual: true {
+		display shared type: 3d virtual: true {
 			image "../includes/wood.jpg";
 			species object;
 		}

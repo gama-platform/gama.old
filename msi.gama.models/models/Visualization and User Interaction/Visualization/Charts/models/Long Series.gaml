@@ -27,7 +27,7 @@ global {
 
 experiment "Long series" type: gui {
 	output synchronized: true {
-		display "long_series" type: java2D {
+		display "long_series" type: 2d {
 			chart "Long series values" type: series x_label: "#points to draw at each step" {
 				data "Cosinus" value: coslist color: #blue marker: false style: line;
 				data "Sinus" value: sinlist color: #red marker: false style: line;

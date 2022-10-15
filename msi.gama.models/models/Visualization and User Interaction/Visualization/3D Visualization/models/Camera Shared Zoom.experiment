@@ -18,7 +18,7 @@ experiment "Shared Zoom Example" model: 'Building Elevation.gaml' type: gui {
 	parameter "Display 4 focuses on building " var: target4;
 	
 	output {
-		display base type: opengl light: true virtual: true toolbar: false {
+		display base type: 3d light: true virtual: true toolbar: false {
 			species building aspect: base refresh: false;
 			species road aspect: base refresh: false;
 			species people refresh: true;

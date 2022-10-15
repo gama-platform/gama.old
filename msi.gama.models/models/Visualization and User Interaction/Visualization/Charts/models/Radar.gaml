@@ -29,7 +29,7 @@ experiment "Different radars" type: gui
 
 		}
 
-		display "bounded_cumulative_radar_chart" type: java2D
+		display "bounded_cumulative_radar_chart" type: 2d
 		{
 			chart "bounded_cumulative_bar_chart" type: radar x_serie_labels: ("cycle" + cycle) x_range: 10
 			{
@@ -40,7 +40,7 @@ experiment "Different radars" type: gui
 
 		}
 
-		display "data_non_cumulative_bar_chart" type: java2D
+		display "data_non_cumulative_bar_chart" type: 2d
 		{
 			chart "data_non_cumulative_bar_chart" type: radar x_serie_labels: ["axeCos", "axeSin", "axeCosSin"] series_label_position: xaxis
 			{
@@ -51,7 +51,7 @@ experiment "Different radars" type: gui
 
 		}
 
-		display "datalist_radar_chart" type: java2D
+		display "datalist_radar_chart" type: 2d
 		{
 			chart "datalist_bar" type: radar series_label_position: onchart
 			{
@@ -60,7 +60,7 @@ experiment "Different radars" type: gui
 
 		}
 
-		display "onvalue_cumulative_bar_chart" type: java2D
+		display "onvalue_cumulative_bar_chart" type: 2d
 		{
 			chart "onvalue_cumulative_bar_chart" type: radar series_label_position: yaxis x_label: "my_time_label" y_range: 100
 			{
@@ -69,7 +69,7 @@ experiment "Different radars" type: gui
 
 		}
 
-		display "data_cumulative_style_chart" type: java2D
+		display "data_cumulative_style_chart" type: 2d
 		{
 			chart "Style Cumulative chart" type: radar style: stack
 			{

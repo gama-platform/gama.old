@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * GearJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 /**
  * Created at 11:34:45 AM Jan 23, 2011
  */
@@ -53,89 +66,44 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public class GearJoint extends Joint {
 
-  /** The m joint 1. */
   private final Joint m_joint1;
-  
-  /** The m joint 2. */
   private final Joint m_joint2;
 
-  /** The m type A. */
   private final JointType m_typeA;
-  
-  /** The m type B. */
   private final JointType m_typeB;
 
   // Body A is connected to body C
-  /** The m body C. */
   // Body B is connected to body D
   private final Body m_bodyC;
-  
-  /** The m body D. */
   private final Body m_bodyD;
 
-  /** The m local anchor A. */
   // Solver shared
   private final Vec2 m_localAnchorA = new Vec2();
-  
-  /** The m local anchor B. */
   private final Vec2 m_localAnchorB = new Vec2();
-  
-  /** The m local anchor C. */
   private final Vec2 m_localAnchorC = new Vec2();
-  
-  /** The m local anchor D. */
   private final Vec2 m_localAnchorD = new Vec2();
 
-  /** The m local axis C. */
   private final Vec2 m_localAxisC = new Vec2();
-  
-  /** The m local axis D. */
   private final Vec2 m_localAxisD = new Vec2();
 
-  /** The m reference angle A. */
   private float m_referenceAngleA;
-  
-  /** The m reference angle B. */
   private float m_referenceAngleB;
 
-  /** The m constant. */
   private float m_constant;
-  
-  /** The m ratio. */
   private float m_ratio;
 
-  /** The m impulse. */
   private float m_impulse;
 
-  /** The m index D. */
   // Solver temp
   private int m_indexA, m_indexB, m_indexC, m_indexD;
-  
-  /** The m lc D. */
   private final Vec2 m_lcA = new Vec2(), m_lcB = new Vec2(), m_lcC = new Vec2(),
       m_lcD = new Vec2();
-  
-  /** The m m D. */
   private float m_mA, m_mB, m_mC, m_mD;
-  
-  /** The m i D. */
   private float m_iA, m_iB, m_iC, m_iD;
-  
-  /** The m jv BD. */
   private final Vec2 m_JvAC = new Vec2(), m_JvBD = new Vec2();
-  
-  /** The m jw D. */
   private float m_JwA, m_JwB, m_JwC, m_JwD;
-  
-  /** The m mass. */
   private float m_mass;
 
-  /**
-   * Instantiates a new gear joint.
-   *
-   * @param argWorldPool the arg world pool
-   * @param def the def
-   */
   protected GearJoint(IWorldPool argWorldPool, GearJointDef def) {
     super(argWorldPool, def);
 
@@ -249,20 +217,10 @@ public class GearJoint extends Joint {
     return inv_dt * L;
   }
 
-  /**
-   * Sets the ratio.
-   *
-   * @param argRatio the new ratio
-   */
   public void setRatio(float argRatio) {
     m_ratio = argRatio;
   }
 
-  /**
-   * Gets the ratio.
-   *
-   * @return the ratio
-   */
   public float getRatio() {
     return m_ratio;
   }
@@ -435,20 +393,10 @@ public class GearJoint extends Joint {
     data.velocities[m_indexD].w = wD;
   }
 
-  /**
-   * Gets the joint 1.
-   *
-   * @return the joint 1
-   */
   public Joint getJoint1() {
     return m_joint1;
   }
 
-  /**
-   * Gets the joint 2.
-   *
-   * @return the joint 2
-   */
   public Joint getJoint2() {
     return m_joint2;
   }

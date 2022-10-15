@@ -87,7 +87,7 @@ experiment Terrain type: gui {
 	list<rgb> field_and_forest <- palette(reverse([#sienna, #olive, #darkgreen, #green, #forestgreen,  #lightgreen]));
 	output {
 		layout #split consoles: false controls: false toolbars: false;
-		display "Terrain" type: opengl axes: false  {
+		display "Terrain" type: 3d axes: false  {
 			mesh terrain color: palette_name = "Seaside" ? land_and_sea : field_and_forest triangulation: true;
 		}
 

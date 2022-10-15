@@ -400,7 +400,7 @@ species fruit {
 
 experiment "Random" type: gui autorun: true {
 	output {
-		display 'Tree' type: opengl background: season.sky_color axes: false toolbar: false fullscreen: true {
+		display 'Tree' type: 3d background: season.sky_color axes: false toolbar: false fullscreen: true {
 			light #ambient intensity: 150;
 			rotation angle: cycle/1000000 dynamic: true;
 			camera #default location: {50.0,450,250} target: {50.0,50.0,40+80*(1-exp(-cycle/50000))} dynamic: true;
@@ -424,7 +424,7 @@ experiment "4 simulations" type: gui autorun: true {
 	}
 
 	output {
-		display 'Tree' type: opengl background: season.sky_color axes: false toolbar: false {
+		display 'Tree' type: 3d background: season.sky_color axes: false toolbar: false {
 			light #ambient intensity: 150;	
 			rotation angle: cycle/1000000 dynamic: true;
 			camera #default location: {50.0,450,250} target: {50.0,50.0,40+80*(1-exp(-cycle/50000))} dynamic: true;
@@ -444,7 +444,7 @@ experiment L_Tri type: gui autorun: true {
 	float minimum_cycle_duration <- 0.0005;
 	float seed <- 0.05387546426306633;
 	output {
-		display 'Tree' type: opengl background: season.sky_color axes: false toolbar: true {
+		display 'Tree' type: 3d background: season.sky_color axes: false toolbar: true {
 			light #ambient intensity: 150;
 			rotation angle: cycle/1000000 dynamic: true;
 			camera #default location: {50.0,450,250} target: {50.0,50.0,40+80*(1-exp(-cycle/50000))} dynamic: true;

@@ -1,62 +1,49 @@
-/*******************************************************************************************************
- *
- * DynamicIntStack.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.pooling.stacks;
 
-/**
- * The Class DynamicIntStack.
- */
 public class DynamicIntStack {
 
-  /** The stack. */
   private int[] stack;
-  
-  /** The size. */
   private int size;
-  
-  /** The position. */
   private int position;
 
-  /**
-   * Instantiates a new dynamic int stack.
-   *
-   * @param initialSize the initial size
-   */
   public DynamicIntStack(int initialSize) {
     stack = new int[initialSize];
     position = 0;
     size = initialSize;
   }
 
-  /**
-   * Reset.
-   */
   public void reset() {
     position = 0;
   }
 
-  /**
-   * Pop.
-   *
-   * @return the int
-   */
   public int pop() {
     assert (position > 0);
     return stack[--position];
   }
 
-  /**
-   * Push.
-   *
-   * @param i the i
-   */
   public void push(int i) {
     if (position == size) {
       int[] old = stack;
@@ -67,11 +54,6 @@ public class DynamicIntStack {
     stack[position++] = i;
   }
 
-  /**
-   * Gets the count.
-   *
-   * @return the count
-   */
   public int getCount() {
     return position;
   }
