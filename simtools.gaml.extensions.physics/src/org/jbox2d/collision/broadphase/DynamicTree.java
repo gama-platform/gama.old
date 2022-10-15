@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * DynamicTree.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *  * Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.collision.broadphase;
 
 import org.jbox2d.callbacks.DebugDraw;
@@ -29,40 +42,20 @@ import org.jbox2d.common.Vec2;
  * @author daniel
  */
 public class DynamicTree implements BroadPhaseStrategy {
-  
-  /** The Constant MAX_STACK_SIZE. */
   public static final int MAX_STACK_SIZE = 64;
-  
-  /** The Constant NULL_NODE. */
   public static final int NULL_NODE = -1;
 
-  /** The m root. */
   private DynamicTreeNode m_root;
-  
-  /** The m nodes. */
   private DynamicTreeNode[] m_nodes;
-  
-  /** The m node count. */
   private int m_nodeCount;
-  
-  /** The m node capacity. */
   private int m_nodeCapacity;
 
-  /** The m free list. */
   private int m_freeList;
 
-  /** The draw vecs. */
   private final Vec2[] drawVecs = new Vec2[4];
-  
-  /** The node stack. */
   private DynamicTreeNode[] nodeStack = new DynamicTreeNode[20];
-  
-  /** The node stack index. */
   private int nodeStackIndex = 0;
 
-  /**
-   * Instantiates a new dynamic tree.
-   */
   public DynamicTree() {
     m_root = null;
     m_nodeCount = 0;
@@ -196,13 +189,8 @@ public class DynamicTree implements BroadPhaseStrategy {
     }
   }
 
-  /** The r. */
   private final Vec2 r = new Vec2();
-  
-  /** The aabb. */
   private final AABB aabb = new AABB();
-  
-  /** The sub input. */
   private final RayCastInput subInput = new RayCastInput();
 
   @Override
@@ -321,12 +309,6 @@ public class DynamicTree implements BroadPhaseStrategy {
     return computeHeight(m_root);
   }
 
-  /**
-   * Compute height.
-   *
-   * @param node the node
-   * @return the int
-   */
   private final int computeHeight(DynamicTreeNode node) {
     assert (0 <= node.id && node.id < m_nodeCapacity);
 
@@ -478,11 +460,6 @@ public class DynamicTree implements BroadPhaseStrategy {
     validate();
   }
 
-  /**
-   * Allocate node.
-   *
-   * @return the dynamic tree node
-   */
   private final DynamicTreeNode allocateNode() {
     if (m_freeList == NULL_NODE) {
       assert (m_nodeCount == m_nodeCapacity);
@@ -525,14 +502,8 @@ public class DynamicTree implements BroadPhaseStrategy {
     m_nodeCount--;
   }
 
-  /** The combined AABB. */
   private final AABB combinedAABB = new AABB();
 
-  /**
-   * Insert leaf.
-   *
-   * @param leaf_index the leaf index
-   */
   private final void insertLeaf(int leaf_index) {
     DynamicTreeNode leaf = m_nodes[leaf_index];
     if (m_root == null) {
@@ -645,11 +616,6 @@ public class DynamicTree implements BroadPhaseStrategy {
     // validate();
   }
 
-  /**
-   * Removes the leaf.
-   *
-   * @param leaf the leaf
-   */
   private final void removeLeaf(DynamicTreeNode leaf) {
     if (leaf == m_root) {
       m_root = null;
@@ -698,12 +664,6 @@ public class DynamicTree implements BroadPhaseStrategy {
   }
 
   // Perform a left or right rotation if node A is imbalanced.
-  /**
-   * Balance.
-   *
-   * @param iA the i A
-   * @return the dynamic tree node
-   */
   // Returns the new root index.
   private DynamicTreeNode balance(DynamicTreeNode iA) {
     assert (iA != null);
@@ -828,11 +788,6 @@ public class DynamicTree implements BroadPhaseStrategy {
     return iA;
   }
 
-  /**
-   * Validate structure.
-   *
-   * @param node the node
-   */
   private void validateStructure(DynamicTreeNode node) {
     if (node == null) {
       return;
@@ -863,11 +818,6 @@ public class DynamicTree implements BroadPhaseStrategy {
     validateStructure(child2);
   }
 
-  /**
-   * Validate metrics.
-   *
-   * @param node the node
-   */
   private void validateMetrics(DynamicTreeNode node) {
     if (node == null) {
       return;
@@ -911,20 +861,9 @@ public class DynamicTree implements BroadPhaseStrategy {
     drawTree(argDraw, m_root, 0, height);
   }
 
-  /** The color. */
   private final Color3f color = new Color3f();
-  
-  /** The text vec. */
   private final Vec2 textVec = new Vec2();
 
-  /**
-   * Draw tree.
-   *
-   * @param argDraw the arg draw
-   * @param node the node
-   * @param spot the spot
-   * @param height the height
-   */
   public void drawTree(DebugDraw argDraw, DynamicTreeNode node, int spot, int height) {
     node.aabb.getVertices(drawVecs);
 

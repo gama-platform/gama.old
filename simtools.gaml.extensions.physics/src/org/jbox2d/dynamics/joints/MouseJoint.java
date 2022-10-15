@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * MouseJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.Mat22;
@@ -29,59 +42,26 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public class MouseJoint extends Joint {
 
-  /** The m local anchor B. */
   private final Vec2 m_localAnchorB = new Vec2();
-  
-  /** The m target A. */
   private final Vec2 m_targetA = new Vec2();
-  
-  /** The m frequency hz. */
   private float m_frequencyHz;
-  
-  /** The m damping ratio. */
   private float m_dampingRatio;
-  
-  /** The m beta. */
   private float m_beta;
 
-  /** The m impulse. */
   // Solver shared
   private final Vec2 m_impulse = new Vec2();
-  
-  /** The m max force. */
   private float m_maxForce;
-  
-  /** The m gamma. */
   private float m_gamma;
 
-  /** The m index B. */
   // Solver temp
   private int m_indexB;
-  
-  /** The m r B. */
   private final Vec2 m_rB = new Vec2();
-  
-  /** The m local center B. */
   private final Vec2 m_localCenterB = new Vec2();
-  
-  /** The m inv mass B. */
   private float m_invMassB;
-  
-  /** The m inv IB. */
   private float m_invIB;
-  
-  /** The m mass. */
   private final Mat22 m_mass = new Mat22();
-  
-  /** The m C. */
   private final Vec2 m_C = new Vec2();
 
-  /**
-   * Instantiates a new mouse joint.
-   *
-   * @param argWorld the arg world
-   * @param def the def
-   */
   protected MouseJoint(IWorldPool argWorld, MouseJointDef def) {
     super(argWorld, def);
     assert (def.target.isValid());
@@ -123,11 +103,6 @@ public class MouseJoint extends Joint {
   }
 
 
-  /**
-   * Sets the target.
-   *
-   * @param target the new target
-   */
   public void setTarget(Vec2 target) {
     if (m_bodyB.isAwake() == false) {
       m_bodyB.setAwake(true);
@@ -135,68 +110,33 @@ public class MouseJoint extends Joint {
     m_targetA.set(target);
   }
 
-  /**
-   * Gets the target.
-   *
-   * @return the target
-   */
   public Vec2 getTarget() {
     return m_targetA;
   }
 
-  /**
-   * Sets the max force.
-   *
-   * @param force the new max force
-   */
   // / set/get the maximum force in Newtons.
   public void setMaxForce(float force) {
     m_maxForce = force;
   }
 
-  /**
-   * Gets the max force.
-   *
-   * @return the max force
-   */
   public float getMaxForce() {
     return m_maxForce;
   }
 
-  /**
-   * Sets the frequency.
-   *
-   * @param hz the new frequency
-   */
   // / set/get the frequency in Hertz.
   public void setFrequency(float hz) {
     m_frequencyHz = hz;
   }
 
-  /**
-   * Gets the frequency.
-   *
-   * @return the frequency
-   */
   public float getFrequency() {
     return m_frequencyHz;
   }
 
-  /**
-   * Sets the damping ratio.
-   *
-   * @param ratio the new damping ratio
-   */
   // / set/get the damping ratio (dimensionless).
   public void setDampingRatio(float ratio) {
     m_dampingRatio = ratio;
   }
 
-  /**
-   * Gets the damping ratio.
-   *
-   * @return the damping ratio
-   */
   public float getDampingRatio() {
     return m_dampingRatio;
   }

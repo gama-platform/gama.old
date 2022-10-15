@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * Fixture.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.dynamics;
 
 import org.jbox2d.collision.AABB;
@@ -34,42 +47,25 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
  */
 public class Fixture {
 
-  /** The m density. */
   public float m_density;
 
-  /** The m next. */
   public Fixture m_next;
-  
-  /** The m body. */
   public Body m_body;
 
-  /** The m shape. */
   public Shape m_shape;
 
-  /** The m friction. */
   public float m_friction;
-  
-  /** The m restitution. */
   public float m_restitution;
 
-  /** The m proxies. */
   public FixtureProxy[] m_proxies;
-  
-  /** The m proxy count. */
   public int m_proxyCount;
 
-  /** The m filter. */
   public final Filter m_filter;
 
-  /** The m is sensor. */
   public boolean m_isSensor;
 
-  /** The m user data. */
   public Object m_userData;
 
-  /**
-   * Instantiates a new fixture.
-   */
   public Fixture() {
     m_userData = null;
     m_body = null;
@@ -197,21 +193,11 @@ public class Fixture {
     return m_next;
   }
 
-  /**
-   * Sets the density.
-   *
-   * @param density the new density
-   */
   public void setDensity(float density) {
     assert (density >= 0f);
     m_density = density;
   }
 
-  /**
-   * Gets the density.
-   *
-   * @return the density
-   */
   public float getDensity() {
     return m_density;
   }
@@ -328,12 +314,6 @@ public class Fixture {
   // We need separation create/destroy functions from the constructor/destructor because
   // the destructor cannot access the allocator (no destructor arguments allowed by C++).
 
-  /**
-   * Creates the.
-   *
-   * @param body the body
-   * @param def the def
-   */
   public void create(Body body, FixtureDef def) {
     m_userData = def.userData;
     m_friction = def.friction;
@@ -378,9 +358,6 @@ public class Fixture {
     m_density = def.density;
   }
 
-  /**
-   * Destroy.
-   */
   public void destroy() {
     // The proxies must be destroyed before calling this.
     assert (m_proxyCount == 0);
@@ -394,12 +371,6 @@ public class Fixture {
     // TODO pool fixtures
   }
 
-  /**
-   * Creates the proxies.
-   *
-   * @param broadPhase the broad phase
-   * @param xf the xf
-   */
   // These support body activation/deactivation.
   public void createProxies(BroadPhase broadPhase, final Transform xf) {
     assert (m_proxyCount == 0);
@@ -432,13 +403,8 @@ public class Fixture {
     m_proxyCount = 0;
   }
 
-  /** The pool 1. */
   private final AABB pool1 = new AABB();
-  
-  /** The pool 2. */
   private final AABB pool2 = new AABB();
-  
-  /** The displacement. */
   private final Vec2 displacement = new Vec2();
 
   /**

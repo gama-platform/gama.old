@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * WheelJoint.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.dynamics.joints;
 
 import org.jbox2d.common.MathUtils;
@@ -44,101 +57,45 @@ import org.jbox2d.pooling.IWorldPool;
  */
 public class WheelJoint extends Joint {
 
-  /** The m frequency hz. */
   private float m_frequencyHz;
-  
-  /** The m damping ratio. */
   private float m_dampingRatio;
 
-  /** The m local anchor A. */
   // Solver shared
   private final Vec2 m_localAnchorA = new Vec2();
-  
-  /** The m local anchor B. */
   private final Vec2 m_localAnchorB = new Vec2();
-  
-  /** The m local X axis A. */
   private final Vec2 m_localXAxisA = new Vec2();
-  
-  /** The m local Y axis A. */
   private final Vec2 m_localYAxisA = new Vec2();
 
-  /** The m impulse. */
   private float m_impulse;
-  
-  /** The m motor impulse. */
   private float m_motorImpulse;
-  
-  /** The m spring impulse. */
   private float m_springImpulse;
 
-  /** The m max motor torque. */
   private float m_maxMotorTorque;
-  
-  /** The m motor speed. */
   private float m_motorSpeed;
-  
-  /** The m enable motor. */
   private boolean m_enableMotor;
 
-  /** The m index A. */
   // Solver temp
   private int m_indexA;
-  
-  /** The m index B. */
   private int m_indexB;
-  
-  /** The m local center A. */
   private final Vec2 m_localCenterA = new Vec2();
-  
-  /** The m local center B. */
   private final Vec2 m_localCenterB = new Vec2();
-  
-  /** The m inv mass A. */
   private float m_invMassA;
-  
-  /** The m inv mass B. */
   private float m_invMassB;
-  
-  /** The m inv IA. */
   private float m_invIA;
-  
-  /** The m inv IB. */
   private float m_invIB;
 
-  /** The m ax. */
   private final Vec2 m_ax = new Vec2();
-  
-  /** The m ay. */
   private final Vec2 m_ay = new Vec2();
-  
-  /** The m s bx. */
   private float m_sAx, m_sBx;
-  
-  /** The m s by. */
   private float m_sAy, m_sBy;
 
-  /** The m mass. */
   private float m_mass;
-  
-  /** The m motor mass. */
   private float m_motorMass;
-  
-  /** The m spring mass. */
   private float m_springMass;
 
-  /** The m bias. */
   private float m_bias;
-  
-  /** The m gamma. */
   private float m_gamma;
 
-  /**
-   * Instantiates a new wheel joint.
-   *
-   * @param argPool the arg pool
-   * @param def the def
-   */
   protected WheelJoint(IWorldPool argPool, WheelJointDef def) {
     super(argPool, def);
     m_localAnchorA.set(def.localAnchorA);
@@ -158,20 +115,10 @@ public class WheelJoint extends Joint {
     m_dampingRatio = def.dampingRatio;
   }
 
-  /**
-   * Gets the local anchor A.
-   *
-   * @return the local anchor A
-   */
   public Vec2 getLocalAnchorA() {
     return m_localAnchorA;
   }
 
-  /**
-   * Gets the local anchor B.
-   *
-   * @return the local anchor B
-   */
   public Vec2 getLocalAnchorB() {
     return m_localAnchorB;
   }
@@ -199,11 +146,6 @@ public class WheelJoint extends Joint {
     return inv_dt * m_motorImpulse;
   }
 
-  /**
-   * Gets the joint translation.
-   *
-   * @return the joint translation
-   */
   public float getJointTranslation() {
     Body b1 = m_bodyA;
     Body b2 = m_bodyB;
@@ -226,129 +168,63 @@ public class WheelJoint extends Joint {
     return m_localXAxisA;
   }
 
-  /**
-   * Gets the joint speed.
-   *
-   * @return the joint speed
-   */
   public float getJointSpeed() {
     return m_bodyA.m_angularVelocity - m_bodyB.m_angularVelocity;
   }
 
-  /**
-   * Checks if is motor enabled.
-   *
-   * @return true, if is motor enabled
-   */
   public boolean isMotorEnabled() {
     return m_enableMotor;
   }
 
-  /**
-   * Enable motor.
-   *
-   * @param flag the flag
-   */
   public void enableMotor(boolean flag) {
     m_bodyA.setAwake(true);
     m_bodyB.setAwake(true);
     m_enableMotor = flag;
   }
 
-  /**
-   * Sets the motor speed.
-   *
-   * @param speed the new motor speed
-   */
   public void setMotorSpeed(float speed) {
     m_bodyA.setAwake(true);
     m_bodyB.setAwake(true);
     m_motorSpeed = speed;
   }
 
-  /**
-   * Gets the motor speed.
-   *
-   * @return the motor speed
-   */
   public float getMotorSpeed() {
     return m_motorSpeed;
   }
 
-  /**
-   * Gets the max motor torque.
-   *
-   * @return the max motor torque
-   */
   public float getMaxMotorTorque() {
     return m_maxMotorTorque;
   }
 
-  /**
-   * Sets the max motor torque.
-   *
-   * @param torque the new max motor torque
-   */
   public void setMaxMotorTorque(float torque) {
     m_bodyA.setAwake(true);
     m_bodyB.setAwake(true);
     m_maxMotorTorque = torque;
   }
 
-  /**
-   * Gets the motor torque.
-   *
-   * @param inv_dt the inv dt
-   * @return the motor torque
-   */
   public float getMotorTorque(float inv_dt) {
     return m_motorImpulse * inv_dt;
   }
 
-  /**
-   * Sets the spring frequency hz.
-   *
-   * @param hz the new spring frequency hz
-   */
   public void setSpringFrequencyHz(float hz) {
     m_frequencyHz = hz;
   }
 
-  /**
-   * Gets the spring frequency hz.
-   *
-   * @return the spring frequency hz
-   */
   public float getSpringFrequencyHz() {
     return m_frequencyHz;
   }
 
-  /**
-   * Sets the spring damping ratio.
-   *
-   * @param ratio the new spring damping ratio
-   */
   public void setSpringDampingRatio(float ratio) {
     m_dampingRatio = ratio;
   }
 
-  /**
-   * Gets the spring damping ratio.
-   *
-   * @return the spring damping ratio
-   */
   public float getSpringDampingRatio() {
     return m_dampingRatio;
   }
 
-  /** The r A. */
   // pooling
   private final Vec2 rA = new Vec2();
-  
-  /** The r B. */
   private final Vec2 rB = new Vec2();
-  
-  /** The d. */
   private final Vec2 d = new Vec2();
 
   @Override

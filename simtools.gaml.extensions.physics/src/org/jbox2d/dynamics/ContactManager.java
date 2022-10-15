@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * ContactManager.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.dynamics;
 
 import org.jbox2d.callbacks.ContactFilter;
@@ -24,30 +37,14 @@ import org.jbox2d.dynamics.contacts.ContactEdge;
  */
 public class ContactManager implements PairCallback {
 
-  /** The m broad phase. */
   public BroadPhase m_broadPhase;
-  
-  /** The m contact list. */
   public Contact m_contactList;
-  
-  /** The m contact count. */
   public int m_contactCount;
-  
-  /** The m contact filter. */
   public ContactFilter m_contactFilter;
-  
-  /** The m contact listener. */
   public ContactListener m_contactListener;
 
-  /** The pool. */
   private final World pool;
 
-  /**
-   * Instantiates a new contact manager.
-   *
-   * @param argPool the arg pool
-   * @param broadPhase the broad phase
-   */
   public ContactManager(World argPool, BroadPhase broadPhase) {
     m_contactList = null;
     m_contactCount = 0;
@@ -171,18 +168,10 @@ public class ContactManager implements PairCallback {
     ++m_contactCount;
   }
 
-  /**
-   * Find new contacts.
-   */
   public void findNewContacts() {
     m_broadPhase.updatePairs(this);
   }
 
-  /**
-   * Destroy.
-   *
-   * @param c the c
-   */
   public void destroy(Contact c) {
     Fixture fixtureA = c.getFixtureA();
     Fixture fixtureB = c.getFixtureB();

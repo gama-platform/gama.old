@@ -1,13 +1,26 @@
-/*******************************************************************************************************
- *
- * Island.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+/*******************************************************************************
+ * Copyright (c) 2013, Daniel Murphy
+ * All rights reserved.
  * 
- ********************************************************************************************************/
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ ******************************************************************************/
 package org.jbox2d.dynamics;
 
 import org.jbox2d.callbacks.ContactImpulse;
@@ -150,57 +163,27 @@ import org.jbox2d.dynamics.joints.Joint;
  */
 public class Island {
 
-  /** The m listener. */
   public ContactListener m_listener;
 
-  /** The m bodies. */
   public Body[] m_bodies;
-  
-  /** The m contacts. */
   public Contact[] m_contacts;
-  
-  /** The m joints. */
   public Joint[] m_joints;
 
-  /** The m positions. */
   public Position[] m_positions;
-  
-  /** The m velocities. */
   public Velocity[] m_velocities;
 
-  /** The m body count. */
   public int m_bodyCount;
-  
-  /** The m joint count. */
   public int m_jointCount;
-  
-  /** The m contact count. */
   public int m_contactCount;
 
-  /** The m body capacity. */
   public int m_bodyCapacity;
-  
-  /** The m contact capacity. */
   public int m_contactCapacity;
-  
-  /** The m joint capacity. */
   public int m_jointCapacity;
 
-  /**
-   * Instantiates a new island.
-   */
   public Island() {
 
   }
 
-  /**
-   * Inits the.
-   *
-   * @param bodyCapacity the body capacity
-   * @param contactCapacity the contact capacity
-   * @param jointCapacity the joint capacity
-   * @param listener the listener
-   */
   public void init(int bodyCapacity, int contactCapacity, int jointCapacity,
       ContactListener listener) {
     // System.out.println("Initializing Island");
@@ -244,35 +227,17 @@ public class Island {
     }
   }
 
-  /**
-   * Clear.
-   */
   public void clear() {
     m_bodyCount = 0;
     m_contactCount = 0;
     m_jointCount = 0;
   }
 
-  /** The contact solver. */
   private final ContactSolver contactSolver = new ContactSolver();
-  
-  /** The timer. */
   private final Timer timer = new Timer();
-  
-  /** The solver data. */
   private final SolverData solverData = new SolverData();
-  
-  /** The solver def. */
   private final ContactSolverDef solverDef = new ContactSolverDef();
 
-  /**
-   * Solve.
-   *
-   * @param profile the profile
-   * @param step the step
-   * @param gravity the gravity
-   * @param allowSleep the allow sleep
-   */
   public void solve(Profile profile, TimeStep step, Vec2 gravity, boolean allowSleep) {
 
     // System.out.println("Solving Island");
@@ -463,19 +428,9 @@ public class Island {
     }
   }
 
-  /** The toi contact solver. */
   private final ContactSolver toiContactSolver = new ContactSolver();
-  
-  /** The toi solver def. */
   private final ContactSolverDef toiSolverDef = new ContactSolverDef();
 
-  /**
-   * Solve TOI.
-   *
-   * @param subStep the sub step
-   * @param toiIndexA the toi index A
-   * @param toiIndexB the toi index B
-   */
   public void solveTOI(TimeStep subStep, int toiIndexA, int toiIndexB) {
     assert (toiIndexA < m_bodyCount);
     assert (toiIndexB < m_bodyCount);
@@ -607,11 +562,6 @@ public class Island {
     report(toiContactSolver.m_velocityConstraints);
   }
 
-  /**
-   * Adds the.
-   *
-   * @param body the body
-   */
   public void add(Body body) {
     assert (m_bodyCount < m_bodyCapacity);
     body.m_islandIndex = m_bodyCount;
@@ -619,34 +569,18 @@ public class Island {
     ++m_bodyCount;
   }
 
-  /**
-   * Adds the.
-   *
-   * @param contact the contact
-   */
   public void add(Contact contact) {
     assert (m_contactCount < m_contactCapacity);
     m_contacts[m_contactCount++] = contact;
   }
 
-  /**
-   * Adds the.
-   *
-   * @param joint the joint
-   */
   public void add(Joint joint) {
     assert (m_jointCount < m_jointCapacity);
     m_joints[m_jointCount++] = joint;
   }
 
-  /** The impulse. */
   private final ContactImpulse impulse = new ContactImpulse();
 
-  /**
-   * Report.
-   *
-   * @param constraints the constraints
-   */
   public void report(ContactVelocityConstraint[] constraints) {
     if (m_listener == null) {
       return;

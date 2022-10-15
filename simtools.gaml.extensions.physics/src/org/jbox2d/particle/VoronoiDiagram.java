@@ -1,60 +1,20 @@
-/*******************************************************************************************************
- *
- * VoronoiDiagram.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
- *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
- *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
- ********************************************************************************************************/
 package org.jbox2d.particle;
 
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.pooling.normal.MutableStack;
 
-/**
- * The Class VoronoiDiagram.
- */
 public class VoronoiDiagram {
-  
-  /**
-   * The Class Generator.
-   */
   public static class Generator {
-    
-    /** The center. */
     final Vec2 center = new Vec2();
-    
-    /** The tag. */
     int tag;
   }
-  
-  /**
-   * The Class VoronoiDiagramTask.
-   */
   public static class VoronoiDiagramTask {
-    
-    /** The m i. */
     int m_x, m_y, m_i;
-    
-    /** The m generator. */
     Generator m_generator;
 
-    /**
-     * Instantiates a new voronoi diagram task.
-     */
     public VoronoiDiagramTask() {}
 
-    /**
-     * Instantiates a new voronoi diagram task.
-     *
-     * @param x the x
-     * @param y the y
-     * @param i the i
-     * @param g the g
-     */
     public VoronoiDiagramTask(int x, int y, int i, Generator g) {
       m_x = x;
       m_y = y;
@@ -62,15 +22,6 @@ public class VoronoiDiagram {
       m_generator = g;
     }
 
-    /**
-     * Sets the.
-     *
-     * @param x the x
-     * @param y the y
-     * @param i the i
-     * @param g the g
-     * @return the voronoi diagram task
-     */
     public VoronoiDiagramTask set(int x, int y, int i, Generator g) {
       m_x = x;
       m_y = y;
@@ -80,39 +31,16 @@ public class VoronoiDiagram {
     }
   }
 
-  /**
-   * The Interface VoronoiDiagramCallback.
-   */
   public static interface VoronoiDiagramCallback {
-    
-    /**
-     * Callback.
-     *
-     * @param aTag the a tag
-     * @param bTag the b tag
-     * @param cTag the c tag
-     */
     void callback(int aTag, int bTag, int cTag);
   }
 
-  /** The m generator buffer. */
   private Generator[] m_generatorBuffer;
-  
-  /** The m generator count. */
   private int m_generatorCount;
-  
-  /** The m count Y. */
   private int m_countX, m_countY;
-  
-  /** The m diagram. */
   // The diagram is an array of "pointers".
   private Generator[] m_diagram;
 
-  /**
-   * Instantiates a new voronoi diagram.
-   *
-   * @param generatorCapacity the generator capacity
-   */
   public VoronoiDiagram(int generatorCapacity) {
     m_generatorBuffer = new Generator[generatorCapacity];
     for (int i = 0; i < generatorCapacity; i++) {
@@ -124,12 +52,6 @@ public class VoronoiDiagram {
     m_diagram = null;
   }
 
-  /**
-   * Gets the nodes.
-   *
-   * @param callback the callback
-   * @return the nodes
-   */
   public void getNodes(VoronoiDiagramCallback callback) {
     for (int y = 0; y < m_countY - 1; y++) {
       for (int x = 0; x < m_countX - 1; x++) {
@@ -150,12 +72,6 @@ public class VoronoiDiagram {
     }
   }
 
-  /**
-   * Adds the generator.
-   *
-   * @param center the center
-   * @param tag the tag
-   */
   public void addGenerator(Vec2 center, int tag) {
     Generator g = m_generatorBuffer[m_generatorCount++];
     g.center.x = center.x;
@@ -163,13 +79,8 @@ public class VoronoiDiagram {
     g.tag = tag;
   }
 
-  /** The lower. */
   private final Vec2 lower = new Vec2();
-  
-  /** The upper. */
   private final Vec2 upper = new Vec2();
-  
-  /** The task pool. */
   private MutableStack<VoronoiDiagramTask> taskPool =
       new MutableStack<VoronoiDiagram.VoronoiDiagramTask>(50) {
         @Override
@@ -182,15 +93,8 @@ public class VoronoiDiagram {
           return new VoronoiDiagramTask[size];
         }
       };
-  
-  /** The queue. */
   private final StackQueue<VoronoiDiagramTask> queue = new StackQueue<VoronoiDiagramTask>();
 
-  /**
-   * Generate.
-   *
-   * @param radius the radius
-   */
   public void generate(float radius) {
     assert (m_diagram == null);
     float inverseRadius = 1 / radius;
