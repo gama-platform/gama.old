@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Maths.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Maths.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -32,8 +31,10 @@ public class Maths {
 	/**
 	 * Pow.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -60,8 +61,10 @@ public class Maths {
 	/**
 	 * Pow.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -81,8 +84,10 @@ public class Maths {
 	/**
 	 * Pow.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -103,8 +108,10 @@ public class Maths {
 	/**
 	 * Pow.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -129,7 +136,8 @@ public class Maths {
 	/**
 	 * Abs.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -156,7 +164,8 @@ public class Maths {
 	/**
 	 * Abs.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the integer
 	 */
 	@operator (
@@ -179,13 +188,15 @@ public class Maths {
 	@test ("abs(0) = 0")
 	@test ("abs(-0) = 0")
 	public static Integer abs(final Integer rv) {
-		return (rv ^ rv >> 31) - (rv >> 31);
+		int a = rv.intValue();
+		return (a ^ a >> 31) - (a >> 31);
 	}
 
 	/**
 	 * Acos.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -214,7 +225,8 @@ public class Maths {
 	/**
 	 * Acos.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -236,7 +248,8 @@ public class Maths {
 	/**
 	 * Asin.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -264,7 +277,8 @@ public class Maths {
 	/**
 	 * Asin.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -292,7 +306,8 @@ public class Maths {
 	/**
 	 * Atan.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -317,7 +332,8 @@ public class Maths {
 	/**
 	 * Atan.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -337,7 +353,8 @@ public class Maths {
 	/**
 	 * Tanh.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -360,7 +377,8 @@ public class Maths {
 	/**
 	 * Tanh.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -379,7 +397,8 @@ public class Maths {
 	/**
 	 * Cos rad.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	// hqnghi & Tri 14/04/2013
@@ -406,7 +425,8 @@ public class Maths {
 	/**
 	 * Sin rad.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -431,7 +451,8 @@ public class Maths {
 	/**
 	 * Tan rad.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the double
 	 */
 	@operator (
@@ -455,7 +476,8 @@ public class Maths {
 	/**
 	 * Cos.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -484,7 +506,8 @@ public class Maths {
 	/**
 	 * Cos.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -512,7 +535,8 @@ public class Maths {
 	/**
 	 * Sin.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -535,7 +559,8 @@ public class Maths {
 	/**
 	 * Sin.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -558,7 +583,8 @@ public class Maths {
 	/**
 	 * Tan.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the double
 	 */
 	@operator (
@@ -584,7 +610,8 @@ public class Maths {
 	/**
 	 * Tan.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the double
 	 */
 	@operator (
@@ -607,7 +634,8 @@ public class Maths {
 	/**
 	 * Even.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the boolean
 	 */
 	@operator (
@@ -628,13 +656,14 @@ public class Maths {
 							value = "even(-12)",
 							equals = "true") })
 	public static Boolean even(final Integer rv) {
-		return rv.intValue() % 2 == 0;
+		return (rv.intValue() & 1) == 0;
 	}
 
 	/**
 	 * Exp.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -658,7 +687,8 @@ public class Maths {
 	/**
 	 * Exp.
 	 *
-	 * @param rv the rv
+	 * @param rv
+	 *            the rv
 	 * @return the double
 	 */
 	@operator (
@@ -676,7 +706,8 @@ public class Maths {
 	/**
 	 * Fact.
 	 *
-	 * @param n the n
+	 * @param n
+	 *            the n
 	 * @return the double
 	 */
 	@operator (
@@ -691,19 +722,19 @@ public class Maths {
 					value = "fact(4)",
 					equals = "24"))
 	public static Double fact(final Integer n) {
-		if (n < 0) { return 0.0; }
+		if (n < 0) return 0.0;
 		double product = 1;
-		for (int i = 2; i <= n; i++) {
-			product *= i;
-		}
+		for (int i = 2; i <= n; i++) { product *= i; }
 		return product;
 	}
 
 	/**
 	 * Ln.
 	 *
-	 * @param scope the scope
-	 * @param x the x
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
 	 * @return the double
 	 */
 	@operator (
@@ -721,18 +752,18 @@ public class Maths {
 					equals = "1.0"),
 			see = "exp")
 	public static Double ln(final IScope scope, final Double x) {
-		if (x <= 0) {
-			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
-			// return Double.MAX_VALUE; // A compromise...
-		}
+		if (x <= 0) throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+		// return Double.MAX_VALUE; // A compromise...
 		return Math.log(x);
 	}
 
 	/**
 	 * Ln.
 	 *
-	 * @param scope the scope
-	 * @param x the x
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
 	 * @return the double
 	 */
 	@operator (
@@ -746,18 +777,18 @@ public class Maths {
 					value = "ln(1)",
 					equals = "0.0"))
 	public static Double ln(final IScope scope, final Integer x) {
-		if (x <= 0) {
-			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
-			// return Double.MAX_VALUE; // A compromise...
-		}
+		if (x <= 0) throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+		// return Double.MAX_VALUE; // A compromise...
 		return Math.log(x);
 	}
 
 	/**
 	 * Log.
 	 *
-	 * @param scope the scope
-	 * @param x the x
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
 	 * @return the double
 	 */
 	@operator (
@@ -774,18 +805,18 @@ public class Maths {
 					equals = "1.0"),
 			see = "ln")
 	public static Double log(final IScope scope, final Double x) {
-		if (x <= 0) {
-			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
-			// return Double.MAX_VALUE; // A compromise...
-		}
-		return Double.valueOf(Math.log10(x.doubleValue()));
+		if (x <= 0) throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+		// return Double.MAX_VALUE; // A compromise...
+		return Math.log10(x.doubleValue());
 	}
 
 	/**
 	 * Log.
 	 *
-	 * @param scope the scope
-	 * @param x the x
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
 	 * @return the double
 	 */
 	@operator (
@@ -799,17 +830,16 @@ public class Maths {
 					value = "log(1)",
 					equals = "0.0"))
 	public static Double log(final IScope scope, final Integer x) {
-		if (x <= 0) {
-			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
-			// return Double.MAX_VALUE; // A compromise...
-		}
+		if (x <= 0) throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
+		// return Double.MAX_VALUE; // A compromise...
 		return Math.log10(x);
 	}
 
 	/**
 	 * Negate.
 	 *
-	 * @param x the x
+	 * @param x
+	 *            the x
 	 * @return the double
 	 */
 	@operator (
@@ -828,7 +858,8 @@ public class Maths {
 	/**
 	 * Negate.
 	 *
-	 * @param x the x
+	 * @param x
+	 *            the x
 	 * @return the integer
 	 */
 	@operator (
@@ -848,7 +879,8 @@ public class Maths {
 	/**
 	 * Round.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the integer
 	 */
 	@operator (
@@ -882,7 +914,8 @@ public class Maths {
 	/**
 	 * Round.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the integer
 	 */
 	@operator (
@@ -901,10 +934,13 @@ public class Maths {
 	/**
 	 * Sqrt.
 	 *
-	 * @param scope the scope
-	 * @param v the v
+	 * @param scope
+	 *            the scope
+	 * @param v
+	 *            the v
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "sqrt",
@@ -920,17 +956,20 @@ public class Maths {
 					value = "sqrt(4)",
 					equals = "2.0"))
 	public static Double sqrt(final IScope scope, final Integer v) throws GamaRuntimeException {
-		if (v < 0) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope); }
+		if (v < 0) throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope);
 		return Math.sqrt(v);
 	}
 
 	/**
 	 * Sqrt.
 	 *
-	 * @param scope the scope
-	 * @param v the v
+	 * @param scope
+	 *            the scope
+	 * @param v
+	 *            the v
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "sqrt",
@@ -943,18 +982,22 @@ public class Maths {
 					value = "sqrt(4)",
 					equals = "2.0"))
 	public static Double sqrt(final IScope scope, final Double v) throws GamaRuntimeException {
-		if (v < 0) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope); }
+		if (v < 0) throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs", scope);
 		return Math.sqrt(v);
 	}
 
 	/**
 	 * Op divide.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -975,18 +1018,22 @@ public class Maths {
 	@test ("is_error(1/0)")
 	@test ("3/5=0.6")
 	public static Double opDivide(final IScope scope, final Integer a, final Integer b) throws GamaRuntimeException {
-		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
-		return Double.valueOf(a.doubleValue() / b.doubleValue());
+		if (b == 0) throw GamaRuntimeException.error("Division by zero", scope);
+		return a.doubleValue() / b.doubleValue();
 	}
 
 	/**
 	 * Op divide.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -1000,18 +1047,22 @@ public class Maths {
 	@test ("is_error(1.5/0)")
 	@test ("0.0/5=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
-		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (b == 0) throw GamaRuntimeException.error("Division by zero", scope);
 		return a / b.doubleValue();
 	}
 
 	/**
 	 * Op divide.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -1025,18 +1076,22 @@ public class Maths {
 	@test ("is_error(1.5/0.0)")
 	@test ("0.0/1.0=0.0")
 	public static Double opDivide(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
-		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (b.equals(0.0)) throw GamaRuntimeException.error("Division by zero", scope);
 		return a / b;
 	}
 
 	/**
 	 * Op divide.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -1050,15 +1105,17 @@ public class Maths {
 	@test ("is_error(2/0.0)")
 	@test ("0/0.3=0.0")
 	public static Double opDivide(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
-		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (b.equals(0.0)) throw GamaRuntimeException.error("Division by zero", scope);
 		return a.doubleValue() / b.doubleValue();
 	}
 
 	/**
 	 * Op times.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
 	 */
 	@operator (
@@ -1082,8 +1139,10 @@ public class Maths {
 	/**
 	 * Op times.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1098,14 +1157,16 @@ public class Maths {
 					equals = "5.0") },
 			see = "/")
 	public static Double opTimes(final Double a, final Integer b) {
-		return Double.valueOf(a * b);
+		return a * b;
 	}
 
 	/**
 	 * Op times.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1128,8 +1189,10 @@ public class Maths {
 	/**
 	 * Op times.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1144,14 +1207,16 @@ public class Maths {
 	@test ("1 * (- 1.0) = -1.0")
 	@test ("1 * 0.0 = 0.0")
 	public static Double opTimes(final Integer a, final Double b) {
-		return Double.valueOf(a * b);
+		return a * b;
 	}
 
 	/**
 	 * Op times.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
 	 */
 	@operator (
@@ -1173,8 +1238,10 @@ public class Maths {
 	/**
 	 * Op times.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
 	 */
 	@operator (
@@ -1192,8 +1259,10 @@ public class Maths {
 	/**
 	 * Op plus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
 	 */
 	@operator (
@@ -1217,8 +1286,10 @@ public class Maths {
 	/**
 	 * Op plus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1241,8 +1312,10 @@ public class Maths {
 	/**
 	 * Op plus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1261,8 +1334,10 @@ public class Maths {
 	/**
 	 * Op plus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1281,8 +1356,10 @@ public class Maths {
 	/**
 	 * Op plus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
 	 */
 	@operator (
@@ -1305,8 +1382,10 @@ public class Maths {
 	/**
 	 * Op plus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
 	 */
 	@operator (
@@ -1327,8 +1406,10 @@ public class Maths {
 	/**
 	 * Op minus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
 	 */
 	@operator (
@@ -1352,8 +1433,10 @@ public class Maths {
 	/**
 	 * Op minus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1379,8 +1462,10 @@ public class Maths {
 	/**
 	 * Op minus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1406,8 +1491,10 @@ public class Maths {
 	/**
 	 * Op minus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the double
 	 */
 	@operator (
@@ -1430,8 +1517,10 @@ public class Maths {
 	/**
 	 * Op minus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
 	 */
 	@operator (
@@ -1455,8 +1544,10 @@ public class Maths {
 	/**
 	 * Op minus.
 	 *
-	 * @param a the a
-	 * @param b the b
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
 	 */
 	@operator (
@@ -1484,8 +1575,10 @@ public class Maths {
 	/**
 	 * Op truncate.
 	 *
-	 * @param x the x
-	 * @param precision the precision
+	 * @param x
+	 *            the x
+	 * @param precision
+	 *            the precision
 	 * @return the double
 	 */
 	// "round")
@@ -1510,8 +1603,10 @@ public class Maths {
 	/**
 	 * Round.
 	 *
-	 * @param v the v
-	 * @param precision the precision
+	 * @param v
+	 *            the v
+	 * @param precision
+	 *            the precision
 	 * @return the double
 	 */
 	@operator (
@@ -1536,7 +1631,8 @@ public class Maths {
 	/**
 	 * Floor.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the double
 	 */
 	@operator (
@@ -1563,7 +1659,8 @@ public class Maths {
 	/**
 	 * Ceil.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the double
 	 */
 	@operator (
@@ -1589,9 +1686,12 @@ public class Maths {
 	/**
 	 * Op mod.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
 	 */
 	@operator (
@@ -1616,11 +1716,15 @@ public class Maths {
 	/**
 	 * Div.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "div",
@@ -1637,18 +1741,22 @@ public class Maths {
 					equals = "13"),
 			see = "mod")
 	public static Integer div(final IScope scope, final Integer a, final Integer b) throws GamaRuntimeException {
-		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (b == 0) throw GamaRuntimeException.error("Division by zero", scope);
 		return a / b;
 	}
 
 	/**
 	 * Div.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "div",
@@ -1662,18 +1770,22 @@ public class Maths {
 					equals = "13"),
 			see = "mod")
 	public static Integer div(final IScope scope, final Double a, final Integer b) throws GamaRuntimeException {
-		if (b == 0) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (b == 0) throw GamaRuntimeException.error("Division by zero", scope);
 		return (int) (a / b);
 	}
 
 	/**
 	 * Div.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "div",
@@ -1686,18 +1798,22 @@ public class Maths {
 					value = "40 div 4.1",
 					equals = "9"))
 	public static Integer div(final IScope scope, final Integer a, final Double b) throws GamaRuntimeException {
-		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (b.equals(0.0)) throw GamaRuntimeException.error("Division by zero", scope);
 		return (int) (a / b);
 	}
 
 	/**
 	 * Div.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the integer
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "div",
@@ -1710,7 +1826,7 @@ public class Maths {
 					value = "40.1 div 4.5",
 					equals = "8"))
 	public static Integer div(final IScope scope, final Double a, final Double b) throws GamaRuntimeException {
-		if (b.equals(0.0)) { throw GamaRuntimeException.error("Division by zero", scope); }
+		if (b.equals(0.0)) throw GamaRuntimeException.error("Division by zero", scope);
 		return (int) (a / b);
 	}
 
@@ -1737,21 +1853,21 @@ public class Maths {
 	public static final double toDeg = 180d / Math.PI;
 	/** Constant field toRad. */
 	public static final double toRad = Math.PI / 180d;
-	
+
 	/** The Constant TENS. */
 	public static final long[] TENS = new long[100];
 
 	static {
-		for (int i = 0; i < TENS.length; i++) {
-			TENS[i] = (long) Math.pow(10, i);
-		}
+		for (int i = 0; i < TENS.length; i++) { TENS[i] = (long) Math.pow(10, i); }
 	}
 
 	/**
 	 * Atan 2.
 	 *
-	 * @param y the y
-	 * @param x the x
+	 * @param y
+	 *            the y
+	 * @param x
+	 *            the x
 	 * @return the double
 	 */
 	@operator (
@@ -1781,9 +1897,7 @@ public class Maths {
 	 */
 	public static double checkHeading(final int newHeading) {
 		double result = newHeading;
-		while (result < 0) {
-			result += PRECISION;
-		}
+		while (result < 0) { result += PRECISION; }
 		return result % PRECISION;
 	}
 
@@ -1797,23 +1911,24 @@ public class Maths {
 	 */
 	public static double checkHeading(final double newHeading) {
 		double result = newHeading;
-		while (result < 0) {
-			result += PRECISION;
-		}
-		while (result > 360) {
-			result -= PRECISION;
-		}
+		while (result < 0) { result += PRECISION; }
+		while (result > 360) { result -= PRECISION; }
 		return result;
 	}
 
 	/**
 	 * Hypot.
 	 *
-	 * @param scope the scope
-	 * @param x1 the x 1
-	 * @param x2 the x 2
-	 * @param y1 the y 1
-	 * @param y2 the y 2
+	 * @param scope
+	 *            the scope
+	 * @param x1
+	 *            the x 1
+	 * @param x2
+	 *            the x 2
+	 * @param y1
+	 *            the y 1
+	 * @param y2
+	 *            the y 2
 	 * @return the double
 	 */
 	@operator (
@@ -1837,7 +1952,8 @@ public class Maths {
 	/**
 	 * Checks if is number.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the boolean
 	 */
 	@operator (
@@ -1863,7 +1979,8 @@ public class Maths {
 	/**
 	 * Checks if is finite.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the boolean
 	 */
 	@operator (
@@ -1886,7 +2003,37 @@ public class Maths {
 	/**
 	 * Signum.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
+	 * @return the integer
+	 */
+	@operator (
+			value = "signum",
+			can_be_const = true,
+			category = { IOperatorCategory.ARITHMETIC },
+			concept = { IConcept.MATH, IConcept.ARITHMETIC })
+	@doc (
+			value = "Returns -1 if the argument is negative, +1 if it is positive, 0 if it is equal to zero or not a number",
+			examples = { @example (
+					value = "signum(-12.8)",
+					equals = "-1"),
+					@example (
+							value = "signum(14.5)",
+							equals = "1"),
+					@example (
+							value = "signum(0.0)",
+							equals = "0") })
+	public static Integer signum(final Double d) {
+		if (d == null || d.isNaN() || Comparison.equal(d, 0d)) return 0;
+		if (d < 0) return -1;
+		return 1;
+	}
+
+	/**
+	 * Signum.
+	 *
+	 * @param d
+	 *            the d
 	 * @return the integer
 	 */
 	@operator (
@@ -1905,10 +2052,9 @@ public class Maths {
 					@example (
 							value = "signum(0)",
 							equals = "0") })
-	public static Integer signum(final Double d) {
-		if (d == null || d.isNaN() || Comparison.equal(d, 0d)) { return 0; }
-		if (d < 0) { return -1; }
-		return 1;
+	public static Integer signum(final Integer d) {
+		int a = d.intValue();
+		return a < 0 ? -1 : a == 0 ? 0 : 1;
 	}
 
 }

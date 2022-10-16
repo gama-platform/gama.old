@@ -39,7 +39,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import msi.gama.common.geometry.GamaGeometryFactory;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.GISUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
@@ -129,7 +128,7 @@ public class GamaShapeFile extends GamaGisFile {
 				}
 				env = source.getBounds();
 				if (crs1 == null) {
-					crs1 = GISUtils.manageGoogleCRS(url);
+					crs1 = ProjectionFactory.manageGoogleCRS(url);
 					if (crs1 != null) { env = new ReferencedEnvelope(env, crs1); }
 				}
 

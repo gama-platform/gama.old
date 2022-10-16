@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGisFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaGisFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -33,7 +33,6 @@ import com.google.common.cache.CacheBuilder;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
-import msi.gama.common.util.GISUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.metamodel.shape.GamaShape;
@@ -129,7 +128,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		try {
 			url = getFile(scope).toURI().toURL();
 			CoordinateReferenceSystem crs = getFeatureCollection(scope).getSchema().getCoordinateReferenceSystem();
-			if (crs == null) { crs = GISUtils.manageGoogleCRS(url); }
+			if (crs == null) { crs = ProjectionFactory.manageGoogleCRS(url); }
 			return crs;
 		} catch (MalformedURLException e) {
 			return null;

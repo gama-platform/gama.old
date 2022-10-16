@@ -35,12 +35,12 @@ import org.locationtech.jts.operation.distance.DistanceOp;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.JavaUtils;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.GamlAgent;
@@ -2115,7 +2115,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public Iterator<G> iterator() {
-			return JavaUtils.iterator(matrix);
+			return (Iterator<G>) Iterators.forArray(matrix);
 		}
 
 		@Override

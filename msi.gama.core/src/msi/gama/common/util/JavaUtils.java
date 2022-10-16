@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -154,20 +153,6 @@ public class JavaUtils {
 		}
 		return IMPLEMENTATION_CLASSES.get(key);
 
-	}
-
-	/**
-	 * Iterator.
-	 *
-	 * @param <F>
-	 *            the generic type
-	 * @param array
-	 *            the array
-	 * @return the iterator
-	 */
-	public static <F> Iterator<F> iterator(final Object[] array) {
-		if (array != null && array.length > 0) return (Iterator<F>) Iterators.forArray(array);
-		return NULL_ITERATOR;
 	}
 
 }

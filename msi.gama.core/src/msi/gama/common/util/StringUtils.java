@@ -1,31 +1,29 @@
 /*******************************************************************************************************
  *
- * StringUtils.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * StringUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.IList;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The class StringUtils.
@@ -37,29 +35,49 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class StringUtils {
 
-//	static {
-//		DEBUG.ON();
-//	}
+	// static {
+	// DEBUG.ON();
+	// }
 
+	/** The Constant DEFAULT_DECIMAL_FORMAT. */
+	public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;
+
+	/** The Constant SYMBOLS. */
+	public static final DecimalFormatSymbols SYMBOLS;
+
+	static {
+		SYMBOLS = new DecimalFormatSymbols();
+		SYMBOLS.setDecimalSeparator('.');
+		SYMBOLS.setInfinity("#infinity");
+		SYMBOLS.setNaN("#nan");
+		DEFAULT_DECIMAL_FORMAT = new DecimalFormat("##0.0################", SYMBOLS);
+	}
 	/** The Constant strings. */
-final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
-	
+	final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
+
 	/** The Constant operators. */
 	final static String operators = "::|<>|!=|>=|<=|//";
-	
+
 	/** The Constant ponctuation. */
 	public final static String ponctuation = "\\p{Punct}";
-	
+
 	/** The Constant literals. */
 	public final static String literals = "\\w+\\$\\w+|\\#\\w+|\\d+\\.\\d+|\\w+\\.\\w+|\\w+";
-	
+
 	/** The Constant regex. */
 	final static String regex = strings + "|" + literals + "|" + operators + "|" + ponctuation;
+
+	/** The gama string pattern. */
+	static Predicate<String> GAMA_STRING_PATTERN = Pattern.compile("^'.*'$").asMatchPredicate();
+
+	/** The tokenizer pattern. */
+	static Pattern TOKENIZER_PATTERN = Pattern.compile(strings + "|" + literals + "|" + operators + "|" + ponctuation);
 
 	/**
 	 * To gaml string.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the string
 	 */
 	static public String toGamlString(final String s) {
@@ -88,7 +106,8 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 	/**
 	 * To java string.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the string
 	 */
 	static public String toJavaString(final String s) {
@@ -102,117 +121,12 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 	/**
 	 * Tokenize.
 	 *
-	 * @param expression the expression
+	 * @param expression
+	 *            the expression
 	 * @return the list
 	 */
 	public static List<String> tokenize(final String expression) {
-		if (expression == null) return Collections.EMPTY_LIST;
-		final Pattern p = Pattern.compile(regex);
-		final List<String> tokens = new ArrayList<>();
-		final Matcher m = p.matcher(expression);
-		while (m.find()) {
-			tokens.add(expression.substring(m.start(), m.end()));
-		}
-		return tokens;
-	}
-
-	/**
-	 * Unescape java.
-	 *
-	 * @param str
-	 *            the str
-	 *
-	 * @return the string
-	 */
-	static public String unescapeJava(final String str) {
-		if (str == null) return null;
-		// final String result = unescapeJavaHandMade1(str); // AD: original version
-		final String result = unescapeJavaHandMade2(str); // AD: More complete version. See #3095
-//		DEBUG.LOG("Input: " + str + " ; unescaped output: " + result);
-		return result;
-	}
-
-	/**
-	 * Unescape java hand made 1.
-	 *
-	 * @param str the str
-	 * @return the string
-	 */
-	static private String unescapeJavaHandMade1(final String str) {
-		final int sz = str.length();
-		final StringBuilder writer = new StringBuilder(str.length());
-		boolean hadSlash = false;
-		boolean inUnicode = false;
-		StringBuilder unicode = null;
-		for (int i = 0; i < sz; i++) {
-			final char ch = str.charAt(i);
-			if (inUnicode) {
-				// if in unicode, then we're reading unicode
-				// values in somehow
-				if (unicode == null) { unicode = new StringBuilder(4); }
-				unicode.append(ch);
-				if (unicode.length() == 4) {
-					final int value = Integer.parseInt(unicode.toString(), 16);
-					writer.append((char) value);
-					unicode.setLength(0);
-					inUnicode = false;
-					hadSlash = false;
-				}
-				continue;
-			}
-			if (hadSlash) {
-				// handle an escaped value
-				hadSlash = false;
-				switch (ch) {
-					case '\\':
-						writer.append('\\');
-						break;
-					case '\'':
-						writer.append('\'');
-						break;
-					case '\"':
-						writer.append('"');
-						break;
-					case '/':
-						writer.append('/');
-						break;
-					case 'r':
-						writer.append('\r');
-						break;
-					case 'f':
-						writer.append('\f');
-						break;
-					case 't':
-						writer.append('\t');
-						break;
-					case 'n':
-						writer.append('\n');
-						break;
-					case 'b':
-						writer.append('\b');
-						break;
-					case 'u': {
-						// uh-oh, we're in unicode country....
-						inUnicode = true;
-						break;
-					}
-					default:
-						// See Issue #3095
-						writer.append('\\').append(ch);
-						break;
-				}
-				continue;
-			} else if (ch == '\\') {
-				hadSlash = true;
-				continue;
-			}
-			writer.append(ch);
-		}
-		if (hadSlash) {
-			// string, let's output it anyway.
-			writer.append('\\');
-		}
-		return writer.toString();
+		return expression == null ? Collections.EMPTY_LIST : Arrays.asList(TOKENIZER_PATTERN.split(expression));
 	}
 
 	/*
@@ -223,12 +137,14 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 	/**
 	 * Unescape java hand made 2.
 	 *
-	 * @param oldstr the oldstr
+	 * @param oldstr
+	 *            the oldstr
 	 * @return the string
 	 */
-	public final static String unescapeJavaHandMade2(final String oldstr) {
+	public final static String unescapeJava(final String oldstr) {
+		if (oldstr == null) return null;
 		final int sz = oldstr.length();
-		StringBuffer newstr = new StringBuffer(sz);
+		StringBuilder newstr = new StringBuilder(sz);
 		boolean saw_backslash = false;
 		for (int i = 0; i < sz; i++) {
 			int cp = oldstr.codePointAt(i);
@@ -287,19 +203,19 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 				 * Strange but true: "\c{" is ";", "\c}" is "=", etc.
 				 */
 				case 'c': {
-					if (++i == oldstr.length()) { die("trailing \\c"); }
+					if (++i == oldstr.length()) { emitError("trailing \\c"); }
 					cp = oldstr.codePointAt(i);
 					/*
 					 * don't need to grok surrogates, as next line blows them up
 					 */
-					if (cp > 0x7f) { die("expected ASCII after \\c"); }
+					if (cp > 0x7f) { emitError("expected ASCII after \\c"); }
 					newstr.append(Character.toChars(cp ^ 64));
 					break; /* switch */
 				}
 
 				case '8':
 				case '9':
-					die("illegal octal digit");
+					emitError("illegal octal digit");
 					/* NOTREACHED */
 
 					/*
@@ -351,7 +267,7 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 					try {
 						value = Integer.parseInt(oldstr.substring(i, i + digits), 8);
 					} catch (NumberFormatException nfe) {
-						die("invalid octal value for \\0 escape");
+						emitError("invalid octal value for \\0 escape");
 					}
 					newstr.append(Character.toChars(value));
 					i += digits - 1;
@@ -359,7 +275,7 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 				} /* end case '0' */
 
 				case 'x': {
-					if (i + 2 > oldstr.length()) { die("string too short for \\x escape"); }
+					if (i + 2 > oldstr.length()) { emitError("string too short for \\x escape"); }
 					i++;
 					boolean saw_brace = false;
 					if (oldstr.charAt(i) == '{') {
@@ -378,21 +294,21 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 						 * ASCII test also catches surrogates
 						 */
 						int ch = oldstr.charAt(i + j);
-						if (ch > 127) { die("illegal non-ASCII hex digit in \\x escape"); }
+						if (ch > 127) { emitError("illegal non-ASCII hex digit in \\x escape"); }
 
 						if (saw_brace && ch == '}') { break; /* for */ }
 
-						if (!(ch >= '0' && ch <= '9' || ch >= 'a' && ch <= 'f' || ch >= 'A' && ch <= 'F')) {
-							die(String.format("illegal hex digit #%d '%c' in \\x", ch, ch));
+						if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'f') && (ch < 'A' || ch > 'F')) {
+							emitError(String.format("illegal hex digit #%d '%c' in \\x", ch, ch));
 						}
 
 					}
-					if (j == 0) { die("empty braces in \\x{} escape"); }
+					if (j == 0) { emitError("empty braces in \\x{} escape"); }
 					int value = 0;
 					try {
 						value = Integer.parseInt(oldstr.substring(i, i + j), 16);
 					} catch (NumberFormatException nfe) {
-						die("invalid hex value for \\x escape");
+						emitError("invalid hex value for \\x escape");
 					}
 					newstr.append(Character.toChars(value));
 					if (saw_brace) { j++; }
@@ -401,18 +317,18 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 				}
 
 				case 'u': {
-					if (i + 4 > oldstr.length()) { die("string too short for \\u escape"); }
+					if (i + 4 > oldstr.length()) { emitError("string too short for \\u escape"); }
 					i++;
 					int j;
 					for (j = 0; j < 4; j++) {
 						/* this also handles the surrogate issue */
-						if (oldstr.charAt(i + j) > 127) { die("illegal non-ASCII hex digit in \\u escape"); }
+						if (oldstr.charAt(i + j) > 127) { emitError("illegal non-ASCII hex digit in \\u escape"); }
 					}
 					int value = 0;
 					try {
 						value = Integer.parseInt(oldstr.substring(i, i + j), 16);
 					} catch (NumberFormatException nfe) {
-						die("invalid hex value for \\u escape");
+						emitError("invalid hex value for \\u escape");
 					}
 					newstr.append(Character.toChars(value));
 					i += j - 1;
@@ -420,18 +336,18 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 				}
 
 				case 'U': {
-					if (i + 8 > oldstr.length()) { die("string too short for \\U escape"); }
+					if (i + 8 > oldstr.length()) { emitError("string too short for \\U escape"); }
 					i++;
 					int j;
 					for (j = 0; j < 8; j++) {
 						/* this also handles the surrogate issue */
-						if (oldstr.charAt(i + j) > 127) { die("illegal non-ASCII hex digit in \\U escape"); }
+						if (oldstr.charAt(i + j) > 127) { emitError("illegal non-ASCII hex digit in \\U escape"); }
 					}
 					int value = 0;
 					try {
 						value = Integer.parseInt(oldstr.substring(i, i + j), 16);
 					} catch (NumberFormatException nfe) {
-						die("invalid hex value for \\U escape");
+						emitError("invalid hex value for \\U escape");
 					}
 					newstr.append(Character.toChars(value));
 					i += j - 1;
@@ -453,84 +369,41 @@ final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
 	}
 
 	/**
-	 * Uniplus.
-	 *
-	 * @param s the s
-	 * @return the string
-	 */
-	/*
-	 * Return a string "U+XX.XXX.XXXX" etc, where each XX set is the xdigits of the logical Unicode code point. No
-	 * bloody brain-damaged UTF-16 surrogate crap, just true logical characters.
-	 */
-	public final static String uniplus(final String s) {
-		if (s.length() == 0) return "";
-		/* This is just the minimum; sb will grow as needed. */
-		StringBuffer sb = new StringBuffer(2 + 3 * s.length());
-		sb.append("U+");
-		for (int i = 0; i < s.length(); i++) {
-			sb.append(String.format("%X", s.codePointAt(i)));
-			if (s.codePointAt(i) > Character.MAX_VALUE) {
-				i++; /**** WE HATES UTF-16! WE HATES IT FOREVERSES!!! ****/
-			}
-			if (i + 1 < s.length()) { sb.append("."); }
-		}
-		return sb.toString();
-	}
-
-	/**
 	 * Die.
 	 *
-	 * @param foa the foa
+	 * @param foa
+	 *            the foa
 	 */
-	private static final void die(final String foa) {
+	private static final void emitError(final String foa) {
 		GAMA.reportAndThrowIfNeeded(null, GamaRuntimeException.warning(foa, null), false);
 	}
 
 	/**
 	 * Checks if is gama string.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return true, if is gama string
 	 */
 	static public boolean isGamaString(final String s) {
-		if (s == null) return false;
-		final int n = s.length();
-		if (n == 0 || n == 1) return false;
-		if (s.charAt(0) != '\'') return false;
-		return s.charAt(n - 1) == '\'';
-	}
-
-	/** The Constant DEFAULT_DECIMAL_FORMAT. */
-	public static final DecimalFormat DEFAULT_DECIMAL_FORMAT;
-	
-	/** The Constant SYMBOLS. */
-	public static final DecimalFormatSymbols SYMBOLS;
-
-	static {
-		SYMBOLS = new DecimalFormatSymbols();
-		SYMBOLS.setDecimalSeparator('.');
-		SYMBOLS.setInfinity("#infinity");
-		SYMBOLS.setNaN("#nan");
-		DEFAULT_DECIMAL_FORMAT = new DecimalFormat("##0.0################", SYMBOLS);
+		return s != null && GAMA_STRING_PATTERN.test(s);
 	}
 
 	/**
 	 * To gaml.
 	 *
-	 * @param val the val
-	 * @param includingBuiltIn the including built in
+	 * @param val
+	 *            the val
+	 * @param includingBuiltIn
+	 *            the including built in
 	 * @return the string
 	 */
 	public static String toGaml(final Object val, final boolean includingBuiltIn) {
 		if (val == null) return "nil";
-		if (val instanceof IGamlable) return ((IGamlable) val).serialize(includingBuiltIn);
-		if (val instanceof String) return toGamlString((String) val);
-		if (val instanceof Double) return DEFAULT_DECIMAL_FORMAT.format(val);
-		if (val instanceof Collection) {
-			final IList l = GamaListFactory.create(Types.STRING);
-			l.addAll((Collection) val);
-			return toGaml(l, includingBuiltIn);
-		}
+		if (val instanceof IGamlable g) return g.serialize(includingBuiltIn);
+		if (val instanceof String s) return toGamlString(s);
+		if (val instanceof Double d) return DEFAULT_DECIMAL_FORMAT.format(d);
+		if (val instanceof Collection c) return toGaml(GamaListFactory.wrap(Types.STRING, c), includingBuiltIn);
 		return String.valueOf(val);
 	}
 

@@ -14,7 +14,9 @@ import static java.util.stream.Collectors.toList;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -37,6 +39,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 
+import com.google.common.collect.Iterables;
+
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.ext.webb.Webb;
 import msi.gama.ext.webb.WebbException;
@@ -44,6 +48,7 @@ import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.file.CacheLocationProvider;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -168,7 +173,97 @@ public class FileUtils {
 		}
 
 		DEBUG.OUT("Falling back to the old JavaIO based search");
-		return OldFileUtils.constructAbsoluteFilePathAlternate(scope, fp, mustExist);
+		return constructAbsoluteFilePathAlternate(scope, fp, mustExist);
+	}
+
+	/**
+	 * Construct absolute file path alternate.
+	 *
+	 * @param scope the scope
+	 * @param fp the fp
+	 * @param mustExist the must exist
+	 * @return the string
+	 */
+	static public String constructAbsoluteFilePathAlternate(final IScope scope, final String fp,
+			final boolean mustExist) {
+		if (scope == null) return fp;
+		String filePath = null;
+		Iterable<String> baseDirectories = null;
+		final IExperimentAgent a = scope.getExperiment();
+
+		try {
+			baseDirectories = Iterables.transform(a.getWorkingPaths(), each -> {
+				try {
+					String result = URLDecoder.decode(each, "UTF-8");
+					return result.endsWith("/") ? result : result + "/";
+				} catch (final UnsupportedEncodingException e1) {
+					return each;
+				}
+			});
+			filePath = URLDecoder.decode(fp, "UTF-8");
+		} catch (final UnsupportedEncodingException e1) {
+			filePath = fp;
+		}
+		final GamaRuntimeException ex =
+				new GamaRuntimeFileException(scope, "File denoted by " + filePath + " not found.");
+		File file = null;
+		if (FileUtils.isAbsolutePath(filePath)) {
+			file = new File(filePath);
+			if (file.exists() || !mustExist) {
+				try {
+					return file.getCanonicalPath();
+				} catch (final IOException e) {
+					e.printStackTrace();
+					return file.getAbsolutePath();
+				}
+			}
+			final File[] roots = File.listRoots();
+			for (final String baseDirectory : baseDirectories) {
+				for (final File root : roots) {
+					if (filePath.startsWith(root.getAbsolutePath())) {
+						filePath = filePath.substring(root.getAbsolutePath().length());
+					}
+				}
+				String completePath = baseDirectory + filePath;
+				file = new File(completePath);
+				if (file.exists()) {
+					try {
+						return file.getCanonicalPath();
+					} catch (final IOException e) {
+						e.printStackTrace();
+						return file.getAbsolutePath();
+					}
+				}
+				ex.addContext(file.getAbsolutePath());
+			}
+		} else {
+			for (final String baseDirectory : baseDirectories) {
+				file = new File(baseDirectory + filePath);
+				if (file.exists()) {
+					try {
+						// We have to try if the test is necessary.
+						if (scope.getExperiment().isHeadless()) // if (GAMA.isInHeadLessMode()) {
+							return file.getAbsolutePath();
+						return file.getCanonicalPath();
+
+					} catch (final IOException e) {
+						e.printStackTrace();
+						return file.getAbsolutePath();
+					}
+				}
+
+				ex.addContext(file.getAbsolutePath());
+			}
+			// We havent found the file, but it may not exist. In that case, the
+			// first directory is used as a reference.
+			if (!mustExist) {
+				try {
+					return new File(Iterables.get(baseDirectories, 0) + filePath).getCanonicalPath();
+				} catch (final IOException e) {}
+			}
+		}
+
+		throw ex;
 	}
 
 	/**

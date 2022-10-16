@@ -486,31 +486,31 @@ public class DrawingAttributes {
 		return true;
 	}
 
-	/**
-	 * Gets the frame count.
-	 *
-	 * @return the frame count
-	 */
-	public int getFrameCount() {
-		if (textures == null) return 1;
-		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile)) return 1;
-		return ((GamaGifFile) o).getFrameCount();
-
-	}
-
-	/**
-	 * Gets the average delay.
-	 *
-	 * @return the average delay
-	 */
-	public int getAverageDelay() {
-		if (textures == null) return 0;
-		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile)) return 0;
-		return ((GamaGifFile) o).getAverageDelay();
-
-	}
+	// /**
+	// * Gets the frame count.
+	// *
+	// * @return the frame count
+	// */
+	// public int getFrameCount() {
+	// if (textures == null) return 1;
+	// final Object o = textures.get(0);
+	// if (!(o instanceof GamaGifFile)) return 1;
+	// return ((GamaGifFile) o).getFrameCount();
+	//
+	// }
+	//
+	// /**
+	// * Gets the average delay.
+	// *
+	// * @return the average delay
+	// */
+	// public int getAverageDelay() {
+	// if (textures == null) return 0;
+	// final Object o = textures.get(0);
+	// if (!(o instanceof GamaGifFile)) return 0;
+	// return ((GamaGifFile) o).getAverageDelay();
+	//
+	// }
 
 	/**
 	 * Checks if is lighting.
