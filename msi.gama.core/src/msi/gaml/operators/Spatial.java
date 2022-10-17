@@ -9,10 +9,6 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
-
-import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -97,7 +93,6 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGisFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
@@ -7303,54 +7298,6 @@ public abstract class Spatial {
 			});
 
 			return geom;
-		}
-
-		/**
-		 * Rgb to xyz.
-		 *
-		 * @param scope
-		 *            the scope
-		 * @param file
-		 *            the file
-		 * @return the i list
-		 */
-		@operator (
-				value = "rgb_to_xyz",
-				type = IType.LIST,
-				content_type = IType.POINT,
-				category = { IOperatorCategory.SPATIAL, IOperatorCategory.THREED },
-				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.THREED, IConcept.COLOR })
-		@doc (
-				value = "A list of point corresponding to RGB value of an image (r:x , g:y, b:z)",
-				deprecated = "Not used anymore",
-				examples = { @example (
-						value = "rgb_to_xyz(texture)",
-						equals = "a list of points",
-						isExecutable = false) },
-				see = {})
-		public static IList<GamaPoint> rgb_to_xyz(final IScope scope, final GamaFile file) {
-
-			final IList<GamaPoint> points = GamaListFactory.create(Types.POINT);
-			BufferedImage texture = null;
-			int rows, cols, x, y;
-
-			if (!(file instanceof GamaImageFile)) {
-				if (file == null) throw error("File is null in rgb_to_xyz", scope);
-				throw error("Impossible to read points from " + file.getPath(scope), scope);
-			}
-			texture = ((GamaImageFile) file).getImage(scope, true);
-			if (texture == null) return points;
-			rows = texture.getHeight() - 1;
-			cols = texture.getWidth() - 1;
-
-			for (y = 0; y < rows; y++) {
-				for (x = 0; x <= cols; x++) {
-					final Color c = new Color(texture.getRGB(cols - x, y));
-					points.add(new GamaPoint(c.getRed(), c.getGreen(), c.getBlue()));
-				}
-			}
-
-			return points;
 		}
 
 		/**

@@ -38,7 +38,6 @@ import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.DeprecatedOperators;
 import msi.gaml.skills.GridSkill;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
@@ -325,9 +324,6 @@ public interface IGamlAdditions {
 
 	/** The ea. */
 	Class<?> EA = ExperimentAgent.class;
-
-	/** The do. */
-	Class<?> DO = DeprecatedOperators.class;
 
 	/** The pa. */
 	Class<?> PA = PlatformAgent.class;

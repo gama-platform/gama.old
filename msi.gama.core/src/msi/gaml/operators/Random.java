@@ -1,15 +1,15 @@
 /*******************************************************************************************************
  *
- * Random.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Random.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,10 +30,10 @@ import msi.gama.util.IMap;
 import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.IField;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.operators.noise.SimplexNoise2;
 import msi.gaml.types.GamaFieldType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.IntStreamEx;
 
 /**
  * Written by drogoul Modified on 10 dec. 2010
@@ -47,7 +47,8 @@ public class Random {
 	/**
 	 * Random.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the random utils
 	 */
 	public static RandomUtils RANDOM(final IScope scope) {
@@ -59,8 +60,10 @@ public class Random {
 	/**
 	 * Op T gauss.
 	 *
-	 * @param scope the scope
-	 * @param p the p
+	 * @param scope
+	 *            the scope
+	 * @param p
+	 *            the p
 	 * @return the double
 	 */
 	@operator (
@@ -85,8 +88,10 @@ public class Random {
 	/**
 	 * Op T gauss.
 	 *
-	 * @param scope the scope
-	 * @param list the list
+	 * @param scope
+	 *            the scope
+	 * @param list
+	 *            the list
 	 * @return the double
 	 */
 	@operator (
@@ -131,8 +136,10 @@ public class Random {
 	/**
 	 * Op gauss.
 	 *
-	 * @param scope the scope
-	 * @param point the point
+	 * @param scope
+	 *            the scope
+	 * @param point
+	 *            the point
 	 * @return the double
 	 */
 	@operator (
@@ -159,9 +166,12 @@ public class Random {
 	/**
 	 * Op gauss.
 	 *
-	 * @param scope the scope
-	 * @param mean the mean
-	 * @param sd the sd
+	 * @param scope
+	 *            the scope
+	 * @param mean
+	 *            the mean
+	 * @param sd
+	 *            the sd
 	 * @return the double
 	 */
 	@operator (
@@ -186,11 +196,16 @@ public class Random {
 	/**
 	 * Op gauss.
 	 *
-	 * @param scope the scope
-	 * @param min the min
-	 * @param max the max
-	 * @param skew the skew
-	 * @param bias the bias
+	 * @param scope
+	 *            the scope
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param skew
+	 *            the skew
+	 * @param bias
+	 *            the bias
 	 * @return the double
 	 */
 	@operator (
@@ -219,8 +234,10 @@ public class Random {
 	/**
 	 * Op poisson.
 	 *
-	 * @param scope the scope
-	 * @param mean the mean
+	 * @param scope
+	 *            the scope
+	 * @param mean
+	 *            the mean
 	 * @return the integer
 	 */
 	@operator (
@@ -244,9 +261,12 @@ public class Random {
 	/**
 	 * Op binomial.
 	 *
-	 * @param scope the scope
-	 * @param n the n
-	 * @param p the p
+	 * @param scope
+	 *            the scope
+	 * @param n
+	 *            the n
+	 * @param p
+	 *            the p
 	 * @return the integer
 	 */
 	@operator (
@@ -270,8 +290,10 @@ public class Random {
 	/**
 	 * Op shuffle.
 	 *
-	 * @param scope the scope
-	 * @param target the target
+	 * @param scope
+	 *            the scope
+	 * @param target
+	 *            the target
 	 * @return the i list
 	 */
 	@operator (
@@ -310,10 +332,13 @@ public class Random {
 	/**
 	 * Op shuffle.
 	 *
-	 * @param scope the scope
-	 * @param target the target
+	 * @param scope
+	 *            the scope
+	 * @param target
+	 *            the target
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "shuffle",
@@ -335,8 +360,10 @@ public class Random {
 	/**
 	 * Op shuffle.
 	 *
-	 * @param scope the scope
-	 * @param target the target
+	 * @param scope
+	 *            the scope
+	 * @param target
+	 *            the target
 	 * @return the string
 	 */
 	@operator (
@@ -358,8 +385,10 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param max the max
+	 * @param scope
+	 *            the scope
+	 * @param max
+	 *            the max
 	 * @return the integer
 	 */
 	@operator (
@@ -385,9 +414,12 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param min the min
-	 * @param max the max
+	 * @param scope
+	 *            the scope
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
 	 * @return the integer
 	 */
 	@operator (
@@ -411,10 +443,14 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param min the min
-	 * @param max the max
-	 * @param step the step
+	 * @param scope
+	 *            the scope
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
 	 * @return the integer
 	 */
 	@operator (
@@ -438,9 +474,12 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param min the min
-	 * @param max the max
+	 * @param scope
+	 *            the scope
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
 	 * @return the double
 	 */
 	@operator (
@@ -464,10 +503,14 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param min the min
-	 * @param max the max
-	 * @param step the step
+	 * @param scope
+	 *            the scope
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
 	 * @return the double
 	 */
 	@operator (
@@ -491,9 +534,12 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param min the min
-	 * @param max the max
+	 * @param scope
+	 *            the scope
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
 	 * @return the gama point
 	 */
 	@operator (
@@ -519,10 +565,14 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param min the min
-	 * @param max the max
-	 * @param step the step
+	 * @param scope
+	 *            the scope
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
 	 * @return the gama point
 	 */
 	@operator (
@@ -551,8 +601,10 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param max the max
+	 * @param scope
+	 *            the scope
+	 * @param max
+	 *            the max
 	 * @return the gama point
 	 */
 	@operator (
@@ -576,8 +628,10 @@ public class Random {
 	/**
 	 * Op rnd.
 	 *
-	 * @param scope the scope
-	 * @param max the max
+	 * @param scope
+	 *            the scope
+	 * @param max
+	 *            the max
 	 * @return the double
 	 */
 	@operator (
@@ -601,8 +655,10 @@ public class Random {
 	/**
 	 * Op flip.
 	 *
-	 * @param scope the scope
-	 * @param probability the probability
+	 * @param scope
+	 *            the scope
+	 * @param probability
+	 *            the probability
 	 * @return the boolean
 	 */
 	@operator (
@@ -626,8 +682,10 @@ public class Random {
 	/**
 	 * Op rnd choice.
 	 *
-	 * @param scope the scope
-	 * @param distribution the distribution
+	 * @param scope
+	 *            the scope
+	 * @param distribution
+	 *            the distribution
 	 * @return the integer
 	 */
 	@operator (
@@ -643,23 +701,22 @@ public class Random {
 	@test ("seed <- 1.0; rnd_choice([0.2,0.5,0.3]) = 2")
 	public static Integer opRndChoice(final IScope scope, final IList distribution) {
 		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
-		Double sumElt = 0.0;
+		double sumElt = 0.0;
 		Double minVal = 0.0;
 		for (final Object eltDistrib : distribution) {
 			final Double elt = Cast.asFloat(scope, eltDistrib);
-			if (elt < 0.0) {
-				minVal = Math.max(minVal, Math.abs(elt));
-			}
-		//	throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."), scope);
+			if (elt < 0.0) { minVal = Math.max(minVal, Math.abs(elt)); }
+			// throw GamaRuntimeException.create(new RuntimeException("Distribution elements should be positive."),
+			// scope);
 			normalizedDistribution.add(elt);
 			sumElt = sumElt + elt;
 		}
-		int nb =  normalizedDistribution.size();
-		if (minVal > 0) sumElt += minVal *  nb;
+		int nb = normalizedDistribution.size();
+		if (minVal > 0) { sumElt += minVal * nb; }
 		if (sumElt == 0.0) throw GamaRuntimeException
 				.create(new RuntimeException("Distribution elements should not be all equal to 0"), scope);
 		for (int i = 0; i < nb; i++) {
-			normalizedDistribution.set(i,(normalizedDistribution.get(i) +  minVal)/ sumElt);
+			normalizedDistribution.set(i, (normalizedDistribution.get(i) + minVal) / sumElt);
 		}
 
 		double randomValue = RANDOM(scope).between(0., 1.);
@@ -675,9 +732,12 @@ public class Random {
 	/**
 	 * Op rnd coice.
 	 *
-	 * @param <T> the generic type
-	 * @param scope the scope
-	 * @param distribution the distribution
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param distribution
+	 *            the distribution
 	 * @return the t
 	 */
 	@operator (
@@ -695,7 +755,7 @@ public class Random {
 	public static <T> T opRndCoice(final IScope scope, final IMap<T, ?> distribution) {
 		final IList<T> key = distribution.getKeys();
 		final IList<Double> normalizedDistribution = GamaListFactory.create(Types.FLOAT);
-		Double sumElt = 0.0;
+		double sumElt = 0.0;
 
 		for (final T k : key) {
 			Object eltDistrib = distribution.get(k);
@@ -725,10 +785,14 @@ public class Random {
 	/**
 	 * Op sample.
 	 *
-	 * @param scope the scope
-	 * @param x the x
-	 * @param nb the nb
-	 * @param replacement the replacement
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
+	 * @param nb
+	 *            the nb
+	 * @param replacement
+	 *            the replacement
 	 * @return the i list
 	 */
 	@operator (
@@ -763,11 +827,16 @@ public class Random {
 	/**
 	 * Op sample.
 	 *
-	 * @param scope the scope
-	 * @param x the x
-	 * @param nb the nb
-	 * @param replacement the replacement
-	 * @param weights the weights
+	 * @param scope
+	 *            the scope
+	 * @param x
+	 *            the x
+	 * @param nb
+	 *            the nb
+	 * @param replacement
+	 *            the replacement
+	 * @param weights
+	 *            the weights
 	 * @return the i list
 	 */
 	@operator (
@@ -807,31 +876,38 @@ public class Random {
 		return result;
 	}
 
-	// @operator (
-	// value = "simplex_generator",
-	// category = { IOperatorCategory.RANDOM },
-	// concept = {})
-	// @doc (
-	// value = "take a x, y and a bias parameters and gives a value",
-	// examples = { @example (
-	// value = "simplex_generator(2,3,253)",
-	// equals = "0.0976676931220678",
-	// test = false) })
-	// @test ("simplex_generator(2,3,253) = 0.0976676931220678")
-	// public static Double simplex_generator(final IScope scope, final double x, final double y, final double biais) {
-	// return SimplexNoise.noise(x, y, biais);
-	// }
+	/** The supply. */
+	// this contains all the numbers between 0 and 255, these are put in a random order depending upon the seed
+	private final static short SUPPLY[] = IntStreamEx.rangeClosed(0, 255).toShortArray();
+
+	/** The gradient. */
+	private final static int GRADIENT[] =
+			{ 1, 1, -1, 1, 1, -1, -1, -1, 1, 0, -1, 0, 1, 0, -1, 0, 0, 1, 0, -1, 0, 1, 0, -1 };
+
+	/** The Constant F2. */
+	// Skewing and unskewing factors for 2, 3, and 4 dimensions
+	private static final double F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+
+	/** The Constant G2. */
+	private static final double G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
 
 	/**
 	 * Generate terrain.
 	 *
-	 * @param scope the scope
-	 * @param seed the seed
-	 * @param width the width
-	 * @param height the height
-	 * @param details the details
-	 * @param smoothness the smoothness
-	 * @param scattering the scattering
+	 * @param scope
+	 *            the scope
+	 * @param seed
+	 *            the seed
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @param details
+	 *            the details
+	 * @param smoothness
+	 *            the smoothness
+	 * @param scattering
+	 *            the scattering
 	 * @return the i field
 	 */
 	@operator (
@@ -844,39 +920,88 @@ public class Random {
 	public static IField generateTerrain(final IScope scope, final int seed, final int width, final int height,
 			final double details, final double smoothness, final double scattering) {
 
-		SimplexNoise2 simplex = new SimplexNoise2(seed);
+		RandomUtils rand = new RandomUtils((double) seed, IKeyword.MERSENNE);
+		final short p[] = SUPPLY.clone();
+		rand.shuffleInPlace(p);
 
+		// Permutations
+		final short perm[] = new short[512];
+		final short permMod12[] = new short[512];
+
+		for (int i = 0; i < 512; i++) {
+			short s = p[i & 255];
+			perm[i] = s;
+			permMod12[i] = (short) (s % 12);
+		}
 		// smoothness between 0 (very rough) to 1 (very smooth)
 		double roughness = smoothness <= 0 ? 1 : smoothness >= 1 ? 0 : 1 - smoothness;
-
 		// scattering between 0 (in one piece) to 1 (completely scattered)
 		double scale = scattering <= 0 ? 0.0001 : scattering >= 1 ? 0.01 : scattering / 100d;
-
 		// details between 0 (1 octave) and 1 (10 octaves)
-		int octaves = details < 0.1 ? 1 : details >= 1 ? 10 : (int) (details * 10d);
-
+		int octaves = details < 0.1 ? 1 : details >= 1 ? 10 : (int) (details * 10);
 		GamaField result = (GamaField) GamaFieldType.buildField(scope, width, height);
 		double[] totalNoise = result.getMatrix();
-
 		double layerWeight = 1d;
 		double weightSum = 0d;
-
+		double n0, n1, n2; // Noise contributions from the three corners
+		int i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords
 		for (int octave = 0; octave < octaves; octave++) {
 			// Calculate single layer/octave of simplex noise, then add it to total noise
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
-					totalNoise[y * width + x] += simplex.noise(x * scale, y * scale) * layerWeight;
+					double xin = x * scale, yin = y * scale;
+					// Skew the input space to determine which simplex cell we're in
+					double s = (xin + yin) * F2; // Hairy factor for 2D
+					int i = Maths.floor(xin + s), j = Maths.floor(yin + s);
+					double t = (i + j) * G2, X0 = i - t, Y0 = j - t, x0 = xin - X0, y0 = yin - Y0;
+					// For the 2D case, the simplex shape is an equilateral triangle.
+					// Determine which simplex we are in.
+					if (x0 > y0) {
+						i1 = 1;
+						j1 = 0;
+					} // lower triangle, XY order: (0,0)->(1,0)->(1,1)
+					else {
+						i1 = 0;
+						j1 = 1;
+					} // upper triangle, YX order: (0,0)->(0,1)->(1,1)
+					double x1 = x0 - i1 + G2, y1 = y0 - j1 + G2, x2 = x0 - 1.0 + 2.0 * G2, y2 = y0 - 1.0 + 2.0 * G2;
+					// Work out the hashed gradient indices of the three simplex corners
+					int ii = i & 255, jj = j & 255, gi0 = permMod12[ii + perm[jj]],
+							gi1 = permMod12[ii + i1 + perm[jj + j1]], gi2 = permMod12[ii + 1 + perm[jj + 1]];
+					// Calculate the contribution from the three corners
+					double t0 = 0.5 - x0 * x0 - y0 * y0;
+					if (t0 < 0) {
+						n0 = 0.0;
+					} else {
+						t0 *= t0;
+						n0 = t0 * t0 * (GRADIENT[gi0] * x0 + GRADIENT[gi0 + 1] * y0);
+					}
+					double t1 = 0.5 - x1 * x1 - y1 * y1;
+					if (t1 < 0) {
+						n1 = 0.0;
+					} else {
+						t1 *= t1;
+						n1 = t1 * t1 * (GRADIENT[gi1] * x1 + GRADIENT[gi1 + 1] * y1);
+					}
+					double t2 = 0.5 - x2 * x2 - y2 * y2;
+					if (t2 < 0) {
+						n2 = 0.0;
+					} else {
+						t2 *= t2;
+						n2 = t2 * t2 * (GRADIENT[gi2] * x2 + GRADIENT[gi2 + 1] * y2);
+					}
+					// Add contributions from each corner to get the final noise value.
+					// The result is scaled to return values in the interval [-1,1].
+					totalNoise[y * width + x] += 70.0 * (n0 + n1 + n2) * layerWeight;
 				}
 			}
-
 			// Increase variables with each incrementing octave
 			scale *= 2;
 			weightSum += layerWeight;
 			layerWeight *= roughness;
 		}
-
 		for (int x = 0; x < totalNoise.length; x++) { totalNoise[x] /= weightSum; }
-
 		return result;
 	}
+
 }

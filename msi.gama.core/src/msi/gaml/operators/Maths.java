@@ -1644,16 +1644,18 @@ public class Maths {
 			value = "Maps the operand to the largest previous following integer, i.e. the largest integer not greater than x.",
 			examples = { @example (
 					value = "floor(3)",
-					equals = "3.0"),
+					equals = "3"),
 					@example (
 							value = "floor(3.5)",
-							equals = "3.0"),
+							equals = "3"),
 					@example (
 							value = "floor(-4.7)",
-							equals = "-5.0") },
+							equals = "-5") },
 			see = { "ceil", "round" })
-	public static final double floor(final double d) {
-		return Math.floor(d);
+	public static final int floor(final double x) {
+		// This method is a *lot* faster than using (int)Math.floor(x)
+		int xi = (int) x;
+		return x < xi ? xi - 1 : xi;
 	}
 
 	/**

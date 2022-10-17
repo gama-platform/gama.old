@@ -550,6 +550,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+	@SuppressWarnings ("null")
 	public void createVariablesFor(final IScope scope, final List<T> agents,
 			final List<? extends Map<String, Object>> initialValues) throws GamaRuntimeException {
 		if (agents == null || agents.isEmpty()) return;
@@ -969,18 +970,13 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public T getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		if (indices == null) return null;
 		final int size = indices.size();
-		switch (size) {
-			case 0:
-				return null;
-			case 1:
-				return super.getFromIndicesList(scope, indices);
-			case 2:
-				return this.getAgent(scope,
-						new GamaPoint(Cast.asFloat(scope, indices.get(0)), Cast.asFloat(scope, indices.get(1))));
-			default:
-				throw GamaRuntimeException.error("Populations cannot be accessed with 3 or more indexes", scope);
-
-		}
+		return switch (size) {
+			case 0 -> null;
+			case 1 -> super.getFromIndicesList(scope, indices);
+			case 2 -> this.getAgent(scope,
+									new GamaPoint(Cast.asFloat(scope, indices.get(0)), Cast.asFloat(scope, indices.get(1))));
+			default -> throw GamaRuntimeException.error("Populations cannot be accessed with 3 or more indexes", scope);
+		};
 
 	}
 

@@ -8,9 +8,9 @@ model RandomMaps
 
 global {
 	// the generation is mostly governed by these values (see the documentation of 'generate_terrain')
-	float details <- 0.9;
-	float smoothness <- 0.6;
-	float scattering <- 0.05;
+	float details <- 0.5;
+	float smoothness <- 0.4;
+	float scattering <- 0.7;
 	int width <- 250;
 	int height <- 250;
 	field terrain;
@@ -87,7 +87,7 @@ experiment Terrain type: gui {
 	list<rgb> field_and_forest <- palette(reverse([#sienna, #olive, #darkgreen, #green, #forestgreen,  #lightgreen]));
 	output {
 		layout #split consoles: false controls: false toolbars: false;
-		display "Terrain" type: 3d axes: false  {
+		display "Terrain" type: 3d axes: false camera: #from_up_front {
 			mesh terrain color: palette_name = "Seaside" ? land_and_sea : field_and_forest triangulation: true;
 		}
 

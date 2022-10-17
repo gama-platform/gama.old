@@ -152,6 +152,7 @@ public class BatchAgent extends ExperimentAgent {
 		return false;
 	}
 
+	@SuppressWarnings ("null")
 	@Override
 	public void reset() {
 		// We first save the results of the various simulations
@@ -481,8 +482,7 @@ public class BatchAgent extends ExperimentAgent {
 							.setStatus(
 									"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
 											+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
-									"small.batch" + i / 5,
-									getScope());
+									"small.batch" + i / 5, getScope());
 				}
 				if (++i == 20) { i = 0; }
 				// We then verify that the front scheduler has not been paused

@@ -166,6 +166,13 @@ public class System {
 		}
 	}
 
+	/**
+	 * Play sound.
+	 *
+	 * @param scope the scope
+	 * @param source the source
+	 * @return the boolean
+	 */
 	@operator (
 			value = "play_sound",
 			can_be_const = true,
@@ -180,7 +187,7 @@ public class System {
 		try {
 			final String soundFilePath = FileUtils.constructAbsoluteFilePath(scope, source, true);
 			File f = new File(soundFilePath);
-			if (f == null || !f.exists()) return false;
+			if (!f.exists()) return false;
 			Clip clip = AudioSystem.getClip();
 			AudioInputStream inputStream = AudioSystem.getAudioInputStream(f);
 			clip.open(inputStream);

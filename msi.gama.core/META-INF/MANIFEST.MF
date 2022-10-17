@@ -380,7 +380,6 @@ Export-Package: msi.gama.common,
    org.locationtech.jts.geom,
    org.locationtech.jts.algorithm,
    msi.gama.metamodel.agent",
- msi.gaml.operators.noise,
  msi.gaml.skills;
   uses:="org.graphstream.stream.file,
    org.graphstream.stream,
