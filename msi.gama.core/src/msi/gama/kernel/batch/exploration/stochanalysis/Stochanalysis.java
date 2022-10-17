@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Stochanalysis.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Stochanalysis.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration.stochanalysis;
 
@@ -57,7 +57,7 @@ public class Stochanalysis {
 	final static double[] Talpha = { 6.314, 2.920, 2.353, 2.132, 2.015, 1.943, 1.895, 1.860, 1.833, 1.812, 1.796, 1.782,
 			1.771, 1.761, 1.753, 1.746, 1.740, 1.734, 1.729, 1.725, 1.721, 1.717, 1.714, 1.711, 1.708, 1.706, 1.703,
 			1.701, 1.699, 1.697, 1.684, 1.676, 1.671, 1.664, 1.660, 1.658, 1.645 };
-	
+
 	/** The Constant Tbeta. */
 	final static double[] Tbeta = { 3.078, 1.886, 1.638, 1.533, 1.476, 1.440, 1.415, 1.397, 1.383, 1.372, 1.363, 1.356,
 			1.350, 1.345, 1.341, 1.337, 1.333, 1.330, 1.328, 1.325, 1.323, 1.321, 1.319, 1.318, 1.316, 1.315, 1.314,
@@ -259,9 +259,12 @@ public class Stochanalysis {
 	/**
 	 * Write and tell result list.
 	 *
-	 * @param path the path
-	 * @param Outputs the outputs
-	 * @param scope the scope
+	 * @param path
+	 *            the path
+	 * @param Outputs
+	 *            the outputs
+	 * @param scope
+	 *            the scope
 	 */
 	public static void WriteAndTellResultList(final String path, final Map<String, Map<Double, List<Object>>> Outputs,
 			final IScope scope) {
@@ -271,9 +274,9 @@ public class Stochanalysis {
 			final File parent = f.getParentFile();
 			if (!parent.exists()) { parent.mkdirs(); }
 			if (f.exists()) { f.delete(); }
-			FileWriter fw = new FileWriter(f, false);
-			fw.write(buildResultMap(Outputs, scope));
-			fw.close();
+			try (FileWriter fw = new FileWriter(f, false)) {
+				fw.write(buildResultMap(Outputs, scope));
+			}
 		} catch (IOException e) {
 			throw GamaRuntimeException.error("File " + path + " not found", scope);
 		}
@@ -282,7 +285,8 @@ public class Stochanalysis {
 	/**
 	 * Builds the result txt.
 	 *
-	 * @param nb_replicat the nb replicat
+	 * @param nb_replicat
+	 *            the nb replicat
 	 * @return the string
 	 */
 	private static String buildResultTxt(final int nb_replicat) {
@@ -298,9 +302,12 @@ public class Stochanalysis {
 	/**
 	 * Write and tell result.
 	 *
-	 * @param path the path
-	 * @param val the val
-	 * @param scope the scope
+	 * @param path
+	 *            the path
+	 * @param val
+	 *            the val
+	 * @param scope
+	 *            the scope
 	 */
 	public static void WriteAndTellResult(final String path, final int val, final IScope scope) {
 		try {
@@ -308,10 +315,13 @@ public class Stochanalysis {
 			final File parent = f.getParentFile();
 			if (!parent.exists()) { parent.mkdirs(); }
 			if (f.exists()) { f.delete(); }
-			FileWriter fw = new FileWriter(f, false);
-			fw.write(buildResultTxt(val));
-			fw.close();
-		} catch (IOException e) {
+			try (FileWriter fw = new FileWriter(f, false)) {
+				fw.write(buildResultTxt(val));
+			}
+		} catch (
+
+		/** The e. */
+		IOException e) {
 			throw GamaRuntimeException.error("File " + path + " not found", scope);
 		}
 	}
@@ -338,8 +348,10 @@ public class Stochanalysis {
 	/**
 	 * Compute mean combination.
 	 *
-	 * @param val the val
-	 * @param scope the scope
+	 * @param val
+	 *            the val
+	 * @param scope
+	 *            the scope
 	 * @return the list
 	 */
 	/*
@@ -508,15 +520,11 @@ public class Stochanalysis {
 	 */
 	private static double computeT(final boolean isAlpha, final int sample_size) {
 		if (isAlpha) {
-			if (sample_size <= 30)
-				return Talpha[sample_size - 1];
-			else if (30 < sample_size && sample_size <= 40)
-				return Talpha[30];
-			else if (40 < sample_size && sample_size <= 50)
-				return Talpha[31];
-			else if (50 < sample_size && sample_size <= 60)
-				return Talpha[32];
-			else if (60 < sample_size && sample_size <= 80)
+			if (sample_size <= 30) return Talpha[sample_size - 1];
+			if (30 < sample_size && sample_size <= 40) return Talpha[30];
+			if (40 < sample_size && sample_size <= 50) return Talpha[31];
+			if (50 < sample_size && sample_size <= 60) return Talpha[32];
+			if (60 < sample_size && sample_size <= 80)
 				return Talpha[33];
 			else if (80 < sample_size && sample_size <= 100)
 				return Talpha[34];
@@ -525,15 +533,11 @@ public class Stochanalysis {
 			else
 				return Talpha[36];
 		}
-		if (sample_size <= 30)
-			return Tbeta[sample_size - 1];
-		else if (30 < sample_size && sample_size <= 40)
-			return Tbeta[30];
-		else if (40 < sample_size && sample_size <= 50)
-			return Tbeta[31];
-		else if (50 < sample_size && sample_size <= 60)
-			return Tbeta[32];
-		else if (60 < sample_size && sample_size <= 80)
+		if (sample_size <= 30) return Tbeta[sample_size - 1];
+		if (30 < sample_size && sample_size <= 40) return Tbeta[30];
+		if (40 < sample_size && sample_size <= 50) return Tbeta[31];
+		if (50 < sample_size && sample_size <= 60) return Tbeta[32];
+		if (60 < sample_size && sample_size <= 80)
 			return Tbeta[33];
 		else if (80 < sample_size && sample_size <= 100)
 			return Tbeta[34];
@@ -617,42 +621,41 @@ public class Stochanalysis {
 			if (min_replicat == 0) { min_replicat = 1; }
 			return Arrays.asList(min_replicat, compteur_failed, n_min_list);
 
-		} else if (threshold >= 1) {
-			// Min nb replicat with SE method
-			// hypothesis of normally distributed samples around the mean
-			// ==> means that a SE have to fit into a given confident interval
-			int compteur_failed = 0;
-			List<Integer> n_min_list = new ArrayList<>();
-			for (ParametersSet ps : sample.keySet()) {
-				List<Object> currentXp = sample.get(ps);
-				Collections.shuffle(currentXp);
-				List<Double> mean = computeMeanCombination(currentXp, scope);
-				List<Double> std = computeSTD(mean, currentXp, scope);
-				double ci = threshold == 90 ? CI[0] : threshold == 95 ? CI[1] : CI[2];
-				double new_threshold = ci * std.get(std.size() - 1) / Math.sqrt(std.size());
-				List<Double> se = computeSE(std, ci);
-				boolean first = true;
-				int tmp = 0;
-				for (int i = 0; i < se.size(); i++) {
-					if (first && se.get(i) < new_threshold) {
-						tmp = i + 1;
-						first = false;
-					}
-				}
-				if (first) {
-					compteur_failed++;
-					tmp_replicat = tmp_replicat + mean.size();
-					n_min_list.add(-1);
-				} else {
-					tmp_replicat = tmp_replicat + tmp;
-					n_min_list.add(tmp);
+		}
+		if (threshold < 1) throw GamaRuntimeException.error("Wrong value for threshold", scope);
+		// Min nb replicat with SE method
+		// hypothesis of normally distributed samples around the mean
+		// ==> means that a SE have to fit into a given confident interval
+		int compteur_failed = 0;
+		List<Integer> n_min_list = new ArrayList<>();
+		for (ParametersSet ps : sample.keySet()) {
+			List<Object> currentXp = sample.get(ps);
+			Collections.shuffle(currentXp);
+			List<Double> mean = computeMeanCombination(currentXp, scope);
+			List<Double> std = computeSTD(mean, currentXp, scope);
+			double ci = threshold == 90 ? CI[0] : threshold == 95 ? CI[1] : CI[2];
+			double new_threshold = ci * std.get(std.size() - 1) / Math.sqrt(std.size());
+			List<Double> se = computeSE(std, ci);
+			boolean first = true;
+			int tmp = 0;
+			for (int i = 0; i < se.size(); i++) {
+				if (first && se.get(i) < new_threshold) {
+					tmp = i + 1;
+					first = false;
 				}
 			}
-			int min_replicat = tmp_replicat / sample.size();
-			if (min_replicat == 0) { min_replicat = 1; }
-			return Arrays.asList(min_replicat, compteur_failed, n_min_list);
-		} else
-			throw GamaRuntimeException.error("Wrong value for threshold", scope);
+			if (first) {
+				compteur_failed++;
+				tmp_replicat = tmp_replicat + mean.size();
+				n_min_list.add(-1);
+			} else {
+				tmp_replicat = tmp_replicat + tmp;
+				n_min_list.add(tmp);
+			}
+		}
+		int min_replicat = tmp_replicat / sample.size();
+		if (min_replicat == 0) { min_replicat = 1; }
+		return Arrays.asList(min_replicat, compteur_failed, n_min_list);
 	}
 	/*
 	 * "#################################################################################################"
@@ -666,32 +669,34 @@ public class Stochanalysis {
 	/**
 	 * Read simulation.
 	 *
-	 * @param path the path
-	 * @param idOutput the id output
-	 * @param scope the scope
+	 * @param path
+	 *            the path
+	 * @param idOutput
+	 *            the id output
+	 * @param scope
+	 *            the scope
 	 * @return the list
 	 */
 	public static List<Object> readSimulation(final String path, final int idOutput, final IScope scope) {
 		List<Map<String, Object>> parameters = new ArrayList<>();
 		try {
 			File file = new File(path);
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-			String line = " ";
-			String[] tempArr;
-			List<String> list_name = new ArrayList<>();
-			int i = 0;
-			while ((line = br.readLine()) != null) {
-				tempArr = line.split(",");
-				for (String tempStr : tempArr) { if (i == 0) { list_name.add(tempStr); } }
-				if (i > 0) {
-					Map<String, Object> temp_map = new LinkedHashMap<>();
-					for (int y = 0; y < tempArr.length; y++) { temp_map.put(list_name.get(y), tempArr[y]); }
-					parameters.add(temp_map);
+			try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
+				String line = " ";
+				String[] tempArr;
+				List<String> list_name = new ArrayList<>();
+				int i = 0;
+				while ((line = br.readLine()) != null) {
+					tempArr = line.split(",");
+					for (String tempStr : tempArr) { if (i == 0) { list_name.add(tempStr); } }
+					if (i > 0) {
+						Map<String, Object> temp_map = new LinkedHashMap<>();
+						for (int y = 0; y < tempArr.length; y++) { temp_map.put(list_name.get(y), tempArr[y]); }
+						parameters.add(temp_map);
+					}
+					i++;
 				}
-				i++;
 			}
-			br.close();
 		} catch (IOException ioe) {
 			throw GamaRuntimeException.error("File " + path + " not found", scope);
 		}
@@ -723,7 +728,8 @@ public class Stochanalysis {
 	/**
 	 * Builds the string.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the string
 	 */
 	private static String BuildString(final Map<String, Object> s) {
@@ -735,11 +741,16 @@ public class Stochanalysis {
 	/**
 	 * Stochasticity analysis from CSV.
 	 *
-	 * @param replicat the replicat
-	 * @param threshold the threshold
-	 * @param path_to_data the path to data
-	 * @param id_output the id output
-	 * @param scope the scope
+	 * @param replicat
+	 *            the replicat
+	 * @param threshold
+	 *            the threshold
+	 * @param path_to_data
+	 *            the path to data
+	 * @param id_output
+	 *            the id output
+	 * @param scope
+	 *            the scope
 	 * @return the string
 	 */
 	// Need to be tested and change like the main method if it works

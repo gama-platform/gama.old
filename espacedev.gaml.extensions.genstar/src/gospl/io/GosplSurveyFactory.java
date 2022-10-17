@@ -1,12 +1,13 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
- * 'SurveyFactory.java, in plugin core, is part of the source code of the GAMA modeling and simulation platform. (c)
- * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * GosplSurveyFactory.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package gospl.io;
 
 import java.io.BufferedWriter;
@@ -56,22 +57,43 @@ import gospl.io.exception.InvalidSurveyFormatException;
  */
 public class GosplSurveyFactory {
 
+	/** The precision. */
 	@SuppressWarnings ("unused") private final double precision = Math.pow(10, -2);
 
+	/** The dfs. */
 	private final DecimalFormatSymbols dfs;
+
+	/** The decimal format. */
 	private final DecimalFormat decimalFormat;
 
+	/** The separator. */
 	private char separator = ';'; // default separator for writing files if not specified
+
+	/** The stored in memory. */
 	private boolean storedInMemory;
+
+	/** The sheet nb. */
 	private int sheetNb;
+
+	/** The first row data idx. */
 	private int firstRowDataIdx;
+
+	/** The first column data idx. */
 	private int firstColumnDataIdx;
 
+	/** The Constant UNKNOWN_VARIABLE. */
 	public static final String UNKNOWN_VARIABLE = "?";
 
+	/** The Constant CSV_EXT. */
 	public static final String CSV_EXT = ".csv";
+
+	/** The Constant XLS_EXT. */
 	public static final String XLS_EXT = ".xls";
+
+	/** The Constant XLSX_EXT. */
 	public static final String XLSX_EXT = ".xlsx";
+
+	/** The Constant DBF_EXT. */
 	public static final String DBF_EXT = ".dbf";
 
 	/**
@@ -80,6 +102,9 @@ public class GosplSurveyFactory {
 	public static final List<String> supportedFileFormat =
 			Collections.unmodifiableList(Arrays.asList(CSV_EXT, XLS_EXT, XLSX_EXT, DBF_EXT));
 
+	/**
+	 * Instantiates a new gospl survey factory.
+	 */
 	public GosplSurveyFactory() {
 
 		this.dfs = new DecimalFormatSymbols(Locale.FRANCE);
@@ -368,16 +393,12 @@ public class GosplSurveyFactory {
 	public IGSSurvey createSummary(final File surveyFile, final GSSurveyType surveyType,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population)
 			throws InvalidFormatException, IOException, InvalidSurveyFormatException {
-		switch (surveyType) {
-			case Sample:
-				return createSample(surveyFile, true, population);
-			case ContingencyTable:
-				return createTableSummary(surveyFile, surveyType, population);
-			case GlobalFrequencyTable:
-				return createTableSummary(surveyFile, surveyType, population);
-			default:
-				return createTableSummary(surveyFile, GSSurveyType.GlobalFrequencyTable, population);
-		}
+		return switch (surveyType) {
+			case Sample -> createSample(surveyFile, true, population);
+			case ContingencyTable -> createTableSummary(surveyFile, surveyType, population);
+			case GlobalFrequencyTable -> createTableSummary(surveyFile, surveyType, population);
+			default -> createTableSummary(surveyFile, GSSurveyType.GlobalFrequencyTable, population);
+		};
 	}
 
 	/**
@@ -532,6 +553,23 @@ public class GosplSurveyFactory {
 
 	// ---------------------- inner methods ---------------------- //
 
+	/**
+	 * Creates a new GosplSurvey object.
+	 *
+	 * @param surveyFile
+	 *            the survey file
+	 * @param surveyType
+	 *            the survey type
+	 * @param population
+	 *            the population
+	 * @return the IGS survey
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws InvalidFormatException
+	 *             the invalid format exception
+	 * @throws InvalidSurveyFormatException
+	 *             the invalid survey format exception
+	 */
 	private IGSSurvey createTableSummary(final File surveyFile, final GSSurveyType surveyType,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population)
 			throws IOException, InvalidFormatException, InvalidSurveyFormatException {
@@ -595,114 +633,80 @@ public class GosplSurveyFactory {
 	 * @throws InvalidFormatException
 	 * @throws InvalidFileTypeException
 	 */
+	@SuppressWarnings ("null")
 	private IGSSurvey createSample(final File surveyFile, boolean withParent,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population)
 			throws IOException, InvalidSurveyFormatException, InvalidFormatException {
 
-		final BufferedWriter bw = Files.newBufferedWriter(surveyFile.toPath());
-		final Collection<Attribute<? extends IValue>> attributes = population.getPopulationAttributes();
-		final Collection<IEntity<? extends IAttribute<? extends IValue>>> parents =
-				population.stream().map(ADemoEntity::getParent).filter(p -> p != null).collect(Collectors.toSet());
-		Set<IAttribute<? extends IValue>> parentAttributes = null;
-		if (parents.isEmpty()) {
-			withParent = false;
-		} else {
-			parentAttributes = parents.stream().flatMap(e -> e.getAttributes().stream())
-					.map(a -> (IAttribute<? extends IValue>) a).collect(Collectors.toSet());
-		}
-		bw.write("ID");
-		bw.write(separator);
-		bw.write("__type");
-		bw.write(separator);
-		bw.write(attributes.stream().map(Attribute::getAttributeName)
-				.collect(Collectors.joining(String.valueOf(separator))));
-		bw.write(separator);
-		bw.write("parentId");
-		bw.write(separator);
-		if (withParent) {
-			bw.write("parent__type");
+		try (final BufferedWriter bw = Files.newBufferedWriter(surveyFile.toPath())) {
+			final Collection<Attribute<? extends IValue>> attributes = population.getPopulationAttributes();
+			final Collection<IEntity<? extends IAttribute<? extends IValue>>> parents =
+					population.stream().map(ADemoEntity::getParent).filter(p -> p != null).collect(Collectors.toSet());
+			Set<IAttribute<? extends IValue>> parentAttributes = null;
+			if (parents.isEmpty()) {
+				withParent = false;
+			} else {
+				parentAttributes = parents.stream().flatMap(e -> e.getAttributes().stream())
+						.map(a -> (IAttribute<? extends IValue>) a).collect(Collectors.toSet());
+			}
+			bw.write("ID");
 			bw.write(separator);
-			bw.write(parentAttributes.stream().map(IAttribute::getAttributeName)
+			bw.write("__type");
+			bw.write(separator);
+			bw.write(attributes.stream().map(Attribute::getAttributeName)
 					.collect(Collectors.joining(String.valueOf(separator))));
 			bw.write(separator);
-			bw.write("count_parent_children");
+			bw.write("parentId");
 			bw.write(separator);
-		}
-		bw.write("count_children");
-		bw.write("\n");
-
-		bw.write("Individual");
-		bw.write(separator);
-		bw.write("Type of the entity");
-		bw.write(separator);
-		bw.write(attributes.stream().map(Attribute::getDescription)
-				.collect(Collectors.joining(String.valueOf(separator))));
-		bw.write(separator);
-		bw.write("ID of the parent entity");
-		bw.write(separator);
-		if (withParent) {
-			bw.write("parent__type");
-			bw.write(separator);
-			bw.write(parentAttributes.stream().map(IAttribute::getDescription)
-					.collect(Collectors.joining(String.valueOf(separator))));
-			bw.write(separator);
-		}
-		bw.write("count of children of this entity");
-		bw.write("\n");
-
-		for (final ADemoEntity e : population) {
-			if (e._hasEntityId()) {
-				bw.write(e.getEntityId()); // String.valueOf(individual++)
-			} else {
-				bw.write(" ");
-			}
-
-			bw.write(separator);
-			if (e.getEntityType() != null) {
-				bw.write(e.getEntityType());
-			} else {
-				bw.write(" ");
-			}
-			for (final Attribute<? extends IValue> attribute : attributes) {
-				bw.write(separator);
-				try {
-
-					IValue val = e.getValueForAttribute(attribute);
-					String v = val.getStringValue();
-
-					if (!attribute.getValueSpace().getType().isNumericValue()) {
-						bw.write("\"");
-						bw.write(v);
-						bw.write("\"");
-					} else {
-						bw.write(v);
-					}
-
-				} catch (NullPointerException e2) {
-					bw.write(UNKNOWN_VARIABLE + "\""); // WARNING: i don't understand why i have to add extra "
-				}
-			}
-			bw.write(separator);
-			IEntity<?> parent = e.getParent();
-			if (parent != null) {
-				bw.write(e.getParent().getEntityId());
-			} else {
-				bw.write(" ");
-			}
 			if (withParent) {
-				ADemoEntity p = (ADemoEntity) parent;
+				bw.write("parent__type");
 				bw.write(separator);
-				if (p.getEntityType() != null) {
-					bw.write(p.getEntityType());
+				bw.write(parentAttributes.stream().map(IAttribute::getAttributeName)
+						.collect(Collectors.joining(String.valueOf(separator))));
+				bw.write(separator);
+				bw.write("count_parent_children");
+				bw.write(separator);
+			}
+			bw.write("count_children");
+			bw.write("\n");
+
+			bw.write("Individual");
+			bw.write(separator);
+			bw.write("Type of the entity");
+			bw.write(separator);
+			bw.write(attributes.stream().map(Attribute::getDescription)
+					.collect(Collectors.joining(String.valueOf(separator))));
+			bw.write(separator);
+			bw.write("ID of the parent entity");
+			bw.write(separator);
+			if (withParent) {
+				bw.write("parent__type");
+				bw.write(separator);
+				bw.write(parentAttributes.stream().map(IAttribute::getDescription)
+						.collect(Collectors.joining(String.valueOf(separator))));
+				bw.write(separator);
+			}
+			bw.write("count of children of this entity");
+			bw.write("\n");
+
+			for (final ADemoEntity e : population) {
+				if (e._hasEntityId()) {
+					bw.write(e.getEntityId()); // String.valueOf(individual++)
 				} else {
 					bw.write(" ");
 				}
-				for (final IAttribute<? extends IValue> attribute : parentAttributes) {
-					bw.write(separator);
 
+				bw.write(separator);
+				if (e.getEntityType() != null) {
+					bw.write(e.getEntityType());
+				} else {
+					bw.write(" ");
+				}
+				for (final Attribute<? extends IValue> attribute : attributes) {
+					bw.write(separator);
 					try {
 
-						IValue val = p.getValueForAttribute((Attribute<? extends IValue>) attribute);
+						IValue val = e.getValueForAttribute(attribute);
 						String v = val.getStringValue();
 
 						if (!attribute.getValueSpace().getType().isNumericValue()) {
@@ -718,13 +722,48 @@ public class GosplSurveyFactory {
 					}
 				}
 				bw.write(separator);
-				bw.write(Integer.toString(p.getCountChildren().getActualValue()));
+				IEntity<?> parent = e.getParent();
+				if (parent != null) {
+					bw.write(e.getParent().getEntityId());
+				} else {
+					bw.write(" ");
+				}
+				if (withParent) {
+					ADemoEntity p = (ADemoEntity) parent;
+					bw.write(separator);
+					if (p.getEntityType() != null) {
+						bw.write(p.getEntityType());
+					} else {
+						bw.write(" ");
+					}
+					for (final IAttribute<? extends IValue> attribute : parentAttributes) {
+						bw.write(separator);
+
+						try {
+
+							IValue val = p.getValueForAttribute((Attribute<? extends IValue>) attribute);
+							String v = val.getStringValue();
+
+							if (!attribute.getValueSpace().getType().isNumericValue()) {
+								bw.write("\"");
+								bw.write(v);
+								bw.write("\"");
+							} else {
+								bw.write(v);
+							}
+
+						} catch (NullPointerException e2) {
+							bw.write(UNKNOWN_VARIABLE + "\""); // WARNING: i don't understand why i have to add extra "
+						}
+					}
+					bw.write(separator);
+					bw.write(Integer.toString(p.getCountChildren().getActualValue()));
+				}
+				bw.write(separator);
+				bw.write(Integer.toString(e.getCountChildren().getActualValue()));
+				bw.write("\n");
 			}
-			bw.write(separator);
-			bw.write(Integer.toString(e.getCountChildren().getActualValue()));
-			bw.write("\n");
 		}
-		bw.close();
 		return this.getSurvey(surveyFile, GSSurveyType.Sample);
 	}
 

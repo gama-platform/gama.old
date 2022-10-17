@@ -87,11 +87,9 @@ public class GenStarGamaSurveyUtils {
 	public int inferRowHeaders() {
 		if (rowHeaderNumber[0] == -1) {
 
-			CsvReader reader = null;
 			int first = rowHeaderNumber[0];
 			int headerLength = 0;
-			try {
-				reader = new CsvReader(path.toString(), stats.delimiter);
+			try (CsvReader reader = new CsvReader(path.toString(), stats.delimiter)) {
 				boolean isData = false;
 
 				do {
@@ -110,7 +108,6 @@ public class GenStarGamaSurveyUtils {
 				} while (!isData);
 
 			} catch (final IOException e) {}
-			reader.close();
 			rowHeaderNumber[0] = first;
 			columnHeaderNumber[1] = headerLength;
 		}
@@ -125,11 +122,9 @@ public class GenStarGamaSurveyUtils {
 	 */
 	public int inferColumnHeaders() {
 		if (columnHeaderNumber[0] == -1) {
-			CsvReader reader = null;
 			int first = 0;
 			int columnLength = 0;
-			try {
-				reader = new CsvReader(path.toString(), stats.delimiter);
+			try (CsvReader reader = new CsvReader(path.toString(), stats.delimiter)) {
 
 				int idx = inferRowHeaders();
 				do { reader.skipLine(); } while (--idx > 0);
@@ -155,10 +150,8 @@ public class GenStarGamaSurveyUtils {
 				}
 
 			} catch (final IOException e) {}
-			reader.close();
 			columnHeaderNumber[0] = first;
 			rowHeaderNumber[1] = columnLength;
-
 		}
 		return columnHeaderNumber[0];
 	}
@@ -172,10 +165,7 @@ public class GenStarGamaSurveyUtils {
 	public IType inferDataType() {
 		if (inferedType != null) return inferedType;
 		inferedType = Types.NO_TYPE;
-		CsvReader reader = null;
-		try {
-
-			reader = new CsvReader(path.toString(), stats.delimiter);
+		try (CsvReader reader = new CsvReader(path.toString(), stats.delimiter)) {
 			int idx = inferRowHeaders();
 			do { reader.skipLine(); } while (--idx > 0);
 
@@ -186,7 +176,6 @@ public class GenStarGamaSurveyUtils {
 			}
 
 		} catch (final IOException e) {}
-		reader.close();
 		return inferedType;
 	}
 
@@ -198,9 +187,7 @@ public class GenStarGamaSurveyUtils {
 	public Double getTotalData() {
 		if (total != null) return total;
 		if (!inferedType.isNumber()) { total = -1d; }
-		CsvReader reader = null;
-		try {
-			reader = new CsvReader(path.toString(), stats.delimiter);
+		try (CsvReader reader = new CsvReader(path.toString(), stats.delimiter)) {
 			int[] min = { inferRowHeaders(), inferColumnHeaders() };
 			int[] max = { columnHeaderNumber[0] + columnHeaderNumber[1], rowHeaderNumber[0] + rowHeaderNumber[1] };
 			DEBUG.OUT("Data matrix is" + DEBUG.TO_STRING(min) + DEBUG.TO_STRING(max));
@@ -215,10 +202,9 @@ public class GenStarGamaSurveyUtils {
 				}
 			}
 
-			//System.out.println("Total value is " + total);
+			// System.out.println("Total value is " + total);
 
 		} catch (final IOException e) {}
-		reader.close();
 		return total;
 	}
 

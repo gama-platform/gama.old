@@ -1,3 +1,12 @@
+/*******************************************************************************************************
+ *
+ * Sobol.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration.sobol;
 
 import java.io.BufferedReader;
@@ -20,6 +29,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Strings;
 
+/**
+ * The Class Sobol.
+ */
 public class Sobol {
 
 	/** The list of Saltelli indices [0; 1] */
@@ -104,8 +116,7 @@ public class Sobol {
 		this.output_names = new ArrayList<>();
 		this.outputs = new HashMap<>();
 
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(f));
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
 			String line = br.readLine();
 
 			// parse first line
@@ -131,14 +142,10 @@ public class Sobol {
 
 				}
 			}
-			if (_sample % (2 * nb_parameters + 2) != 0) {
-				br.close();
-				throw new IllegalArgumentException(
-						"Number of sample in the file doesn't match the number of parameters");
-			}
+			if (_sample % (2 * nb_parameters + 2) != 0) throw new IllegalArgumentException(
+					"Number of sample in the file doesn't match the number of parameters");
 			sample = _sample / (2 * nb_parameters + 2);
 
-			br.close();
 		} catch (IOException e) {
 			throw GamaRuntimeException.error("File " + f.toString() + " not found", scope);
 		} catch (OutOfRangeException e) {
@@ -282,10 +289,8 @@ public class Sobol {
 	 *            : .csv file
 	 */
 	public void saveSimulation(final File file) {
-		try {
-			FileWriter fw = new FileWriter(file, false);
+		try (FileWriter fw = new FileWriter(file, false)) {
 			fw.write(this.buildSimulationCsv());
-			fw.close();
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("File " + file.toString() + " not found", scope);
 		}
@@ -298,10 +303,8 @@ public class Sobol {
 	 *            : .csv file
 	 */
 	public void saveResult(final File file) {
-		try {
-			FileWriter fw = new FileWriter(file, false);
+		try (FileWriter fw = new FileWriter(file, false)) {
 			fw.write(this.buildReportString());
-			fw.close();
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("File " + file.toString() + " not found", scope);
 		}

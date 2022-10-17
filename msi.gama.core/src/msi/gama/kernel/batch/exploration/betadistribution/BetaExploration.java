@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * BetaExploration.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration.betadistribution;
 
 import java.io.File;
@@ -108,6 +118,11 @@ public class BetaExploration extends AExplorationAlgorithm {
 	/** Actual input / output map */
 	protected IMap<ParametersSet, Map<String, List<Object>>> res_outputs;
 
+	/**
+	 * Instantiates a new beta exploration.
+	 *
+	 * @param desc the desc
+	 */
 	public BetaExploration(final IDescription desc) {
 		super(desc);
 	}
@@ -118,9 +133,9 @@ public class BetaExploration extends AExplorationAlgorithm {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public void explore(final IScope scope) {
-		
+
 		// == Parameters ==
-		
+
 		List<Batch> params = currentExperiment.getParametersToExplore().stream()
 				.filter(p -> p.getMinValue(scope) != null && p.getMaxValue(scope) != null).map(p -> p)
 				.collect(Collectors.toList());
@@ -132,9 +147,9 @@ public class BetaExploration extends AExplorationAlgorithm {
 		if (hasFacet(Exploration.SAMPLE_SIZE)) {
 			sample_size = Cast.asInt(scope, getFacet(Exploration.SAMPLE_SIZE).value(scope));
 		}
-		
+
 		// == Build sample of parameter inputs ==
-		
+
 		String method = Cast.asString(scope, getFacet(Exploration.METHODS).value(scope));
 		sets = switch (method) {
 			case IKeyword.MORRIS -> {
@@ -144,12 +159,12 @@ public class BetaExploration extends AExplorationAlgorithm {
 			}
 			case IKeyword.SALTELLI -> SaltelliSampling.MakeSaltelliSampling(scope, sample_size, parameters);
 			case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters,
-									scope.getRandom().getGenerator(), scope);
+					scope.getRandom().getGenerator(), scope);
 			case IKeyword.ORTHOGONAL -> {
 				int iterations = hasFacet(Exploration.ITERATIONS)
 						? Cast.asInt(scope, getFacet(Exploration.SAMPLE_SIZE).value(scope)) : 5;
 				yield OrthogonalSampling.OrthogonalSamples(sample_size, iterations, parameters,
-										scope.getRandom().getGenerator(), scope);
+						scope.getRandom().getGenerator(), scope);
 			}
 			default -> RandomSampling.UniformSampling(scope, sample_size, parameters);
 		};
@@ -182,10 +197,8 @@ public class BetaExploration extends AExplorationAlgorithm {
 			final File parent = f.getParentFile();
 			if (!parent.exists()) { parent.mkdirs(); }
 			if (f.exists()) { f.delete(); }
-			try {
-				FileWriter fw = new FileWriter(f, false);
+			try (FileWriter fw = new FileWriter(f, false)) {
 				fw.write(this.buildReportString(res));
-				fw.close();
 			} catch (Exception e) {
 				throw GamaRuntimeException.error("File " + f.toString() + " not found", scope);
 			}
@@ -199,6 +212,12 @@ public class BetaExploration extends AExplorationAlgorithm {
 		return null;
 	}
 
+	/**
+	 * Builds the report string.
+	 *
+	 * @param res the res
+	 * @return the string
+	 */
 	public String buildReportString(final Map<String, Map<Batch, Double>> res) {
 		StringBuilder sb = new StringBuilder();
 		String sep = "; ";

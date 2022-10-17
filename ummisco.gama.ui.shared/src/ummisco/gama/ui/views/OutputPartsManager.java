@@ -44,7 +44,7 @@ public class OutputPartsManager {
 
 		@Override
 		public void partActivated(final IWorkbenchPartReference partRef) {
-			final IWorkbenchPart part = partRef.getPart(false);
+			// final IWorkbenchPart part = partRef.getPart(false);
 			// if (part instanceof IGamaView.Display) { DEBUG.LOG("Part Activated: " + part.getTitle()); }
 		}
 
@@ -80,7 +80,7 @@ public class OutputPartsManager {
 
 		@Override
 		public void partBroughtToTop(final IWorkbenchPartReference partRef) {
-			final IWorkbenchPart part = partRef.getPart(false);
+			// final IWorkbenchPart part = partRef.getPart(false);
 			// if (part instanceof IGamaView.Display) { DEBUG.LOG("Part Brought to top: " + part.getTitle()); }
 		}
 

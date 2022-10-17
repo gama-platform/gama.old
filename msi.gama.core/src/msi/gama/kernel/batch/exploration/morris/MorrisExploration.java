@@ -146,7 +146,8 @@ public class MorrisExploration extends AExplorationAlgorithm {
 	/**
 	 * Instantiates a new morris exploration.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public MorrisExploration(final IDescription desc) {
 		super(desc);
@@ -220,7 +221,7 @@ public class MorrisExploration extends AExplorationAlgorithm {
 	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public List<ParametersSet> buildParameterSets(final IScope scope, List<ParametersSet> sets, final int index) {
+	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
 		List<Batch> params = new ArrayList(currentExperiment.getParametersToExplore());
 		parameters = parameters == null ? params : parameters;
 		List<String> names = new ArrayList<>();
@@ -256,15 +257,16 @@ public class MorrisExploration extends AExplorationAlgorithm {
 	/**
 	 * Save simulation.
 	 *
-	 * @param rebuilt_output the rebuilt output
-	 * @param file the file
-	 * @param scope the scope
+	 * @param rebuilt_output
+	 *            the rebuilt output
+	 * @param file
+	 *            the file
+	 * @param scope
+	 *            the scope
 	 */
 	private void saveSimulation(final Map<String, List<Double>> rebuilt_output, final File file, final IScope scope) {
-		try {
-			FileWriter fw = new FileWriter(file, false);
+		try (FileWriter fw = new FileWriter(file, false)) {
 			fw.write(this.buildSimulationCsv(rebuilt_output));
-			fw.close();
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("File " + file.toString() + " not found", scope);
 		}
@@ -273,7 +275,8 @@ public class MorrisExploration extends AExplorationAlgorithm {
 	/**
 	 * Builds the simulation csv.
 	 *
-	 * @param rebuilt_output the rebuilt output
+	 * @param rebuilt_output
+	 *            the rebuilt output
 	 * @return the string
 	 */
 	private String buildSimulationCsv(final Map<String, List<Double>> rebuilt_output) {
@@ -301,9 +304,12 @@ public class MorrisExploration extends AExplorationAlgorithm {
 	/**
 	 * Builds the parameter sets from CSV.
 	 *
-	 * @param scope the scope
-	 * @param path the path
-	 * @param sets the sets
+	 * @param scope
+	 *            the scope
+	 * @param path
+	 *            the path
+	 * @param sets
+	 *            the sets
 	 * @return the list
 	 */
 	public List<ParametersSet> buildParameterSetsFromCSV(final IScope scope, final String path,
@@ -311,23 +317,22 @@ public class MorrisExploration extends AExplorationAlgorithm {
 		List<Map<String, Object>> parameters = new ArrayList<>();
 		try {
 			File file = new File(path);
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-			String line = " ";
-			String[] tempArr;
-			List<String> list_name = new ArrayList<>();
-			int i = 0;
-			while ((line = br.readLine()) != null) {
-				tempArr = line.split(",");
-				for (String tempStr : tempArr) { if (i == 0) { list_name.add(tempStr); } }
-				if (i > 0) {
-					Map<String, Object> temp_map = new HashMap<>();
-					for (int y = 0; y < tempArr.length; y++) { temp_map.put(list_name.get(y), tempArr[y]); }
-					parameters.add(temp_map);
+			try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
+				String line = " ";
+				String[] tempArr;
+				List<String> list_name = new ArrayList<>();
+				int i = 0;
+				while ((line = br.readLine()) != null) {
+					tempArr = line.split(",");
+					for (String tempStr : tempArr) { if (i == 0) { list_name.add(tempStr); } }
+					if (i > 0) {
+						Map<String, Object> temp_map = new HashMap<>();
+						for (int y = 0; y < tempArr.length; y++) { temp_map.put(list_name.get(y), tempArr[y]); }
+						parameters.add(temp_map);
+					}
+					i++;
 				}
-				i++;
 			}
-			br.close();
 		} catch (IOException ioe) {
 			throw GamaRuntimeException.error("File " + path + " not found", scope);
 		}

@@ -20,7 +20,6 @@ import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.metamodel.agent.IAgent;
 import ummisco.gama.ui.interfaces.IParameterEditor;
-import ummisco.gama.ui.parameters.AbstractEditor;
 
 /**
  * The Class EditorsList.
@@ -96,7 +95,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	 *            the gp param
 	 * @return true, if is enabled
 	 */
-	public boolean isEnabled(final AbstractEditor<?> gpParam) {
+	public boolean isEnabled(final IParameterEditor<?> gpParam) {
 		return true;
 	}
 

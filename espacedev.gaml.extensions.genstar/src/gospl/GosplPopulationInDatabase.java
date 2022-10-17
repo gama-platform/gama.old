@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplPopulationInDatabase.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl;
 
 import java.io.File;
@@ -44,25 +54,50 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> {
 
+	/** The Constant VARCHAR_SIZE. */
 	public static final int VARCHAR_SIZE = 255;
+
+	/** The Constant MAX_BUFFER_QRY. */
 	public static final int MAX_BUFFER_QRY = 10000;
+
+	/** The Constant DEFAULT_ENTITY_TYPE. */
 	public static final String DEFAULT_ENTITY_TYPE = "unknown";
+
+	/** The remove entities batch. */
 	public static int REMOVE_ENTITIES_BATCH = 500;
+
+	/** The add entities batch. */
 	public static int ADD_ENTITIES_BATCH = 5000; // TODO more !
 
+	/** The connection. */
 	private final Connection connection;
 
+	/** The entity type 2 table name. */
 	private final Map<String, String> entityType2tableName = new HashMap<>();
+
+	/** The entity type 2 attribute 2 col name. */
 	private final Map<String, Map<Attribute<? extends IValue>, String>> entityType2attribute2colName = new HashMap<>();
 
+	/** The entity type 2 attributes. */
 	private final Map<String, Set<Attribute<? extends IValue>>> entityType2attributes = new HashMap<>();
 
+	/** The current instance count. */
 	private static int currentInstanceCount = 0;
 
+	/** The my sql D bname. */
 	private final String mySqlDBname = "IPopulation_" + (++currentInstanceCount);
 
+	/** The table 2 created index. */
 	private final Map<String, Set<String>> table2createdIndex = new HashMap<>();
 
+	/**
+	 * Instantiates a new gospl population in database.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param population
+	 *            the population
+	 */
 	public GosplPopulationInDatabase(final Connection connection,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
 		this.connection = connection;
@@ -149,6 +184,13 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		loadPopulationIntoDatabase(population);
 	}
 
+	/**
+	 * Gets the table name for entity type.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the table name for entity type
+	 */
 	protected String getTableNameForEntityType(final String type) {
 		String tableName = entityType2tableName.get(type);
 		if (tableName == null) {
@@ -158,6 +200,15 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		return tableName;
 	}
 
+	/**
+	 * Gets the attribute col name for type.
+	 *
+	 * @param type
+	 *            the type
+	 * @param a
+	 *            the a
+	 * @return the attribute col name for type
+	 */
 	protected String getAttributeColNameForType(final String type, final Attribute<? extends IValue> a) {
 		Map<Attribute<? extends IValue>, String> a2name = entityType2attribute2colName.get(type);
 		if (a2name == null) {
@@ -172,27 +223,35 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		return colName;
 	}
 
+	/**
+	 * Gets the SQL type for attribute.
+	 *
+	 * @param a
+	 *            the a
+	 * @return the SQL type for attribute
+	 */
 	protected String getSQLTypeForAttribute(final Attribute<? extends IValue> a) {
 
-		switch (a.getValueSpace().getType()) {
-			case Integer:
-				return "INTEGER";
-			case Continue:
-				return "DOUBLE";
-			case Nominal:
-			case Order:
-			case Range:
-				return "VARCHAR(" + VARCHAR_SIZE + ")";
-			case Boolean:
-				return "BOOLEAN";
-			default:
-				new RuntimeException("this attribute type is not managed: " + a.getValueSpace().getType());
-		}
+		return switch (a.getValueSpace().getType()) {
+			case Integer -> "INTEGER";
+			case Continue -> "DOUBLE";
+			case Nominal, Order, Range -> "VARCHAR(" + VARCHAR_SIZE + ")";
+			case Boolean -> "BOOLEAN";
+			default -> throw new RuntimeException("this attribute type is not managed: " + a.getValueSpace().getType());
+		};
 
 		// can never reach here
-		return "HELP";
+		// return "HELP";
 	}
 
+	/**
+	 * Creates the table for entity type.
+	 *
+	 * @param type
+	 *            the type
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	protected void createTableForEntityType(final String type) throws SQLException {
 
 		// prepare the SQL query
@@ -219,30 +278,30 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 		// execute
 		DEBUG.LOG("creating table for type {} with SQL query:  " + type + "," + qry);
-		Statement s = connection.createStatement();
-		s.execute(qry);
-		s.close();
+		try (Statement s = connection.createStatement()) {
+			s.execute(qry);
+		}
 
 		// create indexes
 		Set<String> setIndex = new HashSet<>();
 		table2createdIndex.put(getTableNameForEntityType(type), setIndex);
 
-		Statement s2 = connection.createStatement();
-		for (Attribute<? extends IValue> a : entityType2attributes.get(type)) {
+		try (Statement s2 = connection.createStatement()) {
+			for (Attribute<? extends IValue> a : entityType2attributes.get(type)) {
 
-			sb = new StringBuilder();
-			sb.append("CREATE INDEX idx_").append(getTableNameForEntityType(type)).append("_")
-					.append(getAttributeColNameForType(type, a));
-			sb.append(" ON ");
-			sb.append(getTableNameForEntityType(type));
-			sb.append(" (");
-			sb.append(getAttributeColNameForType(type, a));
-			sb.append(")");
-			s2.execute(sb.toString());
+				sb = new StringBuilder();
+				sb.append("CREATE INDEX idx_").append(getTableNameForEntityType(type)).append("_")
+						.append(getAttributeColNameForType(type, a));
+				sb.append(" ON ");
+				sb.append(getTableNameForEntityType(type));
+				sb.append(" (");
+				sb.append(getAttributeColNameForType(type, a));
+				sb.append(")");
+				s2.execute(sb.toString());
 
-			setIndex.add(getAttributeColNameForType(type, a));
+				setIndex.add(getAttributeColNameForType(type, a));
+			}
 		}
-		s2.close();
 	}
 
 	/**
@@ -303,19 +362,12 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 		IValue v = e.getValueForAttribute(a);
 
-		switch (a.getValueSpace().getType()) {
-			case Continue:
-			case Integer:
-				return v.getStringValue();
-			case Nominal:
-			case Order:
-			case Range:
-				return "'" + v.getStringValue() + "'";
-			case Boolean:
-				return ((BooleanValue) v).getActualValue() ? "TRUE" : "FALSE";
-			default:
-				throw new RuntimeException("unknown value type " + a.getValueSpace().getType());
-		}
+		return switch (a.getValueSpace().getType()) {
+			case Continue, Integer -> v.getStringValue();
+			case Nominal, Order, Range -> "'" + v.getStringValue() + "'";
+			case Boolean -> ((BooleanValue) v).getActualValue() ? "TRUE" : "FALSE";
+			default -> throw new RuntimeException("unknown value type " + a.getValueSpace().getType());
+		};
 
 	}
 
@@ -354,6 +406,17 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		}
 	}
 
+	/**
+	 * Store entities.
+	 *
+	 * @param type
+	 *            the type
+	 * @param entities
+	 *            the entities
+	 * @return the int
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	protected int storeEntities(final String type, final Collection<? extends ADemoEntity> entities)
 			throws SQLException {
 
@@ -383,13 +446,13 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				final String qry = sb.toString();
 				// execute the query
 				DEBUG.LOG("adding entities with query " + qry);
-				Statement st = connection.createStatement();
-				st.executeQuery(qry);
-				ResultSet rs = st.executeQuery("CALL DIAGNOSTICS ( ROW_COUNT )");
-				rs.next();
-				added += rs.getInt(1);
-				rs.close();
-				st.close();
+				try (Statement st = connection.createStatement()) {
+					st.executeQuery(qry);
+					try (ResultSet rs = st.executeQuery("CALL DIAGNOSTICS ( ROW_COUNT )")) {
+						rs.next();
+						added += rs.getInt(1);
+					}
+				}
 				// restart from scratch
 				first = true;
 				sb = new StringBuilder(qryHead);
@@ -416,13 +479,13 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			final String qry = sb.toString();
 			// execute the query
 			DEBUG.LOG("adding last entities with query " + qry);
-			Statement st = connection.createStatement();
-			st.executeQuery(qry);
-			ResultSet rs = st.executeQuery("CALL DIAGNOSTICS ( ROW_COUNT )");
-			rs.next();
-			added += rs.getInt(1);
-			rs.close();
-			st.close();
+			try (Statement st = connection.createStatement()) {
+				st.executeQuery(qry);
+				try (ResultSet rs = st.executeQuery("CALL DIAGNOSTICS ( ROW_COUNT )")) {
+					rs.next();
+					added += rs.getInt(1);
+				}
+			}
 		}
 		return added;
 	}
@@ -466,10 +529,8 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		}
 		sb.append(")");
 
-		try {
-			Statement st = connection.createStatement();
+		try (Statement st = connection.createStatement()) {
 			st.executeQuery(sb.toString());
-			st.close();
 			return true;
 		} catch (SQLIntegrityConstraintViolationException e1) {
 			return false;
@@ -638,13 +699,36 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	 */
 	public class DatabaseEntitiesIterator implements Iterator<ADemoEntity> {
 
+		/** The rs. */
 		private ResultSet rs;
+
+		/** The ps. */
 		private PreparedStatement ps;
+
+		/** The connection. */
 		private final Connection connection;
+
+		/** The sql. */
 		private final String sql;
+
+		/** The type. */
 		private final String type;
+
+		/** The attributes. */
 		private final Set<Attribute<? extends IValue>> attributes;
 
+		/**
+		 * Instantiates a new database entities iterator.
+		 *
+		 * @param connection
+		 *            the connection
+		 * @param attributes
+		 *            the attributes
+		 * @param type
+		 *            the type
+		 * @param sqlWhereClause
+		 *            the sql where clause
+		 */
 		public DatabaseEntitiesIterator(final Connection connection, final Set<Attribute<? extends IValue>> attributes,
 				final String type, final String sqlWhereClause) {
 			assert connection != null;
@@ -669,6 +753,9 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			this(connection, attributes, type, "");
 		}
 
+		/**
+		 * Inits the.
+		 */
 		public void init() {
 			try {
 				ps = connection.prepareStatement(sql);
@@ -702,6 +789,9 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 		}
 
+		/**
+		 * Close.
+		 */
 		private void close() {
 			try {
 				if (rs != null) { rs.close(); }
@@ -730,6 +820,19 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		}
 	}
 
+	/**
+	 * Creates the entity.
+	 *
+	 * @param rs
+	 *            the rs
+	 * @param type
+	 *            the type
+	 * @param attributes
+	 *            the attributes
+	 * @return the a demo entity
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	private ADemoEntity createEntity(final ResultSet rs, final String type,
 			final Set<Attribute<? extends IValue>> attributes) throws SQLException {
 
@@ -757,14 +860,31 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	 */
 	public class AllTypesIterator implements Iterator<ADemoEntity> {
 
+		/** The connection. */
 		protected Connection connection;
+
+		/** The entity type 2 attributes. */
 		protected Map<String, Set<Attribute<? extends IValue>>> entityType2attributes;
 
+		/** The it types. */
 		protected Iterator<String> itTypes = null;
+
+		/** The it entities. */
 		protected DatabaseEntitiesIterator itEntities = null;
 
+		/** The where clause. */
 		protected String whereClause = null;
 
+		/**
+		 * Instantiates a new all types iterator.
+		 *
+		 * @param connection
+		 *            the connection
+		 * @param entityType2tableName
+		 *            the entity type 2 table name
+		 * @param entityType2attributes
+		 *            the entity type 2 attributes
+		 */
 		public AllTypesIterator(final Connection connection, final Map<String, String> entityType2tableName,
 				final Map<String, Set<Attribute<? extends IValue>>> entityType2attributes) {
 
@@ -794,11 +914,20 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			itTypes.hasNext();
 		}
 
+		/**
+		 * Inits the entities iterator for type.
+		 *
+		 * @param currentType
+		 *            the current type
+		 */
 		protected void initEntitiesIteratorForType(final String currentType) {
 			itEntities = new DatabaseEntitiesIterator(connection, entityType2attributes.get(currentType), currentType,
 					this.whereClause);
 		}
 
+		/**
+		 * Inits the entities iterator.
+		 */
 		protected void initEntitiesIterator() {
 			initEntitiesIteratorForType(itTypes.next());
 		}
@@ -828,10 +957,26 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		}
 	}
 
+	/**
+	 * The Class AllTypesWithWhereIterator.
+	 */
 	public class AllTypesWithWhereIterator extends AllTypesIterator {
 
+		/** The attribute 2 values. */
 		Map<Attribute<? extends IValue>, Collection<IValue>> attribute2values;
 
+		/**
+		 * Instantiates a new all types with where iterator.
+		 *
+		 * @param connection
+		 *            the connection
+		 * @param entityType2tableName
+		 *            the entity type 2 table name
+		 * @param entityType2attributes
+		 *            the entity type 2 attributes
+		 * @param attribute2values
+		 *            the attribute 2 values
+		 */
 		public AllTypesWithWhereIterator(final Connection connection, final Map<String, String> entityType2tableName,
 				final Map<String, Set<Attribute<? extends IValue>>> entityType2attributes,
 				final Map<Attribute<? extends IValue>, Collection<IValue>> attribute2values) {
@@ -867,6 +1012,13 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		return new AllTypesIterator(connection, entityType2tableName, entityType2attributes);
 	}
 
+	/**
+	 * Iterator.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the iterator
+	 */
 	public Iterator<ADemoEntity> iterator(final String type) {
 		return new DatabaseEntitiesIterator(connection, entityType2attributes.get(type), type);
 	}
@@ -900,6 +1052,14 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		}
 	}
 
+	/**
+	 * Creates the ids clause.
+	 *
+	 * @param sb
+	 *            the sb
+	 * @param ids
+	 *            the ids
+	 */
 	protected void createIdsClause(final StringBuffer sb, final Collection<String> ids) {
 		sb.append("IN (");
 		boolean first = true;
@@ -915,6 +1075,15 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 	}
 
+	/**
+	 * Delete ids.
+	 *
+	 * @param type
+	 *            the type
+	 * @param ids
+	 *            the ids
+	 * @return the int
+	 */
 	protected int deleteIds(final String type, final Collection<String> ids) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("DELETE FROM ").append(getTableNameForEntityType(type)).append(" WHERE id ");
@@ -1057,6 +1226,18 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		return total;
 	}
 
+	/**
+	 * Adds the where clause for attribute.
+	 *
+	 * @param sb
+	 *            the sb
+	 * @param type
+	 *            the type
+	 * @param attribute
+	 *            the attribute
+	 * @param values
+	 *            the values
+	 */
 	protected void addWhereClauseForAttribute(final StringBuffer sb, final String type,
 			final Attribute<? extends IValue> attribute, final IValue... values) {
 
@@ -1110,6 +1291,19 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 	}
 
+	/**
+	 * Gets the entities having values.
+	 *
+	 * @param type
+	 *            the type
+	 * @param attribute
+	 *            the attribute
+	 * @param values
+	 *            the values
+	 * @return the entities having values
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	public int getEntitiesHavingValues(final String type, final Attribute<? extends IValue> attribute,
 			final IValue... values) throws SQLException {
 
@@ -1123,15 +1317,23 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 		// System.out.println(sb.toString());
 
-		Statement st = connection.createStatement();
-		ResultSet set = st.executeQuery(sb.toString());
-		set.next();
-		int res = set.getInt("TOTAL");
-		st.close();
-
-		return res;
+		try (Statement st = connection.createStatement()) {
+			ResultSet set = st.executeQuery(sb.toString());
+			set.next();
+			return set.getInt("TOTAL");
+		}
 	}
 
+	/**
+	 * Adds the where clause for attributes.
+	 *
+	 * @param sb
+	 *            the sb
+	 * @param type
+	 *            the type
+	 * @param attribute2values
+	 *            the attribute 2 values
+	 */
 	/*
 	 * Private inner method to setup query
 	 */
@@ -1153,6 +1355,16 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		sb.append(")");
 	}
 
+	/**
+	 * Adds the where clause for coordinate.
+	 *
+	 * @param sb
+	 *            the sb
+	 * @param type
+	 *            the type
+	 * @param attribute2values
+	 *            the attribute 2 values
+	 */
 	/*
 	 * Private inner method to setupe query
 	 */
@@ -1171,6 +1383,17 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		sb.append(")");
 	}
 
+	/**
+	 * Gets the entities having values.
+	 *
+	 * @param type
+	 *            the type
+	 * @param attribute2values
+	 *            the attribute 2 values
+	 * @return the entities having values
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	protected int getEntitiesHavingValues(final String type,
 			final Map<Attribute<? extends IValue>, Collection<IValue>> attribute2values) throws SQLException {
 
@@ -1180,13 +1403,11 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		if (!attribute2values.isEmpty()) { addWhereClauseForAttributes(sb, type, attribute2values); }
 		// System.out.println(sb.toString());
 
-		Statement st = connection.createStatement();
-		ResultSet set = st.executeQuery(sb.toString());
-		set.next();
-		int res = set.getInt("TOTAL");
-		st.close();
-
-		return res;
+		try (Statement st = connection.createStatement()) {
+			ResultSet set = st.executeQuery(sb.toString());
+			set.next();
+			return set.getInt("TOTAL");
+		}
 
 	}
 
@@ -1207,6 +1428,17 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		return total;
 	}
 
+	/**
+	 * Gets the entities having coordinate.
+	 *
+	 * @param type
+	 *            the type
+	 * @param attribute2value
+	 *            the attribute 2 value
+	 * @return the entities having coordinate
+	 * @throws SQLException
+	 *             the SQL exception
+	 */
 	protected int getEntitiesHavingCoordinate(final String type,
 			final Map<Attribute<? extends IValue>, IValue> attribute2value) throws SQLException {
 
@@ -1216,13 +1448,11 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		if (!attribute2value.isEmpty()) { addWhereClauseForCoordinate(sb, type, attribute2value); }
 		// System.out.println(sb.toString());
 
-		Statement st = connection.createStatement();
-		ResultSet set = st.executeQuery(sb.toString());
-		set.next();
-		int res = set.getInt("TOTAL");
-		st.close();
-
-		return res;
+		try (Statement st = connection.createStatement()) {
+			ResultSet set = st.executeQuery(sb.toString());
+			set.next();
+			return set.getInt("TOTAL");
+		}
 
 	}
 

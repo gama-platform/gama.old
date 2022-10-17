@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * CsvInputHandler.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.io;
 
 import java.io.BufferedReader;
@@ -13,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +39,7 @@ import core.metamodel.io.GSSurveyType;
  * TODO : from the API, DEAL WITH IT => "Reads the entire file into a List with each element being a String[] of tokens.
  * Since the current implementation returns a LinkedList, you are strongly discouraged from using index-based access
  * methods to get at items in the list. Instead, iterate over the list."
- * 
+ *
  * @author kevinchapuis
  *
  */
@@ -41,31 +50,82 @@ public class CsvInputHandler extends AbstractInputHandler {
 	 */
 	private static final char[] CSV_SEPARATORS_FROM_DETECTION = { ',', ';', ':', '|', ' ', '\t' };
 
+	/** The Constant CHUNK_SIZE. */
 	/*
 	 *
 	 */
 	private static final int CHUNK_SIZE = 100000;
+
+	/** The Constant CHUNK. */
 	private static final boolean CHUNK = false;
+
+	/** The data tables. */
 	private Map<Integer, List<String[]>> dataTables;
 
+	/** The data table. */
 	private List<String[]> dataTable;
 
+	/** The first row data index. */
 	private final int firstRowDataIndex;
+
+	/** The first column data index. */
 	private final int firstColumnDataIndex;
 
+	/** The charset. */
 	private final String charset;
+
+	/** The csv separator. */
 	private final char csvSeparator;
 
+	/** The store in memory. */
 	private final boolean storeInMemory;
+
+	/** The last row index. */
 	// If the data have not been stored in memory still have to get some stats
 	private int lastRowIndex = -1;
+
+	/** The last column index. */
 	private int lastColumnIndex = -1;
 
+	/**
+	 * Instantiates a new csv input handler.
+	 *
+	 * @param fileName
+	 *            the file name
+	 * @param csvSeparator
+	 *            the csv separator
+	 * @param firstRowDataIndex
+	 *            the first row data index
+	 * @param firstColumnDataIndex
+	 *            the first column data index
+	 * @param dataFileType
+	 *            the data file type
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	protected CsvInputHandler(final String fileName, final char csvSeparator, final int firstRowDataIndex,
 			final int firstColumnDataIndex, final GSSurveyType dataFileType) throws IOException {
 		this(fileName, true, csvSeparator, firstRowDataIndex, firstColumnDataIndex, dataFileType);
 	}
 
+	/**
+	 * Instantiates a new csv input handler.
+	 *
+	 * @param fileName
+	 *            the file name
+	 * @param storeInMemory
+	 *            the store in memory
+	 * @param csvSeparator
+	 *            the csv separator
+	 * @param firstRowDataIndex
+	 *            the first row data index
+	 * @param firstColumnDataIndex
+	 *            the first column data index
+	 * @param dataFileType
+	 *            the data file type
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	protected CsvInputHandler(final String fileName, final boolean storeInMemory, final char csvSeparator,
 			final int firstRowDataIndex, final int firstColumnDataIndex, final GSSurveyType dataFileType)
 			throws IOException {
@@ -93,41 +153,75 @@ public class CsvInputHandler extends AbstractInputHandler {
 		this.csvSeparator = csvSeparator;
 		this.charset = charset;
 
-		CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(surveyCompleteFile), this.charset),
-				csvSeparator);
-		if (this.storeInMemory) {
-			if (CHUNK) {
-				this.dataTables = chunkData(reader, CHUNK_SIZE);
+		try (CSVReader reader = new CSVReader(
+				new InputStreamReader(new FileInputStream(surveyCompleteFile), this.charset), csvSeparator)) {
+			if (this.storeInMemory) {
+				if (CHUNK) {
+					this.dataTables = chunkData(reader, CHUNK_SIZE);
+				} else {
+					dataTable = reader.readAll();
+				}
 			} else {
-				dataTable = reader.readAll();
+				// Store header in memory
+				dataTable = new ArrayList<>();
+				int length = 0;
+				for (int row = 0; row < firstRowDataIndex; row++) {
+					dataTable.add(reader.readNext());
+					length++;
+				}
+				String[] rec = null;
+				do {
+					rec = reader.readNext();
+					if (this.lastColumnIndex < 0) { this.lastColumnIndex = rec.length - 1; }
+					length++;
+				} while (rec != null);
+				this.lastRowIndex = length - 1;
 			}
-		} else {
-			// Store header in memory
-			dataTable = new ArrayList<>();
-			int length = 0;
-			for (int row = 0; row < firstRowDataIndex; row++) {
-				dataTable.add(reader.readNext());
-				length++;
-			}
-			String[] rec = null;
-			do {
-				rec = reader.readNext();
-				if (this.lastColumnIndex < 0) { this.lastColumnIndex = rec.length - 1; }
-				length++;
-			} while (rec != null);
-			this.lastRowIndex = length - 1;
 		}
-		reader.close();
 
 		this.firstRowDataIndex = firstRowDataIndex;
 		this.firstColumnDataIndex = firstColumnDataIndex;
 	}
 
+	/**
+	 * Instantiates a new csv input handler.
+	 *
+	 * @param file
+	 *            the file
+	 * @param csvSeparator
+	 *            the csv separator
+	 * @param firstRowDataIndex
+	 *            the first row data index
+	 * @param firstColumnDataIndex
+	 *            the first column data index
+	 * @param dataFileType
+	 *            the data file type
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	protected CsvInputHandler(final File file, final char csvSeparator, final int firstRowDataIndex,
 			final int firstColumnDataIndex, final GSSurveyType dataFileType) throws IOException {
 		this(file, true, csvSeparator, firstRowDataIndex, firstColumnDataIndex, dataFileType);
 	}
 
+	/**
+	 * Instantiates a new csv input handler.
+	 *
+	 * @param file
+	 *            the file
+	 * @param storeInMemory
+	 *            the store in memory
+	 * @param csvSeparator
+	 *            the csv separator
+	 * @param firstRowDataIndex
+	 *            the first row data index
+	 * @param firstColumnDataIndex
+	 *            the first column data index
+	 * @param dataFileType
+	 *            the data file type
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	protected CsvInputHandler(final File file, final boolean storeInMemory, final char csvSeparator,
 			final int firstRowDataIndex, final int firstColumnDataIndex, final GSSurveyType dataFileType)
 			throws IOException {
@@ -156,31 +250,31 @@ public class CsvInputHandler extends AbstractInputHandler {
 		this.charset = charset;
 		this.csvSeparator = csvSeparator;
 
-		CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream(surveyCompleteFile), this.charset),
-				csvSeparator);
-		if (this.storeInMemory) {
-			if (CHUNK) {
-				this.dataTables = chunkData(reader, CHUNK_SIZE);
+		try (CSVReader reader = new CSVReader(
+				new InputStreamReader(new FileInputStream(surveyCompleteFile), this.charset), csvSeparator)) {
+			if (this.storeInMemory) {
+				if (CHUNK) {
+					this.dataTables = chunkData(reader, CHUNK_SIZE);
+				} else {
+					dataTable = reader.readAll();
+				}
 			} else {
-				dataTable = reader.readAll();
+				// Store header in memory
+				dataTable = new ArrayList<>();
+				int length = 0;
+				for (int row = 0; row < firstRowDataIndex; row++) {
+					dataTable.add(reader.readNext());
+					length++;
+				}
+				String[] rec = null;
+				do {
+					rec = reader.readNext();
+					if (this.lastColumnIndex < 0) { this.lastColumnIndex = rec.length - 1; }
+					length++;
+				} while (rec != null);
+				this.lastRowIndex = length - 1;
 			}
-		} else {
-			// Store header in memory
-			dataTable = new ArrayList<>();
-			int length = 0;
-			for (int row = 0; row < firstRowDataIndex; row++) {
-				dataTable.add(reader.readNext());
-				length++;
-			}
-			String[] rec = null;
-			do {
-				rec = reader.readNext();
-				if (this.lastColumnIndex < 0) { this.lastColumnIndex = rec.length - 1; }
-				length++;
-			} while (rec != null);
-			this.lastRowIndex = length - 1;
 		}
-		reader.close();
 
 		if (dataTable != null) {
 			for (String[] str : dataTable) {
@@ -192,6 +286,24 @@ public class CsvInputHandler extends AbstractInputHandler {
 
 	}
 
+	/**
+	 * Instantiates a new csv input handler.
+	 *
+	 * @param fileName
+	 *            the file name
+	 * @param surveyIS
+	 *            the survey IS
+	 * @param csvSeparator
+	 *            the csv separator
+	 * @param firstRowDataIndex
+	 *            the first row data index
+	 * @param firstColumnDataIndex
+	 *            the first column data index
+	 * @param dataFileType
+	 *            the data file type
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	protected CsvInputHandler(final String fileName, final InputStream surveyIS, final char csvSeparator,
 			final int firstRowDataIndex, final int firstColumnDataIndex, final GSSurveyType dataFileType)
 			throws IOException {
@@ -199,6 +311,28 @@ public class CsvInputHandler extends AbstractInputHandler {
 				firstColumnDataIndex, dataFileType);
 	}
 
+	/**
+	 * Instantiates a new csv input handler.
+	 *
+	 * @param fileName
+	 *            the file name
+	 * @param charset
+	 *            the charset
+	 * @param surveyIS
+	 *            the survey IS
+	 * @param storeInMemory
+	 *            the store in memory
+	 * @param csvSeparator
+	 *            the csv separator
+	 * @param firstRowDataIndex
+	 *            the first row data index
+	 * @param firstColumnDataIndex
+	 *            the first column data index
+	 * @param dataFileType
+	 *            the data file type
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	protected CsvInputHandler(final String fileName, final String charset, final InputStream surveyIS,
 			final boolean storeInMemory, final char csvSeparator, final int firstRowDataIndex,
 			final int firstColumnDataIndex, final GSSurveyType dataFileType) throws IOException {
@@ -208,30 +342,30 @@ public class CsvInputHandler extends AbstractInputHandler {
 		this.charset = charset;
 		this.csvSeparator = csvSeparator;
 
-		CSVReader reader = new CSVReader(new InputStreamReader(surveyIS, this.charset), csvSeparator);
-		if (this.storeInMemory) {
-			if (CHUNK) {
-				this.dataTables = chunkData(reader, CHUNK_SIZE);
+		try (CSVReader reader = new CSVReader(new InputStreamReader(surveyIS, this.charset), csvSeparator)) {
+			if (this.storeInMemory) {
+				if (CHUNK) {
+					this.dataTables = chunkData(reader, CHUNK_SIZE);
+				} else {
+					dataTable = reader.readAll();
+				}
 			} else {
-				dataTable = reader.readAll();
+				// Store header in memory
+				dataTable = new ArrayList<>();
+				int length = 0;
+				for (int row = 0; row < firstRowDataIndex; row++) {
+					dataTable.add(reader.readNext());
+					length++;
+				}
+				String[] rec = null;
+				do {
+					rec = reader.readNext();
+					if (this.lastColumnIndex < 0) { this.lastColumnIndex = rec.length - 1; }
+					length++;
+				} while (rec != null);
+				this.lastRowIndex = length - 1;
 			}
-		} else {
-			// Store header in memory
-			dataTable = new ArrayList<>();
-			int length = 0;
-			for (int row = 0; row < firstRowDataIndex; row++) {
-				dataTable.add(reader.readNext());
-				length++;
-			}
-			String[] rec = null;
-			do {
-				rec = reader.readNext();
-				if (this.lastColumnIndex < 0) { this.lastColumnIndex = rec.length - 1; }
-				length++;
-			} while (rec != null);
-			this.lastRowIndex = length - 1;
 		}
-		reader.close();
 
 		this.firstRowDataIndex = firstRowDataIndex;
 		this.firstColumnDataIndex = firstColumnDataIndex;
@@ -291,20 +425,12 @@ public class CsvInputHandler extends AbstractInputHandler {
 		if (CHUNK) {
 			List<String> col = new ArrayList<>();
 			for (Integer chunkIdx : dataTables.keySet()) {
-				Iterator<String[]> it = dataTables.get(chunkIdx).iterator();
-				while (it.hasNext()) {
-					String[] line = it.next();
-					col.add(line[columnIndex]);
-				}
+				for (String[] line : dataTables.get(chunkIdx)) { col.add(line[columnIndex]); }
 			}
 
 		}
 		List<String> column = new ArrayList<>();
-		Iterator<String[]> it = dataTable.iterator();
-		while (it.hasNext()) {
-			String[] line = it.next();
-			column.add(line[columnIndex]);
-		}
+		for (String[] line : dataTable) { column.add(line[columnIndex]); }
 		return column;
 	}
 
@@ -346,8 +472,9 @@ public class CsvInputHandler extends AbstractInputHandler {
 	@Override
 	public int getLastRowIndex() {
 		if (!storeInMemory) return lastRowIndex;
-		return dataTable == null || dataTable.isEmpty() ? (dataTables.size() - 1) * CHUNK_SIZE
-				+ dataTables.get(Collections.max(dataTables.keySet())).size() : dataTable.size() - 1;
+		return dataTable == null || dataTable.isEmpty()
+				? (dataTables.size() - 1) * CHUNK_SIZE + dataTables.get(Collections.max(dataTables.keySet())).size()
+				: dataTable.size() - 1;
 	}
 
 	@Override
@@ -404,13 +531,11 @@ public class CsvInputHandler extends AbstractInputHandler {
 	public static char detectSeparator(final File f, final String charset, final char[] candidates) throws IOException {
 
 		int countLines = 20;
-
-		// read the first n lines
-		BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset));
 		List<String> firstLines = new ArrayList<>(countLines);
-		while (bf.ready()) { firstLines.add(bf.readLine()); }
-		// close the file
-		bf.close();
+		// read the first n lines
+		try (BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(f), charset))) {
+			while (bf.ready()) { firstLines.add(bf.readLine()); }
+		}
 
 		countLines = firstLines.size();
 

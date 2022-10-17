@@ -396,9 +396,9 @@ public class GamaBundleLoader {
 				final String featureId = feature.getIdentifier();
 				result.add(featureId);
 				DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("from", 15) + providerName);
-				for (Bundle bundle : feature.getBundles()) {
-
-				}
+				// for (Bundle bundle : feature.getBundles()) {
+				//
+				// }
 			}
 		}
 		return result;

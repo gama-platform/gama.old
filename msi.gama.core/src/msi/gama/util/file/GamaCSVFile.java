@@ -466,10 +466,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		}
 		if (hasHeader != null && hasHeader) {
 			if (!info.header) {
-				try {
-					final CsvReader reader = new CsvReader(getPath(scope), info.delimiter);
+				try (final CsvReader reader = new CsvReader(getPath(scope), info.delimiter)) {
 					if (reader.readHeaders()) { info.headers = reader.getHeaders(); }
-					reader.close();
 				} catch (final IOException e) {}
 			}
 			info.header = hasHeader;
@@ -492,10 +490,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 			hasHeader = hasHeader == null ? stats.header : hasHeader;
 			scope.getGui().getStatus().endSubStatus("", scope);
 		}
-		CsvReader reader = null;
-		try {
-
-			reader = new CsvReader(getPath(scope), csvSeparator.charAt(0));
+		try (CsvReader reader = new CsvReader(getPath(scope), csvSeparator.charAt(0))) {
 			reader.setTextQualifier(textQualifier);
 			if (hasHeader) {
 				reader.readHeaders();
@@ -512,7 +507,6 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			if (reader != null) { reader.close(); }
 			// See Issue #3036 -- value must be modified when the file is reloaded
 			if (hasHeader != null && hasHeader) { userSize.y++; }
 		}

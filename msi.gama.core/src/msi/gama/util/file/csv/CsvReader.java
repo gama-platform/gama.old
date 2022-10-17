@@ -10,6 +10,7 @@
 package msi.gama.util.file.csv;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,7 +31,7 @@ import msi.gaml.types.Types;
  * A stream based parser for parsing delimited text data from a file or a stream.
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class CsvReader {
+public class CsvReader implements Closeable {
 
 	/** The file name. */
 	private String fileName = null;

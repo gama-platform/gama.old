@@ -43,7 +43,6 @@ import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.interfaces.IParameterEditor;
-import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.parameters.MonitorDisplayer;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -168,9 +167,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(cat);
 		final EditorsGroup compo = new EditorsGroup(getViewer());
 		if (parameters != null) {
-			final List<AbstractEditor> list = new ArrayList(parameters.values());
-			Collections.sort(list);
-			for (final AbstractEditor<?> gpParam : list) {
+			final List<IParameterEditor> list = new ArrayList<>(parameters.values());
+			list.sort(null);
+			for (final IParameterEditor<?> gpParam : list) {
 				gpParam.createControls(compo);
 				if (!editors.isEnabled(gpParam)) { gpParam.setActive(false); }
 			}

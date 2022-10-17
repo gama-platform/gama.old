@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * ManualExperimentJob.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.headless.job;
 
@@ -44,15 +44,37 @@ import msi.gaml.types.Types;
  * The Class ExperimentJob.
  */
 public class ManualExperimentJob extends ExperimentJob {
-	
+
+	/** The server. */
 	public GamaWebSocketServer server;
+	
+	/** The socket. */
 	public WebSocket socket;
+	
+	/** The params. */
 	public GamaJsonList params;
+	
+	/** The end cond. */
 	public String endCond = "";
+	
+	/** The controller. */
 	public ServerExperimentController controller;
 
+	/**
+	 * Instantiates a new manual experiment job.
+	 *
+	 * @param sourcePath the source path
+	 * @param exp the exp
+	 * @param gamaWebSocketServer the gama web socket server
+	 * @param sk the sk
+	 * @param p the p
+	 * @param console the console
+	 * @param status the status
+	 * @param dialog the dialog
+	 */
 	public ManualExperimentJob(final String sourcePath, final String exp, final GamaWebSocketServer gamaWebSocketServer,
-			final WebSocket sk, final GamaJsonList p, boolean console, boolean status, boolean dialog) {
+			final WebSocket sk, final GamaJsonList p, final boolean console, final boolean status,
+			final boolean dialog) {
 		// (final String sourcePath, final String exp, final long max, final String untilCond,
 		// final double s)
 		super(sourcePath, exp, 0, "", 0);
@@ -77,6 +99,15 @@ public class ManualExperimentJob extends ExperimentJob {
 		this.simulator = new RichExperiment(mdl);
 	}
 
+	/**
+	 * Load and build with json.
+	 *
+	 * @throws InstantiationException the instantiation exception
+	 * @throws IllegalAccessException the illegal access exception
+	 * @throws ClassNotFoundException the class not found exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException the gama headless exception
+	 */
 	public void loadAndBuildWithJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
 			IOException, GamaHeadlessException {
 
@@ -87,6 +118,11 @@ public class ManualExperimentJob extends ExperimentJob {
 		initEndContion(endCond);
 	}
 
+	/**
+	 * Inits the param.
+	 *
+	 * @param p the p
+	 */
 	public void initParam(final GamaJsonList p) {
 		params = p;
 		if (params != null) {
@@ -113,6 +149,11 @@ public class ManualExperimentJob extends ExperimentJob {
 		}
 	}
 
+	/**
+	 * Inits the end contion.
+	 *
+	 * @param cond the cond
+	 */
 	// Initialize the enCondition
 	public void initEndContion(final String cond) {
 		if (cond == null || "".equals(cond)) {
@@ -136,9 +177,9 @@ public class ManualExperimentJob extends ExperimentJob {
 			if (this.step % v.frameRate == 0) {
 				final RichOutput out = simulator.getRichOutput(v);
 				if (out == null || out.getValue() == null) {} else if (out.getValue() instanceof BufferedImage) {
-					try {
+					try (ByteArrayOutputStream out1 = new ByteArrayOutputStream()) {
 						BufferedImage bi = (BufferedImage) out.getValue();
-						ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+
 						ImageIO.write(bi, "png", out1);
 
 						byte[] array1 = out1.toByteArray();
@@ -151,7 +192,6 @@ public class ManualExperimentJob extends ExperimentJob {
 						ByteBuffer byteBuffer = ByteBuffer.wrap(joinedArray);
 						if (!socket.isClosing() && !socket.isClosed()) { socket.send(byteBuffer); }
 						// server.broadcast(byteBuffer);
-						out1.close();
 						byteBuffer.clear();
 
 					} catch (IOException e) {

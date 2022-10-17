@@ -1,7 +1,17 @@
+/*******************************************************************************************************
+ *
+ * Morris.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration.morris;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -24,7 +35,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 
 /**
- * 
+ *
  * This class make a Morris analysis from the GAMA simulation Input and output or from a CSV data file with all Inputs
  * and Outputs of the GAMA model.
  */
@@ -47,27 +58,27 @@ public class Morris {
 	 * Attributes MySample -> List of samples for simulation ParametersNames-> List of names of inputs mu -> mu
 	 * indicates the mean of the distribution mu_star -> mu_star indicates the mean of the distribution of absolute
 	 * values sigma -> The standard deviation of the distribution
-	 * 
+	 *
 	 * Example: MySample=[{Var1=1,Var2=1},{Var1=4,Var2=5}] ParametersName=[Var1,Var2]
 	 *
 	 */
-	
-	//protected List<Map<String, Object>> MySample;
-	//protected List<String> ParametersNames;
-	//protected Map<String, Double> mu;
-	//protected Map<String, Double> mu_star;
-	//protected Map<String, Double> sigma;
+
+	// protected List<Map<String, Object>> MySample;
+	// protected List<String> ParametersNames;
+	// protected Map<String, Double> mu;
+	// protected Map<String, Double> mu_star;
+	// protected Map<String, Double> sigma;
 
 	/** ########################## SAVING/LOADING METHODS ############################# */
 
-	public static String buildResultTxt(final String name, final boolean first,final Map<String,Double> mu,
-			final Map<String,Double> mu_star,final Map<String,Double> sigma ) {
+	public static String buildResultTxt(final String name, final boolean first, final Map<String, Double> mu,
+			final Map<String, Double> mu_star, final Map<String, Double> sigma) {
 		StringBuilder sb = new StringBuilder();
 		if (first) { sb.append("==MORRIS ANALYSIS : \n"); }
 		sb.append("\n");
 		sb.append("Result for output :" + name + "\n");
 		sb.append("mu : \n");
-		for(String n: mu.keySet()) {
+		for (String n : mu.keySet()) {
 			sb.append("		");
 			sb.append(n);
 			sb.append(" : ");
@@ -75,7 +86,7 @@ public class Morris {
 			sb.append("\n");
 		}
 		sb.append("mu_star : \n");
-		for(String n: mu_star.keySet()) {
+		for (String n : mu_star.keySet()) {
 			sb.append("		");
 			sb.append(n);
 			sb.append(" : ");
@@ -83,7 +94,7 @@ public class Morris {
 			sb.append("\n");
 		}
 		sb.append("sigma : \n");
-		for(String n: sigma.keySet()) {
+		for (String n : sigma.keySet()) {
 			sb.append("		");
 			sb.append(n);
 			sb.append(" : ");
@@ -94,16 +105,30 @@ public class Morris {
 
 	}
 
+	/**
+	 * Write and tell result.
+	 *
+	 * @param name
+	 *            the name
+	 * @param path
+	 *            the path
+	 * @param first
+	 *            the first
+	 * @param scope
+	 *            the scope
+	 * @param morris_coefficient
+	 *            the morris coefficient
+	 */
 	public static void WriteAndTellResult(final String name, final String path, final boolean first, final IScope scope,
-			final List<Map<String,Double>> morris_coefficient) {
-		Map<String,Double> mu=morris_coefficient.get(0);
-		Map<String,Double> mu_star=morris_coefficient.get(1);
-		Map<String,Double> sigma=morris_coefficient.get(2);
+			final List<Map<String, Double>> morris_coefficient) {
+		Map<String, Double> mu = morris_coefficient.get(0);
+		Map<String, Double> mu_star = morris_coefficient.get(1);
+		Map<String, Double> sigma = morris_coefficient.get(2);
 		try {
 			File file = new File(path);
-			FileWriter fw = new FileWriter(file, false);
-			fw.write(buildResultTxt(name, first,mu,mu_star,sigma));
-			fw.close();
+			try (FileWriter fw = new FileWriter(file, false)) {
+				fw.write(buildResultTxt(name, first, mu, mu_star, sigma));
+			}
 		} catch (IOException e) {
 			throw GamaRuntimeException.error("File " + path + " not found", scope);
 		}
@@ -121,24 +146,23 @@ public class Morris {
 		List<Map<String, Object>> parameters = new ArrayList<>();
 		try {
 			File file = new File(path);
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-			String line = " ";
-			String[] tempArr;
-			List<String> list_name = new ArrayList<>();
-			int i = 0;
-			while ((line = br.readLine()) != null) {
-				tempArr = line.split(",");
-				for (String tempStr : tempArr) { if (i == 0) { list_name.add(tempStr); } }
+			try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
+				String line = " ";
+				String[] tempArr;
+				List<String> list_name = new ArrayList<>();
+				int i = 0;
+				while ((line = br.readLine()) != null) {
+					tempArr = line.split(",");
+					for (String tempStr : tempArr) { if (i == 0) { list_name.add(tempStr); } }
 
-				if (i > 0) {
-					Map<String, Object> temp_map = new LinkedHashMap<>();
-					for (int y = 0; y < tempArr.length; y++) { temp_map.put(list_name.get(y), tempArr[y]); }
-					parameters.add(temp_map);
+					if (i > 0) {
+						Map<String, Object> temp_map = new LinkedHashMap<>();
+						for (int y = 0; y < tempArr.length; y++) { temp_map.put(list_name.get(y), tempArr[y]); }
+						parameters.add(temp_map);
+					}
+					i++;
 				}
-				i++;
 			}
-			br.close();
 		} catch (IOException ioe) {
 			throw GamaRuntimeException.error("File " + path + " not found", scope);
 		}
@@ -161,7 +185,7 @@ public class Morris {
 				parameters.get(i).remove(tmpNames.get(y));
 			}
 		});
-		List<Object> simulation_morris= new ArrayList<>();
+		List<Object> simulation_morris = new ArrayList<>();
 		simulation_morris.add(parameters);
 		simulation_morris.add(new_Outputs);
 		return simulation_morris;
@@ -228,7 +252,7 @@ public class Morris {
 	 */
 	private static List<Map<String, Double>> reorganize_output_matrix(final List<List<Double>> Outputs,
 			final List<List<Map<String, Boolean>>> value_increased,
-			final List<List<Map<String, Boolean>>> value_decreased, final boolean increase, 
+			final List<List<Map<String, Boolean>>> value_decreased, final boolean increase,
 			final List<String> ParametersNames) {
 		List<List<Map<String, Boolean>>> new_value_increased = new ArrayList<>(value_increased);
 		List<List<Map<String, Boolean>>> new_value_decreased = new ArrayList<>(value_decreased);
@@ -318,7 +342,7 @@ public class Morris {
 	 */
 	private static List<Map<String, Double>> compute_elementary_effects(final List<Map<String, Double>> MySampleTemp,
 			final List<Double> Outputs, final int trajectory_size, final double delta,
-			final List<String> ParametersNames,final List<Map<String, Object>> MySample) {
+			final List<String> ParametersNames, final List<Map<String, Object>> MySample) {
 		int num_trajectories;
 		num_trajectories = MySample.size() / trajectory_size;
 		List<List<Double>> new_Outputs = new ArrayList<>();
@@ -377,12 +401,13 @@ public class Morris {
 			inputs_splits_decreased.add(tmp2);
 			inputs_splits_increased2.add(tmp3);
 			inputs_splits_decreased2.add(tmp4);
-		});		
-		List<Map<String, Double>> resultat_increased =
-				reorganize_output_matrix(new_Outputs, inputs_splits_increased, inputs_splits_decreased, true, ParametersNames);
-		List<Map<String, Double>> resultat_decreased =
-				reorganize_output_matrix(new_Outputs, inputs_splits_increased2, inputs_splits_decreased2, false, ParametersNames);
-		List<Map<String, Double>> elementary_effects = calc_results_difference(resultat_increased, resultat_decreased, ParametersNames);
+		});
+		List<Map<String, Double>> resultat_increased = reorganize_output_matrix(new_Outputs, inputs_splits_increased,
+				inputs_splits_decreased, true, ParametersNames);
+		List<Map<String, Double>> resultat_decreased = reorganize_output_matrix(new_Outputs, inputs_splits_increased2,
+				inputs_splits_decreased2, false, ParametersNames);
+		List<Map<String, Double>> elementary_effects =
+				calc_results_difference(resultat_increased, resultat_decreased, ParametersNames);
 		elementary_effects.forEach(map -> {
 			IntStream.range(0, ParametersNames.size()).forEach(w -> {
 				double val = map.get(ParametersNames.get(w)) / delta;
@@ -401,72 +426,12 @@ public class Morris {
 	 *            List of the Output to analyze
 	 *
 	 */
-	
-	public static List<Map<String,Double>> MorrisAggregation(final int num_levels, final List<Double> Outputs,final List<Map<String,Object>> sample) {
-		List<Map<String, Object>> MySample=sample;
-		List<String> ParametersNames= sample.get(0).keySet().stream().toList();
-		
-		List<Map<String, Double>> MySampleTemp = new ArrayList<>();
-		MySample.forEach(m -> {
-			Map<String, Double> maptmp = new LinkedHashMap<>();
-			IntStream.range(0, ParametersNames.size()).forEach(i -> {
-				Object o = m.get(ParametersNames.get(i));
-				if (Objects.equals(o.toString(), "false")) {
-					maptmp.put(ParametersNames.get(i), 0.0);
-				} else if (Objects.equals(o.toString(), "true")) {
-					maptmp.put(ParametersNames.get(i), 1.0);
-				} else {
-					maptmp.put(ParametersNames.get(i), Double.parseDouble(o.toString()));
-				}
-			});
-			MySampleTemp.add(maptmp);
-		});
 
-		double delta = num_levels / (2.0 * ((double) num_levels - 1));
-		int num_vars = MySampleTemp.get(0).size();
-		int number_of_groups = num_vars;
-		int num_trajectories;
-		int trajectory_size;
-		num_trajectories = Math.round(MySample.size() / (number_of_groups + 1));
-		trajectory_size = Math.round(MySample.size() / num_trajectories);
-		List<Map<String, Double>> elementary_effects =
-				compute_elementary_effects(MySampleTemp, Outputs, trajectory_size, delta,ParametersNames,MySample);
-		Map<String, List<Double>> elementary = transformListMapToMapList(elementary_effects,ParametersNames);
-		Map<String, Double> mu = new LinkedHashMap<>();
-		IntStream.range(0, ParametersNames.size()).forEach(i -> {
-			double val = 0;
-			List<Double> listtmp = elementary.get(ParametersNames.get(i));
-			for (Double aDouble : listtmp) { val = val + aDouble; }
-			mu.put(ParametersNames.get(i), val / listtmp.size());
-		});
-		Map<String, Double> mu_star = new LinkedHashMap<>();
-		IntStream.range(0, ParametersNames.size()).forEach(i -> {
-			double val = 0;
-			List<Double> listtmp = elementary.get(ParametersNames.get(i));
-			for (Double aDouble : listtmp) { val = val + abs(aDouble); }
-			mu_star.put(ParametersNames.get(i), val / listtmp.size());
-		});
-		Map<String, Double> sigma = new LinkedHashMap<>();
-		IntStream.range(0, ParametersNames.size()).forEach(i -> {
-			double val = 0;
-			List<Double> listtmp = elementary.get(ParametersNames.get(i));
-			for (Double aDouble : listtmp) { val = val + pow(aDouble - mu.get(ParametersNames.get(i)), 2); }
-			val = Math.sqrt(val / (listtmp.size() - 1));
-			sigma.put(ParametersNames.get(i), val);
-		});
-		List<Map<String,Double>> morris_coefficient = new ArrayList<>();
-		morris_coefficient.add(mu);
-		morris_coefficient.add(mu_star);
-		morris_coefficient.add(sigma);
-		return morris_coefficient;
-	}
-	
-	public static List<Map<String,Double>> MorrisAggregation_CSV(final int num_levels, final List<Double> Outputs, 
-			final List<Map<String,Object>> sample) {
-		List<Map<String, Object>> MySample=sample;
-		List<String> ParametersNames= sample.get(0).keySet().stream().toList();
+	public static List<Map<String, Double>> MorrisAggregation(final int num_levels, final List<Double> Outputs,
+			final List<Map<String, Object>> sample) {
+		List<Map<String, Object>> MySample = sample;
+		List<String> ParametersNames = sample.get(0).keySet().stream().toList();
 
-			
 		List<Map<String, Double>> MySampleTemp = new ArrayList<>();
 		MySample.forEach(m -> {
 			Map<String, Double> maptmp = new LinkedHashMap<>();
@@ -515,7 +480,78 @@ public class Morris {
 			val = Math.sqrt(val / (listtmp.size() - 1));
 			sigma.put(ParametersNames.get(i), val);
 		});
-		List<Map<String,Double>> morris_coefficient = new ArrayList<>();
+		List<Map<String, Double>> morris_coefficient = new ArrayList<>();
+		morris_coefficient.add(mu);
+		morris_coefficient.add(mu_star);
+		morris_coefficient.add(sigma);
+		return morris_coefficient;
+	}
+
+	/**
+	 * Morris aggregation CSV.
+	 *
+	 * @param num_levels
+	 *            the num levels
+	 * @param Outputs
+	 *            the outputs
+	 * @param sample
+	 *            the sample
+	 * @return the list
+	 */
+	public static List<Map<String, Double>> MorrisAggregation_CSV(final int num_levels, final List<Double> Outputs,
+			final List<Map<String, Object>> sample) {
+		List<Map<String, Object>> MySample = sample;
+		List<String> ParametersNames = sample.get(0).keySet().stream().toList();
+
+		List<Map<String, Double>> MySampleTemp = new ArrayList<>();
+		MySample.forEach(m -> {
+			Map<String, Double> maptmp = new LinkedHashMap<>();
+			IntStream.range(0, ParametersNames.size()).forEach(i -> {
+				Object o = m.get(ParametersNames.get(i));
+				if (Objects.equals(o.toString(), "false")) {
+					maptmp.put(ParametersNames.get(i), 0.0);
+				} else if (Objects.equals(o.toString(), "true")) {
+					maptmp.put(ParametersNames.get(i), 1.0);
+				} else {
+					maptmp.put(ParametersNames.get(i), Double.parseDouble(o.toString()));
+				}
+			});
+			MySampleTemp.add(maptmp);
+		});
+
+		double delta = num_levels / (2.0 * ((double) num_levels - 1));
+		int num_vars = MySampleTemp.get(0).size();
+		int number_of_groups = num_vars;
+		int num_trajectories;
+		int trajectory_size;
+		num_trajectories = Math.round(MySample.size() / (number_of_groups + 1));
+		trajectory_size = Math.round(MySample.size() / num_trajectories);
+		List<Map<String, Double>> elementary_effects =
+				compute_elementary_effects(MySampleTemp, Outputs, trajectory_size, delta, ParametersNames, MySample);
+		Map<String, List<Double>> elementary = transformListMapToMapList(elementary_effects, ParametersNames);
+		Map<String, Double> mu = new LinkedHashMap<>();
+		IntStream.range(0, ParametersNames.size()).forEach(i -> {
+			double val = 0;
+			List<Double> listtmp = elementary.get(ParametersNames.get(i));
+			for (Double aDouble : listtmp) { val = val + aDouble; }
+			mu.put(ParametersNames.get(i), val / listtmp.size());
+		});
+		Map<String, Double> mu_star = new LinkedHashMap<>();
+		IntStream.range(0, ParametersNames.size()).forEach(i -> {
+			double val = 0;
+			List<Double> listtmp = elementary.get(ParametersNames.get(i));
+			for (Double aDouble : listtmp) { val = val + abs(aDouble); }
+			mu_star.put(ParametersNames.get(i), val / listtmp.size());
+		});
+		Map<String, Double> sigma = new LinkedHashMap<>();
+		IntStream.range(0, ParametersNames.size()).forEach(i -> {
+			double val = 0;
+			List<Double> listtmp = elementary.get(ParametersNames.get(i));
+			for (Double aDouble : listtmp) { val = val + pow(aDouble - mu.get(ParametersNames.get(i)), 2); }
+			val = Math.sqrt(val / (listtmp.size() - 1));
+			sigma.put(ParametersNames.get(i), val);
+		});
+		List<Map<String, Double>> morris_coefficient = new ArrayList<>();
 		morris_coefficient.add(mu);
 		morris_coefficient.add(mu_star);
 		morris_coefficient.add(sigma);

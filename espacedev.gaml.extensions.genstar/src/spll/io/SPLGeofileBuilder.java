@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SPLGeofileBuilder.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package spll.io;
 
 import java.awt.Color;
@@ -93,24 +103,48 @@ import spll.io.exception.InvalidGeoFormatException;
  */
 public class SPLGeofileBuilder {
 
+	/**
+	 * The Enum SPLGisFileExtension.
+	 */
 	// FILE EXTENSION
 	public enum SPLGisFileExtension {
-		shp, asc, tif
+
+		/** The shp. */
+		shp,
+		/** The asc. */
+		asc,
+		/** The tif. */
+		tif
 	}
 
+	/** The bands. */
 	// RASTER FILE BUILD ATTRIBUTE
 	private List<float[][]> bands;
+
+	/** The envelope. */
 	private ReferencedEnvelope envelope;
+
+	/** The no data. */
 	private double noData = SPLRasterFile.DEF_NODATA.doubleValue();
+
+	/** The palette. */
 	private Color[] palette = { new Color(254, 240, 217), new Color(253, 204, 138), new Color(252, 141, 89),
 			new Color(227, 74, 51), new Color(179, 0, 0) };
+
+	/** The no data color. */
 	private final Color noDataColor = new Color(0, 0, 0, 0);
 
+	/** The population. */
 	// SHAPE FILE BUILD ATTRIBUTE
 	private SpllPopulation population;
+
+	/** The features. */
 	private Collection<SpllFeature> features;
+
+	/** The charset. */
 	private final Charset charset = null;
 
+	/** The gis file. */
 	// UNSPECIFIC BUILD
 	private File gisFile;
 
@@ -234,69 +268,65 @@ public class SPLGeofileBuilder {
 		if (!csvFile.exists())
 			throw new FileNotFoundException("File " + csvFile + " cannot be resolve to a valid file");
 
-		CSVReader reader = null;
-		try {
-			reader = new CSVReader(new FileReader(csvFile), seperator);
+		try (CSVReader reader = new CSVReader(new FileReader(csvFile), seperator)) {
+			List<String[]> dataTable = reader.readAll();
+			Map<String, Map<String, String>> values = new Hashtable<>();
+			List<String> header = Arrays.asList(dataTable.get(0));
+
+			if (!header.contains(keyCSV)) throw new IllegalArgumentException(
+					"The given key to retrieve attribute from csv is not related to any csv column");
+			int keyCSVIndex = header.indexOf(keyCSV);
+
+			Map<String, Integer> attIndex = newAttributes.keySet().stream().filter(att -> header.contains(att))
+					.collect(Collectors.toMap(s -> s, s -> header.indexOf(s)));
+			Map<String, Attribute<? extends IValue>> attAGeo = new Hashtable<>();
+
+			for (String attName : attIndex.keySet()) {
+				attAGeo.put(attName,
+						AttributeFactory.getFactory().createAttribute(attName, newAttributes.get(attName)));
+			}
+
+			for (String[] line : dataTable) {
+				String id = line[keyCSVIndex];
+				Map<String, String> vals = new Hashtable<>();
+				for (String name : attIndex.keySet()) {
+					int idat = attIndex.get(name);
+					vals.put(name, line[idat]);
+				}
+				values.put(id, vals);
+			}
+			// Create the new type using the former as a template
+			Set<FeatureType> fTypes =
+					features.stream().map(feat -> feat.getInnerFeature().getType()).collect(Collectors.toSet());
+			if (fTypes.size() > 1)
+				throw new IllegalStateException("There is more than one feature type in feature collection");
+			SimpleFeatureTypeBuilder stb = new SimpleFeatureTypeBuilder();
+			stb.init((SimpleFeatureType) fTypes.iterator().next());
+			stb.setName("augmented feature type");
+			// add new attributes
+			newAttributes.keySet().stream().forEach(attName -> stb.add(attName, IValue.class));
+			GeoEntityFactory gef = new GeoEntityFactory(new HashSet<>(attAGeo.values()), stb.buildFeatureType());
+
+			Set<SpllFeature> newSpllFeatures = new HashSet<>();
+			for (SpllFeature ft : features) {
+				Collection<String> properties = ft.getPropertiesAttribute();
+				if (!properties.contains(keyAttribute)) { continue; }
+				String objid = ft.getValueForAttribute(keyAttribute).getStringValue();
+
+				Map<String, String> vals = values.get(objid);
+				if (vals == null) { continue; }
+
+				// New Spll feature attribute setup
+				Map<Attribute<? extends IValue>, IValue> newValues = new HashMap<>(ft.getAttributeMap());
+				newValues.putAll(vals.keySet().stream().collect(Collectors.toMap(vn -> attAGeo.get(vn),
+						vn -> attAGeo.get(vn).getValueSpace().addValue(vals.get(vn)))));
+				newSpllFeatures.add(gef.createGeoEntity(ft.getGeometry(), newValues));
+			}
+			this.features = newSpllFeatures;
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		List<String[]> dataTable = reader.readAll();
-		reader.close();
-		Map<String, Map<String, String>> values = new Hashtable<>();
-		List<String> header = Arrays.asList(dataTable.get(0));
-
-		if (!header.contains(keyCSV)) throw new IllegalArgumentException(
-				"The given key to retrieve attribute from csv is not related to any csv column");
-		int keyCSVIndex = header.indexOf(keyCSV);
-
-		Map<String, Integer> attIndex = newAttributes.keySet().stream().filter(att -> header.contains(att))
-				.collect(Collectors.toMap(s -> s, s -> header.indexOf(s)));
-		Map<String, Attribute<? extends IValue>> attAGeo = new Hashtable<>();
-
-		for (String attName : attIndex.keySet()) {
-			attAGeo.put(attName, AttributeFactory.getFactory().createAttribute(attName, newAttributes.get(attName)));
-		}
-
-		for (String[] line : dataTable) {
-			String id = line[keyCSVIndex];
-			Map<String, String> vals = new Hashtable<>();
-			for (String name : attIndex.keySet()) {
-				int idat = attIndex.get(name);
-				vals.put(name, line[idat]);
-			}
-			values.put(id, vals);
-		}
-
-		// Create the new type using the former as a template
-		Set<FeatureType> fTypes =
-				features.stream().map(feat -> feat.getInnerFeature().getType()).collect(Collectors.toSet());
-		if (fTypes.size() > 1)
-			throw new IllegalStateException("There is more than one feature type in feature collection");
-		SimpleFeatureTypeBuilder stb = new SimpleFeatureTypeBuilder();
-		stb.init((SimpleFeatureType) fTypes.iterator().next());
-		stb.setName("augmented feature type");
-		// add new attributes
-		newAttributes.keySet().stream().forEach(attName -> stb.add(attName, IValue.class));
-		GeoEntityFactory gef = new GeoEntityFactory(new HashSet<>(attAGeo.values()), stb.buildFeatureType());
-
-		Set<SpllFeature> newSpllFeatures = new HashSet<>();
-		for (SpllFeature ft : features) {
-			Collection<String> properties = ft.getPropertiesAttribute();
-			if (!properties.contains(keyAttribute)) { continue; }
-			String objid = ft.getValueForAttribute(keyAttribute).getStringValue();
-
-			Map<String, String> vals = values.get(objid);
-			if (vals == null) { continue; }
-
-			// New Spll feature attribute setup
-			Map<Attribute<? extends IValue>, IValue> newValues = new HashMap<>(ft.getAttributeMap());
-			newValues.putAll(vals.keySet().stream().collect(Collectors.toMap(vn -> attAGeo.get(vn),
-					vn -> attAGeo.get(vn).getValueSpace().addValue(vals.get(vn)))));
-			newSpllFeatures.add(gef.createGeoEntity(ft.getGeometry(), newValues));
-		}
-		this.features = newSpllFeatures;
-
 		return this;
 	}
 
@@ -467,39 +497,36 @@ public class SPLGeofileBuilder {
 				for (SpllEntity ent : population) { links.addAll(ent.getLinkedPlaces().keySet()); }
 				for (String link : links) { specs.append(',').append(link).append(':').append("String"); }
 				newDataStore.createSchema(DataUtilities.createType("Pop", specs.toString()));
-				FeatureWriter<SimpleFeatureType, SimpleFeature> fw =
-						newDataStore.getFeatureWriter(newDataStore.getTypeNames()[0], Transaction.AUTO_COMMIT);
+				try (FeatureWriter<SimpleFeatureType, SimpleFeature> fw =
+						newDataStore.getFeatureWriter(newDataStore.getTypeNames()[0], Transaction.AUTO_COMMIT)) {
 
-				for (final SpllEntity entity : population) {
+					for (final SpllEntity entity : population) {
 
-					SimpleFeature f = fw.next();
-					List<Object> at = Stream.concat(Stream.of(geoms.get(entity)), entity.getValues().stream())
-							.collect(Collectors.toList());
-					for (String link : links) {
-						AGeoEntity<? extends IValue> lp = entity.getLinkedPlaces().get(link);
-						if (lp == null) {
-							at.add("?");
-						} else {
-							at.add(lp.getGenstarName());
+						SimpleFeature f = fw.next();
+						List<Object> at = Stream.concat(Stream.of(geoms.get(entity)), entity.getValues().stream())
+								.collect(Collectors.toList());
+						for (String link : links) {
+							AGeoEntity<? extends IValue> lp = entity.getLinkedPlaces().get(link);
+							if (lp == null) {
+								at.add("?");
+							} else {
+								at.add(lp.getGenstarName());
+							}
+						}
+						f.setAttributes(at);
+						fw.write();
+						fw.hasNext();
+
+					}
+
+					if (gisFile != null) {
+						try (FileWriter fwz = new FileWriter(this.gisFile.getAbsolutePath().replace(".shp", ".prj"))) {
+							fwz.write(population.getCrs().toString());
+						} catch (final IOException e) {
+							e.printStackTrace();
 						}
 					}
-					f.setAttributes(at);
-					fw.write();
-					fw.hasNext();
-
 				}
-
-				try {
-					if (gisFile != null) {
-						FileWriter fwz = new FileWriter(this.gisFile.getAbsolutePath().replace(".shp", ".prj"));
-						fwz.write(population.getCrs().toString());
-
-						fwz.close();
-					}
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-				fw.close();
 				// 1.2 - with extended feature to add to spatial entities
 			} else {
 				// TODO
@@ -515,21 +542,20 @@ public class SPLGeofileBuilder {
 			SimpleFeatureType featureType = (SimpleFeatureType) featTypeSet.iterator().next();
 			newDataStore.createSchema(featureType);
 
-			Transaction transaction = new DefaultTransaction("create");
-			SimpleFeatureStore featureStore =
-					(SimpleFeatureStore) newDataStore.getFeatureSource(newDataStore.getTypeNames()[0]);
+			try (Transaction transaction = new DefaultTransaction("create")) {
+				SimpleFeatureStore featureStore =
+						(SimpleFeatureStore) newDataStore.getFeatureSource(newDataStore.getTypeNames()[0]);
 
-			SimpleFeatureCollection collection = new ListFeatureCollection(featureType,
-					this.features.stream().map(f -> (SimpleFeature) f.getInnerFeature()).collect(Collectors.toList()));
-			featureStore.setTransaction(transaction);
-			try {
-				featureStore.addFeatures(collection);
-				transaction.commit();
-			} catch (Exception problem) {
-				problem.printStackTrace();
-				transaction.rollback();
-			} finally {
-				transaction.close();
+				SimpleFeatureCollection collection = new ListFeatureCollection(featureType, this.features.stream()
+						.map(f -> (SimpleFeature) f.getInnerFeature()).collect(Collectors.toList()));
+				featureStore.setTransaction(transaction);
+				try {
+					featureStore.addFeatures(collection);
+					transaction.commit();
+				} catch (Exception problem) {
+					problem.printStackTrace();
+					transaction.rollback();
+				}
 			}
 		}
 
@@ -584,6 +610,21 @@ public class SPLGeofileBuilder {
 	// ------------------- INNER UTILITIES ------------------- //
 	// ------------------------------------------------------- //
 
+	/**
+	 * Write raster file.
+	 *
+	 * @param rasterfile
+	 *            the rasterfile
+	 * @param coverage
+	 *            the coverage
+	 * @return the SPL raster file
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 * @throws TransformException
+	 *             the transform exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	/*
 	 * Write down either asc or tif file
 	 */
@@ -603,10 +644,17 @@ public class SPLGeofileBuilder {
 		} else {
 			writer = new GeoTiffWriter(rasterfile);
 		}
-		writer.write(coverage, null);
+		writer.write(coverage);
 		return new SPLRasterFile(rasterfile);
 	}
 
+	/**
+	 * Gets the geometry type.
+	 *
+	 * @param geoms
+	 *            the geoms
+	 * @return the geometry type
+	 */
 	/*
 	 * retrieve the string formated type for this geometry
 	 */
@@ -632,6 +680,16 @@ public class SPLGeofileBuilder {
 		return geomType;
 	}
 
+	/**
+	 * Chek file.
+	 *
+	 * @param expectedExtension
+	 *            the expected extension
+	 * @throws FileNotFoundException
+	 *             the file not found exception
+	 * @throws InvalidGeoFormatException
+	 *             the invalid geo format exception
+	 */
 	/*
 	 * Check if file exists and is consistent with expected extension
 	 */
@@ -647,6 +705,15 @@ public class SPLGeofileBuilder {
 		}
 	}
 
+	/**
+	 * Chek and rename file.
+	 *
+	 * @param expectedExtension
+	 *            the expected extension
+	 * @return true, if successful
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	/*
 	 * Check if file exists and insure extension compliance
 	 */

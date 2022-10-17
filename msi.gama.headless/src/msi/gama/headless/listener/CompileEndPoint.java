@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * CompileEndPoint.java, in msi.gama.headless, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package msi.gama.headless.listener;
 
 import java.io.FileOutputStream;
@@ -9,53 +19,84 @@ import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gaml.operators.Files; 
+import msi.gaml.operators.Files;
 
-public class CompileEndPoint  {
+/**
+ * The Class CompileEndPoint.
+ */
+public class CompileEndPoint {
 
-//	@Override
-	public void onOpen(WebSocket socket) {
-//		socket.send("Hello!");
+	/**
+	 * On open.
+	 *
+	 * @param socket the socket
+	 */
+	// @Override
+	public void onOpen(final WebSocket socket) {
+		// socket.send("Hello!");
 	}
 
-//	@Override
-	public void onMessage(WebSocketServer server, WebSocket socket, String message) {
+	/**
+	 * On message.
+	 *
+	 * @param server the server
+	 * @param socket the socket
+	 * @param message the message
+	 */
+	// @Override
+	public void onMessage(final WebSocketServer server, final WebSocket socket, final String message) {
 		System.out.println(socket + ": String " + message);
-//		socket.send(message);
+		// socket.send(message);
 
 	}
 
+	/**
+	 * Builds the from zip.
+	 *
+	 * @param socket the socket
+	 * @param compiledModel the compiled model
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException the gama headless exception
+	 */
 	public void buildFromZip(final WebSocket socket, final ByteBuffer compiledModel)
 			throws IOException, GamaHeadlessException {
-		FileOutputStream fos = new FileOutputStream(Globals.TEMP_PATH+"/tmp"+socket.hashCode()+".zip");
-		fos.write(compiledModel.array());
-		fos.close();
-		System.out.println(Globals.TEMP_PATH+"/tmp"+socket);
-		Files.extractFolder(null,Globals.TEMP_PATH+"/tmp"+socket.hashCode()+".zip",Globals.TEMP_PATH+"/tmp"+socket.hashCode());
-//		socket.send(Globals.TEMP_PATH+"/tmp"+socket.hashCode());
-//		ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
-//		ObjectInput in = null;
-//		ExperimentJob selectedJob = null;
-//		try {
-//			in = new ObjectInputStream(bis);
-//			Object o = in.readObject();
-//			selectedJob = (ExperimentJob) o;
-//		} catch (ClassNotFoundException ex) {
-//			ex.printStackTrace();
-//		} finally {
-//			try {
-//				if (in != null) {
-//					in.close();
-//				}
-//			} catch (IOException ex) {
-//				ex.printStackTrace();
-//			}
-//		} 
+		try (FileOutputStream fos = new FileOutputStream(Globals.TEMP_PATH + "/tmp" + socket.hashCode() + ".zip")) {
+			fos.write(compiledModel.array());
+		}
+		System.out.println(Globals.TEMP_PATH + "/tmp" + socket);
+		Files.extractFolder(null, Globals.TEMP_PATH + "/tmp" + socket.hashCode() + ".zip",
+				Globals.TEMP_PATH + "/tmp" + socket.hashCode());
+		// socket.send(Globals.TEMP_PATH+"/tmp"+socket.hashCode());
+		// ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
+		// ObjectInput in = null;
+		// ExperimentJob selectedJob = null;
+		// try {
+		// in = new ObjectInputStream(bis);
+		// Object o = in.readObject();
+		// selectedJob = (ExperimentJob) o;
+		// } catch (ClassNotFoundException ex) {
+		// ex.printStackTrace();
+		// } finally {
+		// try {
+		// if (in != null) {
+		// in.close();
+		// }
+		// } catch (IOException ex) {
+		// ex.printStackTrace();
+		// }
+		// }
 
 	}
 
-//	@Override
-	public void onMessage(WebSocketServer server, WebSocket socket, ByteBuffer message) {
+	/**
+	 * On message.
+	 *
+	 * @param server the server
+	 * @param socket the socket
+	 * @param message the message
+	 */
+	// @Override
+	public void onMessage(final WebSocketServer server, final WebSocket socket, final ByteBuffer message) {
 
 		System.out.println(socket + ": " + message);
 		try {

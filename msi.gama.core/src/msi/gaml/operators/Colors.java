@@ -1161,14 +1161,14 @@ public class Colors {
 			value = "returns a list of n colors chosen in the gradient provided. Colors are chosen by interpolating the stops of the gradient (the colors) using their weight, in the order described in the gradient. In case the map<rgb, float> passed in argument is not a gradient but a scale, the colors will be chosen in the set of colors and might appear duplicated in the palette")
 	@no_test 
 	public static GamaPalette palette(final IScope scope, final IMap<GamaColor, Number> colors, final int nb) {
-		var cm = gradient(scope, colors); // to make sure it is normalized
+		//var cm = gradient(scope, colors); // to make sure it is normalized
 		// Not yet ready...
 		return null;
 	}
 
 	/**
 	 * Palette.
-	 *
+	 * 
 	 * @param scope
 	 *            the scope
 	 * @param colors

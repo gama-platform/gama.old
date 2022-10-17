@@ -1294,7 +1294,7 @@ public class PedestrianSkill extends MovingSkill {
 			final IContainer pedestriansList, final IContainer obstaclesList) {
 		GamaPoint current_velocity = getVelocity(agent).copy(scope);
 		double BWall = getBObstSFM(agent);
- 		double Bpedestrian = getB_SFM(agent);
+		double Bpedestrian = getB_SFM(agent);
 		Double distMin = getMinDist(agent);
 		double shoulderL = getShoulderLength(agent) / 2.0 + distMin;
 		IMap<IShape, GamaPoint> forcesMap = GamaMapFactory.create();
@@ -1383,7 +1383,7 @@ public class PedestrianSkill extends MovingSkill {
 					fwall = fwall.minus(tij.multiplyBy(omega * kappa * product));
 				}
 			}
-			
+
 			forcesWall.add(fwall);
 			forcesMap.put(ag, fwall);
 

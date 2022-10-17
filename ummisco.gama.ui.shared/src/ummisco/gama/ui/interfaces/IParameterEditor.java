@@ -13,6 +13,7 @@ package ummisco.gama.ui.interfaces;
 import msi.gama.common.interfaces.IScoped;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.parameters.EditorsGroup;
 
 /**
  * The class IParameterEditor.
@@ -22,7 +23,7 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public interface IParameterEditor<T> extends IScoped {
+public interface IParameterEditor<T> extends IScoped, Comparable<IParameterEditor<T>> {
 
 	/**
 	 * Gets the expected type.
@@ -107,5 +108,19 @@ public interface IParameterEditor<T> extends IScoped {
 	 * @param b
 	 */
 	void isSubParameter(boolean b);
+
+	/**
+	 * Gets the order.
+	 *
+	 * @return the order
+	 */
+	int getOrder();
+
+	/**
+	 * Creates the controls.
+	 *
+	 * @param compo the compo
+	 */
+	void createControls(EditorsGroup compo);
 
 }

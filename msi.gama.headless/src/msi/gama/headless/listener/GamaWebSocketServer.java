@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GamaWebSocketServer.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.headless.listener;
 
 import java.io.ByteArrayInputStream;
@@ -12,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.util.List;
+
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -36,33 +47,60 @@ import msi.gama.util.IMap;
 import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class GamaWebSocketServer.
+ */
 public class GamaWebSocketServer extends WebSocketServer {
 
+	/** The listener. */
 	private GamaListener _listener;
 
+	/**
+	 * Gets the listener.
+	 *
+	 * @return the listener
+	 */
 	public GamaListener get_listener() {
 		return _listener;
 	}
 
+	/**
+	 * Sets the listener.
+	 *
+	 * @param _listener
+	 *            the new listener
+	 */
 	public void set_listener(final GamaListener _listener) {
 		this._listener = _listener;
 	}
 
+	/** The app. */
 	private final Application app;
 
+	/** The cmd helper. */
 	CommandExecutor cmdHelper;
 
+	/**
+	 * Instantiates a new gama web socket server.
+	 *
+	 * @param port
+	 *            the port
+	 * @param a
+	 *            the a
+	 * @param l
+	 *            the l
+	 * @param ssl
+	 *            the ssl
+	 */
 	public GamaWebSocketServer(final int port, final Application a, final GamaListener l, final boolean ssl) {
 		super(new InetSocketAddress(port));
-		if (a.verbose) {
-			DEBUG.ON();
-		}
+		if (a.verbose) { DEBUG.ON(); }
 		cmdHelper = new CommandExecutor();
 		if (ssl) {
 			// load up the key store
 			String STORETYPE = "JKS";
-			File currentJavaJarFile = new File(
-					GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			File currentJavaJarFile =
+					new File(GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 			String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
 
 			String KEYSTORE = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/../keystore.jks";
@@ -102,14 +140,18 @@ public class GamaWebSocketServer extends WebSocketServer {
 		// broadcast("new connection: " + handshake.getResourceDescriptor()); // This
 		// method sends a message to all clients connected
 		DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-		conn.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.ConnectionSuccessful, "" + conn.hashCode())));
-		
+		conn.send(Jsoner
+				.serialize(new GamaServerMessage(GamaServerMessageType.ConnectionSuccessful, "" + conn.hashCode())));
+
 		// String path = URI.create(handshake.getResourceDescriptor()).getPath();
 	}
 
-	public Application getDefaultApp() {
-		return app;
-	}
+	/**
+	 * Gets the default app.
+	 *
+	 * @return the default app
+	 */
+	public Application getDefaultApp() { return app; }
 
 	@Override
 	public void onClose(final WebSocket conn, final int code, final String reason, final boolean remote) {
@@ -124,6 +166,15 @@ public class GamaWebSocketServer extends WebSocketServer {
 		DEBUG.OUT(conn + " has left the room!");
 	}
 
+	/**
+	 * Extract param.
+	 *
+	 * @param socket
+	 *            the socket
+	 * @param message
+	 *            the message
+	 * @return the i map
+	 */
 	public IMap<String, Object> extractParam(final WebSocket socket, final String message) {
 		IMap<String, Object> map = null;
 		try {
@@ -138,7 +189,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 			}
 
 		} catch (Exception e1) {
-			//e1.printStackTrace();
+			// e1.printStackTrace();
 			DEBUG.OUT(e1.toString());
 			socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.MalformedRequest, e1)));
 		}
@@ -157,8 +208,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 			cmdHelper.process(socket, map);
 
 		} catch (Exception e1) {
-			DEBUG.OUT(e1);			
-			//e1.printStackTrace();
+			DEBUG.OUT(e1);
+			// e1.printStackTrace();
 			socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.GamaServerError, e1)));
 
 		}
@@ -169,7 +220,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 		try {
 			runCompiledSimulation(this, message);
 		} catch (IOException | GamaHeadlessException e) {
-			DEBUG.OUT(e);			
+			DEBUG.OUT(e);
 			conn.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.RuntimeError, e)));
 
 		}
@@ -191,13 +242,23 @@ public class GamaWebSocketServer extends WebSocketServer {
 		// setConnectionLostTimeout(100);
 	}
 
+	/**
+	 * Compile gaml simulation.
+	 *
+	 * @param socket
+	 *            the socket
+	 * @param args
+	 *            the args
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
+	 */
 	public void compileGamlSimulation(final WebSocket socket, final List<String> args)
 			throws IOException, GamaHeadlessException {
 		final String pathToModel = args.get(args.size() - 1);
 
-		if (!GamlFileExtension.isGaml(pathToModel)) {
-			System.exit(-1);
-		}
+		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
 		final String argExperimentName = args.get(args.size() - 2);
 		final String argGamlFile = args.get(args.size() - 1);
 
@@ -209,27 +270,29 @@ public class GamaWebSocketServer extends WebSocketServer {
 				break;
 			}
 		}
-		if (selectedJob == null)
-			return;
+		if (selectedJob == null) return;
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutputStream out = null;
-		try {
-			out = new ObjectOutputStream(bos);
+		try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				ObjectOutputStream out = new ObjectOutputStream(bos)) {
 			out.writeObject(selectedJob);
 			out.flush();
 			byte[] yourBytes = bos.toByteArray();
 			socket.send(yourBytes);
-		} finally {
-			try {
-				bos.close();
-			} catch (IOException ex) {
-				// ignore close exception
-			}
 		}
-
 	}
 
+	/**
+	 * Run compiled simulation.
+	 *
+	 * @param server
+	 *            the server
+	 * @param compiledModel
+	 *            the compiled model
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
+	 */
 	public void runCompiledSimulation(final WebSocketServer server, final ByteBuffer compiledModel)
 			throws IOException, GamaHeadlessException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(compiledModel.array());
@@ -243,9 +306,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 			ex.printStackTrace();
 		} finally {
 			try {
-				if (in != null) {
-					in.close();
-				}
+				if (in != null) { in.close(); }
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}

@@ -27,7 +27,6 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.interfaces.EditorListener.Command;
 import ummisco.gama.ui.interfaces.IParameterEditor;
-import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.MonitorDisplayer;
 
@@ -43,6 +42,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/** The activations. */
 	final Map<String, Boolean> activations = new HashMap<>();
 
+	/** The monitors. */
 	final Map<MonitorOutput, MonitorDisplayer> monitors = new HashMap<>();
 
 	/**
@@ -60,7 +60,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	}
 
 	@Override
-	public boolean isEnabled(final AbstractEditor<?> gpParam) {
+	public boolean isEnabled(final IParameterEditor<?> gpParam) {
 		final IParameter p = gpParam.getParam();
 		if (p == null) return true;
 		final Boolean b = activations.get(p.getName());
@@ -149,16 +149,34 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		}
 	}
 
+	/**
+	 * Adds the monitor.
+	 *
+	 * @param var the var
+	 * @return the monitor displayer
+	 */
 	public MonitorDisplayer addMonitor(final MonitorOutput var) {
 		MonitorDisplayer result = EditorFactory.getInstance().create(scope, var);
 		monitors.put(var, result);
 		return result;
 	}
 
+	/**
+	 * Removes the monitor.
+	 *
+	 * @param var the var
+	 * @return the monitor displayer
+	 */
 	public MonitorDisplayer removeMonitor(final MonitorOutput var) {
 		return monitors.remove(var);
 	}
 
+	/**
+	 * Adds the editor.
+	 *
+	 * @param var the var
+	 * @param gp the gp
+	 */
 	private void addEditor(final IExperimentDisplayable var, final IParameterEditor gp) {
 		String cat = var.getCategory();
 		addItem(cat);
@@ -184,6 +202,11 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		updateMonitors(synchronously);
 	}
 
+	/**
+	 * Update monitors.
+	 *
+	 * @param synchronously the synchronously
+	 */
 	public void updateMonitors(final boolean synchronously) {
 		monitors.forEach((s, md) -> { md.updateWithValueOfParameter(synchronously, false); });
 	}
@@ -198,10 +221,20 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		return null;
 	}
 
+	/**
+	 * Checks for monitors.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean hasMonitors() {
 		return monitors.size() > 0;
 	}
 
+	/**
+	 * Gets the monitors.
+	 *
+	 * @return the monitors
+	 */
 	public Map<MonitorOutput, MonitorDisplayer> getMonitors() { return monitors; }
 
 }

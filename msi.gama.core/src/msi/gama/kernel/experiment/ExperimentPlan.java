@@ -211,75 +211,80 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
 						METHOD);
 			}
-			
-			if(desc.getChildWithKeyword(EXPLORATION)!=null) {
 
-				IDescription tmpDesc=desc.getChildWithKeyword(EXPLORATION);
-				if(tmpDesc.hasFacet(Exploration.METHODS)) {
-					
-					switch(tmpDesc.getLitteral(Exploration.METHODS)) {
-					
-					case IKeyword.MORRIS:
-						if(!tmpDesc.hasFacet(Exploration.NB_LEVELS)) {
-							tmpDesc.warning("levels not defined for Morris sampling, will be 4 by default",IGamlIssue.MISSING_FACET);
-						}else {
-							int levels= Integer.valueOf(tmpDesc.getLitteral(Exploration.NB_LEVELS));
-							System.out.println(levels);
-							if(levels<=0) {
-								tmpDesc.error("Levels should be positive");
+			if (desc.getChildWithKeyword(EXPLORATION) != null) {
+
+				IDescription tmpDesc = desc.getChildWithKeyword(EXPLORATION);
+				if (tmpDesc.hasFacet(Exploration.METHODS)) {
+
+					switch (tmpDesc.getLitteral(Exploration.METHODS)) {
+
+						case IKeyword.MORRIS:
+							if (!tmpDesc.hasFacet(Exploration.NB_LEVELS)) {
+								tmpDesc.warning("levels not defined for Morris sampling, will be 4 by default",
+										IGamlIssue.MISSING_FACET);
+							} else {
+								int levels = Integer.parseInt(tmpDesc.getLitteral(Exploration.NB_LEVELS));
+								System.out.println(levels);
+								if (levels <= 0) { tmpDesc.error("Levels should be positive"); }
 							}
-						}
-						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
-							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
-						}else {
-							int sample= Integer.valueOf(tmpDesc.getLitteral(Exploration.SAMPLE_SIZE));
-							System.out.println(sample);
-							if(sample%2!=0) {
-								tmpDesc.error("The sample size should be even");
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
+								tmpDesc.warning("Sample size not defined, will be 132 by default",
+										IGamlIssue.MISSING_FACET);
+							} else {
+								int sample = Integer.parseInt(tmpDesc.getLitteral(Exploration.SAMPLE_SIZE));
+								System.out.println(sample);
+								if (sample % 2 != 0) { tmpDesc.error("The sample size should be even"); }
+
 							}
-							
-						}
-						break;
-					case IKeyword.SALTELLI:
-						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
-							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
-						}else {
-							int sample= Integer.valueOf(tmpDesc.getLitteral(Exploration.SAMPLE_SIZE));
-							/*
-							System.out.println(sample);
-							if(!((sample & (sample-1)) ==0)) {
-								tmpDesc.error("The sample size should be a power of 2");
+							break;
+						case IKeyword.SALTELLI:
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
+								tmpDesc.warning("Sample size not defined, will be 132 by default",
+										IGamlIssue.MISSING_FACET);
+							} else {
+								// int sample= Integer.valueOf(tmpDesc.getLitteral(Exploration.SAMPLE_SIZE));
+								/*
+								 * System.out.println(sample); if(!((sample & (sample-1)) ==0)) {
+								 * tmpDesc.error("The sample size should be a power of 2"); }
+								 */
+
 							}
-							*/
-							
-						}
-						if(tmpDesc.hasFacet(Exploration.NB_LEVELS)) {
-							tmpDesc.warning("Saltelli sampling doesn't need the levels facet",IGamlIssue.MISSING_FACET);
-						}
-						break;
-						
-					case IKeyword.LHS:
-						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
-							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
-						}
-						break;
-						
-					case IKeyword.ORTHOGONAL:
-						if(!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE )) {
-							tmpDesc.warning("Sample size not defined, will be 132 by default",IGamlIssue.MISSING_FACET);
-						}
-						if(!tmpDesc.hasFacet(Exploration.ITERATIONS )) {
-							tmpDesc.warning("Number of Iterations not defined, will be 5 by default",IGamlIssue.MISSING_FACET);
-						}
-						break;
-						
-					case IKeyword.SOBOL:
-						tmpDesc.warning("The sampling "+tmpDesc.getLitteral(Exploration.METHODS)+" doesn't exist yet, do you perhaps mean 'saltelli' ?",IGamlIssue.MISSING_FACET);
-						break;
-						
-						
-					default:
-						tmpDesc.error("The sampling "+tmpDesc.getLitteral(Exploration.METHODS)+" doesn't exist yet",IGamlIssue.MISSING_FACET);
+							if (tmpDesc.hasFacet(Exploration.NB_LEVELS)) {
+								tmpDesc.warning("Saltelli sampling doesn't need the levels facet",
+										IGamlIssue.MISSING_FACET);
+							}
+							break;
+
+						case IKeyword.LHS:
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
+								tmpDesc.warning("Sample size not defined, will be 132 by default",
+										IGamlIssue.MISSING_FACET);
+							}
+							break;
+
+						case IKeyword.ORTHOGONAL:
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
+								tmpDesc.warning("Sample size not defined, will be 132 by default",
+										IGamlIssue.MISSING_FACET);
+							}
+							if (!tmpDesc.hasFacet(Exploration.ITERATIONS)) {
+								tmpDesc.warning("Number of Iterations not defined, will be 5 by default",
+										IGamlIssue.MISSING_FACET);
+							}
+							break;
+
+						case IKeyword.SOBOL:
+							tmpDesc.warning(
+									"The sampling " + tmpDesc.getLitteral(Exploration.METHODS)
+											+ " doesn't exist yet, do you perhaps mean 'saltelli' ?",
+									IGamlIssue.MISSING_FACET);
+							break;
+
+						default:
+							tmpDesc.error(
+									"The sampling " + tmpDesc.getLitteral(Exploration.METHODS) + " doesn't exist yet",
+									IGamlIssue.MISSING_FACET);
 					}
 				}
 
@@ -658,13 +663,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		agent.schedule(scope);
 
 		if (isBatch()) {
-			getGui().getStatus()
-					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.", scope);
+			getGui().getStatus().informStatus(
+					isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.", scope);
 			getGui().updateExperimentState(scope);
 		}
 
 	}
 
+	/**
+	 * Prepare gui.
+	 */
 	void prepareGui() {
 		final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
 		Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();

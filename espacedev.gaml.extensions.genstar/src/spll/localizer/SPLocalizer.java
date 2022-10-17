@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SPLocalizer.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package spll.localizer;
 
 import java.io.File;
@@ -63,33 +73,51 @@ import spll.localizer.pointInalgo.PointInLocalizer;
 import spll.localizer.pointInalgo.RandomPointInLocalizer;
 import spll.util.SpllUtil;
 
+/**
+ * The Class SPLocalizer.
+ */
 public class SPLocalizer implements ISPLocalizer {
 
+	/** The gspu. */
 	/*
 	 * Performance purpose logger
 	 */
 	protected GSPerformanceUtil gspu;
 
+	/** The population. */
 	protected IPopulation<ADemoEntity, Attribute<? extends IValue>> population;
 
+	/** The match. */
 	// main referenced area for placing the agents (e.g. Iris)
 	protected IGSGeofile<? extends AGeoEntity<? extends IValue>, ? extends IValue> match;
+	
+	/** The map. */
 	// gives the number of entities per area (e.g. regression cells)
 	protected IGSGeofile<? extends AGeoEntity<? extends IValue>, ? extends IValue> map;
 
+	/** The linker. */
 	protected ISPLinker<ADemoEntity> linker; // Encapsulate spatial distribution and constraints to link entity and
+												
+												/** The localization constraint. */
 												// spatial object
 	protected SpatialConstraintLocalization localizationConstraint; // the localization constraint;
 
+	/** The point in localizer. */
 	protected PointInLocalizer pointInLocalizer; // allows to return one or several points in a geometry
 
+	/** The key att map. */
 	protected String keyAttMap; // name of the attribute that contains the number of entities in the map file
+	
+	/** The key att pop. */
 	protected String keyAttPop; // name of the attribute that is used to store the id of the referenced area in the
+								
+								/** The key att match. */
 								// population
 	protected String keyAttMatch; // name of the attribute that is used to store the id of the referenced area in the
 									// match file
 
-	protected Random rand;
+	/** The rand. */
+									protected Random rand;
 
 	/**
 	 * Private constructor to setup random engine
@@ -102,7 +130,7 @@ public class SPLocalizer implements ISPLocalizer {
 
 	/**
 	 * Build a localizer based on a geographically grounded population
-	 * 
+	 *
 	 * @param population
 	 */
 	public SPLocalizer(final IPopulation<ADemoEntity, Attribute<? extends IValue>> population,
@@ -221,6 +249,11 @@ public class SPLocalizer implements ISPLocalizer {
 	// ----------------------- MAPPER ---------------------- //
 	// ----------------------------------------------------- //
 
+	/**
+	 * Gets the mapper output.
+	 *
+	 * @return the mapper output
+	 */
 	public IGSGeofile<? extends AGeoEntity<? extends IValue>, ? extends IValue> getMapperOutput() { return map; }
 
 	@Override
@@ -260,6 +293,22 @@ public class SPLocalizer implements ISPLocalizer {
 
 	}
 
+	/**
+	 * Sets the mapper.
+	 *
+	 * @param splMapperBuilder the spl mapper builder
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformException the transform exception
+	 * @throws InterruptedException the interrupted exception
+	 * @throws ExecutionException the execution exception
+	 * @throws IllegalRegressionException the illegal regression exception
+	 * @throws IndexOutOfBoundsException the index out of bounds exception
+	 * @throws GSMapperException the GS mapper exception
+	 * @throws SchemaException the schema exception
+	 * @throws MismatchedDimensionException the mismatched dimension exception
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws InvalidGeoFormatException the invalid geo format exception
+	 */
 	/*
 	 * Inner utility set mapper from regression
 	 *
@@ -290,6 +339,9 @@ public class SPLocalizer implements ISPLocalizer {
 		}
 	}
 
+	/**
+	 * Clear map cache.
+	 */
 	public void clearMapCache() {
 		if (map instanceof SPLRasterFile) { ((SPLRasterFile) map).clearCache(); }
 	}
@@ -396,7 +448,7 @@ public class SPLocalizer implements ISPLocalizer {
 					}
 
 					remainingEntities = localizationInNestOp(remainingEntities, candidates, null);
-					if ((remainingEntities == null) || remainingEntities.isEmpty()) return;
+					if (remainingEntities == null || remainingEntities.isEmpty()) return;
 					cr.relaxConstraint(possibleNests);
 
 				}
@@ -404,6 +456,14 @@ public class SPLocalizer implements ISPLocalizer {
 		}
 	}
 
+	/**
+	 * Localization in nest op.
+	 *
+	 * @param entities the entities
+	 * @param possibleNests the possible nests
+	 * @param val the val
+	 * @return the list
+	 */
 	private List<SpllEntity> localizationInNestOp(final Collection<SpllEntity> entities,
 			final List<AGeoEntity<? extends IValue>> possibleNests, Long val) {
 		Collection<SpllEntity> chosenEntities = null;
@@ -441,6 +501,14 @@ public class SPLocalizer implements ISPLocalizer {
 	// if the one is not null),
 	// define the number of entities from the entities list to locate inside, then try to set a nest to this randomly
 	// chosen number of entities.
+	/**
+	 * Localization in nest with numbers.
+	 *
+	 * @param entities the entities
+	 * @param spatialBounds the spatial bounds
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformException the transform exception
+	 */
 	// NOTE: if no nest is located inside the area, not entities will be located inside.
 	@SuppressWarnings ("unchecked")
 	private void localizationInNestWithNumbers(final List<SpllEntity> entities, final Geometry spatialBounds)
@@ -489,13 +557,22 @@ public class SPLocalizer implements ISPLocalizer {
 								.getReferenceFile().getGeoEntity());
 					}
 				}
-				if (remainingEntities == null || remainingEntities.isEmpty()) { break; }
+				if (remainingEntities.isEmpty()) { break; }
 			}
 		}
 	}
 
 	// ----------------------------- MOVE PART OF THESE METHOD INTO FACTORY / BUILDER
 
+	/**
+	 * Estimate matches.
+	 *
+	 * @param matchFile the match file
+	 * @param keyAttributeSpace the key attribute space
+	 * @param keyAttributePopulation the key attribute population
+	 * @return the map<? extends A geo entity<? extends I value>, number>
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	/*
 	 * Estimate the number of match between population and space through the key attribute link
 	 */
@@ -526,6 +603,20 @@ public class SPLocalizer implements ISPLocalizer {
 				e -> attMatches.get(e.getValueForAttribute(keyAttributeSpace).getStringValue())));
 	}
 
+	/**
+	 * Creates the match file.
+	 *
+	 * @param output the output
+	 * @param template the template
+	 * @param eMatches the e matches
+	 * @return the SPL raster file
+	 * @throws MismatchedDimensionException the mismatched dimension exception
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws TransformException the transform exception
+	 * @throws SchemaException the schema exception
+	 * @throws InvalidGeoFormatException the invalid geo format exception
+	 */
 	/*
 	 * Create a raster match file from a number of matches (eMatches) and a key attribute: parameter file for areal
 	 * interpolation
@@ -547,6 +638,18 @@ public class SPLocalizer implements ISPLocalizer {
 				.buildRasterfile();
 	}
 
+	/**
+	 * Creates the match file.
+	 *
+	 * @param output the output
+	 * @param matchFile the match file
+	 * @param eMatches the e matches
+	 * @param keyAttMatch the key att match
+	 * @return the SPL vector file
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws SchemaException the schema exception
+	 * @throws InvalidGeoFormatException the invalid geo format exception
+	 */
 	/*
 	 * Create a vector file from a number of matches and a key attribute: parameter file for areal interpolation
 	 */
@@ -586,6 +689,15 @@ public class SPLocalizer implements ISPLocalizer {
 		return new SPLGeofileBuilder().setFile(output).setFeatures(features).buildShapeFile();
 	}
 
+	/**
+	 * Construct feature collection.
+	 *
+	 * @param eMatches the e matches
+	 * @param contAtt the cont att
+	 * @param keyAtt the key att
+	 * @param featType the feat type
+	 * @return the collection
+	 */
 	/*
 	 * Create a set of GSFeature
 	 */

@@ -55,8 +55,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @param <T>
  *            the generic type
  */
-public abstract class AbstractEditor<T>
-		implements SelectionListener, ModifyListener, Comparable<AbstractEditor<T>>, IParameterEditor<T> {
+public abstract class AbstractEditor<T> implements SelectionListener, ModifyListener, IParameterEditor<T> {
 
 	/** The order. */
 	private static int ORDER;
@@ -165,6 +164,7 @@ public abstract class AbstractEditor<T>
 	 *            the v
 	 * @return the t
 	 */
+	@SuppressWarnings ("unchecked")
 	protected T castValueToInnerType(final Object v) {
 		return (T) getExpectedType().cast(getScope(), v, null, false);
 	}
@@ -266,10 +266,20 @@ public abstract class AbstractEditor<T>
 		}
 	}
 
+	/**
+	 * Compare to.
+	 *
+	 * @param e
+	 *            the e
+	 * @return the int
+	 */
 	@Override
-	public int compareTo(final AbstractEditor<T> e) {
-		return Ints.compare(order, e.order);
+	public int compareTo(final IParameterEditor<T> e) {
+		return Ints.compare(order, e.getOrder());
 	}
+
+	@Override
+	public int getOrder() { return order; }
 
 	/**
 	 * Gets the label.
@@ -291,6 +301,7 @@ public abstract class AbstractEditor<T>
 	 * @param parent
 	 *            the parent
 	 */
+	@Override
 	public void createControls(final EditorsGroup parent) {
 		this.parent = parent;
 		internalModification = true;
@@ -333,10 +344,20 @@ public abstract class AbstractEditor<T>
 		return editorLabel;
 	}
 
+	/**
+	 * Gets the editor control background.
+	 *
+	 * @return the editor control background
+	 */
 	Color getEditorControlBackground() {
 		return parent.getBackground(); // by default
 	}
 
+	/**
+	 * Gets the editor control foreground.
+	 *
+	 * @return the editor control foreground
+	 */
 	Color getEditorControlForeground() {
 		return GamaColors.getTextColorForBackground(getEditorControlBackground()).color(); // by default
 	}
@@ -647,8 +668,14 @@ public abstract class AbstractEditor<T>
 		this.noScope = dont;
 	}
 
+	/**
+	 * Apply save.
+	 */
 	protected void applySave() {}
 
+	/**
+	 * Dispose.
+	 */
 	public void dispose() {
 		if (editorLabel != null && !editorLabel.isDisposed()) {
 			editorLabel.dispose();
