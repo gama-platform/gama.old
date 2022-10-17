@@ -126,9 +126,6 @@ public class Experiment implements IExperiment {
 														v);
 				}
 
-				// curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(),v);
-				// .setParameterValueByTitle(curExperiment.getExperimentScope(),
-				// m.get("name").toString(),m.get("value"));
 			}
 		}
 		curExperiment.open(seed);

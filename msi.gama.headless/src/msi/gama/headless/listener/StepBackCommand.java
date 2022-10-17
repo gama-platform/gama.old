@@ -14,7 +14,7 @@ public class StepBackCommand implements ISocketCommand {
 
 		final String 	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		final Object 	socket_id 	= map.get("socket_id");
-		final int		nb_step		= map.get("nb_step") != null ? (int) map.get("nb_step") : 1; 
+		final int		nb_step		= map.get("nb_step") != null ? ((Number) map.get("nb_step")).intValue() : 1; 
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("stepBack");
 		DEBUG.OUT(exp_id);
