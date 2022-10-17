@@ -42,7 +42,6 @@ import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.test.TestExperimentSummary;
 import msi.gaml.statements.test.WithTestSummary;
 import ummisco.gama.dev.utils.DEBUG;
@@ -103,7 +102,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 		// final StringBuilder sb = new StringBuilder();
 		final IModel model = findModel(object);
 		if (model == null) return null;
-		final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
+		final List<String> testExpNames = model.getDescription().getExperimentNames().stream()
 				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 		if (testExpNames.isEmpty()) return null;
 		final List<TestExperimentSummary> result = new ArrayList<>();

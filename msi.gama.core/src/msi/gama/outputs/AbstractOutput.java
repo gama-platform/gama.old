@@ -98,6 +98,12 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return true;
 	}
 
+	/**
+	 * Builds the scope from.
+	 *
+	 * @param scope the scope
+	 * @return the i scope
+	 */
 	protected IScope buildScopeFrom(final IScope scope) {
 		String desc = description == null ? " " : description.getKeyword() + " ";
 		return scope.copy("of " + desc + getName());
@@ -180,7 +186,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		if (this.outputScope != null) { GAMA.releaseScope(this.outputScope); }
 		if (scope.getModel() != null) {
 			final ModelDescription micro = this.getDescription().getModelDescription();
-			final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
+			final ModelDescription main = scope.getModel().getDescription();
 			final boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 			if (fromMicroModel) {
 				final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()

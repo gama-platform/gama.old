@@ -34,7 +34,6 @@ import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.statements.test.TestState;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -116,7 +115,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 		try {
 			final IModel model = builder.compile(p, errors);
 			if (model == null || model.getDescription() == null) return;
-			final List<String> testExpNames = ((ModelDescription) model.getDescription()).getExperimentNames().stream()
+			final List<String> testExpNames = model.getDescription().getExperimentNames().stream()
 					.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
 
 			if (testExpNames.isEmpty()) return;

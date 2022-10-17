@@ -270,7 +270,7 @@ public class GAML {
 	public static ModelDescription getModelContext() {
 		IExperimentPlan experiment = GAMA.getExperiment();
 		if (experiment == null) return null;
-		return (ModelDescription) experiment.getModel().getDescription();
+		return experiment.getModel().getDescription();
 	}
 
 	/**

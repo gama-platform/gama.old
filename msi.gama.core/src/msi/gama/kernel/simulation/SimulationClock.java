@@ -22,7 +22,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.operators.Dates;
 
 /**
@@ -98,7 +97,7 @@ public class SimulationClock {
 	 */
 	public SimulationClock(final IScope scope) {
 		final IModel model = scope.getModel();
-		outputAsDuration = model == null ? true : !((ModelDescription) model.getDescription()).isStartingDateDefined();
+		outputAsDuration = model == null ? true : !model.getDescription().isStartingDateDefined();
 		this.clockScope = scope;
 	}
 

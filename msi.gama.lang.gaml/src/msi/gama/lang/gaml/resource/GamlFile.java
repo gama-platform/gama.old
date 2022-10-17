@@ -26,7 +26,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.GamaFile;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IContainerType;
@@ -195,9 +194,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 	private IModel getModel(final IScope scope) {
 		if (model == null) {
 			model = GamlModelBuilder.getDefaultInstance().compile(getURIRelativeToWorkspace(), null);
-			if (aliasName != null && !aliasName.isBlank()) {
-				((ModelDescription) getModel(scope).getDescription()).setAlias(aliasName);
-			}
+			if (aliasName != null && !aliasName.isBlank()) { getModel(scope).getDescription().setAlias(aliasName); }
 		}
 		return model;
 	}

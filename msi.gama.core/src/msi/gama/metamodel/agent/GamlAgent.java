@@ -331,7 +331,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		// hqnghi adjust to get population for species which come from main as
 		// well micro models
 		final ModelDescription micro = species.getDescription().getModelDescription();
-		final ModelDescription main = (ModelDescription) this.getModel().getDescription();
+		final ModelDescription main = this.getModel().getDescription();
 		IPopulation<? extends IAgent> microPopulation = null;
 		if (main.getMicroModel(micro.getAlias()) == null) {
 			microPopulation = this.getMicroPopulation(species);

@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -119,8 +118,15 @@ public class SobolExploration extends AExplorationAlgorithm {
 	/* All the outputs for each simulation */
 	protected IMap<ParametersSet, Map<String, List<Object>>> res_outputs;
 
+	/** The sample. */
 	private int _sample;
 
+	/**
+	 * Instantiates a new sobol exploration.
+	 *
+	 * @param desc
+	 *            the desc
+	 */
 	public SobolExploration(final IDescription desc) {
 		super(desc);
 	}
@@ -181,9 +187,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 		int sample = Cast.asInt(scope, getFacet(SAMPLE_SIZE).value(scope));
 		// Do not trust getExplorableParameter of the BatchAgent
 		// Needs a step to explore a parameter, also for any sampling methods only min/max is required
-		List<Batch> params = currentExperiment.getParametersToExplore().stream()
-				.map(p-> (Batch) p)
-				.collect(Collectors.toList());
+		List<Batch> params = new ArrayList<>(currentExperiment.getParametersToExplore());
 		parameters = parameters == null ? params : parameters;
 		/* times 2 the number of parameters for the bootstraping (Saltelli 2002) and +2 because of sample A & B */
 		_sample = sample * (2 * parameters.size() + 2);
