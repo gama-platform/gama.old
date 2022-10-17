@@ -279,7 +279,7 @@ public class GAMA {
 		if (controller == null || controller.getExperiment() == null || controller.isDisposing()
 				|| controller.getExperiment().getAgent() == null)
 			return false;
-		DEBUG.LOG("report error : " + g.getMessage());
+		// DEBUG.LOG("report error : " + g.getMessage());
 		// Returns whether or not to continue
 		if (!(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors()) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -307,7 +307,7 @@ public class GAMA {
 	 */
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 			final boolean shouldStopSimulation) {
-
+		if (g.isReported()) return;
 		if (getExperiment() == null && !(g instanceof GamaRuntimeFileException) && scope != null
 				&& !scope.reportErrors()) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -315,7 +315,7 @@ public class GAMA {
 			return;
 		}
 
-		DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
+		// DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
 		if (scope != null && scope.getAgent() != null) {
 			final String name = scope.getAgent().getName();
 			if (!g.getAgentsNames().contains(name)) { g.addAgent(name); }
@@ -561,16 +561,21 @@ public class GAMA {
 	 */
 	public static boolean isInHeadLessMode() { return isInHeadlessMode; }
 
-	
+	/**
+	 * Checks if is in server mode.
+	 *
+	 * @return true, if is in server mode
+	 */
 	public static boolean isInServerMode() { return isInServerMode; }
+
 	/**
 	 *
 	 */
-	public static IGui setHeadLessMode(boolean isServer,final IGui guiHandler) {
-		isInHeadlessMode	= true;
-		isInServerMode		= isServer;
+	public static IGui setHeadLessMode(final boolean isServer, final IGui guiHandler) {
+		isInHeadlessMode = true;
+		isInServerMode = isServer;
 		setHeadlessGui(guiHandler);
-		return guiHandler;			
+		return guiHandler;
 	}
 
 	/**
