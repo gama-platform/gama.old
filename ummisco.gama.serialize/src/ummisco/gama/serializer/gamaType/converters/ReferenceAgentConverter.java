@@ -49,7 +49,7 @@ public class ReferenceAgentConverter extends AbstractGamaConverter<ReferenceAgen
 			final UnmarshallingContext arg1) {
 		reader.moveDown();
 		try {
-			return new ReferenceAgent(null, null, (IAgent) arg1.convertAnother(null, ReferenceToAgent.class));
+			return new ReferenceAgent(null, null, (ReferenceToAgent) arg1.convertAnother(null, ReferenceToAgent.class));
 		} finally {
 			reader.moveUp();
 		}
