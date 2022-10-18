@@ -78,6 +78,7 @@ public class RandomSampling extends SamplingUtils {
 	 */
 	public static List<ParametersSet> FactorialUniformSampling(IScope scope, int samples, List<Batch> parameters){
 		int f = (int) Math.round(Math.pow(samples, 1 / parameters.size()));
+		f = f < 1 ? 1 : f;
 		int[] factor = new int[parameters.size()];
 		Arrays.fill(factor, f);
 		return FactorialUniformSampling(scope, factor, parameters);

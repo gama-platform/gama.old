@@ -76,7 +76,7 @@ import msi.gaml.types.IType;
 						name = Exploration.METHODS,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("The name of the method (among saltelli/morris/latinhypercube/orthogonal/uniform)")),
+						doc = @doc ("The name of the method (among saltelli/morris/latinhypercube/orthogonal/uniform/factorial)")),
 				@facet (
 						name = IKeyword.FROM,
 						type = IType.STRING,
