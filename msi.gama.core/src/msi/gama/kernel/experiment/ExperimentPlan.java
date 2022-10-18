@@ -280,7 +280,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 											+ " doesn't exist yet, do you perhaps mean 'saltelli' ?",
 									IGamlIssue.MISSING_FACET);
 							break;
-
+						case IKeyword.FACTORIAL:
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
+								tmpDesc.warning("Sample size not defined, will be 132 by default",
+										IGamlIssue.MISSING_FACET);
+							}
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_FACTORIAL)) {
+								tmpDesc.warning("If no factorial design is defined, it will be "
+										+ "approximated according to sample size and equi-distribution of values per parameters",
+										IGamlIssue.MISSING_FACET);
+							}
 						default:
 							tmpDesc.error(
 									"The sampling " + tmpDesc.getLitteral(Exploration.METHODS) + " doesn't exist yet",

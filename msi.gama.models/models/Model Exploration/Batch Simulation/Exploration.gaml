@@ -129,5 +129,5 @@ experiment Morris parent: batch_abstract type: batch until:( time > end_cycle ) 
 // on the distribution of outputs. It has been retro-engineered based on the description in
 // Borgonovo et al. 2022 doi:10.1007/s10588-021-09358-5
 experiment Beta_distribution parent: batch_abstract type: batch until:( time > end_cycle ) {
-	method betad outputs:["nb_preys","nb_predators"] sample:100 sampling:"uniform" report:"Results/betad.txt" results:"Results/betad_raw.csv";
+	method betad outputs:["nb_preys","nb_predators"] sample:100 sampling:"facorial" report:"Results/betad.txt" results:"Results/betad_raw.csv";
 }

@@ -94,6 +94,12 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The number of sample required, 132 by default")),
 				@facet (
+						name = Exploration.SAMPLE_FACTORIAL,
+						type = IType.LIST,
+						of = IType.INT,
+						optional = true,
+						doc = @doc ("The number of sample required.")),
+				@facet (
 						name = Exploration.NB_LEVELS,
 						type = IType.INT,
 						optional = true,
@@ -139,6 +145,9 @@ public class Exploration extends AExplorationAlgorithm {
 
 	/** The Constant SAMPLE_SIZE */
 	public static final String SAMPLE_SIZE = "sample";
+	
+	/** The factorial sampling */
+	public static final String SAMPLE_FACTORIAL = "factorial";
 
 	/** The Constant NB_LEVELS */
 	public static final String NB_LEVELS = "levels";
@@ -212,6 +221,20 @@ public class Exploration extends AExplorationAlgorithm {
 			case IKeyword.ORTHOGONAL -> OrthogonalSampling.OrthogonalSamples(sample_size, iterations, parameters,
 					scope.getRandom().getGenerator(), scope);
 			case IKeyword.UNIFORM -> RandomSampling.UniformSampling(scope, sample_size, parameters);
+			case IKeyword.FACTORIAL -> {
+				List<ParametersSet> ps = null;
+				if (hasFacet(Exploration.SAMPLE_FACTORIAL)) {
+					@SuppressWarnings("unchecked")
+					int[] factors = Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope))
+						.stream().mapToInt(o -> Integer.valueOf(o.toString()))
+						.toArray();
+					ps = RandomSampling.FactorialUniformSampling(scope, factors, params);
+				} else {
+					ps = RandomSampling.FactorialUniformSampling(scope, sample_size, params);
+				}
+				yield ps;
+			}
+					
 			case FROM_LIST -> buildParameterFromMap(scope, new ArrayList<>(), 0);
 			case FROM_FILE -> buildParametersFromCSV(scope, Cast.asString(scope, getFacet(IKeyword.FROM).value(scope)),
 					new ArrayList<>());

@@ -80,6 +80,12 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The number of sample required , 10 by default")),
 				@facet (
+						name = Exploration.SAMPLE_FACTORIAL,
+						type = IType.LIST,
+						of = IType.INT,
+						optional = true,
+						doc = @doc ("The number of sample required.")),
+				@facet (
 						name = IKeyword.BATCH_OUTPUT,
 						type = IType.STRING,
 						optional = true,
@@ -163,6 +169,20 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 						? Cast.asInt(scope, getFacet(Exploration.ITERATIONS).value(scope)) : 5;
 				yield OrthogonalSampling.OrthogonalSamples(sample_size, iterations, parameters,
 						scope.getRandom().getGenerator(), scope);
+			}
+			case IKeyword.FACTORIAL -> {
+				List<ParametersSet> ps = null;
+				if (hasFacet(Exploration.SAMPLE_FACTORIAL)) {
+					@SuppressWarnings("unchecked")
+					int[] factors = Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope))
+						.stream().mapToInt(o -> Integer.valueOf(o.toString()))
+						.toArray();
+					ps = RandomSampling.FactorialUniformSampling(scope, factors, params);
+				} else {
+					ps = RandomSampling.FactorialUniformSampling(scope, sample_size, params);
+				}
+				
+				yield ps;
 			}
 			default -> RandomSampling.UniformSampling(scope, sample_size, params);
 		};

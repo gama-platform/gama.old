@@ -381,6 +381,9 @@ public interface IKeyword {
 
 	/** The extensions. */
 	String EXTENSIONS = "extensions";
+	
+	/** Factorial sampling */
+	String FACTORIAL = "factorial";
 
 	/** The fading. */
 	String FADING = "fading";
