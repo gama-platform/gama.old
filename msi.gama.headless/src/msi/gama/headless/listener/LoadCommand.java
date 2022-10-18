@@ -13,6 +13,7 @@ import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.headless.job.ManualExperimentJob;
+import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
@@ -39,7 +40,7 @@ public class LoadCommand implements ISocketCommand {
 										map);
 		} catch (Exception e) {
 			DEBUG.OUT(e);
-			return new CommandResponse(GamaServerMessageType.RuntimeError, e, map, false);
+			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest, e, map, false);
 		}
 	}
 
@@ -55,18 +56,29 @@ public class LoadCommand implements ISocketCommand {
 		if (!ff.exists()) {
 			DEBUG.OUT(ff.getAbsolutePath() + " does not exist");
 			return new CommandResponse(	GamaServerMessageType.UnableToExecuteRequest,
-										ff.getAbsolutePath() + " does not exist", 
+										"'" + ff.getAbsolutePath() + "' does not exist", 
 										map, 
 										false);
 		}
 		if (!GamlFileExtension.isGaml(ff.getAbsoluteFile().toString())) {
 			DEBUG.OUT(ff.getAbsolutePath() + " is not a gaml file");
 			return new CommandResponse(	GamaServerMessageType.UnableToExecuteRequest, 
-										pathToModel + " is not a gaml file",
+										"'" + ff.getAbsolutePath() + "' is not a gaml file",
 										map, 
 										false);
 		}
+		
 		final String argExperimentName = map.get("experiment").toString(); 
+		
+		//we check if the experiment is present in the file
+		if ( ! ExperimentationPlanFactory.buildExperiment(ff.getAbsolutePath().toString()).stream()
+				.anyMatch((jb) -> jb.getExperimentName().equals(argExperimentName))) {
+			return new CommandResponse(	GamaServerMessageType.UnableToExecuteRequest, 
+										"'" + argExperimentName + "' is not an experiment present in '" + ff.getAbsolutePath() + "'",
+										map, 
+										false);
+		}
+		
 
 		ManualExperimentJob selectedJob = null;
 
