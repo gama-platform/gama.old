@@ -12,6 +12,7 @@ package msi.gama.kernel.batch.exploration.betadistribution;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.exploration.Exploration;
-import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
-import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
-import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
 import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
 import msi.gama.kernel.experiment.IParameter.Batch;
@@ -79,7 +77,7 @@ import msi.gaml.types.IType;
 						name = Exploration.METHODS,
 						type = IType.ID,
 						optional = false,
-						doc = @doc ("The sampling method to build parameters sets - default is uniform")),
+						doc = @doc ("The sampling method to build parameters sets that must be factorial based to some extends - available are saltelli and default uniform")),
 				@facet (
 						name = IKeyword.BATCH_VAR_OUTPUTS,
 						type = IType.LIST,
@@ -89,6 +87,12 @@ import msi.gaml.types.IType;
 				@facet (
 						name = Exploration.SAMPLE_SIZE,
 						type = IType.INT,
+						optional = true,
+						doc = @doc ("The number of sample required.")),
+				@facet (
+						name = Exploration.SAMPLE_FACTORIAL,
+						type = IType.LIST,
+						of = IType.INT,
 						optional = true,
 						doc = @doc ("The number of sample required.")),
 				@facet (
@@ -152,21 +156,25 @@ public class BetaExploration extends AExplorationAlgorithm {
 
 		String method = Cast.asString(scope, getFacet(Exploration.METHODS).value(scope));
 		sets = switch (method) {
-			case IKeyword.MORRIS -> {
-				int nbl = hasFacet(Exploration.NB_LEVELS)
-						? Cast.asInt(scope, getFacet(Exploration.NB_LEVELS).value(scope)) : 4;
-				yield Cast.asList(scope, MorrisSampling.MakeMorrisSampling(nbl, sample_size, parameters, scope).get(1));
-			}
+			case IKeyword.MORRIS -> throw GamaRuntimeException.error("Beta d indicator should use a factorial sampling design", scope);
+			case IKeyword.LHS -> throw GamaRuntimeException.error("Beta d indicator should use a factorial sampling design", scope);
+			case IKeyword.ORTHOGONAL -> throw GamaRuntimeException.error("Beta d indicator should use a factorial sampling design", scope);
+			
 			case IKeyword.SALTELLI -> SaltelliSampling.MakeSaltelliSampling(scope, sample_size, parameters);
-			case IKeyword.LHS -> LatinhypercubeSampling.LatinHypercubeSamples(sample_size, parameters,
-					scope.getRandom().getGenerator(), scope);
-			case IKeyword.ORTHOGONAL -> {
-				int iterations = hasFacet(Exploration.ITERATIONS)
-						? Cast.asInt(scope, getFacet(Exploration.SAMPLE_SIZE).value(scope)) : 5;
-				yield OrthogonalSampling.OrthogonalSamples(sample_size, iterations, parameters,
-						scope.getRandom().getGenerator(), scope);
+			case IKeyword.FACTORIAL -> {
+				List<ParametersSet> ps = null;
+				if (hasFacet(Exploration.SAMPLE_FACTORIAL)) {
+					int[] factors = Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope))
+						.stream().mapToInt(o -> Integer.valueOf(o.toString()))
+						.toArray();
+					ps = RandomSampling.FactorialUniformSampling(scope, factors, params);
+				} else {
+					ps = RandomSampling.FactorialUniformSampling(scope, sample_size, params);
+				}
+				yield ps;
 			}
-			default -> RandomSampling.UniformSampling(scope, sample_size, parameters);
+			case IKeyword.UNIFORM -> RandomSampling.UniformSampling(scope, sample_size, parameters); 
+			default -> buildParameterSets(scope, new ArrayList<>(), 0);
 		};
 
 		// == Launch simulations ==

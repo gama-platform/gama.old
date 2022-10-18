@@ -1,7 +1,6 @@
 package msi.gama.kernel.batch.exploration.betadistribution;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +41,13 @@ public class Betadistribution {
 		this.parameters = inputs;
 		this.empiricalCDFGranularity = granularity(granularity,this.objMin,this.objMax);
 		this.Y = get_empirical_distribution(this.sample.values().stream().flatMap(List::stream).toList());
+		
 	}
 	
+	/**
+	 * Main method that evaluate a set of simulations and propose a beta d for a single output
+	 * @return : a mapping of each parameter @Batch with beta d statistic @Double
+	 */
 	public Map<Batch,Double> evaluate() {
 		Map<Batch,Double> betadKu = new HashMap<>();
 		
@@ -77,24 +81,20 @@ public class Betadistribution {
 	 */
 	EmpiricalDistribution get_empirical_distribution(List<Double> as) {
 		 
-		double[] prob = new double[this.empiricalCDFGranularity.length];
+		double[] prob = new double[this.empiricalCDFGranularity.length+1];
 		
 		for (int i = 0; i < prob.length; i++) {
 			final int idx = i;
 			if (i==0) {
 				prob[i] = as.stream().filter(v -> v.doubleValue() < empiricalCDFGranularity[idx]).count() * 1d / as.size(); 
 			} else if (i==prob.length-1) {
-				prob[i] = as.stream().filter(v -> v.doubleValue() >= empiricalCDFGranularity[idx]).count() * 1d / as.size();
+				prob[i] = as.stream().filter(v -> v.doubleValue() >= empiricalCDFGranularity[idx-1]).count() * 1d / as.size();
 			} else {
 				prob[i] = as.stream().filter(v -> v.doubleValue() >= empiricalCDFGranularity[idx-1] && 
 						v.doubleValue() < empiricalCDFGranularity[idx]).count() * 1d / as.size();
 			}
 		}
-		
-		if (Math.ulp(Arrays.stream(prob).sum()) != Math.ulp(1.0)) {
-			throw new IllegalArgumentException("The sum of probability does not sum to 1: "+Arrays.stream(prob).sum());
-		}
-		
+
 		return new EmpiricalDistribution(prob);
 	}
 	
@@ -115,6 +115,9 @@ public class Betadistribution {
 	/*
 	 * Empirical distribution based on the implementation of smile API:
 	 * https://github.com/haifengl/smile/blob/master/base/src/main/java/smile/stat/distribution/EmpiricalDistribution.java
+	 * 
+	 * For the problematic of assessing acceptable error for probability to sum to 1:
+	 * https://stackoverflow.com/questions/54003108/what-is-a-suitable-tolerance-for-expecting-n-floats-to-sum-to-1
 	 */
 	public class EmpiricalDistribution {
 		double[] p;
@@ -137,8 +140,8 @@ public class Betadistribution {
 
 	        }
 
-	        if (Math.abs(cdf[cdf.length - 1] - 1.0) > 1E-7) {
-	            throw new IllegalArgumentException("The sum of probabilities is not 1: "+cdf[cdf.length - 1]);
+	        if (Math.abs(cdf[cdf.length - 1] - 1.0f) > (prob.length-1) * 0.5 * Math.ulp(0.5f)) {
+	            throw new IllegalArgumentException("The sum of probabilities is not exactly 1: "+cdf[cdf.length - 1]);
 	        }
 		}
 		
