@@ -14,7 +14,6 @@ import "../../Tutorials/Predator Prey/models/Model 13.gaml"
  * Change a little bit the behavior of the world agent to fit exploration requirements
  */
 global {
-	bool is_batch <- true;
 	int end_cycle <- 500;
 	reflex save_result when: (nb_preys > 0) and (nb_predators > 0){ } // Overload method so we do not have any saved output
 	bool stop_sim { return (nb_preys = 0) or (nb_predators = 0); } 
@@ -28,6 +27,7 @@ global {
  */
  
 experiment batch_abstract type:batch virtual:true until:(time > end_cycle) {
+	init {is_batch <- true;}
 	parameter "Prey max transfer:" var: prey_max_transfer min: 0.05 max: 0.5 step: 0.05;
 	parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
 	parameter "Predator energy transfer:" var: predator_energy_transfer min: 0.1 max: 1.0 step: 0.1;
@@ -129,5 +129,5 @@ experiment Morris parent: batch_abstract type: batch until:( time > end_cycle ) 
 // on the distribution of outputs. It has been retro-engineered based on the description in
 // Borgonovo et al. 2022 doi:10.1007/s10588-021-09358-5
 experiment Beta_distribution parent: batch_abstract type: batch until:( time > end_cycle ) {
-	method betad outputs:["nb_preys","nb_predators"] sample:100 sampling:"facorial" report:"Results/betad.txt" results:"Results/betad_raw.csv";
+	method betad outputs:["nb_preys","nb_predators"] sample:100 sampling:"factorial" report:"Results/betad.txt" results:"Results/betad_raw.csv";
 }
