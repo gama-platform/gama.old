@@ -1202,6 +1202,7 @@ public class PedestrianSkill extends MovingSkill {
 	 */
 	// public GamaPoint avoidSFMSimple(IScope scope, IAgent agent, GamaPoint location, GamaPoint currentTarget, double
 	// distPercep, IContainer obstaclesList) {
+	@SuppressWarnings ("unchecked")
 	public GamaPoint avoidSFMSimple(final IScope scope, final IAgent agent, final GamaPoint location,
 			final GamaPoint currentTarget, final double distPercepPedestrian, final double distPercepObstacle,
 			final IContainer pedestriansList, final IContainer obstaclesList) {
@@ -1289,6 +1290,7 @@ public class PedestrianSkill extends MovingSkill {
 	 *            the obstacles list
 	 * @return the gama point
 	 */
+	@SuppressWarnings ("unchecked")
 	public GamaPoint avoidSFM(final IScope scope, final IAgent agent, final GamaPoint location,
 			final GamaPoint currentTarget, final double distPercepPedestrian, final double distPercepObstacle,
 			final IContainer pedestriansList, final IContainer obstaclesList) {
@@ -1556,6 +1558,7 @@ public class PedestrianSkill extends MovingSkill {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+	@SuppressWarnings ("unchecked")
 	@action (
 			name = WALK,
 			doc = @doc (
@@ -1605,7 +1608,6 @@ public class PedestrianSkill extends MovingSkill {
 			} else {
 				obstacles = GamaListFactory.create(Types.AGENT);
 				for (ISpecies species : speciesList) {
-
 					((IList<IAgent>) obstacles).addAll(Cast.asList(scope, species));
 				}
 			}

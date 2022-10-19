@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * TextDisplayer.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * MonitorDisplayer.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -28,7 +28,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.kernel.experiment.InputParameter;
@@ -52,6 +51,7 @@ import ummisco.gama.ui.views.toolbar.Selector;
  */
 public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 
+	/** The closer. */
 	private Runnable closer;
 
 	/**
@@ -89,13 +89,14 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 		}
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	protected FlatButton createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 		textBox = FlatButton.menu(composite, GamaColors.get(getStatement().getColor(getScope())),
 				getStatement().getTitle());
 		textBox.addSelectionListener((Selector) e -> {
 			final Menu m = new Menu(textBox);
-			MenuItem item = action(m, "Edit...", ex -> { applyEdit(); });
+			action(m, "Edit...", ex -> { applyEdit(); });
 			// item.setEnabled(false); // for the moment
 			action(m, getStatement().isPaused() ? "Resume" : "Pause", ex -> {
 				getStatement().setPaused(!getStatement().isPaused());
@@ -191,6 +192,12 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 		return d;
 	}
 
+	/**
+	 * Sets the closer.
+	 *
+	 * @param object
+	 *            the new closer
+	 */
 	public void setCloser(final Runnable object) { closer = object; }
 
 }

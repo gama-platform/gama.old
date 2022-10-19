@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaFieldType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaFieldType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -14,9 +14,9 @@ import java.util.Arrays;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -55,8 +55,10 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Builds the field.
 	 *
-	 * @param scope the scope
-	 * @param object the object
+	 * @param scope
+	 *            the scope
+	 * @param object
+	 *            the object
 	 * @return the i field
 	 */
 	public static IField buildField(final IScope scope, final Object object) {
@@ -66,11 +68,16 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param contentType the content type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param contentType
+	 *            the content type
+	 * @param copy
+	 *            the copy
 	 * @return the i field
 	 */
 	public static IField staticCast(final IScope scope, final Object obj, final Object param, final IType contentType,
@@ -84,11 +91,8 @@ public class GamaFieldType extends GamaMatrixType {
 			if (obj instanceof IContainer) return staticCast(scope,
 					((IContainer) obj).matrixValue(scope, contentType, copy), null, contentType, copy);
 			// Special case for grid species
-			if (obj instanceof ISpecies) {
-				ISpecies species = (ISpecies) obj;
-				if (species.isGrid()) return staticCast(scope, species.getPopulation(scope).getTopology().getPlaces(),
-						param, contentType, copy);
-			}
+			if (obj instanceof ISpecies species && species.isGrid()) return staticCast(scope,
+					species.getPopulation(scope).getTopology().getPlaces(), param, contentType, copy);
 
 		} else if (size.x <= 0 || size.y < 0)
 			throw GamaRuntimeException.error("Dimensions of a field should be positive.", scope);
@@ -101,12 +105,17 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * With.
 	 *
-	 * @param scope the scope
-	 * @param val the val
-	 * @param p the p
-	 * @param contentsType the contents type
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param p
+	 *            the p
+	 * @param contentsType
+	 *            the contents type
 	 * @return the i field
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static IField with(final IScope scope, final Object val, final GamaPoint p, final IType contentsType)
 			throws GamaRuntimeException {
@@ -118,13 +127,19 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * With object.
 	 *
-	 * @param scope the scope
-	 * @param val the val
-	 * @param cols the cols
-	 * @param rows the rows
-	 * @param contentsType the contents type
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param contentsType
+	 *            the contents type
 	 * @return the i field
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static IField withObject(final IScope scope, final Object val, final int cols, final int rows,
 			final IType contentsType) throws GamaRuntimeException {
@@ -146,14 +161,10 @@ public class GamaFieldType extends GamaMatrixType {
 	}
 
 	@Override
-	public IType<?> getContentType() {
-		return Types.FLOAT;
-	}
+	public IType<?> getContentType() { return Types.FLOAT; }
 
 	@Override
-	public boolean isDrawable() {
-		return true;
-	}
+	public boolean isDrawable() { return true; }
 
 	/**
 	 * Constructors to be used in GAML besides the default "casting" one (i.e. field(xxx))
@@ -165,6 +176,7 @@ public class GamaFieldType extends GamaMatrixType {
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Allows to build a field by specifying, in order, its number of columns, number of rows, the initial value of its cells and the value representing the absence of value") })
+	@no_test
 	public static IField buildField(final IScope scope, final int cols, final int rows, final double init,
 			final double no) {
 		double[] data = new double[cols * rows];
@@ -175,10 +187,14 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Builds the field.
 	 *
-	 * @param scope the scope
-	 * @param cols the cols
-	 * @param rows the rows
-	 * @param init the init
+	 * @param scope
+	 *            the scope
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
+	 * @param init
+	 *            the init
 	 * @return the i field
 	 */
 	@operator (
@@ -188,6 +204,7 @@ public class GamaFieldType extends GamaMatrixType {
 			concept = { IConcept.GRID },
 			doc = { @doc ("Allows to build a field by specifying, in order, its number of columns, "
 					+ "number of rows and the initial value of its cells. The value representing the absence of value is set to #max_float") })
+	@no_test
 	public static IField buildField(final IScope scope, final int cols, final int rows, final double init) {
 		return buildField(scope, cols, rows, init, IField.NO_NO_DATA);
 	}
@@ -195,9 +212,12 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Builds the field.
 	 *
-	 * @param scope the scope
-	 * @param cols the cols
-	 * @param rows the rows
+	 * @param scope
+	 *            the scope
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
 	 * @return the i field
 	 */
 	@operator (
@@ -207,6 +227,7 @@ public class GamaFieldType extends GamaMatrixType {
 			concept = { IConcept.GRID },
 			doc = { @doc ("Allows to build a field by specifying, in order, its number of columns and number of rows. "
 					+ "The initial value of its cells is set to 0.0 and the value representing the absence of value is set to #max_float") })
+	@no_test
 	public static IField buildField(final IScope scope, final int cols, final int rows) {
 		return buildField(scope, cols, rows, 0d);
 	}
@@ -214,9 +235,12 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Builds the field with no data.
 	 *
-	 * @param scope the scope
-	 * @param object the object
-	 * @param noData the no data
+	 * @param scope
+	 *            the scope
+	 * @param object
+	 *            the object
+	 * @param noData
+	 *            the no data
 	 * @return the i field
 	 */
 	@operator (
@@ -226,6 +250,7 @@ public class GamaFieldType extends GamaMatrixType {
 			concept = { IConcept.GRID },
 			doc = { @doc ("Allows to build a field by specifying an arbitrary object (assuming this object can return a matrix of float) "
 					+ "and a value representing the absence of data. ") })
+	@no_test
 	public static IField buildFieldWithNoData(final IScope scope, final Object object, final double noData) {
 		IField field = buildField(scope, object);
 		field.setNoData(scope, noData);
@@ -235,9 +260,12 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Builds the shape from field location.
 	 *
-	 * @param scope the scope
-	 * @param field the field
-	 * @param location the location
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param location
+	 *            the location
 	 * @return the i shape
 	 */
 	@operator (
@@ -246,6 +274,7 @@ public class GamaFieldType extends GamaMatrixType {
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the rectangular shape that corresponds to the 'cell' in the field at this location. This cell has no attributes. A future version may load it with the value of the field at this attribute") })
+	@no_test
 	public static IShape buildShapeFromFieldLocation(final IScope scope, final IField field, final GamaPoint location) {
 		return field.getCellShapeAt(scope, location);
 	}
@@ -253,10 +282,14 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Builds the shape from field location.
 	 *
-	 * @param scope the scope
-	 * @param field the field
-	 * @param columns the columns
-	 * @param rows the rows
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param columns
+	 *            the columns
+	 * @param rows
+	 *            the rows
 	 * @return the i shape
 	 */
 	@operator (
@@ -265,6 +298,7 @@ public class GamaFieldType extends GamaMatrixType {
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the rectangular shape that corresponds to the 'cell' in the field at this location in the matrix (column, row). This cell has no attributes. A future version may load it with the value of the field at this attribute") })
+	@no_test
 	public static IShape buildShapeFromFieldLocation(final IScope scope, final IField field, final int columns,
 			final int rows) {
 		return field.getCellShapeAt(scope, columns, rows);
@@ -273,9 +307,12 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Gets the shapes from geometry (cells with a point inside the geometry).
 	 *
-	 * @param scope the scope
-	 * @param field the field
-	 * @param shape the shape
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param shape
+	 *            the shape
 	 * @return the shapes from geometry
 	 */
 	@operator (
@@ -287,16 +324,20 @@ public class GamaFieldType extends GamaMatrixType {
 			doc = { @doc ("Returns the list of 'cells' that 'intersect' with the geometry passed in argument. "
 					+ "(Intersection is understood as the cell center is insside the geometry; if the  geometry is a polyline or a point, results will not be accurate."
 					+ "The cells are ordered by their x-, then y-coordinates") })
+	@no_test
 	public static IList<IShape> getShapesFromGeometry(final IScope scope, final IField field, final IShape shape) {
 		return field.getCellsIntersecting(scope, shape);
 	}
-	
+
 	/**
 	 * Gets the shapes from geometry (cells overlapping the geometry).
 	 *
-	 * @param scope the scope
-	 * @param field the field
-	 * @param shape the shape
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param shape
+	 *            the shape
 	 * @return the shapes from geometry
 	 */
 	@operator (
@@ -308,16 +349,20 @@ public class GamaFieldType extends GamaMatrixType {
 			doc = { @doc ("Returns the list of 'cells' that 'overlap' the geometry passed in argument. "
 					+ "It is much less efficient than the cells_in operator, but is relevant is a polynie or a point. "
 					+ "The cells are ordered by their x-, then y-coordinates") })
+	@no_test
 	public static IList<IShape> getShapesOverGeometry(final IScope scope, final IField field, final IShape shape) {
 		return field.getCellsOverlapping(scope, shape);
-	}	
+	}
 
 	/**
 	 * Gets the values from geometry.
 	 *
-	 * @param scope the scope
-	 * @param field the field
-	 * @param shape the shape
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param shape
+	 *            the shape
 	 * @return the values from geometry
 	 */
 	@operator (
@@ -327,6 +372,7 @@ public class GamaFieldType extends GamaMatrixType {
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the list of values in the field whose 'cell' 'intersects' with the geometry passed in argument. The values are ordered by the x-, then y-coordinate, of their 'cell'") })
+	@no_test
 	public static IList<Double> getValuesFromGeometry(final IScope scope, final IField field, final IShape shape) {
 		return field.getValuesIntersecting(scope, shape);
 	}
@@ -334,9 +380,12 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Gets the points from geometry.
 	 *
-	 * @param scope the scope
-	 * @param field the field
-	 * @param shape the shape
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param shape
+	 *            the shape
 	 * @return the points from geometry
 	 */
 	@operator (
@@ -346,6 +395,7 @@ public class GamaFieldType extends GamaMatrixType {
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the list of values in the field whose 'cell' 'intersects' with the geometry passed in argument. The values are ordered by the x-, then y-coordinate, of their 'cell'") })
+	@no_test
 	public static IList<GamaPoint> getPointsFromGeometry(final IScope scope, final IField field, final IShape shape) {
 		return field.getLocationsIntersecting(scope, shape);
 	}
@@ -353,9 +403,12 @@ public class GamaFieldType extends GamaMatrixType {
 	/**
 	 * Gets the neighbors of.
 	 *
-	 * @param scope the scope
-	 * @param field the field
-	 * @param point the point
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param point
+	 *            the point
 	 * @return the neighbors of
 	 */
 	@operator (
@@ -365,6 +418,7 @@ public class GamaFieldType extends GamaMatrixType {
 			category = { IOperatorCategory.GRID },
 			concept = { IConcept.GRID },
 			doc = { @doc ("Returns the list of the 'neighbors' of a given world coordinate point, which correspond to the world coordinates of the cells that surround the cell located at this point") })
+	@no_test
 	public static IList<GamaPoint> getNeighborsOf(final IScope scope, final IField field, final GamaPoint point) {
 		return field.getNeighborsOf(scope, point);
 	}

@@ -290,6 +290,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 										+ "approximated according to sample size and equi-distribution of values per parameters",
 										IGamlIssue.MISSING_FACET);
 							}
+							break;
 						default:
 							tmpDesc.error(
 									"The sampling " + tmpDesc.getLitteral(Exploration.METHODS) + " doesn't exist yet",

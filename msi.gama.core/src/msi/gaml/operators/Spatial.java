@@ -2518,6 +2518,7 @@ public abstract class Spatial {
 						value = "perception_geom masked_by obstacle_list",
 						equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
 						isExecutable = false) })
+		@no_test
 		public static IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles,
 				final Integer prec) {
 			final Integer precision = prec == null ? 120 : prec;
@@ -2674,6 +2675,7 @@ public abstract class Spatial {
 						value = "perception_geom masked_by obstacle_list",
 						equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.",
 						isExecutable = false) })
+		@no_test
 		public static IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles) {
 			return masked_by(scope, source, obstacles, null);
 		}
@@ -3421,6 +3423,7 @@ public abstract class Spatial {
 								+ "of the agent applying the operator.",
 						test = false) },
 				see = { "rotated_by", "translated_by" })
+		@no_test
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
 			if (g == null) return null;
 			return scaled_by(scope, rotated_by(scope, g, p.x), p.y);
@@ -3445,6 +3448,7 @@ public abstract class Spatial {
 						equals = "the geometry resulting from applying the translation to the left-hand geometry (or agent).",
 						test = false) },
 				see = { "rotated_by", "transformed_by" })
+		@no_test
 		public static IShape translated_by(final IScope scope, final IShape g, final GamaPoint p)
 				throws GamaRuntimeException {
 			if (g == null) return null;
@@ -3671,6 +3675,7 @@ public abstract class Spatial {
 						value = "triangulate(self)",
 						equals = "the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator.",
 						test = false) })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IList<IShape> triangulate(final IScope scope, final IShape g) {
 			if (g == null) return null;
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry(), 0.0, 0.0, false);
@@ -3910,6 +3915,7 @@ public abstract class Spatial {
 						value = "to_squares(self, 10.0, true)",
 						equals = "the list of squares of side size 10.0 corresponding to the discretization into squares of the geometry of the agent applying the operator. The squares overlapping the border of the geometry are kept",
 						test = false) })
+		@no_test
 		public static IList<IShape> toSquares(final IScope scope, final IShape geom, final Double dimension,
 				final boolean overlaps) {
 			if (geom == null || geom.getInnerGeometry().getArea() <= 0) return GamaListFactory.create(Types.GEOMETRY);
@@ -4165,6 +4171,7 @@ public abstract class Spatial {
 						value = "to_segments(line([{10,10},{80,10},{80,80}]))",
 						equals = "[line([{10,10},{80,10}]), line([{80,10},{80,80}])]",
 						test = false) })
+		@no_test
 		public static IList<IShape> toSegments(final IScope scope, final IShape geom) {
 			if (geom == null) return GamaListFactory.create(Types.GEOMETRY);
 			final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
@@ -4206,6 +4213,7 @@ public abstract class Spatial {
 						equals = "list of geometries (hexagonal) corresponding to the hexagonal tesselation of the first operand geometry",
 						test = false) },
 				see = { "as_4_grid", "as_grid" })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IList<IShape> as_hexagonal_grid(final IShape ls, final GamaPoint param) {
 			return GeometryUtils.hexagonalGridFromGeom(ls, (int) param.x, (int) param.y);
 		}
@@ -4236,6 +4244,7 @@ public abstract class Spatial {
 						equals = "a matrix of square geometries (grid with 8-neighborhood) with 10 columns and 5 lines corresponding to the square tessellation of the geometry of the agent applying the operator.",
 						test = false) },
 				see = { "as_4_grid", "as_hexagonal_grid" })
+		@no_test
 		public static IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim)
 				throws GamaRuntimeException {
 			// cols, rows
@@ -4547,6 +4556,7 @@ public abstract class Spatial {
 						value = "clean(self)",
 						equals = "returns the geometry resulting from the cleaning of the geometry of the agent applying the operator.",
 						test = false) })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IShape clean(final IScope scope, final IShape g) {
 
 			if (g == null || g.getInnerGeometry() == null) return g;
@@ -4742,6 +4752,7 @@ public abstract class Spatial {
 						value = "self simplification 0.1",
 						equals = "the geometry resulting from the application of the Douglas-Peuker algorithm on the geometry of the agent applying the operator with a tolerance distance of 0.1.",
 						test = false) })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IShape simplification(final IScope scope, final IShape g1, final Double distanceTolerance) {
 			if (g1 == null || g1.getInnerGeometry() == null) return g1;
 			if (g1.isPoint()) return g1.copy(scope);
@@ -4771,6 +4782,7 @@ public abstract class Spatial {
 						value = "self with_precision 2",
 						equals = "the geometry resulting from the rounding of points of the geometry with a precision of 0.1.",
 						test = false) })
+		@no_test
 		public static IShape withPrecision(final IScope scope, final IShape g1, final Integer precision) {
 			if (g1 == null || g1.getInnerGeometry() == null) return g1;
 			final double scale = Math.pow(10, precision);
@@ -5741,7 +5753,7 @@ public abstract class Spatial {
 						equals = "returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location",
 						test = false) },
 				see = { "any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
-
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IList<GamaPoint> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if (distance == null || nbLoc == null) // scope.setStatus(ExecutionStatus.failure);
 				throw GamaRuntimeException.error("Impossible to compute points_at", scope);
@@ -5782,6 +5794,7 @@ public abstract class Spatial {
 						equals = "[pt1, pt2] with pt1 the closest point of geom1 to geom2 and pt1 the closest point of geom2 to geom1",
 						isExecutable = false) },
 				see = { "any_location_in", "any_point_in", "farthest_point_to", "points_at" })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IList<GamaPoint> closest_points_with(final IShape a, final IShape b) {
 			final Coordinate[] coors = DistanceOp.nearestPoints(a.getInnerGeometry(), b.getInnerGeometry());
 			return GamaListFactory.wrap(Types.POINT, new GamaPoint(coors[0]), new GamaPoint(coors[1]));
@@ -5808,6 +5821,7 @@ public abstract class Spatial {
 						equals = "the farthest point of geom to pt",
 						isExecutable = false) },
 				see = { "any_location_in", "any_point_in", "closest_points_with", "points_at" })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static GamaPoint farthest_point_to(final IShape g, final GamaPoint p) {
 			if (g == null) return p.getLocation();
 			if (p == null) return g.getLocation();
@@ -6586,6 +6600,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "neighbors_at", "neighbors_of", "agents_inside", "agents_overlapping", "closest_to", "inside",
 						"overlapping", "agent_closest_to", "farthest_to" })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IAgent agent_farthest_to(final IScope scope, final Object source) {
 			return _farthest(scope, Different.with(), source);
 		}
@@ -6776,6 +6791,7 @@ public abstract class Spatial {
 						test = false) },
 				see = { "neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 						"overlapping", "at_distance" })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			return _neighbors(scope, Different.with(), scope.getAgent(), distance);
 		}
@@ -6929,6 +6945,7 @@ public abstract class Spatial {
 						equals = "for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]",
 						isExecutable = false) },
 				see = { "hierarchical_clustering" })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope,
 				final IContainer<?, IAgent> agents, final Double distance) {
 			final IList<IList<IAgent>> groups =
@@ -7000,6 +7017,7 @@ public abstract class Spatial {
 						equals = "for example, can return [[[ag1],[ag3]], [ag2], [[[ag4],[ag5]],[ag6]]",
 						isExecutable = false) },
 				see = { "simple_clustering_by_distance" })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static IList hierarchicalClusteringe(final IScope scope, final IContainer<?, IAgent> agents,
 				final Double distance) {
 			final int nb = agents.length(scope);
@@ -7170,6 +7188,7 @@ public abstract class Spatial {
 								equals = "the Moran index is computed",
 								test = false,
 								isExecutable = false) }) })
+		@no_test (Reason.IMPOSSIBLE_TO_TEST)
 		public static double moranIndex(final IScope scope, final IList<Double> vals, final IMatrix<Double> mat) {
 			final GamaMatrix<Double> weightMatrix = (GamaMatrix<Double>) mat;
 			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows) throw GamaRuntimeException
@@ -7385,6 +7404,7 @@ public abstract class Spatial {
 						equals = "the crs of the shapefile",
 						isExecutable = false) },
 				see = {})
+		@no_test
 		public static String crsFromFile(final IScope scope, final GamaFile gisFile) {
 			if (!(gisFile instanceof GamaGisFile))
 				throw GamaRuntimeException.error("Impossible to compute the CRS for this type of file", scope);
@@ -7418,6 +7438,7 @@ public abstract class Spatial {
 								value = "CRS_transform(shape)",
 								equals = "a geometry corresponding to the agent geometry transformed into the current CRS",
 								test = false) }) })
+		@no_test
 		public static IShape transform_CRS(final IScope scope, final IShape g) {
 			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) return g.copy(scope);
@@ -7447,6 +7468,7 @@ public abstract class Spatial {
 								value = "to_GAMA_CRS({121,14})",
 								equals = "a geometry corresponding to the agent geometry transformed into the GAMA CRS",
 								test = false) }) })
+		@no_test
 		public static IShape to_GAMA_CRS(final IScope scope, final IShape g) {
 			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) return g.copy(scope);

@@ -367,6 +367,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 *
 	 * @return the editor toolbar
 	 */
+	@SuppressWarnings ("unchecked")
 	EditorToolbar createEditorToolbar() {
 		editorToolbar = new EditorToolbar(this, parent);
 		updateToolbar();

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaMessageType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaMessageType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -20,7 +20,6 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-
 
 /**
  * The Class GamaMessageType.
@@ -42,9 +41,7 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 	public GamaMessageType() {}
 
 	@Override
-	public GamaMessage getDefault() {
-		return null;
-	}
+	public GamaMessage getDefault() { return null; }
 
 	@Override
 	protected boolean acceptNullInstances() {
@@ -54,10 +51,13 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 	/**
 	 * As message.
 	 *
-	 * @param scope the scope
-	 * @param val the val
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
 	 * @return the gama message
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = GamaMessageType.MESSAGE_STR,
@@ -74,19 +74,23 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param val the val
-	 * @param object the object
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @param object
+	 *            the object
 	 * @return the gama message
 	 */
 	private static GamaMessage staticCast(final IScope scope, final Object val, final Object object) {
 
-		if (val instanceof GamaMessage) { return (GamaMessage) val; }
-		// ??? ??? Demander au skill la classe de message à produire !
+		if (val instanceof GamaMessage) return (GamaMessage) val;
+		// TODO AD ??? ??? Demander au skill la classe de message à produire !
 		return new GamaMessage(scope, scope.getAgent(), null, val);
 	}
 
 	@Override
+	@doc ("Returns a message built from the argument. If the argument is already a message returns it, otherwise returns a message with the current agent as the sender and the argument as the contents ")
 	public GamaMessage cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, param);

@@ -499,12 +499,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 *            the new value
 	 * @return the object
 	 */
+	@SuppressWarnings ("unchecked")
 	private Object verifyMin(final IScope scope, final Object newValue) {
 		Object minValue = getMinValue(scope);
 		if (minValue instanceof Number && newValue instanceof Number
 				&& compare(((Number) minValue).doubleValue(), ((Number) newValue).doubleValue()) > 0
-				|| minValue instanceof Comparable && newValue instanceof Comparable
-						&& ((Comparable) minValue).compareTo(newValue) > 0)
+				|| minValue instanceof Comparable mc && newValue instanceof Comparable nc && mc.compareTo(nc) > 0)
 			return minValue;
 		return newValue;
 	}
@@ -516,12 +516,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 *            the new value
 	 * @return the object
 	 */
+	@SuppressWarnings ("unchecked")
 	private Object verifyMax(final IScope scope, final Object newValue) {
 		Object maxValue = getMaxValue(scope);
 		if (maxValue instanceof Number && newValue instanceof Number
 				&& compare(((Number) maxValue).doubleValue(), ((Number) newValue).doubleValue()) < 0
-				|| maxValue instanceof Comparable && newValue instanceof Comparable
-						&& ((Comparable) maxValue).compareTo(newValue) < 0)
+				|| maxValue instanceof Comparable mc && newValue instanceof Comparable nc && mc.compareTo(nc) < 0)
 			return maxValue;
 		return newValue;
 	}
@@ -614,13 +614,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		Object minValue = getMinValue(scope);
 		Object maxValue = getMaxValue(scope);
 		Object stepValue = getStepValue(scope);
-		switch (type.id()) {
-			case IType.INT:
+		return switch (type.id()) {
+			case IType.INT -> {
 				final int iMin = minValue == null ? Integer.MIN_VALUE : Cast.asInt(scope, minValue);
 				final int iMax = maxValue == null ? Integer.MAX_VALUE : Cast.asInt(scope, maxValue);
 				final int iStep = stepValue == null ? 1 : Cast.asInt(scope, stepValue);
-				return scope.getRandom().between(iMin, iMax, iStep);
-			case IType.POINT:
+				yield scope.getRandom().between(iMin, iMax, iStep);
+			}
+			case IType.POINT -> {
 				final GamaPoint pStep = stepValue == null ? new GamaPoint(1, 1, 1) : Cast.asPoint(scope, stepValue);
 				final GamaPoint pMin =
 						minValue == null ? new GamaPoint(Double.MIN_VALUE, Double.MIN_VALUE, Double.MIN_VALUE)
@@ -628,8 +629,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				final GamaPoint pMax =
 						maxValue == null ? new GamaPoint(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE)
 								: Cast.asPoint(scope, maxValue);
-				return scope.getRandom().between(pMin, pMax, pStep);
-			case IType.DATE:
+				yield scope.getRandom().between(pMin, pMax, pStep);
+			}
+			case IType.DATE -> {
 				final double dStep =
 						stepValue == null ? Dates.DATES_TIME_STEP.getValue() : Cast.asFloat(scope, stepValue);
 				final GamaDate dMin =
@@ -638,13 +640,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 				final GamaDate dMax =
 						maxValue == null ? GamaDate.of(LocalDateTime.now()).plus(Integer.MAX_VALUE, ChronoUnit.SECONDS)
 								: GamaDateType.staticCast(scope, maxValue, null, false);
-				return new GamaDateInterval(dMin, dMax, Duration.of((long) dStep, ChronoUnit.SECONDS)).anyValue(scope);
-			default:
+				yield new GamaDateInterval(dMin, dMax, Duration.of((long) dStep, ChronoUnit.SECONDS)).anyValue(scope);
+			}
+			default -> {
 				final double fStep = stepValue == null ? 1.0 : Cast.asFloat(scope, stepValue);
 				final double fMin = minValue == null ? Double.MIN_VALUE : Cast.asFloat(scope, minValue);
 				final double fMax = maxValue == null ? Double.MAX_VALUE : Cast.asFloat(scope, maxValue);
-				return scope.getRandom().between(fMin, fMax, fStep);
-		}
+				yield scope.getRandom().between(fMin, fMax, fStep);
+			}
+		};
 	}
 
 	@Override
@@ -834,7 +838,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public boolean canBeExplored() {
-		return among != null || (min != null && max != null);
+		return among != null || min != null && max != null;
 	}
 
 	@Override

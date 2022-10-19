@@ -293,17 +293,19 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 	}
 
 	/** The cache. */
-	static LoadingCache<BufferedImage, Map<Point2D, BufferedImage>> cache =
-			CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.SECONDS).removalListener(notif -> {
-				Map<Point2D, BufferedImage> map = (Map<Point2D, BufferedImage>) notif.getValue();
-				map.forEach((a, b) -> { b.flush(); });
-			}).build(new CacheLoader<>() {
+	@SuppressWarnings ({ "unchecked",
+			"unused" }) static LoadingCache<BufferedImage, Map<Point2D, BufferedImage>> cache =
+					CacheBuilder.<BufferedImage, Map<Point2D, BufferedImage>> newBuilder()
+							.expireAfterAccess(30, TimeUnit.SECONDS).removalListener(notif -> {
+								Map<Point2D, BufferedImage> map = (Map<Point2D, BufferedImage>) notif.getValue();
+								map.forEach((a, b) -> { b.flush(); });
+							}).build(new CacheLoader<>() {
 
-				@Override
-				public Map<Point2D, BufferedImage> load(final BufferedImage arg0) throws Exception {
-					return new HashMap<>();
-				}
-			});
+								@Override
+								public Map<Point2D, BufferedImage> load(final BufferedImage arg0) throws Exception {
+									return new HashMap<>();
+								}
+							});
 
 	/**
 	 * Method drawString.
@@ -549,6 +551,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 	/** The chart rect. */
 	final Rectangle2D chartRect = new Rectangle2D.Double();
 
+	/** The draw chart. */
 	boolean drawChart = true;
 
 	// @Override

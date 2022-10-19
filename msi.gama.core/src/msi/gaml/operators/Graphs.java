@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Graphs.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Graphs.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -556,8 +555,7 @@ public class Graphs {
 			see = { "contains_vertex" })
 	public static Boolean containsEdge(final IScope scope, final IGraph graph, final Object edge) {
 		if (graph == null) throw GamaRuntimeException.error("graph is nil", scope);
-		if (edge instanceof Graphs.EdgeToAdd) {
-			final Graphs.EdgeToAdd edge2 = (Graphs.EdgeToAdd) edge;
+		if (edge instanceof Graphs.EdgeToAdd edge2) {
 			if (edge2.object != null) return graph.containsEdge(edge2.object);
 			if (edge2.source != null && edge2.target != null) return graph.containsEdge(edge2.source, edge2.target);
 
@@ -699,8 +697,7 @@ public class Graphs {
 	public static Double weightOf(final IScope scope, final IGraph graph, final Object edge) {
 		if (graph == null) throw GamaRuntimeException.error("The graph is nil", scope);
 		if (edge instanceof Graphs.GraphObjectToAdd) {
-			if (edge instanceof Graphs.EdgeToAdd) {
-				final Graphs.EdgeToAdd edge2 = (Graphs.EdgeToAdd) edge;
+			if (edge instanceof Graphs.EdgeToAdd edge2) {
 				if (edge2.object != null) return graph.getEdgeWeight(edge2.object);
 				if (edge2.source != null && edge2.target != null) {
 					final Object edge3 = graph.getEdge(edge2.source, edge2.target);
@@ -1557,8 +1554,9 @@ public class Graphs {
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance,
 			final ISpecies edgeSpecies) {
 		final IType edgeType = scope.getType(edgeSpecies.getName());
-		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, true, new IntersectionRelation(tolerance),
-				edgeSpecies, scope, vertices.getGamlType().getContentType(), edgeType);
+		final IGraph createdGraph =
+				new GamaSpatialGraph(vertices, false, false, true, new IntersectionRelation(tolerance), edgeSpecies,
+						scope, vertices.getGamlType().getContentType(), edgeType);
 
 		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, edgeSpecies, createdGraph);
@@ -1690,8 +1688,9 @@ public class Graphs {
 			see = { "as_distance_graph", "as_edge_graph" })
 	@no_test
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
-		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false,true, new IntersectionRelation(tolerance),
-				null, scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		final IGraph createdGraph =
+				new GamaSpatialGraph(vertices, false, false, true, new IntersectionRelation(tolerance), null, scope,
+						vertices.getGamlType().getContentType(), Types.GEOMETRY);
 		if (Types.AGENT.equals(vertices.getGamlType().getContentType())) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, null, createdGraph);
 		}
@@ -1708,8 +1707,8 @@ public class Graphs {
 	 * @return the i graph
 	 */
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, false, new IntersectionRelationLineTriangle(true), null, scope,
-				vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		return new GamaSpatialGraph(vertices, false, false, false, new IntersectionRelationLineTriangle(true), null,
+				scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
 	}
 
 	/**
@@ -1782,8 +1781,8 @@ public class Graphs {
 			see = { "as_intersection_graph", "as_edge_graph" })
 	@no_test
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
-		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, true,new DistanceRelation(distance), null,
-				scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, true, new DistanceRelation(distance),
+				null, scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
 		// TODO
 		if (vertices.getGamlType().getContentType().isAgentType()) {
 			GraphFromAgentContainerSynchronizer.synchronize(scope, vertices, null, createdGraph);
@@ -1878,8 +1877,8 @@ public class Graphs {
 			see = { "graph" })
 	@no_test
 	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, false, null, null, scope, vertices.getGamlType().getContentType(),
-				Types.GEOMETRY);
+		return new GamaSpatialGraph(vertices, false, false, false, null, null, scope,
+				vertices.getGamlType().getContentType(), Types.GEOMETRY);
 	}
 
 	/**
@@ -1897,6 +1896,7 @@ public class Graphs {
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH, IConcept.GEOMETRY, IConcept.POINT })
 	@doc ("Creates a spatial graph out of an arbitrary graph. If the argument is already a spatial graph, returns it unchanged. If it contains geometrical nodes or edges, they are kept unchanged")
+	@no_test
 	public static ISpatialGraph as_spatial_graph(final IScope scope, final IGraph graph) {
 		if (graph instanceof ISpatialGraph) return (ISpatialGraph) graph;
 		ISpatialGraph result = new GamaSpatialGraph(scope, Types.GEOMETRY, Types.GEOMETRY);
@@ -1943,8 +1943,8 @@ public class Graphs {
 			see = {})
 	@no_test
 	public static IGraph gridCellsToGraph(final IScope scope, final IContainer vertices) {
-		final IGraph graph = new GamaSpatialGraph(vertices, false, false, false, new GridNeighborsRelation(), null, scope,
-				vertices.getGamlType().getContentType(), Types.GEOMETRY);
+		final IGraph graph = new GamaSpatialGraph(vertices, false, false, false, new GridNeighborsRelation(), null,
+				scope, vertices.getGamlType().getContentType(), Types.GEOMETRY);
 		for (final Object e : graph.edgeSet()) { graph.setEdgeWeight(e, ((IShape) e).getPerimeter()); }
 		return graph;
 	}
@@ -3423,6 +3423,17 @@ public class Graphs {
 		return new GamaGraph<>(scope, graph, node_species, edges_species);
 
 	}
+
+	/**
+	 * Generate graph barabasi albert.
+	 *
+	 * @param scope the scope
+	 * @param nodes the nodes
+	 * @param initNbNodes the init nb nodes
+	 * @param nbEdgesAdded the nb edges added
+	 * @param directed the directed
+	 * @return the i graph
+	 */
 	@operator (
 			value = "generate_barabasi_albert",
 			concept = { IConcept.ALGORITHM })
@@ -3445,24 +3456,22 @@ public class Graphs {
 	@no_test
 	public static IGraph generateGraphBarabasiAlbert(final IScope scope, final IContainer nodes,
 			final Integer initNbNodes, final Integer nbEdgesAdded, final Boolean directed) {
-		
-		BarabasiAlbertGraphGenerator gen = new BarabasiAlbertGraphGenerator(initNbNodes, nbEdgesAdded, nodes.length(scope),
-				scope.getSimulation().getRandomGenerator().getGenerator());
+
+		BarabasiAlbertGraphGenerator gen = new BarabasiAlbertGraphGenerator(initNbNodes, nbEdgesAdded,
+				nodes.length(scope), scope.getSimulation().getRandomGenerator().getGenerator());
 		AbstractBaseGraph<String, DefaultEdge> graph = directed
 				? new DirectedMultigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true)
 				: new Multigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
 
 		gen.generateGraph(graph);
 		IList l = nodes.listValue(scope, Types.NO_TYPE, false);
-		
+
 		GamaMap nodesM = (GamaMap) GamaMapFactory.create();
 		List vs = new ArrayList<>(graph.vertexSet());
-		for (int i = 0; i < graph.vertexSet().size(); i++) {
-			nodesM.put(vs.get(i), l.get(i));
-		}
+		for (int i = 0; i < graph.vertexSet().size(); i++) { nodesM.put(vs.get(i), l.get(i)); }
 		return new GamaGraph<>(scope, graph, nodesM);
 	}
-	
+
 	/**
 	 * Generate graph barabasi albert.
 	 *
@@ -3495,7 +3504,6 @@ public class Graphs {
 							+ "\"nbEdgesAdded\": number of edges of each new node added during the network growth; "
 							+ "\"nbNodes\": final number of nodes; " + "\"directed\": is the graph directed or not; "
 							+ "\"node_species\": the species of vertices; \"edges_species\": the species of edges",
-							
 
 					examples = { @example (
 							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_watts_strogatz(",
@@ -3765,7 +3773,17 @@ public class Graphs {
 		return generateGraphWattsStrogatz(scope, nbNodes, p, k, directed, null, null);
 
 	}
-	
+
+	/**
+	 * Generate graph watts strogatz.
+	 *
+	 * @param scope the scope
+	 * @param nodes the nodes
+	 * @param p the p
+	 * @param k the k
+	 * @param directed the directed
+	 * @return the i graph
+	 */
 	@operator (
 			value = "generate_watts_strogatz",
 			concept = { IConcept.ALGORITHM })
@@ -3799,10 +3817,8 @@ public class Graphs {
 									isExecutable = false) }) },
 			see = { "generate_barabasi_albert" })
 	@no_test
-	public static IGraph generateGraphWattsStrogatz(final IScope scope, final IContainer nodes,
-			final Double p, 
+	public static IGraph generateGraphWattsStrogatz(final IScope scope, final IContainer nodes, final Double p,
 			final Integer k, final Boolean directed) {
-
 
 		WattsStrogatzGraphGenerator wsg = new WattsStrogatzGraphGenerator(nodes.length(scope), k, p, false,
 				scope.getSimulation().getRandomGenerator().getGenerator());
@@ -3813,9 +3829,7 @@ public class Graphs {
 		IList l = nodes.listValue(scope, Types.NO_TYPE, false);
 		GamaMap nodesM = (GamaMap) GamaMapFactory.create();
 		List vs = new ArrayList<>(graph.vertexSet());
-		for (int i = 0; i < graph.vertexSet().size(); i++) {
-			nodesM.put(vs.get(i), l.get(i));
-		}
+		for (int i = 0; i < graph.vertexSet().size(); i++) { nodesM.put(vs.get(i), l.get(i)); }
 		return new GamaGraph<>(scope, graph, nodesM);
 	}
 

@@ -38,7 +38,7 @@ public class GamaListReducer {
 	 * @param l
 	 *            the l
 	 */
-	public GamaListReducer(final IList l) {
+	public GamaListReducer(final IList<?> l) {
 		contentTypeListReducer = l.getGamlType().getContentType();
 		valuesListReducer.addAll(l);
 	}
@@ -51,7 +51,6 @@ public class GamaListReducer {
 	 * @return the i list
 	 */
 	public IList constructObject(final IScope scope) {
-
 		boolean isReference = false;
 		int i = 0;
 		while (!isReference && i < valuesListReducer.size()) {

@@ -24,6 +24,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
@@ -353,14 +354,12 @@ public class GamaField extends GamaFloatMatrix implements IField {
 			for (double j = env.getMinY(); j < env.getMaxY(); j += cellDimensions.y) {
 				p.setLocation(i, j, 0);
 				IShape s = getCellShapeAt(scope, p);
-				if( (s!=null) && (s.intersects(shape)) ){
-					inEnv.add(s);
-				}
+				if (s != null && s.intersects(shape)) { inEnv.add(s); }
 			}
 		}
 		return inEnv;
-	}	
-	
+	}
+
 	@Override
 	public IList<GamaPoint> getLocationsIntersecting(final IScope scope, final IShape shape) {
 		computeDimensions(scope);
@@ -442,6 +441,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the left field. Use an explicit copy operation to prevent this",
 					value = "Adds a matrix or a field to the left field"))
 	@Override
+	@no_test
 	public GamaField plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		if (other instanceof GamaFloatMatrix nm) {
@@ -460,6 +460,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the left field. Use an explicit copy operation to prevent this",
 					value = "Subtracts a matrix or a field from the left field"))
 	@Override
+	@no_test
 	public GamaField minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		if (other instanceof GamaFloatMatrix nm) {
@@ -478,6 +479,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Scales the values in the field by the float parameter"))
 	@Override
+	@no_test
 	public GamaField times(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] *= val; }
@@ -494,6 +496,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Scales the values in the field by the int parameter"))
 	@Override
+	@no_test
 	public GamaField times(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] *= val; }
@@ -510,6 +513,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Scales the values in the field by 1 on the float parameter"))
 	@Override
+	@no_test
 	public GamaField divides(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] /= val; }
@@ -526,6 +530,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Scales the values in the field by 1 on the int parameter"))
 	@Override
+	@no_test
 	public GamaField divides(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] /= val; }
@@ -542,6 +547,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Adds a float value to all the values in the field"))
 	@Override
+	@no_test
 	public GamaField plus(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] += val; }
@@ -558,6 +564,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Adds an int value to all the values in the field"))
 	@Override
+	@no_test
 	public GamaField plus(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] += val; }
@@ -574,6 +581,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Subtracts a float value from all the values in the field"))
 	@Override
+	@no_test
 	public GamaField minus(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] -= val; }
@@ -590,6 +598,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 					side_effects = "Modifies the field. Use an explicit copy operation to prevent this",
 					value = "Subtracts an int value from all the values in the field"))
 	@Override
+	@no_test
 	public GamaField minus(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] -= val; }

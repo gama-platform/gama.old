@@ -60,10 +60,11 @@ public class GamaGenericAgentType extends GamaAgentType {
 	}
 
 	@Override
+	@doc ("Returns an agent if the argument is already an agent, otherwise returns null")
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		if (obj == null) return getDefault();
-		if (obj instanceof IAgent) return (IAgent) obj;
+		if (obj instanceof IAgent a) return a;
 		return getDefault();
 	}
 

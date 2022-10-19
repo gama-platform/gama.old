@@ -158,6 +158,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	protected void clearDataSet(final IScope scope) {
 		// TODO Auto-generated method stub

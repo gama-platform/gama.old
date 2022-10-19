@@ -15,6 +15,5 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="schema" sourcepath="schema"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

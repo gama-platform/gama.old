@@ -866,6 +866,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 * @param scope
 	 *            the scope
 	 */
+	@SuppressWarnings ("unchecked")
 	public void saveGraph(final IGraph g, final File f, final String type, final IScope scope) {
 		GraphExporter<?, ?> exp = GraphExporters.getGraphWriter(type);
 		if (exp != null) { exp.exportGraph(g, f.getAbsoluteFile()); }
@@ -1114,16 +1115,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 * @return the string
 	 */
 	public static String type(final ITyped var) {
-		switch (var.getGamlType().id()) {
-			case IType.BOOL:
-				return "Boolean";
-			case IType.INT:
-				return "Integer";
-			case IType.FLOAT:
-				return "Double";
-			default:
-				return "String";
-		}
+		return switch (var.getGamlType().id()) {
+			case IType.BOOL -> "Boolean";
+			case IType.INT -> "Integer";
+			case IType.FLOAT -> "Double";
+			default -> "String";
+		};
 	}
 
 	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
@@ -1200,8 +1197,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 * @return the geometry
 	 */
 	private static Geometry fixesPolygonCWS(final Geometry g) {
-		if (g instanceof Polygon) {
-			final Polygon p = (Polygon) g;
+		if (g instanceof Polygon p) {
 			final boolean clockwise = Orientation.isCCW(p.getExteriorRing().getCoordinates());
 			if (p.getNumInteriorRing() == 0) return g;
 			boolean change = false;
@@ -1221,8 +1217,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 			if (change) return geomFact.createPolygon(p.getExteriorRing(), holes);
-		} else if (g instanceof GeometryCollection) {
-			final GeometryCollection gc = (GeometryCollection) g;
+		} else if (g instanceof GeometryCollection gc) {
 			boolean change = false;
 			final GeometryFactory geomFact = new GeometryFactory();
 			final Geometry[] geometries = new Geometry[gc.getNumGeometries()];

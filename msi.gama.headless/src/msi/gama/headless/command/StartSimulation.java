@@ -35,10 +35,19 @@ import msi.gaml.types.IType;
 /**
  * The Class StartSimulation.
  */
+
+/**
+ * The Class StartSimulation.
+ */
+
+/**
+ * The Class StartSimulation.
+ */
 @symbol (
 		name = IKeywords.STARTSIMULATION,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		doc = @doc ("Allows to run an experiment on a different model"),
 		concept = { IConcept.HEADLESS })
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
@@ -56,10 +65,12 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeywords.WITHSEED,
 						type = IType.INT,
+						doc = @doc ("The seed to use for initializing the random number generator of the new experiment"),
 						optional = true),
 				@facet (
 						name = IKeywords.WITHPARAMS,
 						type = IType.MAP,
+						doc = @doc ("The parameters to pass to the new experiment"),
 						optional = true) },
 		omissible = IKeywords.EXPERIMENT)
 public class StartSimulation extends AbstractStatement {
@@ -89,6 +100,15 @@ public class StartSimulation extends AbstractStatement {
 		return new File(scope.getModel().getFilePath()).getParentFile().getAbsolutePath() + "/" + filename;
 	}
 
+	/**
+	 * Private execute in.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		int seed = 0;

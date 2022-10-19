@@ -290,6 +290,7 @@ public class Application implements IApplication {
 		return false;
 	}
 
+	@SuppressWarnings ("unused")
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 
@@ -353,10 +354,10 @@ public class Application implements IApplication {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
 			// GamaListener.newInstance(this.socket, this);
-			GamaListener gl = new GamaListener(this.socket, this, false);
+			new GamaListener(this.socket, this, false);
 		} else if (args.contains(SSOCKET_PARAMETER)) {
 			// GamaListener.newInstance(this.socket, this);
-			GamaListener gl = new GamaListener(this.socket, this, true);
+			new GamaListener(this.socket, this, true);
 		} else {
 			runSimulation(args);
 		}

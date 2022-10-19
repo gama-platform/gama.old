@@ -1,17 +1,18 @@
 /*******************************************************************************************************
  *
- * GamaMaterialType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaMaterialType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.ISymbolKind;
@@ -31,6 +32,9 @@ import msi.gama.util.GamaMaterial;
 		id = IType.MATERIAL,
 		wraps = { GamaMaterial.class },
 		kind = ISymbolKind.Variable.REGULAR,
+		doc = { @doc (
+				value = "",
+				deprecated = "This is not used anymore") },
 		concept = { /* TODO */ })
 public class GamaMaterialType extends GamaType<GamaMaterial> {
 
@@ -40,8 +44,10 @@ public class GamaMaterialType extends GamaType<GamaMaterial> {
 	/**
 	 * Material.
 	 *
-	 * @param damper the damper
-	 * @param reflectivity the reflectivity
+	 * @param damper
+	 *            the damper
+	 * @param reflectivity
+	 *            the reflectivity
 	 * @return the gama material
 	 */
 	@operator (
@@ -52,11 +58,13 @@ public class GamaMaterialType extends GamaType<GamaMaterial> {
 	@doc (
 			value = "Returns a material defined by a given damper and reflectivity",
 			masterDoc = true)
+	@no_test
 	public static GamaMaterial material(final double damper, final double reflectivity) {
 		return new GamaMaterial(damper, reflectivity);
 	}
 
 	@Override
+	@doc ("Not used anymore")
 	public GamaMaterial cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, copy);
@@ -65,9 +73,12 @@ public class GamaMaterialType extends GamaType<GamaMaterial> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param copy
+	 *            the copy
 	 * @return the gama material
 	 */
 	public static GamaMaterial staticCast(final IScope scope, final Object obj, final boolean copy) {
@@ -76,19 +87,13 @@ public class GamaMaterialType extends GamaType<GamaMaterial> {
 	}
 
 	@Override
-	public GamaMaterial getDefault() {
-		return null;
-	}
+	public GamaMaterial getDefault() { return null; }
 
 	@Override
-	public IType<?> getContentType() {
-		return Types.get(FLOAT);
-	}
+	public IType<?> getContentType() { return Types.get(FLOAT); }
 
 	@Override
-	public IType<?> getKeyType() {
-		return Types.get(INT);
-	}
+	public IType<?> getKeyType() { return Types.get(INT); }
 
 	@Override
 	public boolean canCastToConst() {
@@ -96,8 +101,6 @@ public class GamaMaterialType extends GamaType<GamaMaterial> {
 	}
 
 	@Override
-	public boolean isDrawable() {
-		return true;
-	}
+	public boolean isDrawable() { return true; }
 
 }

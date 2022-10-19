@@ -257,7 +257,8 @@ public class GSDataParser {
 			if (maxVal == null && minVal != null) {
 				stringRange.add(0, String.valueOf(minVal));
 			} else if (minVal == null && maxVal != null) { stringRange.add(String.valueOf(maxVal)); }
-			if (Double.valueOf(stringRange.get(0)) - minVal <= maxVal - Double.valueOf(stringRange.get(0))) {
+			if (minVal != null && maxVal != null
+					&& Double.valueOf(stringRange.get(0)) - minVal <= maxVal - Double.valueOf(stringRange.get(0))) {
 				stringRange.add(0, String.valueOf(minVal));
 			} else {
 				stringRange.add(String.valueOf(maxVal));
@@ -319,8 +320,8 @@ public class GSDataParser {
 					"for implicit bounded values, either min or max value in argument must be set to a concret value !");
 			if (maxVal == null && minVal != null) {
 				stringRange.add(0, String.valueOf(minVal));
-			} else if (minVal == null && maxVal != null
-					|| Integer.valueOf(stringRange.get(0)) - minVal > maxVal - Integer.valueOf(stringRange.get(0))) {
+			} else if (minVal == null && maxVal != null || minVal != null && maxVal != null
+					&& Integer.valueOf(stringRange.get(0)) - minVal > maxVal - Integer.valueOf(stringRange.get(0))) {
 				stringRange.add(String.valueOf(maxVal));
 			} else {
 				stringRange.add(0, String.valueOf(minVal));

@@ -69,7 +69,8 @@ public class OutputCommand implements ISocketCommand {
 		gama_exp.controller.directPause();
 		IList<? extends IShape> agents = gama_exp.getSimulation().getSimulation().getPopulationFor(species.toString());
 
-		final IList ll = map.get("attributes") != null ? (IList) map.get("attributes") : GamaListFactory.EMPTY_LIST;
+		@SuppressWarnings ("unchecked") final IList<String> ll =
+				map.get("attributes") != null ? (IList<String>) map.get("attributes") : GamaListFactory.EMPTY_LIST;
 		final String crs = map.get("crs") != null ? map.get("crs").toString() : "";
 		String res = "";
 		GamaServerMessageType status = GamaServerMessageType.CommandExecutedSuccessfully;

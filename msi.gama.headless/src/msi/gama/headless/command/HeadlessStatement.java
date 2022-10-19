@@ -14,7 +14,6 @@ import java.io.File;
 
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.runtime.SimulationRuntime;
-import msi.gama.headless.runtime.SimulationRuntime;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -36,6 +35,7 @@ import msi.gaml.types.IType;
 		name = IKeywords.RUNSIMULARTION,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
 		with_sequence = true,
+		doc = @doc ("Allows to run an experiment on a different model"),
 		concept = { IConcept.HEADLESS })
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
@@ -65,20 +65,18 @@ import msi.gaml.types.IType;
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("Provides a predetermined seed instead of letting GAMA choose one")),
-				// @facet(name = IKeywords.OUT, type = IType.STRING, optional = true),
 				@facet (
 						name = IKeywords.WITHOUTPUTS,
 						type = IType.MAP,
+						doc = @doc ("<i>This needs to be docummented</i>"),
 						optional = true),
 				@facet (
 						name = IKeywords.WITHPARAMS,
 						type = IType.MAP,
+						doc = @doc ("The parameters to pass to the new experiment"),
 						optional = true) },
 		omissible = IKeywords.EXPERIMENT)
 public class HeadlessStatement extends AbstractStatement {
-
-	/** The number of thread. */
-	private final int numberOfThread = 4;
 
 	/** The processor queue. */
 	private final SimulationRuntime processorQueue;

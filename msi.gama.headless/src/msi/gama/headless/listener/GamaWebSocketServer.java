@@ -175,6 +175,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 *            the message
 	 * @return the i map
 	 */
+	@SuppressWarnings ("unchecked")
 	public IMap<String, Object> extractParam(final WebSocket socket, final String message) {
 		IMap<String, Object> map = null;
 		try {

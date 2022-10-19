@@ -45,7 +45,7 @@ import ummisco.gama.ui.views.toolbar.GamaCommand;
 /**
  * The Class EditorToolbar.
  */
-public class EditorToolbar {
+public class EditorToolbar<T> {
 
 	/**
 	 * The Class Item.
@@ -104,7 +104,7 @@ public class EditorToolbar {
 	}
 
 	/** The editor. */
-	final AbstractEditor editor;
+	final AbstractEditor<T> editor;
 
 	/** The active. */
 	boolean active;
@@ -115,6 +115,7 @@ public class EditorToolbar {
 	/** The items. */
 	protected final Item[] items = new Item[9]; /* 10 */
 
+	/** The group. */
 	final Composite group;
 
 	static {
@@ -138,7 +139,7 @@ public class EditorToolbar {
 	 * @param composite
 	 *            the composite
 	 */
-	EditorToolbar(final AbstractEditor editor, final Composite composite) {
+	EditorToolbar(final AbstractEditor<T> editor, final Composite composite) {
 		this.editor = editor;
 		group = new Composite(composite, SWT.NONE);
 		final GridData d = new GridData(SWT.END, SWT.CENTER, false, false);
@@ -268,6 +269,12 @@ public class EditorToolbar {
 		return c.label;
 	}
 
+	/**
+	 * Sets the horizontal alignment.
+	 *
+	 * @param lead
+	 *            the new horizontal alignment
+	 */
 	public void setHorizontalAlignment(final int lead) {
 		if (group.isDisposed()) return;
 		((GridData) group.getLayoutData()).horizontalAlignment = lead;

@@ -32,7 +32,7 @@ import ummisco.gama.network.common.MessageFactory.MessageType;
 import ummisco.gama.network.common.socket.AbstractProtocol;
 import ummisco.gama.network.common.socket.IListener;
 import ummisco.gama.network.common.socket.SocketService;
-import ummisco.gama.network.skills.INetworkSkill; 
+import ummisco.gama.network.skills.INetworkSkill;
 
 /**
  * The Class ServerService.
@@ -44,7 +44,7 @@ public class ServerService extends Thread implements SocketService, IListener {
 
 	/** The my agent. */
 	protected final IAgent myAgent;
-	
+
 	/** The port. */
 	protected final int port;
 
@@ -56,14 +56,17 @@ public class ServerService extends Thread implements SocketService, IListener {
 
 	/** The sender. */
 	protected PrintWriter sender;
- 
+
 	/** The receiver. */
 	BufferedReader receiver = null;
 
+	/** The connector. */
 	protected IConnector connector;
+
 	/**
 	 * Instantiates a new server service.
-	 * @param agent 
+	 *
+	 * @param agent
 	 *
 	 * @param port
 	 *            the port
@@ -72,8 +75,8 @@ public class ServerService extends Thread implements SocketService, IListener {
 		this.port = port;
 		this.isAlive = false;
 		this.isOnline = false;
-		this.connector=conn;
-		this.myAgent=agent;
+		this.connector = conn;
+		this.myAgent = agent;
 	}
 
 	@Override
@@ -101,21 +104,21 @@ public class ServerService extends Thread implements SocketService, IListener {
 		while (this.isAlive) {
 			isOnline = true;
 			try {
-//				DEBUG.OUT("before accept wait...");
-//				currentSocket = this.serverSocket.accept();
-//				String msg = "";
-//				do {
-//					DEBUG.OUT("wait message ...........");
-//					receiver = new BufferedReader(new InputStreamReader(currentSocket.getInputStream()));
-//					msg = receiver.readLine();
-//					if (msg != null) {
-//						msg = msg.replace("@n@", "\n");
-//						msg = msg.replace("@b@@r@", "\b\r");
-//						receivedMessage(this.currentSocket.getInetAddress() + ":" + this.port, msg);
-//					}
-//					DEBUG.OUT("fin traitement message ..." + this.isOnline);
-//				} while (isOnline);
-				
+				// DEBUG.OUT("before accept wait...");
+				// currentSocket = this.serverSocket.accept();
+				// String msg = "";
+				// do {
+				// DEBUG.OUT("wait message ...........");
+				// receiver = new BufferedReader(new InputStreamReader(currentSocket.getInputStream()));
+				// msg = receiver.readLine();
+				// if (msg != null) {
+				// msg = msg.replace("@n@", "\n");
+				// msg = msg.replace("@b@@r@", "\b\r");
+				// receivedMessage(this.currentSocket.getInetAddress() + ":" + this.port, msg);
+				// }
+				// DEBUG.OUT("fin traitement message ..." + this.isOnline);
+				// } while (isOnline);
+
 				// Accept incoming connections.
 				if (myAgent.dead()) {
 					isOnline = false;
@@ -133,10 +136,10 @@ public class ServerService extends Thread implements SocketService, IListener {
 					if (list_net_agents != null && !list_net_agents.contains(clientSocket.toString())) {
 						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
 						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
-//						clientSocket.setSoTimeout(TCPConnector._TCP_SO_TIMEOUT);
-//						clientSocket.setKeepAlive(true);
+						// clientSocket.setSoTimeout(TCPConnector._TCP_SO_TIMEOUT);
+						// clientSocket.setKeepAlive(true);
 
-						final ClientService cliThread = new ClientService(clientSocket,connector);
+						final ClientService cliThread = new ClientService(clientSocket, connector);
 						cliThread.startService();
 
 						myAgent.setAttribute(TCPConnector._TCP_CLIENT + clientSocket.toString(), cliThread);
@@ -151,10 +154,8 @@ public class ServerService extends Thread implements SocketService, IListener {
 				DEBUG.LOG("Socket error" + e1);
 				/// isOnline = false;
 			} catch (final Exception e) {
-				DEBUG.LOG("Exception occured in socket "+e.getMessage());
-				if (serverSocket.isClosed()) {
-					isOnline = false;
-				}  
+				DEBUG.LOG("Exception occured in socket " + e.getMessage());
+				if (serverSocket.isClosed()) { isOnline = false; }
 			}
 		}
 		// DEBUG.OUT("closed ");
@@ -177,7 +178,7 @@ public class ServerService extends Thread implements SocketService, IListener {
 
 		if (sender != null) { sender.close(); }
 		try {
-			if (receiver != null) { receiver.close(); } 
+			if (receiver != null) { receiver.close(); }
 			if (serverSocket != null) { serverSocket.close(); }
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -187,74 +188,74 @@ public class ServerService extends Thread implements SocketService, IListener {
 
 	@Override
 	public void sendMessage(final String msg, final String receiver) throws IOException {
-		IList<String> groups = Cast.asList(myAgent.getScope(), myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
-		final ClientService cliThread =(ClientService) myAgent.getAttribute(TCPConnector._TCP_CLIENT + receiver);
+		// IList<String> groups = Cast.asList(myAgent.getScope(), myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
+		final ClientService cliThread = (ClientService) myAgent.getAttribute(TCPConnector._TCP_CLIENT + receiver);
 
 		String message = msg;
-		if (cliThread==null || cliThread.socket == null || !isOnline()) return;
+		if (cliThread == null || cliThread.socket == null || !isOnline()) return;
 		message = message.replace("\n", "@n@");
 		message = message.replace("\b\r", "@b@@r@");
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(cliThread.socket.getOutputStream())), true);
-		sender.println(message );//+"\n" 
+		sender.println(message);// +"\n"
 		sender.flush();
-		
-//		DataOutputStream outToServer = new DataOutputStream(currentSocket.getOutputStream());  
-//		outToServer.writeUTF(message +"\n");
-//		outToServer.flush();
+
+		// DataOutputStream outToServer = new DataOutputStream(currentSocket.getOutputStream());
+		// outToServer.writeUTF(message +"\n");
+		// outToServer.flush();
 	}
-	
+
 	@Override
 	public void sendMessage(final String msg) throws IOException {
-//		String message = msg;
-//		if (currentSocket == null || !isOnline()) return;
-//		message = message.replace("\n", "@n@");
-//		message = message.replace("\b\r", "@b@@r@");
-//		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(currentSocket.getOutputStream())), true);
-//		sender.println(message );//+"\n" 
-//		sender.flush();
-		
-//		DataOutputStream outToServer = new DataOutputStream(currentSocket.getOutputStream());  
-//		outToServer.writeUTF(message +"\n");
-//		outToServer.flush();
+		// String message = msg;
+		// if (currentSocket == null || !isOnline()) return;
+		// message = message.replace("\n", "@n@");
+		// message = message.replace("\b\r", "@b@@r@");
+		// sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(currentSocket.getOutputStream())), true);
+		// sender.println(message );//+"\n"
+		// sender.flush();
+
+		// DataOutputStream outToServer = new DataOutputStream(currentSocket.getOutputStream());
+		// outToServer.writeUTF(message +"\n");
+		// outToServer.flush();
 	}
 
 	@Override
 	public void receivedMessage(final String sender, final String message) {
 		final MessageType mte = MessageFactory.identifyMessageType(message);
-		if (mte.equals(MessageType.COMMAND_MESSAGE)) {
-			((TCPConnector)connector).extractAndApplyCommand(sender, message);
-		} else { 
-			final String r = ((TCPConnector)connector).isRaw() ? message : MessageFactory.unpackReceiverName(message);
-			((TCPConnector)connector).storeMessage(sender, r, message);
+		if (MessageType.COMMAND_MESSAGE.equals(mte)) {
+			((TCPConnector) connector).extractAndApplyCommand(sender, message);
+		} else {
+			final String r = ((TCPConnector) connector).isRaw() ? message : MessageFactory.unpackReceiverName(message);
+			((TCPConnector) connector).storeMessage(sender, r, message);
 		}
 	}
 
 	@Override
-	public void onOpen(AbstractProtocol conn) {
+	public void onOpen(final AbstractProtocol conn) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onClose(AbstractProtocol conn, int code, String reason, boolean remote) {
+	public void onClose(final AbstractProtocol conn, final int code, final String reason, final boolean remote) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onMessage(AbstractProtocol conn, String message) {
+	public void onMessage(final AbstractProtocol conn, final String message) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onMessage(AbstractProtocol conn, ByteBuffer message) {
+	public void onMessage(final AbstractProtocol conn, final ByteBuffer message) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void onError(AbstractProtocol conn, Exception ex) {
+	public void onError(final AbstractProtocol conn, final Exception ex) {
 		// TODO Auto-generated method stub
 
 	}

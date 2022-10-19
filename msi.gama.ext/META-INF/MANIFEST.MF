@@ -757,7 +757,6 @@ Bundle-ClassPath: .,
  jgrapht 1.5.1/antlr4-runtime-4.8-1.jar,
  svgsalamander1.1.1/svgSalamander-v1.1.1.jar,
  moeaframework-2.13.jar,
- Java-WebSocket-1.5.2.jar,
  commons-math3-3.6.1.jar,
  streamex/streamex-0.8.1.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17

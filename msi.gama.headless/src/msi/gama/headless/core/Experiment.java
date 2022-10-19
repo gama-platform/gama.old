@@ -108,8 +108,8 @@ public class Experiment implements IExperiment {
 		curExperiment.setController(ec.controller);
 
 		if (p != null) {
-			for (var O : p.listValue(null, Types.MAP, false)) {
-				IMap<String, Object> m = (IMap<String, Object>) O;
+			for (var param : p.listValue(null, Types.MAP, false)) {
+				@SuppressWarnings ("unchecked") IMap<String, Object> m = (IMap<String, Object>) param;
 				String type = m.get("type") != null ? m.get("type").toString() : "";
 				Object v = m.get("value");
 				if ("int".equals(type)) { v = Integer.valueOf("" + m.get("value")); }
@@ -117,13 +117,10 @@ public class Experiment implements IExperiment {
 
 				final IParameter.Batch b = curExperiment.getParameterByTitle(m.get("name").toString());
 				if (b != null) {
-					curExperiment.setParameterValueByTitle(	curExperiment.getExperimentScope(), 
-															m.get("name").toString(),
-															v);
+					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
+							v);
 				} else {
-					curExperiment.setParameterValue(	curExperiment.getExperimentScope(), 
-														m.get("name").toString(), 
-														v);
+					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(), v);
 				}
 
 			}

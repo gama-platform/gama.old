@@ -254,24 +254,26 @@ public class LawStatement extends AbstractStatement {
 				if (threshold == null || obedienceValue >= (Double) threshold.value(scope)) {
 					if (newObligation != null) {
 						if (allVal) {
-							for (Predicate p : predBeliefList) {
-								final Predicate newObl = (Predicate) newObligation.value(scope);
-								final MentalState tempNewObligation = new MentalState("Obligation", newObl);
-								tempNewObligation.getPredicate()
-										.setValues((IMap<String, Object>) System.opCopy(scope, p.getValues()));
-								if (strength != null) {
-									tempNewObligation.setStrength(Cast.asFloat(scope, strength.value(scope)));
-								}
-								if (lifetime != null) {
-									tempNewObligation.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
-								}
-								// ne faire ces actions que si on n'a pas d�j� l'obligation
-								if (!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)) {
-									SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
-									SimpleBdiArchitecture.clearIntention(scope);
-									final IAgent agent = scope.getAgent();
-									agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
-									agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+							if (predBeliefList != null) {
+								for (Predicate p : predBeliefList) {
+									final Predicate newObl = (Predicate) newObligation.value(scope);
+									final MentalState tempNewObligation = new MentalState("Obligation", newObl);
+									tempNewObligation.getPredicate()
+											.setValues((IMap<String, Object>) System.opCopy(scope, p.getValues()));
+									if (strength != null) {
+										tempNewObligation.setStrength(Cast.asFloat(scope, strength.value(scope)));
+									}
+									if (lifetime != null) {
+										tempNewObligation.setLifeTime(Cast.asInt(scope, lifetime.value(scope)));
+									}
+									// ne faire ces actions que si on n'a pas d�j� l'obligation
+									if (!SimpleBdiArchitecture.hasObligation(scope, tempNewObligation)) {
+										SimpleBdiArchitecture.addObligation(scope, tempNewObligation);
+										SimpleBdiArchitecture.clearIntention(scope);
+										final IAgent agent = scope.getAgent();
+										agent.setAttribute(SimpleBdiArchitecture.CURRENT_PLAN, null);
+										agent.setAttribute(SimpleBdiArchitecture.CURRENT_NORM, null);
+									}
 								}
 							}
 						} else {

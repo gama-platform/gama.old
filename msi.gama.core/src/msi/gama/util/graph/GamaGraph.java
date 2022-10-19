@@ -329,23 +329,34 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		this(scope, graph, nodeS, edgeS, null, null);
 	}
 
+	/**
+	 * Instantiates a new gama graph.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param graph
+	 *            the graph
+	 * @param nodes
+	 *            the nodes
+	 */
 	public GamaGraph(final IScope scope, final AbstractBaseGraph<?, DefaultEdge> graph,
 			final GamaMap<?, IShape> nodes) {
 		this(scope, nodes == null || nodes.isEmpty() ? Types.GEOMETRY
 				: nodes.getValues().get(0) instanceof IAgent ? Types.AGENT : Types.GEOMETRY, Types.GEOMETRY);
-		for (IShape v : nodes.getValues()) { addVertex(v); }
-
-		for (DefaultEdge e : graph.edgeSet()) {
-			Object s = graph.getEdgeSource(e);
-			Object t = graph.getEdgeTarget(e);
-			IShape sg = nodes.get(s);
-			IShape tg = nodes.get(t);
-			IList<IShape> points = GamaListFactory.create();
-			points.add(sg.getLocation());
-			points.add(tg.getLocation());
-			IShape eg = Creation.line(scope, points);
-			setEdgeWeight(eg, graph.getEdgeWeight(e));
-			addEdge(sg, tg, eg);
+		if (nodes != null) {
+			for (IShape v : nodes.getValues()) { addVertex(v); }
+			for (DefaultEdge e : graph.edgeSet()) {
+				Object s = graph.getEdgeSource(e);
+				Object t = graph.getEdgeTarget(e);
+				IShape sg = nodes.get(s);
+				IShape tg = nodes.get(t);
+				IList<IShape> points = GamaListFactory.create();
+				points.add(sg.getLocation());
+				points.add(tg.getLocation());
+				IShape eg = Creation.line(scope, points);
+				setEdgeWeight(eg, graph.getEdgeWeight(e));
+				addEdge(sg, tg, eg);
+			}
 		}
 	}
 
@@ -676,9 +687,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public Object addEdge(final Object e) {
 		incVersion();
 
-		if (e instanceof GamaPair p) {
-			return addEdge(p.first(), p.last());
-		}
+		if (e instanceof GamaPair p) return addEdge(p.first(), p.last());
 		if (e instanceof GraphObjectToAdd) {
 			addValue(graphScope, (GraphObjectToAdd) e);
 			return ((GraphObjectToAdd) e).getObject();
@@ -756,9 +765,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void removeIndex(final IScope scope, final Object index) {
-		if (index instanceof GamaPair p) {
-			removeAllEdges(p.key, p.value);
-		}
+		if (index instanceof GamaPair p) { removeAllEdges(p.key, p.value); }
 	}
 
 	/**

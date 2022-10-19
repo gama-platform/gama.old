@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MatrixOperators.java, in ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * MatrixOperators.java, in ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.matrix;
 
@@ -19,6 +19,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -45,11 +46,15 @@ public class MatrixOperators {
 	/**
 	 * Matrix multiplication.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = ".",
@@ -78,10 +83,13 @@ public class MatrixOperators {
 	/**
 	 * Gets the determinant.
 	 *
-	 * @param scope the scope
-	 * @param m the m
+	 * @param scope
+	 *            the scope
+	 * @param m
+	 *            the m
 	 * @return the determinant
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "determinant", "det" },
@@ -100,10 +108,13 @@ public class MatrixOperators {
 	/**
 	 * Gets the trace.
 	 *
-	 * @param scope the scope
-	 * @param m the m
+	 * @param scope
+	 *            the scope
+	 * @param m
+	 *            the m
 	 * @return the trace
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "trace",
@@ -122,10 +133,13 @@ public class MatrixOperators {
 	/**
 	 * Gets the eigen.
 	 *
-	 * @param scope the scope
-	 * @param m the m
+	 * @param scope
+	 *            the scope
+	 * @param m
+	 *            the m
 	 * @return the eigen
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "eigenvalues",
@@ -145,10 +159,13 @@ public class MatrixOperators {
 	/**
 	 * Transpose.
 	 *
-	 * @param scope the scope
-	 * @param m the m
+	 * @param scope
+	 *            the scope
+	 * @param m
+	 *            the m
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "transpose",
@@ -169,10 +186,13 @@ public class MatrixOperators {
 	/**
 	 * Inverse.
 	 *
-	 * @param scope the scope
-	 * @param m the m
+	 * @param scope
+	 *            the scope
+	 * @param m
+	 *            the m
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "inverse",
@@ -194,9 +214,12 @@ public class MatrixOperators {
 	/**
 	 * Op append vertically.
 	 *
-	 * @param scope the scope
-	 * @param a the a
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param b
+	 *            the b
 	 * @return the i matrix
 	 */
 	@operator (
@@ -212,14 +235,13 @@ public class MatrixOperators {
 					equals = "matrix([[1,2,1,2],[3,4,3,4]])") })
 	public static IMatrix opAppendVertically(final IScope scope, final IMatrix a, final IMatrix b) {
 		if (a instanceof GamaIntMatrix) {
-			if (b instanceof GamaIntMatrix)
-				return ((GamaIntMatrix) a)._opAppendVertically(scope, (GamaIntMatrix) b);
-			else if (b instanceof GamaFloatMatrix)
+			if (b instanceof GamaIntMatrix) return ((GamaIntMatrix) a)._opAppendVertically(scope, (GamaIntMatrix) b);
+			if (b instanceof GamaFloatMatrix)
 				return GamaFloatMatrix.from(scope, b)._opAppendVertically(scope, (GamaFloatMatrix) b);
 		} else if (a instanceof GamaFloatMatrix) {
 			if (b instanceof GamaIntMatrix)
 				return ((GamaFloatMatrix) a)._opAppendVertically(scope, GamaFloatMatrix.from(scope, b));
-			else if (b instanceof GamaFloatMatrix)
+			if (b instanceof GamaFloatMatrix)
 				return ((GamaFloatMatrix) a)._opAppendVertically(scope, (GamaFloatMatrix) b);
 		}
 		if (a instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix)
@@ -244,16 +266,16 @@ public class MatrixOperators {
 	@doc (
 			value = "A matrix resulting from the concatenation of the rows of the two given matrices.",
 			masterDoc = false)
+	@no_test
 	public static IMatrix opAppendHorizontally(final IScope scope, final IMatrix a, final IMatrix b) {
 		if (a instanceof GamaIntMatrix) {
-			if (b instanceof GamaIntMatrix)
-				return ((GamaIntMatrix) a)._opAppendHorizontally(scope, (GamaIntMatrix) b);
-			else if (b instanceof GamaFloatMatrix)
+			if (b instanceof GamaIntMatrix) return ((GamaIntMatrix) a)._opAppendHorizontally(scope, (GamaIntMatrix) b);
+			if (b instanceof GamaFloatMatrix)
 				return GamaFloatMatrix.from(scope, a)._opAppendHorizontally(scope, (GamaFloatMatrix) b);
 		} else if (a instanceof GamaFloatMatrix) {
 			if (b instanceof GamaIntMatrix)
 				return ((GamaFloatMatrix) a)._opAppendHorizontally(scope, GamaFloatMatrix.from(scope, b));
-			else if (b instanceof GamaFloatMatrix)
+			if (b instanceof GamaFloatMatrix)
 				return GamaFloatMatrix.from(scope, a)._opAppendHorizontally(scope, (GamaFloatMatrix) b);
 		}
 		if (a instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix)
@@ -264,7 +286,8 @@ public class MatrixOperators {
 	/**
 	 * Gets the real matrix.
 	 *
-	 * @param m the m
+	 * @param m
+	 *            the m
 	 * @return the real matrix
 	 */
 	public static RealMatrix getRealMatrix(final IMatrix m) {
@@ -272,9 +295,7 @@ public class MatrixOperators {
 		var cols = m.getCols(null);
 		final RealMatrix realMatrix = new Array2DRowRealMatrix(rows, cols);
 		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				realMatrix.setEntry(i, j, Cast.asFloat(null, m.get(null, j, i)));
-			}
+			for (int j = 0; j < cols; j++) { realMatrix.setEntry(i, j, Cast.asFloat(null, m.get(null, j, i))); }
 		}
 		return realMatrix;
 	}
@@ -282,23 +303,24 @@ public class MatrixOperators {
 	/**
 	 * Update matrix.
 	 *
-	 * @param m the m
-	 * @param realMatrix the real matrix
+	 * @param m
+	 *            the m
+	 * @param realMatrix
+	 *            the real matrix
 	 */
 	public static void updateMatrix(final IMatrix m, final RealMatrix realMatrix) {
 		var rows = m.getRows(null);
 		var cols = m.getCols(null);
 		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++) {
-				m.set(null, j, i, realMatrix.getEntry(i, j));
-			}
+			for (int j = 0; j < cols; j++) { m.set(null, j, i, realMatrix.getEntry(i, j)); }
 		}
 	}
 
 	/**
 	 * To gama int matrix.
 	 *
-	 * @param m the m
+	 * @param m
+	 *            the m
 	 * @return the gama int matrix
 	 */
 	public static GamaIntMatrix toGamaIntMatrix(final RealMatrix m) {
@@ -310,7 +332,8 @@ public class MatrixOperators {
 	/**
 	 * To gama float matrix.
 	 *
-	 * @param m the m
+	 * @param m
+	 *            the m
 	 * @return the gama float matrix
 	 */
 	public static GamaFloatMatrix toGamaFloatMatrix(final RealMatrix m) {
@@ -322,15 +345,15 @@ public class MatrixOperators {
 	/**
 	 * From apache matrixto diag list.
 	 *
-	 * @param scope the scope
-	 * @param rm the rm
+	 * @param scope
+	 *            the scope
+	 * @param rm
+	 *            the rm
 	 * @return the i list
 	 */
 	public static IList<Double> fromApacheMatrixtoDiagList(final IScope scope, final RealMatrix rm) {
 		final IList<Double> vals = GamaListFactory.create(Types.FLOAT);
-		for (int i = 0; i < rm.getColumnDimension(); i++) {
-			vals.add(rm.getEntry(i, i));
-		}
+		for (int i = 0; i < rm.getColumnDimension(); i++) { vals.add(rm.getEntry(i, i)); }
 		return vals;
 	}
 

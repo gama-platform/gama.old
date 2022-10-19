@@ -437,8 +437,7 @@ Export-Package: msi.gama.common,
    msi.gaml.skills,
    msi.gaml.compilation,
    msi.gaml.types"
-Bundle-ClassPath: schema/,
- .
+Bundle-ClassPath: .
 Bundle-Activator: msi.gama.common.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.core

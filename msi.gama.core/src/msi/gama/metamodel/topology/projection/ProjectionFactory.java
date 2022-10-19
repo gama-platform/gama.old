@@ -130,9 +130,9 @@ public class ProjectionFactory {
 			if (!GamaPreferences.External.LIB_TARGETED.getValue()) {
 				targetCRS = computeDefaultCRS(scope, GamaPreferences.External.LIB_TARGET_CRS.getValue(), true);
 			} else if (crs instanceof DefaultProjectedCRS) { // Temporary fix of issue 766... a better
-																			// solution
+																// solution
 				final CartesianCS ccs = ((DefaultProjectedCRS) crs).getCoordinateSystem();
-				final Unit<Length> unitX = (Unit<Length>) ccs.getAxis(0).getUnit();
+				@SuppressWarnings ("unchecked") final Unit<Length> unitX = (Unit<Length>) ccs.getAxis(0).getUnit();
 				if (unitX != null && !unitX.equals(Units.METRE)) { unitConverter = unitX.getConverterTo(Units.METRE); }
 				targetCRS = crs;
 			} else {

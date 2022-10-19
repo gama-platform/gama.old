@@ -254,24 +254,26 @@ public class GraphTopology extends AbstractTopology {
 		}
 
 		if (getPlaces().isDirected()) {
-			final List<IShape> edgesS = new ArrayList<>();
-			final List<IShape> edgesT = new ArrayList<>();
-			edgesS.add(edgeS);
+			final List<IShape> startingEdgesList = new ArrayList<>();
+			final List<IShape> targetEdgesList = new ArrayList<>();
+			startingEdgesList.add(edgeS);
 			if (!sourceNode) {
 				final IShape edgeRev = (IShape) graph.getEdge(graph.getEdgeTarget(edgeS), graph.getEdgeSource(edgeS));
-				if (edgeRev != null && edgeRev.euclidianDistanceTo(source) <= edgeS.euclidianDistanceTo(source)) {
-					edgesS.add(edgeRev);
+				if (edgeRev != null && edgeS != null
+						&& edgeRev.euclidianDistanceTo(source) <= edgeS.euclidianDistanceTo(source)) {
+					startingEdgesList.add(edgeRev);
 				}
 			}
-			edgesT.add(edgeT);
+			targetEdgesList.add(edgeT);
 			if (!targetNode) {
 				final IShape edgeRev = (IShape) graph.getEdge(graph.getEdgeTarget(edgeT), graph.getEdgeSource(edgeT));
 				if (edgeRev != null && target != null && edgeS != null
 						&& edgeRev.euclidianDistanceTo(target) <= edgeS.euclidianDistanceTo(target)) {
-					edgesT.add(edgeRev);
+					targetEdgesList.add(edgeRev);
 				}
 			}
-			return pathBetweenCommonDirected(scope, edgesS, edgesT, sourceN, targetN, sourceNode, targetNode);
+			return pathBetweenCommonDirected(scope, startingEdgesList, targetEdgesList, sourceN, targetN, sourceNode,
+					targetNode);
 		}
 
 		return pathBetweenCommon(scope, graph, edgeS, edgeT, sourceN, targetN, sourceNode, targetNode);

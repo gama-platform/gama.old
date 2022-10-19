@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Stats.java, in ummisco.gaml.extensions.stats, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * Stats.java, in ummisco.gaml.extensions.stats, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.stats;
 
@@ -44,6 +44,7 @@ import msi.gama.kernel.batch.exploration.stochanalysis.Stochanalysis;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -1533,7 +1534,7 @@ public class Stats {
 	 *
 	 *
 	 * @param scope
-	 * @param x 
+	 * @param x
 	 * @return
 	 */
 	@operator (
@@ -2247,17 +2248,17 @@ public class Stats {
 			throw GamaRuntimeException.error("The build operator is not usable for these data", scope);
 		}
 	}
-	
+
 	/**
 	 * Compute adjusted R²
 	 *
 	 * @param scope
-	 * 				the scope
+	 *            the scope
 	 * @param regression
-	 * 				the regression
+	 *            the regression
 	 * @return the adjusted R²
 	 */
-	@operator(
+	@operator (
 			value = "rSquare",
 			type = IType.FLOAT,
 			category = { IOperatorCategory.STATISTICAL },
@@ -2271,36 +2272,40 @@ public class Stats {
 	public static Double rSquare(final IScope scope, final GamaRegression regression) {
 		return regression.getRSquare();
 	}
-	
+
 	/**
 	 * Compute the residuals for the regression
 	 *
 	 * @param scope
-	 * 				the scope
+	 *            the scope
 	 * @param regression
-	 * 				the regression
+	 *            the regression
 	 * @return the list of residuals
 	 */
-	@operator(
+	@operator (
 			value = "residuals",
 			type = IType.LIST,
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC, IConcept.REGRESSION })
-	@doc(
+	@doc (
 			value = "Return the list of residuals for a given regression model",
-			examples = { @example(
+			examples = { @example (
 					value = "residuals(my_regression)",
-					isExecutable = false)})
-	public static IList<Double> residuals(final IScope scope, final GamaRegression regression){
+					isExecutable = false) })
+	@no_test
+	public static IList<Double> residuals(final IScope scope, final GamaRegression regression) {
 		return regression.getResiduals();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param scope
-	 * @param path path of the input csv file
-	 * @param report_path path to save the sobol_report.txt file
-	 * @param nb_parameters number of parameters in the model
+	 * @param path
+	 *            path of the input csv file
+	 * @param report_path
+	 *            path to save the sobol_report.txt file
+	 * @param nb_parameters
+	 *            number of parameters in the model
 	 * @return
 	 */
 	@operator (
@@ -2310,9 +2315,11 @@ public class Stats {
 			category = { IOperatorCategory.STATISTICAL },
 			concept = { IConcept.STATISTIC },
 			expected_content_type = { IType.STRING, IType.INT })
-	@doc(
+	@doc (
 			value = "Return a string containing the Report of the sobol analysis for the corresponding .csv file and save this report in a txt file.")
-	public static String sobolAnalysis(final IScope scope, String path, String report_path, int nb_parameters) {
+	@no_test
+	public static String sobolAnalysis(final IScope scope, final String path, final String report_path,
+			final int nb_parameters) {
 		final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
 		final File f_report = new File(FileUtils.constructAbsoluteFilePath(scope, report_path, false));
 		Sobol sob = new Sobol(f, nb_parameters, scope);
@@ -2320,57 +2327,76 @@ public class Stats {
 		sob.saveResult(f_report);
 		return sob.buildReportString();
 	}
-	
-	
+
 	/**
-	 * Add by Tom
-	 * Return the morris analysis
+	 * Add by Tom Return the morris analysis
+	 *
 	 * @param scope
-	 * @param path : path to csv file
-	 * @param nb_levels : the number of level
-	 * @param id_firstOutput : the id of the first output
+	 * @param path
+	 *            : path to csv file
+	 * @param nb_levels
+	 *            : the number of level
+	 * @param id_firstOutput
+	 *            : the id of the first output
 	 * @return the result of a morris analysis based on data in a CSV file
 	 *
 	 */
 	@operator (
-				value = "morrisAnalysis",
-				type= IType.STRING,
-				can_be_const = true,
-				category = {IOperatorCategory.STATISTICAL},
-				concept = {IConcept.STATISTIC},
-				expected_content_type= {IType.STRING,IType.INT})
-	@doc(
-			value= "Return a string containing the Report of the morris analysis for the corresponding CSV file")
-	public static String morrisAnalysis(final IScope scope, String path, int nb_levels,int id_firstOutput) {
+			value = "morrisAnalysis",
+			type = IType.STRING,
+			can_be_const = true,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC },
+			expected_content_type = { IType.STRING, IType.INT })
+	@doc (
+			value = "Return a string containing the Report of the morris analysis for the corresponding CSV file")
+	@no_test
+	public static String morrisAnalysis(final IScope scope, final String path, final int nb_levels,
+			final int id_firstOutput) {
 
-		String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
-		List<Object> morris_simulation= Morris.readSimulation(new_path, id_firstOutput,scope);
-		List<Map<String, Object>> MySamples= Cast.asList(scope, morris_simulation.get(0));
-		//True or false ? Have to be tested
-		Map<String,List<Double>> output = Cast.asMap(scope, morris_simulation,false);
-		List<String> OutputsNames= output.keySet().stream().toList();
-		boolean temp=true;
-		String s="";
-		
-		for(String name: OutputsNames) {
-			List<Map<String,Double>> morris_coefficient = Morris.MorrisAggregation_CSV(nb_levels,output.get(name),MySamples);
-			Map<String,Double> mu=morris_coefficient.get(0);
-			Map<String,Double> mu_star=morris_coefficient.get(1);
-			Map<String,Double> sigma=morris_coefficient.get(2);
-			s= s+ Morris.buildResultTxt(name, temp, mu,mu_star,sigma);
+		String new_path = scope.getExperiment().getWorkingPath() + "/" + path;
+		List<Object> morris_simulation = Morris.readSimulation(new_path, id_firstOutput, scope);
+		List<Map<String, Object>> MySamples = Cast.asList(scope, morris_simulation.get(0));
+		// True or false ? Have to be tested
+		Map<String, List<Double>> output = Cast.asMap(scope, morris_simulation, false);
+		List<String> OutputsNames = output.keySet().stream().toList();
+		boolean temp = true;
+		StringBuilder s = new StringBuilder();
+
+		for (String name : OutputsNames) {
+			List<Map<String, Double>> morris_coefficient =
+					Morris.MorrisAggregation_CSV(nb_levels, output.get(name), MySamples);
+			Map<String, Double> mu = morris_coefficient.get(0);
+			Map<String, Double> mu_star = morris_coefficient.get(1);
+			Map<String, Double> sigma = morris_coefficient.get(2);
+			s.append(Morris.buildResultTxt(name, temp, mu, mu_star, sigma));
 		}
 
-		return s;
-		
-		
+		return s.toString();
+
 	}
-	
-	public static String Stochanalyse(int replicat,int threshold,String path,int id_firstOutput,IScope scope) {
-		String new_path= scope.getExperiment().getWorkingPath() + "/" +path;
-		Stochanalysis sto= new Stochanalysis();
-		String s =sto.StochasticityAnalysis_From_CSV (replicat,threshold, new_path,id_firstOutput, scope);
-		return s;
-		
+
+	/**
+	 * Stochanalyse.
+	 *
+	 * @param replicat
+	 *            the replicat
+	 * @param threshold
+	 *            the threshold
+	 * @param path
+	 *            the path
+	 * @param id_firstOutput
+	 *            the id first output
+	 * @param scope
+	 *            the scope
+	 * @return the string
+	 */
+	public static String Stochanalyse(final int replicat, final int threshold, final String path,
+			final int id_firstOutput, final IScope scope) {
+		String new_path = scope.getExperiment().getWorkingPath() + "/" + path;
+		// Stochanalysis sto = new Stochanalysis();
+		return Stochanalysis.StochasticityAnalysis_From_CSV(replicat, threshold, new_path, id_firstOutput, scope);
+
 	}
 
 	/**

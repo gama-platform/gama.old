@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ManualExperimentJob.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ManualExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.job;
 
@@ -47,30 +47,38 @@ public class ManualExperimentJob extends ExperimentJob {
 
 	/** The server. */
 	public GamaWebSocketServer server;
-	
+
 	/** The socket. */
 	public WebSocket socket;
-	
+
 	/** The params. */
 	public GamaJsonList params;
-	
+
 	/** The end cond. */
 	public String endCond = "";
-	
+
 	/** The controller. */
 	public ServerExperimentController controller;
 
 	/**
 	 * Instantiates a new manual experiment job.
 	 *
-	 * @param sourcePath the source path
-	 * @param exp the exp
-	 * @param gamaWebSocketServer the gama web socket server
-	 * @param sk the sk
-	 * @param p the p
-	 * @param console the console
-	 * @param status the status
-	 * @param dialog the dialog
+	 * @param sourcePath
+	 *            the source path
+	 * @param exp
+	 *            the exp
+	 * @param gamaWebSocketServer
+	 *            the gama web socket server
+	 * @param sk
+	 *            the sk
+	 * @param p
+	 *            the p
+	 * @param console
+	 *            the console
+	 * @param status
+	 *            the status
+	 * @param dialog
+	 *            the dialog
 	 */
 	public ManualExperimentJob(final String sourcePath, final String exp, final GamaWebSocketServer gamaWebSocketServer,
 			final WebSocket sk, final GamaJsonList p, final boolean console, final boolean status,
@@ -102,11 +110,16 @@ public class ManualExperimentJob extends ExperimentJob {
 	/**
 	 * Load and build with json.
 	 *
-	 * @throws InstantiationException the instantiation exception
-	 * @throws IllegalAccessException the illegal access exception
-	 * @throws ClassNotFoundException the class not found exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
+	 * @throws InstantiationException
+	 *             the instantiation exception
+	 * @throws IllegalAccessException
+	 *             the illegal access exception
+	 * @throws ClassNotFoundException
+	 *             the class not found exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
 	public void loadAndBuildWithJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
 			IOException, GamaHeadlessException {
@@ -121,14 +134,16 @@ public class ManualExperimentJob extends ExperimentJob {
 	/**
 	 * Inits the param.
 	 *
-	 * @param p the p
+	 * @param p
+	 *            the p
 	 */
+	@SuppressWarnings ("unchecked")
 	public void initParam(final GamaJsonList p) {
 		params = p;
 		if (params != null) {
 			final ExperimentPlan curExperiment = (ExperimentPlan) simulator.getExperimentPlan();
-			for (var O : params.listValue(null, Types.MAP, false)) {
-				IMap<String, Object> m = (IMap<String, Object>) O;
+			for (var param : params.listValue(null, Types.MAP, false)) {
+				IMap<String, Object> m = (IMap<String, Object>) param;
 				String type = m.get("type").toString();
 				Object v = m.get("value");
 				if ("int".equals(type)) { v = Integer.valueOf("" + m.get("value")); }
@@ -152,7 +167,8 @@ public class ManualExperimentJob extends ExperimentJob {
 	/**
 	 * Inits the end contion.
 	 *
-	 * @param cond the cond
+	 * @param cond
+	 *            the cond
 	 */
 	// Initialize the enCondition
 	public void initEndContion(final String cond) {

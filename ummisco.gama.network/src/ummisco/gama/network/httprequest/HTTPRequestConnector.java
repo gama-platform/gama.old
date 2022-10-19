@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * HTTPRequestConnector.java, in ummisco.gama.network, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.network.httprequest;
 
 import java.io.IOException;
@@ -5,8 +15,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.Builder;
+import java.net.http.HttpResponse;
 
 import msi.gama.extensions.messaging.GamaMailbox;
 import msi.gama.extensions.messaging.GamaMessage;
@@ -21,6 +31,9 @@ import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.socket.SocketService;
 import ummisco.gama.network.httprequest.utils.Utils;
 
+/**
+ * The Class HTTPRequestConnector.
+ */
 public class HTTPRequestConnector extends Connector {
 
 	/** The timeout. */
@@ -28,127 +41,111 @@ public class HTTPRequestConnector extends Connector {
 
 	/** The default host. */
 	public static String DEFAULT_HOST = "localhost";
-	
+
 	/** The default port. */
 	public static String DEFAULT_PORT = "80";
-	
-	
+
 	/** The ss thread. */
-	// MultiThreadedArduinoReceiver ssThread;	
-	
+	// MultiThreadedArduinoReceiver ssThread;
+
 	String host;
+
+	/** The port. */
 	String port;
-	
+
+	/** The request. */
 	//
 	private HttpRequest request;
-	
+
 	/**
 	 * Instantiates a new HTTPRequest connector.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
-	public HTTPRequestConnector(final IScope scope) {
-	}	
-	
+	public HTTPRequestConnector(final IScope scope) {}
+
 	@Override
-	protected void connectToServer(IAgent agent) throws GamaNetworkException {
-		String host_tmp = this.getConfigurationParameter(SERVER_URL);	
+	protected void connectToServer(final IAgent agent) throws GamaNetworkException {
+		String host_tmp = this.getConfigurationParameter(SERVER_URL);
 		String port_tmp = this.getConfigurationParameter(SERVER_PORT);
 
 		host = host_tmp == null ? DEFAULT_HOST : host_tmp;
-		port = port_tmp == null ? DEFAULT_PORT : port_tmp;		
+		port = port_tmp == null ? DEFAULT_PORT : port_tmp;
 	}
 
 	@Override
-	protected boolean isAlive(IAgent agent) throws GamaNetworkException {
+	protected boolean isAlive(final IAgent agent) throws GamaNetworkException {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	protected void subscribeToGroup(IAgent agt, String boxName) throws GamaNetworkException {
+	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	protected void unsubscribeGroup(IAgent agt, String boxName) throws GamaNetworkException {
+	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	protected void releaseConnection(IScope scope) throws GamaNetworkException {
+	protected void releaseConnection(final IScope scope) throws GamaNetworkException {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
-		Object cont = content.getContents(sender.getScope());	
+		Object cont = content.getContents(sender.getScope());
 		try {
-			if(cont instanceof GamaList)  {
-				URI uri = null;
-				try {
-					uri = Utils.buildURI(host,""+port,receiver);
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-				Builder requestBuilder = HttpRequest.newBuilder().uri(uri);
-				
-				// Management of the content. A list [method,body,headers] or [method] are expected 
-				GamaList listContent = (GamaList) cont;	
-				String method = (String) listContent.get(0);
-				String jsonBody = (listContent.size() > 1) ? Jsoner.serialize(listContent.get(1)) : "";
-				IMap<String,String> header = (listContent.size() > 2) ? (IMap<String,String>) listContent.get(2) : null;
-	
-	 			if(header != null) {
-					for(String key : header.keySet()) {
-						requestBuilder.header(key, header.get(key));
-					}
-				}
-				
-				switch(method) {
-					case "GET":
-						request = requestBuilder.GET().build();
-						break;
-					case "POST":
-						request = requestBuilder.POST(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
-						break;
-					case "PUT":
-						request = requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
-						break;
-					case "DELETE":
-						request = requestBuilder.DELETE().build();
-						break;
-					default:
-						throw GamaNetworkException.cannotSendMessage(null, "Bad HTTP action");
-				}
-				
-				this.sendMessage(sender, receiver, jsonBody);
-	
-			} else {
-				throw GamaNetworkException.cannotSendMessage(null, "The content expected to be sent is well formatted, a list [method,body,headers] is expected.");
+			if (!(cont instanceof GamaList listContent)) throw GamaNetworkException.cannotSendMessage(null,
+					"The content expected to be sent is well formatted, a list [method,body,headers] is expected.");
+			URI uri = null;
+			try {
+				uri = Utils.buildURI(host, "" + port, receiver);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
 			}
+			Builder requestBuilder = HttpRequest.newBuilder().uri(uri);
+			// Management of the content. A list [method,body,headers] or [method] are expected
+			String method = (String) listContent.get(0);
+			String jsonBody = listContent.size() > 1 ? Jsoner.serialize(listContent.get(1)) : "";
+			@SuppressWarnings ("unchecked") IMap<String, String> header =
+					listContent.size() > 2 ? (IMap<String, String>) listContent.get(2) : null;
+
+			if (header != null) { for (String key : header.keySet()) { requestBuilder.header(key, header.get(key)); } }
+
+			request = switch (method) {
+				case "GET" -> requestBuilder.GET().build();
+				case "POST" -> requestBuilder.POST(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
+				case "PUT" -> requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
+				case "DELETE" -> requestBuilder.DELETE().build();
+				default -> throw GamaNetworkException.cannotSendMessage(null, "Bad HTTP action");
+			};
+
+			this.sendMessage(sender, receiver, jsonBody);
 		} catch (Exception e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 	}
-	
 
 	@Override
-	protected void sendMessage(IAgent sender, String receiver, String content) throws GamaNetworkException {
-        
+	protected void sendMessage(final IAgent sender, final String receiver, final String content)
+			throws GamaNetworkException {
+
 		try {
-            
-            HttpResponse<String> response = HttpClient.newHttpClient()
-                        .send(request, HttpResponse.BodyHandlers.ofString());
-            
-            // Manage the response of the request
-            IMap<String,Object> responseMap = Utils.formatResponse(response);
-            
-			@SuppressWarnings ("unchecked") 
-			GamaMailbox<GamaMessage> mailbox =
+
+			HttpResponse<String> response =
+					HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+			// Manage the response of the request
+			IMap<String, Object> responseMap = Utils.formatResponse(response);
+
+			@SuppressWarnings ("unchecked") GamaMailbox<GamaMessage> mailbox =
 					(GamaMailbox<GamaMessage>) sender.getAttribute(MessagingSkill.MAILBOX_ATTRIBUTE);
 			if (mailbox == null) {
 				mailbox = new GamaMailbox<>();
@@ -158,15 +155,13 @@ public class HTTPRequestConnector extends Connector {
 			GamaMessage msg = new GamaMessage(sender.getScope(), "HTTP", sender.getName(), responseMap);
 
 			mailbox.add(msg);
-               
+
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public SocketService getSocketService() {
-		return null;
-	}
+	public SocketService getSocketService() { return null; }
 
 }

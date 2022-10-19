@@ -169,8 +169,10 @@ public class System {
 	/**
 	 * Play sound.
 	 *
-	 * @param scope the scope
-	 * @param source the source
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
 	 * @return the boolean
 	 */
 	@operator (
@@ -211,6 +213,12 @@ public class System {
 	@operator (
 			value = "is_reachable",
 			concept = IConcept.TEST)
+	@doc (
+			value = "Returns whether or not the given web address is reachable or not before a time_out time in milliseconds",
+			examples = { @example (
+					value = "write sample(is_reachable(\"www.google.com\", 200));",
+					isExecutable = false) })
+	@no_test
 	public static Boolean is_reachable(final IScope scope, final String address, final int timeout) {
 		return is_reachable(scope, address, 80, timeout);
 	}
