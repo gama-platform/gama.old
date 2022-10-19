@@ -750,7 +750,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public Object resume(final IScope scope) {
 //		if (GAMA.isPaused()) { GAMA.resumeFrontmostExperiment(); }
 		final IExperimentController controller= scope.getExperiment().getSpecies().getController();
-		if(controller!=null && !controller.isPaused()) {
+		if(controller!=null && controller.isPaused()) {
 			controller.userStart();
 		}
 		return null;
