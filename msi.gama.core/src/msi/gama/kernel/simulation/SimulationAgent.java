@@ -25,6 +25,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ActionExecuter;
 import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.metamodel.agent.GamlAgent;
@@ -723,7 +724,15 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			doc = @doc ("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be resumed with the manual intervention of the user or the 'resume' action."))
 
 	public Object pause(final IScope scope) {
-		if (!GAMA.isPaused()) { GAMA.pauseFrontmostExperiment(); }
+//		if (!GAMA.isPaused()) { GAMA.pauseFrontmostExperiment(); }
+		final IExperimentController controller= scope.getExperiment().getSpecies().getController();
+		if(controller!=null && !controller.isPaused()) {
+			if (GAMA.getGui().isInDisplayThread()) {
+				controller.userPause();
+			} else {
+				controller.directPause();
+			}
+		}
 		return null;
 	}
 
@@ -739,7 +748,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			doc = @doc ("Allows to resume the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can then be paused with the manual intervention of the user or the 'pause' action."))
 
 	public Object resume(final IScope scope) {
-		if (GAMA.isPaused()) { GAMA.resumeFrontmostExperiment(); }
+//		if (GAMA.isPaused()) { GAMA.resumeFrontmostExperiment(); }
+		final IExperimentController controller= scope.getExperiment().getSpecies().getController();
+		if(controller!=null && !controller.isPaused()) {
+			controller.userStart();
+		}
 		return null;
 	}
 
