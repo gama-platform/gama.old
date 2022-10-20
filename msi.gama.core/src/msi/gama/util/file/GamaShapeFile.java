@@ -64,7 +64,7 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 @file (
 		name = "shape",
-		extensions = { "shp" },
+		extensions = { "shp", "SHP" },
 		buffer_type = IType.LIST,
 		buffer_content = IType.GEOMETRY,
 		buffer_index = IType.INT,
