@@ -272,9 +272,7 @@ public class SimulationClock {
 		try {
 			if (duration >= delay) return;
 			Thread.sleep((long) delay - duration);
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		}
+		} catch (final InterruptedException e) {}
 	}
 
 	/**

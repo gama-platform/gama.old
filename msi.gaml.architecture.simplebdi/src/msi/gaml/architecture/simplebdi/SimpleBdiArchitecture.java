@@ -138,7 +138,7 @@ import msi.gaml.types.Types;
 		@variable (
 				name = SimpleBdiArchitecture.EMOTION_BASE,
 				type = IType.LIST,
-				of = EmotionType.id,
+				of = EmotionType.EMOTIONTYPE_ID,
 				init = "[]",
 				doc = @doc ("the emotion base of the agent")),
 		@variable (
@@ -174,7 +174,7 @@ import msi.gaml.types.Types;
 		@variable (
 				name = SimpleBdiArchitecture.PLAN_BASE,
 				type = IType.LIST,
-				of = BDIPlanType.id,
+				of = BDIPlanType.TYPE_ID,
 				init = "[]",
 				doc = @doc ("the plan base of the agent")),
 		@variable (
@@ -2123,7 +2123,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_belief_emotion",
 			args = { @arg (
 					name = "emotion",
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to add as a belief")),
 					@arg (
@@ -2142,7 +2142,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					examples = { @example ("") }))
 	public Boolean primAddBeliefEmotion(final IScope scope) throws GamaRuntimeException {
 		final Emotion stateDirect =
-				(Emotion) (scope.hasArg("emotion") ? scope.getArg("emotion", EmotionType.id) : null);
+				(Emotion) (scope.hasArg("emotion") ? scope.getArg("emotion", EmotionType.EMOTIONTYPE_ID) : null);
 		final Double stre = (Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
 		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
 		MentalState tempState;
@@ -2346,7 +2346,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "get_belief_emotion",
 			args = { @arg (
 					name = "emotion",
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = false,
 					doc = @doc ("emotion about which the belief to get is")) },
 			doc = @doc (
@@ -2947,7 +2947,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_desire_emotion",
 			args = { @arg (
 					name = "emotion",
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to add as a desire")),
 					@arg (
@@ -2971,7 +2971,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					examples = { @example ("") }))
 	public Boolean primAddDesireEmotion(final IScope scope) throws GamaRuntimeException {
 		final Emotion stateDirect =
-				(Emotion) (scope.hasArg("emotion") ? scope.getArg("emotion", EmotionType.id) : null);
+				(Emotion) (scope.hasArg("emotion") ? scope.getArg("emotion", EmotionType.EMOTIONTYPE_ID) : null);
 		final Double stre = (Double) (scope.hasArg("strength") ? scope.getArg("strength", IType.FLOAT) : null);
 		final int life = (int) (scope.hasArg("lifetime") ? scope.getArg("lifetime", IType.INT) : -1);
 		if (stateDirect != null) {
@@ -3510,7 +3510,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_intention_emotion",
 			args = { @arg (
 					name = "emotion",
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to add as an intention")),
 					@arg (
@@ -5402,7 +5402,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_emotion",
 			args = { @arg (
 					name = EMOTION,
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to add to the base")) },
 			doc = @doc (
@@ -5410,7 +5410,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "true if it is added in the base.",
 					examples = { @example ("") }))
 	public Boolean primAddEmotion(final IScope scope) throws GamaRuntimeException {
-		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.EMOTIONTYPE_ID) : null);
 		return addEmotion(scope, emotionDirect);
 	}
 
@@ -5453,7 +5453,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "has_emotion",
 			args = { @arg (
 					name = EMOTION,
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to check")) },
 			doc = @doc (
@@ -5461,7 +5461,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
 	public Boolean primTestEmotion(final IScope scope) throws GamaRuntimeException {
-		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.EMOTIONTYPE_ID) : null);
 		if (emotionDirect != null) { return hasEmotion(scope, emotionDirect); }
 		return false;
 	}
@@ -5515,7 +5515,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "get_emotion",
 			args = { @arg (
 					name = EMOTION,
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = false,
 					doc = @doc ("emotion to get")) },
 			doc = @doc (
@@ -5523,7 +5523,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "the emotion if it is in the base.",
 					examples = { @example ("get_belief(new_predicate(\"has_water\", true))") }))
 	public Emotion getEmotion(final IScope scope) throws GamaRuntimeException {
-		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.EMOTIONTYPE_ID) : null);
 		if (emotionDirect != null) {
 			for (final Emotion emo : getEmotionBase(scope, EMOTION_BASE)) {
 				if (emotionDirect.equals(emo)) { return emo; }
@@ -5596,7 +5596,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "remove_emotion",
 			args = { @arg (
 					name = EMOTION,
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to remove")) },
 			doc = @doc (
@@ -5604,7 +5604,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					returns = "true if it is in the base.",
 					examples = { @example ("") }))
 	public Boolean primRemoveEmotion(final IScope scope) throws GamaRuntimeException {
-		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.id) : null);
+		final Emotion emotionDirect = (Emotion) (scope.hasArg(EMOTION) ? scope.getArg(EMOTION, EmotionType.EMOTIONTYPE_ID) : null);
 		if (emotionDirect != null) { return removeEmotion(scope, emotionDirect); }
 		return false;
 	}
@@ -5789,7 +5789,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_uncertainty_emotion",
 			args = { @arg (
 					name = "emotion",
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to add as an uncertainty")),
 					@arg (
@@ -6210,7 +6210,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			name = "add_ideal_emotion",
 			args = { @arg (
 					name = "emotion",
-					type = EmotionType.id,
+					type = EmotionType.EMOTIONTYPE_ID,
 					optional = true,
 					doc = @doc ("emotion to add as an ideal")),
 					@arg (

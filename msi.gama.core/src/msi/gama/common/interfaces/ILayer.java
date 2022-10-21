@@ -11,7 +11,6 @@ package msi.gama.common.interfaces;
 
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -27,6 +26,8 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 
 /**
  * Represents the concrete layers that are displayed on IDisplaySurface's and managed by its ILayerManager
@@ -38,8 +39,16 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface ILayer extends INamed, Comparable<ILayer> {
 
+	/**
+	 * The Interface IGridLayer.
+	 */
 	interface IGridLayer extends ILayer {
 
+		/**
+		 * Gets the data.
+		 *
+		 * @return the data
+		 */
 		@Override
 		GridLayerData getData();
 	}
@@ -166,8 +175,8 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	 *            the current scope (usually the surface's one)
 	 * @return a collection of agents or an empty collection if no agents are drawn on this layer
 	 */
-	default Collection<IAgent> getAgentsForMenu(final IScope scope) {
-		return Collections.EMPTY_LIST; // by default
+	default IList<? extends IAgent> getAgentsForMenu(final IScope scope) {
+		return GamaListFactory.EMPTY_LIST; // by default
 	}
 
 	/**

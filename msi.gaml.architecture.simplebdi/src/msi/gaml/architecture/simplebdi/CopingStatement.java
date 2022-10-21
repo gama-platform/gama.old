@@ -55,7 +55,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("The mandatory desire")),
 				@facet (
 						name = CopingStatement.EMOTION,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The mandatory emotion")),
 				@facet (
@@ -88,7 +88,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = CopingStatement.EMOTIONS,
 						type = IType.LIST,
-						of = EmotionType.id,
+						of = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The mandatory emotions")),
 				@facet (
@@ -121,7 +121,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("The belief that will be added")),
 				@facet (
 						name = CopingStatement.NEW_EMOTION,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The emotion that will be added")),
 				@facet (
@@ -149,7 +149,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = CopingStatement.NEW_EMOTIONS,
 						type = IType.LIST,
-						of = EmotionType.id,
+						of = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The emotion that will be added")),
 				@facet (
@@ -179,7 +179,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = CopingStatement.REMOVE_EMOTIONS,
 						type = IType.LIST,
-						of = EmotionType.id,
+						of = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The emotion that will be removed")),
 				@facet (
@@ -222,7 +222,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("The intention that will be removed")),
 				@facet (
 						name = CopingStatement.REMOVE_EMOTION,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The emotion that will be removed")),
 				@facet (

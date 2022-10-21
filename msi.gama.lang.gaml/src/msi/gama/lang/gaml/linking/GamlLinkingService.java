@@ -1,19 +1,19 @@
 /*******************************************************************************************************
  *
- * GamlLinkingService.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlLinkingService.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.linking;
 
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -36,23 +36,24 @@ import msi.gama.runtime.IExecutionContext;
 
 /**
  * The class GamlLinkingService.
- * 
- * 
+ *
+ *
  * Provide the linking semantics for GAML. The references to 'imported' table definitions are stubbed out by this class
  * until the Indexer is implemented.
- * 
+ *
  * @author John Bito, adapted by Alexis Drogoul
  * @since 10 mai 2012
+ * @modified october 2022 to enable different classes of stub refs
  */
 public class GamlLinkingService extends DefaultLinkingService {
 
 	/**
 	 * Keep stubs so that new ones aren't created for each linking pass.
 	 */
-	private static final Map<String, List<EObject>> stubbedRefs = new Hashtable<>();
-	
+	private static final Map<EClass, Map<String, List<EObject>>> STUB_NAMES = new ConcurrentHashMap<>();
+
 	/** The stubs resource. */
-	private static Resource stubsResource;
+	private static Resource STUB_RESOURCE;
 
 	/** The resource set. */
 	@Inject private XtextResourceSet resourceSet;
@@ -61,19 +62,25 @@ public class GamlLinkingService extends DefaultLinkingService {
 	 * Instantiates a new gaml linking service.
 	 */
 	public GamlLinkingService() {
-		super();
 
 	}
 
 	/**
 	 * Adds the symbol.
 	 *
-	 * @param name the name
-	 * @param clazz the clazz
+	 * @param name
+	 *            the name
+	 * @param clazz
+	 *            the clazz
 	 * @return the list
 	 */
 	public List<EObject> addSymbol(final String name, final EClass clazz) {
-		List<EObject> list = stubbedRefs.get(name);
+		Map<String, List<EObject>> refLists = STUB_NAMES.get(clazz);
+		if (refLists == null) {
+			refLists = new ConcurrentHashMap<>();
+			STUB_NAMES.put(clazz, refLists);
+		}
+		List<EObject> list = refLists.get(name);
 		if (list == null) {
 			// DEBUG.LOG("Adding stub reference to " + name + " as a "
 			// + clazz.getName());
@@ -81,7 +88,7 @@ public class GamlLinkingService extends DefaultLinkingService {
 			final EObject stub = create(name, clazz);
 			getResource().getContents().add(stub);
 			list = Collections.singletonList(stub);
-			stubbedRefs.put(name, list);
+			refLists.put(name, list);
 		}
 		return list;
 	}
@@ -89,8 +96,10 @@ public class GamlLinkingService extends DefaultLinkingService {
 	/**
 	 * Creates the.
 	 *
-	 * @param name the name
-	 * @param clazz the clazz
+	 * @param name
+	 *            the name
+	 * @param clazz
+	 *            the clazz
 	 * @return the e object
 	 */
 	public EObject create(final String name, final EClass clazz) {
@@ -105,10 +114,10 @@ public class GamlLinkingService extends DefaultLinkingService {
 	 * @return the resource
 	 */
 	private Resource getResource() {
-		if (stubsResource == null) {
-			stubsResource = resourceSet.createResource(URI.createURI("gaml:/newSymbols.xmi", false));
+		if (STUB_RESOURCE == null) {
+			STUB_RESOURCE = resourceSet.createResource(URI.createURI("gaml:/newSymbols.xmi", false));
 		}
-		return stubsResource;
+		return STUB_RESOURCE;
 	}
 
 	@Override
@@ -131,28 +140,17 @@ public class GamlLinkingService extends DefaultLinkingService {
 			throws IllegalNodeException {
 		final List<EObject> result = super.getLinkedObjects(context, ref, node);
 		// If the default implementation resolved the link, return it
-		if (null != result && !result.isEmpty()) { return result; }
+		if (null != result && !result.isEmpty()) return result;
 		final String name = getCrossRefNodeAsString(node);
-		if (GamlPackage.eINSTANCE.getTypeDefinition()
-				.isSuperTypeOf(ref.getEReferenceType())) { return addSymbol(name, ref.getEReferenceType()); }
-		if (GamlPackage.eINSTANCE.getVarDefinition()
-				.isSuperTypeOf(ref.getEReferenceType())) { return addSymbol(name, ref.getEReferenceType());
-		// if (name.startsWith("pref_")) {
-		// return addSymbol(name, ref.getEReferenceType());
-		// } else {
-		// if (context.eContainer() instanceof Parameter) {
-		// final Parameter p = (Parameter) context.eContainer();
-		// if (p.getLeft() == context) { return addSymbol(name, ref.getEReferenceType()); }
-		// }
-		// }
-		// if (stubbedRefs.containsKey(name)) { return stubbedRefs.get(name); }
-		}
+		EClass eclass = ref.getEReferenceType();
+		if (GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(eclass)
+				|| GamlPackage.eINSTANCE.getActionDefinition().isSuperTypeOf(eclass)
+				|| GamlPackage.eINSTANCE.getVarDefinition().isSuperTypeOf(eclass))
+			return addSymbol(name, ref.getEReferenceType());
 		final GamlResource resource = (GamlResource) context.eResource();
 		final IExecutionContext additionalContext = resource.getCache().getOrCreate(resource).get("linking");
-		if (additionalContext != null) {
-			if (additionalContext
-					.hasLocalVar(name)) { return Collections.singletonList(create(name, ref.getEReferenceType())); }
-		}
+		if (additionalContext != null && additionalContext.hasLocalVar(name))
+			return Collections.singletonList(create(name, ref.getEReferenceType()));
 		return Collections.EMPTY_LIST;
 	}
 }

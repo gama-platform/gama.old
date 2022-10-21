@@ -44,7 +44,7 @@ import msi.gaml.types.IType;
 		@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 		@facet(name = SimpleBdiPlanStatement.INTENTION, type = PredicateType.id, optional = true),
-		@facet(name = SimpleBdiPlanStatement.EMOTION, type = EmotionType.id, optional = true),
+		@facet(name = SimpleBdiPlanStatement.EMOTION, type = EmotionType.EMOTIONTYPE_ID, optional = true),
 		@facet(name = SimpleBdiPlanStatement.THRESHOLD, type = IType.FLOAT, optional = true),
 		@facet(name = SimpleBdiArchitecture.INSTANTANEAOUS, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 @validator(SimpleBdiPlanValidator.class)

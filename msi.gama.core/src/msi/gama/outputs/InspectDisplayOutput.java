@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * InspectDisplayOutput.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * InspectDisplayOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -330,9 +330,9 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	public IAgent[] getLastValue() {
 		if (IKeyword.TABLE.equals(type) && (rootAgent == null || rootAgent.dead())) return EMPTY;
 		// DEBUG.LOG("Last value :" + lastValue);
-		if (lastValue instanceof IAgent) return new IAgent[] { (IAgent) lastValue };
-		if (lastValue instanceof ISpecies && rootAgent != null) {
-			final IPopulation pop = rootAgent.getMicroPopulation((ISpecies) lastValue);
+		if (lastValue instanceof IAgent a) return new IAgent[] { a };
+		if (lastValue instanceof ISpecies s && rootAgent != null) {
+			final IPopulation pop = rootAgent.getMicroPopulation(s);
 			return pop.toArray();
 		}
 		if (lastValue instanceof IContainer)

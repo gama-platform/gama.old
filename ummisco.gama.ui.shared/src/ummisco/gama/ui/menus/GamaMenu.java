@@ -157,10 +157,18 @@ public abstract class GamaMenu {
 	 *            the listener
 	 * @return the menu item
 	 */
-	public final MenuItem action(final Menu m, final String s, final SelectionListener listener) {
+	public static final MenuItem action(final Menu m, final String s, final SelectionListener listener) {
 		return action(m, s, listener, null);
 	}
 
+	/**
+	 * Action.
+	 *
+	 * @param m the m
+	 * @param s the s
+	 * @param listener the listener
+	 * @return the menu item
+	 */
 	public static final MenuItem action(final Menu m, final String s, final Selector listener) {
 		return action(m, s, listener, null);
 	}
@@ -186,6 +194,15 @@ public abstract class GamaMenu {
 		return action;
 	}
 
+	/**
+	 * Action.
+	 *
+	 * @param m the m
+	 * @param s the s
+	 * @param listener the listener
+	 * @param image the image
+	 * @return the menu item
+	 */
 	public static MenuItem action(final Menu m, final String s, final Selector listener, final Image image) {
 		final MenuItem action = createItem(m, SWT.PUSH);
 		action.setText(s);
@@ -237,6 +254,16 @@ public abstract class GamaMenu {
 		return action;
 	}
 
+	/**
+	 * Check.
+	 *
+	 * @param m the m
+	 * @param s the s
+	 * @param select the select
+	 * @param listener the listener
+	 * @param image the image
+	 * @return the menu item
+	 */
 	public static final MenuItem check(final Menu m, final String s, final boolean select, final Selector listener,
 			final Image image) {
 		final MenuItem action = createItem(m, SWT.CHECK);
@@ -291,6 +318,15 @@ public abstract class GamaMenu {
 		return m;
 	}
 
+	/**
+	 * Sub.
+	 *
+	 * @param parent the parent
+	 * @param s the s
+	 * @param t the t
+	 * @param image the image
+	 * @return the menu
+	 */
 	public static Menu sub(final Menu parent, final String s, final String t, final Image image) {
 		final MenuItem item = createItem(parent, SWT.CASCADE);
 		item.setText(s);

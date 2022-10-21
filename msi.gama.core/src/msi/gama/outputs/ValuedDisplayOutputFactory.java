@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ValuedDisplayOutputFactory.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ValuedDisplayOutputFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs;
 
@@ -42,6 +42,7 @@ public class ValuedDisplayOutputFactory {
 			browse(pop.getHost(), pop.getSpecies());
 		} else {
 			for (final IAgent agent : agents) {
+				if (agent == null) { continue; }
 				final IPopulation<?> agentPop = agent.getPopulation();
 				root = agentPop.getHost();
 				if (root != null) { break; }
@@ -69,6 +70,7 @@ public class ValuedDisplayOutputFactory {
 		if (agents instanceof IPopulation) return ((IPopulation<? extends IAgent>) agents).getHost();
 		IMacroAgent result = null;
 		for (final IAgent a : agents) {
+			if (a == null) { continue; }
 			if (result == null) {
 				result = a.getHost();
 			} else if (a.getHost() != result) return null;

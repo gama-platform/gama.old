@@ -106,15 +106,15 @@ public class GamlFileInfo extends GamaFileMetaData {
 		super(propertyString);
 		final String[] values = split(propertyString);
 		int size = values.length;
-		final List<String> imports = asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
-		this.imports = imports == null || imports.isEmpty() || imports.contains(null) ? null : imports;
-		final List<String> uses = asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
-		this.uses = uses == null || uses.isEmpty() || uses.contains(null) ? null : uses;
+		final List<String> declaredImports = asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
+		this.imports = declaredImports == null || declaredImports.isEmpty() || declaredImports.contains(null) ? null : declaredImports;
+		final List<String> declaredUses = asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
+		this.uses = declaredUses == null || declaredUses.isEmpty() || declaredUses.contains(null) ? null : declaredUses;
 		final List<String> exps = asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
 		this.experiments = exps == null || exps.isEmpty() || exps.contains(null) ? null : exps;
-		final List<String> tags =
+		final List<String> declaredTags =
 				size < 5 ? null : asList(splitByWholeSeparatorPreserveAllTokens(values[4], SUB_DELIMITER));
-		this.tags = tags == null || tags.isEmpty() || tags.contains(null) ? null : tags;
+		this.tags = declaredTags == null || declaredTags.isEmpty() || declaredTags.contains(null) ? null : declaredTags;
 		invalid = size > 5 ? "TRUE".equals(values[5]) : "TRUE".equals(values[4]);
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaMetaModel.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaMetaModel.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
@@ -34,6 +34,7 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGenericAgentType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -49,16 +50,19 @@ public class GamaMetaModel {
 
 	/** The experiment creators. */
 	private final Map<String, IExperimentAgentCreator> experimentCreators = new HashMap<>();
-	
+
 	/** The temp species. */
 	private final Map<String, SpeciesProto> tempSpecies = new HashMap();
-	
+
 	/** The species skills. */
 	private final Multimap<String, String> speciesSkills = HashMultimap.create();
-	
+
 	/** The abstract model species. */
 	private GamlModelSpecies abstractModelSpecies;
-	
+
+	/** The abstract agent species. */
+	private ISpecies abstractAgentSpecies;
+
 	/** The is initialized. */
 	public volatile boolean isInitialized;
 
@@ -69,26 +73,30 @@ public class GamaMetaModel {
 
 		/** The name. */
 		final String name;
-		
+
 		/** The plugin. */
 		final String plugin;
-		
+
 		/** The clazz. */
 		final Class clazz;
-		
+
 		/** The helper. */
 		final IAgentConstructor helper;
-		
+
 		/** The skills. */
 		final String[] skills;
 
 		/**
 		 * Instantiates a new species proto.
 		 *
-		 * @param name the name
-		 * @param clazz the clazz
-		 * @param helper the helper
-		 * @param skills the skills
+		 * @param name
+		 *            the name
+		 * @param clazz
+		 *            the clazz
+		 * @param helper
+		 *            the helper
+		 * @param skills
+		 *            the skills
 		 */
 		public SpeciesProto(final String name, final Class clazz, final IAgentConstructor helper,
 				final String[] skills) {
@@ -108,9 +116,12 @@ public class GamaMetaModel {
 	/**
 	 * Creates the experiment agent.
 	 *
-	 * @param name the name
-	 * @param pop the pop
-	 * @param index the index
+	 * @param name
+	 *            the name
+	 * @param pop
+	 *            the pop
+	 * @param index
+	 *            the index
 	 * @return the experiment agent
 	 */
 	public ExperimentAgent createExperimentAgent(final String name, final IPopulation pop, final int index) {
@@ -120,8 +131,10 @@ public class GamaMetaModel {
 	/**
 	 * Adds the experiment agent creator.
 	 *
-	 * @param key the key
-	 * @param creator the creator
+	 * @param key
+	 *            the key
+	 * @param creator
+	 *            the creator
 	 */
 	public void addExperimentAgentCreator(final String key, final IExperimentAgentCreator creator) {
 		experimentCreators.put(key, creator);
@@ -130,10 +143,14 @@ public class GamaMetaModel {
 	/**
 	 * Adds the species.
 	 *
-	 * @param name the name
-	 * @param clazz the clazz
-	 * @param helper the helper
-	 * @param skills the skills
+	 * @param name
+	 *            the name
+	 * @param clazz
+	 *            the clazz
+	 * @param helper
+	 *            the helper
+	 * @param skills
+	 *            the skills
 	 */
 	public void addSpecies(final String name, final Class clazz, final IAgentConstructor helper,
 			final String[] skills) {
@@ -186,11 +203,16 @@ public class GamaMetaModel {
 	/**
 	 * Builds the species.
 	 *
-	 * @param proto the proto
-	 * @param macro the macro
-	 * @param parent the parent
-	 * @param isModel the is model
-	 * @param isExperiment the is experiment
+	 * @param proto
+	 *            the proto
+	 * @param macro
+	 *            the macro
+	 * @param parent
+	 *            the parent
+	 * @param isModel
+	 *            the is model
+	 * @param isExperiment
+	 *            the is experiment
 	 * @return the species description
 	 */
 	public SpeciesDescription buildSpecies(final SpeciesProto proto, final SpeciesDescription macro,
@@ -203,23 +225,20 @@ public class GamaMetaModel {
 		final Set<String> allSkills = new HashSet(Arrays.asList(skills));
 		allSkills.addAll(speciesSkills.get(name));
 		SpeciesDescription desc;
-		if (proto.name.equals(IKeyword.PLATFORM)) {
+		if (IKeyword.PLATFORM.equals(proto.name)) {
 			desc = DescriptionFactory.createPlatformSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
 					plugin);
-		} else {
-			if (!isModel) {
-				if (isExperiment) {
-					desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
-							allSkills, plugin);
-				} else {
-					desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper,
-							allSkills, plugin);
-				}
+		} else if (!isModel) {
+			if (isExperiment) {
+				desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
+						allSkills, plugin);
 			} else {
-				// if it is a ModelDescription, then the macro represents the parent (except for root)
-				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent, helper, allSkills,
+				desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
 						plugin);
 			}
+		} else {
+			// if it is a ModelDescription, then the macro represents the parent (except for root)
+			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent, helper, allSkills, plugin);
 		}
 		desc.copyJavaAdditions();
 		desc.inheritFromParent();
@@ -229,8 +248,10 @@ public class GamaMetaModel {
 	/**
 	 * Adds the species skill.
 	 *
-	 * @param spec the spec
-	 * @param name the name
+	 * @param spec
+	 *            the spec
+	 * @param name
+	 *            the name
 	 */
 	public void addSpeciesSkill(final String spec, final String name) {
 		speciesSkills.put(spec, name);
@@ -258,6 +279,20 @@ public class GamaMetaModel {
 		final IType platform = Types.get(IKeyword.PLATFORM);
 		if (platform != null && platform != Types.NO_TYPE) return (PlatformSpeciesDescription) platform.getSpecies();
 		return null;
+	}
+
+	/**
+	 * Gets the abstract agent species.
+	 *
+	 * @return the abstract agent species
+	 */
+	public ISpecies getAbstractAgentSpecies() {
+		if (abstractAgentSpecies == null) {
+			final IType model = Types.get(IKeyword.AGENT);
+			abstractAgentSpecies = (ISpecies) model.getSpecies().compile();
+		}
+		return abstractAgentSpecies;
+
 	}
 
 }

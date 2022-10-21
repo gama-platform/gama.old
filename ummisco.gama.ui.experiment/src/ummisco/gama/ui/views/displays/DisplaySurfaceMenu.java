@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -53,6 +52,8 @@ import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.outputs.layers.charts.ChartLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
+import msi.gama.util.IList;
+import msi.gaml.types.Types;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.menus.MenuAction;
@@ -336,8 +337,8 @@ public class DisplaySurfaceMenu {
 				boolean visible = layer.getData().isVisible();
 				final ILayerStatement definition = layer.getDefinition();
 
-				Collection<IAgent> pop = layer.getAgentsForMenu(surface.getScope());
-				pop = new ArrayList<>(pop);
+				IList<? extends IAgent> pop = layer.getAgentsForMenu(surface.getScope());
+				pop = pop.listValue(null, Types.AGENT, false);
 				// if (pop.isEmpty()) { continue; }
 
 				if (filteredList != null) { pop.retainAll(filteredList); }

@@ -26,11 +26,11 @@ import msi.gaml.types.IType;
 /**
  * The Class GamaRangeType.
  */
-@type(name = "gen_range", id = GamaRangeType.id, wraps = { GamaRange.class }, concept = { IConcept.TYPE }, doc = @doc("The range type defined in the genstar plugin"))
+@type(name = "gen_range", id = GamaRangeType.RANGETYPE_ID, wraps = { GamaRange.class }, concept = { IConcept.TYPE }, doc = @doc("The range type defined in the genstar plugin"))
 public class GamaRangeType extends GamaType<GamaRange>{
 	
 	/** The Constant id. */
-	public static final int id = IType.AVAILABLE_TYPES + 3524246;
+	public static final int RANGETYPE_ID = IType.AVAILABLE_TYPES + 3524246;
 
 	@Override
 	public boolean canCastToConst() {

@@ -338,8 +338,7 @@ public class GamlResource extends LazyLinkingResource {
 	 *
 	 * @throws IOException
 	 */
-	public void loadSynthetic(final InputStream is, final IExecutionContext additionalLinkingContext)
-			throws IOException {
+	public void loadSynthetic(final InputStream is, final IExecutionContext additionalLinkingContext) {
 		final OnChangeEvictingCache r = getCache();
 		r.getOrCreate(this).set("linking", additionalLinkingContext);
 		getCache().execWithoutCacheClear(this, new IUnitOfWork.Void<GamlResource>() {

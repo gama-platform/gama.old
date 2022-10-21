@@ -25,7 +25,7 @@ import ummisco.gama.serializer.gamaType.converter;
 @SuppressWarnings ("unchecked")
 @type (
 		name = "BDIPlan",
-		id = BDIPlanType.id,
+		id = BDIPlanType.BDIPLANTYPE_ID,
 		wraps = { BDIPlan.class },
 		concept = { IConcept.TYPE, IConcept.BDI })
 @doc ("a type representing a plan for the BDI engine")
@@ -33,7 +33,7 @@ import ummisco.gama.serializer.gamaType.converter;
 public class BDIPlanType extends GamaType<BDIPlan> {
 
 	/** The Constant id. */
-	public final static int id = IType.AVAILABLE_TYPES + 546655;
+	public final static int BDIPLANTYPE_ID = IType.AVAILABLE_TYPES + 546655;
 
 	@Override
 	public boolean canCastToConst() {

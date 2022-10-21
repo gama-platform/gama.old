@@ -212,7 +212,7 @@ public class BDIPlan implements IValue {
 	 */
 	@Override
 	public IType<?> getGamlType() {
-		return Types.get(BDIPlanType.id);
+		return Types.get(BDIPlanType.TYPE_ID);
 	}
 
 }

@@ -1665,10 +1665,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public Boolean isHorizontalOrientation() { return isHorizontalOrientation; }
 
 	@Override
-	public List<IAgent> getAgents() {
-		if (matrix == null) return Collections.EMPTY_LIST;
+	public IList<IAgent> getAgents() {
+		if (matrix == null) return GamaListFactory.EMPTY_LIST;
 		// Later, do return Arrays.asList(matrix);
-		final List<IAgent> agents = GamaListFactory.create(Types.AGENT);
+		final IList<IAgent> agents = GamaListFactory.create(Types.AGENT);
 		for (final IShape element : matrix) { if (element != null) { agents.add(element.getAgent()); } }
 		return agents;
 	}

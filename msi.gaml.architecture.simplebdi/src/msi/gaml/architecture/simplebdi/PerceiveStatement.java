@@ -83,7 +83,7 @@ import msi.gaml.types.Types;
 						doc = @doc ("a float or a geometry. If it is a float, it's a radius of a detection area. If it is a geometry, it is the area of detection of others species.")),
 				@facet (
 						name = PerceiveStatement.EMOTION,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The emotion needed to do the perception")),
 				@facet (

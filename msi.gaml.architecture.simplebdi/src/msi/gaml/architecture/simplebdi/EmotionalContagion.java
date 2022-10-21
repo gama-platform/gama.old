@@ -47,12 +47,12 @@ import msi.gaml.types.IType;
 				doc = @doc ("the identifier of the emotional contagion")),
 				@facet (
 						name = EmotionalContagion.EMOTIONDETECTED,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = false,
 						doc = @doc ("the emotion that will start the contagion")),
 				@facet (
 						name = EmotionalContagion.EMOTIONCREATED,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("the emotion that will be created with the contagion")),
 				@facet (

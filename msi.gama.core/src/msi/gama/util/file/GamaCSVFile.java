@@ -430,9 +430,9 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		if (getBuffer() == null) {
-			final CSVInfo info = getInfo(scope, null);
-			if (info != null)
-				return info.header ? GamaListFactory.wrap(Types.STRING, info.headers) : GamaListFactory.EMPTY_LIST;
+			final CSVInfo cvsInfo = getInfo(scope, null);
+			if (cvsInfo != null)
+				return cvsInfo.header ? GamaListFactory.wrap(Types.STRING, cvsInfo.headers) : GamaListFactory.EMPTY_LIST;
 		}
 		fillBuffer(scope);
 		return headers == null ? GamaListFactory.EMPTY_LIST : headers;

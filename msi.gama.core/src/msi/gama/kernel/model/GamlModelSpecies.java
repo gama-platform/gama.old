@@ -197,6 +197,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		if (speciesName == null) return null;
 		if (speciesName.equals(getName())) return this;
 		if (IKeyword.MODEL.equals(speciesName)) return GamaMetaModel.INSTANCE.getAbstractModelSpecies();
+		if (IKeyword.AGENT.equals(speciesName)) return GamaMetaModel.INSTANCE.getAbstractAgentSpecies();
 		/*
 		 * the original is: return getAllSpecies().get(speciesName);
 		 */
@@ -235,7 +236,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 				}
 			}
 		}
-		return getAllSpecies().get(speciesName);
+		return getSpecies(speciesName);
 	}
 
 	@Override

@@ -86,7 +86,7 @@ public class GenStarGamaUtils {
 				return GSEnumDataType.Integer;
 			case IType.BOOL:
 				return GSEnumDataType.Boolean;
-			case GamaRangeType.id:
+			case GamaRangeType.RANGETYPE_ID:
 				return GSEnumDataType.Range;
 			default:
 				break;

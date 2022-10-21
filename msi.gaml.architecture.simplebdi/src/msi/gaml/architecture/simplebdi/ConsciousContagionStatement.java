@@ -37,8 +37,8 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the unconscious contagion")),
-		@facet(name = ConsciousContagionStatement.EMOTIONDETECTED, type = EmotionType.id, optional = false, doc = @doc("the emotion that will start the contagion")),
-		@facet(name = ConsciousContagionStatement.EMOTIONCREATED, type = EmotionType.id, optional = false, doc = @doc("the emotion that will be created with the contagion")),
+		@facet(name = ConsciousContagionStatement.EMOTIONDETECTED, type = EmotionType.EMOTIONTYPE_ID, optional = false, doc = @doc("the emotion that will start the contagion")),
+		@facet(name = ConsciousContagionStatement.EMOTIONCREATED, type = EmotionType.EMOTIONTYPE_ID, optional = false, doc = @doc("the emotion that will be created with the contagion")),
 		@facet(name = ConsciousContagionStatement.CHARISMA, type = IType.FLOAT, optional = true, doc = @doc("The charisma value of the perceived agent (between 0 and 1)")),
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to get the emotion only with a certain condition")),
 		@facet(name = ConsciousContagionStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("The threshold value to make the contagion")),

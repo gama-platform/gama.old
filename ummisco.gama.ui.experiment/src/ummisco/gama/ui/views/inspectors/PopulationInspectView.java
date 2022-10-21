@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -70,6 +72,8 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.SwitchButton;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
@@ -98,7 +102,6 @@ public class PopulationInspectView extends GamaViewPart
 
 	/** The Constant ID_ATTRIBUTE. */
 	public static final String ID_ATTRIBUTE = "#";
-	// public static final String CUSTOM = "custom";
 
 	/** The Constant SAVE. */
 	public final static int SAVE = 0;
@@ -167,7 +170,12 @@ public class PopulationInspectView extends GamaViewPart
 		@Override
 		public void updateElement(final int index) {
 			if (index > elements.length - 1) return;
-			viewer.replace(elements[index], index);
+			IAgent a = elements[index];
+			if (a != null) {
+				viewer.replace(a, index);
+			} else {
+				viewer.refresh();
+			}
 		}
 
 	}
@@ -199,7 +207,8 @@ public class PopulationInspectView extends GamaViewPart
 				if (v == null || v.getTable() == null || v.getTable().isDisposed() || getOutput() == null)
 					return Status.CANCEL_STATUS;
 				if (!locked) {
-					final IAgent[] agents = getOutput().getLastValue();
+					final IAgent[] agents = StreamEx.of(getOutput().getLastValue()).filter(a -> a != null && !a.dead())
+							.toArray(IAgent.class);
 					if (Arrays.equals(elements, agents)) {
 						v.refresh();
 					} else {
@@ -350,6 +359,7 @@ public class PopulationInspectView extends GamaViewPart
 		final List<String> names = new ArrayList(
 				getOutput().getAttributes() == null ? species.getVarNames() : getOutput().getAttributes().keySet());
 		Collections.sort(names);
+		DEBUG.OUT("" + names);
 		for (final String name : names) {
 			final SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
 			// b.setBackground(GamaColors.system(SWT.COLOR_WHITE));
@@ -489,6 +499,18 @@ public class PopulationInspectView extends GamaViewPart
 				getScope().getGui().setHighlightedAgent((IAgent) o);
 				GAMA.getExperiment().refreshAllOutputs();
 
+			}
+		});
+		viewer.setComparer(new IElementComparer() {
+
+			@Override
+			public int hashCode(final Object element) {
+				return Objects.hashCode(element);
+			}
+
+			@Override
+			public boolean equals(final Object a, final Object b) {
+				return Objects.equals(a, b);
 			}
 		});
 
@@ -651,25 +673,27 @@ public class PopulationInspectView extends GamaViewPart
 		}
 
 		@Override
-		public int compare(final Viewer viewer, final Object e1, final Object e2) {
+		public int compare(final Viewer v, final Object e1, final Object e2) {
 			return compare(e1, e2);
 		}
 
 		@Override
 		public int compare(final Object e1, final Object e2) {
+			if (e1 == null) return -1;
+			if (e2 == null) return 1;
 			final IAgent p1 = (IAgent) e1;
 			final IAgent p2 = (IAgent) e2;
-			final IScope scope = getScope();
+			final IScope myScope = getScope();
 			int rc = 0;
 			if (attribute == null || ID_ATTRIBUTE.equals(attribute)) {
 				rc = p1.compareTo(p2);
 			} else {
 				try {
-					final Object v1 = scope.getAgentVarValue(p1, attribute);
+					final Object v1 = myScope.getAgentVarValue(p1, attribute);
 					if (v1 == null) {
 						rc = -1;
 					} else {
-						final Object v2 = scope.getAgentVarValue(p2, attribute);
+						final Object v2 = myScope.getAgentVarValue(p2, attribute);
 						if (v2 == null) {
 							rc = 1;
 						} else {

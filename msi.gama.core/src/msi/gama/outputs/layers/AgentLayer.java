@@ -10,7 +10,6 @@
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -23,12 +22,14 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 23 août 2008
@@ -98,10 +99,10 @@ public class AgentLayer extends AbstractLayer {
 	}
 
 	@Override
-	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
+	public IList<? extends IAgent> getAgentsForMenu(final IScope scope) {
 		// if (shapes.isEmpty()) { return getAgentsToDisplay(); }
 		// Avoid recalculating the agents
-		return shapes.keySet();
+		return GamaListFactory.wrap(Types.AGENT, shapes.keySet());
 	}
 
 	// public Collection<IAgent> getAgentsToDisplay() {

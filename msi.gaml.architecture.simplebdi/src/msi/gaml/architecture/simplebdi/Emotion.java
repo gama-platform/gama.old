@@ -470,7 +470,7 @@ public class Emotion implements IValue {
 
 	@Override
 	public IType<?> getGamlType() {
-		return Types.get(EmotionType.id);
+		return Types.get(EmotionType.EMOTIONTYPE_ID);
 	}
 
 	@Override

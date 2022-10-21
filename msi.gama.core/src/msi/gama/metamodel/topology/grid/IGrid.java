@@ -1,16 +1,14 @@
 /*******************************************************************************************************
  *
- * IGrid.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IGrid.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +41,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	 *
 	 * @return the agents
 	 */
-	List<IAgent> getAgents();
+	IList<IAgent> getAgents();
 
 	/**
 	 * Checks if is hexagon.
@@ -62,14 +60,16 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Sets the cell species.
 	 *
-	 * @param pop the new cell species
+	 * @param pop
+	 *            the new cell species
 	 */
 	void setCellSpecies(final IPopulation<? extends IAgent> pop);
 
 	/**
 	 * Gets the agent at.
 	 *
-	 * @param c the c
+	 * @param c
+	 *            the c
 	 * @return the agent at
 	 */
 	IAgent getAgentAt(final GamaPoint c);
@@ -77,13 +77,19 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Compute shortest path between.
 	 *
-	 * @param scope the scope
-	 * @param source the source
-	 * @param target the target
-	 * @param topo the topo
-	 * @param on the on
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param on
+	 *            the on
 	 * @return the gama spatial path
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final IList<IAgent> on) throws GamaRuntimeException;
@@ -91,13 +97,19 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Compute shortest path between weighted.
 	 *
-	 * @param scope the scope
-	 * @param source the source
-	 * @param target the target
-	 * @param topo the topo
-	 * @param on the on
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param topo
+	 *            the topo
+	 * @param on
+	 *            the on
 	 * @return the gama spatial path
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	GamaSpatialPath computeShortestPathBetweenWeighted(final IScope scope, final IShape source, final IShape target,
 			final ITopology topo, final Map<IAgent, Object> on) throws GamaRuntimeException;
@@ -110,10 +122,14 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Gets the neighbors of.
 	 *
-	 * @param scope the scope
-	 * @param shape the shape
-	 * @param distance the distance
-	 * @param filter the filter
+	 * @param scope
+	 *            the scope
+	 * @param shape
+	 *            the shape
+	 * @param distance
+	 *            the distance
+	 * @param filter
+	 *            the filter
 	 * @return the neighbors of
 	 */
 	Set<IAgent> getNeighborsOf(final IScope scope, final IShape shape, final Double distance, IAgentFilter filter);
@@ -121,8 +137,10 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Manhattan distance between.
 	 *
-	 * @param g1 the g 1
-	 * @param g2 the g 2
+	 * @param g1
+	 *            the g 1
+	 * @param g2
+	 *            the g 2
 	 * @return the int
 	 */
 	int manhattanDistanceBetween(final IShape g1, final IShape g2);
@@ -130,7 +148,8 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Gets the place at.
 	 *
-	 * @param c the c
+	 * @param c
+	 *            the c
 	 * @return the place at
 	 */
 	IShape getPlaceAt(final GamaPoint c);
@@ -184,7 +203,8 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Gets the x.
 	 *
-	 * @param geometry the geometry
+	 * @param geometry
+	 *            the geometry
 	 * @return the x
 	 */
 	int getX(IShape geometry);
@@ -192,7 +212,8 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	/**
 	 * Gets the y.
 	 *
-	 * @param geometry the geometry
+	 * @param geometry
+	 *            the geometry
 	 * @return the y
 	 */
 	int getY(IShape geometry);

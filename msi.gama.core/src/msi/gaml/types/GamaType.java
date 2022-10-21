@@ -508,6 +508,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 			final IType<?> currentType = types[i];
 			if (currentType == Types.NO_TYPE) {
 				if (result.getDefault() != null) { result = Types.NO_TYPE; }
+			} else if (result == Types.NO_TYPE) {
+				result = currentType.findCommonSupertypeWith(result);
 			} else {
 				result = result.findCommonSupertypeWith(currentType);
 			}

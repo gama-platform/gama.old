@@ -40,7 +40,7 @@ import msi.gaml.types.Types;
 				doc = @doc ("the mental state about which is the mental state")),
 		@variable (
 				name = "emotion",
-				type = EmotionType.id,
+				type = EmotionType.EMOTIONTYPE_ID,
 				doc = @doc ("the emotion about which is the mental state")),
 		@variable (
 				name = "owner",

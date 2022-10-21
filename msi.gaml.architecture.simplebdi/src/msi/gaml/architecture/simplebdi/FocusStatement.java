@@ -93,7 +93,7 @@ import msi.gaml.types.Types;
 						doc = @doc ("The predicate to focus on the desires of the other agent")),
 				@facet (
 						name = FocusStatement.EMOTION,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = true,
 						doc = @doc ("The emotion to focus on the emotions of the other agent")),
 				@facet (

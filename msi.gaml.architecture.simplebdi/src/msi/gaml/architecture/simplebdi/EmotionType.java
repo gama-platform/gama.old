@@ -22,12 +22,12 @@ import msi.gaml.types.IType;
  * The Class EmotionType.
  */
 @SuppressWarnings("unchecked")
-@type(name = "emotion", id = EmotionType.id, wraps = { Emotion.class }, concept = { IConcept.TYPE, IConcept.BDI })
+@type(name = "emotion", id = EmotionType.EMOTIONTYPE_ID, wraps = { Emotion.class }, concept = { IConcept.TYPE, IConcept.BDI })
 @doc("represents the type emotion")
 public class EmotionType extends GamaType<Emotion> {
 
 	/** The Constant id. */
-	public final static int id = IType.AVAILABLE_TYPES + 546656;
+	public final static int EMOTIONTYPE_ID = IType.AVAILABLE_TYPES + 546656;
 
 	@Override
 	public boolean canCastToConst() {

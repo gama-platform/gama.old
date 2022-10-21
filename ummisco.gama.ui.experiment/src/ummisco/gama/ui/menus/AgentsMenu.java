@@ -366,7 +366,7 @@ public class AgentsMenu extends ContributionItem {
 			GamaMenu.separate(menu);
 			actionAgentMenuItem(menu, agent, killer, GamaIcons.create(IGamaIcons.MENU_KILL).image(), "Kill");
 		}
-		if ((agent instanceof IMacroAgent macro) && macro.hasMembers()) {
+		if (agent instanceof IMacroAgent macro && macro.hasMembers()) {
 			GamaMenu.separate(menu);
 			if (!topLevel) { GamaMenu.separate(menu, "Micro-populations"); }
 			for (final IPopulation<? extends IAgent> pop : macro.getMicroPopulations()) {
@@ -402,7 +402,9 @@ public class AgentsMenu extends ContributionItem {
 			GamaMenu.separate(menu, "Agents");
 		}
 		if (size < subMenuSize) {
-			for (final IAgent agent : agents) { cascadingAgentMenuItem(menu, agent, agent.getName(), actions); }
+			for (final IAgent agent : agents) {
+				if (agent != null) { cascadingAgentMenuItem(menu, agent, agent.getName(), actions); }
+			}
 		} else {
 			int nb = size / subMenuSize + 1;
 			// See Issue #2967

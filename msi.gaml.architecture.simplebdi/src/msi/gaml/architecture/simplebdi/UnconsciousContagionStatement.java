@@ -47,7 +47,7 @@ import msi.gaml.types.IType;
 				doc = @doc ("the identifier of the unconscious contagion")),
 				@facet (
 						name = UnconsciousContagionStatement.EMOTION,
-						type = EmotionType.id,
+						type = EmotionType.EMOTIONTYPE_ID,
 						optional = false,
 						doc = @doc ("the emotion that will be copied with the contagion")),
 				@facet (

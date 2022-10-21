@@ -13,7 +13,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Set;
 
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -25,6 +24,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.util.Collector;
 import msi.gama.util.GamaColor;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.IField;
@@ -112,7 +112,7 @@ public class GridLayer extends AbstractLayer implements IGridLayer {
 	public String getType() { return "Grid layer"; }
 
 	@Override
-	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
+	public IList<IAgent> getAgentsForMenu(final IScope scope) {
 		return getData().getGrid().getAgents();
 	}
 

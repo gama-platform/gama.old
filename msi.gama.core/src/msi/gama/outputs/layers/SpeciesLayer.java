@@ -1,19 +1,16 @@
 /*******************************************************************************************************
  *
- * SpeciesLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SpeciesLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.agent.IAgent;
@@ -23,6 +20,7 @@ import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
@@ -39,7 +37,8 @@ public class SpeciesLayer extends AgentLayer {
 	/**
 	 * Instantiates a new species layer.
 	 *
-	 * @param layer the layer
+	 * @param layer
+	 *            the layer
 	 */
 	public SpeciesLayer(final ILayerStatement layer) {
 		super(layer);
@@ -50,8 +49,10 @@ public class SpeciesLayer extends AgentLayer {
 	public SpeciesLayerStatement getDefinition() { return (SpeciesLayerStatement) super.getDefinition(); }
 
 	@Override
-	public Set<IAgent> getAgentsForMenu(final IScope scope) {
-		return ImmutableSet.copyOf(scope.getSimulation().getMicroPopulation(getDefinition().getSpecies()).iterator());
+	public IList<? extends IAgent> getAgentsForMenu(final IScope scope) {
+		return getDefinition().getSpecies().getPopulation(scope);
+		// return
+		// ImmutableSet.copyOf(scope.getSimulation().getMicroPopulation(getDefinition().getSpecies()).iterator());
 	}
 
 	@Override
@@ -75,11 +76,16 @@ public class SpeciesLayer extends AgentLayer {
 	/**
 	 * Draw population.
 	 *
-	 * @param scope the scope
-	 * @param g the g
-	 * @param aspect the aspect
-	 * @param population the population
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param g
+	 *            the g
+	 * @param aspect
+	 *            the aspect
+	 * @param population
+	 *            the population
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	private void drawPopulation(final IScope scope, final IGraphics g, final IExecutable aspect,
 			final IPopulation<? extends IAgent> population) throws GamaRuntimeException {
