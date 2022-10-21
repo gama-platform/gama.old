@@ -110,8 +110,8 @@
 		</repository> 
 		-->
 		<repository>
-			<id>eclipse-2209</id>
-			<url>http://download.eclipse.org/releases/2022-09</url>
+			<id>eclipse-2203</id>
+			<url>http://download.eclipse.org/releases/2022-03</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
