@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaContainerType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaContainerType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -36,6 +36,7 @@ import msi.gaml.expressions.IExpression;
 		doc = @doc ("Generic super-type of all the container types (list, graph, matrix, etc.)"))
 public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> implements IContainerType<T> {
 
+	@doc ("Allows to cast the argument to a container. If the argument is already a container, returns it, otherwise cast it to a list")
 	@Override
 	public T cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
@@ -46,9 +47,7 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 	}
 
 	@Override
-	public int getNumberOfParameters() {
-		return 1;
-	}
+	public int getNumberOfParameters() { return 1; }
 
 	@SuppressWarnings ("unchecked")
 	@Override
@@ -60,36 +59,25 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 	}
 
 	@Override
-	public T getDefault() {
-		return null;
-	}
+	public T getDefault() { return null; }
 
 	@Override
-	public IContainerType<T> getGamlType() {
-		return this;
-	}
+	public IContainerType<T> getGamlType() { return this; }
 
 	@Override
-	public boolean isContainer() {
-		return true;
-	}
+	public boolean isContainer() { return true; }
 
 	@Override
-	public boolean isCompoundType() {
-		return true;
-	}
+	public boolean isCompoundType() { return true; }
 
 	@Override
-	public boolean isFixedLength() {
-		return false;
-	}
+	public boolean isFixedLength() { return false; }
 
 	@Override
 	public IType<?> contentsTypeIfCasting(final IExpression exp) {
 		final IType<?> itemType = exp.getGamlType();
-		if (itemType.isContainer() || itemType.isAgentType() || itemType.isCompoundType()) {
+		if (itemType.isContainer() || itemType.isAgentType() || itemType.isCompoundType())
 			return itemType.getContentType();
-		}
 		return itemType;
 	}
 
@@ -109,7 +97,7 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 		final IType<?> kt = getKeyType();
 		IType<?> ct = sub1;
 		if (ct == Types.NO_TYPE) {
-			if (kt == Types.NO_TYPE) { return this; }
+			if (kt == Types.NO_TYPE) return this;
 			ct = getContentType();
 		}
 		return ParametricType.createParametricType((IContainerType<IContainer<?, ?>>) this, kt, ct);
@@ -122,12 +110,10 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 		IType<?> kt = sub1;
 		IType<?> ct = sub2;
 		if (ct == Types.NO_TYPE) {
-			if (kt == Types.NO_TYPE) { return this; }
+			if (kt == Types.NO_TYPE) return this;
 			ct = getContentType();
 		}
-		if (kt == Types.NO_TYPE) {
-			kt = getKeyType();
-		}
+		if (kt == Types.NO_TYPE) { kt = getKeyType(); }
 		return ParametricType.createParametricType((IContainerType<IContainer<?, ?>>) this, kt, ct);
 
 	}

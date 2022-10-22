@@ -88,6 +88,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static final WKTReader SHAPE_READER = new WKTReader();
 
 	@Override
+	@doc ("Cast the argument into a geometry. If the argument is already a geometry or an agent, returns it; "
+			+ "if it is a species, returns the union of all its agents' geometries; if it is a pair, tries to build a segment from it; "
+			+ "if it is a file containing geometries, returns the union of these geometries; "
+			+ "if it is a container and its contents are points, builds the resulting geometry, "
+			+ "otherwise cast the objects present in the container as geometries and returns their union; "
+			+ "if it is a string, interprets it as a wkt specification; otherwise, returns nil. ")
 	public IShape cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, param, copy);

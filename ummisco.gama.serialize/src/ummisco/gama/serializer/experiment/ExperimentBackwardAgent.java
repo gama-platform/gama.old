@@ -21,6 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -34,6 +35,7 @@ import ummisco.gama.serializer.gaml.ReverseOperators;
  * The Class ExperimentBackwardAgent.
  */
 @experiment (IKeyword.MEMORIZE)
+@doc ("A type of experiment that authorises to step backward")
 public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	/** The history tree. */

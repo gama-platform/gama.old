@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaDateType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaDateType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -44,11 +44,11 @@ public class GamaDateType extends GamaType<GamaDate> {
 
 	/** The Constant DEFAULT_ZONE. */
 	public static final ZoneId DEFAULT_ZONE = Clock.systemDefaultZone().getZone();
-	
+
 	/** The Constant DEFAULT_OFFSET_IN_SECONDS. */
 	public static final ZoneOffset DEFAULT_OFFSET_IN_SECONDS =
 			Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.now(Clock.systemDefaultZone()));
-	
+
 	/** The Constant EPOCH. */
 	public static final GamaDate EPOCH = GamaDate.of(LocalDateTime.ofEpochSecond(0, 0, DEFAULT_OFFSET_IN_SECONDS));
 
@@ -58,7 +58,7 @@ public class GamaDateType extends GamaType<GamaDate> {
 	// // Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.now(Clock.systemDefaultZone()));
 	// public static final GamaDate EPOCH = /** GamaDate.of(LocalDateTime.of(1970, 1, 1, 0, 0)); **/
 	// GamaDate.of(LocalDateTime.ofEpochSecond(0, 0, DEFAULT_OFFSET_IN_SECONDS));
-
+	@doc ("Cast the argument into a date. If the argument is a date already, returns it, otherwise: if it is a container, casts its contents to integer numbers and tries to build a date from it (following the order 'year, month, day, hour, minute, second'); if it is a string, tries to decode it into a date using the format described in the preferences; otherwise cast the argument into a float number and interprets it as the number of milliseconds since the start of the simulation")
 	@Override
 	public GamaDate cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
@@ -68,12 +68,17 @@ public class GamaDateType extends GamaType<GamaDate> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param copy
+	 *            the copy
 	 * @return the gama date
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static GamaDate staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
@@ -91,14 +96,10 @@ public class GamaDateType extends GamaType<GamaDate> {
 	}
 
 	@Override
-	public GamaDate getDefault() {
-		return null;
-	}
+	public GamaDate getDefault() { return null; }
 
 	@Override
-	public IType<?> getContentType() {
-		return Types.get(FLOAT);
-	}
+	public IType<?> getContentType() { return Types.get(FLOAT); }
 
 	@Override
 	public boolean canCastToConst() {
@@ -106,8 +107,6 @@ public class GamaDateType extends GamaType<GamaDate> {
 	}
 
 	@Override
-	public boolean isCompoundType() {
-		return true;
-	}
+	public boolean isCompoundType() { return true; }
 
 }
