@@ -91,6 +91,7 @@ experiment voronoi type: gui autorun: true {
 	output {
 		layout #split navigator: false tray: false toolbars: false consoles: false editors: false;
 		display "Voronoi 2D" background: #black{
+			light #ambient intensity: 100;
 			grid cell;
 		}
 
