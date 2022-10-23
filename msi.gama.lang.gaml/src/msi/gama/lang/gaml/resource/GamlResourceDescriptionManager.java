@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
+import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.allImportsOf;
 
 import java.util.Collection;
 import java.util.Map;
@@ -22,11 +22,12 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
+import org.eclipse.xtext.util.OnChangeEvictingCache;
 
 import com.google.inject.Inject;
 
-import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The class GamlResourceDescriptionManager.
@@ -37,6 +38,23 @@ import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
  */
 public class GamlResourceDescriptionManager extends DefaultResourceDescriptionManager
 		implements IResourceDescription.Manager.AllChangeAware {
+
+	static {
+		DEBUG.ON();
+	}
+
+	@Override
+	public IResourceDescription getResourceDescription(final Resource resource) {
+		IResourceDescription r = super.getResourceDescription(resource);
+		if (resource instanceof GamlResource gr) {
+			if (r instanceof GamlResourceDescription) return r;
+			OnChangeEvictingCache cache = (OnChangeEvictingCache) super.getCache();
+			cache.clear(resource);
+			// DEBUG.OUT("Removing old resource description for: " + resource.getURI().lastSegment());
+			return super.getResourceDescription(resource);
+		}
+		return r;
+	}
 
 	/** The provider. */
 	@Inject BuiltinGlobalScopeProvider provider;
@@ -50,19 +68,14 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	@Override
 	public boolean isAffected(final Collection<Delta> deltas, final IResourceDescription candidate,
 			final IResourceDescriptions context) {
-		Map<URI, String> imports;
-		if (!(candidate instanceof GamlResourceDescription)) {
-			// Seems to happen, although it shouldnt !
-			imports = GamlResourceIndexer.allImportsOf(candidate.getURI());
-		} else {
-			imports = GamlResourceIndexer.allImportsOf(((GamlResourceDescription) candidate).getResource());
-		}
+		Map<URI, String> imports = allImportsOf(candidate.getURI());
 		if (imports.isEmpty()) return false;
 		for (Delta d : deltas) {
-			if (d.haveEObjectDescriptionsChanged() && imports.containsKey(properlyEncodedURI(d.getUri()))) return true;
+			if (d.haveEObjectDescriptionsChanged()
+					&& imports.containsKey(GamlResourceServices.properlyEncodedURI(d.getUri())))
+				return true;
 		}
-		return false;
-		// return super.isAffected(deltas, candidate, context);
+		return super.isAffected(deltas, candidate, context);
 	}
 
 	@Override

@@ -15,7 +15,6 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.apache.commons.logging;resolution:=optional;visibility:=reexport,
  msi.gama.ext,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.xtext.generator;resolution:=optional,
  org.eclipse.xtext.xtext.generator;resolution:=optional
 Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.documentation,

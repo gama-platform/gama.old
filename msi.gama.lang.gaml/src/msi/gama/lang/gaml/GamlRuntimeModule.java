@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlRuntimeModule.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlRuntimeModule.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml;
 
@@ -79,7 +79,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		// binder.bind(GamlSyntacticConverter.class);
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
-		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
+		// binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
 		// binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
 		binder.bind(IResourceValidator.class).to(GamlResourceValidator.class);
 		binder.bind(ErrorToDiagnoticTranslator.class);
@@ -169,6 +169,15 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	public void configureIResourceDescriptions(final com.google.inject.Binder binder) {
 		binder.bind(org.eclipse.xtext.resource.IResourceDescriptions.class)
 				.to(org.eclipse.xtext.resource.impl.ResourceSetBasedResourceDescriptions.class);
+	}
+
+	/**
+	 * Bind I resource description$ manager.
+	 *
+	 * @return the class<? extends I resource description. manager>
+	 */
+	public Class<? extends IResourceDescription.Manager> bindIResourceDescription$Manager() {
+		return GamlResourceDescriptionManager.class;
 	}
 
 	// contributed by

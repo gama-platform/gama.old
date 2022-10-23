@@ -32,6 +32,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -687,9 +689,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	private void startup() {
 		if (started) return;
 		started = true;
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		DEBUG.TIMER(DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			try {
-				ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+				workspace.getRoot().accept(resource -> {
 					if (resource.isAccessible()) {
 						resource.setSessionProperty(CACHE_KEY, resource.getPersistentProperty(CACHE_KEY));
 					}
@@ -697,9 +700,19 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				});
 			} catch (final CoreException e) {}
 		});
+		new Thread(() -> {
+			try {
+				TIMER_WITH_EXCEPTIONS(
+						DEBUG.PAD("> GAMA: workspace projects ", 45, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
+							workspace.build(IncrementalProjectBuilder.FULL_BUILD, null);
+						});
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}).start();
 
 		try {
-			ResourcesPlugin.getWorkspace().addSaveParticipant("ummisco.gama.ui.modeling", getSaveParticipant());
+			workspace.addSaveParticipant("ummisco.gama.ui.modeling", getSaveParticipant());
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
