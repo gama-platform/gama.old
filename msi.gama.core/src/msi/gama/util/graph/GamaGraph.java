@@ -406,11 +406,15 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 			if (edgeS == null) {
 				if (nodeS == null) {
-					addEdge(s.toString(), t.toString(), e);
+//					addEdge(s.toString(), t.toString(), e);
+					String the_edge = (new Pair(s.toString(), t.toString())).toString();
+					addEdge(s.toString(), t.toString(), the_edge); // (null : null)
+					setEdgeWeight(the_edge, graph.getEdgeWeight(e));
 				} else {
 					addEdge(s, t, e);
+					setEdgeWeight(e, graph.getEdgeWeight(e));					
 				}
-				setEdgeWeight(e, graph.getEdgeWeight(e));
+//				setEdgeWeight(e, graph.getEdgeWeight(e));
 			} else {
 				IList atts = GamaListFactory.create();
 				final IList<IAgent> listAgt =

@@ -2372,9 +2372,9 @@ public class Graphs {
 					isExecutable = false) })
 	@test ("graph<geometry, geometry> g <- directed(as_edge_graph([edge({10,5}, {20,3}), edge({10,5}, {30,30}),edge({30,30}, {80,35}),edge({80,35}, {40,60}),edge({80,35}, {10,5}), node ({50,50})]));\r\n"
 			+ " length((path_between (g, {10,5}, {50,50}))) = 1 ")
-	public static IPath path_between(final IScope scope, final IGraph graph, final IShape source, final IShape target)
+	public static IPath path_between(final IScope scope, final IGraph graph, final Object source, final Object target)
 			throws GamaRuntimeException {
-		if (graph instanceof GamaSpatialGraph) return Cast.asTopology(scope, graph).pathBetween(scope, source, target);
+		if (graph instanceof GamaSpatialGraph) return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) source, (IShape) target);
 		return graph.computeShortestPathBetween(scope, source, target);
 	}
 
