@@ -70,9 +70,9 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	@Override
 	public boolean isAffected(final Collection<Delta> deltas, final IResourceDescription candidate,
 			final IResourceDescriptions context) {
-		Map<URI, String> imports = GamlResourceIndexer.allImportsOf(candidate.getURI());
-		if (imports.isEmpty()) return false;
 		URI candidateURI = properlyEncodedURI(candidate.getURI());
+		Map<URI, String> imports = GamlResourceIndexer.allImportsOfProperlyEncoded(candidateURI);
+		if (imports.isEmpty()) return false;
 		for (Delta d : deltas) {
 			URI uri = properlyEncodedURI(d.getUri());
 			if (isImported(uri, candidateURI) || imports.containsKey(uri)) return true;

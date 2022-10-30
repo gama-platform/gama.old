@@ -221,14 +221,7 @@ public class GamlResourceIndexer {
 	 * @return the i map
 	 */
 	public static Map<URI, String> allImportsOf(final GamlResource r) {
-		// Map<URI, String> imports = r.getImports();
-		// if (imports == null) {
-		// imports = allImportsOf(r.getURI());
-		// r.setImports(imports);
-		// }
-		// return imports;
-
-		return r.getCache().get(IMPORTED_URIS, r, () -> allImportsOf(r.getURI()));
+		return r.getCache().get(IMPORTED_URIS, r, () -> allImportsOfProperlyEncoded(r.getURI()));
 	}
 
 	/**
@@ -260,7 +253,7 @@ public class GamlResourceIndexer {
 	 * @return true, if is imported
 	 */
 	public static boolean isImported(final URI imported, final URI importer) {
-		return allImportsOf(properlyEncodedURI(imported)).containsKey(properlyEncodedURI(importer));
+		return allImportsOfProperlyEncoded(imported).containsKey(properlyEncodedURI(importer));
 	}
 
 	/**
@@ -271,7 +264,10 @@ public class GamlResourceIndexer {
 	}
 
 	/**
-	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#directImportsOf(org.eclipse.emf.common.util.URI)
+	 * Direct imports of.
+	 *
+	 * @param uri the uri
+	 * @return the sets the
 	 */
 	public static Set<URI> directImportsOf(final URI uri) {
 		return index.successorsOf(uri);
@@ -286,7 +282,18 @@ public class GamlResourceIndexer {
 	 */
 	public static Map<URI, String> allImportsOf(final URI uri) {
 		// DEBUG.OUT("Computing all labeled imports for " + uri.lastSegment());
-		return index.sortedDepthFirstSearchWithLabels(properlyEncodedURI(uri));
+		return allImportsOfProperlyEncoded(properlyEncodedURI(uri));
+	}
+
+	/**
+	 * All imports of properly encoded.
+	 *
+	 * @param uri
+	 *            the uri
+	 * @return the map
+	 */
+	public static Map<URI, String> allImportsOfProperlyEncoded(final URI uri) {
+		return index.sortedDepthFirstSearchWithLabels(uri);
 	}
 
 	/**

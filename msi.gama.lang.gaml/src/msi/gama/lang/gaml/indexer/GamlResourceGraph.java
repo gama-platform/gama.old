@@ -10,23 +10,20 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.indexer;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Collections.EMPTY_LIST;
-import static java.util.Collections.emptyIterator;
-import static org.jgrapht.Graphs.predecessorListOf;
-import static org.jgrapht.Graphs.successorListOf;
-
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
+import org.jgrapht.Graphs;
 import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultGraphSpecificsStrategy;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import msi.gama.util.GamaMapFactory;
@@ -113,7 +110,13 @@ public class GamlResourceGraph {
 	 * @return the sets the
 	 */
 	public Set<URI> predecessorsOf(final URI uri) {
-		return newHashSet(imports.containsVertex(uri) ? predecessorListOf(imports, uri) : EMPTY_LIST);
+		if (!imports.containsVertex(uri)) return Collections.EMPTY_SET;
+		Set<URI> successors = null;
+		Iterable<LabeledEdge> incoming = imports.iterables().incomingEdgesOf(uri);
+		if (Iterables.isEmpty(incoming)) return Collections.EMPTY_SET;
+		successors = new HashSet<>();
+		for (LabeledEdge e : incoming) { successors.add(Graphs.getOppositeVertex(imports, e, uri)); }
+		return successors;
 	}
 
 	/**
@@ -124,7 +127,13 @@ public class GamlResourceGraph {
 	 * @return the sets the
 	 */
 	public Set<URI> successorsOf(final URI uri) {
-		return newHashSet(imports.containsVertex(uri) ? successorListOf(imports, uri) : EMPTY_LIST);
+		if (!imports.containsVertex(uri)) return Collections.EMPTY_SET;
+		Set<URI> successors = null;
+		Iterable<LabeledEdge> outgoing = imports.iterables().outgoingEdgesOf(uri);
+		if (Iterables.isEmpty(outgoing)) return Collections.EMPTY_SET;
+		successors = new HashSet<>();
+		for (LabeledEdge e : outgoing) { successors.add(Graphs.getOppositeVertex(imports, e, uri)); }
+		return successors;
 	}
 
 	/**
@@ -153,7 +162,7 @@ public class GamlResourceGraph {
 	 */
 	public Iterator<URI> breadthFirstIteratorWithout(final URI uri) {
 		Iterator<URI> regular =
-				imports.containsVertex(uri) ? new BreadthFirstIterator<>(imports, uri) : emptyIterator();
+				imports.containsVertex(uri) ? new BreadthFirstIterator<>(imports, uri) : Collections.emptyIterator();
 		// to eliminate the uri
 		if (regular.hasNext()) { regular.next(); }
 		return regular;
