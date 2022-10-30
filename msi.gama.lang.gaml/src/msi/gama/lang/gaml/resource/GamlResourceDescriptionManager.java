@@ -10,7 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.allImportsOf;
+import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.isImported;
+import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
 
 import java.util.Collection;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.eclipse.xtext.util.OnChangeEvictingCache;
 
 import com.google.inject.Inject;
 
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -40,7 +42,7 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 		implements IResourceDescription.Manager.AllChangeAware {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	@Override
@@ -68,12 +70,12 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	@Override
 	public boolean isAffected(final Collection<Delta> deltas, final IResourceDescription candidate,
 			final IResourceDescriptions context) {
-		Map<URI, String> imports = allImportsOf(candidate.getURI());
+		Map<URI, String> imports = GamlResourceIndexer.allImportsOf(candidate.getURI());
 		if (imports.isEmpty()) return false;
+		URI candidateURI = properlyEncodedURI(candidate.getURI());
 		for (Delta d : deltas) {
-			if (d.haveEObjectDescriptionsChanged()
-					&& imports.containsKey(GamlResourceServices.properlyEncodedURI(d.getUri())))
-				return true;
+			URI uri = properlyEncodedURI(d.getUri());
+			if (isImported(uri, candidateURI) || imports.containsKey(uri)) return true;
 		}
 		return super.isAffected(deltas, candidate, context);
 	}

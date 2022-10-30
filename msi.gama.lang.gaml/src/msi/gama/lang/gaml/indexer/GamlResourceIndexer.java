@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.indexer;
 
+import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -249,6 +251,19 @@ public class GamlResourceIndexer {
 	}
 
 	/**
+	 * Checks if is imported.
+	 *
+	 * @param imported
+	 *            the imported URI - supposed to be clean
+	 * @param importer
+	 *            the importer URI - supposed to be clean
+	 * @return true, if is imported
+	 */
+	public static boolean isImported(final URI imported, final URI importer) {
+		return allImportsOf(properlyEncodedURI(imported)).containsKey(properlyEncodedURI(importer));
+	}
+
+	/**
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#directImportersOf(org.eclipse.emf.common.util.URI)
 	 */
 	public static Set<URI> directImportersOf(final URI uri) {
@@ -271,7 +286,7 @@ public class GamlResourceIndexer {
 	 */
 	public static Map<URI, String> allImportsOf(final URI uri) {
 		// DEBUG.OUT("Computing all labeled imports for " + uri.lastSegment());
-		return index.sortedDepthFirstSearchWithLabels(GamlResourceServices.properlyEncodedURI(uri));
+		return index.sortedDepthFirstSearchWithLabels(properlyEncodedURI(uri));
 	}
 
 	/**
