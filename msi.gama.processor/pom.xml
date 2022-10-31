@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<!--<parent> <groupId>msi.gama</groupId> <artifactId>msi.gama.parent</artifactId> 
 		<version>1.8.2-SNAPSHOT</version> <relativePath>../msi.gama.parent/</relativePath> 
-		</parent> -->
+	</parent> -->
 	<groupId>msi.gama</groupId>
 	<artifactId>msi.gama.processor</artifactId>
 	<version>1.8.2-SNAPSHOT</version>
@@ -22,13 +22,19 @@
 		</snapshotRepository>
 	</distributionManagement>
 
- <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<tycho.version>2.6.0</tycho.version>
-	<jdk.version>17</jdk.version>
-  </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<tycho.version>2.6.0</tycho.version>
+		<jdk.version>17</jdk.version>
+	</properties>
 
 	<profiles>
+		<!-- This profile is used while local compiling
+		Prevent signing error while env variable is not set -->
+		<profile>
+			<id>local-dev</id>
+		</profile>
+
 		<!-- This profile is used to upload the repo -->
 		<profile>
 			<id>p2Repo</id>
@@ -40,19 +46,15 @@
 				<repo.path>${project.build.directory}/repository/</repo.path>
 			</properties>
 
+			<activation>
+				<file>
+					<exists>../sign.maven</exists>
+				</file>
+			</activation>
+
 			<build>
 				<plugins>
-					<plugin>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.5</version>
-						<dependencies>
-							<dependency>
-								<groupId>org.apache.maven.wagon</groupId>
-								<artifactId>wagon-ssh</artifactId>
-								<version>3.5.1</version>
-							</dependency>
-						</dependencies>
-					</plugin>
+
 					<!-- Upload the repo to the server -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
@@ -78,7 +80,7 @@
 									<url>${ftp.url}</url>
 									<serverId>p2Repo</serverId>
 									<!-- Points to your settings.xml where the connection settings are 
-										stored as shown below -->
+									stored as shown below -->
 									<!-- <server> -->
 									<!-- <id>p2Repo</id> -->
 									<!-- <username>username</username> -->
@@ -88,6 +90,27 @@
 							</execution>
 						</executions>
 					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>3.0.0</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<keystore>~/gama.keystore</keystore>
+							<alias>gama-platform</alias>
+							<storepass>GAMA_STORE</storepass>
+							<keypass></keypass>
+						</configuration>
+					</plugin>
+
 				</plugins>
 			</build>
 		</profile>
@@ -111,6 +134,18 @@
 		<!-- <plugins combine.self="override"> -->
 		<plugins>
 			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.5</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-ssh</artifactId>
+						<version>3.5.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
@@ -126,8 +161,8 @@
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
-                	<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
-                	<useProjectSettings>false</useProjectSettings>
+					<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
+					<useProjectSettings>false</useProjectSettings>
 				</configuration>
 			</plugin>
 			<plugin>
