@@ -758,6 +758,7 @@ Bundle-ClassPath: .,
  svgsalamander1.1.1/svgSalamander-v1.1.1.jar,
  moeaframework-2.13.jar,
  commons-math3-3.6.1.jar,
- streamex/streamex-0.8.1.jar
+ streamex/streamex-0.8.1.jar,
+ geotools/activation.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.ext
