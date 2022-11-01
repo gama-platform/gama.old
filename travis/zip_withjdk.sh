@@ -1,135 +1,63 @@
 #!/bin/bash
-set -e
-echo "zip_withjdk"		
-COMMIT=$@
 
-REPO="gama-platform/gama"
-RELEASE="1.8.2"
+#
+#	Prepare utils variables
+#
+
+set -e
 thePATH="$GITHUB_WORKSPACE/ummisco.gama.product/target/products/Gama1.7"
 
 
+echo "zip_withjdk"
 cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products
+echo "$(git log -1 HEAD --pretty=format:%s)"
+
+#
+#	Download latest JDK
+#
+
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win32_17.zip"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx_17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_aarch64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx_aarch_17.tar.gz"
+
+#
+#	Prepare downloaded JDK
+#
+
+for os in "linux" "macosx" "macosx_aarch" "win32"; do
+	mkdir  jdk_$os
+
+	echo "unzip jdk $os"	
+
+	if [[ -f "~/sign.maven" ]]; then
+		tar -zxf jdk_$os\_17.tar.gz -C jdk_$os/
+	else
+		unzip -q jdk_$os\_17.zip -d jdk_$os
+	fi
+	mv jdk_$os/jdk-17* jdk_$os/jdk
+done
 
 
-MESSAGE=$(git log -1 HEAD --pretty=format:%s)
-echo $MESSAGE
+#
+# Modify .ini file to use custom JDK
+#
 
+for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64"; do
 
+	os=$(echo $folder | cut -d "/" -f 1)
 
+	sudo cp -R jdk_$os/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder
 
+	echo "-vm" > Gama.ini
+	echo "./jdk/bin/java" >> Gama.ini
+	cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/Gama.ini >> Gama.ini
+	rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/Gama.ini
+	mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/Gama.ini
+	sudo cp $GITHUB_WORKSPACE/travis/jdk/$os/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/headless
+done
 
-
-
-
-
-
-COMMIT="${COMMIT:0:7}"
-
-BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)
-COMMIT=$(echo $GITHUB_SHA | cut -c1-8)
-timestamp=$(date '+_%D')
-
-SUFFIX=$timestamp'_'$COMMIT'.zip'
-echo $SUFFIX
-
-
-
-n=0
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip" 
-n=1
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip" 
-n=2
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64.zip" 
-n=3
-RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip"  
-n=4
-RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip" 
-n=5
-RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip"  
-n=6
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip" 
-n=7
-RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.zip" 
-
-
-
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.3+7 | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_17.tar.gz"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.3+7 | grep "/OpenJDK17U-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win_17.zip"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.3+7 | grep "/OpenJDK17U-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_17.tar.gz"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.3+7 | grep "/OpenJDK17U-jdk_aarch64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_osx_aarch_17.tar.gz"
-
-mkdir  jdk_linux
-mkdir  jdk_win
-mkdir  jdk_osx
-mkdir  jdk_osx_aarch
-
-
-echo "unzip jdk linux"	
-tar -zxf jdk_linux_17.tar.gz -C jdk_linux/
-mv jdk_linux/jdk-17* jdk_linux/jdk
-
-echo "unzip jdk osx"	
-tar -zxf jdk_osx_17.tar.gz -C jdk_osx/ 
-mv jdk_osx/jdk-17* jdk_osx/jdk 
-
-echo "unzip jdk osx_aarch"	
-tar -zxf jdk_osx_aarch_17.tar.gz -C jdk_osx_aarch/ 
-mv jdk_osx_aarch/jdk-17* jdk_osx_aarch/jdk 
-
-echo "unzip jdk win"	
-unzip -q jdk_win_17.zip -d jdk_win
-mv jdk_win/jdk-17* jdk_win/jdk 
-
-
-
-
-
-
-
-
-
-
-
-sudo cp -R jdk_linux/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-#sudo cp $GITHUB_WORKSPACE/travis/jdk/linux/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
-echo "-vm" > Gama.ini
-echo "./jdk/bin/java" >> Gama.ini
-cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini >> Gama.ini
-rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini
-mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/Gama.ini
-sudo cp $GITHUB_WORKSPACE/travis/jdk/linux/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless
-
-
-
-
-sudo cp -R jdk_win/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-#sudo cp $GITHUB_WORKSPACE/travis/jdk/win/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-echo "-vm" > Gama.ini
-echo "./jdk/bin/" >> Gama.ini
-cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini >> Gama.ini
-rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini
-mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/Gama.ini
-
-sudo cp $GITHUB_WORKSPACE/travis/jdk/win/gama-headless.bat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64/headless
-
-
-
-
-
-
-
-sudo cp -R jdk_osx/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents
-#sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse
-echo "-vm" > Gama.ini
-echo "../jdk/Contents/Home/bin/java" >> Gama.ini
-cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini >> Gama.ini
-rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini
-mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Eclipse/Gama.ini
-
-sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless
-
-
-
+# Too complicated to add it in loop
 sudo cp -R jdk_osx_aarch/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents
 #sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Eclipse
 echo "-vm" > Gama.ini
@@ -141,38 +69,35 @@ mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.
 sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless
 
 
+#
+# Add custom jar signing certificate in custom JDK
+#
+
+if [[ -f "~/sign.maven" ]]; then 
+	keytool -export -alias gama-platform -file ~/GamaPlatform.cer -keystore ~/gama.keystore -storepass $
+	find $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product -name "cacerts" -exec keytool -importcert -noprompt -file ~/GamaPlatform.cer -keystore {} -alias gama-platform -storepass "changeit" \;
+fi
 
 
-	
-cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/linux/gtk/x86_64
+#
+# Create final zip archives
+#
+n=0
+RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64_withJDK.zip" 
+n=$((n+1))
+RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip"  
+n=$((n+1))
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64_withJDK.zip" 
+n=$((n+1))
+RELEASEFILES[$n]="$thePATH-macosx.cocoa.aarch64_withJDK.zip" 
 
-sudo zip -9 -qyr "${RELEASEFILES[4]}" . && echo "compressed ${RELEASEFILES[4]}" || echo "compress fail ${RELEASEFILES[4]}"
+folderIndex=0
+for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64" "macosx/cocoa/aarch64"; do
+	cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder
 
-cd ../../../../../../../
- 
+	sudo zip -9 -qyr "${RELEASEFILES[$folderIndex]}" . && echo "compressed ${RELEASEFILES[$folderIndex]}" || echo "compress fail ${RELEASEFILES[$folderIndex]}"
 
-
-
-cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/win32/win32/x86_64
-
-sudo zip -9 -qr "${RELEASEFILES[5]}" . && echo "compressed ${RELEASEFILES[5]}" || echo "compress fail ${RELEASEFILES[5]}"
-
-cd ../../../../../../../
-
-
-
-
-
-cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/x86_64
-
-sudo zip -9 -qyr "${RELEASEFILES[6]}" . && echo "compressed ${RELEASEFILES[6]}" || echo "compress fail ${RELEASEFILES[6]}"
-
-cd ../../../../../../../
-
-
-cd $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64
-
-sudo zip -9 -qyr "${RELEASEFILES[7]}" . && echo "compressed ${RELEASEFILES[7]}" || echo "compress fail ${RELEASEFILES[7]}"
-
+	folderIndex=$((folderIndex+1))
+done
 
 echo DONE
