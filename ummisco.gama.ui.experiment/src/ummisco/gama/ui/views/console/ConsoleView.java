@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ConsoleView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ConsoleView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.console;
 
@@ -48,27 +48,32 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable,
 		IToolbarDecoratedView.LogExportable, IGamaView.Console {
 
+	static {
+		// DEBUG.ON();
+	}
+
 	/** The msg console. */
-	private IOConsole msgConsole;
-	
+	private final IOConsole msgConsole = new IOConsole("GAMA Console", null);
+
 	/** The viewer. */
 	IOConsoleViewer viewer;
-	
+
 	/** The paused. */
 	boolean paused = false;
-	
+
 	/** The pause buffer. */
 	private final StringBuilder pauseBuffer =
 			new StringBuilder(GamaPreferences.Interface.CORE_CONSOLE_BUFFER.getValue() == -1 ? 0
 					: GamaPreferences.Interface.CORE_CONSOLE_BUFFER.getValue());
-	
+
 	/** The writers. */
 	private final HashMap<Color, BufferedWriter> writers = new HashMap<>();
 
 	/**
 	 * Sets the character limit.
 	 *
-	 * @param limit the new character limit
+	 * @param limit
+	 *            the new character limit
 	 */
 	public void setCharacterLimit(final int limit) {
 		if (limit == -1) {
@@ -80,7 +85,6 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
-		msgConsole = new IOConsole("GAMA Console", null);
 		setCharacterLimit(GamaPreferences.Interface.CORE_CONSOLE_SIZE.getValue());
 		GamaPreferences.Interface.CORE_CONSOLE_SIZE.onChange(this::setCharacterLimit);
 		viewer = new IOConsoleViewer(parent, msgConsole);
@@ -90,8 +94,10 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	/**
 	 * Gets the writer for.
 	 *
-	 * @param root the root
-	 * @param color the color
+	 * @param root
+	 *            the root
+	 * @param color
+	 *            the color
 	 * @return the writer for
 	 */
 	private BufferedWriter getWriterFor(final ITopLevelAgent root, final GamaUIColor color) {
@@ -110,8 +116,10 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	/**
 	 * Gets the color for.
 	 *
-	 * @param root the root
-	 * @param requested the requested
+	 * @param root
+	 *            the root
+	 * @param requested
+	 *            the requested
 	 * @return the color for
 	 */
 	private Color getColorFor(final ITopLevelAgent root, final GamaUIColor requested) {
@@ -132,15 +140,19 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 
 	@Override
 	public void append(final String text, final ITopLevelAgent agent, final GamaColor color) {
+		// DEBUG.OUT("Agent " + agent + " asking to display in the console ");
 		append(text, agent, color == null ? null : GamaColors.get(color));
 	}
 
 	/**
 	 * Append.
 	 *
-	 * @param text the text
-	 * @param root the root
-	 * @param color the color
+	 * @param text
+	 *            the text
+	 * @param root
+	 *            the root
+	 * @param color
+	 *            the color
 	 */
 	public void append(final String text, final ITopLevelAgent root, final GamaUIColor color) {
 
@@ -267,8 +279,6 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	public void synchronizeChanged() {}
 
 	@Override
-	public String getContents() {
-		return viewer.getDocument().get();
-	}
+	public String getContents() { return viewer.getDocument().get(); }
 
 }
