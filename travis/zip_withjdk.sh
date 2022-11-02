@@ -55,7 +55,7 @@ for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.
 	#
 	# Specific sub-path for Eclipse in MacOS
 	folderEclipse=$folder
-	if [[ "$os" == "macosx" ]]; then
+	if [[ "$os" == "macosx"* ]]; then
 		folderEclipse="$folder/Eclipse"
 	fi
 
