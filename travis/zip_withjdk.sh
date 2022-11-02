@@ -50,6 +50,8 @@ for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.
 	# + Add suffix if build for ARM64 system
 	os="$(echo $folder | cut -d '/' -f 1)$(if [[ "$folder" == *'aarch64'* ]]; then echo '_aarch'; fi )"
 
+	echo "Add custom JDK for $os"
+
 	#
 	# Specific sub-path for Eclipse in MacOS
 	folderEclipse=$folder
