@@ -43,30 +43,29 @@ done
 # Modify .ini file to use custom JDK
 #
 
-for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64"; do
+for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.app/Contents" "macosx/cocoa/aarch64/Gama.app/Contents"; do
 
-	os=$(echo $folder | cut -d "/" -f 1)
+	#
+	# Get OS (first attribute in the path)
+	# + Add suffix if build for ARM64 system
+	os="$(echo $folder | cut -d '/' -f 1)$(if [[ "$folder" == *'aarch64'* ]]; then echo '_aarch'; fi )"
+
+	#
+	# Specific sub-path for Eclipse in MacOS
+	folderEclipse=$folder
+	if [[ "$os" == "macosx" ]]; then
+		folderEclipse="$folder/Eclipse"
+	fi
 
 	sudo cp -R jdk_$os/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder
 
 	echo "-vm" > Gama.ini
 	echo "./jdk/bin/java" >> Gama.ini
-	cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/Gama.ini >> Gama.ini
-	rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/Gama.ini
-	mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/Gama.ini
+	cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini >> Gama.ini
+	rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
+	mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
 	sudo cp "$GITHUB_WORKSPACE/travis/jdk/$os/gama-headless.$(if [ "$os" == "win32" ]; then echo "bat"; else echo "sh"; fi)" $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/headless
 done
-
-# Too complicated to add it in loop
-sudo cp -R jdk_osx_aarch/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents
-#sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/64/Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Eclipse
-echo "-vm" > Gama.ini
-echo "../jdk/Contents/Home/bin/java" >> Gama.ini
-cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Eclipse/Gama.ini >> Gama.ini
-rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Eclipse/Gama.ini
-mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Eclipse/Gama.ini
-
-sudo cp $GITHUB_WORKSPACE/travis/jdk/mac/gama-headless.sh $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless
 
 
 #
