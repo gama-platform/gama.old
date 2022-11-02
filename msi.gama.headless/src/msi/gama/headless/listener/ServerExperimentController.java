@@ -90,7 +90,12 @@ public class ServerExperimentController implements IExperimentController {
 
 				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
 				if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
-					if (!"".equals(mexp.endCond)) { mexp.socket.send("finish"); }
+					if (!"".equals(mexp.endCond)) { 
+						mexp.socket.send(Jsoner.serialize( new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, 
+															"", 
+															_job.playCommand, 
+															false))); 
+					}
 					break;
 				}
 				step();

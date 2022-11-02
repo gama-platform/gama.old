@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WriteStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * WriteStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -65,6 +65,10 @@ import msi.gaml.types.IType;
 				examples = { @example ("write \"This is a message from \" + self;") }) })
 public class WriteStatement extends AbstractStatement {
 
+	static {
+		// DEBUG.ON();
+	}
+
 	@Override
 	public String getTrace(final IScope scope) {
 		// We dont trace write statements
@@ -73,14 +77,15 @@ public class WriteStatement extends AbstractStatement {
 
 	/** The message. */
 	final IExpression message;
-	
+
 	/** The color. */
 	final IExpression color;
 
 	/**
 	 * Instantiates a new write statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public WriteStatement(final IDescription desc) {
 		super(desc);
@@ -94,13 +99,11 @@ public class WriteStatement extends AbstractStatement {
 		String mes = null;
 		if (agent != null && !agent.dead()) {
 			mes = Cast.asString(scope, message.value(scope));
-			if (mes == null) {
-				mes = "nil";
-			}
+			if (mes == null) { mes = "nil"; }
 			GamaColor rgb = null;
-			if (color != null) {
-				rgb = (GamaColor) color.value(scope);
-			}
+			if (color != null) { rgb = (GamaColor) color.value(scope); }
+			// DEBUG.OUT(
+			// "" + getName() + " asking to write and passing " + scope.getRoot() + " as the corresponding agent");
 			scope.getGui().getConsole().informConsole(mes, scope.getRoot(), rgb);
 		}
 		return mes;
@@ -109,8 +112,10 @@ public class WriteStatement extends AbstractStatement {
 	/**
 	 * Sample.
 	 *
-	 * @param scope the scope
-	 * @param expr the expr
+	 * @param scope
+	 *            the scope
+	 * @param expr
+	 *            the expr
 	 * @return the string
 	 */
 	@operator (
@@ -125,9 +130,12 @@ public class WriteStatement extends AbstractStatement {
 	/**
 	 * Sample.
 	 *
-	 * @param scope the scope
-	 * @param text the text
-	 * @param expr the expr
+	 * @param scope
+	 *            the scope
+	 * @param text
+	 *            the text
+	 * @param expr
+	 *            the expr
 	 * @return the string
 	 */
 	@operator (
