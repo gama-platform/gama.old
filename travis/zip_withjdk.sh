@@ -30,7 +30,7 @@ for os in "linux" "macosx" "macosx_aarch" "win32"; do
 
 	echo "unzip jdk $os"	
 
-	if [[ -f "~/sign.maven" ]]; then
+	if [[ -f "jdk_$os\_17.tar.gz" ]]; then
 		tar -zxf jdk_$os\_17.tar.gz -C jdk_$os/
 	else
 		unzip -q jdk_$os\_17.zip -d jdk_$os
