@@ -38,7 +38,7 @@ jobs:
           echo "$GAMA_KEYSTORE_BASE64" | base64 --decode > ~/gama.keystore
           # Config file
           sed -i "s/<storepass>GAMA_STORE/<storepass>$GAMA_STORE/g" $GITHUB_WORKSPACE/ummisco.gama.annotations/pom.xml
-          sed -i "s/<storepass>GAMA_STORE/<storepass>$GAMA_STORE/g" $GITHUB_WORKSPACE/ummisco.gama.annotations/pom.xml
+          sed -i "s/<storepass>GAMA_STORE/<storepass>$GAMA_STORE/g" $GITHUB_WORKSPACE/msi.gama.processor/pom.xml
           sed -i "s/<storepass>GAMA_STORE/<storepass>$GAMA_STORE/g" $GITHUB_WORKSPACE/msi.gama.parent/pom.xml
           # Trigger jar signing plugin
           touch $GITHUB_WORKSPACE/sign.maven
