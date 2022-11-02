@@ -16,10 +16,10 @@ echo "$(git log -1 HEAD --pretty=format:%s)"
 #	Download latest JDK
 #
 
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux_17.tar.gz"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win32_17.zip"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx_17.tar.gz"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_aarch64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx_aarch_17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux-17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win32-17.zip"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx-17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.5+8 | grep "/OpenJDK17U-jdk_aarch64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx_aarch-17.tar.gz"
 
 #
 #	Prepare downloaded JDK
@@ -30,10 +30,10 @@ for os in "linux" "macosx" "macosx_aarch" "win32"; do
 
 	echo "unzip jdk $os"	
 
-	if [[ -f "jdk_$os\_17.tar.gz" ]]; then
-		tar -zxf jdk_$os\_17.tar.gz -C jdk_$os/
+    if [[ -f "jdk_$os-17.tar.gz" ]]; then
+		tar -zxf jdk_$os-17.tar.gz -C jdk_$os/
 	else
-		unzip -q jdk_$os\_17.zip -d jdk_$os
+		unzip -q jdk_$os-17.zip -d jdk_$os
 	fi
 	mv jdk_$os/jdk-17* jdk_$os/jdk
 done
