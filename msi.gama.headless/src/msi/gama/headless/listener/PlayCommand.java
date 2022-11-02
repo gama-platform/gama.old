@@ -28,6 +28,7 @@ public class PlayCommand implements ISocketCommand {
 
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
+			gama_exp.playCommand = map;
 			gama_exp.controller.userStart();
 
 			if (!"".equals(gama_exp.endCond) && sync) {

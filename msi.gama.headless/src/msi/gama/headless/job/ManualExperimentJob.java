@@ -60,6 +60,8 @@ public class ManualExperimentJob extends ExperimentJob {
 	/** The controller. */
 	public ServerExperimentController controller;
 
+	public  IMap<String, Object> playCommand;
+	
 	/**
 	 * Instantiates a new manual experiment job.
 	 *
@@ -157,9 +159,6 @@ public class ManualExperimentJob extends ExperimentJob {
 					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(), v);
 				}
 
-				// curExperiment.setParameterValue(curExperiment.getExperimentScope(),m.get("name").toString(),m.get("value"));
-				// curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
-				// m.get("value"));
 			}
 		}
 	}
