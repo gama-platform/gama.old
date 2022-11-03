@@ -537,16 +537,6 @@ public interface IGui {
 	void applyLayout(IScope scope, Object layout);
 
 	/**
-	 * Display errors.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param newExceptions
-	 *            the new exceptions
-	 */
-	void displayErrors(IScope scope, List<GamaRuntimeException> newExceptions);
-
-	/**
 	 * Gets the mouse location in model.
 	 *
 	 * @return the mouse location in model
@@ -666,6 +656,18 @@ public interface IGui {
 			final Boolean keepTabs, final Boolean keepToolbars, final Boolean showParameters,
 			final Boolean showConsoles, final Boolean showNavigator, final Boolean showControls, final Boolean keepTray,
 			final Supplier<GamaColor> color, final boolean showEditors) {}
+
+	/**
+	 * Display errors.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param exceptions
+	 *            the exceptions
+	 * @param reset
+	 *            the reset
+	 */
+	void displayErrors(IScope scope, List<GamaRuntimeException> exceptions, boolean reset);
 
 	/**
 	 * Checks if is synchronized.

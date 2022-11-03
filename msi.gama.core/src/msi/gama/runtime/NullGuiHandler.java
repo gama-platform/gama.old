@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * HeadlessListener.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * NullGuiHandler.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -325,7 +325,6 @@ public class NullGuiHandler implements IGui {
 	/** The status. */
 	protected IStatusDisplayer status = null;
 
-
 	/** The console. */
 	protected IConsoleDisplayer console = null;
 
@@ -355,65 +354,58 @@ public class NullGuiHandler implements IGui {
 	public void setHeadlessLogger(final IHeadlessLogger logger) { this.logger = logger; }
 
 	@Override
-	public IStatusDisplayer getStatus() { 
-	
+	public IStatusDisplayer getStatus() {
+
 		if (status == null) {
 			status = new IStatusDisplayer() {
 
 				@Override
-				public void resumeStatus(IScope scope) {}
+				public void resumeStatus(final IScope scope) {}
 
 				@Override
-				public void waitStatus(final String string, IScope scope) {}
+				public void waitStatus(final String string, final IScope scope) {}
 
 				@Override
-				public void informStatus(final String string, IScope scope) {
-				}
+				public void informStatus(final String string, final IScope scope) {}
 
 				@Override
-				public void errorStatus(final String message, IScope scope) {
-				}
+				public void errorStatus(final String message, final IScope scope) {}
 
 				@Override
-				public void setSubStatusCompletion(final double status, IScope scope) {}
+				public void setSubStatusCompletion(final double status, final IScope scope) {}
 
 				@Override
-				public void setStatus(final String msg, final GamaColor color, IScope scope) {
-				}
+				public void setStatus(final String msg, final GamaColor color, final IScope scope) {}
 
 				@Override
-				public void informStatus(final String message, final String icon, IScope scope) {
-				}
+				public void informStatus(final String message, final String icon, final IScope scope) {}
 
 				@Override
-				public void setStatus(final String msg, final String icon, IScope scope) {
-				}
+				public void setStatus(final String msg, final String icon, final IScope scope) {}
 
 				@Override
-				public void beginSubStatus(final String name, IScope scope) {}
+				public void beginSubStatus(final String name, final IScope scope) {}
 
 				@Override
-				public void endSubStatus(final String name, IScope scope) {}
+				public void endSubStatus(final String name, final IScope scope) {}
 
 				@Override
-				public void neutralStatus(final String string, IScope scope) {			
-				}
+				public void neutralStatus(final String string, final IScope scope) {}
 
 			};
 		}
-		return status; 
+		return status;
 	}
 
-	
 	@Override
-	public IConsoleDisplayer getConsole() { 
-	
+	public IConsoleDisplayer getConsole() {
+
 		if (console == null) {
 			console = new IConsoleDisplayer() {
 
 				@Override
-				public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
-				}
+				public void debugConsole(final int cycle, final String s, final ITopLevelAgent root,
+						final GamaColor color) {}
 
 				@Override
 				public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
@@ -438,7 +430,7 @@ public class NullGuiHandler implements IGui {
 
 			};
 		}
-		return console; 
+		return console;
 	}
 
 	@Override
@@ -462,7 +454,7 @@ public class NullGuiHandler implements IGui {
 	public void applyLayout(final IScope scope, final Object layout) {}
 
 	@Override
-	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list) {}
+	public void displayErrors(final IScope scope, final List<GamaRuntimeException> list, final boolean reset) {}
 
 	@Override
 	public GamaPoint getMouseLocationInModel() { return new GamaPoint(0, 0); }
