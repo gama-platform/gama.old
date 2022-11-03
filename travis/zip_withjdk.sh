@@ -26,7 +26,7 @@ wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases
 #
 
 for os in "linux" "macosx" "macosx_aarch" "win32"; do
-	mkdir  jdk_$os
+	mkdir jdk_$os
 
 	echo "unzip jdk $os"	
 
@@ -74,9 +74,9 @@ done
 # Add custom jar signing certificate in custom JDK
 #
 
-if [[ -f "~/sign.maven" ]]; then 
+if [[ -f "$GITHUB_WORKSPACE/sign.maven" ]]; then 
 	keytool -export -alias gama-platform -file ~/GamaPlatform.cer -keystore ~/gama.keystore -storepass "$GAMA_STORE"
-	find $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product -name "cacerts" -exec keytool -importcert -noprompt -file ~/GamaPlatform.cer -keystore {} -alias gama-platform -storepass "changeit" \;
+	sudo find $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product -name "cacerts" -exec keytool -importcert -noprompt -file ~/GamaPlatform.cer -keystore {} -alias gama-platform -storepass "changeit" \;
 fi
 
 
