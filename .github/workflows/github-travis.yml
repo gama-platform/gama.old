@@ -92,7 +92,8 @@ jobs:
         shell: bash
         run: $GITHUB_WORKSPACE/travis/zip_withjdk.sh
         env:
-          MSG: ${ github.event.head_commit.message }
+          GAMA_KEYSTORE_BASE64: ${{ secrets.GAMA_KEYSTORE_BASE64 }}
+          GAMA_STORE: ${{ secrets.GAMA_KEYSTORE_STOREPASS }}
 
       # cf https://github.com/actions/upload-artifact/issues/246
       - name: Move artefacts to root tree

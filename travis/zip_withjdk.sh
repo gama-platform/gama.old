@@ -75,7 +75,7 @@ done
 #
 
 if [[ -f "~/sign.maven" ]]; then 
-	keytool -export -alias gama-platform -file ~/GamaPlatform.cer -keystore ~/gama.keystore -storepass $
+	keytool -export -alias gama-platform -file ~/GamaPlatform.cer -keystore ~/gama.keystore -storepass "$GAMA_STORE"
 	find $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product -name "cacerts" -exec keytool -importcert -noprompt -file ~/GamaPlatform.cer -keystore {} -alias gama-platform -storepass "changeit" \;
 fi
 
