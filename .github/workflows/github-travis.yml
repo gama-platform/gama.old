@@ -55,8 +55,6 @@ jobs:
       - name: Validate and test Maven
         shell: bash
         run: $GITHUB_WORKSPACE/travis/validate_and_test.sh
-        env:
-          MSG: ${ github.event.head_commit.message }
 
       - name: Clean latest git message for next job's step
         id: cleanGitMessage
@@ -77,15 +75,11 @@ jobs:
           fi
           echo ${{ env.CONTINUE }}
         env:  
-          SSH_USER_PWD: ${{ secrets.USER_PWD }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           MSG: ${{ env.TRAVIS_MSG }}
-          GITHUB_TOKEN: ${{ github.token }}
           SSHPASS: ${{ secrets.USER_PWD }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TRAVIS_COMMIT: ${ GITHUB_SHA }
           TRAVIS_EVENT_TYPE: ${{ github.event_name }}
-          thePATH: "${{ github.workspace }}/Gama1.7"
           
       - name: Make zip file
         if: env.CONTINUE == 'true'
