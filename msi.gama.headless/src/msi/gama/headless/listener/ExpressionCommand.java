@@ -10,7 +10,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.Jsoner;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlIdiomsProvider;
 import ummisco.gama.dev.utils.DEBUG;
@@ -21,16 +20,14 @@ public class ExpressionCommand implements ISocketCommand {
 
 		final String exp_id 	= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		final Object socket_id 	= map.get("socket_id");
-		final Object model 		= map.get("model");
-		final Object experiment	= map.get("experiment");
 		final Object expr		= map.get("expr");
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("expresion");
-		DEBUG.OUT(model);
-		DEBUG.OUT(experiment);
+		DEBUG.OUT(exp_id);
+		DEBUG.OUT(expr);
 
-		if (exp_id == "" || socket_id == null || model == null || experiment == null || expr == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'expression', mandatory parameters are: 'exp_id', 'socket_id', 'model', 'experiment' and 'expr'", map, false);
+		if (exp_id == "" || socket_id == null || expr == null) {
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'expression', mandatory parameters are: 'exp_id', 'socket_id' and 'expr'", map, false);
 		}
 		
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id);
