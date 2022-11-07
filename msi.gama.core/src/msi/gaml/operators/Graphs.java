@@ -2136,9 +2136,9 @@ public class Graphs {
 					IConcept.ALGORITHM })
 	@doc (
 			value = "changes the K shortest paths computation algorithm of the given graph",
-			comment = "the right-hand operand can be Yen, Bhandari, Eppstein, Suurballe to use the associated algorithm. ",
+			comment = "the right-hand operand can be #Yen and #Bhandari to use the associated algorithm. ",
 			examples = @example (
-					value = "graphEpidemio <- graphEpidemio with_optimizer_type \"static\";",
+					value = "the_graph <- the_graph with_k_shortest_path_algorithm #Yen;",
 					isExecutable = false))
 	@no_test
 	public static IGraph setKShortestPathAlgorithm(final IScope scope, final IGraph graph,
@@ -2171,9 +2171,9 @@ public class Graphs {
 					IConcept.ALGORITHM })
 	@doc (
 			value = "changes the shortest path computation algorithm of the given graph",
-			comment = "the right-hand operand can be Djikstra, BidirectionalDijkstra, BellmannFord, FloydWarshall, Astar, NBAStar, NBAStarApprox, DeltaStepping, CHBidirectionalDijkstra, TransitNodeRouting to use the associated algorithm. ",
+			comment = "the right-hand operand can be #Djikstra, #BidirectionalDijkstra, #BellmannFord, #FloydWarshall, #Astar, #NBAStar, #NBAStarApprox, #DeltaStepping, #CHBidirectionalDijkstra, #TransitNodeRouting to use the associated algorithm. ",
 			examples = @example (
-					value = "road_network <- road_network with_shortestpath_algorithm TransitNodeRouting;",
+					value = "road_network <- road_network with_shortestpath_algorithm #TransitNodeRouting;",
 					isExecutable = false))
 	@no_test
 	public static IGraph setShortestPathAlgorithm(final IScope scope, final IGraph graph,
