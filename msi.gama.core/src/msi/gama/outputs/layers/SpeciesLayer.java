@@ -20,10 +20,12 @@ import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 23 août 2008
@@ -50,7 +52,7 @@ public class SpeciesLayer extends AgentLayer {
 
 	@Override
 	public IList<? extends IAgent> getAgentsForMenu(final IScope scope) {
-		return getDefinition().getSpecies().getPopulation(scope);
+		return GamaListFactory.createWithoutCasting(Types.AGENT, getDefinition().getSpecies().getPopulation(scope));
 		// return
 		// ImmutableSet.copyOf(scope.getSimulation().getMicroPopulation(getDefinition().getSpecies()).iterator());
 	}
