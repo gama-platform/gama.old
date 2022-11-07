@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -66,9 +65,25 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		return true;
 	}
 
+	/**
+	 * Display errors.
+	 *
+	 * @param reset
+	 *            the reset
+	 */
 	@Override
-	public void displayErrors() {
-		reset();
+	public void displayErrors(final boolean reset) {
+		if (reset) {
+			reset();
+		} else {
+			WorkbenchHelper.run(() -> {
+				displayItems();
+				if (getParentComposite() != null && !getParentComposite().isDisposed()) {
+					getParentComposite().layout(true, true);
+				}
+			});
+		}
+
 	}
 
 	@Override
@@ -80,25 +95,22 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 			final boolean expanded, final GamaUIColor color) {
 		createViewer(parent);
 		if (getViewer() == null) return null;
-		final ScrolledComposite control = createItemContentsFor(data);
-		ParameterExpandItem item;
+		final Composite control = createItemContentsFor(data);
+		ParameterExpandItem item = createItem(parent, data, control, expanded, color);
 		if (expanded) {
 			createStackTrace(control, data);
-			item = createItem(parent, data, control, expanded, color);
 		} else {
-			item = createItem(parent, data, control, expanded, color);
 			item.onExpand(() -> createStackTrace(control, data));
 		}
 		return item;
 	}
 
 	@Override
-	protected ScrolledComposite createItemContentsFor(final GamaRuntimeException exception) {
-		final ScrolledComposite compo = new ScrolledComposite(getViewer(), SWT.H_SCROLL);
+	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
+		final Composite compo = new Composite(getViewer(), SWT.NONE);
 		final GridLayout layout = new GridLayout(1, false);
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
-		createStackTrace(compo, exception);
 		return compo;
 	}
 
@@ -110,10 +122,8 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	 * @param exception
 	 *            the exception
 	 */
-	private void createStackTrace(final ScrolledComposite compo, final GamaRuntimeException exception) {
+	private void createStackTrace(final Composite compo, final GamaRuntimeException exception) {
 		final Table t = new Table(compo, SWT.H_SCROLL);
-		// t.setFont(GamaFonts.getExpandfont());
-
 		t.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -130,18 +140,22 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		t.setForeground(exception.isWarning() ? GamaColors.get(PreferencesHelper.WARNING_TEXT_COLOR.getValue()).color()
 				: GamaColors.get(PreferencesHelper.ERROR_TEXT_COLOR.getValue()).color());
 		final TableColumn c = new TableColumn(t, SWT.NONE);
-		c.setResizable(true);
-		final TableColumn column2 = new TableColumn(t, SWT.NONE);
-		for (int i = 0; i < strings.size(); i++) {
+		// c.setResizable(true);
+		// final TableColumn column2 = new TableColumn(t, SWT.NONE);
+		for (String string : strings) {
+			if (string.isBlank()) { continue; }
 			final TableItem item = new TableItem(t, SWT.NONE);
-			item.setText(new String[] { String.valueOf(i), strings.get(i) });
+
+			item.setText(new String[] { string });
 		}
 		c.pack();
-		column2.pack();
+		// column2.pack();
 		t.setSize(t.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		t.pack();
-		compo.setContent(t);
-		compo.pack();
+		// t.pack();
+		// compo.setContent(t);
+		t.requestLayout();
+		compo.requestLayout();
+		// compo.pack();
 	}
 
 	@Override

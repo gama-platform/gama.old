@@ -15,20 +15,32 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.annotation.Nullable;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class RuntimeExceptionHandler.
  */
 public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHandler {
+
+	static {
+		//DEBUG.ON();
+	}
 
 	/**
 	 * Instantiates a new runtime exception handler.
@@ -51,6 +63,8 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 	@Override
 	public void offer(final GamaRuntimeException ex) {
+		DEBUG.LOG("Adding exception " + ex.getAllText());
+
 		remainingTime = 5000;
 		incomingExceptions.offer(ex);
 	}
@@ -59,7 +73,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	public void clearErrors() {
 		incomingExceptions.clear();
 		cleanExceptions.clear();
-		updateUI(null);
+		updateUI(null, true);
 	}
 
 	@Override
@@ -78,7 +92,50 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 				stop();
 				return Status.OK_STATUS;
 			}
-			process();
+			final Multimap<ITopLevelAgent, GamaRuntimeException> array =
+					Multimaps.index(incomingExceptions, @Nullable GamaRuntimeException::getTopLevelAgent);
+
+			//DEBUG.LOG("Processing " + array.size() + " exceptions");
+			incomingExceptions.clear();
+			final boolean reset[] = { true };
+			array.asMap().forEach((root, list) -> {
+				//DEBUG.LOG("Processing exceptions for " + root);
+				if (GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue()) {
+					final GamaRuntimeException firstEx = Iterables.getFirst(list, null);
+					if (GamaPreferences.Runtime.CORE_ERRORS_EDITOR_LINK.getValue()) {
+						GAMA.getGui().editModel(null, firstEx.getEditorContext());
+					}
+					firstEx.setReported();
+					if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
+						final List<GamaRuntimeException> exceptions = new ArrayList<>();
+						exceptions.add(firstEx);
+						updateUI(exceptions, reset[0]);
+						reset[0] = false;
+					}
+
+				} else if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
+
+					final ArrayList<GamaRuntimeException> oldExcp = new ArrayList<>(cleanExceptions);
+					for (final GamaRuntimeException newEx : list) {
+						if (oldExcp.size() == 0) {
+							oldExcp.add(newEx);
+						} else {
+							boolean toAdd = true;
+							for (final GamaRuntimeException oldEx : oldExcp
+									.toArray(new GamaRuntimeException[oldExcp.size()])) {
+								if (oldEx.equivalentTo(newEx)) {
+									if (oldEx != newEx) { oldEx.addAgents(newEx.getAgentsNames()); }
+									toAdd = false;
+								}
+							}
+							if (toAdd) { oldExcp.add(newEx); }
+
+						}
+					}
+					updateUI(oldExcp, true);
+				}
+			});
+
 		}
 		return Status.OK_STATUS;
 	}
@@ -89,60 +146,18 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	}
 
 	/**
-	 * Process.
-	 */
-	private void process() {
-		final ArrayList<GamaRuntimeException> array = new ArrayList<>(incomingExceptions);
-		// DEBUG.LOG("Processing " + array.size() + " exceptions");
-		incomingExceptions.clear();
-
-		if (GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue()) {
-			final GamaRuntimeException firstEx = array.get(0);
-			if (GamaPreferences.Runtime.CORE_ERRORS_EDITOR_LINK.getValue()) {
-				GAMA.getGui().editModel(null, firstEx.getEditorContext());
-			}
-			firstEx.setReported();
-			if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
-				final List<GamaRuntimeException> exceptions = new ArrayList<>();
-				exceptions.add(firstEx);
-				updateUI(exceptions);
-			}
-
-		} else if (GamaPreferences.Runtime.CORE_SHOW_ERRORS.getValue()) {
-			final ArrayList<GamaRuntimeException> oldExcp = new ArrayList<>(cleanExceptions);
-			for (final GamaRuntimeException newEx : array) {
-				if (oldExcp.size() == 0) {
-					oldExcp.add(newEx);
-				} else {
-					boolean toAdd = true;
-					for (final GamaRuntimeException oldEx : oldExcp.toArray(new GamaRuntimeException[oldExcp.size()])) {
-						if (oldEx.equivalentTo(newEx)) {
-							if (oldEx != newEx) { oldEx.addAgents(newEx.getAgentsNames()); }
-							toAdd = false;
-						}
-					}
-					if (toAdd) { oldExcp.add(newEx); }
-
-				}
-			}
-			updateUI(oldExcp);
-		}
-
-	}
-
-	/**
 	 * Update UI.
 	 *
 	 * @param newExceptions
 	 *            the new exceptions
 	 */
-	public void updateUI(final List<GamaRuntimeException> newExceptions) {
+	public void updateUI(final List<GamaRuntimeException> newExceptions, final boolean reset) {
 		if (newExceptions != null) {
 			newExceptions.removeIf(GamaRuntimeException::isInvalid);
 			cleanExceptions = new ArrayList<>(newExceptions);
 		}
 
-		GAMA.getGui().displayErrors(null, newExceptions);
+		GAMA.getGui().displayErrors(null, newExceptions, reset);
 	}
 
 	@Override

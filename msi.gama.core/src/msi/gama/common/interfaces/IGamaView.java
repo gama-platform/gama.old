@@ -262,8 +262,11 @@ public interface IGamaView {
 
 		/**
 		 * Display errors.
+		 *
+		 * @param reset
+		 *            the reset
 		 */
-		void displayErrors();
+		void displayErrors(boolean reset);
 
 	}
 

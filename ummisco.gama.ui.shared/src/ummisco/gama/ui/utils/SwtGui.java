@@ -153,15 +153,22 @@ public class SwtGui implements IGui {
 		g.setReported();
 	}
 
+	/**
+	 * Display errors.
+	 *
+	 * @param scope the scope
+	 * @param exceptions the exceptions
+	 * @param reset the reset
+	 */
 	@Override
-	public void displayErrors(final IScope scope, final List<GamaRuntimeException> exceptions) {
+	public void displayErrors(final IScope scope, final List<GamaRuntimeException> exceptions, final boolean reset) {
 		if (exceptions == null) {
-//			DEBUG.OUT("Hiding errors view");
+			// DEBUG.OUT("Hiding errors view");
 			hideView(ERROR_VIEW_ID);
 		} else {
-//			DEBUG.OUT("Showing errors view with new exceptions");
+			// DEBUG.OUT("Showing errors view with new exceptions");
 			final IGamaView.Error v = (Error) showView(scope, ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-			if (v != null) { v.displayErrors(); }
+			if (v != null) { v.displayErrors(reset); }
 		}
 	}
 

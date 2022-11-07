@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
@@ -137,22 +138,16 @@ public class GamaRuntimeException extends RuntimeException {
 		final String s = ex.getClass().getName();
 		if (s.contains("geotools") || s.contains("opengis")) return "exception in GeoTools library";
 		if (s.contains("jts")) return "exception in JTS library";
-		if (s.contains("rcaller"))
-			return "exception in RCaller library";
-		else if (s.contains("jogamp"))
-			return "exception in JOGL library";
-		else if (s.contains("weka"))
-			return "exception in Weka library";
-		else if (s.contains("math3")) return "exception in Math library";
+		if (s.contains("rcaller")) return "exception in RCaller library";
+		if (s.contains("jogamp")) return "exception in JOGL library";
+		if (s.contains("weka")) return "exception in Weka library";
+		if (s.contains("math3")) return "exception in Math library";
 		if (ex instanceof NullPointerException) return "nil value detected";
 		if (ex instanceof IndexOutOfBoundsException) return "index out of bounds";
-		if (ex instanceof IOException)
-			return "I/O error";
-		else if (ex instanceof CoreException)
-			return "exception in Eclipse";
-		else if (ex instanceof ClassCastException)
-			return "wrong casting";
-		else if (ex instanceof IllegalArgumentException) return "illegal argument";
+		if (ex instanceof IOException) return "I/O error";
+		if (ex instanceof CoreException) return "exception in Eclipse";
+		if (ex instanceof ClassCastException) return "wrong casting";
+		if (ex instanceof IllegalArgumentException) return "illegal argument";
 
 		return ex.getClass().getSimpleName();
 	}
@@ -166,7 +161,7 @@ public class GamaRuntimeException extends RuntimeException {
 	 *            the ex
 	 */
 	protected GamaRuntimeException(final IScope scope, final Throwable ex) {
-		super(ex == null ? "Unknown error" : "Java error: " + getExceptionName(ex), ex);
+		super(ex == null ? "Error" : "Java error: " + getExceptionName(ex), ex);
 		if (scope != null) {
 			final ISymbol symbol = scope.getCurrentSymbol();
 			if (symbol != null) { addContext(symbol); }
@@ -305,6 +300,7 @@ public class GamaRuntimeException extends RuntimeException {
 	 */
 	public List<String> getContextAsList() {
 		final List<String> result = new ArrayList<>();
+		if (scope != null && scope.getRoot() != null) { result.add("in " + scope.getRoot().getName()); }
 		result.addAll(context);
 		final int size = agentsNames.size();
 		if (size == 0) return result;
@@ -340,8 +336,8 @@ public class GamaRuntimeException extends RuntimeException {
 	 * @return true, if successful
 	 */
 	public boolean equivalentTo(final GamaRuntimeException ex) {
-		return this == ex || editorContext == ex.editorContext && getMessage().equals(ex.getMessage())
-				&& getCycle() == ex.getCycle();
+		return this == ex || editorContext == ex.editorContext && getMessage().equals(ex.getMessage()) && scope != null
+				&& ex.scope != null && scope.getRoot() == ex.scope.getRoot() && getCycle() == ex.getCycle();
 	}
 
 	/**
@@ -383,5 +379,12 @@ public class GamaRuntimeException extends RuntimeException {
 	 */
 	// If the simulation or experiment is dead, no need to report errors
 	public boolean isInvalid() { return scope == null || scope.isClosed(); }
+
+	/**
+	 * Gets the top level agent.
+	 *
+	 * @return the top level agent
+	 */
+	public ITopLevelAgent getTopLevelAgent() { return scope == null ? null : scope.getRoot(); }
 
 }
