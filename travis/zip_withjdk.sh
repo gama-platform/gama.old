@@ -62,7 +62,11 @@ for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.
 	sudo cp -R jdk_$os/jdk $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder
 
 	echo "-vm" > Gama.ini
-	echo "./jdk/bin/java" >> Gama.ini
+	if [[ "$os" == "macosx"* ]]; then
+		echo "../jdk/Contents/Home/bin/java" >> Gama.ini
+	else
+		echo "./jdk/bin/java" >> Gama.ini
+	fi
 	cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini >> Gama.ini
 	rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
 	mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
