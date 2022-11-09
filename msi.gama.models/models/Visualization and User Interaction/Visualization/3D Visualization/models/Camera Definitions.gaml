@@ -50,7 +50,8 @@ experiment Display type: gui autorun: true {
 		display "Follow object" parent: shared {
 			camera #default target: p distance: 150 / factor location: #from_above dynamic: true;
 		}
-		display "First person" parent: shared {
+		display "First person" type: opengl{
+			image "../includes/wood.jpg";
 			camera #default dynamic: true location: {int(first(object).location.x), int(first(object).location.y), 5/factor} target:
 			{cos(first(object).heading) * first(object).speed + int(first(object).location.x), sin(first(object).heading) * first(object).speed + int(first(object).location.y), 5/factor};
 		}
