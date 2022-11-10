@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GridTopology.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GridTopology.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
@@ -45,8 +45,10 @@ public class GridTopology extends AbstractTopology {
 	/**
 	 * Instantiates a new grid topology.
 	 *
-	 * @param scope the scope
-	 * @param matrix the matrix
+	 * @param scope
+	 *            the scope
+	 * @param matrix
+	 *            the matrix
 	 */
 	public GridTopology(final IScope scope, final IGrid matrix) {
 		super(scope, matrix.getEnvironmentFrame(), null);
@@ -69,25 +71,35 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public boolean isContinuous() {
-		return false;
-	}
+	public boolean isContinuous() { return false; }
 
 	/**
 	 * Instantiates a new grid topology.
 	 *
-	 * @param scope the scope
-	 * @param environment the environment
-	 * @param rows the rows
-	 * @param columns the columns
-	 * @param isTorus the is torus
-	 * @param usesVN the uses VN
-	 * @param isHexagon the is hexagon
-	 * @param horizontalOrientation the horizontal orientation
-	 * @param useIndividualShapes the use individual shapes
-	 * @param useNeighborsCache the use neighbors cache
-	 * @param optimizer the optimizer
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param environment
+	 *            the environment
+	 * @param rows
+	 *            the rows
+	 * @param columns
+	 *            the columns
+	 * @param isTorus
+	 *            the is torus
+	 * @param usesVN
+	 *            the uses VN
+	 * @param isHexagon
+	 *            the is hexagon
+	 * @param horizontalOrientation
+	 *            the horizontal orientation
+	 * @param useIndividualShapes
+	 *            the use individual shapes
+	 * @param useNeighborsCache
+	 *            the use neighbors cache
+	 * @param optimizer
+	 *            the optimizer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
 			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean horizontalOrientation,
@@ -109,15 +121,24 @@ public class GridTopology extends AbstractTopology {
 	/**
 	 * Instantiates a new grid topology.
 	 *
-	 * @param scope the scope
-	 * @param environment the environment
-	 * @param file the file
-	 * @param isTorus the is torus
-	 * @param usesVN the uses VN
-	 * @param useIndividualShapes the use individual shapes
-	 * @param useNeighborsCache the use neighbors cache
-	 * @param optimizer the optimizer
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param environment
+	 *            the environment
+	 * @param file
+	 *            the file
+	 * @param isTorus
+	 *            the is torus
+	 * @param usesVN
+	 *            the uses VN
+	 * @param useIndividualShapes
+	 *            the use individual shapes
+	 * @param useNeighborsCache
+	 *            the use neighbors cache
+	 * @param optimizer
+	 *            the optimizer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
 			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache,
@@ -132,15 +153,24 @@ public class GridTopology extends AbstractTopology {
 	/**
 	 * Instantiates a new grid topology.
 	 *
-	 * @param scope the scope
-	 * @param environment the environment
-	 * @param files the files
-	 * @param isTorus the is torus
-	 * @param usesVN the uses VN
-	 * @param useIndividualShapes the use individual shapes
-	 * @param useNeighborsCache the use neighbors cache
-	 * @param optimizer the optimizer
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param environment
+	 *            the environment
+	 * @param files
+	 *            the files
+	 * @param isTorus
+	 *            the is torus
+	 * @param usesVN
+	 *            the uses VN
+	 * @param useIndividualShapes
+	 *            the use individual shapes
+	 * @param useNeighborsCache
+	 *            the use neighbors cache
+	 * @param optimizer
+	 *            the optimizer
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public GridTopology(final IScope scope, final IShape environment, final IList<GamaGridFile> files,
 			final boolean isTorus, final boolean usesVN, final boolean useIndividualShapes,
@@ -188,9 +218,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public IGrid getPlaces() {
-		return (IGrid) super.getPlaces();
-	}
+	public IGrid getPlaces() { return (IGrid) super.getPlaces(); }
 
 	/**
 	 * @throws GamaRuntimeException
@@ -205,12 +233,17 @@ public class GridTopology extends AbstractTopology {
 	/**
 	 * Path between.
 	 *
-	 * @param scope the scope
-	 * @param source the source
-	 * @param target the target
-	 * @param on the on
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param target
+	 *            the target
+	 * @param on
+	 *            the on
 	 * @return the gama spatial path
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,
 			final Map<IAgent, Object> on) throws GamaRuntimeException {
@@ -279,16 +312,11 @@ public class GridTopology extends AbstractTopology {
 		// agents
 		if (filter.getSpecies() == getPlaces().getCellSpecies()) {
 			// case where the filter is the complete population set
-			if (filter instanceof IPopulationSet)
-				return placesConcerned;
-			else {
-				// otherwise, we return only the accepted cells
-				try (ICollector<IAgent> agents = Collector.getSet()) {
-					for (final IAgent ag : placesConcerned) {
-						if (filter.accept(scope, null, ag)) { agents.add(ag); }
-					}
-					return agents.items();
-				}
+			if (filter instanceof IPopulationSet) return placesConcerned;
+			// otherwise, we return only the accepted cells
+			try (ICollector<IAgent> agents = Collector.getOrderedSet()) {
+				for (final IAgent ag : placesConcerned) { if (filter.accept(scope, null, ag)) { agents.add(ag); } }
+				return agents.items();
 			}
 
 		}

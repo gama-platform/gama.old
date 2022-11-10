@@ -10,13 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
-import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
-import static msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
-import static msi.gama.metamodel.shape.IShape.Type.MULTIPOINT;
-import static msi.gama.metamodel.shape.IShape.Type.NULL;
-import static msi.gama.metamodel.shape.IShape.Type.POINT;
-import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -26,6 +19,7 @@ import java.util.function.Consumer;
 
 import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.algorithm.Distance;
+import org.locationtech.jts.algorithm.PointLocation;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -75,6 +69,7 @@ import msi.gaml.operators.Spatial.ThreeD;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The class GamaGeometryUtils.
@@ -85,6 +80,10 @@ import msi.gaml.types.Types;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GeometryUtils {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The envelope computers. */
 	private static List<IEnvelopeComputer> envelopeComputers = new ArrayList<>();
@@ -178,85 +177,132 @@ public class GeometryUtils {
 	 *            the rand
 	 * @return the gama point
 	 */
-	public static GamaPoint pointInGeom(final Geometry geom, final RandomUtils rand) {
+	public static GamaPoint pointInGeom(final IScope scope, final Geometry geom) {
 		// WARNING Only in 2D for Polygons !
-		if (geom == null || geom.getCoordinate() == null) return null;
-
-		if (geom instanceof Point || geom.getCoordinates().length < 2) return new GamaPoint(geom.getCoordinate());
-		if (geom instanceof LineString) {
-			final double perimeter = GeometryUtils.getContourCoordinates(geom).getLength();
-			final double dist = perimeter * rand.between(0.0, 1.0);
-			double sumDist = 0;
-			Coordinate pS = ((LineString) geom).getCoordinateN(0);
-			for (int i = 1; i < geom.getNumPoints(); i++) {
-				final Coordinate pT = ((LineString) geom).getCoordinateN(i);
-				final double d = pS.distance3D(pT);
-				if (d + sumDist >= dist) {
-					final double ratio = (dist - sumDist) / d;
-					final double newX = pS.x + ratio * (pT.x - pS.x);
-					final double newY = pS.y + ratio * (pT.y - pS.y);
-					final double newZ = pS.z + ratio * (pT.z - pS.z);
-					return new GamaPoint(newX, newY, newZ);
-				}
-				pS = pT;
-				sumDist += d;
-			}
-		}
-		if (geom instanceof Polygon) {
-			final Envelope env = geom.getEnvelopeInternal();
-			final double xMin = env.getMinX();
-			final double xMax = env.getMaxX();
-			final double yMin = env.getMinY();
-			final double yMax = env.getMaxY();
-			final double x = rand.between(xMin, xMax);
-
-			if (geom.getArea() > 0) {
-				final double y = rand.between(yMin, yMax);
-				final UniqueCoordinateSequence ucs = (UniqueCoordinateSequence) ICoordinates.ofLength(1);
-				ucs.setTo(x, y, 0);
-				final Point pt = GEOMETRY_FACTORY.createPoint(ucs);
-				while (!geom.intersects(pt)) {
-					ucs.setTo(rand.between(xMin, xMax), rand.between(yMin, yMax), 0);
-					pt.geometryChanged();
-					// pt.setLocation(rand.between(xMin, xMax), rand.between(yMin, yMax));
-				}
-				return ucs.at(0);
-			}
-
-			final Coordinate coord1 = new Coordinate(x, yMin);
-			final Coordinate coord2 = new Coordinate(x, yMax);
-			final Coordinate[] coords = { coord1, coord2 };
-			Geometry line = GEOMETRY_FACTORY.createLineString(coords);
-			try {
-				line = line.intersection(geom);
-			} catch (final Exception e) {
-				final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-				line = GeometryPrecisionReducer.reducePointwise(line, pm)
-						.intersection(GeometryPrecisionReducer.reducePointwise(geom, pm));
-
-			}
-			return pointInGeom(line, rand);
-		}
+		if (geom == null) return null;
+		Coordinate[] coordinates = geom.getCoordinates();
+		if (coordinates.length < 1 || coordinates[0] == null) return null;
+		if (geom instanceof Point || coordinates.length < 2) return new GamaPoint(geom.getCoordinate());
+		if (geom instanceof LineString ls) return pointInLineString(scope, ls);
+		if (geom instanceof Polygon polygon) return pointInPolygon(scope, polygon);
+		//DEBUG.OUT("Point not in Polygon but in a collection of geometries");
 		if (geom instanceof GeometryCollection) {
 			if (geom instanceof MultiLineString) {
 				final IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
 				for (int i = 0; i < geom.getNumGeometries(); i++) {
 					distribution.add(GeometryUtils.getContourCoordinates(geom.getGeometryN(i)).getLength());
 				}
-				final int index = Random.opRndChoice(GAMA.getRuntimeScope(), distribution);
-				return pointInGeom(geom.getGeometryN(index), rand);
+				final int index = Random.opRndChoice(scope, distribution);
+				return pointInLineString(scope, (LineString) geom.getGeometryN(index));
 			}
 			if (geom instanceof MultiPolygon) {
 				final IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
 				for (int i = 0; i < geom.getNumGeometries(); i++) { distribution.add(geom.getGeometryN(i).getArea()); }
-				final int index = Random.opRndChoice(GAMA.getRuntimeScope(), distribution);
-				return pointInGeom(geom.getGeometryN(index), rand);
+				final int index = Random.opRndChoice(scope, distribution);
+				return pointInPolygon(scope, (Polygon) geom.getGeometryN(index));
 			}
-			return pointInGeom(geom.getGeometryN(rand.between(0, geom.getNumGeometries() - 1)), rand);
+			return pointInGeom(scope, geom.getGeometryN(scope.getRandom().between(0, geom.getNumGeometries() - 1)));
 		}
 
 		return null;
 
+	}
+
+	/**
+	 * Point in polygon.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param polygon
+	 *            the polygon
+	 * @return the gama point
+	 */
+	private static GamaPoint pointInPolygon(final IScope scope, final Polygon polygon) {
+
+		RandomUtils rand = scope.getRandom();
+		final Envelope env = polygon.getEnvelopeInternal();
+		final double xMin = env.getMinX();
+		final double xMax = env.getMaxX();
+		final double yMin = env.getMinY();
+		final double yMax = env.getMaxY();
+		final double x = rand.between(xMin, xMax);
+		if (polygon.getArea() > 0) {
+			// if (polygon.getArea() > 800000) {
+
+			// DEBUG.OUT("Big Polygon");
+
+			// }
+			final double y = rand.between(yMin, yMax);
+			if (polygon.getNumInteriorRing() == 0) {
+				GamaPoint p = new GamaPoint(x, y, 0);
+				Coordinate[] coordinates = polygon.getCoordinates();
+				// int i = 0;
+				while (!PointLocation.isInRing(p, coordinates)) {
+					// i++;
+					p.setLocation(rand.between(xMin, xMax), rand.between(yMin, yMax), 0);
+				}
+				// DEBUG.OUT("Point in Polygon with solid Area = " + polygon.getArea() + " tried " + i + " times");
+				return p;
+			}
+			final ICoordinates ucs = ICoordinates.ofLength(1);
+			ucs.setTo(x, y, 0);
+			final Point pt = GEOMETRY_FACTORY.createPoint(ucs);
+			// int i = 0;
+			while (!polygon.intersects(pt)) {
+				// i++;
+				ucs.setTo(rand.between(xMin, xMax), rand.between(yMin, yMax), 0);
+				pt.geometryChanged();
+			}
+			// DEBUG.OUT("Point in Polygon with holes Area = " + polygon.getArea() + " tried " + i + " times");
+
+			return ucs.at(0);
+		}
+		DEBUG.OUT("Point in Polygon with Area = 0");
+		final Coordinate coord1 = new Coordinate(x, yMin);
+		final Coordinate coord2 = new Coordinate(x, yMax);
+		final Coordinate[] coords = { coord1, coord2 };
+		LineString line = GEOMETRY_FACTORY.createLineString(coords);
+		try {
+			line = (LineString) line.intersection(polygon);
+		} catch (final Exception e) {
+			final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+			line = (LineString) GeometryPrecisionReducer.reducePointwise(line, pm)
+					.intersection(GeometryPrecisionReducer.reducePointwise(polygon, pm));
+
+		}
+		return pointInLineString(scope, line);
+	}
+
+	/**
+	 * Point in geom.
+	 *
+	 * @param geom
+	 *            the geom
+	 * @param rand
+	 *            the rand
+	 * @return
+	 */
+	private static GamaPoint pointInLineString(final IScope scope, final LineString geom) {
+		DEBUG.OUT("Point in LineString");
+		final double perimeter = GeometryUtils.getContourCoordinates(geom).getLength();
+		final double dist = perimeter * scope.getRandom().between(0.0, 1.0);
+		double sumDist = 0;
+		Coordinate pS = geom.getCoordinateN(0);
+		for (int i = 1; i < geom.getNumPoints(); i++) {
+			final Coordinate pT = geom.getCoordinateN(i);
+			final double d = pS.distance3D(pT);
+			if (d + sumDist >= dist) {
+				final double ratio = (dist - sumDist) / d;
+				final double newX = pS.x + ratio * (pT.x - pS.x);
+				final double newY = pS.y + ratio * (pT.y - pS.y);
+				final double newZ = pS.z + ratio * (pT.z - pS.z);
+				return new GamaPoint(newX, newY, newZ);
+			}
+			pS = pT;
+			sumDist += d;
+		}
+		// Should not happen ...
+		return null;
 	}
 
 	/**
@@ -268,9 +314,9 @@ public class GeometryUtils {
 	 *            the rand
 	 * @return the gama point
 	 */
-	public static GamaPoint pointInGeom(final IShape shape, final RandomUtils rand) {
+	public static GamaPoint pointInGeom(final IScope scope, final IShape shape) {
 		if (shape == null) return null;
-		return pointInGeom(shape.getInnerGeometry(), rand);
+		return pointInGeom(scope, shape.getInnerGeometry());
 	}
 
 	/**
@@ -509,8 +555,7 @@ public class GeometryUtils {
 	public static IList<IShape> discretization(final Geometry geom, final double size_x, final double size_y,
 			final boolean overlaps, final List<IShape> borders) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
-		if (geom instanceof GeometryCollection) {
-			final GeometryCollection gc = (GeometryCollection) geom;
+		if (geom instanceof GeometryCollection gc) {
 			for (int i = 0; i < gc.getNumGeometries(); i++) {
 				geoms.addAll(discretization(gc.getGeometryN(i), size_x, size_y, overlaps, borders));
 			}
@@ -674,8 +719,7 @@ public class GeometryUtils {
 	public static IList<IShape> triangulation(final IScope scope, final Geometry geom,
 			final double toleranceTriangulation, final double toleranceClip, final boolean approxClipping) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
-		if (geom instanceof GeometryCollection) {
-			final GeometryCollection gc = (GeometryCollection) geom;
+		if (geom instanceof GeometryCollection gc) {
 			for (int i = 0; i < gc.getNumGeometries(); i++) {
 				geoms.addAll(triangulation(scope, gc.getGeometryN(i), toleranceTriangulation, toleranceClip,
 						approxClipping));
@@ -943,19 +987,15 @@ public class GeometryUtils {
 	 */
 	private static IShape.Type geometryType(final List<List<List<GamaPoint>>> listPoints) {
 		final int size = listPoints.size();
-		if (size == 0) return NULL;
+		if (size == 0) return msi.gama.metamodel.shape.IShape.Type.NULL;
 		if (size == 1) return geometryTypeSimp(listPoints.get(0));
 		final IShape.Type type = geometryTypeSimp(listPoints.get(0));
-		switch (type) {
-			case POINT:
-				return MULTIPOINT;
-			case LINESTRING:
-				return MULTILINESTRING;
-			case POLYGON:
-				return POLYGON;
-			default:
-				return NULL;
-		}
+		return switch (type) {
+			case POINT -> msi.gama.metamodel.shape.IShape.Type.MULTIPOINT;
+			case LINESTRING -> msi.gama.metamodel.shape.IShape.Type.MULTILINESTRING;
+			case POLYGON -> msi.gama.metamodel.shape.IShape.Type.POLYGON;
+			default -> msi.gama.metamodel.shape.IShape.Type.NULL;
+		};
 	}
 
 	/**
@@ -966,12 +1006,14 @@ public class GeometryUtils {
 	 * @return the i shape. type
 	 */
 	private static IShape.Type geometryTypeSimp(final List<List<GamaPoint>> listPoints) {
-		if (listPoints.isEmpty() || listPoints.get(0).isEmpty()) return NULL;
+		if (listPoints.isEmpty() || listPoints.get(0).isEmpty()) return msi.gama.metamodel.shape.IShape.Type.NULL;
 		final List<GamaPoint> list0 = listPoints.get(0);
 		final int size0 = list0.size();
-		if (size0 == 1 || size0 == 2 && list0.get(0).equals(list0.get(listPoints.size() - 1))) return POINT;
-		if (!list0.get(0).equals(list0.get(listPoints.size() - 1)) || size0 < 3) return LINESTRING;
-		return POLYGON;
+		if (size0 == 1 || size0 == 2 && list0.get(0).equals(list0.get(listPoints.size() - 1)))
+			return msi.gama.metamodel.shape.IShape.Type.POINT;
+		if (!list0.get(0).equals(list0.get(listPoints.size() - 1)) || size0 < 3)
+			return msi.gama.metamodel.shape.IShape.Type.LINESTRING;
+		return msi.gama.metamodel.shape.IShape.Type.POLYGON;
 	}
 
 	/**
@@ -1021,8 +1063,7 @@ public class GeometryUtils {
 			if (locs.size() > 1 && locs.get(0).distance3D(locs.get(locs.size() - 1)) < 0.1 * distance) {
 				locs.remove(locs.size() - 1);
 			}
-		} else if (geom instanceof Polygon) {
-			final Polygon poly = (Polygon) geom;
+		} else if (geom instanceof Polygon poly) {
 			locs.addAll(locsOnGeometry(poly.getExteriorRing(), distance));
 			for (int i = 0; i < poly.getNumInteriorRing(); i++) {
 				locs.addAll(locsOnGeometry(poly.getInteriorRingN(i), distance));
@@ -1083,10 +1124,7 @@ public class GeometryUtils {
 					distCur += dist;
 				}
 			}
-		} else if (geom instanceof Polygon) {
-			final Polygon poly = (Polygon) geom;
-			locs.addAll(locsAlongGeometry(poly.getExteriorRing(), rates));
-		}
+		} else if (geom instanceof Polygon poly) { locs.addAll(locsAlongGeometry(poly.getExteriorRing(), rates)); }
 		return locs;
 	}
 
@@ -1110,8 +1148,7 @@ public class GeometryUtils {
 		if (obj instanceof Number) {
 			final double size = ((Number) obj).doubleValue();
 			result = Envelope3D.of(0, size, 0, size, 0, size);
-		} else if (obj instanceof GamaPoint) {
-			final GamaPoint size = (GamaPoint) obj;
+		} else if (obj instanceof GamaPoint size) {
 			result = Envelope3D.of(0, size.getX(), 0, size.getY(), 0, size.getZ());
 		} else if (obj instanceof IShape) {
 			result = ((IShape) obj).getEnvelope();
@@ -1454,10 +1491,9 @@ public class GeometryUtils {
 	 * @return the geometry
 	 */
 	public static Geometry geometryCollectionManagement(final Geometry gjts) {
-		if (!(gjts instanceof GeometryCollection) || gjts instanceof MultiPoint || gjts instanceof MultiLineString
+		if (!(gjts instanceof GeometryCollection gc) || gjts instanceof MultiPoint || gjts instanceof MultiLineString
 				|| gjts instanceof MultiPolygon)
 			return gjts;
-		GeometryCollection gc = (GeometryCollection) gjts;
 		int dimMax = -1;
 		boolean toManage = false;
 		for (int i = 0; i < gc.getNumGeometries(); i++) {
@@ -1504,8 +1540,7 @@ public class GeometryUtils {
 		if (g == null || g.isEmpty()) return g;
 		Geometry g2 = g.buffer(0.0, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT);
 		if (g2.isEmpty()) {
-			if (!(g instanceof Polygon)) return GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
-			Polygon p = (Polygon) g;
+			if (!(g instanceof Polygon p)) return GeometryUtils.GEOMETRY_FACTORY.createGeometry(g);
 			Geometry g3 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getExteriorRing().getCoordinates());
 			for (int i = 0; i < p.getNumInteriorRing(); i++) {
 				Geometry g4 = GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates());

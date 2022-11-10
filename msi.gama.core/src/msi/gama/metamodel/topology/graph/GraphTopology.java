@@ -1112,7 +1112,7 @@ public class GraphTopology extends AbstractTopology {
 		final ISpatialGraph graph = this.getPlaces();
 		boolean searchEdges = false;
 		boolean searchVertices = false;
-		try (ICollector<IAgent> agents = Collector.getSet()) {
+		try (ICollector<IAgent> agents = Collector.getOrderedSet()) {
 			IShape realS = null;
 			IShape tcr = null;
 			if (graph.containsEdge(source)) {

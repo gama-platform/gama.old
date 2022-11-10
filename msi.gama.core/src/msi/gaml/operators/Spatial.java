@@ -5654,7 +5654,7 @@ public abstract class Spatial {
 				see = { "closest_points_with", "farthest_point_to", "points_at" })
 		@no_test
 		public static GamaPoint any_location_in(final IScope scope, final IShape g) {
-			return GeometryUtils.pointInGeom(g, scope.getRandom());
+			return GeometryUtils.pointInGeom(scope, g);
 		}
 
 		/**

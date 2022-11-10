@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractTopology.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractTopology.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
 
@@ -54,16 +54,14 @@ import msi.gaml.types.Types;
 public abstract class AbstractTopology implements ITopology {
 
 	@Override
-	public IType<?> getGamlType() {
-		return Types.TOPOLOGY;
-	}
+	public IType<?> getGamlType() { return Types.TOPOLOGY; }
 
 	/** The environment. */
 	protected IShape environment;
-	
+
 	/** The root. */
 	protected RootTopology root;
-	
+
 	/** The places. */
 	protected IContainer<?, IShape> places;
 	// protected List<ISpecies> speciesInserted;
@@ -75,9 +73,12 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Instantiates a new abstract topology.
 	 *
-	 * @param scope the scope
-	 * @param env the env
-	 * @param root the root
+	 * @param scope
+	 *            the scope
+	 * @param env
+	 *            the env
+	 * @param root
+	 *            the root
 	 */
 	public AbstractTopology(final IScope scope, final IShape env, final RootTopology root) {
 		setRoot(scope, root);
@@ -106,7 +107,8 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Return toroidal geom.
 	 *
-	 * @param loc the loc
+	 * @param loc
+	 *            the loc
 	 * @return the geometry
 	 */
 	public Geometry returnToroidalGeom(final GamaPoint loc) {
@@ -124,7 +126,8 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Return toroidal geom.
 	 *
-	 * @param shape the shape
+	 * @param shape
+	 *            the shape
 	 * @return the geometry
 	 */
 	public Geometry returnToroidalGeom(final IShape shape) {
@@ -135,8 +138,10 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Toroidal geoms.
 	 *
-	 * @param scope the scope
-	 * @param shps the shps
+	 * @param scope
+	 *            the scope
+	 * @param shps
+	 *            the shps
 	 * @return the map
 	 */
 	public Map<Geometry, IAgent> toroidalGeoms(final IScope scope, final IContainer<?, ? extends IShape> shps) {
@@ -268,9 +273,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public IShape getEnvironment() {
-		return environment;
-	}
+	public IShape getEnvironment() { return environment; }
 
 	@Override
 	public GamaPoint normalizeLocation(final GamaPoint point, final boolean nullIfOutside) {
@@ -345,8 +348,10 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Normalize location 3 D.
 	 *
-	 * @param point the point
-	 * @param nullIfOutside the null if outside
+	 * @param point
+	 *            the point
+	 * @param nullIfOutside
+	 *            the null if outside
 	 * @return the gama point
 	 */
 	public GamaPoint normalizeLocation3D(final GamaPoint point, final boolean nullIfOutside) {
@@ -385,13 +390,11 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public GamaPoint getRandomLocation(final IScope scope) {
-		return GeometryUtils.pointInGeom(environment, scope.getRandom());
+		return GeometryUtils.pointInGeom(scope, environment);
 	}
 
 	@Override
-	public IContainer<?, IShape> getPlaces() {
-		return places;
-	}
+	public IContainer<?, IShape> getPlaces() { return places; }
 
 	// protected void insertSpecies(final IScope scope, final ISpecies species) {
 	// if (!this.speciesInserted.contains(species)) {
@@ -430,9 +433,7 @@ public abstract class AbstractTopology implements ITopology {
 		scope.getRandom().shuffleInPlace(ggs);
 		final Ordering<Geometry> ordering = Ordering.natural().onResultOf(input -> g0.distance(input));
 		final IList<IAgent> shapes = GamaListFactory.create(Types.AGENT);
-		for (final Geometry g : ordering.leastOf(ggs, number)) {
-			shapes.add(agents.get(g));
-		}
+		for (final Geometry g : ordering.leastOf(ggs, number)) { shapes.add(agents.get(g)); }
 		return shapes;
 	}
 
@@ -493,9 +494,12 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Gets the tororoidal agents.
 	 *
-	 * @param source the source
-	 * @param scope the scope
-	 * @param filter the filter
+	 * @param source
+	 *            the source
+	 * @param scope
+	 *            the scope
+	 * @param filter
+	 *            the filter
 	 * @return the tororoidal agents
 	 */
 	public Map<Geometry, IAgent> getTororoidalAgents(final IShape source, final IScope scope,
@@ -506,9 +510,12 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Gets the filtered agents.
 	 *
-	 * @param source the source
-	 * @param scope the scope
-	 * @param filter the filter
+	 * @param source
+	 *            the source
+	 * @param scope
+	 *            the scope
+	 * @param filter
+	 *            the filter
 	 * @return the filtered agents
 	 */
 	@SuppressWarnings ("unchecked")
@@ -538,7 +545,7 @@ public abstract class AbstractTopology implements ITopology {
 		// FOR TORUS ENVIRONMENTS ONLY
 
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
-		try (ICollector<IAgent> agents = Collector.getSet()) {
+		try (ICollector<IAgent> agents = Collector.getOrderedSet()) {
 			final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(source, scope, filter);
 			final IAgent sourceAgent = source.getAgent();
 			for (final Geometry g1 : agentsMap.keySet()) {
@@ -553,14 +560,10 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public double getWidth() {
-		return environment.getEnvelope().getWidth();
-	}
+	public double getWidth() { return environment.getEnvelope().getWidth(); }
 
 	@Override
-	public double getHeight() {
-		return environment.getEnvelope().getHeight();
-	}
+	public double getHeight() { return environment.getEnvelope().getHeight(); }
 
 	@Override
 	public void dispose() {
@@ -574,21 +577,20 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * Accept.
 	 *
-	 * @param pg1 the pg 1
-	 * @param g2 the g 2
-	 * @param rel the rel
+	 * @param pg1
+	 *            the pg 1
+	 * @param g2
+	 *            the g 2
+	 * @param rel
+	 *            the rel
 	 * @return true, if successful
 	 */
 	public static final boolean accept(final PreparedGeometry pg1, final Geometry g2, final SpatialRelation rel) {
-		if (rel == SpatialRelation.OVERLAP)
-			return pg1.intersects(g2);
-		else if (rel == SpatialRelation.INSIDE)
-			return pg1.covers(g2);
-		else if (rel == SpatialRelation.COVER)
-			return pg1.coveredBy(g2);
-		else if (rel == SpatialRelation.CROSS)
-			return pg1.crosses(g2);
-		else if (rel == SpatialRelation.PARTIALLY_OVERLAP)
+		if (rel == SpatialRelation.OVERLAP) return pg1.intersects(g2);
+		if (rel == SpatialRelation.INSIDE) return pg1.covers(g2);
+		if (rel == SpatialRelation.COVER) return pg1.coveredBy(g2);
+		if (rel == SpatialRelation.CROSS) return pg1.crosses(g2);
+		if (rel == SpatialRelation.PARTIALLY_OVERLAP)
 			return pg1.overlaps(g2);
 		else
 			return pg1.touches(g2);
@@ -615,7 +617,7 @@ public abstract class AbstractTopology implements ITopology {
 				envelope.dispose();
 			}
 		}
-		try (final ICollector<IAgent> result = Collector.getSet()) {
+		try (final ICollector<IAgent> result = Collector.getOrderedSet()) {
 
 			for (final IShape sourceSub : source.getGeometries()) {
 				final Geometry sourceTo = returnToroidalGeom(sourceSub);
@@ -636,14 +638,10 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public ISpatialIndex getSpatialIndex() {
-		return root.getSpatialIndex();
-	}
+	public ISpatialIndex getSpatialIndex() { return root.getSpatialIndex(); }
 
 	@Override
-	public boolean isTorus() {
-		return root.isTorus();
-	}
+	public boolean isTorus() { return root.isTorus(); }
 
 	/**
 	 * Gets the adjusted XY vector.
