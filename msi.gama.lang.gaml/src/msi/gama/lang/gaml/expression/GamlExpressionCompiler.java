@@ -103,7 +103,6 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.ValidationContext;
-import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
@@ -262,11 +261,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// The unary "unit" operator should let the value of its child pass
 		// through
 		if ("°".equals(op) || "#".equals(op)) return expr;
-		if ("every".equals(op) && expr instanceof ConstantExpression && expr.getGamlType() == Types.INT) {
-			getContext().warning(
-					"No unit provided. If this frequency concerns cycles, please use the #cycle unit. Otherwise use one of the temporal unit (#ms, #s, #mn, #h, #day, #week, #month, #year)",
-					IGamlIssue.DEPRECATED, e);
-		}
 		if (isSpeciesName(op)) return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr());
 		// if ( isSkillName(op) ) { return factory.createOperator(AS, context,
 		// e, expr, skill(op)); }
@@ -654,7 +648,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IType type = owner.getGamlType();
 		if (type.isParametricFormOf(Types.SPECIES)) {
 			final SpeciesDescription sd = type.getContentType().getSpecies();
-			if ((sd instanceof ModelDescription md) && md.hasExperiment(name))
+			if (sd instanceof ModelDescription md && md.hasExperiment(name))
 				return getFactory().createConst(name, GamaType.from(md.getExperiment(name)));
 		}
 		getContext().error("Only experiments can be accessed using their plain name", IGamlIssue.UNKNOWN_FIELD);
@@ -1154,11 +1148,18 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 * @return the i expression
 	 */
 	private IExpression tryActionCall(final String op, final Function object) {
-		final SpeciesDescription sd = getContext().getSpeciesContext();
+		SpeciesDescription sd = getContext().getSpeciesContext();
 		if (sd == null) return null;
 		final boolean isSuper = getContext() instanceof StatementDescription
 				&& ((StatementDescription) getContext()).isSuperInvocation();
-		final ActionDescription action = isSuper ? sd.getParent().getAction(op) : sd.getAction(op);
+		ActionDescription action = isSuper ? sd.getParent().getAction(op) : sd.getAction(op);
+		if (action == null) {
+			// Not found: see #3530
+			if (sd instanceof ExperimentDescription && getContext().isIn(IKeyword.OUTPUT)) {
+				sd = sd.getModelDescription();
+			}
+			action = isSuper ? sd.getParent().getAction(op) : sd.getAction(op);
+		}
 		if (action == null) return null;
 		final EObject params = object.getRight();
 		return action(op, caseVar(isSuper ? SUPER : SELF, object), params, action);
@@ -1192,8 +1193,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// If there is one, we match
 		if (size == 1) return true;
 		// If more than one, we need to check if there are operators that match. If yes, we return false
-		return !getFactory().hasOperator(op, getContext(), object,
-				toArray(transform(args, this::compile), IExpression.class));
+		return !getFactory().hasOperator(op, toArray(transform(args, this::compile), IExpression.class));
 	}
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IExpressionFactory.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * IExpressionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -35,13 +35,13 @@ public interface IExpressionFactory {
 
 	/** The true expr. */
 	ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
-	
+
 	/** The false expr. */
 	ConstantExpression FALSE_EXPR = ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION;
-	
+
 	/** The nil expr. */
 	ConstantExpression NIL_EXPR = ConstantExpressionDescription.NULL_EXPR_DESCRIPTION;
-	
+
 	/** The temporary action name. */
 	String TEMPORARY_ACTION_NAME = "__synthetic__action__";
 
@@ -50,28 +50,36 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param val the val
-	 * @param type the type
+	 * @param val
+	 *            the val
+	 * @param type
+	 *            the type
 	 * @return the constant expression
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	ConstantExpression createConst(final Object val, final IType type) throws GamaRuntimeException;
 
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param val the val
-	 * @param type the type
-	 * @param name the name
+	 * @param val
+	 *            the val
+	 * @param type
+	 *            the type
+	 * @param name
+	 *            the name
 	 * @return the constant expression
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	ConstantExpression createConst(final Object val, final IType type, String name) throws GamaRuntimeException;
 
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param type the type
+	 * @param type
+	 *            the type
 	 * @return the species constant expression
 	 */
 	SpeciesConstantExpression createSpeciesConstant(final IType type);
@@ -79,8 +87,10 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param s the s
-	 * @param context the context
+	 * @param s
+	 *            the s
+	 * @param context
+	 *            the context
 	 * @return the i expression
 	 */
 	IExpression createExpr(final IExpressionDescription s, final IDescription context);
@@ -88,8 +98,10 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param s the s
-	 * @param context the context
+	 * @param s
+	 *            the s
+	 * @param context
+	 *            the context
 	 * @return the i expression
 	 */
 	IExpression createExpr(final String s, IDescription context);
@@ -97,9 +109,12 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param s the s
-	 * @param context the context
-	 * @param additionalContext the additional context
+	 * @param s
+	 *            the s
+	 * @param context
+	 *            the context
+	 * @param additionalContext
+	 *            the additional context
 	 * @return the i expression
 	 */
 	IExpression createExpr(final String s, final IDescription context, final IExecutionContext additionalContext);
@@ -107,7 +122,8 @@ public interface IExpressionFactory {
 	/**
 	 * Gets the unit expr.
 	 *
-	 * @param unit the unit
+	 * @param unit
+	 *            the unit
 	 * @return the unit expr
 	 */
 	UnitConstantExpression getUnitExpr(final String unit);
@@ -115,9 +131,12 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param action the action
-	 * @param args the args
-	 * @param context the context
+	 * @param action
+	 *            the action
+	 * @param args
+	 *            the args
+	 * @param context
+	 *            the context
 	 * @return the arguments
 	 */
 	Arguments createArgumentMap(ActionDescription action, IExpressionDescription args, IDescription context);
@@ -132,11 +151,16 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param name the name
-	 * @param type the type
-	 * @param isConst the is const
-	 * @param scope the scope
-	 * @param definitionDescription the definition description
+	 * @param name
+	 *            the name
+	 * @param type
+	 *            the type
+	 * @param isConst
+	 *            the is const
+	 * @param scope
+	 *            the scope
+	 * @param definitionDescription
+	 *            the definition description
 	 * @return the i expression
 	 */
 	IExpression createVar(String name, IType type, boolean isConst, int scope, IDescription definitionDescription);
@@ -144,7 +168,8 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param elements the elements
+	 * @param elements
+	 *            the elements
 	 * @return the i expression
 	 */
 	IExpression createList(final Iterable<? extends IExpression> elements);
@@ -152,7 +177,8 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param elements the elements
+	 * @param elements
+	 *            the elements
 	 * @return the i expression
 	 */
 	IExpression createMap(final Iterable<? extends IExpression> elements);
@@ -204,9 +230,12 @@ public interface IExpressionFactory {
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param agent the agent
-	 * @param expression the expression
-	 * @param tempContext the temp context
+	 * @param agent
+	 *            the agent
+	 * @param expression
+	 *            the expression
+	 * @param tempContext
+	 *            the temp context
 	 * @return the i expression
 	 */
 	IExpression createTemporaryActionForAgent(IAgent agent, String expression, IExecutionContext tempContext);
@@ -214,20 +243,27 @@ public interface IExpressionFactory {
 	/**
 	 * Checks for operator.
 	 *
-	 * @param op the op
-	 * @param context the context
-	 * @param object the object
-	 * @param compiledArgs the compiled args
+	 * @param op
+	 *            the op
+	 * @param context
+	 *            the context
+	 * @param object
+	 *            the object
+	 * @param compiledArgs
+	 *            the compiled args
 	 * @return true, if successful
 	 */
-	boolean hasOperator(String op, IDescription context, EObject object, IExpression... compiledArgs);
+	boolean hasOperator(String op, IExpression... compiledArgs);
 
 	/**
 	 * Creates a new IExpression object.
 	 *
-	 * @param context the context
-	 * @param toCast the to cast
-	 * @param createTypeExpression the create type expression
+	 * @param context
+	 *            the context
+	 * @param toCast
+	 *            the to cast
+	 * @param createTypeExpression
+	 *            the create type expression
 	 * @return the i expression
 	 */
 	IExpression createAs(IDescription context, IExpression toCast, IExpression createTypeExpression);

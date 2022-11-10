@@ -185,7 +185,7 @@ public class GeometryUtils {
 		if (geom instanceof Point || coordinates.length < 2) return new GamaPoint(geom.getCoordinate());
 		if (geom instanceof LineString ls) return pointInLineString(scope, ls);
 		if (geom instanceof Polygon polygon) return pointInPolygon(scope, polygon);
-		//DEBUG.OUT("Point not in Polygon but in a collection of geometries");
+		// DEBUG.OUT("Point not in Polygon but in a collection of geometries");
 		if (geom instanceof GeometryCollection) {
 			if (geom instanceof MultiLineString) {
 				final IList<Double> distribution = GamaListFactory.create(Types.FLOAT);

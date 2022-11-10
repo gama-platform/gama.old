@@ -172,26 +172,20 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createVar(final String name, final IType type, final boolean isConst, final int scope,
 			final IDescription definitionDescription) {
-		switch (scope) {
-			case IVarExpression.GLOBAL:
-				return GlobalVariableExpression.create(name, type, isConst,
-						definitionDescription.getModelDescription());
-			case IVarExpression.AGENT:
-				return new AgentVariableExpression(name, type, isConst, definitionDescription);
-			case IVarExpression.TEMP:
-				// TODO AD possibility to optimize the code if the variable is not changed anywhere in the code
-				return new TempVariableExpression(name, type, definitionDescription);
-			case IVarExpression.EACH:
-				return new EachExpression(name, type);
-			case IVarExpression.SELF:
-				return new SelfExpression(type);
-			case IVarExpression.SUPER:
-				return new SuperExpression(type);
-			case IVarExpression.MYSELF:
-				return new MyselfExpression(type, definitionDescription);
-			default:
-				return null;
-		}
+		return switch (scope) {
+			case IVarExpression.GLOBAL -> GlobalVariableExpression.create(name, type, isConst,
+					definitionDescription.getModelDescription());
+			case IVarExpression.AGENT -> new AgentVariableExpression(name, type, isConst, definitionDescription);
+			case IVarExpression.TEMP -> /*
+										 * TODO AD possibility to optimize the code if the variable is not changed
+										 * anywhere in the code
+										 */ new TempVariableExpression(name, type, definitionDescription);
+			case IVarExpression.EACH -> new EachExpression(name, type);
+			case IVarExpression.SELF -> new SelfExpression(type);
+			case IVarExpression.SUPER -> new SuperExpression(type);
+			case IVarExpression.MYSELF -> new MyselfExpression(type, definitionDescription);
+			default -> null;
+		};
 	}
 
 	@Override
@@ -216,8 +210,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public boolean hasOperator(final String op, final IDescription context, final EObject object,
-			final IExpression... args) {
+	public boolean hasOperator(final String op, final IExpression... args) {
 		// If arguments are invalid, we have no match
 		if (args == null || args.length == 0) return false;
 		for (final IExpression exp : args) { if (exp == null) return false; }
@@ -238,7 +231,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
 
-		if (!hasOperator(op, context, eObject, args)) {
+		if (!hasOperator(op, args)) {
 			final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 			final Signature userSignature = new Signature(args).simplified();
 			StringBuilder msg = new StringBuilder("No operator found for applying '").append(op).append("' to ")

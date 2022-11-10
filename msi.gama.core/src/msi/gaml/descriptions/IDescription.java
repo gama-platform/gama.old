@@ -115,7 +115,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		/** The is batch. */
 		isBatch,
-		
+
 		/** The is memorize. */
 		isMemorize
 	}
@@ -742,5 +742,19 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 * @return the serializer
 	 */
 	SymbolSerializer getSerializer();
+
+	/**
+	 * Checks if this description is in (directly or indirectly) a description with the keyword passed in argument.
+	 *
+	 * @param ancestor
+	 *            the ancestor
+	 * @return true, if is in
+	 */
+	default boolean isIn(final String ancestor) {
+		IDescription d = this.getEnclosingDescription();
+		if (d == null || d == this) return false;
+		if (d.getKeyword().equals(ancestor)) return true;
+		return d.isIn(ancestor);
+	}
 
 }

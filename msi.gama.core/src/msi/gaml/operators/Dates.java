@@ -41,6 +41,9 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.emf.ecore.EObject;
+
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
@@ -59,10 +62,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
 import msi.gama.util.GamaDateInterval;
 import msi.gama.util.IList;
+import msi.gaml.compilation.IOperatorValidator;
+import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.units.TimeUnitConstantExpression;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -120,7 +128,9 @@ public class Dates {
 				try {
 					FORMATTERS.put(CUSTOM_KEY, getFormatter(StringUtils.toJavaString(e), null));
 					if (CUSTOM_KEY.equals(DEFAULT_VALUE)) { FORMATTERS.put(DEFAULT_KEY, FORMATTERS.get(CUSTOM_KEY)); }
-				} catch (final Exception ex) {
+				} catch (
+				/** The ex. */
+				final Exception ex) {
 					DEBUG.ERR("Formatter not valid: " + e);
 				}
 			});
@@ -203,6 +213,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Minus date.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return the double
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { IKeyword.MINUS },
 			content_type = IType.NONE,
@@ -232,6 +256,16 @@ public class Dates {
 	 *            the period
 	 * @return the boolean
 	 */
+
+	/**
+	 * Every.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
+	 * @return the boolean
+	 */
 	@operator (
 			value = { "every", "every_cycle" },
 			category = { IOperatorCategory.SYSTEM },
@@ -246,10 +280,21 @@ public class Dates {
 							value = "	     else {write \"the cycle number is odd\";}",
 							test = false) })
 	@no_test
+	@validator (EveryValidator.class)
 	public static Boolean every(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();
 		return period > 0 && (time == 0 || time >= period) && time % period == 0;
 	}
+
+	/**
+	 * Every.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
+	 * @return the boolean
+	 */
 
 	/**
 	 * Every.
@@ -274,10 +319,42 @@ public class Dates {
 					@example (
 							value = "state a { transition to: b when: every(2#mn);} state b { transition to: a when: every(30#s);} // This oscillatory behavior will use the starting_date of the model as its starting point in time",
 							isExecutable = false) })
+	@validator (EveryValidator.class)
 	@no_test
 	public static Boolean every(final IScope scope, final IExpression period) {
 		return scope.getClock().getStartingDate().isIntervalReached(scope, period);
 	}
+
+	/**
+	 * The Class EveryValidator.
+	 */
+	public static class EveryValidator implements IOperatorValidator {
+
+		@Override
+		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
+			if (arguments == null || arguments.length == 0) return false;
+			IExpression expr = arguments[0];
+			if (expr instanceof ConstantExpression && expr.getGamlType() == Types.INT) {
+				context.warning(
+						"No unit provided. If this frequency concerns cycles, please use the #cycle unit. Otherwise use one of the temporal unit (#ms, #s, #mn, #h, #day, #week, #month, #year)",
+						IGamlIssue.DEPRECATED, emfContext);
+			}
+			return true;
+		}
+
+	}
+
+	/**
+	 * Every.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param interval
+	 *            the interval
+	 * @param period
+	 *            the period
+	 * @return the i list
+	 */
 
 	/**
 	 * Every.
@@ -305,6 +382,18 @@ public class Dates {
 	public static IList<GamaDate> every(final IScope scope, final GamaDateInterval interval, final IExpression period) {
 		return interval.step(Cast.asFloat(scope, period.value(scope)));
 	}
+
+	/**
+	 * To.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param start
+	 *            the start
+	 * @param end
+	 *            the end
+	 * @return the i list
+	 */
 
 	/**
 	 * To.
@@ -346,6 +435,16 @@ public class Dates {
 	 *            the date
 	 * @return true, if successful
 	 */
+
+	/**
+	 * Since.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 	@operator (
 			value = { "since", "from" },
 			category = { IOperatorCategory.DATE },
@@ -364,6 +463,16 @@ public class Dates {
 	public static boolean since(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date, false);
 	}
+
+	/**
+	 * After.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 
 	/**
 	 * After.
@@ -405,6 +514,16 @@ public class Dates {
 	 *            the date
 	 * @return true, if successful
 	 */
+
+	/**
+	 * Before.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 	@operator (
 			value = { "before" },
 			category = { IOperatorCategory.DATE },
@@ -420,6 +539,16 @@ public class Dates {
 	public static boolean before(final IScope scope, final GamaDate date) {
 		return scope.getSimulation().getCurrentDate().isSmallerThan(date, true);
 	}
+
+	/**
+	 * Until.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 
 	/**
 	 * Until.
@@ -457,6 +586,18 @@ public class Dates {
 	 *            the date
 	 * @return true, if successful
 	 */
+
+	/**
+	 * Since.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 	@operator (
 			value = { "since", "from" },
 			category = { IOperatorCategory.DATE },
@@ -466,6 +607,18 @@ public class Dates {
 	public static boolean since(final IScope scope, final IExpression expression, final GamaDate date) {
 		return since(scope, date) && Cast.asBool(scope, expression.value(scope));
 	}
+
+	/**
+	 * After.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 
 	/**
 	 * After.
@@ -499,6 +652,18 @@ public class Dates {
 	 *            the date
 	 * @return true, if successful
 	 */
+
+	/**
+	 * Before.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 	@operator (
 			value = { "before" },
 			category = { IOperatorCategory.DATE },
@@ -508,6 +673,18 @@ public class Dates {
 	public static boolean before(final IScope scope, final IExpression expression, final GamaDate date) {
 		return before(scope, date) && Cast.asBool(scope, expression.value(scope));
 	}
+
+	/**
+	 * Until.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param date
+	 *            the date
+	 * @return true, if successful
+	 */
 
 	/**
 	 * Until.
@@ -543,6 +720,20 @@ public class Dates {
 	 *            the stop
 	 * @return true, if successful
 	 */
+
+	/**
+	 * Between.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param expression
+	 *            the expression
+	 * @param start
+	 *            the start
+	 * @param stop
+	 *            the stop
+	 * @return true, if successful
+	 */
 	@operator (
 			value = { "between" },
 			category = { IOperatorCategory.DATE },
@@ -553,6 +744,20 @@ public class Dates {
 			final GamaDate stop) {
 		return between(scope, scope.getClock().getCurrentDate(), start, stop) && (boolean) expression.value(scope);
 	}
+
+	/**
+	 * Between.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date
+	 *            the date
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 */
 
 	/**
 	 * Between.
@@ -599,6 +804,18 @@ public class Dates {
 	 *            the date 2
 	 * @return true, if successful
 	 */
+
+	/**
+	 * Between.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 */
 	@operator (
 			value = { "between" },
 			category = { IOperatorCategory.DATE },
@@ -614,6 +831,20 @@ public class Dates {
 		return scope.getSimulation().getCurrentDate().isGreaterThan(date1, true)
 				&& scope.getSimulation().getCurrentDate().isSmallerThan(date2, true);
 	}
+
+	/**
+	 * Plus duration.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Plus duration.
@@ -658,6 +889,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Plus duration.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { IKeyword.PLUS },
 			content_type = IType.NONE,
@@ -674,6 +919,20 @@ public class Dates {
 			throws GamaRuntimeException {
 		return date1.plus(duration * 1000, ChronoUnit.MILLIS);
 	}
+
+	/**
+	 * Minus duration.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Minus duration.
@@ -719,6 +978,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Minus duration.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param duration
+	 *            the duration
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { IKeyword.MINUS },
 			content_type = IType.NONE,
@@ -749,6 +1022,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Concatain date.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param text
+	 *            the text
+	 * @return the string
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { IKeyword.PLUS },
 			content_type = IType.NONE,
@@ -764,6 +1051,20 @@ public class Dates {
 			throws GamaRuntimeException {
 		return date1.toString() + text;
 	}
+
+	/**
+	 * Adds the years.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbYears
+	 *            the nb years
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Adds the years.
@@ -809,6 +1110,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Adds the months.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMonths
+	 *            the nb months
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "plus_months", "add_months" },
 			content_type = IType.NONE,
@@ -826,6 +1141,20 @@ public class Dates {
 		return date1.plus(nbMonths, MONTHS);
 
 	}
+
+	/**
+	 * Adds the weeks.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbWeeks
+	 *            the nb weeks
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Adds the weeks.
@@ -870,6 +1199,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Adds the days.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbDays
+	 *            the nb days
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "plus_days", "add_days" },
 			content_type = IType.NONE,
@@ -886,6 +1229,20 @@ public class Dates {
 		return date1.plus(nbDays, DAYS);
 
 	}
+
+	/**
+	 * Adds the hours.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbHours
+	 *            the nb hours
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Adds the hours.
@@ -933,6 +1290,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Adds the minutes.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMinutes
+	 *            the nb minutes
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "plus_minutes", "add_minutes" },
 			content_type = IType.NONE,
@@ -952,6 +1323,20 @@ public class Dates {
 		return date1.plus(nbMinutes, MINUTES);
 
 	}
+
+	/**
+	 * Subtract years.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbYears
+	 *            the nb years
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Subtract years.
@@ -996,6 +1381,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Subtract months.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMonths
+	 *            the nb months
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "minus_months", "subtract_months" },
 			content_type = IType.NONE,
@@ -1012,6 +1411,20 @@ public class Dates {
 		return date1.plus(-nbMonths, MONTHS);
 
 	}
+
+	/**
+	 * Subtract weeks.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbWeeks
+	 *            the nb weeks
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Subtract weeks.
@@ -1056,6 +1469,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Subtract days.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbDays
+	 *            the nb days
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "minus_days", "subtract_days" },
 			content_type = IType.NONE,
@@ -1072,6 +1499,20 @@ public class Dates {
 		return date1.plus(-nbDays, DAYS);
 
 	}
+
+	/**
+	 * Subtract hours.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbHours
+	 *            the nb hours
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Subtract hours.
@@ -1119,6 +1560,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Subtract ms.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMs
+	 *            the nb ms
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "minus_ms", "subtract_ms" },
 			content_type = IType.NONE,
@@ -1151,6 +1606,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Adds the ms.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMs
+	 *            the nb ms
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "plus_ms", "add_ms" },
 			content_type = IType.NONE,
@@ -1168,6 +1637,20 @@ public class Dates {
 	public static GamaDate addMs(final IScope scope, final GamaDate date1, final int nbMs) throws GamaRuntimeException {
 		return date1.plus(nbMs, ChronoUnit.MILLIS);
 	}
+
+	/**
+	 * Subtract minutes.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param nbMinutes
+	 *            the nb minutes
+	 * @return the gama date
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Subtract minutes.
@@ -1215,6 +1698,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Years between.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return the int
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "years_between" },
 			content_type = IType.NONE,
@@ -1230,6 +1727,20 @@ public class Dates {
 			throws GamaRuntimeException {
 		return (int) ChronoUnit.YEARS.between(date1, date2);
 	}
+
+	/**
+	 * Milliseconds between.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return the double
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Milliseconds between.
@@ -1273,6 +1784,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Months between.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return the int
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "months_between" },
 			content_type = IType.NONE,
@@ -1288,6 +1813,20 @@ public class Dates {
 			throws GamaRuntimeException {
 		return (int) ChronoUnit.MONTHS.between(date1, date2);
 	}
+
+	/**
+	 * Greater than.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Greater than.
@@ -1331,6 +1870,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Greater than or equal.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { ">=" },
 			content_type = IType.NONE,
@@ -1346,6 +1899,20 @@ public class Dates {
 			throws GamaRuntimeException {
 		return date1.isGreaterThan(date2, false);
 	}
+
+	/**
+	 * Smaller than.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Smaller than.
@@ -1389,6 +1956,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Smaller than or equal.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "<=" },
 			content_type = IType.NONE,
@@ -1404,6 +1985,20 @@ public class Dates {
 			throws GamaRuntimeException {
 		return date1.isSmallerThan(date2, false);
 	}
+
+	/**
+	 * Equal.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 
 	/**
 	 * Equal.
@@ -1447,6 +2042,20 @@ public class Dates {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Different.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param date1
+	 *            the date 1
+	 * @param date2
+	 *            the date 2
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { "!=" },
 			content_type = IType.NONE,
@@ -1473,24 +2082,16 @@ public class Dates {
 	static Locale getLocale(final String l) {
 		if (l == null) return Locale.getDefault();
 		final String locale = l.toLowerCase();
-		switch (locale) {
-			case "us":
-				return Locale.US;
-			case "fr":
-				return Locale.FRANCE;
-			case "en":
-				return Locale.ENGLISH;
-			case "de":
-				return Locale.GERMAN;
-			case "it":
-				return Locale.ITALIAN;
-			case "jp":
-				return Locale.JAPANESE;
-			case "uk":
-				return Locale.UK;
-			default:
-				return new Locale(locale);
-		}
+		return switch (locale) {
+			case "us" -> Locale.US;
+			case "fr" -> Locale.FRANCE;
+			case "en" -> Locale.ENGLISH;
+			case "de" -> Locale.GERMAN;
+			case "it" -> Locale.ITALIAN;
+			case "jp" -> Locale.JAPANESE;
+			case "uk" -> Locale.UK;
+			default -> new Locale(locale);
+		};
 	}
 
 	/**
@@ -1618,6 +2219,18 @@ public class Dates {
 	 *            the pattern
 	 * @return the gama date
 	 */
+
+	/**
+	 * Date.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @param pattern
+	 *            the pattern
+	 * @return the gama date
+	 */
 	@operator (
 			value = "date",
 			can_be_const = true,
@@ -1635,6 +2248,20 @@ public class Dates {
 	public static GamaDate date(final IScope scope, final String value, final String pattern) {
 		return new GamaDate(scope, value, pattern);
 	}
+
+	/**
+	 * Date.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @param pattern
+	 *            the pattern
+	 * @param locale
+	 *            the locale
+	 * @return the gama date
+	 */
 
 	/**
 	 * Date.
@@ -1676,6 +2303,16 @@ public class Dates {
 	 *            the pattern
 	 * @return the string
 	 */
+
+	/**
+	 * Format.
+	 *
+	 * @param time
+	 *            the time
+	 * @param pattern
+	 *            the pattern
+	 * @return the string
+	 */
 	@operator (
 			value = "string",
 			can_be_const = true,
@@ -1695,6 +2332,18 @@ public class Dates {
 	public static String format(final GamaDate time, final String pattern) {
 		return format(time, pattern, null);
 	}
+
+	/**
+	 * Format.
+	 *
+	 * @param time
+	 *            the time
+	 * @param pattern
+	 *            the pattern
+	 * @param locale
+	 *            the locale
+	 * @return the string
+	 */
 
 	/**
 	 * Format.
