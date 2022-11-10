@@ -155,10 +155,6 @@ public class GamaPreferences {
 		 */
 		public static final String SIMULATIONS = "Simulations";
 
-		/** The Constant CORE_MONITOR_PARAMETERS. */
-		public static final Pref<Boolean> CORE_MONITOR_PARAMETERS = create("pref_monitors_in_parameters",
-				"Display monitors in the experiment parameters view", false, IType.BOOL, true).in(NAME, SIMULATIONS);
-
 		/** The Constant CORE_SIMULATION_NAME. */
 		public static final Pref<Boolean> CORE_SIMULATION_NAME = create("pref_append_simulation_name",
 				"Append the name of simulations to their outputs", false, IType.BOOL, true).in(NAME, SIMULATIONS);
@@ -365,10 +361,22 @@ public class GamaPreferences {
 				create("pref_display_synchronized", "Synchronize outputs with the simulation", false, IType.BOOL, true)
 						.in(NAME, EXECUTION);
 
+		/** The Constant PARAMETERS. */
+		public static final String PARAMETERS = "Parameters";
+
 		/** The Constant CORE_EXPAND_PARAMS. */
-		public static final Pref<Boolean> CORE_EXPAND_PARAMS =
-				create("pref_experiment_expand_params", "Auto expand Parameters Categories", false, IType.BOOL, true)
-						.in(NAME, EXECUTION);
+		public static final Pref<Boolean> CORE_EXPAND_PARAMS = create("pref_experiment_expand_params",
+				"Automatically expand the parameters categories", false, IType.BOOL, true).in(NAME, PARAMETERS);
+
+		/** The Constant CORE_MONITOR_PARAMETERS. */
+		public static final Pref<Boolean> CORE_MONITOR_PARAMETERS = create("pref_monitors_in_parameters",
+				"Display monitors in the parameters view", false, IType.BOOL, true).in(NAME, PARAMETERS);
+
+		/** The Constant CORE_RND_EDITABLE. */
+		public static final Pref<Boolean> CORE_RND_EDITABLE =
+				create("pref_rng_in_parameters", "Include random number generation parameters in the parameters view",
+						false, IType.BOOL, true).in(NAME, PARAMETERS);
+
 		/**
 		 * Concurrency
 		 */
@@ -711,9 +719,6 @@ public class GamaPreferences {
 				create("pref_rng_default_seed", "Default seed value (0 is undefined)", 1d, IType.FLOAT, true).in(NAME,
 						RNG);
 
-		/** The Constant CORE_RND_EDITABLE. */
-		public static final Pref<Boolean> CORE_RND_EDITABLE =
-				create("pref_rng_in_parameters", "Include in the parameters", false, IType.BOOL, true).in(NAME, RNG);
 		/**
 		 * Dates
 		 */

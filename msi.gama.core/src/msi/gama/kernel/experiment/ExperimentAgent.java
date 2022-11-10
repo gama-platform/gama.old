@@ -252,7 +252,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return the defined rng
 	 */
 	public String getDefinedRng() {
-		if (GamaPreferences.External.CORE_RND_EDITABLE.getValue())
+		if (GamaPreferences.Runtime.CORE_RND_EDITABLE.getValue())
 			return (String) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.RNG).value(ownScope);
 		return GamaPreferences.External.CORE_RNG.getValue();
 	}
@@ -263,7 +263,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return the defined seed
 	 */
 	public Double getDefinedSeed() {
-		if (GamaPreferences.External.CORE_RND_EDITABLE.getValue()) {
+		if (GamaPreferences.Runtime.CORE_RND_EDITABLE.getValue()) {
 			final IParameter.Batch p = (Batch) ((ExperimentPlan) getSpecies()).parameters.get(IKeyword.SEED);
 			return p.isDefined() ? (Double) p.value(ownScope) : null;
 		}
@@ -428,7 +428,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
-		if (!getSpecies().isHeadless() && !GamaPreferences.External.CORE_RND_EDITABLE.getValue())
+		if (!getSpecies().isHeadless() && !GamaPreferences.Runtime.CORE_RND_EDITABLE.getValue())
 			return new ArrayList<>();
 		final List<ExperimentParameter> params = new ArrayList<>();
 		final String cat = getExperimentParametersCategory();
@@ -759,8 +759,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public void informStatus() {
-		//TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
-		if (isHeadless() || isBatch() || getSimulation() == null) return; 
+		// TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
+		if (isHeadless() || isBatch() || getSimulation() == null) return;
 		ownScope.getGui().getStatus().informStatus(null, "status.clock", ownScope);
 	}
 

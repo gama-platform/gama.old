@@ -46,7 +46,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class PerspectiveHelper {
 
 	static {
-		DEBUG.ON();
+		// DEBUG.ON();
 	}
 
 	/** The Constant BOTTOM_TRIM_ID. */
@@ -374,7 +374,7 @@ public class PerspectiveHelper {
 			if (showControls != null) { window.setCoolBarVisible(showControls); }
 			final Boolean keepTray = keepTray();
 			if (keepTray != null) { showBottomTray(window, keepTray); }
-			DEBUG.OUT("Perspective " + perspectiveId + " opened ");
+			// DEBUG.OUT("Perspective " + perspectiveId + " opened ");
 		};
 		if (immediately) {
 			Display.getDefault().syncExec(r);
@@ -485,6 +485,17 @@ public class PerspectiveHelper {
 	}
 
 	/**
+	 * Show consoles.
+	 *
+	 * @return true, if successful
+	 */
+	public static boolean showConsoles() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if (d instanceof SimulationPerspectiveDescriptor) return ((SimulationPerspectiveDescriptor) d).showConsoles();
+		return true;
+	}
+
+	/**
 	 * Gets the background.
 	 *
 	 * @return the background
@@ -546,6 +557,9 @@ public class PerspectiveHelper {
 
 		/** The keep tray. */
 		Boolean keepTray = true;
+
+		/** The show consoles. */
+		Boolean showConsoles = true;
 
 		/** The background. */
 		Supplier<Color> background = null;
@@ -620,6 +634,15 @@ public class PerspectiveHelper {
 		 */
 		public Boolean keepTabs() {
 			return keepTabs;
+		}
+
+		/**
+		 * Show consoles.
+		 *
+		 * @return true, if successful
+		 */
+		public Boolean showConsoles() {
+			return showConsoles;
 		}
 
 		/**
@@ -704,6 +727,16 @@ public class PerspectiveHelper {
 		 */
 		public void setBackground(final Supplier<Color> c) { background = c; }
 
+		/**
+		 * Show consoles.
+		 *
+		 * @param b
+		 *            the b
+		 */
+		public void showConsoles(final Boolean b) {
+			showConsoles = b;
+		}
+
 	}
 
 	/**
@@ -733,7 +766,7 @@ public class PerspectiveHelper {
 					currentSimulationPerspective.setRestoreBackground(null);
 				}
 				deletePerspectiveFromApplication(currentSimulationPerspective);
-				DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
+				// DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}
 			currentSimulationPerspective = null;
 		}
