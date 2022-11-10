@@ -139,14 +139,14 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 				layoutDefinition.getFacetValue(scope, definitionFacet, LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 		super.init(scope);
 		scope.getGui().applyLayout(scope, layoutObject);
-		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()) { GAMA.getGui().updateParameterView(scope); }
+		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) { GAMA.getGui().updateParameterView(scope); }
 		return true;
 	}
 
 	@Override
 	public boolean step(final IScope scope) {
 		super.step(scope);
-		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()) { GAMA.getGui().updateParameterView(scope); }
+		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) { GAMA.getGui().updateParameterView(scope); }
 		return true;
 	}
 

@@ -16,6 +16,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
+import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Console;
@@ -24,7 +25,6 @@ import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Strings;
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -79,20 +79,25 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 		 *            the color
 		 */
 		private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
-			IGamaView.Console console = null;
+
+			IGamaView.Console[] console = new IGamaView.Console[1];
 			try {
-				console = (Console) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
+				console[0] = (Console) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
 			} catch (final ConcurrentModificationException e) {
 				// See Issue #2812. With concurrent views opening, the view might be impossible to find
 				// e.printStackTrace();
 			}
-			if (console == null) {
-				console =
-						(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+			if (console[0] == null) {
+				WorkbenchHelper.run(() -> {
+					if (!PerspectiveHelper.showConsoles()) return;
+					console[0] = (Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null,
+							IWorkbenchPage.VIEW_VISIBLE);
+				});
+
 			}
-			if (console != null) {
-				DEBUG.OUT("---> Console ready for " + root + " to display");
-				console.append(msg, root, color);
+			if (console[0] != null) {
+				// DEBUG.OUT("---> Console ready for " + root + " to display");
+				console[0].append(msg, root, color);
 			}
 			// else {
 			// DEBUG.OUT("---> Console NOT ready for " + root + " to display");

@@ -12,7 +12,6 @@ package msi.gama.lang.gaml.indexer;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +20,6 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultGraphSpecificsStrategy;
 import org.jgrapht.graph.DefaultGraphType;
-import org.jgrapht.traverse.BreadthFirstIterator;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -41,12 +39,12 @@ public class GamlResourceGraph {
 	/**
 	 * The Class Graph.
 	 */
-	static class Graph extends AbstractBaseGraph<URI, LabeledEdge> {
+	class Imports extends AbstractBaseGraph<URI, LabeledEdge> {
 
 		/**
 		 * Instantiates a new graph.
 		 */
-		public Graph() {
+		public Imports() {
 			super(null, null,
 					new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
 							.weighted(false).allowCycles(true).build(),
@@ -56,19 +54,19 @@ public class GamlResourceGraph {
 	}
 
 	/** The regular imports. */
-	Graph imports = new Graph();
+	Imports imports = new Imports();
 
 	/**
 	 * Reset.
 	 */
 	void reset() {
-		imports = new Graph();
+		imports = new Imports();
 	}
 
 	/**
 	 * The Class Edge.
 	 */
-	static class LabeledEdge {
+	class LabeledEdge {
 
 		/** The label. */
 		String label;
@@ -154,29 +152,14 @@ public class GamlResourceGraph {
 	}
 
 	/**
-	 * Breadth first iterator without.
-	 *
-	 * @param uri
-	 *            the uri
-	 * @return the iterator
-	 */
-	public Iterator<URI> breadthFirstIteratorWithout(final URI uri) {
-		Iterator<URI> regular =
-				imports.containsVertex(uri) ? new BreadthFirstIterator<>(imports, uri) : Collections.emptyIterator();
-		// to eliminate the uri
-		if (regular.hasNext()) { regular.next(); }
-		return regular;
-	}
-
-	/**
 	 * Removes the all edges.
 	 *
 	 * @param edges
 	 *            the edges
 	 */
 	public void removeAllEdges(final URI source, final Map<URI, String> edges) {
-		for (URI uri : edges.keySet()) { imports.removeAllEdges(source, uri); }
-		// TransitiveReduction.INSTANCE.reduce(regularImports);
+		if (edges.isEmpty()) return;
+		edges.forEach((uri, v) -> { imports.removeEdge(source, uri); });
 	}
 
 	/**

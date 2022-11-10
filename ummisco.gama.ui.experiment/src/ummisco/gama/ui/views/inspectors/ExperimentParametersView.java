@@ -126,7 +126,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	 *            the a monitor is about to be created
 	 */
 	private void createMonitorSectionIfNeeded(final boolean aMonitorIsAboutToBeCreated) {
-		if (monitorSection != null || !GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()
+		if (monitorSection != null || !GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()
 				|| !aMonitorIsAboutToBeCreated && !getEditorsList().hasMonitors())
 			return;
 		final EditorsGroup compo = (EditorsGroup) createItemContentsFor(MONITOR_CATEGORY);
@@ -168,7 +168,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		final EditorsGroup compo = new EditorsGroup(getViewer());
 		if (parameters != null) {
 			final List<IParameterEditor> list = new ArrayList<>(parameters.values());
-			list.sort(null);
+			Collections.sort(list);
 			for (final IParameterEditor<?> gpParam : list) {
 				gpParam.createControls(compo);
 				if (!editors.isEnabled(gpParam)) { gpParam.setActive(false); }
@@ -189,7 +189,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 			params.addAll(exp.getUserCommands());
 			params.addAll(exp.getTexts());
 			SimulationAgent sim = exp.getCurrentSimulation();
-			if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
+			if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
 				SimulationOutputManager som = sim.getOutputManager();
 				if (som != null) { params.addAll(som.getMonitors()); }
 			}
@@ -212,7 +212,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					final EditorsList<?> eds = editors;
 					if (eds != null) { eds.revertToDefaultValue(); }
 				}, SWT.RIGHT);
-		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue()) {
+		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) {
 			tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(),
 					SWT.RIGHT);
 			tb.sep(SWT.RIGHT);
@@ -236,7 +236,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	public boolean addItem(final String object) {
-		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && MONITOR_CATEGORY.equals(object)) {
+		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && MONITOR_CATEGORY.equals(object)) {
 			createMonitorSectionIfNeeded(true);
 			return true;
 		}
@@ -258,7 +258,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	protected GamaUIJob createUpdateJob() {
-		if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && getEditorsList().hasMonitors())
+		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && getEditorsList().hasMonitors())
 			return new GamaUIJob() {
 
 				@Override

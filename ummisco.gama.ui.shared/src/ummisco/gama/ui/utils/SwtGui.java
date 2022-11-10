@@ -156,9 +156,12 @@ public class SwtGui implements IGui {
 	/**
 	 * Display errors.
 	 *
-	 * @param scope the scope
-	 * @param exceptions the exceptions
-	 * @param reset the reset
+	 * @param scope
+	 *            the scope
+	 * @param exceptions
+	 *            the exceptions
+	 * @param reset
+	 *            the reset
 	 */
 	@Override
 	public void displayErrors(final IScope scope, final List<GamaRuntimeException> exceptions, final boolean reset) {
@@ -513,6 +516,7 @@ public class SwtGui implements IGui {
 
 			final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
 			if (sd != null) {
+				sd.showConsoles(((showConsoles == null) || showConsoles));
 				sd.keepTabs(keepTabs);
 				sd.keepToolbars(keepToolbars);
 				sd.keepControls(showControls);

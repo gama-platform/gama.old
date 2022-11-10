@@ -112,6 +112,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 	/** The history. */
 	protected List<Object> history;
 
+	/** The should be initialized. */
 	protected boolean shouldBeInitialized;
 
 	/**
@@ -144,6 +145,11 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 		}
 	}
 
+	/**
+	 * Sets the color.
+	 *
+	 * @param gamaColor the new color
+	 */
 	public void setColor(final GamaColor gamaColor) {
 		color = gamaColor;
 		constantColor = gamaColor;
@@ -173,17 +179,25 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 		}
 	}
 
+	/**
+	 * Should be initialized.
+	 *
+	 * @return true, if successful
+	 */
 	public boolean shouldBeInitialized() {
 		return shouldBeInitialized;
 	}
 
+	/**
+	 * Should not be initialized.
+	 */
 	public void shouldNotBeInitialized() {
 		shouldBeInitialized = false;
 	}
 
 	@Override
 	protected boolean shouldOpenView() {
-		return !GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue();
+		return !GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue();
 	}
 
 	@Override
