@@ -126,7 +126,7 @@ public class NullGuiHandler implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#getExperimentState()
 	 */
 	@Override
-	public String getExperimentState(final String uid) {
+	public String getExperimentState() {
 		return RUNNING; // ???
 	}
 
@@ -161,9 +161,7 @@ public class NullGuiHandler implements IGui {
 	@Override
 	public IConsoleDisplayer getConsole() {
 
-		if (console == null) {
-			console = (s, root, color) -> logger.log(s);
-		}
+		if (console == null) { console = (s, root, color) -> logger.log(s); }
 		return console;
 	}
 

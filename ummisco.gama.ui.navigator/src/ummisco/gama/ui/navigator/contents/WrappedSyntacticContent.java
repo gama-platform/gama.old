@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WrappedSyntacticContent.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * WrappedSyntacticContent.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -18,10 +18,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
+import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class WrappedSyntacticContent.
@@ -44,7 +46,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	 *            the e
 	 */
 	private WrappedSyntacticContent(final WrappedSyntacticContent parent, final ISyntacticElement e) {
-		this(parent, e, GAMA.getGui().getGamlLabelProvider().getText(e));
+		this(parent, e, WorkbenchHelper.getService(IGamlLabelProvider.class).getText(e));
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	 *            the name
 	 */
 	public WrappedSyntacticContent(final VirtualContent<?> root, final ISyntacticElement e, final String name) {
-		super(root, name == null ? GAMA.getGui().getGamlLabelProvider().getText(e) : name);
+		super(root, name == null ? WorkbenchHelper.getService(IGamlLabelProvider.class).getText(e) : name);
 		element = e;
 		uri = element == null || element.getElement() == null ? null : EcoreUtil.getURI(element.getElement());
 	}
@@ -86,7 +88,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	}
 
 	@Override
-	public Image getImage() { return (Image) GAMA.getGui().getGamlLabelProvider().getImage(element); }
+	public Image getImage() { return (Image) WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element); }
 
 	// @Override
 	// public Color getColor() {

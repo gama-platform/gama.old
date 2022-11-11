@@ -40,7 +40,6 @@ import msi.gama.common.interfaces.IGamaView.Error;
 import msi.gama.common.interfaces.IGamaView.Parameters;
 import msi.gama.common.interfaces.IGamaView.Test;
 import msi.gama.common.interfaces.IGamaView.User;
-import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
@@ -110,14 +109,12 @@ public class SwtGui implements IGui {
 	private GamaPoint mouseLocationInModel;
 
 	/** The parameters view. */
-	private IGamaView parametersView = null;
+	private final IGamaView.Parameters[] parametersView = new IGamaView.Parameters[1];
 
 	static {
-		// GamaFonts.setLabelFont(PreferencesHelper.BASE_BUTTON_FONT.getValue());
 		PreferencesHelper.initialize();
 		ImageUtils.getCachedGC();
 		initializeOpenGL();
-
 	}
 
 	/**
@@ -289,9 +286,6 @@ public class SwtGui implements IGui {
 		return surface;
 	}
 
-	@Override
-	public Iterable<IDisplaySurface> getAllDisplaySurfaces() { return ViewsHelper.allDisplaySurfaces(); }
-
 	/**
 	 * Gets the frontmost display surface.
 	 *
@@ -406,18 +400,15 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void showAndUpdateParameterView(final IScope scope, final IExperimentPlan exp) {
-		IGamaView.Parameters[] viewArray = new IGamaView.Parameters[1];
-
 		WorkbenchHelper.run(() -> {
 			if (!exp.hasParametersOrUserCommands()) return;
-			viewArray[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-			if (viewArray[0] != null) {
-				viewArray[0].setExperiment(exp);
-				viewArray[0].updateItemValues(false);
+			parametersView[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+			if (parametersView[0] != null) {
+				parametersView[0].setExperiment(exp);
+				parametersView[0].updateItemValues(false);
 			}
 
 		});
-		parametersView = (IGamaView) viewArray[0];
 	}
 
 	/**
@@ -427,7 +418,7 @@ public class SwtGui implements IGui {
 	 */
 	@Override
 	public void updateParameterView(final IScope scope) {
-		if (parametersView != null) { parametersView.update(null); }
+		if (parametersView[0] instanceof IGamaView gv) { gv.update(null); }
 	}
 
 	/**
@@ -511,7 +502,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void hideParameters() {
 		hideView(PARAMETER_VIEW_ID);
-		parametersView = null;
+		parametersView[0] = null;
 	}
 
 	/**
@@ -555,9 +546,6 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IGamlLabelProvider getGamlLabelProvider() { return WorkbenchHelper.getService(IGamlLabelProvider.class); }
-
-	@Override
 	public void closeSimulationViews(final IScope scope, final boolean openModelingPerspective,
 			final boolean immediately) {
 		WorkbenchHelper.run(() -> {
@@ -584,7 +572,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public String getExperimentState(final String uid) {
+	public String getExperimentState() {
 		final IExperimentController controller = GAMA.getFrontmostController();
 		if (controller == null) return NONE;
 		if (controller.isPaused()) return PAUSED;
@@ -602,7 +590,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final IScope scope) {
-		updateExperimentState(scope, getExperimentState(""));
+		updateExperimentState(scope, getExperimentState());
 	}
 
 	@Override
@@ -611,12 +599,6 @@ public class SwtGui implements IGui {
 			final IViewPart part = ViewsHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
 			if (part instanceof IGamaView) { ((IGamaView) part).changePartNameWithSimulation(agent); }
 		});
-
-	}
-
-	@Override
-	public void updateDecorator(final String id) {
-		WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getWorkbench().getDecoratorManager().update(id));
 
 	}
 
@@ -678,7 +660,6 @@ public class SwtGui implements IGui {
 	@Override
 	public boolean isHiDPI() {
 		int zoom = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getPrimaryMonitor().getZoom());
-		// DEBUG.OUT("Primary Monitor Zoom = " + zoom);
 		return zoom > 100;
 	}
 

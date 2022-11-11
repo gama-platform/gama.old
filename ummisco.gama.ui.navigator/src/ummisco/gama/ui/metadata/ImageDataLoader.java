@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ImageDataLoader.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ImageDataLoader.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.metadata;
 
@@ -153,32 +153,34 @@ public class ImageDataLoader {
 			try {
 				final BufferedImage tif = ImageIO.read(in);
 				imageData = convertToSWT(tif);
-				
+
 				if (imageData == null) {
-					ImageInputStream is =
-							createImageInputStream(new File(file.getLocation().toFile().getAbsolutePath())) ;
+					try (ImageInputStream is =
+							createImageInputStream(new File(file.getLocation().toFile().getAbsolutePath()))) {
 						final ImageReader reader = READER_SPI.createReaderInstance();
 						reader.setInput(is);
 						final BufferedImage image = toCompatibleImage(reader.read(0));
 						imageData = convertToSWT(image);
 						image.flush();
 						imageData.type = SWT.IMAGE_TIFF;
-					
+					}
 				}
 			} catch (Exception ex2) {
 				try {
-					AbstractGridCoverage2DReader reader = new GeoTiffReader(file.getLocation().toFile().getAbsolutePath());// format.getReader(file,
+					AbstractGridCoverage2DReader reader =
+							new GeoTiffReader(file.getLocation().toFile().getAbsolutePath());// format.getReader(file,
 					GridCoverage2D grid = reader.read(null);
 					reader.dispose();
 					BufferedImage image = new BufferedImage(grid.getGridGeometry().getGridRange2D().width,
 							grid.getGridGeometry().getGridRange2D().height, BufferedImage.TYPE_4BYTE_ABGR);
-	
+
 					MapContent mapContent = new MapContent();
 					mapContent.getViewport().setCoordinateReferenceSystem(grid.getCoordinateReferenceSystem());
 					Layer rasterLayer = new GridCoverageLayer(grid, createStyle(1, -0.4, 0.2));
 					mapContent.addLayer(rasterLayer);
-	
-					// TODO: Patrick: I removed these lines to avoid an error with some geotiffs, but no idea of there roles
+
+					// TODO: Patrick: I removed these lines to avoid an error with some geotiffs, but no idea of there
+					// roles
 					/*
 					 * GTRenderer draw = new StreamingRenderer(); draw.setMapContent(mapContent); Graphics2D graphics =
 					 * image.createGraphics(); draw.paint(graphics, grid.getGridGeometry().getGridRange2D(),

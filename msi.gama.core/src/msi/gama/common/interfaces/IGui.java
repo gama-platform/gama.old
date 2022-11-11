@@ -9,7 +9,6 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -37,7 +36,6 @@ import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
-import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
@@ -53,20 +51,6 @@ public interface IGui {
 
 	/** The null point. */
 	GamaPoint NULL_POINT = new GamaPoint.Immutable();
-
-	/** The label provider. */
-	IGamlLabelProvider NULL_LABEL_PROVIDER = new IGamlLabelProvider() {
-
-		@Override
-		public String getText(final ISyntacticElement element) {
-			return "";
-		}
-
-		@Override
-		public Object getImage(final ISyntacticElement element) {
-			return null;
-		}
-	};
 
 	/** The null metadata provider. */
 	IFileMetaDataProvider NULL_METADATA_PROVIDER = new IFileMetaDataProvider() {
@@ -332,13 +316,6 @@ public interface IGui {
 	}
 
 	/**
-	 * Gets the all display surfaces.
-	 *
-	 * @return the all display surfaces
-	 */
-	default Iterable<IDisplaySurface> getAllDisplaySurfaces() { return Collections.EMPTY_LIST; }
-
-	/**
 	 * Gets the frontmost display surface.
 	 *
 	 * @return the frontmost display surface
@@ -519,7 +496,7 @@ public interface IGui {
 	 *            the uid
 	 * @return the experiment state
 	 */
-	String getExperimentState(String uid);
+	String getExperimentState();
 
 	/**
 	 * Update experiment state.
@@ -556,14 +533,6 @@ public interface IGui {
 	 *            the b
 	 */
 	default void openWelcomePage(final boolean b) {}
-
-	/**
-	 * Update decorator.
-	 *
-	 * @param string
-	 *            the string
-	 */
-	default void updateDecorator(final String string) {}
 
 	/**
 	 * Run.
@@ -609,13 +578,6 @@ public interface IGui {
 	 *            the new mouse location in model
 	 */
 	default void setMouseLocationInModel(final GamaPoint modelCoordinates) {}
-
-	/**
-	 * Gets the gaml label provider.
-	 *
-	 * @return the gaml label provider
-	 */
-	default IGamlLabelProvider getGamlLabelProvider() { return NULL_LABEL_PROVIDER; }
 
 	/**
 	 * Exit.

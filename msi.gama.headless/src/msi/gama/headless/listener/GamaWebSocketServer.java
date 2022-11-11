@@ -108,10 +108,10 @@ public class GamaWebSocketServer extends WebSocketServer {
 			String KEYPASSWORD = "storepassword";
 
 			KeyStore ks;
-			try {
+			try (FileInputStream fis = new FileInputStream(new File(KEYSTORE))) {
 				ks = KeyStore.getInstance(STORETYPE);
-				File kf = new File(KEYSTORE);
-				ks.load(new FileInputStream(kf), STOREPASSWORD.toCharArray());
+
+				ks.load(fis, STOREPASSWORD.toCharArray());
 
 				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 				kmf.init(ks, KEYPASSWORD.toCharArray());

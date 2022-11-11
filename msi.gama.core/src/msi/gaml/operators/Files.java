@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -391,8 +392,8 @@ public class Files {
 			}
 			return dest != null && dest.toFile().exists();
 		}
-		try {
-			java.nio.file.Files.walk(Paths.get(pathSource)).forEach(s -> {
+		try (Stream<Path> paths = java.nio.file.Files.walk(Paths.get(pathSource))) {
+			paths.forEach(s -> {
 				Path dest = Paths.get(pathDest, s.toString().substring(pathSource.length()));
 				try {
 					if (replace) {
@@ -413,9 +414,12 @@ public class Files {
 	/**
 	 * Copy.
 	 *
-	 * @param scope the scope
-	 * @param source the source
-	 * @param destination the destination
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param destination
+	 *            the destination
 	 * @return true, if successful
 	 */
 	@operator (
