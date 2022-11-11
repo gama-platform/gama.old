@@ -149,12 +149,12 @@ public class ExperimentController implements IExperimentController {
 				try {
 					final boolean wasRunning = !isPaused() && !experiment.isAutorun();
 					pause();
-					scope.getGui().getStatus().waitStatus("Reloading...", scope);
+					scope.getGui().getStatus().waitStatus(scope, "Reloading...");
 					experiment.reload();
 					if (wasRunning) {
 						processUserCommand(_START);
 					} else {
-						scope.getGui().getStatus().informStatus("Experiment reloaded", scope);
+						scope.getGui().getStatus().informStatus(scope, "Experiment reloaded");
 					}
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
@@ -252,7 +252,7 @@ public class ExperimentController implements IExperimentController {
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage(), getScope()); }
+		if (e != null) { getScope().getGui().getStatus().errorStatus(getScope(), e.getMessage()); }
 		experiment.dispose(); // will call own dispose() later
 	}
 

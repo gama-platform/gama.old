@@ -339,7 +339,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		super.init(scope);
 		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) { outputs.init(scope); }
-		scope.getGui().getStatus().informStatus("Experiment ready", scope);
+		scope.getGui().getStatus().informStatus(scope, "Experiment ready");
 		scope.getGui().updateExperimentState(scope);
 		return true;
 	}
@@ -761,7 +761,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void informStatus() {
 		// TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
 		if (isHeadless() || isBatch() || getSimulation() == null) return;
-		ownScope.getGui().getStatus().informStatus(null, "status.clock", ownScope);
+		ownScope.getGui().getStatus().informStatus(ownScope, null, "status.clock");
 	}
 
 	/**

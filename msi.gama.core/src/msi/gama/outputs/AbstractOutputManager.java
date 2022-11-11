@@ -75,6 +75,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	/** The sync. */
 	protected boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
+	/** The has monitors. */
+	protected boolean hasMonitors;
+
 	/**
 	 * Checks if is sync.
 	 *
@@ -121,6 +124,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public void add(final IOutput output) {
+		hasMonitors |= output instanceof MonitorOutput;
 		if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isVirtual()) {
 			virtualOutputs.put(output.getId(), output);
 		}
@@ -177,6 +181,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 				add(o);
 				o.setUserCreated(false);
 				if (o instanceof LayeredDisplayOutput ldo) { ldo.setIndex(displayIndex++); }
+
 			}
 		}
 	}
@@ -366,4 +371,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		return true;
 	}
 
+	@Override
+	public boolean hasMonitors() {
+		return hasMonitors;
+	}
 }

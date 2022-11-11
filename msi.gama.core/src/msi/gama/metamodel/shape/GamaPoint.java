@@ -60,6 +60,131 @@ import msi.gaml.types.Types;
 public class GamaPoint extends Coordinate implements IShape, ILocation, IIntersectable {
 
 	/**
+	 * The Class Immutable.
+	 */
+	public static class Immutable extends GamaPoint {
+
+		/**
+		 * Instantiates a new immutable.
+		 */
+		public Immutable() {}
+
+		/**
+		 * Instantiates a new immutable.
+		 *
+		 * @param coord
+		 *            the coord
+		 */
+		public Immutable(final Coordinate coord) {
+			x = coord.x;
+			y = coord.y;
+			z = coord.z;
+		}
+
+		/**
+		 * Instantiates a new immutable.
+		 *
+		 * @param x
+		 *            the x
+		 * @param y
+		 *            the y
+		 * @param z
+		 *            the z
+		 */
+		public Immutable(final double x, final double y, final double z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		/**
+		 * Instantiates a new immutable.
+		 *
+		 * @param x
+		 *            the x
+		 * @param y
+		 *            the y
+		 */
+		public Immutable(final double x, final double y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		@Override
+		public GamaPoint setLocation(final GamaPoint al) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint setLocation(final double x, final double y, final double z) {
+			return this;
+		}
+
+		@Override
+		public void setCoordinate(final Coordinate c) {}
+
+		@Override
+		public void setOrdinate(final int i, final double v) {}
+
+		@Override
+		public void setX(final double xx) {}
+
+		@Override
+		public void setY(final double yy) {}
+
+		@Override
+		public void setZ(final double zz) {}
+
+		@Override
+		public GamaPoint add(final GamaPoint loc) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint add(final double ax, final double ay, final double az) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint subtract(final GamaPoint loc) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint multiplyBy(final double value) {
+			return this;
+		}
+
+		@Override
+		public GamaPoint divideBy(final double value) {
+			return this;
+		}
+
+		@Override
+		public void setGeometry(final IShape g) {}
+
+		@Override
+		public void setInnerGeometry(final Geometry point) {
+
+		}
+
+		@Override
+		public GamaPoint normalize() {
+			return this;
+		}
+
+		@Override
+		public void negate() {}
+
+		@Override
+		public void setDepth(final double depth) {}
+
+		@Override
+		public void add(final ILocation p) {}
+
+	}
+
+	/**
 	 * Instantiates a new gama point.
 	 */
 	public GamaPoint() {

@@ -242,7 +242,7 @@ public class BatchAgent extends ExperimentAgent {
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
-		scope.getGui().getStatus().informStatus(endStatus(), scope);
+		scope.getGui().getStatus().informStatus(scope, endStatus());
 		// Issue #2426: the agent is killed too soon
 		getScope().setDisposeStatus();
 		// dispose();
@@ -405,7 +405,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 
 		// At last, we update the parameters (last fitness and best fitness)
-		getScope().getGui().showParameterView(getScope(), getSpecies());
+		getScope().getGui().showAndUpdateParameterView(getScope(), getSpecies());
 		return res;
 
 	}
@@ -438,7 +438,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 
 		// We update the parameters (parameter to explore)
-		getScope().getGui().showParameterView(getScope(), getSpecies());
+		getScope().getGui().showAndUpdateParameterView(getScope(), getSpecies());
 
 		// We then create a number of simulations with the same solution
 
@@ -478,11 +478,10 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 				if (!dead) {
-					getScope().getGui().getStatus()
-							.setStatus(
-									"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
-											+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
-									"small.batch" + i / 5, getScope());
+					getScope().getGui().getStatus().setStatus(
+							getScope(), "Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
+									+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
+							"small.batch" + i / 5);
 				}
 				if (++i == 20) { i = 0; }
 				// We then verify that the front scheduler has not been paused
@@ -527,7 +526,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 
 		// At last, we update the parameters (last fitness and best fitness)
-		getScope().getGui().showParameterView(getScope(), getSpecies());
+		getScope().getGui().showAndUpdateParameterView(getScope(), getSpecies());
 
 		return outputs;
 

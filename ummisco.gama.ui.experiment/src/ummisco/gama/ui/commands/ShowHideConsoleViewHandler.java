@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ShowHideConsoleViewHandler.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ShowHideConsoleViewHandler.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
@@ -23,7 +23,7 @@ public class ShowHideConsoleViewHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.getGui().getConsole().showConsoleView(GAMA.getSimulation());
+		GAMA.getGui().getConsole().showConsoleViews(GAMA.getSimulation());
 		return null;
 	}
 }

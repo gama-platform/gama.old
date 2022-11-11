@@ -31,7 +31,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.services.ISourceProviderService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
-import msi.gama.application.workbench.PerspectiveHelper.SimulationPerspectiveDescriptor;
+import msi.gama.application.workbench.SimulationPerspectiveDescriptor;
 import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -405,24 +405,16 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void showParameterView(final IScope scope, final IExperimentPlan exp) {
+	public void showAndUpdateParameterView(final IScope scope, final IExperimentPlan exp) {
 		IGamaView.Parameters[] viewArray = new IGamaView.Parameters[1];
-		WorkbenchHelper.run(() -> {
-			if (!exp.hasParametersOrUserCommands()) return;
-			viewArray[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-			if (viewArray[0] != null) { viewArray[0].setExperiment(exp); }
-		});
-		parametersView = (IGamaView) viewArray[0];
-	}
 
-	@Override
-	public void updateParameterView(final IScope scope, final IExperimentPlan exp) {
-		IGamaView.Parameters[] viewArray = new IGamaView.Parameters[1];
 		WorkbenchHelper.run(() -> {
 			if (!exp.hasParametersOrUserCommands()) return;
 			viewArray[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-			viewArray[0].setExperiment(exp);
-			viewArray[0].updateItemValues(false);
+			if (viewArray[0] != null) {
+				viewArray[0].setExperiment(exp);
+				viewArray[0].updateItemValues(false);
+			}
 
 		});
 		parametersView = (IGamaView) viewArray[0];
@@ -460,40 +452,10 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void prepareForExperiment(final IScope scope, final IExperimentPlan exp) {
-		// hideScreen();
-
-		// final ExperimentAgent agent = exp.getAgent();
-		// final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
-		// Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
-		// final Boolean keepTabs = layout.getFacetValue(scope, "tabs", true);
-		// final Boolean keepToolbars = layout.getFacetValue(scope, "toolbars", null);
-		// final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
-		// final Boolean showConsoles = layout.getFacetValue(scope, "consoles", null);
-		// final Boolean showNavigator = layout.getFacetValue(scope, "navigator", null);
-		// final Boolean showControls = layout.getFacetValue(scope, "controls", null);
-		// final Boolean keepTray = layout.getFacetValue(scope, "tray", null);
-		// Supplier<Color> color = () -> {
-		// final GamaColor c = layout.getFacetValue(scope, "background", null);
-		// return c == null ? null : GamaColors.toSwtColor(c);
-		// };
-		//
-		// boolean showEditors;
-		// if (layout.hasFacet("editors")) {
-		// showEditors = layout.getFacetValue(scope, "editors", false);
-		// } else {
-		// showEditors = !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
-		// }
-		// arrangeExperimentViews(scope, exp, keepTabs, keepToolbars, showParameters, showConsoles, showNavigator,
-		// showControls, keepTray, color, showEditors);
-
-	}
-
-	@Override
 	public void arrangeExperimentViews(final IScope scope, final IExperimentPlan exp, final Boolean keepTabs,
-			final Boolean keepToolbars, final Boolean showParameters, final Boolean showConsoles,
-			final Boolean showNavigator, final Boolean showControls, final Boolean keepTray,
-			final Supplier<GamaColor> color, final boolean showEditors) {
+			final Boolean keepToolbars, final Boolean showConsoles, final Boolean showNavigator,
+			final Boolean showControls, final Boolean keepTray, final Supplier<GamaColor> color,
+			final boolean showEditors) {
 
 		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
@@ -502,21 +464,21 @@ public class SwtGui implements IGui {
 				hideView(IGui.CONSOLE_VIEW_ID);
 				hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 			} else {
-				getConsole().showConsoleView(exp.getAgent());
+				getConsole().showConsoleViews(exp.getAgent());
 			}
-			if (showParameters != null && !showParameters) {
-				hideView(IGui.PARAMETER_VIEW_ID);
-				parametersView = null;
-			} else {
-				updateParameterView(scope, exp);
-			}
+			// if (showParameters != null && !showParameters) {
+			// hideView(IGui.PARAMETER_VIEW_ID);
+			// parametersView = null;
+			// } else {
+			// showAndUpdateParameterView(scope, exp);
+			// }
 			if (showNavigator != null && !showNavigator) { hideView(IGui.NAVIGATOR_VIEW_ID); }
 			if (showControls != null) { WorkbenchHelper.getWindow().setCoolBarVisible(showControls); }
 			if (keepTray != null) { PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray); }
 
 			final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
 			if (sd != null) {
-				sd.showConsoles(((showConsoles == null) || showConsoles));
+				sd.showConsoles(showConsoles == null || showConsoles);
 				sd.keepTabs(keepTabs);
 				sd.keepToolbars(keepToolbars);
 				sd.keepControls(showControls);
@@ -544,8 +506,7 @@ public class SwtGui implements IGui {
 	 */
 	@Override
 	public void cleanAfterExperiment() {
-		hideView(PARAMETER_VIEW_ID);
-		parametersView = null;
+		hideParameters();
 		final IGamaView m = (IGamaView) ViewsHelper.findView(MONITOR_VIEW_ID, null, false);
 		if (m != null) {
 			m.reset();
@@ -556,6 +517,12 @@ public class SwtGui implements IGui {
 		if (icv != null) { icv.reset(); }
 		final IRuntimeExceptionHandler handler = getRuntimeExceptionHandler();
 		handler.stop();
+	}
+
+	@Override
+	public void hideParameters() {
+		hideView(PARAMETER_VIEW_ID);
+		parametersView = null;
 	}
 
 	/**
@@ -622,7 +589,7 @@ public class SwtGui implements IGui {
 				PerspectiveHelper.openModelingPerspective(immediately, false);
 			}
 
-			getStatus().neutralStatus("No simulation running", scope);
+			getStatus().neutralStatus(scope, "No simulation running");
 		});
 
 	}

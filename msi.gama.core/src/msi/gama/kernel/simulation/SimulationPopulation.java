@@ -108,7 +108,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
 
 		for (int i = 0; i < number; i++) {
-			scope.getGui().getStatus().waitStatus("Initializing simulation", scope);
+			scope.getGui().getStatus().waitStatus(scope, "Initializing simulation");
 			// Model do not only rely on SimulationAgent
 			final IAgentConstructor<SimulationAgent> constr = species.getDescription().getAgentConstructor();
 
@@ -148,7 +148,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	private void initSimulation(final IScope scope, final SimulationAgent sim,
 			final List<? extends Map<String, Object>> initialValues, final int index, final boolean isRestored,
 			final boolean toBeScheduled, final RemoteSequence sequence) {
-		scope.getGui().getStatus().waitStatus("Instantiating agents", scope);
+		scope.getGui().getStatus().waitStatus(scope, "Instantiating agents");
 		// if (toBeScheduled) { sim.prepareGuiForSimulation(scope); }
 
 		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);

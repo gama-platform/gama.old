@@ -9,9 +9,12 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import org.eclipse.core.resources.IResource;
 
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -32,7 +35,9 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.IFileMetaDataProvider;
+import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.statements.test.CompoundSummary;
 import msi.gaml.statements.test.TestExperimentSummary;
@@ -45,6 +50,69 @@ import msi.gaml.statements.test.TestExperimentSummary;
  *
  */
 public interface IGui {
+
+	/** The null point. */
+	GamaPoint NULL_POINT = new GamaPoint.Immutable();
+
+	/** The label provider. */
+	IGamlLabelProvider NULL_LABEL_PROVIDER = new IGamlLabelProvider() {
+
+		@Override
+		public String getText(final ISyntacticElement element) {
+			return "";
+		}
+
+		@Override
+		public Object getImage(final ISyntacticElement element) {
+			return null;
+		}
+	};
+
+	/** The null metadata provider. */
+	IFileMetaDataProvider NULL_METADATA_PROVIDER = new IFileMetaDataProvider() {
+
+		@Override
+		public void storeMetaData(final IResource file, final IGamaFileMetaData data, final boolean immediately) {}
+
+		@Override
+		public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated,
+				final boolean immediately) {
+			return new IGamaFileMetaData() {
+
+				@Override
+				public boolean hasFailed() {
+					return false;
+				}
+
+				@Override
+				public String toPropertyString() {
+					return "";
+				}
+
+				@Override
+				public void setModificationStamp(final long modificationStamp) {}
+
+				@Override
+				public Object getThumbnail() { return ""; }
+
+				@Override
+				public String getSuffix() { return ""; }
+
+				@Override
+				public void appendSuffix(final StringBuilder sb) {}
+
+				@Override
+				public long getModificationStamp() { return 0; }
+
+				@Override
+				public String getDocumentation() { return ""; }
+			};
+		}
+
+	};
+
+	/** The null status displayer. */
+	IStatusDisplayer NULL_STATUS_DISPLAYER = new IStatusDisplayer() {};
 
 	/** The error. */
 	int ERROR = 0;
@@ -134,7 +202,7 @@ public interface IGui {
 	 *            the scope
 	 * @return the status
 	 */
-	IStatusDisplayer getStatus();
+	default IStatusDisplayer getStatus() { return NULL_STATUS_DISPLAYER; }
 
 	/**
 	 * Gets the console.
@@ -156,7 +224,9 @@ public interface IGui {
 	 *            the code
 	 * @return the i gama view
 	 */
-	IGamaView showView(IScope scope, String viewId, String name, int code);
+	default IGamaView showView(final IScope scope, final String viewId, final String name, final int code) {
+		return null;
+	}
 
 	/**
 	 * Tell.
@@ -206,7 +276,7 @@ public interface IGui {
 	 * @param exp
 	 *            the exp
 	 */
-	void showParameterView(IScope scope, IExperimentPlan exp);
+	default void showAndUpdateParameterView(final IScope scope, final IExperimentPlan exp) {}
 
 	/**
 	 * Clear errors.
@@ -214,7 +284,7 @@ public interface IGui {
 	 * @param scope
 	 *            the scope
 	 */
-	void clearErrors(IScope scope);
+	default void clearErrors(final IScope scope) {}
 
 	/**
 	 * Runtime error.
@@ -233,7 +303,9 @@ public interface IGui {
 	 *            the experiment
 	 * @return true, if successful
 	 */
-	boolean confirmClose(IExperimentPlan experiment);
+	default boolean confirmClose(final IExperimentPlan experiment) {
+		return true;
+	}
 
 	/**
 	 * Copy to clipboard.
@@ -242,7 +314,9 @@ public interface IGui {
 	 *            the text
 	 * @return true, if successful
 	 */
-	boolean copyToClipboard(String text);
+	default boolean copyToClipboard(final String text) {
+		return false;
+	}
 
 	/**
 	 * Open simulation perspective.
@@ -253,21 +327,23 @@ public interface IGui {
 	 *            the experiment id
 	 * @return true, if successful
 	 */
-	boolean openSimulationPerspective(IModel model, String experimentId);
+	default boolean openSimulationPerspective(final IModel model, final String experimentId) {
+		return true;
+	}
 
 	/**
 	 * Gets the all display surfaces.
 	 *
 	 * @return the all display surfaces
 	 */
-	Iterable<IDisplaySurface> getAllDisplaySurfaces();
+	default Iterable<IDisplaySurface> getAllDisplaySurfaces() { return Collections.EMPTY_LIST; }
 
 	/**
 	 * Gets the frontmost display surface.
 	 *
 	 * @return the frontmost display surface
 	 */
-	IDisplaySurface getFrontmostDisplaySurface();
+	default IDisplaySurface getFrontmostDisplaySurface() { return null; }
 
 	/**
 	 * Creates the display surface for.
@@ -325,7 +401,9 @@ public interface IGui {
 	 *            the message
 	 * @return the boolean
 	 */
-	Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message);
+	default Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message) {
+		return true;
+	}
 
 	/**
 	 * Open user control panel.
@@ -335,7 +413,7 @@ public interface IGui {
 	 * @param panel
 	 *            the panel
 	 */
-	void openUserControlPanel(IScope scope, UserPanelStatement panel);
+	default void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {}
 
 	/**
 	 * Close dialogs.
@@ -343,14 +421,14 @@ public interface IGui {
 	 * @param scope
 	 *            the scope
 	 */
-	void closeDialogs(IScope scope);
+	default void closeDialogs(final IScope scope) {}
 
 	/**
 	 * Gets the highlighted agent.
 	 *
 	 * @return the highlighted agent
 	 */
-	IAgent getHighlightedAgent();
+	default IAgent getHighlightedAgent() { return null; }
 
 	/**
 	 * Sets the highlighted agent.
@@ -358,7 +436,7 @@ public interface IGui {
 	 * @param a
 	 *            the new highlighted agent
 	 */
-	void setHighlightedAgent(IAgent a);
+	default void setHighlightedAgent(final IAgent a) {}
 
 	/**
 	 * Sets the selected agent.
@@ -366,32 +444,12 @@ public interface IGui {
 	 * @param a
 	 *            the new selected agent
 	 */
-	void setSelectedAgent(IAgent a);
-
-	/**
-	 * Update parameter view.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param exp
-	 *            the exp
-	 */
-	void updateParameterView(IScope scope, IExperimentPlan exp);
-
-	/**
-	 * Prepare for experiment.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param exp
-	 *            the exp
-	 */
-	void prepareForExperiment(IScope scope, IExperimentPlan exp);
+	default void setSelectedAgent(final IAgent a) {}
 
 	/**
 	 * Clean after experiment.
 	 */
-	void cleanAfterExperiment();
+	default void cleanAfterExperiment() {}
 
 	/**
 	 * Edits the model.
@@ -401,7 +459,7 @@ public interface IGui {
 	 * @param eObject
 	 *            the e object
 	 */
-	void editModel(IScope scope, Object eObject);
+	default void editModel(final IScope scope, final Object eObject) {}
 
 	/**
 	 * Run model.
@@ -411,7 +469,7 @@ public interface IGui {
 	 * @param exp
 	 *            the exp
 	 */
-	void runModel(final Object object, final String exp);
+	default void runModel(final Object object, final String exp) {}
 
 	/**
 	 * Update speed display.
@@ -423,14 +481,14 @@ public interface IGui {
 	 * @param notify
 	 *            the notify
 	 */
-	void updateSpeedDisplay(IScope scope, Double d, boolean notify);
+	default void updateSpeedDisplay(final IScope scope, final Double d, final boolean notify) {}
 
 	/**
 	 * Gets the meta data provider.
 	 *
 	 * @return the meta data provider
 	 */
-	IFileMetaDataProvider getMetaDataProvider();
+	default IFileMetaDataProvider getMetaDataProvider() { return NULL_METADATA_PROVIDER; }
 
 	/**
 	 * Close simulation views.
@@ -442,7 +500,8 @@ public interface IGui {
 	 * @param immediately
 	 *            the immediately
 	 */
-	void closeSimulationViews(IScope scope, boolean andOpenModelingPerspective, boolean immediately);
+	default void closeSimulationViews(final IScope scope, final boolean andOpenModelingPerspective,
+			final boolean immediately) {}
 
 	/**
 	 * Gets the display description for.
@@ -470,7 +529,7 @@ public interface IGui {
 	 * @param state
 	 *            the state
 	 */
-	void updateExperimentState(IScope scope, String state);
+	default void updateExperimentState(final IScope scope, final String state) {}
 
 	/**
 	 * Update experiment state.
@@ -478,7 +537,7 @@ public interface IGui {
 	 * @param scope
 	 *            the scope
 	 */
-	void updateExperimentState(IScope scope);
+	default void updateExperimentState(final IScope scope) {}
 
 	/**
 	 * Update view title.
@@ -488,7 +547,7 @@ public interface IGui {
 	 * @param agent
 	 *            the agent
 	 */
-	void updateViewTitle(IDisplayOutput output, SimulationAgent agent);
+	default void updateViewTitle(final IDisplayOutput output, final SimulationAgent agent) {}
 
 	/**
 	 * Open welcome page.
@@ -496,7 +555,7 @@ public interface IGui {
 	 * @param b
 	 *            the b
 	 */
-	void openWelcomePage(boolean b);
+	default void openWelcomePage(final boolean b) {}
 
 	/**
 	 * Update decorator.
@@ -504,7 +563,7 @@ public interface IGui {
 	 * @param string
 	 *            the string
 	 */
-	void updateDecorator(String string);
+	default void updateDecorator(final String string) {}
 
 	/**
 	 * Run.
@@ -524,7 +583,7 @@ public interface IGui {
 	 * @param o
 	 *            the new focus on
 	 */
-	void setFocusOn(IShape o);
+	default void setFocusOn(final IShape o) {}
 
 	/**
 	 * Apply layout.
@@ -534,14 +593,14 @@ public interface IGui {
 	 * @param layout
 	 *            the layout
 	 */
-	void applyLayout(IScope scope, Object layout);
+	default void applyLayout(final IScope scope, final Object layout) {}
 
 	/**
 	 * Gets the mouse location in model.
 	 *
 	 * @return the mouse location in model
 	 */
-	GamaPoint getMouseLocationInModel();
+	default GamaPoint getMouseLocationInModel() { return NULL_POINT; }
 
 	/**
 	 * Sets the mouse location in model.
@@ -549,14 +608,14 @@ public interface IGui {
 	 * @param modelCoordinates
 	 *            the new mouse location in model
 	 */
-	void setMouseLocationInModel(GamaPoint modelCoordinates);
+	default void setMouseLocationInModel(final GamaPoint modelCoordinates) {}
 
 	/**
 	 * Gets the gaml label provider.
 	 *
 	 * @return the gaml label provider
 	 */
-	IGamlLabelProvider getGamlLabelProvider();
+	default IGamlLabelProvider getGamlLabelProvider() { return NULL_LABEL_PROVIDER; }
 
 	/**
 	 * Exit.
@@ -574,7 +633,9 @@ public interface IGui {
 	 *            the remain open
 	 * @return the i gama view. test
 	 */
-	IGamaView.Test openTestView(IScope scope, boolean remainOpen);
+	default IGamaView.Test openTestView(final IScope scope, final boolean remainOpen) {
+		return null;
+	}
 
 	/**
 	 * Display tests results.
@@ -589,7 +650,7 @@ public interface IGui {
 	/**
 	 * End test display.
 	 */
-	void endTestDisplay();
+	default void endTestDisplay() {}
 
 	/**
 	 * Run headless tests.
@@ -598,19 +659,21 @@ public interface IGui {
 	 *            the model
 	 * @return the list
 	 */
-	List<TestExperimentSummary> runHeadlessTests(final Object model);
+	default List<TestExperimentSummary> runHeadlessTests(final Object model) {
+		return null;
+	}
 
 	/**
 	 * Refresh navigator.
 	 */
-	void refreshNavigator();
+	default void refreshNavigator() {}
 
 	/**
 	 * Checks if is in display thread.
 	 *
 	 * @return true, if is in display thread
 	 */
-	boolean isInDisplayThread();
+	default boolean isInDisplayThread() { return false; }
 
 	/**
 	 * Checks if is hi DPI.
@@ -653,9 +716,9 @@ public interface IGui {
 	 *            the show editors
 	 */
 	default void arrangeExperimentViews(final IScope myScope, final IExperimentPlan experimentPlan,
-			final Boolean keepTabs, final Boolean keepToolbars, final Boolean showParameters,
-			final Boolean showConsoles, final Boolean showNavigator, final Boolean showControls, final Boolean keepTray,
-			final Supplier<GamaColor> color, final boolean showEditors) {}
+			final Boolean keepTabs, final Boolean keepToolbars, final Boolean showConsoles, final Boolean showNavigator,
+			final Boolean showControls, final Boolean keepTray, final Supplier<GamaColor> color,
+			final boolean showEditors) {}
 
 	/**
 	 * Display errors.
@@ -667,7 +730,12 @@ public interface IGui {
 	 * @param reset
 	 *            the reset
 	 */
-	void displayErrors(IScope scope, List<GamaRuntimeException> exceptions, boolean reset);
+	default void displayErrors(final IScope scope, final List<GamaRuntimeException> exceptions, final boolean reset) {}
+
+	/**
+	 * Hide parameters.
+	 */
+	default void hideParameters() {}
 
 	/**
 	 * Checks if is synchronized.

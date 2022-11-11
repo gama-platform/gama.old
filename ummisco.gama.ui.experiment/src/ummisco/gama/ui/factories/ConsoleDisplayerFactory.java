@@ -11,6 +11,8 @@
 package ummisco.gama.ui.factories;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -41,51 +43,16 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 	 */
 	static class ConsoleDisplayer implements IConsoleDisplayer {
 
-		static {
-			// DEBUG.ON();
-		}
-
-		/** The console buffer. */
-		// private final Map<GamaColor, StringBuilder> consoleBuffers = new HashMap<>();
-
-		@Override
-		public void debugConsole(final int cycle, final String msg, final ITopLevelAgent root) {
-			this.debugConsole(cycle, msg, root, null);
-		}
-
-		@Override
-		public void debugConsole(final int cycle, final String msg, final ITopLevelAgent root, final GamaColor color) {
-			writeToConsole("(cycle : " + cycle + ") " + msg + Strings.LN, root, color);
-		}
-
-		@Override
-		public void informConsole(final String msg, final ITopLevelAgent root) {
-			this.informConsole(msg, root, null);
-		}
+		/** The console buffers. */
+		Map<GamaColor, StringBuilder> consoleBuffers = new HashMap<>();
 
 		@Override
 		public void informConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
-			writeToConsole(msg + Strings.LN, root, color);
-		}
-
-		/**
-		 * Write to console.
-		 *
-		 * @param msg
-		 *            the msg
-		 * @param root
-		 *            the root
-		 * @param color
-		 *            the color
-		 */
-		private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaColor color) {
-
 			IGamaView.Console[] console = new IGamaView.Console[1];
 			try {
 				console[0] = (Console) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, true);
 			} catch (final ConcurrentModificationException e) {
 				// See Issue #2812. With concurrent views opening, the view might be impossible to find
-				// e.printStackTrace();
 			}
 			if (console[0] == null) {
 				WorkbenchHelper.run(() -> {
@@ -93,44 +60,48 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 					console[0] = (Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null,
 							IWorkbenchPage.VIEW_VISIBLE);
 				});
-
 			}
 			if (console[0] != null) {
-				// DEBUG.OUT("---> Console ready for " + root + " to display");
-				console[0].append(msg, root, color);
+				console[0].append(msg + Strings.LN, root, color);
+			} else { // DO WE KEEP THIS ? NOT HAVING BUFFERS MEANS THAT IF A CONSOLE IS OPENED AFTERWARDS, NOTHING WILL
+				// APPEAR ON IT
+				GamaColor c = color == null ? root == null ? GamaColor.getInt(0) : root.getColor() : color;
+				StringBuilder sb = consoleBuffers.get(c);
+				if (sb == null) {
+					sb = new StringBuilder(2000);
+					consoleBuffers.put(c, sb);
+				}
+				sb.append(msg + Strings.LN);
 			}
-			// else {
-			// DEBUG.OUT("---> Console NOT ready for " + root + " to display");
-			// GamaColor c = color == null ? root == null ? GamaColor.getInt(0) : root.getColor() : color;
-			// StringBuilder sb = consoleBuffers.get(c);
-			// if (sb == null) {
-			// sb = new StringBuilder(2000);
-			// consoleBuffers.put(c, sb);
-			// }
-			// sb.append(msg);
-			// }
+
 		}
 
 		@Override
 		public void eraseConsole(final boolean setToNull) {
 			final IGamaView console = (IGamaView) ViewsHelper.findView(IGui.CONSOLE_VIEW_ID, null, false);
 			if (console != null) { WorkbenchHelper.run(() -> console.reset()); }
-			// consoleBuffers.clear();
+			consoleBuffers.clear();
 		}
 
+		/**
+		 * Show console views.
+		 *
+		 * @param agent
+		 *            the agent
+		 */
 		@Override
-		public void showConsoleView(final ITopLevelAgent agent) {
+		public void showConsoleViews(final ITopLevelAgent agent) {
 			final IGamaView.Console icv = (Console) GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
 					IWorkbenchPage.VIEW_VISIBLE);
 			if (icv != null) { icv.append(null, agent, null); }
-			// final IGamaView.Console console = (Console)
-			GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-			// consoleBuffers.forEach((c, sb) -> {
-			// if (sb.length() > 0 && console != null) {
-			// console.append(sb.toString(), agent, c);
-			// sb.setLength(0);
-			// }
-			// });
+			final IGamaView.Console console =
+					(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+			consoleBuffers.forEach((c, sb) -> {
+				if (sb.length() > 0 && console != null) {
+					console.append(sb.toString(), agent, c);
+					sb.setLength(0);
+				}
+			});
 
 		}
 	}

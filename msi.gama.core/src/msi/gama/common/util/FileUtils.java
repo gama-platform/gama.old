@@ -179,9 +179,12 @@ public class FileUtils {
 	/**
 	 * Construct absolute file path alternate.
 	 *
-	 * @param scope the scope
-	 * @param fp the fp
-	 * @param mustExist the must exist
+	 * @param scope
+	 *            the scope
+	 * @param fp
+	 *            the fp
+	 * @param mustExist
+	 *            the must exist
 	 * @return the string
 	 */
 	static public String constructAbsoluteFilePathAlternate(final IScope scope, final String fp,
@@ -784,7 +787,7 @@ public class FileUtils {
 		String pathName = constructRelativeTempFilePath(scope, url);
 		final String urlPath = url.toExternalForm();
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf(SEPARATOR));
-		scope.getGui().getStatus().beginSubStatus(status, scope);
+		scope.getGui().getStatus().beginSubStatus(scope, status);
 		final Webb web = WEB.get();
 		try {
 			try (InputStream in = web.get(urlPath).ensureSuccess()
@@ -801,7 +804,7 @@ public class FileUtils {
 		} catch (final IOException | WebbException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			scope.getGui().getStatus().endSubStatus(status, scope);
+			scope.getGui().getStatus().endSubStatus(scope, status);
 		}
 		return pathName;
 	}

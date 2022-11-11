@@ -12,10 +12,7 @@ package msi.gama.application.workbench;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl;
@@ -542,204 +539,6 @@ public class PerspectiveHelper {
 	}
 
 	/**
-	 * The Class SimulationPerspectiveDescriptor.
-	 */
-	public static class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
-
-		/** The keep tabs. */
-		Boolean keepTabs = true;
-
-		/** The keep toolbars. */
-		Boolean keepToolbars = null;
-
-		/** The keep controls. */
-		Boolean keepControls = true;
-
-		/** The keep tray. */
-		Boolean keepTray = true;
-
-		/** The show consoles. */
-		Boolean showConsoles = true;
-
-		/** The background. */
-		Supplier<Color> background = null;
-
-		/** The restore background. */
-		private Runnable restoreBackground;
-
-		/**
-		 * Gets the restore background.
-		 *
-		 * @return the restore background
-		 */
-		public Runnable getRestoreBackground() { return restoreBackground; }
-
-		/**
-		 * Sets the restore background.
-		 *
-		 * @param restoreBackground
-		 *            the new restore background
-		 */
-		public void setRestoreBackground(final Runnable restoreBackground) {
-			this.restoreBackground = restoreBackground;
-		}
-
-		/**
-		 * Instantiates a new simulation perspective descriptor.
-		 *
-		 * @param id
-		 *            the id
-		 */
-		SimulationPerspectiveDescriptor(final String id) {
-			super(id, id, getSimulationDescriptor());
-			dirtySavePerspective(this);
-		}
-
-		@Override
-		public IPerspectiveFactory createFactory() {
-
-			try {
-				return new SimulationPerspectiveFactory(
-						(IPerspectiveFactory) getConfigElement().createExecutableExtension("class"));
-			} catch (final CoreException e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		}
-
-		@Override
-		public boolean hasCustomDefinition() {
-			return true;
-		}
-
-		@Override
-		public boolean isPredefined() { return false; }
-
-		@Override
-		public IConfigurationElement getConfigElement() { return getSimulationDescriptor().getConfigElement(); }
-
-		@Override
-		public String getDescription() { return "Perspective for " + getId(); }
-
-		@Override
-		public String getOriginalId() { return getId(); }
-
-		@Override
-		public String getPluginId() { return getSimulationDescriptor().getPluginId(); }
-
-		/**
-		 * Keep tabs.
-		 *
-		 * @return the boolean
-		 */
-		public Boolean keepTabs() {
-			return keepTabs;
-		}
-
-		/**
-		 * Show consoles.
-		 *
-		 * @return true, if successful
-		 */
-		public Boolean showConsoles() {
-			return showConsoles;
-		}
-
-		/**
-		 * Keep tabs.
-		 *
-		 * @param b
-		 *            the b
-		 */
-		public void keepTabs(final Boolean b) {
-			keepTabs = b;
-		}
-
-		/**
-		 * Keep toolbars.
-		 *
-		 * @return the boolean
-		 */
-		public Boolean keepToolbars() {
-			return keepToolbars;
-		}
-
-		/**
-		 * Keep toolbars.
-		 *
-		 * @param b
-		 *            the b
-		 */
-		public void keepToolbars(final Boolean b) {
-			keepToolbars = b;
-		}
-
-		/**
-		 * Keep controls.
-		 *
-		 * @param b
-		 *            the b
-		 */
-		public void keepControls(final Boolean b) {
-			keepControls = b;
-		}
-
-		/**
-		 * Keep controls.
-		 *
-		 * @return the boolean
-		 */
-		public Boolean keepControls() {
-			return keepControls;
-		}
-
-		/**
-		 * Keep tray.
-		 *
-		 * @param b
-		 *            the b
-		 */
-		public void keepTray(final Boolean b) {
-			keepTray = b;
-		}
-
-		/**
-		 * Keep tray.
-		 *
-		 * @return the boolean
-		 */
-		public Boolean keepTray() {
-			return keepTray;
-		}
-
-		/**
-		 * Gets the background.
-		 *
-		 * @return the background
-		 */
-		public Color getBackground() { return background.get(); }
-
-		/**
-		 * Sets the background.
-		 *
-		 * @param c
-		 *            the new background
-		 */
-		public void setBackground(final Supplier<Color> c) { background = c; }
-
-		/**
-		 * Show consoles.
-		 *
-		 * @param b
-		 *            the b
-		 */
-		public void showConsoles(final Boolean b) {
-			showConsoles = b;
-		}
-
-	}
-
-	/**
 	 * Gets the new perspective name.
 	 *
 	 * @param model
@@ -761,10 +560,7 @@ public class PerspectiveHelper {
 			if (page != null) {
 				page.closePerspective(currentSimulationPerspective, false, false);
 				getPerspectiveRegistry().deletePerspective(currentSimulationPerspective);
-				if (currentSimulationPerspective.getRestoreBackground() != null) {
-					currentSimulationPerspective.getRestoreBackground().run();
-					currentSimulationPerspective.setRestoreBackground(null);
-				}
+				currentSimulationPerspective.dispose();
 				deletePerspectiveFromApplication(currentSimulationPerspective);
 				// DEBUG.OUT("Perspective destroyed: " + currentSimulationPerspective.getId());
 			}

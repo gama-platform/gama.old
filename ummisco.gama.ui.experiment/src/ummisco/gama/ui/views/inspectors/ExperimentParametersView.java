@@ -165,6 +165,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	protected Composite createItemContentsFor(final String cat) {
 		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(cat);
+		createViewer(getParentComposite());
 		final EditorsGroup compo = new EditorsGroup(getViewer());
 		if (parameters != null) {
 			final List<IParameterEditor> list = new ArrayList<>(parameters.values());

@@ -90,11 +90,9 @@ public class ServerExperimentController implements IExperimentController {
 
 				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
 				if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
-					if (!"".equals(mexp.endCond)) { 
-						mexp.socket.send(Jsoner.serialize( new CommandResponse(GamaServerMessageType.SimulationEnded, 
-															"", 
-															_job.playCommand, 
-															false))); 
+					if (!"".equals(mexp.endCond)) {
+						mexp.socket.send(Jsoner.serialize(new CommandResponse(GamaServerMessageType.SimulationEnded, "",
+								_job.playCommand, false)));
 					}
 					break;
 				}
@@ -113,14 +111,19 @@ public class ServerExperimentController implements IExperimentController {
 
 	/** The disposing. */
 	private boolean disposing;
-	
-	private WebSocket socket;
 
+	/** The socket. */
+	private final WebSocket socket;
 
+	/** The redirect console. */
 	public final boolean redirectConsole;
-	public final boolean redirectStatus;
-	public final boolean redirectDialog;
 	
+	/** The redirect status. */
+	public final boolean redirectStatus;
+	
+	/** The redirect dialog. */
+	public final boolean redirectDialog;
+
 	/** The commands. */
 	protected volatile ArrayBlockingQueue<Integer> commands;
 
@@ -135,19 +138,21 @@ public class ServerExperimentController implements IExperimentController {
 
 	/**
 	 * Instantiates a new experiment controller.
-	 * @param socket 
+	 *
+	 * @param socket
 	 *
 	 * @param experiment
 	 *            the experiment
 	 */
-	public ServerExperimentController(final ManualExperimentJob j, WebSocket sock, boolean console, boolean status, boolean dialog) {
-		
-		_job 			= j;
-		socket 			= sock;
+	public ServerExperimentController(final ManualExperimentJob j, final WebSocket sock, final boolean console,
+			final boolean status, final boolean dialog) {
+
+		_job = j;
+		socket = sock;
 		redirectConsole = console;
-		redirectStatus	= status;
-		redirectDialog	= dialog;
-		commands 		= new ArrayBlockingQueue<>(10);
+		redirectStatus = status;
+		redirectDialog = dialog;
+		commands = new ArrayBlockingQueue<>(10);
 		executionThread = new MyRunnable(j);
 
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
@@ -170,9 +175,7 @@ public class ServerExperimentController implements IExperimentController {
 	 * @param exp
 	 *            the new experiment
 	 */
-	public void setExperiment(final IExperimentPlan exp) { 
-		this.experiment = exp; 
-	}
+	public void setExperiment(final IExperimentPlan exp) { this.experiment = exp; }
 
 	/**
 	 * Offer.
@@ -358,7 +361,7 @@ public class ServerExperimentController implements IExperimentController {
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage(), scope); }
+		if (e != null) { getScope().getGui().getStatus().errorStatus(scope, e.getMessage()); }
 		experiment.dispose(); // will call own dispose() later
 	}
 
@@ -382,9 +385,9 @@ public class ServerExperimentController implements IExperimentController {
 	public void schedule(final ExperimentAgent agent) {
 		this.agent = agent;
 		scope = agent.getScope();
-		scope.setData("socket",	socket);
+		scope.setData("socket", socket);
 		scope.setData("exp_id", _job.getExperimentID());
-		scope.setData("console",redirectConsole);
+		scope.setData("console", redirectConsole);
 		scope.setData("status", redirectStatus);
 		scope.setData("dialog", redirectDialog);
 		try {

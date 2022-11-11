@@ -99,6 +99,11 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	 */
 	Iterable<IDisplayOutput> getDisplayOutputs();
 
+	/**
+	 * Gets the monitors.
+	 *
+	 * @return the monitors
+	 */
 	Collection<MonitorOutput> getMonitors();
 
 	/**
@@ -135,5 +140,12 @@ public interface IOutputManager extends IStepable, Iterable<IOutput> {
 	 * @return true, if is sync
 	 */
 	boolean isSync();
+
+	/**
+	 * Checks for monitors.
+	 *
+	 * @return true, if successful
+	 */
+	boolean hasMonitors();
 
 }

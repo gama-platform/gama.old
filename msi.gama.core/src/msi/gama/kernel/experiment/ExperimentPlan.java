@@ -10,10 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import static msi.gama.common.interfaces.IKeyword.MEMORIZE;
-import static msi.gama.common.interfaces.IKeyword.TEST;
-import static msi.gama.runtime.GAMA.getGui;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -668,14 +664,29 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// experiment
 		myScope.push(agent);
 		prepareGui();
-		myScope.getGui().prepareForExperiment(myScope, this);
 		IScope scope = agent.getScope();
 		agent.schedule(scope);
+		showParameters();
 
 		if (isBatch()) {
-			getGui().getStatus().informStatus(
-					isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.", scope);
-			getGui().updateExperimentState(scope);
+			myScope.getGui().getStatus().informStatus(scope,
+					isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
+			myScope.getGui().updateExperimentState(scope);
+		}
+
+	}
+
+	/**
+	 * Show parameters.
+	 */
+	private void showParameters() {
+		final ExperimentOutputManager manager = (ExperimentOutputManager) agent.getOutputManager();
+		Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
+		final Boolean showParameters = layout.getFacetValue(myScope, "parameters", null);
+		if (showParameters != null && !showParameters) {
+			myScope.getGui().hideParameters();
+		} else {
+			myScope.getGui().showAndUpdateParameterView(myScope, this);
 		}
 
 	}
@@ -688,7 +699,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
 		final Boolean keepTabs = layout.getFacetValue(myScope, "tabs", true);
 		final Boolean keepToolbars = layout.getFacetValue(myScope, "toolbars", null);
-		final Boolean showParameters = layout.getFacetValue(myScope, "parameters", null);
 		final Boolean showConsoles = layout.getFacetValue(myScope, "consoles", null);
 		final Boolean showNavigator = layout.getFacetValue(myScope, "navigator", null);
 		final Boolean showControls = layout.getFacetValue(myScope, "controls", null);
@@ -696,8 +706,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final Boolean showEditors = layout.hasFacet("editors") ? layout.getFacetValue(myScope, "editors", false)
 				: !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
 		Supplier<GamaColor> color = () -> layout.getFacetValue(myScope, "background", null);
-		GAMA.getGui().arrangeExperimentViews(myScope, this, keepTabs, keepToolbars, showParameters, showConsoles,
-				showNavigator, showControls, keepTray, color, showEditors);
+		myScope.getGui().arrangeExperimentViews(myScope, this, keepTabs, keepToolbars, showConsoles, showNavigator,
+				showControls, keepTray, color, showEditors);
 	}
 
 	@Override
@@ -721,7 +731,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public boolean hasParametersOrUserCommands() {
-		return !parameters.isEmpty() || !explorableParameters.isEmpty() || !getUserCommands().isEmpty();
+		return !parameters.isEmpty() || !explorableParameters.isEmpty() || !getUserCommands().isEmpty()
+				|| GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()
+						&& (experimentOutputs.hasMonitors() || originalSimulationOutputs.hasMonitors());
 	}
 
 	// @Override
@@ -729,10 +741,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean isBatch() { return exploration != null; }
 
 	@Override
-	public boolean isTest() { return TEST.equals(getExperimentType()); }
+	public boolean isTest() { return IKeyword.TEST.equals(getExperimentType()); }
 
 	@Override
-	public boolean isMemorize() { return MEMORIZE.equals(getExperimentType()); }
+	public boolean isMemorize() { return IKeyword.MEMORIZE.equals(getExperimentType()); }
 
 	@Override
 	public IScope getExperimentScope() { return myScope; }
@@ -895,17 +907,36 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			super(null, additionalName);
 		}
 
+		/**
+		 * Sets the global var value.
+		 *
+		 * @param name
+		 *            the name
+		 * @param v
+		 *            the v
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
+		 */
 		@Override
 		public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
 			if (hasParameter(name)) {
 				setParameterValue(this, name, v);
-				GAMA.getGui().updateParameterView(getCurrentSimulation().getScope(), ExperimentPlan.this);
+				myScope.getGui().showAndUpdateParameterView(getCurrentSimulation().getScope(), ExperimentPlan.this);
 				return;
 			}
 			final SimulationAgent a = getCurrentSimulation();
 			if (a != null) { a.setDirectVarValue(this, name, v); }
 		}
 
+		/**
+		 * Gets the global var value.
+		 *
+		 * @param varName
+		 *            the var name
+		 * @return the global var value
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
+		 */
 		@Override
 		public Object getGlobalVarValue(final String varName) throws GamaRuntimeException {
 			if (hasParameter(varName)) return getParameterValue(varName);

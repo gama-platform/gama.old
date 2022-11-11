@@ -391,7 +391,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 			coverage = store.read(null);
 		} finally {
 			if (store != null) { store.dispose(); }
-			scope.getGui().getStatus().endSubStatus("Opening file " + getName(scope), scope);
+			scope.getGui().getStatus().endSubStatus(scope, "Opening file " + getName(scope));
 		}
 	}
 
@@ -438,13 +438,13 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	void read(final IScope scope, final boolean readAll, final boolean createGeometries) {
 
 		try {
-			scope.getGui().getStatus().beginSubStatus("Reading file " + getName(scope), scope);
+			scope.getGui().getStatus().beginSubStatus(scope, "Reading file " + getName(scope));
 
 			final Envelope envP = gis.getProjectedEnvelope();
-			if (gis != null) {
-				if(!(gis.getInitialCRS(scope) instanceof ProjectedCRS)) {
-						GAMA.reportError(scope, GamaRuntimeException.warning("Try to project a grid -" + this.originalPath+ "-  that is not projected. Projection of grids can lead to errors in the cell coordinates. ", scope), false);
-				}
+			if (gis != null && !(gis.getInitialCRS(scope) instanceof ProjectedCRS)) {
+				GAMA.reportError(scope, GamaRuntimeException.warning("Try to project a grid -" + this.originalPath
+						+ "-  that is not projected. Projection of grids can lead to errors in the cell coordinates. ",
+						scope), false);
 			}
 			final double cellHeight = envP.getHeight() / numRows;
 			final double cellWidth = envP.getWidth() / numCols;
@@ -475,7 +475,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 				records.y = new double[numRows * numCols]; // y
 				records.bands.add(new double[numRows * numCols]); // data
 				for (int i = 0, n = numRows * numCols; i < n; i++) {
-					scope.getGui().getStatus().setSubStatusCompletion(i / (double) n, scope);
+					scope.getGui().getStatus().setSubStatusCompletion(scope, i / (double) n);
 
 					final int yy = i / numCols;
 					final int xx = i - yy * numCols;
@@ -531,7 +531,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		} catch (final Exception e) {
 			throw error("The format of " + getName(scope) + " is not correct. Error: " + e.getMessage(), scope);
 		} finally {
-			scope.getGui().getStatus().endSubStatus("Reading file " + getName(scope), scope);
+			scope.getGui().getStatus().endSubStatus(scope, "Reading file " + getName(scope));
 		}
 
 	}
@@ -617,7 +617,10 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 				final GeoTiffReader store = new GeoTiffReader(getFile(scope));
 				return store.getCoordinateReferenceSystem();
 			} catch (final DataSourceException e) {
-				GAMA.reportError(scope, GamaRuntimeException.warning("Problem when reading the CRS of the " + this.getOriginalPath() +" file", scope), false);
+				GAMA.reportError(scope,
+						GamaRuntimeException.warning(
+								"Problem when reading the CRS of the " + this.getOriginalPath() + " file", scope),
+						false);
 			}
 		}
 
