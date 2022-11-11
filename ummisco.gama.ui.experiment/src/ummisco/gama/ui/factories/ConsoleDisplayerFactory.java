@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.factories;
 
+import static ummisco.gama.ui.utils.ViewsHelper.hideView;
+
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,26 +86,31 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 		}
 
 		/**
-		 * Show console views.
+		 * Toogle console views.
 		 *
 		 * @param agent
 		 *            the agent
 		 */
 		@Override
-		public void showConsoleViews(final ITopLevelAgent agent) {
-			final IGamaView.Console icv = (Console) GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID, null,
-					IWorkbenchPage.VIEW_VISIBLE);
-			if (icv != null) { icv.append(null, agent, null); }
-			final IGamaView.Console console =
-					(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-			consoleBuffers.forEach((c, sb) -> {
-				if (sb.length() > 0 && console != null) {
-					console.append(sb.toString(), agent, c);
-					sb.setLength(0);
-				}
-			});
-
+		public void toggleConsoleViews(final ITopLevelAgent agent, final boolean show) {
+			if (!show) {
+				hideView(IGui.CONSOLE_VIEW_ID);
+				hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
+			} else {
+				final IGamaView.Console icv = (Console) GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID,
+						null, IWorkbenchPage.VIEW_VISIBLE);
+				if (icv != null) { icv.append(null, agent, null); }
+				final IGamaView.Console console =
+						(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+				consoleBuffers.forEach((c, sb) -> {
+					if (sb.length() > 0 && console != null) {
+						console.append(sb.toString(), agent, c);
+						sb.setLength(0);
+					}
+				});
+			}
 		}
+
 	}
 
 	@Override

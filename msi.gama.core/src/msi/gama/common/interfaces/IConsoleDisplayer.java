@@ -78,7 +78,7 @@ public interface IConsoleDisplayer {
 	 * @param agent
 	 *            the agent
 	 */
-	default void showConsoleViews(final ITopLevelAgent agent) {}
+	default void toggleConsoleViews(final ITopLevelAgent agent, final boolean show) {}
 
 	/**
 	 * Erase console.

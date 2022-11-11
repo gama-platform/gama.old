@@ -460,18 +460,7 @@ public class SwtGui implements IGui {
 		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
-			if (showConsoles != null && !showConsoles) {
-				hideView(IGui.CONSOLE_VIEW_ID);
-				hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
-			} else {
-				getConsole().showConsoleViews(exp.getAgent());
-			}
-			// if (showParameters != null && !showParameters) {
-			// hideView(IGui.PARAMETER_VIEW_ID);
-			// parametersView = null;
-			// } else {
-			// showAndUpdateParameterView(scope, exp);
-			// }
+			getConsole().toggleConsoleViews(exp.getAgent(), showConsoles == null || showConsoles);
 			if (showNavigator != null && !showNavigator) { hideView(IGui.NAVIGATOR_VIEW_ID); }
 			if (showControls != null) { WorkbenchHelper.getWindow().setCoolBarVisible(showControls); }
 			if (keepTray != null) { PerspectiveHelper.showBottomTray(WorkbenchHelper.getWindow(), keepTray); }

@@ -23,7 +23,7 @@ public class ShowHideConsoleViewHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.getGui().getConsole().showConsoleViews(GAMA.getSimulation());
+		GAMA.getGui().getConsole().toggleConsoleViews(GAMA.getSimulation(), true);
 		return null;
 	}
 }
