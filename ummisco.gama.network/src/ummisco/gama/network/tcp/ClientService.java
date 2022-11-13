@@ -112,7 +112,7 @@ public class ClientService extends Thread implements SocketService {
 			if (receiver != null) { receiver.close(); }
 			socket.close();
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

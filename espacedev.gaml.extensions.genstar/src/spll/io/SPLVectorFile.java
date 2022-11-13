@@ -54,12 +54,12 @@ import core.metamodel.attribute.Attribute;
 import core.metamodel.entity.AGeoEntity;
 import core.metamodel.io.IGSGeofile;
 import core.metamodel.value.IValue;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
+import core.util.exception.GenstarException;
 import core.util.random.GenstarRandom;
 import spll.entity.GeoEntityFactory;
 import spll.entity.SpllFeature;
 import spll.entity.iterator.GSFeatureIterator;
-import spll.io.exception.InvalidGeoFormatException;
 import spll.util.SpllGeotoolsAdapter;
 import spll.util.SpllUtil;
 
@@ -183,9 +183,7 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 		DataStore datastore = DataStoreFinder.getDataStore(parameters);
 
 		// set the charset (if possible)
-		if (charset != null && datastore instanceof ShapefileDataStore) {
-			((ShapefileDataStore) datastore).setCharset(charset);
-		}
+		if (charset != null && datastore instanceof ShapefileDataStore sds) { sds.setCharset(charset); }
 		return datastore;
 	}
 
@@ -197,7 +195,8 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 	@Override
 	public boolean
 			isCoordinateCompliant(final IGSGeofile<? extends AGeoEntity<? extends IValue>, ? extends IValue> file) {
-		CoordinateReferenceSystem thisCRS = null, fileCRS = null;
+		CoordinateReferenceSystem thisCRS = null;
+		CoordinateReferenceSystem fileCRS = null;
 		thisCRS = SpllUtil.getCRSfromWKT(this.getWKTCoordinateReferentSystem());
 		fileCRS = SpllUtil.getCRSfromWKT(file.getWKTCoordinateReferentSystem());
 		if (thisCRS == null && fileCRS == null) return false;
@@ -210,7 +209,7 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 		} catch (FactoryException e) {
 			e.printStackTrace();
 		}
-		return codeThis == null && codeFile == null ? false : Objects.equals(codeFile, codeThis);
+		return Objects.equals(codeFile, codeThis) && codeThis != null;
 	}
 
 	@Override
@@ -245,9 +244,9 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 		IGSGeofile<SpllFeature, IValue> res = null;
 		try {
 			res = new SPLGeofileBuilder().setFeatures(newFeatures).setFile(destination).buildShapeFile();
-		} catch (SchemaException | InvalidGeoFormatException e) {
+		} catch (SchemaException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new GenstarException(e);
 
 		}
 		return res;
@@ -263,7 +262,7 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * TODO: leave parallel processing option open
+	 * leave parallel processing option open
 	 *
 	 * @return
 	 */
@@ -275,7 +274,7 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * TODO: leave parallel processing option open
+	 * leave parallel processing option open
 	 *
 	 * @return
 	 */
@@ -331,7 +330,7 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 	 * @param avoidOverlapping
 	 */
 	@SuppressWarnings ("null")
-	public void minMaxDistance(final Double minDist, final Double maxDist, final Boolean avoidOverlapping) {
+	public void minMaxDistance(final Double minDist, final Double maxDist, final boolean avoidOverlapping) {
 		Quadtree quadTreeMin = null;
 		if (minDist != null && minDist > 0) {
 			quadTreeMin = new Quadtree();
@@ -354,11 +353,11 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 				@SuppressWarnings ("unchecked") List<Geometry> intersection =
 						quadTreeMin.query(newGeom.getEnvelopeInternal());
 				for (Geometry g : intersection) {
-					if (g.isEmpty()) { continue; }
-					newGeom = SpllUtil.difference(newGeom, g);
-					if (newGeom == null) { break; }
-					newGeom = manageGeometryCollection(newGeom);
-
+					if (!g.isEmpty()) {
+						newGeom = SpllUtil.difference(newGeom, g);
+						if (newGeom == null) { break; }
+						newGeom = manageGeometryCollection(newGeom);
+					}
 				}
 				if (newGeom == null) { break; }
 				if (avoidOverlapping) {
@@ -371,13 +370,14 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 				}
 			} else if (minDist > 0) {
 				for (SpllFeature ft2 : features) {
-					if (ft == ft2) { continue; }
-					Geometry newGeom2 = ft2.getProxyGeometry();
-					if (newGeom2.isEmpty()) { continue; }
-					newGeom = SpllUtil.difference(newGeom, newGeom2);
-					if (newGeom == null) { break; }
-					newGeom = manageGeometryCollection(newGeom);
-
+					if (ft != ft2) {
+						Geometry newGeom2 = ft2.getProxyGeometry();
+						if (!newGeom2.isEmpty()) {
+							newGeom = SpllUtil.difference(newGeom, newGeom2);
+							if (newGeom == null) { break; }
+							newGeom = manageGeometryCollection(newGeom);
+						}
+					}
 				}
 				if (avoidOverlapping) {
 					try {
@@ -392,30 +392,31 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 		}
 
 		if (avoidOverlapping) {
-			List<SpllFeature> fts_overlap = new ArrayList<>(features);
-			Collections.shuffle(fts_overlap, GenstarRandom.getInstance());
+			List<SpllFeature> ftsOverlap = new ArrayList<>(features);
+			Collections.shuffle(ftsOverlap, GenstarRandom.getInstance());
 
-			for (SpllFeature ft : fts_overlap) {
+			for (SpllFeature ft : ftsOverlap) {
 				Geometry newGeom = ft.getProxyGeometry();
 				if (quadTreeOverlap != null && !quadTreeOverlap.isEmpty()) {
 					@SuppressWarnings ("unchecked") List<Geometry> intersection =
 							quadTreeOverlap.query(newGeom.getEnvelopeInternal());
 					for (Geometry g : intersection) {
-						if (g.isEmpty() || g == ft.getGeometry()) { continue; }
-						newGeom = SpllUtil.difference(newGeom, g);
-						if (newGeom == null) { break; }
-						newGeom = manageGeometryCollection(newGeom);
-
+						if (!g.isEmpty() && g != ft.getGeometry()) {
+							newGeom = SpllUtil.difference(newGeom, g);
+							if (newGeom == null) { break; }
+							newGeom = manageGeometryCollection(newGeom);
+						}
 					}
 				} else {
-					for (SpllFeature ft2 : fts_overlap) {
-						if (ft == ft2) { continue; }
-						Geometry newGeom2 = ft2.getProxyGeometry();
-						if (newGeom2.isEmpty()) { continue; }
-						newGeom = SpllUtil.difference(newGeom, newGeom2);
-						if (newGeom == null) { break; }
-						newGeom = manageGeometryCollection(newGeom);
-
+					for (SpllFeature ft2 : ftsOverlap) {
+						if (ft != ft2) {
+							Geometry newGeom2 = ft2.getProxyGeometry();
+							if (!newGeom2.isEmpty()) {
+								newGeom = SpllUtil.difference(newGeom, newGeom2);
+								if (newGeom == null) { break; }
+								newGeom = manageGeometryCollection(newGeom);
+							}
+						}
 					}
 				}
 				ft.setProxyGeometry(newGeom);
@@ -461,7 +462,6 @@ public class SPLVectorFile implements IGSGeofile<SpllFeature, IValue> {
 			s = "Shapefile containing " + features.size() + " features of geometry type "
 					+ dataStore.getSchema(dataStore.getTypeNames()[0]).getGeometryDescriptor().getType();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return s;

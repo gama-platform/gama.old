@@ -147,7 +147,7 @@ public class WorkspaceModelsManager {
 					Thread.sleep(100);
 					DEBUG.OUT(Thread.currentThread().getName() + ": waiting for the GUI to become available");
 				} catch (final InterruptedException e2) {
-					// TODO Auto-generated catch block
+					
 					e2.printStackTrace();
 				}
 			}

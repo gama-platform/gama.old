@@ -483,13 +483,13 @@ public abstract class GamlAccessContents implements IPopupProvider {
 
 			@Override
 			public void mouseEnter(final MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 
 			}
 
 			@Override
 			public void mouseExit(final MouseEvent e) {
-				// TODO Auto-generated method stub
+				
 
 			}
 		});

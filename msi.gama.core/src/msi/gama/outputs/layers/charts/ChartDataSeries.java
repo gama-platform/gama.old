@@ -139,7 +139,7 @@ public class ChartDataSeries {
 	 * @return the serie legend
 	 */
 	public Comparable getSerieLegend(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		return name;
 	}
 
@@ -151,7 +151,7 @@ public class ChartDataSeries {
 	 * @return the serie id
 	 */
 	public String getSerieId(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		return name;
 	}
 
@@ -266,7 +266,7 @@ public class ChartDataSeries {
 	 * @return the c values
 	 */
 	public ArrayList<String> getCValues(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		if (isOngoing_update()) return oldcvalues;
 		return cvalues;
 	}
@@ -279,7 +279,7 @@ public class ChartDataSeries {
 	 * @return the x values
 	 */
 	public ArrayList<Double> getXValues(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		if (isOngoing_update()) return oldxvalues;
 		return xvalues;
 	}
@@ -292,7 +292,7 @@ public class ChartDataSeries {
 	 * @return the y values
 	 */
 	public ArrayList<Double> getYValues(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		if (isOngoing_update()) return oldyvalues;
 		return yvalues;
 	}
@@ -305,7 +305,7 @@ public class ChartDataSeries {
 	 * @return the s values
 	 */
 	public ArrayList<Double> getSValues(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		if (isOngoing_update()) return oldsvalues;
 		return svalues;
 	}
@@ -317,7 +317,7 @@ public class ChartDataSeries {
 	 *            the scope
 	 */
 	/*
-	 * public void addxysvalue(double dx, double dy, double dz, int date) { // TODO Auto-generated method stub
+	 * public void addxysvalue(double dx, double dy, double dz, int date) { 
 	 * xvalues.add(dx); yvalues.add(dy); svalues.add(dz); this.getDataset().serieToUpdateBefore.put(this.getName(),
 	 * date);
 	 *
@@ -356,7 +356,7 @@ public class ChartDataSeries {
 	 */
 	private Object getlistvalue(final IScope scope, final HashMap barvalues, final String valuetype,
 			final int listvalue) {
-		// TODO Auto-generated method stub
+		
 		if (!barvalues.containsKey(valuetype)) return null;
 		boolean uselist = true;
 		if (listvalue < 0) { uselist = false; }
@@ -512,7 +512,7 @@ public class ChartDataSeries {
 	 */
 	public void addxyvalue(final IScope scope, final double dx, final double dy, final int date,
 			final HashMap barvalues, final int listvalue) {
-		// TODO Auto-generated method stub
+		
 		xvalues.add(dx);
 		yvalues.add(dy);
 

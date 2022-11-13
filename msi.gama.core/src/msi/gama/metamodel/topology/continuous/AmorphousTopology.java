@@ -388,7 +388,7 @@ public class AmorphousTopology implements ITopology {
 
 	@Override
 	public void setRoot(final IScope scope, final RootTopology rt) {
-		// TODO Auto-generated method stub
+		
 
 	}
 }

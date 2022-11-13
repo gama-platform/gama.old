@@ -63,7 +63,7 @@ public class GSPixelIterator implements Iterator<SpllPixel> {
 		try {
 			pixelEnvelop = coverage.getGridGeometry().gridToWorld(new GridEnvelope2D(w, h, 1, 1));
 		} catch (TransformException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return gef.createGeoEntity(valsN, pixelEnvelop, w, h);

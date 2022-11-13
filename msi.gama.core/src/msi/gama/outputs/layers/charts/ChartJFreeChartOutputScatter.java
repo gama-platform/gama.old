@@ -199,7 +199,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
-		// TODO Auto-generated method stub
+		
 
 		switch (type_val) {
 			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
@@ -346,7 +346,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	protected void clearDataSet(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		super.clearDataSet(scope);
 		final XYPlot plot = (XYPlot) this.chart.getPlot();
 		for (int i = plot.getDatasetCount() - 1; i >= 1; i--) {
@@ -389,7 +389,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			// DEBUG.LOG("new serie"+serieid+" at
 			// "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds
 			// "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
-			// TODO Auto-generated method stub
+			
 
 		}
 	}
@@ -397,7 +397,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	@SuppressWarnings ("unchecked")
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
+		
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		final XYIntervalSeries serie =
@@ -715,7 +715,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	public void setUseSize(final IScope scope, final String name, final boolean b) {
-		// TODO Auto-generated method stub
+		
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, name);
 		if (newr instanceof myXYErrorRenderer) { ((myXYErrorRenderer) newr).setUseSize(scope, b); }
 

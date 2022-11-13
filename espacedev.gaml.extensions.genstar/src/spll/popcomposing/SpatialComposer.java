@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SpatialComposer.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package spll.popcomposing;
 
 import java.util.ArrayList;
@@ -18,27 +28,43 @@ import core.metamodel.entity.AGeoEntity;
 import core.metamodel.io.IGSGeofile;
 import core.metamodel.io.IGSGeofile.GeoGSFileType;
 import core.metamodel.value.IValue;
+import core.util.exception.GenstarException;
 import gospl.GosplMultitypePopulation;
 import spll.SpllEntity;
 import spll.SpllPopulation;
 import spll.localizer.constraint.ISpatialConstraint;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class SpatialComposer.
+ */
 public class SpatialComposer implements ISpatialComposer<SpllEntity> {
 
+	/** The constraints. */
 	protected List<ISpatialConstraint> constraints = new LinkedList<>();
 
+	/** The population of parent candidates. */
 	protected SpllPopulation populationOfParentCandidates;
+	
+	/** The parent type. */
 	protected String parentType;
 
+	/** The population of children candidates. */
 	protected SpllPopulation populationOfChildrenCandidates;
+	
+	/** The children type. */
 	protected String childrenType;
 
+	/** The count empty parents. */
 	protected Integer countEmptyParents = null;
+	
+	/** The count orphan children. */
 	protected Integer countOrphanChildren = null;
 
+	/** The result population. */
 	protected GosplMultitypePopulation<SpllEntity> resultPopulation = null;
 
+	/** The max buffer. */
 	protected int maxBuffer = 300;
 
 	/**
@@ -47,8 +73,13 @@ public class SpatialComposer implements ISpatialComposer<SpllEntity> {
 	 *
 	 */
 	protected Map<AGeoEntity<IValue>, SpllEntity> feature2ParentEntity = new HashMap<>();
+	
+	/** The feature 2 child entity. */
 	protected Map<AGeoEntity<IValue>, SpllEntity> feature2ChildEntity = new HashMap<>();
 
+	/**
+	 * Instantiates a new spatial composer.
+	 */
 	public SpatialComposer() {
 
 		// start with an empty population
@@ -118,7 +149,7 @@ public class SpatialComposer implements ISpatialComposer<SpllEntity> {
 
 		// check inputs
 		if (!GeoGSFileType.VECTOR.equals(map.getGeoGSFileType()))
-			throw new RuntimeException("This algorithm is only qualified to run on Vector shapefiles");
+			throw new GenstarException("This algorithm is only qualified to run on Vector shapefiles");
 
 		if (populationOfChildrenCandidates == null || populationOfParentCandidates == null)
 			throw new NullPointerException(
@@ -161,8 +192,7 @@ public class SpatialComposer implements ISpatialComposer<SpllEntity> {
 					DEBUG.LOG("* child of this geom was not found and will be ignored: {}" + childGeom.toString());
 					continue;
 				}
-				DEBUG.LOG(
-						"* found child entity: {} -- {}" + childEntity.getEntityId() + "" + childEntity.toString());
+				DEBUG.LOG("* found child entity: {} -- {}" + childEntity.getEntityId() + "" + childEntity.toString());
 
 				childEntity.setParent(parentEntity);
 				parentEntity.addChild(childEntity);
@@ -308,11 +338,17 @@ public class SpatialComposer implements ISpatialComposer<SpllEntity> {
 		updateCountsOfOrphanEntities();
 	}
 
+	/**
+	 * Update counts of orphan entities.
+	 */
 	protected void updateCountsOfOrphanEntities() {
 		updateCountOfEmptyParentCandidates();
 		updateCountOfOrphanChildrenCandidates();
 	}
 
+	/**
+	 * Update count of empty parent candidates.
+	 */
 	protected void updateCountOfEmptyParentCandidates() {
 
 		if (this.populationOfParentCandidates == null) {
@@ -332,6 +368,9 @@ public class SpatialComposer implements ISpatialComposer<SpllEntity> {
 
 	}
 
+	/**
+	 * Update count of orphan children candidates.
+	 */
 	protected void updateCountOfOrphanChildrenCandidates() {
 
 		if (this.populationOfChildrenCandidates == null) {
@@ -351,8 +390,18 @@ public class SpatialComposer implements ISpatialComposer<SpllEntity> {
 
 	}
 
+	/**
+	 * Gets the max buffer.
+	 *
+	 * @return the max buffer
+	 */
 	public int getMaxBuffer() { return this.maxBuffer; }
 
+	/**
+	 * Sets the max buffer.
+	 *
+	 * @param maxBuffer the new max buffer
+	 */
 	public void setMaxBuffer(final int maxBuffer) { this.maxBuffer = maxBuffer; }
 
 }

@@ -71,7 +71,7 @@ public class DXFImageHandler extends AbstractEntityHandler {
      * @see de.miethxml.kabeja.parser.entities.DXFEntityHandler#getDXFEntity()
      */
     public DXFEntity getDXFEntity() {
-        // TODO Auto-generated method stub
+        
         return image;
     }
 

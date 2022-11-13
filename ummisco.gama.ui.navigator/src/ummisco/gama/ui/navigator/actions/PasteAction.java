@@ -299,7 +299,7 @@ public class PasteAction extends SelectionListenerAction {
 					}
 					// RefreshHandler.run(container);
 				} catch (final CoreException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			} else {
@@ -310,7 +310,7 @@ public class PasteAction extends SelectionListenerAction {
 					op.copyFiles(new String[] { name }, container);
 					// RefreshHandler.run(container);
 				} catch (final CoreException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}

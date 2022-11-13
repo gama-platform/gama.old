@@ -823,7 +823,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public IMatrix _reverse(final IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -1860,7 +1860,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public void setDepth(final double depth) {
-			// TODO Auto-generated method stub
+			
 
 		}
 
@@ -2330,7 +2330,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			@Override
 			public void setDepth(final double depth) {
-				// TODO Auto-generated method stub
+				
 
 			}
 

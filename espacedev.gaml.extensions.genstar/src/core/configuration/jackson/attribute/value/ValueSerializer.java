@@ -26,7 +26,7 @@ public class ValueSerializer extends StdSerializer<IValue> {
 	@Override
 	public void serialize(IValue value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		gen.writeStartObject();
-		gen.writeStringField(IValue.VALUE, value.getStringValue());
+		gen.writeStringField(IValue.VALUE_LABEL, value.getStringValue());
 		gen.writeEndObject();		
 	}
 

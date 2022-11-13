@@ -20,7 +20,6 @@ import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import espacedev.gaml.extensions.genstar.generator.IGenstarGenerator;
 import espacedev.gaml.extensions.genstar.statement.GenerateStatement.GenerateValidator;
@@ -69,6 +68,22 @@ import one.util.streamex.StreamEx;
 /**
  * The Class GenerateStatement.
  */
+
+/**
+ * The Class GenerateStatement.
+ */
+
+/**
+ * The Class GenerateStatement.
+ */
+
+/**
+ * The Class GenerateStatement.
+ */
+
+/**
+ * The Class GenerateStatement.
+ */
 @symbol (
 		name = GENERATE,
 		kind = SEQUENCE_STATEMENT,
@@ -91,16 +106,16 @@ import one.util.streamex.StreamEx;
 						name = FROM,
 						type = IType.NONE,
 						optional = false,
-						doc = @doc ("To specify the input data used to inform the generation process. Various data input can be used: \n"
-								+ "  * list of csv_file: can be aggregated or micro data\n"
-								+ "  * matrix: describe the joint distribution of two attributes\n"
-								// + "  * bayesian network (not yet implem): describe a conditional distribution of three
-								// or more attributes"
-								+ "  * genstar generator: a dedicated gaml type to enclose various genstar options all in one")),
+						doc = @doc (
+								value = """
+										To specify the input data used to inform the generation process. Various data input can be used:
+										 * list of csv_file: can be aggregated or micro data
+										 * matrix: describe the joint distribution of two attributes
+										 * genstar generator: a dedicated gaml type to enclose various genstar options all in one""")),
 				@facet (
 						/*
-						 * TODO : make those attributes like in csv map to directly recognize species' attributes rather
-						 * than use string with potential mispells
+						 * make those attributes like in csv map to directly recognize species' attributes rather than
+						 * use string with potential mispells
 						 */
 						name = GenStarConstant.GSATTRIBUTES,
 						type = { IType.MAP },
@@ -110,9 +125,11 @@ import one.util.streamex.StreamEx;
 						name = NUMBER,
 						type = IType.INT,
 						optional = true,
-						doc = @doc ("To specify the number of created agents interpreted as an int value. "
-								+ "If facet is ommited or value is 0 or less, generator will treat data used in the 'from' facet as contingencies "
-								+ "(i.e. a count of entities) and infer a number to generate (if distribution is used, then only one entity will be created")),
+						doc = @doc (
+								value = """
+										To specify the number of created agents interpreted as an int value.
+										If facet is ommited or value is 0 or less, generator will treat data used in the 'from' facet as contingencies
+										(i.e. a count of entities) and infer a number to generate (if distribution is used, then only one entity will be created""")),
 				@facet (
 						name = GenStarConstant.GSGENERATOR,
 						type = { IType.STRING },
@@ -122,19 +139,18 @@ import one.util.streamex.StreamEx;
 
 @doc (
 		value = "Allows to create a synthetic population of agent from a set of given rules",
-		usages = { 
-				@usage (
+		usages = { @usage (
 				value = "The synthax to create a minimal synthetic population from aggregated file is:",
 				examples = { @example (
-				value = "generate species:people number: 10000 \n"
-						+ "from:[csv_file(\"../includes/Age & Sexe-Tableau 1.csv\",\";\")] \n"
-						+ "attributes:[\"Age\"::[\"Moins de 5 ans\", \"5 à 9 ans\", \"10 à 14 ans\", \"15 à 19 ans\", \"20 à 24 ans\", \n"
-						+ "\"25 à 29 ans\", \"30 à 34 ans\", \"35 à 39 ans\", \"40 à 44 ans\", \"45 à 49 ans\", \n"
-						+ "\"50 à 54 ans\", \"55 à 59 ans\", \"60 à 64 ans\", \"65 à 69 ans\", \"70 à 74 ans\", \"75 à 79 ans\", \n"
-						+ "\"80 à 84 ans\", \"85 à 89 ans\", \"90 à 94 ans\", \"95 à 99 ans\", \"100 ans ou plus\"],\n"
-						+ "\"Sexe\"::[\"Hommes\", \"Femmes\"]];",
-				isExecutable = false)}
-) })
+						value = """
+								generate species:people number: 10000
+								from:[csv_file("../includes/Age & Sexe-Tableau 1.csv",";")]
+								attributes:["Age"::["Moins de 5 ans", "5 à 9 ans", "10 à 14 ans", "15 à 19 ans", "20 à 24 ans",
+								"25 à 29 ans", "30 à 34 ans", "35 à 39 ans", "40 à 44 ans", "45 à 49 ans",
+								"50 à 54 ans", "55 à 59 ans", "60 à 64 ans", "65 à 69 ans", "70 à 74 ans", "75 à 79 ans",
+								"80 à 84 ans", "85 à 89 ans", "90 à 94 ans", "95 à 99 ans", "100 ans ou plus"],
+								"Sexe"::["Hommes", "Femmes"]];""",
+						isExecutable = false) }) })
 @validator (GenerateValidator.class)
 public class GenerateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
@@ -142,7 +158,19 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 	private Arguments init;
 
 	/** The algorithm. */
-	private final IExpression from, number, species, attributes, algorithm;
+	private final IExpression from;
+	
+	/** The number. */
+	private final IExpression number;
+	
+	/** The species. */
+	private final IExpression species;
+	
+	/** The attributes. */
+	private final IExpression attributes;
+	
+	/** The algorithm. */
+	private final IExpression algorithm;
 
 	/** The returns. */
 	private final String returns;
@@ -201,10 +229,46 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 	}
 
 	/**
-	 * TODO Description PLZZZZZ TODO Call it before calling the ICreateDelegate createFrom method !
+	 * Description PLZZZZZ Call it before calling the ICreateDelegate createFrom method !
 	 *
 	 * @param scope
 	 * @param values
+	 */
+
+	/**
+	 * Fill with user init.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
+	 */
+
+	/**
+	 * Fill with user init.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
+	 */
+
+	/**
+	 * Fill with user init.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
+	 */
+
+	/**
+	 * Fill with user init.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public void fillWithUserInit(final IScope scope, final Map values) {
@@ -268,7 +332,7 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 	}
 
 	/**
-	 * TODO : make the validator coherent with 'must contains' facets
+	 * make the validator coherent with 'must contains' facets
 	 *
 	 * @author kevinchapuis
 	 *
@@ -338,13 +402,13 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 				if (type.id() != 938373948) {
 					boolean found = false;
 					List<IType> types = StreamEx.of(GenStarGamaUtils.getGamaGenerator())
-							.map(IGenstarGenerator::sourceType).collect(Collectors.toList());
+							.map(IGenstarGenerator::sourceType).toList();
 					for (final IType genType : types) {
 						found = genType.isAssignableFrom(type);
 						if (found) { break; }
 					}
 					if (type == Types.MATRIX) {
-						// TODO verify that x,y matrix match possible attributes values
+						// verify that x,y matrix match possible attributes values
 					}
 					if (!found) {
 						description.warning(
@@ -369,9 +433,6 @@ public class GenerateStatement extends AbstractStatementSequence implements ISta
 
 	@Override
 	public void setFormalArgs(final Arguments args) { init = args; }
-
-	@Override
-	public void setRuntimeArgs(final IScope scope, final Arguments args) {}
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> com) {

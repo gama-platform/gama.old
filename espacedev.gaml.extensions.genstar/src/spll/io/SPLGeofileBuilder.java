@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +84,8 @@ import core.metamodel.entity.AGeoEntity;
 import core.metamodel.io.IGSGeofile;
 import core.metamodel.value.IValue;
 import core.util.data.GSEnumDataType;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
+import core.util.exception.GenstarException;
 import core.util.stats.GSBasicStats;
 import core.util.stats.GSEnumStats;
 import spll.SpllEntity;
@@ -142,7 +142,7 @@ public class SPLGeofileBuilder {
 	private Collection<SpllFeature> features;
 
 	/** The charset. */
-	private final Charset charset = null;
+	private static final Charset charset = null;
 
 	/** The gis file. */
 	// UNSPECIFIC BUILD
@@ -158,7 +158,7 @@ public class SPLGeofileBuilder {
 	 * @throws InvalidGeoFormatException
 	 * @throws FileNotFoundException
 	 */
-	public SPLGeofileBuilder setFile(final File gisFile) throws InvalidGeoFormatException, FileNotFoundException {
+	public SPLGeofileBuilder setFile(final File gisFile) {
 		File parentFile = gisFile.getParentFile();
 		if (!parentFile.exists()) { parentFile.mkdirs(); }
 		this.gisFile = gisFile;
@@ -263,23 +263,23 @@ public class SPLGeofileBuilder {
 	public SPLGeofileBuilder addAttributeToFeature(final File csvFile, final char seperator, final String keyAttribute,
 			final String keyCSV, final Map<String, GSEnumDataType> newAttributes)
 			throws IOException, GSIllegalRangedData {
-		if (features == null && features.isEmpty()) throw new IllegalStateException(this.getClass().getCanonicalName()
+		if (features == null || features.isEmpty()) throw new IllegalStateException(this.getClass().getCanonicalName()
 				+ " is not able to add attribute if not any feature have been added before");
 		if (!csvFile.exists())
 			throw new FileNotFoundException("File " + csvFile + " cannot be resolve to a valid file");
 
 		try (CSVReader reader = new CSVReader(new FileReader(csvFile), seperator)) {
 			List<String[]> dataTable = reader.readAll();
-			Map<String, Map<String, String>> values = new Hashtable<>();
+			Map<String, Map<String, String>> values = new HashMap<>();
 			List<String> header = Arrays.asList(dataTable.get(0));
 
 			if (!header.contains(keyCSV)) throw new IllegalArgumentException(
 					"The given key to retrieve attribute from csv is not related to any csv column");
 			int keyCSVIndex = header.indexOf(keyCSV);
 
-			Map<String, Integer> attIndex = newAttributes.keySet().stream().filter(att -> header.contains(att))
-					.collect(Collectors.toMap(s -> s, s -> header.indexOf(s)));
-			Map<String, Attribute<? extends IValue>> attAGeo = new Hashtable<>();
+			Map<String, Integer> attIndex = newAttributes.keySet().stream().filter(header::contains)
+					.collect(Collectors.toMap(s -> s, header::indexOf));
+			Map<String, Attribute<? extends IValue>> attAGeo = new HashMap<>();
 
 			for (String attName : attIndex.keySet()) {
 				attAGeo.put(attName,
@@ -288,7 +288,7 @@ public class SPLGeofileBuilder {
 
 			for (String[] line : dataTable) {
 				String id = line[keyCSVIndex];
-				Map<String, String> vals = new Hashtable<>();
+				Map<String, String> vals = new HashMap<>();
 				for (String name : attIndex.keySet()) {
 					int idat = attIndex.get(name);
 					vals.put(name, line[idat]);
@@ -346,10 +346,10 @@ public class SPLGeofileBuilder {
 	 * @throws IOException
 	 * @throws GSIllegalRangedData
 	 */
-	public SPLGeofileBuilder addIdToFeature() throws IOException, GSIllegalRangedData {
-		if (features == null && features.isEmpty()) throw new IllegalStateException(this.getClass().getCanonicalName()
+	public SPLGeofileBuilder addIdToFeature() throws GSIllegalRangedData {
+		if (features == null || features.isEmpty()) throw new IllegalStateException(this.getClass().getCanonicalName()
 				+ " is not able to add the id if not any feature have been added before");
-		Map<String, Attribute<? extends IValue>> attAGeo = new Hashtable<>();
+		Map<String, Attribute<? extends IValue>> attAGeo = new HashMap<>();
 
 		String attName = "id";
 		attAGeo.put(attName, AttributeFactory.getFactory().createAttribute(attName, GSEnumDataType.Nominal));
@@ -368,13 +368,13 @@ public class SPLGeofileBuilder {
 		Set<SpllFeature> newSpllFeatures = new HashSet<>();
 		for (SpllFeature ft : features) {
 
-			Map<String, String> vals = new Hashtable<>();
+			Map<String, String> vals = new HashMap<>();
 			vals.put(attName, ft.getGenstarName());
 
 			// New Spll feature attribute setup
 			Map<Attribute<? extends IValue>, IValue> newValues = new HashMap<>(ft.getAttributeMap());
-			newValues.putAll(vals.keySet().stream().collect(Collectors.toMap(vn -> attAGeo.get(vn),
-					vn -> attAGeo.get(vn).getValueSpace().addValue(vals.get(vn)))));
+			newValues.putAll(vals.keySet().stream().collect(
+					Collectors.toMap(attAGeo::get, vn -> attAGeo.get(vn).getValueSpace().addValue(vals.get(vn)))));
 			newSpllFeatures.add(gef.createGeoEntity(ft.getGeometry(), newValues));
 		}
 		this.features = newSpllFeatures;
@@ -400,16 +400,16 @@ public class SPLGeofileBuilder {
 	public IGSGeofile<? extends AGeoEntity<? extends IValue>, ? extends IValue> buildGeofile() throws IOException,
 			IllegalArgumentException, TransformException, InvalidGeoFormatException, GSIllegalRangedData {
 		if (FilenameUtils.getExtension(this.gisFile.getName()).equals(SPLGisFileExtension.shp.toString()))
-			return new SPLVectorFile(this.gisFile, this.charset);
+			return new SPLVectorFile(this.gisFile, SPLGeofileBuilder.charset);
 		if (FilenameUtils.getExtension(this.gisFile.getName()).equals(SPLGisFileExtension.asc.toString())
 				|| FilenameUtils.getExtension(this.gisFile.getName()).equals(SPLGisFileExtension.tif.toString()))
 			return new SPLRasterFile(this.gisFile);
 		chekFile(SPLGisFileExtension.values());
-		throw new RuntimeException("GIS file " + gisFile + " cannot be init.");
+		throw new GenstarException("GIS file " + gisFile + " cannot be init.");
 	}
 
 	/**
-	 * TODO: test TODO: change float pixel value type to double (possible through JAI)
+	 * : test : change float pixel value type to double (possible through JAI)
 	 *
 	 * Build a raster file from a list of pixel band.
 	 *
@@ -427,8 +427,7 @@ public class SPLGeofileBuilder {
 				this.getClass().getCanonicalName() + " should contain bands data to build raster file");
 
 		List<GSBasicStats<Double>> stats = bands.stream()
-				.map(pix -> new GSBasicStats<>(GSBasicStats.transpose(pix), Arrays.asList(this.noData * 1d)))
-				.collect(Collectors.toList());
+				.map(pix -> new GSBasicStats<>(GSBasicStats.transpose(pix), Arrays.asList(this.noData * 1d))).toList();
 		float min = (float) stats.stream().mapToDouble(stat -> stat.getStat(GSEnumStats.min)[0]).min().getAsDouble();
 		float max = (float) stats.stream().mapToDouble(stat -> stat.getStat(GSEnumStats.max)[0]).min().getAsDouble();
 
@@ -461,7 +460,7 @@ public class SPLGeofileBuilder {
 	 */
 	public SPLVectorFile buildShapeFile() throws IOException, SchemaException {
 		if (!chekAndRenameFile(SPLGisFileExtension.shp))
-			throw new RuntimeException("Not able to build requested " + this.gisFile + " shape file");
+			throw new GenstarException("Not able to build requested " + this.gisFile + " shape file");
 
 		if (population == null && (features == null || features.isEmpty())) throw new IllegalStateException(
 				"To build shape file you must first setup a sources, either features or population");
@@ -503,8 +502,8 @@ public class SPLGeofileBuilder {
 					for (final SpllEntity entity : population) {
 
 						SimpleFeature f = fw.next();
-						List<Object> at = Stream.concat(Stream.of(geoms.get(entity)), entity.getValues().stream())
-								.collect(Collectors.toList());
+						List<Object> at =
+								Stream.concat(Stream.of(geoms.get(entity)), entity.getValues().stream()).toList();
 						for (String link : links) {
 							AGeoEntity<? extends IValue> lp = entity.getLinkedPlaces().get(link);
 							if (lp == null) {
@@ -529,7 +528,7 @@ public class SPLGeofileBuilder {
 				}
 				// 1.2 - with extended feature to add to spatial entities
 			} else {
-				// TODO
+				// ?
 			}
 		}
 		// 2 - write down features to a vector style file if C1. features are available C2 no population are available
@@ -546,8 +545,8 @@ public class SPLGeofileBuilder {
 				SimpleFeatureStore featureStore =
 						(SimpleFeatureStore) newDataStore.getFeatureSource(newDataStore.getTypeNames()[0]);
 
-				SimpleFeatureCollection collection = new ListFeatureCollection(featureType, this.features.stream()
-						.map(f -> (SimpleFeature) f.getInnerFeature()).collect(Collectors.toList()));
+				SimpleFeatureCollection collection = new ListFeatureCollection(featureType,
+						this.features.stream().map(f -> (SimpleFeature) f.getInnerFeature()).toList());
 				featureStore.setTransaction(transaction);
 				try {
 					featureStore.addFeatures(collection);
@@ -587,21 +586,21 @@ public class SPLGeofileBuilder {
 	}
 
 	/**
-	 * TODO: javadoc
+	 * javadoc
 	 *
 	 * @param shapefile
 	 * @param attributes
-	 * @param charset
+	 * @param ownCharset
 	 *            charset to use to decode the file (null for default)
 	 * @return
 	 * @throws IOException
 	 * @throws InvalidGeoFormatException
 	 * @throws GSIllegalRangedData
 	 */
-	public static SPLVectorFile getShapeFile(final File shapefile, final List<String> attributes, final Charset charset)
+	public static SPLVectorFile getShapeFile(final File shapefile, final List<String> attributes, final Charset ownCharset)
 			throws IOException, InvalidGeoFormatException, GSIllegalRangedData {
 		if (FilenameUtils.getExtension(shapefile.getName()).equals(SPLGisFileExtension.shp.toString()))
-			return new SPLVectorFile(shapefile, charset, attributes);
+			return new SPLVectorFile(shapefile, ownCharset, attributes);
 		String[] pathArray = shapefile.getPath().split(File.separator);
 		throw new InvalidGeoFormatException(pathArray[pathArray.length - 1], Arrays.asList(SPLGisFileExtension.shp));
 	}

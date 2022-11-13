@@ -87,7 +87,7 @@ public class GenstarConfigurationFileDeserializer extends StdDeserializer<Gensta
 					.trim();
 			
 			List<Integer> listLayers = Arrays.asList(layers.split(GSKeywords.SERIALIZE_ELEMENT_SEPARATOR)).stream()
-					.map(level -> Integer.valueOf(level.trim())).collect(Collectors.toList());
+					.map(level -> Integer.valueOf(level.trim())).toList();
 			
 			// Wrapper
 			JsonNode wrap = wrappersNode.get(i);

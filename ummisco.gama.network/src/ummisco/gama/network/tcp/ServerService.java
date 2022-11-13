@@ -163,7 +163,7 @@ public class ServerService extends Thread implements SocketService, IListener {
 			myAgent.setAttribute(TCPConnector._TCP_SERVER + serverSocket.getLocalPort(), null);
 			serverSocket.close();
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -232,37 +232,37 @@ public class ServerService extends Thread implements SocketService, IListener {
 
 	@Override
 	public void onOpen(final AbstractProtocol conn) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void onClose(final AbstractProtocol conn, final int code, final String reason, final boolean remote) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void onMessage(final AbstractProtocol conn, final String message) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void onMessage(final AbstractProtocol conn, final ByteBuffer message) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void onError(final AbstractProtocol conn, final Exception ex) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void onStart() {
-		// TODO Auto-generated method stub
+		
 
 	}
 }

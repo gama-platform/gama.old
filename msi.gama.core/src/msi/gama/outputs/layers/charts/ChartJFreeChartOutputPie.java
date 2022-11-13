@@ -77,7 +77,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
 	@Override
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
-		// TODO Auto-generated method stub
+		
 
 		switch (type_val) {
 			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
@@ -161,7 +161,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 	@SuppressWarnings ("unchecked")
 	@Override
 	protected void clearDataSet(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		super.clearDataSet(scope);
 		final PiePlot<?> plot = (PiePlot) this.chart.getPlot();
 		jfreedataset.clear();
@@ -193,7 +193,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
+		
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		@SuppressWarnings ("unchecked") final DefaultPieDataset<String> serie =
@@ -210,7 +210,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
 	@Override
 	protected void initRenderer(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 
 	}
 

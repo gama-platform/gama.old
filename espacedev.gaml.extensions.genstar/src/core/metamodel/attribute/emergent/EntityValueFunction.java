@@ -66,7 +66,7 @@ public class EntityValueFunction<E extends IEntity<? extends IAttribute<? extend
 	@Override
 	public Collection<Map<IAttribute<? extends IValue>, IValue>> reverse(
 			Map<IAttribute<? extends IValue>, IValue> entities) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	

@@ -102,7 +102,7 @@ public class CompileEndPoint {
 		try {
 			buildFromZip(socket, message);
 		} catch (IOException | GamaHeadlessException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 

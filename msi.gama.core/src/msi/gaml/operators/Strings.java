@@ -424,7 +424,7 @@ public class Strings {
 					: GamaListFactory.create();
 		}
 		return GamaListFactory.wrap(Types.STRING,
-				p.matcher(target).results().map(MatchResult::group).collect(Collectors.toList()));
+				p.matcher(target).results().map(MatchResult::group).toList());
 	}
 
 	/**

@@ -47,7 +47,7 @@ public class GSMatchSelection<F> extends AGSEntitySelector<IEntity<? extends IAt
 	@Override
 	public <V extends IValue> Map<IAttribute<? extends IValue>, IValue> reverse(
 			EmergentAttribute<V, IEntity<? extends IAttribute<? extends IValue>>, F> attribute, V value) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	

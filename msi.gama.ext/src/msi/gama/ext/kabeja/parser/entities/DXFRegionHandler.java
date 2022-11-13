@@ -37,7 +37,7 @@ public class DXFRegionHandler extends AbstractEntityHandler {
      * @see de.miethxml.kabeja.parser.entities.AbstractEntityHandler#getDXFEntityName()
      */
     public String getDXFEntityName() {
-        // TODO Auto-generated method stub
+        
         return DXFConstants.ENTITY_TYPE_REGION;
     }
 

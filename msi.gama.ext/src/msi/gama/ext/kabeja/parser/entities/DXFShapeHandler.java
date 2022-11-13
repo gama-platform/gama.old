@@ -64,7 +64,7 @@ public class DXFShapeHandler extends AbstractEntityHandler {
      * @see org.kabeja.parser.entities.DXFEntityHandler#isFollowSequence()
      */
     public boolean isFollowSequence() {
-        // TODO Auto-generated method stub
+        
         return false;
     }
 

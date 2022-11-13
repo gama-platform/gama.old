@@ -52,7 +52,7 @@ public abstract class BinaryParser implements BlockReaderAdapter {
 
 	@Override
 	public void handleBlock(final FileBlock message) {
-		// TODO Auto-generated method stub
+		
 		try {
 			if (message.getType().equals("OSMHeader")) {
 				final Osmformat.HeaderBlock headerblock = Osmformat.HeaderBlock.parseFrom(message.getData());
@@ -62,7 +62,7 @@ public abstract class BinaryParser implements BlockReaderAdapter {
 				parse(primblock);
 			}
 		} catch (final InvalidProtocolBufferException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 			throw new Error("ParseError"); // TODO
 		}

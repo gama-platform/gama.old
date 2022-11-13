@@ -151,7 +151,7 @@ public class WebSocketConnector extends Connector {
 				socket.sendMessage(content);
 			}
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

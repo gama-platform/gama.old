@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplInputMultiLayerDataManager.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gospl.distribution;
 
 import java.io.IOException;
@@ -32,17 +42,26 @@ import gospl.io.exception.InvalidSurveyFormatException;
  * {@link GosplInputDataManager} that will be responsible for level related sample and table data management.
  * <p>
  * TODO : make a unique input data manager for multi layer and mono layer data
- * 
+ *
  * @author kevinchapuis
  *
  */
 public class GosplInputMultiLayerDataManager extends GosplInputDataManager {
 
+	/** The configuration. */
 	private GenstarConfigurationFile configuration;
 
+	/** The data tables. */
 	Map<Integer, Set<AFullNDimensionalMatrix<? extends Number>>> dataTables;
+	
+	/** The samples. */
 	Map<Integer, GosplPopulation> samples;
 
+	/**
+	 * Instantiates a new gospl input multi layer data manager.
+	 *
+	 * @param configurationFile the configuration file
+	 */
 	public GosplInputMultiLayerDataManager(final GenstarConfigurationFile configurationFile) {
 		super(configurationFile);
 		if (configurationFile.getLevel() <= 1)
@@ -50,6 +69,13 @@ public class GosplInputMultiLayerDataManager extends GosplInputDataManager {
 					+ super.getConfiguration().getLevel() + "] of input data");
 	}
 
+	/**
+	 * Instantiates a new gospl input multi layer data manager.
+	 *
+	 * @param configurationFilePath the configuration file path
+	 * @throws IllegalArgumentException the illegal argument exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	public GosplInputMultiLayerDataManager(final Path configurationFilePath)
 			throws IllegalArgumentException, IOException {
 		super(configurationFilePath);
@@ -100,6 +126,14 @@ public class GosplInputMultiLayerDataManager extends GosplInputDataManager {
 		return this.collapseDataTablesIntoDistribution(0);
 	}
 
+	/**
+	 * Collapse data tables into distribution.
+	 *
+	 * @param level the level
+	 * @return the IN dimensional matrix< attribute<? extends I value>, I value, double>
+	 * @throws IllegalControlTotalException the illegal control total exception
+	 * @throws IllegalDistributionCreation the illegal distribution creation
+	 */
 	@SuppressWarnings ("unlikely-arg-type")
 	public INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> collapseDataTablesIntoDistribution(
 			final int level) throws IllegalControlTotalException, IllegalDistributionCreation {

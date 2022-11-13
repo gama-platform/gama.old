@@ -36,7 +36,7 @@ public class ComplexSpatialDistribution<N extends Number> implements ISpatialDis
 	public AGeoEntity<? extends IValue> getCandidate(SpllEntity entity, 
 			List<? extends AGeoEntity<? extends IValue>> candidates) {
 		return RouletteWheelSelectionFactory.getRouletteWheel(candidates.stream()
-				.map(candidate -> function.apply(candidate, entity)).collect(Collectors.toList()), candidates)
+				.map(candidate -> function.apply(candidate, entity)).toList(), candidates)
 			.drawObject();
 	}
 
@@ -50,7 +50,7 @@ public class ComplexSpatialDistribution<N extends Number> implements ISpatialDis
 		if(this.roulettes.isEmpty()
 				|| !this.roulettes.containsKey(entity))
 			this.roulettes.put(entity, RouletteWheelSelectionFactory.getRouletteWheel(candidates.stream()
-				.map(candidate -> function.apply(candidate, entity)).collect(Collectors.toList()), candidates));
+				.map(candidate -> function.apply(candidate, entity)).toList(), candidates));
 		return roulettes.get(entity).drawObject();
 	}
 

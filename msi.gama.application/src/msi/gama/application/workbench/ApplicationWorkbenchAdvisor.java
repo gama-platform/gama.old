@@ -53,7 +53,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	 * Instantiates a new application workbench advisor.
 	 */
 	public ApplicationWorkbenchAdvisor() {
-		super(Application.processor);
+		super(Application.getOpenDocumentProcessor());
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		}
 
 		if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue()) {
-			IGamaFile file = GamaPreferences.Interface.CORE_DEFAULT_MODEL.getValue();
+			IGamaFile<?, ?> file = GamaPreferences.Interface.CORE_DEFAULT_MODEL.getValue();
 			if (file != null && file.exists(null)) {
 				StringBuilder name = new StringBuilder().append(file.getPath(null));
 				String exp = GamaPreferences.Interface.CORE_DEFAULT_EXPERIMENT.getValue();

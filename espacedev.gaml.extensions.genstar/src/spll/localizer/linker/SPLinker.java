@@ -78,7 +78,7 @@ public class SPLinker<E extends ADemoEntity> implements ISPLinker<E> {
 						constraints.stream().forEach(c -> c.updateConstraint(oNest.get()));
 					}
 				}
-				unbindedEntities = res.keySet().stream().filter(e -> !res.get(e).isPresent()).collect(Collectors.toList());
+				unbindedEntities = res.keySet().stream().filter(e -> !res.get(e).isPresent()).toList();
 			} while (!unbindedEntities.isEmpty() || this.constraints.stream().allMatch(ISpatialConstraint::isConstraintLimitReach));
 		}
 		return res;
@@ -100,14 +100,14 @@ public class SPLinker<E extends ADemoEntity> implements ISPLinker<E> {
 		List<AGeoEntity<? extends IValue>> filteredCandidates = new ArrayList<>(candidates);
 		List<ISpatialConstraint> scs = constraints.stream().sorted(
 				(c1,c2) -> Integer.compare(c1.getPriority(), c2.getPriority()))
-				.collect(Collectors.toList());
+				.toList();
 		switch(rule) {
 		case LINEAR:
 			do {
 				List<AGeoEntity<? extends IValue>> newFilteredCandidates = new ArrayList<>(filteredCandidates);
 				for(ISpatialConstraint sc : scs.stream()
 						.filter(c -> !c.isConstraintLimitReach())
-						.collect(Collectors.toList())) {
+						.toList()) {
 					newFilteredCandidates = sc.getCandidates(filteredCandidates);
 					if(newFilteredCandidates.isEmpty()) {
 						sc.relaxConstraint(newFilteredCandidates);
@@ -144,7 +144,7 @@ public class SPLinker<E extends ADemoEntity> implements ISPLinker<E> {
 		List<AGeoEntity<? extends IValue>> filteredCandidates = new ArrayList<>(candidates);
 		List<ISpatialConstraint> scs = constraints.stream().sorted(
 				(c1,c2) -> Integer.compare(c1.getPriority(), c2.getPriority()))
-				.collect(Collectors.toList());
+				.toList();
 		for(ISpatialConstraint sc : scs) {
 			filteredCandidates = sc.getCandidates(filteredCandidates);
 			if(filteredCandidates.isEmpty())

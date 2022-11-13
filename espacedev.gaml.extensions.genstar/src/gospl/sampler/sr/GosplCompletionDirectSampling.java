@@ -43,7 +43,7 @@ public class GosplCompletionDirectSampling implements ICompletionSampler<ACoordi
 		List<ACoordinate<Attribute<? extends IValue>, IValue>> keys = new ArrayList<>(subDistribution.keySet());
 		
 		return RouletteWheelSelectionFactory.getRouletteWheel(
-				keys.stream().map(k -> subDistribution.get(k)).collect(Collectors.toList()), 
+				keys.stream().map(k -> subDistribution.get(k)).toList(), 
 				keys).drawObject();
 	}
 
@@ -65,7 +65,7 @@ public class GosplCompletionDirectSampling implements ICompletionSampler<ACoordi
 	
 	@Override
 	public String toCsv(String csvSeparator) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

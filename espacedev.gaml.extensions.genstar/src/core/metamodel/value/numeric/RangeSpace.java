@@ -20,8 +20,8 @@ import core.metamodel.value.numeric.RangeValue.RangeBound;
 import core.metamodel.value.numeric.template.GSRangeTemplate;
 import core.util.data.GSDataParser;
 import core.util.data.GSDataParser.NumMatcher;
+import core.util.exception.GSIllegalRangedData;
 import core.util.data.GSEnumDataType;
-import core.util.excpetion.GSIllegalRangedData;
 import core.util.random.GenstarRandomUtils;
 
 /**
@@ -204,7 +204,7 @@ public class RangeSpace implements IValueSpace<RangeValue> {
 				try {
 					currentVal = gsdp.getRangedDoubleData(value, rt.getNumberMatcher());
 				} catch (GSIllegalRangedData e1) {
-					// TODO Auto-generated catch block
+					
 					throw new IllegalArgumentException("SHOULD NOT HAPPEN");
 				}
 				this.emptyValue = currentVal.size() == 1 ? 
@@ -260,7 +260,7 @@ public class RangeSpace implements IValueSpace<RangeValue> {
 	public List<Number> getNumbers() {
 		return values.stream()
 				.flatMap(range -> Stream.of(range.getBottomBound(),range.getTopBound()))
-				.collect(Collectors.toList());
+				.toList();
 	}
 	
 	/**
@@ -284,12 +284,12 @@ public class RangeSpace implements IValueSpace<RangeValue> {
 		
 		for(Number conflictingNumber : the_count.keySet().stream()
 				.filter(num -> the_count.get(num) > 1)
-				.collect(Collectors.toList())) {
+				.toList()) {
 			RangeValue conflictingRange;
 			List<RangeValue> conflictingRanges = values.stream()
 					.filter(v -> v.getBottomBound().doubleValue() == conflictingNumber.doubleValue() ||
 						v.getTopBound().doubleValue() == conflictingNumber.doubleValue())
-					.collect(Collectors.toList());
+					.toList();
 			double modifier = 1;
 			if (usualRange==Double.NaN) {
 				conflictingRange = conflictingRanges.stream()
@@ -333,7 +333,7 @@ public class RangeSpace implements IValueSpace<RangeValue> {
 		List<Double> vals = values.stream()
 				.flatMap(v -> Stream.of(v.getBottomBound(), v.getTopBound()))
 				.mapToDouble(v -> v.doubleValue()).boxed()
-				.collect(Collectors.toList());
+				.toList();
 		Collections.sort(vals);
 		Map<Double, Integer> ranges = new HashMap<>();
 		for(int i = 1 ; i < vals.size(); i++) {

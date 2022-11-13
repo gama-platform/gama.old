@@ -229,7 +229,7 @@ public class FIPAMessage extends GamaMessage {
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		
 		return "message[sender: " + getData().getSender() + "; receivers: " + getData().getReceivers()
 				+ "; performative: " + getData().getPerformativeName() + "; content: " + getData().getContent()
 				+ "; content" + "]";

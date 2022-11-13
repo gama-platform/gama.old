@@ -66,7 +66,7 @@ extends StdSerializer<IAttributeMapper<? extends IValue, ? extends IValue>> {
 		return mapper.getRawMapper().entrySet().stream().map(entry -> 
 				this.getStringValues(entry.getKey()) + 
 					GSKeywords.SERIALIZE_KEY_VALUE_SEPARATOR + this.getStringValues(entry.getValue()))
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	/*
@@ -79,9 +79,9 @@ extends StdSerializer<IAttributeMapper<? extends IValue, ? extends IValue>> {
 		return mapper.getRawMapper().entrySet().stream().map(entry -> 
 					this.getStringValues(orderedValues.stream()
 						.filter(ok -> entry.getKey().contains(ok))
-						.collect(Collectors.toList())) + 
+						.toList()) + 
 					GSKeywords.SERIALIZE_KEY_VALUE_SEPARATOR + this.getStringValues(entry.getValue()))
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	/*

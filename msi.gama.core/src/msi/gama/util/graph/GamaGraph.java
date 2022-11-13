@@ -2083,7 +2083,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public V addVertex() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

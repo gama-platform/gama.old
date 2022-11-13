@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * OrderedSpace.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * OrderedSpace.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package core.metamodel.value.categoric;
 
@@ -43,14 +43,14 @@ public class OrderedSpace implements IValueSpace<OrderedValue> {
 	// Generic purpose comparator. Ordered value does not implement comparable because
 	/** The comp. */
 	// they only be compared within a given ordered space
-	@JsonIgnore private static Comparator<OrderedValue> comp = (o1, o2) -> o1.compareTo(o2);
+	@JsonIgnore private static Comparator<OrderedValue> comp = OrderedValue::compareTo;
 
 	/** The values. */
 	private final TreeSet<OrderedValue> values;
-	
+
 	/** The empty value. */
 	private OrderedValue emptyValue;
-	
+
 	/** The excluded values. */
 	private final Set<String> excludedValues;
 
@@ -71,8 +71,10 @@ public class OrderedSpace implements IValueSpace<OrderedValue> {
 	/**
 	 * Instantiates a new ordered space.
 	 *
-	 * @param attribute the attribute
-	 * @param template the template
+	 * @param attribute
+	 *            the attribute
+	 * @param template
+	 *            the template
 	 */
 	public OrderedSpace(final IAttribute<OrderedValue> attribute, final GSCategoricTemplate template) {
 		this.values = new TreeSet<>(comp);
@@ -86,8 +88,10 @@ public class OrderedSpace implements IValueSpace<OrderedValue> {
 	/**
 	 * Compare.
 	 *
-	 * @param referent the referent
-	 * @param compareTo the compare to
+	 * @param referent
+	 *            the referent
+	 * @param compareTo
+	 *            the compare to
 	 * @return the int
 	 */
 	public int compare(final OrderedValue referent, final OrderedValue compareTo) {
@@ -226,8 +230,7 @@ public class OrderedSpace implements IValueSpace<OrderedValue> {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return this.isEqual(obj) && obj == null ? false
-				: this.template.equals(((OrderedSpace) obj).getCategoricTemplate());
+		return obj instanceof OrderedSpace os && this.isEqual(os) && this.template.equals(os.getCategoricTemplate());
 	}
 
 	@Override

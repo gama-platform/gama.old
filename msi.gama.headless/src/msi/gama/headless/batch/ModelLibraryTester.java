@@ -116,7 +116,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 			final IModel model = builder.compile(p, errors);
 			if (model == null || model.getDescription() == null) return;
 			final List<String> testExpNames = model.getDescription().getExperimentNames().stream()
-					.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
+					.filter(e -> model.getExperiment(e).isTest()).toList();
 
 			if (testExpNames.isEmpty()) return;
 			for (final String expName : testExpNames) {

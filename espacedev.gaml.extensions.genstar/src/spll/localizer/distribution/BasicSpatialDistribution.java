@@ -30,7 +30,7 @@ public class BasicSpatialDistribution<N extends Number, E extends ADemoEntity> i
 	@Override
 	public AGeoEntity<? extends IValue> getCandidate(E entity, List<? extends AGeoEntity<? extends IValue>> candidates) {
 		return RouletteWheelSelectionFactory.getRouletteWheel(candidates.stream()
-				.map(a -> function.apply(a)).collect(Collectors.toList()), candidates)
+				.map(a -> function.apply(a)).toList(), candidates)
 			.drawObject();
 	}
 
@@ -44,7 +44,7 @@ public class BasicSpatialDistribution<N extends Number, E extends ADemoEntity> i
 	@Override
 	public void setCandidate(List<? extends AGeoEntity<? extends IValue>> candidates) {
 		this.roulette = RouletteWheelSelectionFactory.getRouletteWheel(candidates.stream()
-				.map(a -> function.apply(a)).collect(Collectors.toList()), candidates);
+				.map(a -> function.apply(a)).toList(), candidates);
 	}
 
 	@Override

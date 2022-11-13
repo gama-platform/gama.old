@@ -90,7 +90,7 @@ public class DBaseInputHandler extends AbstractInputHandler {
 	 *
 	 * } catch (CorruptedTableException e) { e.printStackTrace(); throw new
 	 * IllegalArgumentException("the database "+surveyCompleteFile+" seems corrupted", e); } catch (IOException e) {
-	 * e.printStackTrace(); throw new RuntimeException("error reading data from database "+surveyCompleteFile, e); }
+	 * e.printStackTrace(); throw new GenstarException("error reading data from database "+surveyCompleteFile, e); }
 	 *
 	 * } return table;
 	 *
@@ -122,7 +122,7 @@ public class DBaseInputHandler extends AbstractInputHandler {
 		return "";
 		/*
 		 * try { return getDBFTable().getRecordAt(rowIndex).getTypedValue(idx2columnName.get(columnIndex)).toString(); }
-		 * catch (CorruptedTableException e) { throw new RuntimeException(e); } catch (IOException e) { throw new
+		 * catch (CorruptedTableException e) { throw new GenstarException(e); } catch (IOException e) { throw new
 		 * RuntimeException(e); }
 		 */
 	}
@@ -131,10 +131,9 @@ public class DBaseInputHandler extends AbstractInputHandler {
 	public List<String> readLine(final int rowIndex) {
 		/*
 		 * Record record; try { record = getDBFTable().getRecordAt(rowIndex); } catch (CorruptedTableException e) {
-		 * throw new RuntimeException(e); } catch (IOException e) { throw new RuntimeException(e); }
+		 * throw new GenstarException(e); } catch (IOException e) { throw new GenstarException(e); }
 		 *
-		 * return getDBFTable().getFields().stream().map(f ->
-		 * record.getTypedValue(f.getName()).toString()).collect(Collectors.toList());
+		 * return getDBFTable().getFields().stream().map(f -> record.getTypedValue(f.getName()).toString()).toList();
 		 */
 		return Collections.emptyList();
 	}
@@ -154,7 +153,7 @@ public class DBaseInputHandler extends AbstractInputHandler {
 		 *
 		 * for (int i=fromFirstRowIndex; i<toLastRowIndex; i++) try {
 		 * res.add(table.getRecordAt(i).getTypedValue(colName).toString()); } catch (CorruptedTableException e) { throw
-		 * new RuntimeException(e); } catch (IOException e) { throw new RuntimeException(e); }
+		 * new RuntimeException(e); } catch (IOException e) { throw new GenstarException(e); }
 		 */
 
 		return new ArrayList<>(toLastRowIndex - fromFirstRowIndex);
@@ -168,11 +167,11 @@ public class DBaseInputHandler extends AbstractInputHandler {
 		 * final Table table = getDBFTable();
 		 *
 		 * final List<String> colNames = table.getFields().subList(fromFirstColumnIndex,
-		 * toLastColumnIndex).stream().map(f -> f.getName()).collect(Collectors.toList());
+		 * toLastColumnIndex).stream().map(f -> f.getName()).toList();
 		 *
 		 * for (int i=fromFirstRowIndex; i<toLastRowIndex; i++) try { Record record = table.getRecordAt(i);
-		 * res.add(colNames.stream().map(n -> record.getTypedValue(n).toString()).collect(Collectors.toList()) ); }
-		 * catch (CorruptedTableException e) { throw new RuntimeException(e); } catch (IOException e) { throw new
+		 * res.add(colNames.stream().map(n -> record.getTypedValue(n).toString()).toList() ); } catch
+		 * (CorruptedTableException e) { throw new GenstarException(e); } catch (IOException e) { throw new
 		 * RuntimeException(e); }
 		 */
 		return new ArrayList<>(toLastRowIndex - fromFirstRowIndex);
@@ -187,7 +186,7 @@ public class DBaseInputHandler extends AbstractInputHandler {
 		 *
 		 * for (int i=0; i<table.getRecordCount(); i++) try {
 		 * res.add(table.getRecordAt(i).getTypedValue(colName).toString()); } catch (CorruptedTableException e) { throw
-		 * new RuntimeException(e); } catch (IOException e) { throw new RuntimeException(e); }
+		 * new RuntimeException(e); } catch (IOException e) { throw new GenstarException(e); }
 		 *
 		 * return res;
 		 */
@@ -202,11 +201,11 @@ public class DBaseInputHandler extends AbstractInputHandler {
 		 * List<List<String>> res = new ArrayList<>(table.getRecordCount());
 		 *
 		 * final List<String> colNames = table.getFields().subList(fromFirstColumnIndex,
-		 * toLastColumnIndex).stream().map(f -> f.getName()).collect(Collectors.toList());
+		 * toLastColumnIndex).stream().map(f -> f.getName()).toList();
 		 *
 		 * for (int i=0; i<table.getRecordCount(); i++) try { Record record = table.getRecordAt(i);
-		 * res.add(colNames.stream().map(n -> record.getTypedValue(n).toString()).collect(Collectors.toList()) ); }
-		 * catch (CorruptedTableException e) { throw new RuntimeException(e); } catch (IOException e) { throw new
+		 * res.add(colNames.stream().map(n -> record.getTypedValue(n).toString()).toList() ); } catch
+		 * (CorruptedTableException e) { throw new GenstarException(e); } catch (IOException e) { throw new
 		 * RuntimeException(e); }
 		 *
 		 * return res;
@@ -219,13 +218,12 @@ public class DBaseInputHandler extends AbstractInputHandler {
 
 		/*
 		 * final Table table = getDBFTable(); final List<String> colNames =
-		 * table.getFields().subList(fromFirstColumnIndex, toLastColumnIndex).stream().map(f ->
-		 * f.getName()).collect(Collectors.toList());
+		 * table.getFields().subList(fromFirstColumnIndex, toLastColumnIndex).stream().map(f -> f.getName()).toList();
 		 *
 		 * Record record; try { record = table.getRecordAt(rowIndex); } catch (CorruptedTableException | IOException e)
-		 * { throw new RuntimeException(e); }
+		 * { throw new GenstarException(e); }
 		 *
-		 * return colNames.stream().map(n -> record.getTypedValue(n).toString()).collect(Collectors.toList());
+		 * return colNames.stream().map(n -> record.getTypedValue(n).toString()).toList();
 		 */
 		return Collections.emptyList();
 
@@ -240,11 +238,11 @@ public class DBaseInputHandler extends AbstractInputHandler {
 		 * List<List<String>> res = new ArrayList<>(table.getRecordCount());
 		 *
 		 * final List<String> colNames = table.getFields().subList(fromFirstColumnIndex,
-		 * toLastColumnIndex).stream().map(f -> f.getName()).collect(Collectors.toList());
+		 * toLastColumnIndex).stream().map(f -> f.getName()).toList();
 		 *
 		 * for (int i=fromFirstRowIndex; i<toLastRowIndex; i++) try { Record record = table.getRecordAt(i);
-		 * res.add(colNames.stream().map(n -> record.getTypedValue(n).toString()).collect(Collectors.toList()) ); }
-		 * catch (CorruptedTableException e) { throw new RuntimeException(e); } catch (IOException e) { throw new
+		 * res.add(colNames.stream().map(n -> record.getTypedValue(n).toString()).toList() ); } catch
+		 * (CorruptedTableException e) { throw new GenstarException(e); } catch (IOException e) { throw new
 		 * RuntimeException(e); }
 		 *
 		 * return res;
@@ -347,7 +345,7 @@ public class DBaseInputHandler extends AbstractInputHandler {
 		 *
 		 * try { Attribute<? extends IValue> updatedAtt = AttributeFactory.getFactory()
 		 * .createAttribute(att.getAttributeName(), dt, att.getValueSpace().getValues().stream()
-		 * .map(IValue::getStringValue).collect(Collectors.toList())); dictionnary.getAttributes().remove(att);
+		 * .map(IValue::getStringValue).toList()); dictionnary.getAttributes().remove(att);
 		 * dictionnary.getAttributes().add(updatedAtt); name2attribute.put(currentField.getName(), updatedAtt); } catch
 		 * (GSIllegalRangedData e) { // unable to do that; don't touch this attribute
 		 * DEBUG.OUT("error while trying to refine the definition of attribute {} with type {}; leaving it untouched",

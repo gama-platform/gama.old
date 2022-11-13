@@ -43,7 +43,7 @@ public class DXFTolerance extends DXFEntity {
      * @see org.kabeja.dxf.DXFEntity#getType()
      */
     public String getType() {
-        // TODO Auto-generated method stub
+        
         return DXFConstants.ENTITY_TYPE_TOLERANCE;
     }
 

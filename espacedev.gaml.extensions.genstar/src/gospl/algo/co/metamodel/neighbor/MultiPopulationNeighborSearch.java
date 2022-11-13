@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * MultiPopulationNeighborSearch.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA
+ * modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.algo.co.metamodel.neighbor;
 
 import java.util.ArrayList;
@@ -26,22 +36,40 @@ import gospl.distribution.GosplNDimensionalMatrixFactory;
 import gospl.distribution.matrix.INDimensionalMatrix;
 import gospl.validation.GosplIndicatorFactory;
 
+/**
+ * The Class MultiPopulationNeighborSearch.
+ */
 public class MultiPopulationNeighborSearch implements
 		IPopulationNeighborSearch<GosplMultitypePopulation<ADemoEntity>, INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer>> {
 
+	/** The search. */
 	private final IPopulationNeighborSearch<GosplPopulation, INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer>> search;
 
+	/** The predicates. */
 	private Map<Integer, INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer>> predicates;
+
+	/** The objectives. */
 	private Map<Integer, INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer>> objectives;
 
-	private final int maxSizeGrowthFactor = 3;
+	/** The max size growth factor. */
+	private static final int maxSizeGrowthFactor = 3;
 
+	/** The sample. */
 	private GosplMultitypePopulation<ADemoEntity> sample;
 
+	/**
+	 * Instantiates a new multi population neighbor search.
+	 */
 	public MultiPopulationNeighborSearch() {
 		this.search = new PopulationRandomNeighborSearch<>();
 	}
 
+	/**
+	 * Instantiates a new multi population neighbor search.
+	 *
+	 * @param search
+	 *            the search
+	 */
 	public MultiPopulationNeighborSearch(
 			final IPopulationNeighborSearch<GosplPopulation, INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer>> search) {
 		this.search = search;
@@ -100,16 +128,14 @@ public class MultiPopulationNeighborSearch implements
 						pairs.entrySet().stream().limit(10).map(Entry::toString).collect(Collectors.joining("\n"))),
 				this.getClass());
 
-		List<Integer> subEs =
-				population.getEntityLevel().stream().filter(lvl -> lvl < layer).collect(Collectors.toList());
+		List<Integer> subEs = population.getEntityLevel().stream().filter(lvl -> lvl < layer).toList();
 		// Do we have to look for sub-entities ?
 		// Normally, the sub-search engine should have take care of sub-entities consistency: i.e. proposed pair of
 		// add/remove entities have the same number of sub-entities (or closest found)
 		if (subEs.size() > 1) throw new UnsupportedOperationException(
 				"Cannot yet operate combinatorial optimization " + "on synthetic population with more than 2 layeres");
 
-		List<Integer> supEs =
-				population.getEntityLevel().stream().filter(lvl -> lvl > layer).collect(Collectors.toList());
+		List<Integer> supEs = population.getEntityLevel().stream().filter(lvl -> lvl > layer).toList();
 		if (supEs.size() > 1) throw new UnsupportedOperationException("Cannot yet operate combinatorial optimization "
 				+ "on synthetic population with entities encapsulated in more than 1 group (e.g. individuals > households > classes");
 		// Do we have to lock layered entities to be within a super-entity ? (i.e. swap all individual of a household,

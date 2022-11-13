@@ -28,7 +28,7 @@ public class SpatialConstraintMaxDistance extends ASpatialConstraint {
 		return nests.stream().filter(nest -> distanceToEntities.keySet()
 				.stream().anyMatch(entity -> nest.getGeometry()
 						.buffer(distanceToEntities.get(entity))
-						.intersects(entity.getGeometry()))).collect(Collectors.toList());
+						.intersects(entity.getGeometry()))).toList();
 		
 		/*		.sorted((c1, c2) -> Double.compare(
 						distanceToEntities.keySet().stream().mapToDouble(entity -> c1.getGeometry().getCentroid()

@@ -54,7 +54,6 @@ import spll.entity.GeoEntityFactory;
 import spll.entity.SpllPixel;
 import spll.entity.iterator.GSPixelIterator;
 import spll.io.SPLGeofileBuilder.SPLGisFileExtension;
-import spll.io.exception.InvalidGeoFormatException;
 import spll.util.SpllUtil;
 
 /**
@@ -181,7 +180,7 @@ public class SPLRasterFile implements IGSGeofile<SpllPixel, ContinuousValue> {
 		try {
 			res = new SPLGeofileBuilder().setRasterBands(bands).setFile(destination)
 					.setReferenceEnvelope(this.getEnvelope()).buildRasterfile();
-		} catch (TransformException | InvalidGeoFormatException e) {
+		} catch (TransformException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}

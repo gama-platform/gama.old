@@ -24,18 +24,18 @@ import core.metamodel.value.IValue;
  * @param <F> the type of predicate this attributes needs to make values emerge
  * 
  */
-@JsonTypeName(EmergentAttribute.SELF)
+@JsonTypeName(EmergentAttribute.SELF_LABEL)
 //@JsonSerialize(using = EmergentAttributeSerializer.class)
 public class EmergentAttribute<V extends IValue, U, F> 
 	extends Attribute<V> {
 
-	public static final String SELF = "EMERGENT ATTRIBUTE";
-	public static final String FUNCTION = "EMERGENT FUNCTION";
-	public static final String TRANSPOSER = "EMERGENT FILTER";
+	public static final String SELF_LABEL = "EMERGENT ATTRIBUTE";
+	public static final String FUNCTION_LABEL = "EMERGENT FUNCTION";
+	public static final String TRANSPOSER_LABEL = "EMERGENT FILTER";
 	
-	@JsonProperty(FUNCTION)
+	@JsonProperty(FUNCTION_LABEL)
 	private IGSValueFunction<U, V> function;
-	@JsonProperty(TRANSPOSER)
+	@JsonProperty(TRANSPOSER_LABEL)
 	private IGSEntitySelector<U, F> transposer;
 
 	protected EmergentAttribute(String name) {
@@ -75,7 +75,7 @@ public class EmergentAttribute<V extends IValue, U, F>
 	 * 
 	 * @return
 	 */
-	@JsonProperty(FUNCTION)
+	@JsonProperty(FUNCTION_LABEL)
 	public IGSValueFunction<U, V> getFunction(){
 		return this.function;
 	}
@@ -85,7 +85,7 @@ public class EmergentAttribute<V extends IValue, U, F>
 	 * 
 	 * @param function
 	 */
-	@JsonProperty(FUNCTION)
+	@JsonProperty(FUNCTION_LABEL)
 	public void setFunction(IGSValueFunction<U, V> function){
 		this.function = function;
 	}
@@ -96,7 +96,7 @@ public class EmergentAttribute<V extends IValue, U, F>
 	 * 
 	 * @return
 	 */
-	@JsonProperty(TRANSPOSER)
+	@JsonProperty(TRANSPOSER_LABEL)
 	public IGSEntitySelector<U, F> getTransposer(){
 		return this.transposer;
 	}
@@ -106,7 +106,7 @@ public class EmergentAttribute<V extends IValue, U, F>
 	 * 
 	 * @param transposer
 	 */
-	@JsonProperty(TRANSPOSER)
+	@JsonProperty(TRANSPOSER_LABEL)
 	public void setTransposer(IGSEntitySelector<U, F> transposer) {
 		this.transposer = transposer;
 	}

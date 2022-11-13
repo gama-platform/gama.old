@@ -106,7 +106,7 @@ public class MySqlConnection extends SqlConnection {
 		try {
 			conn = dataStore.getConnection(Transaction.AUTO_COMMIT);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return conn;

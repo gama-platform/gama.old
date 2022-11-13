@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplNDimensionalMatrixFactory.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA
+ * modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.distribution;
 
 import java.util.Arrays;
@@ -48,8 +58,14 @@ import gospl.distribution.matrix.coordinate.GosplCoordinate;
  */
 public class GosplNDimensionalMatrixFactory {
 
+	/** The epsilon. */
 	public static double EPSILON = Math.pow(10, -3);
 
+	/**
+	 * Gets the factory.
+	 *
+	 * @return the factory
+	 */
 	public static final GosplNDimensionalMatrixFactory getFactory() { return new GosplNDimensionalMatrixFactory(); }
 
 	//////////////////////////////////////////////
@@ -114,8 +130,8 @@ public class GosplNDimensionalMatrixFactory {
 			final boolean buildCoordinate) {
 		AFullNDimensionalMatrix<Integer> contingency = new GosplContingencyTable(dimensions);
 		if (buildCoordinate) {
-			for (List<? extends IValue> coordinate : Sets.cartesianProduct(
-					dimensions.stream().map(dim -> dim.getValueSpace().getValues()).collect(Collectors.toList()))) {
+			for (List<? extends IValue> coordinate : Sets
+					.cartesianProduct(dimensions.stream().map(dim -> dim.getValueSpace().getValues()).toList())) {
 				contingency.addValue(new GosplCoordinate(coordinate.stream()
 						.collect(Collectors.toMap(
 								v -> dimensions.stream().filter(d -> d.getValueSpace().contains(v)).findFirst().get(),
@@ -161,7 +177,7 @@ public class GosplNDimensionalMatrixFactory {
 				new GosplJointDistribution(contigency.getDimensions(), GSSurveyType.GlobalFrequencyTable);
 		matrix.addGenesis("created from distribution GosplNDimensionalMatrixFactory@createDistribution");
 
-		int total = Math.round(Math.round(contigency.getVal().getValue().doubleValue()));
+		int total = (int) Math.round(contigency.getVal().getValue().doubleValue());
 
 		// Normalize increments to global frequency
 		contigency.getMatrix().keySet().stream().forEach(coord -> matrix.setValue(coord,
@@ -188,7 +204,7 @@ public class GosplNDimensionalMatrixFactory {
 				new GosplJointDistribution(distribution.getDimensions(), GSSurveyType.GlobalFrequencyTable);
 		matrix.addGenesis("created from distribution GosplNDimensionalMatrixFactory@createDistribution");
 
-		int total = Math.round(Math.round(distribution.getVal().getValue().doubleValue()));
+		int total = (int) Math.round(distribution.getVal().getValue().doubleValue());
 
 		// Normalize increments to global frequency
 		distribution.getMatrix().keySet().stream().forEach(coord -> matrix.setValue(coord,
@@ -509,7 +525,7 @@ public class GosplNDimensionalMatrixFactory {
 
 	/**
 	 * Create a full contingency table from an unknown type contingency matrix
-	 * 
+	 *
 	 * @param unknownMatrix
 	 * @return
 	 */

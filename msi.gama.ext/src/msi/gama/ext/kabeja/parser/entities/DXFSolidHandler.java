@@ -43,7 +43,7 @@ public class DXFSolidHandler extends AbstractEntityHandler {
      * @see de.miethxml.kabeja.parser.entities.DXFEntityHandler#endDXFEntity()
      */
     public void endDXFEntity() {
-        // TODO Auto-generated method stub
+        
     }
 
     /*
@@ -70,7 +70,7 @@ public class DXFSolidHandler extends AbstractEntityHandler {
      * @see de.miethxml.kabeja.parser.entities.DXFEntityHandler#isFollowSequence()
      */
     public boolean isFollowSequence() {
-        // TODO Auto-generated method stub
+        
         return false;
     }
 

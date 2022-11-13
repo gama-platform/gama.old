@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GSUtilGenerator.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.generator.util;
 
 import java.util.ArrayList;
@@ -18,7 +28,7 @@ import core.metamodel.value.IValue;
 import core.util.GSPerformanceUtil;
 import core.util.GSPerformanceUtil.Level;
 import core.util.data.GSEnumDataType;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 import core.util.random.GenstarRandom;
 import core.util.random.GenstarRandomUtils;
 import core.util.random.roulette.ARouletteWheelSelection;
@@ -43,14 +53,22 @@ import gospl.generator.ISyntheticGosplPopGenerator;
  */
 public class GSUtilGenerator implements ISyntheticGosplPopGenerator {
 
+	/** The max att. */
 	private int maxAtt;
+
+	/** The max val. */
 	private int maxVal;
 
+	/** The chars. */
 	char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
+	/** The dictionary. */
 	private AttributeDictionary dictionary;
+
+	/** The attributes proba. */
 	private Map<Attribute<? extends IValue>, ARouletteWheelSelection<Double, IValue>> attributesProba;
 
+	/** The random. */
 	Random random = GenstarRandom.getInstance();
 
 	/**
@@ -90,8 +108,8 @@ public class GSUtilGenerator implements ISyntheticGosplPopGenerator {
 			nb = nb <= 1 ? 2 : nb;
 			@SuppressWarnings ("unchecked") Attribute<? extends IValue>[] arr = new Attribute[nb];
 			this.dictionary.addAttributes(IntStream.range(0, nb)
-					.mapToObj(i -> random.nextDouble() > 0.5 ? createStringAtt() : createIntegerAtt())
-					.collect(Collectors.toList()).toArray(arr));
+					.mapToObj(i -> random.nextDouble() > 0.5 ? createStringAtt() : createIntegerAtt()).toList()
+					.toArray(arr));
 		}
 
 		// Attribute probability table
@@ -124,36 +142,52 @@ public class GSUtilGenerator implements ISyntheticGosplPopGenerator {
 	// ---------- attribute & value random creator ---------- //
 	// ------------------------------------------------------ //
 
+	/**
+	 * Creates the integer att.
+	 *
+	 * @return the attribute<? extends I value>
+	 */
 	private Attribute<? extends IValue> createIntegerAtt() {
 		int valNb = random.nextInt(maxVal);
 		valNb = valNb <= 1 ? 2 : valNb;
 		Attribute<? extends IValue> asa = null;
 		try {
 			asa = AttributeFactory.getFactory().createAttribute(generateName(random.nextInt(6) + 1),
-					GSEnumDataType.Integer,
-					IntStream.range(0, valNb).mapToObj(String::valueOf).collect(Collectors.toList()));
+					GSEnumDataType.Integer, IntStream.range(0, valNb).mapToObj(String::valueOf).toList());
 		} catch (GSIllegalRangedData e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return asa;
 	}
 
+	/**
+	 * Creates the string att.
+	 *
+	 * @return the attribute<? extends I value>
+	 */
 	private Attribute<? extends IValue> createStringAtt() {
 		int valNb = random.nextInt(maxVal);
 		valNb = valNb <= 1 ? 2 : valNb;
 		Attribute<? extends IValue> asa = null;
 		try {
 			asa = AttributeFactory.getFactory().createAttribute(generateName(random.nextInt(6) + 1),
-					GSEnumDataType.Nominal, IntStream.range(0, valNb).mapToObj(j -> generateName(random.nextInt(j + 1)))
-							.collect(Collectors.toList()));
+					GSEnumDataType.Nominal,
+					IntStream.range(0, valNb).mapToObj(j -> generateName(random.nextInt(j + 1))).toList());
 		} catch (GSIllegalRangedData e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		return asa;
 	}
 
+	/**
+	 * Generate name.
+	 *
+	 * @param size
+	 *            the size
+	 * @return the string
+	 */
 	private String generateName(final int size) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < size; i++) {
@@ -163,8 +197,11 @@ public class GSUtilGenerator implements ISyntheticGosplPopGenerator {
 		return sb.toString();
 	}
 
+	/**
+	 * Setup attribute probability table.
+	 */
 	/*
-	 * TODO: make mapped attribute coherent
+	 * make mapped attribute coherent
 	 */
 	private void setupAttributeProbabilityTable() {
 		attributesProba = new HashMap<>();
@@ -175,20 +212,34 @@ public class GSUtilGenerator implements ISyntheticGosplPopGenerator {
 
 		for (Attribute<? extends IValue> att : referentAttribute) {
 			List<IValue> keys = new ArrayList<>(att.getValueSpace().getValues());
-			List<Double> probaList = keys.stream().map(v -> random.nextDouble()).collect(Collectors.toList());
+			List<Double> probaList = keys.stream().map(v -> random.nextDouble()).toList();
 			double sop = probaList.stream().mapToDouble(Double::doubleValue).sum();
 			attributesProba.put(att, RouletteWheelSelectionFactory
-					.getRouletteWheel(probaList.stream().map(d -> d / sop).collect(Collectors.toList()), keys));
+					.getRouletteWheel(probaList.stream().map(d -> d / sop).toList(), keys));
 		}
 
 	}
 
 	// ---------------------- utilities ---------------------- //
 
+	/**
+	 * Random val.
+	 *
+	 * @param attribute
+	 *            the attribute
+	 * @return the i value
+	 */
 	private IValue randomVal(final Attribute<? extends IValue> attribute) {
 		return attributesProba.get(attribute).drawObject();
 	}
 
+	/**
+	 * Random uniform val.
+	 *
+	 * @param values
+	 *            the values
+	 * @return the i value
+	 */
 	private IValue randomUniformVal(final Collection<? extends IValue> values) {
 		return GenstarRandomUtils.oneOf(values);
 	}

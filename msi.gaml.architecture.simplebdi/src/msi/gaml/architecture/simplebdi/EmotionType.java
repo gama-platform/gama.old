@@ -46,7 +46,7 @@ public class EmotionType extends GamaType<Emotion> {
 
 	@Override
 	public Emotion getDefault() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

@@ -139,7 +139,7 @@ public class SPLUniformNormalizer extends ASPLNormalizer {
 		List<SpllFeature> feats = featureOutput.entrySet()
 				.parallelStream().filter(e -> e.getValue() != noData.doubleValue())
 				.map(e -> e.getKey())
-				.collect(Collectors.toList());
+				.toList();
 		while(Math.round(errorload) != 0 || iter++ > ITER_LIMIT + Math.abs(errorload)){
 			SpllFeature feat = feats.get(super.random.nextInt(feats.size()));
 			int update = errorload < 0 ? -1 : 1;

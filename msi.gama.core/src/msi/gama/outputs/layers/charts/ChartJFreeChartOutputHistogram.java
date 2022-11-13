@@ -137,7 +137,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
-		// TODO Auto-generated method stub
+		
 
 		switch (type_val) {
 			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
@@ -268,7 +268,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	protected void clearDataSet(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		super.clearDataSet(scope);
 		final CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 		for (int i = plot.getDatasetCount() - 1; i >= 1; i--) {
@@ -317,19 +317,19 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+"
 		// jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse
 		// "+nbseries);
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void removeSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
+		
 		super.removeSerie(scope, serieid);
 		this.clearDataSet(scope);
 	}
 
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
+		
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		// DefaultCategoryDataset serie=((DefaultCategoryDataset)
@@ -442,7 +442,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	 *            the scope
 	 */
 	public void resetDomainAxis(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 		if (this.useSubAxis) {
 			final SubCategoryAxis newAxis = new SubCategoryAxis(pp.getDomainAxis().getLabel());
@@ -502,7 +502,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	public void initChart_post_data_init(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		super.initChart_post_data_init(scope);
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 
@@ -576,7 +576,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 		// final BarRenderer renderer = (BarRenderer) pp.getRenderer();
 
-		// TODO Auto-generated method stub
+		
 		// CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
 		// defaultrenderer = new BarRenderer();
 		// plot.setRenderer((BarRenderer)defaultrenderer);

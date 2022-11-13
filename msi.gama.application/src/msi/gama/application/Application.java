@@ -47,20 +47,15 @@ import msi.gama.application.workbench.ApplicationWorkbenchAdvisor;
 import msi.gama.application.workspace.PickWorkspaceDialog;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
+import msi.gama.common.interfaces.IKeyword;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
-	{
-		// DEBUG.ON();
-		// if (FLAGS.USE_PRECISE_AUTOSCALE) { System.setProperty("swt.autoScale", "quarter"); }
-
-	}
-
 	/** The processor. */
-	public static OpenDocumentEventProcessor processor;
+	private static OpenDocumentEventProcessor OPEN_DOCUMENT_PROCESSOR;
 
 	/** The Constant CLEAR_WORKSPACE. */
 	public static final String CLEAR_WORKSPACE = "clearWorkspace";
@@ -124,7 +119,7 @@ public class Application implements IApplication {
 		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
 		// DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
 		if (display == null) return;
-		processor = new OpenDocumentEventProcessor(display);
+		OPEN_DOCUMENT_PROCESSOR = new OpenDocumentEventProcessor(display);
 	}
 
 	@Override
@@ -153,7 +148,7 @@ public class Application implements IApplication {
 				try {
 					final int returnCode = Workbench.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 					if (returnCode == RETURN_RESTART) return EXIT_RESTART;
-				} catch (Throwable t) {
+				} catch (Exception t) {
 					DEBUG.ERR("Error in application", t);
 				}
 			} finally {
@@ -179,7 +174,7 @@ public class Application implements IApplication {
 		final Location instanceLoc = Platform.getInstanceLocation();
 		if (instanceLoc == null) {
 			// -data @none was specified but GAMA requires a workspace
-			openError(null, "Error", "A workspace is required to run GAMA");
+			openError(null, IKeyword.ERROR, "A workspace is required to run GAMA");
 			return EXIT_OK;
 		}
 		boolean remember = false;
@@ -190,7 +185,7 @@ public class Application implements IApplication {
 			if (ret != null) {
 				// if ( ret.equals("Restart") ) { return EXIT_RESTART; }
 				/* If we dont or cant remember and the location is set, we cant do anything as we need a workspace */
-				openError(null, "Error", "The workspace provided cannot be used. Please change it");
+				openError(null, IKeyword.ERROR, "The workspace provided cannot be used. Please change it");
 				if (isWorkbenchRunning()) { getWorkbench().close(); }
 				System.exit(0);
 				return EXIT_OK;
@@ -222,7 +217,7 @@ public class Application implements IApplication {
 			final int pick = new PickWorkspaceDialog().open();
 			/* If the user cancelled, we can't do anything as we need a workspace */
 			if (pick == 1 /* Window.CANCEL */ && getSelectedWorkspaceRootLocation() == null) {
-				openError(null, "Error", "The application can not start without a workspace and will now exit.");
+				openError(null, IKeyword.ERROR, "The application can not start without a workspace and will now exit.");
 				// System.exit(0);
 				return IApplication.EXIT_OK;
 			}
@@ -244,5 +239,12 @@ public class Application implements IApplication {
 		final Display display = workbench.getDisplay();
 		display.syncExec(() -> { if (!display.isDisposed()) { workbench.close(); } });
 	}
+
+	/**
+	 * Gets the open document processor.
+	 *
+	 * @return the open document processor
+	 */
+	public static OpenDocumentEventProcessor getOpenDocumentProcessor() { return OPEN_DOCUMENT_PROCESSOR; }
 
 }

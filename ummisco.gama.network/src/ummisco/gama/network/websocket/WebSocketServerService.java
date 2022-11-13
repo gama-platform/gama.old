@@ -66,7 +66,7 @@ public class WebSocketServerService extends ServerService {
 		try {
 			myAgent.setAttribute(TCPConnector._TCP_SERVER + serverSocket.getPort(), null);
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -109,7 +109,7 @@ public class WebSocketServerService extends ServerService {
 			try {
 				serverSocket.stop(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}

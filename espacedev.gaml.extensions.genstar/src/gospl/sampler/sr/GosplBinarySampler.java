@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplBinarySampler.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.sampler.sr;
 
 import java.util.ArrayList;
@@ -11,6 +21,7 @@ import core.metamodel.attribute.Attribute;
 import core.metamodel.value.IValue;
 import core.util.GSPerformanceUtil;
 import core.util.GSPerformanceUtil.Level;
+import core.util.exception.GenstarException;
 import core.util.random.GenstarRandom;
 import gospl.distribution.matrix.AFullNDimensionalMatrix;
 import gospl.distribution.matrix.coordinate.ACoordinate;
@@ -32,12 +43,17 @@ import gospl.sampler.IDistributionSampler;
  */
 public class GosplBinarySampler implements IDistributionSampler {
 
+	/** The keys. */
 	private List<ACoordinate<Attribute<? extends IValue>, IValue>> keys;
+
+	/** The sop. */
 	private List<Double> sop;
 
+	/** The epsilon. */
 	private final double EPSILON = Math.pow(10, -6);
 
-	private final static Level LEVEL = Level.INFO;
+	/** The Constant LEVEL. */
+	private static final Level LEVEL = Level.INFO;
 
 	// -------------------- setup methods -------------------- //
 
@@ -86,13 +102,13 @@ public class GosplBinarySampler implements IDistributionSampler {
 			if (rand < highMid) { top = mid - 1; }
 			if (rand >= highMid) { floor = mid + 1; }
 
-			if (count++ > keys.size()) throw new RuntimeException("Infinity loop: floor = " + floor + " | top = " + top
+			if (count++ > keys.size()) throw new GenstarException("Infinity loop: floor = " + floor + " | top = " + top
 					+ " | mid = " + mid + "\nRand = " + rand + " | mid range = [" + lowMid + ";" + highMid + "] "
 					+ "\n next key = " + sop.get(mid + 1) + " | previous key = " + sop.get(mid - 2 < 0 ? 0 : mid - 2));
 
 		}
 
-		throw new RuntimeException("Sample engine has not been able to draw one coordinate !!!\n" + "random (" + rand
+		throw new GenstarException("Sample engine has not been able to draw one coordinate !!!\n" + "random (" + rand
 				+ "), floor (" + floor + " = " + sop.get(floor) + ") and top (" + top + " = " + sop.get(top)
 				+ ") could not draw index\n" + "befor floor is: " + sop.get(floor - 1));
 
@@ -105,7 +121,7 @@ public class GosplBinarySampler implements IDistributionSampler {
 	 */
 	@Override
 	public final Collection<ACoordinate<Attribute<? extends IValue>, IValue>> draw(final int numberOfDraw) {
-		return IntStream.range(0, numberOfDraw).mapToObj(i -> draw()).collect(Collectors.toList());
+		return IntStream.range(0, numberOfDraw).mapToObj(i -> draw()).toList();
 	}
 
 	// -------------------- utility -------------------- //
@@ -114,23 +130,23 @@ public class GosplBinarySampler implements IDistributionSampler {
 	public String toCsv(final String csvSeparator) {
 		List<Attribute<? extends IValue>> attributs = new ArrayList<>(
 				keys.parallelStream().flatMap(coord -> coord.getDimensions().stream()).collect(Collectors.toSet()));
-		StringBuilder s = new StringBuilder().append(String.join(csvSeparator,
-				attributs.stream().map(Attribute::getAttributeName).collect(Collectors.toList())));
+		StringBuilder s = new StringBuilder()
+				.append(String.join(csvSeparator, attributs.stream().map(Attribute::getAttributeName).toList()));
 		s.append("; Probability\n");
 		double formerProba = 0d;
 		for (ACoordinate<Attribute<? extends IValue>, IValue> coord : keys) {
-			String line = "";
+			StringBuilder line = new StringBuilder();
 			for (Attribute<? extends IValue> att : attributs) {
 				if (coord.getDimensions().contains(att)) {
 					if (line.isEmpty()) {
-						line += coord.getMap().get(att).getStringValue();
+						line.append(coord.getMap().get(att).getStringValue());
 					} else {
-						line += csvSeparator + coord.getMap().get(att).getStringValue();
+						line.append(csvSeparator).append(coord.getMap().get(att).getStringValue());
 					}
 				} else if (line.isEmpty()) {
-					line += " ";
+					line.append(" ");
 				} else {
-					line += csvSeparator + " ";
+					line.append(csvSeparator).append(" ");
 				}
 			}
 			double actualProba = sop.get(keys.indexOf(coord)) - formerProba;

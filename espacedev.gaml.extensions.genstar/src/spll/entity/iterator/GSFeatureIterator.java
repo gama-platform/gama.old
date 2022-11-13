@@ -20,9 +20,10 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
+import core.util.exception.GSIllegalRangedData;
+
 import org.locationtech.jts.geom.Geometry;
 
-import core.util.excpetion.GSIllegalRangedData;
 import spll.entity.GeoEntityFactory;
 import spll.entity.SpllFeature;
 
@@ -41,7 +42,7 @@ public class GSFeatureIterator implements Iterator<SpllFeature> {
 			this.fItt = DataUtilities.collection(dataStore.getFeatureSource(dataStore.getTypeNames()[0])
 					.getFeatures(filter)).features();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		this.factory = new GeoEntityFactory(feature2splFeature);
@@ -73,7 +74,7 @@ public class GSFeatureIterator implements Iterator<SpllFeature> {
 			try {
 				schema = DataUtilities.createSubType(feature.getFeatureType(), null, this.crs);
 			} catch (SchemaException e1) {
-				// TODO Auto-generated catch block
+				
 				e1.printStackTrace();
 			}
 			feature = SimpleFeatureBuilder.template(schema, feature.getID());
@@ -81,7 +82,7 @@ public class GSFeatureIterator implements Iterator<SpllFeature> {
 			try {
 				feature.setDefaultGeometry(transformer.transform((Geometry) feature.getDefaultGeometry()));
 			} catch (TransformException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -89,7 +90,7 @@ public class GSFeatureIterator implements Iterator<SpllFeature> {
 		try {
 			spllFeature = factory.createGeoEntity(feature, Collections.emptyList());
 		} catch (GSIllegalRangedData e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return spllFeature;

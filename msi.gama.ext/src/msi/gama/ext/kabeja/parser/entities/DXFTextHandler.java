@@ -82,7 +82,7 @@ public class DXFTextHandler extends AbstractEntityHandler {
      * @see org.dxf2svg.parser.entities.EntityHandler#isFollowSequence()
      */
     public boolean isFollowSequence() {
-        // TODO Auto-generated method stub
+        
         return false;
     }
 

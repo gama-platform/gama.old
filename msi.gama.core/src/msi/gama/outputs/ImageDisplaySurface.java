@@ -230,7 +230,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void zoomIn() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -241,7 +241,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void zoomOut() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -252,7 +252,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void zoomFit() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -263,7 +263,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	// @Override
 	// public void fireSelectionChanged(final Object a) {
-	// // TODO Auto-generated method stub
+	// 
 	//
 	// }
 
@@ -274,7 +274,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {
-		// TODO Auto-generated method stub
+		
 
 	}
 

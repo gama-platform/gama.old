@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * DataLocalRepository.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package core.util.data;
 
 import java.io.File;
@@ -10,6 +20,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Base64;
 
+import core.util.exception.GenstarException;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -23,15 +34,25 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class DataLocalRepository {
 
+	/** The singleton. */
 	private static DataLocalRepository singleton = null;
 
+	/**
+	 * Gets the repository.
+	 *
+	 * @return the repository
+	 */
 	public static DataLocalRepository getRepository() {
 		if (singleton == null) { singleton = new DataLocalRepository(); }
 		return singleton;
 	}
 
+	/** The base directory. */
 	protected File baseDirectory = null;
 
+	/**
+	 * Instantiates a new data local repository.
+	 */
 	private DataLocalRepository() {}
 
 	/**
@@ -40,9 +61,9 @@ public class DataLocalRepository {
 	 * @param baseDirectory
 	 */
 	public void setDirectory(final File baseDirectory) {
-		if (!baseDirectory.exists()) throw new RuntimeException("this directory does not exists");
+		if (!baseDirectory.exists()) throw new GenstarException("this directory does not exists");
 		if (!baseDirectory.canRead() || !baseDirectory.canWrite())
-			throw new RuntimeException("this directory does not have read and write permissions");
+			throw new GenstarException("this directory does not have read and write permissions");
 
 		this.baseDirectory = baseDirectory;
 	}
@@ -72,6 +93,14 @@ public class DataLocalRepository {
 		return new File(getBaseDirectory(), hashname);
 	}
 
+	/**
+	 * Download file into.
+	 *
+	 * @param url
+	 *            the url
+	 * @param targetFile
+	 *            the target file
+	 */
 	protected void downloadFileInto(final URL url, final File targetFile) {
 
 		DEBUG.OUT("opening URL {} : " + url);
@@ -80,7 +109,7 @@ public class DataLocalRepository {
 			rbc = Channels.newChannel(url.openStream());
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException("error while loading data from " + url, e);
+			throw new GenstarException("error while loading data from " + url, e);
 		}
 
 		// copy
@@ -91,10 +120,19 @@ public class DataLocalRepository {
 			targetFileTmp.renameTo(targetFile);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw new GenstarException(e);
 		}
 	}
 
+	/**
+	 * Gets the or download resource.
+	 *
+	 * @param url
+	 *            the url
+	 * @param downloadedName
+	 *            the downloaded name
+	 * @return the or download resource
+	 */
 	public File getOrDownloadResource(final URL url, final String downloadedName) {
 
 		// get or create the host repository for this URL
@@ -105,7 +143,7 @@ public class DataLocalRepository {
 				ps.println(url.toString());
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-				throw new RuntimeException(e);
+				throw new GenstarException(e);
 			}
 
 		}

@@ -62,7 +62,7 @@ public class DXFCircleHandler extends AbstractEntityHandler {
      * @see org.dxf2svg.parser.entities.EntityHandler#getEntityName()
      */
     public String getDXFEntityName() {
-        // TODO Auto-generated method stub
+        
         return ENTITY_NAME;
     }
 

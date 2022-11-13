@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import au.com.bytecode.opencsv.CSVReader;
 import core.metamodel.io.GSSurveyType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * A wrapper of OpenCSV to read csv based data
@@ -568,9 +569,10 @@ public class CsvInputHandler extends AbstractInputHandler {
 
 		}
 
-		String msg = "";
+		StringBuilder msg = new StringBuilder();
 		for (int i = 0; i < candidates.length; i++) {
-			msg += candidates[i] + ": " + averageOccurences[i] + " ~ " + variance[i] + " \n";
+			msg.append(candidates[i]).append(": ").append(averageOccurences[i]).append(" ~ ").append(variance[i])
+					.append(" \n");
 		}
 		// Log.debug("candidates for separators: "+msg);
 
@@ -610,8 +612,7 @@ public class CsvInputHandler extends AbstractInputHandler {
 			if (count % chunkSize == 0) {
 				idx += chunkSize;
 				chunks.put(idx, new ArrayList<>());
-				System.out.println(
-						"[SYSO::" + CsvInputHandler.class.getSimpleName() + "] " + idx + " record have been done");
+				DEBUG.OUT("[SYSO::" + CsvInputHandler.class.getSimpleName() + "] " + idx + " record have been done");
 			}
 		} while (true);
 	}
@@ -626,7 +627,7 @@ public class CsvInputHandler extends AbstractInputHandler {
 				try {
 					reader.readNext();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
 			});

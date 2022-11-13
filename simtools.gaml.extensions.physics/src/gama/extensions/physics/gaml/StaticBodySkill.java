@@ -364,7 +364,7 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 
 		@Override
 		public void setLocation(final GamaPoint loc) {
-			// TODO Auto-generated method stub
+			
 
 		}
 

@@ -302,7 +302,7 @@ public class DXFLeader extends DXFEntity {
 
 	@Override
 	public double getLength() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 }

@@ -103,7 +103,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 		final IModel model = findModel(object);
 		if (model == null) return null;
 		final List<String> testExpNames = model.getDescription().getExperimentNames().stream()
-				.filter(e -> model.getExperiment(e).isTest()).collect(Collectors.toList());
+				.filter(e -> model.getExperiment(e).isTest()).toList();
 		if (testExpNames.isEmpty()) return null;
 		final List<TestExperimentSummary> result = new ArrayList<>();
 		for (final String expName : testExpNames) {

@@ -43,10 +43,10 @@ public class SpatialConstraintMaxNumber extends ASpatialConstraint {
 
 	@Override
 	public List<AGeoEntity<? extends IValue>> getCandidates(List<AGeoEntity<? extends IValue>> nests) {
-		List<AGeoEntity<? extends IValue>> candidates = nests.stream().filter(a -> nestCapacities.get(a.getGenstarName()) > 0).collect(Collectors.toList());
+		List<AGeoEntity<? extends IValue>> candidates = nests.stream().filter(a -> nestCapacities.get(a.getGenstarName()) > 0).toList();
 		return candidates;
 		/*return candidates.stream().sorted((n1, n2) -> Integer.compare(-1 * nestCapacities.get(n1.getGenstarName()),
-				-1 * nestCapacities.get(n2.getGenstarName()))).collect(Collectors.toList());*/
+				-1 * nestCapacities.get(n2.getGenstarName()))).toList();*/
 	}
 	
 	@Override

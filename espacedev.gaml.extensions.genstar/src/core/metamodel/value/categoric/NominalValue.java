@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * NominalValue.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package core.metamodel.value.categoric;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,46 +18,47 @@ import core.util.data.GSEnumDataType;
 
 /**
  * Encapsulate nominal {@link String} value
- * 
+ *
  * @author kevinchapuis
  *
  */
 public class NominalValue implements IValue {
+
+	/** The value. */
+	private final String value;
 	
-	private String value;
+	/** The actual value. */
 	private Object actualValue;
-	
-	@JsonManagedReference
-	private NominalSpace vs;
-	
-	protected NominalValue(NominalSpace vs, String value){
+
+	/** The vs. */
+	@JsonManagedReference private final NominalSpace vs;
+
+	/**
+	 * Instantiates a new nominal value.
+	 *
+	 * @param vs the vs
+	 * @param value the value
+	 */
+	protected NominalValue(final NominalSpace vs, final String value) {
 		this.value = value;
 		this.actualValue = value;
 		this.vs = vs;
 	}
 
 	@Override
-	public GSEnumDataType getType() {
-		return GSEnumDataType.Nominal;
-	}
-	
+	public GSEnumDataType getType() { return GSEnumDataType.Nominal; }
+
 	@JsonIgnore
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
-	public <T> T getActualValue() {
-		return (T) this.actualValue;
-	}
-	
+	public <T> T getActualValue() { return (T) this.actualValue; }
+
 	@Override
-	public String getStringValue() {
-		return value;
-	}
-	
+	public String getStringValue() { return value; }
+
 	@Override
-	public NominalSpace getValueSpace() {
-		return vs;
-	}
-	
+	public NominalSpace getValueSpace() { return vs; }
+
 	// ------------------------------------------------------ //
 
 	@Override
@@ -56,19 +67,16 @@ public class NominalValue implements IValue {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return this.isEquals(obj);
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.getStringValue();
 	}
 
 	@Override
-	public <T> void setActualValue(T v) throws UnsupportedOperationException {
-		this.actualValue = v;
-	}
+	public <T> void setActualValue(final T v) throws UnsupportedOperationException { this.actualValue = v; }
 
-	
 }

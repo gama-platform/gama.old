@@ -54,7 +54,7 @@ public class DXFImageDefHandler extends AbstractDXFObjectHandler {
      * @see de.miethxml.kabeja.parser.objects.DXFObjectHandler#endObject()
      */
     public void endObject() {
-        // TODO Auto-generated method stub
+        
     }
 
     /*
@@ -63,7 +63,7 @@ public class DXFImageDefHandler extends AbstractDXFObjectHandler {
      * @see de.miethxml.kabeja.parser.objects.DXFObjectHandler#getDXFObject()
      */
     public DXFObject getDXFObject() {
-        // TODO Auto-generated method stub
+        
         return imageDef;
     }
 

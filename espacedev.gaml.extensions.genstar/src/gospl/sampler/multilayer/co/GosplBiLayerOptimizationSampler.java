@@ -156,7 +156,7 @@ public class GosplBiLayerOptimizationSampler<A extends AMultiLayerOptimizationAl
 
 	@Override
 	public String toCsv(final String csvSeparator) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

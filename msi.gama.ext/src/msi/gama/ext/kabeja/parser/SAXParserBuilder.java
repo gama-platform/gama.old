@@ -230,7 +230,7 @@ public class SAXParserBuilder implements ContentHandler {
 	 */
 	@Override
 	public void startPrefixMapping(final String prefix, final String uri) throws SAXException {
-		// TODO Auto-generated method stub
+		
 	}
 
 	/**

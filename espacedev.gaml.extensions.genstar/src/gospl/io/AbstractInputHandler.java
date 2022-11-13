@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * AbstractInputHandler.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.io;
 
 import java.io.File;
@@ -32,14 +42,32 @@ import core.util.GSPerformanceUtil.Level;
  */
 public abstract class AbstractInputHandler implements IGSSurvey {
 
+	/** The survey complete file. */
 	protected final String surveyCompleteFile;
+
+	/** The survey file name. */
 	protected final String surveyFileName;
+
+	/** The survey file path. */
 	protected final String surveyFilePath;
+
+	/** The data file type. */
 	protected final GSSurveyType dataFileType;
 
+	/** The gspu. */
 	private final GSPerformanceUtil gspu;
+
+	/** The log level. */
 	public static Level LOG_LEVEL = Level.TRACE;
 
+	/**
+	 * Instantiates a new abstract input handler.
+	 *
+	 * @param dataFileType
+	 *            the data file type
+	 * @param fileName
+	 *            the file name
+	 */
 	public AbstractInputHandler(final GSSurveyType dataFileType, final String fileName) {
 
 		this.dataFileType = dataFileType;
@@ -51,6 +79,14 @@ public abstract class AbstractInputHandler implements IGSSurvey {
 
 	}
 
+	/**
+	 * Instantiates a new abstract input handler.
+	 *
+	 * @param dataFileType
+	 *            the data file type
+	 * @param file
+	 *            the file
+	 */
 	public AbstractInputHandler(final GSSurveyType dataFileType, final File file) {
 
 		this.dataFileType = dataFileType;
@@ -132,12 +168,10 @@ public abstract class AbstractInputHandler implements IGSSurvey {
 						attributeIdx.add(idx);
 
 					} else {
-						gspu.sysoStempMessage("the values " + valList + " match none of our attributes: "
-								+ dictionary.getAttributes().stream()
-										.map(a -> a.getValueSpace().getValues().stream().map(IValue::getStringValue)
-												.collect(Collectors.toList()))
-										.collect(Collectors.toList()),
-								Level.WARN);
+						gspu.sysoStempMessage("the values " + valList + " match none of our attributes: " + dictionary
+								.getAttributes().stream()
+								.map(a -> a.getValueSpace().getValues().stream().map(IValue::getStringValue).toList())
+								.toList(), Level.WARN);
 					}
 				}
 			}
@@ -146,7 +180,7 @@ public abstract class AbstractInputHandler implements IGSSurvey {
 		final Map<Integer, Set<IValue>> rowHeaders = new HashMap<>();
 		for (int i = getFirstRowIndex(); i <= getLastRowIndex(); i++) {
 			final List<String> rawLine = readColumns(0, getFirstColumnIndex(), i);
-			final List<String> line = attributeIdx.stream().map(idx -> rawLine.get(idx)).collect(Collectors.toList());
+			final List<String> line = attributeIdx.stream().map(idx -> rawLine.get(idx)).toList();
 			for (int j = 0; j < line.size(); j++) {
 				final String lineVal = line.get(j);
 				final Set<IValue> vals = dictionary.getAttributeAndRecord().stream()
@@ -226,8 +260,7 @@ public abstract class AbstractInputHandler implements IGSSurvey {
 
 		for (int i = getFirstColumnIndex(); i <= getLastColumnIndex(); i++) {
 			List<String> columnAtt = readLines(0, getFirstRowIndex(), i);
-			Optional<String> opIdWgt =
-					idwgt.stream().filter(iw -> columnAtt.stream().anyMatch(s -> iw.equals(s))).findFirst();
+			Optional<String> opIdWgt = idwgt.stream().filter(iw -> columnAtt.stream().anyMatch(iw::equals)).findFirst();
 			if (opIdWgt.isPresent()) { columnHeaders.put(opIdWgt.get(), i); }
 		}
 		return columnHeaders;

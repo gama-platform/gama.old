@@ -16,13 +16,13 @@ public class DistanceFunction implements ISpatialComplexFunction<Double> {
 	@Override
 	public void updateFunctionState(Collection<SpllEntity> entities,
 			Collection<AGeoEntity<? extends IValue>> candidates) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

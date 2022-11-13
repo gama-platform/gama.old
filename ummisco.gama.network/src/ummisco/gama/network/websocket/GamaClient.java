@@ -73,13 +73,13 @@ public class GamaClient extends WebSocketClient {
   
 	@Override
 	public void onClose(int arg0, String arg1, boolean arg2) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void onError(Exception arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -95,7 +95,7 @@ public class GamaClient extends WebSocketClient {
 
 	@Override
 	public void onOpen(ServerHandshake arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

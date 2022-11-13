@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -192,7 +193,7 @@ public class GosplSurveyFactory {
 	 * @throws InvalidSurveyFormatException
 	 */
 	public IGSSurvey getSurvey(final GSSurveyWrapper wrapper, final Path basePath)
-			throws InvalidFormatException, IOException, InvalidSurveyFormatException {
+			throws IOException, InvalidSurveyFormatException {
 
 		Path expectedPath = wrapper.getRelativePath();
 
@@ -214,7 +215,6 @@ public class GosplSurveyFactory {
 	}
 
 	/**
-	 * TODO: javadoc
 	 *
 	 * @param filepath
 	 * @param sheetNn
@@ -229,7 +229,7 @@ public class GosplSurveyFactory {
 	 */
 	public IGSSurvey getSurvey(final String filepath, final int sheetNn, final char csvSeparator,
 			final int firstRowDataIndex, final int firstColumnDataIndex, final GSSurveyType dataFileType)
-			throws IOException, InvalidSurveyFormatException, InvalidFormatException {
+			throws IOException, InvalidSurveyFormatException {
 
 		if (filepath.endsWith(XLS_EXT))
 			return new XlsInputHandler(filepath, sheetNn, firstRowDataIndex, firstColumnDataIndex, dataFileType);
@@ -259,7 +259,7 @@ public class GosplSurveyFactory {
 	 */
 	public IGSSurvey getSurvey(final String filepath, final int sheetNn, final char csvSeparator,
 			final int firstRowDataIndex, final int firstColumnDataIndex, final GSSurveyType dataFileType,
-			final String processAsFormat) throws IOException, InvalidSurveyFormatException, InvalidFormatException {
+			final String processAsFormat) throws IOException, InvalidSurveyFormatException {
 
 		if (XLS_EXT.equals(processAsFormat))
 			return new XlsInputHandler(filepath, sheetNn, firstRowDataIndex, firstColumnDataIndex, dataFileType);
@@ -273,7 +273,6 @@ public class GosplSurveyFactory {
 	}
 
 	/**
-	 * TODO: javadoc
 	 *
 	 * @param filepath
 	 * @param dataFileType
@@ -283,12 +282,11 @@ public class GosplSurveyFactory {
 	 * @throws InvalidSurveyFormatException
 	 */
 	public IGSSurvey getSurvey(final String filepath, final GSSurveyType dataFileType)
-			throws InvalidFormatException, IOException, InvalidSurveyFormatException {
+			throws IOException, InvalidSurveyFormatException {
 		return this.getSurvey(filepath, sheetNb, separator, firstRowDataIdx, firstColumnDataIdx, dataFileType);
 	}
 
 	/**
-	 * TODO: javadoc
 	 *
 	 * @param file
 	 * @param sheetNn
@@ -324,13 +322,12 @@ public class GosplSurveyFactory {
 	 * @throws InvalidSurveyFormatException
 	 */
 	public IGSSurvey getSurvey(final File file, final GSSurveyType dataFileType)
-			throws IOException, InvalidFormatException, InvalidSurveyFormatException {
+			throws IOException, InvalidSurveyFormatException {
 		return this.getSurvey(file, storedInMemory, sheetNb, separator, firstRowDataIdx, firstColumnDataIdx,
 				dataFileType);
 	}
 
 	/**
-	 * TODO: javadoc
 	 *
 	 * @param fileName
 	 * @param surveyIS
@@ -356,7 +353,6 @@ public class GosplSurveyFactory {
 	}
 
 	/**
-	 * TODO: javadoc
 	 *
 	 * @param fileName
 	 * @param surveyIS
@@ -367,7 +363,7 @@ public class GosplSurveyFactory {
 	 * @throws InvalidSurveyFormatException
 	 */
 	public IGSSurvey getSurvey(final String fileName, final InputStream surveyIS, final GSSurveyType dataFileType)
-			throws IOException, InvalidFormatException, InvalidSurveyFormatException {
+			throws IOException, InvalidSurveyFormatException {
 		return this.getSurvey(fileName, surveyIS, sheetNb, separator, firstRowDataIdx, firstColumnDataIdx,
 				dataFileType);
 	}
@@ -415,7 +411,7 @@ public class GosplSurveyFactory {
 	 */
 	public IGSSurvey createContingencyTable(final File surveyFile, final Set<Attribute<? extends IValue>> format,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population)
-			throws IOException, InvalidFormatException, InvalidSurveyFormatException {
+			throws IOException, InvalidSurveyFormatException {
 
 		GSPerformanceUtil gspu = new GSPerformanceUtil("TEST OUTPUT TABLES", Level.TRACE);
 
@@ -427,10 +423,9 @@ public class GosplSurveyFactory {
 					+ Arrays.toString(format.toArray()) + "\n" + "Population: "
 					+ Arrays.toString(popMatrix.getDimensions().toArray()));
 
-		List<Attribute<? extends IValue>> columnHeaders =
-				format.stream().skip(format.size() / 2).collect(Collectors.toList());
+		List<Attribute<? extends IValue>> columnHeaders = format.stream().skip(format.size() / 2).toList();
 		List<Attribute<? extends IValue>> rowHeaders =
-				format.stream().filter(att -> !columnHeaders.contains(att)).collect(Collectors.toList());
+				format.stream().filter(att -> !columnHeaders.contains(att)).toList();
 
 		gspu.sysoStempMessage("Columns: "
 				+ columnHeaders.stream().map(Attribute::getAttributeName).collect(Collectors.joining(" + ")));
@@ -440,8 +435,8 @@ public class GosplSurveyFactory {
 		String report = "";
 
 		if (rowHeaders.isEmpty()) {
-			List<IValue> vals = columnHeaders.stream().flatMap(att -> att.getValueSpace().getValues().stream())
-					.collect(Collectors.toList());
+			List<? extends IValue> vals =
+					columnHeaders.stream().flatMap(att -> att.getValueSpace().getValues().stream()).toList();
 			report += vals.stream().map(IValue::getStringValue).collect(Collectors.joining(String.valueOf(separator)))
 					+ String.valueOf(separator) + "TOTAL\n";
 			report += vals.stream().map(val -> popMatrix.getVal(val, true).getValue().toString())
@@ -451,8 +446,7 @@ public class GosplSurveyFactory {
 			Map<Integer, List<IValue>> columnHead = getTableHeader(columnHeaders);
 			Map<Integer, List<IValue>> rowHead = getTableHeader(rowHeaders);
 
-			String blankHeadLine =
-					rowHeaders.stream().map(rAtt -> " " + String.valueOf(separator)).collect(Collectors.joining());
+			String blankHeadLine = rowHeaders.stream().map(rAtt -> " " + separator).collect(Collectors.joining());
 			report += IntStream.range(0, columnHeaders.size()).mapToObj(
 					index -> blankHeadLine + columnHead.values().stream().map(col -> col.get(index).getStringValue())
 							.collect(Collectors.joining(String.valueOf(separator))))
@@ -475,20 +469,19 @@ public class GosplSurveyFactory {
 				report += "\n"
 						+ rowHead.get(rowIdx).stream().map(IValue::getStringValue)
 								.collect(Collectors.joining(String.valueOf(separator)))
-						+ String.valueOf(separator)
+						+ separator
 						+ data.stream().map(i -> i.toString()).collect(Collectors.joining(String.valueOf(separator)));
-				report += String.valueOf(separator) + data.stream().reduce(0, (i1, i2) -> i1 + i2);
+				report += separator + data.stream().reduce(0, (i1, i2) -> i1 + i2);
 				gspu.sysoStempMessage("New line (" + Arrays.toString(rowHead.get(rowIdx).toArray()) + ") = "
 						+ Arrays.toString(data.toArray()));
 			}
 
 			List<Integer> colTotals = IntStream.range(0, columnHead.size())
-					.mapToObj(colIdx -> popMatrix.getVal(columnHead.get(colIdx)).getValue())
-					.collect(Collectors.toList());
+					.mapToObj(colIdx -> popMatrix.getVal(columnHead.get(colIdx)).getValue()).toList();
 			report += "\n"
 					+ colTotals.stream().map(col -> col.toString())
 							.collect(Collectors.joining(String.valueOf(separator)))
-					+ String.valueOf(separator) + colTotals.stream().reduce(1, (i1, i2) -> i1 + i2);
+					+ separator + colTotals.stream().reduce(1, (i1, i2) -> i1 + i2);
 		}
 
 		Files.write(surveyFile.toPath(), report.getBytes());
@@ -522,7 +515,7 @@ public class GosplSurveyFactory {
 				.append("\n");
 		List<String> lines = IntStream.range(0,
 				attributes.stream().mapToInt(att -> att.getValueSpace().getValues().size() + 1).max().getAsInt())
-				.mapToObj(i -> "").collect(Collectors.toList());
+				.mapToObj(i -> "").toList();
 
 		for (Attribute<? extends IValue> attribute : attributes) {
 
@@ -582,7 +575,7 @@ public class GosplSurveyFactory {
 				.append("\n");
 		List<String> lines = IntStream.range(0,
 				attributes.stream().mapToInt(att -> att.getValueSpace().getValues().size() + 1).max().getAsInt())
-				.mapToObj(i -> "").collect(Collectors.toList());
+				.mapToObj(i -> "").toList();
 
 		Map<IValue, Integer> mapReport = attributes.stream()
 				.flatMap(att -> Stream.concat(att.getValueSpace().getValues().stream(), Stream.of(att.getEmptyValue()))
@@ -640,8 +633,8 @@ public class GosplSurveyFactory {
 
 		try (final BufferedWriter bw = Files.newBufferedWriter(surveyFile.toPath())) {
 			final Collection<Attribute<? extends IValue>> attributes = population.getPopulationAttributes();
-			final Collection<IEntity<? extends IAttribute<? extends IValue>>> parents =
-					population.stream().map(ADemoEntity::getParent).filter(p -> p != null).collect(Collectors.toSet());
+			final Collection<IEntity<? extends IAttribute<? extends IValue>>> parents = population.stream()
+					.map(ADemoEntity::getParent).filter(Objects::nonNull).collect(Collectors.toSet());
 			Set<IAttribute<? extends IValue>> parentAttributes = null;
 			if (parents.isEmpty()) {
 				withParent = false;
@@ -772,7 +765,6 @@ public class GosplSurveyFactory {
 	 */
 
 	/**
-	 * TODO doc
 	 *
 	 * @param headerAttributes
 	 * @return
@@ -787,13 +779,12 @@ public class GosplSurveyFactory {
 			List<List<IValue>> tmpHead = new ArrayList<>();
 			for (List<IValue> currentHead : head) {
 				tmpHead.addAll(headAtt.getValueSpace().getValues().stream()
-						.map(val -> Stream.concat(currentHead.stream(), Stream.of(val)).collect(Collectors.toList()))
-						.collect(Collectors.toList()));
+						.map(val -> Stream.concat(currentHead.stream(), Stream.of(val)).toList()).toList());
 			}
 			head = tmpHead;
 		}
 		final List<List<IValue>> headFinal = head;
-		return head.stream().collect(Collectors.toMap(h -> headFinal.indexOf(h), Function.identity()));
+		return head.stream().collect(Collectors.toMap(headFinal::indexOf, Function.identity()));
 	}
 
 }

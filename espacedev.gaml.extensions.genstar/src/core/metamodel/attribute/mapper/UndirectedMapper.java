@@ -59,13 +59,13 @@ public class UndirectedMapper<K extends IValue, V extends IValue> implements IAt
 		// Modif Benoit
 		// new return : pour tenir compte que les keys, contiennent des listes.
 		return (map.entrySet().stream().filter(e -> e.getKey().contains(value)).count() != 0) ?
-				map.entrySet().stream().filter(e -> e.getKey().contains(value)).flatMap(e -> e.getValue().stream()).collect(Collectors.toList())
-				: map.entrySet().stream().filter(e -> e.getValue().contains(value)).flatMap(e -> e.getKey().stream()).collect(Collectors.toList());
+				map.entrySet().stream().filter(e -> e.getKey().contains(value)).flatMap(e -> e.getValue().stream()).toList()
+				: map.entrySet().stream().filter(e -> e.getValue().contains(value)).flatMap(e -> e.getKey().stream()).toList();
 		
 //		return map.keySet().contains(value) ? 
 //				Collections.unmodifiableCollection(map.get(value))
 //				: map.entrySet().stream().filter(e -> e.getValue().contains(value))
-//				.flatMap(e -> e.getKey().stream()).collect(Collectors.toList());
+//				.flatMap(e -> e.getKey().stream()).toList();
 	}
 
 	// -------------------- GETTER & SETTER -------------------- //

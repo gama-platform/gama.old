@@ -103,6 +103,6 @@ public class ViewFilter extends AbstractPostProcessor {
          * @see org.kabeja.tools.PostProcessor#setProperties(java.util.Map)
          */
     public void setProperties(Map properties) {
-        // TODO Auto-generated method stub
+        
     }
 }

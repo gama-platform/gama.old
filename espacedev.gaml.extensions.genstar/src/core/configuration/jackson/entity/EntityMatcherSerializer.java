@@ -35,7 +35,7 @@ public class EntityMatcherSerializer extends StdSerializer<IGSEntityMatcher<?>> 
 	@Override
 	public void serialize(IGSEntityMatcher<?> value, JsonGenerator gen, SerializerProvider provider)
 			throws IOException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	
@@ -45,9 +45,9 @@ public class EntityMatcherSerializer extends StdSerializer<IGSEntityMatcher<?>> 
 		
 		gen.writeStartObject();
 		final String mType = typeSer.getTypeIdResolver().idFromValue(matcher);
-		gen.writeStringField(IGSEntityMatcher.TYPE, mType);
+		gen.writeStringField(IGSEntityMatcher.TYPE_LABEL, mType);
 		
-		gen.writeArrayFieldStart(IGSEntityMatcher.VECTOR);
+		gen.writeArrayFieldStart(IGSEntityMatcher.VECTOR_LABEL);
 		switch (mType) {
 		case AttributeVectorMatcher.SELF:
 			for(Entry<IAttribute<? extends IValue>, Set<IValue>> entry : 

@@ -1,8 +1,19 @@
+/*******************************************************************************************************
+ *
+ * ReadMultiLayerEntityUtils.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.io.util;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import core.metamodel.attribute.Attribute;
 import core.metamodel.value.IValue;
@@ -11,91 +22,151 @@ import gospl.GosplEntity;
 
 /**
  * Utilities to encapsulate information on entities when read from data sources
- * 
+ *
  * @author kevinchapuis
  *
  */
 public class ReadMultiLayerEntityUtils {
 
-	private String id;
-	private String weight;
-	
-	private int layer;
-	
-	private Map<Integer,String> ids;
-	
-	private Map<Attribute<? extends IValue>,IValue> entity;
-	
+	/** The id. */
+	private final String id;
+
+	/** The weight. */
+	private final String weight;
+
+	/** The layer. */
+	private final int layer;
+
+	/** The ids. */
+	private Map<Integer, String> ids;
+
+	/** The entity. */
+	private Map<Attribute<? extends IValue>, IValue> entity;
+
+	/** The Constant gsdp. */
 	public static final GSDataParser gsdp = new GSDataParser();
-	
-	public ReadMultiLayerEntityUtils(int layer, String id, String weight) {
+
+	/**
+	 * Instantiates a new read multi layer entity utils.
+	 *
+	 * @param layer
+	 *            the layer
+	 * @param id
+	 *            the id
+	 * @param weight
+	 *            the weight
+	 */
+	public ReadMultiLayerEntityUtils(final int layer, final String id, final String weight) {
 		this.layer = layer;
 		this.id = id;
 		this.weight = weight;
 		this.ids = new HashMap<>();
 	}
-	
-	public ReadMultiLayerEntityUtils(int layer, String id, String weight, Map<Attribute<? extends IValue>,IValue> entity) {
-		this(layer,id,weight);
+
+	/**
+	 * Instantiates a new read multi layer entity utils.
+	 *
+	 * @param layer
+	 *            the layer
+	 * @param id
+	 *            the id
+	 * @param weight
+	 *            the weight
+	 * @param entity
+	 *            the entity
+	 */
+	public ReadMultiLayerEntityUtils(final int layer, final String id, final String weight,
+			final Map<Attribute<? extends IValue>, IValue> entity) {
+		this(layer, id, weight);
 		this.entity = entity;
 	}
-	
-	public int getLayer() {return layer;}
-	public String getId() {return id;}
-	public String getWgt() {return weight;}
-	
-	public Map<Attribute<? extends IValue>,IValue> getEntity() {return entity;}
-	public void setEntity(Map<Attribute<? extends IValue>,IValue> entity) {this.entity = entity;}
-	
-	public Map<Integer,String> getIDs() {return Collections.unmodifiableMap(ids);}
-	public void setIDs(Map<Integer,String> ids) {this.ids = ids;}
-	
+
+	/**
+	 * Gets the layer.
+	 *
+	 * @return the layer
+	 */
+	public int getLayer() { return layer; }
+
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	public String getId() { return id; }
+
+	/**
+	 * Gets the wgt.
+	 *
+	 * @return the wgt
+	 */
+	public String getWgt() { return weight; }
+
+	/**
+	 * Gets the entity.
+	 *
+	 * @return the entity
+	 */
+	public Map<Attribute<? extends IValue>, IValue> getEntity() { return entity; }
+
+	/**
+	 * Sets the entity.
+	 *
+	 * @param entity
+	 *            the entity
+	 */
+	public void setEntity(final Map<Attribute<? extends IValue>, IValue> entity) { this.entity = entity; }
+
+	/**
+	 * Gets the i ds.
+	 *
+	 * @return the i ds
+	 */
+	public Map<Integer, String> getIDs() { return Collections.unmodifiableMap(ids); }
+
+	/**
+	 * Sets the I ds.
+	 *
+	 * @param ids
+	 *            the ids
+	 */
+	public void setIDs(final Map<Integer, String> ids) { this.ids = ids; }
+
+	/**
+	 * To gospl entity.
+	 *
+	 * @return the gospl entity
+	 */
 	public GosplEntity toGosplEntity() {
 		return this.toGosplEntity(false);
 	}
-	
-	public GosplEntity toGosplEntity(boolean withID) {
+
+	/**
+	 * To gospl entity.
+	 *
+	 * @param withID
+	 *            the with ID
+	 * @return the gospl entity
+	 */
+	public GosplEntity toGosplEntity(final boolean withID) {
 		GosplEntity entity = new GosplEntity(this.entity, gsdp.getDouble(weight));
-		if(withID) { entity._setEntityId(id); }
+		if (withID) { entity._setEntityId(id); }
 		return entity;
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((entity == null) ? 0 : entity.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((weight == null) ? 0 : weight.hashCode());
-		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		if (layer == 0) { return false; } // NASTY TRICKS TO ALLOW FIRST ORDER ENTITY TO NEVER BE EQUAL
-		ReadMultiLayerEntityUtils other = (ReadMultiLayerEntityUtils) obj;
-		if (entity == null) {
-			if (other.entity != null)
-				return false;
-		} else if (!entity.equals(other.entity))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (weight == null) {
-			if (other.weight != null)
-				return false;
-		} else if (!weight.equals(other.weight))
-			return false;
-		return true;
+	public int hashCode() {
+		return Objects.hash(entity, id, weight);
 	}
-	
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass() || layer == 0) return false;
+		ReadMultiLayerEntityUtils other = (ReadMultiLayerEntityUtils) obj;
+		return Objects.equals(entity, other.entity) && Objects.equals(id, other.id)
+				&& Objects.equals(weight, other.weight);
+
+	}
+
 }

@@ -61,7 +61,7 @@ public class GosplBiLayerReconstructionSampler implements ISRMultiLayerSampler {
 
 	@Override
 	public Collection<GosplMultiLayerCoordinate> draw(int numberOfDraw) {
-		return IntStream.range(0,numberOfDraw).mapToObj(i -> this.draw()).collect(Collectors.toList());
+		return IntStream.range(0,numberOfDraw).mapToObj(i -> this.draw()).toList();
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class GosplBiLayerReconstructionSampler implements ISRMultiLayerSampler {
 	
 	@Override
 	public String toCsv(String csvSeparator) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	

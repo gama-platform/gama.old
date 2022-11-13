@@ -92,7 +92,7 @@ public class MOBIL {
 			upper = Math.min(upper, currentLowestLane + laneChangeLimit);
 		}
 		List<Integer> limitedLaneRange = IntStream.rangeClosed(lower, upper).
-			boxed().collect(Collectors.toList());
+			boxed().toList();
 
 		// Compute acceleration if the vehicle stays on the same lane
 		Triple<IAgent, Double, Boolean> leaderTriple = findLeader(

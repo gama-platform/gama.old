@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplJointDistribution.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.distribution;
 
 import java.util.Map;
@@ -13,77 +23,84 @@ import gospl.distribution.matrix.control.ControlFrequency;
 import gospl.distribution.matrix.coordinate.ACoordinate;
 
 /**
- * TODO: javadoc
- * 
+ *
  * @author kevinchapuis
  *
  */
 public class GosplJointDistribution extends AFullNDimensionalMatrix<Double> {
-	
-	private Double min = Math.pow(10, -8);
-	
-	protected GosplJointDistribution(Map<ACoordinate<Attribute<? extends IValue>, IValue>, AControl<Double>> matrix){
+
+	/** The min. */
+	private final Double min = Math.pow(10, -8);
+
+	/**
+	 * Instantiates a new gospl joint distribution.
+	 *
+	 * @param matrix
+	 *            the matrix
+	 */
+	protected GosplJointDistribution(
+			final Map<ACoordinate<Attribute<? extends IValue>, IValue>, AControl<Double>> matrix) {
 		super(matrix);
 	}
 
-	public GosplJointDistribution(Set<Attribute<? extends IValue>> dimensions, GSSurveyType metaDataType) {
+	/**
+	 * Instantiates a new gospl joint distribution.
+	 *
+	 * @param dimensions
+	 *            the dimensions
+	 * @param metaDataType
+	 *            the meta data type
+	 */
+	public GosplJointDistribution(final Set<Attribute<? extends IValue>> dimensions, final GSSurveyType metaDataType) {
 		super(dimensions, metaDataType);
 	}
 
-		
 	// ----------------------- SETTER CONTRACT ----------------------- //
-	
-	
+
 	@Override
-	public boolean addValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinates, AControl<? extends Number> value){
-		if(matrix.containsKey(coordinates))
-			return false;
+	public boolean addValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinates,
+			final AControl<? extends Number> value) {
+		if (matrix.containsKey(coordinates)) return false;
 		return setValue(coordinates, value);
 	}
-	
+
 	@Override
-	public final boolean addValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinates, Double value) {
+	public final boolean addValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinates,
+			final Double value) {
 		return addValue(coordinates, new ControlFrequency(value));
 	}
 
 	@Override
-	public boolean setValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinate, AControl<? extends Number> value){
-		if(isCoordinateCompliant(coordinate)){
+	public boolean setValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinate,
+			final AControl<? extends Number> value) {
+		if (isCoordinateCompliant(coordinate)) {
 			coordinate.setHashIndex(matrix.size());
 			matrix.put(coordinate, new ControlFrequency(value.getValue().doubleValue()));
 			return true;
 		}
 		return false;
 	}
-	
 
 	@Override
-	public final boolean setValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinate, Double value) {
+	public final boolean setValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinate,
+			final Double value) {
 		return setValue(coordinate, new ControlFrequency(value));
 	}
-	
+
 	// ----------------------- CONTRACT ----------------------- //
-	
-	@Override
-	public AControl<Double> getNulVal() {
-		return new ControlFrequency(0d);
-	}
-	
 
 	@Override
-	public AControl<Double> getIdentityProductVal() {
-		return new ControlFrequency(1d);
-	}
-	
-	@Override
-	public AControl<Double> getAtomicVal() {
-		return new ControlFrequency(min / this.size());
-	}
+	public AControl<Double> getNulVal() { return new ControlFrequency(0d); }
 
 	@Override
-	public AControl<Double> parseVal(GSDataParser parser, String val) {
-		if(!parser.getValueType(val).isNumericValue())
-			return getNulVal();
+	public AControl<Double> getIdentityProductVal() { return new ControlFrequency(1d); }
+
+	@Override
+	public AControl<Double> getAtomicVal() { return new ControlFrequency(min / this.size()); }
+
+	@Override
+	public AControl<Double> parseVal(final GSDataParser parser, final String val) {
+		if (!parser.getValueType(val).isNumericValue()) return getNulVal();
 		return new ControlFrequency(parser.getDouble(val));
 	}
 
@@ -91,11 +108,9 @@ public class GosplJointDistribution extends AFullNDimensionalMatrix<Double> {
 	public void normalize() throws IllegalArgumentException {
 
 		Double total = getVal().getValue();
-		
-		for (AControl<Double> c: getMatrix().values()) {
-			c.multiply(1/total);
-		}
-			
+
+		for (AControl<Double> c : getMatrix().values()) { c.multiply(1 / total); }
+
 	}
-	
+
 }

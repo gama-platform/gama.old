@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ContinuousSpace.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package core.metamodel.value.numeric;
 
 import java.util.Collection;
@@ -15,32 +25,58 @@ import core.util.data.GSEnumDataType;
 
 /**
  * Encapsulates a set of double value
- * 
- * WARNING: inner structure is not time efficient, also for fast use of {@link ContinuousValue}
- * try to use {@link #getInstanceValue(String)} or {@link #proposeValue(String)}, that do not
- * store {@link ContinuousValue} in a collection
- * 
+ *
+ * WARNING: inner structure is not time efficient, also for fast use of {@link ContinuousValue} try to use
+ * {@link #getInstanceValue(String)} or {@link #proposeValue(String)}, that do not store {@link ContinuousValue} in a
+ * collection
+ *
  * @author kevinchapuis
  *
  */
 public class ContinuousSpace implements IValueSpace<ContinuousValue> {
 
+	/** The gsdp. */
 	private static GSDataParser gsdp = new GSDataParser();
 
+	/** The empty value. */
 	private ContinuousValue emptyValue;
-	private TreeMap<Double, ContinuousValue> values;
-	private Set<String> excludedValues;
 
-	private double min, max;
+	/** The values. */
+	private final TreeMap<Double, ContinuousValue> values;
 
-	private IAttribute<ContinuousValue> attribute;
+	/** The excluded values. */
+	private final Set<String> excludedValues;
 
-	public ContinuousSpace(IAttribute<ContinuousValue> attribute) {
+	/** The max. */
+	private double min;
+	
+	/** The max. */
+	private double max;
+
+	/** The attribute. */
+	private final IAttribute<ContinuousValue> attribute;
+
+	/**
+	 * Instantiates a new continuous space.
+	 *
+	 * @param attribute
+	 *            the attribute
+	 */
+	public ContinuousSpace(final IAttribute<ContinuousValue> attribute) {
 		this(attribute, -Double.MAX_VALUE, Double.MAX_VALUE);
 	}
 
-	public ContinuousSpace(IAttribute<ContinuousValue> attribute,
-			Double min, Double max) {
+	/**
+	 * Instantiates a new continuous space.
+	 *
+	 * @param attribute
+	 *            the attribute
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 */
+	public ContinuousSpace(final IAttribute<ContinuousValue> attribute, final Double min, final Double max) {
 		this.attribute = attribute;
 		this.min = min;
 		this.max = max;
@@ -50,69 +86,57 @@ public class ContinuousSpace implements IValueSpace<ContinuousValue> {
 	}
 
 	@Override
-	public GSEnumDataType getType() {
-		return GSEnumDataType.Continue;
-	}
-	
+	public GSEnumDataType getType() { return GSEnumDataType.Continue; }
+
 	@Override
-	public Class<ContinuousValue> getTypeClass() {
-		return ContinuousValue.class;
-	}
-	
+	public Class<ContinuousValue> getTypeClass() { return ContinuousValue.class; }
+
 	@Override
-	public ContinuousValue getInstanceValue(String value) {
+	public ContinuousValue getInstanceValue(final String value) {
 		double currentVal = gsdp.getDouble(value);
-		if(currentVal < min || currentVal > max)
-			throw new IllegalArgumentException("Proposed value "+currentVal+" is "
-					+ (currentVal < min ? "below" : "beyond") + " given bound ("
-					+ (currentVal < min ? min : max) + ")");
+		if (currentVal < min || currentVal > max) throw new IllegalArgumentException(
+				"Proposed value " + currentVal + " is " + (currentVal < min ? "below" : "beyond") + " given bound ("
+						+ (currentVal < min ? min : max) + ")");
 		return new ContinuousValue(this, currentVal);
 	}
 
 	@Override
-	public ContinuousValue proposeValue(String value) {
+	public ContinuousValue proposeValue(final String value) {
 		return new ContinuousValue(this, gsdp.getDouble(value));
 	}
-	
+
 	// -------------------- SETTERS & GETTER CAPACITIES -------------------- //
 
 	@Override
-	public ContinuousValue addValue(String value) {
-		if(excludedValues.contains(value))
-			return this.getEmptyValue();
+	public ContinuousValue addValue(final String value) {
+		if (excludedValues.contains(value)) return this.getEmptyValue();
 		ContinuousValue iv = getValue(value);
-		if(value == null) {
+		if (value == null) {
 			iv = this.getInstanceValue(value);
 			values.put(iv.getActualValue(), iv);
 		}
 		return iv;
 	}
-	
 
 	@Override
-	public ContinuousValue getValue(String value) throws NullPointerException {
+	public ContinuousValue getValue(final String value) throws NullPointerException {
 		return values.get(gsdp.getDouble(value));
 	}
 
 	@Override
-	public Set<ContinuousValue> getValues(){
-		return new HashSet<>(values.values());
-	}
-	
+	public Set<ContinuousValue> getValues() { return new HashSet<>(values.values()); }
+
 	@Override
-	public boolean contains(IValue value) {
-		if(!value.getClass().equals(ContinuousValue.class))
-			return false;
+	public boolean contains(final IValue value) {
+		if (!value.getClass().equals(ContinuousValue.class)) return false;
 		return values.containsValue(value);
 	}
 
 	@Override
-	public ContinuousValue getEmptyValue() {
-		return emptyValue;
-	}
+	public ContinuousValue getEmptyValue() { return emptyValue; }
 
 	@Override
-	public void setEmptyValue(String value) {
+	public void setEmptyValue(final String value) {
 		try {
 			this.emptyValue = getValue(value);
 		} catch (NullPointerException npe) {
@@ -124,44 +148,54 @@ public class ContinuousSpace implements IValueSpace<ContinuousValue> {
 			}
 		}
 	}
-	
+
 	@Override
-	public void addExceludedValue(String value) {
+	public void addExceludedValue(final String value) {
 		this.excludedValues.add(value);
 	}
 
 	@Override
-	public boolean isValidCandidate(String value) {
-		if(!gsdp.getValueType(value).isNumericValue() 
-				|| gsdp.getDouble(value) < min || gsdp.getDouble(value) > max)
-			return false;
-		return true;
+	public boolean isValidCandidate(final String value) {
+		return gsdp.getValueType(value).isNumericValue() && gsdp.getDouble(value) >= min
+				&& gsdp.getDouble(value) <= max;
 	}
 
 	@Override
-	public IAttribute<ContinuousValue> getAttribute() {
-		return attribute;
-	}
+	public IAttribute<ContinuousValue> getAttribute() { return attribute; }
 
 	// ----------------------------------------------------- //
 
-	@JsonProperty("max")
-	public double getMax() {
-		return max;
-	}
+	/**
+	 * Gets the max.
+	 *
+	 * @return the max
+	 */
+	@JsonProperty ("max")
+	public double getMax() { return max; }
 
-	public void setMax(double max) {
-		this.max = max;
-	}
+	/**
+	 * Sets the max.
+	 *
+	 * @param max
+	 *            the new max
+	 */
+	public void setMax(final double max) { this.max = max; }
 
-	@JsonProperty("min")
-	public double getMin()	{
-		return min;
-	}
+	/**
+	 * Gets the min.
+	 *
+	 * @return the min
+	 */
+	@JsonProperty ("min")
+	public double getMin() { return min; }
 
-	public void setMin(double min) {
-		this.min = min;
-	}
+	/**
+	 * Sets the min.
+	 *
+	 * @param min
+	 *            the new min
+	 */
+	public void setMin(final double min) { this.min = min; }
 
 	// ----------------------------------------------- //
 
@@ -171,29 +205,27 @@ public class ContinuousSpace implements IValueSpace<ContinuousValue> {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return isEqual(obj);
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.toPrettyString();
 	}
 
 	@Override
-	public boolean contains(String valueStr) {
+	public boolean contains(final String valueStr) {
 		return values.values().stream().anyMatch(v -> v.getStringValue().equals(valueStr));
-	}
-	
-	@Override
-	public boolean containsAllLabels(Collection<String> valuesStr) {
-		return this.values.values()
-				.stream()
-				.allMatch(val -> valuesStr.contains(val.getStringValue()));
 	}
 
 	@Override
-	public IValueSpace<ContinuousValue> clone(IAttribute<ContinuousValue> newReferent) {
+	public boolean containsAllLabels(final Collection<String> valuesStr) {
+		return this.values.values().stream().allMatch(val -> valuesStr.contains(val.getStringValue()));
+	}
+
+	@Override
+	public IValueSpace<ContinuousValue> clone(final IAttribute<ContinuousValue> newReferent) {
 		return new ContinuousSpace(newReferent, getMin(), getMax());
 	}
 

@@ -124,7 +124,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}

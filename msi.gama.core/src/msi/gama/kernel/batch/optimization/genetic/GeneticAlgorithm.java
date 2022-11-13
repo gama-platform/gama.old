@@ -274,7 +274,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				computePopFitnessAll(scope, population);
 			else
 				computePopFitness(scope, population);
-			population = population.stream().distinct().collect(Collectors.toList());
+			population = population.stream().distinct().toList();
 			population = selectionOp.select(scope, population, populationDim, isMaximize());
 			nbGen++;
 		}

@@ -52,7 +52,7 @@ public class GosplAliasSampler implements IDistributionSampler {
 				distribution.getOrderedMatrix();
 
 		this.indexedKey = new ArrayList<>(orderedDistribution.keySet());
-		this.initProba = orderedDistribution.values().stream().map(AControl::getValue).collect(Collectors.toList());
+		this.initProba = orderedDistribution.values().stream().map(AControl::getValue).toList();
 
 		/* Allocate space for the probability and alias tables. */
 		probability = new double[distribution.size()];
@@ -134,7 +134,7 @@ public class GosplAliasSampler implements IDistributionSampler {
 	 */
 	@Override
 	public final Collection<ACoordinate<Attribute<? extends IValue>, IValue>> draw(final int numberOfDraw) {
-		return IntStream.range(0, numberOfDraw).mapToObj(i -> draw()).collect(Collectors.toList());
+		return IntStream.range(0, numberOfDraw).mapToObj(i -> draw()).toList();
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class GosplAliasSampler implements IDistributionSampler {
 		List<Attribute<? extends IValue>> attributs = new ArrayList<>(indexedKey.parallelStream()
 				.flatMap(coord -> coord.getDimensions().stream()).collect(Collectors.toSet()));
 		StringBuilder s = new StringBuilder().append(String.join(csvSeparator,
-				attributs.stream().map(Attribute::getAttributeName).collect(Collectors.toList())));
+				attributs.stream().map(Attribute::getAttributeName).toList()));
 		s.append("; Probability\n");
 		for (ACoordinate<Attribute<? extends IValue>, IValue> coord : indexedKey) {
 			String line = "";

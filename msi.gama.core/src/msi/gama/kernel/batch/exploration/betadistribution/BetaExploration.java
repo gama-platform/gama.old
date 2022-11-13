@@ -142,7 +142,7 @@ public class BetaExploration extends AExplorationAlgorithm {
 
 		List<Batch> params = currentExperiment.getParametersToExplore().stream()
 				.filter(p -> p.getMinValue(scope) != null && p.getMaxValue(scope) != null).map(p -> p)
-				.collect(Collectors.toList());
+				.toList();
 
 		parameters = parameters == null ? params : parameters;
 		List<ParametersSet> sets;
@@ -216,7 +216,7 @@ public class BetaExploration extends AExplorationAlgorithm {
 
 	@Override
 	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

@@ -58,12 +58,12 @@ public class IRejectionSampler implements IEntitySampler<IPopulation<ADemoEntity
 	 */
 	@Override
 	public Collection<ADemoEntity> draw(int numberOfDraw) {
-		return IntStream.range(0,numberOfDraw).parallel().mapToObj(i -> this.draw()).collect(Collectors.toList());
+		return IntStream.range(0,numberOfDraw).parallel().mapToObj(i -> this.draw()).toList();
 	}
 
 	@Override
 	public String toCsv(String csvSeparator) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -83,7 +83,7 @@ public class IRejectionSampler implements IEntitySampler<IPopulation<ADemoEntity
 			try {
 				this.rejectionDistribution = gndmf.createDistributionFromDistributions(Stream.of(dToAdd,rejectD).collect(Collectors.toSet()));
 			} catch (IllegalDistributionCreation e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}

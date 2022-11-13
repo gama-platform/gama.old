@@ -18,7 +18,7 @@ import core.metamodel.attribute.Attribute;
 import core.metamodel.attribute.AttributeFactory;
 import core.metamodel.io.GSSurveyWrapper;
 import core.metamodel.value.IValue;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 import espacedev.gaml.extensions.genstar.type.GamaPopGenerator;
 import espacedev.gaml.extensions.genstar.utils.GenStarConstant;
 import espacedev.gaml.extensions.genstar.utils.GenStarConstant.GenerationAlgorithm;
@@ -144,7 +144,7 @@ public class GenstarAdderOperators {
 				// Si keys ont 1 seules element -> aggregation
 				
 			//	dd.addAttributes(attf.createRangeAggregatedAttribute("Age_2", new GSDataParser()
-			//			.getRangeTemplate(mapperA1.keySet().stream().collect(Collectors.toList())),
+			//			.getRangeTemplate(mapperA1.keySet().stream().toList()),
 			//			referentAgeAttribute, mapperA1));
 				
 			} catch (GSIllegalRangedData e) {
@@ -287,7 +287,7 @@ public class GenstarAdderOperators {
 			
 			gen.getInputAttributes().addAttributes(newAttribute);
 			 
-			 // TODO : à revoir les records ..........
+			 // TODO : ï¿½ revoir les records ..........
 		//	 if (record != null && ! record.isEmpty()) {
 		//		 gen.getInputAttributes().addRecords()
 		//				 gen.getAttf()
@@ -323,7 +323,7 @@ public class GenstarAdderOperators {
 		if (gen == null) { gen = new GamaPopGenerator(); }
 		gen.setMarginals(gen.getInputAttributes().getAttributes().stream()
 				.filter(att -> names.contains(att.getAttributeName()))
-				.collect(Collectors.toList()));
+				.toList());
 		return gen;
 	}
 	

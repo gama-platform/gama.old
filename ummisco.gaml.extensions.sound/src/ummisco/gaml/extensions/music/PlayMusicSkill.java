@@ -97,7 +97,7 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 	 *            the arguments
 	 */
 	public static void main(final String[] args) {
-		// TODO Auto-generated method stub
+		
 		final PlayMusicSkill mon_instru = new PlayMusicSkill();
 		mon_instru.note_on(75);
 		mon_instru.note_on(50);
@@ -105,7 +105,7 @@ public class PlayMusicSkill extends Skill implements IPlayMusic {
 		try {
 			Thread.sleep(1000);
 		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 

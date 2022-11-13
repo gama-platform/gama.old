@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -64,7 +65,8 @@ import core.metamodel.value.categoric.OrderedValue;
 import core.metamodel.value.numeric.RangeValue;
 import core.util.GSKeywords;
 import core.util.data.GSEnumDataType;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
+import core.util.exception.GenstarException;
 
 /**
  * The Class AttributeDeserializer.
@@ -72,7 +74,7 @@ import core.util.excpetion.GSIllegalRangedData;
 public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends IValue>> {
 
 	/** The des demo attributes. */
-	public static Map<String, Attribute<? extends IValue>> DES_DEMO_ATTRIBUTES = new HashMap<>();
+	protected static final Map<String, Attribute<? extends IValue>> DES_DEMO_ATTRIBUTES = new HashMap<>();
 
 	/**
 	 *
@@ -98,7 +100,7 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 
 	@Override
 	public IAttribute<? extends IValue> deserialize(final JsonParser p, final DeserializationContext ctxt)
-			throws IOException, JsonProcessingException {
+			throws IOException {
 		ObjectMapper om = (ObjectMapper) p.getCodec();
 		JsonNode on = om.readTree(p);
 
@@ -109,21 +111,22 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 				case MappedAttribute.SELF -> {
 					String mapperType = on.get(MappedAttribute.MAP).get(IAttributeMapper.TYPE).asText();
 					yield switch (mapperType) {
-											case IAttributeMapper.REC -> this.deserializeRMA(on);
-											case IAttributeMapper.AGG -> this.deserializeAMA(on);
-											case IAttributeMapper.UND -> this.deserializeUMA(on);
-											default -> throw new IllegalArgumentException(
-													"Trying to deserialize unrecognized mapper: " + mapperType);
-										};
+						case IAttributeMapper.REC -> this.deserializeRMA(on);
+						case IAttributeMapper.AGG -> this.deserializeAMA(on);
+						case IAttributeMapper.UND -> this.deserializeUMA(on);
+						default -> throw new IllegalArgumentException(
+								"Trying to deserialize unrecognized mapper: " + mapperType);
+					};
 				}
 				case RecordAttribute.SELF -> this.deserializeRA(on);
-				case EmergentAttribute.SELF -> this.deserializeEA(on);
-				default -> throw new IllegalArgumentException("Trying to parse unknown attribute type: " + attributeType);
+				case EmergentAttribute.SELF_LABEL -> this.deserializeEA(on);
+				default -> throw new IllegalArgumentException(
+						"Trying to parse unknown attribute type: " + attributeType);
 			};
 		} catch (GSIllegalRangedData e) {
 			e.printStackTrace();
 		}
-		throw new RuntimeException();
+		throw new GenstarException();
 	}
 
 	// ------------------ SPECIFIC DESERIALIZER ------------------ //
@@ -368,7 +371,7 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	 *
 	 */
 	private GSEnumDataType getType(final JsonNode attributeNode) {
-		return GSEnumDataType.valueOf(attributeNode.findValue(IValueSpace.TYPE).asText());
+		return GSEnumDataType.valueOf(attributeNode.findValue(IValueSpace.TYPE_LABEL).asText());
 	}
 
 	/**
@@ -382,8 +385,8 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	 * Get values from an attribute describes as a json node WARNING: only useful for demographic attribute
 	 */
 	private List<String> getValues(final JsonNode attributeNode) {
-		return attributeNode.findValue(IAttribute.VALUE_SPACE).findValue(IValueSpace.VALUES).findValues(IValue.VALUE)
-				.stream().map(JsonNode::asText).collect(Collectors.toList());
+		return attributeNode.findValue(IAttribute.VALUE_SPACE).findValue(IValueSpace.VALUES_LABEL)
+				.findValues(IValue.VALUE_LABEL).stream().map(JsonNode::asText).toList();
 	}
 
 	// REFERENT (DEMOGRAHIC) ATTRIBUTE
@@ -426,8 +429,8 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 		int i = 0;
 		while (themap.has(i)) {
 			String[] keyVal = themap.get(i++).asText().split(GSKeywords.SERIALIZE_KEY_VALUE_SEPARATOR);
-			for (String record : keyVal[1].split(GSKeywords.SERIALIZE_ELEMENT_SEPARATOR)) {
-				records.put(record, keyVal[0].trim());
+			for (String rec : keyVal[1].split(GSKeywords.SERIALIZE_ELEMENT_SEPARATOR)) {
+				records.put(rec, keyVal[0].trim());
 			}
 		}
 		return records;
@@ -445,15 +448,15 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	 */
 	private LinkedHashMap<String, String> getOrderedRecord(final JsonNode node) {
 		JsonNode mapArray = this.validateMapper(node);
-		LinkedHashMap<String, String> record = new LinkedHashMap<>();
+		LinkedHashMap<String, String> records = new LinkedHashMap<>();
 		int i = 0;
 		while (mapArray.has(i)) {
 			String[] keyVal = mapArray.get(i++).asText().split(GSKeywords.SERIALIZE_KEY_VALUE_SEPARATOR);
 			if (keyVal.length != 2)
 				throw new IllegalArgumentException("Not a key / value match but has " + keyVal.length + " match");
-			record.put(keyVal[0].trim(), keyVal[1].trim());
+			records.put(keyVal[0].trim(), keyVal[1].trim());
 		}
-		return record;
+		return records;
 	}
 
 	/**
@@ -476,9 +479,9 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 				throw new IllegalArgumentException("Not a key / value match but has " + keyVal.length + " match");
 			mapper.put(
 					Arrays.asList(keyVal[0].split(GSKeywords.SERIALIZE_ELEMENT_SEPARATOR)).stream().map(String::trim)
-							.collect(Collectors.toList()),
+							.toList(),
 					Arrays.asList(keyVal[1].split(GSKeywords.SERIALIZE_ELEMENT_SEPARATOR)).stream().map(String::trim)
-							.collect(Collectors.toList()));
+							.toList());
 		}
 		return mapper;
 	}
@@ -502,7 +505,7 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 			if (keyVal.length != 2)
 				throw new IllegalArgumentException("Not a key / value match but has " + keyVal.length + " match");
 			mapper.put(keyVal[0].trim(), Arrays.asList(keyVal[1].split(GSKeywords.SERIALIZE_ELEMENT_SEPARATOR)).stream()
-					.map(String::trim).collect(Collectors.toList()));
+					.map(String::trim).toList());
 		}
 		return mapper;
 	}
@@ -547,13 +550,12 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	/*
 	 * Build emergent attribute
 	 */
-	private EmergentAttribute<? extends IValue, ?, ?> getEmergentAttribute(final JsonNode node)
-			throws JsonParseException, JsonMappingException, JsonProcessingException, IOException {
+	private EmergentAttribute<? extends IValue, ?, ?> getEmergentAttribute(final JsonNode node) throws IOException {
 
 		String name = this.getName(node);
 
-		JsonNode function = node.get(EmergentAttribute.FUNCTION);
-		JsonNode transposer = node.get(EmergentAttribute.TRANSPOSER);
+		JsonNode function = node.get(EmergentAttribute.FUNCTION_LABEL);
+		JsonNode transposer = node.get(EmergentAttribute.TRANSPOSER_LABEL);
 		JsonNode mapping = function.get(IGSValueFunction.MAPPING);
 
 		EmergentAttribute<? extends IValue, ?, ?> att = null;
@@ -608,7 +610,7 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	 *
 	 */
 	private Map<String, String> getMapping(final JsonNode mapping) {
-		if (!mapping.isArray()) throw new RuntimeException("Error when deserializing mapping: " + mapping.toString());
+		if (!mapping.isArray()) throw new GenstarException("Error when deserializing mapping: " + mapping.toString());
 		Map<String, String> outputMap = new HashMap<>();
 		int i = 0;
 		while (mapping.has(i)) {
@@ -636,9 +638,8 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	/*
 	 *
 	 */
-	private Map<Integer, String> getCountMapping(final JsonNode mapping)
-			throws JsonParseException, JsonMappingException, IOException {
-		if (!mapping.isArray()) throw new RuntimeException("Error when deserializing mapping: " + mapping.toString());
+	private Map<Integer, String> getCountMapping(final JsonNode mapping) {
+		if (!mapping.isArray()) throw new GenstarException("Error when deserializing mapping: " + mapping.toString());
 		Map<Integer, String> outputMap = new HashMap<>();
 		int i = 0;
 		while (mapping.has(i)) {
@@ -667,7 +668,7 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	 */
 	@SuppressWarnings ("unchecked")
 	private <V extends IValue> IAggregatorValueFunction<V> getAggrgatorFunction(final JsonNode function)
-			throws JsonParseException, JsonMappingException, IOException {
+			throws IOException {
 		return new ObjectMapper().readValue(function.toString(), IAggregatorValueFunction.class);
 	}
 
@@ -689,38 +690,38 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	/*
 	 * Retrieve a collection transposer
 	 */
-	private IGSEntitySelector<Collection<IEntity<? extends IAttribute<? extends IValue>>>, ?> getCollectionTransposer(
-			final JsonNode node) throws JsonParseException, JsonMappingException, JsonProcessingException, IOException {
+	private IGSEntitySelector<Collection<IEntity<? extends IAttribute<? extends IValue>>>, ?>
+			getCollectionTransposer(final JsonNode node) throws IOException {
 
 		IGSEntitySelector<Collection<IEntity<? extends IAttribute<? extends IValue>>>, ?> transposer = null;
 
 		String type = node.get(IGSEntitySelector.TYPE).asText();
 
 		JsonNode transNode = node.get(IGSEntitySelector.MATCHERS);
-		String transType = transNode.get(IGSEntityMatcher.TYPE).asText();
+		String transType = transNode.get(IGSEntityMatcher.TYPE_LABEL).asText();
 
 		MatchType matchType = MatchType.valueOf(node.get(IGSEntitySelector.MATCH_TYPE).asText());
 		ImplicitEntityComparator comparator = this.getComparator(node.get(IGSEntitySelector.COMPARATOR));
 
-		if (type == GSMatchSelection.SELF) throw new IllegalArgumentException(
+		if (Objects.equals(type, GSMatchSelection.SELF)) throw new IllegalArgumentException(
 				"Trying to deserialize transposer to collection of sub entities with a selection filter");
 
 		switch (type) {
 			case GSMatchFilter.SELF:
-				if (transType == AttributeVectorMatcher.SELF) {
+				if (Objects.equals(transType, AttributeVectorMatcher.SELF)) {
 					transposer = new GSMatchFilter<>(
-							new AttributeVectorMatcher(this.getValueMatchers(node.get(IGSEntityMatcher.VECTOR))),
+							new AttributeVectorMatcher(this.getValueMatchers(node.get(IGSEntityMatcher.VECTOR_LABEL))),
 							matchType);
-				} else if (transType == TagMatcher.SELF) {
+				} else if (Objects.equals(transType, TagMatcher.SELF)) {
 					transposer = new GSMatchFilter<>(
-							new TagMatcher(this.getTagMatchers(node.get(IGSEntityMatcher.VECTOR))), matchType);
+							new TagMatcher(this.getTagMatchers(node.get(IGSEntityMatcher.VECTOR_LABEL))), matchType);
 				}
 				if (comparator == null && transposer != null) { transposer.setComparator(comparator); }
 				return transposer;
 			case GSNoFilter.SELF:
 				return new GSNoFilter();
 			default:
-				throw new RuntimeException("Deserialization failed to create IGSEntityTransposer of type " + type);
+				throw new GenstarException("Deserialization failed to create IGSEntityTransposer of type " + type);
 		}
 
 	}
@@ -743,15 +744,15 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	/*
 	 * Retrieve entity transposer
 	 */
-	private IGSEntitySelector<IEntity<? extends IAttribute<? extends IValue>>, ?> getEntityTransposer(
-			final JsonNode node) throws JsonParseException, JsonMappingException, JsonProcessingException, IOException {
+	private IGSEntitySelector<IEntity<? extends IAttribute<? extends IValue>>, ?>
+			getEntityTransposer(final JsonNode node) throws IOException {
 
 		IGSEntitySelector<IEntity<? extends IAttribute<? extends IValue>>, ?> transposer = null;
 
 		String tType = node.get(IGSEntitySelector.TYPE).asText();
 
 		JsonNode nodeMatcher = node.get(IGSEntitySelector.MATCHERS);
-		String mType = nodeMatcher.get(IGSEntityMatcher.TYPE).asText();
+		String mType = nodeMatcher.get(IGSEntityMatcher.TYPE_LABEL).asText();
 
 		MatchType matchType = MatchType.valueOf(node.get(IGSEntitySelector.MATCH_TYPE).asText());
 		ImplicitEntityComparator comparator = this.getComparator(node.get(IGSEntitySelector.COMPARATOR));
@@ -761,11 +762,11 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 
 		transposer = switch (mType) {
 			case AttributeVectorMatcher.SELF -> new GSMatchSelection<>(
-					new AttributeVectorMatcher(this.getValueMatchers(nodeMatcher.get(IGSEntityMatcher.VECTOR))),
+					new AttributeVectorMatcher(this.getValueMatchers(nodeMatcher.get(IGSEntityMatcher.VECTOR_LABEL))),
 					matchType);
 			case TagMatcher.SELF -> new GSMatchSelection<>(
-					new TagMatcher(this.getTagMatchers(nodeMatcher.get(IGSEntityMatcher.VECTOR))), matchType);
-			default -> throw new RuntimeException("Trying to deserialize " + IGSEntityMatcher.class.getSimpleName()
+					new TagMatcher(this.getTagMatchers(nodeMatcher.get(IGSEntityMatcher.VECTOR_LABEL))), matchType);
+			default -> throw new GenstarException("Trying to deserialize " + IGSEntityMatcher.class.getSimpleName()
 					+ " with unkown match type: " + mType);
 		};
 
@@ -791,9 +792,12 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 		int i = 0;
 		while (ArrayNode.has(i)) {
 			String val = ArrayNode.get(i++).asText();
-			IValue value = DES_DEMO_ATTRIBUTES.values().stream().filter(att -> att.getValueSpace().contains(val))
-					.findFirst().get().getValueSpace().getValue(val);
-			values.add(value);
+			Attribute<? extends IValue> attribute = DES_DEMO_ATTRIBUTES.values().stream()
+					.filter(att -> att.getValueSpace().contains(val)).findFirst().orElse(null);
+			if (attribute != null) {
+				IValue value = attribute.getValueSpace().getValue(val);
+				values.add(value);
+			}
 		}
 		return values.toArray(new IValue[values.size()]);
 	}
@@ -836,7 +840,7 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 	 * TODO: enable deserialization of Hamming distance based comparator
 	 */
 	private ImplicitEntityComparator getComparator(final JsonNode comparatorNode)
-			throws JsonParseException, JsonMappingException, IllegalArgumentException, IOException {
+			throws IllegalArgumentException, IOException {
 
 		ImplicitEntityComparator comparator = new ImplicitEntityComparator();
 
@@ -868,7 +872,7 @@ public class AttributeDeserializer extends StdDeserializer<IAttribute<? extends 
 			functions.add(om.readerFor(IComparatorFunction.class).readValue(arrayFunctions.get(index).asText()));
 		}
 
-		functions.stream().forEach(function -> comparator.setComparatorFunction(function));
+		functions.stream().forEach(comparator::setComparatorFunction);
 
 		return comparator;
 	}

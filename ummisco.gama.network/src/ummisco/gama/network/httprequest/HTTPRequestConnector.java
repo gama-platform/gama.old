@@ -76,25 +76,25 @@ public class HTTPRequestConnector extends Connector {
 
 	@Override
 	protected boolean isAlive(final IAgent agent) throws GamaNetworkException {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	protected void releaseConnection(final IScope scope) throws GamaNetworkException {
-		// TODO Auto-generated method stub
+		
 
 	}
 

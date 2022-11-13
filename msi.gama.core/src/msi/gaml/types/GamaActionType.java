@@ -52,7 +52,7 @@ public class GamaActionType extends GamaType<IDescription> {
 
 	@Override
 	public IDescription getDefault() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

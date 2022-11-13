@@ -321,7 +321,7 @@ public class PedestrianNetwork {
 				newLinks.add(Creation.link(scope, cn, pt));
 			}
 
-			for (IShape connection : newLinks.stream().filter(link -> !link.crosses(o)).collect(Collectors.toList())) {
+			for (IShape connection : newLinks.stream().filter(link -> !link.crosses(o)).toList()) {
 				connection.setAttribute(PedestrianRoadSkill.PEDESTRIAN_ROAD_STATUS, PedestrianRoadSkill.COMPLEX_STATUS);
 				currentLines.add(connection);
 			}

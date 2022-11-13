@@ -45,7 +45,7 @@ public class GSMatchFilter<T> extends AGSEntitySelector<Collection<IEntity<? ext
 	@Override
 	public <V extends IValue> Map<IAttribute<? extends IValue>, IValue> reverse(
 			EmergentAttribute<V, Collection<IEntity<? extends IAttribute<? extends IValue>>>, T> attribute, V value) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

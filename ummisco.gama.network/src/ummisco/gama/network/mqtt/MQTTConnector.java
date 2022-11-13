@@ -177,7 +177,7 @@ public final class MQTTConnector extends Connector {
 
 	@Override
 	public SocketService getSocketService() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 }

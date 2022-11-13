@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * AGosplIPF.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.algo.ipf;
 
 import java.util.Arrays;
@@ -56,14 +66,36 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public abstract class AGosplIPF<T extends Number> {
 
+	/** The step. */
 	private int step = 100;
-	private double delta = Math.pow(10, -4);
-	private double aapd = Double.MAX_VALUE;
 
+	/** The delta. */
+	private double delta = Math.pow(10, -4);
+
+	/** The aapd. */
+	// private double aapd = Double.MAX_VALUE;
+
+	/** The sample seed. */
 	protected IPopulation<ADemoEntity, Attribute<? extends IValue>> sampleSeed;
+
+	/** The marginals. */
 	protected INDimensionalMatrix<Attribute<? extends IValue>, IValue, T> marginals;
+
+	/** The marginal processor. */
 	protected MarginalsIPFBuilder<T> marginalProcessor;
 
+	/**
+	 * Instantiates a new a gospl IPF.
+	 *
+	 * @param sampleSeed
+	 *            the sample seed
+	 * @param marginalProcessor
+	 *            the marginal processor
+	 * @param step
+	 *            the step
+	 * @param delta
+	 *            the delta
+	 */
 	protected AGosplIPF(final IPopulation<ADemoEntity, Attribute<? extends IValue>> sampleSeed,
 			final MarginalsIPFBuilder<T> marginalProcessor, final int step, final double delta) {
 		this.sampleSeed = sampleSeed;
@@ -72,19 +104,43 @@ public abstract class AGosplIPF<T extends Number> {
 		this.delta = delta;
 	}
 
+	/**
+	 * Instantiates a new a gospl IPF.
+	 *
+	 * @param sampleSeed
+	 *            the sample seed
+	 * @param step
+	 *            the step
+	 * @param delta
+	 *            the delta
+	 */
 	protected AGosplIPF(final IPopulation<ADemoEntity, Attribute<? extends IValue>> sampleSeed, final int step,
 			final double delta) {
-		this(sampleSeed, new MarginalsIPFBuilder<T>(), step, delta);
+		this(sampleSeed, new MarginalsIPFBuilder<>(), step, delta);
 	}
 
+	/**
+	 * Instantiates a new a gospl IPF.
+	 *
+	 * @param sampleSeed
+	 *            the sample seed
+	 * @param marginalProcessor
+	 *            the marginal processor
+	 */
 	protected AGosplIPF(final IPopulation<ADemoEntity, Attribute<? extends IValue>> sampleSeed,
 			final MarginalsIPFBuilder<T> marginalProcessor) {
 		this.sampleSeed = sampleSeed;
 		this.marginalProcessor = marginalProcessor;
 	}
 
+	/**
+	 * Instantiates a new a gospl IPF.
+	 *
+	 * @param sampleSeed
+	 *            the sample seed
+	 */
 	protected AGosplIPF(final IPopulation<ADemoEntity, Attribute<? extends IValue>> sampleSeed) {
-		this(sampleSeed, new MarginalsIPFBuilder<T>());
+		this(sampleSeed, new MarginalsIPFBuilder<>());
 	}
 
 	/**
@@ -128,13 +184,13 @@ public abstract class AGosplIPF<T extends Number> {
 	 *
 	 * @see AGosplIPF#process()
 	 *
-	 * @param delta
-	 * @param step
+	 * @param delta1
+	 * @param step1
 	 * @return
 	 */
-	public AFullNDimensionalMatrix<T> process(final double delta, final int step) {
-		this.delta = delta;
-		this.step = step;
+	public AFullNDimensionalMatrix<T> process(final double delta1, final int step1) {
+		this.delta = delta1;
+		this.step = step1;
 		return process();
 	}
 
@@ -166,10 +222,8 @@ public abstract class AGosplIPF<T extends Number> {
 							+ Arrays.toString(seed.getDimensions().toArray()));
 
 		List<Attribute<? extends IValue>> unmatchSeedAttribute =
-				seed.getDimensions().stream()
-						.filter(dim -> marginals.getDimensions().contains(dim)
-								|| marginals.getDimensions().contains(dim.getReferentAttribute()))
-						.collect(Collectors.toList());
+				seed.getDimensions().stream().filter(dim -> marginals.getDimensions().contains(dim)
+						|| marginals.getDimensions().contains(dim.getReferentAttribute())).toList();
 
 		GSPerformanceUtil gspu = new GSPerformanceUtil("*** IPF PROCEDURE ***", Level.INFO);
 		gspu.sysoStempPerformance(0, this);
@@ -181,14 +235,14 @@ public abstract class AGosplIPF<T extends Number> {
 				.map(d -> d.getAttributeName() + " = " + d.getValueSpace().getValues().size())
 				.collect(Collectors.joining(";")));
 
-		Collection<Margin<T>> marginals = marginalProcessor.buildCompliantMarginals(this.marginals, seed);
+		Collection<Margin<T>> theMarginals = marginalProcessor.buildCompliantMarginals(this.marginals, seed);
 
 		int stepIter = step;
-		int totalNumberOfMargins = marginals.stream().mapToInt(Margin::size).sum();
+		int totalNumberOfMargins = theMarginals.stream().mapToInt(Margin::size).sum();
 		gspu.sysoStempMessage("Convergence criterias are: step = " + step + " | delta = " + delta);
 
 		double total = this.marginals.getVal().getValue().doubleValue();
-		aapd = marginals.stream()
+		double aapd = theMarginals.stream()
 				.mapToDouble(m -> m.getMarginDescriptors().stream().mapToDouble(
 						md -> Math.abs(seed.getVal(md.getSeed()).getDiff(m.getControl(md)).doubleValue()) / total)
 						.sum())
@@ -197,11 +251,11 @@ public abstract class AGosplIPF<T extends Number> {
 
 		double relativeIncrease = Double.MAX_VALUE;
 
-		while (stepIter-- > 0 ? aapd > delta || relativeIncrease < delta : false) {
+		while (stepIter-- > 0 && aapd > delta || relativeIncrease < delta) {
 			if (stepIter % (int) (step * 0.1) == 0d) {
 				gspu.sysoStempMessage("Step = " + (step - stepIter) + " | average error = " + aapd, Level.DEBUG);
 			}
-			for (Margin<T> margin : marginals) {
+			for (Margin<T> margin : theMarginals) {
 				for (MarginDescriptor seedMarginalDescriptor : margin.getMarginDescriptors()) {
 					double marginValue = margin.getControl(seedMarginalDescriptor).getValue().doubleValue();
 					double actualValue = seed.getVal(seedMarginalDescriptor.getSeed()).getValue().doubleValue();
@@ -234,7 +288,7 @@ public abstract class AGosplIPF<T extends Number> {
 				}
 			}
 
-			double cachedAapd = marginals.stream()
+			double cachedAapd = theMarginals.stream()
 					.mapToDouble(m -> m.getMarginDescriptors().stream().mapToDouble(
 							md -> Math.abs(seed.getVal(md.getSeed()).getDiff(m.getControl(md)).doubleValue()) / total)
 							.sum())

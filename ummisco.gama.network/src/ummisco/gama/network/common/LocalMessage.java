@@ -77,7 +77,7 @@ public class LocalMessage implements ConnectorMessage {
 
 	@Override
 	public boolean isCommandMessage() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

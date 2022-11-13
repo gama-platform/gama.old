@@ -110,7 +110,7 @@ public class NetworkSkill extends MessagingSkill {
 			final BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 			return stdError.readLine();
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return "";

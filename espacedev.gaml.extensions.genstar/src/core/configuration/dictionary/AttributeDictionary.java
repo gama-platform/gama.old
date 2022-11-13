@@ -36,7 +36,7 @@ import core.util.GSKeywords;
  *
  * @param <A>
  */
-@JsonTypeName(value = IGenstarDictionary.SELF)
+@JsonTypeName(value = IGenstarDictionary.SELF_LABEL)
 /*
 @JsonPropertyOrder({ IGenstarDictionary.LEVEL, 
 	IGenstarDictionary.SERIAL, IGenstarDictionary.WEIGHT, 
@@ -76,12 +76,12 @@ public class AttributeDictionary implements IGenstarDictionary<Attribute<? exten
 	
 	@JsonCreator
 	public AttributeDictionary(
-			@JsonProperty(IGenstarDictionary.ATTRIBUTES) Collection<Attribute<? extends IValue>> attributes,
-			@JsonProperty(IGenstarDictionary.RECORDS) Collection<RecordAttribute<Attribute<? extends IValue>, Attribute<? extends IValue>>> records,
-			@JsonProperty(IGenstarDictionary.SIZE) EmergentAttribute<? extends IValue, Collection<IEntity<? extends IAttribute<? extends IValue>>>, ?> sizeAttribute,
-			@JsonProperty(IGenstarDictionary.WEIGHT) String weight,
-			@JsonProperty(IGenstarDictionary.SERIAL) String serial,
-			@JsonProperty(IGenstarDictionary.LEVEL) int level) {
+			@JsonProperty(IGenstarDictionary.ATTRIBUTES_LABEL) Collection<Attribute<? extends IValue>> attributes,
+			@JsonProperty(IGenstarDictionary.RECORDS_LABEL) Collection<RecordAttribute<Attribute<? extends IValue>, Attribute<? extends IValue>>> records,
+			@JsonProperty(IGenstarDictionary.SIZE_LABEL) EmergentAttribute<? extends IValue, Collection<IEntity<? extends IAttribute<? extends IValue>>>, ?> sizeAttribute,
+			@JsonProperty(IGenstarDictionary.WEIGHT_LABEL) String weight,
+			@JsonProperty(IGenstarDictionary.SERIAL_LABEL) String serial,
+			@JsonProperty(IGenstarDictionary.LEVEL_LABEL) int level) {
 		
 		if (records == null)
 			records = Collections.emptyList();

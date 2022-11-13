@@ -66,7 +66,7 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 	}
 
 	@Override
-	public GamlResource getResource() { // TODO Auto-generated method stub
+	public GamlResource getResource() { 
 		return (GamlResource) super.getResource();
 	}
 

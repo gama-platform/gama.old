@@ -77,7 +77,7 @@ public class LayoutCircle {
 		/*
 		 * List<IShape> orderedNode = graph.vertexSet().stream().sorted((v1,v2) -> graph.degreeOf(v1) <
 		 * graph.degreeOf(v2) ? 1 : (v1.getAgent().getIndex() < v2.getAgent().getIndex() ? -1 : 1))
-		 * .collect(Collectors.toList());
+		 * .toList();
 		 */
 
 		// Not find a simple to implement algorithm

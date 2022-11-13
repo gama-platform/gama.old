@@ -61,7 +61,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	@Override
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
-		// TODO Auto-generated method stub
+		
 
 		switch (type_val) {
 			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
@@ -128,7 +128,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	@Override
 	protected void clearDataSet(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		super.clearDataSet(scope);
 		final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
 		for (int i = plot.getDataset().getRowCount() - 1; i >= 1; i--) {
@@ -177,19 +177,19 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		// "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+"
 		// jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse
 		// "+nbseries);
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void removeSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
+		
 		super.removeSerie(scope, serieid);
 		this.clearDataSet(scope);
 	}
 
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
+		
 
 		chart.getPlot();
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
@@ -236,7 +236,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 	 * @param scope the scope
 	 */
 	private void resetDomainAxis(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		chart.getPlot();
 
 	}
@@ -250,7 +250,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	@Override
 	public void initChart_post_data_init(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		super.initChart_post_data_init(scope);
 		final SpiderWebPlot pp = (SpiderWebPlot) chart.getPlot();
 		

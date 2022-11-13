@@ -17,7 +17,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import core.metamodel.attribute.Attribute;
 import core.metamodel.value.IValue;
@@ -51,7 +50,7 @@ public class GenStarGamaSurveyUtils {
 	 *             the file not found exception
 	 */
 	public GenStarGamaSurveyUtils(final IScope scope, final GamaCSVFile survey,
-			final List<Attribute<? extends IValue>> atts) throws FileNotFoundException {
+			final List<Attribute<? extends IValue>> atts) {
 		this.path = Paths.get(FileUtils.constructAbsoluteFilePath(scope, survey.getPath(scope), false));
 		this.stats = CsvReader.getStats(this.path.toString(), null);
 		this.atts = atts;
@@ -80,7 +79,7 @@ public class GenStarGamaSurveyUtils {
 	private Double total = null;
 
 	/**
-	 * TODO : find the number of row headers
+	 * find the number of row headers
 	 *
 	 * @return
 	 */
@@ -94,8 +93,8 @@ public class GenStarGamaSurveyUtils {
 
 				do {
 					if (reader.readRecord()) {
-						List<String> vals = Arrays.asList(reader.getValues()).stream().filter(s -> !s.isBlank())
-								.collect(Collectors.toList());
+						List<String> vals =
+								Arrays.asList(reader.getValues()).stream().filter(s -> !s.isBlank()).toList();
 						Optional<Attribute<? extends IValue>> oa = atts.stream().filter(a -> a.getValueSpace()
 								.getValues().stream().allMatch(v -> vals.contains(v.getStringValue()))).findFirst();
 						if (oa.isPresent()) {
@@ -107,7 +106,9 @@ public class GenStarGamaSurveyUtils {
 					first += 1;
 				} while (!isData);
 
-			} catch (final IOException e) {}
+			} catch (final IOException e) {
+
+			}
 			rowHeaderNumber[0] = first;
 			columnHeaderNumber[1] = headerLength;
 		}
@@ -116,7 +117,7 @@ public class GenStarGamaSurveyUtils {
 	}
 
 	/**
-	 * TODO : find the number of column headers
+	 * find the number of column headers
 	 *
 	 * @return
 	 */
@@ -131,8 +132,7 @@ public class GenStarGamaSurveyUtils {
 
 				boolean isData = false;
 				if (reader.readRecord()) {
-					List<String> vals = Arrays.asList(reader.getValues()).stream().filter(s -> !s.isBlank())
-							.collect(Collectors.toList());
+					List<String> vals = Arrays.asList(reader.getValues()).stream().filter(s -> !s.isBlank()).toList();
 					int tmp = 0;
 					do {
 						String current = vals.get(tmp++);

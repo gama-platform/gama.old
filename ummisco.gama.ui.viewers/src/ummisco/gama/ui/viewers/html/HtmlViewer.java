@@ -83,7 +83,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 			try {
 				this.setUrl(input.getURI().toURL().toString());
 			} catch (final MalformedURLException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}

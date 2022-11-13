@@ -26,7 +26,7 @@ public class EmergentTransposerSerializer extends StdSerializer<IGSEntitySelecto
 
 	@Override
 	public void serialize(IGSEntitySelector<?,?> arg0, JsonGenerator arg1, SerializerProvider arg2) throws IOException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	

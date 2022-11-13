@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaRange.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaRange.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.type;
 
@@ -24,25 +24,31 @@ import msi.gaml.types.IType;
 /**
  * The Class GamaRange.
  */
-@vars({ 
-	@variable(name = "min_value", type = IType.FLOAT, doc = 	@doc("The lower bound of the range.")),
-	@variable(name = "max_value", type = IType.FLOAT, doc = @doc("The upper bound of the range."))
-	})
-public class GamaRange implements IValue{
+@vars ({ @variable (
+		name = "min_value",
+		type = IType.FLOAT,
+		doc = @doc ("The lower bound of the range.")),
+		@variable (
+				name = "max_value",
+				type = IType.FLOAT,
+				doc = @doc ("The upper bound of the range.")) })
+public class GamaRange implements IValue {
 
 	/** The min. */
-	Number min; 
-	
+	Number min;
+
 	/** The max. */
 	Number max;
-	
+
 	/**
 	 * Instantiates a new gama range.
 	 *
-	 * @param min the min
-	 * @param max the max
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
 	 */
-	public GamaRange(Number min, Number max) {
+	public GamaRange(final Number min, final Number max) {
 		this.min = min;
 		this.max = max;
 	}
@@ -52,61 +58,54 @@ public class GamaRange implements IValue{
 	 *
 	 * @return the min
 	 */
-	@getter("min_value")
-	public Number getMin() {
-		return min.doubleValue();
-	}
+	@getter ("min_value")
+	public Number getMin() { return min.doubleValue(); }
 
 	/**
 	 * Gets the max.
 	 *
 	 * @return the max
 	 */
-	@getter("max_value")
-	public Number getMax() {
-		return max.doubleValue();
-	}
-	
+	@getter ("max_value")
+	public Number getMax() { return max.doubleValue(); }
+
 	@Override
-	public String serialize(boolean includingBuiltIn) {
-		return min +"->" +max;
+	public String serialize(final boolean includingBuiltIn) {
+		return min + "->" + max;
 	}
 
 	@Override
-	public String stringValue(IScope scope) {
-		return serialize(true);
-	}
-	
-	public String toString()  {
+	public String stringValue(final IScope scope) {
 		return serialize(true);
 	}
 
 	@Override
-	public IValue copy(IScope scope) {
+	public String toString() {
+		return serialize(true);
+	}
+
+	@Override
+	public IValue copy(final IScope scope) {
 		return new GamaRange(min, max);
 	}
-	
+
 	/**
 	 * Cast.
 	 *
-	 * @param scope the scope
-	 * @param type the type
+	 * @param scope
+	 *            the scope
+	 * @param type
+	 *            the type
 	 * @return the object
 	 */
-	@SuppressWarnings("rawtypes")
-	public Object cast(IScope scope, IType type) {
-		if(type == null) { return this; }
-		
-		if(type.id() == IType.INT) {
-			return intValue();
-		} 
-		if(type.id() == IType.FLOAT) {
-			return floatValue();
-		}
-		if(type.id() == IType.STRING) {
-			return stringValue(scope);
-		}
-		return this;
+	@SuppressWarnings ("rawtypes")
+	public Object cast(final IScope scope, final IType type) {
+		return type == null ? this : switch (type.id()) {
+			case IType.INT -> intValue();
+			case IType.FLOAT -> floatValue();
+			case IType.STRING -> stringValue(scope);
+			default -> this;
+		};
 	}
 
 	/**
@@ -114,7 +113,7 @@ public class GamaRange implements IValue{
 	 *
 	 * @return the double
 	 */
-	// TODO : à raffiner ... 
+	// à raffiner ...
 	private double floatValue() {
 		Random random = GenstarRandom.getInstance();
 		return (max.doubleValue() - min.doubleValue() + 1) * random.nextDouble() + min.doubleValue();

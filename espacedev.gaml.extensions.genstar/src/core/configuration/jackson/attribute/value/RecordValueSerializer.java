@@ -75,7 +75,7 @@ public class RecordValueSerializer<K extends IValue> extends StdSerializer<Encod
 				+GSKeywords.SERIALIZE_KEY_VALUE_SEPARATOR
 				+e.getValue().stream().map(r -> r.getStringValue())
 					.collect(Collectors.joining(GSKeywords.SERIALIZE_ELEMENT_SEPARATOR)))
-				.collect(Collectors.toList());
+				.toList();
 	}
 	
 }

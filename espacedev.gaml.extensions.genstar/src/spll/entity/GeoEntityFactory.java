@@ -24,7 +24,7 @@ import core.metamodel.attribute.AttributeFactory;
 import core.metamodel.value.IValue;
 import core.metamodel.value.numeric.ContinuousValue;
 import core.util.data.GSDataParser;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 import spll.io.SPLRasterFile;
 import spll.util.SpllGeotoolsAdapter;
 import ummisco.gama.dev.utils.DEBUG;

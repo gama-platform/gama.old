@@ -2144,7 +2144,7 @@ public class Graphs {
 	public static IGraph setKShortestPathAlgorithm(final IScope scope, final IGraph graph,
 			final String shortestpathAlgo) {
 		final List<String> existingAlgo = Arrays.asList(GamaGraph.kShortestPathAlgorithm.values()).stream()
-				.map(kShortestPathAlgorithm::toString).collect(Collectors.toList());
+				.map(kShortestPathAlgorithm::toString).toList();
 		if (!existingAlgo.contains(shortestpathAlgo)) throw GamaRuntimeException.error("The K shortest paths algorithm "
 				+ shortestpathAlgo + " does not exist. Possible K shortest paths algorithms: " + existingAlgo, scope);
 		graph.setKShortestPathAlgorithm(shortestpathAlgo);
@@ -2179,7 +2179,7 @@ public class Graphs {
 	public static IGraph setShortestPathAlgorithm(final IScope scope, final IGraph graph,
 			final String shortestpathAlgo) {
 		final List<String> existingAlgo = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
-				.map(shortestPathAlgorithm::toString).collect(Collectors.toList());
+				.map(shortestPathAlgorithm::toString).toList();
 		if (!existingAlgo.contains(shortestpathAlgo)) throw GamaRuntimeException.error("The shortest path algorithm "
 				+ shortestpathAlgo + " does not exist. Possible shortest path algorithms: " + existingAlgo, scope);
 		graph.setShortestPathAlgorithm(shortestpathAlgo);

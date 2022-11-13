@@ -68,7 +68,7 @@ public class ArduinoConnector extends Connector {
 	@Override
 	protected boolean isAlive(IAgent agent) throws GamaNetworkException {
 		return true;
-		// TODO Auto-generated method stub
+		
 		// return false;
 	}
 
@@ -90,13 +90,13 @@ public class ArduinoConnector extends Connector {
 
 	@Override
 	protected void sendMessage(IAgent sender, String receiver, String content) throws GamaNetworkException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public SocketService getSocketService() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

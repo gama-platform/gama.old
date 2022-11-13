@@ -382,8 +382,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final String type = (typeExp != null ? typeExp : "text").trim().toLowerCase();
 			//
 			switch (type) {
-				case "shp":
-				case "json":
+				case "shp", "json":
 					Object agents = item.value(scope);
 					if (agents instanceof ISpecies) {
 						agents = scope.getAgent().getPopulationFor((ISpecies) agents);
@@ -393,8 +392,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					} else if (!(agents instanceof IList)) return null;
 					saveShape((IList<? extends IShape>) agents, fileToSave, scope, "json".equals(type));
 					break;
-				case "text":
-				case "csv":
+				case "text", "csv":
 					final boolean rewrite = shouldOverwrite(scope);
 					if (rewrite && exists) {
 						fileToSave.delete();
@@ -414,8 +412,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						saveAsc(species1, fileToSave, scope);
 					}
 					break;
-				case "geotiff":
-				case "image":
+				case "geotiff", "image":
 					v = item.value(scope);
 					if (v instanceof GamaField) {
 						saveRasterImage((GamaField) v, path, scope, "geotiff".equals(type));
@@ -425,8 +422,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						saveRasterImage(species2, path, scope, "geotiff".equals(type));
 					}
 					break;
-				case "kml":
-				case "kmz":
+				case "kml", "kmz":
 					final Object kml = item.value(scope);
 					if (!(kml instanceof GamaKmlExport)) return null;
 					if ("kml".equals(type)) {
@@ -1532,6 +1528,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public void setRuntimeArgs(final IScope scope, final Arguments args) {
-		// TODO Auto-generated method stub
+
 	}
 }

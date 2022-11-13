@@ -19,10 +19,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import core.metamodel.value.numeric.template.GSRangeTemplate;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 
 /**
  *
@@ -39,6 +38,12 @@ import core.util.excpetion.GSIllegalRangedData;
  *
  */
 public class GSDataParser {
+
+	/** The Constant DOES_NOT_REPRESENT_ANY_VALUE. */
+	private static final String DOES_NOT_REPRESENT_ANY_VALUE = " does not represent any value";
+
+	/** The Constant THE_STRING_RANGED_DATA. */
+	private static final String THE_STRING_RANGED_DATA = "The string ranged data ";
 
 	/** The Constant DEFAULT_NUM_MATCH. */
 	public static final String DEFAULT_NUM_MATCH = "#";
@@ -137,7 +142,9 @@ public class GSDataParser {
 		List<Integer> rangeInt = new ArrayList<>();
 		for (String range : ranges) { rangeInt.addAll(this.getRangedIntegerData(range, numMatcher)); }
 		Collections.sort(rangeInt);
-		String lowerBound = "", upperBound = "", middle = "";
+		String lowerBound = "";
+		String upperBound = "";
+		String middle = "";
 		for (String range : ranges) {
 			List<Integer> ints = this.getRangedIntegerData(range, numMatcher);
 			if (ints.size() == 1) {
@@ -218,11 +225,11 @@ public class GSDataParser {
 		List<Double> list = new ArrayList<>();
 		List<String> stringRange = this.getNumbers(range, numMatcher.getMatch());
 		stringRange.stream().forEach(String::trim);
-		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).toList();
 		if (stringRange.isEmpty())
-			throw new GSIllegalRangedData("The string ranged data " + range + " does not represent any value");
-		if (stringRange.size() > 2) throw new GSIllegalRangedData(
-				"The string ranged data " + range + " has more than 2 (lower / upper) values");
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + DOES_NOT_REPRESENT_ANY_VALUE);
+		if (stringRange.size() > 2)
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + " has more than 2 (lower / upper) values");
 		for (String i : stringRange) { list.add(Double.valueOf(i)); }
 		return list;
 	}
@@ -236,27 +243,29 @@ public class GSDataParser {
 	 * @param range
 	 * @param nullValue
 	 * @param minVal
+	 * @deprecated
 	 * @return {@link List} of min and max double values based on given {@code minVal} and parsed max {@code range}
 	 * @throws GSIllegalRangedData
 	 */
-	@Deprecated
+	@Deprecated (
+			forRemoval = true)
 	public List<Double> getRangedData(String range, final NumMatcher numMatcher, final Double minVal,
 			final Double maxVal) throws GSIllegalRangedData {
 		List<Double> list = new ArrayList<>();
 		range = range.replaceAll(numMatcher.getMatch(), SPLIT_OPERATOR);
 		List<String> stringRange = Arrays.asList(range.trim().split(SPLIT_OPERATOR));
 		stringRange.stream().forEach(String::trim);
-		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).toList();
 		if (stringRange.isEmpty())
-			throw new GSIllegalRangedData("The string ranged data " + range + " does not represent any value");
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + DOES_NOT_REPRESENT_ANY_VALUE);
 		if (stringRange.size() > 2)
-			throw new GSIllegalRangedData("The string ranged data " + range + " has more than 2 (min / max) values");
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + " has more than 2 (min / max) values");
 		if (stringRange.size() == 1) {
 			if (minVal == null && maxVal == null) throw new GSIllegalRangedData(
 					"for implicit bounded values, either min or max value in argument must be set to a concret value !");
-			if (maxVal == null && minVal != null) {
+			if (maxVal == null) {
 				stringRange.add(0, String.valueOf(minVal));
-			} else if (minVal == null && maxVal != null) { stringRange.add(String.valueOf(maxVal)); }
+			} else if (minVal == null) { stringRange.add(String.valueOf(maxVal)); }
 			if (minVal != null && maxVal != null
 					&& Double.valueOf(stringRange.get(0)) - minVal <= maxVal - Double.valueOf(stringRange.get(0))) {
 				stringRange.add(0, String.valueOf(minVal));
@@ -282,11 +291,11 @@ public class GSDataParser {
 		List<Integer> list = new ArrayList<>();
 		List<String> stringRange = this.getNumbers(range, numMatcher.getMatch());
 		stringRange.stream().forEach(String::trim);
-		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).toList();
 		if (stringRange.isEmpty())
-			throw new GSIllegalRangedData("The string ranged data " + range + " does not represent any value");
-		if (stringRange.size() > 2) throw new GSIllegalRangedData(
-				"The string ranged data " + range + " has more than 2 (lower / upper) values");
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + DOES_NOT_REPRESENT_ANY_VALUE);
+		if (stringRange.size() > 2)
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + " has more than 2 (lower / upper) values");
 		for (String i : stringRange) { list.add(Integer.valueOf(i)); }
 		return list;
 	}
@@ -303,28 +312,44 @@ public class GSDataParser {
 	 * @return {@link List} of min and max values
 	 * @throws GSIllegalRangedData
 	 */
-	@Deprecated
+
+	/**
+	 * Gets the ranged data.
+	 *
+	 * @param range
+	 *            the range
+	 * @param numMatcher
+	 *            the num matcher
+	 * @param minVal
+	 *            the min val
+	 * @param maxVal
+	 *            the max val
+	 * @deprecated
+	 * @return the ranged data
+	 * @throws GSIllegalRangedData
+	 *             the GS illegal ranged data
+	 */
+	@Deprecated (
+			forRemoval = true)
 	public List<Integer> getRangedData(String range, final NumMatcher numMatcher, final Integer minVal,
 			final Integer maxVal) throws GSIllegalRangedData {
 		List<Integer> list = new ArrayList<>();
 		range = range.replaceAll(numMatcher.getMatch(), SPLIT_OPERATOR);
 		List<String> stringRange = Arrays.asList(range.trim().split(SPLIT_OPERATOR));
 		stringRange.stream().forEach(String::trim);
-		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
+		stringRange = stringRange.stream().filter(s -> !s.isEmpty()).toList();
 		if (stringRange.isEmpty())
-			throw new GSIllegalRangedData("The string ranged data " + range + " does not represent any value");
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + DOES_NOT_REPRESENT_ANY_VALUE);
 		if (stringRange.size() > 2)
-			throw new GSIllegalRangedData("The string ranged data " + range + " has more than 2 (min / max) values");
+			throw new GSIllegalRangedData(THE_STRING_RANGED_DATA + range + " has more than 2 (min / max) values");
 		if (stringRange.size() == 1) {
 			if (minVal == null && maxVal == null) throw new GSIllegalRangedData(
 					"for implicit bounded values, either min or max value in argument must be set to a concret value !");
-			if (maxVal == null && minVal != null) {
+			if (maxVal == null || minVal != null
+					&& Integer.valueOf(stringRange.get(0)) - minVal <= maxVal - Integer.valueOf(stringRange.get(0))) {
 				stringRange.add(0, String.valueOf(minVal));
-			} else if (minVal == null && maxVal != null || minVal != null && maxVal != null
-					&& Integer.valueOf(stringRange.get(0)) - minVal > maxVal - Integer.valueOf(stringRange.get(0))) {
-				stringRange.add(String.valueOf(maxVal));
 			} else {
-				stringRange.add(0, String.valueOf(minVal));
+				stringRange.add(String.valueOf(maxVal));
 			}
 		}
 		for (String i : stringRange) { list.add(Integer.valueOf(i)); }
@@ -375,8 +400,7 @@ public class GSDataParser {
 	 * @return
 	 */
 	public List<Number> getNumbers(final String string, final NumMatcher matcher) {
-		return this.getNumbers(string, matcher.getMatch()).stream().map(this::parseNumbers)
-				.collect(Collectors.toList());
+		return this.getNumbers(string, matcher.getMatch()).stream().map(this::parseNumbers).toList();
 	}
 
 	/**

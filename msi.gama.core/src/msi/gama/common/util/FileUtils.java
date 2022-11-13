@@ -105,7 +105,7 @@ public class FileUtils {
 		try {
 			ROOT.getPathVariableManager().setValue("CACHE_LOC", ROOT.getLocation().append(CACHE_FOLDER_PATH));
 		} catch (final CoreException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

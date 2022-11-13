@@ -34,7 +34,7 @@ public class GSNoFilter extends AGSEntitySelector<Collection<IEntity<? extends I
 	public <V extends IValue> Map<IAttribute<? extends IValue>, IValue> reverse(
 			EmergentAttribute<V, Collection<IEntity<? extends IAttribute<? extends IValue>>>, Object> attribute,
 			V value) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

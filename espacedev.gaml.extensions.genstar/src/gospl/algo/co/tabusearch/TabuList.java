@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * TabuList.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.algo.co.tabusearch;
 
 import java.util.ArrayList;
@@ -7,49 +17,53 @@ import java.util.List;
 import gospl.GosplPopulation;
 import gospl.algo.co.metamodel.solution.ISyntheticPopulationSolution;
 
+/**
+ * The Class TabuList.
+ */
 public class TabuList implements ITabuList {
-	
-	List<ISyntheticPopulationSolution<GosplPopulation>> tabuList = new ArrayList<>();
+
+	/** The tabu list. */
+	List<ISyntheticPopulationSolution<GosplPopulation>> list = new ArrayList<>();
+
+	/** The max size. */
 	private int maxSize;
-	
-	public TabuList(int size){
-		if(size < 1)
+
+	/**
+	 * Instantiates a new tabu list.
+	 *
+	 * @param size
+	 *            the size
+	 */
+	public TabuList(final int size) {
+		if (size < 1) {
 			this.maxSize = 1;
-		else
+		} else {
 			this.maxSize = size;
+		}
 	}
 
 	@Override
 	public Iterator<ISyntheticPopulationSolution<GosplPopulation>> iterator() {
-		return tabuList.iterator();
+		return list.iterator();
 	}
 
 	@Override
-	public void add(ISyntheticPopulationSolution<GosplPopulation> solution) {
-		if(tabuList.size() == maxSize)
-			tabuList.remove(tabuList.get(0));
-		tabuList.add(solution);
+	public void add(final ISyntheticPopulationSolution<GosplPopulation> solution) {
+		if (list.size() == maxSize) { list.remove(list.get(0)); }
+		list.add(solution);
 	}
 
 	@Override
-	public boolean contains(ISyntheticPopulationSolution<GosplPopulation> solution) {
-		return tabuList.contains(solution);
+	public boolean contains(final ISyntheticPopulationSolution<GosplPopulation> solution) {
+		return list.contains(solution);
 	}
-	
+
 	@Override
 	public int maxSize() {
 		return maxSize;
 	}
-	
-	@Override
-	public int getSize() {
-		return tabuList.size();
-	}
 
 	@Override
-	public void updateSize(Integer currentIteration, ISyntheticPopulationSolution<GosplPopulation> bestSolutionFound) {
-		// TODO Auto-generated method stub
-		
-	}
+	public int getSize() { return list.size(); }
 
 }

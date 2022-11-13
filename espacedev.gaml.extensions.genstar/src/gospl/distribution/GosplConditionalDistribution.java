@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplConditionalDistribution.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA
+ * modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.distribution;
 
 import java.util.Arrays;
@@ -16,6 +26,7 @@ import java.util.stream.Stream;
 import core.metamodel.attribute.Attribute;
 import core.metamodel.value.IValue;
 import core.util.data.GSDataParser;
+import core.util.exception.GenstarException;
 import core.util.random.GenstarRandom;
 import gospl.distribution.exception.IllegalDistributionCreation;
 import gospl.distribution.matrix.AFullNDimensionalMatrix;
@@ -32,6 +43,14 @@ import gospl.distribution.matrix.coordinate.GosplCoordinate;
  */
 public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<Double> {
 
+	/**
+	 * Instantiates a new gospl conditional distribution.
+	 *
+	 * @param jointDistributionSet
+	 *            the joint distribution set
+	 * @throws IllegalDistributionCreation
+	 *             the illegal distribution creation
+	 */
 	protected GosplConditionalDistribution(final Set<AFullNDimensionalMatrix<Double>> jointDistributionSet)
 			throws IllegalDistributionCreation {
 		super(jointDistributionSet);
@@ -43,7 +62,7 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 	 * {@inheritDoc}
 	 * <p>
 	 * Provide the most informed control associated with the given set of aspects <br>
-	 * TODO: describe the whole process
+	 * describe the whole process
 	 */
 	@Override
 	public AControl<Double> getVal(final Collection<IValue> aspects) {
@@ -60,17 +79,17 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 				.collect(Collectors.groupingBy(this::getDimension,
 						Collectors.mapping(Function.identity(), Collectors.toSet())));
 
-		for (Attribute<? extends IValue> mAtt : mapAttToValues.keySet()) {
-			Set<IValue> rValues = mapAttToValues.get(mAtt).stream()
-					.flatMap(a -> mAtt.findMappedAttributeValues(a).stream()).collect(Collectors.toSet());
+		mapAttToValues.forEach((mAtt, value) -> {
+			Set<IValue> rValues =
+					value.stream().flatMap(a -> mAtt.findMappedAttributeValues(a).stream()).collect(Collectors.toSet());
 			Set<IValue> rToMValues = rValues.stream().flatMap(a -> mAtt.findMappedAttributeValues(a).stream())
 					.collect(Collectors.toSet());
-			if (!mapAttToValues.get(mAtt).equals(rToMValues))
+			if (!value.equals(rToMValues))
 				throw new IllegalArgumentException("Elicit a value for which this n dimensional matrix " + "("
 						+ this.getLabel() + ") has divergent information about");
-			aspects.removeAll(mapAttToValues.get(mAtt));
+			aspects.removeAll(value);
 			aspects.addAll(rValues);
-		}
+		});
 
 		// Setup a record of visited dimension to avoid duplicated probabilities
 		Set<Attribute<? extends IValue>> remainingDimension =
@@ -78,30 +97,27 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 
 		// Select matrices that contains at least one concerned dimension and ordered them
 		// in decreasing order of the number of matches
-		List<AFullNDimensionalMatrix<Double>> concernedMatrices = jointDistributionSet.stream().filter(
-				matrix -> matrix.getDimensions().stream().anyMatch(dimension -> remainingDimension.contains(dimension)))
+		List<AFullNDimensionalMatrix<Double>> concernedMatrices = jointDistributionSet.stream()
+				.filter(matrix -> matrix.getDimensions().stream().anyMatch(remainingDimension::contains))
 				.sorted((m1, m2) -> {
-					int diffRef = (int) (m1.getDimensions().stream().filter(dim -> remainingDimension.contains(dim))
-							.count()
-							- m2.getDimensions().stream().filter(dim -> remainingDimension.contains(dim)).count());
-					if ((diffRef > 0) || (diffRef == 0 && m1.getDimensions().stream()
+					int diffRef = (int) (m1.getDimensions().stream().filter(remainingDimension::contains).count()
+							- m2.getDimensions().stream().filter(remainingDimension::contains).count());
+					if (diffRef > 0 || diffRef == 0 && m1.getDimensions().stream()
 							.filter(dim -> remainingDimension.contains(dim.getReferentAttribute())
 									&& !dim.getReferentAttribute().equals(dim))
 							.count() <= m2.getDimensions().stream()
 									.filter(dim -> remainingDimension.contains(dim.getReferentAttribute())
 											&& !dim.getReferentAttribute().equals(dim))
-									.count()))
+									.count())
 						return -1;
 					return 1;
-				}).collect(Collectors.toList());
+				}).toList();
 
 		// Store visited dimension to compute conditional probabilities
 		Set<Attribute<? extends IValue>> assignedDimension = new HashSet<>();
 
 		for (AFullNDimensionalMatrix<Double> mat : concernedMatrices) {
-			if (mat.getDimensions().stream().noneMatch(dimension -> remainingDimension.contains(dimension))) {
-				continue;
-			}
+			if (mat.getDimensions().stream().noneMatch(remainingDimension::contains)) { continue; }
 
 			// Setup concerned values
 			Set<IValue> concernedValues =
@@ -127,7 +143,7 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 			// WARNING: some error test to erase when finished
 			if (Stream.concat(bottomup.values().stream(), topdown.values().stream())
 					.anyMatch(control -> control.getValue() > 1d))
-				throw new RuntimeException("Some conditional probabilities exceed 1:" + "\nBottomup: "
+				throw new GenstarException("Some conditional probabilities exceed 1:" + "\nBottomup: "
 						+ bottomup.entrySet().stream().map(Entry::toString).collect(Collectors.joining("\n"))
 						+ "\nTopdown: "
 						+ topdown.entrySet().stream().map(Entry::toString).collect(Collectors.joining("\n")));
@@ -172,8 +188,8 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 			conditionalProba.multiply(newProbability);
 
 			// Update visited dimension
-			Set<Attribute<? extends IValue>> updateDimension = concernedValues.stream()
-					.filter(val -> aspects.contains(val)).map(this::getDimension).collect(Collectors.toSet());
+			Set<Attribute<? extends IValue>> updateDimension = concernedValues.stream().filter(aspects::contains)
+					.map(this::getDimension).collect(Collectors.toSet());
 			assignedDimension.addAll(updateDimension);
 			remainingDimension.removeAll(updateDimension);
 		}
@@ -277,12 +293,23 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 
 	@Override
 	public boolean checkGlobalSum() {
-		// TODO Auto-generated method stub
+
 		return jointDistributionSet.stream().allMatch(AFullNDimensionalMatrix::checkGlobalSum);
 	}
 
 	// -------------------- Inner Utilities -------------------- //
 
+	/**
+	 * Estimate bottom up references.
+	 *
+	 * @param mat
+	 *            the mat
+	 * @param aspects
+	 *            the aspects
+	 * @param assignedDimension
+	 *            the assigned dimension
+	 * @return the map
+	 */
 	/*
 	 * Setup conditional bottom up values: value for which this matrix has partial bottom-up information, i.e. one
 	 * attribute of this matrix has for referent one value attribute for which probability has already be defined
@@ -296,13 +323,12 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 						Collectors.mapping(Function.identity(), Collectors.toSet())));
 
 		Map<Attribute<? extends IValue>, Attribute<? extends IValue>> refAttributeToBottomup = new HashMap<>();
-		for (Attribute<? extends IValue> da : ratb.keySet()) {
-			refAttributeToBottomup.put(da, ratb.get(da).stream().sorted(
-					(a1, a2) -> a1.getValueSpace().getValues().size() < a2.getValueSpace().getValues().size() ? -1
-							: a1.getValueSpace().getValues().size() > a2.getValueSpace().getValues().size() ? 1
-							: GenstarRandom.getInstance().nextDouble() > 0.5 ? -1 : 1)
-					.findFirst().get());
-		}
+
+		ratb.forEach((da, set) -> refAttributeToBottomup.put(da, set.stream()
+				.sorted((a1, a2) -> a1.getValueSpace().getValues().size() < a2.getValueSpace().getValues().size() ? -1
+						: a1.getValueSpace().getValues().size() > a2.getValueSpace().getValues().size() ? 1
+						: GenstarRandom.getInstance().nextDouble() > 0.5 ? -1 : 1)
+				.findFirst().orElse(null)));
 
 		if (refAttributeToBottomup.isEmpty()) return Collections.emptyMap();
 		// Transpose top down value set to control proportional referent
@@ -314,14 +340,24 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 				.collect(Collectors.toSet());
 		if (noneAllignedAttribute.stream().anyMatch(
 				att -> mat.getDimensions().stream().noneMatch(matAtt -> matAtt.getReferentAttribute().equals(att))))
-			throw new RuntimeException("Estimated bottom up reference targeted dimension out of the concerned matrix:"
+			throw new GenstarException("Estimated bottom up reference targeted dimension out of the concerned matrix:"
 					+ "\nConcerned matrix dimensions = " + Arrays.toString(mat.getDimensions().toArray())
-					+ "\nTargeted dimensions = "
-					+ res.keySet().stream().flatMap(set -> set.stream().map(val -> val.getValueSpace().getAttribute()))
-							.collect(Collectors.toList()));
+					+ "\nTargeted dimensions = " + res.keySet().stream()
+							.flatMap(set -> set.stream().map(val -> val.getValueSpace().getAttribute())).toList());
 		return res;
 	}
 
+	/**
+	 * Estimate top down references.
+	 *
+	 * @param mat
+	 *            the mat
+	 * @param aspects
+	 *            the aspects
+	 * @param assignedDimension
+	 *            the assigned dimension
+	 * @return the map
+	 */
 	/*
 	 * Setup conditional top down values: value for which this matrix has partial top down information, i.e. one
 	 * attribute of this matrix is the referent of one value attribute for which probability has already be defined
@@ -339,57 +375,68 @@ public class GosplConditionalDistribution extends ASegmentedNDimensionalMatrix<D
 				computeControlReferences(assignedAttributeToTopdown, aspects, assignedDimension);
 		if (res.keySet().stream().flatMap(Set::stream)
 				.anyMatch(a -> !mat.getDimensions().contains(a.getValueSpace().getAttribute())))
-			throw new RuntimeException("Estimated bottom up reference targeted dimension out of the concerned matrix:"
+			throw new GenstarException("Estimated bottom up reference targeted dimension out of the concerned matrix:"
 					+ "\nConcerned matrix dimensions = " + Arrays.toString(mat.getDimensions().toArray())
-					+ "\nTargeted dimensions = "
-					+ res.keySet().stream().flatMap(Set::stream).collect(Collectors.toList()));
+					+ "\nTargeted dimensions = " + res.keySet().stream().flatMap(Set::stream).toList());
 		return res;
 	}
 
+	/**
+	 * Compute control references.
+	 *
+	 * @param assignedAttToCurrentAtt
+	 *            the assigned att to current att
+	 * @param aspects
+	 *            the aspects
+	 * @param assignedDimension
+	 *            the assigned dimension
+	 * @return the map
+	 */
 	private Map<Set<IValue>, AControl<Double>> computeControlReferences(
 			final Map<Attribute<? extends IValue>, Attribute<? extends IValue>> assignedAttToCurrentAtt,
 			final Collection<IValue> aspects, final Set<Attribute<? extends IValue>> assignedDimension) {
 		// Map of referent attribute and their already defined value
-		Map<Attribute<? extends IValue>, Set<IValue>> CurrentAttToAssignedValues = aspects.stream()
+		Map<Attribute<? extends IValue>, Set<IValue>> currentAttToAssignedValues = aspects.stream()
 				.filter(as -> assignedDimension.contains(as.getValueSpace().getAttribute())
 						&& assignedAttToCurrentAtt.containsKey(as.getValueSpace().getAttribute()))
 				.collect(Collectors.groupingBy(as -> assignedAttToCurrentAtt.get(as.getValueSpace().getAttribute()),
 						Collectors.mapping(Function.identity(), Collectors.toSet())));
 		// Transpose bottom up value set to control proportional referent
 		Map<Set<IValue>, AControl<Double>> output = new HashMap<>();
-		for (Attribute<? extends IValue> assignedAtt : assignedAttToCurrentAtt.keySet()) {
+		assignedAttToCurrentAtt.forEach((assignedAtt, attValue) -> {
+
 			// Distinguish bottomup & topdown attribute from assigned & current attribute
 			Attribute<? extends IValue> bottomupAtt =
-					assignedAtt.getReferentAttribute().equals(assignedAttToCurrentAtt.get(assignedAtt)) ? assignedAtt
-							: assignedAttToCurrentAtt.get(assignedAtt);
+					assignedAtt.getReferentAttribute().equals(attValue) ? assignedAtt : attValue;
 			// Map bottomup & topdown attribute to according current & assigned values
-			Set<IValue> currentMappedVals = CurrentAttToAssignedValues.get(assignedAttToCurrentAtt.get(assignedAtt))
-					.stream().flatMap(val -> bottomupAtt.findMappedAttributeValues(val).stream())
-					.collect(Collectors.toSet());
+			Set<IValue> currentMappedVals = currentAttToAssignedValues.get(attValue).stream()
+					.flatMap(val -> bottomupAtt.findMappedAttributeValues(val).stream()).collect(Collectors.toSet());
 			Set<IValue> assignedMappedVals = currentMappedVals.stream()
 					.flatMap(val -> bottomupAtt.findMappedAttributeValues(val).stream()).collect(Collectors.toSet());
 			// Find the proper matrix to compute conditional probability
 			AFullNDimensionalMatrix<Double> matrix = this.jointDistributionSet.stream()
-					.filter(m -> m.getDimensions().contains(assignedAtt)).findAny().get();
+					.filter(m -> m.getDimensions().contains(assignedAtt)).findAny().orElse(null);
 			// Use two information: the probability to have assigned values, knowing that current mapped values
 			// probability
 			// in this particular matrix (that is we need to know how current mapped values mapped to assigned values)
-			Set<IValue> assignedValues = CurrentAttToAssignedValues.get(assignedAttToCurrentAtt.get(assignedAtt));
+			Set<IValue> assignedValues = currentAttToAssignedValues.get(attValue);
 
 			/*
 			 * HINT: some syso to debug System.out.println("Assigned: "+Arrays.toString(assignedValues.toArray()));
 			 * System.out.println("Current: "+Arrays.toString(currentMappedVals.toArray()));
 			 * System.out.println("Assigned mapped: "+Arrays.toString(assignedMappedVals.toArray()));
 			 */
-
-			if (assignedMappedVals.stream().anyMatch(val -> this.getDimension(val).getEmptyValue().equals(val))) {
-				output.put(currentMappedVals, matrix.getNulVal());
-			} else {
-				output.put(currentMappedVals, matrix.getVal(assignedValues).multiply(
-						matrix.getVal(assignedValues).multiply(1d / matrix.getVal(assignedMappedVals).getValue())));
-				// Pretty slow to multiply twice
+			if (matrix != null) {
+				if (assignedMappedVals.stream().anyMatch(val -> this.getDimension(val).getEmptyValue().equals(val))) {
+					output.put(currentMappedVals, matrix.getNulVal());
+				} else {
+					output.put(currentMappedVals, matrix.getVal(assignedValues).multiply(
+							matrix.getVal(assignedValues).multiply(1d / matrix.getVal(assignedMappedVals).getValue())));
+					// Pretty slow to multiply twice
+				}
 			}
-		}
+
+		});
 		return output;
 	}
 

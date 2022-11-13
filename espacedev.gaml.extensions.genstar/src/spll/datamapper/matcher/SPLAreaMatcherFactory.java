@@ -45,7 +45,7 @@ public class SPLAreaMatcherFactory implements ISPLMatcherFactory<SPLVariable, Do
 				.stream().map(entity -> getMatchers(entity, 
 						regressorsFile.getGeoEntityIteratorWithin(entity.getGeometry()), 
 						this.variables, gspu))
-				.flatMap(list -> list.stream()).collect(Collectors.toList());
+				.flatMap(list -> list.stream()).toList();
 		gspu.sysoStempMessage("-------------------------\n"
 				+ "process ends up with "+varList.size()+" collected matches");
 		return varList;

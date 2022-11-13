@@ -783,7 +783,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public IGraphics getIGraphics() { // TODO Auto-generated method stub
+	public IGraphics getIGraphics() { 
 		return renderer;
 	}
 

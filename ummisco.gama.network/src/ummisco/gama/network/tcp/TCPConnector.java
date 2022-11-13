@@ -153,7 +153,7 @@ public class TCPConnector extends Connector {
 				socket.sendMessage(content,receiver);
 			}
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

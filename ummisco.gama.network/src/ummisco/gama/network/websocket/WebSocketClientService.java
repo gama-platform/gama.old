@@ -49,10 +49,10 @@ public class WebSocketClientService extends ClientService {
 				socket = client.getSocket();
 				
 			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -93,7 +93,7 @@ public class WebSocketClientService extends ClientService {
 			}
 			socket.close();
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

@@ -13,7 +13,7 @@ import core.metamodel.attribute.Attribute;
 import core.metamodel.attribute.AttributeFactory;
 import core.metamodel.value.IValue;
 import core.util.data.GSEnumDataType;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 
 /**
  * A simple utility class that enable to transpose geotools object and variable into Gen* object

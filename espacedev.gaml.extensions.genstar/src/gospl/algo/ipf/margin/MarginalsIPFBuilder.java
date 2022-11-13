@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * MarginalsIPFBuilder.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gospl.algo.ipf.margin;
 
 import java.util.ArrayList;
@@ -151,7 +161,7 @@ public class MarginalsIPFBuilder<T extends Number> {
 		Map<Attribute<? extends IValue>, Attribute<? extends IValue>> seedToControlAttribute = new HashMap<>();
 		for (Attribute<? extends IValue> sAttribute : seed.getDimensions()) {
 			List<Attribute<? extends IValue>> cAttList =
-					control.getDimensions().stream().filter(ca -> ca.isLinked(sAttribute)).collect(Collectors.toList());
+					control.getDimensions().stream().filter(ca -> ca.isLinked(sAttribute)).toList();
 			// Only keep the most inform control attribute
 			Attribute<? extends IValue> mostInformedControlAtt = null;
 			if (cAttList.size() == 1) {
@@ -207,7 +217,7 @@ public class MarginalsIPFBuilder<T extends Number> {
 			for (Set<IValue> descriptors : controlMarginals) {
 				tmpDescriptors.addAll(att.getValueSpace().getValues().stream()
 						.map(val -> Stream.concat(descriptors.stream(), Stream.of(val)).collect(Collectors.toSet()))
-						.collect(Collectors.toList()));
+						.toList());
 			}
 			controlMarginals = tmpDescriptors;
 		}

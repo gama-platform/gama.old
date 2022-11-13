@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GSUtilPopulation.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.generator.util;
 
 import java.io.IOException;
@@ -14,7 +24,7 @@ import core.configuration.GenstarJsonUtil;
 import core.configuration.dictionary.AttributeDictionary;
 import core.metamodel.attribute.Attribute;
 import core.metamodel.value.IValue;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 import core.util.random.GenstarRandom;
 import gospl.GosplPopulation;
 import gospl.distribution.GosplNDimensionalMatrixFactory;
@@ -36,24 +46,38 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GSUtilPopulation {
 
+	/** The Constant NO_POPULATION_HAVE_BEEN_GENERATED_SEE_BUILD_POPULATION. */
+	private static final String NO_POPULATION_HAVE_BEEN_GENERATED_SEE_BUILD_POPULATION =
+			"No population have been generated - see #buildPopulation";
+
+	/** The generator. */
 	private ISyntheticGosplPopGenerator generator;
 
+	/** The population. */
 	private GosplPopulation population = null;
 
+	/** The distribution. */
 	private AFullNDimensionalMatrix<Double> distribution = null;
+
+	/** The contingency. */
 	private AFullNDimensionalMatrix<Integer> contingency = null;
 
+	/** The dico. */
 	private AttributeDictionary dico;
+
+	/** The path to dictionary. */
 	private final Path pathToDictionary =
 			FileSystems.getDefault().getPath("src", "test", "resources", "attributedictionary");
-	public static String defaultDictionary = "defaultDictionary.gns";
+
+	/** The default dictionary. */
+	public static final String defaultDictionary = "defaultDictionary.gns";
 
 	/**
 	 * Default constructor that use a pre-define dictionary of attributes.
 	 *
 	 * @throws GSIllegalRangedData
 	 */
-	public GSUtilPopulation() throws GSIllegalRangedData {
+	public GSUtilPopulation() {
 		this(defaultDictionary);
 	}
 
@@ -90,7 +114,7 @@ public class GSUtilPopulation {
 			this.dico = new GenstarJsonUtil().unmarshalFromGenstarJson(pathToDictionary.resolve(dictionaryFile),
 					AttributeDictionary.class);
 		} catch (IllegalArgumentException | IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		this.generator = generator;
@@ -105,7 +129,7 @@ public class GSUtilPopulation {
 		try {
 			this.dico = new GenstarJsonUtil().unmarshalFromGenstarJson(dictionaryFile, AttributeDictionary.class);
 		} catch (IllegalArgumentException | IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		this.generator = new GSUtilGenerator(dico);
@@ -121,7 +145,7 @@ public class GSUtilPopulation {
 			this.dico = new GenstarJsonUtil().unmarshalFromGenstarJson(pathToDictionary.resolve(dictionaryFile),
 					AttributeDictionary.class);
 		} catch (IllegalArgumentException | IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		this.generator = new GSUtilGenerator(dico);
@@ -189,7 +213,7 @@ public class GSUtilPopulation {
 	 */
 	public AFullNDimensionalMatrix<Integer> getContingency() {
 		if (this.population == null)
-			throw new NullPointerException("No population have been generated - see #buildPopulation");
+			throw new NullPointerException(NO_POPULATION_HAVE_BEEN_GENERATED_SEE_BUILD_POPULATION);
 		if (this.contingency == null) {
 			this.contingency = new GosplNDimensionalMatrixFactory().createContingency(this.population);
 		}
@@ -204,7 +228,7 @@ public class GSUtilPopulation {
 	 */
 	public AFullNDimensionalMatrix<Double> getFrequency() {
 		if (this.population == null)
-			throw new NullPointerException("No population have been generated - see #buildPopulation");
+			throw new NullPointerException(NO_POPULATION_HAVE_BEEN_GENERATED_SEE_BUILD_POPULATION);
 		if (this.distribution == null) {
 			this.distribution = new GosplNDimensionalMatrixFactory().createDistribution(this.population);
 		}
@@ -221,7 +245,7 @@ public class GSUtilPopulation {
 	public ASegmentedNDimensionalMatrix<Double> getSegmentedFrequency(final int segmentSize)
 			throws IllegalDistributionCreation {
 		if (this.population == null)
-			throw new NullPointerException("No population have been generated - see #buildPopulation");
+			throw new NullPointerException(NO_POPULATION_HAVE_BEEN_GENERATED_SEE_BUILD_POPULATION);
 		DEBUG.OUT("Try to build segmented matrix with {} dimensions" + this.dico.getAttributes().size());
 		Map<Attribute<? extends IValue>, Double> attributesProb =
 				this.dico.getAttributes().stream().collect(Collectors.toMap(Function.identity(), att -> 0.5));

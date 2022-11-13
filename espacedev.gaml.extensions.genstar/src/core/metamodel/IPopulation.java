@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * IPopulation.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package core.metamodel;
 
 import java.util.Collection;
@@ -8,15 +18,13 @@ import core.metamodel.entity.IEntity;
 import core.metamodel.value.IValue;
 
 /**
- * A population is a collection of entity characterized by a set of attribute.
- * Each attribute is made of one or more values, and a particular entity should have
- * a precise value for each.
+ * A population is a collection of entity characterized by a set of attribute. Each attribute is made of one or more
+ * values, and a particular entity should have a precise value for each.
  * <p>
- * More formally, an {@link IPopulation} is a {@link Collection} of {@link IEntity}
- * characterized by the same set of {@link IAttribute} and specified by a
- * corresponding set of {@link IValue}; i.e. each attribute is binded to a value 
+ * More formally, an {@link IPopulation} is a {@link Collection} of {@link IEntity} characterized by the same set of
+ * {@link IAttribute} and specified by a corresponding set of {@link IValue}; i.e. each attribute is binded to a value
  * for a particular entity
- * 
+ *
  * @author gospl-team
  *
  */
@@ -24,38 +32,42 @@ public interface IPopulation<E extends IEntity<A>, A extends IAttribute<? extend
 
 	/**
 	 * Returns the set of the attributs which exist in this population
+	 *
 	 * @return
 	 */
-	public Set<A> getPopulationAttributes();
-	
+	Set<A> getPopulationAttributes();
+
 	/**
-	 * returns the population attribute for the given name of attribute,
-	 * or null if it does not exists
+	 * returns the population attribute for the given name of attribute, or null if it does not exists
+	 *
 	 * @param attribute
 	 * @return
 	 */
-	public A getPopulationAttributeNamed(String name);
-	
+	A getPopulationAttributeNamed(String name);
+
 	/**
 	 * Returns true if the population contains the given attribute.
+	 *
 	 * @param name
 	 * @return
 	 */
-	public default boolean hasPopulationAttributeNamed(String name) {
+	default boolean hasPopulationAttributeNamed(final String name) {
 		return getPopulationAttributeNamed(name) != null;
 	}
-	
+
 	/**
 	 * returns true if all the entities are of type type.
+	 *
 	 * @param type
 	 * @return
 	 */
-	public boolean isAllPopulationOfType(String type);
-	
+	boolean isAllPopulationOfType(String type);
+
 	/**
 	 * Return a copy of this object
+	 *
 	 * @return
 	 */
-	public IPopulation<E, A> clone();
-	
+	IPopulation<E, A> clone();
+
 }

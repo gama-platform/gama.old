@@ -102,10 +102,11 @@ public class GraphMLWriter {
 	 */
 	protected static void writeHeader(final PrintStream ps) {
 		ps.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		ps.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\"  \n"
-				+ "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-				+ "    xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns\n"
-				+ "     http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">");
+		ps.println("""
+				<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+				  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				  xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns"
+				  http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">""");
 
 	}
 
@@ -127,9 +128,9 @@ public class GraphMLWriter {
 
 		for (Attribute<? extends IValue> a : population.getPopulationAttributes()) {
 			ps.print("<key id=\"");
-			ps.print(a.getAttributeName()); // TODO escape
+			ps.print(a.getAttributeName()); // escape
 			ps.print("\" for=\"node\" attr.name=\"");
-			ps.print(a.getDescription()); // TODO escape
+			ps.print(a.getDescription()); // escape
 			ps.print("\" attr.type=\"");
 			switch (a.getValueSpace().getType()) {
 				case Boolean:
@@ -141,9 +142,7 @@ public class GraphMLWriter {
 				case Integer:
 					ps.print("integer");
 					break;
-				case Nominal:
-				case Order:
-				case Range:
+				case Nominal, Order, Range:
 					ps.print("string");
 					break;
 			}
@@ -196,7 +195,7 @@ public class GraphMLWriter {
 		// attributes
 		for (Attribute<? extends IValue> a : e.getAttributes()) {
 			ps.print("        <data key=\"");
-			ps.print(a.getAttributeName()); // TODO escape
+			ps.print(a.getAttributeName()); // escape
 			ps.print("\">");
 			ps.print(e.getValueForAttribute(a).getStringValue());
 			ps.println("</data>");

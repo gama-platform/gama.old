@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * PopulationRandomNeighborSearch.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gospl.algo.co.metamodel.neighbor;
 
 import java.util.Collection;
@@ -10,16 +20,32 @@ import core.util.GSPerformanceUtil.Level;
 import gospl.GosplPopulation;
 import gospl.sampler.co.MicroDataSampler;
 
+/**
+ * The Class PopulationRandomNeighborSearch.
+ *
+ * @param <Predicate> the generic type
+ */
 public class PopulationRandomNeighborSearch<Predicate>
 		implements IPopulationNeighborSearch<GosplPopulation, Predicate> {
 
+	/** The to sample. */
 	private MicroDataSampler toSample;
+	
+	/** The use weights. */
 	private boolean useWeights;
 
+	/**
+	 * Instantiates a new population random neighbor search.
+	 */
 	public PopulationRandomNeighborSearch() {
 		this(false);
 	}
 
+	/**
+	 * Instantiates a new population random neighbor search.
+	 *
+	 * @param useWeights the use weights
+	 */
 	public PopulationRandomNeighborSearch(final boolean useWeights) {
 		this.useWeights = useWeights;
 	}

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * HillClimbing.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.algo.co.hillclimbing;
 
 import core.util.GSPerformanceUtil;
@@ -20,12 +30,31 @@ import gospl.algo.co.metamodel.solution.ISyntheticPopulationSolution;
  */
 public class HillClimbing extends AOptimizationAlgorithm<GosplPopulation> {
 
+	/** The nb iteration. */
 	private final int nbIteration;
 
+	/**
+	 * Instantiates a new hill climbing.
+	 *
+	 * @param fitnessThreshold
+	 *            the fitness threshold
+	 * @param nbIteration
+	 *            the nb iteration
+	 */
 	public HillClimbing(final double fitnessThreshold, final int nbIteration) {
 		this(new PopulationEntityNeighborSearch(), fitnessThreshold, nbIteration);
 	}
 
+	/**
+	 * Instantiates a new hill climbing.
+	 *
+	 * @param neighborSearch
+	 *            the neighbor search
+	 * @param fitnessThreshold
+	 *            the fitness threshold
+	 * @param nbIteration
+	 *            the nb iteration
+	 */
 	public HillClimbing(final IPopulationNeighborSearch<GosplPopulation, ?> neighborSearch,
 			final double fitnessThreshold, final int nbIteration) {
 		super(neighborSearch, fitnessThreshold);
@@ -65,7 +94,6 @@ public class HillClimbing extends AOptimizationAlgorithm<GosplPopulation> {
 				gspu.sysoStempPerformance(iter / gspu.getObjectif(), this);
 				gspu.sysoStempMessage("Best fitness = " + bestFitness + " (buffer = " + buffer + ") | Pop size = "
 						+ bestSolution.getSolution().size());
-				// System.out.println("BF = "+bestFitness+" | CF = "+currentFitness);
 			}
 		}
 

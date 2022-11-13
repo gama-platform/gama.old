@@ -46,7 +46,7 @@ public class PostProcessManager {
 			PostProcessor pp = (PostProcessor) this.getClass().getClassLoader().loadClass(classname).newInstance();
 			addPostProcessor(pp);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

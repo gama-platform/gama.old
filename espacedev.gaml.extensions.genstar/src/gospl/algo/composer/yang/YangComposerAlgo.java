@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * YangComposerAlgo.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gospl.algo.composer.yang;
 
 import java.util.HashSet;
@@ -9,12 +19,27 @@ import gospl.GosplPopulation;
 import gospl.distribution.matrix.INDimensionalMatrix;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class YangComposerAlgo.
+ */
 public class YangComposerAlgo {
 
+	/** The pop parents. */
 	protected GosplPopulation popParents;
+	
+	/** The pop children. */
 	protected GosplPopulation popChildren;
+	
+	/** The p matching. */
 	protected INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> pMatching;
 
+	/**
+	 * Instantiates a new yang composer algo.
+	 *
+	 * @param popParents the pop parents
+	 * @param popChildren the pop children
+	 * @param pMatching the matching
+	 */
 	public YangComposerAlgo(final GosplPopulation popParents, final GosplPopulation popChildren,
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> pMatching) {
 

@@ -121,19 +121,19 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public IShape copy(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public boolean covers(final IShape g) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean crosses(final IShape g) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -142,163 +142,163 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public double euclidianDistanceTo(final GamaPoint g) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public IAgent getAgent() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Envelope3D getEnvelope() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Type getGeometricalType() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Geometry getInnerGeometry() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public boolean intersects(final IShape g) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean touches(final IShape g) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean partiallyOverlaps(final IShape g) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean isLine() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean isPoint() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public void setAgent(final IAgent agent) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void setInnerGeometry(final Geometry intersection) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void setDepth(final double depth) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public IMap<String, Object> getOrCreateAttributes() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public boolean isMultiple() {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public Double getArea() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Double getVolume() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public double getPerimeter() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public IList<GamaShape> getHoles() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public GamaPoint getCentroid() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public GamaShape getExteriorRing(final IScope scope) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Double getWidth() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Double getHeight() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Double getDepth() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public GamaShape getGeometricEnvelope() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -307,73 +307,73 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public IList<? extends IShape> getGeometries() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public IType<?> getGamlType() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	//
 	// @Override
 	// public Map<String, Object> getAttributes() {
-	// // TODO Auto-generated method stub
+	// 
 	// return null;
 	// }
 
 	@Override
 	public Object getAttribute(final String key) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void setAttribute(final String key, final Object value) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public boolean hasAttribute(final String key) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public int compareTo(final IAgent o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

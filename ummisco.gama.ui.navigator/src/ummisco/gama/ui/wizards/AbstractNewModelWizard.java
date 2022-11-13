@@ -92,7 +92,7 @@ public abstract class AbstractNewModelWizard extends Wizard implements INewWizar
 				TEMPLATES.put(name, uri.getPath());
 
 			} catch (final URISyntaxException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 

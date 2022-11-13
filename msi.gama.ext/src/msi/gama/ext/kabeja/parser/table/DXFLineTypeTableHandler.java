@@ -51,7 +51,7 @@ public class DXFLineTypeTableHandler extends AbstractTableHandler {
      * @see de.miethxml.kabeja.parser.table.DXFTableHandler#getTableKey()
      */
     public String getTableKey() {
-        // TODO Auto-generated method stub
+        
         return TABLE_KEY;
     }
 

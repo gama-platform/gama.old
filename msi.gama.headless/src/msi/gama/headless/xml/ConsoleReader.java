@@ -48,7 +48,7 @@ public abstract class ConsoleReader {
 			try {
 				entry = entry + br.readLine();
 			} catch (final IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		} while (!entry.contains(END_OF_FILE));

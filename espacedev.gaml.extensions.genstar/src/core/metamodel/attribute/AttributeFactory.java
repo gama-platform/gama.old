@@ -64,7 +64,8 @@ import core.metamodel.value.numeric.template.GSRangeTemplate;
 import core.util.GSKeywords;
 import core.util.data.GSDataParser;
 import core.util.data.GSEnumDataType;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
+import core.util.exception.GenstarException;
 
 /**
  * Main factory to build attribute. Anyone that wants to build attribute should refers to one method below:
@@ -123,7 +124,7 @@ public class AttributeFactory {
 		if (!GSEnumDataType.Order.getGenstarType().equals(type) && !GSEnumDataType.Nominal.getGenstarType().equals(type)
 				&& !GSEnumDataType.Boolean.getGenstarType().equals(type)
 				&& !GSEnumDataType.Range.getGenstarType().equals(type))
-			throw new RuntimeException(type.getCanonicalName() + " has not any "
+			throw new GenstarException(type.getCanonicalName() + " has not any "
 					+ GSEnumDataType.class.getCanonicalName() + " equivalent");
 		if (NIUs.containsKey(name)) return (Attribute<V>) NIUs.get(name);
 		return (Attribute<V>) NIUs.put(name, new Attribute<V>(name));
@@ -147,7 +148,7 @@ public class AttributeFactory {
 			case Nominal -> createNominalAttribute(name, new GSCategoricTemplate());
 			case Range -> throw new IllegalArgumentException("Cannot create range without values to setup template");
 			case Boolean -> createBooleanAttribute(name);
-			default -> throw new RuntimeException("Creation attribute failure");
+			default -> throw new GenstarException("Creation attribute failure");
 		};
 	}
 
@@ -236,7 +237,7 @@ public class AttributeFactory {
 		} else if (GSEnumDataType.Range.getGenstarType().equals(type)) {
 			attribute = (Attribute<V>) createRangeAttribute(name, values);
 		} else
-			throw new RuntimeException(type.getCanonicalName() + " has not any "
+			throw new GenstarException(type.getCanonicalName() + " has not any "
 					+ GSEnumDataType.class.getCanonicalName() + " equivalent");
 		final IValueSpace<V> vs = attribute.getValueSpace();
 		values.stream().forEach(val -> vs.addValue(val));
@@ -296,11 +297,10 @@ public class AttributeFactory {
 							Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 			case Nominal -> createNominalAttribute(name, new GSCategoricTemplate(), referent, map);
 			case Range -> createRangeAttribute(name,
-					new GSDataParser().getRangeTemplate(
-							map.keySet().stream().flatMap(Collection::stream).collect(Collectors.toList())),
+					new GSDataParser().getRangeTemplate(map.keySet().stream().flatMap(Collection::stream).toList()),
 					referent, map);
 			case Boolean -> createBooleanAttribute(name, referent, map);
-			default -> throw new RuntimeException("Cannot instanciate " + dataType + " data type mapped attribute");
+			default -> throw new GenstarException("Cannot instanciate " + dataType + " data type mapped attribute");
 		};
 	}
 
@@ -353,7 +353,7 @@ public class AttributeFactory {
 			case Nominal -> createNominalRecordAttribute(name, referentAttribute, record);
 			case Range -> createRangeRecordAttribute(name, referentAttribute, record);
 			case Boolean -> createBooleanRecordAttribute(name, referentAttribute, record);
-			default -> throw new RuntimeException("Cannot instanciate " + dataType + " data type mapped attribute");
+			default -> throw new GenstarException("Cannot instanciate " + dataType + " data type mapped attribute");
 		};
 	}
 
@@ -711,10 +711,10 @@ public class AttributeFactory {
 
 		LinkedHashMap<Collection<OrderedValue>, Collection<V>> newMap = new LinkedHashMap<>();
 		for (Entry<List<String>, Collection<String>> entry : map.entrySet()) {
-			List<OrderedValue> keys = entry.getKey().stream().map(val -> attribute.getValueSpace().addValue(val))
-					.collect(Collectors.toList());
-			List<V> values = entry.getValue().stream().map(val -> referentAttribute.getValueSpace().getValue(val))
-					.collect(Collectors.toList());
+			List<OrderedValue> keys =
+					entry.getKey().stream().map(val -> attribute.getValueSpace().addValue(val)).toList();
+			List<V> values =
+					entry.getValue().stream().map(val -> referentAttribute.getValueSpace().getValue(val)).toList();
 			newMap.put(keys, values);
 		}
 		mapper.setMapper(newMap);
@@ -750,9 +750,8 @@ public class AttributeFactory {
 		MappedAttribute<OrderedValue, OrderedValue> attribute = new MappedAttribute<>(name, referentAttribute, mapper);
 		attribute.setValueSpace(new OrderedSpace(attribute, gsCategoricTemplate));
 		mapper.setRelatedAttribute(attribute);
-		mapper.setMapper(map.keySet().stream()
-				.collect(Collectors.toMap(key -> attribute.getValueSpace().addValue(key), key -> map.get(key).stream()
-						.map(val -> referentAttribute.getValueSpace().getValue(val)).collect(Collectors.toList()))));
+		mapper.setMapper(map.keySet().stream().collect(Collectors.toMap(key -> attribute.getValueSpace().addValue(key),
+				key -> map.get(key).stream().map(val -> referentAttribute.getValueSpace().getValue(val)).toList())));
 		return attribute;
 	}
 
@@ -922,9 +921,8 @@ public class AttributeFactory {
 		attribute.setValueSpace(new NominalSpace(attribute, gsCategoricTemplate));
 		attribute.getAttributeMapper().setRelatedAttribute(attribute);
 		mapper.setMapper(map.keySet().stream().collect(Collectors.toMap(
-				key -> key.stream().map(val -> attribute.getValueSpace().addValue(val)).collect(Collectors.toList()),
-				key -> map.get(key).stream().map(val -> referentAttribute.getValueSpace().getValue(val))
-						.collect(Collectors.toList()))));
+				key -> key.stream().map(val -> attribute.getValueSpace().addValue(val)).toList(),
+				key -> map.get(key).stream().map(val -> referentAttribute.getValueSpace().getValue(val)).toList())));
 		return attribute;
 	}
 
@@ -944,9 +942,8 @@ public class AttributeFactory {
 		MappedAttribute<NominalValue, NominalValue> attribute = new MappedAttribute<>(name, referentAttribute, mapper);
 		attribute.setValueSpace(new NominalSpace(attribute, gsCategoricTemplate));
 		attribute.getAttributeMapper().setRelatedAttribute(attribute);
-		mapper.setMapper(map.keySet().stream()
-				.collect(Collectors.toMap(key -> attribute.getValueSpace().addValue(key), key -> map.get(key).stream()
-						.map(val -> referentAttribute.getValueSpace().getValue(val)).collect(Collectors.toList()))));
+		mapper.setMapper(map.keySet().stream().collect(Collectors.toMap(key -> attribute.getValueSpace().addValue(key),
+				key -> map.get(key).stream().map(val -> referentAttribute.getValueSpace().getValue(val)).toList())));
 		return attribute;
 	}
 
@@ -1123,9 +1120,8 @@ public class AttributeFactory {
 		attribute.setValueSpace(new RangeSpace(attribute, rangeTemplate));
 		attribute.getAttributeMapper().setRelatedAttribute(attribute);
 		mapper.setMapper(map.keySet().stream().collect(Collectors.toMap(
-				key -> key.stream().map(val -> attribute.getValueSpace().addValue(val)).collect(Collectors.toList()),
-				key -> map.get(key).stream().map(val -> referentAttribute.getValueSpace().getValue(val))
-						.collect(Collectors.toList()))));
+				key -> key.stream().map(val -> attribute.getValueSpace().addValue(val)).toList(),
+				key -> map.get(key).stream().map(val -> referentAttribute.getValueSpace().getValue(val)).toList())));
 		return attribute;
 	}
 
@@ -1146,9 +1142,8 @@ public class AttributeFactory {
 		RangeSpace refRs = (RangeSpace) referentAttribute.getValueSpace();
 		attribute.setValueSpace(new RangeSpace(attribute, rangeTemplate, refRs.getMin(), refRs.getMax()));
 		attribute.getAttributeMapper().setRelatedAttribute(attribute);
-		mapper.setMapper(map.keySet().stream()
-				.collect(Collectors.toMap(key -> attribute.getValueSpace().addValue(key), key -> map.get(key).stream()
-						.map(val -> referentAttribute.getValueSpace().getValue(val)).collect(Collectors.toList()))));
+		mapper.setMapper(map.keySet().stream().collect(Collectors.toMap(key -> attribute.getValueSpace().addValue(key),
+				key -> map.get(key).stream().map(val -> referentAttribute.getValueSpace().getValue(val)).toList())));
 		return attribute;
 	}
 
@@ -1224,9 +1219,9 @@ public class AttributeFactory {
 		attribute.setValueSpace(
 				new RangeSpace(attribute, new GSDataParser().getRangeTemplate(new ArrayList<>(records.keySet()))));
 		attribute.getAttributeMapper().setRelatedAttribute(attribute);
-		mapper.setMapper(records.keySet().stream().collect(
-				Collectors.toMap(key -> Arrays.asList(attribute.getValueSpace().addValue(key)), key -> records.get(key)
-						.stream().map(k -> referent.getValueSpace().getValue(k)).collect(Collectors.toList()))));
+		mapper.setMapper(records.keySet().stream()
+				.collect(Collectors.toMap(key -> Arrays.asList(attribute.getValueSpace().addValue(key)),
+						key -> records.get(key).stream().map(k -> referent.getValueSpace().getValue(k)).toList())));
 		return attribute;
 	}
 
@@ -1255,10 +1250,9 @@ public class AttributeFactory {
 						refRs.getMin(), refRs.getMax()));
 
 		attribute.getAttributeMapper().setRelatedAttribute(attribute);
-		mapper.setMapper(records.keySet().stream()
-				.collect(Collectors.toMap(key -> Arrays.asList(attribute.getValueSpace().addValue(key)),
-						key -> records.get(key).stream().map(k -> referentIntegers.getValueSpace().getValue(k))
-								.collect(Collectors.toList()))));
+		mapper.setMapper(records.keySet().stream().collect(Collectors.toMap(
+				key -> Arrays.asList(attribute.getValueSpace().addValue(key)),
+				key -> records.get(key).stream().map(k -> referentIntegers.getValueSpace().getValue(k)).toList())));
 		return attribute;
 	}
 
@@ -1629,7 +1623,7 @@ public class AttributeFactory {
 			case Nominal -> createEmergentNominal(name, values, predicates);
 			case Order -> createEmergentOrder(name, values, predicates);
 			case Range -> createEmergentRange(name, values, predicates);
-			default -> throw new RuntimeException("Creation attribute failure");
+			default -> throw new GenstarException("Creation attribute failure");
 		};
 	}
 

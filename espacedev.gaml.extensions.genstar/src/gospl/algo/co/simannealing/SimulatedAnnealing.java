@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * SimulatedAnnealing.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.algo.co.simannealing;
 
 import core.util.GSPerformanceUtil;
@@ -48,14 +58,35 @@ import gospl.sampler.IEntitySampler;
  */
 public class SimulatedAnnealing extends AOptimizationAlgorithm<GosplPopulation> {
 
-	private final double coolTempRatio = 0.06;
+	/** The cool temp ratio. */
+	private static final double coolTempRatio = 0.06;
 
+	/** The init temp. */
 	private int initTemp = 100000;
-	private double coolingRate = 3;
-	private final int transitionLength = 4;
 
+	/** The cooling rate. */
+	private double coolingRate = 3;
+
+	/** The transition length. */
+	private static final int transitionLength = 4;
+
+	/** The trans function. */
 	private ISimulatedAnnealingTransitionFunction transFunction;
 
+	/**
+	 * Instantiates a new simulated annealing.
+	 *
+	 * @param neighborSearch
+	 *            the neighbor search
+	 * @param minStateEnergy
+	 *            the min state energy
+	 * @param initTemp
+	 *            the init temp
+	 * @param coolingRate
+	 *            the cooling rate
+	 * @param transFonction
+	 *            the trans fonction
+	 */
 	public SimulatedAnnealing(final IPopulationNeighborSearch<GosplPopulation, ?> neighborSearch,
 			final double minStateEnergy, final int initTemp, final double coolingRate,
 			final ISimulatedAnnealingTransitionFunction transFonction) {
@@ -64,6 +95,18 @@ public class SimulatedAnnealing extends AOptimizationAlgorithm<GosplPopulation> 
 		this.coolingRate = coolingRate;
 	}
 
+	/**
+	 * Instantiates a new simulated annealing.
+	 *
+	 * @param minStateEnergy
+	 *            the min state energy
+	 * @param initTemp
+	 *            the init temp
+	 * @param coolingRate
+	 *            the cooling rate
+	 * @param transFonction
+	 *            the trans fonction
+	 */
 	public SimulatedAnnealing(final double minStateEnergy, final int initTemp, final double coolingRate,
 			final ISimulatedAnnealingTransitionFunction transFonction) {
 		super(new PopulationEntityNeighborSearch(), minStateEnergy);
@@ -71,6 +114,9 @@ public class SimulatedAnnealing extends AOptimizationAlgorithm<GosplPopulation> 
 		this.coolingRate = coolingRate;
 	}
 
+	/**
+	 * Instantiates a new simulated annealing.
+	 */
 	public SimulatedAnnealing() {
 		super(new PopulationEntityNeighborSearch(), 0d);
 		this.transFunction = new SimulatedAnnealingDefaultTransitionFunction();
@@ -83,7 +129,7 @@ public class SimulatedAnnealing extends AOptimizationAlgorithm<GosplPopulation> 
 		ISyntheticPopulationSolution<GosplPopulation> currentState = initialSolution;
 		ISyntheticPopulationSolution<GosplPopulation> bestState = initialSolution;
 		this.getNeighborSearchAlgorithm().updatePredicates(initialSolution.getSolution());
-		int nBuffer = (int) (super.getNeighborSearchAlgorithm().getPredicates().size() * super.getK_neighborRatio());
+		int nBuffer = (int) (super.getNeighborSearchAlgorithm().getPredicates().size() * super.getKNeighborRatio());
 
 		GSPerformanceUtil gspu = new GSPerformanceUtil("Start Simulated annealing algorithm" + "\nPopulation size = "
 				+ initialSolution.getSolution().size() + "\nSample size = " + super.getSample().size()
@@ -98,13 +144,13 @@ public class SimulatedAnnealing extends AOptimizationAlgorithm<GosplPopulation> 
 		// OR while system energy is above minimum state energy
 		double temperature = initTemp;
 		int stateTransition = 0;
-		int local_transitionLength = this.transitionLength;
+		int localTransitionLength = SimulatedAnnealing.transitionLength;
 		double forcedTransition = 1d;
 		while (temperature > this.initTemp * coolTempRatio && currentEnergy > super.getFitnessThreshold()) {
 
 			boolean tempTransition = false;
 
-			for (int i = 0; i < local_transitionLength; i++) {
+			for (int i = 0; i < localTransitionLength; i++) {
 				ISyntheticPopulationSolution<GosplPopulation> systemStateCandidate =
 						currentState.getRandomNeighbor(super.getNeighborSearchAlgorithm(), nBuffer);
 				double candidateEnergy = systemStateCandidate.getFitness(this.getObjectives());
@@ -130,20 +176,20 @@ public class SimulatedAnnealing extends AOptimizationAlgorithm<GosplPopulation> 
 				}
 			}
 
-			double var = 1 - forcedTransition;
+			double variable = 1 - forcedTransition;
 
-			if (tempTransition || GenstarRandom.getInstance().nextDouble() < var) {
+			if (tempTransition || GenstarRandom.getInstance().nextDouble() < variable) {
 				this.getNeighborSearchAlgorithm().updatePredicates(currentState.getSolution());
-				temperature = this.initTemp / (1 + coolingRate * Math.log(1 + ++stateTransition));
-				local_transitionLength = this.transitionLength;
+				temperature = this.initTemp / (1 + coolingRate * Math.log(1d + ++stateTransition));
+				localTransitionLength = SimulatedAnnealing.transitionLength;
 				forcedTransition = 1;
 			} else {
-				local_transitionLength *= 1.2;
+				localTransitionLength *= 1.2;
 				forcedTransition *= 0.8;
 			}
 		}
 		gspu.sysoStempPerformance(
-				"End simulated annealing with: " + "Temperature = " + temperature + " | Energy = " + bestEnergy, this);
+				"End simulated annealing with: " + "Temperature = " + temperature + " | Energy = " + bestEnergy, this);
 
 		return bestState;
 	}

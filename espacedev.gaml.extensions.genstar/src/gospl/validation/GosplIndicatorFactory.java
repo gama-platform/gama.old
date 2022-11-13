@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplIndicatorFactory.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.validation;
 
 import java.io.BufferedWriter;
@@ -9,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,19 +48,43 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GosplIndicatorFactory {
 
+	private static final String INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE = "Input contingency argument cannot be ";
+
+	private static final String OF_TYPE = "of type ";
+
+	/** The epsilon. */
 	private static Double EPSILON = Math.pow(10, -6);
+
+	/** The gif. */
 	private static GosplIndicatorFactory gif = new GosplIndicatorFactory();
+
+	/** The critical P value. */
 	private double criticalPValue = 0.05;
 
+	/** The gspu. */
 	private GSPerformanceUtil gspu;
 
+	/**
+	 * Instantiates a new gospl indicator factory.
+	 */
 	private GosplIndicatorFactory() {}
 
+	/**
+	 * Gets the factory.
+	 *
+	 * @return the factory
+	 */
 	public static GosplIndicatorFactory getFactory() {
 		gif.gspu = new GSPerformanceUtil("GSUtil print for indicator factory");
 		return gif;
 	}
 
+	/**
+	 * Sets the chi square critival P value.
+	 *
+	 * @param criticalPValue
+	 *            the new chi square critival P value
+	 */
 	public void setChiSquareCritivalPValue(final double criticalPValue) { this.criticalPValue = criticalPValue; }
 
 	// ----------------------------- Matrix error ---------------------------- //
@@ -116,21 +151,17 @@ public class GosplIndicatorFactory {
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
 		double chiFiveCritical =
 				new ChiSquaredDistribution(inputMatrix.getDegree()).inverseCumulativeProbability(criticalPValue);
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return getIntegerTACE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createContingency(population), chiFiveCritical);
-			case GlobalFrequencyTable:
-				return getDoubleTACE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createDistribution(population), chiFiveCritical);
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type : it should have been collapse"
-						+ " [see GosplInputDataManager#collapseDataTablesIntoDistribution]");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> getIntegerTACE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createContingency(population), chiFiveCritical);
+			case GlobalFrequencyTable -> getDoubleTACE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createDistribution(population), chiFiveCritical);
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE
+					+ "a segmented matrix with multiple matrix meta data type : it should have been collapse"
+					+ " [see GosplInputDataManager#collapseDataTablesIntoDistribution]");
+		};
 	}
 
 	/**
@@ -144,19 +175,15 @@ public class GosplIndicatorFactory {
 			final IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> population) {
 		double chiFiveCritical =
 				new ChiSquaredDistribution(inputMatrix.getDegree()).inverseCumulativeProbability(criticalPValue);
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return getIntegerTACE(inputMatrix, population, chiFiveCritical);
-			case GlobalFrequencyTable:
-				return getDoubleTACE(inputMatrix, population, chiFiveCritical);
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type : it should have been collapse"
-						+ " [see GosplInputDataManager#collapseDataTablesIntoDistribution]");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> getIntegerTACE(inputMatrix, population, chiFiveCritical);
+			case GlobalFrequencyTable -> getDoubleTACE(inputMatrix, population, chiFiveCritical);
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE
+					+ "a segmented matrix with multiple matrix meta data type : it should have been collapse"
+					+ " [see GosplInputDataManager#collapseDataTablesIntoDistribution]");
+		};
 	}
 
 	/**
@@ -173,21 +200,17 @@ public class GosplIndicatorFactory {
 	 */
 	public int getTACE(final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population, final double delta) {
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return getIntegerTACE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createContingency(population), delta);
-			case GlobalFrequencyTable:
-				return getDoubleTACE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createDistribution(population), delta);
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type : it should have been collapse"
-						+ " [see GosplInputDataManager#collapseDataTablesIntoDistribution]");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> getIntegerTACE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createContingency(population), delta);
+			case GlobalFrequencyTable -> getDoubleTACE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createDistribution(population), delta);
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE
+					+ "a segmented matrix with multiple matrix meta data type : it should have been collapse"
+					+ " [see GosplInputDataManager#collapseDataTablesIntoDistribution]");
+		};
 	}
 
 	/**
@@ -289,21 +312,16 @@ public class GosplIndicatorFactory {
 	 */
 	public int getTAE(final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return getIntegerTAE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createContingency(population));
-			case GlobalFrequencyTable:
-				return Math.round(Math.round(getDoubleTAE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createDistribution(population))
-						* population.size()));
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> getIntegerTAE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createContingency(population));
+			case GlobalFrequencyTable -> (int) Math.round(getDoubleTAE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createDistribution(population)) * population.size());
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + "a segmented matrix with multiple matrix meta data type");
+		};
 	}
 
 	/**
@@ -315,18 +333,14 @@ public class GosplIndicatorFactory {
 	 */
 	public int getTAE(final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return getIntegerTAE(inputMatrix, population);
-			case GlobalFrequencyTable:
-				return Math.round(Math.round(getDoubleTAE(inputMatrix, population) * population.size()));
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> getIntegerTAE(inputMatrix, population);
+			case GlobalFrequencyTable -> (int) Math.round(getDoubleTAE(inputMatrix, population) * population.size());
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + "a segmented matrix with multiple matrix meta data type");
+		};
 	}
 
 	/**
@@ -386,7 +400,7 @@ public class GosplIndicatorFactory {
 		return inputMatrix.getMatrix().entrySet().stream()
 				.mapToInt(e -> Math.abs(population
 						.getCountHavingValues(e.getKey().values().stream()
-								.collect(Collectors.groupingBy(v -> inputMatrix.getDimension(v),
+								.collect(Collectors.groupingBy(inputMatrix::getDimension,
 										Collectors.toCollection(ArrayList::new))))
 						- e.getValue().getValue().intValue()))
 				.sum();
@@ -422,7 +436,7 @@ public class GosplIndicatorFactory {
 		return inputMatrix.getMatrix().entrySet().stream()
 				.mapToDouble(e -> Math.abs(population
 						.getCountHavingValues(e.getKey().values().stream()
-								.collect(Collectors.groupingBy(v -> inputMatrix.getDimension(v),
+								.collect(Collectors.groupingBy(inputMatrix::getDimension,
 										Collectors.toCollection(ArrayList::new))))
 						/ (1d * population.size()) - e.getValue().getValue().doubleValue()))
 				.sum();
@@ -435,7 +449,7 @@ public class GosplIndicatorFactory {
 	 * relative difference between known multi-way marginal total from input data and those of the generated synthetic
 	 * population.
 	 * <p>
-	 * TODO: little background for the method and advise to read output indicator
+	 * little background for the method and advise to read output indicator
 	 *
 	 * @see J.Y. Guo and C R. Bhat, 2007. Population synthesis for microsimulating travel behavior; Transportation
 	 *      Research Record: Journal of the Transportation Research Board
@@ -446,7 +460,7 @@ public class GosplIndicatorFactory {
 	 */
 	public double getAAPD(final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		return this.getTAE(inputMatrix, population) / inputMatrix.size();
+		return this.getTAE(inputMatrix, population) / (double) inputMatrix.size();
 	}
 
 	/**
@@ -458,7 +472,7 @@ public class GosplIndicatorFactory {
 	 */
 	public double getAAPD(final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		return this.getTAE(inputMatrix, population) / inputMatrix.size();
+		return this.getTAE(inputMatrix, population) / (double) inputMatrix.size();
 	}
 
 	/**
@@ -471,7 +485,7 @@ public class GosplIndicatorFactory {
 	public double getIntegerAAPD(
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final AFullNDimensionalMatrix<Integer> populationMatrix) {
-		return this.getIntegerTAE(inputMatrix, populationMatrix) / inputMatrix.size();
+		return this.getIntegerTAE(inputMatrix, populationMatrix) / (double) inputMatrix.size();
 	}
 
 	/**
@@ -495,7 +509,7 @@ public class GosplIndicatorFactory {
 	 * population. The standardization (normalization) criterion is the most important discrepancy among generated data,
 	 * meaning: maxarg(generatedMatrix) - minarg(generatedMatrix).
 	 * <p>
-	 * TODO: little background for the method and advise to read output indicator
+	 * little background for the method and advise to read output indicator
 	 *
 	 * @see MuÌˆller, K., Axhausen, K.W., 2011. Population synthesis for microsimulation: state of the art;
 	 *      Transportation Research Board 90th Annual Meeting.Washington, D.C.
@@ -508,20 +522,16 @@ public class GosplIndicatorFactory {
 	 */
 	public double getSRMSE(final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return getIntegerSRMSE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createContingency(population));
-			case GlobalFrequencyTable:
-				return getDoubleSRMSE(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createDistribution(population));
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> getIntegerSRMSE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createContingency(population));
+			case GlobalFrequencyTable -> getDoubleSRMSE(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createDistribution(population));
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + "a segmented matrix with multiple matrix meta data type");
+		};
 	}
 
 	/**
@@ -534,18 +544,14 @@ public class GosplIndicatorFactory {
 	 */
 	public double getSRMSE(final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return getIntegerSRMSE(inputMatrix, population);
-			case GlobalFrequencyTable:
-				return getDoubleSRMSE(inputMatrix, population);
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> getIntegerSRMSE(inputMatrix, population);
+			case GlobalFrequencyTable -> getDoubleSRMSE(inputMatrix, population);
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + "a segmented matrix with multiple matrix meta data type");
+		};
 	}
 
 	/**
@@ -562,7 +568,9 @@ public class GosplIndicatorFactory {
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final AFullNDimensionalMatrix<Integer> populationMatrix) {
 		int nbCells = inputMatrix.size();
-		double expectedValue, actualValue, mse = 0d;
+		double expectedValue;
+		double actualValue;
+		double mse = 0d;
 		int minVal = inputMatrix.getMatrix().values().stream().mapToInt(v -> v.getValue().intValue()).min().getAsInt();
 		int maxVal = inputMatrix.getMatrix().values().stream().mapToInt(v -> v.getValue().intValue()).max().getAsInt();
 		for (ACoordinate<Attribute<? extends IValue>, IValue> coord : inputMatrix.getMatrix().keySet()) {
@@ -586,7 +594,9 @@ public class GosplIndicatorFactory {
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> population) {
 		int nbCells = inputMatrix.size();
-		double expectedValue, actualValue, mse = 0d;
+		double expectedValue;
+		double actualValue;
+		double mse = 0d;
 		int minVal = inputMatrix.getMatrix().values().stream().mapToInt(v -> v.getValue().intValue()).min().getAsInt();
 		int maxVal = inputMatrix.getMatrix().values().stream().mapToInt(v -> v.getValue().intValue()).max().getAsInt();
 		for (ACoordinate<Attribute<? extends IValue>, IValue> coord : inputMatrix.getMatrix().keySet()) {
@@ -613,7 +623,9 @@ public class GosplIndicatorFactory {
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final AFullNDimensionalMatrix<Double> populationMatrix) {
 		int nbCells = inputMatrix.size();
-		double expectedValue, actualValue, mse = 0d;
+		double expectedValue;
+		double actualValue;
+		double mse = 0d;
 		double minVal =
 				inputMatrix.getMatrix().values().stream().mapToInt(v -> v.getValue().intValue()).min().getAsInt();
 		double maxVal =
@@ -640,7 +652,9 @@ public class GosplIndicatorFactory {
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> population) {
 		int nbCells = inputMatrix.size();
-		double expectedValue, actualValue, mse = 0d;
+		double expectedValue;
+		double actualValue;
+		double mse = 0d;
 		double minVal =
 				inputMatrix.getMatrix().values().stream().mapToInt(v -> v.getValue().intValue()).min().getAsInt();
 		double maxVal =
@@ -660,7 +674,7 @@ public class GosplIndicatorFactory {
 	 * focus on cell based indicator of error. SSZ is the sum of square Z-score and RSSZ is a proposed relative
 	 * indicator, that is the SSZ divided by the chi square 5% critical value.
 	 * <p>
-	 * FIXME: do not use because of inconsistent result
+	 * do not use because of inconsistent result
 	 *
 	 * @see Williamson, Pau, 2012. â€œAn Evaluation of Two Synthetic Small-Area Microdata Simulation Methodologies:
 	 *      Synthetic Reconstruction and Combinatorial Optimisation.â€� In Spatial Microsimulation: A Reference Guide
@@ -673,20 +687,16 @@ public class GosplIndicatorFactory {
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
 
-		switch (inputMatrix.getMetaDataType()) {
-			case ContingencyTable:
-				return this.getIntegerRSSZstar(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createContingency(population));
-			case GlobalFrequencyTable:
-				return this.getDoubleRSSZstar(inputMatrix,
-						GosplNDimensionalMatrixFactory.getFactory().createDistribution(population));
-			case LocalFrequencyTable:
-				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
-			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
-						+ "a segmented matrix with multiple matrix meta data type");
-		}
+		return switch (inputMatrix.getMetaDataType()) {
+			case ContingencyTable -> this.getIntegerRSSZstar(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createContingency(population));
+			case GlobalFrequencyTable -> this.getDoubleRSSZstar(inputMatrix,
+					GosplNDimensionalMatrixFactory.getFactory().createDistribution(population));
+			case LocalFrequencyTable -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
+			default -> throw new IllegalArgumentException(
+					INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + "a segmented matrix with multiple matrix meta data type");
+		};
 	}
 
 	/**
@@ -701,8 +711,8 @@ public class GosplIndicatorFactory {
 	public double getRSSZstar(
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final IQueryablePopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		double expectedValue = 0d;
-		double actualValue = 0d;
+		double expectedValue;
+		double actualValue;
 		double ssz = 0d;
 		double chiFiveCritical =
 				new ChiSquaredDistribution(inputMatrix.getDegree()).inverseCumulativeProbability(criticalPValue);
@@ -725,9 +735,9 @@ public class GosplIndicatorFactory {
 				return ssz / chiFiveCritical;
 			case LocalFrequencyTable:
 				throw new IllegalArgumentException(
-						"Input contingency argument cannot be " + "of type " + inputMatrix.getMetaDataType());
+						INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE + OF_TYPE + inputMatrix.getMetaDataType());
 			default:
-				throw new IllegalArgumentException("Input contingency argument cannot be "
+				throw new IllegalArgumentException(INPUT_CONTINGENCY_ARGUMENT_CANNOT_BE
 						+ "a segmented matrix with multiple matrix meta data type");
 		}
 	}
@@ -741,8 +751,8 @@ public class GosplIndicatorFactory {
 	public double getIntegerRSSZstar(
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final AFullNDimensionalMatrix<Integer> contingencyTable) {
-		double expectedValue = 0d;
-		double actualValue = 0d;
+		double expectedValue;
+		double actualValue;
 		double ssz = 0d;
 		double chiFiveCritical =
 				new ChiSquaredDistribution(inputMatrix.getDegree()).inverseCumulativeProbability(criticalPValue);
@@ -769,8 +779,8 @@ public class GosplIndicatorFactory {
 	public double getDoubleRSSZstar(
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> inputMatrix,
 			final AFullNDimensionalMatrix<Double> distribution) {
-		double expectedValue = 0d;
-		double actualValue = 0d;
+		double expectedValue;
+		double actualValue;
 		double ssz = 0d;
 		double chiFiveCritical =
 				new ChiSquaredDistribution(inputMatrix.getDegree()).inverseCumulativeProbability(criticalPValue);
@@ -798,7 +808,7 @@ public class GosplIndicatorFactory {
 	 */
 	public Map<GosplIndicator, Number> getReport(final Collection<GosplIndicator> indicators,
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> distribution,
-			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) throws IOException {
+			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
 		return indicators.stream().collect(
 				Collectors.toMap(Function.identity(), indicator -> this.getStats(indicator, distribution, population)));
 	}
@@ -814,17 +824,16 @@ public class GosplIndicatorFactory {
 			final int popSize) throws IOException {
 		DecimalFormat decimalFormat = new DecimalFormat("#.####");
 		String separator = ";";
-		BufferedWriter bw;
-
-		bw = Files.newBufferedWriter(outputFile.toPath());
-		bw.write("Algo" + separator + "Pop size");
-		for (GosplIndicator indicator : report.keySet()) { bw.write(separator + indicator.toString()); }
-		bw.newLine();
-		bw.write(algo + separator + popSize);
-		for (GosplIndicator indicator : report.keySet()) {
-			bw.write(separator + decimalFormat.format(report.get(indicator).doubleValue()).toString());
+		try (BufferedWriter bw = Files.newBufferedWriter(outputFile.toPath())) {
+			bw.write("Algo" + separator + "Pop size");
+			for (GosplIndicator indicator : report.keySet()) { bw.write(separator + indicator.toString()); }
+			bw.newLine();
+			bw.write(algo + separator + popSize);
+			for (Entry<GosplIndicator, Number> entry : report.entrySet()) {
+				bw.write(separator + decimalFormat.format(entry.getValue().doubleValue()));
+			}
+			bw.flush();
 		}
-		bw.flush();
 	}
 
 	/**
@@ -838,41 +847,40 @@ public class GosplIndicatorFactory {
 	public double getIndicator(final GosplIndicator indicator,
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> inputMatrix,
 			final AFullNDimensionalMatrix<Double> distribution) {
-		switch (indicator) {
-			case TAE:
-				return this.getDoubleTAE(inputMatrix, distribution);
-			case TACE:
-				return this.getDoubleTACE(inputMatrix, distribution, EPSILON);
-			case AAPD:
-				return this.getDoubleAAPD(inputMatrix, distribution);
-			case SRMSE:
-				return this.getDoubleSRMSE(inputMatrix, distribution);
-			case RSSZstar:
-				return this.getDoubleRSSZstar(inputMatrix, distribution);
-			default:
-				throw new IllegalArgumentException(indicator + " is an unknown indicator");
-		}
+		return switch (indicator) {
+			case TAE -> this.getDoubleTAE(inputMatrix, distribution);
+			case TACE -> this.getDoubleTACE(inputMatrix, distribution, EPSILON);
+			case AAPD -> this.getDoubleAAPD(inputMatrix, distribution);
+			case SRMSE -> this.getDoubleSRMSE(inputMatrix, distribution);
+			case RSSZstar -> this.getDoubleRSSZstar(inputMatrix, distribution);
+			default -> throw new IllegalArgumentException(indicator + " is an unknown indicator");
+		};
 	}
 
 	// -------------------- Private inner methods -------------------- //
 
+	/**
+	 * Gets the stats.
+	 *
+	 * @param indicator
+	 *            the indicator
+	 * @param distribution
+	 *            the distribution
+	 * @param population
+	 *            the population
+	 * @return the stats
+	 */
 	private Number getStats(final GosplIndicator indicator,
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> distribution,
 			final IPopulation<ADemoEntity, Attribute<? extends IValue>> population) {
-		switch (indicator) {
-			case TAE:
-				return this.getTAE(distribution, population);
-			case TACE:
-				return this.getTACE(distribution, population);
-			case AAPD:
-				return this.getAAPD(distribution, population);
-			case SRMSE:
-				return this.getSRMSE(distribution, population);
-			case RSSZstar:
-				return this.getRSSZstar(distribution, population);
-			default:
-				return this.getTAE(distribution, population);
-		}
+		return switch (indicator) {
+			case TAE -> this.getTAE(distribution, population);
+			case TACE -> this.getTACE(distribution, population);
+			case AAPD -> this.getAAPD(distribution, population);
+			case SRMSE -> this.getSRMSE(distribution, population);
+			case RSSZstar -> this.getRSSZstar(distribution, population);
+			default -> this.getTAE(distribution, population);
+		};
 	}
 
 }

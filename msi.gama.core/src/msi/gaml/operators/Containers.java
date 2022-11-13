@@ -1130,7 +1130,7 @@ public class Containers {
 
 		// Note: I also tested the following version with streams, but it was around 2 times slower...
 		// return (IList) IntStream.range(0, notNull(scope,c).size()).filter(i -> c.get(scope,i) ==
-		// o).boxed().collect(Collectors.toList());
+		// o).boxed().toList();
 	}
 
 	/**
@@ -1624,6 +1624,9 @@ public class Containers {
 		return result;
 	}
 
+	/**
+	 * The Class PlusListValidator.
+	 */
 	public static class PlusListValidator implements IOperatorValidator {
 
 		@Override
@@ -1981,20 +1984,14 @@ public class Containers {
 			t = container.getGamlType().getContentType();
 		}
 		s = s.map(each -> t.cast(scope, each, null, false));
-		switch (t.id()) {
-			case IType.INT:
-				return ((Stream<Integer>) s).reduce(0, Integer::sum);
-			case IType.FLOAT:
-				return ((Stream<Double>) s).reduce(0d, Double::sum);
-			case IType.POINT:
-				return ((Stream<GamaPoint>) s).reduce(new GamaPoint(), GamaPoint::plus);
-			case IType.COLOR:
-				return ((Stream<GamaColor>) s).reduce(new GamaColor(0, 0, 0, 0), GamaColor::merge);
-			case IType.STRING:
-				return ((Stream<String>) s).reduce("", String::concat);
-			default:
-				return GamaRuntimeException.error("No sum can be computed for " + container.serialize(true), scope);
-		}
+		return switch (t.id()) {
+			case IType.INT -> ((Stream<Integer>) s).reduce(0, Integer::sum);
+			case IType.FLOAT -> ((Stream<Double>) s).reduce(0d, Double::sum);
+			case IType.POINT -> ((Stream<GamaPoint>) s).reduce(new GamaPoint(), GamaPoint::plus);
+			case IType.COLOR -> ((Stream<GamaColor>) s).reduce(new GamaColor(0, 0, 0, 0), GamaColor::merge);
+			case IType.STRING -> ((Stream<String>) s).reduce("", String::concat);
+			default -> GamaRuntimeException.error("No sum can be computed for " + container.serialize(true), scope);
+		};
 	}
 
 	/**

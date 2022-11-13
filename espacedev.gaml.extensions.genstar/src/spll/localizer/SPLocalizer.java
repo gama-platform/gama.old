@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SPLocalizer.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * SPLocalizer.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package spll.localizer;
 
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -45,6 +46,7 @@ import core.metamodel.io.IGSGeofile.GeoGSFileType;
 import core.metamodel.value.IValue;
 import core.metamodel.value.numeric.IntegerValue;
 import core.util.GSPerformanceUtil;
+import core.util.exception.GenstarException;
 import core.util.random.GenstarRandom;
 import spll.SpllEntity;
 import spll.SpllPopulation;
@@ -90,16 +92,16 @@ public class SPLocalizer implements ISPLocalizer {
 	/** The match. */
 	// main referenced area for placing the agents (e.g. Iris)
 	protected IGSGeofile<? extends AGeoEntity<? extends IValue>, ? extends IValue> match;
-	
+
 	/** The map. */
 	// gives the number of entities per area (e.g. regression cells)
 	protected IGSGeofile<? extends AGeoEntity<? extends IValue>, ? extends IValue> map;
 
 	/** The linker. */
 	protected ISPLinker<ADemoEntity> linker; // Encapsulate spatial distribution and constraints to link entity and
-												
-												/** The localization constraint. */
-												// spatial object
+
+	/** The localization constraint. */
+	// spatial object
 	protected SpatialConstraintLocalization localizationConstraint; // the localization constraint;
 
 	/** The point in localizer. */
@@ -107,17 +109,17 @@ public class SPLocalizer implements ISPLocalizer {
 
 	/** The key att map. */
 	protected String keyAttMap; // name of the attribute that contains the number of entities in the map file
-	
+
 	/** The key att pop. */
 	protected String keyAttPop; // name of the attribute that is used to store the id of the referenced area in the
-								
-								/** The key att match. */
-								// population
+
+	/** The key att match. */
+	// population
 	protected String keyAttMatch; // name of the attribute that is used to store the id of the referenced area in the
 									// match file
 
 	/** The rand. */
-									protected Random rand;
+	protected Random rand;
 
 	/**
 	 * Private constructor to setup random engine
@@ -169,8 +171,7 @@ public class SPLocalizer implements ISPLocalizer {
 					String valKeyAtt = globalfeature.getValueForAttribute(keyAttMatch).getStringValue();
 
 					List<SpllEntity> entities = outputPopulation.stream()
-							.filter(s -> s.getValueForAttribute(keyAttPop).getStringValue().equals(valKeyAtt))
-							.collect(Collectors.toList());
+							.filter(s -> s.getValueForAttribute(keyAttPop).getStringValue().equals(valKeyAtt)).toList();
 
 					if (keyAttMap == null || map == null) {
 						localizationInNest(entities, globalfeature.getProxyGeometry());
@@ -181,19 +182,19 @@ public class SPLocalizer implements ISPLocalizer {
 				}
 			}
 			outputPopulation.removeIf(a -> a.getLocation() == null);
-		} catch (IOException | TransformException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return outputPopulation;
 	}
 
 	@Override
-	public SpllPopulation linkPopulation(final SpllPopulation population, final ISPLinker<SpllEntity> linker,
+	public SpllPopulation linkPopulation(final SpllPopulation pop, final ISPLinker<SpllEntity> theLinker,
 			final Collection<? extends AGeoEntity<? extends IValue>> linkedPlaces,
 			final Attribute<? extends IValue> attribute) {
-		population.forEach(entity -> entity.addLinkedPlaces(attribute.getAttributeName(),
-				linker.getCandidate(entity, linkedPlaces).orElseGet(null)));
-		return population;
+		pop.forEach(entity -> entity.addLinkedPlaces(attribute.getAttributeName(),
+				theLinker.getCandidate(entity, linkedPlaces).orElseGet(null)));
+		return pop;
 	}
 
 	// ----------------------------------------------------- //
@@ -296,18 +297,30 @@ public class SPLocalizer implements ISPLocalizer {
 	/**
 	 * Sets the mapper.
 	 *
-	 * @param splMapperBuilder the spl mapper builder
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws TransformException the transform exception
-	 * @throws InterruptedException the interrupted exception
-	 * @throws ExecutionException the execution exception
-	 * @throws IllegalRegressionException the illegal regression exception
-	 * @throws IndexOutOfBoundsException the index out of bounds exception
-	 * @throws GSMapperException the GS mapper exception
-	 * @throws SchemaException the schema exception
-	 * @throws MismatchedDimensionException the mismatched dimension exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws InvalidGeoFormatException the invalid geo format exception
+	 * @param splMapperBuilder
+	 *            the spl mapper builder
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws TransformException
+	 *             the transform exception
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 * @throws ExecutionException
+	 *             the execution exception
+	 * @throws IllegalRegressionException
+	 *             the illegal regression exception
+	 * @throws IndexOutOfBoundsException
+	 *             the index out of bounds exception
+	 * @throws GSMapperException
+	 *             the GS mapper exception
+	 * @throws SchemaException
+	 *             the schema exception
+	 * @throws MismatchedDimensionException
+	 *             the mismatched dimension exception
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 * @throws InvalidGeoFormatException
+	 *             the invalid geo format exception
 	 */
 	/*
 	 * Inner utility set mapper from regression
@@ -315,8 +328,8 @@ public class SPLocalizer implements ISPLocalizer {
 	 */
 	private void setMapper(final ASPLMapperBuilder<? extends ISPLVariable, ? extends Number> splMapperBuilder)
 			throws IOException, TransformException, InterruptedException, ExecutionException,
-			IllegalRegressionException, IndexOutOfBoundsException, GSMapperException, SchemaException,
-			MismatchedDimensionException, IllegalArgumentException, InvalidGeoFormatException {
+			IllegalRegressionException, IndexOutOfBoundsException, GSMapperException, MismatchedDimensionException,
+			IllegalArgumentException, InvalidGeoFormatException {
 		splMapperBuilder.buildMapper();
 		switch (splMapperBuilder.getAncillaryFiles().get(0).getGeoGSFileType()) {
 			case RASTER:
@@ -343,7 +356,7 @@ public class SPLocalizer implements ISPLocalizer {
 	 * Clear map cache.
 	 */
 	public void clearMapCache() {
-		if (map instanceof SPLRasterFile) { ((SPLRasterFile) map).clearCache(); }
+		if (map instanceof SPLRasterFile file) { file.clearCache(); }
 	}
 
 	// ----------------------------------------------------- //
@@ -410,7 +423,7 @@ public class SPLocalizer implements ISPLocalizer {
 	// set to all the entities given as argument, a given nest chosen randomly in the possible geoEntities
 	// of the localisation shapefile (all if not bounds is defined, only the one in the bounds if the one is not null)
 	/**
-	 * TODO : describe the algorithm PLZ !
+	 * describe the algorithm PLZ !
 	 *
 	 * To be revised absolutly, because there is incoherences: e.g. loop over constraints to loop over constraint again,
 	 * and then localize updating constraint.
@@ -421,7 +434,7 @@ public class SPLocalizer implements ISPLocalizer {
 	 * @throws TransformException
 	 */
 	private void localizationInNest(final Collection<SpllEntity> entities, final Geometry spatialBounds)
-			throws IOException, TransformException {
+			throws IOException {
 
 		localizationConstraint.setBounds(spatialBounds);
 		List<AGeoEntity<? extends IValue>> possibleNests = localizationConstraint.getCandidates(
@@ -435,7 +448,7 @@ public class SPLocalizer implements ISPLocalizer {
 
 			List<ISpatialConstraint> otherConstraints =
 					Stream.concat(linker.getConstraints().stream(), Stream.of(localizationConstraint))
-							.sorted(Comparator.comparing(ISpatialConstraint::getPriority)).collect(Collectors.toList());
+							.sorted(Comparator.comparing(ISpatialConstraint::getPriority)).toList();
 
 			Collection<SpllEntity> remainingEntities = new ArrayList<>(entities);
 			for (ISpatialConstraint cr : otherConstraints) {
@@ -459,9 +472,12 @@ public class SPLocalizer implements ISPLocalizer {
 	/**
 	 * Localization in nest op.
 	 *
-	 * @param entities the entities
-	 * @param possibleNests the possible nests
-	 * @param val the val
+	 * @param entities
+	 *            the entities
+	 * @param possibleNests
+	 *            the possible nests
+	 * @param val
+	 *            the val
 	 * @return the list
 	 */
 	private List<SpllEntity> localizationInNestOp(final Collection<SpllEntity> entities,
@@ -473,8 +489,9 @@ public class SPLocalizer implements ISPLocalizer {
 			val = Math.min(val, ens.size());
 			for (int i = 0; i < val; i++) {
 				int index = rand.nextInt(ens.size());
-				chosenEntities.add(ens.get(index));
-				ens.remove(index);
+				SpllEntity entity = ens.get(index);
+				chosenEntities.add(entity);
+				ens.remove(entity);
 			}
 		} else {
 			chosenEntities = entities;
@@ -494,7 +511,7 @@ public class SPLocalizer implements ISPLocalizer {
 			}
 
 		}
-		return entities.stream().filter(a -> a.getLocation() == null).collect(Collectors.toList());
+		return entities.stream().filter(a -> a.getLocation() == null).toList();
 	}
 
 	// For each area concerned of the entityNbAreas shapefile (all if not bounds is defined, only the one in the bounds
@@ -504,15 +521,19 @@ public class SPLocalizer implements ISPLocalizer {
 	/**
 	 * Localization in nest with numbers.
 	 *
-	 * @param entities the entities
-	 * @param spatialBounds the spatial bounds
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws TransformException the transform exception
+	 * @param entities
+	 *            the entities
+	 * @param spatialBounds
+	 *            the spatial bounds
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws TransformException
+	 *             the transform exception
 	 */
 	// NOTE: if no nest is located inside the area, not entities will be located inside.
 	@SuppressWarnings ("unchecked")
 	private void localizationInNestWithNumbers(final List<SpllEntity> entities, final Geometry spatialBounds)
-			throws IOException, TransformException {
+			throws IOException {
 		List<ISpatialConstraint> otherConstraints = new ArrayList<>(linker.getConstraints());
 
 		List<? extends AGeoEntity<? extends IValue>> areas =
@@ -567,11 +588,15 @@ public class SPLocalizer implements ISPLocalizer {
 	/**
 	 * Estimate matches.
 	 *
-	 * @param matchFile the match file
-	 * @param keyAttributeSpace the key attribute space
-	 * @param keyAttributePopulation the key attribute population
+	 * @param matchFile
+	 *            the match file
+	 * @param keyAttributeSpace
+	 *            the key attribute space
+	 * @param keyAttributePopulation
+	 *            the key attribute population
 	 * @return the map<? extends A geo entity<? extends I value>, number>
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	/*
 	 * Estimate the number of match between population and space through the key attribute link
@@ -606,24 +631,33 @@ public class SPLocalizer implements ISPLocalizer {
 	/**
 	 * Creates the match file.
 	 *
-	 * @param output the output
-	 * @param template the template
-	 * @param eMatches the e matches
+	 * @param output
+	 *            the output
+	 * @param template
+	 *            the template
+	 * @param eMatches
+	 *            the e matches
 	 * @return the SPL raster file
-	 * @throws MismatchedDimensionException the mismatched dimension exception
-	 * @throws IllegalArgumentException the illegal argument exception
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws TransformException the transform exception
-	 * @throws SchemaException the schema exception
-	 * @throws InvalidGeoFormatException the invalid geo format exception
+	 * @throws MismatchedDimensionException
+	 *             the mismatched dimension exception
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws TransformException
+	 *             the transform exception
+	 * @throws SchemaException
+	 *             the schema exception
+	 * @throws InvalidGeoFormatException
+	 *             the invalid geo format exception
 	 */
 	/*
 	 * Create a raster match file from a number of matches (eMatches) and a key attribute: parameter file for areal
 	 * interpolation
 	 */
 	protected SPLRasterFile createMatchFile(final File output, final SPLRasterFile template,
-			final Map<AGeoEntity<? extends IValue>, Number> eMatches) throws MismatchedDimensionException,
-			IllegalArgumentException, IOException, TransformException, SchemaException, InvalidGeoFormatException {
+			final Map<AGeoEntity<? extends IValue>, Number> eMatches)
+			throws MismatchedDimensionException, IllegalArgumentException, IOException, TransformException {
 		float[][] pixels = new float[template.getColumnNumber()][template.getRowNumber()];
 		eMatches.entrySet().stream()
 				.forEach(e -> pixels[((SpllPixel) e.getKey()).getGridX()][((SpllPixel) e.getKey()).getGridY()] =
@@ -641,29 +675,36 @@ public class SPLocalizer implements ISPLocalizer {
 	/**
 	 * Creates the match file.
 	 *
-	 * @param output the output
-	 * @param matchFile the match file
-	 * @param eMatches the e matches
-	 * @param keyAttMatch the key att match
+	 * @param output
+	 *            the output
+	 * @param matchFile
+	 *            the match file
+	 * @param eMatches
+	 *            the e matches
+	 * @param keyAttMatcher
+	 *            the key att match
 	 * @return the SPL vector file
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws SchemaException the schema exception
-	 * @throws InvalidGeoFormatException the invalid geo format exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws SchemaException
+	 *             the schema exception
+	 * @throws InvalidGeoFormatException
+	 *             the invalid geo format exception
 	 */
 	/*
 	 * Create a vector file from a number of matches and a key attribute: parameter file for areal interpolation
 	 */
 	protected SPLVectorFile createMatchFile(final File output, final SPLVectorFile matchFile,
-			final Map<AGeoEntity<? extends IValue>, Number> eMatches, final String keyAttMatch)
-			throws IOException, SchemaException, InvalidGeoFormatException {
+			final Map<AGeoEntity<? extends IValue>, Number> eMatches, final String keyAttMatcher)
+			throws IOException, SchemaException {
 		Optional<Attribute<? extends IValue>> keyAtt = matchFile.getGeoAttributes().stream()
-				.filter(att -> att.getAttributeName().equals(keyAttMatch)).findFirst();
+				.filter(att -> att.getAttributeName().equals(keyAttMatcher)).findFirst();
 		if (!keyAtt.isPresent()) throw new IllegalArgumentException(
-				"key attribute matcher " + keyAttMatch + " does not exist in proposed matched file");
-		if (!eMatches.keySet().stream().allMatch(entity -> entity.getPropertiesAttribute().contains(keyAttMatch))
+				"key attribute matcher " + keyAttMatcher + " does not exist in proposed matched file");
+		if (!eMatches.keySet().stream().allMatch(entity -> entity.getPropertiesAttribute().contains(keyAttMatcher))
 				|| !eMatches.keySet().stream()
 						.allMatch(entity -> entity.getValueForAttribute(keyAtt.get().getAttributeName()) != null))
-			throw new IllegalArgumentException("Matches entity must contain attribute " + keyAttMatch);
+			throw new IllegalArgumentException("Matches entity must contain attribute " + keyAttMatcher);
 
 		Attribute<? extends IValue> key = keyAtt.get();
 		Attribute<IntegerValue> contAtt =
@@ -678,7 +719,7 @@ public class SPLocalizer implements ISPLocalizer {
 		Set<SpllFeature> categoricalValue = features.stream().filter(
 				feat -> !feat.getValueForAttribute(GeoEntityFactory.ATTRIBUTE_FEATURE_POP).getType().isNumericValue())
 				.collect(Collectors.toSet());
-		if (!categoricalValue.isEmpty()) throw new RuntimeException(
+		if (!categoricalValue.isEmpty()) throw new GenstarException(
 				categoricalValue.size() + " created feature are not numerical: " + categoricalValue.stream()
 						.map(gsf -> gsf.getValueForAttribute(key).getStringValue()).collect(Collectors.joining("; ")));
 		this.gspu.sysoStempPerformance("Total population count is " + features.stream()
@@ -692,10 +733,14 @@ public class SPLocalizer implements ISPLocalizer {
 	/**
 	 * Construct feature collection.
 	 *
-	 * @param eMatches the e matches
-	 * @param contAtt the cont att
-	 * @param keyAtt the key att
-	 * @param featType the feat type
+	 * @param eMatches
+	 *            the e matches
+	 * @param contAtt
+	 *            the cont att
+	 * @param keyAtt
+	 *            the key att
+	 * @param featType
+	 *            the feat type
 	 * @return the collection
 	 */
 	/*
@@ -706,9 +751,10 @@ public class SPLocalizer implements ISPLocalizer {
 			final Attribute<? extends IValue> keyAtt, final SimpleFeatureType featType) {
 		GeoEntityFactory ef = new GeoEntityFactory(Stream.of(contAtt, keyAtt).collect(Collectors.toSet()), featType);
 		Collection<SpllFeature> features = new HashSet<>();
-		for (AGeoEntity<? extends IValue> entity : eMatches.keySet()) {
+		for (Entry<AGeoEntity<? extends IValue>, Number> entry : eMatches.entrySet()) {
 			Map<Attribute<? extends IValue>, IValue> theMap = new HashMap<>();
-			theMap.put(contAtt, contAtt.getValueSpace().addValue(eMatches.get(entity).toString()));
+			theMap.put(contAtt, contAtt.getValueSpace().addValue(entry.getValue().toString()));
+			AGeoEntity<? extends IValue> entity = entry.getKey();
 			theMap.put(keyAtt, entity.getValueForAttribute(keyAtt.getAttributeName()));
 			features.add(ef.createGeoEntity(entity.getProxyGeometry(), theMap));
 		}

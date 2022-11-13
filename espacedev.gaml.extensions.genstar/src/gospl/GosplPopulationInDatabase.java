@@ -41,14 +41,15 @@ import core.metamodel.entity.EntityUniqueId;
 import core.metamodel.value.IValue;
 import core.metamodel.value.binary.BinarySpace;
 import core.metamodel.value.binary.BooleanValue;
+import core.util.exception.GenstarException;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Stores a population in database; provides quick access.
  *
- * TODO prepared statements for perf
+ * prepared statements for perf
  *
- * TODO create indexes on dimensions often queried together
+ * create indexes on dimensions often queried together
  *
  * @author Samuel Thiriot
  */
@@ -64,10 +65,10 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	public static final String DEFAULT_ENTITY_TYPE = "unknown";
 
 	/** The remove entities batch. */
-	public static int REMOVE_ENTITIES_BATCH = 500;
+	public static final int REMOVE_ENTITIES_BATCH = 500;
 
 	/** The add entities batch. */
-	public static int ADD_ENTITIES_BATCH = 5000; // TODO more !
+	public static final int ADD_ENTITIES_BATCH = 5000; // more !
 
 	/** The connection. */
 	private final Connection connection;
@@ -85,7 +86,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	private static int currentInstanceCount = 0;
 
 	/** The my sql D bname. */
-	private final String mySqlDBname = "IPopulation_" + (++currentInstanceCount);
+	private static final String mySqlDBname = "IPopulation_" + (++currentInstanceCount);
 
 	/** The table 2 created index. */
 	private final Map<String, Set<String>> table2createdIndex = new HashMap<>();
@@ -113,7 +114,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 					DriverManager.getConnection("jdbc:hsqldb:mem:" + mySqlDBname + ";shutdown=true", "SA", "");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException(
+			throw new GenstarException(
 					"error while trying to initialize the HDSQL database engine in memory: " + e.getMessage(), e);
 		}
 	}
@@ -130,7 +131,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 					DriverManager.getConnection("jdbc:hsqldb:mem:" + mySqlDBname + ";shutdown=true", "SA", "");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException(
+			throw new GenstarException(
 					"error while trying to initialize the HDSQL database engine in memory: " + e.getMessage(), e);
 		}
 		loadPopulationIntoDatabase(population);
@@ -151,7 +152,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 					"jdbc:hsqldb:file:" + databaseFile.getPath() + ";create=true;shutdown=true;", "SA", "");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException("error while trying to initialize the HDSQL database engine in file "
+			throw new GenstarException("error while trying to initialize the HDSQL database engine in file "
 					+ databaseFile + ": " + e.getMessage(), e);
 		}
 		loadPopulationIntoDatabase(population);
@@ -169,16 +170,16 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		try {
 			Class.forName("org.hsqldb.jdbc.JDBCDriver");
 		} catch (Exception e) {
-			System.err.println("ERROR: failed to load HSQLDB JDBC driver.");
+			DEBUG.ERR("ERROR: failed to load HSQLDB JDBC driver.");
 			e.printStackTrace();
-			throw new RuntimeException("error while trying to load the JDBC driver to load the HSQL database", e);
+			throw new GenstarException("error while trying to load the JDBC driver to load the HSQL database", e);
 		}
 
 		try {
 			this.connection = DriverManager.getConnection("jdbc:hsqldb:" + hsqlUrlServer + ";shutdown=true", "SA", "");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException("error while trying to initialize the HDSQL database engine in file "
+			throw new GenstarException("error while trying to initialize the HDSQL database engine in file "
 					+ hsqlUrlServer + ": " + e.getMessage(), e);
 		}
 		loadPopulationIntoDatabase(population);
@@ -192,12 +193,8 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	 * @return the table name for entity type
 	 */
 	protected String getTableNameForEntityType(final String type) {
-		String tableName = entityType2tableName.get(type);
-		if (tableName == null) {
-			tableName = "entities_" + type;
-			entityType2tableName.put(type, tableName);
-		}
-		return tableName;
+		entityType2tableName.putIfAbsent(type, "entities_" + type);
+		return entityType2tableName.get(type);
 	}
 
 	/**
@@ -237,7 +234,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			case Continue -> "DOUBLE";
 			case Nominal, Order, Range -> "VARCHAR(" + VARCHAR_SIZE + ")";
 			case Boolean -> "BOOLEAN";
-			default -> throw new RuntimeException("this attribute type is not managed: " + a.getValueSpace().getType());
+			default -> throw new GenstarException("this attribute type is not managed: " + a.getValueSpace().getType());
 		};
 
 		// can never reach here
@@ -259,7 +256,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		sb.append("CREATE TABLE ") // LOCAL TEMPORARY
 				.append(getTableNameForEntityType(type)).append(" (");
 
-		sb.append("id VARCHAR(50) PRIMARY KEY"); // TODO maybe 30 is not enough?
+		sb.append("id VARCHAR(50) PRIMARY KEY"); // maybe 30 is not enough?
 
 		for (Attribute<? extends IValue> a : entityType2attributes.get(type)) {
 			sb.append(", ");
@@ -314,7 +311,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		// create one table per type with the corresponding attributes
 		for (String type : entityType2attributes.keySet()) { createTableForEntityType(type); }
 
-		// TODO indexes !
+		// indexes !
 
 	}
 
@@ -338,7 +335,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			createInitialTables();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException(
+			throw new GenstarException(
 					"error creating the tables to store the population in database: " + e.getMessage(), e);
 		}
 
@@ -346,7 +343,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			storeEntities(entityType, pop);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException("error while inserting the population in database: " + e.getMessage(), e);
+			throw new GenstarException("error while inserting the population in database: " + e.getMessage(), e);
 
 		}
 	}
@@ -366,7 +363,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			case Continue, Integer -> v.getStringValue();
 			case Nominal, Order, Range -> "'" + v.getStringValue() + "'";
 			case Boolean -> ((BooleanValue) v).getActualValue() ? "TRUE" : "FALSE";
-			default -> throw new RuntimeException("unknown value type " + a.getValueSpace().getType());
+			default -> throw new GenstarException("unknown value type " + a.getValueSpace().getType());
 		};
 
 	}
@@ -391,9 +388,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			case Continue:
 				double valueDouble = r.getDouble(colName);
 				return a.getValueSpace().getValue(Double.toString(valueDouble));
-			case Nominal:
-			case Range:
-			case Order:
+			case Nominal, Range, Order:
 				String valueStr = r.getString(colName);
 				return a.getValueSpace().getValue(valueStr);
 			case Boolean:
@@ -402,7 +397,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				else
 					return ((BinarySpace) a.getValueSpace()).valueFalse;
 			default:
-				throw new RuntimeException("unknown entity type " + a.getValueSpace().getType());
+				throw new GenstarException("unknown entity type " + a.getValueSpace().getType());
 		}
 	}
 
@@ -504,7 +499,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			try {
 				createTableForEntityType(type);
 			} catch (SQLException ex) {
-				throw new RuntimeException("error while creating table for type " + type);
+				throw new GenstarException("error while creating table for type " + type);
 			}
 		}
 
@@ -536,7 +531,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			return false;
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			throw new RuntimeException("error while adding entity " + e, e1);
+			throw new GenstarException("error while adding entity " + e, e1);
 		}
 
 	}
@@ -550,31 +545,20 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 		try {
 
-			for (Object o : c) {
-				ADemoEntity e = null;
-				try {
-					e = (ADemoEntity) o;
-				} catch (ClassCastException e1) {
-					// skip was is not an entity
-					continue;
-				}
+			for (ADemoEntity e : c) {
 
 				String type = e.getEntityType();
 				if (type == null) { type = DEFAULT_ENTITY_TYPE; }
-
 				if (!e._hasEntityId()) { e._setEntityId(EntityUniqueId.createNextId(this, type)); }
-
-				System.out.println("should add entity id: " + e.getEntityId());
-
+				DEBUG.OUT("should add entity id: " + e.getEntityId());
 				if (!entityType2attributes.containsKey(type)) {
 					entityType2attributes.put(type, new HashSet<>(e.getAttributes()));
 				}
-
 				if (!entityType2tableName.containsKey(type)) {
 					try {
 						createTableForEntityType(type);
 					} catch (SQLException ex) {
-						throw new RuntimeException("error while creating table for type " + type);
+						throw new GenstarException("error while creating table for type " + type);
 					}
 				}
 
@@ -592,7 +576,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 						// one of the entities already exist;
 						// there is no easy and efficient synthax for sqldb to exclude the known ones
 						// the best is to just add them one by one
-						System.err.println("some of these agents already existed; switching to add 1 by 1");
+						DEBUG.ERR("some of these agents already existed; switching to add 1 by 1");
 						for (ADemoEntity en : l) { if (add(en)) { added++; } }
 					}
 					l.clear();
@@ -607,13 +591,13 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 					// one of the entities already exist;
 					// there is no easy and efficient synthax for sqldb to exclude the known ones
 					// the best is to just add them one by one
-					System.err.println("some of these agents already existed; switching to add 1 by 1");
+					DEBUG.ERR("some of these agents already existed; switching to add 1 by 1");
 					for (ADemoEntity en : type2entities.get(type)) { if (add(en)) { added++; } }
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException("error while adding entities", e);
+			throw new GenstarException("error while adding entities", e);
 		}
 		return added > 0;
 
@@ -621,12 +605,11 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 	@Override
 	public void clear() {
-		try {
-			Statement st = connection.createStatement();
+		try (Statement st = connection.createStatement()) {
 			for (String tablename : entityType2tableName.values()) { st.executeQuery("TRUNCATE TABLE " + tablename); }
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new RuntimeException("error while dropping the table containing the entities", e);
+			throw new GenstarException("error while dropping the table containing the entities", e);
 		}
 	}
 
@@ -644,8 +627,8 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			if (tableName == null)
 				// we never saw such a type; we cannot contain it
 				return false;
-			try {
-				Statement st = connection.createStatement();
+			try (Statement st = connection.createStatement()) {
+
 				ResultSet set =
 						st.executeQuery("SELECT COUNT(*) FROM " + tableName + " WHERE id='" + e.getEntityId() + "'");
 				set.next();
@@ -653,7 +636,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				return count > 0;
 			} catch (SQLException e1) {
 				e1.printStackTrace();
-				throw new RuntimeException("Unable to search for entity " + o, e1);
+				throw new GenstarException("Unable to search for entity " + o, e1);
 			}
 		}
 		return false;
@@ -662,7 +645,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	@Override
 	public boolean containsAll(final Collection<?> c) {
 
-		// TODO implement that, we can do it (but its tedious and no one ever uses it !)
+		// implement that, we can do it (but its tedious and no one ever uses it !)
 		throw new NotImplementedException("Not yet implemented");
 	}
 
@@ -673,8 +656,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		if (entityType2tableName.isEmpty()) return true;
 
 		// the hard way
-		try {
-			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		try (Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
 			for (String tableName : entityType2tableName.values()) {
 				// ResultSet set = st.executeQuery("SELECT * FROM "+tableName+";");
@@ -686,7 +668,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			throw new RuntimeException("Error while checking if the table is empty", e1);
+			throw new GenstarException("Error while checking if the table is empty", e1);
 		}
 
 		return false;
@@ -731,10 +713,10 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		 */
 		public DatabaseEntitiesIterator(final Connection connection, final Set<Attribute<? extends IValue>> attributes,
 				final String type, final String sqlWhereClause) {
-			assert connection != null;
-			assert sqlWhereClause != null;
-			assert type != null;
-			assert attributes != null;
+			if (connection == null) throw new IllegalArgumentException("Resource is null");
+			if (sqlWhereClause == null) throw new IllegalArgumentException("Clause is null");
+			if (type == null) throw new IllegalArgumentException("Type is null");
+			if (attributes == null) throw new IllegalArgumentException("Attributes are null");
 			this.connection = connection;
 			this.sql = "SELECT * FROM " + entityType2tableName.get(type) + sqlWhereClause;
 			this.attributes = attributes;
@@ -763,7 +745,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				rs.next();
 			} catch (SQLException e) {
 				close();
-				throw new RuntimeException(e);
+				throw new GenstarException(e);
 			}
 		}
 
@@ -772,7 +754,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			if (ps == null) { init(); }
 			try {
 				boolean hasMore = !rs.isAfterLast();
-				// TODO avoid this ugly workaround ?!
+				// avoid this ugly workaround ?!
 				if (hasMore) {
 					try {
 						rs.getString("id");
@@ -784,7 +766,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				return hasMore;
 			} catch (SQLException e) {
 				close();
-				throw new RuntimeException(e);
+				throw new GenstarException(e);
 			}
 
 		}
@@ -815,7 +797,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			try {
 				return createEntity(rs, type, attributes);
 			} catch (SQLException e) {
-				throw new RuntimeException(e);
+				throw new GenstarException(e);
 			}
 		}
 	}
@@ -902,16 +884,15 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		public AllTypesIterator(final Connection connection, final Map<String, String> entityType2tableName,
 				final Map<String, Set<Attribute<? extends IValue>>> entityType2attributes, final String whereClause) {
 
-			assert connection != null;
-			assert whereClause != null;
-			assert entityType2attributes != null;
+			if (connection == null) throw new IllegalArgumentException("Resource is null");
+			if (whereClause == null) throw new IllegalArgumentException("Clause is null");
+			if (entityType2attributes == null) throw new IllegalArgumentException("Entity types to attributes is null");
 
 			this.connection = connection;
 			this.entityType2attributes = entityType2attributes;
 			this.whereClause = whereClause;
 
 			itTypes = entityType2tableName.keySet().iterator();
-			itTypes.hasNext();
 		}
 
 		/**
@@ -937,7 +918,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 			if (itEntities == null) { initEntitiesIterator(); }
 
-			if (!itEntities.hasNext()) // System.out.println("end of the entities iterator");
+			if (!itEntities.hasNext()) // DEBUG.OUT("end of the entities iterator");
 				return itTypes.hasNext();
 			return true;
 		}
@@ -997,7 +978,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				return;
 			}
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			addWhereClauseForAttributes(sb, currentType, attribute2values);
 
@@ -1032,8 +1013,8 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				// we never stored an agent without id
 				return false;
 
-			try {
-				Statement st = connection.createStatement();
+			try (Statement st = connection.createStatement()) {
+
 				st.executeQuery("DELETE FROM " + getTableNameForEntityType(e.getEntityType()) + " WHERE id='"
 						+ e.getEntityId() + "'");
 
@@ -1043,7 +1024,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				return rs.getInt(1) > 0;
 			} catch (SQLException ex) {
 				ex.printStackTrace();
-				throw new RuntimeException("SQL error while deleting the entity " + e, ex);
+				throw new GenstarException("SQL error while deleting the entity " + e, ex);
 			}
 
 		} catch (ClassCastException e1) {
@@ -1060,7 +1041,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	 * @param ids
 	 *            the ids
 	 */
-	protected void createIdsClause(final StringBuffer sb, final Collection<String> ids) {
+	protected void createIdsClause(final StringBuilder sb, final Collection<String> ids) {
 		sb.append("IN (");
 		boolean first = true;
 		for (String id : ids) {
@@ -1085,12 +1066,11 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	 * @return the int
 	 */
 	protected int deleteIds(final String type, final Collection<String> ids) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("DELETE FROM ").append(getTableNameForEntityType(type)).append(" WHERE id ");
 		createIdsClause(sb, ids);
 
-		try {
-			Statement st = connection.createStatement();
+		try (Statement st = connection.createStatement()) {
 			st.executeQuery(sb.toString());
 			// check if we deleted anything
 			ResultSet rs = st.executeQuery("CALL DIAGNOSTICS ( ROW_COUNT )");
@@ -1098,7 +1078,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			return rs.getInt(1);
 		} catch (SQLException ex) {
 			ex.printStackTrace();
-			throw new RuntimeException("SQL error while deleting the entities " + ex, ex);
+			throw new GenstarException("SQL error while deleting the entities " + ex, ex);
 		}
 	}
 
@@ -1151,10 +1131,9 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 	@Override
 	public int size() {
-		try {
+		try (Statement st = connection.createStatement()) {
 			int accumulated = 0;
-			System.out.println("in size");
-			Statement st = connection.createStatement();
+			DEBUG.OUT("in size");
 
 			for (String tableName : entityType2tableName.values()) {
 
@@ -1165,7 +1144,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			return accumulated;
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			throw new RuntimeException("Error while counting entities", e1);
+			throw new GenstarException("Error while counting entities", e1);
 		}
 	}
 
@@ -1191,7 +1170,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 
 	@Override
 	public Attribute<? extends IValue> getPopulationAttributeNamed(final String name) {
-		// TODO index
+		// index
 		Set<Attribute<? extends IValue>> attributes = getPopulationAttributes();
 		if (attributes == null) return null;
 		for (Attribute<? extends IValue> a : attributes) { if (a.getAttributeName().equals(name)) return a; }
@@ -1220,7 +1199,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			try {
 				total += getEntitiesHavingValues(type, attribute, values);
 			} catch (SQLException e) {
-				throw new RuntimeException("error while counting entities of type " + type, e);
+				throw new GenstarException("error while counting entities of type " + type, e);
 			}
 		}
 		return total;
@@ -1238,7 +1217,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	 * @param values
 	 *            the values
 	 */
-	protected void addWhereClauseForAttribute(final StringBuffer sb, final String type,
+	protected void addWhereClauseForAttribute(final StringBuilder sb, final String type,
 			final Attribute<? extends IValue> attribute, final IValue... values) {
 
 		boolean first = true;
@@ -1246,7 +1225,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 		switch (attribute.getValueSpace().getType()) {
 			case Integer:
 			case Continue:
-				// TODO to optimize by creating >= <= clauses
+				// to optimize by creating >= <= clauses
 				for (IValue v : values) {
 					if (first) {
 						first = false;
@@ -1286,7 +1265,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				}
 				break;
 			default:
-				throw new RuntimeException("unknown attribute type " + attribute.getValueSpace().getType());
+				throw new GenstarException("unknown attribute type " + attribute.getValueSpace().getType());
 		}
 
 	}
@@ -1307,7 +1286,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	public int getEntitiesHavingValues(final String type, final Attribute<? extends IValue> attribute,
 			final IValue... values) throws SQLException {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT COUNT(*) AS TOTAL FROM ").append(getTableNameForEntityType(type));
 
 		if (values.length > 0) {
@@ -1315,7 +1294,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 			addWhereClauseForAttribute(sb, type, attribute, values);
 		}
 
-		// System.out.println(sb.toString());
+		// DEBUG.OUT(sb.toString());
 
 		try (Statement st = connection.createStatement()) {
 			ResultSet set = st.executeQuery(sb.toString());
@@ -1337,10 +1316,11 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	/*
 	 * Private inner method to setup query
 	 */
-	private void addWhereClauseForAttributes(final StringBuffer sb, final String type,
+	private void addWhereClauseForAttributes(final StringBuilder sb, final String type,
 			final Map<Attribute<? extends IValue>, Collection<IValue>> attribute2values) {
 		sb.append(" WHERE (");
 		boolean first = true;
+
 		for (Attribute<? extends IValue> attribute : attribute2values.keySet()) {
 			if (first) {
 				first = false;
@@ -1348,9 +1328,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				sb.append(") AND (");
 			}
 			Collection<IValue> values = attribute2values.get(attribute);
-			IValue[] vv = new IValue[values.size()];
-			values.toArray(vv);
-			addWhereClauseForAttribute(sb, type, attribute, vv);
+			addWhereClauseForAttribute(sb, type, attribute, values.toArray(new IValue[values.size()]));
 		}
 		sb.append(")");
 	}
@@ -1368,7 +1346,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	/*
 	 * Private inner method to setupe query
 	 */
-	private void addWhereClauseForCoordinate(final StringBuffer sb, final String type,
+	private void addWhereClauseForCoordinate(final StringBuilder sb, final String type,
 			final Map<Attribute<? extends IValue>, IValue> attribute2values) {
 		sb.append(" WHERE (");
 		boolean first = true;
@@ -1397,11 +1375,11 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	protected int getEntitiesHavingValues(final String type,
 			final Map<Attribute<? extends IValue>, Collection<IValue>> attribute2values) throws SQLException {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT COUNT(*) AS TOTAL FROM ").append(getTableNameForEntityType(type));
 
 		if (!attribute2values.isEmpty()) { addWhereClauseForAttributes(sb, type, attribute2values); }
-		// System.out.println(sb.toString());
+		// DEBUG.OUT(sb.toString());
 
 		try (Statement st = connection.createStatement()) {
 			ResultSet set = st.executeQuery(sb.toString());
@@ -1421,7 +1399,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				total += getEntitiesHavingValues(type, attribute2values);
 			} catch (SQLException e) {
 				e.printStackTrace();
-				throw new RuntimeException("error while counting entities of type " + type, e);
+				throw new GenstarException("error while counting entities of type " + type, e);
 			}
 
 		}
@@ -1442,11 +1420,11 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	protected int getEntitiesHavingCoordinate(final String type,
 			final Map<Attribute<? extends IValue>, IValue> attribute2value) throws SQLException {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT COUNT(*) AS TOTAL FROM ").append(getTableNameForEntityType(type));
 
 		if (!attribute2value.isEmpty()) { addWhereClauseForCoordinate(sb, type, attribute2value); }
-		// System.out.println(sb.toString());
+		// DEBUG.OUT(sb.toString());
 
 		try (Statement st = connection.createStatement()) {
 			ResultSet set = st.executeQuery(sb.toString());
@@ -1466,7 +1444,7 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 				total += getEntitiesHavingCoordinate(type, attribute2value);
 			} catch (SQLException e) {
 				e.printStackTrace();
-				throw new RuntimeException("error while counting entities of type " + type, e);
+				throw new GenstarException("error while counting entities of type " + type, e);
 			}
 
 		}
@@ -1492,32 +1470,29 @@ public class GosplPopulationInDatabase implements IQueryablePopulation<ADemoEnti
 	@Override
 	public ADemoEntity getEntityForId(final String id) {
 
-		Statement st;
-		try {
-			st = connection.createStatement();
+		try (Statement st = connection.createStatement()) {
+
+			for (String type : entityType2tableName.keySet()) {
+				try {
+					ResultSet rs = st.executeQuery(
+							"SELECT * FROM " + getTableNameForEntityType(type) + " WHERE id='" + id + "'");
+					rs.next(); // check
+					return createEntity(rs, type, entityType2attributes.get(type));
+				} catch (SQLException e) {
+					throw e;// maybe its not in this population
+				}
+			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-			throw new RuntimeException(e1);
+			throw new GenstarException(e1);
 		}
-
-		for (String type : entityType2tableName.keySet()) {
-			try {
-				ResultSet rs =
-						st.executeQuery("SELECT * FROM " + getTableNameForEntityType(type) + " WHERE id='" + id + "'");
-				rs.next(); // TODO check
-				return createEntity(rs, type, entityType2attributes.get(type));
-			} catch (SQLException e) {
-				// maybe its not in this population
-			}
-		}
-
 		return null;
 
 	}
 
 	@Override
 	public Iterator<ADemoEntity> getEntitiesForIds(final String... ids) {
-		// TODO !!!
+		// !!!
 		throw new NotImplementedException("sorry.");
 	}
 

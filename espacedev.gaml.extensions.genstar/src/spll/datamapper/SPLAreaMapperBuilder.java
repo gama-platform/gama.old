@@ -193,7 +193,7 @@ public class SPLAreaMapperBuilder extends ASPLMapperBuilder<SPLVariable, Double>
 	@Override
 	protected Map<SpllFeature, Number> buildOutput(final SPLVectorFile formatFile, final boolean intersect,
 			final boolean integer, final Number tagetPopulation) {
-		// TODO Auto-generated method stub
+		
 
 		if (mapper == null)
 			throw new IllegalAccessError("Cannot create output before a SPLMapper has been built and regression done");
@@ -350,7 +350,7 @@ public class SPLAreaMapperBuilder extends ASPLMapperBuilder<SPLVariable, Double>
 		// Retain main feature the pixel is within
 		Geometry pixGeom = refPixel.getGeometry();
 		List<? extends AGeoEntity<? extends IValue>> feats =
-				mainFeatures.stream().filter(ft -> ft.getGeometry().intersects(pixGeom)).collect(Collectors.toList());
+				mainFeatures.stream().filter(ft -> ft.getGeometry().intersects(pixGeom)).toList();
 		if (feats.isEmpty()) return SPLRasterFile.DEF_NODATA.floatValue();
 
 		// Get the values contain in the pixel bands

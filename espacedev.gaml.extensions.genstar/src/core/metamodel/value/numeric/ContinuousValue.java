@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ContinuousValue.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package core.metamodel.value.numeric;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,53 +18,53 @@ import core.util.data.GSEnumDataType;
 
 /**
  * Encapsulates a double value
- * 
+ *
  * @author kevinchapuis
  *
  */
 public class ContinuousValue implements IValue, Comparable<ContinuousValue> {
 
+	/** The value. */
 	private final Double value;
 
-	@JsonManagedReference
-	private ContinuousSpace cs;
-		
-	public ContinuousValue(ContinuousSpace cs, double value) {
+	/** The cs. */
+	@JsonManagedReference private final ContinuousSpace cs;
+
+	/**
+	 * Instantiates a new continuous value.
+	 *
+	 * @param cs the cs
+	 * @param value the value
+	 */
+	public ContinuousValue(final ContinuousSpace cs, final double value) {
 		this.cs = cs;
 		this.value = value;
 	}
 
 	@Override
-	public GSEnumDataType getType() {
-		return GSEnumDataType.Continue;
-	}
+	public GSEnumDataType getType() { return GSEnumDataType.Continue; }
 
 	@Override
-	public String getStringValue() {
-		return String.valueOf(value);
-	}
+	public String getStringValue() { return String.valueOf(value); }
 
 	@Override
-	public int compareTo(ContinuousValue o) {
+	public int compareTo(final ContinuousValue o) {
 		return this.value.compareTo(o.getActualValue());
 	}
 
 	@Override
-	public ContinuousSpace getValueSpace() {
-		return cs;
-	}
+	public ContinuousSpace getValueSpace() { return cs; }
 
 	/**
 	 * The actual encapsulated value
+	 *
 	 * @return
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@JsonIgnore
-	public Double getActualValue(){
-		return value;
-	}
-	
+	public Double getActualValue() { return value; }
+
 	// ------------------------------------------------------ //
 
 	@Override
@@ -63,20 +73,19 @@ public class ContinuousValue implements IValue, Comparable<ContinuousValue> {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return this.isEquals(obj);
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.getStringValue();
 	}
 
 	@Override
-	public <T> void setActualValue(T v) throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("cannot change the actual value of a Continuous attribute, it will always be a Double");
+	public <T> void setActualValue(final T v) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException(
+				"cannot change the actual value of a Continuous attribute, it will always be a Double");
 	}
 
-	
-	
 }

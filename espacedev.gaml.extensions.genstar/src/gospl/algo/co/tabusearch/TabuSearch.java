@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * TabuSearch.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.algo.co.tabusearch;
 
 import java.util.Collection;
@@ -28,7 +38,10 @@ import gospl.algo.co.metamodel.solution.ISyntheticPopulationSolution;
  */
 public class TabuSearch extends AOptimizationAlgorithm<GosplPopulation> {
 
+	/** The tabu list. */
 	private final ITabuList tabuList;
+
+	/** The max iterations. */
 	private final int maxIterations;
 
 	/**
@@ -45,6 +58,18 @@ public class TabuSearch extends AOptimizationAlgorithm<GosplPopulation> {
 		this(new PopulationAttributeNeighborSearch(), tabulist, fitnessThreshold, maxIterations);
 	}
 
+	/**
+	 * Instantiates a new tabu search.
+	 *
+	 * @param neighborSearch
+	 *            the neighbor search
+	 * @param tabuList
+	 *            the tabu list
+	 * @param fitnessThreshold
+	 *            the fitness threshold
+	 * @param maxIterations
+	 *            the max iterations
+	 */
 	public TabuSearch(final IPopulationNeighborSearch<GosplPopulation, ?> neighborSearch, final ITabuList tabuList,
 			final double fitnessThreshold, final int maxIterations) {
 		super(neighborSearch, fitnessThreshold);
@@ -108,15 +133,16 @@ public class TabuSearch extends AOptimizationAlgorithm<GosplPopulation> {
 
 			double candidateFitness = Collections.min(neighborsFitness.values());
 			if (candidateFitness < bestFitness) {
-				bestSolution = neighborsFitness.entrySet().stream()
-						.filter(entry -> entry.getValue() == candidateFitness).map(Entry::getKey).findFirst().get();
+				bestSolution =
+						neighborsFitness.entrySet().stream().filter(entry -> entry.getValue() == candidateFitness)
+								.map(Entry::getKey).findFirst().orElse(null);
 				bestFitness = candidateFitness;
 				stuckIdx = 0;
 			}
 
-			double var = Math.log1p(stuckIdx++) / Math.log(tabuList.maxSize());
+			double variable = Math.log1p(stuckIdx++) / Math.log(tabuList.maxSize());
 
-			if (GenstarRandom.getInstance().nextDouble() < var) {
+			if (GenstarRandom.getInstance().nextDouble() < variable) {
 
 				currentSolution = currentSolution.getRandomNeighbor(super.getNeighborSearchAlgorithm(),
 						super.computeBuffer(bestFitness * stuckIdx, currentSolution));

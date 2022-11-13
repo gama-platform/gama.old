@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplContingencyTable.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gospl.distribution;
 
 import java.util.Map;
@@ -14,44 +24,54 @@ import gospl.distribution.matrix.control.AControl;
 import gospl.distribution.matrix.control.ControlContingency;
 import gospl.distribution.matrix.coordinate.ACoordinate;
 
-
 /**
  * Complete n dimensional matrix with contingency cell, which means internal storage data are integers.
- * 
+ *
  * @see AFullNDimensionalMatrix
- * 
+ *
  * @author kevinchapuis
  *
  */
 public class GosplContingencyTable extends AFullNDimensionalMatrix<Integer> {
-	
-	public GosplContingencyTable(Set<Attribute<? extends IValue>> attributes) {
+
+	/**
+	 * Instantiates a new gospl contingency table.
+	 *
+	 * @param attributes the attributes
+	 */
+	public GosplContingencyTable(final Set<Attribute<? extends IValue>> attributes) {
 		super(attributes, GSSurveyType.ContingencyTable);
 	}
-	
-	protected GosplContingencyTable(Map<ACoordinate<Attribute<? extends IValue>, IValue>, AControl<Integer>> matrix) {
+
+	/**
+	 * Instantiates a new gospl contingency table.
+	 *
+	 * @param matrix the matrix
+	 */
+	protected GosplContingencyTable(
+			final Map<ACoordinate<Attribute<? extends IValue>, IValue>, AControl<Integer>> matrix) {
 		super(new ConcurrentHashMap<>(matrix));
 	}
-	
+
 	// ----------------------- SETTER CONTRACT ----------------------- //
 
-	
 	@Override
-	public boolean addValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinates, AControl<? extends Number> value){
-		if(matrix.containsKey(coordinates))
-			return false;
+	public boolean addValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinates,
+			final AControl<? extends Number> value) {
+		if (matrix.containsKey(coordinates)) return false;
 		return setValue(coordinates, value);
 	}
 
-
 	@Override
-	public final boolean addValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinates, Integer value) {
+	public final boolean addValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinates,
+			final Integer value) {
 		return addValue(coordinates, new ControlContingency(value));
 	}
-	
+
 	@Override
-	public boolean setValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinate, AControl<? extends Number> value){
-		if(isCoordinateCompliant(coordinate)){
+	public boolean setValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinate,
+			final AControl<? extends Number> value) {
+		if (isCoordinateCompliant(coordinate)) {
 			coordinate.setHashIndex(matrix.size());
 			matrix.put(coordinate, new ControlContingency(value.getValue().intValue()));
 			return true;
@@ -60,32 +80,25 @@ public class GosplContingencyTable extends AFullNDimensionalMatrix<Integer> {
 	}
 
 	@Override
-	public final boolean setValue(ACoordinate<Attribute<? extends IValue>, IValue> coordinate, Integer value) {
+	public final boolean setValue(final ACoordinate<Attribute<? extends IValue>, IValue> coordinate,
+			final Integer value) {
 		return setValue(coordinate, new ControlContingency(value));
 	}
-	
 
 	// ----------------------- SIDE CONTRACT ----------------------- //
-	
+
 	@Override
-	public AControl<Integer> getNulVal() {
-		return new ControlContingency(0);
-	}
-	
+	public AControl<Integer> getNulVal() { return new ControlContingency(0); }
+
 	@Override
-	public AControl<Integer> getIdentityProductVal() {
-		return new ControlContingency(1);
-	}
-	
+	public AControl<Integer> getIdentityProductVal() { return new ControlContingency(1); }
+
 	@Override
-	public AControl<Integer> getAtomicVal() {
-		return new ControlContingency(1);
-	}
-	
+	public AControl<Integer> getAtomicVal() { return new ControlContingency(1); }
+
 	@Override
-	public AControl<Integer> parseVal(GSDataParser parser, String val){
-		if(!parser.getValueType(val).equals(GSEnumDataType.Integer))
-			return getNulVal();
+	public AControl<Integer> parseVal(final GSDataParser parser, final String val) {
+		if (!GSEnumDataType.Integer.equals(parser.getValueType(val))) return getNulVal();
 		return new ControlContingency(Integer.valueOf(val));
 	}
 
@@ -95,13 +108,11 @@ public class GosplContingencyTable extends AFullNDimensionalMatrix<Integer> {
 		return true;
 	}
 
-
 	@Override
 	public void normalize() throws IllegalArgumentException {
 
-		throw new IllegalArgumentException("should not normalize a "+getMetaDataType());		
-		
-	}
+		throw new IllegalArgumentException("should not normalize a " + getMetaDataType());
 
+	}
 
 }

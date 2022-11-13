@@ -24,7 +24,7 @@ import core.metamodel.value.IValue;
 @JsonTypeInfo(
 	      use = JsonTypeInfo.Id.NAME,
 	      include = JsonTypeInfo.As.EXISTING_PROPERTY,
-	      property = IGSEntityMatcher.TYPE
+	      property = IGSEntityMatcher.TYPE_LABEL
 	      )
 @JsonSubTypes({
   @JsonSubTypes.Type(value = AttributeVectorMatcher.class),
@@ -34,8 +34,8 @@ import core.metamodel.value.IValue;
 @JsonSerialize(using = EntityMatcherSerializer.class)
 public interface IGSEntityMatcher<M> {
 	
-	public static final String TYPE = "ENTITY MATCH TYPE";
-	public static final String VECTOR = "MATCH VECTOR";
+	public static final String TYPE_LABEL = "ENTITY MATCH TYPE";
+	public static final String VECTOR_LABEL = "MATCH VECTOR";
 
 	public boolean valueMatch(M value);
 	public boolean valuesMatch(Collection<? extends M> values);
@@ -43,10 +43,10 @@ public interface IGSEntityMatcher<M> {
 	public int getHammingDistance(IEntity<? extends IAttribute<? extends IValue>> entity);
 	public void addMatchToVector(@SuppressWarnings("unchecked") M... matches);
 	
-	@JsonProperty(VECTOR)
+	@JsonProperty(VECTOR_LABEL)
 	public void setVector(Collection<M> vector);
 	
-	@JsonProperty(VECTOR)
+	@JsonProperty(VECTOR_LABEL)
 	public Collection<M> getVector();
 	
 }

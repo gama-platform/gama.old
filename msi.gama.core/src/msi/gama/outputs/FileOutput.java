@@ -441,7 +441,7 @@ public class FileOutput extends AbstractOutput {
 		if (outputs == null || outputs.isEmpty()) {
 			if (!getScope().step(this).passed()) { return; }
 		} else {
-			this.lastValues = outputs.values().stream().collect(Collectors.toList()); //setLastValue(fitness);
+			this.lastValues = outputs.values().stream().toList(); //setLastValue(fitness);
 		}
 		// compute(getOwnScope(), 0l);
 		switch (type) {

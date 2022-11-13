@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.utils;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import core.metamodel.attribute.Attribute;
@@ -32,9 +31,7 @@ import espacedev.gaml.extensions.genstar.utils.GenStarConstant.GenerationAlgorit
 import espacedev.gaml.extensions.genstar.utils.GenStarConstant.InputDataType;
 import espacedev.gaml.extensions.genstar.utils.GenStarConstant.SpatialDistribution;
 import gospl.algo.IGosplConcept;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaCSVFile;
 import msi.gaml.types.IType;
 
@@ -42,6 +39,11 @@ import msi.gaml.types.IType;
  * The Class GenStarGamaUtils.
  */
 public class GenStarGamaUtils {
+
+	/**
+	 * Instantiates a new gen star gama utils.
+	 */
+	private GenStarGamaUtils() {}
 
 	/**
 	 * The spatial distribution available in the Genstar API
@@ -119,25 +121,20 @@ public class GenStarGamaUtils {
 	public static GSSurveyWrapper toSurveyWrapper(final IScope scope, final GamaCSVFile survey,
 			final List<Attribute<? extends IValue>> atts) {
 		GenStarGamaSurveyUtils gsg = null;
-		try {
-			gsg = new GenStarGamaSurveyUtils(scope, survey, atts);
-		} catch (FileNotFoundException e) {
-			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(e, scope), true);
-			return null;
-		}
-		GSSurveyType gsType = GenStarGamaUtils.inferSurveyType(scope, gsg);
+		gsg = new GenStarGamaSurveyUtils(scope, survey, atts);
+		GSSurveyType gsType = GenStarGamaUtils.inferSurveyType(gsg);
 		return new GSSurveyWrapper(gsg.getPath(), gsType, gsg.getDelimiter(), 1, 1);
 	}
 
 	/**
 	 * Retrieve (smartly) the type of data from the data itself
 	 *
-	 * TODO : find something specific for samples, e.g. the case where every attribute of agent is a int proxy value
+	 * find something specific for samples, e.g. the case where every attribute of agent is a int proxy value
 	 *
 	 * @param survey
 	 * @return
 	 */
-	public static GSSurveyType inferSurveyType(final IScope scope, final GenStarGamaSurveyUtils gsg) {
+	public static GSSurveyType inferSurveyType(final GenStarGamaSurveyUtils gsg) {
 		switch (gsg.inferDataType().id()) {
 			case IType.INT:
 				return GSSurveyType.ContingencyTable;
@@ -147,8 +144,7 @@ public class GenStarGamaUtils {
 					return GSSurveyType.GlobalFrequencyTable;
 				else
 					return GSSurveyType.LocalFrequencyTable;
-			case IType.STRING:
-			case IType.NONE:
+			case IType.STRING, IType.NONE:
 				return GSSurveyType.Sample;
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + gsg.inferDataType().asPattern());
@@ -208,7 +204,7 @@ public class GenStarGamaUtils {
 	public static Object toGAMAValue(final IScope scope, final IValue valueForAttribute, final boolean checkEmpty,
 			final IType type) {
 		Object gamaValue = toGAMAValue(scope, valueForAttribute, checkEmpty);
-		if (type != null && gamaValue instanceof GamaRange) return ((GamaRange) gamaValue).cast(scope, type);
+		if (type != null && gamaValue instanceof GamaRange gr) return gr.cast(scope, type);
 		return gamaValue;
 	}
 

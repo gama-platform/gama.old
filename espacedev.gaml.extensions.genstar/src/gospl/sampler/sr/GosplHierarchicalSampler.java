@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GosplHierarchicalSampler.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.sampler.sr;
 
 import java.util.ArrayList;
@@ -32,9 +42,15 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GosplHierarchicalSampler implements IHierarchicalSampler {
 
+	/** The exploration order. */
 	private Collection<List<Attribute<? extends IValue>>> explorationOrder = null;
+
+	/** The segmented matrix. */
 	private ISegmentedNDimensionalMatrix<Double> segmentedMatrix;
 
+	/**
+	 * Instantiates a new gospl hierarchical sampler.
+	 */
 	public GosplHierarchicalSampler() {
 		// TODO Auto-generated constructor stub
 	}
@@ -94,7 +110,7 @@ public class GosplHierarchicalSampler implements IHierarchicalSampler {
 					// what we want is the distribution of probabilities for each of these possible values of the
 					// current attribute...
 					List<IValue> keys = new ArrayList<>(att.getValueSpace().getValues());
-					// TODO knowing the previous ones !
+					// knowing the previous ones !
 					keys.addAll(att2value.values());
 
 					// for each of the aspects of this attribute we're working on...
@@ -103,7 +119,7 @@ public class GosplHierarchicalSampler implements IHierarchicalSampler {
 					// ... we want to add the values already defined that can condition the attribute of interest
 					for (INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> m : this.segmentedMatrix
 							.getMatricesInvolving(this.segmentedMatrix.getDimensions().stream()
-									.filter(dim -> dim.equals(att.getReferentAttribute())).findAny().get())) {
+									.filter(dim -> dim.equals(att.getReferentAttribute())).findAny().orElse(null))) {
 						a.addAll(m.getDimensions().stream().filter(dim -> att2value.containsKey(dim))
 								.map(dim -> att2value.get(dim)).collect(Collectors.toSet()));
 					}
@@ -187,14 +203,14 @@ public class GosplHierarchicalSampler implements IHierarchicalSampler {
 	 */
 	@Override
 	public final Collection<ACoordinate<Attribute<? extends IValue>, IValue>> draw(final int numberOfDraw) {
-		return IntStream.range(0, numberOfDraw).parallel().mapToObj(i -> draw()).collect(Collectors.toList());
+		return IntStream.range(0, numberOfDraw).parallel().mapToObj(i -> draw()).toList();
 	}
 
 	// -------------------- utility -------------------- //
 
 	@Override
 	public String toCsv(final String csvSeparator) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

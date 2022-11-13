@@ -294,7 +294,7 @@ public class ModelLibraryGenerator {
 			// build the xml
 			headlessApplication.buildXMLForModelLibrary(gamlFilesForScreenshot, inputFileForHeadlessExecution);
 		} catch (ParserConfigurationException | TransformerException | IOException | GamaHeadlessException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 	}

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * DirectSamplingMultiLayerAlgo.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * 
+ ********************************************************************************************************/
 package gospl.algo.sr.multilayer.ds;
 
 import core.metamodel.attribute.Attribute;
@@ -12,6 +22,9 @@ import gospl.distribution.matrix.coordinate.GosplMultiLayerCoordinate;
 import gospl.sampler.ISampler;
 import gospl.sampler.multilayer.sr.GosplBiLayerReconstructionSampler;
 
+/**
+ * The Class DirectSamplingMultiLayerAlgo.
+ */
 public class DirectSamplingMultiLayerAlgo
 		implements ISynthethicReconstructionMultiLayerAlgo<GosplBiLayerReconstructionSampler> {
 

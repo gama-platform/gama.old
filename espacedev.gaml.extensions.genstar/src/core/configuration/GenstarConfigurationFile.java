@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GenstarConfigurationFile.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package core.configuration;
 
 import java.nio.file.Path;
@@ -8,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,27 +60,31 @@ import ummisco.gama.dev.utils.DEBUG;
 		using = GenstarConfigurationFileDeserializer.class)
 public class GenstarConfigurationFile {
 
+	/** The Constant SELF. */
 	public static final String SELF = "CONFIGURATION FILE";
+
+	/** The Constant BASE_DIR. */
 	public static final String BASE_DIR = "MAIN DIRECTORY";
 
+	/** The Constant INPUT_FILES. */
 	public static final String INPUT_FILES = "INPUT FILES";
+
+	/** The Constant DICOS. */
 	public static final String DICOS = "DICTIONARIES";
 
+	/** The Constant LAYER. */
 	public static final String LAYER = "LAYER LEVEL";
 
+	/** The data files. */
 	private final Map<GSSurveyWrapper, List<Integer>> dataFiles = new HashMap<>();
 
+	/** The dictionaries. */
 	private Set<IGenstarDictionary<Attribute<? extends IValue>>> dictionaries = new HashSet<>();
 
 	/**
 	 * The path in which the files included in this configuration is stored, if known.
 	 */
 	protected Path baseDirectory = null;
-
-	/**
-	 * Default constructor
-	 */
-	public GenstarConfigurationFile() {}
 
 	// ------------------------------------------- //
 
@@ -107,8 +122,7 @@ public class GenstarConfigurationFile {
 	public List<GSSurveyWrapper> getSurveyWrappers(final int level) {
 		if (this.dataFiles.values().stream().noneMatch(levels -> levels.contains(level)))
 			throw new NullPointerException("No survey wrappers for layer " + level);
-		return this.dataFiles.keySet().stream().filter(wrapper -> this.dataFiles.get(wrapper).contains(level))
-				.collect(Collectors.toList());
+		return this.dataFiles.keySet().stream().filter(wrapper -> this.dataFiles.get(wrapper).contains(level)).toList();
 	}
 
 	/**
@@ -164,7 +178,9 @@ public class GenstarConfigurationFile {
 	 * @return
 	 */
 	public IGenstarDictionary<Attribute<? extends IValue>> getDictionary(final int level) {
-		return this.dictionaries.stream().filter(dico -> dico.getLevel() == level).findFirst().get();
+		Optional<IGenstarDictionary<Attribute<? extends IValue>>> result =
+				this.dictionaries.stream().filter(dico -> dico.getLevel() == level).findFirst();
+		return result.isEmpty() ? null : result.get();
 	}
 
 	/**
@@ -177,9 +193,15 @@ public class GenstarConfigurationFile {
 		return Collections.unmodifiableSet(this.dictionaries);
 	}
 
+	/**
+	 * Sets the dictionaries.
+	 *
+	 * @param dictionaries
+	 *            the new dictionaries
+	 */
 	@JsonProperty (GenstarConfigurationFile.DICOS)
 	public void setDictionaries(final Set<IGenstarDictionary<Attribute<? extends IValue>>> dictionaries) {
-		if (!dictionaries.stream().anyMatch(dico -> dico.getLevel() == 0))
+		if (dictionaries.stream().noneMatch(dico -> dico.getLevel() == 0))
 			throw new IllegalArgumentException("Dictionary must include 0 based layer population");
 		dictionaries.stream().forEach(this::isCircleReferencedAttribute);
 		this.dictionaries = dictionaries;
@@ -193,20 +215,42 @@ public class GenstarConfigurationFile {
 	@JsonProperty (GenstarConfigurationFile.BASE_DIR)
 	public Path getBaseDirectory() { return this.baseDirectory; }
 
+	/**
+	 * Sets the path in which the files included in this configuration is stored, if known.
+	 *
+	 * @param f
+	 *            the new path in which the files included in this configuration is stored, if known
+	 */
 	@JsonProperty (GenstarConfigurationFile.BASE_DIR)
 	public void setBaseDirectory(final Path f) {
 		DEBUG.OUT("Setting Genstar configuration basepath to " + f);
 		this.baseDirectory = f;
 	}
 
+	/**
+	 * Gets the level.
+	 *
+	 * @return the level
+	 */
 	public int getLevel() { return dictionaries.size(); }
 
-	public List<Integer> getLayers() {
-		return dictionaries.stream().map(IGenstarDictionary::getLevel).collect(Collectors.toList());
-	}
+	/**
+	 * Gets the layers.
+	 *
+	 * @return the layers
+	 */
+	public List<Integer> getLayers() { return dictionaries.stream().map(IGenstarDictionary::getLevel).toList(); }
 
 	// --------------- UTILITIES --------------- //
 
+	/**
+	 * Checks if is circle referenced attribute.
+	 *
+	 * @param dictionary
+	 *            the dictionary
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 */
 	/*
 	 * Throws an exception if attributes have feedback loop references, e.g. : A referees to B that referees to C that
 	 * referees to A; in this case, no any attribute can be taken as a referent one
@@ -220,14 +264,13 @@ public class GenstarConfigurationFile {
 				attributes.stream().filter(att -> !att.getReferentAttribute().equals(att))
 						.collect(Collectors.toMap(att -> att, Attribute::getReferentAttribute));
 		// store attributes that are referent and which also have a referent attribute
-		Map<Attribute<? extends IValue>, Attribute<? extends IValue>> opCircle =
-				attToRefAtt.keySet().stream().filter(key -> attToRefAtt.containsValue(key))
-						.collect(Collectors.toMap(key -> key, key -> attToRefAtt.get(key)));
+		Map<Attribute<? extends IValue>, Attribute<? extends IValue>> opCircle = attToRefAtt.keySet().stream()
+				.filter(attToRefAtt::containsValue).collect(Collectors.toMap(key -> key, attToRefAtt::get));
 		// check if all referent attributes are also ones to refer to another attributes (circle)
 		if (!opCircle.isEmpty() && opCircle.keySet().containsAll(opCircle.values())) throw new IllegalArgumentException(
 				"You cannot setup circular references between attributes: " + opCircle.entrySet().stream()
 						.map(e -> e.getKey().getAttributeName() + " > " + e.getValue().getAttributeName())
-						.reduce((s1, s2) -> s1.concat(" >> " + s2)).get());
+						.reduce((s1, s2) -> s1.concat(" >> " + s2)).orElse(""));
 	}
 
 }

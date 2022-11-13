@@ -25,7 +25,7 @@ public class DXF3DSolid extends DXFRegion {
      * @see de.miethxml.kabeja.dxf.DXFEntity#getType()
      */
     public String getType() {
-        // TODO Auto-generated method stub
+        
         return DXFConstants.ENTITY_TYPE_3DSOLID;
     }
 }

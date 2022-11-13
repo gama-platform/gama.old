@@ -118,7 +118,7 @@ public class GSPredicateFactory {
 			EXIST_P = new Function<Collection<IEntity<? extends IAttribute<? extends IValue>>>, Boolean>() {
 				@Override
 				public Boolean apply(Collection<IEntity<? extends IAttribute<? extends IValue>>> collection) {
-					// TODO Auto-generated method stub
+					
 					return !collection.isEmpty();
 				}
 			};

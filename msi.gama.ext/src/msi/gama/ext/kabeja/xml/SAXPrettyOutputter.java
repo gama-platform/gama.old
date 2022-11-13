@@ -155,7 +155,7 @@ public class SAXPrettyOutputter extends AbstractSAXSerializer implements SAXSeri
 				this.out.write("</" + qName + ">");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -234,7 +234,7 @@ public class SAXPrettyOutputter extends AbstractSAXSerializer implements SAXSeri
 				this.out.write(qname + "=\"" + encodeXML(atts.getValue(i)) + "\"");
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 

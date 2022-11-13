@@ -77,7 +77,7 @@ public class DXFDimensionHandler extends AbstractEntityHandler {
      * @see de.miethxml.kabeja.parser.entities.DXFEntityHandler#getDXFEntityName()
      */
     public String getDXFEntityName() {
-        // TODO Auto-generated method stub
+        
         return ENTITY_NAME;
     }
 
@@ -87,7 +87,7 @@ public class DXFDimensionHandler extends AbstractEntityHandler {
      * @see de.miethxml.kabeja.parser.entities.DXFEntityHandler#isFollowSequence()
      */
     public boolean isFollowSequence() {
-        // TODO Auto-generated method stub
+        
         return false;
     }
 

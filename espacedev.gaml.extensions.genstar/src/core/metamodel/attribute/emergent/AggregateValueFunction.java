@@ -42,13 +42,13 @@ public class AggregateValueFunction<V extends IValue> implements
 		return aggregator.aggregate(entities.stream()
 				.map(e -> referent.getValueSpace().getValue(
 						e.getValueForAttribute(referent.getAttributeName()).getStringValue()))
-				.collect(Collectors.toList()), this.referent.getValueSpace());
+				.toList(), this.referent.getValueSpace());
 	}
 
 	@Override
 	public Collection<Map<IAttribute<? extends IValue>, IValue>> reverse(
 			Map<IAttribute<? extends IValue>, IValue> entities) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	

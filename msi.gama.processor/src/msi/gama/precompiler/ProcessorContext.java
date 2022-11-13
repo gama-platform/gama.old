@@ -448,7 +448,7 @@ public class ProcessorContext implements ProcessingEnvironment, RoundEnvironment
 	 */
 	public void setRoundEnvironment(final RoundEnvironment env) {
 		round = env;
-		roots = round.getRootElements().stream().map(Element::toString).collect(Collectors.toList());
+		roots = round.getRootElements().stream().map(Element::toString).toList();
 	}
 
 	@Override

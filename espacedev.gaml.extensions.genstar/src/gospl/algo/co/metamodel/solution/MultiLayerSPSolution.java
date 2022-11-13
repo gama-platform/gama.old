@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * MultiLayerSPSolution.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package gospl.algo.co.metamodel.solution;
 
 import java.util.ArrayList;
@@ -25,7 +35,7 @@ import gospl.validation.GosplIndicatorFactory;
 /**
  * A Synthetic population that provides a ready to access exploration feature in term of fitness and neighbors
  *
- * TODO : move fitness computation from layer 0 to multi-layered fitness : requires to create a new type of optimization
+ * move fitness computation from layer 0 to multi-layered fitness : requires to create a new type of optimization
  * algorithm (or extend the current 3)
  *
  * @author kevinchapuis
@@ -33,11 +43,28 @@ import gospl.validation.GosplIndicatorFactory;
  */
 public class MultiLayerSPSolution implements ISyntheticPopulationSolution<GosplMultitypePopulation<ADemoEntity>> {
 
-	final private GosplMultitypePopulation<ADemoEntity> population;
-	final private Map<Integer, Double> layeredFitness;
-	final private int layer;
-	final private boolean subPopulationConstant;
+	/** The population. */
+	private final GosplMultitypePopulation<ADemoEntity> population;
 
+	/** The layered fitness. */
+	private final Map<Integer, Double> layeredFitness;
+
+	/** The layer. */
+	private final int layer;
+
+	/** The sub population constant. */
+	private final boolean subPopulationConstant;
+
+	/**
+	 * Instantiates a new multi layer SP solution.
+	 *
+	 * @param population
+	 *            the population
+	 * @param layer
+	 *            the layer
+	 * @param subPopulationConstant
+	 *            the sub population constant
+	 */
 	public MultiLayerSPSolution(final GosplMultitypePopulation<ADemoEntity> population, final int layer,
 			final boolean subPopulationConstant) {
 		this.population = population;
@@ -46,6 +73,16 @@ public class MultiLayerSPSolution implements ISyntheticPopulationSolution<GosplM
 		this.layeredFitness = new HashMap<>();
 	}
 
+	/**
+	 * Instantiates a new multi layer SP solution.
+	 *
+	 * @param population
+	 *            the population
+	 * @param layer
+	 *            the layer
+	 * @param subPopulationConstant
+	 *            the sub population constant
+	 */
 	public MultiLayerSPSolution(final Collection<ADemoEntity> population, final int layer,
 			final boolean subPopulationConstant) {
 		this.population = GosplMultitypePopulation.getMultiPopulation(population, false);
@@ -97,22 +134,21 @@ public class MultiLayerSPSolution implements ISyntheticPopulationSolution<GosplM
 	/**
 	 * Return the fitness for a given layer
 	 *
-	 * @param layer
+	 * @param layerNum
 	 * @param objectives
 	 * @return
 	 */
-	public Double getFitness(final int layer,
+	public Double getFitness(final int layerNum,
 			final Set<INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer>> objectives) {
-		if (layeredFitness.containsKey(layer)) return layeredFitness.get(layer);
+		if (layeredFitness.containsKey(layerNum)) return layeredFitness.get(layerNum);
 		final GSPerformanceUtil gspu = new GSPerformanceUtil("== Fitness Computation ==", Level.TRACE);
 		double t = System.currentTimeMillis();
 
 		Set<Attribute<? extends IValue>> objAtt =
 				objectives.stream().flatMap(obj -> obj.getDimensions().stream()).collect(Collectors.toSet());
 
-		IPopulation<ADemoEntity, Attribute<? extends IValue>> popLayer = this.getSolution().getSubPopulation(layer);
-		objAtt = objAtt.stream()
-				.filter(att -> popLayer.getPopulationAttributes().stream().anyMatch(popAtt -> att.isLinked(popAtt)))
+		IPopulation<ADemoEntity, Attribute<? extends IValue>> popLayer = this.getSolution().getSubPopulation(layerNum);
+		objAtt = objAtt.stream().filter(att -> popLayer.getPopulationAttributes().stream().anyMatch(att::isLinked))
 				.collect(Collectors.toSet());
 
 		gspu.sysoStempMessage("Convert population of " + popLayer.size()
@@ -127,17 +163,17 @@ public class MultiLayerSPSolution implements ISyntheticPopulationSolution<GosplM
 						+ "\nPopulation: " + popLayer.getPopulationAttributes().stream()
 								.map(Attribute::getAttributeName).collect(Collectors.joining("; ")));
 		/*
-		 * TODO : turn the method into a : "passed this population into this matrix" to be sure to keep same ACoordinate
+		 * turn the method into a : "passed this population into this matrix" to be sure to keep same ACoordinate
 		 */
 		AFullNDimensionalMatrix<Integer> popMatrix =
 				GosplNDimensionalMatrixFactory.getFactory().createContingency(objAtt, popLayer);
 
 		gspu.sysoStempMessage("Build population contingency (" + popMatrix.getVal().getValue() + ") for attributes: "
 				+ popMatrix.getDimensions().stream().map(Attribute::getAttributeName).collect(Collectors.joining(", "))
-				+ " (" + String.valueOf((System.currentTimeMillis() - t) / 1000) + "s)");
+				+ " (" + (System.currentTimeMillis() - t) / 1000 + "s)");
 
 		for (IValue val : objAtt.stream().map(att -> att.getValueSpace().getValues().stream().findFirst().get())
-				.collect(Collectors.toList())) {
+				.toList()) {
 			gspu.sysoStempMessage("Exemple comparison on value " + val.getStringValue() + ": " + "POP="
 					+ popMatrix.getVal(val, true) + " | MARGINAL=" + objectives.iterator().next().getVal(val, true));
 		}
@@ -146,9 +182,9 @@ public class MultiLayerSPSolution implements ISyntheticPopulationSolution<GosplM
 		double fitness = objectives.stream()
 				.mapToDouble(obj -> GosplIndicatorFactory.getFactory().getIntegerTAE(obj, popMatrix)).sum();
 		gspu.sysoStempMessage("Compute fitness for given contingency: " + fitness + " ("
-				+ String.valueOf((System.currentTimeMillis() - t1) / 1000) + "s)");
+				+ (System.currentTimeMillis() - t1) / 1000 + "s)");
 
-		layeredFitness.put(layer, fitness);
+		layeredFitness.put(layerNum, fitness);
 		return fitness;
 	}
 
@@ -162,16 +198,16 @@ public class MultiLayerSPSolution implements ISyntheticPopulationSolution<GosplM
 	/**
 	 * Return the absolute error on each control marginals
 	 *
-	 * @param layer
+	 * @param layerNum
 	 * @param errorMatrix
 	 * @param objectives
 	 * @return
 	 */
-	public INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer> getAbsoluteErrors(final int layer,
+	public INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer> getAbsoluteErrors(final int layerNum,
 			final INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer> errorMatrix,
 			final Set<INDimensionalMatrix<Attribute<? extends IValue>, IValue, Integer>> objectives) {
 
-		return GosplIndicatorFactory.getFactory().getAbsoluteErrors(this.getSolution().getSubPopulation(layer),
+		return GosplIndicatorFactory.getFactory().getAbsoluteErrors(this.getSolution().getSubPopulation(layerNum),
 				errorMatrix, objectives);
 
 	}

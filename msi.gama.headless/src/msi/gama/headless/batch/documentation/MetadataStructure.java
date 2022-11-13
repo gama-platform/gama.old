@@ -69,10 +69,10 @@ public class MetadataStructure {
 		try {
 			computeMetadata(metadata);
 		} catch (final IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (final IllegalAccessException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}

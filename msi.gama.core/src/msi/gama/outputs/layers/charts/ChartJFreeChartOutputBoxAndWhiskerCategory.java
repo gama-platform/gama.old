@@ -111,7 +111,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 
 	@Override
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
-		// TODO Auto-generated method stub
+
 		source.setUseXErrValues(false);
 		source.setUseYErrValues(false);
 		source.setisBoxAndWhiskerData(true);
@@ -190,7 +190,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 
 	@Override
 	protected void clearDataSet(final IScope scope) {
-		// TODO Auto-generated method stub
+
 		super.clearDataSet(scope);
 		final CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 		for (int i = plot.getDatasetCount() - 1; i >= 1; i--) {
@@ -226,48 +226,43 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 
 	@Override
 	public void removeSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
+
 		super.removeSerie(scope, serieid);
 		this.clearDataSet(scope);
 	}
 
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
-		// TODO Auto-generated method stub
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		final DefaultBoxAndWhiskerCategoryDataset serie = (DefaultBoxAndWhiskerCategoryDataset) jfreedataset.get(0);
 		if (serie.getRowKeys().contains(serieid)) { serie.removeRow(serieid); }
 		// final ArrayList<Double> XValues = dataserie.getXValues(scope);
-		final ArrayList<String> CValues = dataserie.getCValues(scope);
-		final ArrayList<Double> YValues = dataserie.getYValues(scope);
-		final ArrayList<Double> SValues = dataserie.getSValues(scope);
-		if (CValues.size() > 0) {
+		final ArrayList<String> cValues = dataserie.getCValues(scope);
+		final ArrayList<Double> yValues = dataserie.getYValues(scope);
+		final ArrayList<Double> sValues = dataserie.getSValues(scope);
+		if (!cValues.isEmpty()) {
 			final NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
 			rangeAxis.setAutoRange(false);
-			for (int i = 0; i < CValues.size(); i++) {
+			for (int i = 0; i < cValues.size(); i++) {
 				if (getY_LogScale(scope)) {
-					final double val = YValues.get(i);
+					final double val = yValues.get(i);
 					if (val <= 0) throw GamaRuntimeException.warning("Log scale with <=0 value:" + val, scope);
-					serie.add(new BoxAndWhiskerItem(YValues.get(i), SValues.get(i), dataserie.xerrvaluesmin.get(i),
+					serie.add(new BoxAndWhiskerItem(yValues.get(i), sValues.get(i), dataserie.xerrvaluesmin.get(i),
 							dataserie.xerrvaluesmax.get(i), dataserie.yerrvaluesmin.get(i),
-							dataserie.yerrvaluesmax.get(i), null, null, null), serieid, CValues.get(i));
+							dataserie.yerrvaluesmax.get(i), null, null, null), serieid, cValues.get(i));
 
 				} else {
-					serie.add(new BoxAndWhiskerItem(YValues.get(i),
-							SValues.size() > i ? SValues.get(i) : YValues.get(i),
-							dataserie.xerrvaluesmin.size() > i ? dataserie.xerrvaluesmin.get(i) : YValues.get(i),
-							dataserie.xerrvaluesmax.size() > i ? dataserie.xerrvaluesmax.get(i) : YValues.get(i),
-							dataserie.yerrvaluesmin.size() > i ? dataserie.yerrvaluesmin.get(i) : YValues.get(i),
-							dataserie.yerrvaluesmax.size() > i ? dataserie.yerrvaluesmax.get(i) : YValues.get(i), null,
-							null, null), serieid, CValues.get(i));
+					serie.add(new BoxAndWhiskerItem(yValues.get(i),
+							sValues.size() > i ? sValues.get(i) : yValues.get(i),
+							dataserie.xerrvaluesmin.size() > i ? dataserie.xerrvaluesmin.get(i) : yValues.get(i),
+							dataserie.xerrvaluesmax.size() > i ? dataserie.xerrvaluesmax.get(i) : yValues.get(i),
+							dataserie.yerrvaluesmin.size() > i ? dataserie.yerrvaluesmin.get(i) : yValues.get(i),
+							dataserie.yerrvaluesmax.size() > i ? dataserie.yerrvaluesmax.get(i) : yValues.get(i), null,
+							null, null), serieid, cValues.get(i));
 
 				}
 			}
-		}
-		if (SValues.size() > 0) {
-			// what to do with Z values??
-
 		}
 
 		this.resetRenderer(scope, serieid);
@@ -353,7 +348,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 	 *            the scope
 	 */
 	public void resetDomainAxis(final IScope scope) {
-		// TODO Auto-generated method stub
+
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 		if (this.useSubAxis) {
 			final SubCategoryAxis newAxis = new SubCategoryAxis(pp.getDomainAxis().getLabel());
@@ -401,37 +396,32 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 
 	@Override
 	public void initChart_post_data_init(final IScope scope) {
-		// TODO Auto-generated method stub
+
 		super.initChart_post_data_init(scope);
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 
 		final String sty = getStyle();
 		this.useSubAxis = false;
-		switch (sty) {
-			case IKeyword.STACK: {
-				if ("xaxis".equals(this.series_label_position)) { this.series_label_position = "default"; }
-				if ("default".equals(this.series_label_position)) { this.series_label_position = "legend"; }
-				break;
-			}
-			default: {
-				if ("default".equals(this.series_label_position)) {
-					if (this.getChartdataset().getSources().size() > 0) {
-						final ChartDataSource onesource = this.getChartdataset().getSources().get(0);
-						if (onesource.isCumulative) {
-							this.series_label_position = "legend";
-						} else {
-							this.series_label_position = "xaxis";
-							useMainAxisLabel = false;
-						}
 
-					} else {
-						this.series_label_position = "legend";
-
-					}
+		if (IKeyword.STACK.equals(sty)) {
+			if ("xaxis".equals(this.series_label_position)) { this.series_label_position = IKeyword.DEFAULT; }
+			if (IKeyword.DEFAULT.equals(this.series_label_position)) { this.series_label_position = IKeyword.LEGEND; }
+		} else if ("default".equals(this.series_label_position)) {
+			if (!this.getChartdataset().getSources().isEmpty()) {
+				final ChartDataSource onesource = this.getChartdataset().getSources().get(0);
+				if (onesource.isCumulative) {
+					this.series_label_position = "legend";
+				} else {
+					this.series_label_position = "xaxis";
+					useMainAxisLabel = false;
 				}
-				break;
+
+			} else {
+				this.series_label_position = "legend";
+
 			}
 		}
+
 		if ("xaxis".equals(this.series_label_position)) { this.useSubAxis = true; }
 
 		if (!"legend".equals(this.series_label_position)) {
@@ -475,7 +465,6 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 		// final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 		// final BarRenderer renderer = (BarRenderer) pp.getRenderer();
 
-		// TODO Auto-generated method stub
 		// CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
 		// defaultrenderer = new BarRenderer();
 		// plot.setRenderer((BarRenderer)defaultrenderer);
@@ -489,10 +478,10 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 		final int y = yOnScreen - positionInPixels.y;
 		final ChartEntity entity = info.getEntityCollection().getEntity(x, y);
 		// getChart().handleClick(x, y, info);
-		if (entity instanceof XYItemEntity) {
-			final XYDataset data = ((XYItemEntity) entity).getDataset();
-			final int index = ((XYItemEntity) entity).getItem();
-			final int series = ((XYItemEntity) entity).getSeriesIndex();
+		if (entity instanceof XYItemEntity xyie) {
+			final XYDataset data = xyie.getDataset();
+			final int index = xyie.getItem();
+			final int series = xyie.getSeriesIndex();
 			final double xx = data.getXValue(series, index);
 			final double yy = data.getYValue(series, index);
 			final XYPlot plot = (XYPlot) getJFChart().getPlot();
@@ -506,18 +495,18 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 			if (StringUtils.isBlank(yTitle)) { yTitle = "Y"; }
 			sb.append(xTitle).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			sb.append(" | ").append(yTitle).append(" ").append(yInt ? (int) yy : String.format("%.2f", yy));
-		} else if (entity instanceof PieSectionEntity) {
-			final String title = ((PieSectionEntity) entity).getSectionKey().toString();
-			final PieDataset data = ((PieSectionEntity) entity).getDataset();
-			final int index = ((PieSectionEntity) entity).getSectionIndex();
+		} else if (entity instanceof PieSectionEntity pie) {
+			final String title = pie.getSectionKey().toString();
+			final PieDataset data = pie.getDataset();
+			final int index = pie.getSectionIndex();
 			final double xx = data.getValue(index).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-		} else if (entity instanceof CategoryItemEntity) {
-			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
+		} else if (entity instanceof CategoryItemEntity cie) {
+			final Comparable<?> columnKey = cie.getColumnKey();
 			final String title = columnKey.toString();
-			final CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
-			final Comparable<?> rowKey = ((CategoryItemEntity) entity).getRowKey();
+			final CategoryDataset data = cie.getDataset();
+			final Comparable<?> rowKey = cie.getRowKey();
 			final double xx = data.getValue(rowKey, columnKey).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));

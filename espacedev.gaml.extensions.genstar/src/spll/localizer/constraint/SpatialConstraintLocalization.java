@@ -38,7 +38,7 @@ public class SpatialConstraintLocalization extends ASpatialConstraint {
 				cands.removeIf(a -> !nestNames.contains(a.getGenstarName()));
 			}
 		} else {
-			cands = nests.stream().filter(a -> a.getGeometry().getCentroid().intersects(bounds)).collect(Collectors.toList());
+			cands = nests.stream().filter(a -> a.getGeometry().getCentroid().intersects(bounds)).toList();
 		}
 		return cands;
 	}

@@ -4372,7 +4372,7 @@ public abstract class Spatial {
 					comp = (o1, o2) -> Double.compare(o1.getLocation().getY(), o2.getLocation().getY());
 				}
 				final List<IShape> listSq =
-						toSquares(scope, geom, dimension).stream().sorted(comp).collect(Collectors.toList());
+						toSquares(scope, geom, dimension).stream().sorted(comp).toList();
 				final Double sum = (Double) Containers.sum(scope, rates);
 				final int totalNumber = listSq.size();
 				for (final Double rate : rates) {

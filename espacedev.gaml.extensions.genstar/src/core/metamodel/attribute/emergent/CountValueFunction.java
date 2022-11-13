@@ -51,7 +51,7 @@ public class CountValueFunction<E extends IEntity<? extends IAttribute<? extends
 	@Override
 	public Collection<Map<IAttribute<? extends IValue>, IValue>> reverse(
 			Map<IAttribute<? extends IValue>, IValue> entities) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	

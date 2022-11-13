@@ -22,7 +22,7 @@ import core.metamodel.entity.AGeoEntity;
 import core.metamodel.entity.EntityUniqueId;
 import core.metamodel.io.IGSGeofile;
 import core.metamodel.value.IValue;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 import gospl.GosplEntity;
 import spll.entity.SpllFeature;
 import spll.io.SPLGeofileBuilder;
@@ -92,7 +92,7 @@ public class SpllPopulation implements IPopulation<SpllEntity, Attribute<? exten
 
 		List<String> attributesNamesToKeep = dictionnary.stream()
 													.map(Attribute::getAttributeName)
-													.collect(Collectors.toList());
+													.toList();
 		SPLVectorFile sf = SPLGeofileBuilder.getShapeFile(sfFile,  attributesNamesToKeep, charset);
 		this.geoFile = sf;
 

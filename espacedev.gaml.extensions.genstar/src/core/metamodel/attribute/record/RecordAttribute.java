@@ -29,7 +29,7 @@ public class RecordAttribute<R extends IAttribute<? extends IValue>,
 	P extends IAttribute<? extends IValue>> implements IAttribute<NominalValue> {
 
 	public static final String SELF = "RECORD ATTRIBUTE";
-	public static final String PROXY_TYPE = "PROXY ATTRIBUTE "+IValueSpace.TYPE;
+	public static final String PROXY_TYPE = "PROXY ATTRIBUTE "+IValueSpace.TYPE_LABEL;
 	
 	private final P proxy;
 	

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * FileBasedGenerator.java, in espacedev.gaml.extensions.genstar, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * FileBasedGenerator.java, in espacedev.gaml.extensions.genstar, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package espacedev.gaml.extensions.genstar.generator;
 
@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
@@ -30,7 +29,7 @@ import core.metamodel.io.GSSurveyWrapper;
 import core.metamodel.value.IValue;
 import core.metamodel.value.numeric.RangeSpace;
 import core.util.data.GSEnumDataType;
-import core.util.excpetion.GSIllegalRangedData;
+import core.util.exception.GSIllegalRangedData;
 import core.util.random.GenstarRandom;
 import espacedev.gaml.extensions.genstar.statement.GenerateStatement;
 import espacedev.gaml.extensions.genstar.utils.GenStarGamaUtils;
@@ -42,6 +41,7 @@ import gospl.distribution.GosplInputDataManager;
 import gospl.distribution.exception.IllegalControlTotalException;
 import gospl.distribution.exception.IllegalDistributionCreation;
 import gospl.distribution.matrix.INDimensionalMatrix;
+import gospl.distribution.matrix.control.AControl;
 import gospl.distribution.matrix.coordinate.ACoordinate;
 import gospl.generator.DistributionBasedGenerator;
 import gospl.io.exception.InvalidSurveyFormatException;
@@ -61,9 +61,9 @@ import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
 /**
- * 
+ *
  * Genstar translation of Gama Delegate
- * 
+ *
  * @author kevinchapuis
  *
  */
@@ -72,87 +72,87 @@ public class FileBasedGenerator implements IGenstarGenerator {
 	/** The Constant INSTANCE. */
 	// SINGLETONG
 	private static final FileBasedGenerator INSTANCE = new FileBasedGenerator();
-	
+
 	/**
 	 * Gets the single instance of FileBasedGenerator.
 	 *
 	 * @return single instance of FileBasedGenerator
 	 */
-	public static FileBasedGenerator getInstance() {return INSTANCE;}
-	
+	public static FileBasedGenerator getInstance() { return INSTANCE; }
+
 	/** The type. */
-	@SuppressWarnings("rawtypes")
-	final IType type;
-	
+	@SuppressWarnings ("rawtypes") final IType type;
+
 	/**
 	 * Instantiates a new file based generator.
 	 */
-	@SuppressWarnings("unchecked")
-	private FileBasedGenerator() { this.type = Types.LIST.of(Types.FILE); }
-	
-	@SuppressWarnings("rawtypes")
-	@Override
-	public IType sourceType() { return type; }
+	@SuppressWarnings ("unchecked")
+	private FileBasedGenerator() {
+		this.type = Types.LIST.of(Types.FILE);
+	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings ("rawtypes")
 	@Override
-	public boolean sourceMatch(IScope scope, Object source) {
+	public IType sourceType() {
+		return type;
+	}
+
+	@SuppressWarnings ({ "rawtypes", "unchecked" })
+	@Override
+	public boolean sourceMatch(final IScope scope, final Object source) {
 		return source instanceof IList && ((IList) source).stream(scope).allMatch(csv -> csv instanceof GamaCSVFile);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
-	public void generate(IScope scope, List<Map<String, Object>> inits, Integer max, 
-			Object source, Object attributes, Object algo, 
-			Arguments init, GenerateStatement generateStatement) {
+	public void generate(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
+			final Object source, final Object attributes, final Object algo, final Arguments init,
+			final GenerateStatement generateStatement) {
 		IAgent executor = scope.getAgent();
-		msi.gama.metamodel.population.IPopulation<? extends IAgent> gamaPop = executor
-				.getPopulationFor(generateStatement.getDescription().getSpeciesContext().getName());
-		
+		msi.gama.metamodel.population.IPopulation<? extends IAgent> gamaPop =
+				executor.getPopulationFor(generateStatement.getDescription().getSpeciesContext().getName());
+
 		// --------
 		// 1. Infer the type of data for each attributes (based on gaml type and values given)
 		// -------
-		IMap<String,IList<String>> atts = (IMap<String,IList<String>>) attributes;
+		IMap<String, IList<String>> atts = (IMap<String, IList<String>>) attributes;
 		List<Attribute<? extends IValue>> gsAttributes = new ArrayList<>();
 		for (String a : atts.getKeys()) {
-			
+
 			// Trying to infer the type of data given
-			@SuppressWarnings("rawtypes")
-			IType gamaT = gamaPop.getVar(a).getType();
-			GSEnumDataType gsT = ReadDictionaryUtils.detectIsRange(atts.get(a)) ? 
-					GSEnumDataType.Range : GenStarGamaUtils.toDataType(gamaT,false);
-			
+			@SuppressWarnings ("rawtypes") IType gamaT = gamaPop.getVar(a).getType();
+			GSEnumDataType gsT = ReadDictionaryUtils.detectIsRange(atts.get(a)) ? GSEnumDataType.Range
+					: GenStarGamaUtils.toDataType(gamaT, false);
+
 			Attribute<? extends IValue> newAttribute = null;
 			try {
-				 newAttribute = AttributeFactory.getFactory().createAttribute(a, gsT, atts.get(a));
+				newAttribute = AttributeFactory.getFactory().createAttribute(a, gsT, atts.get(a));
 			} catch (GSIllegalRangedData e) {
 				e.printStackTrace();
 			}
-			if (newAttribute != null) {gsAttributes.add(newAttribute);}
+			if (newAttribute != null) { gsAttributes.add(newAttribute); }
 		}
-		
+
 		// --------
 		// 1. Infer the type of data in files - contingency, frequency or sample
 		// --------
 		IList<GamaCSVFile> fileSources = (IList<GamaCSVFile>) source;
-		List<GSSurveyWrapper> gsSurveys = fileSources.stream(scope)
-				.map(s -> GenStarGamaUtils.toSurveyWrapper(scope, s, gsAttributes))
-				.collect(Collectors.toList());
-		
-		
+		List<GSSurveyWrapper> gsSurveys =
+				fileSources.stream(scope).map(s -> GenStarGamaUtils.toSurveyWrapper(scope, s, gsAttributes)).toList();
+
 		// Set Genstar random engine to be the one of Gama for seed purpose consistancy !
 		GenstarRandom.setInstance(scope.getRandom().getGenerator());
-		
+
 		////////////////////////////////////////////////////////////////////////
 		// Setup Gen* data
 		////////////////////////////////////////////////////////////////////////
-		
+
 		// Create a basic empty Genstar population
 		IPopulation<ADemoEntity, Attribute<? extends IValue>> population = new GosplPopulation();
-				
-		// TODO : retrieve all the required configuration to build a Genstar configuration
-		Path baseDirectory = FileSystems.getDefault().getPath(".");		
-		
+
+		// retrieve all the required configuration to build a Genstar configuration
+		Path baseDirectory = FileSystems.getDefault().getPath(".");
+
 		GenstarConfigurationFile confFile = new GenstarConfigurationFile();
 		confFile.setBaseDirectory(baseDirectory);
 		confFile.setSurveyWrappers(gsSurveys);
@@ -161,117 +161,127 @@ public class FileBasedGenerator implements IGenstarGenerator {
 		////////////////////////////////////////////////////////////////////////
 		// Gospl generation
 		////////////////////////////////////////////////////////////////////////
-		
-		
+
 		GosplInputDataManager gdb = new GosplInputDataManager(confFile);
-		
-		
-        final EGosplAlgorithm gsAlgo = algo==null ? EGosplAlgorithm.DS : GenStarGamaUtils.toGosplAlgorithm(algo.toString());
-        
-        switch (gsAlgo.concept) {
+
+		final EGosplAlgorithm gsAlgo =
+				algo == null ? EGosplAlgorithm.DS : GenStarGamaUtils.toGosplAlgorithm(algo.toString());
+
+		switch (gsAlgo.concept) {
 			case CO:
 				break;
 			case MIXTURE:
-				throw new UnsupportedOperationException("Mixture population synthesis have not yet been ported from API to plugin ! "
-					+ "request dev at https://github.com/ANRGenstar/genstar.gamaplugin ;)");
-			case MULTILEVEL: throw new UnsupportedOperationException("I'll do it asap");
+				throw new UnsupportedOperationException(
+						"Mixture population synthesis have not yet been ported from API to plugin ! "
+								+ "request dev at https://github.com/ANRGenstar/genstar.gamaplugin ;)");
+			case MULTILEVEL:
+				throw new UnsupportedOperationException("I'll do it asap");
 			case SR:
 			default:
 				// Build the n-dimensional matrix from raw data
-				INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> distribution = manageRawData(scope, gdb);
+				INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> distribution =
+						manageRawData(scope, gdb);
 				ISampler<ACoordinate<Attribute<? extends IValue>, IValue>> sampler = null;
-				for (final Attribute<? extends IValue> attribute : gsAttributes) {  
-		        	if (attribute.getValueSpace() instanceof RangeSpace) {
-		        		((RangeSpace)attribute.getValueSpace()).consolidateRanges();   
-		        	}
-		        }
+				for (final Attribute<? extends IValue> attribute : gsAttributes) {
+					if (attribute.getValueSpace() instanceof RangeSpace) {
+						((RangeSpace) attribute.getValueSpace()).consolidateRanges();
+					}
+				}
 				switch (gsAlgo) {
-					case HS: 
+					case HS:
 						break;
 					case DS:
 					default:
 						try {
 							sampler = new DirectSamplingAlgo().inferSRSampler(distribution, new GosplBasicSampler());
 						} catch (final IllegalDistributionCreation e1) {
-							throw GamaRuntimeException.error("Error of distribution creation in infering the sampler for "+gsAlgo.name
-									+" SR Based algorithm. "+e1.getMessage(), scope);
+							throw GamaRuntimeException
+									.error("Error of distribution creation in infering the sampler for " + gsAlgo.name
+											+ " SR Based algorithm. " + e1.getMessage(), scope);
 						}
-						break; 
+						break;
 				}
 				population = new DistributionBasedGenerator(sampler).generate(inferPopulationSize(max, gdb));
 				break;
-        }
-        
+		}
+
 		////////////////////////////////////////////////////////////////////////
 		// Transpose Gen* entities to Gama species
 		////////////////////////////////////////////////////////////////////////
-        
-        if (max > 0 && max < population.size()) scope.getRandom().shuffleInPlace(population);
-        
-        for (final ADemoEntity e : population) {
-        	@SuppressWarnings("rawtypes")
-			final Map map = GamaMapFactory.create();
-        	for (final Attribute<? extends IValue> attribute : gsAttributes) {  
-        		IVariable var = gamaPop.getVar(attribute.getAttributeName());
-        		map.put(attribute.getAttributeName(), 
-        				GenStarGamaUtils.toGAMAValue(scope, e.getValueForAttribute(attribute), true, var.getType()));
-        		
-        	}
-        	generateStatement.fillWithUserInit(scope, map);
-    		inits.add(map);
-        }
-		
+
+		if (max > 0 && max < population.size()) { scope.getRandom().shuffleInPlace(population); }
+
+		for (final ADemoEntity e : population) {
+			@SuppressWarnings ("rawtypes") final Map map = GamaMapFactory.create();
+			for (final Attribute<? extends IValue> attribute : gsAttributes) {
+				IVariable variable = gamaPop.getVar(attribute.getAttributeName());
+				map.put(attribute.getAttributeName(),
+						GenStarGamaUtils.toGAMAValue(scope, e.getValueForAttribute(attribute), true, variable.getType()));
+
+			}
+			generateStatement.fillWithUserInit(scope, map);
+			inits.add(map);
+		}
+
 	}
-	
+
 	// -------------------------------------------------------------------- //
-	
+
 	// SR Utils
-	
+
 	/**
 	 * Construct a n-dimensional matrix based on raw data
-	 * 
+	 *
 	 * @param scope
 	 * @param gdb
 	 * @return
 	 */
-	public static INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> manageRawData(IScope scope, GosplInputDataManager gdb) {
+	public static INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> manageRawData(final IScope scope,
+			final GosplInputDataManager gdb) {
 		try {
-			gdb.buildDataTables();  // Load and read input data
+			gdb.buildDataTables(); // Load and read input data
 		} catch (final RuntimeException | InvalidFormatException | IOException | InvalidSurveyFormatException e) {
-			throw GamaRuntimeException.error("Error in building dataTable for the IS algorithm. "+e.getMessage(), scope);
+			throw GamaRuntimeException.error("Error in building dataTable for the IS algorithm. " + e.getMessage(),
+					scope);
 		}
 
 		INDimensionalMatrix<Attribute<? extends IValue>, IValue, Double> distribution = null;
 		try {
 			distribution = gdb.collapseDataTablesIntoDistribution(); // Build a distribution from input data
 		} catch (final IllegalDistributionCreation e1) {
-			throw GamaRuntimeException.error("Error of distribution creation in collapsing DataTable into distibution. "+e1.getMessage(), scope);
+			throw GamaRuntimeException.error(
+					"Error of distribution creation in collapsing DataTable into distibution. " + e1.getMessage(),
+					scope);
 		} catch (final IllegalControlTotalException e1) {
-			throw GamaRuntimeException.error("Error of control in collapsing DataTable into distibution. "+e1.getMessage(), scope);
+			throw GamaRuntimeException
+					.error("Error of control in collapsing DataTable into distibution. " + e1.getMessage(), scope);
 		}
 		return distribution;
 	}
-	
+
 	/**
-	 * Try to find a good fit in the data to decide the proper number of synthetic population size, i.e. in the case there is contingencies
-	 * 
+	 * Try to find a good fit in the data to decide the proper number of synthetic population size, i.e. in the case
+	 * there is contingencies
+	 *
 	 * @param requestedSize
 	 * @param gdb
 	 * @return
 	 */
-	public static int inferPopulationSize(int requestedSize, GosplInputDataManager gdb) {
+	public static int inferPopulationSize(int requestedSize, final GosplInputDataManager gdb) {
 		// DEFINE THE POPULATION SIZE
 		if (requestedSize < 0) {
 			int min = Integer.MAX_VALUE;
-			for (INDimensionalMatrix<Attribute<? extends IValue>,IValue,? extends Number> mat: gdb.getRawDataTables()) {
-				if (mat instanceof GosplContingencyTable) {
-					GosplContingencyTable cmat = (GosplContingencyTable) mat;
-					min = Math.min(min, cmat.getMatrix().values().stream().mapToInt(v -> v.getValue()).sum());
+			for (INDimensionalMatrix<Attribute<? extends IValue>, IValue, ? extends Number> mat : gdb
+					.getRawDataTables()) {
+				if (mat instanceof GosplContingencyTable cmat) {
+					min = Math.min(min, cmat.getMatrix().values().stream().mapToInt(AControl::getValue).sum());
 				}
 			}
 			if (min < Integer.MAX_VALUE) {
 				requestedSize = min;
-			} else requestedSize = 1;
+			} else {
+				requestedSize = 1;
+			}
 		}
 		return requestedSize <= 0 ? 1 : requestedSize;
 	}
