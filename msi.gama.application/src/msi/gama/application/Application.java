@@ -134,12 +134,12 @@ public class Application implements IApplication {
 			}
 
 		});
+		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion("1.8.2");
-		if (!EXIT_OK.equals(checkWorkspace())) {
-			Display display = null;
+		Object check = Display.getCurrent().syncCall(Application::checkWorkspace);
+		if (!EXIT_OK.equals(check)) {
 			try {
-				display = PlatformUI.createDisplay();
 				createProcessor(display);
 				if (getInternalPreferenceStore().getBoolean(CLEAR_WORKSPACE)) {
 					setProperty(CLEAR_PERSISTED_STATE, "true");
@@ -170,7 +170,7 @@ public class Application implements IApplication {
 	 * @throws MalformedURLException
 	 *             the malformed URL exception
 	 */
-	public static Object checkWorkspace() throws IOException, MalformedURLException {
+	public static Object checkWorkspace() throws IOException {
 		final Location instanceLoc = Platform.getInstanceLocation();
 		if (instanceLoc == null) {
 			// -data @none was specified but GAMA requires a workspace
@@ -214,7 +214,7 @@ public class Application implements IApplication {
 
 		/* If we don't remember the workspace, show the dialog */
 		if (!remember) {
-			final int pick = new PickWorkspaceDialog().open();
+			final int pick = new PickWorkspaceDialog(true).open();
 			/* If the user cancelled, we can't do anything as we need a workspace */
 			if (pick == 1 /* Window.CANCEL */ && getSelectedWorkspaceRootLocation() == null) {
 				openError(null, IKeyword.ERROR, "The application can not start without a workspace and will now exit.");

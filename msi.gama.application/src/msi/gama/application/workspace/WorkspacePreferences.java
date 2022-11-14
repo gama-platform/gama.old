@@ -222,9 +222,7 @@ public class WorkspacePreferences {
 			final boolean fromDialog, final boolean cloning) {
 		final Path workspaceDirectoryPath = Paths.get(workspaceLocation);
 		final Path workspaceIdentifierFilePath = Paths.get(workspaceLocation, WORKSPACE_IDENTIFIER);
-		// final File f = new File(workspaceLocation);
 		if (!Files.exists(workspaceDirectoryPath) && askCreate) {
-			// if (!f.exists() && askCreate) {
 			final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "New Directory",
 					workspaceLocation + " does not exist. Would you like to create a new workspace here"
 							+ (cloning ? ", copy the projects of your current workspace into it," : "")
@@ -232,21 +230,16 @@ public class WorkspacePreferences {
 			if (create) {
 				try {
 					Files.createDirectories(workspaceDirectoryPath);
-					// f.mkdirs();
-					// final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
 					Files.createFile(workspaceIdentifierFilePath);
-					// wsDot.createNewFile();
 					Path dotPath = Paths.get(workspaceLocation, getModelIdentifier());
-					// final File dotFile = new File(workspaceLocation + File.separator + getModelIdentifier());
 					Files.createFile(dotPath);
-					// dotFile.createNewFile();
+					return null;
 				} catch (final RuntimeException | IOException er) {
 					er.printStackTrace();
 					return "Error creating directories, please check folder permissions";
 				}
 			}
 			if (!Files.notExists(workspaceDirectoryPath)) return "The selected directory does not exist";
-			// if (!f.exists()) return "The selected directory does not exist";
 			return null;
 		}
 

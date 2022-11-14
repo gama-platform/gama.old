@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PickWorkspaceDialog.java, in msi.gama.application, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * PickWorkspaceDialog.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.application.workspace;
 
@@ -53,6 +53,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	// FIX: Removed the static reference in case it was causing trouble. Issue
 	// 240.
 
+	/** The Constant ERROR. */
+	private static final String ERROR = "Error";
+
 	// static Preferences preferences = Preferences.userRoot().node("gama");
 	/** The Constant strMsg. */
 	/* Various dialog messages */
@@ -87,6 +90,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/* Whatever the user picks ends up on this variable */
 	private boolean cloning = false;
 
+	/** The initial check. */
+	private final boolean initialCheck;
+
 	/**
 	 * Creates a new workspace dialog with a specific image as title-area image.
 	 *
@@ -95,8 +101,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * @param wizardImage
 	 *            Image to show
 	 */
-	public PickWorkspaceDialog() {
+	public PickWorkspaceDialog(final boolean initialCheck) {
 		super(Display.getDefault().getActiveShell());
+		this.initialCheck = initialCheck;
 	}
 
 	@Override
@@ -113,12 +120,6 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		try {
 			final Composite inner = new Composite(parent, SWT.NONE);
 			final GridLayout l = new GridLayout(4, false);
-			// double[][] layout =
-			// new double[][] {
-			// { 5, LatticeConstants.PREFERRED, 5, 250, 5,
-			// LatticeConstants.PREFERRED, 5 },
-			// { 5, LatticeConstants.PREFERRED, 5, LatticeConstants.PREFERRED,
-			// 40 } };
 			inner.setLayout(l);
 			inner.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true));
 
@@ -184,8 +185,10 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	protected void createButtonsForButtonBar(final Composite parent) {
 
 		/* Clone workspace needs a lot of checks */
-		final Button clone = createButton(parent, IDialogConstants.IGNORE_ID, "Clone existing workspace", false);
-		clone.addListener(SWT.Selection, arg0 -> cloneCurrentWorkspace());
+		if (!initialCheck) {
+			final Button clone = createButton(parent, IDialogConstants.IGNORE_ID, "Clone existing workspace", false);
+			clone.addListener(SWT.Selection, arg0 -> cloneCurrentWorkspace());
+		}
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
@@ -236,14 +239,14 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	protected void cloneCurrentWorkspace() {
 		final String currentLocation = WorkspacePreferences.getLastSetWorkspaceDirectory();
 		if (currentLocation == null || currentLocation.isEmpty()) {
-			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+			MessageDialog.openError(Display.getDefault().getActiveShell(), ERROR,
 					"No current workspace exists. Can only clone from an existing workspace");
 			return;
 		}
 		final String newLocation = workspacePathCombo.getText();
 		// Fixes Issue #2848
 		if (newLocation.startsWith(currentLocation)) {
-			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+			MessageDialog.openError(Display.getDefault().getActiveShell(), ERROR,
 					"The path entered is either that of the current wokspace or of a subdirectory of it. Neither can be used as a destination.");
 			return;
 		}
@@ -326,7 +329,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					copy(workspaceDirectory, targetDirectory);
 					// WorkspacePreferences.setApplyPrefs(true);
 				} catch (final Exception err) {
-					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+					MessageDialog.openError(Display.getDefault().getActiveShell(), ERROR,
 							"There was an error cloning the workspace: " + err.getMessage());
 					return;
 				}
@@ -357,9 +360,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 				final boolean created = dotFile.createNewFile();
 				if (!created) return false;
 				dotFile = new File(wsRoot + File.separator + WorkspacePreferences.getModelIdentifier());
-				dotFile.createNewFile();
+				if (!dotFile.createNewFile()) return false;
 			}
-
 			return true;
 		} catch (final Exception err) {
 			err.printStackTrace();
