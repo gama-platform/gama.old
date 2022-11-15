@@ -24,7 +24,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>2.6.0</tycho.version>
+		<tycho.version>3.0.0</tycho.version>
 		<jdk.version>17</jdk.version>
 	</properties>
 
