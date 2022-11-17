@@ -23,18 +23,25 @@ public interface IMPISkill {
 	
 	String OUTER_OLZ_AREA = "outer_OLZ_area";	
 	String INNER_OLZ_AREA = "inner_OLZ_area";	
+	String MAP_NEIGHBOR_INNEROLZ = "map_neighbor_innerOLZ";	
 	String MAIN_AREA = "shape";
 	
 	String GET_AGENT_IN_NEIGHBOR_OUTER_OLZ = "getAgentInNeighborOuterOLZ";
 	String GET_AGENT_IN_NEIGHBOR_INNER_OLZ = "getAgentInNeighborInnerOLZ";
 	String GET_AGENT_IN_NEIGHBOR_MAIN_AREA = "getAgentInNeighborMainArea";
 	String GET_ALL_AGENT_IN_NEIGHBOR = "getAllAgentInNeighbor";
+	String GATHER_ATTRIBUTE_FROM_MAIN_MODEL = "gatherAttributeFromMainModel";
+	String GATHER_ATTRIBUTE_FROM_EACH_PROCESS = "gatherAttributeFromEachProcess";
+	String UPDATE_COPY_ATTRIBUTE = "updateIsCopyAttribute";
 	
 	String NEIGHBORS_RANK = "neighbor_rank";
 	String MY_RANK = "myRank";
 
 	String START_LISTENER = "start_listener";
 	String STOP_LISTENER = "stop_listener";
+
+	String SPECIE_NAME_IN_MAIN_MODEL = "specieName";
+	String ATTRIBUTE_TO_GATHER = "attribute";
 	
-	Integer REQUEST_TAG = 1;
+	Integer REQUEST_TAG = 1; // tag to send request (GettingAgent, Gather, etc....)
 }

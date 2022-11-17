@@ -1,5 +1,5 @@
 /**
-* Name: NewModel
+* Name: OLZ_Controler
 * MPI Controler of OLZ.gaml
 * Author: Lucas GROSJEAN
 * Tags: MPI, Controler
@@ -13,7 +13,10 @@ global
 {
 	
 	string file_name;
-	int final_step <- 50;
+	int final_step <- 25;
+	int grid_widht <- 2;
+	int grid_lenght <- 2;
+	
 	int rank;
 	
 	init
@@ -46,20 +49,24 @@ global
 	    {
 	    	do die;
 	    }
-    	do die;
+	    
+	    do die;
     }
 }
 
 species slave parent: SlaveMPI
 {
 	cell cellule;
-	list<int> neighbors;
+	list<int> list_of_neighbors;
+	map<int, geometry> list_of_Rank_Outer_Geo;
 	
-	list<agent> agent_inside_me;
-	list<agent> inside_main;
-	list<agent> inside_outer_OLZ;
-	list<agent> inside_inner_OLZ;
-	list<agent> to_delete;
+	list<agent> agents_from_model;
+	list<agent> inside_main -> { agents_from_model inside(shape) };
+	list<agent> inside_outer_OLZ -> { agents_from_model inside(cellule.outer_OLZ) };
+	list<agent> inside_me -> { inside_main + inside_outer_OLZ };
+	
+	int division;
+	int remainder;
 	
 	init
 	{
@@ -67,54 +74,55 @@ species slave parent: SlaveMPI
 		file_name <- "log"+myRank+".txt";
 		do clearLogFile();
 		
-		
-		ask pp.movingExp[0]
-		{
-			myself.cellule <- cell[0,myself.myRank];
-			myself.outer_OLZ_area <- myself.cellule.OLZ_top_outer + myself.cellule.OLZ_bottom_outer + myself.cellule.OLZ_left_outer + myself.cellule.OLZ_right_outer;
-			myself.inner_OLZ_area <- myself.cellule.OLZ_top_inner + myself.cellule.OLZ_bottom_inner + myself.cellule.OLZ_left_inner + myself.cellule.OLZ_right_inner;
-			myself.shape <- myself.cellule.shape;
-		}
-		if(myRank = 0)
-		{
-			neighbors <- [1];
-		}else if(myRank = MPI_SIZE() - 1)
-		{				
-			neighbors <- [myRank - 1];
-		}else
-		{
-			neighbors <- [myRank - 1, myRank + 1];	
-		}
+		division <- myRank / grid_lenght;
+		remainder <- myRank mod grid_lenght;
 		
 		
 		do writeLog("My rank is " + myRank);
+		do writeLog("Grid size is [" + grid_lenght + "," + grid_widht + "]");
+		do writeLog("My position is [" + division + "," + remainder + "]");
 		do writeLog("NetSize " + MPI_SIZE());
 		do writeLog("Seed = " + seed);	
-		do writeLog("neighbors = " + neighbors);	
+		
+		list<int> tmp_list;
+		map<int, geometry> list_pair;
+		
+		ask pp.movingExp[0]
+		{
+			myself.cellule <- cell[myself.division, myself.remainder];
+			myself.shape <- myself.cellule.shape;
+			
+			cell tmp <- myself.cellule;
+			
+			ask myself.cellule.neighbors
+			{
+				geometry intersect <- tmp.inner_OLZ inter tmp.outer_OLZ;
+				int index <- self.cell_index;
+				
+				add index to: tmp_list;
+				add index :: intersect to: list_pair;
+			}
+		}
+		
+		
+		list_of_neighbors <- tmp_list;
+		map_neighbor_innerOLZ <- list_pair;
+		
+		do writeLog("list_of_geo = " + map_neighbor_innerOLZ);
+		do writeLog("neighbor = " + list_of_neighbors);
 	}
 	
 	action deleteAgentsNotInMyArea
 	{
 		do writeLog("-"+deleteAgentsNotInMyArea+"-");
-		ask pp.movingExp[0]
-	    {
-			myself.agent_inside_me <- agents; 
-	    }
-	    
-		inside_main <- agent_inside_me inside(shape); 
-		inside_outer_OLZ <- agent_inside_me inside(outer_OLZ_area);
-		inside_inner_OLZ <- agent_inside_me inside(inner_OLZ_area);
-		
-		agent_inside_me <- inside_main + inside_outer_OLZ; // inner is in main
 		
 		list<agent> agent_outside_me;
-		list<movingAgent> li;
-
 		string deleted <- "";
 		ask pp.movingExp[0] 
 	    {
-	    	agent_outside_me <- agents - myself.agent_inside_me;
-	    	ask movingAgent
+	    	agent_outside_me <- agents - myself.inside_me;
+	    	
+	    	ask movingAgent// important to specify the type to not delete experiment agent for example
 	    	{
 	    		if(agent_outside_me contains self)
 	    		{
@@ -123,17 +131,26 @@ species slave parent: SlaveMPI
 	    		}
 	    	}
 	    }
-
+	    
+		do writeLog("deleted = " + deleted);
+		do writeLog("inside_main" + inside_main);
+		do writeLog("inside_outer_OLZ" + inside_outer_OLZ);
+		do writeLog("agent_inside_me" + inside_me);
+		do writeLog("NB AGENTS agent_inside_me =  " +length(inside_me));
+	}
+	
+	action updateIsCopy
+	{
+		do updateIsCopyAttribute(inside_me);
+	}
+	
+	
+	reflex getAgentFromModel
+	{
 		ask pp.movingExp[0]
 	    {
-			myself.agent_inside_me <- agents; 
-			li <- movingAgent;
-	    }
-		do writeLog("deleted = " + deleted);
-		do writeLog("agent_inside_me" + inside_main);
-		do writeLog("inside_outer_OLZ" + inside_outer_OLZ);
-		do writeLog("inside_inner_OLZ" + inside_inner_OLZ);
-		do writeLog("NB AGENTS =  " +length(li));
+			myself.agents_from_model <- agents; 
+		}
 	}
 	
 	reflex routineMPI
@@ -146,19 +163,33 @@ species slave parent: SlaveMPI
 		
 		do MPI_BARRIER();
 		
-		do writeLog("Number of neigh = "+length(neighbors));
-		do writeLog("Neighs = "+neighbors);
-		loop neighbor over: neighbors
+		do writeLog("Number of neigh = "+length(list_of_neighbors));
+		do writeLog("Neighs = "+list_of_neighbors);
+		
+		loop neighbor over: list_of_neighbors
 		{
 			list<agent> t <- getAgentInNeighborInnerOLZ(neighbor);		
 			do writeLog("getAgentInNeighborInnerOLZ N°" + neighbor + "  result = " + t);
 		}
 		
+		
 		do MPI_BARRIER();
 		
 		do deleteAgentsNotInMyArea;
+	
+		do updateIsCopy();
+		
+		/*if(myRank = 0)
+		{		
+			list allAttribute <- gatherAttributeFromEachProcess("movingAgent","random_number");
+			do writeLog("allAttribute " + allAttribute);
+		}*/
+		
+		do MPI_BARRIER();
 		
 		do stop_listener;
+		
+		
 	}
 	
     action writeLog(string log)

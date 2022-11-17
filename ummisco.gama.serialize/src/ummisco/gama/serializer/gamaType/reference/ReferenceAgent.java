@@ -549,4 +549,16 @@ public class ReferenceAgent implements IReference, IAgent {
 	@Override
 	public void setUniqueID(int uID) {
 	}
+
+	@Override
+	public boolean getIsCopy() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setIsCopy(boolean copied) {
+		// TODO Auto-generated method stub
+		
+	}
 }

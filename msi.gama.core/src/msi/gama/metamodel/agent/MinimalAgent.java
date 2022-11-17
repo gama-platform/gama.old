@@ -59,6 +59,8 @@ public class MinimalAgent extends AbstractAgent {
 	/** The uniqueID. */
 	private int uniqueID;
 
+	private boolean isCopy;
+	
 	/**
 	 * @param s
 	 *            the population used to prototype the agent.
@@ -81,11 +83,11 @@ public class MinimalAgent extends AbstractAgent {
 		super(index);
 		this.population = population;
 		
-		this.setUniqueID(UniqueIDProviderService.getInstance().register());			
-		
-		//this.setUniqueID(Objects.hash(getPopulation(), index)); // todo service provider	
 		this.setUniqueID(UniqueIDProviderService.getInstance().register());
+		this.isCopy = false;
+		
 		System.out.println(this.name + " MinimalAgent unique ID construtor = " + this.uniqueID);
+		System.out.println(this.name + " MinimalAgent isCopy = " + this.isCopy);
 		this.geometry = geometry;
 		geometry.setAgent(this);
 	}
@@ -167,6 +169,16 @@ public class MinimalAgent extends AbstractAgent {
 	@Override
 	public int getUniqueID() {
 		return uniqueID;
+	}
+	
+	@Override
+	public boolean getIsCopy() {
+		return isCopy;
+	}
+
+	@Override
+	public void setIsCopy(boolean copied) {
+		this.isCopy = copied;
 	}
 
 	@SuppressWarnings ("rawtypes")

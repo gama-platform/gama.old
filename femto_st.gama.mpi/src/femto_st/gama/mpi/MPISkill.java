@@ -5,6 +5,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -14,18 +15,17 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
-import msi.gama.util.IContainer;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Spatial;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import ummisco.gama.serializer.factory.StreamConverter;
 
-import java.nio.Buffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @vars ({ @variable (
 		name = IMPISkill.MPI_RANK,
@@ -82,16 +82,14 @@ public class MPISkill extends Skill {
 					examples = { @example ("") }))
 	public void mpiFinalize(final IScope scope) {
 	    
-	    final IAgent agt = scope.getAgent();
 	    boolean isMPIInit = (boolean) scope.getArg(IMPISkill.MPI_INIT_DONE, IType.BOOL);
-	    
+	  
 	    if (!isMPIInit) { return; }
 	    
-	    final String[] arg = {};
 	    try {
 			System.out.println("************* Call Finalize");
 			MPI.Finalize();
-		    } catch (final MPIException e) {
+	    } catch (final MPIException e) {
 			System.out.println("MPI Finalize Error" + e);
 	    }
 	}
@@ -163,23 +161,17 @@ public class MPISkill extends Skill {
 		System.out.println("dest = " + dest);
 		System.out.println("stag = " + stag);
 
-
 		String conversion = StreamConverter.convertMPIObjectToStream(scope, mesg);
 		System.out.println("xxxxxxxxxxx " +conversion);
 		
 		final byte[] message = StreamConverter.convertMPIObjectToStream(scope, mesg).getBytes();
-		final int[] size = new int[1];
-		size[0] = message.length;
-
 		
-		System.out.println("size of message : "+size[0]);
 		try {
-			System.out.println("send size: "+Arrays.toString(size));
-			MPI.COMM_WORLD.send(size, 1, MPI.INT, dest, stag);
-			System.out.println("send message: "+message.length);
+			
+			System.out.println("send message: "+message);
+			System.out.println("message lenght: "+message.length);
 			MPI.COMM_WORLD.send(message, message.length, MPI.BYTE, dest, stag);
-			System.out.println("end try");
-
+			
 		} catch (final MPIException mpiex) {
 			System.out.println("MPI send Error" + mpiex);
 		}
@@ -216,9 +208,13 @@ public class MPISkill extends Skill {
 
 		System.out.println("Before MPI.COMM_WORLD.recv");
 		try {
-			MPI.COMM_WORLD.recv(size, 1, MPI.INT, source, rtag);
-			message = new byte[size[0]];
-			MPI.COMM_WORLD.recv(message, size[0], MPI.BYTE, source, rtag);
+			
+			Status st = MPI.COMM_WORLD.probe(source,0);
+            int sizeOfMessage = st.getCount(MPI.BYTE);
+            System.out.println("sizeOfMessage " + sizeOfMessage);
+			message = new byte[sizeOfMessage];
+			
+			MPI.COMM_WORLD.recv(message, sizeOfMessage, MPI.BYTE, source, rtag);
 		} catch (final MPIException mpiex) {
 			System.out.println("MPI send Error" + mpiex);
 		}
@@ -274,64 +270,117 @@ public class MPISkill extends Skill {
 		});
 	}
 	
-	@action(name = "testing")
-	public <T extends IAgent> IList<T> test(final IScope scope)
+	public static List<Object> gatherAttributeFromMainModel(IScope scope, String specieName, String attribute)
 	{
-
-		List<T> allAgentsInImportedModel = new ArrayList<T>();
+		System.out.println("gatherAttribute : " + attribute + " from specie : " +  specieName);
 		
-		var list = scope.getExperiment().getAgents(scope.getRoot().getScope());
-		System.out.println("list = "+list);
-		for(var let : list)
+		IList<IAgent> agentListInControlerModel = scope.getExperiment().getAgents(scope.getRoot().getScope());
+		for(var currentAgentInControler : agentListInControlerModel)
 		{
-			if(let instanceof SimulationAgent)
+			System.out.println("currentAgentInControler = "+currentAgentInControler.getName());
+			if(currentAgentInControler instanceof SimulationAgent)
 			{
-				IPopulation<? extends IAgent> movingAgents = ((ExperimentAgent)((SimulationAgent)let).getExternMicroPopulationFor("pp.movingExp").getAgent(0)).getSimulation().getPopulationFor("movingAgent");
-				for(var agent : movingAgents)
+				IPopulation<? extends IAgent>[] populationsInMainModel = ((ExperimentAgent)((SimulationAgent)currentAgentInControler).getExternMicroPopulationFor("pp.movingExp").getAgent(0)).getSimulation().getMicroPopulations();
+				for(var population : populationsInMainModel)
 				{
-					System.out.println("agent = "+agent.getName());
-				}
+					System.out.println("pop name = "+population.getName());
+					if(population.getName().equals(specieName))
+					{
+						System.out.println("Found species : "+specieName);
+						var auto = population.getVar(attribute);
+						
+						if(auto != null)
+						{
+							System.out.println("Found Attribute : " + attribute);
+							var agentsFromPopulation = population.getAgents(scope);
+							List<Object> listOfAttribute = agentsFromPopulation.stream(scope).filter(agent -> agent.getIsCopy() == false).map(agent -> agent.getAttribute(attribute)).collect(Collectors.toList());
 
-				IPopulation<? extends IAgent>[] allPops = ((ExperimentAgent)((SimulationAgent)let).getExternMicroPopulationFor("pp.movingExp").getAgent(0)).getSimulation().getMicroPopulations();
+							System.out.println("listOfAttribute = " + listOfAttribute);
+							for(IAgent agent : agentsFromPopulation.iterable(scope))
+							{
+								System.out.println("agent ("+agent.getName() + ") = " + agent.getAttribute(attribute).toString());
+							}
+							
+							return listOfAttribute;
+							
+						}else
+						{
+							System.out.println("No attribute : " + attribute + " for specie : " +  specieName);
+						}
+					}
+				}	
 
-				System.out.println("HELLOOOOOOOOOOOOOOOOO ");
-				for(var pop : allPops)
-				{
-					System.out.println("pop name = "+pop.getName());
-					System.out.println("0");
-					List<T> casting = (List<T>) pop.getAgents(scope);
-					System.out.println("1");
-					allAgentsInImportedModel.addAll(casting);
-					System.out.println("2");
-					System.out.println("allAgentsInImportedModel "+allAgentsInImportedModel.toString());
-
-					System.out.println("pop agent "+pop.getAgents(scope));
-				}
-				/*System.out.println("let "+((SimulationAgent)let).getSpeciesName());
-				System.out.println("1 "+let.getModel().getAgents(scope.getRoot().getScope()));
-				System.out.println("2 "+let.getModel().getAllSpecies());
-				System.out.println("3 movingAgent pop = "+let.getModel().getSpecies("movingAgent").getPopulation(scope));
-				System.out.println("3 movingAgent pop = "+let.getModel().getSpecies("movingAgent").getPopulation(scope.getRoot().getScope()));
-				System.out.println("4 "+let.getModel().getAgents(let.getScope()));
-				
-				System.out.println("5 "+let.getModel().getSpecies("OLZ_model").getAgents(scope));
-				System.out.println("6 "+let.getModel().getSpecies("OLZ_model").getAgents(scope.getRoot().getScope()));
-
-				System.out.println("7 "+let.getModel().getSpecies("OLZ_model").getMicroSpecies().get(0).getAgents(scope));
-				IList<ISpecies> listAgent = let.getModel().getSpecies("OLZ_model").getMicroSpecies();
-				System.out.println("listAgent value"+listAgent);
-				
-				for(var auto : listAgent.iterable(scope))
-				{
-					System.out.println("auto : "+auto);
-					System.out.println("auto POP : "+auto.getPopulation(scope));
-					System.out.println("auto root POP : "+auto.getPopulation(scope.getRoot().getScope()));
-				}*/
-				System.out.println("result = "+allAgentsInImportedModel);
-				return (IList<T>) allAgentsInImportedModel;
+				System.out.println("No specie : "+specieName+" found");
+				return new ArrayList<Object>();
 			}
 		}
+
+		return new ArrayList<Object>();
+	}
+	
+	@action(name = IMPISkill.GATHER_ATTRIBUTE_FROM_MAIN_MODEL,
+			args = { @arg (
+					name = IMPISkill.SPECIE_NAME_IN_MAIN_MODEL,
+					type = IType.STRING,
+					doc = @doc ("species to gather attribute from")),
+					
+					@arg (
+						name = IMPISkill.ATTRIBUTE_TO_GATHER,
+						type = IType.STRING,
+						doc = @doc ("attribute from the species to gather"))
+			})
+	public List<Object> gatherAttributeFromMainModel(final IScope scope)
+	{
 		
-		return null;
+		String specieName = (String) scope.getArg("specieName", IType.STRING);
+		String attribute = (String) scope.getArg("attribute", IType.STRING);
+		
+		return gatherAttributeFromMainModel(scope, specieName, attribute);
+	}
+	
+	public static ArrayList<IAgent> getAgentInArea(IScope scope, IShape shape)
+	{	
+		ArrayList<IAgent> agentListInImportedModel = new ArrayList<IAgent>();
+		IList<IAgent> agentListInMainModel = scope.getExperiment().getAgents(scope.getRoot().getScope());
+		System.out.println("agentListInMainModel = "+agentListInMainModel);
+		for(var let : agentListInMainModel)
+		{
+			System.out.println("let = "+let.getName());
+			if(let instanceof SimulationAgent)
+			{
+				IPopulation<? extends IAgent>[] pops = ((ExperimentAgent)((SimulationAgent)let).getExternMicroPopulationFor("pp.movingExp").getAgent(0)).getSimulation().getMicroPopulations();
+				System.out.println("pops = "+pops);
+				for(var pop : pops)
+				{
+					System.out.println("pop name = "+pop.getName());
+				}
+				for(var pop : pops)
+				{
+					if(!pop.getName().equals("cell"))
+					{
+						System.out.println("pop name = "+pop.getName());
+						for(var agent : pop)
+						{
+							System.out.println("agent name :  "+agent.getName());
+							System.out.println("agent location : "+agent.getLocation());
+							System.out.println("agent intersect shape : "+agent.getLocation().intersects(shape));
+						}
+						
+						System.out.println("Spatial.Queries.inside( scope : "+scope+", pop :"+pop+", shape :"+shape+")");
+						IList<? extends IShape> listShape = Spatial.Queries.inside(scope, pop, shape);
+						System.out.println("listShape : "+listShape);
+						IList<IAgent> listAgent = GamaListFactory.wrap(Types.LIST, listShape.stream().filter(agentShape -> agentShape.getAgent().getIsCopy() == false).map(agentShape -> agentShape.getAgent()).collect(Collectors.toList()));
+						System.out.println("listAgent : "+listAgent);
+						
+						agentListInImportedModel.addAll(listAgent);
+					}
+				}
+				
+				System.out.println("result of test "+agentListInImportedModel);
+				return agentListInImportedModel;
+			}
+		}
+		System.out.println("NO IMPORTED MODEL FOUND");
+		return agentListInImportedModel;
 	}
 }

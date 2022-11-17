@@ -221,7 +221,25 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 */
 	@setter (IKeyword.UNIQUEID)
 	void setUniqueID(int uID);
+	
+	
+	/**
+	 * Gets the uniqueID.
+	 *
+	 * @return the index
+	 */
+	@getter (IKeyword.IS_COPY)
+	boolean getIsCopy();
 
+	/**
+	 * Sets the uniqueID var value.
+	 *
+	 * @param uID
+	 *            the uniqueID
+	 */
+	@setter (IKeyword.IS_COPY)
+	void setIsCopy(boolean copied);
+	
 	/**
 	 * Gets the species name.
 	 *

@@ -55,6 +55,9 @@ public class SavedAgent extends GamaMap<String, Object> {
 	/** The uniqueID **/
 	int uniqueID;
 	
+	/** The uniqueID **/
+	boolean isCopy;
+	
 	
 	/** The inner populations. */
 	Map<String, List<SavedAgent>> innerPopulations;
@@ -69,6 +72,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 		result.source = source;
 		result.alias = alias;
 		result.uniqueID = uniqueID;
+		result.isCopy = isCopy;
 		return result;
 	}
 
@@ -94,6 +98,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 		source = agent.getScope().getExperiment().getSpeciesName();
 		alias = ((ModelDescription) agent.getScope().getSimulation().getSpecies().getDescription()).getAlias();
 		uniqueID = agent.getUniqueID();
+		isCopy = agent.getIsCopy();
 		saveAttributes(scope, agent);
 		if (agent instanceof IMacroAgent) {
 			saveMicroAgents(scope, (IMacroAgent) agent);
@@ -229,6 +234,23 @@ public class SavedAgent extends GamaMap<String, Object> {
 	}
 	 
 	 /**
+	 * Set the isCopy.
+	 */
+	public void setIsCopy(boolean copied) {
+		System.out.println("SAVED AGENT IS COPIED = " + copied);
+		isCopy = copied;
+	}
+	
+	/**
+	 * Gets the isCopy.
+	 *
+	 * @return the isCopy
+	 */
+	 public boolean getIsCopy(){
+		return isCopy;
+	}
+	 
+	 /**
 	 * Set the hashcode.
 	 */
 	public void setUniqueID(int uID) {
@@ -355,6 +377,76 @@ public class SavedAgent extends GamaMap<String, Object> {
 		return restoredAgents.get(0);
 	}
 	
+	
+	/** 
+	 * Get agent with uniqueID matching with this.uniqueID
+	 * 
+	 * @param targetPopulation
+	 *            The population that the saved agent will be restored to.
+	 *                    
+	 * @return the agent matching with this.uniqueID or null
+	 * 
+	 */
+	IAgent getCopyAgent(final IPopulation<? extends IAgent> targetPopulation)
+	{
+		IAgent copyAgent = targetPopulation.stream().filter(agent -> agent.getUniqueID() == this.uniqueID).findFirst().orElse(null);
+	
+		return copyAgent;
+	}
+	
+	
+	/**
+	 * Update agent copyAgent with new data
+	 * 
+	 * @param scope
+	 *            Restores the saved agent as a member of the target population.
+	 *
+	 * @param targetPopulation
+	 *            The population that the saved agent will be restored to.
+	 *            
+	 * @param agentAttrs
+	 *            List of the agent's attributes
+	 *            
+	 * @return the created agent
+	 * 
+	 */
+	void updateCopyAgent(final IScope scope, IAgent copyAgent) {
+		
+		System.out.println("Agent already created in the current population (UPDATE)");
+		
+		System.out.println("Agent before update = "+copyAgent.getOrCreateAttributes());
+		
+		System.out.println("Updating agent with (variable) " + this.getValues());
+		copyAgent.updateWith(scope, this);
+		System.out.println("Agent after update = "+copyAgent.getOrCreateAttributes());
+	}
+	
+	/** 
+	 * Create an agent in the population targetPopulation
+	 * 
+	 * @param scope
+	 *            Restores the saved agent as a member of the target population.
+	 *
+	 * @param targetPopulation
+	 *            The population that the saved agent will be restored to.
+	 *            
+	 * @param agentAttrs
+	 *            List of the agent's attributes
+	 *            
+	 * @return the created agent
+	 * 
+	 */
+	IAgent createAgentInPopulation(final IScope scope, final IPopulation<? extends IAgent> targetPopulation){
+		
+		final List<Map<String, Object>> agentAttributes = new ArrayList<>();
+		agentAttributes.add(this);
+		
+		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttributes, true, true);
+		restoreMicroAgents(scope, restoredAgents.get(0));
+		
+		return restoredAgents.get(0);
+	}
+	
 	/**
 	 * @param scope
 	 *            Restores the saved agent as a member of the target population.
@@ -367,28 +459,19 @@ public class SavedAgent extends GamaMap<String, Object> {
 	public IAgent restoreToMPI(final IScope scope, final IPopulation<? extends IAgent> targetPopulation, int uniqueID)
 			throws GamaRuntimeException {
 		System.out.println("RESTORING NEW AGENTS WITH UNIQUEID = "+uniqueID);
-		final List<Map<String, Object>> agentAttrs = new ArrayList<>();
-		agentAttrs.add(this);
-		/*for(var auto : agentAttrs)
-		{
-			System.out.println("auto = "+auto.toString());
-			for(var auto2 : auto.entrySet())
-			{
-				System.out.println(auto2.getKey() + " = "+auto2.getValue());
-			}
-		}*/
-
-		List<Integer> uniqueIDList = targetPopulation.stream().map(a -> a.getUniqueID()).collect(Collectors.toList());
-		if(uniqueIDList.contains(uniqueID))
-		{
-			System.out.println("Agent already created in the current population");
-			return null;
-		}
 		
-		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true, true);
-		restoreMicroAgents(scope, restoredAgents.get(0));
+		IAgent copyAgent = getCopyAgent(targetPopulation);
+		if(copyAgent != null)
+		{
+			System.out.println("before updateCopyAgent =  "+copyAgent.getLocation());
+			
+			updateCopyAgent(scope, copyAgent); // updating copyAgent with the new data
+			
+			System.out.println("after updateCopyAgent = "+copyAgent.getLocation());
+			return null; // no need to restore this agent since he is already in the simulation
+		}
 
-		return restoredAgents.get(0);
+		return createAgentInPopulation(scope, targetPopulation);
 	}
 
 	/**

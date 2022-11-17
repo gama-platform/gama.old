@@ -585,6 +585,9 @@ public interface IKeyword {
 
 	/** The is skill. */
 	String IS_SKILL = "is_skill";
+	
+	/** The is copy. */
+	String IS_COPY = "is_copy";
 
 	/** The isfolder. */
 	String ISFOLDER = "is_folder";

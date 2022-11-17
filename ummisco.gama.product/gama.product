@@ -22,7 +22,6 @@
       <programArgs>-data @noDefault 
 		--launcher.defaultAction
 		openFile
-		-MPI
       </programArgs>
       <programArgsLin>--launcher.GTK_version 3
       </programArgsLin>
