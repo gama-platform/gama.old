@@ -13,7 +13,7 @@ global
 {
 	
 	string file_name;
-	int final_step <- 25;
+	int final_step <- 50;
 	int grid_widht <- 2;
 	int grid_lenght <- 2;
 	
@@ -91,12 +91,13 @@ species slave parent: SlaveMPI
 		{
 			myself.cellule <- cell[myself.division, myself.remainder];
 			myself.shape <- myself.cellule.shape;
+			myself.agents_from_model <- agents;
 			
 			cell tmp <- myself.cellule;
 			
 			ask myself.cellule.neighbors
 			{
-				geometry intersect <- tmp.inner_OLZ inter tmp.outer_OLZ;
+				geometry intersect <- tmp.inner_OLZ inter self.outer_OLZ;
 				int index <- self.cell_index;
 				
 				add index to: tmp_list;
