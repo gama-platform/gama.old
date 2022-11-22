@@ -300,7 +300,7 @@ public class ServerExperimentController implements IExperimentController {
 	@Override
 	public void userReload() {
 		// TODO Should maybe be done directly (so as to reload immediately)
-		offer(_RELOAD);
+		processUserCommand(_RELOAD);
 	}
 
 	@Override
