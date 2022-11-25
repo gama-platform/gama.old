@@ -22,3 +22,4 @@ release/
 /*/bin/
 msi.gama.ext/lib/
 .__*
+/*/.tycho-consumer-pom.xml
