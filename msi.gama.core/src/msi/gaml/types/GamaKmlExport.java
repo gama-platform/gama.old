@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaKmlExport.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaKmlExport.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -40,28 +40,28 @@ import msi.gama.ext.kml.Placemark;
 import msi.gama.ext.kml.Scale;
 import msi.gama.ext.kml.Style;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
 import msi.gaml.operators.Spatial;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class GamaKmlExport.
  */
 public class GamaKmlExport {
-	
+
 	/** The kml. */
 	private final Kml kml;
-	
+
 	/** The doc. */
 	private final Document doc;
-	
+
 	/** The defolder. */
 	private KmlFolder defolder; // Default folder in case we need one.
-	
+
 	/** The folders. */
 	private final HashMap<String, KmlFolder> folders;
 
@@ -77,9 +77,12 @@ public class GamaKmlExport {
 	/**
 	 * Adds the folder.
 	 *
-	 * @param label the label
-	 * @param beginDate the begin date
-	 * @param endDate the end date
+	 * @param label
+	 *            the label
+	 * @param beginDate
+	 *            the begin date
+	 * @param endDate
+	 *            the end date
 	 * @return the kml folder
 	 */
 	public KmlFolder addFolder(final String label, final GamaDate beginDate, final GamaDate endDate) {
@@ -91,13 +94,20 @@ public class GamaKmlExport {
 	/**
 	 * Adds the 3 D model.
 	 *
-	 * @param scope the scope
-	 * @param loc the loc
-	 * @param orientation the orientation
-	 * @param scale the scale
-	 * @param beginDate the begin date
-	 * @param endDate the end date
-	 * @param daefile the daefile
+	 * @param scope
+	 *            the scope
+	 * @param loc
+	 *            the loc
+	 * @param orientation
+	 *            the orientation
+	 * @param scale
+	 *            the scale
+	 * @param beginDate
+	 *            the begin date
+	 * @param endDate
+	 *            the end date
+	 * @param daefile
+	 *            the daefile
 	 */
 	public void add3DModel(final IScope scope, final GamaPoint loc, final double orientation, final double scale,
 			final GamaDate beginDate, final GamaDate endDate, final String daefile) {
@@ -108,13 +118,20 @@ public class GamaKmlExport {
 	/**
 	 * Adds the geometry.
 	 *
-	 * @param scope the scope
-	 * @param label the label
-	 * @param beginDate the begin date
-	 * @param endDate the end date
-	 * @param geom the geom
-	 * @param styleName the style name
-	 * @param height the height
+	 * @param scope
+	 *            the scope
+	 * @param label
+	 *            the label
+	 * @param beginDate
+	 *            the begin date
+	 * @param endDate
+	 *            the end date
+	 * @param geom
+	 *            the geom
+	 * @param styleName
+	 *            the style name
+	 * @param height
+	 *            the height
 	 */
 	public void addGeometry(final IScope scope, final String label, final GamaDate beginDate, final GamaDate endDate,
 			final IShape geom, final String styleName, final double height) {
@@ -143,14 +160,13 @@ public class GamaKmlExport {
 	/**
 	 * To hex 2 digit.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the string
 	 */
 	private static String toHex2Digit(final int a) {
 		String prefix = "";
-		if (a % 256 < 16) {
-			prefix = "0";
-		}
+		if (a % 256 < 16) { prefix = "0"; }
 		return prefix + Integer.toHexString(a % 256);
 	}
 
@@ -188,43 +204,48 @@ public class GamaKmlExport {
 	/**
 	 * Save as kml.
 	 *
-	 * @param scope the scope
-	 * @param filename the filename
+	 * @param scope
+	 *            the scope
+	 * @param filename
+	 *            the filename
 	 */
 	public void saveAsKml(final IScope scope, final String filename) {
 		try {
 			if (!filename.isEmpty()) {
 				kml.marshal(new File(filename));
 			} else {
-				System.out.println("Failed to save the kml file : no valid file name was provided.");
+				DEBUG.OUT("Failed to save the kml file : no valid file name was provided.");
 			}
 		} catch (final FileNotFoundException e) {
-			GamaRuntimeFileException.error("Failed to open " + filename + " for saving to KML.", scope);
+			throw GamaRuntimeException.error("Failed to open " + filename + " for saving to KML.", scope);
 		}
 	}
 
 	/**
 	 * Save as kmz.
 	 *
-	 * @param scope the scope
-	 * @param filename the filename
+	 * @param scope
+	 *            the scope
+	 * @param filename
+	 *            the filename
 	 */
 	public void saveAsKmz(final IScope scope, final String filename) {
 		try {
 			if (!filename.isEmpty()) {
 				kml.marshalAsKmz(filename);
 			} else {
-				System.out.println("Failed to save the kmz file : no valid file name was provided.");
+				DEBUG.OUT("Failed to save the kmz file : no valid file name was provided.");
 			}
 		} catch (final IOException e) {
-			GamaRuntimeFileException.error("Failed to open " + filename + " for saving to KMZ.", scope);
+			throw GamaRuntimeException.error("Failed to open " + filename + " for saving to KMZ.", scope);
 		}
 	}
 
 	/**
 	 * Hide folder.
 	 *
-	 * @param folname the folname
+	 * @param folname
+	 *            the folname
 	 */
 	public void hideFolder(final String folname) {
 		final KmlFolder kf = getFolder(folname);
@@ -234,7 +255,8 @@ public class GamaKmlExport {
 	/**
 	 * Show folder.
 	 *
-	 * @param folname the folname
+	 * @param folname
+	 *            the folname
 	 */
 	public void showFolder(final String folname) {
 		final KmlFolder kf = getFolder(folname);
@@ -257,7 +279,8 @@ public class GamaKmlExport {
 	/**
 	 * Gets the folder.
 	 *
-	 * @param folname the folname
+	 * @param folname
+	 *            the folname
 	 * @return the folder
 	 */
 	protected KmlFolder getFolder(final String folname) {
@@ -273,7 +296,8 @@ public class GamaKmlExport {
 	/**
 	 * Date to kml.
 	 *
-	 * @param d the d
+	 * @param d
+	 *            the d
 	 * @return the string
 	 */
 	protected String dateToKml(final GamaDate d) {
@@ -284,13 +308,20 @@ public class GamaKmlExport {
 	/**
 	 * Adds the label.
 	 *
-	 * @param scope the scope
-	 * @param loc the loc
-	 * @param beginDate the begin date
-	 * @param endDate the end date
-	 * @param name the name
-	 * @param description the description
-	 * @param styleName the style name
+	 * @param scope
+	 *            the scope
+	 * @param loc
+	 *            the loc
+	 * @param beginDate
+	 *            the begin date
+	 * @param endDate
+	 *            the end date
+	 * @param name
+	 *            the name
+	 * @param description
+	 *            the description
+	 * @param styleName
+	 *            the style name
 	 */
 	public void addLabel(final IScope scope, final GamaPoint loc, final GamaDate beginDate, final GamaDate endDate,
 			final String name, final String description, final String styleName) {
@@ -300,14 +331,22 @@ public class GamaKmlExport {
 	/**
 	 * Adds the label.
 	 *
-	 * @param scope the scope
-	 * @param foldname the foldname
-	 * @param loc the loc
-	 * @param beginDate the begin date
-	 * @param endDate the end date
-	 * @param name the name
-	 * @param description the description
-	 * @param styleName the style name
+	 * @param scope
+	 *            the scope
+	 * @param foldname
+	 *            the foldname
+	 * @param loc
+	 *            the loc
+	 * @param beginDate
+	 *            the begin date
+	 * @param endDate
+	 *            the end date
+	 * @param name
+	 *            the name
+	 * @param description
+	 *            the description
+	 * @param styleName
+	 *            the style name
 	 */
 	public void addLabel(final IScope scope, final String foldname, final GamaPoint loc, final GamaDate beginDate,
 			final GamaDate endDate, final String name, final String description, final String styleName) {
@@ -319,20 +358,27 @@ public class GamaKmlExport {
 	 * The Class KmlFolder.
 	 */
 	public class KmlFolder {
-		
+
+		/** The Constant EPSG_4326. */
+		private static final String EPSG_4326 = "EPSG:4326";
+
 		/** The fold. */
-		public Folder fold;
-		
+		Folder fold;
+
 		/** The Constant ERR_HEADER. */
 		static final String ERR_HEADER = "Kml Export: ";
 
 		/**
 		 * Instantiates a new kml folder.
 		 *
-		 * @param doc the doc
-		 * @param label the label
-		 * @param beginDate the begin date
-		 * @param endDate the end date
+		 * @param doc
+		 *            the doc
+		 * @param label
+		 *            the label
+		 * @param beginDate
+		 *            the begin date
+		 * @param endDate
+		 *            the end date
 		 */
 		public KmlFolder(final Document doc, final String label, final String beginDate, final String endDate) {
 			this.fold = doc.createAndAddFolder();
@@ -342,8 +388,10 @@ public class GamaKmlExport {
 		/**
 		 * Instantiates a new kml folder.
 		 *
-		 * @param doc the doc
-		 * @param label the label
+		 * @param doc
+		 *            the doc
+		 * @param label
+		 *            the label
 		 */
 		public KmlFolder(final Document doc, final String label) {
 			this.fold = doc.createAndAddFolder();
@@ -376,7 +424,7 @@ public class GamaKmlExport {
 			final msi.gama.ext.kml.Point ls = placemark.createAndSetPoint();
 			ls.setExtrude(true);
 			ls.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-			final GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, "EPSG:4326").getCentroid();
+			final GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, EPSG_4326).getCentroid();
 
 			ls.addToCoordinates(locTM.x, locTM.y, locTM.z);
 			placemark.setName(name);
@@ -386,13 +434,20 @@ public class GamaKmlExport {
 		/**
 		 * Adds the 3 D model.
 		 *
-		 * @param scope the scope
-		 * @param loc the loc
-		 * @param orientation the orientation
-		 * @param scale the scale
-		 * @param beginDate the begin date
-		 * @param endDate the end date
-		 * @param daefile the daefile
+		 * @param scope
+		 *            the scope
+		 * @param loc
+		 *            the loc
+		 * @param orientation
+		 *            the orientation
+		 * @param scale
+		 *            the scale
+		 * @param beginDate
+		 *            the begin date
+		 * @param endDate
+		 *            the end date
+		 * @param daefile
+		 *            the daefile
 		 */
 		public void add3DModel(final IScope scope, final GamaPoint loc, final double orientation, final double scale,
 				final String beginDate, final String endDate, final String daefile) {
@@ -401,7 +456,7 @@ public class GamaKmlExport {
 			placemark.createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
 			final Model model = placemark.createAndSetModel();
 			model.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-			final GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, "EPSG:4326").getCentroid();
+			final GamaPoint locTM = Spatial.Projections.transform_CRS(scope, loc, EPSG_4326).getCentroid();
 			final Location locKML = new Location();
 			locKML.setLongitude(locTM.x);
 			locKML.setLatitude(locTM.y);
@@ -434,42 +489,42 @@ public class GamaKmlExport {
 			placemark.setName(label);
 			placemark.createAndSetTimeSpan().withBegin(beginDate).withEnd(endDate);
 
-			final IShape shapeTM = Spatial.Projections.transform_CRS(scope, shape, "EPSG:4326");
+			final IShape shapeTM = Spatial.Projections.transform_CRS(scope, shape, EPSG_4326);
 			final Geometry geom = shapeTM.getInnerGeometry();
 
-			if (geom instanceof Point) {
-				addPoint(placemark, (Point) geom, height);
-			} else if (geom instanceof LineString) {
-				addLine(placemark, (LineString) geom, height);
-			} else if (geom instanceof Polygon) {
-				addPolygon(placemark, (Polygon) geom, height);
-			} else if (geom instanceof MultiPoint) {
-				addMultiPoint(placemark, (MultiPoint) geom, height);
-			} else if (geom instanceof MultiLineString) {
-				addMultiLine(placemark, (MultiLineString) geom, height);
-			} else if (geom instanceof MultiPolygon) {
-				addMultiPolygon(placemark, (MultiPolygon) geom, height);
-			}
+			if (geom instanceof Point p) {
+				addPoint(placemark, p, height);
+			} else if (geom instanceof LineString ls) {
+				addLine(placemark, ls, height);
+			} else if (geom instanceof Polygon p) {
+				addPolygon(placemark, p, height);
+			} else if (geom instanceof MultiPoint mp) {
+				addMultiPoint(placemark, mp, height);
+			} else if (geom instanceof MultiLineString mls) {
+				addMultiLine(placemark, mls, height);
+			} else if (geom instanceof MultiPolygon mp) { addMultiPolygon(placemark, mp, height); }
 		}
 
 		/**
 		 * Sets the visibility.
 		 *
-		 * @param value the new visibility
+		 * @param value
+		 *            the new visibility
 		 */
 		public void setVisibility(final boolean value) {
 			this.fold.setVisibility(value);
-			for (final Feature f : this.fold.getFeature()) {
-				f.setVisibility(value);
-			}
+			for (final Feature f : this.fold.getFeature()) { f.setVisibility(value); }
 		}
 
 		/**
 		 * Adds the point.
 		 *
-		 * @param pm the pm
-		 * @param point the point
-		 * @param height the height
+		 * @param pm
+		 *            the pm
+		 * @param point
+		 *            the point
+		 * @param height
+		 *            the height
 		 */
 		public void addPoint(final Placemark pm, final Point point, final double height) {
 			final msi.gama.ext.kml.Point kmlpoint = pm.createAndSetPoint();
@@ -479,12 +534,14 @@ public class GamaKmlExport {
 		/**
 		 * Fill point.
 		 *
-		 * @param kmlpoint the kmlpoint
-		 * @param point the point
-		 * @param height the height
+		 * @param kmlpoint
+		 *            the kmlpoint
+		 * @param point
+		 *            the point
+		 * @param height
+		 *            the height
 		 */
-		public void fillPoint(final msi.gama.ext.kml.Point kmlpoint, final Point point,
-				final double height) {
+		public void fillPoint(final msi.gama.ext.kml.Point kmlpoint, final Point point, final double height) {
 			final Coordinate pos = point.getCoordinate();
 			if (height > 0.0) {
 				kmlpoint.setExtrude(true);
@@ -498,9 +555,12 @@ public class GamaKmlExport {
 		/**
 		 * Adds the line.
 		 *
-		 * @param pm the pm
-		 * @param line the line
-		 * @param height the height
+		 * @param pm
+		 *            the pm
+		 * @param line
+		 *            the line
+		 * @param height
+		 *            the height
 		 */
 		public void addLine(final Placemark pm, final LineString line, final double height) {
 			final msi.gama.ext.kml.LineString kmlline = pm.createAndSetLineString();
@@ -510,31 +570,32 @@ public class GamaKmlExport {
 		/**
 		 * Fill line.
 		 *
-		 * @param kmlline the kmlline
-		 * @param line the line
-		 * @param height the height
+		 * @param kmlline
+		 *            the kmlline
+		 * @param line
+		 *            the line
+		 * @param height
+		 *            the height
 		 */
-		public void fillLine(final msi.gama.ext.kml.LineString kmlline, final LineString line,
-				final double height) {
+		public void fillLine(final msi.gama.ext.kml.LineString kmlline, final LineString line, final double height) {
 			if (height > 0.0) {
 				kmlline.setExtrude(true);
 				kmlline.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
-				for (final Coordinate pos : line.getCoordinates()) {
-					kmlline.addToCoordinates(pos.x, pos.y, height);
-				}
+				for (final Coordinate pos : line.getCoordinates()) { kmlline.addToCoordinates(pos.x, pos.y, height); }
 			} else {
-				for (final Coordinate pos : line.getCoordinates()) {
-					kmlline.addToCoordinates(pos.x, pos.y);
-				}
+				for (final Coordinate pos : line.getCoordinates()) { kmlline.addToCoordinates(pos.x, pos.y); }
 			}
 		}
 
 		/**
 		 * Adds the polygon.
 		 *
-		 * @param pm the pm
-		 * @param poly the poly
-		 * @param height the height
+		 * @param pm
+		 *            the pm
+		 * @param poly
+		 *            the poly
+		 * @param height
+		 *            the height
 		 */
 		public void addPolygon(final Placemark pm, final Polygon poly, final double height) {
 			final msi.gama.ext.kml.Polygon kmlpoly = pm.createAndSetPolygon();
@@ -544,16 +605,17 @@ public class GamaKmlExport {
 		/**
 		 * Fill polygon.
 		 *
-		 * @param kmlpoly the kmlpoly
-		 * @param poly the poly
-		 * @param height the height
+		 * @param kmlpoly
+		 *            the kmlpoly
+		 * @param poly
+		 *            the poly
+		 * @param height
+		 *            the height
 		 */
-		public void fillPolygon(final msi.gama.ext.kml.Polygon kmlpoly, final Polygon poly,
-				final double height) {
+		public void fillPolygon(final msi.gama.ext.kml.Polygon kmlpoly, final Polygon poly, final double height) {
 
 			// Shell ring
-			final msi.gama.ext.kml.LinearRing kmlring =
-					kmlpoly.createAndSetOuterBoundaryIs().createAndSetLinearRing();
+			final msi.gama.ext.kml.LinearRing kmlring = kmlpoly.createAndSetOuterBoundaryIs().createAndSetLinearRing();
 			if (height > 0.0) {
 				kmlpoly.setExtrude(true);
 				kmlpoly.setAltitudeMode(AltitudeMode.RELATIVE_TO_GROUND);
@@ -582,7 +644,6 @@ public class GamaKmlExport {
 					for (final Coordinate pos : poly.getInteriorRingN(hi).getCoordinates()) {
 						kmlhole.addToCoordinates(pos.x, pos.y);
 					}
-					;
 				}
 			}
 		}
@@ -590,9 +651,12 @@ public class GamaKmlExport {
 		/**
 		 * Adds the multi point.
 		 *
-		 * @param pm the pm
-		 * @param mpoint the mpoint
-		 * @param height the height
+		 * @param pm
+		 *            the pm
+		 * @param mpoint
+		 *            the mpoint
+		 * @param height
+		 *            the height
 		 */
 		public void addMultiPoint(final Placemark pm, final MultiPoint mpoint, final double height) {
 			final int ng = mpoint.getNumGeometries();
@@ -606,9 +670,12 @@ public class GamaKmlExport {
 		/**
 		 * Adds the multi line.
 		 *
-		 * @param pm the pm
-		 * @param mline the mline
-		 * @param height the height
+		 * @param pm
+		 *            the pm
+		 * @param mline
+		 *            the mline
+		 * @param height
+		 *            the height
 		 */
 		public void addMultiLine(final Placemark pm, final MultiLineString mline, final double height) {
 			final int ng = mline.getNumGeometries();
@@ -622,9 +689,12 @@ public class GamaKmlExport {
 		/**
 		 * Adds the multi polygon.
 		 *
-		 * @param pm the pm
-		 * @param mpoly the mpoly
-		 * @param height the height
+		 * @param pm
+		 *            the pm
+		 * @param mpoly
+		 *            the mpoly
+		 * @param height
+		 *            the height
 		 */
 		public void addMultiPolygon(final Placemark pm, final MultiPolygon mpoly, final double height) {
 			final int ng = mpoly.getNumGeometries();
