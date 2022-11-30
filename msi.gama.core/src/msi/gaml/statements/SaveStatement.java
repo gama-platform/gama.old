@@ -19,14 +19,13 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -224,6 +223,19 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
+	/** The Constant EPSG_LABEL. */
+	private static final String EPSG_LABEL = "EPSG:";
+
+	/** The Constant GEOTIFF. */
+	private static final String GEOTIFF = "geotiff";
+
+	/** The Constant DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE. */
+	private static final String DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE =
+			" does not correspond to a known EPSG code. GAMA is unable to save ";
+
+	/** The Constant THE_CODE. */
+	private static final String THE_CODE = "The code ";
+
 	/**
 	 * The Class SaveValidator.
 	 */
@@ -306,7 +318,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	private final IExpression attributesFacet;
 
 	/** The header. */
-	private final IExpression crsCode, item, file, rewriteExpr, header;
+	private final IExpression crsCode;
+
+	/** The item. */
+	private final IExpression item;
+
+	/** The file. */
+	private final IExpression file;
+
+	/** The rewrite expr. */
+	private final IExpression rewriteExpr;
+
+	/** The header. */
+	private final IExpression header;
 
 	/**
 	 * Instantiates a new save statement.
@@ -336,8 +360,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return Cast.asBool(scope, rewriteExpr.value(scope));
 	}
 
-	// TODO rewrite this with the GamaFile framework
-
 	@SuppressWarnings ("unchecked")
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
@@ -345,21 +367,21 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		// First case: we have a file as item;
 		if (file == null) {
 			if (!Types.FILE.isAssignableFrom(item.getGamlType())) return null;
-			final IGamaFile file = (IGamaFile) item.value(scope);
-			if (file != null) {
+			final IGamaFile theFile = (IGamaFile) item.value(scope);
+			if (theFile != null) {
 				// Passes directly the facets of the statement, like crs, etc.
-				file.save(scope, description.getFacets());
+				theFile.save(scope, description.getFacets());
 			}
-			return file;
+			return theFile;
 		}
 		final String typeExp = getLiteral(IKeyword.TYPE);
 		// Second case: a filename is indicated but not the type. In that case,
 		// we try to build a new GamaFile from it and save it
-		if (file != null && typeExp == null) {
-			final String name = Cast.asString(scope, file.value(scope));
+		if (typeExp == null) {
+			final String theName = Cast.asString(scope, file.value(scope));
 			final Object contents = item.value(scope);
-			if (contents instanceof IModifiableContainer) {
-				final IGamaFile f = GamaFileType.createFile(scope, name, (IModifiableContainer) contents);
+			if (contents instanceof IModifiableContainer mc) {
+				final IGamaFile f = GamaFileType.createFile(scope, theName, mc);
 				f.save(scope, description.getFacets());
 				return f;
 			}
@@ -384,11 +406,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			switch (type) {
 				case "shp", "json":
 					Object agents = item.value(scope);
-					if (agents instanceof ISpecies) {
-						agents = scope.getAgent().getPopulationFor((ISpecies) agents);
-					} else if (agents instanceof IShape) {
+					if (agents instanceof ISpecies is) {
+						agents = scope.getAgent().getPopulationFor(is);
+					} else if (agents instanceof IShape is) {
 						// see Issue #2857
-						agents = GamaListFactory.wrap(Types.GEOMETRY, (IShape) agents);
+						agents = GamaListFactory.wrap(Types.GEOMETRY, is);
 					} else if (!(agents instanceof IList)) return null;
 					saveShape((IList<? extends IShape>) agents, fileToSave, scope, "json".equals(type));
 					break;
@@ -404,22 +426,22 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					break;
 				case "asc":
 					Object v = item.value(scope);
-					if (v instanceof GamaField) {
-						saveAsc((GamaField) v, fileToSave, scope);
+					if (v instanceof GamaField gf) {
+						saveAsc(gf, fileToSave, scope);
 					} else {
 						final ISpecies species1 = Cast.asSpecies(scope, v);
 						if (species1 == null || !species1.isGrid()) return null;
 						saveAsc(species1, fileToSave, scope);
 					}
 					break;
-				case "geotiff", "image":
+				case GEOTIFF, "image":
 					v = item.value(scope);
-					if (v instanceof GamaField) {
-						saveRasterImage((GamaField) v, path, scope, "geotiff".equals(type));
+					if (v instanceof GamaField gf) {
+						saveRasterImage(gf, path, scope, GEOTIFF.equals(type));
 					} else {
 						final ISpecies species2 = Cast.asSpecies(scope, v);
 						if (species2 == null || !species2.isGrid()) return null;
-						saveRasterImage(species2, path, scope, "geotiff".equals(type));
+						saveRasterImage(species2, path, scope, GEOTIFF.equals(type));
 					}
 					break;
 				case "kml", "kmz":
@@ -473,30 +495,30 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (field == null || field.isEmpty(scope)) return;
 		if (f.exists()) { f.delete(); }
 		try (FileWriter fw = new FileWriter(f)) {
-			StringBuilder header = new StringBuilder();
+			StringBuilder theHeader = new StringBuilder();
 			final int nbCols = field.numCols;
 			final int nbRows = field.numRows;
-			header.append("ncols         ").append(nbCols).append(Strings.LN);
-			header.append("nrows         ").append(nbRows).append(Strings.LN);
+			theHeader.append("ncols         ").append(nbCols).append(Strings.LN);
+			theHeader.append("nrows         ").append(nbRows).append(Strings.LN);
 			savePrj(scope, f.getAbsolutePath());
 			final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
-			header.append("xllcorner     ")
+			theHeader.append("xllcorner     ")
 					.append(nullProjection ? "0"
 							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())
 					.append(Strings.LN);
-			header.append("yllcorner     ")
+			theHeader.append("yllcorner     ")
 					.append(nullProjection ? "0"
 							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())
 					.append(Strings.LN);
 			final double dx = scope.getSimulation().getEnvelope().getWidth() / nbCols;
 			final double dy = scope.getSimulation().getEnvelope().getHeight() / nbRows;
 			if (Comparison.equal(dx, dy)) {
-				header.append("cellsize      ").append(dx).append(Strings.LN);
+				theHeader.append("cellsize      ").append(dx).append(Strings.LN);
 			} else {
-				header.append("dx            ").append(dx).append(Strings.LN);
-				header.append("dy            ").append(dy).append(Strings.LN);
+				theHeader.append("dx            ").append(dx).append(Strings.LN);
+				theHeader.append("dy            ").append(dy).append(Strings.LN);
 			}
-			fw.write(header.toString());
+			fw.write(theHeader.toString());
 
 			for (int i = 0; i < nbRows; i++) {
 				StringBuilder val = new StringBuilder();
@@ -521,38 +543,37 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (f.exists()) { f.delete(); }
 
 		try (FileWriter fw = new FileWriter(f)) {
-			StringBuilder header = new StringBuilder();
+			StringBuilder headerBuilder = new StringBuilder();
 			final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
 			final int nbCols = gp.getNbCols();
 			final int nbRows = gp.getNbRows();
-			header.append("ncols         ").append(nbCols).append(Strings.LN);
-			header.append("nrows         ").append(nbRows).append(Strings.LN);
+			headerBuilder.append("ncols         ").append(nbCols).append(Strings.LN);
+			headerBuilder.append("nrows         ").append(nbRows).append(Strings.LN);
 			savePrj(scope, f.getAbsolutePath());
 			final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
-			header.append("xllcorner     ")
+			headerBuilder.append("xllcorner     ")
 					.append(nullProjection ? "0"
 							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())
 					.append(Strings.LN);
-			header.append("yllcorner     ")
+			headerBuilder.append("yllcorner     ")
 					.append(nullProjection ? "0"
 							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())
 					.append(Strings.LN);
 			final double dx = scope.getSimulation().getEnvelope().getWidth() / nbCols;
 			final double dy = scope.getSimulation().getEnvelope().getHeight() / nbRows;
 			if (Comparison.equal(dx, dy)) {
-				header.append("cellsize      ").append(dx).append(Strings.LN);
+				headerBuilder.append("cellsize      ").append(dx).append(Strings.LN);
 			} else {
-				header.append("dx            ").append(dx).append(Strings.LN);
-				header.append("dy            ").append(dy).append(Strings.LN);
+				headerBuilder.append("dx            ").append(dx).append(Strings.LN);
+				headerBuilder.append("dy            ").append(dy).append(Strings.LN);
 			}
-			fw.write(header.toString());
+			fw.write(headerBuilder.toString());
 
 			for (int i = 0; i < nbRows; i++) {
 				StringBuilder val = new StringBuilder();
 				for (int j = 0; j < nbCols; j++) { val.append(gp.getGridValue(j, i)).append(" "); }
 				fw.write(val.append(Strings.LN).toString());
 			}
-			fw.close();
 		} catch (final IOException e) {}
 
 	}
@@ -670,7 +691,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		try (FileWriter fw =
 				new FileWriter(path.replace(".png", ".prj").replace(".tif", ".prj").replace(".asc", ".prj"))) {
 			fw.write(crs.toString());
-			fw.close();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -835,11 +855,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					} else if (g2.getGeometryN(0).getClass() == Polygon.class) return Polygon.class.getSimpleName();
 
 				} else {
-					String geomType_tmp = geom.getInnerGeometry().getClass().getSimpleName();
-					if (geom.getInnerGeometry() instanceof Polygon) return geomType_tmp;
+					String geomTypeTmp = geom.getInnerGeometry().getClass().getSimpleName();
+					if (geom.getInnerGeometry() instanceof Polygon) return geomTypeTmp;
 					if (!isLine) {
 						if (geom.getInnerGeometry() instanceof LineString) { isLine = true; }
-						geomType = geomType_tmp;
+						geomType = geomTypeTmp;
 
 					}
 
@@ -888,33 +908,31 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String geomType = getGeometryType(agents);
 		specs.append("geometry:" + geomType);
 		try {
-			final SpeciesDescription species =
-					agents instanceof IPopulation ? ((IPopulation) agents).getSpecies().getDescription()
-							: agents.getGamlType().getContentType().getSpecies();
+			final SpeciesDescription species = agents instanceof IPopulation pop ? pop.getSpecies().getDescription()
+					: agents.getGamlType().getContentType().getSpecies();
 			final Map<String, IExpression> attributes = GamaMapFactory.create();
 			// if (species != null) {
 			if (withFacet != null) {
-				computeInitsFromWithFacet(scope, withFacet, attributes, species);
+				computeInitsFromWithFacet(attributes, species);
 			} else if (attributesFacet != null) { computeInitsFromAttributesFacet(scope, attributes, species); }
-			for (final String e : attributes.keySet()) {
+			for (final Entry<String, IExpression> enty : attributes.entrySet()) {
+				String e = enty.getKey();
 				if (e == null) { continue; }
-				final IExpression var = attributes.get(e);
-				String name = e.replace("\"", "");
-				name = name.replace("'", "");
-				name = name.replace(":", "_");
-				final String type = type(var);
-				specs.append(',').append(name).append(':').append(type);
+				final IExpression theVar = enty.getValue();
+				String theName = e.replace("\"", "").replace("'", "").replace(":", "_");
+				final String type = type(theVar);
+				specs.append(',').append(theName).append(':').append(type);
 			}
 			// }
 			final IProjection proj = defineProjection(scope, f);
 			if (!geoJson) {
 				saveShapeFile(scope, f, agents, specs.toString(), geomType, attributes, proj);
 			} else {
-				saveGeoJSonFile(scope, f, agents, specs.toString(), geomType, attributes, proj);
+				saveGeoJSonFile(scope, f, agents, specs.toString(), attributes, proj);
 			}
 		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (final Throwable e) {
+		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
 
@@ -934,37 +952,35 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (crsCode != null) {
 			final IType type = crsCode.getGamlType();
 			if (type.id() == IType.INT || type.id() == IType.FLOAT) {
-				code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
+				code = EPSG_LABEL + Cast.asInt(scope, crsCode.value(scope));
 			} else if (type.id() == IType.STRING) { code = (String) crsCode.value(scope); }
 		}
 		IProjection gis;
 		if (code == null) {
 			final boolean useNoSpecific = GamaPreferences.External.LIB_USE_DEFAULT.getValue();
 			if (!useNoSpecific) {
-				code = "EPSG:" + GamaPreferences.External.LIB_OUTPUT_CRS.getValue();
+				code = EPSG_LABEL + GamaPreferences.External.LIB_OUTPUT_CRS.getValue();
 				try {
 					gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 				} catch (final FactoryException e1) {
 					throw GamaRuntimeException.error(
-							"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save "
-									+ f.getAbsolutePath(),
-							scope);
+							THE_CODE + code + DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE + f.getAbsolutePath(), scope);
 				}
 			} else {
 				gis = scope.getSimulation().getProjectionFactory().getWorld();
 				if (gis == null || gis.getInitialCRS(scope) == null) {
 					final boolean alreadyprojected = GamaPreferences.External.LIB_PROJECTED.getValue();
 					if (alreadyprojected) {
-						code = "EPSG:" + GamaPreferences.External.LIB_TARGET_CRS.getValue();
+						code = EPSG_LABEL + GamaPreferences.External.LIB_TARGET_CRS.getValue();
 					} else {
-						code = "EPSG:" + GamaPreferences.External.LIB_INITIAL_CRS.getValue();
+						code = EPSG_LABEL + GamaPreferences.External.LIB_INITIAL_CRS.getValue();
 					}
 					try {
 						gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 					} catch (final FactoryException e1) {
-						throw GamaRuntimeException.error("The code " + code
-								+ " does not correspond to a known EPSG code. GAMA is unable to save "
-								+ f.getAbsolutePath(), scope);
+						throw GamaRuntimeException.error(
+								THE_CODE + code + DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE + f.getAbsolutePath(),
+								scope);
 					}
 				}
 			}
@@ -983,9 +999,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e1) {
-				throw GamaRuntimeException.error("The code " + code
-						+ " does not correspond to a known EPSG code. GAMA is unable to save " + f.getAbsolutePath(),
-						scope);
+				throw GamaRuntimeException
+						.error(THE_CODE + code + DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE + f.getAbsolutePath(), scope);
 			}
 		}
 
@@ -1076,7 +1091,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (final Throwable e) {
+		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
 
@@ -1106,12 +1121,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/**
 	 * Type.
 	 *
-	 * @param var
+	 * @param theVar
 	 *            the var
 	 * @return the string
 	 */
-	public static String type(final ITyped var) {
-		return switch (var.getGamlType().id()) {
+	public static String type(final ITyped theVar) {
+		return switch (theVar.getGamlType().id()) {
 			case IType.BOOL -> "Boolean";
 			case IType.INT -> "Integer";
 			case IType.FLOAT -> "Double";
@@ -1120,8 +1135,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
-	public static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES = new HashSet<>(Arrays.asList(IKeyword.PEERS,
-			IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE));
+	public static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES =
+			Set.of(IKeyword.PEERS, IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE);
 
 	/**
 	 * Compute inits from with facet.
@@ -1137,12 +1152,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	private void computeInitsFromWithFacet(final IScope scope, final Arguments withFacet,
-			final Map<String, IExpression> values, final SpeciesDescription species) throws GamaRuntimeException {
+	private void computeInitsFromWithFacet(final Map<String, IExpression> values, final SpeciesDescription species)
+			throws GamaRuntimeException {
 		if (species == null) return;
 		if (withFacet.isEmpty()) {
-			for (final String var : species.getAttributeNames()) {
-				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var)) { values.put(var, species.getVarExpr(var, false)); }
+			for (final String theVar : species.getAttributeNames()) {
+				if (!NON_SAVEABLE_ATTRIBUTE_NAMES.contains(theVar)) {
+					values.put(theVar, species.getVarExpr(theVar, false));
+				}
 			}
 		} else {
 			withFacet.forEachFacet((key, value) -> {
@@ -1166,11 +1183,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 */
 	private void computeInitsFromAttributesFacet(final IScope scope, final Map<String, IExpression> values,
 			final SpeciesDescription species) throws GamaRuntimeException {
-		if (attributesFacet instanceof MapExpression) {
-			final Map<IExpression, IExpression> map = ((MapExpression) attributesFacet).getElements();
+		if (attributesFacet instanceof MapExpression me) {
+			final Map<IExpression, IExpression> map = me.getElements();
 			map.forEach((key, value) -> {
-				final String name = Cast.asString(scope, key.value(scope));
-				values.put(name, value);
+				final String theName = Cast.asString(scope, key.value(scope));
+				values.put(theName, value);
 			});
 		} else {
 			@SuppressWarnings ("unchecked") final List<String> names =
@@ -1257,9 +1274,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		g = geometryCollectionManagement(g);
 
 		values.add(g);
-		if (ag instanceof IAgent) {
+		if (ag instanceof IAgent ia) {
 			for (final IExpression variable : attributeValues) {
-				Object val = scope.evaluate(variable, (IAgent) ag).getValue();
+				Object val = scope.evaluate(variable, ia).getValue();
 				if (variable.getGamlType().equals(Types.STRING)) {
 					if (val == null) {
 						val = "";
@@ -1277,17 +1294,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			// see #2982. Assume it is an attribute of the shape
 			for (final IExpression variable : attributeValues) {
 				final Object val = variable.value(scope);
-				if (val instanceof String) {
-					values.add(ag.getAttribute((String) val));
+				if (val instanceof String s) {
+					values.add(ag.getAttribute(s));
 				} else {
 					values.add("");
 				}
 			}
 		}
 		// AD Assumes that the type is ok.
-		// AD TODO replace this list of variable names by expressions
-		// (to be
-		// evaluated by agents), so that dynamic values can be passed
 		// AD WARNING Would require some sort of iterator operator that
 		// would collect the values beforehand
 		ff.setAttributes(values);
@@ -1320,9 +1334,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 */
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public static void saveGeoJSonFile(final IScope scope, final File f, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final String geomType,
-			final Map<String, IExpression> attributes, final IProjection gis)
-			throws IOException, SchemaException, GamaRuntimeException {
+			/* final String featureTypeName, */final String specs, final Map<String, IExpression> attributes,
+			final IProjection gis) throws IOException, SchemaException, GamaRuntimeException {
 		// AD 11/02/15 Added to allow saving to new directories
 		if (agents == null || agents.isEmpty()) return;
 
@@ -1334,7 +1347,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		// AD Builds once the list of agent attributes to evaluate
 		final Collection<IExpression> attributeValues =
-				attributes == null ? Collections.EMPTY_LIST : attributes.values();
+				attributes == null ? Collections.emptyList() : attributes.values();
 		int i = 0;
 		for (final IShape ag : agents) {
 			final SimpleFeature ff = builder.buildFeature(i + "");
@@ -1382,7 +1395,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (agents == null || agents.isEmpty()) return;
 
 		final ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
-		store.setCharset(Charset.forName("UTF8"));
+		store.setCharset(StandardCharsets.UTF_8);
 		// The name of the type and the name of the feature source shoud now be
 		// the same.
 		final SimpleFeatureType type =
@@ -1398,7 +1411,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		try (FeatureWriter fw = store.getFeatureWriter(Transaction.AUTO_COMMIT)) {
 			// AD Builds once the list of agent attributes to evaluate
 			final Collection<IExpression> attributeValues =
-					attributes == null ? Collections.EMPTY_LIST : attributes.values();
+					attributes == null ? Collections.emptyList() : attributes.values();
 
 			for (final IShape ag : agents) {
 				if (ag.getGeometries().size() > 1) {
@@ -1413,14 +1426,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 
 			}
-			fw.close();
 			// Writes the prj file
 			if (gis != null) {
 				final CoordinateReferenceSystem crs = gis.getInitialCRS(scope);
 				if (crs != null) {
 					try (FileWriter fw1 = new FileWriter(f.getAbsolutePath().replace(".shp", ".prj"))) {
 						fw1.write(crs.toString());
-						fw1.close();
 					} catch (final IOException e) {
 						e.printStackTrace();
 					}
@@ -1444,19 +1455,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 * @return the geometry
 	 */
 	private static Geometry geometryCollectionToSimpleManagement(final Geometry gg) {
-		if (gg instanceof GeometryCollection) {
-			final int nb = ((GeometryCollection) gg).getNumGeometries();
+		if (gg instanceof GeometryCollection gc) {
+			final int nb = gc.getNumGeometries();
 			List<Polygon> polys = new ArrayList<>();
 			List<LineString> lines = new ArrayList<>();
 			List<Point> points = new ArrayList<>();
 
 			for (int i = 0; i < nb; i++) {
-				final Geometry g = ((GeometryCollection) gg).getGeometryN(i);
-				if (g instanceof Polygon) {
-					polys.add((Polygon) g);
-				} else if (g instanceof LineString) {
-					lines.add((LineString) g);
-				} else if (g instanceof Point) { points.add((Point) g); }
+				final Geometry g = gc.getGeometryN(i);
+				if (g instanceof Polygon p) {
+					polys.add(p);
+				} else if (g instanceof LineString ls) {
+					lines.add(ls);
+				} else if (g instanceof Point p) { points.add(p); }
 			}
 			if (!polys.isEmpty()) {
 				if (polys.size() == 1) return polys.get(0);
@@ -1491,14 +1502,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 * @return the geometry
 	 */
 	private static Geometry geometryCollectionManagement(final Geometry gg) {
-		if (gg instanceof GeometryCollection) {
+		if (gg instanceof GeometryCollection gc) {
 			boolean isMultiPolygon = true;
 			boolean isMultiPoint = true;
 			boolean isMultiLine = true;
-			final int nb = ((GeometryCollection) gg).getNumGeometries();
+			final int nb = gc.getNumGeometries();
 
 			for (int i = 0; i < nb; i++) {
-				final Geometry g = ((GeometryCollection) gg).getGeometryN(i);
+				final Geometry g = gc.getGeometryN(i);
 				if (!(g instanceof Polygon)) { isMultiPolygon = false; }
 				if (!(g instanceof LineString)) { isMultiLine = false; }
 				if (!(g instanceof Point)) { isMultiPoint = false; }
@@ -1506,17 +1517,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			if (isMultiPolygon) {
 				final Polygon[] polygons = new Polygon[nb];
-				for (int i = 0; i < nb; i++) { polygons[i] = (Polygon) ((GeometryCollection) gg).getGeometryN(i); }
+				for (int i = 0; i < nb; i++) { polygons[i] = (Polygon) gc.getGeometryN(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polygons);
 			}
 			if (isMultiLine) {
 				final LineString[] lines = new LineString[nb];
-				for (int i = 0; i < nb; i++) { lines[i] = (LineString) ((GeometryCollection) gg).getGeometryN(i); }
+				for (int i = 0; i < nb; i++) { lines[i] = (LineString) gc.getGeometryN(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
 			}
 			if (isMultiPoint) {
 				final Point[] points = new Point[nb];
-				for (int i = 0; i < nb; i++) { points[i] = (Point) ((GeometryCollection) gg).getGeometryN(i); }
+				for (int i = 0; i < nb; i++) { points[i] = (Point) gc.getGeometryN(i); }
 				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(points);
 			}
 		}
@@ -1528,6 +1539,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public void setRuntimeArgs(final IScope scope, final Arguments args) {
-
+		//
 	}
 }
