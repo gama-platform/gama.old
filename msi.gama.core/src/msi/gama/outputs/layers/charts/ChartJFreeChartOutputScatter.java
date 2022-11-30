@@ -166,8 +166,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	 */
 	public ChartJFreeChartOutputScatter(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
-		// TODO Auto-generated constructor stub
-
 	}
 
 	@Override
@@ -179,9 +177,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		if (reverse_axes) { orientation = PlotOrientation.HORIZONTAL; }
 
 		switch (type) {
-			case SERIES_CHART:
-			case XY_CHART:
-			case SCATTER_CHART:
+			case SERIES_CHART, XY_CHART, SCATTER_CHART:
 				chart = ChartFactory.createXYLineChart(getName(), "", "",
 						(XYIntervalSeriesCollection) jfreedataset.get(0), orientation, true, false, false);
 				break;
@@ -192,6 +188,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 				break;
 			}
+			default:
 
 		}
 
@@ -199,14 +196,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
-		
 
 		switch (type_val) {
-			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
-			case ChartDataSource.DATA_TYPE_LIST_POINT:
-			case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE: {
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N, ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N, ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12, ChartDataSource.DATA_TYPE_LIST_POINT, ChartDataSource.DATA_TYPE_MATRIX_DOUBLE: {
 				source.setCumulative(scope, false);
 				source.setUseSize(scope, false);
 				break;
@@ -239,24 +231,19 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				chartdataset.setCommonXSeries(true);
 				chartdataset.setByCategory(false);
 				break;
-			case ChartOutput.XY_CHART:
-				chartdataset.setCommonXSeries(false);
-				chartdataset.setByCategory(false);
-				break;
-			case ChartOutput.SCATTER_CHART:
+			case ChartOutput.XY_CHART, ChartOutput.SCATTER_CHART:
 				chartdataset.setCommonXSeries(false);
 				chartdataset.setByCategory(false);
 				break;
 			default:
-				break;
 		}
 	}
 
 	@Override
 	protected AbstractRenderer createRenderer(final IScope scope, final String serieid) {
-		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
+		final String theStyle = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
 		AbstractRenderer newr;
-		switch (style) {
+		switch (theStyle) {
 			case IKeyword.SPLINE: {
 				newr = new XYSplineRenderer();
 				break;
@@ -285,9 +272,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				newr = new XYLineAndShapeRenderer();
 				break;
 			}
-			case IKeyword.STACK:
-			case IKeyword.RING:
-			case IKeyword.EXPLODED:
+			case IKeyword.STACK, IKeyword.RING, IKeyword.EXPLODED:
 			default: {
 				// newr = new FastXYItemRenderer();
 				newr = new myXYErrorRenderer();
@@ -314,15 +299,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		newr.setDefaultCreateEntities(true);
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
 
-		if (newr instanceof XYLineAndShapeRenderer) {
-			((XYLineAndShapeRenderer) newr).setSeriesLinesVisible(0, myserie.getMysource().showLine);
-			((XYLineAndShapeRenderer) newr).setSeriesShapesFilled(0, myserie.getMysource().fillMarker);
-			((XYLineAndShapeRenderer) newr).setSeriesShapesVisible(0, myserie.getMysource().useMarker);
+		if (newr instanceof XYLineAndShapeRenderer xy) {
+			xy.setSeriesLinesVisible(0, myserie.getMysource().showLine);
+			xy.setSeriesShapesFilled(0, myserie.getMysource().fillMarker);
+			xy.setSeriesShapesVisible(0, myserie.getMysource().useMarker);
 
 		}
 
-		if (newr instanceof XYShapeRenderer && !myserie.getMysource().fillMarker) {
-			((XYShapeRenderer) newr).setUseFillPaint(false);
+		if (newr instanceof XYShapeRenderer xy && !myserie.getMysource().fillMarker) {
+			xy.setUseFillPaint(false);
 			// ((XYShapeRenderer) newr).setDrawOutlines(true);
 		}
 		if (myserie.getMycolor() != null) { newr.setSeriesPaint(0, myserie.getMycolor()); }
@@ -330,12 +315,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		newr.setSeriesStroke(0,
 				new BasicStroke(Cast.asFloat(scope, myserie.getLineThickness().value(scope)).floatValue()));
 
-		if (newr instanceof myXYErrorRenderer) {
-			((myXYErrorRenderer) newr).setDrawYError(false);
-			((myXYErrorRenderer) newr).setDrawXError(false);
-			if (myserie.isUseYErrValues()) { ((myXYErrorRenderer) newr).setDrawYError(true); }
-			if (myserie.isUseXErrValues()) { ((myXYErrorRenderer) newr).setDrawXError(true); }
-			if (myserie.getMysource().isUseSize()) { ((myXYErrorRenderer) newr).setUseSize(scope, true); }
+		if (newr instanceof myXYErrorRenderer xy) {
+			xy.setDrawYError(false);
+			xy.setDrawXError(false);
+			if (myserie.isUseYErrValues()) { xy.setDrawYError(true); }
+			if (myserie.isUseXErrValues()) { xy.setDrawXError(true); }
+			if (myserie.getMysource().isUseSize()) { xy.setUseSize(scope, true); }
 		}
 
 		if (myserie.getMysource().getUniqueMarkerName() != null) {
@@ -346,7 +331,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	protected void clearDataSet(final IScope scope) {
-		
+
 		super.clearDataSet(scope);
 		final XYPlot plot = (XYPlot) this.chart.getPlot();
 		for (int i = plot.getDatasetCount() - 1; i >= 1; i--) {
@@ -389,7 +374,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			// DEBUG.LOG("new serie"+serieid+" at
 			// "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds
 			// "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
-			
 
 		}
 	}
@@ -397,16 +381,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	@SuppressWarnings ("unchecked")
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
-		
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		final XYIntervalSeries serie =
 				((XYIntervalSeriesCollection) jfreedataset.get(idPosition.get(dataserie.getSerieId(scope))))
 						.getSeries(0);
 		serie.clear();
-		final ArrayList<Double> XValues = dataserie.getXValues(scope);
-		final ArrayList<Double> YValues = dataserie.getYValues(scope);
-		final ArrayList<Double> SValues = dataserie.getSValues(scope);
+		final ArrayList<Double> xValues = dataserie.getXValues(scope);
+		final ArrayList<Double> yValues = dataserie.getYValues(scope);
+		final ArrayList<Double> sValues = dataserie.getSValues(scope);
 		boolean secondaxis = false;
 		if (dataserie.getMysource().getUseSecondYAxis(scope)) {
 			secondaxis = true;
@@ -414,7 +397,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 		}
 
-		if (XValues.size() > 0) {
+		if (!xValues.isEmpty()) {
 			final NumberAxis domainAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getDomainAxis();
 			final NumberAxis rangeAxis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(0);
 			final int ids = idPosition.get(dataserie.getSerieId(scope));
@@ -435,26 +418,26 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			// rangeAxis.setRange(Math.min((double)(Collections.min(YValues)),0),
 			// Math.max(Collections.max(YValues),Collections.min(YValues)+1));
 			XYIntervalDataItem newval;
-			for (int i = 0; i < XValues.size(); i++) {
+			for (int i = 0; i < xValues.size(); i++) {
 				if (dataserie.isUseYErrValues()) {
 					if (dataserie.isUseXErrValues()) {
-						newval = new XYIntervalDataItem(XValues.get(i), dataserie.xerrvaluesmin.get(i),
-								dataserie.xerrvaluesmax.get(i), YValues.get(i), dataserie.yerrvaluesmin.get(i),
+						newval = new XYIntervalDataItem(xValues.get(i), dataserie.xerrvaluesmin.get(i),
+								dataserie.xerrvaluesmax.get(i), yValues.get(i), dataserie.yerrvaluesmin.get(i),
 								dataserie.yerrvaluesmax.get(i));
 						// serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));
 					} else {
-						newval = new XYIntervalDataItem(XValues.get(i), XValues.get(i), XValues.get(i), YValues.get(i),
+						newval = new XYIntervalDataItem(xValues.get(i), xValues.get(i), xValues.get(i), yValues.get(i),
 								dataserie.yerrvaluesmin.get(i), dataserie.yerrvaluesmax.get(i));
 						// serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));
 					}
 
 				} else if (dataserie.isUseXErrValues()) {
-					newval = new XYIntervalDataItem(XValues.get(i), dataserie.xerrvaluesmin.get(i),
-							dataserie.xerrvaluesmax.get(i), YValues.get(i), YValues.get(i), YValues.get(i));
+					newval = new XYIntervalDataItem(xValues.get(i), dataserie.xerrvaluesmin.get(i),
+							dataserie.xerrvaluesmax.get(i), yValues.get(i), yValues.get(i), yValues.get(i));
 					// serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));
 				} else {
-					newval = new XYIntervalDataItem(XValues.get(i), XValues.get(i), XValues.get(i), YValues.get(i),
-							YValues.get(i), YValues.get(i));
+					newval = new XYIntervalDataItem(xValues.get(i), xValues.get(i), xValues.get(i), yValues.get(i),
+							yValues.get(i), yValues.get(i));
 					// serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));
 				}
 				serie.add(newval, false);
@@ -463,9 +446,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			// rangeAxis.setAutoRange(true);
 		}
 		// resetAutorange(scope);
-		if (SValues.size() > 0) {
+		if (!sValues.isEmpty()) {
 			MarkerScale.remove(serieid);
-			final ArrayList<Double> nscale = (ArrayList<Double>) SValues.clone();
+			final ArrayList<Double> nscale = (ArrayList<Double>) sValues.clone();
 			MarkerScale.put(serieid, nscale);
 
 		}
@@ -519,7 +502,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			if (range2Axis == null) {
 				final NumberAxis secondAxis = new NumberAxis("");
 				((XYPlot) this.chart.getPlot()).setRangeAxis(1, secondAxis);
-				range2Axis = secondAxis;
 				range2Axis = (NumberAxis) ((XYPlot) this.chart.getPlot()).getRangeAxis(1);
 				range2Axis = formatYAxis(scope, range2Axis);
 
@@ -715,9 +697,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 	@Override
 	public void setUseSize(final IScope scope, final String name, final boolean b) {
-		
+
 		final AbstractXYItemRenderer newr = (AbstractXYItemRenderer) this.getOrCreateRenderer(scope, name);
-		if (newr instanceof myXYErrorRenderer) { ((myXYErrorRenderer) newr).setUseSize(scope, b); }
+		if (newr instanceof myXYErrorRenderer xy) { xy.setUseSize(scope, b); }
 
 	}
 
@@ -813,10 +795,10 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		final int y = yOnScreen - positionInPixels.y;
 		final ChartEntity entity = info.getEntityCollection().getEntity(x, y);
 		// getChart().handleClick(x, y, info);
-		if (entity instanceof XYItemEntity) {
-			final XYDataset data = ((XYItemEntity) entity).getDataset();
-			final int index = ((XYItemEntity) entity).getItem();
-			final int series = ((XYItemEntity) entity).getSeriesIndex();
+		if (entity instanceof XYItemEntity xy) {
+			final XYDataset data = xy.getDataset();
+			final int index = xy.getItem();
+			final int series = xy.getSeriesIndex();
 			final double xx = data.getXValue(series, index);
 			final double yy = data.getYValue(series, index);
 			final XYPlot plot = (XYPlot) getJFChart().getPlot();
@@ -832,18 +814,18 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			sb.append(" | ").append(yTitle).append(" ").append(yInt ? (int) yy : String.format("%.2f", yy));
 			return;
 		}
-		if (entity instanceof PieSectionEntity) {
-			final String title = ((PieSectionEntity) entity).getSectionKey().toString();
-			final PieDataset data = ((PieSectionEntity) entity).getDataset();
-			final int index = ((PieSectionEntity) entity).getSectionIndex();
+		if (entity instanceof PieSectionEntity ps) {
+			final String title = ps.getSectionKey().toString();
+			final PieDataset<?> data = ps.getDataset();
+			final int index = ps.getSectionIndex();
 			final double xx = data.getValue(index).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
-		} else if (entity instanceof CategoryItemEntity) {
-			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
+		} else if (entity instanceof CategoryItemEntity ci) {
+			final Comparable<?> columnKey = ci.getColumnKey();
 			final String title = columnKey.toString();
-			final CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
-			final Comparable<?> rowKey = ((CategoryItemEntity) entity).getRowKey();
+			final CategoryDataset data = ci.getDataset();
+			final Comparable<?> rowKey = ci.getRowKey();
 			final double xx = data.getValue(rowKey, columnKey).doubleValue();
 			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));

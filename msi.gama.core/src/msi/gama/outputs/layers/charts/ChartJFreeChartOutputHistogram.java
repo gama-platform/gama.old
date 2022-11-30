@@ -63,6 +63,8 @@ import msi.gaml.expressions.IExpression;
  */
 public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
+	private static final String XAXIS = "xaxis";
+
 	/** The use sub axis. */
 	boolean useSubAxis = false;
 
@@ -455,7 +457,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		if (textColor != null) {
 			pp.getDomainAxis().setLabelPaint(textColor);
 			pp.getDomainAxis().setTickLabelPaint(textColor);
-			if ("xaxis".equals(this.series_label_position)) {
+			if (XAXIS.equals(this.series_label_position)) {
 				((SubCategoryAxis) pp.getDomainAxis()).setSubLabelPaint(textColor);
 			}
 		}
@@ -510,7 +512,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		this.useSubAxis = false;
 		switch (sty) {
 			case IKeyword.STACK: {
-				if ("xaxis".equals(this.series_label_position)) { this.series_label_position = "default"; }
+				if (XAXIS.equals(this.series_label_position)) { this.series_label_position = "default"; }
 				if ("default".equals(this.series_label_position)) { this.series_label_position = "legend"; }
 				break;
 			}
@@ -521,7 +523,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 						if (onesource.isCumulative) {
 							this.series_label_position = "legend";
 						} else {
-							this.series_label_position = "xaxis";
+							this.series_label_position = XAXIS;
 							useMainAxisLabel = false;
 						}
 
@@ -533,7 +535,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 				break;
 			}
 		}
-		if ("xaxis".equals(this.series_label_position)) { this.useSubAxis = true; }
+		if (XAXIS.equals(this.series_label_position)) { this.useSubAxis = true; }
 
 		if (!"legend".equals(this.series_label_position)) {
 			chart.getLegend().setVisible(false);
@@ -565,7 +567,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		if (textColor != null) {
 			pp.getDomainAxis().setLabelPaint(textColor);
 			pp.getDomainAxis().setTickLabelPaint(textColor);
-			if ("xaxis".equals(this.series_label_position)) {
+			if (XAXIS.equals(this.series_label_position)) {
 				((SubCategoryAxis) pp.getDomainAxis()).setSubLabelPaint(textColor);
 			}
 		}

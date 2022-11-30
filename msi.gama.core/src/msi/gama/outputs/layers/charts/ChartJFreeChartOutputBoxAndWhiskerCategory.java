@@ -49,6 +49,9 @@ import msi.gaml.expressions.IExpression;
  */
 public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartOutput {
 
+	/** The Constant XAXIS. */
+	private static final String XAXIS = "xaxis";
+
 	/** The use sub axis. */
 	boolean useSubAxis = false;
 
@@ -116,13 +119,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 		source.setUseYErrValues(false);
 		source.setisBoxAndWhiskerData(true);
 		switch (type_val) {
-			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
-			case ChartDataSource.DATA_TYPE_LIST_POINT:
-			case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
-			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3: {
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N, ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N, ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12, ChartDataSource.DATA_TYPE_LIST_POINT, ChartDataSource.DATA_TYPE_MATRIX_DOUBLE, ChartDataSource.DATA_TYPE_LIST_DOUBLE_3, ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3: {
 				source.setCumulative(scope, false);
 				source.setUseSize(scope, false);
 				break;
@@ -361,7 +358,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 		if (textColor != null) {
 			pp.getDomainAxis().setLabelPaint(textColor);
 			pp.getDomainAxis().setTickLabelPaint(textColor);
-			if ("xaxis".equals(this.series_label_position)) {
+			if (XAXIS.equals(this.series_label_position)) {
 				((SubCategoryAxis) pp.getDomainAxis()).setSubLabelPaint(textColor);
 			}
 		}
@@ -404,7 +401,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 		this.useSubAxis = false;
 
 		if (IKeyword.STACK.equals(sty)) {
-			if ("xaxis".equals(this.series_label_position)) { this.series_label_position = IKeyword.DEFAULT; }
+			if (XAXIS.equals(this.series_label_position)) { this.series_label_position = IKeyword.DEFAULT; }
 			if (IKeyword.DEFAULT.equals(this.series_label_position)) { this.series_label_position = IKeyword.LEGEND; }
 		} else if ("default".equals(this.series_label_position)) {
 			if (!this.getChartdataset().getSources().isEmpty()) {
@@ -412,7 +409,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 				if (onesource.isCumulative) {
 					this.series_label_position = "legend";
 				} else {
-					this.series_label_position = "xaxis";
+					this.series_label_position = XAXIS;
 					useMainAxisLabel = false;
 				}
 
@@ -422,7 +419,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 			}
 		}
 
-		if ("xaxis".equals(this.series_label_position)) { this.useSubAxis = true; }
+		if (XAXIS.equals(this.series_label_position)) { this.useSubAxis = true; }
 
 		if (!"legend".equals(this.series_label_position)) {
 			chart.getLegend().setVisible(false);
@@ -454,7 +451,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 		if (textColor != null) {
 			pp.getDomainAxis().setLabelPaint(textColor);
 			pp.getDomainAxis().setTickLabelPaint(textColor);
-			if ("xaxis".equals(this.series_label_position)) {
+			if (XAXIS.equals(this.series_label_position)) {
 				((SubCategoryAxis) pp.getDomainAxis()).setSubLabelPaint(textColor);
 			}
 		}
