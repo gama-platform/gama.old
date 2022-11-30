@@ -82,7 +82,7 @@ public abstract class AbstractAgent implements IAgent {
 	 * @param index
 	 *            the index
 	 */
-	public AbstractAgent(final int index) {
+	protected AbstractAgent(final int index) {
 		this.index = index;
 	}
 
@@ -174,7 +174,8 @@ public abstract class AbstractAgent implements IAgent {
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		boolean result = false;
 		try {
-			return result = preStep(scope) ? doStep(scope) : false;
+			result = preStep(scope) && doStep(scope);
+			return result;
 		} finally {
 			if (result) { postStep(scope); }
 		}
@@ -432,6 +433,7 @@ public abstract class AbstractAgent implements IAgent {
 	 *
 	 * @param scope
 	 *            the scope
+	 * @deprecated
 	 * @return the object
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
@@ -445,7 +447,8 @@ public abstract class AbstractAgent implements IAgent {
 			doc = { @doc (
 					value = "",
 					deprecated = "Use the 'write' statement instead") })
-	@Deprecated
+	@Deprecated (
+			forRemoval = true)
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
 		final String s = (String) scope.getArg("message", IType.STRING);
 		scope.getGui().getConsole().informConsole(s, scope.getRoot());
@@ -513,11 +516,12 @@ public abstract class AbstractAgent implements IAgent {
 			name = "die",
 			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		if (dying) return null;
-		dying = true;
-		getSpecies().getArchitecture().abort(scope);
-		scope.setDeathStatus();
-		dispose();
+		if (!dying) {
+			dying = true;
+			getSpecies().getArchitecture().abort(scope);
+			scope.setDeathStatus();
+			dispose();
+		}
 		return null;
 	}
 
