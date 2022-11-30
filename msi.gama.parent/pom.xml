@@ -180,16 +180,6 @@
 			<url>https://oss.sonatype.org/content/groups/public/</url> <releases> <enabled>true</enabled> 
 		</releases> <snapshots> <enabled>true</enabled> </snapshots> </repository> -->
 		<repository>
-			<id>pentaho-releases</id>
-			<url>https://repository.pentaho.org/artifactory/repo/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
 			<id>annot-local-repo</id>
 			<url>${project.baseUri}../msi.gama.processor/processor/plugins</url>
 			<releases>
