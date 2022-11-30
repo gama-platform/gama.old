@@ -48,6 +48,7 @@ import msi.gama.application.workspace.PickWorkspaceDialog;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 
@@ -66,7 +67,7 @@ public class Application implements IApplication {
 	 * @param clear
 	 *            the clear
 	 */
-	public static void ClearWorkspace(final boolean clear) {
+	public static void clearWorkspace(final boolean clear) {
 		getInternalPreferenceStore().setValue(CLEAR_WORKSPACE, Boolean.toString(clear));
 		saveInternalPrefs();
 	}
@@ -136,14 +137,14 @@ public class Application implements IApplication {
 		});
 		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
-		Display.setAppVersion("1.8.2");
+		Display.setAppVersion(GAMA.VERSION_NUMBER);
 		Object check = Display.getCurrent().syncCall(Application::checkWorkspace);
 		if (!EXIT_OK.equals(check)) {
 			try {
 				createProcessor(display);
 				if (getInternalPreferenceStore().getBoolean(CLEAR_WORKSPACE)) {
 					setProperty(CLEAR_PERSISTED_STATE, "true");
-					ClearWorkspace(false);
+					clearWorkspace(false);
 				}
 				try {
 					final int returnCode = Workbench.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());

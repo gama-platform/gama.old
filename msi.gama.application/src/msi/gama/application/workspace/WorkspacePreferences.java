@@ -336,7 +336,7 @@ public class WorkspacePreferences {
 			}
 			if (rebuild) {
 				for (final File file : files) { if (file.exists()) { file.delete(); } }
-				Application.ClearWorkspace(true);
+				Application.clearWorkspace(true);
 				return false;
 			}
 			return true;

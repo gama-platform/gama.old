@@ -28,7 +28,7 @@ public class ResetModelingPerspective extends AbstractHandler {
 		final boolean result = Messages.confirm("Reset modeling perspective",
 				"Resetting the modeling perspective will lose memory of the current editors, navigator state and restart GAMA in a pristine state. Do you want to proceed ?");
 		if (result) {
-			Application.ClearWorkspace(true);
+			Application.clearWorkspace(true);
 			// removeWorkbenchXMI();
 			WorkbenchHelper.getWorkbench().restart();
 		}
