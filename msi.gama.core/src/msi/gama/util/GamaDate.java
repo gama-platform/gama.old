@@ -122,6 +122,8 @@ import msi.gaml.types.Types;
 				doc = { @doc ("Returns the year") }) })
 public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
+	/** The Constant THE_DATE. */
+	private static final String THE_DATE = "The date ";
 	/** The internal. */
 	final Temporal internal;
 
@@ -274,7 +276,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 		if (df != null) {
 			try {
 				final TemporalAccessor ta = df.parse(original);
-				if (ta instanceof Temporal) return (Temporal) ta;
+				if (ta instanceof Temporal tmp) return tmp;
 				if (!ta.isSupported(ChronoField.YEAR) && !ta.isSupported(ChronoField.MONTH_OF_YEAR)
 						&& !ta.isSupported(ChronoField.DAY_OF_MONTH) && ta.isSupported(ChronoField.HOUR_OF_DAY))
 					return LocalTime.from(ta);
@@ -287,7 +289,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			}
 			GAMA.reportAndThrowIfNeeded(scope,
 					GamaRuntimeException.warning(
-							"The date " + original + " can not correctly be parsed by the pattern provided", scope),
+							THE_DATE + original + " can not correctly be parsed by the pattern provided", scope),
 					false);
 			return parse(scope, original, null);
 		}
@@ -325,7 +327,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			dateStr = year + "-" + month + "-" + day + "T" + other;
 		} catch (final Exception e1) {
 			throw GamaRuntimeException.error(
-					"The date " + original + " is not correctly formatted. Please refer to the ISO date/time format",
+					THE_DATE + original + " is not correctly formatted. Please refer to the ISO date/time format",
 					scope);
 		}
 
@@ -338,7 +340,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 				try {
 					result = ZonedDateTime.parse(dateStr);
 				} catch (final DateTimeParseException e3) {
-					throw GamaRuntimeException.error("The date " + original
+					throw GamaRuntimeException.error(THE_DATE + original
 							+ " is not correctly formatted. Please refer to the ISO date/time format", scope);
 				}
 			}
@@ -419,7 +421,12 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the local date time
 	 */
 	private static LocalDateTime computeFromList(final IScope scope, final IList<?> vals) {
-		int year = 0, month = 1, day = 1, hour = 0, minute = 0, second = 0;
+		int year = 0;
+		int month = 1;
+		int day = 1;
+		int hour = 0;
+		int minute = 0;
+		int second = 0;
 		final int size = vals.size();
 		if (size > 0) {
 			year = Cast.asInt(scope, vals.get(0));
@@ -696,9 +703,9 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof GamaDate) {
+		if (o instanceof GamaDate gd) {
 			Temporal a = getLocalDateTime();
-			Temporal b = ((GamaDate) o).getLocalDateTime();
+			Temporal b = gd.getLocalDateTime();
 			return a.equals(b);
 		}
 
@@ -925,8 +932,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	public static GamaDate fromISOString(final String s) {
 		try {
 			final TemporalAccessor t = Dates.getFormatter(Dates.ISO_OFFSET_KEY, null).parse(s);
-			if (t instanceof Temporal) return of((Temporal) t);
-		} catch (final DateTimeParseException e) {}
+			if (t instanceof Temporal tmp) return of(tmp);
+		} catch (final DateTimeParseException e) {
+			//
+		}
 		return new GamaDate(null, s);
 	}
 
