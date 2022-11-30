@@ -17,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
@@ -1243,11 +1242,11 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
-		 * @param P2
+		 * @param p2
 		 *            the p2
 		 * @return the i shape
 		 */
@@ -1270,10 +1269,10 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
-				final GamaPoint P2) {
-			if (P0 == null || P1 == null || P2 == null) return null;
-			return GamaGeometryType.buildPolyline(quadraticBezierCurve(P0, P1, P2, 10));
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1,
+				final GamaPoint p2) {
+			if (p0 == null || p1 == null || p2 == null) return null;
+			return GamaGeometryType.buildPolyline(quadraticBezierCurve(p0, p1, p2, 10));
 		}
 
 		/**
@@ -1281,11 +1280,11 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
-		 * @param P2
+		 * @param p2
 		 *            the p2
 		 * @param nbPoints
 		 *            the nb points
@@ -1307,10 +1306,10 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1, final GamaPoint p2,
 				final int nbPoints) {
-			if (P0 == null || P1 == null || P2 == null || nbPoints < 2) return null;
-			return GamaGeometryType.buildPolyline(quadraticBezierCurve(P0, P1, P2, nbPoints));
+			if (p0 == null || p1 == null || p2 == null || nbPoints < 2) return null;
+			return GamaGeometryType.buildPolyline(quadraticBezierCurve(p0, p1, p2, nbPoints));
 		}
 
 		/**
@@ -1318,13 +1317,13 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
-		 * @param P2
+		 * @param p2
 		 *            the p2
-		 * @param P3
+		 * @param p3
 		 *            the p3
 		 * @return the i shape
 		 */
@@ -1344,10 +1343,10 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
-				final GamaPoint P3) {
-			if (P0 == null || P1 == null || P2 == null || P3 == null) return null;
-			return GamaGeometryType.buildPolyline(cubicBezierCurve(P0, P1, P2, P3, 10));
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1, final GamaPoint p2,
+				final GamaPoint p3) {
+			if (p0 == null || p1 == null || p2 == null || p3 == null) return null;
+			return GamaGeometryType.buildPolyline(cubicBezierCurve(p0, p1, p2, p3, 10));
 		}
 
 		/**
@@ -1379,9 +1378,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
 				final Double coefficient) {
-			return BezierCurve(scope, P0, P1, coefficient, true, 10, 0.5);
+			return bezierCurve(scope, P0, P1, coefficient, true, 10, 0.5);
 		}
 
 		/**
@@ -1389,9 +1388,9 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
 		 * @param coefficient
 		 *            the coefficient
@@ -1415,9 +1414,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 				final Double coefficient, final boolean right) {
-			return BezierCurve(scope, P0, P1, coefficient, right, 10, 0.5);
+			return bezierCurve(scope, p0, p1, coefficient, right, 10, 0.5);
 		}
 
 		/**
@@ -1425,9 +1424,9 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
 		 * @param coefficient
 		 *            the coefficient
@@ -1453,9 +1452,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 				final Double coefficient, final boolean right, final int nbPoints) {
-			return BezierCurve(scope, P0, P1, coefficient, right, nbPoints, 0.5);
+			return bezierCurve(scope, p0, p1, coefficient, right, nbPoints, 0.5);
 		}
 
 		/**
@@ -1463,9 +1462,9 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
 		 * @param coefficient
 		 *            the coefficient
@@ -1493,16 +1492,16 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 				final Double coefficient, final boolean right, final int nbPoints, final double proportion) {
-			if (P0 == null || P1 == null) return null;
-			GamaPoint P01 = new GamaPoint(P0.x + (P1.x - P0.x) * proportion, P0.y + (P1.y - P0.y) * proportion,
-					P0.z + (P1.z - P0.z) * proportion);
-			final double val = coefficient * P0.euclidianDistanceTo(P1);
-			final double heading = Relations.towards(scope, P0, P1);
-			P01 = new GamaPoint(P01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val,
-					P01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, P01.z);
-			return BezierCurve(scope, P0, P01, P1, nbPoints);
+			if (p0 == null || p1 == null) return null;
+			GamaPoint p01 = new GamaPoint(p0.x + (p1.x - p0.x) * proportion, p0.y + (p1.y - p0.y) * proportion,
+					p0.z + (p1.z - p0.z) * proportion);
+			final double val = coefficient * p0.euclidianDistanceTo(p1);
+			final double heading = Relations.towards(scope, p0, p1);
+			p01 = new GamaPoint(p01.x + Maths.cos(heading + 90 * (right ? 1.0 : -1.0)) * val,
+					p01.y + Maths.sin(heading + 90 * (right ? 1.0 : -1.0)) * val, p01.z);
+			return bezierCurve(scope, p0, p01, p1, nbPoints);
 		}
 
 		/**
@@ -1510,9 +1509,9 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
 		 * @param coefficient
 		 *            the coefficient
@@ -1540,14 +1539,16 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 				final Double coefficient, final int nbPoints, final double proportion, final double angle) {
-			IShape shape = BezierCurve(scope, P0, P1, coefficient, false, nbPoints, proportion);
+			if (p0 == null || p1 == null) return null;
+			IShape shape = bezierCurve(scope, p0, p1, coefficient, false, nbPoints, proportion);
 			shape = Transformations.rotated_by(scope, shape, angle,
-					new GamaPoint(P0.x - P1.x, P0.y - P1.y, P0.z - P1.z));
+					new GamaPoint(p0.x - p1.x, p0.y - p1.y, p0.z - p1.z));
+			if (shape == null) return null;
 			final GamaPoint newPt0 = shape.getPoints().get(0);
 			return Transformations.translated_by(scope, shape,
-					new GamaPoint(P0.x - newPt0.x, P0.y - newPt0.y, P0.z - newPt0.z));
+					new GamaPoint(p0.x - newPt0.x, p0.y - newPt0.y, p0.z - newPt0.z));
 		}
 
 		/**
@@ -1555,9 +1556,9 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
 		 * @param coefficient
 		 *            the coefficient
@@ -1583,9 +1584,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 				final Double coefficient, final int nbPoints, final double angle) {
-			return BezierCurve(scope, P0, P1, coefficient, nbPoints, 0.5, angle);
+			return bezierCurve(scope, p0, p1, coefficient, nbPoints, 0.5, angle);
 		}
 
 		/**
@@ -1593,9 +1594,9 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
 		 * @param coefficient
 		 *            the coefficient
@@ -1619,9 +1620,9 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1,
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1,
 				final Double coefficient, final double angle) {
-			return BezierCurve(scope, P0, P1, coefficient, 10, 0.5, angle);
+			return bezierCurve(scope, p0, p1, coefficient, 10, 0.5, angle);
 		}
 
 		/**
@@ -1629,13 +1630,13 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
-		 * @param P2
+		 * @param p2
 		 *            the p2
-		 * @param P3
+		 * @param p3
 		 *            the p3
 		 * @param nbPoints
 		 *            the nb points
@@ -1657,32 +1658,32 @@ public abstract class Spatial {
 				see = { "around", "circle", "cone", "link", "norm", "point", "polygone", "rectangle", "square",
 						"triangle", "line" })
 		@no_test
-		public static IShape BezierCurve(final IScope scope, final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
-				final GamaPoint P3, final int nbPoints) {
-			if (P0 == null || P1 == null || P2 == null || P3 == null || nbPoints < 2) return null;
-			return GamaGeometryType.buildPolyline(cubicBezierCurve(P0, P1, P2, P3, nbPoints));
+		public static IShape bezierCurve(final IScope scope, final GamaPoint p0, final GamaPoint p1, final GamaPoint p2,
+				final GamaPoint p3, final int nbPoints) {
+			if (p0 == null || p1 == null || p2 == null || p3 == null || nbPoints < 2) return null;
+			return GamaGeometryType.buildPolyline(cubicBezierCurve(p0, p1, p2, p3, nbPoints));
 		}
 
 		/**
 		 * Quadratic bezier curve.
 		 *
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
-		 * @param P2
+		 * @param p2
 		 *            the p2
 		 * @param nbPoints
 		 *            the nb points
 		 * @return the list
 		 */
-		private static List<IShape> quadraticBezierCurve(final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
+		private static List<IShape> quadraticBezierCurve(final GamaPoint p0, final GamaPoint p1, final GamaPoint p2,
 				final int nbPoints) {
 			final List<IShape> points = new ArrayList<>();
 			for (int i = 0; i < nbPoints; i++) {
-				final double x = quadraticBezier(P0.x, P1.x, P2.x, (double) i / (nbPoints - 1));
-				final double y = quadraticBezier(P0.y, P1.y, P2.y, (double) i / (nbPoints - 1));
-				final double z = quadraticBezier(P0.z, P1.z, P2.z, (double) i / (nbPoints - 1));
+				final double x = quadraticBezier(p0.x, p1.x, p2.x, (double) i / (nbPoints - 1));
+				final double y = quadraticBezier(p0.y, p1.y, p2.y, (double) i / (nbPoints - 1));
+				final double z = quadraticBezier(p0.z, p1.z, p2.z, (double) i / (nbPoints - 1));
 				points.add(new GamaPoint(x, y, z));
 			}
 			return points;
@@ -1691,25 +1692,25 @@ public abstract class Spatial {
 		/**
 		 * Cubic bezier curve.
 		 *
-		 * @param P0
+		 * @param p0
 		 *            the p0
-		 * @param P1
+		 * @param p1
 		 *            the p1
-		 * @param P2
+		 * @param p2
 		 *            the p2
-		 * @param P3
+		 * @param p3
 		 *            the p3
 		 * @param nbPoints
 		 *            the nb points
 		 * @return the list
 		 */
-		private static List<IShape> cubicBezierCurve(final GamaPoint P0, final GamaPoint P1, final GamaPoint P2,
-				final GamaPoint P3, final int nbPoints) {
+		private static List<IShape> cubicBezierCurve(final GamaPoint p0, final GamaPoint p1, final GamaPoint p2,
+				final GamaPoint p3, final int nbPoints) {
 			final List<IShape> points = new ArrayList<>();
 			for (int i = 0; i < nbPoints; i++) {
-				final double x = cubicBezier(P0.x, P1.x, P2.x, P3.x, (double) i / (nbPoints - 1));
-				final double y = cubicBezier(P0.y, P1.y, P2.y, P3.y, (double) i / (nbPoints - 1));
-				final double z = cubicBezier(P0.z, P1.z, P2.z, P3.z, (double) i / (nbPoints - 1));
+				final double x = cubicBezier(p0.x, p1.x, p2.x, p3.x, (double) i / (nbPoints - 1));
+				final double y = cubicBezier(p0.y, p1.y, p2.y, p3.y, (double) i / (nbPoints - 1));
+				final double z = cubicBezier(p0.z, p1.z, p2.z, p3.z, (double) i / (nbPoints - 1));
 				points.add(new GamaPoint(x, y, z));
 			}
 			return points;
@@ -2531,12 +2532,12 @@ public abstract class Spatial {
 			if (obstacles != null && !obstacles.isEmpty(scope)) {
 				final Geometry pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(location);
 				final Geometry locG = pt.buffer(0.01).getEnvelope();
-				double percep_dist = 0;
+				double percepDist = 0;
 				for (final GamaPoint p : source.getPoints()) {
 					final double dist = location.euclidianDistanceTo(p);
-					if (dist > percep_dist) { percep_dist = dist; }
+					if (dist > percepDist) { percepDist = dist; }
 				}
-				final Geometry gbuff = pt.buffer(percep_dist, precision / 4);
+				final Geometry gbuff = pt.buffer(percepDist, precision / 4);
 				final List<IShape> geoms = new ArrayList<>();
 				for (int k = 1; k < gbuff.getNumPoints(); k++) {
 					final IList coordinates = GamaListFactory.create(Types.POINT, 4);
@@ -4371,15 +4372,14 @@ public abstract class Spatial {
 				} else {
 					comp = (o1, o2) -> Double.compare(o1.getLocation().getY(), o2.getLocation().getY());
 				}
-				final List<IShape> listSq =
-						toSquares(scope, geom, dimension).stream().sorted(comp).toList();
+				final List<IShape> listSq = toSquares(scope, geom, dimension).stream().sorted(comp).toList();
 				final Double sum = (Double) Containers.sum(scope, rates);
 				final int totalNumber = listSq.size();
 				for (final Double rate : rates) {
 					final int number = Math.min((int) (rate / sum * totalNumber + 0.5), listSq.size());
 					final IList<IShape> squares = GamaListFactory.create(Types.GEOMETRY);
 					for (int i = 0; i < number; i++) { squares.add(listSq.remove(0)); }
-					if (squares.size() > 0) {
+					if (!squares.isEmpty()) {
 						final IShape unionG = Transformations.clean(scope, Operators.union(scope, squares));
 						nwGeoms.add(unionG);
 
@@ -5087,14 +5087,12 @@ public abstract class Spatial {
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
 			if (n == 1) {
-				if (topo instanceof GridTopology)
-					return ((GridTopology) topo).pathBetween(scope, source, source, cells);
+				if (topo instanceof GridTopology gt) return gt.pathBetween(scope, source, source, cells);
 				return scope.getTopology().pathBetween(scope, source, source);
 			}
 			final IShape target = nodes.lastValue(scope);
 			if (n == 2) {
-				if (topo instanceof GridTopology)
-					return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+				if (topo instanceof GridTopology gt) return gt.pathBetween(scope, source, target, cells);
 				return scope.getTopology().pathBetween(scope, source, target);
 			}
 			double weight = 0;
@@ -5102,9 +5100,8 @@ public abstract class Spatial {
 			IShape previous = null;
 			for (final IShape gg : nodes.iterable(scope)) {
 				if (previous != null) {
-					// TODO Take the case of GamaPoint
-					if (topo instanceof GridTopology) {
-						final GamaSpatialPath path = ((GridTopology) topo).pathBetween(scope, previous, gg, cells);
+					if (topo instanceof GridTopology gt) {
+						final GamaSpatialPath path = gt.pathBetween(scope, previous, gg, cells);
 						edges.addAll(path.getEdgeList());
 						weight += path.getWeight();
 					} else {
@@ -7382,7 +7379,10 @@ public abstract class Spatial {
 	/**
 	 * The Class Projections.
 	 */
-	public static abstract class Projections {
+	public abstract static class Projections {
+
+		/** The Constant THE_CODE. */
+		private static final String THE_CODE = "The code ";
 
 		/**
 		 * Crs from file.
@@ -7505,8 +7505,7 @@ public abstract class Spatial {
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e) {
-				throw GamaRuntimeException.error("The code " + code + " does not correspond to a known EPSG code",
-						scope);
+				throw GamaRuntimeException.error(THE_CODE + code + " does not correspond to a known EPSG code", scope);
 			}
 			if (gis == null) return g.copy(scope);
 			final IShape s = new GamaShape(gis.transform(g.getInnerGeometry()));
@@ -7543,8 +7542,7 @@ public abstract class Spatial {
 			try {
 				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e) {
-				throw GamaRuntimeException.error("The code " + code + " does not correspond to a known EPSG code",
-						scope);
+				throw GamaRuntimeException.error(THE_CODE + code + " does not correspond to a known EPSG code", scope);
 			}
 			if (gis == null) return g.copy(scope);
 			final IShape s = new GamaShape(gis.inverseTransform(g.getInnerGeometry()));
@@ -7585,14 +7583,14 @@ public abstract class Spatial {
 			try {
 				sourceCRS = CRS.decode(sourceCode);
 			} catch (final FactoryException e) {
-				throw GamaRuntimeException.error("The code " + sourceCode + " does not correspond to a known EPSG code",
+				throw GamaRuntimeException.error(THE_CODE + sourceCode + " does not correspond to a known EPSG code",
 						scope);
 			}
 			CoordinateReferenceSystem targetCRS;
 			try {
 				targetCRS = CRS.decode(targetcode);
 			} catch (final FactoryException e) {
-				throw GamaRuntimeException.error("The code " + targetcode + " does not correspond to a known EPSG code",
+				throw GamaRuntimeException.error(THE_CODE + targetcode + " does not correspond to a known EPSG code",
 						scope);
 			}
 
