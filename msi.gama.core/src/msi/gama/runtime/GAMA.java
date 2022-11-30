@@ -42,7 +42,7 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  * In GUI Mode, for the moment, only one controller allowed at a time (controllers[0])
  *
- * @todo Description
+ * Description
  */
 public class GAMA {
 
@@ -51,10 +51,10 @@ public class GAMA {
 	}
 
 	/** The Constant VERSION_NUMBER. */
-	public final static String VERSION_NUMBER = "1.8.2";
+	public static final String VERSION_NUMBER = "1.8.2";
 
 	/** The Constant VERSION. */
-	public final static String VERSION = "GAMA " + VERSION_NUMBER;
+	public static final String VERSION = "GAMA " + VERSION_NUMBER;
 
 	/** The Constant _WARNINGS. */
 	public static final String _WARNINGS = "warnings";
@@ -79,7 +79,7 @@ public class GAMA {
 
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
-	private final static List<IExperimentController> controllers = new CopyOnWriteArrayList<>();
+	private static final List<IExperimentController> controllers = new CopyOnWriteArrayList<>();
 
 	/**
 	 * Gets the controllers.
@@ -121,7 +121,7 @@ public class GAMA {
 			}
 		}
 		controller = newExperiment.getController();
-		if (controllers.size() > 0) { closeAllExperiments(false, false); }
+		if (!controllers.isEmpty()) { closeAllExperiments(false, false); }
 
 		if (getGui().openSimulationPerspective(model, id)) {
 			controllers.add(controller);
@@ -514,7 +514,8 @@ public class GAMA {
 		r.run();
 		// SimulationAgent sim = getSimulation();
 		// if(sim.isPaused(sim.getScope()))
-		getExperiment().refreshAllOutputs();
+		IExperimentPlan exp = getExperiment();
+		if (exp != null) { exp.refreshAllOutputs(); }
 	}
 
 	/**
@@ -604,8 +605,8 @@ public class GAMA {
 	 */
 	public static StopWatch benchmark(final IScope scope, final Object symbol) {
 		if (benchmarkAgent == null || symbol == null || scope == null) return StopWatch.NULL;
-		if (symbol instanceof IBenchmarkable) return benchmarkAgent.record(scope, (IBenchmarkable) symbol);
-		if (symbol instanceof ISymbol) return benchmarkAgent.record(scope, ((ISymbol) symbol).getDescription());
+		if (symbol instanceof IBenchmarkable ib) return benchmarkAgent.record(scope, ib);
+		if (symbol instanceof ISymbol is) return benchmarkAgent.record(scope, is.getDescription());
 		return StopWatch.NULL;
 	}
 
@@ -653,7 +654,8 @@ public class GAMA {
 	 * Synchronize experiment.
 	 */
 	public static void synchronizeFrontmostExperiment() {
-		getExperiment().synchronizeAllOutputs();
+		IExperimentPlan exp = getExperiment();
+		if (exp != null) { exp.synchronizeAllOutputs(); }
 
 	}
 }
