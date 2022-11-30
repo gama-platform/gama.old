@@ -444,16 +444,16 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	 *
 	 * @param scope
 	 *            the scope
-	 * @param var
+	 * @param theVar
 	 *            the var
 	 * @param result
 	 *            the result
 	 * @return true, if successful
 	 */
-	protected FlowStatus loopBody(final IScope scope, final Object var, final Object[] result) {
+	protected FlowStatus loopBody(final IScope scope, final Object theVar, final Object[] result) {
 		scope.push(this);
 		// We set it explicitely to the newly created scope
-		if (varName != null) { scope.setVarValue(varName, var, true); }
+		if (varName != null) { scope.setVarValue(varName, theVar, true); }
 		result[0] = super.privateExecuteIn(scope);
 		scope.pop(this);
 		// return !scope.interrupted();
@@ -490,7 +490,13 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		private final IExpression step = getFacet(IKeyword.STEP);
 
 		/** The constant step. */
-		private Integer constantFrom, constantTo, constantStep;
+		private Integer constantFrom;
+
+		/** The constant to. */
+		private Integer constantTo;
+
+		/** The constant step. */
+		private Integer constantStep;
 
 		/** The step defined. */
 		private final boolean stepDefined;
@@ -523,10 +529,11 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			final int f = constantFrom == null ? Cast.asInt(scope, from.value(scope)) : constantFrom;
 			final int t = constantTo == null ? Cast.asInt(scope, to.value(scope)) : constantTo;
 			int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
-			final boolean negative = f - t > 0;
 			// if ( f == t ) { return null; }
 			boolean shouldBreak = false;
-			if (negative) {
+			if (f == t) {
+				loopBody(scope, f, result);
+			} else if (f - t > 0) {
 				if (s > 0) {
 					if (stepDefined) return null;
 					s = -s;
@@ -536,10 +543,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					switch (status) {
 						case CONTINUE:
 							continue;
-						case BREAK:
-						case RETURN:
-						case DIE:
-						case DISPOSE:
+						case BREAK, RETURN, DIE, DISPOSE:
 							shouldBreak = true;
 							break;
 						default:
@@ -551,10 +555,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					switch (status) {
 						case CONTINUE:
 							continue;
-						case BREAK:
-						case RETURN:
-						case DIE:
-						case DISPOSE:
+						case BREAK, RETURN, DIE, DISPOSE:
 							shouldBreak = true;
 							break;
 						default:
@@ -571,34 +572,25 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	class Over implements LoopExecuter {
 
 		/** The over. */
-		private final IExpression over = getFacet(IKeyword.OVER);
+		private final IExpression overExpression = getFacet(IKeyword.OVER);
 
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object[] result = new Object[1];
-			final Object obj = over.value(scope);
-			final Iterable list_ =
-					!(obj instanceof IContainer) ? Cast.asList(scope, obj) : ((IContainer) obj).iterable(scope);
+			final Object obj = overExpression.value(scope);
+			final Iterable list = !(obj instanceof IContainer c) ? Cast.asList(scope, obj) : c.iterable(scope);
 			boolean shouldBreak = false;
 
-			for (final Object each : list_) {
-
+			for (final Object each : list) {
 				switch (loopBody(scope, each, result)) {
 					case CONTINUE:
 						continue;
-					case BREAK:
-					case RETURN:
-					case DIE:
-					case DISPOSE:
+					case BREAK, RETURN, DIE, DISPOSE:
 						shouldBreak = true;
 						break;
 					default:
-						;
 				}
-				if (shouldBreak) {
-					break;
-					// if (!loopBody(scope, each, result)) { break; } }
-				}
+				if (shouldBreak) { break; }
 			}
 			return result[0];
 		}
@@ -610,7 +602,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	class Times implements LoopExecuter {
 
 		/** The times. */
-		private final IExpression times = getFacet(IKeyword.TIMES);
+		private final IExpression timesExpression = getFacet(IKeyword.TIMES);
 
 		/** The constant times. */
 		private Integer constantTimes;
@@ -622,26 +614,24 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		 *             the gama runtime exception
 		 */
 		Times() throws GamaRuntimeException {
-			if (times.isConst()) { constantTimes = Types.INT.cast(null, times.getConstValue(), null, false); }
+			if (timesExpression.isConst()) {
+				constantTimes = Types.INT.cast(null, timesExpression.getConstValue(), null, false);
+			}
 		}
 
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object[] result = new Object[1];
-			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
+			final int max = constantTimes == null ? Cast.asInt(scope, timesExpression.value(scope)) : constantTimes;
 			boolean shouldBreak = false;
 			for (int i = 0; i < max && !shouldBreak; i++) {
 				switch (loopBody(scope, null, result)) {
 					case CONTINUE:
 						continue;
-					case BREAK:
-					case RETURN:
-					case DIE:
-					case DISPOSE:
+					case BREAK, RETURN, DIE, DISPOSE:
 						shouldBreak = true;
 						break;
 					default:
-						;
 				}
 			}
 			return result[0];
@@ -661,18 +651,14 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object[] result = new Object[1];
 			boolean shouldBreak = false;
-			while (Cast.asBool(scope, cond.value(scope)) && !shouldBreak) {
+			while (Boolean.TRUE.equals(Cast.asBool(scope, cond.value(scope))) && !shouldBreak) {
 				switch (loopBody(scope, null, result)) {
 					case CONTINUE:
 						continue;
-					case BREAK:
-					case RETURN:
-					case DIE:
-					case DISPOSE:
+					case BREAK, RETURN, DIE, DISPOSE:
 						shouldBreak = true;
 						break;
 					default:
-						;
 				}
 			}
 			return result[0];
