@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.alg.clique.BronKerboschCliqueFinder;
@@ -2374,7 +2373,8 @@ public class Graphs {
 			+ " length((path_between (g, {10,5}, {50,50}))) = 1 ")
 	public static IPath path_between(final IScope scope, final IGraph graph, final Object source, final Object target)
 			throws GamaRuntimeException {
-		if (graph instanceof GamaSpatialGraph) return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) source, (IShape) target);
+		if (graph instanceof GamaSpatialGraph)
+			return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) source, (IShape) target);
 		return graph.computeShortestPathBetween(scope, source, target);
 	}
 
@@ -2405,18 +2405,22 @@ public class Graphs {
 					value = "paths_between(my_graph, ag1:: ag2, 2)",
 					equals = "the 2 shortest paths (ordered by length) between ag1 and ag2",
 					isExecutable = false) })
-	@test (" graph<geometry, geometry> g <- directed(as_edge_graph([\r\n"
-			+ "								edge({10,5}, {20,3}), \r\n"
-			+ "								edge({10,5}, {30,30}),\r\n"
-			+ "								edge({30,30}, {80,35}),\r\n"
-			+ "								edge({80,35}, {40,60}),\r\n"
-			+ "								edge({80,35}, {10,5}), \r\n"
-			+ "								edge({10,5}, {80,35}),\r\n"
-			+ "								edge({30,30}, {85,25}),\r\n"
-			+ "								edge({85,35}, {80,35}),\r\n"
-			+ "								node ({50,50})\r\n" + "	])); "
-			+ " length((paths_between(g, {10,5}:: {80,35}, 2))) = 2")
-	public static IList<GamaSpatialPath> Kpaths_between(final IScope scope, final GamaGraph graph,
+	@test ("""
+			graph<geometry, geometry> g <- directed(as_edge_graph([
+										edge({10,5}, {20,3}),
+										edge({10,5}, {30,30}),
+										edge({30,30}, {80,35}),
+										edge({80,35}, {40,60}),
+										edge({80,35}, {10,5}),
+										edge({10,5}, {80,35}),
+										edge({30,30}, {85,25}),
+										edge({85,35}, {80,35}),
+										node ({50,50})
+										]));
+			   length((paths_between(g, {10,5}:: {80,35}, 2))) = 2
+
+			""")
+	public static IList<GamaSpatialPath> kPathsBetween(final IScope scope, final GamaGraph graph,
 			final GamaPair sourTarg, final int k) throws GamaRuntimeException {
 
 		return Cast.asTopology(scope, graph).KpathsBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value, k);
@@ -3005,8 +3009,7 @@ public class Graphs {
 	 */
 	@operator (
 			value = "edge",
-			type = IType.NONE, // ITypeProvider.TYPE_AT_INDEX + 1, // FIXME this is
-			// false
+			type = IType.NONE, // ITypeProvider.TYPE_AT_INDEX + 1
 			category = { IOperatorCategory.GRAPH })
 	@doc (
 			value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph ")
@@ -3427,11 +3430,16 @@ public class Graphs {
 	/**
 	 * Generate graph barabasi albert.
 	 *
-	 * @param scope the scope
-	 * @param nodes the nodes
-	 * @param initNbNodes the init nb nodes
-	 * @param nbEdgesAdded the nb edges added
-	 * @param directed the directed
+	 * @param scope
+	 *            the scope
+	 * @param nodes
+	 *            the nodes
+	 * @param initNbNodes
+	 *            the init nb nodes
+	 * @param nbEdgesAdded
+	 *            the nb edges added
+	 * @param directed
+	 *            the directed
 	 * @return the i graph
 	 */
 	@operator (
@@ -3777,11 +3785,16 @@ public class Graphs {
 	/**
 	 * Generate graph watts strogatz.
 	 *
-	 * @param scope the scope
-	 * @param nodes the nodes
-	 * @param p the p
-	 * @param k the k
-	 * @param directed the directed
+	 * @param scope
+	 *            the scope
+	 * @param nodes
+	 *            the nodes
+	 * @param p
+	 *            the p
+	 * @param k
+	 *            the k
+	 * @param directed
+	 *            the directed
 	 * @return the i graph
 	 */
 	@operator (
@@ -3861,19 +3874,19 @@ public class Graphs {
 							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_random_graph(",
 							isExecutable = false),
 							@example (
-									value = "			50,",
+									value = "50,",
 									isExecutable = false),
 							@example (
-									value = "			100,",
+									value = "100,",
 									isExecutable = false),
 							@example (
-									value = "			true,",
+									value = "true,",
 									isExecutable = false),
 							@example (
-									value = "			node_species,",
+									value = "node_species,",
 									isExecutable = false),
 							@example (
-									value = "		edge_species);",
+									value = "edge_species);",
 									isExecutable = false) }) },
 			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	@no_test
@@ -3916,16 +3929,16 @@ public class Graphs {
 							value = "graph myGraph <- generate_random_graph(",
 							isExecutable = false),
 							@example (
-									value = "			50,",
+									value = "50,",
 									isExecutable = false),
 							@example (
-									value = "			100,",
+									value = "100,",
 									isExecutable = false),
 							@example (
-									value = "			true,",
+									value = "true,",
 									isExecutable = false),
 							@example (
-									value = "			node_species);",
+									value = "node_species);",
 									isExecutable = false) }) },
 			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	@no_test
@@ -3959,13 +3972,13 @@ public class Graphs {
 							value = "graph myGraph <- generate_random_graph(",
 							isExecutable = false),
 							@example (
-									value = "			50,",
+									value = "50,",
 									isExecutable = false),
 							@example (
-									value = "			100,",
+									value = "100,",
 									isExecutable = false),
 							@example (
-									value = "			true);",
+									value = "true);",
 									isExecutable = false) }) },
 			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	@no_test
@@ -3988,18 +4001,18 @@ public class Graphs {
 							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",
 							isExecutable = false),
 							@example (
-									value = "			true,",
+									value = "true,",
 									isExecutable = false),
 							@example (
-									value = "			nodes,",
+									value = "nodes,",
 									isExecutable = false),
 							@example (
-									value = "		edge_species);",
+									value = "edge_species);",
 									isExecutable = false) }) },
 			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	@no_test
 	public static IGraph generateGraphComplete(final IScope scope, final Boolean directed, final IList nodes,
-			final ISpecies edges_species) {
+			final ISpecies edgeSpecies) {
 		AbstractBaseGraph<String, DefaultEdge> graph = directed
 				? new DirectedMultigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true)
 				: new Multigraph(SupplierUtil.createStringSupplier(), SupplierUtil.DEFAULT_EDGE_SUPPLIER, true);
@@ -4007,7 +4020,7 @@ public class Graphs {
 		ComplementGraphGenerator gen = new ComplementGraphGenerator(graph);
 		gen.generateGraph(graph, null);
 
-		return new GamaGraph<>(scope, graph, nodes, edges_species);
+		return new GamaGraph<>(scope, graph, nodes, edgeSpecies);
 
 	}
 
@@ -4070,16 +4083,16 @@ public class Graphs {
 							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",
 							isExecutable = false),
 							@example (
-									value = "			100,",
+									value = "100,",
 									isExecutable = false),
 							@example (
-									value = "			true,",
+									value = "true,",
 									isExecutable = false),
 							@example (
-									value = "			node_species,",
+									value = "node_species,",
 									isExecutable = false),
 							@example (
-									value = "		edge_species);",
+									value = "edge_species);",
 									isExecutable = false) }) },
 			see = { "generate_barabasi_albert", "generate_watts_strogatz" })
 	@no_test
