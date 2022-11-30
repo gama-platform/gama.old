@@ -154,8 +154,8 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);
 		final Object firstValue =
 				firstInitValues != null && !firstInitValues.isEmpty() ? firstInitValues.values().toArray()[0] : null;
-		if (firstValue instanceof SavedAgent) {
-			sim.updateWith(scope, (SavedAgent) firstValue);
+		if (firstValue instanceof SavedAgent sa) {
+			sim.updateWith(scope, sa);
 		} else {
 			createVariablesFor(sim.getScope(), Collections.singletonList(sim), Arrays.asList(firstInitValues));
 		}
@@ -171,9 +171,9 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	}
 
 	@Override
-	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable var) {
-		return switch (var.getName()) {
-			case IKeyword.SEED, IKeyword.RNG -> !var.hasFacet(IKeyword.INIT);
+	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable theVar) {
+		return switch (theVar.getName()) {
+			case IKeyword.SEED, IKeyword.RNG -> !theVar.hasFacet(IKeyword.INIT);
 			default -> true;
 		};
 	}
