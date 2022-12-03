@@ -95,6 +95,29 @@ public class Displays {
 	}
 
 	/**
+	 * Stack.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param nodes
+	 *            the nodes
+	 * @return the gama node
+	 */
+	@operator (
+			value = STACK,
+			can_be_const = false)
+	@doc ("Creates a stack layout node. Accepts the same argument as `horizontal` or `vertical` (a map of display indices and weights) but the weights are not taken into account")
+	@no_test
+	public static GamaNode<String> stack(final IScope scope, final IMap<Object, Integer> nodes) {
+		if (nodes == null) throw GamaRuntimeException.error("Nodes of a stack cannot be nil", scope);
+		if (nodes.isEmpty())
+			throw GamaRuntimeException.error("At least one display must be defined in the stack", scope);
+		final GamaNode<String> node = new GamaNode<>(STACK);
+		nodes.forEach((n, i) -> node.addChild(String.valueOf(n)));
+		return node;
+	}
+
+	/**
 	 * Builds the sash from map.
 	 *
 	 * @param scope

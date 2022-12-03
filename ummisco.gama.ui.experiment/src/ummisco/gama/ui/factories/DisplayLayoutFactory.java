@@ -34,7 +34,7 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 		// On macOS, the simple use of 'asyncRun' prevents java2D views to be displayed in mixed environments (e.g. "3
 		// simulations" in Ant Foraging).
 		// WorkbenchHelper.runInUI("Arranging views", 0, m -> {
-		WorkbenchHelper.asyncRun(() -> { ArrangeDisplayViews.execute(layout); });
+		WorkbenchHelper.asyncRun(() -> ArrangeDisplayViews.execute(layout));
 
 	}
 

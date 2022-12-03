@@ -6,11 +6,10 @@
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
-import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static msi.gama.common.interfaces.IKeyword.LAYOUT;
 import static msi.gama.util.tree.GamaTree.withRoot;
@@ -24,8 +23,8 @@ import static msi.gaml.operators.IUnits.stack;
 import static msi.gaml.operators.IUnits.vertical;
 import static one.util.streamex.StreamEx.of;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.DISPLAY_INDEX_KEY;
-import static ummisco.gama.ui.commands.ArrangeDisplayViews.getDisplaysPlaceholder;
 import static ummisco.gama.ui.commands.ArrangeDisplayViews.collectAndPrepareDisplayViews;
+import static ummisco.gama.ui.commands.ArrangeDisplayViews.getDisplaysPlaceholder;
 import static ummisco.gama.ui.utils.ViewsHelper.getDisplayViews;
 
 import java.util.ArrayList;
@@ -118,9 +117,7 @@ public class LayoutTreeConverter {
 		final List<GamaNode<String>> placeholders = new ArrayList<>();
 		buildPlaceholders(initialSash, placeholders, indices.length);
 		int i = 0;
-		for (final GamaNode<String> node : placeholders) {
-			node.setData(valueOf(indices[i++]));
-		}
+		for (final GamaNode<String> node : placeholders) { node.setData(valueOf(indices[i++])); }
 		return result;
 	}
 
@@ -189,9 +186,7 @@ public class LayoutTreeConverter {
 	String getWeight(final MUIElement element) {
 		String data = element.getContainerData();
 		final MUIElement parent = element.getParent();
-		while (data == null && parent != null) {
-			data = parent.getContainerData();
-		}
+		while (data == null && parent != null) { data = parent.getContainerData(); }
 		return data;
 	}
 
@@ -222,6 +217,21 @@ public class LayoutTreeConverter {
 				final GamaNode<String> node = parent.addChild(prefix(container), parseInt(data));
 				children.forEach(e -> save(e, holders, node, null));
 			}
+		}
+	}
+
+	/**
+	 * Parses the int.
+	 *
+	 * @param data
+	 *            the data
+	 * @return the int
+	 */
+	static int parseInt(final String data) {
+		try {
+			return data == null ? 0 : Integer.parseInt(data);
+		} catch (NumberFormatException e) {
+			return 0;
 		}
 	}
 
