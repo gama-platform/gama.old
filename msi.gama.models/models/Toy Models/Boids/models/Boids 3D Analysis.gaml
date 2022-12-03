@@ -384,14 +384,14 @@ experiment "Trajectory Analysis" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		layout #split;
-		display RealBoids type: 3d{
+		display RealBoids type: 3d {
 			image 'background' file: file_path_to_ocean;
 			species boids aspect: dynamicColor transparency: 0.5 position: {0, 0, 0.1};
 			species boids_goal transparency: 0.2 position: {0, 0, 0.1};
 			species obstacle position: {0, 0, 0.1};
 		}
 
-		display AggregatedBoidsTrajectory type: 3d{
+		display AggregatedBoidsTrajectory type: 3d {
 			image 'background' file: file_path_to_ocean;
 			species aggregatedboids aspect: base trace: 100 fading: true;
 			species boids_goal aspect: default;
@@ -405,14 +405,14 @@ experiment "Space & Time Cube" type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
 		layout #split;
-		display RealBoids type: 3d{
+		display RealBoids type: 3d {
 			image 'background' file: file_path_to_ocean;
 			species boids aspect: dynamicColor transparency: 0.5 position: {0, 0, 0.1};
 			species boids_goal transparency: 0.2 position: {0, 0, 0.1};
 			species obstacle position: {0, 0, 0.1};
 		}
 
-		display SpaceTimeCubeAll type: 3d camera:#from_up_front{
+		display SpaceTimeCubeAll type: 3d camera: #from_up_front {
 			image 'background' file: file_path_to_ocean refresh: false;
 			species boids trace: 100 {
 				draw triangle(20) size: 15 rotate: heading color: hsb(float(heading) / 360.0, 1.0, 1.0) border: hsb(float(heading) / 360.0, 1.0, 1.0) depth: 5 at:
@@ -425,7 +425,7 @@ experiment "Space & Time Cube" type: gui {
 
 		}
 
-		display SpaceTimeCubeAggregated type: 3d camera:#from_up_front{
+		display SpaceTimeCubeAggregated type: 3d camera: #from_up_front {
 			image 'background' file: file_path_to_ocean refresh: false;
 			species aggregatedboids trace: 500 {
 				draw sphere(10) color: rgb('red') at: {location.x, location.y, location.z + time};
@@ -443,9 +443,9 @@ experiment "Space & Time Cube" type: gui {
 
 experiment "Multiple views" type: gui {
 	float minimum_cycle_duration <- 0.05;
-	output  synchronized: true{
+	output synchronized: true {
 		layout #split;
-		display RealBoids type: 2d antialias: false{
+		display RealBoids type: 2d antialias: false {
 			image 'background' file: file_path_to_ocean refresh: false;
 			species boids aspect: dynamicColor transparency: 0.5 position: {0, 0, 0.1};
 			species boids_goal transparency: 0.2 position: {0, 0, 0.25};
@@ -455,7 +455,12 @@ experiment "Multiple views" type: gui {
 
 		display ThirdPerson type: 3d antialias: false {
 			camera "default" dynamic: true location: {int(first(boids).location.x), int(first(boids).location.y), 500} target:
-		    {int(first(boids).location.x), int(first(boids).location.y), 0};
+			{int(first(boids).location.x), int(first(boids).location.y), 0};
+			overlay position: {5, 5} size: {width_and_height_of_environment/3,width_and_height_of_environment/3} transparency: 0.2 rounded: false {
+			 	ask boids {
+					draw triangle(20) size: 15 rotate: 90 + heading color: int(self)=0 ? #red: #gray depth: 5 at: location/3;
+			 	}
+			}
 			image 'background' file: file_path_to_ocean;
 			species obstacle;
 			species boids aspect: dynamicColor transparency: 0.2;
@@ -469,6 +474,12 @@ experiment "Multiple views" type: gui {
 			species obstacle;
 			species boids aspect: dynamicColor transparency: 0.2;
 			species boids_goal transparency: 0.2;
+			overlay position: {5, 5} size: {width_and_height_of_environment/3,width_and_height_of_environment/3} transparency: 0.2 rounded: false {
+			 	ask boids {
+					draw triangle(20) size: 15 rotate: 90 + heading color: int(self)=0 ? #red: #gray depth: 5 at: location/3;
+			 	}
+			}
+
 		}
 
 	}

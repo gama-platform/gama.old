@@ -16,7 +16,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.outputs.layers.OverlayLayerData;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -72,6 +72,7 @@ public class OverlayLayerObject extends LayerObject {
 		GamaPoint size = new GamaPoint(renderer.getEnvWidth(), renderer.getEnvHeight());
 		final IScope scope = renderer.getSurface().getScope();
 		final IExpression expr = layer.getDefinition().getFacet(IKeyword.SIZE);
+		OverlayLayerData d = (OverlayLayerData) layer.getData();
 		if (expr != null) {
 			size = Cast.asPoint(scope, expr.value(scope));
 			if (size.x <= 1) { size.x *= renderer.getEnvWidth(); }
@@ -80,11 +81,10 @@ public class OverlayLayerObject extends LayerObject {
 		gl.pushMatrix();
 		boolean previous = gl.setObjectWireframe(false);
 		try {
-			gl.translateBy(0, -size.y, 0);
+			gl.translateBy(size.x / 2, -size.y / 2, 0);
 			gl.scaleBy(size.x, size.y, 1);
-			gl.setCurrentColor(((OverlayLayer) layer).getData().getBackgroundColor(scope),
-					1 - layer.getData().getTransparency(scope));
-			gl.drawCachedGeometry(IShape.Type.ROUNDED, null);
+			gl.setCurrentColor(d.getBackgroundColor(scope), 1 - layer.getData().getTransparency(scope));
+			gl.drawCachedGeometry(d.isRounded() ? IShape.Type.ROUNDED : IShape.Type.SQUARE, null);
 		} finally {
 			gl.setObjectWireframe(previous);
 			gl.popMatrix();

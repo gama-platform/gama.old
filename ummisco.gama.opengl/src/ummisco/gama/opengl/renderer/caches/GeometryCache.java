@@ -376,8 +376,12 @@ public class GeometryCache {
 		})));
 		put(POINT, BuiltInGeometry.assemble().faces(gl.compileAsList(() -> { drawSphere(gl, 1.0, 5, 5); })));
 
-		put(IShape.Type.ROUNDED,
-				BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> { drawRoundedRectangle(gl.getGL()); })));
+		put(IShape.Type.ROUNDED, BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> {
+			// Align with SQUARE; see issue #3542
+			gl.translateBy(-.5d, -.5d);
+			drawRoundedRectangle(gl.getGL());
+			gl.translateBy(.5d, .5d);
+		})));
 		put(SQUARE, BuiltInGeometry.assemble().bottom(gl.compileAsList(() -> {
 			gl.drawSimpleShape(baseVertices, 4, true, true, null);
 		})));
