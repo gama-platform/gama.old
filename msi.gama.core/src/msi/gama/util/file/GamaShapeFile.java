@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
+import static msi.gama.runtime.GAMA.reportError;
+import static msi.gama.runtime.exceptions.GamaRuntimeException.create;
+import static msi.gama.runtime.exceptions.GamaRuntimeException.warning;
 import static org.apache.commons.lang3.StringUtils.splitByWholeSeparatorPreserveAllTokens;
 
 import java.io.IOException;
@@ -46,7 +49,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -445,11 +447,15 @@ public class GamaShapeFile extends GamaGisFile {
 		ProgressCounter counter = new ProgressCounter(scope, "Reading " + getName(scope));
 		SimpleFeatureCollection collection = getFeatureCollection(scope);
 		computeEnvelope(scope);
-
+		int[] indexOfGeometry = { 0 };
 		try {
-
 			collection.accepts(feature -> {
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
+				// DEBUG.OUT(
+				// "Geometry #" + indexOfGeometry[0] + " / " + feature.getIdentifier() + " is "
+				// + (g == null ? "nil" : g.isEmpty() ? "empty" : !g.isValid() ? "invalid" : "valid"),
+				// true);
+
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 					if (!with3D && g.getNumPoints() > 2) {
 						try {
@@ -468,14 +474,16 @@ public class GamaShapeFile extends GamaGisFile {
 					if (gt.getInnerGeometry() != null) { getBuffer().add(gt); }
 				} else if (g == null) {
 					// See Issue 725
-					GAMA.reportError(scope,
-							GamaRuntimeException.warning(
-									"geometry could not be added as it is " + "nil: " + feature.getIdentifier(), scope),
+					reportError(scope, warning("geometry #" + indexOfGeometry[0]
+							+ " could not be added as it is nil (identifier: " + feature.getIdentifier() + ")", scope),
 							false);
 				}
+				indexOfGeometry[0]++;
 			}, counter);
 		} catch (final Exception ex) {
 			try {
+				getBuffer().clear();
+				indexOfGeometry[0] = 0;
 				ShpFiles shp = new ShpFiles(getFile(scope).toURI().toURL());
 				try (ShapefileReader reader = new ShapefileReader(shp, false, false, GeometryUtils.GEOMETRY_FACTORY)) {
 					reader.setFlatGeometry(true);
@@ -507,16 +515,16 @@ public class GamaShapeFile extends GamaGisFile {
 
 						} else if (g == null) {
 							// See Issue 725
-							GAMA.reportError(scope,
-									GamaRuntimeException.warning(
-											"geometry could not be added as it is " + "nil: " + record.number, scope),
+							reportError(scope,
+									warning("geometry #" + indexOfGeometry[0] + " could not be added as it is nil",
+											scope),
 									false);
 						}
+						indexOfGeometry[0]++;
 					}
 				}
 			} catch (final IOException e2) {
-
-				throw GamaRuntimeException.create(e2, scope);
+				throw create(e2, scope);
 			}
 		}
 
@@ -539,13 +547,14 @@ public class GamaShapeFile extends GamaGisFile {
 			return collection;
 
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, scope);
+			throw create(e, scope);
 		}
 	}
 
 	@Override
 	public int length(final IScope scope) {
-		if (getBuffer() == null) return getFeatureCollection(scope).size();
+		// This line deactivated because of issue #3525
+		// if (getBuffer() == null) return getFeatureCollection(scope).size();
 		return super.length(scope);
 	}
 
