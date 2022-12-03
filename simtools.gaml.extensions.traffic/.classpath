@@ -7,7 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="/msi.gama.ext/geotools/commons-collections4-4.4.jar"/>
+	<classpathentry kind="lib" path="../msi.gama.ext/geotools/commons-collections4-4.4.jar"/>
 	<classpathentry kind="src" path="gaml">
 		<attributes>
 			<attribute name="optional" value="true"/>
