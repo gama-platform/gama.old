@@ -555,10 +555,8 @@ public class Application implements IApplication {
 	 * @param experimentName
 	 * @param pathToModel
 	 */
-	public void runBatchSimulation(final String experimentName, final String pathToModel)
-			throws FileNotFoundException, InterruptedException {
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
-
+	public void runBatchSimulation(final String experimentName, final String pathToModel) {
+		assertIsAModelFile(pathToModel);
 		final Injector injector = HeadlessSimulationLoader.getInjector();
 		final GamlModelBuilder builder = new GamlModelBuilder(injector);
 
@@ -569,7 +567,7 @@ public class Application implements IApplication {
 		GamaExecutorService.THREADS_NUMBER.set(processorQueue.getCorePoolSize());
 
 		final IExperimentPlan expPlan = mdl.getExperiment(experimentName);
-
+		assertIsExperiment(experimentName, expPlan);
 		expPlan.setHeadless(true);
 		expPlan.open();
 		expPlan.getController().userStart();
@@ -587,8 +585,7 @@ public class Application implements IApplication {
 	public void runGamlSimulation(final List<String> args)
 			throws IOException, GamaHeadlessException, InterruptedException {
 		final String pathToModel = args.get(args.size() - 1);
-
-		if (!GamlFileExtension.isGaml(pathToModel)) { System.exit(-1); }
+		assertIsAModelFile(pathToModel);
 		final String argExperimentName = args.get(args.size() - 2);
 		final String argGamlFile = args.get(args.size() - 1);
 
@@ -610,6 +607,32 @@ public class Application implements IApplication {
 		processorQueue.shutdown();
 		while (!processorQueue.awaitTermination(100, TimeUnit.MILLISECONDS)) {}
 		System.exit(0);
+	}
+
+	/**
+	 * Assert is A model file.
+	 *
+	 * @param pathToModel
+	 *            the path to model
+	 */
+	private void assertIsAModelFile(final String pathToModel) {
+		if (!GamlFileExtension.isGaml(pathToModel)) {
+			DEBUG.LOG("The file " + pathToModel + " is not a GAML model or experiment file.");
+			System.exit(-1);
+		}
+	}
+
+	/**
+	 * Assert is experiment.
+	 *
+	 * @param experimentName the experiment name
+	 * @param expPlan the exp plan
+	 */
+	private void assertIsExperiment(final String experimentName, final IExperimentPlan expPlan) {
+		if (expPlan == null) {
+			DEBUG.LOG("Experiment " + experimentName + " does not exist. Verify its name.");
+			System.exit(-1);
+		}
 	}
 
 }
