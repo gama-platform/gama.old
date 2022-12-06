@@ -618,7 +618,7 @@ public class Stochanalysis {
 				tmp_replicat += nb_tmp;
 			}
 			int min_replicat = tmp_replicat / sample.size();
-			if (min_replicat == 0) { min_replicat = 1; }
+			if (min_replicat == 0) { min_replicat = -1; }
 			return Arrays.asList(min_replicat, compteur_failed, n_min_list);
 
 		}
