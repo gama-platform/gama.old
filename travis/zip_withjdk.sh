@@ -63,9 +63,11 @@ for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.
 
 	echo "-vm" > Gama.ini
 	if [[ "$os" == "macosx"* ]]; then
-		echo "../jdk/Contents/Home/bin/javaw" >> Gama.ini
-	else
+		echo "../jdk/Contents/Home/bin/java" >> Gama.ini
+	elif [[ "$os" == "win32"* ]]; then
 		echo "./jdk/bin/javaw" >> Gama.ini
+	else
+		echo "./jdk/bin/java" >> Gama.ini
 	fi
 	cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini >> Gama.ini
 	rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
