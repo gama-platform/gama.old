@@ -105,7 +105,7 @@ public class FileUtils {
 		try {
 			ROOT.getPathVariableManager().setValue("CACHE_LOC", ROOT.getLocation().append(CACHE_FOLDER_PATH));
 		} catch (final CoreException e) {
-			
+
 			e.printStackTrace();
 		}
 	}
@@ -345,9 +345,11 @@ public class FileUtils {
 		// If it already exists, we need to find it a new name as it doesnt point to the
 		// same absolute file
 		String fileName = new Path(path).lastSegment();
-		final int i = fileName.lastIndexOf(URL_SEPARATOR_REPLACEMENT);
-		if (i > -1) { fileName = fileName.substring(i + URL_SEPARATOR_REPLACEMENT.length()); }
-		file = correctlyNamedFile(folder, fileName);
+		if (fileName != null) {
+			final int i = fileName.lastIndexOf(URL_SEPARATOR_REPLACEMENT);
+			if (i > -1) { fileName = fileName.substring(i + URL_SEPARATOR_REPLACEMENT.length()); }
+			file = correctlyNamedFile(folder, fileName);
+		}
 		return createLinkedFile(path, file);
 	}
 
@@ -489,6 +491,7 @@ public class FileUtils {
 	 * @return the i file
 	 */
 	private static IFile createLinkedFile(final String path, final IFile file) {
+		if (file == null) return null;
 		java.net.URI resolvedURI = null;
 		final java.net.URI javaURI = URIUtil.toURI(path);// new java.io.File(path).toURI();
 
@@ -499,7 +502,7 @@ public class FileUtils {
 		}
 		try {
 			file.createLink(resolvedURI, IResource.NONE, null);
-		} catch (final CoreException e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
