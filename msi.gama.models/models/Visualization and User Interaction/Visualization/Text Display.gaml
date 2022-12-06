@@ -38,7 +38,7 @@ experiment Strings {
 				draw circle(0.5) at: {50, y + 5} color: #red;
 				draw "custom {0.2, 0.2} with border" at: {50, y + y_step} anchor: {0.2, 0.2} color: current_color   depth: 3 border: rnd_color(255) width: 2;
 				draw circle(0.5) at: {50, y + 10} color: #red;
-				draw "custom {0.8, 0.8} with texture" at: {50, y + 2*y_step} anchor: {0.8, 0.8}  font:  one_of(fonts)  depth: 8 texture: g ;
+				draw "custom {0.8, 0.8} with texture" at: {50, y + 2*y_step} anchor: {0.8, 0.8}  font:  one_of(fonts) with_size 100  depth: 8 texture: g ;
 				draw circle(0.5) at: {50, y + 10} color: #red;
 				draw "custom {0.8, 0.8} 3D Wireframe" at: {50, y + 3*y_step} anchor: {0.8, 0.8}  font:  current_font  depth: 8 wireframe: true ;
 				draw circle(0.5) at: {50, y + 15} color: #red;

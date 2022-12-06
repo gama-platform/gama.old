@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaFont.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamaFont.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -61,7 +60,8 @@ public class GamaFont extends Font implements IValue {
 	/**
 	 * Instantiates a new gama font.
 	 *
-	 * @param font the font
+	 * @param font
+	 *            the font
 	 */
 	public GamaFont(final Font font) {
 		super(font);
@@ -69,21 +69,15 @@ public class GamaFont extends Font implements IValue {
 
 	@Override
 	@getter (IKeyword.NAME)
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 
 	@Override
 	@getter (IKeyword.SIZE)
-	public int getSize() {
-		return size;
-	}
+	public int getSize() { return size; }
 
 	@Override
 	@getter (IKeyword.STYLE)
-	public int getStyle() {
-		return style;
-	}
+	public int getStyle() { return style; }
 
 	/**
 	 * Method serialize()
@@ -109,9 +103,7 @@ public class GamaFont extends Font implements IValue {
 	 * @see msi.gama.common.interfaces.ITyped#getGamlType()
 	 */
 	@Override
-	public IType<?> getGamlType() {
-		return Types.FONT;
-	}
+	public IType<?> getGamlType() { return Types.FONT; }
 
 	/**
 	 * Method stringValue(). Outputs to a format that is usable by Font.decode(String);
@@ -147,9 +139,12 @@ public class GamaFont extends Font implements IValue {
 	/**
 	 * Font.
 	 *
-	 * @param name the name
-	 * @param size the size
-	 * @param style the style
+	 * @param name
+	 *            the name
+	 * @param size
+	 *            the size
+	 * @param style
+	 *            the style
 	 * @return the gama font
 	 */
 	@operator (
@@ -170,10 +165,64 @@ public class GamaFont extends Font implements IValue {
 	}
 
 	/**
+	 * With size.
+	 *
+	 * @param font
+	 *            the font
+	 * @param size
+	 *            the size
+	 * @return the gama font
+	 */
+	@operator (
+			value = "with_size",
+			category = { IOperatorCategory.CASTING },
+			concept = { IConcept.TEXT, IConcept.DISPLAY },
+			can_be_const = true)
+	@doc (
+			value = "Creates a new font from an existing font, with a new size in points",
+			masterDoc = true,
+			examples = @example (
+					value = "font ('Helvetica Neue',12, #bold + #italic) with_size 24",
+					equals = "a bold and italic face of the Helvetica Neue family with a size of 24 points",
+					test = false))
+	@no_test
+	public static GamaFont withSize(final GamaFont font, final Integer size) {
+		return new GamaFont(font.name, font.style, size);
+	}
+
+	/**
+	 * With size.
+	 *
+	 * @param font
+	 *            the font
+	 * @param size
+	 *            the size
+	 * @return the gama font
+	 */
+	@operator (
+			value = "with_style",
+			category = { IOperatorCategory.CASTING },
+			concept = { IConcept.TEXT, IConcept.DISPLAY },
+			can_be_const = true)
+	@doc (
+			value = "Creates a new font from an existing font, with a new style: either #bold, #italic or #plain or a combination (addition) of them.",
+			masterDoc = true,
+			examples = @example (
+					value = "font ('Helvetica Neue',12, #bold + #italic) with_style #plain",
+					equals = "a plain face of the Helvetica Neue family with a size of 12 points",
+					test = false))
+	@no_test
+	public static GamaFont withStyle(final GamaFont font, final Integer style) {
+		return new GamaFont(font.name, style, font.size);
+	}
+
+	/**
 	 * Font.
 	 *
-	 * @param name the name
-	 * @param size the size
+	 * @param name
+	 *            the name
+	 * @param size
+	 *            the size
 	 * @return the gama font
 	 */
 	@operator (
