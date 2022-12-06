@@ -100,6 +100,12 @@ public class ManualExperimentJob extends ExperimentJob {
 	}
 
 	@Override
+	public void doBackStep() {
+		this.step = simulator.backStep();
+	}
+	
+	
+	@Override
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
 			GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);

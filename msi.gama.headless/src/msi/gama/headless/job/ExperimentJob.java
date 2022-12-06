@@ -349,6 +349,14 @@ public class ExperimentJob implements IExperimentJob {
 		this.step = simulator.step();
 		this.exportVariables();
 	}
+	
+
+	@Override
+	public void doBackStep() {
+		this.step = simulator.backStep();
+		//this.exportVariables(); ?
+	}
+	
 
 	@Override
 	public String getExperimentID() { return experimentID; }

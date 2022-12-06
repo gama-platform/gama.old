@@ -154,6 +154,13 @@ public class Experiment implements IExperiment {
 	}
 
 	@Override
+	public long backStep() {
+		currentExperiment.getAgent().backward(currentExperiment.getAgent().getScope());
+		return currentStep--;
+
+	}
+	
+	@Override
 	public void setParameter(final String parameterName, final Object value) {
 		this.params.put(parameterName, value);
 	}

@@ -224,4 +224,6 @@ public interface IExperimentJob extends Runnable {
 	 * Do step.
 	 */
 	void doStep();
+
+	void doBackStep();
 }

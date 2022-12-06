@@ -72,6 +72,14 @@ public interface IExperiment {
 	 */
 	long step();
 
+
+	/**
+	 * BackStep.
+	 *
+	 * @return the long
+	 */
+	long backStep();
+	
 	/**
 	 * Checks if is interrupted.
 	 *

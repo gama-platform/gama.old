@@ -15,6 +15,7 @@ public class StepBackCommand implements ISocketCommand {
 		final String 	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		final Object 	socket_id 	= map.get("socket_id");
 		final int		nb_step		= map.get("nb_step") != null ? ((Number) map.get("nb_step")).intValue() : 1; 
+		final boolean 	sync 		= map.get("sync") != null ? (boolean) map.get("sync") : false;
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("stepBack");
 		DEBUG.OUT(exp_id);
@@ -28,7 +29,12 @@ public class StepBackCommand implements ISocketCommand {
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 			for (int i = 0 ; i < nb_step ; i++) {
-				gama_exp.controller.userStepBack();
+				if (sync) {
+					gama_exp.controller._job.doBackStep();
+				}
+				else {
+					gama_exp.controller.userStepBack();					
+				}
 			}
 			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
 		}
