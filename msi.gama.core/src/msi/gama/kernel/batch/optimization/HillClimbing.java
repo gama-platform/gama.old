@@ -154,11 +154,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 			
 			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
 				Map<ParametersSet,Double> result = testSolutions(neighbors);
-				for (ParametersSet p : result.keySet()) {
-					if (keepSol(p, result.get(p))) {
-						bestNeighbor = p;
-					}	
-				}
+				if (result.containsKey(bestSolution)) { bestNeighbor = bestSolution; }
 			} else {
 				for (final ParametersSet neighborSol : neighbors) {
 					if (neighborSol == null) {
@@ -169,10 +165,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS).get(0);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
-
-					if (keepSol(neighborSol, neighborFitness)) {
-						bestNeighbor = neighborSol;
-					}
+					if (neighborSol == bestSolution) { bestNeighbor = neighborSol;}	
 					
 				}
 			}

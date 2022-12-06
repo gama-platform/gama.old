@@ -66,7 +66,7 @@ import msi.gaml.types.IType;
 						name = SimulatedAnnealing.TEMP_DECREASE,
 						type = IType.FLOAT,
 						optional = true,
-						doc = @doc ("temperature decrease coefficient")),
+						doc = @doc ("temperature decrease (mutiplicative) coefficient")),
 				@facet (
 						name = SimulatedAnnealing.TEMP_INIT,
 						type = IType.FLOAT,
