@@ -117,7 +117,7 @@
 	<repositories>
 		<repository>
 			<id>eclipse-swt</id>
-			<url>http://download.eclipse.org/releases/2022-03</url>
+			<url>http://download.eclipse.org/releases/2022-12</url>
 			<layout>p2</layout>
 			<releases>
 				<enabled>true</enabled>
