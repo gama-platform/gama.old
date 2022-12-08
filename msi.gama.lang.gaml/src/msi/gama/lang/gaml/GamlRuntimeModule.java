@@ -41,11 +41,16 @@ import msi.gama.lang.gaml.validation.GamlResourceValidator;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpressionCompiler;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeModule {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The initialized. */
 	private static boolean initialized;
@@ -60,6 +65,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	 * Static initialize.
 	 */
 	public static void staticInitialize() {
+
 		if (!initialized) {
 			GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
 			GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
@@ -72,6 +78,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	@Override
 	public void configure(final Binder binder) {
+		DEBUG.OUT("Initialization of GAML XText runtime module begins");
 		super.configure(binder);
 		staticInitialize();
 		// binder.bind(ExpressionDescriptionBuilder.class);
@@ -85,6 +92,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(ErrorToDiagnoticTranslator.class);
 		// binder.bind(org.eclipse.xtext.scoping.IGlobalScopeProvider.class)
 		// .toInstance(new msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider());
+		DEBUG.OUT("Initialization of GAML XText runtime module finished");
 	}
 
 	@Override

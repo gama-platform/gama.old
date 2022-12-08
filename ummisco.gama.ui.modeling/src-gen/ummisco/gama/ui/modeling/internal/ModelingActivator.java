@@ -52,8 +52,11 @@ public class ModelingActivator extends AbstractUIPlugin {
 
 	@Override
 	public void start(final BundleContext context) throws Exception {
+		DEBUG.OUT("Initialization of GAML XText UI activator begins");
 		super.start(context);
 		INSTANCE = this;
+		DEBUG.OUT("Initialization of GAML XText UI activator finished");
+
 	}
 
 	@Override

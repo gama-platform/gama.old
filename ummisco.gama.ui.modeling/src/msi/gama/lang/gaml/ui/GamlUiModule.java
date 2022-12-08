@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlUiModule.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlUiModule.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
@@ -84,6 +84,7 @@ import msi.gama.lang.gaml.ui.outline.GamlOutlinePage;
 import msi.gama.lang.gaml.ui.outline.GamlSortOutlineContribution;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.ui.utils.ModelRunner;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.interfaces.IModelRunner;
 
 /**
@@ -91,10 +92,15 @@ import ummisco.gama.ui.interfaces.IModelRunner;
  */
 public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	/**
 	 * Instantiates a new gaml ui module.
 	 *
-	 * @param plugin the plugin
+	 * @param plugin
+	 *            the plugin
 	 */
 	public GamlUiModule(final AbstractUIPlugin plugin) {
 		super(plugin);
@@ -103,7 +109,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public void configure(final Binder binder) {
-
+		DEBUG.OUT("Initialization of GAML XText UI module begins");
 		super.configure(binder);
 		binder.bind(String.class).annotatedWith(
 				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
@@ -118,6 +124,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		binder.bind(IGamlLabelProvider.class).to(GamlLabelProvider.class);
 		// binder.bind(IHighlightingConfiguration.class).to(GamlHighlightingConfiguration.class).asEagerSingleton();
+		DEBUG.OUT("Initialization of GAML XText UI module finished");
 	}
 
 	@Override
@@ -128,7 +135,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	/**
 	 * Bind parser based content assist context factory$ stateful factory.
 	 *
-	 * @return the class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr. parser based content assist context factory. stateful factory>
+	 * @return the class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr. parser based content assist context
+	 *         factory. stateful factory>
 	 */
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory>
 			bindParserBasedContentAssistContextFactory$StatefulFactory() {

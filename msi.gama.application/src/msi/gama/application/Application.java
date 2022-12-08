@@ -55,6 +55,10 @@ import ummisco.gama.dev.utils.FLAGS;
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	/** The processor. */
 	private static OpenDocumentEventProcessor OPEN_DOCUMENT_PROCESSOR;
 
@@ -132,6 +136,8 @@ public class Application implements IApplication {
 						"GAMA is out of memory and will likely crash. Do you want to close now ?");
 				if (close) { this.stop(); }
 				e.printStackTrace();
+			} else {
+				DEBUG.ERR("Exception in Application", e);
 			}
 
 		});
@@ -217,13 +223,14 @@ public class Application implements IApplication {
 		if (!remember) {
 			final int pick = new PickWorkspaceDialog(true).open();
 			/* If the user cancelled, we can't do anything as we need a workspace */
-			if (pick == 1 /* Window.CANCEL */ && getSelectedWorkspaceRootLocation() == null) {
-				openError(null, IKeyword.ERROR, "The application can not start without a workspace and will now exit.");
+			String wr = getSelectedWorkspaceRootLocation();
+			if (pick == 1 /* Window.CANCEL */ || wr == null) {
+				openError(null, IKeyword.ERROR, "GAMA can not start without a workspace and will now exit.");
 				// System.exit(0);
 				return IApplication.EXIT_OK;
 			}
 			/* Tell Eclipse what the selected location was and continue */
-			instanceLoc.set(new URL("file", null, getSelectedWorkspaceRootLocation()), false);
+			instanceLoc.set(new URL("file", null, wr), false);
 			// if ( applyPrefs() ) { applyEclipsePreferences(getSelectedWorkspaceRootLocation()); }
 		} else if (!instanceLoc.isSet()) {
 			/* Set the last used location and continue */

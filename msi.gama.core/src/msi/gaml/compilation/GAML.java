@@ -30,6 +30,7 @@ import org.eclipse.emf.common.util.URI;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
 import msi.gama.common.interfaces.ISkill;
@@ -77,31 +78,35 @@ import msi.gaml.types.Types;
 public class GAML {
 
 	/** The operators. */
-	public static final IMap<String, IMap<Signature, OperatorProto>> OPERATORS = GamaMapFactory.createUnordered();
+	@SuppressWarnings ("unchecked") public static final Map<String, IMap<Signature, OperatorProto>> OPERATORS =
+			Collections.synchronizedMap(GamaMapFactory.createUnordered());
 
 	/** The iterators. */
-	public static final Set<String> ITERATORS = new HashSet<>();
+	public static final Set<String> ITERATORS = Collections.synchronizedSet(new HashSet<>());
 
 	/** The Constant CONSTANTS. */
-	public static final Set<String> CONSTANTS = new HashSet<>();
+	public static final Set<String> CONSTANTS = Collections.synchronizedSet(new HashSet<>());
 
 	/** The Constant ADDITIONS. */
-	public final static Multimap<Class, IDescription> ADDITIONS = HashMultimap.create();
+	public final static Multimap<Class, IDescription> ADDITIONS = Multimaps.synchronizedMultimap(HashMultimap.create());
 
 	/** The Constant FIELDS. */
-	public final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
+	public final static Multimap<Class, OperatorProto> FIELDS = Multimaps.synchronizedMultimap(HashMultimap.create());
 
 	/** The units. */
-	public static final Map<String, UnitConstantExpression> UNITS = new HashMap<>();
+	public static final Map<String, UnitConstantExpression> UNITS = Collections.synchronizedMap(new HashMap<>());
 
 	/** The Constant VARTYPE2KEYWORDS. */
-	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
+	public final static Multimap<Integer, String> VARTYPE2KEYWORDS =
+			Multimaps.synchronizedMultimap(HashMultimap.create());
 
 	/** The Constant LISTENERS_BY_CLASS. */
-	public final static HashMultimap<Class, GamaHelper> LISTENERS_BY_CLASS = HashMultimap.create();
+	public final static SetMultimap<Class, GamaHelper> LISTENERS_BY_CLASS =
+			Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
 	/** The Constant LISTENERS_BY_NAME. */
-	public final static HashMultimap<String, Class> LISTENERS_BY_NAME = HashMultimap.create();
+	public final static SetMultimap<String, Class> LISTENERS_BY_NAME =
+			Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
 	/** The expression factory. */
 	public static volatile IExpressionFactory expressionFactory = null;

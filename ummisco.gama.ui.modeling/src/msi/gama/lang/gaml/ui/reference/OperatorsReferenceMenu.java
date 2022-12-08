@@ -76,7 +76,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	 * Fill menu by name.
 	 */
 	protected void fillMenuByName() {
-		final IMap<String, IMap<Signature, OperatorProto>> operators = GAML.OPERATORS;
+		final Map<String, IMap<Signature, OperatorProto>> operators = GAML.OPERATORS;
 		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
 		for (final String name : nn) {
@@ -107,7 +107,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	 * Fill menu by category.
 	 */
 	protected void fillMenuByCategory() {
-		final IMap<String, IMap<Signature, OperatorProto>> operators = GAML.OPERATORS;
+		final Map<String, IMap<Signature, OperatorProto>> operators = GAML.OPERATORS;
 		final Map<String, Map<String, Map<OperatorProto, Template>>> categories = new LinkedHashMap();
 		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
