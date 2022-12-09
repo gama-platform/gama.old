@@ -1,4 +1,4 @@
-# GAMA 1.8.2 - alpha version supporting JDK 17+ and macOS Monterey
+# GAMA 1.9.0 - alpha version supporting JDK 17+ and macOS Monterey
 
 This represents the development branch of the next version of GAMA. 
 

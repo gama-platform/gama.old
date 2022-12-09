@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.modeling.ui"
       label="UI Components for designing models in  GAMA"
-      version="1.8.2.qualifier"
+      version="1.9.0.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.feature.modeling.ui.branding">
 
@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core.ui" version="1.8.2.qualifier"/>
+      <import feature="ummisco.gama.feature.core.ui" version="1.9.0.qualifier"/>
       <import plugin="msi.gama.lang.gaml"/>
       <import plugin="org.eclipse.xtext.ui"/>
       <import plugin="org.eclipse.xtext.ui.shared"/>

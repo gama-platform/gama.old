@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Pedestrian
 Bundle-SymbolicName: miat.gaml.extension.pedestrian;singleton:=true
-Bundle-Version: 1.8.2.qualifier
+Bundle-Version: 1.9.0.qualifier
 Automatic-Module-Name: escape.gaml.additions
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: msi.gama.core,

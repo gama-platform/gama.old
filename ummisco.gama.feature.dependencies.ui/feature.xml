@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.dependencies.ui"
       label="UI Dependencies of GAMA"
-      version="1.8.2.qualifier"
+      version="1.9.0.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.feature.dependencies.ui.branding">
 
@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.dependencies" version="1.8.2.qualifier"/>
+      <import feature="ummisco.gama.feature.dependencies" version="1.9.0.qualifier"/>
    </requires>
 
    <plugin

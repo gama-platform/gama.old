@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * Operators.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.8.2).
+ * platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
