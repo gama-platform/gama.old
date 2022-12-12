@@ -34,12 +34,17 @@ import org.osgi.framework.Bundle;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 
 /**
  * The Class ApplicationWorkbenchWindowAdvisor.
  */
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	@Override
 	public ActionBarAdvisor createActionBarAdvisor(final IActionBarConfigurer configurer) {
@@ -57,7 +62,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 			final IWorkbenchWindowConfigurer configurer) {
 		super(adv, configurer);
-
+		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor begins");
 		// Hack and workaround for the inability to find launcher icons...
 
 		final Bundle bundle = Platform.getBundle("msi.gama.application");
@@ -65,6 +70,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		final ImageDescriptor myImage =
 				ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("branding_icons/icon256.png"), null));
 		configurer.getWindow().getShell().setImage(myImage.createImage());
+		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor finished");
 	}
 
 	@Override
@@ -108,7 +114,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		if (FLAGS.USE_OLD_TABS) {
 			ThemeHelper.injectCSS(".MPartStack {\n" + " swt-tab-renderer: null;\n" + " swt-simple: true;\n" + "}");
 		}
-		//ThemeHelper.injectCSS(".MPartSashContainer{ jsash-width: 0px; } ");
+		// ThemeHelper.injectCSS(".MPartSashContainer{ jsash-width: 0px; } ");
 		ThemeHelper.restoreSashBackground();
 		configurer.setShowMenuBar(true);
 		configurer.setShowCoolBar(true);

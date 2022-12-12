@@ -43,7 +43,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class PerspectiveHelper {
 
 	static {
-		// DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The Constant BOTTOM_TRIM_ID. */

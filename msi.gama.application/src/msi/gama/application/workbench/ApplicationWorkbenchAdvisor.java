@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
@@ -25,8 +24,6 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.PluginActionBuilder;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
-import org.eclipse.ui.statushandlers.AbstractStatusHandler;
-import org.eclipse.ui.statushandlers.StatusAdapter;
 
 import msi.gama.application.Application;
 import msi.gama.application.workspace.WorkspaceModelsManager;
@@ -54,6 +51,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	 */
 	public ApplicationWorkbenchAdvisor() {
 		super(Application.getOpenDocumentProcessor());
+		//DEBUG.OUT(DEBUG.CALLER() + " is created");
 	}
 
 	@Override
@@ -246,27 +244,27 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	 *
 	 * @see org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor#getWorkbenchErrorHandler()
 	 */
-	@Override
-	public synchronized AbstractStatusHandler getWorkbenchErrorHandler() {
-		return new AbstractStatusHandler() {
-
-			@Override
-			public void handle(final StatusAdapter statusAdapter, final int style) {
-				final int severity = statusAdapter.getStatus().getSeverity();
-				if (severity == IStatus.INFO || severity == IStatus.CANCEL) return;
-				final Throwable e = statusAdapter.getStatus().getException();
-				if (e instanceof OutOfMemoryError) {
-					GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), e);
-				}
-				final String message = statusAdapter.getStatus().getMessage();
-				// Stupid Eclipse
-				if (!message.contains("File toolbar contribution item") && !message.contains("Duplicate template id")) {
-					DEBUG.OUT("GAMA caught a workbench message : " + message);
-				}
-				if (e != null) { DEBUG.OUT("GAMA caught an error in the main application loop: " + e.getMessage()); }
-			}
-		};
-	}
+	// @Override
+	// public synchronized AbstractStatusHandler getWorkbenchErrorHandler() {
+	// return new AbstractStatusHandler() {
+	//
+	// @Override
+	// public void handle(final StatusAdapter statusAdapter, final int style) {
+	// final int severity = statusAdapter.getStatus().getSeverity();
+	// if (severity == IStatus.INFO || severity == IStatus.CANCEL) return;
+	// final Throwable e = statusAdapter.getStatus().getException();
+	// if (e instanceof OutOfMemoryError) {
+	// GamaExecutorService.EXCEPTION_HANDLER.uncaughtException(Thread.currentThread(), e);
+	// }
+	// final String message = statusAdapter.getStatus().getMessage();
+	// // Stupid Eclipse
+	// if (!message.contains("File toolbar contribution item") && !message.contains("Duplicate template id")) {
+	// DEBUG.OUT("GAMA caught a workbench message : " + message);
+	// }
+	// if (e != null) { DEBUG.OUT("GAMA caught an error in the main application loop: " + e.getMessage()); }
+	// }
+	// };
+	// }
 
 	@Override
 	public void eventLoopException(final Throwable t) {
