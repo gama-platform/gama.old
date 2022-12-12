@@ -3,5 +3,5 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Extensions to the core that ship with GAMA
 Bundle-SymbolicName: ummisco.gama.feature.core.extensions.branding
 Bundle-Version: 1.9.0.qualifier
-Bundle-Vendor: UMMISCO,  CTU, MIAT, IRIT
+Bundle-Vendor: Extensions — UMMISCO,  CTU, MIAT, IRIT
 Automatic-Module-Name: ummisco.gama.feature.core.extensions.branding

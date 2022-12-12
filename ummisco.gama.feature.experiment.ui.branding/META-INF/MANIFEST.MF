@@ -3,5 +3,5 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Experiment UI for GAMA
 Bundle-SymbolicName: ummisco.gama.feature.experiment.ui.branding
 Bundle-Version: 1.9.0.qualifier
-Bundle-Vendor: UMMISCO
+Bundle-Vendor: Experiment UI — UMMISCO
 Automatic-Module-Name: ummisco.gama.feature.experiment.ui.branding

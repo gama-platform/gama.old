@@ -3,5 +3,5 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Core components of GAMA
 Bundle-SymbolicName: ummisco.gama.feature.core.branding
 Bundle-Version: 1.9.0.qualifier
-Bundle-Vendor: UMMISCO, MIAT
+Bundle-Vendor: Core — UMMISCO, MIAT
 Automatic-Module-Name: ummisco.gama.feature.core.branding
