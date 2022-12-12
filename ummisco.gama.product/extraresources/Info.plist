@@ -48,7 +48,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Gama</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Gama 1.9.0-RC1, modeling and simulation platform</string>
+	<string>Gama 1.9.0, modeling and simulation platform</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -60,11 +60,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.9.0-RC1</string>
+	<string>1.9.0</string>
 	<key>CFBundleSignature</key>
 	<string>GAMA</string>
 	<key>CFBundleVersion</key>
-	<string>1.9.0-RC1</string>
+	<string>1.9.0</string>
 	<key>NSRequiresAquaSystemAppearance</key>
 	<string>True</string>
 	<key>NSHighResolutionCapable</key>
