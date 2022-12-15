@@ -1,0 +1,26 @@
+Log active
+> GAMA: version 1.8.2                         loading on____ linux 5.15.79.1-microsoft-standard-WSL2, x86_64, JDK 17.0.4
+> JAI : ImageIO extensions                    loaded for____ |jpg|tiff|bmp|gif|arx|tf8|TF8|png|ppm|jp2|asc|tif|TIF|TIFF|btf|BTF|pgm|wbmp|jpeg|pbm
+> GAMA: msi.gama.core                         loaded in_____ 17996ms
+> GAMA: simtools.gaml.extensions.physics      loaded in_____ 192ms
+> GAMA: espacedev.gaml.extensions.genstar     loaded in_____ 13ms
+> GAMA: simtools.gaml.extensions.traffic      loaded in_____ 182ms
+> GAMA: irit.gaml.extensions.database         loaded in_____ 27ms
+> GAMA: miat.gaml.extension.pedestrian        loaded in_____ 18ms
+> GAMA: ummisco.gama.java2d                   loaded in_____ 7ms
+UniqueIDProvider
+INIT mpi rank uniqueID provider = 1
+MPIRANK PROVIDER INIT
+> GAMA: femto_st.gama.mpi                     loaded in_____ 3264ms
+> GAMA: ummisco.gama.serialize                loaded in_____ 15ms
+> GAMA: msi.gama.headless                     loaded in_____ 9ms
+> GAMA: msi.gama.lang.gaml                    loaded in_____ 8ms
+> GAMA: msi.gaml.extensions.fipa              loaded in_____ 15ms
+> GAMA: ummisco.gama.network                  loaded in_____ 12ms
+> GAMA: msi.gaml.architecture.simplebdi       loaded in_____ 56ms
+> GAMA: ummisco.gaml.extensions.stats         loaded in_____ 602ms
+> GAMA: ummisco.gama.opengl                   loaded in_____ 9ms
+> GAMA: ummisco.gaml.extensions.maths         loaded in_____ 3254ms
+> GAMA: all plugins                           loaded in_____ 25900ms
+GAMA configuring and loading...
+> GAMA: GAML artefacts                        built in______ 97ms

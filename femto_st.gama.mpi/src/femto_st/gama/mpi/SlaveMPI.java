@@ -393,10 +393,6 @@ public class SlaveMPI extends GamlAgent {
 			System.out.println("MPI.COMM_WORLD.getRank() = "+MPI.COMM_WORLD.getRank());
 			UniqueIDProviderService.getInstance().initMPI(MPI.COMM_WORLD.getRank());*/
 			myRank = MPI.COMM_WORLD.getRank();
-	
-			
-			PrintStream fileOut = new PrintStream("filename"+myRank+".txt");
-			System.setOut(fileOut);
 			
 			System.out.println("Hello");
 			System.out.println("MyRank = " + myRank);

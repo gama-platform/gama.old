@@ -209,7 +209,7 @@ public class MPISkill extends Skill {
 		System.out.println("Before MPI.COMM_WORLD.recv");
 		try {
 			
-			Status st = MPI.COMM_WORLD.probe(source,0);
+			Status st = MPI.COMM_WORLD.probe(source, rtag);
             int sizeOfMessage = st.getCount(MPI.BYTE);
             System.out.println("sizeOfMessage " + sizeOfMessage);
 			message = new byte[sizeOfMessage];

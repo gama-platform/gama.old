@@ -1,0 +1,64 @@
+Log active
+> GAMA: version 1.8.2                         loading on____ linux 5.15.79.1-microsoft-standard-WSL2, x86_64, JDK 17.0.4
+> JAI : ImageIO extensions                    loaded for____ |jpg|tiff|bmp|gif|arx|tf8|TF8|png|ppm|jp2|tif|TIF|asc|TIFF|btf|BTF|pgm|wbmp|jpeg|pbm
+> GAMA: msi.gama.core                         loaded in_____ 17834ms
+> GAMA: msi.gaml.extensions.fipa              loaded in_____ 22ms
+> GAMA: ummisco.gaml.extensions.stats         loaded in_____ 775ms
+> GAMA: ummisco.gama.network                  loaded in_____ 14ms
+> GAMA: ummisco.gaml.extensions.maths         loaded in_____ 2646ms
+> GAMA: simtools.gaml.extensions.physics      loaded in_____ 131ms
+> GAMA: ummisco.gama.java2d                   loaded in_____ 6ms
+> GAMA: msi.gaml.architecture.simplebdi       loaded in_____ 55ms
+UniqueIDProvider
+INIT mpi rank uniqueID provider = 0
+MPIRANK PROVIDER INIT
+> GAMA: femto_st.gama.mpi                     loaded in_____ 54ms
+> GAMA: miat.gaml.extension.pedestrian        loaded in_____ 14ms
+> GAMA: simtools.gaml.extensions.traffic      loaded in_____ 253ms
+> GAMA: msi.gama.headless                     loaded in_____ 7ms
+> GAMA: msi.gama.lang.gaml                    loaded in_____ 8ms
+> GAMA: espacedev.gaml.extensions.genstar     loaded in_____ 12ms
+> GAMA: ummisco.gama.serialize                loaded in_____ 14ms
+> GAMA: ummisco.gama.opengl                   loaded in_____ 7ms
+> GAMA: irit.gaml.extensions.database         loaded in_____ 26ms
+> GAMA: all plugins                           loaded in_____ 22067ms
+GAMA configuring and loading...
+> GAMA: GAML artefacts                        built in______ 94ms
+MinimalAgent register
+MinimalAgent this.uniqueID == null
+MPI REGISTER
+created new uniqueID struct for rank 0 : 2
+null MinimalAgent ID construtor = 2
+null MinimalAgent initialMpiRank construtor = 0
+null MinimalAgent isCopy = false
+MinimalAgent register
+MinimalAgent this.uniqueID == null
+MPI REGISTER
+created new uniqueID struct for rank 0 : 3
+null MinimalAgent ID construtor = 3
+null MinimalAgent initialMpiRank construtor = 0
+null MinimalAgent isCopy = false
+setUniqueID change prevented
+MinimalAgent register
+MinimalAgent this.uniqueID == null
+MPI REGISTER
+created new uniqueID struct for rank 0 : 4
+null MinimalAgent ID construtor = 4
+null MinimalAgent initialMpiRank construtor = 0
+null MinimalAgent isCopy = false
+setUniqueID change prevented
+xxxxxHHHHxxxxxx 
+mesg = [10]
+dest = 1
+stag = 50
+xxxxxxxxxxx <msi.gama.util.GamaList>
+  <valuesListReducer>
+    <int>10</int>
+  </valuesListReducer>
+  <contentTypeListReducer class="msi.gaml.types.GamaIntegerType">
+    <GamaType>int</GamaType>
+  </contentTypeListReducer>
+</msi.gama.util.GamaList>
+send message: [B@77488d59
+message lenght: 236
+End send 
