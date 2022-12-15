@@ -303,7 +303,7 @@ public class SimulationClock {
 	public StringBuilder getInfo(final StringBuilder sb) {
 		final int c = getCycle();
 		final ITopLevelAgent agent = clockScope.getRoot();
-		sb.append(agent.getName()).append(": ").append(c).append(c == 1 ? " cycle " : " cycles ").append("elapsed ");
+		sb.append(agent.getName()).append(": ").append(c).append(c <= 1 ? " cycle " : " cycles ").append("elapsed ");
 		try {
 			GamaDate d = getCurrentDate();
 			final String date =
@@ -347,7 +347,7 @@ public class SimulationClock {
 		@Override
 		public StringBuilder getInfo(final StringBuilder sb) {
 			final int c = getCycle();
-			return sb.append("Experiment: ").append(c).append(c == 1 ? " cycle " : " cycles ").append("elapsed");
+			return sb.append("Experiment: ").append(c).append(c <= 1 ? " cycle " : " cycles ").append("elapsed");
 		}
 	}
 

@@ -134,6 +134,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		} finally {
 			informStatus();
 
+			scope.getGui().updateExperimentState(scope);
 			// TODO a remettre
 			// final int nbThreads =
 			// this.getSimulationPopulation().getNumberOfActiveThreads();

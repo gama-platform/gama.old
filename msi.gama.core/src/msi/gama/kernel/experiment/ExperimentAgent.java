@@ -755,6 +755,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) { outputs.step(scope); }
 		ownClock.step();
 		informStatus();
+
+		scope.getGui().updateExperimentState(scope);
+
 	}
 
 	@Override
