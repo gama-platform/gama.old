@@ -165,7 +165,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS).get(0);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
-					if (neighborSol == bestSolution) { bestNeighbor = neighborSol;}	
+					if (neighborSol.equals(bestSolution)) { bestNeighbor = neighborSol;}	
 					
 				}
 			}
