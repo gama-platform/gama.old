@@ -11,6 +11,7 @@
 package msi.gama.metamodel.topology.projection;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -71,6 +72,14 @@ public class ProjectionFactory {
 	/** The target CRS. */
 	public CoordinateReferenceSystem targetCRS;
 
+	public static CoordinateReferenceSystem EPSG3857 = null;
+
+	static {
+		try {
+			EPSG3857 = CRS.decode("EPSG:3857");
+		} catch (FactoryException e) {}
+	}
+
 	/**
 	 * Manage google CRS.
 	 *
@@ -88,10 +97,10 @@ public class ProjectionFactory {
 				final String content = new String(encoded, StandardCharsets.UTF_8);
 				if (content.contains("WGS 84 / Pseudo-Mercator")
 						|| content.contains("WGS_1984_Web_Mercator_Auxiliary_Sphere")) {
-					crs = CRS.decode("EPSG:3857");
+					crs = EPSG3857;
 				}
 			}
-		} catch (final IOException | URISyntaxException | FactoryException e) {}
+		} catch (final IOException | URISyntaxException e) {}
 		return crs;
 	}
 
@@ -145,6 +154,29 @@ public class ProjectionFactory {
 			e.addContext(
 					"The cause could be that you try to re-project already projected data (see Gama > Preferences... > External for turning the option to true)");
 			throw e;
+		}
+	}
+
+	/**
+	 * Gets the crs.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the crs
+	 */
+	public static CoordinateReferenceSystem getTargetCRSOrDefault(final IScope scope) {
+		IProjection worldProjection = scope.getSimulation().getProjectionFactory().getWorld();
+		return worldProjection == null ? ProjectionFactory.EPSG3857 : worldProjection.getTargetCRS(scope);
+	}
+
+	public static boolean saveTargetCRSAsPRJFile(final IScope scope, final String path) {
+		CoordinateReferenceSystem crs = getTargetCRSOrDefault(scope);
+		try (FileWriter fw =
+				new FileWriter(path.replace(".png", ".prj").replace(".tif", ".prj").replace(".asc", ".prj"))) {
+			fw.write(crs.toString());
+			return true;
+		} catch (final IOException e) {
+			return false;
 		}
 	}
 

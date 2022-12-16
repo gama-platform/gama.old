@@ -32,6 +32,7 @@ import org.geotools.geojson.geom.GeometryJSON;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
@@ -876,7 +877,7 @@ public class Jsoner {
 
 		} else if (jsonSerializable instanceof IShape agentOrIShape) {
 			final StringBuilder specs = new StringBuilder(1 * 20);
-			final String geomType = SaveStatement.getGeometryType(Arrays.asList(agentOrIShape));
+			final String geomType = GeometryUtils.getGeometryStringType(Arrays.asList(agentOrIShape));
 			specs.append("geometry:" + geomType);
 			try {
 				final SimpleFeatureType type = DataUtilities.createType("geojson", specs.toString());

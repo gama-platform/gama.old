@@ -17,13 +17,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.algorithm.Distance;
+import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.algorithm.PointLocation;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.GeometryFilter;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.LinearRing;
@@ -34,6 +38,7 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.io.WKTWriter;
@@ -1248,6 +1253,43 @@ public class GeometryUtils {
 	}
 
 	/**
+	 * Gets the geometry type.
+	 *
+	 * @param agents
+	 *            the agents
+	 * @return the geometry type
+	 */
+	public static String getGeometryStringType(final List<? extends IShape> agents) {
+		String geomType = "";
+		boolean isLine = false;
+		for (final IShape be : agents) {
+			final IShape geom = be.getGeometry();
+			if (geom != null) {
+				Geometry g2 = cleanAndSimplifyGeometryCollection(geom.getInnerGeometry());
+				if (g2 != null) {
+					if (g2.getNumGeometries() > 1) {
+						if (!isLine && g2.getGeometryN(0).getClass() == Point.class) {
+							geomType = Point.class.getSimpleName();
+						} else if (g2.getGeometryN(0).getClass() == LineString.class) {
+							geomType = LineString.class.getSimpleName();
+						} else if (g2.getGeometryN(0).getClass() == Polygon.class) return Polygon.class.getSimpleName();
+					} else {
+						String geomTypeTmp = g2.getClass().getSimpleName();
+						if (geom.getInnerGeometry() instanceof Polygon) return geomTypeTmp;
+						if (!isLine) {
+							if (g2 instanceof LineString) { isLine = true; }
+							geomType = geomTypeTmp;
+						}
+					}
+				}
+			}
+
+		}
+		if ("DynamicLineString".equals(geomType)) { geomType = LineString.class.getSimpleName(); }
+		return geomType;
+	}
+
+	/**
 	 * @param ownScope
 	 * @param innerGeometry
 	 * @param param
@@ -1526,6 +1568,133 @@ public class GeometryUtils {
 
 		}
 		return gc;
+	}
+
+	/**
+	 * Geometry collection management. Needs to be documented ...
+	 *
+	 * @param gg
+	 *            the gg
+	 * @return the geometry
+	 */
+	public static Geometry cleanGeometryCollection(final Geometry gg) {
+		if (gg instanceof GeometryCollection gc) {
+			boolean isMultiPolygon = true;
+			boolean isMultiPoint = true;
+			boolean isMultiLine = true;
+			final int nb = gc.getNumGeometries();
+
+			for (int i = 0; i < nb; i++) {
+				final Geometry g = gc.getGeometryN(i);
+				if (!(g instanceof Polygon)) { isMultiPolygon = false; }
+				if (!(g instanceof LineString)) { isMultiLine = false; }
+				if (!(g instanceof Point)) { isMultiPoint = false; }
+			}
+
+			if (isMultiPolygon) {
+				final Polygon[] polygons = new Polygon[nb];
+				for (int i = 0; i < nb; i++) { polygons[i] = (Polygon) gc.getGeometryN(i); }
+				return GEOMETRY_FACTORY.createMultiPolygon(polygons);
+			}
+			if (isMultiLine) {
+				final LineString[] lines = new LineString[nb];
+				for (int i = 0; i < nb; i++) { lines[i] = (LineString) gc.getGeometryN(i); }
+				return GEOMETRY_FACTORY.createMultiLineString(lines);
+			}
+			if (isMultiPoint) {
+				final Point[] points = new Point[nb];
+				for (int i = 0; i < nb; i++) { points[i] = (Point) gc.getGeometryN(i); }
+				return GEOMETRY_FACTORY.createMultiPoint(points);
+			}
+		}
+		return gg;
+	}
+
+	/**
+	 * Geometry collection to simple management.
+	 *
+	 * @param gg
+	 *            the gg
+	 * @return the geometry
+	 */
+	public static Geometry cleanAndSimplifyGeometryCollection(final Geometry gg) {
+		if (gg instanceof GeometryCollection gc) {
+			final int nb = gc.getNumGeometries();
+			List<Polygon> polys = new ArrayList<>();
+			List<LineString> lines = new ArrayList<>();
+			List<Point> points = new ArrayList<>();
+
+			for (int i = 0; i < nb; i++) {
+				final Geometry g = gc.getGeometryN(i);
+				if (g instanceof Polygon p) {
+					polys.add(p);
+				} else if (g instanceof LineString ls) {
+					lines.add(ls);
+				} else if (g instanceof Point p) { points.add(p); }
+			}
+			int size = polys.size();
+			if (size > 0) {
+				if (size == 1) return polys.get(0);
+				return GEOMETRY_FACTORY.createMultiPolygon(polys.toArray(new Polygon[polys.size()]));
+			}
+			size = lines.size();
+			if (size > 0) {
+				if (size == 1) return lines.get(0);
+				return GEOMETRY_FACTORY.createMultiLineString(lines.toArray(new LineString[lines.size()]));
+			}
+			size = points.size();
+			if (size > 0) {
+				if (size == 1) return points.get(0);
+				return GEOMETRY_FACTORY.createMultiPoint(points.toArray(new Point[points.size()]));
+			}
+		}
+		return gg;
+	}
+
+	/**
+	 * Fixes polygon CWS.
+	 *
+	 * @param g
+	 *            the g
+	 * @return the geometry
+	 */
+	public static Geometry fixesPolygonCWS(final Geometry g) {
+		if (g instanceof Polygon p) {
+			final boolean clockwise = Orientation.isCCW(p.getExteriorRing().getCoordinates());
+			if (p.getNumInteriorRing() == 0) return g;
+			boolean change = false;
+			final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
+			final GeometryFactory geomFact = new GeometryFactory();
+			for (int i = 0; i < p.getNumInteriorRing(); i++) {
+				final LinearRing hole = p.getInteriorRingN(i);
+				if (!clockwise && !Orientation.isCCW(hole.getCoordinates())
+						|| clockwise && Orientation.isCCW(hole.getCoordinates())) {
+					change = true;
+					final Coordinate[] coords = hole.getCoordinates();
+					ArrayUtils.reverse(coords);
+					final CoordinateSequence points = CoordinateArraySequenceFactory.instance().create(coords);
+					holes[i] = new LinearRing(points, geomFact);
+				} else {
+					holes[i] = hole;
+				}
+			}
+			if (change) return geomFact.createPolygon(p.getExteriorRing(), holes);
+		} else if (g instanceof GeometryCollection gc) {
+			boolean change = false;
+			final GeometryFactory geomFact = new GeometryFactory();
+			final Geometry[] geometries = new Geometry[gc.getNumGeometries()];
+			for (int i = 0; i < gc.getNumGeometries(); i++) {
+				final Geometry gg = gc.getGeometryN(i);
+				if (gg instanceof Polygon) {
+					geometries[i] = fixesPolygonCWS(gg);
+					change = true;
+				} else {
+					geometries[i] = gg;
+				}
+			}
+			if (change) return geomFact.createGeometryCollection(geometries);
+		}
+		return g;
 	}
 
 	/**

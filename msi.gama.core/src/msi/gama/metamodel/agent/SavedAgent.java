@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * SavedAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * SavedAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
@@ -39,7 +38,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 
 	/** The index. */
 	int index;
-	
+
 	/** The inner populations. */
 	Map<String, List<SavedAgent>> innerPopulations;
 
@@ -58,30 +57,33 @@ public class SavedAgent extends GamaMap<String, Object> {
 	protected SavedAgent() {
 		super(11, Types.STRING, Types.NO_TYPE);
 	}
-	
 
 	/**
 	 * Instantiates a new saved agent.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public SavedAgent(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		this();
 		index = agent.getIndex();
 		saveAttributes(scope, agent);
-		if (agent instanceof IMacroAgent) {
-			saveMicroAgents(scope, (IMacroAgent) agent);
-		}
+		if (agent instanceof IMacroAgent) { saveMicroAgents(scope, (IMacroAgent) agent); }
 	}
 
 	/**
 	 * Instantiates a new saved agent.
 	 *
-	 * @param ind the ind
-	 * @param v the v
-	 * @param inPop the in pop
+	 * @param ind
+	 *            the ind
+	 * @param v
+	 *            the v
+	 * @param inPop
+	 *            the in pop
 	 */
 	public SavedAgent(final int ind, final Map<String, Object> v, final Map<String, List<SavedAgent>> inPop) {
 		this(v, inPop);
@@ -91,8 +93,10 @@ public class SavedAgent extends GamaMap<String, Object> {
 	/**
 	 * Instantiates a new saved agent.
 	 *
-	 * @param v the v
-	 * @param inPop the in pop
+	 * @param v
+	 *            the v
+	 * @param inPop
+	 *            the in pop
 	 */
 	public SavedAgent(final Map<String, Object> v, final Map<String, List<SavedAgent>> inPop) {
 		super(v.size(), Types.STRING, Types.NO_TYPE);
@@ -103,7 +107,8 @@ public class SavedAgent extends GamaMap<String, Object> {
 	/**
 	 * Instantiates a new saved agent.
 	 *
-	 * @param map the map
+	 * @param map
+	 *            the map
 	 */
 	public SavedAgent(final IMap<String, Object> map) {
 		this();
@@ -113,7 +118,8 @@ public class SavedAgent extends GamaMap<String, Object> {
 	/**
 	 * Gets the attribute value.
 	 *
-	 * @param attrName the attr name
+	 * @param attrName
+	 *            the attr name
 	 * @return the attribute value
 	 */
 	public Object getAttributeValue(final String attrName) {
@@ -125,27 +131,21 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 *
 	 * @return the variables
 	 */
-	public Map<String, Object> getVariables() {
-		return this;
-	}
+	public Map<String, Object> getVariables() { return this; }
 
 	/**
 	 * Gets the inner populations.
 	 *
 	 * @return the inner populations
 	 */
-	public Map<String, List<SavedAgent>> getInnerPopulations() {
-		return innerPopulations;
-	}
+	public Map<String, List<SavedAgent>> getInnerPopulations() { return innerPopulations; }
 
 	/**
 	 * Gets the index.
 	 *
 	 * @return the index
 	 */
-	public int getIndex() {
-		return index;
-	}
+	public int getIndex() { return index; }
 
 	/**
 	 * Saves agent's attributes to a map.
@@ -156,15 +156,9 @@ public class SavedAgent extends GamaMap<String, Object> {
 	private void saveAttributes(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final ISpecies species = agent.getSpecies();
 		for (final String specVar : species.getVarNames()) {
-			if (UNSAVABLE_VARIABLES.contains(specVar)) {
-				continue;
-			}
+			if (UNSAVABLE_VARIABLES.contains(specVar) || (species.getVar(specVar).value(scope, agent) instanceof IPopulation)) { continue; }
 
-			if (species.getVar(specVar).value(scope, agent) instanceof IPopulation) {
-				continue;
-			}
-
-			if (specVar.equals(IKeyword.SHAPE)) {
+			if (IKeyword.SHAPE.equals(specVar)) {
 				// variables.put(specVar, geometry.copy());
 				// Changed 3/2/12: is it necessary to make the things below ?
 				// variables.put(specVar,
@@ -180,9 +174,9 @@ public class SavedAgent extends GamaMap<String, Object> {
 				// if (agent.getAttributes() != null) {}
 
 				agent.forEachAttribute((attrName, val) -> {
-					if (UNSAVABLE_VARIABLES.contains(attrName)) { return true; }
-					if (species.getVarNames().contains(attrName)) { return true; }
-					if (val instanceof IPopulation) { return true; }
+					if (UNSAVABLE_VARIABLES.contains(attrName)) return true;
+					if (species.getVarNames().contains(attrName)) return true;
+					if (val instanceof IPopulation) return true;
 					shape.setAttribute(attrName, val);
 					return true;
 				});
@@ -217,14 +211,12 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 * @throws GamaRuntimeException
 	 */
 	private void saveMicroAgents(final IScope scope, final IMacroAgent agent) throws GamaRuntimeException {
-		innerPopulations = GamaMapFactory.createUnordered();
+		innerPopulations = GamaMapFactory.create();
 
 		for (final IPopulation<? extends IAgent> microPop : agent.getMicroPopulations()) {
 			final List<SavedAgent> savedAgents = new ArrayList<>();
 			final Iterator<? extends IAgent> it = microPop.iterator();
-			while (it.hasNext()) {
-				savedAgents.add(new SavedAgent(scope, it.next()));
-			}
+			while (it.hasNext()) { savedAgents.add(new SavedAgent(scope, it.next())); }
 
 			innerPopulations.put(microPop.getSpecies().getName(), savedAgents);
 		}
@@ -263,9 +255,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 				if (microPop != null) {
 					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
 					final List<Map<String, Object>> microAttrs = new ArrayList<>();
-					for (final SavedAgent sa : savedMicros) {
-						microAttrs.add(sa);
-					}
+					microAttrs.addAll(savedMicros);
 
 					final List<? extends IAgent> microAgents =
 							microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
@@ -278,7 +268,3 @@ public class SavedAgent extends GamaMap<String, Object> {
 		}
 	}
 }
-
-
-
-
