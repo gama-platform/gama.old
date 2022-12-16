@@ -37,6 +37,8 @@ public interface IExperimentController {
 	/** The back. */
 	int _BACK = 8;
 
+	int _CLOSE = -1;
+
 	/**
 	 * @return
 	 */

@@ -114,6 +114,10 @@ public class ExperimentController implements IExperimentController {
 	private void processUserCommand(final int command) {
 		final IScope scope = getScope();
 		switch (command) {
+			case _CLOSE:
+				scope.getGui().updateExperimentState(scope, IGui.NONE);
+				// scope.getGui().getStatus().neutralStatus(scope, "No simulation running");
+				break;
 			case _OPEN:
 				scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
 				try {
@@ -225,7 +229,10 @@ public class ExperimentController implements IExperimentController {
 				acceptingCommands = false;
 				experimentAlive = false;
 				lock.release();
-				if (commandThread != null && commandThread.isAlive()) { commands.offer(-1); }
+				if (commandThread != null && commandThread.isAlive()) {
+					commands.offer(_CLOSE);
+					// processUserCommand(_CLOSE);
+				}
 			}
 		}
 	}

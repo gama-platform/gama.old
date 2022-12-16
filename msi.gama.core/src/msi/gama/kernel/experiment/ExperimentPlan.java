@@ -22,6 +22,7 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.IExploration;
@@ -505,6 +506,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		parameters.clear();
 		texts.clear();
+		myScope.getGui().getStatus().neutralStatus(myScope, "No simulation running");
 		GAMA.releaseScope(myScope);
 		// FIXME Should be put somewhere around here, but probably not here
 		// exactly.
