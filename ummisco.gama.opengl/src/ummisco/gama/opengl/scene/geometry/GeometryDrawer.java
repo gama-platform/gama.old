@@ -168,7 +168,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 				break;
 			case LINESTRING:
 				if (height != 0) {
-					drawLineCylinder(geom, height, border);
+					drawPlan(geom, height, border);
 					break;
 				}
 				//$FALL-THROUGH$
