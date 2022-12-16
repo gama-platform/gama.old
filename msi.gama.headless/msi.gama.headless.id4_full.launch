@@ -213,7 +213,7 @@
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="espacedev.gaml.extensions.genstar@default:default"/>
         <setEntry value="irit.gaml.extensions.database@default:default"/>
-        <setEntry value="miat.gaml.extension.pedestrian@default:default"/>
+        <setEntry value="miat.gaml.extensions.pedestrian@default:default"/>
         <setEntry value="msi.gama.application@default:default"/>
         <setEntry value="msi.gama.core@default:default"/>
         <setEntry value="msi.gama.documentation@default:default"/>
