@@ -147,7 +147,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		}
 		final String kw = getKeyword();
 		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
-		if (temps == null) { temps = GamaMapFactory.createUnordered(); }
+		if (temps == null) { temps = GamaMapFactory.create(); }
 		if (!MYSELF.equals(name)) {
 			IVarDescriptionProvider description = getDescriptionDeclaringVar(name);
 			if (description != null) {

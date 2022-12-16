@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -49,12 +48,17 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class SpeciesDescription.
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SpeciesDescription extends TypeDescription {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The behaviors. */
 	// AD 08/16: Behaviors are now inherited dynamically
@@ -81,12 +85,6 @@ public class SpeciesDescription extends TypeDescription {
 
 	/** The java base. */
 	protected Class javaBase;
-
-	/** The can use minimal agents. */
-	// protected boolean canUseMinimalAgents = true;
-
-	/** The control finalized. */
-	// protected boolean controlFinalized;
 
 	/**
 	 * Instantiates a new species description.
@@ -388,6 +386,7 @@ public class SpeciesDescription extends TypeDescription {
 			sd.error("For the moment, grids cannot be defined as micro-species anywhere else than in the model");
 		}
 		getMicroSpecies().put(sd.getName(), sd);
+		// DEBUG.OUT("Adding micro-species " + sd.getName() + " to " + getName());
 		invalidateMinimalAgents();
 	}
 
@@ -396,7 +395,6 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	protected void invalidateMinimalAgents() {
 		unSet(Flag.CanUseMinimalAgents);
-		// canUseMinimalAgents = false;
 		if (parent != null && parent != this && !parent.isBuiltIn()) { getParent().invalidateMinimalAgents(); }
 	}
 
@@ -463,7 +461,7 @@ public class SpeciesDescription extends TypeDescription {
 			ce.setName(aspectName);
 		}
 		if (!DEFAULT.equals(aspectName) && hasAspect(aspectName)) { duplicateInfo(ce, getAspect(aspectName)); }
-		if (aspects == null) { aspects = GamaMapFactory.createUnordered(); }
+		if (aspects == null) { aspects = GamaMapFactory.create(); }
 		aspects.put(aspectName, ce);
 	}
 
@@ -637,11 +635,10 @@ public class SpeciesDescription extends TypeDescription {
 		// Takes care of invalid species (see Issue 711)
 		if (parent == null || parent == this) return;
 		if (parent.hasMicroSpecies()) {
-			for (final Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet()) {
-				if (!getMicroSpecies().containsKey(entry.getKey())) {
-					getMicroSpecies().put(entry.getKey(), entry.getValue());
-				}
-			}
+			parent.getMicroSpecies().forEachPair((k, v) -> {
+				getMicroSpecies().putIfAbsent(k, v);
+				return true;
+			});
 		}
 	}
 

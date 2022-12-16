@@ -51,7 +51,7 @@ import msi.gaml.types.Types;
 public class VariableDescription extends SymbolDescription {
 
 	/** The dependencies. */
-	private static Map<String, Collection<String>> dependencies = GamaMapFactory.createUnordered();
+	private static Map<String, Collection<String>> dependencies = GamaMapFactory.create();
 
 	/** The Constant INIT_DEPENDENCIES_FACETS. */
 	public final static Set<String> INIT_DEPENDENCIES_FACETS =

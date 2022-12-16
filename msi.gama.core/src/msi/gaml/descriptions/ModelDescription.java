@@ -357,7 +357,7 @@ public class ModelDescription extends SpeciesDescription {
 
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
-			if (microModels == null) { microModels = GamaMapFactory.createUnordered(); }
+			if (microModels == null) { microModels = GamaMapFactory.create(); }
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
 

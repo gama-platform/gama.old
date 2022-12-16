@@ -503,7 +503,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				duplicateInfo(newAction, existing);
 			}
 		} else {
-			actions = GamaMapFactory.createUnordered();
+			actions = GamaMapFactory.create();
 		}
 		actions.put(actionName, newAction);
 	}
