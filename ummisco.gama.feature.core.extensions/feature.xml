@@ -76,13 +76,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="miat.gaml.extension.pedestrian"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="simtools.gaml.extensions.physics"
          download-size="0"
          install-size="0"
@@ -100,5 +93,12 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="miat.gaml.extensions.pedestrian"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
