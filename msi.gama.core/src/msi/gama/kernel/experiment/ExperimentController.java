@@ -220,11 +220,11 @@ public class ExperimentController implements IExperimentController {
 				getScope().getGui().closeDialogs(getScope());
 				// Dec 2015 This method is normally now called from
 				// ExperimentPlan.dispose()
+				getScope().getGui().updateExperimentState(getScope(), IGui.NONE);
 			} finally {
 				acceptingCommands = false;
 				experimentAlive = false;
 				lock.release();
-				getScope().getGui().updateExperimentState(getScope(), IGui.NONE);
 				if (commandThread != null && commandThread.isAlive()) { commands.offer(-1); }
 			}
 		}

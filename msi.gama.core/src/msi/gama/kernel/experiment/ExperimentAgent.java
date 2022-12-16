@@ -26,7 +26,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.kernel.simulation.SimulationClock.ExperimentClock;
 import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;

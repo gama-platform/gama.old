@@ -245,4 +245,10 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		return currentSimulation;
 	}
 
+	public SimulationAgent getSimulationAtIndex(final int i) {
+		if (i >= size()) return null;
+		return get(i);
+
+	}
+
 }
