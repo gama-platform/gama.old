@@ -613,6 +613,11 @@ public class GamaPreferences {
 		public static final Pref<Integer> DISPLAY_SLICE_NUMBER =
 				create("pref_display_slice_number", "Number of slices of circular geometries", 16, IType.INT, true)
 						.in(NAME, RENDERING);
+
+		/** The Constant DISPLAY_SLICE_NUMBER. */
+		public static final Pref<Boolean> OPENGL_Z_FIGHTING =
+				create("pref_opengl_z_fighting", "Enable a shift in the z ordinate to fight visual artefacts", true,
+						IType.BOOL, true).in(NAME, RENDERING);
 		/**
 		 * Options
 		 */

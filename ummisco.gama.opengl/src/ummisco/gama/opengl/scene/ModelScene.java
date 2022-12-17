@@ -15,6 +15,7 @@ import org.locationtech.jts.geom.Geometry;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 
 import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.GamaGeometryFile;
@@ -161,7 +162,7 @@ public class ModelScene {
 	 * @return the double
 	 */
 	private double computeVisualZIncrement() {
-		if (objectNumber <= 1) return 0d;
+		if (objectNumber <= 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) return 0d;
 		// The maximum visual z allowance between the object at the bottom and the one at the top
 
 		// The increment is simply
