@@ -755,7 +755,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ownClock.step();
 		informStatus();
 
-		scope.getGui().updateExperimentState(scope);
+		// scope.getGui().updateExperimentState(scope);
 
 	}
 
