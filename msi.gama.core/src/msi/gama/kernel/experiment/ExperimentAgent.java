@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * ExperimentAgent.java, in msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform (v.1.8.2).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- *
+ * 
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -754,7 +754,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) { outputs.step(scope); }
 		ownClock.step();
 		informStatus();
-
+		// Removed as it causes the pause/run button to not update itself correctly
 		// scope.getGui().updateExperimentState(scope);
 
 	}
