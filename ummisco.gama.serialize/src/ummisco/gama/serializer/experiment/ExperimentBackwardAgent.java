@@ -150,10 +150,8 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	@Override
 	public boolean canStepBack() {
-
 		final int current_cycle = getSimulation().getCycle(this.getScope());
-		return current_cycle > 0;
-		// return currentNode != null && currentNode.getParent() != null;
+		return current_cycle >= 0 ;
 	}
 
 	@Override
