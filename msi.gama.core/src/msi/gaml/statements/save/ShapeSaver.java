@@ -1,3 +1,12 @@
+/*******************************************************************************************************
+ *
+ * ShapeSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ *
+ * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
 import java.io.File;
@@ -15,6 +24,7 @@ import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.SchemaException;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPoint;
@@ -32,6 +42,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.SaveStatement;
 
+/**
+ * The Class ShapeSaver.
+ */
 public class ShapeSaver extends AbstractShapeSaver {
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
@@ -65,9 +78,9 @@ public class ShapeSaver extends AbstractShapeSaver {
 				if (ag.getGeometries().size() > 1) {
 					ag.setInnerGeometry(geometryCollectionToSimpleManagement(ag.getInnerGeometry()));
 				}
-				if (isPolygon
-						&& (ag.getInnerGeometry() instanceof Polygon || ag.getInnerGeometry() instanceof MultiPolygon)
-						|| isLine && ag.getGeometry().isLine() || isPoint && ag.getGeometry().isPoint()) {
+				Geometry internal = ag.getInnerGeometry();
+				if (isPolygon && (internal instanceof Polygon || internal instanceof MultiPolygon)
+						|| isLine && ag.isLine() || isPoint && ag.isPoint()) {
 					final SimpleFeature ff = (SimpleFeature) fw.next();
 					final boolean ok = SaveStatement.buildFeature(scope, ff, ag, gis, attributeValues);
 					if (!ok) { break; }

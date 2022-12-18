@@ -493,7 +493,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		Geometry g = ag.getInnerGeometry();
 		if (g == null) return false;
 		if (gis != null) { g = gis.inverseTransform(g); }
-		g = fixesPolygonCWS(cleanGeometryCollection(g));
+		g = cleanGeometryCollection(fixesPolygonCWS(g));
 		values.add(g);
 		if (ag instanceof IAgent ia) {
 			for (final IExpression variable : attributeValues) {
