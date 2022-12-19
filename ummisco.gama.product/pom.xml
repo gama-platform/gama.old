@@ -46,7 +46,7 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<tasks>
+							<target>
 								<!--
 								MacOS
 								x64 -->
@@ -90,7 +90,7 @@
 									todir="./target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/unix" />
 								</copy>
-			                </tasks>
+			                </target>
 						</configuration>
 
 					</execution>

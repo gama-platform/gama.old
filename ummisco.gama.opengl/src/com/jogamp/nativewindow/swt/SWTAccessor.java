@@ -217,6 +217,9 @@ public class SWTAccessor {
 	/** The Constant GTK_VERSION_2_14_0. */
 	private static final VersionNumber GTK_VERSION_2_14_0 = new VersionNumber(2, 14, 0);
 
+	/** The Constant GTK_VERSION_2_21_0. */
+	private static final VersionNumber GTK_VERSION_2_21_0 = new VersionNumber(2, 21, 0);
+
 	/** The Constant GTK_VERSION_2_24_0. */
 	private static final VersionNumber GTK_VERSION_2_24_0 = new VersionNumber(2, 24, 0);
 
@@ -378,11 +381,14 @@ public class SWTAccessor {
 					m8 = cGTK.getDeclaredMethod(str_gdk_x11_drawable_get_xid, handleType);
 				}
 
+				// Fix SWT above 4.21 (2022-03) - https://forum.jogamp.org/JOGL-incompatible-with-SWT-4-21-tp4041643p4041973.html
 				if (_gtk_version.compareTo(GTK_VERSION_2_90_0) >= 0) {
-					mb = cGDK.getDeclaredMethod(str_gdk_window_set_background_pattern, handleType, handleType);
+					if (_gtk_version.compareTo(GTK_VERSION_2_21_0) <= 0)
+						mb = cGDK.getDeclaredMethod(str_gdk_window_set_background_pattern, handleType, handleType);
 				} else {
 					ma = cGTK.getDeclaredMethod(str_gdk_window_set_back_pixmap, handleType, handleType, boolean.class);
 				}
+
 			} catch (final Exception ex) {
 				throw new NativeWindowException(ex);
 			}
