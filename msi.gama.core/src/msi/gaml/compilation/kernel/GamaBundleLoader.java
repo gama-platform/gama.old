@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * GamaBundleLoader.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -237,7 +237,7 @@ public class GamaBundleLoader {
 			} catch (final Exception e2) {
 				ERR(ERROR_MESSAGE);
 				ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
-				// System.exit(0);
+				System.exit(0);
 				return;
 			}
 			// We then build the other extensions to the language

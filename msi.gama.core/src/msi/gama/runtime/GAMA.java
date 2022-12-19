@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -51,7 +51,7 @@ public class GAMA {
 	}
 
 	/** The Constant VERSION_NUMBER. */
-	public static final String VERSION_NUMBER = "1.8.2";
+	public static final String VERSION_NUMBER = "1.9.0";
 
 	/** The Constant VERSION. */
 	public static final String VERSION = "GAMA " + VERSION_NUMBER;

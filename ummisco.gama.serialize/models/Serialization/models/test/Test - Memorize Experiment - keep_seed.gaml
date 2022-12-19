@@ -27,8 +27,8 @@ species people {
 	
 	reflex move {
 		float r <- rnd(5.0);
-		write "" + cycle + " - "  + r  ;
 		location <- {location.x + r, location.y};
+		write "" + cycle + " - "  + r  + " - loc : " + first(people).location.x;		
 	}
 	
 	aspect default {

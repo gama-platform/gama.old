@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core"
       label="Core plugins of GAMA"
-      version="1.8.2.qualifier"
+      version="1.9.0.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.feature.core.branding">
 
@@ -40,8 +40,8 @@
       <import plugin="org.eclipse.xtext.util"/>
       <import plugin="org.eclipse.emf.common"/>
       <import plugin="org.eclipse.xtext.xbase.lib"/>
-      <import plugin="ummisco.gaml.extensions.maths" version="1.8.2" match="greaterOrEqual"/>
-      <import plugin="msi.gama.ext" version="1.8.2" match="greaterOrEqual"/>
+      <import plugin="ummisco.gaml.extensions.maths" version="1.9.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.9.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

@@ -1,8 +1,8 @@
-# GAMA 1.8.2 - alpha version supporting JDK 17+ and macOS Monterey
+# GAMA 1.9.0 - alpha version supporting JDK 17+ and macOS Monterey
 
 This represents the development branch of the next version of GAMA. 
 
-Due to several bugfixes in the recent versions of SWT, the _highly recommended configuration_ for working on this branch is [Eclipse for Java and DSL 2022-09](https://www.eclipse.org/downloads/packages/release/2022-09/r/eclipse-ide-java-and-dsl-developers) and the [Temurin distribution of JDK17](https://adoptium.net).
+Due to several bugfixes in the recent versions of SWT, the _highly recommended configuration_ for working on this branch is [Eclipse for Java and DSL 2022-12](https://www.eclipse.org/downloads/packages/release/2022-12/r/eclipse-ide-java-and-dsl-developers) and the [Temurin distribution of JDK17](https://adoptium.net).
 
 
 [![Github Travis](https://github.com/gama-platform/gama/actions/workflows/github-travis.yml/badge.svg)](https://github.com/gama-platform/gama/actions/workflows/github-travis.yml)

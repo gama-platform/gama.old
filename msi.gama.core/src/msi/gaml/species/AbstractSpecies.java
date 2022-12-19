@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractSpecies.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * AbstractSpecies.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.species;
 
@@ -61,35 +61,36 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	/** The is graph. */
 	protected final boolean isGrid, isGraph;
-	
+
 	/** The micro species. */
-	protected final Map<String, ISpecies> microSpecies = GamaMapFactory.createUnordered();
-	
+	protected final Map<String, ISpecies> microSpecies = GamaMapFactory.createOrdered();
+
 	/** The variables. */
 	private final Map<String, IVariable> variables = GamaMapFactory.createOrdered();
-	
+
 	/** The aspects. */
 	private final Map<String, AspectStatement> aspects = GamaMapFactory.createOrdered();
-	
+
 	/** The actions. */
 	private final Map<String, ActionStatement> actions = GamaMapFactory.createOrdered();
-	
+
 	/** The user commands. */
 	private final Map<String, UserCommandStatement> userCommands = GamaMapFactory.createOrdered();
-	
+
 	/** The behaviors. */
 	private final List<IStatement> behaviors = new ArrayList<>();
-	
+
 	/** The parent species. */
 	protected ISpecies macroSpecies, parentSpecies;
-	
+
 	/** The control. */
 	final IArchitecture control;
 
 	/**
 	 * Instantiates a new abstract species.
 	 *
-	 * @param description the description
+	 * @param description
+	 *            the description
 	 */
 	public AbstractSpecies(final IDescription description) {
 		super(description);
@@ -105,9 +106,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<IStatement> getBehaviors() {
-		return behaviors;
-	}
+	public Collection<IStatement> getBehaviors() { return behaviors; }
 
 	@Override
 	public java.lang.Iterable<? extends IAgent> iterable(final IScope scope) {
@@ -162,21 +161,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		// Default behavior : Returns a map containing the names of agents as
 		// keys and the agents themselves as values
 		final IMap result = GamaMapFactory.create(Types.STRING, scope.getType(getName()));
-		for (final IAgent agent : agents.iterable(scope)) {
-			result.put(agent.getName(), agent);
-		}
+		for (final IAgent agent : agents.iterable(scope)) { result.put(agent.getName(), agent); }
 		return result;
 	}
 
 	@Override
-	public boolean isGrid() {
-		return isGrid;
-	}
+	public boolean isGrid() { return isGrid; }
 
 	@Override
-	public boolean isGraph() {
-		return isGraph;
-	}
+	public boolean isGraph() { return isGraph; }
 
 	@Override
 	public String toString() {
@@ -209,9 +202,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<String> getMicroSpeciesNames() {
-		return microSpecies.keySet();
-	}
+	public Collection<String> getMicroSpeciesNames() { return microSpecies.keySet(); }
 
 	/**
 	 * Returns a micro-species with the specified name or null otherwise.
@@ -242,9 +233,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public SpeciesDescription getDescription() {
-		return (SpeciesDescription) description;
-	}
+	public SpeciesDescription getDescription() { return (SpeciesDescription) description; }
 
 	@Override
 	public boolean isPeer(final ISpecies other) {
@@ -288,14 +277,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public String getParentName() {
-		return getDescription().getParentName();
-	}
+	public String getParentName() { return getDescription().getParentName(); }
 
 	@Override
-	public IArchitecture getArchitecture() {
-		return control;
-	}
+	public IArchitecture getArchitecture() { return control; }
 
 	@Override
 	public IVariable getVar(final String n) {
@@ -308,19 +293,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<String> getVarNames() {
-		return getDescription().getAttributeNames();
-	}
+	public Collection<String> getVarNames() { return getDescription().getAttributeNames(); }
 
 	@Override
-	public Collection<IVariable> getVars() {
-		return variables.values();
-	}
+	public Collection<IVariable> getVars() { return variables.values(); }
 
 	@Override
-	public Collection<UserCommandStatement> getUserCommands() {
-		return userCommands.values();
-	}
+	public Collection<UserCommandStatement> getUserCommands() { return userCommands.values(); }
 
 	@Override
 	public WithArgs getAction(final String name) {
@@ -328,9 +307,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<ActionStatement> getActions() {
-		return actions.values();
-	}
+	public Collection<ActionStatement> getActions() { return actions.values(); }
 
 	@Override
 	public boolean hasAspect(final String n) {
@@ -343,14 +320,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<? extends IExecutable> getAspects() {
-		return aspects.values();
-	}
+	public Collection<? extends IExecutable> getAspects() { return aspects.values(); }
 
 	@Override
-	public IList<String> getAspectNames() {
-		return GamaListFactory.wrap(Types.STRING, aspects.keySet());
-	}
+	public IList<String> getAspectNames() { return GamaListFactory.wrap(Types.STRING, aspects.keySet()); }
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
@@ -360,8 +333,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 					GAMA.getRuntimeScope());
 		// Then we classify the children in their categories
 		for (final ISymbol s : children) {
-			if (s instanceof ISpecies) {
-				final ISpecies oneMicroSpecies = (ISpecies) s;
+			if (s instanceof ISpecies oneMicroSpecies) {
 				oneMicroSpecies.setMacroSpecies(this);
 				microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
 			} else if (s instanceof IVariable) {
@@ -387,21 +359,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void dispose() {
 		super.dispose();
-		for (final IVariable v : variables.values()) {
-			v.dispose();
-		}
+		for (final IVariable v : variables.values()) { v.dispose(); }
 		variables.clear();
-		for (final AspectStatement ac : aspects.values()) {
-			ac.dispose();
-		}
+		for (final AspectStatement ac : aspects.values()) { ac.dispose(); }
 		aspects.clear();
-		for (final ActionStatement ac : actions.values()) {
-			ac.dispose();
-		}
+		for (final ActionStatement ac : actions.values()) { ac.dispose(); }
 		actions.clear();
-		for (final IStatement c : behaviors) {
-			c.dispose();
-		}
+		for (final IStatement c : behaviors) { c.dispose(); }
 		behaviors.clear();
 		macroSpecies = null;
 		parentSpecies = null;
@@ -412,14 +376,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	// TODO review this
 	// this is the "original" macro-species???
 	@Override
-	public ISpecies getMacroSpecies() {
-		return macroSpecies;
-	}
+	public ISpecies getMacroSpecies() { return macroSpecies; }
 
 	@Override
-	public void setMacroSpecies(final ISpecies macroSpecies) {
-		this.macroSpecies = macroSpecies;
-	}
+	public void setMacroSpecies(final ISpecies macroSpecies) { this.macroSpecies = macroSpecies; }
 
 	/*
 	 * Equation (Huynh Quang Nghi)
@@ -519,9 +479,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public boolean isMirror() {
-		return getDescription().isMirror();
-	}
+	public boolean isMirror() { return getDescription().isMirror(); }
 
 	@Override
 	public Collection<? extends IPopulation<? extends IAgent>> getPopulations(final IScope scope) {
@@ -532,7 +490,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	/**
 	 * Gets the skill instance for.
 	 *
-	 * @param skillClass the skill class
+	 * @param skillClass
+	 *            the skill class
 	 * @return the skill instance for
 	 */
 	public ISkill getSkillInstanceFor(final Class skillClass) {
@@ -544,8 +503,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	/**
 	 * Gets the skill instance for.
 	 *
-	 * @param sd the sd
-	 * @param skillClass the skill class
+	 * @param sd
+	 *            the sd
+	 * @param skillClass
+	 *            the skill class
 	 * @return the skill instance for
 	 */
 	private ISkill getSkillInstanceFor(final SpeciesDescription sd, final Class skillClass) {

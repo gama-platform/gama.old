@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * TabuSearchReactive.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GAMA modeling and simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -61,8 +61,8 @@ import msi.gaml.types.IType;
 						name = TabuSearchReactive.ITER_MAX,
 						type = IType.INT,
 						optional = true,
-						doc = @doc ("number of iterations")),
-				@facet (
+						doc = @doc ("number of iterations. this number corresponds to the number of \"moves\" in the parameter space. For each move, the algorithm will test the whole neighborhood of the current solution, each neighbor corresponding to a particular set of parameters and thus to a run. Thus, there can be several runs per iteration (maximum: 2^(number of parameters)).")),
+					@facet (
 						name = HillClimbing.INIT_SOL,
 						type = IType.MAP,
 						optional = true,

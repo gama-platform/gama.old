@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.stats"
       label="Stats"
-      version="1.8.2.qualifier">
+      version="1.9.0.qualifier">
 
    <description url="http://www.example.com/description">
       This plug-in contains additional statistical operators.
@@ -28,8 +28,8 @@ Aditional library:
 
    <requires>
       <import plugin="msi.gama.core"/>
-      <import plugin="ummisco.gaml.extensions.maths" version="1.8.2" match="greaterOrEqual"/>
-      <import plugin="msi.gama.ext" version="1.8.2" match="greaterOrEqual"/>
+      <import plugin="ummisco.gaml.extensions.maths" version="1.9.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.9.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

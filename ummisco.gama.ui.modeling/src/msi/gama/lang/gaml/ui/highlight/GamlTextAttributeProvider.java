@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlTextAttributeProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GamlTextAttributeProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
@@ -50,10 +50,10 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 	/** The attributes. */
 	// private final PreferenceStoreAccessor preferencesAccessor;
 	private final HashMap<String, TextAttribute> attributes;
-	
+
 	/** The highlighting config. */
 	private final GamlHighlightingConfiguration highlightingConfig;
-	
+
 	/** The language name. */
 	private @Inject @Named (Constants.LANGUAGE_NAME) String languageName;
 
@@ -66,7 +66,8 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 	/**
 	 * Gets the font.
 	 *
-	 * @param ts the ts
+	 * @param ts
+	 *            the ts
 	 * @return the font
 	 */
 	public static GamaFont getFont(final TextStyle ts) {
@@ -81,9 +82,12 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 	/**
 	 * Instantiates a new gaml text attribute provider.
 	 *
-	 * @param c the c
-	 * @param preferenceStoreAccess the preference store access
-	 * @param prefStoreAccessor the pref store accessor
+	 * @param c
+	 *            the c
+	 * @param preferenceStoreAccess
+	 *            the preference store access
+	 * @param prefStoreAccessor
+	 *            the pref store accessor
 	 */
 	@Inject
 	public GamlTextAttributeProvider(final IHighlightingConfiguration c,
@@ -134,9 +138,7 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 		final var mergedIds = getMergedIds(ids);
 		var result = getAttribute(mergedIds);
 		if (result == null) {
-			for (final String id : ids) {
-				result = merge(result, getAttribute(id));
-			}
+			for (final String id : ids) { result = merge(result, getAttribute(id)); }
 			if (result != null) {
 				attributes.put(mergedIds, result);
 			} else {
@@ -149,8 +151,10 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 	/**
 	 * Merge.
 	 *
-	 * @param first the first
-	 * @param second the second
+	 * @param first
+	 *            the first
+	 * @param second
+	 *            the second
 	 * @return the text attribute
 	 */
 	private TextAttribute merge(final TextAttribute first, final TextAttribute second) {
@@ -169,7 +173,8 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 	/**
 	 * Gets the merged ids.
 	 *
-	 * @param ids the ids
+	 * @param ids
+	 *            the ids
 	 * @return the merged ids
 	 */
 	public String getMergedIds(final String[] ids) {
@@ -184,8 +189,10 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 	/**
 	 * Creates the text attribute.
 	 *
-	 * @param id the id
-	 * @param textStyle the text style
+	 * @param id
+	 *            the id
+	 * @param textStyle
+	 *            the text style
 	 * @return the text attribute
 	 */
 	protected TextAttribute createTextAttribute(final String id, final TextStyle textStyle) {
@@ -217,7 +224,7 @@ public class GamlTextAttributeProvider implements ITextAttributeProvider, IHighl
 	// ids.add(pref.getKey());
 	// ids.add(pref2.getKey());
 	// });
-	//// ThemeHelper.CORE_THEME_LIGHT.refreshes(ids.toArray(new String[0]));
+	// // ThemeHelper.CORE_THEME_LIGHT.refreshes(ids.toArray(new String[0]));
 	// }
 
 }

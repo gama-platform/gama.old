@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * SimulationClock.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -78,10 +78,10 @@ public class SimulationClock {
 	// private volatile boolean displayCycles = true;
 
 	/** The starting date. */
-	private GamaDate startingDate = null;
+	protected GamaDate startingDate = null;
 
 	/** The current date. */
-	private GamaDate currentDate = null;
+	protected GamaDate currentDate = null;
 
 	/** The output current date as duration. */
 	private final boolean outputAsDuration;
@@ -303,7 +303,7 @@ public class SimulationClock {
 	public StringBuilder getInfo(final StringBuilder sb) {
 		final int c = getCycle();
 		final ITopLevelAgent agent = clockScope.getRoot();
-		sb.append(agent.getName()).append(": ").append(c).append(c == 1 ? " cycle " : " cycles ").append("elapsed ");
+		sb.append(agent.getName()).append(": ").append(c).append(c <= 1 ? " cycle " : " cycles ").append("elapsed ");
 		try {
 			GamaDate d = getCurrentDate();
 			final String date =
@@ -311,44 +311,6 @@ public class SimulationClock {
 			sb.append("[").append(date).append("]");
 		} catch (final DateTimeException e) {}
 		return sb;
-	}
-
-	/**
-	 * The Class ExperimentClock.
-	 */
-	public static class ExperimentClock extends SimulationClock {
-
-		/**
-		 * Instantiates a new experiment clock.
-		 *
-		 * @param scope
-		 *            the scope
-		 */
-		public ExperimentClock(final IScope scope) {
-			super(scope);
-		}
-
-		@Override
-		public void waitDelay() {}
-
-		/**
-		 * @param totalDuration
-		 */
-		public void setTotalDuration(final long totalDuration) { this.totalDuration = totalDuration; }
-
-		/**
-		 * Sets the last duration.
-		 *
-		 * @param duration
-		 *            the new last duration
-		 */
-		public void setLastDuration(final long duration) { this.duration = duration; }
-
-		@Override
-		public StringBuilder getInfo(final StringBuilder sb) {
-			final int c = getCycle();
-			return sb.append("Experiment: ").append(c).append(c == 1 ? " cycle " : " cycles ").append("elapsed");
-		}
 	}
 
 	/**

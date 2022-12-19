@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * HillClimbing.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * GAMA modeling and simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -61,7 +61,7 @@ import msi.gaml.types.IType;
 						name = HillClimbing.ITER_MAX,
 						type = IType.INT,
 						optional = true,
-						doc = @doc ("number of iterations")),
+						doc = @doc ("number of iterations. this number corresponds to the number of \"moves\" in the parameter space. For each move, the algorithm will test the whole neighborhood of the current solution, each neighbor corresponding to a particular set of parameters and thus to a run. Thus, there can be several runs per iteration (maximum: 2^(number of parameters)).")),
 				@facet (
 						name = HillClimbing.INIT_SOL,
 						type = IType.MAP,
@@ -165,7 +165,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS).get(0);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
-					if (neighborSol == bestSolution) { bestNeighbor = neighborSol;}	
+					if (neighborSol.equals(bestSolution)) { bestNeighbor = neighborSol;}	
 					
 				}
 			}

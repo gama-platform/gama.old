@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.network"
       label="Network"
-      version="1.8.2.qualifier"
+      version="1.9.0.qualifier"
       plugin="ummisco.gama.feature.network.branding">
 
    <description url="http://www.example.com/description">

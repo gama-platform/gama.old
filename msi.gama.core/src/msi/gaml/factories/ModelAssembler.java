@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ModelAssembler.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -100,7 +100,7 @@ public class ModelAssembler {
 
 		if (!applyPragmas(collector, source)) return null;
 
-		final Map<String, SpeciesDescription> tempSpeciesCache = GamaMapFactory.createUnordered();
+		final IMap<String, SpeciesDescription> tempSpeciesCache = GamaMapFactory.create();
 
 		Facets globalFacets = null;
 		for (final ISyntacticElement cm : models.reverse()) {
@@ -187,7 +187,7 @@ public class ModelAssembler {
 
 	private void addSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
 			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
-			final Map<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
+			final IMap<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
 		speciesNodes.forEachValue(speciesNode -> {
 			addMicroSpecies(model, speciesNode, tempSpeciesCache);
 			return true;
@@ -205,7 +205,7 @@ public class ModelAssembler {
 
 	private void parentSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
 			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
-			final Map<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
+			final IMap<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
 		speciesNodes.forEachValue(speciesNode -> {
 			parentSpecies(model, speciesNode, model, tempSpeciesCache);
 			return true;
@@ -224,8 +224,8 @@ public class ModelAssembler {
 
 	private ModelDescription buildPrimaryModel(final String projectPath, final String modelPath,
 			final ValidationContext collector, final boolean document, final ImmutableList<ISyntacticElement> models,
-			final ISyntacticElement source, Facets globalFacets, final String modelName,
-			Set<String> absoluteAlternatePathAsStrings) {
+			final ISyntacticElement source, final Facets globalFacets, final String modelName,
+			final Set<String> absoluteAlternatePathAsStrings) {
 		ModelDescription parent = ROOT;
 		if (globalFacets != null && globalFacets.containsKey(PARENT)) {
 			String parentModel = globalFacets.getLabel(PARENT);
@@ -245,8 +245,10 @@ public class ModelAssembler {
 	/**
 	 * Builds the working paths.
 	 *
-	 * @param mm the mm
-	 * @param models the models
+	 * @param mm
+	 *            the mm
+	 * @param models
+	 *            the models
 	 * @return the sets the
 	 */
 	private Set<String> buildWorkingPaths(final Map<String, ModelDescription> mm,
@@ -268,12 +270,18 @@ public class ModelAssembler {
 	/**
 	 * Extract and assemble elements of.
 	 *
-	 * @param collector the collector
-	 * @param speciesNodes the species nodes
-	 * @param experimentNodes the experiment nodes
-	 * @param globalNodes the global nodes
-	 * @param globalFacets the global facets
-	 * @param cm the cm
+	 * @param collector
+	 *            the collector
+	 * @param speciesNodes
+	 *            the species nodes
+	 * @param experimentNodes
+	 *            the experiment nodes
+	 * @param globalNodes
+	 *            the global nodes
+	 * @param globalFacets
+	 *            the global facets
+	 * @param cm
+	 *            the cm
 	 * @return the facets
 	 */
 	private Facets extractAndAssembleElementsOf(final ValidationContext collector,

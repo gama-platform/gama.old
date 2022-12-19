@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.dependencies"
       label="Dependencies of GAMA"
-      version="1.8.2.qualifier"
+      version="1.9.0.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.feature.dependencies.branding">
 

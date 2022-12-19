@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * StatementWithChildrenDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.8.2).
+ * simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -147,7 +147,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		}
 		final String kw = getKeyword();
 		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
-		if (temps == null) { temps = GamaMapFactory.createUnordered(); }
+		if (temps == null) { temps = GamaMapFactory.create(); }
 		if (!MYSELF.equals(name)) {
 			IVarDescriptionProvider description = getDescriptionDeclaringVar(name);
 			if (description != null) {

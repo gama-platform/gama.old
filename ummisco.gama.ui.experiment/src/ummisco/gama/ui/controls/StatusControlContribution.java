@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * StatusControlContribution.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.8.2).
+ * simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -34,6 +34,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
+import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
@@ -167,17 +168,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		if (agentIndex < 0) { agentIndex = 0; }
 		final IExperimentPlan exp = GAMA.getExperiment();
 		if (exp == null) return null;
-		// final ITopLevelAgent agent;
 		if (agentIndex == 0) return exp.getAgent();
 		if (exp.getAgent() == null) return null;
-		final IPopulation<? extends IAgent> pop = exp.getAgent().getSimulationPopulation();
-		if (pop.isEmpty()) return null;
-		final IAgent[] simulations = pop.toArray();
-		if (agentIndex > simulations.length) {
-			agentIndex = 0;
-			return exp.getAgent();
-		}
-		return (ITopLevelAgent) simulations[agentIndex - 1];
+		final SimulationPopulation pop = exp.getAgent().getSimulationPopulation();
+		ITopLevelAgent agent = pop.getSimulationAtIndex(agentIndex - 1);
+		if (agent == null) { agentIndex = 0; }
+		return agent;
+
 	}
 
 	/**
@@ -195,7 +192,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 		final ITopLevelAgent agent = getStatusAgent();
 
-		if (agent == null) {
+		if (agent == null || agent.dead() || agent.getScope().isClosed()) {
 			result.add(IGamaColors.NEUTRAL, "No experiment available");
 			return result;
 		}

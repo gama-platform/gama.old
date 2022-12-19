@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * GamaPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -49,6 +49,7 @@ import com.google.common.collect.Iterators;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -99,7 +100,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPopulation<T> {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/**
@@ -242,7 +243,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
 		// AD Revised in Aug 2021 for Issue #3068: do not introduce cycles (which might exist in update blocks) in order
 		// to obtain a correct topological order
-		final DirectedAcyclicGraph<String, Object> graph = new DirectedAcyclicGraph<>(Object.class);
+		final DirectedAcyclicGraph<String, Object> graph = new VariableOrderingGraph();
+
+		// if (this instanceof SimulationPopulation) { DEBUG.OUT("Species to order: " +
+		// DEBUG.TO_STRING(Iterables.toArray(Iterables.transform(subs, v->v.getName()), String.class))); }
 		ecd.visitAllAttributes(d -> {
 			VariableDescription var = (VariableDescription) d;
 			if (keep.apply(var)) {
@@ -252,10 +256,43 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 					if (keep.apply(dep)) { tryAdd(graph, dep.getName(), name); }
 				}
 				// Adding a constraint between the shape of the macrospecies and the populations of microspecies
-				if (var.isSyntheticSpeciesContainer()) { tryAdd(graph, SHAPE, name); }
+				if (var.isSyntheticSpeciesContainer()) {
+					// SpeciesDescription sd = var.getGamlType().getSpecies();
+					// if (sd != null && graph.containsVertex(sd.getParentName())) {
+					// tryAdd(graph, sd.getParentName(), name);
+					// }
+					tryAdd(graph, SHAPE, name);
+				}
 			}
 			return true;
 		});
+
+		// AD Revised in Dec 2022 for Issue #3526: the order in which the sub-species is declared in the variables is
+		// kept if possible, so that 'agents' returns the agents in the same order
+		final List<VariableDescription> subs = new ArrayList<>();
+		ecd.visitAllAttributes(d -> {
+			VariableDescription var = (VariableDescription) d;
+			if (var.isSyntheticSpeciesContainer()) { subs.add(var); }
+			return true;
+		});
+		for (int i = 0; i < subs.size() - 1; i++) {
+			VariableDescription vs = subs.get(i);
+			if (keep.apply(vs)) {
+				VariableDescription vt = subs.get(i + 1);
+				if (keep.apply(vt)) {
+					String source = vs.getName();
+					String target = vt.getName();
+					if (!graph.containsEdge(target, source)) { tryAdd(graph, source, target); }
+				}
+			}
+		}
+		// End revision
+		if (this instanceof SimulationPopulation) {
+			DEBUG.OUT("After ordering: " + DEBUG.TO_STRING(Iterators.toArray(
+					Iterators.filter(graph.iterator(),
+							s -> ((VariableDescription) getVar(s).getDescription()).isSyntheticSpeciesContainer()),
+					String.class)));
+		}
 		return Iterators.toArray(transform(graph.iterator(), s -> getVar(s)), IVariable.class);
 
 	}
@@ -974,7 +1011,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			case 0 -> null;
 			case 1 -> super.getFromIndicesList(scope, indices);
 			case 2 -> this.getAgent(scope,
-									new GamaPoint(Cast.asFloat(scope, indices.get(0)), Cast.asFloat(scope, indices.get(1))));
+					new GamaPoint(Cast.asFloat(scope, indices.get(0)), Cast.asFloat(scope, indices.get(1))));
 			default -> throw GamaRuntimeException.error("Populations cannot be accessed with 3 or more indexes", scope);
 		};
 

@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * OutputCommand.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -24,6 +24,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.metamodel.population.IPopulation;
@@ -106,10 +107,10 @@ public class OutputCommand implements ISocketCommand {
 	 */
 	@SuppressWarnings ("deprecation")
 	public String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents, final IList<String> filterAttr,
-			final String gis_code) throws IOException, SchemaException, GamaRuntimeException {
+			final String gis_code) throws GamaRuntimeException {
 
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
-		final String geomType = SaveStatement.getGeometryType(agents);
+		final String geomType = GeometryUtils.getGeometryStringType(agents);
 		specs.append("geometry:" + geomType);
 		try {
 			final SpeciesDescription species =

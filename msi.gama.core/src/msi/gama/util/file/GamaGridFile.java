@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * GamaGridFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -11,6 +11,7 @@
 package msi.gama.util.file;
 
 import static msi.gama.common.geometry.Envelope3D.of;
+import static msi.gama.metamodel.topology.projection.ProjectionFactory.getTargetCRSOrDefault;
 import static msi.gama.runtime.GAMA.reportError;
 import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
 import static msi.gama.runtime.exceptions.GamaRuntimeException.warning;
@@ -40,7 +41,6 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.GeneralEnvelope;
-import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
 import org.locationtech.jts.geom.Envelope;
 import org.opengis.coverage.grid.GridCoverageWriter;
@@ -310,29 +310,10 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
 		Envelope2D refEnvelope;
 
-		refEnvelope = new Envelope2D(this.getCRS(scope), x, y, width, height);
+		refEnvelope = new Envelope2D(getTargetCRSOrDefault(scope), x, y, width, height);
 
 		coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
 
-	}
-
-	/**
-	 * Gets the crs.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @return the crs
-	 */
-	protected CoordinateReferenceSystem getCRS(final IScope scope) {
-		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
-		CoordinateReferenceSystem crs = null;
-		try {
-			crs = nullProjection ? CRS.decode("EPSG:3857")
-					: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS(scope);
-		} catch (FactoryException e) {
-			e.printStackTrace();
-		}
-		return crs;
 	}
 
 	@Override

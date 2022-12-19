@@ -1,18 +1,17 @@
 /*******************************************************************************************************
  *
- * DelegateHighlightingConfiguration.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * DelegateHighlightingConfiguration.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.highlight;
 
 import static java.util.Map.entry;
 import static msi.gama.common.preferences.GamaPreferences.create;
-import static msi.gama.lang.gaml.ui.highlight.GamlTextAttributeProvider.getFont;
 import static ummisco.gama.ui.resources.GamaColors.toGamaColor;
 
 import java.util.Map;
@@ -38,67 +37,67 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings ("unchecked")
 public abstract class DelegateHighlightingConfiguration implements IHighlightingConfiguration {
-	
+
 	/** The Constant OPERATOR_ID. */
 	public static final String OPERATOR_ID = "binary";
-	
+
 	/** The Constant RESERVED_ID. */
 	public static final String RESERVED_ID = "reserved";
-	
+
 	/** The Constant FACET_ID. */
 	public static final String FACET_ID = "facet";
-	
+
 	/** The Constant FIELD_ID. */
 	public static final String FIELD_ID = "field";
-	
+
 	/** The Constant GLOBAL_ID. */
 	public static final String GLOBAL_ID = "global";
-	
+
 	/** The Constant VARIABLE_ID. */
 	public static final String VARIABLE_ID = "variable";
-	
+
 	/** The Constant VARDEF_ID. */
 	public static final String VARDEF_ID = "varDef";
-	
+
 	/** The Constant TYPE_ID. */
 	public static final String TYPE_ID = "typeDef";
-	
+
 	/** The Constant ASSIGN_ID. */
 	public static final String ASSIGN_ID = "assignment";
-	
+
 	/** The Constant UNIT_ID. */
 	public static final String UNIT_ID = "unit";
-	
+
 	/** The Constant PRAGMA_ID. */
 	public static final String PRAGMA_ID = "pragma";
-	
+
 	/** The Constant KEYWORD_ID. */
 	public static final String KEYWORD_ID = HighlightingStyles.KEYWORD_ID;
-	
+
 	/** The Constant PUNCTUATION_ID. */
 	public static final String PUNCTUATION_ID = HighlightingStyles.PUNCTUATION_ID;
-	
+
 	/** The Constant COMMENT_ID. */
 	public static final String COMMENT_ID = HighlightingStyles.COMMENT_ID;
-	
+
 	/** The Constant STRING_ID. */
 	public static final String STRING_ID = HighlightingStyles.STRING_ID;
-	
+
 	/** The Constant NUMBER_ID. */
 	public static final String NUMBER_ID = HighlightingStyles.NUMBER_ID;
-	
+
 	/** The Constant DEFAULT_ID. */
 	public static final String DEFAULT_ID = HighlightingStyles.DEFAULT_ID;
-	
+
 	/** The Constant INVALID_TOKEN_ID. */
 	public static final String INVALID_TOKEN_ID = HighlightingStyles.INVALID_TOKEN_ID;
-	
+
 	/** The Constant TASK_ID. */
 	public static final String TASK_ID = HighlightingStyles.TASK_ID;
 
 	/** The theme. */
 	String theme;
-	
+
 	/** The Constant TITLES. */
 	// final Map<String, Pref<?>> preferences = new HashMap<>();
 	final static Map<String, String> TITLES = Map.ofEntries(entry(KEYWORD_ID, "Statement keyword"),
@@ -108,7 +107,7 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 			entry(VARIABLE_ID, "Variable"), entry(VARDEF_ID, "Variable definition"), entry(TYPE_ID, "Type"),
 			entry(ASSIGN_ID, "Assignment sign"), entry(UNIT_ID, "Unit & constant"), entry(TASK_ID, "Task"),
 			entry(PRAGMA_ID, "Pragma"), entry(FIELD_ID, "Field"));
-	
+
 	/** The styles. */
 	final Map<String, TextStyle> styles = Map.ofEntries(entry(KEYWORD_ID, keywordTextStyle()),
 			entry(PUNCTUATION_ID, punctuationTextStyle()), entry(OPERATOR_ID, operatorTextStyle()),
@@ -122,10 +121,14 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	/**
 	 * New style.
 	 *
-	 * @param style the style
-	 * @param red the red
-	 * @param green the green
-	 * @param blue the blue
+	 * @param style
+	 *            the style
+	 * @param red
+	 *            the red
+	 * @param green
+	 *            the green
+	 * @param blue
+	 *            the blue
 	 * @return the text style
 	 */
 	TextStyle newStyle(final int style, final int red, final int green, final int blue) {
@@ -137,7 +140,8 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	/**
 	 * New style.
 	 *
-	 * @param style the style
+	 * @param style
+	 *            the style
 	 * @return the text style
 	 */
 	TextStyle newStyle(final int style) {
@@ -158,7 +162,8 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	/**
 	 * Instantiates a new delegate highlighting configuration.
 	 *
-	 * @param themeName the theme name
+	 * @param themeName
+	 *            the theme name
 	 */
 	public DelegateHighlightingConfiguration(final String themeName) {
 		theme = themeName;
@@ -168,8 +173,10 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	/**
 	 * Configure.
 	 *
-	 * @param acceptor the acceptor
-	 * @param key the key
+	 * @param acceptor
+	 *            the acceptor
+	 * @param key
+	 *            the key
 	 */
 	private void configure(final IHighlightingConfigurationAcceptor acceptor, final String key) {
 		acceptor.acceptDefaultHighlighting(key, TITLES.get(key), styles.get(key));
@@ -186,16 +193,16 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	public void configurePreferences() {
 		// we create and/or read the preferences
 		configure((id, name, style) -> {
-			var key = "pref_" + id + "_font_" + theme;
-			final var pref = create(key, theme + " theme " + name + " font", () -> getFont(style), IType.FONT, false)
-					.in(Modeling.NAME, "Syntax coloring (" + theme + " theme)").onChange(font -> {
-						applyFont(id, name, style, font);
-					});
-			applyFont(id, name, style, pref.getValue());
+			// var key = "pref_" + id + "_font_" + theme;
+			// final var pref = create(key, theme + " theme " + name + " font", () -> getFont(style), IType.FONT, false)
+			// .in(Modeling.NAME, "Syntax coloring (" + theme + " theme)").onChange(font -> {
+			// applyFont(id, name, style, font);
+			// });
+			// applyFont(id, name, style, pref.getValue());
 			// preferences.put(key, pref);
-			key = "pref_" + id + "_color_" + theme;
-			final var pref2 = create(key, "... and color", () -> toGamaColor(style.getColor()), IType.COLOR, false)
-					.in(Modeling.NAME, "Syntax coloring (" + theme + " theme)").onChange(color -> {
+			var key = "pref_" + id + "_color_" + theme;
+			final var pref2 = create(key, theme + " theme " + name + " color", () -> toGamaColor(style.getColor()),
+					IType.COLOR, false).in(Modeling.NAME, "Syntax coloring (" + theme + " theme)").onChange(color -> {
 						applyColor(id, name, style, color);
 					});
 			applyColor(id, name, style, pref2.getValue());
@@ -209,10 +216,14 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	/**
 	 * Apply font.
 	 *
-	 * @param id the id
-	 * @param name the name
-	 * @param style the style
-	 * @param font the font
+	 * @param id
+	 *            the id
+	 * @param name
+	 *            the name
+	 * @param style
+	 *            the style
+	 * @param font
+	 *            the font
 	 */
 	private void applyFont(final String id, final String name, final TextStyle style, final GamaFont font) {
 		if (font != null) { style.setFontData(new FontData(font.getFontName(), font.getSize(), font.getStyle())); }
@@ -222,10 +233,14 @@ public abstract class DelegateHighlightingConfiguration implements IHighlighting
 	/**
 	 * Apply color.
 	 *
-	 * @param id the id
-	 * @param name the name
-	 * @param style the style
-	 * @param color the color
+	 * @param id
+	 *            the id
+	 * @param name
+	 *            the name
+	 * @param style
+	 *            the style
+	 * @param color
+	 *            the color
 	 */
 	private void applyColor(final String id, final String name, final TextStyle style, final GamaColor color) {
 		style.setColor(new RGB(color.red(), color.green(), color.blue()));

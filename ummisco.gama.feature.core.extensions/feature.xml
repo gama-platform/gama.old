@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core.extensions"
       label="Standard Extensions to the Core of GAMA"
-      version="1.8.2.qualifier"
+      version="1.9.0.qualifier"
       provider-name="UMMISCO, ESPACE-DEV, IRIT &amp; MIAT"
       plugin="ummisco.gama.feature.core.extensions.branding">
 
@@ -23,11 +23,11 @@
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core" version="1.8.2.qualifier"/>
+      <import feature="ummisco.gama.feature.core" version="1.9.0.qualifier"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="ummisco.gama.serialize" version="1.8.2" match="greaterOrEqual"/>
-      <import plugin="msi.gama.core" version="1.8.2" match="greaterOrEqual"/>
-      <import plugin="msi.gama.ext" version="1.8.2" match="greaterOrEqual"/>
+      <import plugin="ummisco.gama.serialize" version="1.9.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.core" version="1.9.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.ext" version="1.9.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.io" version="2.8.0" match="greaterOrEqual"/>
    </requires>
 
@@ -76,13 +76,6 @@
          version="0.0.0"/>
 
    <plugin
-         id="miat.gaml.extension.pedestrian"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="simtools.gaml.extensions.physics"
          download-size="0"
          install-size="0"
@@ -100,5 +93,12 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
+
+   <plugin
+         id="miat.gaml.extensions.pedestrian"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

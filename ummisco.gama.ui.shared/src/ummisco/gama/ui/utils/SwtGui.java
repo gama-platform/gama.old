@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * SwtGui.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -574,9 +574,10 @@ public class SwtGui implements IGui {
 	@Override
 	public String getExperimentState() {
 		final IExperimentController controller = GAMA.getFrontmostController();
-		if (controller == null) return NONE;
-		if (controller.isPaused()) return PAUSED;
-		return RUNNING;
+		if (controller != null) {
+			if (controller.isPaused()) return PAUSED; else return RUNNING;
+		}
+		return NONE;
 	}
 
 	@Override
@@ -603,7 +604,11 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IStatusDisplayer getStatus() { return WorkbenchHelper.getService(IStatusDisplayer.class); }
+	public IStatusDisplayer getStatus() {
+
+		return WorkbenchHelper.getService(IStatusDisplayer.class);
+
+	}
 
 	@Override
 	public IConsoleDisplayer getConsole() { return WorkbenchHelper.getService(IConsoleDisplayer.class); }

@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ModelDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -357,7 +357,7 @@ public class ModelDescription extends SpeciesDescription {
 
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
-			if (microModels == null) { microModels = GamaMapFactory.createUnordered(); }
+			if (microModels == null) { microModels = GamaMapFactory.create(); }
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
 

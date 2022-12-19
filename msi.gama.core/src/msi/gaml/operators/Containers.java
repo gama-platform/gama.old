@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * Containers.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.8.2).
+ * Containers.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -1506,8 +1506,7 @@ public class Containers {
 	 */
 	private static IList of_species(final IScope scope, final IContainer agents, final ISpecies s,
 			final boolean generic) {
-		return (IList) agents.stream(scope)
-				.filter(each -> each instanceof IAgent && ((IAgent) each).isInstanceOf(s, !generic))
+		return (IList) agents.stream(scope).filter(each -> each instanceof IAgent a && a.isInstanceOf(s, !generic))
 				.toCollection(listOf(scope.getType(s.getName())));
 	}
 

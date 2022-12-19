@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentController.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.8.2).
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -114,6 +114,10 @@ public class ExperimentController implements IExperimentController {
 	private void processUserCommand(final int command) {
 		final IScope scope = getScope();
 		switch (command) {
+			case _CLOSE:
+				scope.getGui().updateExperimentState(scope, IGui.NONE);
+				// scope.getGui().getStatus().neutralStatus(scope, "No simulation running");
+				break;
 			case _OPEN:
 				scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
 				try {
@@ -220,12 +224,15 @@ public class ExperimentController implements IExperimentController {
 				getScope().getGui().closeDialogs(getScope());
 				// Dec 2015 This method is normally now called from
 				// ExperimentPlan.dispose()
+				getScope().getGui().updateExperimentState(getScope(), IGui.NONE);
 			} finally {
 				acceptingCommands = false;
 				experimentAlive = false;
 				lock.release();
-				getScope().getGui().updateExperimentState(getScope(), IGui.NONE);
-				if (commandThread != null && commandThread.isAlive()) { commands.offer(-1); }
+				if (commandThread != null && commandThread.isAlive()) {
+					commands.offer(_CLOSE);
+					// processUserCommand(_CLOSE);
+				}
 			}
 		}
 	}
