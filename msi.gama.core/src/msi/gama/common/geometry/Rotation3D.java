@@ -91,7 +91,7 @@ public class Rotation3D implements Serializable, Transformation3D {
 	 * Build a rotation from the quaternion coordinates.
 	 * <p>
 	 */
-	private Rotation3D(final double quat0, final double quat1, final double quat2, final double quat3,
+	public Rotation3D(final double quat0, final double quat1, final double quat2, final double quat3,
 			final boolean needsNormalization) {
 		q0 = quat0;
 		q1 = quat1;

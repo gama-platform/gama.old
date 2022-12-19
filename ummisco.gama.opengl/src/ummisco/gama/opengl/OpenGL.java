@@ -138,6 +138,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	/** The current texture rotation. */
 	private final Rotation3D currentTextureRotation = Rotation3D.identity();
 
+	/** The null texture rotation. */
+	private final Rotation3D nullTextureRotation = new Rotation3D(0, 0, 0, 1, false);
+
 	/** The textured. */
 	private boolean textured;
 
@@ -903,7 +906,11 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	public void drawVertex(final int i, final double x, final double y, final double z) {
 		if (isTextured()) {
 			textureCoords.setLocation(x, y, z);
-			currentTextureRotation.applyTo(textureCoords);
+			if (GamaPreferences.Displays.OPENGL_TEXTURE_ORIENTATION.getValue()) {
+				currentTextureRotation.applyTo(textureCoords);
+			} else {
+				nullTextureRotation.applyTo(textureCoords);
+			}
 			final double u = 1 - (textureCoords.x - textureEnvelope.getMinX()) / textureEnvelope.getWidth();
 			final double v = (textureCoords.y - textureEnvelope.getMinY()) / textureEnvelope.getHeight();
 			outputTexCoord(u, v);
@@ -990,9 +997,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	private void computeTextureCoordinates(final ICoordinates yNegatedVertices, final boolean clockwise) {
 		workingVertices.setTo(yNegatedVertices);
-		currentTextureRotation.rotateToHorizontal(currentNormal, workingVertices.directionBetweenLastPointAndOrigin(),
-				clockwise);
-		workingVertices.applyRotation(currentTextureRotation);
+		if (GamaPreferences.Displays.OPENGL_TEXTURE_ORIENTATION.getValue()) {
+			currentTextureRotation.rotateToHorizontal(currentNormal,
+					workingVertices.directionBetweenLastPointAndOrigin(), clockwise);
+			workingVertices.applyRotation(currentTextureRotation);
+		} else {
+			workingVertices.applyRotation(nullTextureRotation);
+		}
+
 		workingVertices.getEnvelopeInto(textureEnvelope);
 	}
 

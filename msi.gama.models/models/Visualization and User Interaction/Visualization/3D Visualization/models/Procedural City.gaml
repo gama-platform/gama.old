@@ -53,6 +53,11 @@ species Building{
 
 
 experiment DisplayTextured  type: gui {
+	
+	init {
+		gama.pref_texture_orientation <- true;
+	}
+	
 	output {
 	  display City type:3d background:#white {
 			species Building aspect:textured;							

@@ -615,9 +615,14 @@ public class GamaPreferences {
 						.in(NAME, RENDERING);
 
 		/** The Constant DISPLAY_SLICE_NUMBER. */
-		public static final Pref<Boolean> OPENGL_Z_FIGHTING =
-				create("pref_opengl_z_fighting", "Enable a shift in the z ordinate to fight visual artefacts", true,
-						IType.BOOL, true).in(NAME, RENDERING);
+		public static final Pref<Boolean> OPENGL_Z_FIGHTING = create("pref_opengl_z_fighting",
+				"When true, adds a small increment to the z ordinate of objects to fight visual artefacts", true,
+				IType.BOOL, true).in(NAME, RENDERING);
+
+		/** The Constant OPENGL_TEXTURE_ORIENTATION. */
+		public static final Pref<Boolean> OPENGL_TEXTURE_ORIENTATION = create("pref_texture_orientation",
+				"When true, attempts to orient the textures according to the geometry on which they are displayed (may create visual oddities)",
+				true, IType.BOOL, true).in(NAME, RENDERING);
 		/**
 		 * Options
 		 */
@@ -673,6 +678,7 @@ public class GamaPreferences {
 		public static final Pref<Integer> OPENGL_DEFAULT_LIGHT_INTENSITY = create("pref_display_light_intensity",
 				"Set the default intensity of the ambient and default lights (from 0, completely dark, to 255, completely light)",
 				160, IType.INT, true).in(NAME, RENDERING).between(0, 255);
+
 	}
 
 	/**
