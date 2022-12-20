@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaMapType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamaMapType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -22,6 +22,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.DeserializationException;
+import msi.gama.util.file.json.Jsoner;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -38,6 +40,7 @@ import msi.gaml.expressions.IExpression;
 public class GamaMapType extends GamaContainerType<IMap> {
 
 	@Override
+	@doc ("Casts the operand into a map. In case of an agent, returns its attributes. In case of a string, tries to parse JSON contents and returns a corresponding map.")
 	public IMap cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentType, final boolean copy) throws GamaRuntimeException {
 		return staticCast(scope, obj, keyType, contentType, copy);
@@ -46,46 +49,59 @@ public class GamaMapType extends GamaContainerType<IMap> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param keyType the key type
-	 * @param contentsType the contents type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param keyType
+	 *            the key type
+	 * @param contentsType
+	 *            the contents type
+	 * @param copy
+	 *            the copy
 	 * @return the i map
 	 */
 	public static IMap staticCast(final IScope scope, final Object obj, final IType keyType, final IType contentsType,
 			final boolean copy) {
-		if (obj == null) { return GamaMapFactory.create(keyType, contentsType); }
-		if (obj instanceof IAgent) { return new SavedAgent(scope, (IAgent) obj); }
-		if (obj instanceof IContainer) { return ((IContainer) obj).mapValue(scope, keyType, contentsType, copy); }
+		if (obj instanceof IAgent ia) return new SavedAgent(scope, ia);
+		if (obj instanceof IContainer ic) return ic.mapValue(scope, keyType, contentsType, copy);
+		if (obj instanceof String s) {
+			final IMap<String, Object> map;
+			try {
+				Object o = Jsoner.deserialize(s);
+				if (o instanceof IMap m) return m;
+				map = GamaMapFactory.create();
+				map.put(IKeyword.CONTENTS, o);
+				return map;
+			} catch (DeserializationException e) {
+				throw GamaRuntimeException.create(e, scope);
+			}
+		}
 		final IMap result = GamaMapFactory.create(keyType, contentsType);
-		result.setValueAtIndex(scope, obj, obj);
+		if (obj != null) { result.setValueAtIndex(scope, obj, obj); }
 		return result;
 	}
 
 	@Override
-	public int getNumberOfParameters() {
-		return 2;
-	}
+	public int getNumberOfParameters() { return 2; }
 
 	@Override
 	public IType keyTypeIfCasting(final IExpression exp) {
 		final IType itemType = exp.getGamlType();
-		if (itemType.isAgentType()) { return Types.get(STRING); }
+		if (itemType.isAgentType()) return Types.STRING;
 		switch (itemType.id()) {
+			case STRING:
+				return Types.STRING;
 			case PAIR:
 			case MAP:
 				return itemType.getKeyType();
 			case MATRIX:
 				return itemType.getContentType();
 			case GRAPH:
-				return Types.get(PAIR);
+				return Types.PAIR;
 			case LIST:
-				if (itemType.getContentType().id() == IType.PAIR) {
-					return itemType.getContentType().getKeyType();
-				} else {
-					return itemType.getContentType();
-				}
+				if (itemType.getContentType().id() == IType.PAIR) return itemType.getContentType().getKeyType();
+				return itemType.getContentType();
 		}
 		return itemType;
 	}
@@ -93,14 +109,15 @@ public class GamaMapType extends GamaContainerType<IMap> {
 	@Override
 	public IType contentsTypeIfCasting(final IExpression exp) {
 		final IType itemType = exp.getGamlType();
-		if (itemType.isAgentType()) { return Types.NO_TYPE; }
+		if (itemType.isAgentType()) return Types.NO_TYPE;
 		switch (itemType.id()) {
+			case STRING:
+				return Types.NO_TYPE;
 			case LIST:
-				if (itemType.getContentType().id() == IType.PAIR) {
+				if (itemType.getContentType().id() == IType.PAIR)
 					return itemType.getContentType().getContentType();
-				} else {
+				else
 					return itemType.getContentType();
-				}
 			case PAIR:
 			case GRAPH:
 			case MAP:
