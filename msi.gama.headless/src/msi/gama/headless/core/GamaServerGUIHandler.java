@@ -58,10 +58,15 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				return;
 			}
 			var socket = (WebSocket) scope.getData("socket");
+			if (socket == null) {
+				DEBUG.OUT("No socket found, maybe the client is already disconnected. Unable to send message: " + m);
+				return;
+			}
 			socket.send(Jsoner.serialize(new GamaServerMessage(type, m, (String) scope.getData("exp_id"))));
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			DEBUG.OUT("Unable to send message:" + m);
 			DEBUG.OUT(ex.toString());
 		}
 	}
