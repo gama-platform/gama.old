@@ -145,7 +145,7 @@ public class Exploration extends AExplorationAlgorithm {
 
 	/** The Constant SAMPLE_SIZE */
 	public static final String SAMPLE_SIZE = "sample";
-	
+
 	/** The factorial sampling */
 	public static final String SAMPLE_FACTORIAL = "factorial";
 
@@ -224,22 +224,22 @@ public class Exploration extends AExplorationAlgorithm {
 			case IKeyword.FACTORIAL -> {
 				List<ParametersSet> ps = null;
 				if (hasFacet(Exploration.SAMPLE_FACTORIAL)) {
-					@SuppressWarnings("unchecked")
-					int[] factors = Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope))
-						.stream().mapToInt(o -> Integer.valueOf(o.toString()))
-						.toArray();
+					@SuppressWarnings ("unchecked") int[] factors =
+							Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope)).stream()
+									.mapToInt(o -> Integer.parseInt(o.toString())).toArray();
 					ps = RandomSampling.FactorialUniformSampling(scope, factors, params);
 				} else {
 					ps = RandomSampling.FactorialUniformSampling(scope, sample_size, params);
 				}
 				yield ps;
 			}
-					
+
 			case FROM_LIST -> buildParameterFromMap(scope, new ArrayList<>(), 0);
 			case FROM_FILE -> buildParametersFromCSV(scope, Cast.asString(scope, getFacet(IKeyword.FROM).value(scope)),
 					new ArrayList<>());
 			default -> buildParameterSets(scope, new ArrayList<>(), 0);
 		};
+		if (sets.isEmpty()) { sets.add(new ParametersSet()); }
 
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
 			currentExperiment.launchSimulationsWithSolution(sets);
@@ -251,12 +251,12 @@ public class Exploration extends AExplorationAlgorithm {
 
 	@Override
 	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
-		List<ParametersSet> sets2 = new ArrayList<>();
-		final List<Batch> variables = currentExperiment.getParametersToExplore();
-		if (variables.isEmpty()) return sets2;
-		if (sets == null) throw GamaRuntimeException.error("Cannot build a sample with empty parameter set", scope);
-		if (sets.isEmpty()) { sets.add(new ParametersSet()); }
 
+		if (sets == null) throw GamaRuntimeException.error("Cannot build a sample with empty parameter set", scope);
+		final List<Batch> variables = currentExperiment.getParametersToExplore();
+		List<ParametersSet> sets2 = new ArrayList<>();
+		if (variables.isEmpty()) return sets2;
+		if (sets.isEmpty()) { sets.add(new ParametersSet()); }
 		final IParameter.Batch var = variables.get(index);
 		for (ParametersSet solution : sets) {
 			@SuppressWarnings ("rawtypes") List vals =
