@@ -12,7 +12,9 @@ package msi.gama.outputs;
 
 import static msi.gama.common.interfaces.IKeyword.LAYOUT;
 
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.outputs.LayoutStatement.ILayoutValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -22,9 +24,14 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.PlatformHelper;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
@@ -101,7 +108,29 @@ import msi.gaml.types.IType;
 				examples = { @example (
 						value = "layout horizontal([vertical([0::5000,1::5000])::5000,vertical([2::5000,3::5000])::5000]) tabs: false;",
 						isExecutable = false) }) })
+@validator (ILayoutValidator.class)
 public class LayoutStatement extends Symbol {
+
+	/**
+	 * The Class ILayoutValidator.
+	 */
+	public static class ILayoutValidator implements IDescriptionValidator {
+
+		@Override
+		public void validate(final IDescription description) {
+			if (!PlatformHelper.isWindows()) return;
+			IExpression tabs = description.getFacetExpr("tabs");
+			if (tabs != null && tabs.isConst()) {
+				Boolean b = Cast.asBool(null, tabs.getConstValue());
+				if (!b) {
+					description.info(
+							"A bug in GAMA 1.9 on Windows means that removing display tabs can prevent 2D displays from being shown. Please make sure you only use 3D (aka opengl) displays.",
+							IGamlIssue.CONFLICTING_FACETS, "tabs");
+				}
+			}
+		}
+
+	}
 
 	/**
 	 * Instantiates a new layout statement.

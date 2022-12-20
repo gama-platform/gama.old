@@ -49,7 +49,6 @@ import com.google.common.collect.Iterators;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -287,12 +286,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			}
 		}
 		// End revision
-		if (this instanceof SimulationPopulation) {
-			DEBUG.OUT("After ordering: " + DEBUG.TO_STRING(Iterators.toArray(
-					Iterators.filter(graph.iterator(),
-							s -> ((VariableDescription) getVar(s).getDescription()).isSyntheticSpeciesContainer()),
-					String.class)));
-		}
+		// if (this instanceof SimulationPopulation) {
+		// DEBUG.OUT("After ordering: " + DEBUG.TO_STRING(Iterators.toArray(
+		// Iterators.filter(graph.iterator(),
+		// s -> ((VariableDescription) getVar(s).getDescription()).isSyntheticSpeciesContainer()),
+		// String.class)));
+		// }
 		return Iterators.toArray(transform(graph.iterator(), s -> getVar(s)), IVariable.class);
 
 	}
