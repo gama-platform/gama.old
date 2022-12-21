@@ -54,7 +54,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegateEventsToParent, FPSCounter {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The canvas. */
