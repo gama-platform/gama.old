@@ -43,7 +43,7 @@ species LV_model {
 experiment Displays type: gui {
 	float minimum_cycle_duration <- 0.1#s;
 	output {
-		layout #split tabs: false;
+		layout #split tabs: true;
 		display D1 toolbar: false{
 			chart 'Time series' type: series background: rgb(47,47,47) color: #white y_label:"pop" x_tick_line_visible: false{
 				data "x" value: first(LV_model).x color: rgb(52,152,219);

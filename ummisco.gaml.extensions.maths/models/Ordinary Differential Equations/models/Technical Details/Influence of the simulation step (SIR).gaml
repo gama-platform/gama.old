@@ -53,7 +53,7 @@ experiment examples type: gui {
 	}
 	
 	output {
-		layout #split tabs: false;	
+		layout #split tabs: true;	
 		display SIR toolbar: false {
 			chart 'Time Teries ('+step_string+' per cycle)' type: series 
 			background: rgb(47,47,47) color: #white y_label: "pop" x_tick_line_visible: false{

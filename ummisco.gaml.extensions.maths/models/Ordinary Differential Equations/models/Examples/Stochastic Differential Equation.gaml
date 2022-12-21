@@ -81,7 +81,7 @@ experiment mysimulation type: gui {
 	//parameter "Window" var: time_window_size category: 'Choix';
 	parameter "Window" var: view category: 'Choix';
 	output {
-		layout 	#split tabs: false;
+		layout 	#split tabs: true;
 		display display_charts axes: false {
 			chart 'BTC price' type: series  
 				x_range: min(elapsed_steps,time_window_size*nb_steps) background: #white 

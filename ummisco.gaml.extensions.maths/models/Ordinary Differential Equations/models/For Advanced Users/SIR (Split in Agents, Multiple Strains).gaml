@@ -112,7 +112,7 @@ experiment Simulation type: gui {
 	parameter 'Delta (I->R)' type: float var: _delta <- 0.2 category: "Parameters";	
 	
 	output {
-		layout #split tabs: false;
+		layout #split tabs: true;
 		display chart_3system_eq name: "Split system" toolbar: false{
 			chart 'Split system' type: series background: rgb(47,47,47) color: #white x_tick_line_visible: false{
 				data 'susceptible' value: first(S_agt).Ssize color: rgb(46,204,113) marker_shape: marker_circle;

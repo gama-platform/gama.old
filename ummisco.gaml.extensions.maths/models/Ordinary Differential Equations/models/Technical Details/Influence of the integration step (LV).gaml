@@ -40,7 +40,7 @@ species userLV {
 experiment examples type: gui {
 	float minimum_cycle_duration <- 0.05#s;
 	output {	
-		layout horizontal([vertical([0::100,1::100])::100,2::100]) tabs: false;	
+		layout horizontal([vertical([0::100,1::100])::100,2::100]) tabs: true;	
 		display "h=0.01"  toolbar: false{
 			chart 'Lotka-Voltera dynamics (time series)' type: series 
 				background: rgb(47,47,47) color: #white

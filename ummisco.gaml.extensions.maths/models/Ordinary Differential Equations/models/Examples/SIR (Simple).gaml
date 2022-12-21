@@ -43,7 +43,7 @@ species agent_with_SIR_dynamic {
 experiment Simulation type: gui {
 	float minimum_cycle_duration <- 0.1#s;
 	output { 
-		layout #vertical tabs: false;
+		layout #vertical tabs: true;
 		display display_charts toolbar: false {
 			chart "Time series" type: series background: rgb(47,47,47) color: #white {
 				data 'S' value: first(agent_with_SIR_dynamic).S color: rgb(46,204,113) ;				
