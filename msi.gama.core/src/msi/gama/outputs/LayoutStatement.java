@@ -12,9 +12,12 @@ package msi.gama.outputs;
 
 import static msi.gama.common.interfaces.IKeyword.LAYOUT;
 
+import com.google.common.collect.Iterables;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.outputs.LayoutStatement.ILayoutValidator;
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.outputs.LayoutStatement.LayoutValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -108,26 +111,35 @@ import msi.gaml.types.IType;
 				examples = { @example (
 						value = "layout horizontal([vertical([0::5000,1::5000])::5000,vertical([2::5000,3::5000])::5000]) tabs: false;",
 						isExecutable = false) }) })
-@validator (ILayoutValidator.class)
+@validator (LayoutValidator.class)
 public class LayoutStatement extends Symbol {
 
 	/**
-	 * The Class ILayoutValidator.
+	 * The Class LayoutValidator.
 	 */
-	public static class ILayoutValidator implements IDescriptionValidator {
+	public static class LayoutValidator implements IDescriptionValidator {
 
 		@Override
 		public void validate(final IDescription description) {
 			if (!PlatformHelper.isWindows()) return;
 			IExpression tabs = description.getFacetExpr("tabs");
-			if (tabs != null && tabs.isConst()) {
-				Boolean b = Cast.asBool(null, tabs.getConstValue());
-				if (!b) {
-					description.info(
+			boolean tabsOn = tabs == null ? true : tabs.isConst() ? Cast.asBool(null, tabs.getConstValue()) : false;
+			if (tabsOn) return;
+			IDescription output = description.getEnclosingDescription();
+			IDescription permanent = output.getEnclosingDescription().getChildWithKeyword(PERMANENT);
+			Iterable<IDescription> displays = output.getChildrenWithKeyword(DISPLAY);
+			if (permanent != null) { displays = Iterables.concat(displays, permanent.getChildrenWithKeyword(DISPLAY)); }
+			boolean defaultDisplayTypeIs2D = _2D.equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
+			for (IDescription display : displays) {
+				String type = display.getLitteral(TYPE);
+				if (_2D.equals(type) || defaultDisplayTypeIs2D && type == null) {
+					description.warning(
 							"A bug in GAMA 1.9 on Windows means that removing display tabs can prevent 2D displays from being shown. Please make sure you only use 3D (aka opengl) displays.",
 							IGamlIssue.CONFLICTING_FACETS, "tabs");
+					return;
 				}
 			}
+
 		}
 
 	}
