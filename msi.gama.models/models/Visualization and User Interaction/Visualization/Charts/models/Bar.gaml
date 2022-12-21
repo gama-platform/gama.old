@@ -13,7 +13,7 @@ global
 
 experiment "Multiple displays" type: gui {
 	output synchronized: true {
-		layout #split parameters: false navigator: false editors: false consoles: false toolbars: false tray: false tabs: false;	
+		layout #split parameters: false navigator: false editors: false consoles: false toolbars: false tray: false tabs: true;	
 		display "nice_bar_chart" {
 			chart "Nice Cumulative Bar Chart" type:histogram 
 			 	background: #darkblue

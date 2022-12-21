@@ -1000,7 +1000,7 @@ public class System {
 			value = "Asks the user to confirm a choice. The two string are used to specify the title and the message of the dialog box. ",
 			examples =
 
-			{ @example ("bool confirm <- user_confirm(\"Confirm\",\"Please confirm\";") })
+			{ @example ("bool confirm <- user_confirm(\"Confirm\",\"Please confirm\");") })
 	@no_test
 	public static Boolean userConfirmDialog(final IScope scope, final String title, final String message) {
 		return scope.getGui().openUserInputDialogConfirm(scope, title, message);

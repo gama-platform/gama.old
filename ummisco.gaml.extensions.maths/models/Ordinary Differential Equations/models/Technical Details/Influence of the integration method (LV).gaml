@@ -74,7 +74,7 @@ species LVEuler {
 experiment examples type: gui {
 	float minimum_cycle_duration <- 0.1#s;
 	output {
-		layout #split tabs: false;
+		layout #split tabs: true;
 		display LV_series name: "Time series" toolbar: false {
 			chart 'Comparison Euler - RK4 (RK4 is more accurate)' type: series 
 			x_serie: first(LVRK4).t[] y_label: "pop" background: rgb(47,47,47) color: #white x_tick_line_visible: false {

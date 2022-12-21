@@ -65,12 +65,12 @@ experiment "Different heatmaps" type: gui
 		consoles: false 
 		toolbars: false 
 		tray: false 
-		tabs: false
+		tabs: true
 		;	
 		
-		display "Nice Heatmap" type: 3d
+		display "Nice Heatmap" type: 2d
 		{
-			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: font('Serif', 32.0, #italic) tick_font:
+			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: font('Serif', 32, #italic) tick_font:
 			font('Monospaced', 14, #bold) label_font: font('Serif', 18, #plain) legend_font: font('SanSerif', 18, #bold) x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'
 			{
 				data "test" value: mylldata color: [# darkblue, # orange] accumulate_values: false;
@@ -84,12 +84,11 @@ experiment "Different heatmaps" type: gui
 				data "cosX" value: mylldata color: [# blue] accumulate_values: false;
 				data "sinY" value: mylldata2 color: [# darkred] accumulate_values: false;
 			}
-
 		}
 
 		display "list_heatmap" type: 2d
 		{
-			chart "list_heatmap" type: heatmap
+			chart "list_heatmap" type: heatmap 
 			{
 				data "test" value: myldata color: [# cyan, # red] accumulate_values: false;
 			}

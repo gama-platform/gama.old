@@ -10,7 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.headless.listener;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.geotools.data.DataUtilities;
@@ -40,6 +42,7 @@ import msi.gama.util.IMap;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.SaveStatement;
+import msi.gaml.statements.save.GeoJSonSaver;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -68,188 +71,63 @@ public class OutputCommand implements ISocketCommand {
 					"Unable to find the experiment or simulation", map, false);
 		final boolean wasPaused = gama_exp.controller.isPaused();
 		gama_exp.controller.directPause();
-		IList<? extends IShape> agents = gama_exp.getSimulation().getSimulation().getPopulationFor(species.toString());
+//		IList<? extends IShape> agents = gama_exp.getSimulation().getSimulation().getPopulationFor(species.toString());
 
-		@SuppressWarnings ("unchecked") final IList<String> ll =
-				map.get("attributes") != null ? (IList<String>) map.get("attributes") : GamaListFactory.EMPTY_LIST;
+		final IList<String> ll = map.get("attributes") != null ? (IList<String>) map.get("attributes")
+				: GamaListFactory.EMPTY_LIST;
 		final String crs = map.get("crs") != null ? map.get("crs").toString() : "";
 		String res = "";
 		GamaServerMessageType status = GamaServerMessageType.CommandExecutedSuccessfully;
 		try {
-			res = buildGeoJSon(gama_exp.getSimulation().getExperimentPlan().getAgent().getScope(), agents, ll, crs);
+//			res = buildGeoJSon(gama_exp.getSimulation().getExperimentPlan().getAgent().getScope(), agents, ll, crs);
+			final SpeciesDescription spec = gama_exp.getSimulation().getSimulation().getPopulationFor(species.toString())
+					.getSpecies().getDescription();
+			res = buildGeoJSon(gama_exp.getSimulation().getExperimentPlan().getAgent().getScope(), spec, ll, crs);
 		} catch (Exception ex) {
 			res = ex.getMessage();
 			status = GamaServerMessageType.RuntimeError;
 		}
 
-		if (!wasPaused) { gama_exp.controller.userStart(); }
+		if (!wasPaused) {
+			gama_exp.controller.userStart();
+		}
 		return new CommandResponse(status, res, map, true);
 	}
 
 	/**
 	 * Builds the geo J son.
 	 *
-	 * @param scope
-	 *            the scope
-	 * @param agents
-	 *            the agents
-	 * @param filterAttr
-	 *            the filter attr
-	 * @param gis_code
-	 *            the gis code
+	 * @param scope      the scope
+	 * @param agents     the agents
+	 * @param filterAttr the filter attr
+	 * @param gis_code   the gis code
 	 * @return the string
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws SchemaException
-	 *             the schema exception
-	 * @throws GamaRuntimeException
-	 *             the gama runtime exception
+	 * @throws IOException          Signals that an I/O exception has occurred.
+	 * @throws SchemaException      the schema exception
+	 * @throws GamaRuntimeException the gama runtime exception
 	 */
-	@SuppressWarnings ("deprecation")
-	public String buildGeoJSon(final IScope scope, final IList<? extends IShape> agents, final IList<String> filterAttr,
+	public String buildGeoJSon(final IScope scope, final SpeciesDescription species, final IList<String> filterAttr,
 			final String gis_code) throws GamaRuntimeException {
-
-		final StringBuilder specs = new StringBuilder(agents.size() * 20);
-		final String geomType = GeometryUtils.getGeometryStringType(agents);
-		specs.append("geometry:" + geomType);
+		final GeoJSonSaver gjsoner = new GeoJSonSaver();
 		try {
-			final SpeciesDescription species =
-					agents instanceof IPopulation ? ((IPopulation) agents).getSpecies().getDescription()
-							: agents.getGamlType().getContentType().getSpecies();
-			final Map<String, IExpression> attributes = GamaMapFactory.create();
-			// if (species != null) {
-			// if (withFacet != null) {
-			// computeInitsFromWithFacet(scope, withFacet, attributes, species);
-			// } else if (attributesFacet != null) { computeInitsFromAttributesFacet(scope, attributes, species); }
-
 			for (final String var : species.getAttributeNames()) {
 				// System.out.println(var);
-				// if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false)); }
+				// if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false));
+				// }
 				if (!SaveStatement.NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var) && filterAttr.contains(var)) {
-					attributes.put(var, species.getVarExpr(var, false));
+					gjsoner.addAttibutes(var, species.getVarExpr(var, false));
 				}
 			}
-			for (final String e : attributes.keySet()) {
-				if (e == null) { continue; }
-				final IExpression var = attributes.get(e);
-				String name = e.replace("\"", "");
-				name = name.replace("'", "");
-				name = name.replace(":", "_");
-				final String type = SaveStatement.type(var);
-				specs.append(',').append(name).append(':').append(type);
-			}
-			// }
-			final IProjection proj = defineProjection2(scope, gis_code);
 
-			// AD 11/02/15 Added to allow saving to new directories
-			if (agents.isEmpty()) return "";
-
-			// The name of the type and the name of the feature source shoud now be
-			// the same.
-			final SimpleFeatureType type = DataUtilities.createType("geojson", specs.toString());
-			final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
-			final DefaultFeatureCollection featureCollection = new DefaultFeatureCollection();
-
-			// AD Builds once the list of agent attributes to evaluate
-			int i = 0;
-			for (final IShape ag : agents) {
-				final SimpleFeature ff = builder.buildFeature(i + "");
-				i++;
-				final boolean ok = SaveStatement.buildFeature(scope, ff, ag, proj, attributes.values());
-				if (!ok) { continue; }
-				featureCollection.add(ff);
-			}
-			// System.out.println(Jsoner.serialize(agents));
-			final FeatureJSON io = new FeatureJSON(new GeometryJSON(20));
-			return io.toString(featureCollection);
-			// return Jsoner.serialize(agents);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			gjsoner.save(scope, species.getSpeciesExpr(), baos, gis_code, null, null);
+			return baos.toString(StandardCharsets.UTF_8);
 
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-	}
-
-	/**
-	 * Define projection 2.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param gis_code
-	 *            the gis code
-	 * @return the i projection
-	 */
-	public static IProjection defineProjection2(final IScope scope, final String gis_code) {
-		// String code = gis_code==null||"".equals(gis_code)?"EPSG:4326":gis_code;
-		// if (crsCode != null) {
-		// final IType type = crsCode.getGamlType();
-		// if (type.id() == IType.INT || type.id() == IType.FLOAT) {
-		// code = "EPSG:" + Cast.asInt(scope, crsCode.value(scope));
-		// } else if (type.id() == IType.STRING) { code = (String) crsCode.value(scope); }
-		// }
-		// IProjection gis;
-		// try {
-		// gis = scope.getSimulation().getProjectionFactory().getWorld();
-		// gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
-		// } catch (final FactoryException e1) {
-		// throw GamaRuntimeException.error(
-		// "The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ", scope);
-		// }
-
-		String code = null;
-		if (gis_code != null) { code = gis_code; }
-		IProjection gis;
-		if (code == null) {
-			final boolean useNoSpecific = GamaPreferences.External.LIB_USE_DEFAULT.getValue();
-			if (!useNoSpecific) {
-				code = "EPSG:" + GamaPreferences.External.LIB_OUTPUT_CRS.getValue();
-				try {
-					gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
-				} catch (final FactoryException e1) {
-					throw GamaRuntimeException.error(
-							"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ",
-							scope);
-				}
-			} else {
-				gis = scope.getSimulation().getProjectionFactory().getWorld();
-				if (gis == null || gis.getInitialCRS(scope) == null) {
-					final boolean alreadyprojected = GamaPreferences.External.LIB_PROJECTED.getValue();
-					if (alreadyprojected) {
-						code = "EPSG:" + GamaPreferences.External.LIB_TARGET_CRS.getValue();
-					} else {
-						code = "EPSG:" + GamaPreferences.External.LIB_INITIAL_CRS.getValue();
-					}
-					try {
-						gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
-					} catch (final FactoryException e1) {
-						throw GamaRuntimeException.error("The code " + code
-								+ " does not correspond to a known EPSG code. GAMA is unable to save ", scope);
-					}
-				}
-			}
-
-		} else {
-			if (code.startsWith("GAMA")) {
-				if ("GAMA".equals(code)) return null;
-				final String[] cs = code.split("::");
-				if (cs.length == 2) {
-					final Double val = Double.parseDouble(cs[1]);
-					return new SimpleScalingProjection(val);
-				}
-				return null;
-			}
-
-			try {
-				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
-			} catch (final FactoryException e1) {
-				throw GamaRuntimeException.error(
-						"The code " + code + " does not correspond to a known EPSG code. GAMA is unable to save ",
-						scope);
-			}
-		}
-
-		return gis;
 	}
 
 }
