@@ -12,36 +12,40 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class ExpressionCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
-		final String exp_id 	= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final Object socket_id 	= map.get("socket_id");
-		final Object expr		= map.get("expr");
+		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
+		final Object socket_id = map.get("socket_id");
+		final Object expr = map.get("expr");
+		final boolean escaped = map.get("escaped") == null ? false : Boolean.parseBoolean("" + map.get("escaped"));
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("expresion");
 		DEBUG.OUT(exp_id);
 		DEBUG.OUT(expr);
 
 		if (exp_id == "" || socket_id == null || expr == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'expression', mandatory parameters are: 'exp_id', 'socket_id' and 'expr'", map, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest,
+					"For 'expression', mandatory parameters are: 'exp_id', 'socket_id' and 'expr'", map, false);
 		}
-		
+
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id);
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 
 			final boolean wasPaused = gama_exp.controller.isPaused();
 			gama_exp.controller.directPause();
 
-			IMap<String, Object> res = GamaMapFactory.create();
-			res.put("result", processInput(gama_exp.controller.getExperiment().getAgent(), expr.toString()));
+//			IMap<String, Object> res = GamaMapFactory.create();
+//			res.put("result",);
 			if (!wasPaused) {
 				gama_exp.controller.userStart();
 			}
-			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, res, map, false);
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully,
+					processInput(gama_exp.controller.getExperiment().getAgent(), expr.toString()), map, escaped);
 
 		} else {
 			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,
@@ -65,7 +69,8 @@ public class ExpressionCommand implements ISocketCommand {
 				try {
 					final var expr = GAML.compileExpression(s, agent, false);
 					if (expr != null) {
-						result = StringUtils.toGaml(scope.evaluate(expr, agent).getValue(), true);
+						result = "" + scope.evaluate(expr, agent).getValue();// StringUtils.toGaml(scope.evaluate(expr,
+																				// agent).getValue(), true);
 					}
 				} catch (final Exception e) {
 					error = true;

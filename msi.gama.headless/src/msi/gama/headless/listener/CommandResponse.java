@@ -22,7 +22,7 @@ public class CommandResponse  extends GamaServerMessage {
 		params.remove("server");
 		return "{ "
 				+ "\"type\": \"" + type + "\","
-				+ "\"content\": " + ((isJson)?content:Jsoner.serialize(content)) + ","	 
+				+ "\"content\": " + ((isJson) ? content : Jsoner.serialize(content)) + ","
 				+ "\"command\": " + Jsoner.serialize(params) 
 				+ "}";
 	}
