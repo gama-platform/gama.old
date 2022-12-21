@@ -56,4 +56,11 @@ public class GeoJSonSaver extends AbstractShapeSaver {
 
 	}
 
+	public Map<String, IExpression> getAttributes(){
+		return attributes;
+	}
+	
+	public void addAttibutes(final String var,final IExpression exp) {
+		attributes.put(var, exp);
+	}
 }
