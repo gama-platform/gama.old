@@ -22,7 +22,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 
@@ -43,7 +42,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 public class GamaToolbarFactory {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	// public static final Pref<Boolean> REDUCED_VIEW_TOOLBAR_HEIGHT = GamaPreferences
@@ -328,7 +327,7 @@ public class GamaToolbarFactory {
 			public void run() {
 
 				final boolean show = !tb.isVisible();
-				DEBUG.OUT("Show toolbar " + ((IViewPart) view).getTitle() + " " + show);
+				// DEBUG.OUT("Show toolbar " + ((IViewPart) view).getTitle() + " " + show);
 				tb.setVisible(show);
 				((GridData) tb.getLayoutData()).exclude = !show;
 				tb.getParent().setVisible(show);

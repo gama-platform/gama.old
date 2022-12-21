@@ -63,7 +63,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 public class LayeredDisplayDecorator implements DisplayDataListener {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The key and mouse listener. */
