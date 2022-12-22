@@ -36,6 +36,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.SaveStatement;
 import msi.gaml.statements.save.GeoJSonSaver;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -179,12 +180,22 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	 */
 	@operator(value = "to_geojson", category = { IOperatorCategory.CASTING }, concept = { IConcept.CAST })
 	@doc(value = "returns geojson of species with crs", examples = {
-			@example(value = "to_geojson(boat,\"EPSG:4326\")", equals = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[100.51155642068785,3.514781609095577E-4,0.0]},\"properties\":{},\"id\":\"0\"}]}") }, see = {})
+			@example(value = "to_geojson(boat,\"EPSG:4326\",[\"color\"])", equals = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[100.51155642068785,3.514781609095577E-4,0.0]},\"properties\":{},\"id\":\"0\"}]}") }, see = {})
 	@no_test
-	public static String toGeoJSon(final IScope scope, final IExpression spec, final String epsgCode) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		new GeoJSonSaver().save(scope, spec, baos, epsgCode, null, null);
-		return baos.toString(StandardCharsets.UTF_8);
+	public static String toGeoJSon(final IScope scope, final IExpression spec, final String epsgCode,
+			final IExpression attributesFacet) {
+
+		final GeoJSonSaver gjsoner = new GeoJSonSaver();
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			gjsoner.save(scope, spec, baos, epsgCode, null, attributesFacet);
+			return baos.toString(StandardCharsets.UTF_8);
+
+		} catch (final GamaRuntimeException e) {
+			throw e;
+		} catch (final Throwable e) {
+			throw GamaRuntimeException.create(e, scope);
+		}
 	}
 
 }

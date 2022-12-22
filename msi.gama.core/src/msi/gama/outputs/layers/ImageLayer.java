@@ -81,8 +81,8 @@ public class ImageLayer extends AbstractLayer {
 		isFile = file.getGamlType().getGamlType().equals(Types.FILE);
 		isFilePotentiallyVariable = !file.isContextIndependant();
 		matrix = ((ImageLayerStatement) definition).matrix;
-		isMatrix = matrix.getGamlType().getGamlType().equals(Types.MATRIX);
-		isMatrixPotentiallyVariable = !matrix.isContextIndependant();
+		isMatrix = matrix==null?false:matrix.getGamlType().getGamlType().equals(Types.MATRIX);
+		isMatrixPotentiallyVariable = matrix==null?false:!matrix.isContextIndependant();
 		if (!isMatrix) {
 			if (!isFile) {
 				if (file.isConst() || !isFilePotentiallyVariable) {
