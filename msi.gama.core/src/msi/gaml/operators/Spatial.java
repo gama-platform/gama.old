@@ -4374,11 +4374,11 @@ public abstract class Spatial {
 				} else {
 					comp = (o1, o2) -> Double.compare(o1.getLocation().getY(), o2.getLocation().getY());
 				}
-				final List<IShape> listSq = toSquares(scope, geom, dimension).stream().sorted(comp).toList();
+				ArrayList<IShape> listSq = new ArrayList(toSquares(scope, geom, dimension).stream().sorted(comp).toList());
 				final Double sum = (Double) Containers.sum(scope, rates);
 				final int totalNumber = listSq.size();
 				for (final Double rate : rates) {
-					final int number = Math.min((int) (rate / sum * totalNumber + 0.5), listSq.size());
+					final int number = Math.min((int) (rate / sum * totalNumber + 0.5), totalNumber);
 					final IList<IShape> squares = GamaListFactory.create(Types.GEOMETRY);
 					for (int i = 0; i < number; i++) { squares.add(listSq.remove(0)); }
 					if (!squares.isEmpty()) {

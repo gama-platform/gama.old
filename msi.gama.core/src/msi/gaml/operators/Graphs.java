@@ -1324,7 +1324,9 @@ public class Graphs {
 					Object node = graph.getEdgeTarget(edge);
 
 					if (node == vc) { node = graph.getEdgeSource(edge); }
-					if (node != v2 && node != v1) { mapResult.put(node, (Integer) mapResult.get(node) + 1); }
+					if (node != v2 && node != v1) { 
+						mapResult.put(node, (Integer) mapResult.get(node) + 1); 
+					}
 					vc = node;
 				}
 			}
