@@ -94,11 +94,16 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("in the case of a shapefile, this the color used to fill in geometries of the shapefile. In the case of an image, it is used to tint the image")),
 				@facet (
+						name = IKeyword.MATRIX,
+						type = { IType.MATRIX},
+						optional = true,
+						doc = @doc ("the matrix containing the values of each pixel as integer following ARGB format")),
+				@facet (
 						name = IKeyword.REFRESH,
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("(openGL only) specify whether the image display is refreshed or not. (false by default, true should be used in cases of images that are modified over the simulation)")) },
-		omissible = IKeyword.NAME)
+			omissible = IKeyword.NAME)
 @doc (
 		value = "`" + IKeyword.IMAGE
 				+ "` allows modeler to display an image (e.g. as background of a simulation). Note that this image will not be dynamically changed or moved in OpenGL, unless the refresh: facet is set to true.",
@@ -120,6 +125,17 @@ import msi.gaml.types.IType;
 								isExecutable = false),
 								@example (
 										value = "   image background file:\"../images/my_backgound.jpg\";",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false) }),
+				@usage (
+						value = "If you already have your image stored in a matrix",
+						examples = { @example (
+								value = "display my_display {",
+								isExecutable = false),
+								@example (
+										value = "   image in_matrix value: my_image_matrix;",
 										isExecutable = false),
 								@example (
 										value = "}",
@@ -165,8 +181,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		@Override
 		public void validate(final StatementDescription description) {
 			if (!description.hasFacet(GIS)) {
-				if (!description.hasFacet(NAME) && !description.hasFacet(FILE)) {
-					description.error("Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE,
+				if (!description.hasFacet(NAME) && !description.hasFacet(FILE) && !description.hasFacet(MATRIX)) {
+					description.error("Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE + " or " + IKeyword.MATRIX,
 							IGamlIssue.MISSING_FACET, description.getUnderlyingElement(), FILE, "\"\"");
 				}
 			} else if (description.hasFacet(FILE)) {
@@ -178,6 +194,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	/** The file. */
 	IExpression file;
+	
+	IExpression matrix;
 
 	/**
 	 * Instantiates a new image layer statement.
@@ -190,6 +208,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		file = getFacet(IKeyword.FILE, IKeyword.NAME);
+		matrix = getFacet(IKeyword.MATRIX);
 	}
 
 	/**

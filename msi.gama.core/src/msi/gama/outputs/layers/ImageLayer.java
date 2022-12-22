@@ -12,6 +12,8 @@ package msi.gama.outputs.layers;
 
 import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
 
+import java.awt.image.BufferedImage;
+
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
@@ -22,8 +24,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.Types;
@@ -46,12 +50,25 @@ public class ImageLayer extends AbstractLayer {
 	/** The file. */
 	IExpression file;
 	
+	
+	IExpression matrix;
+	
 	/** The is potentially variable. */
-	boolean isPotentiallyVariable;
+	boolean isFilePotentiallyVariable;
+	
+	/** The is potentially variable. */
+	boolean isMatrixPotentiallyVariable;
+	
 	
 	/** The is file. */
 	boolean isFile;
+	
+	/** whether it's a matrix or not **/
+	boolean isMatrix;
 
+	/** cached copy to avoid reloading **/	
+	BufferedImage cachedBufferedImage;
+	
 	/**
 	 * Instantiates a new image layer.
 	 *
@@ -62,17 +79,44 @@ public class ImageLayer extends AbstractLayer {
 		super(layer);
 		file = ((ImageLayerStatement) definition).file;
 		isFile = file.getGamlType().getGamlType().equals(Types.FILE);
-		isPotentiallyVariable = !file.isContextIndependant();
-		if (!isFile) {
-			if (file.isConst() || !isPotentiallyVariable) {
-				final String constantFilePath = Cast.asString(scope, file.value(scope));
-				cachedFile = createFileFromString(scope, constantFilePath);
+		isFilePotentiallyVariable = !file.isContextIndependant();
+		matrix = ((ImageLayerStatement) definition).matrix;
+		isMatrix = matrix.getGamlType().getGamlType().equals(Types.MATRIX);
+		isMatrixPotentiallyVariable = !matrix.isContextIndependant();
+		if (!isMatrix) {
+			if (!isFile) {
+				if (file.isConst() || !isFilePotentiallyVariable) {
+					final String constantFilePath = Cast.asString(scope, file.value(scope));
+					cachedFile = createFileFromString(scope, constantFilePath);
+					isFile = true;
+				}
+			} else if (!isFilePotentiallyVariable) {
+				cachedFile = createFileFromFileExpression(scope);
 				isFile = true;
 			}
-		} else if (!isPotentiallyVariable) {
-			cachedFile = createFileFromFileExpression(scope);
-			isFile = true;
 		}
+		else {
+			cachedBufferedImage = constructBufferedImageFromMatrix(scope, Cast.asMatrix(scope, matrix.value(scope)));
+		}
+	}
+
+	private BufferedImage constructBufferedImageFromMatrix(IScope scope, IMatrix<Integer> matrix) {
+		
+		if (matrix == null) {
+			return null;
+		}
+		
+		int w = matrix.getCols(scope);
+		int h = matrix.getRows(scope);
+		
+		BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		
+		for(int i = 0; i < w ; i++) {
+			for (int j = 0 ; j < h; j++) {
+				ret.setRGB(i, j, matrix.get(scope, i, j));
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -145,15 +189,24 @@ public class ImageLayer extends AbstractLayer {
 	 * @return the gama image file
 	 */
 	protected GamaImageFile buildImage(final IScope scope) {
-		if (!isPotentiallyVariable) return cachedFile;
+		if (!isFilePotentiallyVariable) return cachedFile;
 		return isFile ? createFileFromFileExpression(scope)
 				: createFileFromString(scope, Cast.asString(scope, file.value(scope)));
 	}
 
+	protected BufferedImage buildImageFromMatrix(final IScope scope) {
+		if (! isMatrixPotentiallyVariable) {
+			return cachedBufferedImage;
+		}
+		else {
+			return constructBufferedImageFromMatrix(scope, Cast.asMatrix(scope, matrix.value(scope)));
+		}
+	}
+	
 	@Override
 	public void privateDraw(final IGraphicsScope scope, final IGraphics dg) {
-		final GamaImageFile file = buildImage(scope);
-		if (file == null) return;
+		
+		//getting the drawing attributes
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
 		attributes.setUseCache(!getData().getRefresh());
 		if (env != null) {
@@ -166,7 +219,17 @@ public class ImageLayer extends AbstractLayer {
 			attributes.setLocation(loc);
 			attributes.setSize(Scaling3D.of(env.getWidth(), env.getHeight(), 0));
 		}
-		dg.drawFile(file, attributes);
+
+		final GamaImageFile file = buildImage(scope);
+		if (file != null) {
+			dg.drawFile(file, attributes);			
+		}
+		else {
+			final BufferedImage img = buildImageFromMatrix(scope);
+			if (img != null) {				
+				dg.drawImage(img, attributes);				
+			}
+		}
 	}
 
 	@Override
@@ -185,7 +248,7 @@ public class ImageLayer extends AbstractLayer {
 	public void setImageFileName(final IScope scope, final String newValue) {
 		createFileFromString(scope, newValue);
 		isFile = true;
-		isPotentiallyVariable = false;
+		isFilePotentiallyVariable = false;
 	}
 
 	/**
@@ -195,7 +258,7 @@ public class ImageLayer extends AbstractLayer {
 	 * @return the image file name
 	 */
 	public String getImageFileName(final IScope scope) {
-		if (cachedFile != null && !isPotentiallyVariable) return cachedFile.getPath(scope);
+		if (cachedFile != null && !isFilePotentiallyVariable) return cachedFile.getPath(scope);
 		return "Unknown";
 	}
 
