@@ -741,8 +741,8 @@ public class Graphs {
 	public static IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) throw GamaRuntimeException.error("The graph is nil", scope);
 		if (graph.containsVertex(vertex))
-			return GamaListFactory.create(scope, graph.getGamlType().getContentType(), graph.incomingEdgesOf(vertex));
-		return GamaListFactory.create(graph.getGamlType().getContentType());
+			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(), graph.incomingEdgesOf(vertex));
+		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
 	/**
