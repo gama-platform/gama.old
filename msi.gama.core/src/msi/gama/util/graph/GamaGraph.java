@@ -1191,10 +1191,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public IList<E> getShortestPath(final IScope scope, final ShortestPathAlgorithm<V, E> algo, final V source,
 			final V target) {
 		final GraphPath ph = algo.getPath(source, target);
-		if (ph == null) return GamaListFactory.create(getGamlType().getContentType());
+		if (ph == null) return GamaListFactory.create(getGamlType().getKeyType());
 		final List re = ph.getEdgeList();
-		if (re == null) return GamaListFactory.create(getGamlType().getContentType());
-		return GamaListFactory.create(scope, getGamlType().getContentType(), re);
+		if (re == null) return GamaListFactory.create(getGamlType().getKeyType());
+		return GamaListFactory.create(scope, getGamlType().getKeyType(), re);
 	}
 
 	@Override

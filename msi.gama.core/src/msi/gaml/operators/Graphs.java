@@ -741,8 +741,8 @@ public class Graphs {
 	public static IList inEdgesOf(final IScope scope, final IGraph graph, final Object vertex) {
 		if (graph == null) throw GamaRuntimeException.error("The graph is nil", scope);
 		if (graph.containsVertex(vertex))
-			return GamaListFactory.create(scope, graph.getGamlType().getContentType(), graph.incomingEdgesOf(vertex));
-		return GamaListFactory.create(graph.getGamlType().getContentType());
+			return GamaListFactory.create(scope, graph.getGamlType().getKeyType(), graph.incomingEdgesOf(vertex));
+		return GamaListFactory.create(graph.getGamlType().getKeyType());
 	}
 
 	/**
@@ -1324,7 +1324,9 @@ public class Graphs {
 					Object node = graph.getEdgeTarget(edge);
 
 					if (node == vc) { node = graph.getEdgeSource(edge); }
-					if (node != v2 && node != v1) { mapResult.put(node, (Integer) mapResult.get(node) + 1); }
+					if (node != v2 && node != v1) { 
+						mapResult.put(node, (Integer) mapResult.get(node) + 1); 
+					}
 					vc = node;
 				}
 			}
