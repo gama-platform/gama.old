@@ -57,6 +57,7 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 	/** The chart. */
 	JFreeChart chart = null;
 
+	/** The area. */
 	Rectangle2D area = new Rectangle2D.Double();
 
 	/** The cache. */
@@ -67,7 +68,11 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	/** The Id position. */
 	HashMap<String, Integer> idPosition = new HashMap<>();
+
+	/** The renderer set. */
 	HashMap<String, AbstractRenderer> rendererSet = new HashMap<>();
+
+	/** The nbseries. */
 	int nbseries = 0;
 	/** The ready. */
 	// ChartProgressListener
@@ -159,7 +164,11 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	@Override
 	public void step(final IScope scope) {
-		chartdataset.updatedataset(scope, getChartCycle(scope));
+		if (ismyfirststep) {
+			ismyfirststep = false;
+		} else {
+			chartdataset.updatedataset(scope, getChartCycle(scope));
+		}
 		if (!ready) return;
 		updateOutput(scope);
 	}

@@ -147,12 +147,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	 * @return the scale
 	 */
 	double getScale(final String serie, final int col) {
-		if (MarkerScale.containsKey(serie)) return MarkerScale.get(serie).get(col);
+		if (markerScale.containsKey(serie)) return markerScale.get(serie).get(col);
 		return 1;
 	}
 
 	/** The Marker scale. */
-	HashMap<String, ArrayList<Double>> MarkerScale = new HashMap<>();
+	HashMap<String, ArrayList<Double>> markerScale = new HashMap<>();
 
 	/**
 	 * Instantiates a new chart J free chart output scatter.
@@ -447,9 +447,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		// resetAutorange(scope);
 		if (!sValues.isEmpty()) {
-			MarkerScale.remove(serieid);
+			markerScale.remove(serieid);
 			final ArrayList<Double> nscale = (ArrayList<Double>) sValues.clone();
-			MarkerScale.put(serieid, nscale);
+			markerScale.put(serieid, nscale);
 
 		}
 
