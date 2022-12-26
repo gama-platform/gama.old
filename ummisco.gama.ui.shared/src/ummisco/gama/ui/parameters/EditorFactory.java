@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import java.util.Collection;
-
 import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
@@ -23,7 +21,6 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 
@@ -228,31 +225,6 @@ public class EditorFactory {
 	}
 
 	/**
-	 * Choose.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param parent
-	 *            the parent
-	 * @param title
-	 *            the title
-	 * @param value
-	 *            the value
-	 * @param among
-	 *            the among
-	 * @param whenModified
-	 *            the when modified
-	 * @return the string editor
-	 */
-	public static AbstractEditor choose(final IScope scope, final EditorsGroup parent, final String title,
-			final String value, final Collection<String> among, final EditorListener<String> whenModified) {
-		AbstractEditor ed =
-				instance.create(scope, null, new InputParameter(title, value, Types.STRING, among), whenModified);
-		ed.createControls(parent);
-		return ed;
-	}
-
-	/**
 	 * Creates the.
 	 *
 	 * @param scope
@@ -346,6 +318,8 @@ public class EditorFactory {
 				return new FontEditor(scope, agent, var, l);
 			case IType.STRING:
 				return new StringEditor(scope, agent, var, l);
+			// case IType.PAIR:
+			// return new PairEditor(scope, agent, var, l);
 			default:
 				return new ExpressionBasedEditor(scope, agent, var, l);
 		}
@@ -367,10 +341,28 @@ public class EditorFactory {
 		return new CommandEditor(scope, command, selectionAdapter);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param var
+	 *            the var
+	 * @return the i parameter editor
+	 */
 	public IParameterEditor create(final IScope scope, final TextStatement var) {
 		return new TextDisplayer(scope, var);
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param var
+	 *            the var
+	 * @return the monitor displayer
+	 */
 	public MonitorDisplayer create(final IScope scope, final MonitorOutput var) {
 		return new MonitorDisplayer(scope, var);
 	}
