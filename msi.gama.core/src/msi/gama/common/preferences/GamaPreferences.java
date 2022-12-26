@@ -535,8 +535,8 @@ public class GamaPreferences {
 
 		/** The Constant CHART_QUALITY. */
 		public static final Pref<Double> CHART_QUALITY = create("pref_chart_quality",
-				"Size of the chart rendering (from 0, very small but fast, to 1, best but more resource consuming)",
-				0.8, IType.FLOAT, true).in(NAME, CHARTS).between(0.1, 1.0);
+				"Resolution of the charts (from 0, small but fast, to 1, best but resource consuming)", 0.8,
+				IType.FLOAT, true).in(NAME, CHARTS).between(0.1, 1.0);
 
 		/**
 		 * Drawing methods and defaults
@@ -616,12 +616,12 @@ public class GamaPreferences {
 
 		/** The Constant DISPLAY_SLICE_NUMBER. */
 		public static final Pref<Boolean> OPENGL_Z_FIGHTING = create("pref_opengl_z_fighting",
-				"When true, adds a small increment to the z ordinate of objects to fight visual artefacts", true,
-				IType.BOOL, true).in(NAME, RENDERING);
+				"Add a small increment to the z ordinate of objects to fight visual artefacts", true, IType.BOOL, true)
+						.in(NAME, RENDERING);
 
 		/** The Constant OPENGL_TEXTURE_ORIENTATION. */
 		public static final Pref<Boolean> OPENGL_TEXTURE_ORIENTATION = create("pref_texture_orientation",
-				"When true, attempts to orient the textures according to the geometry on which they are displayed (may create visual oddities)",
+				"Orient the textures according to the geometry on which they are displayed (may create visual oddities)",
 				true, IType.BOOL, true).in(NAME, RENDERING);
 		/**
 		 * Options
