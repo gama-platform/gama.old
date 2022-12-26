@@ -264,6 +264,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (isSpeciesName(op)) return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr());
 		// if ( isSkillName(op) ) { return factory.createOperator(AS, context,
 		// e, expr, skill(op)); }
+		OperatorProto proto = expr.getGamlType().getGetter(op);
+		if (proto != null) {
+			// It can only be a field as 'actions' are not defined on simple objects
+
+			final TypeFieldExpression fieldExpr = (TypeFieldExpression) proto.create(getContext(), e, expr);
+			if (getContext() != null) { getContext().document(e, expr); }
+			return fieldExpr;
+
+		}
 		return getFactory().createOperator(op, getContext(), e, expr);
 	}
 
