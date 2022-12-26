@@ -259,7 +259,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	protected GamaUIJob createUpdateJob() {
-		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && getEditorsList().hasMonitors())
+		ExperimentsParametersList editorsList = getEditorsList();
+		if (editorsList != null && GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()
+				&& editorsList.hasMonitors())
 			return new GamaUIJob() {
 
 				@Override

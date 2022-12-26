@@ -43,17 +43,18 @@ public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
 	protected Composite createItemContentsFor(final T data) {
-		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(data);
 		final EditorsGroup compo = new EditorsGroup(getViewer());
-		if (parameters != null) {
-			final List<AbstractEditor> list = new ArrayList(parameters.values());
-			Collections.sort(list);
-			for (final AbstractEditor<?> gpParam : list) {
-				gpParam.createControls(compo);
-				if (!editors.isEnabled(gpParam)) { gpParam.setActive(false); }
+		if (editors != null) {
+			final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(data);
+			if (parameters != null) {
+				final List<AbstractEditor> list = new ArrayList(parameters.values());
+				Collections.sort(list);
+				for (final AbstractEditor<?> gpParam : list) {
+					gpParam.createControls(compo);
+					if (!editors.isEnabled(gpParam)) { gpParam.setActive(false); }
+				}
 			}
 		}
-
 		return compo;
 	}
 
