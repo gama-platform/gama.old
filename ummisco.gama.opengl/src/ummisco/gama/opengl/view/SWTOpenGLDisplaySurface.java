@@ -144,6 +144,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		renderer = createRenderer();
 		animator = new GamaGLCanvas(parent, renderer, this).getAnimator();
 		layerManager = new LayerManager(this, output);
+		if (!layerManager.stayProportional()) { output.getData().setDrawEnv(false); }
 		// temp_focus = output.getFacet(IKeyword.FOCUS);
 		animator.start();
 	}
@@ -783,8 +784,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
-	public IGraphics getIGraphics() { 
-		return renderer;
-	}
+	public IGraphics getIGraphics() { return renderer; }
 
 }
