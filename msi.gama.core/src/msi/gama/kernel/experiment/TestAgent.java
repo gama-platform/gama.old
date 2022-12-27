@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * TestAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TestAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
  * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -48,9 +47,12 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 	/**
 	 * Instantiates a new test agent.
 	 *
-	 * @param p the p
-	 * @param index the index
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param p
+	 *            the p
+	 * @param index
+	 *            the index
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public TestAgent(final IPopulation p, final int index) throws GamaRuntimeException {
 		super(p, index);
@@ -103,7 +105,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 
 	@Override
 	protected String endStatus() {
-		return "Tests over.";
+		return "Tests over: " + summary.getStringSummary();
 	}
 
 	@Override
@@ -163,16 +165,12 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 	}
 
 	@Override
-	public URI getURI() {
-		return getModel().getURI();
-	}
+	public URI getURI() { return getModel().getURI(); }
 
 	@Override
 	public Collection<? extends WithTestSummary<?>> getSubElements() {
 		final List<TestStatement> tests = getModel().getAllTests();
-		final Consumer<IStatement> filter = t -> {
-			if (t instanceof TestStatement) { tests.add((TestStatement) t); }
-		};
+		final Consumer<IStatement> filter = t -> { if (t instanceof TestStatement) { tests.add((TestStatement) t); } };
 		getSpecies().getBehaviors().forEach(filter);
 		return tests;
 	}

@@ -44,6 +44,7 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
@@ -290,6 +291,9 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 					toolbar.status(null, new CompoundSummary<>(experiments).getStringSummary(), null, IGamaColors.BLUE,
 							SWT.LEFT);
 				}
+				// GAMA.getGui().getStatus().informStatus(GAMA.getRuntimeScope(),
+				// new CompoundSummary<>(experiments).getStringSummary());
+				ViewsHelper.bringToFront(this);
 			}
 		});
 
