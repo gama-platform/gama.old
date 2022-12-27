@@ -119,7 +119,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void execute(final GamaTree<String> tree) {
 		try {
 			final List<MPlaceholder> holders = collectAndPrepareDisplayViews();
-			if (tree != null) {
+			if (tree != null && tree.getRoot().hasChildren()) {
 				GamaNode<String> child = tree.getRoot().getChildren().get(0);
 				// DEBUG.LOG("Tree root = " + child.getData() + " weight " + child.getWeight());
 				if (child.getWeight() == null) { child.setWeight(5000); }

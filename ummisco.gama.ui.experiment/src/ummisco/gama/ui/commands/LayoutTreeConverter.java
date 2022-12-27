@@ -113,6 +113,7 @@ public class LayoutTreeConverter {
 	 * @return the gama tree
 	 */
 	GamaTree<String> buildGridTree(final GamaTree<String> result, final int[] indices) {
+		if (indices.length == 0) return result;
 		final GamaNode<String> initialSash = result.getRoot().addChild(HORIZONTAL);
 		final List<GamaNode<String>> placeholders = new ArrayList<>();
 		buildPlaceholders(initialSash, placeholders, indices.length);
