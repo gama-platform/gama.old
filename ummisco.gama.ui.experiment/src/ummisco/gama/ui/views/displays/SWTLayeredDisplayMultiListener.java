@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.eclipse.swt.SWT;
@@ -31,16 +32,15 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
+import ummisco.gama.ui.utils.ViewsHelper;
 
 /**
- * The listener interface for receiving SWTLayeredDisplayMulti events. The class that is interested in processing a
- * SWTLayeredDisplayMulti event implements this interface, and the object created with that class is registered with a
- * component using the component's <code>addSWTLayeredDisplayMultiListener<code> method. When the SWTLayeredDisplayMulti
- * event occurs, that object's appropriate method is invoked.
+ * The listener interface for receiving mouse and key events. When an event occurs, that object's appropriate method is
+ * invoked.
  *
- * @see SWTLayeredDisplayMultiEvent
  */
 public class SWTLayeredDisplayMultiListener implements MenuDetectListener, MouseListener, MouseMoveListener,
 		MouseTrackListener, MouseWheelListener, KeyListener, DragDetectListener, FocusListener, IDisposable {
@@ -58,6 +58,15 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	/** The ok. */
 	final Supplier<Boolean> ok;
 
+	/** See issue #3308 */
+	final boolean isJava2DOnWindows;
+
+	/** The UI zoom level. */
+	final double UIZoomLevel;
+
+	/** The zoom levels with issues. */
+	final Set<Integer> zoomLevelsWithIssues = Set.of(175, 225, 250);
+
 	/**
 	 * Instantiates a new SWT layered display multi listener.
 	 *
@@ -67,6 +76,10 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	 *            the surface
 	 */
 	public SWTLayeredDisplayMultiListener(final LayeredDisplayDecorator deco, final IDisplaySurface surface) {
+		int zoom = ViewsHelper.getMonitorOf(deco.view).getZoom();
+		isJava2DOnWindows =
+				!surface.getData().is3D() && PlatformHelper.isWindows() && zoomLevelsWithIssues.contains(zoom);
+		UIZoomLevel = zoom / 100d;
 
 		delegate = new LayeredDisplayMultiListener(surface, deco);
 		control = deco.view.getInteractionControl();
@@ -123,44 +136,64 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 		delegate.keyReleased(e.keyCode, GamaKeyBindings.ctrl(e));
 	}
 
+	/**
+	 * Filter.
+	 *
+	 * @param e
+	 *            the e
+	 */
+	private void filter(final MouseEvent e) {
+		if (isJava2DOnWindows) {
+			e.x = (int) (e.x / UIZoomLevel);
+			e.y = (int) (e.y / UIZoomLevel);
+		}
+	}
+
 	@Override
 	public void mouseScrolled(final MouseEvent e) {
-		if (!ok.get()) {}
+		filter(e);
+		// if (!ok.get()) {}
 	}
 
 	@Override
 	public void mouseEnter(final MouseEvent e) {
 		if (!ok.get()) return;
+		filter(e);
 		delegate.mouseEnter(e.x, e.y, (e.stateMask & SWT.MODIFIER_MASK) != 0, e.button);
 	}
 
 	@Override
 	public void mouseExit(final MouseEvent e) {
 		if (!ok.get()) return;
+		filter(e);
 		delegate.mouseExit(e.x, e.y, (e.stateMask & SWT.MODIFIER_MASK) != 0, e.button);
 	}
 
 	@Override
 	public void mouseHover(final MouseEvent e) {
 		if (!ok.get()) return;
+		filter(e);
 		delegate.mouseHover(e.x, e.y, e.button);
 	}
 
 	@Override
 	public void mouseMove(final MouseEvent e) {
 		if (!ok.get()) return;
+		filter(e);
 		// DEBUG.OUT("Mouse move " + e);
 		delegate.mouseMove(e.x, e.y, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
 	@Override
 	public void mouseDoubleClick(final MouseEvent e) {
-		if (!ok.get()) {}
+		// if (!ok.get()) {}
+		// filter(e);
 	}
 
 	@Override
 	public void mouseDown(final MouseEvent e) {
 		if (!ok.get()) return;
+		filter(e);
 		// DEBUG.OUT("Mouse down " + e);
 		delegate.mouseDown(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
@@ -168,6 +201,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void mouseUp(final MouseEvent e) {
 		if (!ok.get()) return;
+		filter(e);
 		// DEBUG.OUT("Mouse up " + e);
 		delegate.mouseUp(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
@@ -175,6 +209,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void menuDetected(final MenuDetectEvent e) {
 		if (!ok.get()) return;
+		// Verify if the same "filter" is not needed here too.
 		// DEBUG.LOG("Menu detected on " + view.getPartName());
 		final Point p = control.toControl(e.x, e.y);
 		delegate.menuDetected(p.x, p.y);
@@ -183,6 +218,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void dragDetected(final DragDetectEvent e) {
 		if (!ok.get()) return;
+		filter(e);
 		delegate.dragDetected(e.x, e.y);
 	}
 
@@ -223,18 +259,24 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 		};
 	}
 
+	/**
+	 * Gets the mouse adapter for AWT.
+	 *
+	 * @return the mouse adapter for AWT
+	 */
 	public java.awt.event.MouseMotionListener getMouseAdapterForAWT() {
 		return new java.awt.event.MouseMotionListener() {
 
 			@Override
-			public void mouseDragged(java.awt.event.MouseEvent e) {
-				delegate.dragDetected(e.getX(), e.getY());	
+			public void mouseDragged(final java.awt.event.MouseEvent e) {
+				delegate.dragDetected(e.getX(), e.getY());
 			}
 
 			@Override
-			public void mouseMoved(java.awt.event.MouseEvent e) {
-				delegate.mouseMove(e.getX(), e.getY(), (e.getModifiers()) != 0);				
-			}} ;
+			public void mouseMoved(final java.awt.event.MouseEvent e) {
+				delegate.mouseMove(e.getX(), e.getY(), e.getModifiers() != 0);
+			}
+		};
 	}
 
 }
