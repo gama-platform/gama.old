@@ -247,12 +247,12 @@ public abstract class ChartOutput {
 	 *            the scope
 	 * @return the chart cycle
 	 */
-	public final int getChartCycle(final IScope scope) {
-		// if (ismyfirststep) {
-		// ismyfirststep = false;
-		// return 0;
-		// }
-		return scope.getClock().getCycle() /* + 1 */;
+	public int getChartCycle(final IScope scope) {
+		if (ismyfirststep) {
+			ismyfirststep = false;
+			return 0;
+		}
+		return scope.getClock().getCycle() + 1;
 	}
 
 	/**
@@ -261,7 +261,10 @@ public abstract class ChartOutput {
 	 * @param scope
 	 *            the scope
 	 */
-	public abstract void step(final IScope scope);
+	public void step(final IScope scope) {
+		chartdataset.updatedataset(scope, getChartCycle(scope));
+		updateOutput(scope);
+	}
 
 	/**
 	 * Initdataset.
