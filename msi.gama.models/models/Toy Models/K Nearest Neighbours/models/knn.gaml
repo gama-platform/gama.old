@@ -14,7 +14,7 @@
  * The third one is "Initial number of point for each group". 
  * And the final one is "Number of neighbors", this will specify the number of neighbors that we want to use for our "k_nearest_neighbors" operator,
  * the "k_nearest_neighbors" have one parameter called k, this parameter specify the number of agents we want to compare with our agent. The 
- * "Number of neighbors" parameter is the parameter k in the "k_nearest_neighbors" operator.
+ * "Number of neighbours" parameter is the parameter k in the "k_nearest_neighbors" operator.
  */
 
 
@@ -22,8 +22,8 @@ model KNearestNeighbors
 
 
 global {
+
 	map<unknown, unknown> store;
-	list<special_point> totalPoint;
 	list<rgb> colour <- [#red, #blue, #green, #yellow, #purple, #orange, #pink, #magenta, #cyan];
     int init_amount <- 10;
     int nb_group <- 2;
@@ -36,27 +36,27 @@ global {
 				color <- colour[i];
 				center <- self;
 			}
-			create special_point number: init_amount{
-				location <- {center.location.x + rnd(0.0, radius), center.location.y + rnd(0.0, radius)};
+			geometry around <- circle(radius, center.location) intersection world.shape;
+			create special_point number: init_amount - 1{
+				location <- any_location_in(around);
 				color <- center.color;
 			}
 		}
-		totalPoint <- world.special_point;
-		store <- totalPoint as_map (each::each.color);
+		store <- world.special_point as_map (each::each.color);
 	}
 
 	action createAgent{
 	    create special_point{
 	    	location <- #user_location;
-	    	color <- self k_nearest_neighbors (store,init_amount);
+	    	color <- self k_nearest_neighbors (store, k);
+		    store <+ (self::color);
 	    }
-	    let p <- last(special_point);
-	    store <+ (p::p.color);
 	}
 
 	reflex auto{
 		create special_point{
-	   		color <- self k_nearest_neighbors (store,k);
+	   		color <- self k_nearest_neighbors (store, k);
+	   		store <+ self::color;
 	   	}
 	}
 }
@@ -70,10 +70,11 @@ species special_point {
 	
 }
 
-experiment test type: gui{
+experiment demo {
 	parameter "Number of groups: " var:nb_group min: 2 max: 9;
 	parameter "Radius: " var: radius min:10.0 max:30.0;
 	parameter "Initial numbers of agent for each group: " var:init_amount min:1 max:50;
+	parameter "Number of neighbours considered (K)" var:k min:1;
 	output {
 		display main {
 			species special_point aspect: base;
