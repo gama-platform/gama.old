@@ -38,6 +38,7 @@ import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.IUnits;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
@@ -45,6 +46,7 @@ import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.parameters.MonitorDisplayer;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -56,7 +58,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
 
 	/** The Constant MONITOR_CATEGORY. */
-	private static final String MONITOR_CATEGORY = "Monitors";
+	private static final String MONITOR_SECTION_NAME = "Monitors";
 
 	/** The count. */
 	private static int count = 0;
@@ -76,14 +78,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void ownCreatePartControl(final Composite view) {
 		final Composite intermediate = new Composite(view, SWT.NONE);
-		// intermediate.setBackground(view.getBackground());
 		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
 		parentLayout.verticalSpacing = 5;
 		intermediate.setLayout(parentLayout);
-		// view.pack();
-		// view.layout();
 		setParentComposite(intermediate);
 	}
 
@@ -113,7 +112,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	 */
 	private void deleteMonitorSectionIfEmpty() {
 		if (monitorSection == null || getEditorsList().hasMonitors()
-				|| getEditorsList().getItems().contains(MONITOR_CATEGORY))
+				|| getEditorsList().getItems().contains(MONITOR_SECTION_NAME))
 			return;
 		monitorSection.dispose();
 		monitorSection = null;
@@ -129,9 +128,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		if (monitorSection != null || !GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()
 				|| !aMonitorIsAboutToBeCreated && !getEditorsList().hasMonitors())
 			return;
-		final EditorsGroup compo = (EditorsGroup) createItemContentsFor(MONITOR_CATEGORY);
-		monitorSection = createItem(getParentComposite(), MONITOR_CATEGORY, MONITOR_CATEGORY, compo, getViewer(),
-				GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue(), null);
+		final EditorsGroup compo = (EditorsGroup) createItemContentsFor(MONITOR_SECTION_NAME);
+		monitorSection = createItem(getParentComposite(), MONITOR_SECTION_NAME, MONITOR_SECTION_NAME, compo,
+				getViewer(), editors.getItemExpanded(MONITOR_SECTION_NAME),
+				GamaColors.get(editors.getItemDisplayColor(MONITOR_SECTION_NAME)));
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	protected Composite createItemContentsFor(final String cat) {
-		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(cat);
+		final Map<String, IParameterEditor<?>> parameters = editors.getSections().get(cat);
 		createViewer(getParentComposite());
 		final EditorsGroup compo = new EditorsGroup(getViewer());
 		if (parameters != null) {
@@ -185,10 +185,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 			experiment = exp;
 			if (!exp.hasParametersOrUserCommands()) return;
 			reset();
-			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getParameters().values());
-			params.addAll(exp.getExplorableParameters().values());
+			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getDisplayables());
+			// params.addAll(exp.getExplorableParameters().values());
 			params.addAll(exp.getUserCommands());
-			params.addAll(exp.getTexts());
+			// params.addAll(exp.getTexts());
 			SimulationAgent sim = exp.getCurrentSimulation();
 			if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
 				SimulationOutputManager som = sim.getOutputManager();
@@ -237,11 +237,12 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	@Override
 	public boolean addItem(final String object) {
-		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && MONITOR_CATEGORY.equals(object)) {
+		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && MONITOR_SECTION_NAME.equals(object)) {
 			createMonitorSectionIfNeeded(true);
 			return true;
 		}
-		createItem(getParentComposite(), object, GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue(), null);
+		createItem(getParentComposite(), object, editors.getItemExpanded(object),
+				GamaColors.get(editors.getItemDisplayColor(object)));
 		return true;
 	}
 

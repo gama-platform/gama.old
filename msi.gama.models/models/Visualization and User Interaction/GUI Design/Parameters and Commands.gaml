@@ -53,7 +53,10 @@ experiment "Show Parameters" type: gui {
 	
 	// Texts can be inserted in the parameters pane to explain, for instance, how the model works
 	// Category: Explanation	
-	//////////////////////////////////////////////
+	////////////////////////////////////////////// 
+	category "Explanation" expanded: false color: #green; 
+	category "Various types" expanded: false color: #orange;
+	category "Monitors" expanded: false color: #red;
 	text "This is a simple text using default values. It adapts automatically to the light/dark themes" category: "Explanation";
 	text "This is in a different color and a background" color: #white background: #violet category: "Explanation";
 	text "This is a text in a different font, in italic and a size of 12" category: "Explanation" color: #orange font: font("Times New Roman",16,#italic); 
@@ -71,7 +74,7 @@ experiment "Show Parameters" type: gui {
 	// When a variable of type boolean is a parameter, its input chooser appears as a check box.
 	parameter "Boolean variable" category:"Various types" var: a_boolean_variable;
 	parameter "Boolean variable with different colors" category:"Various types" var: a_boolean_variable2 colors: [#blue, #lightskyblue];
-		parameter "Boolean variable with the same colors" category:"Various types" var: a_boolean_variable3 colors: [#orange];
+	parameter "Boolean variable with the same colors" category:"Various types" var: a_boolean_variable3 colors: [#orange];
 	// A color parameter can be modified using a color chooser.
 	parameter "A color" category:"Various types" var: a_color;
 	// For any parameter, if the possible values are described using the among: facet, a ComboBox is used to choose the parameter value.

@@ -12,8 +12,11 @@ package ummisco.gama.ui.experiment.parameters;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.kernel.experiment.ICategory;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -45,6 +48,9 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/** The monitors. */
 	final Map<MonitorOutput, MonitorDisplayer> monitors = new HashMap<>();
 
+	/** The categories. */
+	final Map<String, EditorsCategory> categories = new LinkedHashMap<>();
+
 	/**
 	 * Instantiates a new experiments parameters list.
 	 *
@@ -74,7 +80,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	@Override
 	public GamaColor getItemDisplayColor(final String o) {
-		return null;
+		return categories.get(o).color();
 	}
 
 	/**
@@ -85,7 +91,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	 * @return the editor for var
 	 */
 	private IParameterEditor getEditorForVar(final String var) {
-		for (final Map<String, IParameterEditor<?>> m : categories.values()) {
+		for (final Map<String, IParameterEditor<?>> m : sections.values()) {
 			for (final IParameterEditor<?> ed : m.values()) {
 				final IParameter param = ed.getParam();
 				if (param != null && param.getName().equals(var)) return ed;
@@ -97,7 +103,9 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		for (final IExperimentDisplayable var : params) {
-			if (var instanceof IParameter param) {
+			if (var instanceof ICategory cat) {
+				addCategory(cat.getName(), cat.getColor(scope), cat.isExpanded(scope));
+			} else if (var instanceof IParameter param) {
 				addEditor(var, EditorFactory.getInstance().create(scope, (IAgent) null, param, null));
 				final String[] enablements = param.getEnablement();
 				final String[] disablements = param.getDisablement();
@@ -152,7 +160,8 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/**
 	 * Adds the monitor.
 	 *
-	 * @param var the var
+	 * @param var
+	 *            the var
 	 * @return the monitor displayer
 	 */
 	public MonitorDisplayer addMonitor(final MonitorOutput var) {
@@ -164,7 +173,8 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/**
 	 * Removes the monitor.
 	 *
-	 * @param var the var
+	 * @param var
+	 *            the var
 	 * @return the monitor displayer
 	 */
 	public MonitorDisplayer removeMonitor(final MonitorOutput var) {
@@ -174,19 +184,63 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/**
 	 * Adds the editor.
 	 *
-	 * @param var the var
-	 * @param gp the gp
+	 * @param var
+	 *            the var
+	 * @param gp
+	 *            the gp
 	 */
 	private void addEditor(final IExperimentDisplayable var, final IParameterEditor gp) {
 		String cat = var.getCategory();
 		addItem(cat);
-		categories.get(cat).put(var.getName(), gp);
+		sections.get(cat).put(var.getName(), gp);
+	}
+
+	/**
+	 * Adds the category. Used for categories defined by themselves
+	 *
+	 * @param name
+	 *            the name
+	 * @param color
+	 *            the color
+	 * @param b
+	 */
+	public void addCategory(final String name, final GamaColor color, final boolean expanded) {
+		categories.put(name, new EditorsCategory(name, color, expanded));
+	}
+
+	/**
+	 * Adds the category. Used for categories defined in parameters
+	 *
+	 * @param name
+	 *            the name
+	 */
+	public void addCategory(final String name) {
+		if (!categories.containsKey(name)) {
+			categories.put(name,
+					new EditorsCategory(name, null, GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue()));
+		}
+	}
+
+	/**
+	 * Gets the item expanded.
+	 *
+	 * @param object
+	 *            the object
+	 * @return the item expanded
+	 */
+	@Override
+	public boolean getItemExpanded(final String object) {
+		// By default
+		EditorsCategory cat = categories.get(object);
+		if (cat == null) return super.getItemExpanded(object);
+		return cat.expanded();
 	}
 
 	@Override
 	public boolean addItem(final String cat) {
-		if (!categories.containsKey(cat)) {
-			categories.put(cat, new HashMap<String, IParameterEditor<?>>());
+		addCategory(cat);
+		if (!sections.containsKey(cat)) {
+			sections.put(cat, new HashMap<String, IParameterEditor<?>>());
 			return true;
 		}
 		return false;
@@ -194,7 +248,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	@Override
 	public void updateItemValues(final boolean synchronously) {
-		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
+		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : sections.entrySet()) {
 			for (final IParameterEditor gp : entry.getValue().values()) {
 				gp.updateWithValueOfParameter(synchronously, false);
 			}
@@ -205,7 +259,8 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/**
 	 * Update monitors.
 	 *
-	 * @param synchronously the synchronously
+	 * @param synchronously
+	 *            the synchronously
 	 */
 	public void updateMonitors(final boolean synchronously) {
 		monitors.forEach((s, md) -> { md.updateWithValueOfParameter(synchronously, false); });

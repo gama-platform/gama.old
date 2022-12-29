@@ -255,7 +255,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		final IAgent agent = scope.getAgent();
 		final AgentAttributesEditorsList editors = new AgentAttributesEditorsList();
 		editors.add(new ArrayList<IParameter>(agent.getSpecies().getVars()), agent);
-		final Map<String, IParameterEditor<?>> parameters = editors.getCategories().get(agent);
+		final Map<String, IParameterEditor<?>> parameters = editors.getSections().get(agent);
 		if (parameters != null) {
 			final List<AbstractEditor> list = new ArrayList(parameters.values());
 			Collections.sort(list);

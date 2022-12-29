@@ -66,7 +66,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 				if (var instanceof IParameter && !HIDDEN.contains(var.getName())) {
 					final IParameterEditor<?> gp =
 							EditorFactory.getInstance().create(scope, agent, (IParameter) var, null);
-					categories.get(agent).put(gp.getParam().getName(), gp);
+					sections.get(agent).put(gp.getParam().getName(), gp);
 				}
 			}
 		}
@@ -74,8 +74,8 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	@Override
 	public boolean addItem(final IAgent agent) {
-		if (!categories.containsKey(agent)) {
-			categories.put(agent, new HashMap<String, IParameterEditor<?>>());
+		if (!sections.containsKey(agent)) {
+			sections.put(agent, new HashMap<String, IParameterEditor<?>>());
 			return true;
 		}
 		return false;
@@ -83,7 +83,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	@Override
 	public void updateItemValues(final boolean synchronously) {
-		for (final Map.Entry<IAgent, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
+		for (final Map.Entry<IAgent, Map<String, IParameterEditor<?>>> entry : sections.entrySet()) {
 			if (!entry.getKey().dead()) {
 				for (final IParameterEditor<?> gp : entry.getValue().values()) {
 					gp.updateWithValueOfParameter(synchronously, false);

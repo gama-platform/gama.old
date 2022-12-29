@@ -285,7 +285,7 @@ public interface IExperimentPlan extends ISpecies {
 	 *
 	 * @return the texts
 	 */
-	List<TextStatement> getTexts();
+	// List<TextStatement> getTexts();
 
 	/**
 	 * Checks if is synchronized.
@@ -293,5 +293,12 @@ public interface IExperimentPlan extends ISpecies {
 	 * @return true, if is synchronized
 	 */
 	boolean isSynchronized();
+
+	/**
+	 * Gets the displayables.
+	 *
+	 * @return the displayables
+	 */
+	List<IExperimentDisplayable> getDisplayables();
 
 }

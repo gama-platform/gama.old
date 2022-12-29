@@ -22,7 +22,6 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.IExploration;
@@ -50,7 +49,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -320,7 +318,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected final Map<String, IParameter> parameters = GamaMapFactory.create();
 
 	/** The texts. */
-	protected final List<TextStatement> texts = GamaListFactory.create();
+	// protected final List<TextStatement> texts = GamaListFactory.create();
 
 	/** The explorable parameters. */
 	protected final Map<String, IParameter.Batch> explorableParameters = GamaMapFactory.create();
@@ -360,6 +358,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	/** The sync. */
 	private volatile boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
+
+	/** The displayables. */
+	private final List<IExperimentDisplayable> displayables = new ArrayList();
 
 	/**
 	 * The Class ExperimentPopulation.
@@ -505,7 +506,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			experimentOutputs = null;
 		}
 		parameters.clear();
-		texts.clear();
+		displayables.clear();
 		myScope.getGui().getStatus().neutralStatus(myScope, "No simulation running");
 		GAMA.releaseScope(myScope);
 		// FIXME Should be put somewhere around here, but probably not here
@@ -589,8 +590,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		BatchOutput fileOutputDescription = null;
 		LayoutStatement layout = null;
 		for (final ISymbol s : children) {
-			if (s instanceof TextStatement) {
-				texts.add((TextStatement) s);
+			// Trial
+			if (s instanceof ICategory c) {
+				displayables.add(c);
+			} else if (s instanceof TextStatement t) {
+				// texts.add(t);
+				displayables.add(t);
 			} else if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;
 			} else if (s instanceof IExploration) {
@@ -608,12 +613,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				if (isBatch() && pb.canBeExplored()) {
 					pb.setEditable(false);
 					addExplorableParameter(pb);
+					displayables.add(pb);
 					continue;
 				}
 				final IParameter p = (IParameter) s;
 				final String parameterName = p.getName();
 				final boolean already = parameters.containsKey(parameterName);
-				if (!already) { parameters.put(parameterName, p); }
+				if (!already) {
+					displayables.add(p);
+					parameters.put(parameterName, p);
+				}
 			} else if (s instanceof ExperimentOutputManager eom) {
 				if (eom.isSync()) { synchronizeAllOutputs(); }
 				if (experimentOutputs != null) {
@@ -880,8 +889,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public Map<String, IParameter> getParameters() { return parameters; }
 
-	@Override
-	public List<TextStatement> getTexts() { return texts; }
+	// @Override
+	// public List<TextStatement> getTexts() { return texts; }
 
 	@Override
 	public SimulationAgent getCurrentSimulation() {
@@ -1074,5 +1083,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public boolean isSynchronized() { return sync; }
+
+	@Override
+	public List<IExperimentDisplayable> getDisplayables() { return displayables; }
 
 }

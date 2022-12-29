@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.ItemList;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.metamodel.agent.IAgent;
 import ummisco.gama.ui.interfaces.IParameterEditor;
@@ -31,10 +32,10 @@ public abstract class EditorsList<T> implements ItemList<T> {
 
 	/** The categories. */
 	/* Map to associate a category to each parameter */
-	protected final Map<T, Map<String, IParameterEditor<?>>> categories = new LinkedHashMap<>();
+	protected final Map<T, Map<String, IParameterEditor<?>>> sections = new LinkedHashMap<>();
 
 	@Override
-	public List<T> getItems() { return new ArrayList<>(categories.keySet()); }
+	public List<T> getItems() { return new ArrayList<>(sections.keySet()); }
 
 	@Override
 	public abstract String getItemDisplayName(final T obj, final String previousName);
@@ -54,20 +55,20 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	 *
 	 * @return the categories
 	 */
-	public Map<T, Map<String, IParameterEditor<?>>> getCategories() { return categories; }
+	public Map<T, Map<String, IParameterEditor<?>>> getSections() { return sections; }
 
 	/**
 	 * Revert to default value.
 	 */
 	public void revertToDefaultValue() {
-		for (final Map<String, IParameterEditor<?>> editors : categories.values()) {
+		for (final Map<String, IParameterEditor<?>> editors : sections.values()) {
 			for (final IParameterEditor<?> ed : editors.values()) { ed.revertToDefaultValue(); }
 		}
 	}
 
 	@Override
 	public void removeItem(final T name) {
-		categories.remove(name);
+		sections.remove(name);
 	}
 
 	@Override
@@ -97,6 +98,18 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	 */
 	public boolean isEnabled(final IParameterEditor<?> gpParam) {
 		return true;
+	}
+
+	/**
+	 * Gets the item expanded.
+	 *
+	 * @param object
+	 *            the object
+	 * @return the item expanded
+	 */
+	public boolean getItemExpanded(final String object) {
+		// By default
+		return GamaPreferences.Runtime.CORE_EXPAND_PARAMS.getValue();
 	}
 
 }
