@@ -25,11 +25,13 @@ import java.util.List;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
+import org.java_websocket.server.SSLParametersWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
 import msi.gama.common.GamlFileExtension;
@@ -121,8 +123,12 @@ public class GamaWebSocketServer extends WebSocketServer {
 				SSLContext sslContext = null;
 				sslContext = SSLContext.getInstance("TLS");
 				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+			    SSLParameters sslParameters = new SSLParameters();
 
-				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+			    sslParameters.setNeedClientAuth(false);
+			    this
+			        .setWebSocketFactory(new SSLParametersWebSocketServerFactory(sslContext, sslParameters));
+//				this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
 			} catch (Exception e) {
 				
 				e.printStackTrace();

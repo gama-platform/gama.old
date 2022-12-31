@@ -110,6 +110,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 			status = new IStatusDisplayer() {
 
 				private boolean canSendMessage(final IExperimentAgent exp) {
+					if(exp==null) return false;
 					var scope = exp.getScope();
 					return scope != null && scope.getData("status") != null ? (boolean) scope.getData("status") : true;
 				}
@@ -245,7 +246,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 
 				@Override
 				public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
-
+					System.out.println(s);
 					if (!canSendMessage(root.getExperiment())) return;
 
 					try {

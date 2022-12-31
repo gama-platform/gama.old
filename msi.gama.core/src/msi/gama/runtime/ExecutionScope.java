@@ -667,7 +667,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		if (executionContext != null) { varsToSave.putAll(executionContext.getLocalVars()); }
+		if (executionContext != null && varsToSave!=null) { varsToSave.putAll(executionContext.getLocalVars()); }
 	}
 
 	/**
