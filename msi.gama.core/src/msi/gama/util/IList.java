@@ -164,7 +164,8 @@ public interface IList<E>
 		// Allows to build sets with the idiom: list <- map(list).values;
 		final IType myCt = getGamlType().getContentType();
 		final IType kt, ct;
-		if (myCt == Types.PAIR) {
+		if (myCt.isParametricFormOf(Types.PAIR) || myCt.equals(Types.PAIR)
+				) {
 			// Issue #2607: specific treatment of lists of pairs
 			kt = GamaType.findSpecificType(keyType, myCt.getKeyType());
 			ct = GamaType.findSpecificType(contentsType, myCt.getContentType());
