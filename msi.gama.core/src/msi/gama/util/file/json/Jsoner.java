@@ -37,6 +37,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
 import msi.gama.util.serialize.IStreamConverter;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.statements.SaveStatement;
@@ -744,6 +745,16 @@ public class Jsoner {
 				Jsoner.serialize(elements.next(), writableDestination, flags);
 			}
 			writableDestination.write(']');
+
+		} else if (jsonSerializable instanceof GamaPair p) {
+			//Considers gamapairs as json
+			writableDestination.write('{');
+			Jsoner.serialize(p.key, writableDestination, flags);
+			writableDestination.write(':');
+			Jsoner.serialize(p.value, writableDestination, flags);
+			writableDestination.write('}');
+			
+			
 		} else if (jsonSerializable instanceof byte[] bw) {
 			final int numberOfElements = bw.length;
 			writableDestination.write('[');

@@ -65,6 +65,7 @@ import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.Jsoner;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.GAML;
@@ -555,6 +556,38 @@ public class Containers {
 		throw GamaRuntimeException.error("" + container + " cannot be accessed using " + indices, scope);
 	}
 
+	
+	
+	@operator (
+			value = { IKeyword.AS_JSON_STRING},
+			can_be_const = true,
+			category = { IOperatorCategory.CONTAINER },
+			concept = { IConcept.CONTAINER })
+	@doc (
+			value = "Tries to convert the container into a json-formatted string",
+			usages = { @usage (
+					value = "With a map:",
+					examples = { @example (
+							value = "as_json_string(map('int_value'::1, 'string_value'::'some words', 'tab'::[1, 2, 3]))",
+							returnType = IKeyword.STRING,
+							equals = "{\"int_value\":1,\"string_value\":\"some words\",\"tab\":[1,2,3]}")
+					}),
+					@usage ( value="With an array:",
+							examples = { @example (
+									value = "as_json_string([1, 2, 3, 'some words'])",
+									returnType = IKeyword.STRING,
+									equals = "[1,2,3,\"some words\"]")}
+							)
+					}
+			)
+	@test("as_json_string(map('int_value'::1, 'string_value'::'some words', 'tab'::[1, 2, 3])) = '{\"int_value\":1,\"string_value\":\"some words\",\"tab\":[1,2,3]}'")
+	@test("as_json_string([1, 2, 3, 'some words', rgb(1,2,3)::'some words']) = '[1,2,3,\"some words\",{{\"r\":1,\"g\":3,\"b\":2}:\"some words\"}]'")
+	@test("as_json_string(map('first value'::1, 'tab'::[1, 2, 3], 'simple string'::'it works', map('very complex'::[1,2,3])::['value linking to very complex'])) = '{\"first value\":1,\"tab\":[1,2,3],\"simple string\":\"it works\",{\"very complex\":[1,2,3]}:[\"value linking to very complex\"]}'")
+	
+	public static String asJsonString(final IScope scope, final IContainer container) {
+		return Jsoner.serialize(container);
+	}
+	
 	/**
 	 * At.
 	 *
