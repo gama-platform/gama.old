@@ -1194,7 +1194,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (ph == null) return GamaListFactory.create(getGamlType().getKeyType());
 		final List re = ph.getEdgeList();
 		if (re == null) return GamaListFactory.create(getGamlType().getKeyType());
-		return GamaListFactory.create(scope, getGamlType().getKeyType(), re);
+		return GamaListFactory.create(scope, getGamlType().getContentType(), re);
 	}
 
 	@Override
