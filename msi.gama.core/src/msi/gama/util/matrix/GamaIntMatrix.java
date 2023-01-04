@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 
@@ -642,4 +643,30 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 		return result;
 	}
+	
+	/**
+	 * Transforms a matrix of integers into the corresponding BufferedImage. The matrix has to follow the ARGB encoding
+	 * @param scope
+	 * @param matrix
+	 * @return
+	 */
+	public static BufferedImage constructBufferedImageFromMatrix(IScope scope, IMatrix<Integer> matrix) {
+		
+		if (matrix == null) {
+			return null;
+		}
+		
+		int w = matrix.getCols(scope);
+		int h = matrix.getRows(scope);
+		
+		BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		
+		for(int i = 0; i < w ; i++) {
+			for (int j = 0 ; j < h; j++) {
+				ret.setRGB(i, j, matrix.get(scope, i, j));
+			}
+		}
+		return ret;
+	}
+
 }

@@ -24,10 +24,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaImageFile;
-import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.Types;
@@ -96,27 +95,8 @@ public class ImageLayer extends AbstractLayer {
 			}
 		}
 		else {
-			cachedBufferedImage = constructBufferedImageFromMatrix(scope, Cast.asMatrix(scope, matrix.value(scope)));
+			cachedBufferedImage = GamaIntMatrix.constructBufferedImageFromMatrix(scope, Cast.asMatrix(scope, matrix.value(scope)));
 		}
-	}
-
-	private BufferedImage constructBufferedImageFromMatrix(IScope scope, IMatrix<Integer> matrix) {
-		
-		if (matrix == null) {
-			return null;
-		}
-		
-		int w = matrix.getCols(scope);
-		int h = matrix.getRows(scope);
-		
-		BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		
-		for(int i = 0; i < w ; i++) {
-			for (int j = 0 ; j < h; j++) {
-				ret.setRGB(i, j, matrix.get(scope, i, j));
-			}
-		}
-		return ret;
 	}
 
 	@Override
@@ -199,7 +179,7 @@ public class ImageLayer extends AbstractLayer {
 			return cachedBufferedImage;
 		}
 		else {
-			return constructBufferedImageFromMatrix(scope, Cast.asMatrix(scope, matrix.value(scope)));
+			return GamaIntMatrix.constructBufferedImageFromMatrix(scope, Cast.asMatrix(scope, matrix.value(scope)));
 		}
 	}
 	
