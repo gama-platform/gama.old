@@ -256,16 +256,16 @@ public class GamlSpecies extends AbstractSpecies {
 			}
 			final IExpression width = sd.getFacetExpr(WIDTH);
 			final IExpression height = sd.getFacetExpr(HEIGHT);
-			if (cellWidth != null && width != null) {
-				sd.error("'cell_width' and 'width' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,
-						WIDTH);
-				return;
-			}
-			if (cellHeight != null && height != null) {
-				sd.error("'cell_width' and 'width' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,
-						HEIGHT);
-				return;
-			}
+//			if (cellWidth != null && width != null) {
+//				sd.error("'cell_width' and 'width' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,
+//						WIDTH);
+//				return;
+//			}
+//			if (cellHeight != null && height != null) {
+//				sd.error("'cell_width' and 'width' cannot be defined at the same time", IGamlIssue.CONFLICTING_FACETS,
+//						HEIGHT);
+//				return;
+//			}
 
 			if (cellHeight != null || cellWidth != null || width != null || height != null || neighbours != null) {
 				if (!IKeyword.GRID.equals(sd.getKeyword())) {
