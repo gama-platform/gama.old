@@ -202,7 +202,8 @@ public class ServerExperimentController implements IExperimentController {
 				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
 						| GamaHeadlessException e) {
 					DEBUG.OUT(e);
-					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
+//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 				}
 				break;
 			case _START:
@@ -210,7 +211,8 @@ public class ServerExperimentController implements IExperimentController {
 					start();
 				} catch (final GamaRuntimeException e) {
 					DEBUG.OUT(e);
-					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
+//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 					closeExperiment(e);
 				} finally {
 					// scope.getGui().updateExperimentState(scope, IGui.RUNNING);
@@ -264,10 +266,12 @@ public class ServerExperimentController implements IExperimentController {
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
 					closeExperiment(e);
-					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
+//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 				} catch (final Throwable e) {
 					closeExperiment(GamaRuntimeException.create(e, scope));
-					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
+//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 
 				} finally {
 					// scope.getGui().updateExperimentState(scope);
