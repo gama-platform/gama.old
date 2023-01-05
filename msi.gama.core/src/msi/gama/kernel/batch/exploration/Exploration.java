@@ -361,7 +361,7 @@ public class Exploration extends AExplorationAlgorithm {
 				int minValue = Cast.asInt(scope, var.getMinValue(scope));
 				int maxValue = Cast.asInt(scope, var.getMaxValue(scope));
 				double stepValue = 1;
-				if (hasFacet(IKeyword.STEP)) {
+				if (var.getStepValue(scope) != null) {
 					stepValue = Cast.asInt(scope, var.getStepValue(scope));
 				} else if (maxValue - minValue > __default_step_factor) {
 					stepValue = (maxValue - minValue) / __default_step_factor;
@@ -376,7 +376,7 @@ public class Exploration extends AExplorationAlgorithm {
 				double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
 				double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
 				double stepFloatValue = 0.1;
-				if (hasFacet(IKeyword.STEP)) {
+				if (var.getStepValue(scope) != null) {
 					stepFloatValue = Cast.asFloat(scope, var.getStepValue(scope));
 				} else {
 					stepFloatValue = (maxFloatValue - floatValue) / __default_step_factor;
@@ -399,7 +399,7 @@ public class Exploration extends AExplorationAlgorithm {
 				GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
 				GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
 				GamaPoint increment = new GamaPoint();
-				if (hasFacet(IKeyword.STEP)) {
+				if (var.getStepValue(scope) != null) {
 					increment = GamaPointType.staticCast(scope, var.getStepValue(scope), true);
 					if (increment == null) {
 						Double d = GamaFloatType.staticCast(scope, var.getStepValue(scope), null, false);
