@@ -3,7 +3,7 @@
  * ExperimentParametersView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -38,7 +38,6 @@ import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.IUnits;
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
@@ -47,6 +46,7 @@ import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.parameters.MonitorDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -129,9 +129,12 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 				|| !aMonitorIsAboutToBeCreated && !getEditorsList().hasMonitors())
 			return;
 		final EditorsGroup compo = (EditorsGroup) createItemContentsFor(MONITOR_SECTION_NAME);
-		monitorSection = createItem(getParentComposite(), MONITOR_SECTION_NAME, MONITOR_SECTION_NAME, compo,
-				getViewer(), editors.getItemExpanded(MONITOR_SECTION_NAME),
-				GamaColors.get(editors.getItemDisplayColor(MONITOR_SECTION_NAME)));
+		Composite parent = getParentComposite();
+		boolean isExpanded = editors.getItemExpanded(MONITOR_SECTION_NAME);
+		GamaUIColor color = GamaColors.get(editors.getItemDisplayColor(MONITOR_SECTION_NAME));
+
+		monitorSection =
+				createItem(parent, MONITOR_SECTION_NAME, MONITOR_SECTION_NAME, compo, getViewer(), isExpanded, color);
 	}
 
 	/**

@@ -81,8 +81,8 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 	}
 
 	@Override
-	public void createControls(final EditorsGroup parent) {
-		super.createControls(parent);
+	public void createControls(final EditorsGroup p) {
+		super.createControls(p);
 		if (getStatement().shouldBeInitialized()) {
 			getStatement().shouldNotBeInitialized();
 			applyEdit();
