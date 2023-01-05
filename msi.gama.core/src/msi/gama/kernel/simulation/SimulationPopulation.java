@@ -3,7 +3,7 @@
  * SimulationPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -68,7 +68,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	 * @return the max number of concurrent simulations
 	 */
 	public int getMaxNumberOfConcurrentSimulations() {
-		return GamaExecutorService.getParallelism(getHost().getScope(), getSpecies().getConcurrency(),
+		return GamaExecutorService.getParallelism(getHost().getScope(), getHost().getSpecies().getConcurrency(),
 				Caller.SIMULATION);
 	}
 
@@ -245,6 +245,13 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		return currentSimulation;
 	}
 
+	/**
+	 * Gets the simulation at index.
+	 *
+	 * @param i
+	 *            the i
+	 * @return the simulation at index
+	 */
 	public SimulationAgent getSimulationAtIndex(final int i) {
 		if (i >= size()) return null;
 		return get(i);
