@@ -3,14 +3,12 @@
  * ExperimentParameter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
-
-import static java.lang.Double.compare;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -501,11 +499,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 */
 	@SuppressWarnings ("unchecked")
 	private Object verifyMin(final IScope scope, final Object newValue) {
-		Object minValue = getMinValue(scope);
-		if (minValue instanceof Number && newValue instanceof Number
-				&& compare(((Number) minValue).doubleValue(), ((Number) newValue).doubleValue()) > 0
-				|| minValue instanceof Comparable mc && newValue instanceof Comparable nc && mc.compareTo(nc) > 0)
-			return minValue;
+		if (!(newValue instanceof Comparable nc)) return newValue;
+		Comparable mc = getMinValue(scope);
+		if (mc != null && mc.compareTo(nc) > 0) return mc;
 		return newValue;
 	}
 
@@ -518,11 +514,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 */
 	@SuppressWarnings ("unchecked")
 	private Object verifyMax(final IScope scope, final Object newValue) {
-		Object maxValue = getMaxValue(scope);
-		if (maxValue instanceof Number && newValue instanceof Number
-				&& compare(((Number) maxValue).doubleValue(), ((Number) newValue).doubleValue()) < 0
-				|| maxValue instanceof Comparable mc && newValue instanceof Comparable nc && mc.compareTo(nc) < 0)
-			return maxValue;
+		if (!(newValue instanceof Comparable nc)) return newValue;
+		Comparable mc = getMaxValue(scope);
+		if (mc != null && mc.compareTo(nc) < 0) return mc;
 		return newValue;
 	}
 
@@ -535,7 +529,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	 *            the val
 	 */
 	public void setAndVerifyValue(final IScope scope, final Object val) {
-		Object newValue = verifyMin(scope, verifyMax(scope, val));
+		Object newValue = verifyMin(scope, verifyMax(scope, type.cast(scope, val, null, false)));
 		newValue = filterWithAmong(scope, newValue);
 		if (value != UNDEFINED) {
 			for (final ParameterChangeListener listener : listeners) { listener.changed(scope, newValue); }
@@ -775,16 +769,18 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Comparable getMinValue(final IScope scope) {
-		return min == null ? null : (Comparable) min.value(scope);
-		// if (minValue == null && min != null) { minValue = min.value(scope); }
-		// return (Comparable) minValue;
+		if (min == null) return null;
+		Object minValue = type.cast(scope, min.value(scope), null, false);
+		if (!(minValue instanceof Comparable mc)) return null;
+		return mc;
 	}
 
 	@Override
 	public Comparable getMaxValue(final IScope scope) {
-		return max == null ? null : (Comparable) max.value(scope);
-		// if (maxValue == null && max != null) { maxValue = max.value(scope); }
-		// return (Comparable) maxValue;
+		if (max == null) return null;
+		Object maxValue = type.cast(scope, max.value(scope), null, false);
+		if (!(maxValue instanceof Comparable mc)) return null;
+		return mc;
 	}
 
 	@Override
