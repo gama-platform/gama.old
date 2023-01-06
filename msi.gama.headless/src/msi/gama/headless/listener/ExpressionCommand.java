@@ -20,7 +20,6 @@ public class ExpressionCommand implements ISocketCommand {
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final Object socket_id = map.get("socket_id");
 		final Object expr = map.get("expr");
 		final boolean escaped = map.get("escaped") == null ? false : Boolean.parseBoolean("" + map.get("escaped"));
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
@@ -28,19 +27,17 @@ public class ExpressionCommand implements ISocketCommand {
 		DEBUG.OUT(exp_id);
 		DEBUG.OUT(expr);
 
-		if (exp_id == "" || socket_id == null || expr == null) {
+		if (exp_id == "" || expr == null) {
 			return new CommandResponse(GamaServerMessageType.MalformedRequest,
-					"For 'expression', mandatory parameters are: 'exp_id', 'socket_id' and 'expr'", map, false);
+					"For 'expression', mandatory parameters are: 'exp_id' and 'expr'", map, false);
 		}
 
-		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id);
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment("" + socket.hashCode(), exp_id);
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 
 			final boolean wasPaused = gama_exp.controller.isPaused();
 			gama_exp.controller.directPause();
 
-//			IMap<String, Object> res = GamaMapFactory.create();
-//			res.put("result",);
 			if (!wasPaused) {
 				gama_exp.controller.userStart();
 			}
@@ -49,7 +46,7 @@ public class ExpressionCommand implements ISocketCommand {
 
 		} else {
 			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,
-					"Wrong socket_id or exp_id " + socket_id + " " + exp_id, map, false);
+					"Wrong exp_id " + exp_id, map, false);
 		}
 	}
 

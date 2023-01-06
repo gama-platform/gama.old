@@ -54,18 +54,16 @@ public class OutputCommand implements ISocketCommand {
 	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
 
 		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final Object socket_id = map.get("socket_id");
 		final Object species = map.get("species");
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("output");
 		DEBUG.OUT(exp_id);
-		DEBUG.OUT(socket_id);
 
-		if (exp_id == "" || socket_id == null || species == null)
+		if (exp_id == "" || species == null)
 			return new CommandResponse(GamaServerMessageType.MalformedRequest,
-					"For 'output', mandatory parameters are: 'exp_id', 'socket_id' and 'species' ", map, false);
+					"For 'output', mandatory parameters are: 'exp_id' and 'species' ", map, false);
 
-		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id);
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(""+socket.hashCode(), exp_id);
 		if (gama_exp == null || gama_exp.getSimulation() == null)
 			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);

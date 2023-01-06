@@ -13,19 +13,17 @@ public class StepCommand implements ISocketCommand {
 
 
 		final String 	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final Object 	socket_id 	= map.get("socket_id");
 		final int		nb_step		= map.get("nb_step") != null ? ((Number) map.get("nb_step")).intValue() : 1; 
 		final boolean 	sync 		= map.get("sync") != null ? (boolean) map.get("sync") : false;
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("step");
 		DEBUG.OUT(exp_id);
-		DEBUG.OUT(socket_id);
 
-		if (exp_id == "" || socket_id == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'step', mandatory parameters are: 'exp_id' and 'socket_id' ", map, false);
+		if (exp_id == "" ) {
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'step', mandatory parameter is: 'exp_id'", map, false);
 		}
 
-		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment("" + socket.hashCode(), exp_id); 
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 			for (int i = 0 ; i < nb_step ; i++) {
 				try {

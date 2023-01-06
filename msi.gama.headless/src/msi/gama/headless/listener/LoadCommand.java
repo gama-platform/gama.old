@@ -110,7 +110,6 @@ public class LoadCommand implements ISocketCommand {
 
 		IMap<String, Object> res = GamaMapFactory.create();
 		res.put("type", "exp");
-		res.put("socket_id", socket.hashCode());
 		res.put("exp_id", selectedJob.getExperimentID());
 		gamaWebSocketServer.getDefaultApp().processorQueue.execute(selectedJob.controller.executionThread);
 		return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, res, map, false);
