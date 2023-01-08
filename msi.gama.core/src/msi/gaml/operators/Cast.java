@@ -2,7 +2,7 @@
  *
  * Cast.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -527,7 +527,7 @@ public class Cast {
 					equals = "[2,2,2,2,2]") })
 	@test ("list_with(5,2) = [2,2,2,2,2]")
 	public static IList list_with(final IScope scope, final Integer size, final IExpression init) {
-		return GamaListFactory.create(scope, init, size);
+		return GamaListFactory.create(scope, init, size, false); // parallel = false by default (see #3572)
 	}
 
 	/**
@@ -569,7 +569,7 @@ public class Cast {
 	@test ("{2,2} matrix_with (1) = matrix([1,1],[1,1])")
 	public static IMatrix matrix_with(final IScope scope, final GamaPoint size, final IExpression init) {
 		if (size == null) throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope);
-		return GamaMatrixType.with(scope, init, size);
+		return GamaMatrixType.with(scope, init, size, false); // parallel = false by default (see #3572)
 	}
 
 	/**

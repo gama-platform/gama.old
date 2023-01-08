@@ -3,7 +3,7 @@
  * SimulationAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -98,12 +98,7 @@ import msi.gaml.types.IType;
 		@variable (
 				name = IKeyword.RNG,
 				type = IType.STRING,
-				doc = @doc ("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: "
-						+ IKeyword.MERSENNE
-						+ " represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; "
-						+ IKeyword.CELLULAR
-						+ " is a cellular automaton based generator that should be a bit faster, but less reliable; and "
-						+ IKeyword.JAVA + " invokes the standard Java generator")),
+				doc = @doc (RandomUtils.DOC)),
 		@variable (
 				name = IKeyword.EXPERIMENT,
 				type = ITypeProvider.EXPERIMENT_TYPE,

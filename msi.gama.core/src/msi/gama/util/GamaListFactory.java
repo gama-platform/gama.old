@@ -3,7 +3,7 @@
  * GamaListFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -410,18 +410,24 @@ public class GamaListFactory {
 	 *            the size
 	 * @return the i list
 	 */
-	public static IList create(final IScope scope, final IExpression fillExpr, final Integer size) {
+	public static IList create(final IScope scope, final IExpression fillExpr, final Integer size,
+			final boolean parallel) {
 		if (fillExpr == null) return create(Types.NO_TYPE, size);
 		final Object[] contents = new Object[size];
 		final IType contentType = fillExpr.getGamlType();
 		// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
 		if (fillExpr.isConst()) {
 			final Object o = fillExpr.value(scope);
+			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
+				contents[i] = o;
+			}));
+		} else if (parallel) {
 			GamaExecutorService.executeThreaded(
-					() -> IntStream.range(0, contents.length).parallel().forEach(i -> { contents[i] = o; }));
+					() -> IntStream.range(0, contents.length)./* see #2974. parallel(). */forEach(i -> {
+						contents[i] = fillExpr.value(scope);
+					}));
 		} else {
-			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length)
-					./* see #2974. parallel(). */forEach(i -> { contents[i] = fillExpr.value(scope); }));
+			for (int i = 0; i < contents.length; i++) { contents[i] = fillExpr.value(scope); }
 		}
 		return create(scope, contentType, contents);
 	}

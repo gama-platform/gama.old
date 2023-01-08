@@ -2,7 +2,7 @@
  *
  * Random.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -43,6 +43,148 @@ import one.util.streamex.IntStreamEx;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Random {
+
+	/**
+	 * The Class BitString.
+	 */
+	private static class BitString {
+
+		/** The Constant WORD_LENGTH. */
+		private static final int WORD_LENGTH = 32;
+
+		/** The length. */
+		private final int length;
+
+		/**
+		 * Store the bits packed in an array of 32-bit ints.
+		 */
+		private final int[] data;
+
+		/**
+		 * Creates a bit string of the specified length with all bits initially set to zero (off).
+		 *
+		 * @param length
+		 *            The number of bits.
+		 */
+		public BitString(final int length) {
+			if (length < 0) throw new IllegalArgumentException("Length must be non-negative.");
+			this.length = length;
+			this.data = new int[(length + WORD_LENGTH - 1) / WORD_LENGTH];
+		}
+
+		/**
+		 * Creates a bit string of the specified length with each bit set randomly (the distribution of bits is uniform
+		 * so long as the output from the provided RNG is also uniform). Using this constructor is more efficient than
+		 * creating a bit string and then randomly setting each bit individually.
+		 *
+		 * @param length
+		 *            The number of bits.
+		 * @param rng
+		 *            A source of randomness.
+		 */
+		public BitString(final int length, final java.util.Random rng) {
+			this(length);
+			for (int i = 0; i < data.length; i++) { data[i] = rng.nextInt(); }
+			// If the last word is not fully utilised, zero any out-of-bounds
+			// bits.
+			// This is necessary because the countSetBits() methods will count
+			// out-of-bounds bits.
+			final int bitsUsed = length % WORD_LENGTH;
+			if (bitsUsed < WORD_LENGTH) {
+				final int unusedBits = WORD_LENGTH - bitsUsed;
+				final int mask = 0xFFFFFFFF >>> unusedBits;
+				data[data.length - 1] &= mask;
+			}
+		}
+
+		/**
+		 * Initialises the bit string from a character string of 1s and 0s in big-endian order.
+		 *
+		 * @param value
+		 *            A character string of ones and zeros.
+		 */
+		public BitString(final String value) {
+			this(value.length());
+			for (int i = 0; i < value.length(); i++) {
+				if (value.charAt(i) == '1') {
+					setBit(value.length() - (i + 1), true);
+				} else if (value.charAt(i) != '0')
+					throw new IllegalArgumentException("Illegal character at position " + i);
+			}
+		}
+
+		/**
+		 * @return The length of this bit string.
+		 */
+		public int getLength() { return length; }
+
+		/**
+		 * Returns the bit at the specified index.
+		 *
+		 * @param index
+		 *            The index of the bit to look-up (0 is the least-significant bit).
+		 * @return A boolean indicating whether the bit is set or not.
+		 * @throws IndexOutOfBoundsException
+		 *             If the specified index is not a bit position in this bit string.
+		 */
+		public boolean getBit(final int index) {
+			assertValidIndex(index);
+			final int word = index / WORD_LENGTH;
+			final int offset = index % WORD_LENGTH;
+			return (data[word] & 1 << offset) != 0;
+		}
+
+		/**
+		 * Sets the bit at the specified index.
+		 *
+		 * @param index
+		 *            The index of the bit to set (0 is the least-significant bit).
+		 * @param set
+		 *            A boolean indicating whether the bit should be set or not.
+		 * @throws IndexOutOfBoundsException
+		 *             If the specified index is not a bit position in this bit string.
+		 */
+		public void setBit(final int index, final boolean set) {
+			assertValidIndex(index);
+			final int word = index / WORD_LENGTH;
+			final int offset = index % WORD_LENGTH;
+			if (set) {
+				data[word] |= 1 << offset;
+			} else // Unset the bit.
+			{
+				data[word] &= ~(1 << offset);
+			}
+		}
+
+		/**
+		 * Helper method to check whether a bit index is valid or not.
+		 *
+		 * @param index
+		 *            The index to check.
+		 * @throws IndexOutOfBoundsException
+		 *             If the index is not valid.
+		 */
+		private void assertValidIndex(final int index) {
+			if (index >= length || index < 0)
+				throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
+		}
+
+		/**
+		 * @return The number of bits that are 1s rather than 0s.
+		 */
+		public int countSetBits() {
+			int count = 0;
+			for (int x : data) {
+				while (x != 0) {
+					x &= x - 1; // Unsets the least significant on bit.
+					++count; // Count how many times we have to unset a bit
+								// before x equals zero.
+				}
+			}
+			return count;
+		}
+
+	}
 
 	/**
 	 * Random.
@@ -255,7 +397,15 @@ public class Random {
 					"weibull_rnd" })
 	@test ("seed <- 1.0; poisson(3.5) = 6")
 	public static Integer opPoisson(final IScope scope, final Double mean) {
-		return RANDOM(scope).createPoisson(mean);
+		RandomUtils ru = RANDOM(scope);
+		int x = 0;
+		double t = 0.0;
+		while (true) {
+			t -= Math.log(ru.next()) / mean;
+			if (t > 1.0) { break; }
+			++x;
+		}
+		return x;
 	}
 
 	/**
@@ -284,7 +434,31 @@ public class Random {
 					"weibull_rnd" })
 	@test ("seed <- 1.0; binomial(15,0.6) = 9")
 	public static Integer opBinomial(final IScope scope, final Integer n, final Double p) {
-		return RANDOM(scope).createBinomial(n, p);
+		double value = p;
+		final StringBuilder bits = new StringBuilder(64);
+		double bitValue = 0.5d;
+		while (value > 0) {
+			if (value >= bitValue) {
+				bits.append('1');
+				value -= bitValue;
+			} else {
+				bits.append('0');
+			}
+			bitValue /= 2;
+		}
+		final BitString pBits = new BitString(bits.toString());
+		RandomUtils ru = RANDOM(scope);
+		int trials = n;
+		int totalSuccesses = 0;
+		int pIndex = pBits.getLength() - 1;
+		while (trials > 0 && pIndex >= 0) {
+			final BitString bs = new BitString(trials, ru.getGenerator());
+			final int successes = bs.countSetBits();
+			trials -= successes;
+			if (pBits.getBit(pIndex)) { totalSuccesses += successes; }
+			--pIndex;
+		}
+		return totalSuccesses;
 	}
 
 	/**

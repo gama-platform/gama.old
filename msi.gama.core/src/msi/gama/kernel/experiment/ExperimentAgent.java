@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExperimentAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.8.2).
+ * ExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
@@ -105,12 +105,7 @@ import ummisco.gama.dev.utils.DEBUG;
 		@variable (
 				name = IKeyword.RNG,
 				type = IType.STRING,
-				doc = @doc ("The random number generator to use for this simulation. Three different ones are at the disposal of the modeler: "
-						+ IKeyword.MERSENNE
-						+ " represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; "
-						+ IKeyword.CELLULAR
-						+ " is a cellular automaton based generator that should be a bit faster, but less reliable; and "
-						+ IKeyword.JAVA + " invokes the standard Java generator")),
+				doc = @doc (RandomUtils.DOC)),
 		@variable (
 				name = SimulationAgent.USAGE,
 				type = IType.INT,
@@ -432,7 +427,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final List<ExperimentParameter> params = new ArrayList<>();
 		final String cat = getExperimentParametersCategory();
 		ExperimentParameter p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG),
-				"Random number generator", cat, GamaPreferences.GENERATOR_NAMES, false);
+				"Random number generator", cat, RandomUtils.Generators.names(), false);
 
 		params.add(p);
 		p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Default random seed", cat,

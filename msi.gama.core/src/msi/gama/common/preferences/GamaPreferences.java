@@ -3,7 +3,7 @@
  * GamaPreferences.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -31,6 +31,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeChangeListener;
 import msi.gama.common.preferences.Pref.ValueProvider;
 import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.outputs.layers.properties.ICameraDefinition;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
@@ -55,10 +56,6 @@ import one.util.streamex.StreamEx;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferences {
-
-	/** The Constant GENERATOR_NAMES. */
-	public static final List<String> GENERATOR_NAMES =
-			Arrays.asList(IKeyword.CELLULAR, IKeyword.JAVA, IKeyword.MERSENNE);
 
 	/** The Constant BASIC_COLORS. */
 	public static final ValueProvider<GamaColor>[] BASIC_COLORS = new ValueProvider[] {
@@ -718,7 +715,7 @@ public class GamaPreferences {
 		/** The Constant CORE_RNG. */
 		public static final Pref<String> CORE_RNG =
 				create("pref_rng_name", "Default random number generator", IKeyword.MERSENNE, IType.STRING, true)
-						.among(GENERATOR_NAMES).in(NAME, RNG);
+						.among(RandomUtils.Generators.names()).in(NAME, RNG);
 
 		/** The Constant CORE_SEED_DEFINED. */
 		public static final Pref<Boolean> CORE_SEED_DEFINED =

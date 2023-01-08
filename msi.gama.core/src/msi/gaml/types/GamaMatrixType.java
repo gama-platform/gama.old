@@ -3,7 +3,7 @@
  * GamaMatrixType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -163,9 +163,9 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	public static IMatrix with(final IScope scope, final IExpression val, final GamaPoint p)
+	public static IMatrix with(final IScope scope, final IExpression val, final GamaPoint p, final boolean parallel)
 			throws GamaRuntimeException {
-		return with(scope, val, (int) p.x, (int) p.y);
+		return with(scope, val, (int) p.x, (int) p.y, parallel);
 	}
 
 	/**
@@ -181,7 +181,8 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	 *            the rows
 	 * @return the i matrix
 	 */
-	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows) {
+	public static IMatrix with(final IScope scope, final IExpression fillExpr, final int cols, final int rows,
+			final boolean parallel) {
 		IMatrix result;
 		if (fillExpr == null) return new GamaObjectMatrix(cols, rows, Types.NO_TYPE);
 		switch (fillExpr.getGamlType().id()) {
@@ -190,9 +191,12 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				final double[] dd = ((GamaFloatMatrix) result).getMatrix();
 				if (fillExpr.isConst()) {
 					Arrays.fill(dd, Cast.asFloat(scope, fillExpr.value(scope)));
+				} else if (!parallel) {
+					for (int i = 0; i < dd.length; i++) { dd[i] = Cast.asFloat(scope, fillExpr.value(scope)); }
 				} else {
-					GamaExecutorService.executeThreaded(() -> IntStream.range(0, dd.length).parallel()
-							.forEach(i -> { dd[i] = Cast.asFloat(scope, fillExpr.value(scope)); }));
+					GamaExecutorService.executeThreaded(() -> IntStream.range(0, dd.length).parallel().forEach(i -> {
+						dd[i] = Cast.asFloat(scope, fillExpr.value(scope));
+					}));
 				}
 				break;
 			case IType.INT:
@@ -200,9 +204,12 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				final int[] ii = ((GamaIntMatrix) result).getMatrix();
 				if (fillExpr.isConst()) {
 					Arrays.fill(ii, Cast.asInt(scope, fillExpr.value(scope)));
+				} else if (!parallel) {
+					for (int i = 0; i < ii.length; i++) { ii[i] = Cast.asInt(scope, fillExpr.value(scope)); }
 				} else {
-					GamaExecutorService.executeThreaded(() -> IntStream.range(0, ii.length).parallel()
-							.forEach(i -> { ii[i] = Cast.asInt(scope, fillExpr.value(scope)); }));
+					GamaExecutorService.executeThreaded(() -> IntStream.range(0, ii.length).parallel().forEach(i -> {
+						ii[i] = Cast.asInt(scope, fillExpr.value(scope));
+					}));
 				}
 				break;
 			default:
@@ -210,9 +217,13 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				final Object[] contents = ((GamaObjectMatrix) result).getMatrix();
 				if (fillExpr.isConst()) {
 					Arrays.fill(contents, fillExpr.value(scope));
+				} else if (!parallel) {
+					for (int i = 0; i < contents.length; i++) { contents[i] = fillExpr.value(scope); }
 				} else {
-					GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel()
-							.forEach(i -> { contents[i] = fillExpr.value(scope); }));
+					GamaExecutorService
+							.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
+								contents[i] = fillExpr.value(scope);
+							}));
 				}
 		}
 		return result;

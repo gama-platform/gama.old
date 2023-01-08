@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RandomUtils.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * RandomUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -20,12 +20,16 @@ import java.util.Random;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.random.CellularAutomatonRNG;
-import msi.gama.util.random.GamaRNG;
+import msi.gama.util.random.IGamaRNG;
 import msi.gama.util.random.JavaRNG;
 import msi.gama.util.random.MersenneTwisterRNG;
+import msi.gama.util.random.ParallelMersenneTwisterRNG;
+import msi.gama.util.random.ThreadLocalRNG;
 import msi.gaml.operators.Maths;
-import ummisco.gama.dev.utils.DEBUG;
+
+/**
+ * The Class RandomUtils.
+ */
 
 /**
  * The Class RandomUtils.
@@ -33,57 +37,87 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RandomUtils {
 
-	/** The seed. */
-	protected Double seed;
+	/** The Constant DOC. */
+	public static final String DOC =
+			"The random number generator to use. Four different ones are at the disposal of the modeler: " + "'"
+					+ IKeyword.MERSENNE + "'"
+					+ " represents the default generator, based on the Mersenne-Twister algorithm. Very reliable, fast and deterministic (that is, using the same seed and the same sequence of calls, it will return the same stream of pseudo-random numbers). This algorithm is however not safe to use in simulations where agents can behave in parallel; "
+					+ "'threaded'"
+					+ " is a very fast generator, based on the DotMix algorithm, that can be safely used in parallel simulations as it creates one instance per thread. However, determinism cannot be guaranteed and this algorithm does not accept a seed as each instance will compute its own;"
+					+ "'" + IKeyword.PARALLEL + "'"
+					+ " is a version of the Mersenne-Twister algorithm that can be safely used in parallel simulations by preventing a concurrent access to its internal state. Determinism is guaranteed (in terms of generation, but not in terms of execution, as the sequence in which the threads will access it cannot be determined) and it performs a bit slower than its base version."
+					+ "'" + IKeyword.JAVA + "'"
+					+ " invokes the standard generator provided by the JDK, deterministic and thread-safe, albeit slower than all the other ones";
+
+	/**
+	 * The Enum GeneratorNames.
+	 */
+	public enum Generators {
+		/** The mersenne. */
+		MERSENNE(IKeyword.MERSENNE,
+				" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable, fast and deterministic (that is, using the same seed and the same sequence of calls, it will return the same stream of pseudo-random numbers). This algorithm is however not safe to use in simulations where agents can behave in parallel; "),
+		/** The parallel. */
+		PARALLEL(IKeyword.PARALLEL,
+				" is a version of the Mersenne-Twister algorithm that can be safely used in parallel simulations by preventing a concurrent access to its internal state. Determinism is guaranteed (in terms of generation, but not in terms of execution, as the sequence in which the threads will access it cannot be determined) and it performs a bit slower than its base version; "),
+		/** The java. */
+		JAVA(IKeyword.JAVA,
+				" invokes the standard generator provided by the JDK, deterministic and thread-safe, albeit slower than all the other ones; "),
+		/** The threaded. */
+		THREADED("threaded",
+				" is a very fast generator, based on the DotMix algorithm, that can be safely used in parallel simulations as it creates one instance per thread. However, determinism cannot be guaranteed and this algorithm does not accept a seed as each instance will compute its own; ");
+
+		/** The name. */
+		private String name;
+
+		/**
+		 * Environment.
+		 *
+		 * @param envUrl
+		 *            the env url
+		 */
+		Generators(final String name, final String doc) {
+			this.name = name;
+		}
+
+		/**
+		 * Gets the url.
+		 *
+		 * @return the url
+		 */
+		public String getName() { return name; }
+
+		// ****** Reverse Lookup ************//
+
+		/**
+		 * Gets the
+		 *
+		 * @param url
+		 *            the url
+		 * @return the optional
+		 */
+		public static Generators get(final String url) {
+			return Arrays.stream(values()).filter(env -> env.name.equals(url)).findFirst().orElse(null);
+		}
+
+		/**
+		 * Names.
+		 *
+		 * @return the list
+		 */
+		public static List<String> names() {
+			return Arrays.stream(values()).map(e -> e.name).toList();
+		}
+	}
 
 	/** The Constant SEED_SOURCE. */
 	private static final SecureRandom SEED_SOURCE = new SecureRandom();
+
+	/** The seed. */
+	protected Double seed;
 	/** The generator name. */
 	private String generatorName;
 	/** The generator. */
-	private GamaRNG generator;
-
-	/**
-	 * The Class State.
-	 */
-	public static class State {
-
-		/**
-		 * Instantiates a new state.
-		 *
-		 * @param seed
-		 *            the seed
-		 * @param generatorName
-		 *            the generator name
-		 * @param usage
-		 *            the usage
-		 */
-		public State(final Double seed, final String generatorName, final int usage) {
-			this.seed = seed;
-			this.generatorName = generatorName;
-			this.usage = usage;
-		}
-
-		/** The seed. */
-		Double seed;
-
-		/** The generator name. */
-		String generatorName;
-
-		/** The usage. */
-		int usage;
-
-	}
-
-	/**
-	 * Instantiates a new random utils.
-	 *
-	 * @param state
-	 *            the state
-	 */
-	public RandomUtils(final State state) {
-		setState(state);
-	}
+	private IGamaRNG generator;
 
 	/**
 	 * Instantiates a new random utils.
@@ -117,36 +151,16 @@ public class RandomUtils {
 	}
 
 	/**
-	 * Gets the state.
-	 *
-	 * @return the state
-	 */
-	public State getState() { return new State(seed, generatorName, generator.getUsage()); }
-
-	/**
-	 * Sets the state.
-	 *
-	 * @param state
-	 *            the new state
-	 */
-	public void setState(final State state) {
-		setSeed(state.seed, false);
-		setGenerator(state.generatorName, true);
-		generator.setUsage(state.usage);
-	}
-
-	/**
 	 * Inits the generator.
 	 */
 	private void initGenerator() {
-		if (IKeyword.CELLULAR.equals(generatorName)) {
-			generator = new CellularAutomatonRNG(this);
-		} else if (IKeyword.JAVA.equals(generatorName)) {
-			generator = new JavaRNG(this);
-		} else {
-			/* By default */
-			generator = new MersenneTwisterRNG(this);
-		}
+		generator = switch (Generators.get(generatorName)) {
+			case JAVA -> new JavaRNG(this);
+			case THREADED -> new ThreadLocalRNG(this);
+			case PARALLEL -> new ParallelMersenneTwisterRNG(this);
+			default -> new MersenneTwisterRNG(this);
+		};
+
 	}
 
 	/**
@@ -181,67 +195,6 @@ public class RandomUtils {
 	}
 
 	/**
-	 * Creates a new Binomial Generator object.
-	 *
-	 * @param n
-	 *            the n
-	 * @param p
-	 *            the p
-	 *
-	 * @return the binomial generator
-	 */
-	public int createBinomial(final int n, final double p) {
-
-		double value = p;
-		final StringBuilder bits = new StringBuilder(64);
-		double bitValue = 0.5d;
-		while (value > 0) {
-			if (value >= bitValue) {
-				bits.append('1');
-				value -= bitValue;
-			} else {
-				bits.append('0');
-			}
-			bitValue /= 2;
-		}
-		final BitString pBits = new BitString(bits.toString());
-
-		int trials = n;
-		int totalSuccesses = 0;
-		int pIndex = pBits.getLength() - 1;
-		while (trials > 0 && pIndex >= 0) {
-			final BitString bs = new BitString(trials, generator);
-			final int successes = bs.countSetBits();
-			trials -= successes;
-			if (pBits.getBit(pIndex)) { totalSuccesses += successes; }
-			--pIndex;
-		}
-		return totalSuccesses;
-
-	}
-
-	/**
-	 * Creates a new Poisson Generator object.
-	 *
-	 * @param mean
-	 *            the mean
-	 *
-	 * @return the poisson generator
-	 */
-	public int createPoisson(final double mean) {
-
-		int x = 0;
-		double t = 0.0;
-		while (true) {
-			t -= Math.log(next()) / mean;
-			if (t > 1.0) { break; }
-			++x;
-		}
-		return x;
-
-	}
-
-	/**
 	 * Creates the seed.
 	 *
 	 * @param s
@@ -250,8 +203,7 @@ public class RandomUtils {
 	 *            the length
 	 * @return the byte[]
 	 */
-	private byte[] createSeed(final Double s, final int length) {
-		this.seed = s;
+	public byte[] generateSeed(final int length) {
 		Double realSeed = seed;
 		if (realSeed < 0) { realSeed *= -1; }
 		if (realSeed < 1) { realSeed *= Long.MAX_VALUE; }
@@ -277,17 +229,6 @@ public class RandomUtils {
 				}
 		}
 		return result;
-	}
-
-	/**
-	 * Generate seed.
-	 *
-	 * @param length
-	 *            the length
-	 * @return the byte[]
-	 */
-	public byte[] generateSeed(final int length) {
-		return createSeed(seed, length);
 	}
 
 	/**
@@ -511,200 +452,11 @@ public class RandomUtils {
 	public String getRngName() { return generatorName; }
 
 	/**
-	 * Test draw random values.
-	 *
-	 * @param min
-	 *            the min
-	 * @param max
-	 *            the max
-	 * @param step
-	 *            the step
-	 */
-	public static void testDrawRandomValues(final double min, final double max, final double step) {
-		DEBUG.LOG("Drawing 100 double between " + min + " and " + max + " step " + step);
-		final RandomUtils r = new RandomUtils(100.0, "mersenne");
-		for (int i = 0; i < 100; i++) {
-			final double val = r.between(min, max);
-			final int nbStep = (int) ((val - min) / step);
-			final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
-			final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
-			DEBUG.LOG(val - low < high - val ? low : high, false);
-			DEBUG.LOG(" | ", false);
-		}
-	}
-
-	/**
-	 * Test draw random values.
-	 *
-	 * @param min
-	 *            the min
-	 * @param max
-	 *            the max
-	 * @param step
-	 *            the step
-	 */
-	public static void testDrawRandomValues(final int min, final int max, final int step) {
-		DEBUG.LOG("Drawing 100 int between " + min + " and " + max + " step " + step);
-		final RandomUtils r = new RandomUtils(100.0, "mersenne");
-		final int nbSteps = (max - min) / step;
-		for (int i = 0; i < 100; i++) {
-			final int val = min + r.between(0, nbSteps) * step;
-			DEBUG.LOG(val + " | ", false);
-		}
-	}
-
-	/**
-	 * The Class BitString.
-	 */
-	private static class BitString {
-
-		/** The Constant WORD_LENGTH. */
-		private static final int WORD_LENGTH = 32;
-
-		/** The length. */
-		private final int length;
-
-		/**
-		 * Store the bits packed in an array of 32-bit ints. This field cannot be declared final because it must be
-		 * cloneable.
-		 */
-		private final int[] data;
-
-		/**
-		 * Creates a bit string of the specified length with all bits initially set to zero (off).
-		 *
-		 * @param length
-		 *            The number of bits.
-		 */
-		public BitString(final int length) {
-			if (length < 0) throw new IllegalArgumentException("Length must be non-negative.");
-			this.length = length;
-			this.data = new int[(length + WORD_LENGTH - 1) / WORD_LENGTH];
-		}
-
-		/**
-		 * Creates a bit string of the specified length with each bit set randomly (the distribution of bits is uniform
-		 * so long as the output from the provided RNG is also uniform). Using this constructor is more efficient than
-		 * creating a bit string and then randomly setting each bit individually.
-		 *
-		 * @param length
-		 *            The number of bits.
-		 * @param rng
-		 *            A source of randomness.
-		 */
-		public BitString(final int length, final Random rng) {
-			this(length);
-			// We can set bits 32 at a time rather than calling
-			// rng.nextBoolean()
-			// and setting each one individually.
-			for (int i = 0; i < data.length; i++) { data[i] = rng.nextInt(); }
-			// If the last word is not fully utilised, zero any out-of-bounds
-			// bits.
-			// This is necessary because the countSetBits() methods will count
-			// out-of-bounds bits.
-			final int bitsUsed = length % WORD_LENGTH;
-			if (bitsUsed < WORD_LENGTH) {
-				final int unusedBits = WORD_LENGTH - bitsUsed;
-				final int mask = 0xFFFFFFFF >>> unusedBits;
-				data[data.length - 1] &= mask;
-			}
-		}
-
-		/**
-		 * Initialises the bit string from a character string of 1s and 0s in big-endian order.
-		 *
-		 * @param value
-		 *            A character string of ones and zeros.
-		 */
-		public BitString(final String value) {
-			this(value.length());
-			for (int i = 0; i < value.length(); i++) {
-				if (value.charAt(i) == '1') {
-					setBit(value.length() - (i + 1), true);
-				} else if (value.charAt(i) != '0')
-					throw new IllegalArgumentException("Illegal character at position " + i);
-			}
-		}
-
-		/**
-		 * @return The length of this bit string.
-		 */
-		public int getLength() { return length; }
-
-		/**
-		 * Returns the bit at the specified index.
-		 *
-		 * @param index
-		 *            The index of the bit to look-up (0 is the least-significant bit).
-		 * @return A boolean indicating whether the bit is set or not.
-		 * @throws IndexOutOfBoundsException
-		 *             If the specified index is not a bit position in this bit string.
-		 */
-		public boolean getBit(final int index) {
-			assertValidIndex(index);
-			final int word = index / WORD_LENGTH;
-			final int offset = index % WORD_LENGTH;
-			return (data[word] & 1 << offset) != 0;
-		}
-
-		/**
-		 * Sets the bit at the specified index.
-		 *
-		 * @param index
-		 *            The index of the bit to set (0 is the least-significant bit).
-		 * @param set
-		 *            A boolean indicating whether the bit should be set or not.
-		 * @throws IndexOutOfBoundsException
-		 *             If the specified index is not a bit position in this bit string.
-		 */
-		public void setBit(final int index, final boolean set) {
-			assertValidIndex(index);
-			final int word = index / WORD_LENGTH;
-			final int offset = index % WORD_LENGTH;
-			if (set) {
-				data[word] |= 1 << offset;
-			} else // Unset the bit.
-			{
-				data[word] &= ~(1 << offset);
-			}
-		}
-
-		/**
-		 * Helper method to check whether a bit index is valid or not.
-		 *
-		 * @param index
-		 *            The index to check.
-		 * @throws IndexOutOfBoundsException
-		 *             If the index is not valid.
-		 */
-		private void assertValidIndex(final int index) {
-			if (index >= length || index < 0)
-				throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
-		}
-
-		/**
-		 * @return The number of bits that are 1s rather than 0s.
-		 */
-		public int countSetBits() {
-			int count = 0;
-			for (int x : data) {
-				while (x != 0) {
-					x &= x - 1; // Unsets the least significant on bit.
-					++count; // Count how many times we have to unset a bit
-								// before x equals zero.
-				}
-			}
-			return count;
-		}
-
-	}
-
-	/**
 	 * Gets the generator.
 	 *
 	 * @return the generator
 	 */
-	public GamaRNG getGenerator() { return generator; }
+	public Random getGenerator() { return generator.getRandomGenerator(); }
 
 	/**
 	 * One of.
