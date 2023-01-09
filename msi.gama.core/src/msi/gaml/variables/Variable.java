@@ -400,11 +400,20 @@ public class Variable extends Symbol implements IVariable {
 			// cd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
 			// return;
 			// }
-			final IExpression init = cd.getFacetExpr(INIT);
+
+			// Cf. #3574
+			IExpression foundedInit;
+			if ((IExpression)cd.getFacetExpr(INIT) != null) {
+				foundedInit = cd.getFacetExpr(INIT);
+			} else {
+				foundedInit = cd.getFacetExpr(MIN);
+			}
+			
+			final IExpression init = foundedInit;
 
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + " must have an initial value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(),
+				cd.error(p + " must have an initial or minimal value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(),
 						Cast.toGaml(cd.getGamlType().getDefault()));
 				return;
 			}
