@@ -256,7 +256,7 @@ public class BatchAgent extends ExperimentAgent {
 	 * @return the string
 	 */
 	protected String endStatus() {
-		return "Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.";
+		return "Batch over. " + runNumber + " runs, " + seeds.length + " simulations.";
 	}
 
 	/**
@@ -297,6 +297,9 @@ public class BatchAgent extends ExperimentAgent {
 			throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		final SimulationPopulation pop = getSimulationPopulation();
+		
+
+		
 		/*
 		 * Results gives for each "parameter set" (a point in the parameter space) a mapping between the key outputs of
 		 * interest (as stated in facet 'outputs' or fitness if calibration process) and any results per repetition
@@ -315,6 +318,7 @@ public class BatchAgent extends ExperimentAgent {
 		// LinkedHashSet<ParametersSet> sols_u = new LinkedHashSet<>(sols);
 		for (ParametersSet sol : sols) {
 			for (int i = 0; i < getSeeds().length; i++) {
+				runNumber = runNumber + 1;
 				Map<String, Object> sim = new HashMap<>();
 				sim.put("parameters", sol);
 				sim.put("seed", getSeeds()[i]);
@@ -429,7 +433,6 @@ public class BatchAgent extends ExperimentAgent {
 
 		currentSolution = new ParametersSet(sol);
 		fitnessValues.clear();
-		runNumber = runNumber + 1;
 		// The values present in the solution are passed to the parameters of
 		// the experiment
 		for (final Map.Entry<String, Object> entry : sol.entrySet()) {
@@ -447,6 +450,8 @@ public class BatchAgent extends ExperimentAgent {
 		int repeatIndex = 0;
 		while (repeatIndex < getSeeds().length && !dead) {
 			for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
+				runNumber = runNumber + 1;
+
 				setSeed(getSeeds()[repeatIndex]);
 				createSimulation(currentSolution, true);
 				repeatIndex++;

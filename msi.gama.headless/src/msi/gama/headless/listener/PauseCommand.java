@@ -14,7 +14,7 @@ public class PauseCommand implements ISocketCommand {
 		
 
 		final String exp_id 	= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final Object socket_id	= map.get("socket_id");
+		final String socket_id = map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("pause");
 		DEBUG.OUT(exp_id);
@@ -22,10 +22,10 @@ public class PauseCommand implements ISocketCommand {
 		
 
 		if (exp_id == "" || socket_id == null) {
-			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'pause', mandatory parameters are: 'exp_id' and 'socket_id' ", map, false);
+			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'pause', mandatory parameter is: 'exp_id'", map, false);
 		}
 
-		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id.toString(), exp_id); 
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id); 
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 			gama_exp.controller.directPause();
 			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
