@@ -14,6 +14,7 @@ public class ReloadCommand implements ISocketCommand {
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 		final String exp_id 	= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
+		final String socket_id	= map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("reload");
 		DEBUG.OUT(exp_id);
@@ -23,7 +24,7 @@ public class ReloadCommand implements ISocketCommand {
 			return new CommandResponse(GamaServerMessageType.MalformedRequest, "For 'reload', mandatory parameter is: 'exp_id'", map, false);
 		}
 
-		var gama_exp = gamaWebSocketServer.get_listener().getExperiment("" + socket.hashCode(), exp_id); 
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id); 
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 
 			gama_exp.params = (GamaJsonList) map.get("parameters");

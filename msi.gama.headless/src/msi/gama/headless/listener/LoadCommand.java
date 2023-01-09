@@ -49,7 +49,9 @@ public class LoadCommand implements ISocketCommand {
 			final GamaJsonList params, final String end, IMap<String, Object> map)
 			throws IOException, GamaHeadlessException {
 		
-		final String pathToModel = map.get("model").toString();
+		final String pathToModel= map.get("model").toString();		
+		final String socket_id	= map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
+
 
 		File ff = new File(pathToModel);
 
@@ -100,18 +102,13 @@ public class LoadCommand implements ISocketCommand {
 		selectedJob.endCond = end;
 		selectedJob.controller.directOpenExperiment();
 		//If the client has not ran any experiment yet, we initialize its experiments map
-		if (gamaWebSocketServer.get_listener().getExperimentsOf("" + socket.hashCode()) == null) {
+		if (gamaWebSocketServer.get_listener().getExperimentsOf(socket_id) == null) {
 			final ConcurrentHashMap<String, ManualExperimentJob> exps = new ConcurrentHashMap<>();
-			gamaWebSocketServer.get_listener().getAllExperiments().put("" + socket.hashCode(), exps);
-
+			gamaWebSocketServer.get_listener().getAllExperiments().put(socket_id, exps);
 		}
-		gamaWebSocketServer.get_listener().getExperimentsOf("" + socket.hashCode()).put(selectedJob.getExperimentID(),
-				selectedJob);
+		gamaWebSocketServer.get_listener().getExperimentsOf(socket_id).put(selectedJob.getExperimentID(), selectedJob);
 
-		IMap<String, Object> res = GamaMapFactory.create();
-		res.put("type", "exp");
-		res.put("exp_id", selectedJob.getExperimentID());
 		gamaWebSocketServer.getDefaultApp().processorQueue.execute(selectedJob.controller.executionThread);
-		return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, res, map, false);
+		return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, selectedJob.getExperimentID(), map, false);
 	}
 }

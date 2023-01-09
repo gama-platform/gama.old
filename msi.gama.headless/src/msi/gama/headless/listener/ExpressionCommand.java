@@ -21,6 +21,7 @@ public class ExpressionCommand implements ISocketCommand {
 
 		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 		final Object expr = map.get("expr");
+		final String socket_id = map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
 		final boolean escaped = map.get("escaped") == null ? false : Boolean.parseBoolean("" + map.get("escaped"));
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("expresion");
@@ -32,7 +33,7 @@ public class ExpressionCommand implements ISocketCommand {
 					"For 'expression', mandatory parameters are: 'exp_id' and 'expr'", map, false);
 		}
 
-		var gama_exp = gamaWebSocketServer.get_listener().getExperiment("" + socket.hashCode(), exp_id);
+		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id);
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 
 			final boolean wasPaused = gama_exp.controller.isPaused();
