@@ -403,10 +403,16 @@ public class Variable extends Symbol implements IVariable {
 
 			// Cf. #3574
 			IExpression foundedInit;
-			if ((IExpression)cd.getFacetExpr(INIT) != null) {
+			
+			if (cd.getFacetExpr(INIT) != null) {
 				foundedInit = cd.getFacetExpr(INIT);
 			} else {
-				foundedInit = cd.getFacetExpr(MIN);
+				// Check if steps increment or not and init with corresponding limit range
+				if (Float.parseFloat(cd.getFacetExpr(STEP).toString().replace("(", "").replace(")", "")) < 0.0) {
+					foundedInit = cd.getFacetExpr(MAX);
+				} else {
+					foundedInit = cd.getFacetExpr(MIN);
+				}
 			}
 			
 			final IExpression init = foundedInit;
