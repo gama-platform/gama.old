@@ -409,31 +409,45 @@ public class Exploration extends AExplorationAlgorithm {
 						dateValue = dateValue.plus(stepVal, ChronoUnit.SECONDS);
 					} else {
 						res.add(maxDateValue);
-						maxDateValue = dateValue.plus(stepVal, ChronoUnit.SECONDS);
+						maxDateValue = maxDateValue.minus(Math.abs(stepVal.longValue()), ChronoUnit.SECONDS);
 					}		
 				}
 				break;
 			case IType.POINT:
 				GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
 				GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
-				GamaPoint increment = new GamaPoint();
+				GamaPoint increment = null;
+				Double stepV = null;
+						
 				if (var.getStepValue(scope) != null) {
 					increment = GamaPointType.staticCast(scope, var.getStepValue(scope), true);
+					
 					if (increment == null) {
 						Double d = GamaFloatType.staticCast(scope, var.getStepValue(scope), null, false);
 						if (d == null) {
 							GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.error("Cannot retrieve steps "
 									+ var.getStepValue(scope) + " of paramter " + var.getName(), scope), true);
 						} else {
+							stepV = d;
 							increment = new GamaPoint(d, d, d);
 						}
+					} else {
+						stepV = (increment.x + increment.y + increment.z)/3.0;
+						
 					}
+					
 				} else {
-
+					increment = new GamaPoint((maxPointValue.x - pointValue.x)/10.0,(maxPointValue.y - pointValue.y)/10.0,(maxPointValue.z - pointValue.z)/10.0);
+					
 				}
 				while (pointValue.smallerThanOrEqualTo(maxPointValue)) {
-					res.add(pointValue);
-					pointValue = pointValue.plus(Cast.asPoint(scope, increment));
+					if ((stepV == null) || (stepV> 0)) {
+						res.add(pointValue);
+						pointValue = pointValue.plus(Cast.asPoint(scope, increment));
+					} else {
+						res.add(maxPointValue);
+						maxPointValue = maxPointValue.plus(Cast.asPoint(scope, increment));
+					}
 				}
 				break;
 			default:
