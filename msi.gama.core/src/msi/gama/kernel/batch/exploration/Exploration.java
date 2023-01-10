@@ -368,31 +368,49 @@ public class Exploration extends AExplorationAlgorithm {
 				}
 
 				while (minValue <= maxValue) {
-					res.add(minValue);
-					minValue = minValue + (int) stepValue + (Random.opFlip(scope, stepValue - (int) stepValue) ? 1 : 0);
+					if (stepValue >= 0) {
+						res.add(minValue);
+						minValue = minValue + (int) stepValue + (Random.opFlip(scope, stepValue - (int) stepValue) ? 1 : 0);
+					} else {
+						res.add(maxValue);
+						maxValue = maxValue + (int) stepValue - (Random.opFlip(scope, stepValue - (int) stepValue) ? 1 : 0);
+					}
 				}
 				break;
 			case IType.FLOAT:
-				double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
+				double minFloatValue = Cast.asFloat(scope, var.getMinValue(scope));
 				double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
 				double stepFloatValue = 0.1;
 				if (var.getStepValue(scope) != null) {
 					stepFloatValue = Cast.asFloat(scope, var.getStepValue(scope));
 				} else {
-					stepFloatValue = (maxFloatValue - floatValue) / __default_step_factor;
+					stepFloatValue = (maxFloatValue - minFloatValue) / __default_step_factor;
 				}
 
-				while (floatValue <= maxFloatValue) {
-					res.add(floatValue);
-					floatValue = floatValue + stepFloatValue;
+				while (minFloatValue <= maxFloatValue) {
+					if (stepFloatValue >= 0) {
+						res.add(minFloatValue);
+						minFloatValue = minFloatValue + stepFloatValue;
+						
+					}
+					else { 
+						res.add(maxFloatValue);
+						maxFloatValue = maxFloatValue + stepFloatValue;
+					}
 				}
 				break;
 			case IType.DATE:
 				GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
 				GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
+				Double stepVal = Cast.asFloat(scope,  var.getStepValue(scope));
 				while (dateValue.isSmallerThan(maxDateValue, false)) {
-					res.add(dateValue);
-					dateValue = dateValue.plus(Cast.asFloat(scope, var.getStepValue(scope)), ChronoUnit.SECONDS);
+					if (stepVal > 0) {
+						res.add(dateValue);
+						dateValue = dateValue.plus(stepVal, ChronoUnit.SECONDS);
+					} else {
+						res.add(maxDateValue);
+						maxDateValue = dateValue.plus(stepVal, ChronoUnit.SECONDS);
+					}		
 				}
 				break;
 			case IType.POINT:
@@ -427,17 +445,26 @@ public class Exploration extends AExplorationAlgorithm {
 				} else {
 					floatcrement = (maxVarValue - varValue) / __default_step_factor;
 				}
-				while (varValue <= Cast.asFloat(scope, var.getMaxValue(scope))) {
-
+				while (varValue <= maxVarValue) {
+					
 					if (var.getType().id() == IType.INT) {
-						res.add((int) varValue);
+						if (floatcrement >= 0) 
+							res.add((int) varValue);
+						 else 
+							res.add((int) maxVarValue);
+						
 					} else if (var.getType().id() == IType.FLOAT) {
-						res.add(varValue);
+						if (floatcrement >= 0) 
+							res.add(varValue);
+						else 
+							res.add(maxVarValue);
 					} else {
 						continue;
 					}
-
-					varValue = varValue + floatcrement;
+					if (floatcrement >= 0) 
+						varValue = varValue + floatcrement;
+					else 
+						maxVarValue = maxVarValue + floatcrement;
 				}
 		}
 		return res;
