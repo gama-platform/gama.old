@@ -84,9 +84,9 @@ public class LoadCommand implements ISocketCommand {
 
 		ManualExperimentJob selectedJob = null;
 
-		var console = map.get("console") != null? (boolean) map.get("console") : true;
-		var status 	= map.get("status") != null	? (boolean) map.get("status") : false;
-		var dialog 	= map.get("dialog") != null	? (boolean) map.get("dialog") : false;
+		var console = map.get("console")!= null ? Boolean.parseBoolean("" + map.get("console")) : true;
+		var status 	= map.get("status") != null	? Boolean.parseBoolean("" + map.get("status")) : false;
+		var dialog 	= map.get("dialog") != null	? Boolean.parseBoolean("" + map.get("dialog")) : false;
 		
 		selectedJob = new ManualExperimentJob(	ff.getAbsoluteFile().toString(), 
 												argExperimentName, 

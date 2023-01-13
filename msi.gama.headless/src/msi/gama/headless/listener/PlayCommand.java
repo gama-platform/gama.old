@@ -13,7 +13,7 @@ public class PlayCommand implements ISocketCommand {
 
 
 		final String 	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final boolean 	sync 		= map.get("sync") != null ? (boolean) map.get("sync") : false;
+		final boolean 	sync 		= map.get("sync") != null ? Boolean.parseBoolean("" + map.get("sync")) : false;
 		final String 	socket_id 	= map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("play");

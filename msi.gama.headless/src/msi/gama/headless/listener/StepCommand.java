@@ -12,10 +12,10 @@ public class StepCommand implements ISocketCommand {
 	public CommandResponse execute(final WebSocket socket, IMap<String, Object> map) {
 
 
-		final String 	exp_id 		= map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final int		nb_step		= map.get("nb_step") != null ? ((Number) map.get("nb_step")).intValue() : 1; 
-		final String 	socket_id	= map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
-		final boolean 	sync 		= map.get("sync") != null ? (boolean) map.get("sync") : false;
+		final String 	exp_id 		= map.get("exp_id") 	!= null ? map.get("exp_id").toString() : "";
+		final int		nb_step		= map.get("nb_step") 	!= null ? Integer.parseInt("" + map.get("nb_step")) : 1; 
+		final String 	socket_id	= map.get("socket_id") 	!= null ? map.get("socket_id").toString() : ("" + socket.hashCode());
+		final boolean 	sync 		= map.get("sync") 		!= null ? Boolean.parseBoolean("" + map.get("sync")) : false;
 		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
 		DEBUG.OUT("step");
 		DEBUG.OUT(exp_id);
