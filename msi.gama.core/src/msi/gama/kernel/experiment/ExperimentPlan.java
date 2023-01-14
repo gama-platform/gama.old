@@ -3,7 +3,7 @@
  * ExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -566,7 +566,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					final IParameter p = new ExperimentParameter(myScope, v);
 					final String parameterName = p.getName();
 					final boolean already = parameters.containsKey(parameterName);
-					if (!already) { parameters.put(parameterName, p); }
+					if (!already) {
+						parameters.put(parameterName, p);
+						displayables.add(p);
+					}
 				}
 
 			}
@@ -616,12 +619,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					displayables.add(pb);
 					continue;
 				}
-				final IParameter p = (IParameter) s;
-				final String parameterName = p.getName();
+				final String parameterName = pb.getName();
 				final boolean already = parameters.containsKey(parameterName);
 				if (!already) {
-					displayables.add(p);
-					parameters.put(parameterName, p);
+					displayables.add(pb);
+					parameters.put(parameterName, pb);
 				}
 			} else if (s instanceof ExperimentOutputManager eom) {
 				if (eom.isSync()) { synchronizeAllOutputs(); }
