@@ -13,11 +13,13 @@ import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.matrix.GamaField;
+import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
+import ummisco.gama.dev.utils.DEBUG;
 
 public class ImageSaver {
 
@@ -31,18 +33,37 @@ public class ImageSaver {
 			f = new File(path);
 		}
 		if (f.exists()) { f.delete(); }
+		boolean isMatrix = false;
 		try {
 			Object v = item.value(scope);
 			if (v instanceof GamaField gf) {
 				saveField(scope, gf, f);
-			} else {
+			} 
+			else if (v instanceof GamaIntMatrix matrix) {
+				isMatrix = true;
+				saveMatrix(scope, matrix, f);
+			}
+			else {
 				final ISpecies species = Cast.asSpecies(scope, v);
 				if (species == null || !species.isGrid()) return;
 				saveGrid(scope, species, f);
 			}
 		} finally {
-			ProjectionFactory.saveTargetCRSAsPRJFile(scope, f.getAbsolutePath());
+			if (! isMatrix) {
+				ProjectionFactory.saveTargetCRSAsPRJFile(scope, f.getAbsolutePath());				
+			}
 		}
+	}
+
+	private void saveMatrix(IScope scope, GamaIntMatrix matrix, File f) {
+		try {
+			var img = GamaIntMatrix.constructBufferedImageFromMatrix(scope, matrix);
+			ImageIO.write(img, "png", f);
+		}
+		catch(Exception ex) {
+			DEBUG.OUT(ex);
+		}
+		
 	}
 
 	private void saveGrid(final IScope scope, final ISpecies species, final File file) throws IOException {
