@@ -2,7 +2,7 @@
  *
  * Variable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -403,18 +403,26 @@ public class Variable extends Symbol implements IVariable {
 
 			// Cf. #3574
 			IExpression foundedInit;
-			
+
 			if (cd.getFacetExpr(INIT) != null) {
 				foundedInit = cd.getFacetExpr(INIT);
 			} else {
 				// Check if steps increment or not and init with corresponding limit range
-				if (Float.parseFloat(cd.getFacetExpr(STEP).toString().replace("(", "").replace(")", "")) < 0.0) {
-					foundedInit = cd.getFacetExpr(MAX);
+
+				IExpression step = cd.getFacetExpr(STEP);
+				if (step.isContextIndependant()) {
+					Double stepValue = Cast.asFloat(null, step.getConstValue());
+					if (stepValue < 0) {
+						foundedInit = cd.getFacetExpr(MAX);
+					} else {
+						foundedInit = cd.getFacetExpr(MIN);
+					}
 				} else {
-					foundedInit = cd.getFacetExpr(MIN);
+					foundedInit = cd.getFacetExpr(MIN); // By default, we assume step is positive
 				}
+
 			}
-			
+
 			final IExpression init = foundedInit;
 
 			if (init == null) {
