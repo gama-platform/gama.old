@@ -9,12 +9,12 @@
 
 	<distributionManagement>
 		<repository>
-			<uniqueVersion>false</uniqueVersion>
+			<uniqueVersion>true</uniqueVersion>
 			<id>p2Repo</id>
 			<url>scp://51.255.46.42/./var/www/gama_updates/1.9.0</url>
 		</repository>
 		<snapshotRepository>
-			<uniqueVersion>false</uniqueVersion>
+			<uniqueVersion>true</uniqueVersion>
 			<id>p2Repo</id>
 			<url>scp://51.255.46.42/./var/www/gama_updates/1.9.0</url>
 		</snapshotRepository>
@@ -22,8 +22,12 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.0</tycho.version>
+		<tycho.version>3.0.1</tycho.version>
 		<jdk.version>17</jdk.version>
+		<codehaus.wagon.version>2.0.2</codehaus.wagon.version>
+		<wagon.version>3.5.3</wagon.version>
+		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+		<maven.plugins.version>3.0.0</maven.plugins.version>
 	</properties>
 
 	<profiles>
@@ -57,7 +61,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>wagon-maven-plugin</artifactId>
-						<version>1.0</version>
+						<version>${codehaus.wagon.version}</version>
 						<executions>
 							<execution>
 								<id>p2Repo</id>
@@ -92,7 +96,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jarsigner-plugin</artifactId>
-						<version>3.0.0</version>
+						<version>${maven.plugins.version}</version>
 						<executions>
 							<execution>
 								<id>sign</id>
@@ -120,25 +124,26 @@
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh-external</artifactId>
-				<version>3.5.1</version>
+				<version>${wagon.version}</version>
 			</extension>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
 				<artifactId>wagon-ssh</artifactId>
-				<version>3.5.1</version>
+				<version>${wagon.version}</version>
 			</extension>
 		</extensions>
 
 		<!-- <plugins combine.self="override"> -->
 		<plugins>
 			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.5</version>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-deploy-plugin</artifactId>
+			    <version>${maven.plugins.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.wagon</groupId>
 						<artifactId>wagon-ssh</artifactId>
-						<version>3.5.1</version>
+						<version>${wagon.version}</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -146,7 +151,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+			    <version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
