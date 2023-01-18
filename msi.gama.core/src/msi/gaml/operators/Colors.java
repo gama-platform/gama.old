@@ -330,6 +330,27 @@ public class Colors {
 	public static GamaColor hsb(final Double h, final Double s, final Double b, final Double a) {
 		return new GamaColor(Color.getHSBColor(h.floatValue(), s.floatValue(), b.floatValue()), a);
 	}
+	
+	@operator (
+			value = "to_hsb",
+			can_be_const = true,
+			category = { IOperatorCategory.COLOR },
+			concept = {})
+	@doc (
+			value = "Converts a Gama color to hsb (h=hue, s=saturation, b=brightness) value",
+			examples = @example (
+					value = "to_hsb (#cyan)",
+					equals = "[0.5,1.0,1.0]"))
+	@test ("[0.5,1.0,1.0] = to_hsb(rgb('cyan',0)) ")
+	public static IList<Double> toHSB(final GamaColor c) {
+		IList<Double> hsb = GamaListFactory.create();
+		float[] v = Color.RGBtoHSB(c.getRed(), c.getBlue(), c.getGreen(), null);
+		hsb.add(Float.valueOf(v[0]).doubleValue());
+		hsb.add(Float.valueOf(v[1]).doubleValue());
+		hsb.add(Float.valueOf(v[2]).doubleValue());
+		return hsb;
+	}
+
 
 	/**
 	 * Hsb.
