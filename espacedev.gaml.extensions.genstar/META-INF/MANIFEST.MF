@@ -5,8 +5,8 @@ Bundle-SymbolicName: espacedev.gaml.extensions.genstar;singleton:=true
 Bundle-Version: 1.9.0.qualifier
 Automatic-Module-Name: espacedev.gaml.extensions.genstar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Require-Bundle: msi.gama.core;bundle-version="1.9.0",
- msi.gama.ext;bundle-version="1.9.0",
+Require-Bundle: msi.gama.core,
+ msi.gama.ext,
  org.apache.commons.io
 Bundle-ClassPath: .,
  lib/jackson-annotations-2.13.2.jar,
