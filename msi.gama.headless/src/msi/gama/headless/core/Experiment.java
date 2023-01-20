@@ -119,7 +119,7 @@ public class Experiment implements IExperiment {
 				if (b != null) {
 					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
 							v);
-				} else {
+				} else if (curExperiment.getParameter(m.get("name").toString()) != null) {
 					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(), v);
 				}
 
