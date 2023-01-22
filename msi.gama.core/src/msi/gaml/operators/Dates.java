@@ -2,7 +2,7 @@
  *
  * Dates.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -56,6 +56,7 @@ import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -256,16 +257,6 @@ public class Dates {
 	 *            the period
 	 * @return the boolean
 	 */
-
-	/**
-	 * Every.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param period
-	 *            the period
-	 * @return the boolean
-	 */
 	@operator (
 			value = { "every", "every_cycle" },
 			category = { IOperatorCategory.SYSTEM },
@@ -284,6 +275,95 @@ public class Dates {
 	public static Boolean every(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();
 		return period > 0 && (time == 0 || time >= period) && time % period == 0;
+	}
+
+	/**
+	 * Every.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
+	 * @return the boolean
+	 */
+	@operator (
+			value = { "every", "every_cycle" },
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.CYCLE })
+	@doc (
+			value = "returns the first float operand every 2nd operand * cycle, 0.0 otherwise",
+			comment = "the value of the every operator depends on the cycle. It can be used to return a value every x cycle. `1000.0 every(10#cycle)` is strictly equivalent to `every(10#cycle) ? 1000.0 : 0.0`",
+			examples = { @example (
+					value = "if (1000.0 every(2#cycle) != 0) {write \"this is a value\";}",
+					test = false),
+					@example (
+							value = "	     else {write \"this is 0.0\";}",
+							test = false) })
+	@no_test
+	@validator (EveryValidator.class)
+	public static Double every(final IScope scope, final Double object, final Integer period) {
+		final int time = scope.getClock().getCycle();
+		return period > 0 && (time == 0 || time >= period) && time % period == 0 ? object : 0d;
+	}
+
+	/**
+	 * Every.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
+	 * @return the boolean
+	 */
+	@operator (
+			value = { "every", "every_cycle" },
+
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.CYCLE })
+	@doc (
+			value = "returns the first integer operand every 2nd operand * cycle, 0 otherwise",
+			comment = "the value of the every operator depends on the cycle. It can be used to return a value every x cycle. `1000 every(10#cycle)` is strictly equivalent to `every(10#cycle) ? 1000 : 0`",
+			examples = { @example (
+					value = "if (1000 every(2#cycle) != 0) {write \"this is a value\";}",
+					test = false),
+					@example (
+							value = "	     else {write \"this is 0\";}",
+							test = false) })
+	@no_test
+	@validator (EveryValidator.class)
+	public static Integer every(final IScope scope, final Integer object, final Integer period) {
+		final int time = scope.getClock().getCycle();
+		return period > 0 && (time == 0 || time >= period) && time % period == 0 ? object : 0;
+	}
+
+	/**
+	 * Every.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param period
+	 *            the period
+	 * @return the boolean
+	 */
+	@operator (
+			value = { "every", "every_cycle" },
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.CYCLE })
+	@doc (
+			value = "returns the first operand every 2nd operand * cycle, nil otherwise",
+			comment = "the value of the every operator depends on the cycle. It can be used to return a value every x cycle. `object every(10#cycle)` is strictly equivalent to `every(10#cycle) ? object : nil`",
+			examples = { @example (
+					value = "if ({2000,2000} every(2#cycle) != nil) {write \"this is a point\";}",
+					test = false),
+					@example (
+							value = "	     else {write \"this is nil\";}",
+							test = false) })
+	@no_test
+	@validator (EveryValidator.class)
+	public static Object every(final IScope scope, final Object object, final Integer period) {
+		final int time = scope.getClock().getCycle();
+		return period > 0 && (time == 0 || time >= period) && time % period == 0 ? object : null;
 	}
 
 	/**
@@ -333,7 +413,7 @@ public class Dates {
 		@Override
 		public boolean validate(final IDescription context, final EObject emfContext, final IExpression... arguments) {
 			if (arguments == null || arguments.length == 0) return false;
-			IExpression expr = arguments[0];
+			IExpression expr = arguments[arguments.length - 1];
 			if (expr instanceof ConstantExpression && expr.getGamlType() == Types.INT) {
 				context.warning(
 						"No unit provided. If this frequency concerns cycles, please use the #cycle unit. Otherwise use one of the temporal unit (#ms, #s, #mn, #h, #day, #week, #month, #year)",
