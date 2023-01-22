@@ -371,6 +371,38 @@ public class Dates {
 	 *
 	 * @param scope
 	 *            the scope
+	 * @param object
+	 *            the object
+	 * @param period
+	 *            the period
+	 * @return the boolean
+	 */
+	@operator (
+			value = { "every", "every_cycle" },
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM, IConcept.CYCLE })
+	@doc (
+			value = "returns the first bool operand every 2nd operand * cycle, false otherwise",
+			comment = "the value of the every operator depends on the cycle. It can be used to return a value every x cycle. `object every(10#cycle)` is strictly equivalent to `every(10#cycle) ? object : false`",
+			examples = { @example (
+					value = "if (true every(2#cycle) != false) {write \"this is true\";}",
+					test = false),
+					@example (
+							value = "	     else {write \"this is false\";}",
+							test = false) })
+	@no_test
+	@validator (EveryValidator.class)
+	public static Boolean every(final IScope scope, final Boolean object, final Integer period) {
+		final int time = scope.getClock().getCycle();
+		return period > 0 && (time == 0 || time >= period) && time % period == 0 ? object : false;
+	}
+
+	/**
+	 * Every.
+	 *
+	 * @param scope
+	 *            the scope
 	 * @param period
 	 *            the period
 	 * @return the boolean
