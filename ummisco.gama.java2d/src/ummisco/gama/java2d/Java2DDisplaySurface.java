@@ -3,7 +3,7 @@
  * Java2DDisplaySurface.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -301,7 +301,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 					// resizeImage(width, height, false);
 
 				}
-				print(g);
+				// Use printComponent() instead of print() as it prevents from changing the clip (see #3570)
+				printComponent(g);
 				if (!sameSize) {
 					// resizeImage(previousWidth, previousHeight, false);
 					viewPort.setBounds(old);
