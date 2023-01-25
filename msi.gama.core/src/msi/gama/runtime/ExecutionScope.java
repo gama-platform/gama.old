@@ -3,7 +3,7 @@
  * ExecutionScope.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -29,6 +29,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulationFactory;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.concurrent.GamaExecutorService;
@@ -667,7 +668,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		if (executionContext != null && varsToSave!=null) { varsToSave.putAll(executionContext.getLocalVars()); }
+		if (executionContext != null && varsToSave != null) { varsToSave.putAll(executionContext.getLocalVars()); }
 	}
 
 	/**
@@ -903,6 +904,13 @@ public class ExecutionScope implements IScope {
 		final ITopLevelAgent root = getRoot();
 		if (root == null) return null;
 		return root.getExperiment();
+	}
+
+	@Override
+	public IPopulationFactory getPopulationFactory() {
+		IExperimentAgent exp = getExperiment();
+		if (exp == null) return null;
+		return exp.getPopulationFactory();
 	}
 
 	/**

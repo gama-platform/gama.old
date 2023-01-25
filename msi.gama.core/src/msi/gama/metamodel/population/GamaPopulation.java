@@ -3,7 +3,7 @@
  * GamaPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -60,7 +60,6 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GraphTopology;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.FlowStatus;
 import msi.gama.runtime.GAMA;
@@ -100,29 +99,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	static {
 		DEBUG.ON();
-	}
-
-	/**
-	 * Creates the population.
-	 *
-	 * @param <E>
-	 *            the element type
-	 * @param scope
-	 *            the scope
-	 * @param host
-	 *            the host
-	 * @param species
-	 *            the species
-	 * @return the gama population
-	 */
-	public static <E extends IAgent> GamaPopulation<E> createPopulation(final IScope scope, final IMacroAgent host,
-			final ISpecies species) {
-		if (species.isGrid()) {
-			final ITopology t = buildGridTopology(scope, species, host);
-			final GamaSpatialMatrix m = (GamaSpatialMatrix) t.getPlaces();
-			return m.new GridPopulation<>(t, host, species);
-		}
-		return new GamaPopulation<>(host, species);
 	}
 
 	/**

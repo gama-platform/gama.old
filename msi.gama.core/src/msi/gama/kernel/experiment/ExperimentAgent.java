@@ -29,7 +29,9 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.DefaultPopulationFactory;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.IPopulationFactory;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IOutputManager;
@@ -189,6 +191,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	/** The is on user hold. */
 	private volatile boolean isOnUserHold = false;
 
+	/** The default population factory for this kind of experiment. */
+	private final IPopulationFactory populationFactory;
+
 	/**
 	 * Instantiates a new experiment agent.
 	 *
@@ -201,10 +206,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public ExperimentAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
+
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
 		ownScope = new ExperimentAgentScope();
 		ownClock = new ExperimentClock(ownScope);
 		executer = new ActionExecuter(ownScope);
+		populationFactory = initializePopulationFactory();
 		// Should not perform a whole reset as it shuts down UI outputs in comodels (see #2813)
 		if (s.getSpecies().getDescription().belongsToAMicroModel()) {
 			initialize();
@@ -225,6 +232,19 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		} else {
 			random = new RandomUtils(getDefinedSeed(), getDefinedRng());
 		}
+	}
+
+	@Override
+	public final IPopulationFactory getPopulationFactory() { return populationFactory; }
+
+	/**
+	 * Initialize population factory. This method should be redefined in experiments that need to return a different
+	 * population factory.
+	 *
+	 * @return the population factory
+	 */
+	protected IPopulationFactory initializePopulationFactory() {
+		return new DefaultPopulationFactory();
 	}
 
 	@Override

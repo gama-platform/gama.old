@@ -3,7 +3,7 @@
  * IExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,6 +14,7 @@ import java.util.List;
 
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
+import msi.gama.metamodel.population.IPopulationFactory;
 
 /**
  * The Interface IExperimentAgent.
@@ -116,5 +117,12 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return true, if is synchronized
 	 */
 	default boolean isSynchronized() { return getSpecies().isSynchronized(); }
+
+	/**
+	 * Returns the population factory of this type of experiment -- default is a DefaultPopulationFactory
+	 *
+	 * @return the population factory
+	 */
+	IPopulationFactory getPopulationFactory();
 
 }

@@ -32,7 +32,6 @@ import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.SavedAgent;
-import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -489,9 +488,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		if (pop != null) return pop;
 		final ISpecies microSpec = getSpecies().getMicroSpecies(speciesName);
 		if (microSpec == null) return null;
-		pop = GamaPopulation.createPopulation(getScope(), this, microSpec);
+		IScope scope = getScope();
+		pop = scope.getPopulationFactory().createPopulation(scope, this, microSpec);
 		setAttribute(speciesName, pop);
-		pop.initializeFor(getScope());
+		pop.initializeFor(scope);
 		return pop;
 	}
 

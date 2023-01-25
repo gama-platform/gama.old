@@ -2,7 +2,7 @@
  *
  * GamlAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.MetaPopulation;
 import msi.gama.metamodel.shape.IShape;
@@ -225,7 +224,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public void initializeMicroPopulation(final IScope scope, final String name) {
 		final ISpecies microSpec = getModel().getSpecies(name);
-		final IPopulation<? extends IAgent> microPop = GamaPopulation.createPopulation(scope, this, microSpec);
+		final IPopulation<? extends IAgent> microPop =
+				scope.getPopulationFactory().createPopulation(scope, this, microSpec);
 		registerMicropopulation(scope, microSpec, microPop);
 	}
 
