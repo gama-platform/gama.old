@@ -334,6 +334,11 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
+	public void toggleLock() {
+		if (getDisplaySurface() != null) { getDisplaySurface().toggleLock(); }
+	}
+
+	@Override
 	public Control[] getZoomableControls() { return new Control[] { getParentComposite() }; }
 
 	@Override

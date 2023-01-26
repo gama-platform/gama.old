@@ -267,6 +267,11 @@ public interface IToolbarDecoratedView {
 		void zoomFit();
 
 		/**
+		 * Locks/unlocks the view.
+		 */
+		void toggleLock();
+
+		/**
 		 * @return the controls that will react to gestures / mouse doucle-cliks
 		 */
 		Control[] getZoomableControls();

@@ -300,7 +300,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.getData().setZoomLevel(renderer.getCameraHelper().zoomLevel(), true);
 		// output.getData().setZoomLevel(LayeredDisplayData.INITIAL_ZOOM, true, true);
 		zoomFit = true;
+	}
 
+	@Override
+	public void toggleLock() {
+		renderer.getCameraHelper().toggleCamera();
 	}
 
 	/**

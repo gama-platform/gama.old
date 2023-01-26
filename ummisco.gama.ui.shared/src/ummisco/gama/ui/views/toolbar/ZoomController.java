@@ -146,11 +146,10 @@ public class ZoomController {
 				};
 				menu.open(tb.getToolbar(SWT.RIGHT), trigger, tb.height, 96);
 			}, SWT.RIGHT);
-			cameraLocked = tb.check("display.lock", "Lock/unlock", "Lock/unlock camera", e -> {
-				view.getCameraHelper().toggleCamera();
-			}, SWT.RIGHT);
 		}
-
+		cameraLocked = tb.check("display.lock", "Lock/unlock", "Lock/unlock camera", e -> {
+			view.toggleLock();
+		}, SWT.RIGHT);
 	}
 
 }

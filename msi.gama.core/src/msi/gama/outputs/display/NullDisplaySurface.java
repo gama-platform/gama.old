@@ -94,6 +94,14 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void zoomFit() {}
 
 	/**
+	 * Method zoomFit()
+	 *
+	 * @see msi.gama.common.interfaces.IDisplaySurface#toggleLock()
+	 */
+	@Override
+	public void toggleLock(){}
+
+	/**
 	 * Method getManager()
 	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getManager()

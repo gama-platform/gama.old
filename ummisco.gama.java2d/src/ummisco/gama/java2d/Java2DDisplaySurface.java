@@ -142,6 +142,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	/** The mouse position. */
 	Point mousePosition;
 
+	private boolean is_locked = false;
+
 	/**
 	 * Instantiates a new java 2 D display surface.
 	 *
@@ -210,10 +212,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void draggedTo(final int x, final int y) {
-		final Point origin = getOrigin();
-		setOrigin(origin.x + x - getMousePosition().x, origin.y + y - getMousePosition().y);
+		if(!is_locked) {
+			final Point origin = getOrigin();
+			setOrigin(origin.x + x - getMousePosition().x, origin.y + y - getMousePosition().y);
+			updateDisplay(true);
+		}
 		setMousePosition(x, y);
-		updateDisplay(true);
 	}
 
 	@Override
@@ -417,12 +421,19 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void zoomIn() {
-		zoom(true);
+		if(!is_locked)
+			zoom(true);
 	}
 
 	@Override
 	public void zoomOut() {
-		zoom(false);
+		if(!is_locked)
+			zoom(false);
+	}
+
+	@Override
+	public void toggleLock() {
+		is_locked = !is_locked;
 	}
 
 	/**

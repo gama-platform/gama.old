@@ -115,6 +115,9 @@ public class ImageViewer extends EditorPart
 	/** The max zoom factor. */
 	double maxZoomFactor = 1.0d;
 	
+	/** Variable used to specify if the zoom is locked. */
+	boolean locked = false;
+
 	/** The input listener. */
 	ImageResourceChangeListener inputListener = null;
 
@@ -676,12 +679,14 @@ public class ImageViewer extends EditorPart
 
 	@Override
 	public void zoomIn() {
-		setZoomFactor(getZoomFactor() * 1.1);
+		if(!locked)
+			setZoomFactor(getZoomFactor() * 1.1);
 	}
 
 	@Override
 	public void zoomOut() {
-		setZoomFactor(getZoomFactor() * 0.9);
+		if(!locked)
+			setZoomFactor(getZoomFactor() * 0.9);
 	}
 
 	@Override
@@ -691,6 +696,11 @@ public class ImageViewer extends EditorPart
 		} else {
 			setZoomFactor((double) scroll.getSize().y / (double) imageData.height);
 		}
+	}
+
+	@Override
+	public void toggleLock() {
+		locked = !locked;
 	}
 
 	@Override
