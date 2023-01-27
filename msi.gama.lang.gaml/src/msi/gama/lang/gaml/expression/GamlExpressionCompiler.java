@@ -3,7 +3,7 @@
  * GamlExpressionCompiler.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -109,11 +109,9 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.operators.TypeFieldExpression;
 import msi.gaml.expressions.types.DenotedActionExpression;
-import msi.gaml.expressions.units.TimeUnitConstantExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.expressions.variables.EachExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.Dates;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -927,7 +925,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (exp.isDeprecated()) {
 				getContext().warning(s + " is deprecated.", IGamlIssue.DEPRECATED, object, (String[]) null);
 			}
-			return exp;
+			// Make sure we can return "special" expression like #month or #year -- see #3590
+			return exp.getExpression();
 		}
 		getContext().error(s + " is not a unit or constant name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
 		return null;
@@ -973,9 +972,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// translated into its float value
 
 		// Case of dates: #month and #year
-		final String name = EGaml.getInstance().toString(object.getRight());
-		if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS.contains(name))
-			return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight());
+		// final String name = EGaml.getInstance().toString(object.getRight());‡
+		// if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS.contains(name))
+		// return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight());
 		return binary("*", object.getLeft(), object.getRight());
 	}
 

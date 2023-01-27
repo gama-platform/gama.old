@@ -54,7 +54,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.ListExpression;
-import msi.gaml.expressions.units.TimeUnitConstantExpression;
+import msi.gaml.expressions.units.TimeUnitConstantExpression.ITimeFloatExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.AbstractSpecies;
 import msi.gaml.statements.IExecutable;
@@ -223,9 +223,9 @@ public class Variable extends Symbol implements IVariable {
 				// May 2019: a warning is emitted instead (see why in #2574)
 				if (STEP.equals(name) && cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
 					final IExpression expr = cd.getFacetExpr(INIT);
-					if (expr.findAny(e -> e instanceof TimeUnitConstantExpression && !e.isConst())) {
+					if (expr.findAny(e -> e instanceof ITimeFloatExpression)) {
 						cd.warning(
-								"Time dependent constants used in 'init' are computed once. The resulting durations may be irrelevant after a few cycles. An 'update' facet should better be defined to recompute 'step' every cycle",
+								"Time dependent constants used to define the step at initialization are computed once based on the current_date. The resulting durations may be irrelevant after a few cycles. An 'update:' facet should be defined with the same expression to recompute the step every cycle",
 								IGamlIssue.CONFLICTING_FACETS, INIT);
 					}
 				}
