@@ -39,7 +39,7 @@ global {
 species contour_line {
 	float elevation;
 	aspect default {
-		draw shape + 5.0 color: #red depth: 10 at: {location.x,location.y, elevation}; 
+		draw shape color: #red depth: 30 at: {location.x,location.y, elevation}; 
 	}
 }
 species triangle_ag {
@@ -52,6 +52,7 @@ species triangle_ag {
 experiment contour_lines_import type: gui {
 	output {
 		display map type: 3d {
+			camera 'default' location: {4341.8834,20215.2668,9585.3894} target: {5500.0,5500.0,0.0};
 			species triangle_ag refresh: false;
 			species contour_line refresh: false;
 		}

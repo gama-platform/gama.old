@@ -23,7 +23,6 @@ global
 		write rest_link;
 		static_map_request <- image_file(rest_link);
 		
-		
 	}
  
 	init
@@ -43,9 +42,9 @@ experiment Display
 	 
 	output
 	{
-		display "Bing Map" type: 3d
+		display "Bing Map" type: 3d axes:false
 		{
-			image static_map_request;
+			image static_map_request refresh:true;
 		}
 
 	}

@@ -26,7 +26,7 @@ grid cell file: grid_data{
 
 experiment gridloading type: gui {
 	output {
-		display "As DEM" type: 3d{
+		display "As DEM" type: 3d axes:false{
 			grid cell border: #gray elevation: self.grid_value * 300 ;
 		}
 		
