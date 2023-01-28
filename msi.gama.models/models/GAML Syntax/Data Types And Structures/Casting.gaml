@@ -7,7 +7,7 @@
 
 model Casting
 
-species to_int {
+species cast_to_int {
 	init {
 		write sample(int(1));
 		write sample(int(1.0));
@@ -26,7 +26,7 @@ species to_int {
 }
 
 
-species to_float{
+species cast_to_float{
 	init {
 		write sample(float(1));
 		write sample(float(1.0));
@@ -45,7 +45,7 @@ species to_float{
 }
 
 
-species to_string{
+species cast_to_string{
 	init {
 		write sample(string(1));
 		write sample(string(1.0));
@@ -61,7 +61,7 @@ species to_string{
 	}
 }
 
-species to_point{
+species cast_to_point{
 	init {
 		write sample(point(1));
 		write sample(point(1.0));
@@ -78,7 +78,7 @@ species to_point{
 		write sample(point(°meter));				
 	}
 }
-species to_list{
+species cast_to_list{
 	init {
 		write sample(list(1));
 		write sample(list(1.0));
@@ -95,7 +95,7 @@ species to_list{
 		write sample(list(°meter));				
 	}
 }
-species to_pair{
+species cast_to_pair{
 	init {
 		write sample(pair(1));
 		write sample(pair(1.0));
@@ -112,7 +112,7 @@ species to_pair{
 		write sample(pair(°meter));				
 	}
 }
-species to_map{
+species cast_to_map{
 	init {
 		write sample(map<float, int>(°meter));
 		write sample(map(1));
@@ -131,11 +131,11 @@ species to_map{
 	}
 }
 experiment Casting type: gui{
-	user_command "to int" {create to_int;}
-	user_command "to float" {create to_float;}
-	user_command "to string" {create to_string;}
-	user_command "to point" {create to_point;}
-	user_command "to list" {create to_list;}
-	user_command "to pair" {create to_pair;}
-	user_command "to map" {create to_map;}
+	user_command "to int" {create cast_to_int;}
+	user_command "to float" {create cast_to_float;}
+	user_command "to string" {create cast_to_string;}
+	user_command "to point" {create cast_to_point;}
+	user_command "to list" {create cast_to_list;}
+	user_command "to pair" {create cast_to_pair;}
+	user_command "to map" {create cast_to_map;}
 }
