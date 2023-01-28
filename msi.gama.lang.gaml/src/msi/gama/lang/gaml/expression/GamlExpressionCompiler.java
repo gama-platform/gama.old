@@ -968,13 +968,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseUnit(final Unit object) {
 		// We simply return a multiplication, since the right member (the
-		// "unit") will be
-		// translated into its float value
-
-		// Case of dates: #month and #year
-		// final String name = EGaml.getInstance().toString(object.getRight());‡
-		// if (TimeUnitConstantExpression.UNCOMPUTABLE_DURATIONS.contains(name))
-		// return binary(Dates.APPROXIMATE_TEMPORAL_QUERY, object.getLeft(), object.getRight());
+		// "unit") will be translated into its float value
 		return binary("*", object.getLeft(), object.getRight());
 	}
 

@@ -18,6 +18,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -500,6 +501,43 @@ public class Cast {
 	 */
 	public static IList asList(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaListType.staticCast(scope, val, null, false);
+	}
+
+	/**
+	 * To list.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param val
+	 *            the val
+	 * @return the i list
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+
+	/**
+	 * List with.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param size
+	 *            the size
+	 * @param init
+	 *            the init
+	 * @return the i list
+	 */
+	@operator (
+			value = "to_list",
+			content_type = ITypeProvider.CONTENT_TYPE_AT_INDEX + 1,
+			can_be_const = true,
+			concept = { IConcept.CAST, IConcept.CONTAINER })
+	@doc (
+			value = "casts the operand to a list, making an explicit copy if it is already a list or a subtype of list (interval, population, etc.)",
+			see = { "list" })
+	@no_test
+	public static IList toList(final IScope scope, final Object val) throws GamaRuntimeException {
+		// copy is set to true in order to force the creation of a new list
+		return GamaListType.staticCast(scope, val, null, true);
 	}
 
 	/**

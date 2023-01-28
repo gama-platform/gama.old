@@ -485,27 +485,17 @@ public class Dates {
 			concept = { IConcept.DATE, IConcept.CYCLE })
 	@doc (
 			see = { "to" },
-			value = "applies a step to an interval of dates defined by 'date1 to date2'",
+			value = "applies a step to an interval of dates defined by 'date1 to date2'. Beware that using every with #month or #year will produce odd results,"
+					+ "as these pseudo-constants are not constant; only the first value will be used to compute the intervals, so, for instance, if current_date is set to February"
+					+ "#month will only represent 28 or 29 days. ",
 			comment = "",
 			examples = { @example (
-					value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
+					value = "(date('2000-01-01') to date('2010-01-01')) every (#day) // builds an interval between these two dates which contains all the days starting from the beginning of the interval",
 					isExecutable = false) })
 	@test ("list((date('2001-01-01') to date('2001-1-02')) every(#day)) collect each = [date ('2001-01-01 00:00:00')]")
 	public static IList<GamaDate> every(final IScope scope, final GamaDateInterval interval, final IExpression period) {
 		return interval.step(Cast.asFloat(scope, period.value(scope)));
 	}
-
-	/**
-	 * To.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param start
-	 *            the start
-	 * @param end
-	 *            the end
-	 * @return the i list
-	 */
 
 	/**
 	 * To.
@@ -530,10 +520,14 @@ public class Dates {
 					value = "date('2000-01-01') to date('2010-01-01') // builds an interval between these two dates",
 					isExecutable = false),
 					@example (
-							value = "(date('2000-01-01') to date('2010-01-01')) every (#month) // builds an interval between these two dates which contains all the monthly dates starting from the beginning of the interval",
+							value = "(date('2000-01-01') to date('2010-01-01')) every (#day) // builds an interval between these two dates which contains all "
+									+ "the days starting from the beginning of the interval. Beware that using every with #month or #year will produce odd results, "
+									+ "as these pseudo-constants are not constant; only the first value will be used to compute the intervals (if current_date is set to a month of February, "
+									+ "#month will only represent 28 or 29 days depending on whether it is a leap year or not !). If such intervals need to be built, it is recommended to use"
+									+ "a generative way, for instance a loop using the 'plus_years' or 'plus_months' operators to build a list of dates",
 							isExecutable = false) })
-	@test ("list((date('2001-01-01') to date('2001-4-01')) every(#month)) collect each =\n"
-			+ "		[date ('2001-01-01 00:00:00'),date ('2001-01-31 00:00:00'),date ('2001-03-02 00:00:00')]")
+	@test ("to_list((date('2001-01-01') to date('2001-01-06')) every(#day)) =\n"
+			+ "		[date ('2001-01-01 00:00:00'),date ('2001-01-02 00:00:00'),date ('2001-01-03 00:00:00'),date ('2001-01-04 00:00:00'),date ('2001-01-05 00:00:00')]")
 	public static IList<GamaDate> to(final IScope scope, final GamaDate start, final GamaDate end) {
 		return GamaDateInterval.of(start, end);
 	}
