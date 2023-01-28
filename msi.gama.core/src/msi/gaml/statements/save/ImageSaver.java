@@ -1,6 +1,16 @@
+/*******************************************************************************************************
+ *
+ * ImageSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,12 +27,26 @@ import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
-import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
 import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * The Class ImageSaver.
+ */
 public class ImageSaver {
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public void save(final IScope scope, final IExpression item, final File file) throws IOException {
 		if (file == null) return;
 		File f = file;
@@ -38,34 +62,51 @@ public class ImageSaver {
 			Object v = item.value(scope);
 			if (v instanceof GamaField gf) {
 				saveField(scope, gf, f);
-			} 
-			else if (v instanceof GamaIntMatrix matrix) {
+			} else if (v instanceof GamaIntMatrix matrix) {
 				isMatrix = true;
 				saveMatrix(scope, matrix, f);
-			}
-			else {
+			} else {
 				final ISpecies species = Cast.asSpecies(scope, v);
 				if (species == null || !species.isGrid()) return;
 				saveGrid(scope, species, f);
 			}
 		} finally {
-			if (! isMatrix) {
-				ProjectionFactory.saveTargetCRSAsPRJFile(scope, f.getAbsolutePath());				
-			}
+			if (!isMatrix) { ProjectionFactory.saveTargetCRSAsPRJFile(scope, f.getAbsolutePath()); }
 		}
 	}
 
-	private void saveMatrix(IScope scope, GamaIntMatrix matrix, File f) {
+	/**
+	 * Save matrix.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param matrix
+	 *            the matrix
+	 * @param f
+	 *            the f
+	 */
+	private void saveMatrix(final IScope scope, final GamaIntMatrix matrix, final File f) {
 		try {
 			var img = GamaIntMatrix.constructBufferedImageFromMatrix(scope, matrix);
 			ImageIO.write(img, "png", f);
-		}
-		catch(Exception ex) {
+		} catch (Exception ex) {
 			DEBUG.OUT(ex);
 		}
-		
+
 	}
 
+	/**
+	 * Save grid.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param species
+	 *            the species
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void saveGrid(final IScope scope, final ISpecies species, final File file) throws IOException {
 		final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
 		final int cols = gp.getNbCols();
@@ -81,14 +122,30 @@ public class ImageSaver {
 			fw.write(cw + "\n0.0\n0.0\n" + ch + "\n" + x + "\n" + y);
 		}
 		final BufferedImage image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_RGB);
-		for (final Object g : gp.getAgents(scope).iterable(scope)) {
-			final IGridAgent ag = (IGridAgent) g;
-			image.setRGB(ag.getX(), rows - 1 - ag.getY(), ag.getColor().getRGB());
-		}
+
+		final int[] imageData = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		System.arraycopy(gp.getTopology().getPlaces().getDisplayData(), 0, imageData, 0, imageData.length);
+		// see #3592
+		// for (final Object g : gp.getAgents(scope).iterable(scope)) {
+		// final IGridAgent ag = (IGridAgent) g;
+		// image.setRGB(ag.getX(), rows - 1 - ag.getY(), ag.getColor().getRGB());
+		// }
 		ImageIO.write(image, "png", file);
 
 	}
 
+	/**
+	 * Save field.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param f
+	 *            the f
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void saveField(final IScope scope, final GamaField field, final File f) throws IOException {
 		if (field.isEmpty(scope)) return;
 		final int cols = field.numCols;
