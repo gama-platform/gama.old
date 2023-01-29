@@ -47,7 +47,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.ICameraHelper;
 public class CameraHelper extends AbstractRendererHelper implements IMultiListener, ICameraHelper {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	// class IntermediaryState {
@@ -761,6 +761,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	final void internalMouseDown(final int x, final int y, final int button, final boolean isCtrl,
 			final boolean isShift) {
+		DEBUG.OUT("Camera mouse down on " + x + ", " + y);
 
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition.setLocation(x, y, 0);
@@ -769,7 +770,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		if (keystoneMode) {
 			if (getRenderer().getKeystoneHelper().getCornerSelected() != -1) {
 				getRenderer().getKeystoneHelper().setCornerSelected(-1);
-				return;
+				// return;
 			}
 			final int cornerSelected = clickOnKeystone(x, y);
 			if (cornerSelected != -1) { getRenderer().getKeystoneHelper().setCornerSelected(cornerSelected); }
@@ -789,13 +790,13 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		// else {
 		// renderer.getPickingState().setPicking(false);
 		// }
-		getMousePosition().x = x;
-		getMousePosition().y = y;
+		mousePosition.x = x;
+		mousePosition.y = y;
+		computeMouseLocationInTheWorld();
 
 		setMouseLeftPressed(button == 1);
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
-
 	}
 
 	/**
@@ -832,6 +833,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the e
 	 */
 	protected void internalMouseUp(final int button, final boolean isShift) {
+		DEBUG.OUT("Camera mouse up.");
 		firsttimeMouseDown = true;
 		if (isViewInXYPlan() && isShift) { finishROISelection(); }
 		if (button == 1) { setMouseLeftPressed(false); }

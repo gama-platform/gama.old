@@ -749,6 +749,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				case SWT.MouseMove:
 					gl.mouseMove(x, y);
 					break;
+				case SWT.DragDetect:
+					gl.mouseDrag(x, y, 1);
+					break;
 				case SWT.MouseEnter:
 					gl.mouseEnter(x, y);
 					break;

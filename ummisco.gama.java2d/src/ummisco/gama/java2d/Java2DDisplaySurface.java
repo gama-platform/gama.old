@@ -236,6 +236,9 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 				case SWT.MouseMove:
 					gl.mouseMove(x, y);
 					break;
+				case SWT.DragDetect:
+					gl.mouseDrag(x, y, 1);
+					break;
 				case SWT.MouseEnter:
 					gl.mouseEnter(x, y);
 					break;
@@ -361,6 +364,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	 *            the y
 	 */
 	void setOrigin(final int x, final int y) {
+		DEBUG.OUT("Move view port to (" + x + "," + y + ")");
 		// Temporarily reverts the changes introduced for #2367
 		final int inset = 0;
 		viewPort.setLocation(x - inset, y - inset);

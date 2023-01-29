@@ -72,7 +72,14 @@ public class WorkaroundForIssue2476 {
 			@Override
 			public void mouseDragged(final java.awt.event.MouseEvent e) {
 				DEBUG.OUT("Mouse drag on applet");
+				// Moves the surface view
 				surface.draggedTo(e.getX(), e.getY());
+				// Updates the mouse position. If the surface view is locked, the
+				// mouse actually moves in the environment. Is the surface is
+				// dragged, the environment follows the mouse so the #user_location
+				// technically does not change, but approximations are not likely to
+				// break anything.
+				setMousePosition(surface, e.getX(), e.getY());
 			}
 		});
 		applet.addMouseListener(new java.awt.event.MouseListener() {
@@ -81,13 +88,15 @@ public class WorkaroundForIssue2476 {
 
 			@Override
 			public void mouseReleased(final java.awt.event.MouseEvent e) {
-				surface.setMousePosition(e.getX(), e.getY());
+				setMousePosition(surface, e.getX(), e.getY());
 				surface.dispatchMouseEvent(SWT.MouseUp, e.getX(), e.getY());
 			}
 
 			@Override
 			public void mousePressed(final java.awt.event.MouseEvent e) {
-
+				// DEBUG.OUT("Click on " + e.getX() + " " + e.getY());
+				setMousePosition(surface, e.getX(), e.getY());
+				surface.dispatchMouseEvent(SWT.MouseDown, e.getX(), e.getY());
 			}
 
 			@Override
@@ -115,10 +124,6 @@ public class WorkaroundForIssue2476 {
 					inMenu = false;
 					return;
 				}
-				// DEBUG.OUT("Click on " + e.getX() + " " + e.getY());
-				setMousePosition(surface, e.getX(), e.getY());
-				surface.dispatchMouseEvent(SWT.MouseDown, e.getX(), e.getY());
-
 			}
 		});
 

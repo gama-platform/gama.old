@@ -49,6 +49,10 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	/** The Constant MOUSE_MENU. */
 	private final static int MOUSE_MENU = 7;
 
+	/** The Constant MOUSE_DRAGGED. */
+	private final static int MOUSE_DRAGGED = 8;
+
+
 	/** The Constant KEY_PRESSED. */
 	private final static int KEY_PRESSED = 3;
 
@@ -104,6 +108,7 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 		if (IKeyword.MOUSE_ENTERED.equals(eventTypeName)) return MOUSE_ENTERED;
 		if (IKeyword.MOUSE_EXITED.equals(eventTypeName)) return MOUSE_EXITED;
 		if (IKeyword.MOUSE_MENU.equals(eventTypeName)) return MOUSE_MENU;
+		if (IKeyword.MOUSE_DRAGGED.equals(eventTypeName)) return MOUSE_DRAGGED;
 		return KEY_PRESSED;
 	}
 
@@ -161,6 +166,11 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	@Override
 	public void mouseMove(final int x, final int y) {
 		if (MOUSE_MOVED == listenedEvent) { executeEvent(x, y); }
+	}
+
+	@Override
+	public void mouseDrag(final int x, final int y, final int button) {
+		if (MOUSE_DRAGGED == listenedEvent && button == 1) { executeEvent(x, y); }
 	}
 
 	@Override

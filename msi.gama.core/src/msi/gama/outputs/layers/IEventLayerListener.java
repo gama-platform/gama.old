@@ -57,6 +57,15 @@ public interface IEventLayerListener {
 	void mouseMove(int x, int y);
 
 	/**
+	 * Mouse drag.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 */
+	void mouseDrag(int x, int y, int button);
+
+
+	/**
 	 * Mouse enter.
 	 *
 	 * @param x the x

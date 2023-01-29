@@ -770,6 +770,9 @@ public interface IKeyword {
 	/** The mouse moved. */
 	String MOUSE_MOVED = "mouse_move";
 
+	/** The mouse dragged. */
+	String MOUSE_DRAGGED = "mouse_drag";
+
 	/** The mouse up. */
 	String MOUSE_UP = "mouse_up";
 
