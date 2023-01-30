@@ -178,7 +178,7 @@ public abstract class GISFileViewer extends EditorPart
 		String path = "";
 		final String[] decomp = pathStr.split("\\.");
 		for (int i = 0; i < decomp.length - 1; i++) {
-			path += decomp[i] + (i < decomp.length - 1 ? "." : "");
+			path += decomp[i] + (i < decomp.length - 2 ? "." : "");
 		}
 		if (name != null) {
 			path += name + ".";
