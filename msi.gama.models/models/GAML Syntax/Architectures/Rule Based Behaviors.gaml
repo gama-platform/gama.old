@@ -15,7 +15,9 @@ global {
 
 
 /**
- * In this species, two rules and one reflex are defined. The rules are fired (executed) when their condition becomes true and in the order defined by their decreasing priorities. 
+ * In this species, two rules and one reflex are defined. 
+ * The rules are fired (executed) when their condition becomes true and in the order 
+ * defined by their decreasing priorities. 
  */
 species simple_rules_statements control: rules {
 	

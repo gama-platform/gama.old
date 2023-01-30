@@ -30,7 +30,7 @@ global {
 	 */
 	reflex cr when:flip(0.5) {
 		nb_simple_when <- nb_simple_when+1;
-		write "this reflex is activated "+round(nb_simple_when/(cycle+1)*100)+" of the time";
+		write "this reflex is activated "+round(nb_simple_when/(cycle+1)*100)+"% of the time";
 	}
 	
 	/*

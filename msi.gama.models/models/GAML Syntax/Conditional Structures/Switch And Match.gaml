@@ -50,7 +50,7 @@ global {
 	 */
 	string rps_result(int res) {
 		switch res {
-			match_between [-#infinity,0] {
+			match_between [-#infinity,-1] {
 				return "You loose";
 			} 
 			match_one [1,2,3,4,5] {

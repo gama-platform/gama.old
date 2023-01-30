@@ -19,8 +19,7 @@ global
 		string appkey<-"G1VfvZoE8T4g0U24bm7UbuozvS9YIGXt";
 		string zoom <- "zoom=" + zoom_text;
 		string center <- "center=" + center_text;
-		static_map_request <-
-		image_file("https://www.mapquestapi.com/staticmap/v4/getmap?key="+appkey+"&size=600,600&type=map&imagetype=jpg&"+zoom+"&scalebar=false&traffic=false&"+center+"");
+		static_map_request <- image_file("https://www.mapquestapi.com/staticmap/v4/getmap?key="+appkey+"&size=600,600&type=map&imagetype=jpg&"+zoom+"&scalebar=false&traffic=false&"+center+"");
 	}
  
 	init
@@ -40,7 +39,7 @@ experiment Display
 	 
 	output
 	{
-		display "Google Map" type: 3d
+		display "Google Map" type: 3d axes:false
 		{
 			image static_map_request;
 		}

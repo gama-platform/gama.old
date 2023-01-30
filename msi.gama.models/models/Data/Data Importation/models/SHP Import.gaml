@@ -33,7 +33,7 @@ species building {
 
 experiment GIS_agentification type: gui {
 	output {
-		display city_display type: 3d {
+		display city_display type: 3d axes:false{
 			species building;
 		}
 	}

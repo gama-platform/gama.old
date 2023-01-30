@@ -160,7 +160,7 @@ species tree {
 
 experiment Vectorize type: gui {
 	output {
-		display map_vector type:3d{
+		display map_vector type:3d axes:false{
 			species water;
 			species ground;
 			species beach;
