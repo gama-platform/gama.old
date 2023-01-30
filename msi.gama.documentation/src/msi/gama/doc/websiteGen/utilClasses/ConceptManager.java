@@ -232,16 +232,10 @@ public class ConceptManager {
 			if (number_of_occurrences == 0) {
 				concept_not_represented.add(id);
 			}
-			if (number_of_occurrences > 20) {
-				concept_too_much_represented.add(id);
-			}
 		}
 		System.out.println("_____________________________");
 		for (String concept : concept_not_represented) {
 			System.out.println("WARNING : No occurrence for concept "+concept+".");
-		}
-		for (String concept : concept_too_much_represented) {
-			System.out.println("WARNING : Too much occurrences ("+Integer.toString(m_occurrence_of_concept.get(concept))+") for concept "+concept+".");
 		}
 	}
 
