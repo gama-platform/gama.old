@@ -303,13 +303,12 @@ global {
 				//build the bounds of the tile
 				bounds_tile <- polygon({sw.x,sw.y}, {sw.x,ne.y}, {ne.x,ne.y}, {ne.x,sw.y});
 				
-				
 				//if the tile really overlaps the boundary
 				if not empty(Boundary overlapping bounds_tile) {
 					continue <- false;
 					// download the google map tile
-					image_file img<- image_file(data_google.keys[ind]);
-				
+					string path_ <-  data_google.keys[ind];
+					image_file img<- image_file(path_,"png");
 					//transform each pixel into a rectangle geometry
 					list<geometry> rectangles <- bounds_tile to_rectangles(TILE_SIZE,TILE_SIZE);
 					loop i from: 0 to: length(rectangles) - 1 {
@@ -368,25 +367,15 @@ global {
 	 	}
 	}
 	
-	action load_satellite_image
-	{ 
-		point top_left <- CRS_transform({0,0}, "EPSG:4326").location;
-		point bottom_right <- CRS_transform({shape.width, shape.height}, "EPSG:4326").location;
-		int size_x <- 1500;
-		int size_y <- 1500;
-		
-		string rest_link<- "https://dev.virtualearth.net/REST/v1/Imagery/Map/Aerial/?mapArea="+bottom_right.y+"," + top_left.x + ","+ top_left.y + "," + bottom_right.x + "&mapSize="+int(size_x)+","+int(size_y)+ "&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln" ;
-		image_file static_map_request <- image_file(rest_link);
-	
+	action save_image (string rest_link) {
+		matrix mat <- (image_file(rest_link).contents);
 		write "Satellite image retrieved";
-		ask cell {		
-			color <-rgb( (static_map_request) at {grid_x,1500 - (grid_y + 1) }) ;
-		}
-		save cell to: exporting_path +"satellite.png" type: image;
-		
-		string rest_link2<- "https://dev.virtualearth.net/REST/v1/Imagery/Map/Aerial/?mapArea="+bottom_right.y+"," + top_left.x + ","+ top_left.y + "," + bottom_right.x + "&mmd=1&mapSize="+int(size_x)+","+int(size_y)+ "&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln" ;
-		file f <- json_file(rest_link2);
-		list<string> v <- string(f.contents) split_with ",";
+		save mat to: exporting_path +"satellite.png" type: image; 
+	}
+	
+	action save_meta_data (string rest_link) {
+		list<string> v <- string(json_file(rest_link).contents) split_with ",";
+		write "Satellite image retrieved";
 		int id <- 0;
 		loop i from: 0 to: length(v) - 1 {
 			if ("bbox" in v[i]) {
@@ -406,7 +395,23 @@ global {
 		string info <- ""  + width +"\n0.0\n0.0\n"+height+"\n"+min(pt1.x,pt2.x)+"\n"+(height < 0 ? max(pt1.y,pt2.y) : min(pt1.y,pt2.y));
 	
 		save info to: exporting_path +"satellite.pgw";
+	}
+	
+	action load_satellite_image
+	{ 
+		point top_left <- CRS_transform({0,0}, "EPSG:4326").location;
+		point bottom_right <- CRS_transform({shape.width, shape.height}, "EPSG:4326").location;
+		int size_x <- 1500;
+		int size_y <- 1500;
 		
+		string rest_link<- "https://dev.virtualearth.net/REST/v1/Imagery/Map/Aerial/?mapArea="+bottom_right.y+"," + top_left.x + ","+ top_left.y + "," + bottom_right.x + "&mapSize="+int(size_x)+","+int(size_y)+ "&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln" ;
+		do save_image(rest_link);
+		float ct <- machine_time + 2000;
+		loop while: machine_time < ct {
+			
+		}
+		string rest_link2<- "https://dev.virtualearth.net/REST/v1/Imagery/Map/Aerial/?mapArea="+bottom_right.y+"," + top_left.x + ","+ top_left.y + "," + bottom_right.x + "&mmd=1&mapSize="+int(size_x)+","+int(size_y)+ "&key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln" ;
+		do save_meta_data(rest_link2);
 		
 		write "Satellite image saved with the right meta-data";
 		 
@@ -434,9 +439,6 @@ global {
 	}
 		
 }
-
- 
-grid cell width: 1500 height:1500 use_individual_shapes: false use_regular_agents: false use_neighbors_cache: false;
 
 
 species marker {
@@ -482,7 +484,7 @@ experiment downloadGISdata type: gui autorun: true{
 	}
 	output {
 		display map type: 3d axes: false{
-			image file_exists(exporting_path + "satellite.png")? (exporting_path + "satellite.png") : default_background_image  transparency: 0.2 refresh: false;
+			image file_exists(exporting_path + "satellite.png")? (exporting_path + "satellite.png") : default_background_image  transparency: 0.2 refresh: true;
 			species OSM_agent;
 			graphics "google map building" {
 				loop bd over: building_google {

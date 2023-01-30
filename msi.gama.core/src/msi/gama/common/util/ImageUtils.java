@@ -818,11 +818,12 @@ public class ImageUtils {
 	 * @param scope
 	 * @param fileName
 	 * @param useCache
+	 * @param extension
 	 * @return
 	 * @throws IOException
 	 */
 	public BufferedImage getImageFromFile(final IScope scope, final String fileName, final boolean useCache,
-			final IIOReadProgressListener listener) throws IOException {
+			final IIOReadProgressListener listener, final String extension) throws IOException {
 		if (useCache) {
 			final BufferedImage image = cache.getIfPresent(fileName);
 			if (image != null) return image;
@@ -831,7 +832,7 @@ public class ImageUtils {
 		}
 		// final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(fileName);
-		final BufferedImage result = getImageFromFile(f, useCache, false, listener);
+		final BufferedImage result = getImageFromFile(f, useCache, false, listener,extension);
 		return result == getNoImage() ? null : result;
 	}
 
@@ -869,13 +870,16 @@ public class ImageUtils {
 	 * @param forOpenGL
 	 *            the for open GL
 	 * @param listener
-	 *            the listener
+	 *            the listener 
+	 * @param extension
+	 *            the optional extension
+	 *         
 	 * @return the buffered image
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	private BufferedImage privateReadFromFile(final File file, final boolean forOpenGL,
-			final IIOReadProgressListener listener) throws IOException {
+			final IIOReadProgressListener listener, final String extension) throws IOException {
 		// DEBUG.OUT("READING " + file.getName());
 		BufferedImage result = getNoImage();
 		if (file == null) return result;
@@ -902,7 +906,7 @@ public class ImageUtils {
 		}
 
 		try {
-			result = forOpenGL ? ioRead(file, listener) : toCompatibleImage(ioRead(file, listener));
+			result = forOpenGL ? ioRead(file, listener, extension) : toCompatibleImage(ioRead(file, listener, extension));
 		} catch (final Exception e) {
 			return getNoImage();
 		}
@@ -920,11 +924,11 @@ public class ImageUtils {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private BufferedImage ioRead(final File file, final IIOReadProgressListener listener) throws IOException {
+	private BufferedImage ioRead(final File file, final IIOReadProgressListener listener, final String extension) throws IOException {
 		ImageReader imageReader = null;
 		ImageInputStream imageInputStream = null;
 		try {
-			Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(Files.getFileExtension(file.getName()));
+			Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(extension != null ? extension: Files.getFileExtension(file.getName()));
 			imageReader = readers.next();
 			imageInputStream = ImageIO.createImageInputStream(file);
 
@@ -964,11 +968,13 @@ public class ImageUtils {
 	 * @param forOpenGL
 	 *            the for open GL
 	 * @param listener
-	 *            the listener
+	 *            the listener 
+	 * @param extension
+	 *            the optional extension
 	 * @return the image from file
 	 */
 	public BufferedImage getImageFromFile(final File file, final boolean useCache, final boolean forOpenGL,
-			final IIOReadProgressListener listener) {
+			final IIOReadProgressListener listener, final String extension) {
 		final BufferedImage image;
 		String name, ext = null;
 		try {
@@ -982,12 +988,12 @@ public class ImageUtils {
 				}
 			} else if (useCache) {
 				if (forOpenGL) {
-					image = openGLCache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, true, listener));
+					image = openGLCache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, true, listener,extension));
 				} else {
-					image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, false, listener));
+					image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, false, listener, extension));
 				}
 			} else {
-				image = privateReadFromFile(file, forOpenGL, listener);
+				image = privateReadFromFile(file, forOpenGL, listener, extension);
 			}
 			return image == getNoImage() ? null : image;
 		} catch (final ExecutionException | IOException e) {

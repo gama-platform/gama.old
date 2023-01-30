@@ -189,6 +189,8 @@ public class ImageLayer extends AbstractLayer {
 		//getting the drawing attributes
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(null, true);
 		attributes.setUseCache(!getData().getRefresh());
+		
+		final GamaImageFile file = buildImage(scope);
 		if (env != null) {
 			final GamaPoint loc;
 			if (dg.is2D()) {
@@ -200,7 +202,6 @@ public class ImageLayer extends AbstractLayer {
 			attributes.setSize(Scaling3D.of(env.getWidth(), env.getHeight(), 0));
 		}
 
-		final GamaImageFile file = buildImage(scope);
 		if (file != null) {
 			dg.drawFile(file, attributes);			
 		}

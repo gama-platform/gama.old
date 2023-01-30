@@ -102,6 +102,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		
 		/** The height. */
 		private final int height;
+		
+
 
 		/**
 		 * Instantiates a new image info.
@@ -216,6 +218,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	/** The is georeferenced. */
 	// protected BufferedImage image;
 	private boolean isGeoreferenced = false;
+	
+
+	/** The extension. */
+	private String extension = null;
 
 	/**
 	 * Instantiates a new gama image file.
@@ -232,6 +238,25 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 
 	public GamaImageFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
+	}
+	
+	/**
+	 * Instantiates a new gama image file.
+	 *
+	 * @param scope the scope
+	 * @param pathName the path name
+	 * @param pathName the extension of the file
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
+	@doc (
+			value = "This file constructor allows to read an image file (tiff, jpg, jpeg, png, pict, bmp) and to force the extension of the file (can be useful for images coming from URL)",
+			examples = { @example (
+					value = "file f <-image_file(\"http://my_url\", \"png\");",
+					isExecutable = false) })
+
+	public GamaImageFile(final IScope scope, final String pathName, final String extension) throws GamaRuntimeException {
+		super(scope, pathName);
+		this.extension = extension;
 	}
 
 	/**
@@ -314,7 +339,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		// if (image == null) {
 		final BufferedImage image;
 		try {
-			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache, null);
+			image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope), useCache, null, extension);
 			if (image == null) throw GamaRuntimeException.error("This image format (." + getExtension(scope)
 					+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
 					scope);
@@ -548,8 +573,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		GamaPoint maxCorner =
 				new GamaPoint(xNeg ? Math.min(x1, x2) : Math.max(x1, x2), yNeg ? Math.min(y1, y2) : Math.max(y1, y2));
 		if (geodataFile != null) {
-			minCorner = Projections.to_GAMA_CRS(scope, minCorner).getLocation();
-			maxCorner = Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
+			minCorner = Projections.to_GAMA_CRS(scope, minCorner,"EPSG:3857").getLocation();
+			maxCorner = Projections.to_GAMA_CRS(scope, maxCorner,"EPSG:3857").getLocation();
 		}
 
 		return Envelope3D.of(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
@@ -600,6 +625,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	public int getBandsNumber(final IScope scope) {
 		BufferedImage image = getImage(scope, true);
 		return image.getColorModel().getNumComponents();
+	}
+	
+	
+
+	public String getExtension() {
+		return extension;
 	}
 
 	@Override
