@@ -20,6 +20,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import msi.gama.common.UniqueID;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -65,7 +66,13 @@ public class SavedAgentConverter implements Converter {
 		writer.endNode();
 		
 		writer.startNode("uniqueID");
-		writer.setValue("" + savedAgt.getUniqueID());
+		System.out.println("marshal savedAgt.getUniqueIDStruct().getID() " + savedAgt.getUniqueIDStruct().getID());
+		writer.setValue("" + savedAgt.getUniqueIDStruct().getID());
+		writer.endNode();
+		
+		writer.startNode("initalMpiRank");
+		System.out.println("marshal savedAgt.getUniqueIDStruct().getInitialRank() " + savedAgt.getUniqueIDStruct().getInitialMpiRank());
+		writer.setValue("" + savedAgt.getUniqueIDStruct().getInitialMpiRank());
 		writer.endNode();
 
 		final ArrayList<String> keys = new ArrayList<>();
@@ -129,8 +136,15 @@ public class SavedAgentConverter implements Converter {
 		reader.moveUp();
 		reader.moveDown();
 		final int uniqueID = Integer.parseInt(reader.getValue());
-		System.out.println("UNIQUE ID FROM DESERI + "+uniqueID);
-		agtToReturn.setUniqueID(uniqueID);
+		
+		reader.moveUp();
+		reader.moveDown();
+		final int initialMpiRank = Integer.parseInt(reader.getValue());
+		
+		
+		System.out.println("initialMpiRank FROM DESERI + "+initialMpiRank);
+		System.out.println("uniqueID FROM DESERI + "+uniqueID);
+		agtToReturn.setUniqueIDStruct(new UniqueID(initialMpiRank, uniqueID));
 
 		System.out.println("variables in agent = ");
 		for(var auto : agtToReturn.entrySet())
@@ -152,7 +166,7 @@ public class SavedAgentConverter implements Converter {
 		}
 		Map<String, List<SavedAgent>> inPop = null;
 
-		if (reader.hasMoreChildren()) {
+		if (reader.hasMoreChildren()) { // todo serialize rework for references agent
 			reader.moveDown();
 			inPop = (Map<String, List<SavedAgent>>) arg1.convertAnother(null, IMap.class);
 			agtToReturn.setInnerPop(inPop);

@@ -1,5 +1,4 @@
 *.icloud
-*.log
 target/
 *.orig
 build/

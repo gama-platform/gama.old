@@ -16,8 +16,8 @@ global
 	
 	init
 	{
-		seed <- 12.0;
-		create movingAgent number: 50;
+		seed <- 13.0;
+		create movingAgent number: 2;
 	}
 }
 
@@ -39,7 +39,7 @@ species movingAgent skills:[moving]
 	}
 	aspect classic
 	{
-		draw circle(0.5) color: col;
+		draw circle(0.7) color: col;
 	}
 	
 	reflex move when: target != location
@@ -57,54 +57,10 @@ species movingAgent skills:[moving]
 	}
 }
 
-species standingAgent
-{	
-	agent closest;
-	aspect classic
-	{
-		draw circle(0.5) color: #red;
-	}
-}
-
-species followingAgent parent: movingAgent
-{
-	movingAgent targetAgent;
-	
-	init
-	{
-		col <- #blue;
-		real_speed <- 1.2;
-		speed <- 1.2;
-		targetAgent <- one_of(movingAgent);
-		target <- targetAgent.location;
-	}
-	aspect classic
-	{
-		draw circle(0.5) color: col;
-	}	
-	
-	/*reflex move when: target != location
-	{
-		target <- targetAgent.location;
-		do goto target: target;
-	}
-	
-	reflex target when: target = location
-	{
-		targetAgent <- one_of(movingAgent);
-		target <- targetAgent.location;
-	}	
-	
-	action reTarget
-	{
-		targetAgent <- one_of(movingAgent);
-		target <- targetAgent.location;
-	}*/
-}
 
 grid cell width: gridWidth height: gridHeight neighbors: 4
 { 
-	int size_OLZ <- 10;
+	int size_OLZ <- 15;
 	
 	int cell_index <- grid_y + (grid_x * gridHeight);
 	
@@ -151,45 +107,13 @@ grid cell width: gridWidth height: gridHeight neighbors: 4
 	}
 }
 
-
 experiment movingExp type: gui 
 {
 	output{
 		display "Modèle de base" type: opengl
 		{
 			species movingAgent aspect: classic;
-		}
-		display "Découpage du modèle" type: opengl
-		{
-			species cell aspect: decoupage;
-			species movingAgent aspect: classic;
-		}
-		display "OLZ" type: opengl
-		{
 			species cell aspect: olz;
-			species movingAgent aspect: classic;
-		}
-	}
-}
-
-experiment decoupage type: gui 
-{
-	output{
-		display "Découpage du modèle" type: opengl
-		{
-			species cell aspect: decoupage;
-			species movingAgent aspect: classic;
-		}
-	}
-}
-
-experiment displayOLZ type: gui 
-{
-	output{
-		display "Découpage du modèle" type: opengl
-		{
-			species cell aspect: olz;
-			species movingAgent aspect: classic;
 		}
 	}
 }

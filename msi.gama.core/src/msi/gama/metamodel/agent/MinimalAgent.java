@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.locationtech.jts.geom.Geometry;
 
+import msi.gama.common.UniqueID;
 import msi.gama.common.UniqueIDProviderService;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
@@ -55,10 +56,11 @@ public class MinimalAgent extends AbstractAgent {
 
 	/** The geometry. */
 	protected final IShape geometry;
-
+	
 	/** The uniqueID. */
-	private int uniqueID;
+	private UniqueID uniqueID;
 
+	/** The isCopy attribute for MPI **/
 	private boolean isCopy;
 	
 	/**
@@ -83,11 +85,49 @@ public class MinimalAgent extends AbstractAgent {
 		super(index);
 		this.population = population;
 		
-		this.setUniqueID(UniqueIDProviderService.getInstance().register());
+		System.out.println("MinimalAgent register");
+		if(this.uniqueID == null)
+		{			
+			System.out.println("MinimalAgent this.uniqueID == null");
+			this.setUniqueIDStruct(UniqueIDProviderService.getInstance().register());
+			this.isCopy = false;
+		}else
+		{
+			System.out.println("MinimalAgent this.uniqueID IS NOT null");
+			this.isCopy = true;
+		}
+		
+		System.out.println(this.name + " MinimalAgent ID construtor = " + this.uniqueID.getID());
+		System.out.println(this.name + " MinimalAgent initialMpiRank construtor = " + this.uniqueID.getInitialMpiRank());
+		System.out.println(this.name + " MinimalAgent isCopy = " + this.isCopy);
+		
+		this.geometry = geometry;
+		geometry.setAgent(this);
+	}
+	
+	
+	/**
+	 * Instantiates a new minimal agent with uniqueID struct (for distribution purpose).
+	 *
+	 * @param population
+	 *            the population that this agent belongs to.
+	 * @param index
+	 *            the index
+	 * @param geometry
+	 *            the geometry
+	 */
+	protected MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final IShape geometry, UniqueID uID) {
+		super(index);
+		this.population = population;
+		
+		System.out.println("MinimalAgent register");
+		this.setUniqueIDStruct(uID);
 		this.isCopy = false;
 		
-		System.out.println(this.name + " MinimalAgent unique ID construtor = " + this.uniqueID);
+		System.out.println(this.name + " MinimalAgent ID construtor = " + this.uniqueID.getID());
+		System.out.println(this.name + " MinimalAgent initialMpiRank construtor = " + this.uniqueID.getInitialMpiRank());
 		System.out.println(this.name + " MinimalAgent isCopy = " + this.isCopy);
+		
 		this.geometry = geometry;
 		geometry.setAgent(this);
 	}
@@ -155,20 +195,28 @@ public class MinimalAgent extends AbstractAgent {
 	}
 	
 	@Override
-	public void setUniqueID(int uID) {
-		//System.out.println(this.name + " MINIMAL SETTER UNIQUEID = "+uID);
-		
-		if(uID == 0) // todo check why uID = 0 on some calls at init
-		{
-			return;
-		}
-		
+	public void setUniqueIDStruct(UniqueID uID) {
 		this.uniqueID = uID;
 	}
 	
 	@Override
-	public int getUniqueID() {
+	public UniqueID getUniqueIDStruct() {
 		return uniqueID;
+	}
+	
+	@Override
+	public void setUniqueID(int uID) {
+		if(uID == 0) // todo check why uID = 0 on some calls
+		{
+			System.out.println("setUniqueID change prevented");
+			return;
+		}
+		this.uniqueID.setID(uID);
+	}
+	
+	@Override
+	public int getUniqueID(){
+		return this.uniqueID.getID();
 	}
 	
 	@Override
@@ -179,6 +227,12 @@ public class MinimalAgent extends AbstractAgent {
 	@Override
 	public void setIsCopy(boolean copied) {
 		this.isCopy = copied;
+	}
+	
+
+	@Override
+	public int getInitialMpiRank() {
+		return this.getUniqueIDStruct().getInitialMpiRank();
 	}
 
 	@SuppressWarnings ("rawtypes")

@@ -12,16 +12,30 @@ global skills:[MPI_Network]
 {
 	int mpi_rank <- 0;
 	int mpi_size <- 0;
+	string file_name;
+	
 	init
 	{
-		do MPI_INIT;
+		
 		mpi_rank <- MPI_RANK();
-		write "mon rank est " + mpi_rank;
-
 		mpi_size <- MPI_SIZE();
-		write "la size est " + mpi_size;
 
-		do MPI_FINALIZE();
+		file_name <- "log"+mpi_rank+".txt";
+		do clearLogFile();
+		
+	    do writeLog("mon rank est : " + mpi_rank);
+		do writeLog("la size est : " + mpi_size);
+
+	}
+    
+    action writeLog(string log)
+	{
+		save log type: text to: file_name rewrite:false;
+	}
+	
+	action clearLogFile
+	{
+		save "" type: text to: file_name rewrite:true;
 	}
 }
 

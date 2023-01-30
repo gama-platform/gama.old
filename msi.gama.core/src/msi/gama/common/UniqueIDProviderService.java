@@ -21,7 +21,7 @@ public class UniqueIDProviderService implements IUniqueIDProviderService
     }
 	
 	@Override
-	public synchronized int register() 
+	public synchronized UniqueID register() 
 	{
 		return instance.register();
 	}

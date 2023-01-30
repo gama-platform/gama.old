@@ -1,10 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<Experiment_plan>
-  <Simulation experiment="com_mpi" finalStep="1000" id="0" seed="1"
-	      sourcePath="communication.gaml">
-    <Parameters/>
-    <Outputs>
-      <Output framerate="1" id="0" name="rank"/>
-    </Outputs>
-  </Simulation>
-</Experiment_plan>
+<?xml version="1.0" encoding="UTF-8"?>
+<Simulation id="0" sourcePath="communication.gaml" experiment="com_mpi">
+</Simulation>

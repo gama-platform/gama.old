@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import msi.gama.common.UniqueID;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -53,9 +54,9 @@ public class SavedAgent extends GamaMap<String, Object> {
 	String alias;
 	
 	/** The uniqueID **/
-	int uniqueID;
+	UniqueID uniqueID;
 	
-	/** The uniqueID **/
+	/** The isCopy **/
 	boolean isCopy;
 	
 	
@@ -97,7 +98,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 		species = agent.getSpeciesName();
 		source = agent.getScope().getExperiment().getSpeciesName();
 		alias = ((ModelDescription) agent.getScope().getSimulation().getSpecies().getDescription()).getAlias();
-		uniqueID = agent.getUniqueID();
+		uniqueID = agent.getUniqueIDStruct();
 		isCopy = agent.getIsCopy();
 		saveAttributes(scope, agent);
 		if (agent instanceof IMacroAgent) {
@@ -225,12 +226,21 @@ public class SavedAgent extends GamaMap<String, Object> {
 	}
 
 	/**
-	 * Gets the hashcode.
+	 * Gets the uniqueID.
 	 *
-	 * @return the hashcode
+	 * @return the uniqueID
+	 */
+	 public UniqueID getUniqueIDStruct(){
+		return uniqueID;
+	}
+	 
+	 /**
+	 * Gets the uniqueID.
+	 *
+	 * @return the uniqueID
 	 */
 	 public int getUniqueID(){
-		return uniqueID;
+		return uniqueID.getID();
 	}
 	 
 	 /**
@@ -251,10 +261,16 @@ public class SavedAgent extends GamaMap<String, Object> {
 	}
 	 
 	 /**
-	 * Set the hashcode.
+	 * Set the uniqueID.
 	 */
 	public void setUniqueID(int uID) {
-		System.out.println("SAVED AGENT UNIQUE SETTER " + uID);
+		uniqueID.setID(uID);
+	}
+	
+	/**
+	 * Set the uniqueID.
+	 */
+	public void setUniqueIDStruct(UniqueID uID) {
 		uniqueID = uID;
 	}
 	
@@ -389,7 +405,8 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 */
 	IAgent getCopyAgent(final IPopulation<? extends IAgent> targetPopulation)
 	{
-		IAgent copyAgent = targetPopulation.stream().filter(agent -> agent.getUniqueID() == this.uniqueID).findFirst().orElse(null);
+		System.out.println("getCopyAgent with" + this.getUniqueIDStruct().getInitialMpiRank() + " :: " + this.getUniqueIDStruct().getID() );
+		IAgent copyAgent = targetPopulation.stream().filter(agent -> agent.getUniqueID() == this.uniqueID.getID() && agent.getInitialMpiRank() == this.uniqueID.getInitialMpiRank()).findFirst().orElse(null);
 	
 		return copyAgent;
 	}
@@ -470,6 +487,8 @@ public class SavedAgent extends GamaMap<String, Object> {
 			System.out.println("after updateCopyAgent = "+copyAgent.getLocation());
 			return null; // no need to restore this agent since he is already in the simulation
 		}
+		
+		System.out.println("No Agent found for " + this.getUniqueIDStruct().getInitialMpiRank() + "::" + this.uniqueID.getID());
 
 		return createAgentInPopulation(scope, targetPopulation);
 	}
@@ -482,7 +501,6 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 */
 	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 		System.out.println("restoreMicroAgents begin");
-		// todo check unique ID of all the agents in the pop
 		if (innerPopulations != null) {
 			for (final String microPopName : innerPopulations.keySet()) {
 				final IPopulation<? extends IAgent> microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);

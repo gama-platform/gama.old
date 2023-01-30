@@ -6,23 +6,22 @@ package msi.gama.common;
 public class UniqueIDProviderMPI extends UniqueIDProviderService
 {
 	
-	int mpiRank;
-	int uniqueID;
-	int uniqueID_entity;
+	int mpiRank = 0;
+	int uniqueID = 0;
 	
 	public UniqueIDProviderMPI(int mpiRank)
 	{
-		this.uniqueID = 0;
-		this.mpiRank = mpiRank + 1; // prefixing when mpiRank = 0 dont work when we cast the id to int afterwards -> 0XXXX = XXXX
+		this.uniqueID = 1;
+		this.mpiRank = mpiRank; 
 		System.out.println("MPIRANK PROVIDER INIT");
 	}
 	
 	@Override
-	public int register() 
+	public UniqueID register() 
 	{
 		System.out.println("MPI REGISTER");
 		increment();
-		return uniqueID_entity;
+		return new UniqueID(mpiRank, uniqueID);
 	}
 
 	/**
@@ -32,14 +31,5 @@ public class UniqueIDProviderMPI extends UniqueIDProviderService
 	public void increment() 
 	{
 		uniqueID++;
-		System.out.println("uniqueID MPI = "+uniqueID);
-		System.out.println("uniqueID_entity = "+uniqueID_entity);
-		System.out.println("uniqueID_entity mpiRank = "+mpiRank);
-		
-		String rankString = Integer.toString(mpiRank);
-        String idString = Integer.toString(uniqueID);
- 
-        String uniqueIDMPI = rankString + idString;
-        uniqueID_entity = Integer.parseInt(uniqueIDMPI);
 	}
 }

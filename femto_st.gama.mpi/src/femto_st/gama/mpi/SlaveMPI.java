@@ -397,7 +397,7 @@ public class SlaveMPI extends GamlAgent {
 			System.out.println("Hello");
 			System.out.println("MyRank = " + myRank);
 			System.out.println("SizeNetwork = " + MPI.COMM_WORLD.getSize());
-		} catch (MPIException | IOException e) 
+		} catch (MPIException e) 
 		{
 			System.out.println("MPIException " + e);
 		}

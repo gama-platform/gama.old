@@ -534,6 +534,9 @@ public interface IKeyword {
 
 	/** The host. */
 	String HOST = "host";
+	
+	/** The hash code. */
+	String INITIAL_MPI_RANK = "initialMpiRank";
 
 	/** The id. */
 	String ID = "id";
@@ -1079,9 +1082,6 @@ public interface IKeyword {
 
 	/** The shape. */
 	String SHAPE = "shape";
-	
-	/** The hash code. */
-	String UNIQUEID = "UNIQUEID";
 
 	/** The show. */
 	String SHOW = "show";
@@ -1241,6 +1241,9 @@ public interface IKeyword {
 
 	/** The type. */
 	String TYPE = "type";
+
+	/** The hash code. */
+	String UNIQUEID = "uniqueID";
 
 	/** The unit. */
 	String UNIT = "unit";

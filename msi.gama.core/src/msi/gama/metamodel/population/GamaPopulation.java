@@ -505,14 +505,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				}
 			}
 			System.out.println(a.getName() + "(UniqueID) = "+a.getUniqueID());
-			if(a.getUniqueID() == 0)
-			{
-				System.out.println("Creating new UniqueID " + a.hashCode());
-				a.setUniqueID(a.hashCode()); // todo here flag mpi rank
-			}else
-			{
-				System.out.println("This agent already habe an UniqueID " + a.getUniqueID());
-			}
 			list.add(a);
 		}
 		addAll(list);

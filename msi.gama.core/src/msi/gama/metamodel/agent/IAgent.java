@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 
+import msi.gama.common.UniqueID;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.INamed;
@@ -68,6 +69,10 @@ import msi.gaml.variables.IVariable;
 				name = IKeyword.UNIQUEID,
 				type = IType.INT,
 				doc = { @doc ("Returns the uniqueID of the agent") }),
+		@variable (
+				name = IKeyword.INITIAL_MPI_RANK,
+				type = IType.INT,
+				doc = { @doc ("return the initial mpi rank position of the agent") }),
 		@variable (
 				name = IKeyword.SHAPE,
 				type = IType.GEOMETRY,
@@ -205,6 +210,23 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	
 
 	/**
+	 * Gets the uniqueID struct.
+	 *
+	 * @return the index
+	 */
+	UniqueID getUniqueIDStruct();
+	
+	
+	/**
+	 * Sets the uniqueID var value.
+	 *
+	 * @param uID
+	 *            the uniqueID
+	 */
+	void setUniqueIDStruct(UniqueID uID);
+	
+	
+	/**
 	 * Gets the uniqueID.
 	 *
 	 * @return the index
@@ -239,6 +261,15 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 */
 	@setter (IKeyword.IS_COPY)
 	void setIsCopy(boolean copied);
+	
+	
+	/**
+	 * Gets the initial process rank position of the agent.
+	 *
+	 * @return the index
+	 */
+	@getter (IKeyword.INITIAL_MPI_RANK)
+	int getInitialMpiRank();
 	
 	/**
 	 * Gets the species name.

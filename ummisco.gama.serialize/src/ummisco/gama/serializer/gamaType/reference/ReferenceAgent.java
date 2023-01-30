@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Geometry;
 
+import msi.gama.common.UniqueID;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.kernel.model.IModel;
@@ -543,11 +544,22 @@ public class ReferenceAgent implements IReference, IAgent {
 	@Override
 	public int getUniqueID() {
 		// TODO Auto-generated method stub
-		return -79;
+		return 0;
+	}
+	
+	@Override
+	public void setUniqueID(int uID) {
 	}
 
 	@Override
-	public void setUniqueID(int uID) {
+	public void setUniqueIDStruct(UniqueID uID) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public UniqueID getUniqueIDStruct() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -559,6 +571,11 @@ public class ReferenceAgent implements IReference, IAgent {
 	@Override
 	public void setIsCopy(boolean copied) {
 		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public int getInitialMpiRank() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

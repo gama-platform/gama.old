@@ -15,10 +15,11 @@ public class UniqueIDProvider extends UniqueIDProviderService
 	}
 	
 	@Override
-	public int register() 
+	public UniqueID register() 
 	{
+		System.out.println("register regular");
 		increment();
-		return uniqueID;
+		return new UniqueID(0,uniqueID); // todo replace this by hash code for gama classic
 	}
 
 	/**

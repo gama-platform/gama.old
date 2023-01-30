@@ -5,50 +5,57 @@
 * Tags: Tag1, Tag2, TagN
 */
 
-model firstmpi
+model communication
 
 
 global skills:[MPI_Network]
 {
     int mpi_rank <- 0;
     int mpi_size <- 0;
+	string file_name;
     
     init
     {
-        do MPI_INIT;
+        
 		mpi_rank <- MPI_RANK();
-		write "mon rank est " + mpi_rank;
-	
 		mpi_size <- MPI_SIZE();
-		write "la size est " + mpi_size;
+		file_name <- "log"+mpi_rank+".txt";
+		do clearLogFile();
+		
+
+		do writeLog("mon rank est " + mpi_rank);	
+		do writeLog("la size est " + mpi_size);
 	
 		if (mpi_rank = 0){
 	
 		    int dst <- 1;
 		    list<int> msg <- [10];
 		    do MPI_SEND mesg: msg dest: dst stag: 50;
-		    write "MPI_SEND done";
-		    
-		    msg <- [10,20];
-		    do MPI_SEND mesg: msg dest: dst stag: 50;
-		    write "MPI_SEND done";
+		    do writeLog("MPI_SEND done");
 		    
 		} else {
 		    int emet <- 0;
 		    list l <- self MPI_RECV [source:: emet, rtag:: 50];
-		    write ("------------- recv " + l);
-		    
-		    list l <- self MPI_RECV [source:: emet, rtag:: 50];
-		    write ("------------- recv " + l);
+		    do writeLog("MPI_RECV done : " + l);
 		}
+		
+	    do MPI_FINALIZE();
+	    
+	    do die;
+		
     }
+    
+    action writeLog(string log)
+	{
+		save log type: text to: file_name rewrite:false;
+	}
+	
+	action clearLogFile
+	{
+		save "" type: text to: file_name rewrite:true;
+	}
 }
 
 experiment com_mpi
 {
-	output
-	{
-		monitor "rank" value:mpi_rank;		
-	}
-
 }

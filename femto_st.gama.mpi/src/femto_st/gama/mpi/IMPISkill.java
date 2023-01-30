@@ -34,6 +34,12 @@ public interface IMPISkill {
 	String GATHER_ATTRIBUTE_FROM_EACH_PROCESS = "gatherAttributeFromEachProcess";
 	String UPDATE_COPY_ATTRIBUTE = "updateIsCopyAttribute";
 	
+
+	String REGISTER_AGENT_IN_LOCATION_MANAGER = "registerAgentInLocationManager";
+	
+
+	String AGENT_LIST = "agentList";
+	
 	String NEIGHBORS_RANK = "neighbor_rank";
 	String MY_RANK = "myRank";
 

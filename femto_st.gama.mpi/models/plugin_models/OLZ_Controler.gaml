@@ -13,7 +13,7 @@ global
 {
 	
 	string file_name;
-	int final_step <- 50;
+	int final_step <- 25;
 	int grid_widht <- 2;
 	int grid_lenght <- 2;
 	
@@ -21,7 +21,7 @@ global
 	
 	init
 	{	
-		seed <- 12.0;
+		seed <- 13.0;
 		do init_sub_simulation;
 		create slave;
 	}
@@ -60,10 +60,11 @@ species slave parent: SlaveMPI
 	list<int> list_of_neighbors;
 	map<int, geometry> list_of_Rank_Outer_Geo;
 	
-	list<agent> agents_from_model;
-	list<agent> inside_main -> { agents_from_model inside(shape) };
-	list<agent> inside_outer_OLZ -> { agents_from_model inside(cellule.outer_OLZ) };
-	list<agent> inside_me -> { inside_main + inside_outer_OLZ };
+	list<agent> agents_from_model; 
+	list<agent> inside_main -> { agents_from_model inside(shape) }; // agents in my shape
+	list<agent> inside_outer_OLZ -> { agents_from_model inside(cellule.outer_OLZ) }; // agents in my outer OLZ (neighbors OLZ)
+	list<agent> inside_me -> { inside_main + inside_outer_OLZ }; // agents inside me (can be copy)
+	list<agent> outside_me -> { not( agents_from_model in (inside_me) )}; // agents that are going to leave the current process to another
 	
 	int division;
 	int remainder;
@@ -111,6 +112,9 @@ species slave parent: SlaveMPI
 		
 		do writeLog("list_of_geo = " + map_neighbor_innerOLZ);
 		do writeLog("neighbor = " + list_of_neighbors);
+		
+		do deleteAgentsNotInMyArea;
+		do registerAgentInLocationManager(inside_main);
 	}
 	
 	action deleteAgentsNotInMyArea
@@ -140,12 +144,6 @@ species slave parent: SlaveMPI
 		do writeLog("NB AGENTS agent_inside_me =  " +length(inside_me));
 	}
 	
-	action updateIsCopy
-	{
-		do updateIsCopyAttribute(inside_me);
-	}
-	
-	
 	reflex getAgentFromModel
 	{
 		ask pp.movingExp[0]
@@ -154,40 +152,36 @@ species slave parent: SlaveMPI
 		}
 	}
 	
+	reflex
+	{
+		ask inside_me
+		{
+			agent tmp <- self;
+			ask myself
+			{
+				do writeLog(""+tmp.name+"(uniqueID) = " + tmp.initialMpiRank + " :: " +tmp.uniqueID);
+			}
+		}
+	}
+	
 	reflex routineMPI
 	{
 		do writeLog("--------"+cycle+"----------");
-		
-		do deleteAgentsNotInMyArea;
-		
+
 		do start_listener;
-		
 		do MPI_BARRIER();
 		
-		do writeLog("Number of neigh = "+length(list_of_neighbors));
-		do writeLog("Neighs = "+list_of_neighbors);
 		
 		loop neighbor over: list_of_neighbors
 		{
 			list<agent> t <- getAgentInNeighborInnerOLZ(neighbor);		
 			do writeLog("getAgentInNeighborInnerOLZ N°" + neighbor + "  result = " + t);
+			
+			// get all agents inside neighbor shape but not in OLZ
+			// send them
 		}
 		
-		
 		do MPI_BARRIER();
-		
-		do deleteAgentsNotInMyArea;
-	
-		do updateIsCopy();
-		
-		/*if(myRank = 0)
-		{		
-			list allAttribute <- gatherAttributeFromEachProcess("movingAgent","random_number");
-			do writeLog("allAttribute " + allAttribute);
-		}*/
-		
-		do MPI_BARRIER();
-		
 		do stop_listener;
 		
 		

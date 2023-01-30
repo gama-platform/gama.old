@@ -78,9 +78,10 @@ public class GamaAgentConverterMPI implements Converter {
 		arg1.convertAnother(msa, SavedAgent.class);
 		SavedAgentProvider.pop();
 		System.out.println("msa.getAlias()+\".\"+msa.getSource() = "+msa.getAlias()+"."+msa.getSource());
-		System.out.println("msa.getUniqueID() = "+msa.getUniqueID());
+		System.out.println("msa.getUniqueID() = "+msa.getUniqueIDStruct().getID());
+		System.out.println("msa.getInitialMpiRank() = "+msa.getUniqueIDStruct().getInitialMpiRank());
 		System.out.println("convertScope.scope.getSimulation().getExternMicroPopulationFor(\"pp.movingExp\") = "+convertScope.scope.getSimulation().getExternMicroPopulationFor(msa.getAlias()+"."+msa.getSource()));
-		// todo change pp.movingExp by the true experiment
+
 		return msa.restoreToMPI(convertScope.getScope(), ((ExperimentAgent)convertScope.scope.getSimulation().getExternMicroPopulationFor(msa.getAlias()+"."+msa.getSource()).getAgent(0)).getSimulation().getMicroPopulation(msa.getSpecies()), msa.getUniqueID());
 	}
 
