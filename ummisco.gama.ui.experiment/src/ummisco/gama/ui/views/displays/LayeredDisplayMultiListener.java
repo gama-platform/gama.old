@@ -230,7 +230,7 @@ public class LayeredDisplayMultiListener {
 	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseDown(final int x, final int y, final int button, final boolean modifier) {
-		DEBUG.OUT("Mouse down at " + x + ", " + y);
+		//DEBUG.LOG("Mouse down at " + x + ", " + y);
 		setMousePosition(x, y);
 		if (inMenu) {
 			inMenu = false;
@@ -242,7 +242,6 @@ public class LayeredDisplayMultiListener {
 			// No need to patch mouseUp(...) right now
 			return;
 		mouseIsDown = true;
-		// DEBUG.LOG("Mouse down on " + view.getPartName());
 		surface.dispatchMouseEvent(SWT.MouseDown, x, y);
 	}
 
@@ -259,13 +258,12 @@ public class LayeredDisplayMultiListener {
 	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseUp(final int x, final int y, final int button, final boolean modifier) {
-		DEBUG.OUT("Mouse up at " + x + ", " + y);
+		//DEBUG.LOG("Mouse up at " + x + ", " + y + " on " + view.getPartName());
 		// In case the mouse has moved (for example on a menu)
 		if (!mouseIsDown) return;
 		setMousePosition(x, y);
 		if (modifier) return;
 		mouseIsDown = false;
-		// DEBUG.LOG("Mouse up on " + view.getPartName());
 		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) { WorkaroundForIssue1353.showShell(); }
 		surface.dispatchMouseEvent(SWT.MouseUp, x, y);
 	}

@@ -767,8 +767,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public void setMousePosition(final int x, final int y) {
-		// Nothing to do (taken in charge by the camera)
-
+		// Updates the world position from the standard SWT event layer, so that
+		// the #user_location is updated before the GAMA mouse_down events are
+		// triggered from the LayeredDisplayMultiListener.
+		renderer.getCameraHelper().computeMouseLocationInTheWorld(x, y);
 	}
 
 	@Override
