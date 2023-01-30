@@ -36,7 +36,7 @@ global {
 }
  
 
-// We create izard agents and locate them on one'cell' among the list of cellules in which there is no izard 
+// We create izard agents and locate them on one 'cell' among the list of cellules in which there is no izard 
 // and with a color that is not white 'each.color != #white'
 // the shuffle operator is used to randomized the list of cells
 

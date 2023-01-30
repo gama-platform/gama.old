@@ -88,7 +88,7 @@ experiment Icons
 	{
 		layout #split;
 		
-		display "Colorful in 3D" type: 3d 
+		display "Colorful in 3D" type: 3d axes:false
 		{
 			// We simply display people, which will use their aspect named 3d
 			species people aspect: 3d;

@@ -42,7 +42,7 @@ grid cell files: [dem_file,land_cover_file] {
 
 experiment importationraster type: gui {
 	output {
-		display map type: 3d{
+		display map type: 3d axes:false{
 			grid cell elevation: true  triangulation: true refresh: false;	
 		}
 	}

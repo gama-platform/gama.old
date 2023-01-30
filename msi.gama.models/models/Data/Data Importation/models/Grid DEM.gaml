@@ -47,36 +47,32 @@ experiment Comparison type: gui {
 		layout #split;
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
- display "Grid with triangles"
-		type: 3d {
+ 		display "Grid with triangles" type: 3d {
 			grid cell elevation: true triangulation: true;
 		}
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
-
 		display "Grid with triangles and grayscale" type: 3d {
 			grid cell elevation: true grayscale: true triangulation: true;
 		}
 
 		//Display the textured grid in 3D with the cell altitude corresponding to its grid_value.				
- display "Grid with triangles and texture" type: 3d {
+		display "Grid with triangles and texture" type: 3d {
 			grid cell texture: texture triangulation: true elevation: true;
 		}
 
 		//Display the field triangulated in 3D with the cell altitude corresponding to its value and the color defined (otherwise in default color)
- display
-		"Field with triangles, green color" type: 3d {
+ 		display "Field with triangles, green color" type: 3d {
 			mesh grid_data triangulation: true color: #green;
 		}
 
 		//Display the field triangulated in 3D with the cell altitude corresponding to its value and the color of cells as a gray value corresponding to grid_value / maxZ *255
- display
-		"Field with triangles and grayscale" type: 3d {
+ 		display "Field with triangles and grayscale" type: 3d {
 			mesh grid_data grayscale: true triangulation: true;
 		}
 
 		//Display the textured field in 3D with the cell altitude corresponding to its value.				
- display "Field scaled by 2, with triangles and texture" type: 3d {
+ 		display "Field scaled by 2, with triangles and texture" type: 3d {
 			mesh grid_data texture: texture triangulation: true scale: 2.0;
 		}
 
@@ -89,39 +85,36 @@ experiment "Grids" type: gui {
 		layout #split toolbars: false;
 
 		//Display the grid on a plan with cell color (if defined otherwise in black)
- display grid type: 3d { //Same as in 2d
- grid cell border: #black;
+ 		display grid type: 3d { //Same as in 2d
+ 			grid cell border: #black;
 		}
 
 		//Display the grid in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
- display gridWithElevation type: 3d {
+ 		display gridWithElevation type: 3d {
 			grid cell elevation: true;
 		}
 
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color cells (if defined otherwise in black)
- display
-		gridWithElevationTriangulated type: 3d {
+ 		display gridWithElevationTriangulated type: 3d {
 			grid cell elevation: true triangulation: true;
 		}
 
 		//Display the grid in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
- display
-		gridGrayScaled type: 3d {
+ 		display gridGrayScaled type: 3d {
 			grid cell elevation: true grayscale: true;
 		}
 		//Display the grid triangulated in 3D with the cell altitude corresponding to its grid_value and the color of cells as a gray value corresponding to grid_value / maxZ *255
-
 		display gridGrayScaledTriangulated type: 3d {
 			grid cell elevation: true grayscale: true triangulation: true;
 		}
 
 		//Display the textured grid in 3D with the cell altitude corresponding to its grid_value.				
- display gridTextured type: 3d {
+		display gridTextured type: 3d {
 			grid cell texture: texture text: false triangulation: false elevation: true;
 		}
 
 		//Display the textured triangulated grid in 3D with the cell altitude corresponding to its grid_value.
- display gridTexturedTriangulated type: 3d {
+ 		display gridTexturedTriangulated type: 3d {
 			grid cell texture: texture text: false triangulation: true elevation: true;
 		}
 
