@@ -193,11 +193,22 @@ public class ServerService extends Thread implements SocketService, IListener {
 
 		String message = msg;
 		if (cliThread == null || cliThread.socket == null || !isOnline()) return;
-		message = message.replace("\n", "@n@");
-		message = message.replace("\b\r", "@b@@r@");
+	
 		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(cliThread.socket.getOutputStream())), true);
-		sender.println(message);// +"\n"
-		sender.flush();
+
+		//If raw connection we do not append an end of line nor escape anything
+		if (connector.isRaw()) {
+			sender.print(message);
+			sender.flush();
+		}
+		else {
+
+			message = message.replace("\n", "@n@");
+			message = message.replace("\b\r", "@b@@r@");
+			//TODO: do we really need to append a '\n' while we already use println and the printwriter is in auto flush ?
+			sender.println(message);// +"\n"
+			sender.flush();
+		}
 
 		// DataOutputStream outToServer = new DataOutputStream(currentSocket.getOutputStream());
 		// outToServer.writeUTF(message +"\n");
