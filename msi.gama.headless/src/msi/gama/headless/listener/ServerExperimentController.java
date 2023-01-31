@@ -397,7 +397,7 @@ public class ServerExperimentController implements IExperimentController {
 		try {
 			if (!scope.init(agent).passed()) {
 				scope.setDisposeStatus();
-			} else if (agent.getSpecies().isAutorun()) { userStart(); }
+			}// else if (agent.getSpecies().isAutorun()) { userStart(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
