@@ -345,6 +345,25 @@
                </with>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.ui.file.properties"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/display.sidebar2.png"
+               label="Properties"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <adapt
+                           type="org.eclipse.core.resources.IResource">
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
       </menuContribution>
       <menuContribution
             allPopups="false"

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaNavigator.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamaNavigator.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
@@ -30,16 +30,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.navigator.CommonNavigator;
@@ -56,12 +53,10 @@ import ummisco.gama.ui.navigator.contents.WrappedContainer;
 import ummisco.gama.ui.navigator.contents.WrappedFile;
 import ummisco.gama.ui.navigator.contents.WrappedResource;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
-import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The Class GamaNavigator.
@@ -82,7 +77,7 @@ public class GamaNavigator extends CommonNavigator
 	protected GamaToolbar2 toolbar;
 
 	/** The properties. */
-	private PropertyDialogAction properties;
+	// private PropertyDialogAction properties;
 
 	/** The find control. */
 	private NavigatorSearchControl findControl;
@@ -102,8 +97,7 @@ public class GamaNavigator extends CommonNavigator
 		restoreState();
 		final IToolBarManager tb = getViewSite().getActionBars().getToolBarManager();
 		for (final IContributionItem item : tb.getItems()) {
-			if (item instanceof ActionContributionItem) {
-				final ActionContributionItem aci = (ActionContributionItem) item;
+			if (item instanceof ActionContributionItem aci) {
 				final IAction action = aci.getAction();
 				if (action instanceof LinkEditorAction) {
 					link = action;
@@ -124,8 +118,8 @@ public class GamaNavigator extends CommonNavigator
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
-		properties =
-				new PropertyDialogAction(new SameShellProvider(getSite().getShell()), getSite().getSelectionProvider());
+		// properties =
+		// new PropertyDialogAction(new SameShellProvider(getSite().getShell()), getSite().getSelectionProvider());
 		findControl.initialize();
 
 	}
@@ -221,8 +215,7 @@ public class GamaNavigator extends CommonNavigator
 		final IStructuredSelection selection = (IStructuredSelection) anEvent.getSelection();
 		final Object element = selection.getFirstElement();
 		if (element instanceof VirtualContent && ((VirtualContent<?>) element).handleDoubleClick()) {
-			if (element instanceof Tag) {
-				Tag t = (Tag) element;
+			if (element instanceof Tag t) {
 				findControl.searchFor(t.getName());
 				return;
 			}
@@ -305,24 +298,24 @@ public class GamaNavigator extends CommonNavigator
 			element = (VirtualContent<?>) currentSelection.getFirstElement();
 		}
 		element.handleSingleClick();
-		showStatus(element);
+		// showStatus(element);
 	}
-
-	/**
-	 * Show status.
-	 *
-	 * @param element
-	 *            the element
-	 */
-	private void showStatus(final VirtualContent<?> element) {
-		final String message = element.getStatusMessage();
-		final String tooltip = element.getStatusTooltip();
-		final Image image = element.getStatusImage();
-		final GamaUIColor color = element.getStatusColor();
-		final Selector l = e -> properties.run();
-		final ToolItem t = toolbar.status(image, message, l, color, SWT.LEFT);
-		t.getControl().setToolTipText(tooltip == null ? message : tooltip);
-	}
+	//
+	// /**
+	// * Show status.
+	// *
+	// * @param element
+	// * the element
+	// */
+	// private void showStatus(final VirtualContent<?> element) {
+	// final String message = element.getStatusMessage();
+	// final String tooltip = element.getStatusTooltip();
+	// final Image image = element.getStatusImage();
+	// final GamaUIColor color = element.getStatusColor();
+	// final Selector l = e -> properties.run();
+	// final ToolItem t = toolbar.status(image, message, l, color, SWT.LEFT);
+	// t.getControl().setToolTipText(tooltip == null ? message : tooltip);
+	// }
 
 	@Override
 	public void expandAll() {
