@@ -272,6 +272,7 @@ public class GamaNavigator extends CommonNavigator
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
+		tb.noRightToolbar();
 		if (PlatformHelper.isWindows() || PlatformHelper.isLinux()) {
 			tb.sep(24, SWT.RIGHT);
 			findControl = new NavigatorSearchControl(this).fill(toolbar.getToolbar(SWT.RIGHT));

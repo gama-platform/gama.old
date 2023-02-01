@@ -357,9 +357,11 @@
                   <iterate
                         ifEmpty="false"
                         operator="and">
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                     </adapt>
+                     <or>
+                        <instanceof
+                              value="ummisco.gama.ui.navigator.contents.VirtualContent">
+                        </instanceof>
+                     </or>
                   </iterate>
                </with>
             </visibleWhen>

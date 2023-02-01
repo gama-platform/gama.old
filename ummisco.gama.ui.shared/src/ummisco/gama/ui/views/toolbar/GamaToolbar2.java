@@ -3,7 +3,7 @@
  * GamaToolbar2.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -137,6 +137,18 @@ public class GamaToolbar2 extends Composite {
 		data.minimumWidth = height * 2;
 		right.setLayoutData(data);
 		setBackgroundColor(isDark() ? getShell().getBackground() : IGamaColors.WHITE.color());
+	}
+
+	/**
+	 * No right toolbar.
+	 */
+	public void noRightToolbar() {
+		GridData data = (GridData) left.getLayoutData();
+		data.minimumWidth = 0;
+		data.grabExcessHorizontalSpace = false;
+		data.widthHint = 0;
+		data = (GridData) right.getLayoutData();
+		data.grabExcessHorizontalSpace = true;
 	}
 
 	@Override
@@ -621,6 +633,12 @@ public class GamaToolbar2 extends Composite {
 		toggle.run(); // will make it true
 	}
 
+	/**
+	 * Sets the default height.
+	 *
+	 * @param height
+	 *            the new default height
+	 */
 	public void setDefaultHeight(final int height) {
 		this.height = height;
 
