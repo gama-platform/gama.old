@@ -3,7 +3,7 @@
  * GamaQuadTree.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -40,6 +40,10 @@ import ummisco.gama.dev.utils.DEBUG;
  * lower right quadrant of the parent rectangle.
  *
  * @author Werner Randelshofer, adapted by Alexis Drogoul for GAMA
+ */
+
+/**
+ * The Class GamaQuadTree.
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaQuadTree implements ISpatialIndex {
@@ -268,44 +272,90 @@ public class GamaQuadTree implements ISpatialIndex {
 		/**
 		 * Adds the.
 		 *
-		 * @param i
+		 * @param p
 		 *            the p
 		 * @param a
 		 *            the a
 		 */
-		public void add(final IIntersectable i, final IAgent a) {
-			if (nw == null && canSplit && objects.size() >= maxCapacity) { split(); }
+		private void add(final GamaPoint p, final IAgent a) {
+			trySplit();
 			if (nw == null) {
-				objects.put(a, i);
-			} else if (i instanceof GamaPoint p) {
-				getNode(p).add(i, a);
+				objects.put(a, p);
 			} else {
-				if (i.intersects(nw.bounds)) { nw.add(i, a); }
-				if (i.intersects(ne.bounds)) { ne.add(i, a); }
-				if (i.intersects(sw.bounds)) { sw.add(i, a); }
-				if (i.intersects(se.bounds)) { se.add(i, a); }
+				getNode(p).add(p, a);
 			}
+		}
+
+		/**
+		 * Adds the.
+		 *
+		 * @param e
+		 *            the e
+		 * @param a
+		 *            the a
+		 */
+		private void add(final Envelope3D e, final IAgent a) {
+			trySplit();
+			if (nw == null) {
+				objects.put(a, e);
+			} else {
+				if (nw.bounds.intersects(e)) { nw.add(e, a); }
+				if (ne.bounds.intersects(e)) { ne.add(e, a); }
+				if (sw.bounds.intersects(e)) { sw.add(e, a); }
+				if (se.bounds.intersects(e)) { se.add(e, a); }
+			}
+		}
+
+		/**
+		 * Try split.
+		 */
+		private void trySplit() {
+			if (nw == null && canSplit && objects.size() >= maxCapacity) { split(); }
+		}
+
+		/**
+		 * Try remove.
+		 *
+		 * @param a
+		 *            the a
+		 * @return true, if successful
+		 */
+		private boolean tryRemove(final IShape a) {
+			if (nw != null) return false;
+			final IIntersectable env = objects.remove(a);
+			if (env != null) {
+				env.dispose();
+				return true;
+			}
+			return false;
 		}
 
 		/**
 		 * Removes the.
 		 *
-		 * @param i
+		 * @param p
 		 *            the p
 		 * @param a
 		 *            the a
 		 */
-		public void remove(final IIntersectable i, final IShape a) {
-			if (nw == null) {
-				final IIntersectable env = objects.remove(a);
-				if (env != null) { env.dispose(); }
-			} else if (i instanceof GamaPoint p) {
-				getNode(p).remove(i, a);
-			} else {
-				if (i.intersects(nw.bounds)) { nw.remove(i, a); }
-				if (i.intersects(ne.bounds)) { ne.remove(i, a); }
-				if (i.intersects(sw.bounds)) { sw.remove(i, a); }
-				if (i.intersects(se.bounds)) { se.remove(i, a); }
+		private void remove(final GamaPoint p, final IShape a) {
+			if (!tryRemove(a)) { getNode(p).remove(p, a); }
+		}
+
+		/**
+		 * Removes the.
+		 *
+		 * @param e
+		 *            the e
+		 * @param a
+		 *            the a
+		 */
+		private void remove(final Envelope3D e, final IShape a) {
+			if (!tryRemove(a)) {
+				if (nw.bounds.intersects(e)) { nw.remove(e, a); }
+				if (ne.bounds.intersects(e)) { ne.remove(e, a); }
+				if (sw.bounds.intersects(e)) { sw.remove(e, a); }
+				if (se.bounds.intersects(e)) { se.remove(e, a); }
 			}
 		}
 
