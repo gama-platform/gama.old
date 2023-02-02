@@ -94,6 +94,11 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	// Mouse
 	private final GamaPoint mousePosition = new GamaPoint(0, 0);
 
+	/** Internal world position.
+	 *
+	 * See SWTOpenGLDisplaySUrface::getModelCoordinates() to access the world
+	 * position is an OpenGL display.
+	 */
 	private final GamaPoint positionInTheWorld = new GamaPoint();
 
 	/** The last mouse pressed position. */
@@ -560,12 +565,14 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			}
 			mousePosition.x = x;
 			mousePosition.y = y;
+			computeMouseLocationInTheWorld(x, y);
 			setCtrlPressed(isCtrl);
 			setShiftPressed(isShift);
 			return;
 		}
 		mousePosition.x = x;
 		mousePosition.y = y;
+		computeMouseLocationInTheWorld(x, y);
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
 
@@ -628,7 +635,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			mousePosition.y = y;
 			defineROI(new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y));
 		} else if (mouseInROI(new GamaPoint(mousePosition.x, mousePosition.y))) {
-			GamaPoint p = getWorldPositionOfMouse();
+			GamaPoint p = positionInTheWorld;
 			p = p.minus(roiEnvelope.centre());
 			roiEnvelope.translate(p.x, p.y);
 		} else if (!data.isCameraLocked()) {
@@ -768,7 +775,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		if (keystoneMode) {
 			if (getRenderer().getKeystoneHelper().getCornerSelected() != -1) {
 				getRenderer().getKeystoneHelper().setCornerSelected(-1);
-				// return;
+				return;
 			}
 			final int cornerSelected = clickOnKeystone(x, y);
 			if (cornerSelected != -1) { getRenderer().getKeystoneHelper().setCornerSelected(cornerSelected); }
@@ -790,6 +797,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		// }
 		mousePosition.x = x;
 		mousePosition.y = y;
+		computeMouseLocationInTheWorld(x, y);
 
 		setMouseLeftPressed(button == 1);
 		setCtrlPressed(isCtrl);
@@ -857,8 +865,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			if (env != null) { renderer.getSurface().selectionIn(env); }
 		}
 	}
-
-	public GamaPoint getWorldPositionOfMouse() { return positionInTheWorld; }
 
 	FloatBuffer pixelDepth = Buffers.newDirectFloatBuffer(1);
 
