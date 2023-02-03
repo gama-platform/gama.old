@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
- * SwingControl.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation platform
+ * SwingControlMac.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -47,6 +47,19 @@ public class SwingControlMac extends SwingControl {
 		if (isDisposed()) return;
 		if (!populated) {
 			populated = true;
+			MouseListener ml = new MouseAdapter() {
+
+				@Override
+				public void mouseExited(final MouseEvent e) {
+					if (surface.isFocusOwner() && !surface.contains(e.getPoint())) {
+						frame.setVisible(false);
+						frame.setVisible(true);
+						WorkbenchHelper.asyncRun(() -> getShell().forceActive());
+					}
+
+				}
+
+			};
 			WorkbenchHelper.asyncRun(() -> {
 				frame = SWT_AWT.new_Frame(SwingControlMac.this);
 				frame.setAlwaysOnTop(false);
@@ -54,25 +67,14 @@ public class SwingControlMac extends SwingControl {
 				if (swingMouseListener != null) { frame.addMouseMotionListener(swingMouseListener); }
 				frame.add(surface);
 
-				MouseListener ml = new MouseAdapter() {
-
-					@Override
-					public void mouseExited(final MouseEvent e) {
-						if (surface.isFocusOwner() && !surface.contains(e.getPoint())) {
-							frame.setVisible(false);
-							frame.setVisible(true);
-							WorkbenchHelper.asyncRun(() -> getShell().forceActive());
-						}
-
-					}
-
-				};
 				frame.addMouseListener(ml);
 				surface.addMouseListener(ml);
 
 			});
 			addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
 				try {
+					frame.removeMouseListener(ml);
+					surface.removeMouseListener(ml);
 					frame.remove(surface);
 				} catch (final Exception e) {}
 
