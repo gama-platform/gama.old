@@ -3,7 +3,7 @@
  * DisplaySurfaceMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -391,7 +391,7 @@ public class DisplaySurfaceMenu {
 						editor.open();
 						surface.updateDisplay(true);
 					}, GamaIcons.create("chart.parameters").image());
-					if (chart.getDataSet().keepsHistory()) {
+					if (chart.keepsHistory()) {
 						GamaMenu.action(submenu, "Save history...", t -> chart.saveHistory(),
 								GamaIcons.create("menu.browse2").image());
 					}

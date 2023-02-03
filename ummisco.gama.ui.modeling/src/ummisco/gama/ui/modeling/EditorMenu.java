@@ -3,7 +3,7 @@
  * EditorMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -349,15 +349,13 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 */
 	private void createBoxToggle(final Menu menu) {
 		final MenuItem box = new MenuItem(menu, SWT.PUSH);
-		boolean selected = getEditor().isDecorationEnabled();
-		box.setText(selected ? " Uncolorize code sections":" Colorize code sections");
+		box.setText(" Toggle code sections colorization");
 		box.setImage(create("toggle.box").image());
-		//box.setSelection(selected);
 		box.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				final boolean selection = box.getSelection();
+				final boolean selection = !getEditor().isDecorationEnabled();
 				getEditor().setDecorationEnabled(selection);
 				getEditor().decorate(selection);
 			}
@@ -371,8 +369,8 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createMarkToggle(final Menu menu) {
 		final MenuItem mark = new MenuItem(menu, SWT.PUSH);
 		boolean selected = markPref.getValue();
-		mark.setText(selected ? " Do not mark symbols occurences":" Mark occurences of symbols");
-		//mark.setSelection(markPref.getValue());
+		mark.setText(selected ? " Do not mark symbols occurences" : " Mark occurences of symbols");
+		// mark.setSelection(markPref.getValue());
 		mark.setImage(create("toggle.mark").image());
 
 		mark.addSelectionListener(new SelectionAdapter() {
@@ -394,8 +392,8 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createOverviewToggle(final Menu menu) {
 		final MenuItem overview = new MenuItem(menu, SWT.PUSH);
 		boolean selected = getEditor().isOverviewRulerVisible();
-		overview.setText(selected ? " Hide markers overview":" Show markers overview");
-		//overview.setSelection(selected);
+		overview.setText(selected ? " Hide markers overview" : " Show markers overview");
+		// overview.setSelection(selected);
 		overview.setImage(create("toggle.overview").image());
 		overview.addSelectionListener(new SelectionAdapter() {
 
@@ -418,8 +416,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createFoldingToggle(final Menu menu) {
 		final MenuItem folding = new MenuItem(menu, SWT.PUSH);
 		boolean selected = getEditor().isRangeIndicatorEnabled();
-		folding.setText(selected ? " Unfold code sections":" Fold code sections");
-
+		folding.setText(selected ? " Unfold code sections" : " Fold code sections");
 
 		folding.setSelection(selected);
 		folding.setImage(create("toggle.folding").image());
@@ -439,9 +436,9 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createLineToggle(final Menu menu) {
 		final MenuItem line = new MenuItem(menu, SWT.PUSH);
 		boolean selected = getEditor().isLineNumberRulerVisible();
-		line.setText(selected ? " Hide line numbers":" Display line numbers");
+		line.setText(selected ? " Hide line numbers" : " Display line numbers");
 
-		//line.setSelection(selected);
+		// line.setSelection(selected);
 		line.setImage(create("toggle.numbers").image());
 		line.addSelectionListener(new SelectionAdapter() {
 

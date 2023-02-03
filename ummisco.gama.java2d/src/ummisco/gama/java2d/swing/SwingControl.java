@@ -3,7 +3,7 @@
  * SwingControl.java, in ummisco.gama.java2d, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -35,6 +35,19 @@ public abstract class SwingControl extends Composite {
 		DEBUG.OFF();
 	}
 
+	/**
+	 * Creates the.
+	 *
+	 * @param parent
+	 *            the parent
+	 * @param view
+	 *            the view
+	 * @param surface
+	 *            the surface
+	 * @param style
+	 *            the style
+	 * @return the composite
+	 */
 	public static Composite create(final Composite parent, final AWTDisplayView view,
 			final Java2DDisplaySurface surface, final int style) {
 		if (PlatformHelper.isLinux()) return new SwingControlLinux(parent, view, surface, style);
@@ -45,6 +58,8 @@ public abstract class SwingControl extends Composite {
 
 	/** The multi listener. */
 	KeyListener swingKeyListener;
+
+	/** The swing mouse listener. */
 	MouseMotionListener swingMouseListener;
 
 	/** The frame. */
@@ -73,7 +88,7 @@ public abstract class SwingControl extends Composite {
 		super(parent, style | ((style & SWT.BORDER) == 0 ? SWT.EMBEDDED : 0) | SWT.NO_BACKGROUND);
 		setEnabled(false);
 		this.surface = component;
-		WorkbenchHelper.getPage().addPartListener(new IPartListener2() {
+		IPartListener2 listener = new IPartListener2() {
 
 			@Override
 			public void partHidden(final IWorkbenchPartReference partRef) {
@@ -88,7 +103,9 @@ public abstract class SwingControl extends Composite {
 				// DEBUG.OUT("Visible event received for " + view.getTitle());
 				if (partRef.getPart(false).equals(view)) { visible = true; }
 			}
-		});
+		};
+		WorkbenchHelper.getPage().addPartListener(listener);
+		addListener(SWT.Dispose, event -> { WorkbenchHelper.getPage().removePartListener(listener); });
 		setLayout(new FillLayout());
 	}
 
@@ -123,6 +140,14 @@ public abstract class SwingControl extends Composite {
 		this.privateSetDimensions(width, height);
 	}
 
+	/**
+	 * Private set dimensions.
+	 *
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 */
 	protected void privateSetDimensions(final int width, final int height) {}
 
 	/**
@@ -133,6 +158,12 @@ public abstract class SwingControl extends Composite {
 	 */
 	public void setKeyListener(final KeyListener adapter) { swingKeyListener = adapter; }
 
+	/**
+	 * Sets the mouse listener.
+	 *
+	 * @param adapter
+	 *            the new mouse listener
+	 */
 	public void setMouseListener(final MouseMotionListener adapter) { swingMouseListener = adapter; }
 
 }

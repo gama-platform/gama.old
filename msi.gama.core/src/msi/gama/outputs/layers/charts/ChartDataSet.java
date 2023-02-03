@@ -3,7 +3,7 @@
  * ChartDataSet.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -36,30 +36,30 @@ public class ChartDataSet {
 	private static String chartFolder = "charts";
 
 	/** The sources. */
-	ArrayList<ChartDataSource> sources = new ArrayList<>();
+	final ArrayList<ChartDataSource> sources = new ArrayList<>();
 
 	/** The series. */
-	LinkedHashMap<String, ChartDataSeries> series = new LinkedHashMap<>();
+	final LinkedHashMap<String, ChartDataSeries> series = new LinkedHashMap<>();
 
 	/** The deletedseries. */
-	LinkedHashMap<String, ChartDataSeries> deletedseries = new LinkedHashMap<>();
+	final LinkedHashMap<String, ChartDataSeries> deletedseries = new LinkedHashMap<>();
 
 	/** The Xcategories. */
-	ArrayList<String> Xcategories = new ArrayList<>(); // for categories
+	final ArrayList<String> Xcategories = new ArrayList<>(); // for categories
 
 	/** The X series values. */
 	// datasets
-	ArrayList<Double> XSeriesValues = new ArrayList<>(); // for series
+	final ArrayList<Double> XSeriesValues = new ArrayList<>(); // for series
 
 	/** The Ycategories. */
-	ArrayList<String> Ycategories = new ArrayList<>(); // for Y categories
+	final ArrayList<String> Ycategories = new ArrayList<>(); // for Y categories
 
 	/** The Y series values. */
 	// datasets
-	ArrayList<Double> YSeriesValues = new ArrayList<>(); // for 3d series
+	final ArrayList<Double> YSeriesValues = new ArrayList<>(); // for 3d series
 
 	/** The serie creation date. */
-	LinkedHashMap<String, Integer> serieCreationDate = new LinkedHashMap<>();
+	final LinkedHashMap<String, Integer> serieCreationDate = new LinkedHashMap<>();
 
 	/** The common xindex. */
 	int commonXindex = -1; // current index on X value (usually last of list,
@@ -82,10 +82,10 @@ public class ChartDataSet {
 	IExpression ylabels; // to replace default common Y Labels
 
 	/** The serie removal date. */
-	LinkedHashMap<String, Integer> serieRemovalDate = new LinkedHashMap<>();
+	final LinkedHashMap<String, Integer> serieRemovalDate = new LinkedHashMap<>();
 
 	/** The serie to update before. */
-	LinkedHashMap<String, Integer> serieToUpdateBefore = new LinkedHashMap<>();
+	final LinkedHashMap<String, Integer> serieToUpdateBefore = new LinkedHashMap<>();
 
 	/** The mainoutput. */
 	ChartOutput mainoutput;
@@ -201,7 +201,10 @@ public class ChartDataSet {
 	 * @param categories
 	 *            the new categories
 	 */
-	public void setCategories(final ArrayList<String> categories) { this.Xcategories = categories; }
+	public void setCategories(final ArrayList<String> categories) {
+		this.Xcategories.clear();
+		Xcategories.addAll(categories);
+	}
 
 	/**
 	 * Gets the x series values.
@@ -223,7 +226,10 @@ public class ChartDataSet {
 	 * @param xSeriesValues
 	 *            the new x series values
 	 */
-	public void setXSeriesValues(final ArrayList<Double> xSeriesValues) { XSeriesValues = xSeriesValues; }
+	public void setXSeriesValues(final ArrayList<Double> xSeriesValues) {
+		XSeriesValues.clear();
+		XSeriesValues.addAll(xSeriesValues);
+	}
 
 	/**
 	 * Checks if is by category.
@@ -555,7 +561,7 @@ public class ChartDataSet {
 			}
 			while (YSeriesValues.size() < targetNb) {
 				double nvalue = getYCycleOrPlusOneForBatch(scope, chartCycle);
-				if ((YSeriesValues.size() > 0) && (YSeriesValues.get(YSeriesValues.size() - 1) >= nvalue)) {
+				if (YSeriesValues.size() > 0 && YSeriesValues.get(YSeriesValues.size() - 1) >= nvalue) {
 					nvalue = YSeriesValues.get(YSeriesValues.size() - 1) + 1;
 				}
 				addCommonYValue(scope, nvalue);
@@ -592,7 +598,7 @@ public class ChartDataSet {
 		// if (this.YSeriesValues.contains((double) chartcycle))
 		// return (int) YSeriesValues.get(YSeriesValues.size() - 1).doubleValue() + 1;
 		double value = chartcycle;
-		if ((YSeriesValues.size() > 0) && (YSeriesValues.get(YSeriesValues.size() - 1) >= value)) {
+		if (YSeriesValues.size() > 0 && YSeriesValues.get(YSeriesValues.size() - 1) >= value) {
 			value = YSeriesValues.get(YSeriesValues.size() - 1) + 1;
 		}
 		return value;
@@ -664,8 +670,8 @@ public class ChartDataSet {
 				final IList<?> xl2 = Cast.asList(scope, xlab);
 
 				if (this.useXSource && xv2.size() > 0 && xv2.get(0) instanceof Number) {
-					XSeriesValues = new ArrayList<>();
-					Xcategories = new ArrayList<>();
+					XSeriesValues.clear();
+					Xcategories.clear();
 					for (int i = 0; i < xv2.size(); i++) {
 						XSeriesValues.add(Cast.asFloat(scope, xv2.get(i)));
 						Xcategories.add(Cast.asString(scope, xl2.get(i)));
@@ -673,7 +679,7 @@ public class ChartDataSet {
 					}
 
 				} else if (xv2.size() > Xcategories.size()) {
-					Xcategories = new ArrayList<>();
+					Xcategories.clear();
 					for (int i = 0; i < xv2.size(); i++) {
 						if (i >= XSeriesValues.size()) {
 							XSeriesValues.add(getXCycleOrPlusOneForBatch(scope, chartCycle));
@@ -707,7 +713,7 @@ public class ChartDataSet {
 			}
 			while (XSeriesValues.size() < targetNb) {
 				double nvalue = getXCycleOrPlusOneForBatch(scope, chartCycle);
-				if ((XSeriesValues.size() > 0) && (XSeriesValues.get(XSeriesValues.size() - 1) >= nvalue)) {
+				if (XSeriesValues.size() > 0 && XSeriesValues.get(XSeriesValues.size() - 1) >= nvalue) {
 					nvalue = XSeriesValues.get(XSeriesValues.size() - 1) + 1;
 				}
 				addCommonXValue(scope, nvalue);
@@ -744,7 +750,7 @@ public class ChartDataSet {
 		// if (this.XSeriesValues.contains(Double.valueOf(chartcycle)))
 		// return (int) XSeriesValues.get(XSeriesValues.size() - 1).doubleValue() + 1;
 		double value = chartcycle;
-		if ((XSeriesValues.size() > 0) && (XSeriesValues.get(XSeriesValues.size() - 1) >= value)) {
+		if (XSeriesValues.size() > 0 && XSeriesValues.get(XSeriesValues.size() - 1) >= value) {
 			value = XSeriesValues.get(XSeriesValues.size() - 1) + 1;
 		}
 		return value;

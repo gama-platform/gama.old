@@ -74,8 +74,12 @@ public class SwingControlMac extends SwingControl {
 			addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
 				try {
 					frame.removeMouseListener(ml);
+					if (swingKeyListener != null) { frame.removeKeyListener(swingKeyListener); }
+					if (swingMouseListener != null) { frame.removeMouseMotionListener(swingMouseListener); }
 					surface.removeMouseListener(ml);
 					frame.remove(surface);
+					surface.dispose();
+					frame.dispose();
 				} catch (final Exception e) {}
 
 			}));
