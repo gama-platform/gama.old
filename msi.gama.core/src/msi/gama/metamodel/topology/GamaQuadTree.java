@@ -49,7 +49,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamaQuadTree implements ISpatialIndex {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The root. */
@@ -314,23 +314,6 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		/**
-		 * Try remove.
-		 *
-		 * @param a
-		 *            the a
-		 * @return true, if successful
-		 */
-		private boolean tryRemove(final IShape a) {
-			if (nw != null) return false;
-			final IIntersectable env = objects.remove(a);
-			if (env != null) {
-				env.dispose();
-				return true;
-			}
-			return false;
-		}
-
-		/**
 		 * Removes the.
 		 *
 		 * @param p
@@ -339,7 +322,12 @@ public class GamaQuadTree implements ISpatialIndex {
 		 *            the a
 		 */
 		private void remove(final GamaPoint p, final IShape a) {
-			if (!tryRemove(a)) { getNode(p).remove(p, a); }
+			if (nw == null) {
+				final IIntersectable env = objects.remove(a);
+				if (env != null) { env.dispose(); }
+			} else {
+				getNode(p).remove(p, a);
+			}
 		}
 
 		/**
@@ -351,7 +339,10 @@ public class GamaQuadTree implements ISpatialIndex {
 		 *            the a
 		 */
 		private void remove(final Envelope3D e, final IShape a) {
-			if (!tryRemove(a)) {
+			if (nw == null) {
+				final IIntersectable env = objects.remove(a);
+				if (env != null) { env.dispose(); }
+			} else {
 				if (nw.bounds.intersects(e)) { nw.remove(e, a); }
 				if (ne.bounds.intersects(e)) { ne.remove(e, a); }
 				if (sw.bounds.intersects(e)) { sw.remove(e, a); }
