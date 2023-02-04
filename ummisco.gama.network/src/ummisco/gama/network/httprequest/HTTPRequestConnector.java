@@ -98,6 +98,7 @@ public class HTTPRequestConnector extends Connector {
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" }) 	
 	@Override
 	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
 		Object cont = content.getContents(sender.getScope());
@@ -112,22 +113,34 @@ public class HTTPRequestConnector extends Connector {
 			}
 			Builder requestBuilder = HttpRequest.newBuilder().uri(uri);
 			// Management of the content. A list [method,body,headers] or [method] are expected
+			// Element at 0 is the HTTP Method
 			String method = (String) listContent.get(0);
-			String jsonBody = listContent.size() > 1 ? Jsoner.serialize(listContent.get(1)) : "";
-			@SuppressWarnings ("unchecked") IMap<String, String> header =
+
+			// Element at 2 is the headers (including the Content-Type)
+			IMap<String, String> header =
 					listContent.size() > 2 ? (IMap<String, String>) listContent.get(2) : null;
+					
+			// Element at 1 is the content
+			String body = "";
+			if(listContent.size() > 1) {
+				if((header != null) && (header.containsKey("Content-Type")) && header.get("Content-Type").equals("text/plain")){
+					body = (String) listContent.get(1);
+				} else {
+					body = Jsoner.serialize(listContent.get(1));
+				}
+			}		
 
 			if (header != null) { for (String key : header.keySet()) { requestBuilder.header(key, header.get(key)); } }
 
 			request = switch (method) {
 				case "GET" -> requestBuilder.GET().build();
-				case "POST" -> requestBuilder.POST(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
-				case "PUT" -> requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(jsonBody)).build();
+				case "POST" -> requestBuilder.POST(HttpRequest.BodyPublishers.ofString(body)).build();
+				case "PUT" -> requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(body)).build();
 				case "DELETE" -> requestBuilder.DELETE().build();
 				default -> throw GamaNetworkException.cannotSendMessage(null, "Bad HTTP action");
 			};
 
-			this.sendMessage(sender, receiver, jsonBody);
+			this.sendMessage(sender, receiver, body);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
