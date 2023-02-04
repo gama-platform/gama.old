@@ -3,7 +3,7 @@
  * ChartDataSeries.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -27,29 +27,29 @@ import msi.gaml.operators.Cast;
 public class ChartDataSeries {
 
 	/** The cvalues. */
-	ArrayList<String> cvalues = new ArrayList<>(); // for categories
+	final ArrayList<String> cvalues = new ArrayList<>(); // for categories
 
 	/** The xvalues. */
-	ArrayList<Double> xvalues = new ArrayList<>(); // for xy charts
+	final ArrayList<Double> xvalues = new ArrayList<>(); // for xy charts
 
 	/** The yvalues. */
-	ArrayList<Double> yvalues = new ArrayList<>();
+	final ArrayList<Double> yvalues = new ArrayList<>();
 
 	/** The svalues. */
-	ArrayList<Double> svalues = new ArrayList<>(); // for marker sizes or
+	final ArrayList<Double> svalues = new ArrayList<>(); // for marker sizes or
 
 	/** The xerrvaluesmax. */
 	// 3d charts
-	ArrayList<Double> xerrvaluesmax = new ArrayList<>();
+	final ArrayList<Double> xerrvaluesmax = new ArrayList<>();
 
 	/** The yerrvaluesmax. */
-	ArrayList<Double> yerrvaluesmax = new ArrayList<>();
+	final ArrayList<Double> yerrvaluesmax = new ArrayList<>();
 
 	/** The xerrvaluesmin. */
-	ArrayList<Double> xerrvaluesmin = new ArrayList<>();
+	final ArrayList<Double> xerrvaluesmin = new ArrayList<>();
 
 	/** The yerrvaluesmin. */
-	ArrayList<Double> yerrvaluesmin = new ArrayList<>();
+	final ArrayList<Double> yerrvaluesmin = new ArrayList<>();
 
 	/** The mymedcolor. */
 	GamaColor mycolor, mymincolor, mymedcolor;
@@ -68,16 +68,16 @@ public class ChartDataSeries {
 	boolean ongoing_update = false;
 
 	/** The oldcvalues. */
-	ArrayList<String> oldcvalues = new ArrayList<>(); // for categories
+	final ArrayList<String> oldcvalues = new ArrayList<>(); // for categories
 
 	/** The oldxvalues. */
-	ArrayList<Double> oldxvalues = new ArrayList<>(); // for xy charts
+	final ArrayList<Double> oldxvalues = new ArrayList<>(); // for xy charts
 
 	/** The oldyvalues. */
-	ArrayList<Double> oldyvalues = new ArrayList<>();
+	final ArrayList<Double> oldyvalues = new ArrayList<>();
 
 	/** The oldsvalues. */
-	ArrayList<Double> oldsvalues = new ArrayList<>(); // for marker sizes
+	final ArrayList<Double> oldsvalues = new ArrayList<>(); // for marker sizes
 
 	/**
 	 * Checks if is ongoing update.
@@ -139,7 +139,7 @@ public class ChartDataSeries {
 	 * @return the serie legend
 	 */
 	public Comparable getSerieLegend(final IScope scope) {
-		
+
 		return name;
 	}
 
@@ -151,7 +151,7 @@ public class ChartDataSeries {
 	 * @return the serie id
 	 */
 	public String getSerieId(final IScope scope) {
-		
+
 		return name;
 	}
 
@@ -266,7 +266,7 @@ public class ChartDataSeries {
 	 * @return the c values
 	 */
 	public ArrayList<String> getCValues(final IScope scope) {
-		
+
 		if (isOngoing_update()) return oldcvalues;
 		return cvalues;
 	}
@@ -279,7 +279,7 @@ public class ChartDataSeries {
 	 * @return the x values
 	 */
 	public ArrayList<Double> getXValues(final IScope scope) {
-		
+
 		if (isOngoing_update()) return oldxvalues;
 		return xvalues;
 	}
@@ -292,7 +292,7 @@ public class ChartDataSeries {
 	 * @return the y values
 	 */
 	public ArrayList<Double> getYValues(final IScope scope) {
-		
+
 		if (isOngoing_update()) return oldyvalues;
 		return yvalues;
 	}
@@ -305,7 +305,7 @@ public class ChartDataSeries {
 	 * @return the s values
 	 */
 	public ArrayList<Double> getSValues(final IScope scope) {
-		
+
 		if (isOngoing_update()) return oldsvalues;
 		return svalues;
 	}
@@ -317,27 +317,30 @@ public class ChartDataSeries {
 	 *            the scope
 	 */
 	/*
-	 * public void addxysvalue(double dx, double dy, double dz, int date) { 
-	 * xvalues.add(dx); yvalues.add(dy); svalues.add(dz); this.getDataset().serieToUpdateBefore.put(this.getName(),
-	 * date);
+	 * public void addxysvalue(double dx, double dy, double dz, int date) { xvalues.add(dx); yvalues.add(dy);
+	 * svalues.add(dz); this.getDataset().serieToUpdateBefore.put(this.getName(), date);
 	 *
 	 * }
 	 */
 	public void clearValues(final IScope scope) {
 
-		oldcvalues = cvalues;
-		oldxvalues = xvalues;
-		oldyvalues = yvalues;
-		oldsvalues = svalues;
+		oldcvalues.clear();
+		oldcvalues.addAll(cvalues);
+		oldxvalues.clear();
+		oldxvalues.addAll(xvalues);
+		oldyvalues.clear();
+		oldyvalues.addAll(yvalues);
+		oldsvalues.clear();
+		oldsvalues.addAll(svalues);
 
-		cvalues = new ArrayList<>(); // for xy charts
-		xvalues = new ArrayList<>(); // for xy charts
-		yvalues = new ArrayList<>();
-		svalues = new ArrayList<>(); // for marker sizes or 3d charts
-		xerrvaluesmax = new ArrayList<>();
-		yerrvaluesmax = new ArrayList<>();
-		xerrvaluesmin = new ArrayList<>();
-		yerrvaluesmin = new ArrayList<>();
+		cvalues.clear(); // for xy charts
+		xvalues.clear(); // for xy charts
+		yvalues.clear();
+		svalues.clear(); // for marker sizes or 3d charts
+		xerrvaluesmax.clear();
+		yerrvaluesmax.clear();
+		xerrvaluesmin.clear();
+		yerrvaluesmin.clear();
 
 	}
 
@@ -356,7 +359,7 @@ public class ChartDataSeries {
 	 */
 	private Object getlistvalue(final IScope scope, final HashMap barvalues, final String valuetype,
 			final int listvalue) {
-		
+
 		if (!barvalues.containsKey(valuetype)) return null;
 		boolean uselist = true;
 		if (listvalue < 0) { uselist = false; }
@@ -466,6 +469,16 @@ public class ChartDataSeries {
 
 	}
 
+	/**
+	 * Inits the color.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param barvalues
+	 *            the barvalues
+	 * @param listvalue
+	 *            the listvalue
+	 */
 	public void initColor(final IScope scope, final HashMap barvalues, final int listvalue) {
 		if (barvalues.containsKey(IKeyword.COLOR)) {
 
@@ -512,7 +525,7 @@ public class ChartDataSeries {
 	 */
 	public void addxyvalue(final IScope scope, final double dx, final double dy, final int date,
 			final HashMap barvalues, final int listvalue) {
-		
+
 		xvalues.add(dx);
 		yvalues.add(dy);
 

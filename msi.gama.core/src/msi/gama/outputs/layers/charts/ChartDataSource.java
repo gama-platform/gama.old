@@ -3,7 +3,7 @@
  * ChartDataSource.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -105,7 +105,7 @@ public class ChartDataSource {
 
 	/** The my series. */
 	// Object lastvalue;
-	LinkedHashMap<String, ChartDataSeries> mySeries = new LinkedHashMap<>();
+	final LinkedHashMap<String, ChartDataSeries> mySeries = new LinkedHashMap<>();
 
 	/** The my dataset. */
 	ChartDataSet myDataset;
@@ -263,8 +263,19 @@ public class ChartDataSource {
 	 */
 	public void setUseSize(final boolean useSize) { this.useSize = useSize; }
 
+	/**
+	 * Checks if is box and whisker data.
+	 *
+	 * @return true, if is box and whisker data
+	 */
 	public boolean isBoxAndWhiskerData() { return isBoxAndWhiskerData; }
 
+	/**
+	 * Sets the checks if is box and whisker data.
+	 *
+	 * @param isBoxAndWhiskerData
+	 *            the new checks if is box and whisker data
+	 */
 	public void setisBoxAndWhiskerData(final boolean isBoxAndWhiskerData) {
 		this.isBoxAndWhiskerData = isBoxAndWhiskerData;
 	}

@@ -3,7 +3,7 @@
  * JOGLRenderer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -391,7 +391,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		// Multiline: Issue #780
 		if (string.contains("\n")) {
 			int i = 0;
-			final double shift = attributes.getFont().getSize() / this.getyRatioBetweenPixelsAndModelUnits();
+			final double shift = attributes.getFont().getSize() / this.getAbsoluteRatioBetweenPixelsAndModelsUnits();
 			for (final String s : string.split("\n")) {
 				// DEBUG.OUT("Attributes Font Size: " + attributes.font.getSize());
 				// DEBUG.OUT("Get Y Ratio: " + getyRatioBetweenPixelsAndModelUnits());
@@ -428,6 +428,12 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
 		return DPIHelper.autoScaleDown(openGL.getRatios().y);
+	}
+
+	@Override
+	public double getAbsoluteRatioBetweenPixelsAndModelsUnits() {
+		return Math.min(DPIHelper.autoScaleDown(canvas.getSurfaceHeight() / data.getEnvHeight()),
+				DPIHelper.autoScaleDown(canvas.getSurfaceWidth() / data.getEnvWidth()));
 	}
 
 	/*

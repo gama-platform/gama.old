@@ -3,7 +3,7 @@
  * ChartJFreeChartOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -49,15 +49,16 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 	boolean oldAntiAlias;
 
 	/** The info. */
-	public ChartRenderingInfo info;
+	final public ChartRenderingInfo info;
 
 	/** The jfreedataset. */
-	List<Dataset> jfreedataset = new ArrayList<>();
+	final List<Dataset> jfreedataset = new ArrayList<>();
 
 	/** The chart. */
 	JFreeChart chart = null;
 
-	Rectangle2D area = new Rectangle2D.Double();
+	/** The area. */
+	final Rectangle2D area = new Rectangle2D.Double();
 
 	/** The cache. */
 	BufferedImage frontImage, backImage;
@@ -66,8 +67,12 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 	AbstractRenderer defaultrenderer;
 
 	/** The Id position. */
-	HashMap<String, Integer> idPosition = new HashMap<>();
-	HashMap<String, AbstractRenderer> rendererSet = new HashMap<>();
+	final HashMap<String, Integer> idPosition = new HashMap<>();
+
+	/** The renderer set. */
+	final HashMap<String, AbstractRenderer> rendererSet = new HashMap<>();
+
+	/** The nbseries. */
 	int nbseries = 0;
 	/** The ready. */
 	// ChartProgressListener

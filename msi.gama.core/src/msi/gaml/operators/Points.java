@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Points.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * Points.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.operators;
 
@@ -23,7 +22,6 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IOperatorValidator;
 import msi.gaml.compilation.annotations.validator;
@@ -74,10 +72,10 @@ public class Points {
 	@validator (PointValidator.class)
 	@no_test
 	public static GamaPoint toPoint(final IScope scope, final IExpression xExp, final IExpression yExp) {
-		boolean isGraphics = scope instanceof IGraphicsScope;
-		if (isGraphics) { ((IGraphicsScope) scope).setHorizontalPixelContext(); }
+		// boolean isGraphics = scope instanceof IGraphicsScope;
+		// if (isGraphics) { ((IGraphicsScope) scope).setHorizontalPixelContext(); }
 		final double x = Cast.asFloat(scope, xExp.value(scope));
-		if (isGraphics) { ((IGraphicsScope) scope).setVerticalPixelContext(); }
+		// if (isGraphics) { ((IGraphicsScope) scope).setVerticalPixelContext(); }
 		final double y = Cast.asFloat(scope, yExp.value(scope));
 		return new GamaPoint(x, y);
 	}
@@ -104,10 +102,10 @@ public class Points {
 	@no_test
 	public static GamaPoint toPoint(final IScope scope, final IExpression xExp, final IExpression yExp,
 			final IExpression zExp) {
-		boolean isGraphics = scope instanceof IGraphicsScope;
-		if (isGraphics) { ((IGraphicsScope) scope).setHorizontalPixelContext(); }
+		// boolean isGraphics = scope instanceof IGraphicsScope;
+		// if (isGraphics) { ((IGraphicsScope) scope).setHorizontalPixelContext(); }
 		final double x = Cast.asFloat(scope, xExp.value(scope));
-		if (isGraphics) { ((IGraphicsScope) scope).setVerticalPixelContext(); }
+		// if (isGraphics) { ((IGraphicsScope) scope).setVerticalPixelContext(); }
 		final double y = Cast.asFloat(scope, yExp.value(scope));
 		final double z = Cast.asFloat(scope, zExp.value(scope));
 		return new GamaPoint(x, y, z);

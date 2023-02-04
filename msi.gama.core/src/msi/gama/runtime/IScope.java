@@ -69,19 +69,19 @@ public interface IScope extends Closeable, IBenchmarkable {
 		/**
 		 * Sets the horizontal pixel context.
 		 */
-		void setHorizontalPixelContext();
+		// void setHorizontalPixelContext();
 
 		/**
 		 * Sets the vertical pixel context.
 		 */
-		void setVerticalPixelContext();
+		// void setVerticalPixelContext();
 
 		/**
 		 * Checks if is horizontal pixel context.
 		 *
 		 * @return true, if is horizontal pixel context
 		 */
-		boolean isHorizontalPixelContext();
+		// boolean isHorizontalPixelContext();
 
 		/**
 		 * Sets the graphics.

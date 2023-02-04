@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GraphicsScope.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GraphicsScope.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
@@ -23,7 +23,7 @@ public class GraphicsScope extends ExecutionScope implements IGraphicsScope {
 	private IGraphics graphics;
 
 	/** The horizontal pixel context. */
-	private boolean horizontalPixelContext;
+	// private boolean horizontalPixelContext;
 
 	/**
 	 * Instantiates a new graphics scope.
@@ -60,28 +60,28 @@ public class GraphicsScope extends ExecutionScope implements IGraphicsScope {
 	/**
 	 * Sets the horizontal pixel context.
 	 */
-	@Override
-	public void setHorizontalPixelContext() {
-		horizontalPixelContext = true;
-
-	}
+	// @Override
+	// public void setHorizontalPixelContext() {
+	// horizontalPixelContext = true;
+	//
+	// }
 
 	/**
 	 * Sets the vertical pixel context.
 	 */
-	@Override
-	public void setVerticalPixelContext() {
-		horizontalPixelContext = false;
-
-	}
+	// @Override
+	// public void setVerticalPixelContext() {
+	// horizontalPixelContext = false;
+	//
+	// }
 
 	/**
 	 * Checks if is horizontal pixel context.
 	 *
-	 * @return true, if is horizontal pixel context
+	 * @return true, if is horizontal pixel context //
 	 */
-	@Override
-	public boolean isHorizontalPixelContext() { return horizontalPixelContext; }
+	// @Override
+	// public boolean isHorizontalPixelContext() { return horizontalPixelContext; }
 
 	@Override
 	public IGraphicsScope copy(final String additionalName) {

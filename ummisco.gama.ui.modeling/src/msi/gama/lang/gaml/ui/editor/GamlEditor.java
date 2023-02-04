@@ -3,7 +3,7 @@
  * GamlEditor.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -73,7 +73,6 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPartService;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
@@ -204,9 +203,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		dndHandler = new GamlEditorDragAndDropHandler(this);
 	}
 
-	/** The part listeners. */
-	protected static Map<IPartService, IPartListener2> partListeners;
-
 	/** The decorator. */
 	IBoxDecorator decorator;
 
@@ -258,6 +254,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	/** The dnd handler. */
 	private final GamlEditorDragAndDropHandler dndHandler;
+
+	/** The box listener. */
+	private final IPartListener2 boxListener = new BoxDecoratorPartListener();
 
 	/** The dnd changed listener. */
 	private final IPreferenceAfterChangeListener dndChangedListener = newValue -> {
@@ -335,7 +334,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		decorator = null;
 		GamaPreferences.Modeling.EDITOR_DRAG_RESOURCES.removeChangeListener(dndChangedListener);
 		GamlResourceServices.removeResourceListener(this);
-
+		removeBoxPartListener();
 		super.dispose();
 	}
 
@@ -855,15 +854,14 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	 * Assign box part listener.
 	 */
 	private void assignBoxPartListener() {
-		final var partService = getSite().getWorkbenchWindow().getPartService();
-		if (partService == null) return;
-		if (partListeners == null) { partListeners = new HashMap<>(); }
-		final var oldListener = partListeners.get(partService);
-		if (oldListener == null) {
-			final IPartListener2 listener = new BoxDecoratorPartListener();
-			partService.addPartListener(listener);
-			partListeners.put(partService, listener);
-		}
+		WorkbenchHelper.getPage().addPartListener(boxListener);
+	}
+
+	/**
+	 * Removes the box part listener.
+	 */
+	private void removeBoxPartListener() {
+		WorkbenchHelper.getPage().removePartListener(boxListener);
 	}
 
 	/**
