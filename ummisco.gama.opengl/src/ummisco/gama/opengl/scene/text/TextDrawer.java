@@ -266,7 +266,8 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 		try {
 			GamaPoint anchor = attributes.getAnchor();
 			applyRotation(attributes, p);
-			final float scale = 1f / ((float) gl.getRenderer().getAbsoluteRatioBetweenPixelsAndModelsUnits() * 2);
+			final float scale =
+					1f / (float) DPIHelper.autoScaleUp(gl.getRenderer().getAbsoluteRatioBetweenPixelsAndModelsUnits());
 			gl.translateBy(p.x - width * scale * anchor.x, p.y + y * scale * anchor.y, p.z);
 			gl.scaleBy(scale, scale, scale);
 			if (!gl.isWireframe()) {

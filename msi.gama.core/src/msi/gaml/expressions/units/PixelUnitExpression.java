@@ -34,24 +34,10 @@ public class PixelUnitExpression extends UnitConstantExpression {
 
 	@Override
 	public Double _value(final IScope sc) {
-		if (sc == null || !sc.isGraphics()) return 1d;
-		IGraphicsScope scope = (IGraphicsScope) sc;
+		if (!(sc instanceof IGraphicsScope scope)) return 1d;
 		final IGraphics g = scope.getGraphics();
 		if (g == null) return 1d;
 		return 1d / g.getAbsoluteRatioBetweenPixelsAndModelsUnits();
-
-		//
-		// double ratio;
-		//
-		//
-		//
-		// if (scope.isHorizontalPixelContext()) {
-		// ratio = g.getxRatioBetweenPixelsAndModelUnits();
-		// } else {
-		// ratio = g.getyRatioBetweenPixelsAndModelUnits();
-		// }
-		// if (ratio == 0d) return 1d;
-		// return 1d / ratio;
 	}
 
 	@Override
