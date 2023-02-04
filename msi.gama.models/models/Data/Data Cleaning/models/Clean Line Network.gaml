@@ -66,7 +66,7 @@ experiment clean_network type: gui {
 		layout #split;
 		display network {
 	
-			 overlay position: { 10, 100 } size: { 1000 #px, 60 #px } background: # black transparency: 0.5 border: #black rounded: true
+			 overlay position: { 10#px, 10#px } size: { 500 #px, 60 #px } background: # black transparency: 0.5 border: #black rounded: true
             {
 				draw legend color: #white font: font("SansSerif", 20, #bold) at: {40#px, 40#px, 1 };
 			}

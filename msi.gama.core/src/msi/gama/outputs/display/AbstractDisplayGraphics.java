@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractDisplayGraphics.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * AbstractDisplayGraphics.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
@@ -101,6 +101,13 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	 */
 	protected final double yFromModelUnitsToPixels(final double mu) {
 		return getYOffsetInPixels() + getyRatioBetweenPixelsAndModelUnits() * mu;
+	}
+
+	@Override
+	public double getAbsoluteRatioBetweenPixelsAndModelsUnits() {
+		return Math.min(getyRatioBetweenPixelsAndModelUnits(), getxRatioBetweenPixelsAndModelUnits());
+
+		// return Math.min(surface.getHeight() / data.getEnvHeight(), surface.getWidth() / data.getEnvWidth());
 	}
 
 	/**
@@ -212,8 +219,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	@Override
 	public Envelope getVisibleRegion() { return surface.getVisibleRegionForLayer(currentLayer); }
 
-	public RandomUtils getRandom() {
-		return random;
-	}
+	@Override
+	public RandomUtils getRandom() { return random; }
 
 }

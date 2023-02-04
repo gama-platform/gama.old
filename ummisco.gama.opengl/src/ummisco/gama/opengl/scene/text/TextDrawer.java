@@ -3,7 +3,7 @@
  * TextDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -266,7 +266,7 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 		try {
 			GamaPoint anchor = attributes.getAnchor();
 			applyRotation(attributes, p);
-			final float scale = 1f / (float) gl.getRatios().y;
+			final float scale = 1f / ((float) gl.getRenderer().getAbsoluteRatioBetweenPixelsAndModelsUnits() * 2);
 			gl.translateBy(p.x - width * scale * anchor.x, p.y + y * scale * anchor.y, p.z);
 			gl.scaleBy(scale, scale, scale);
 			if (!gl.isWireframe()) {
@@ -283,7 +283,8 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	/**
 	 * Draw wireframe.
 	 *
-	 * @param previous the previous
+	 * @param previous
+	 *            the previous
 	 * @return the color
 	 */
 	private Color drawWireframe(Color previous) {
@@ -304,7 +305,8 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	/**
 	 * Draw faces and border.
 	 *
-	 * @param previous the previous
+	 * @param previous
+	 *            the previous
 	 * @return the color
 	 */
 	private Color drawFacesAndBorder(Color previous) {
@@ -329,8 +331,10 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 	/**
 	 * Apply rotation.
 	 *
-	 * @param attributes the attributes
-	 * @param p the p
+	 * @param attributes
+	 *            the attributes
+	 * @param p
+	 *            the p
 	 */
 	private void applyRotation(final TextDrawingAttributes attributes, final GamaPoint p) {
 		final AxisAngle rotation = attributes.getRotation();
