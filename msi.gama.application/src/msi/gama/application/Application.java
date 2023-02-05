@@ -49,6 +49,7 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 
@@ -177,9 +178,13 @@ public class Application implements IApplication {
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
 		// Issues #3596 #3308
+		boolean isWindows = PlatformHelper.isWindows();
 		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
-		System.setProperty("sun.java2d.uiScale.enabled",
-				String.valueOf(DPIUtil.getDeviceZoom() > 100 || display.getPrimaryMonitor().getZoom() > 100));
+
+		boolean hasHiDPI = DPIUtil.getDeviceZoom() > 100;
+		boolean hasCustomZoom = isWindows && display.getPrimaryMonitor().getZoom() > 100;
+
+		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(hasCustomZoom && !hasHiDPI));
 		return display;
 	}
 
