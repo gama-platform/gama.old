@@ -49,7 +49,6 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 
@@ -169,7 +168,7 @@ public class Application implements IApplication {
 	}
 
 	/**
-	 * Configure display.
+	 * Configure display. Issues #3596 #3308
 	 *
 	 * @return the display
 	 */
@@ -177,18 +176,18 @@ public class Application implements IApplication {
 		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
+		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
 		DEBUG.LOG(DEBUG.PAD("> GAMA: Device zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
 				+ DPIUtil.getDeviceZoom() + "%");
 		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
 				+ display.getPrimaryMonitor().getZoom() + "%");
-		// Issues #3596 #3308
-		boolean isWindows = PlatformHelper.isWindows();
-		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
 
-		boolean hasHiDPI = DPIUtil.getDeviceZoom() > 100;
-		boolean hasCustomZoom = isWindows && display.getPrimaryMonitor().getZoom() > 100;
+		// boolean isWindows = PlatformHelper.isWindows();
 
-		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(hasCustomZoom && !hasHiDPI));
+		// boolean hasHiDPI = DPIUtil.getDeviceZoom() > 100;
+		// boolean hasCustomZoom = isWindows && display.getPrimaryMonitor().getZoom() > 100;
+		//
+		// System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(!hasHiDPI && hasCustomZoom));
 		return display;
 	}
 
