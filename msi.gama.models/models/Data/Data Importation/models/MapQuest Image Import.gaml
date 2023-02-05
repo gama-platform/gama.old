@@ -1,7 +1,7 @@
 /**
 * Name: MapQuestImageImport
 * Author: Alexis Drogoul
-* Description: Demonstrates how to load a (possibly dynamic) image from MapQuest https://developer.mapquest.com/documentation/samples/static-map/v4/get-map/ and how to refresh it
+* Description: Demonstrates how to load a (possibly dynamic) image from MapQuest https://developer.mapquest.com/documentation/samples/static-map/v5/map/ and how to refresh it
 * Tags: data_loading, displays, user_input, on_change
 */
 model MapQuestImageImport
@@ -9,21 +9,29 @@ model MapQuestImageImport
  
 global
 {
+	string appkey<-"uoJREhBjzEvVR9MYz3QXiAyYfmGWxOkG";
 	image_file static_map_request;
-	map
-	answers <- user_input_dialog("Address can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Address","48.8566140,2.3522219")]);
-	string center_text <- answers["Address"]; 
-	int zoom_text <- 10;
+	string map_center <- "48.8566140,2.3522219"; 
+	int map_zoom <- 8 max: 20 min: 0;
+	point map_size <-{600,600};
+
 	action load_map
 	{ 
-		string appkey<-"G1VfvZoE8T4g0U24bm7UbuozvS9YIGXt";
-		string zoom <- "zoom=" + zoom_text;
-		string center <- "center=" + center_text;
-		static_map_request <- image_file("https://www.mapquestapi.com/staticmap/v4/getmap?key="+appkey+"&size=600,600&type=map&imagetype=jpg&"+zoom+"&scalebar=false&traffic=false&"+center+"");
+		string zoom_request <- "zoom=" + map_zoom;
+		string center_request <- "locations=" + map_center;
+		string size_request <- "size=" + int(map_size.x) + "," + int(map_size.y) + "@2x";
+		string request <- "https://www.mapquestapi.com/staticmap/v5/map?key="+appkey+"&"+size_request+"&imagetype=jpg&"+zoom_request+"&"+center_request+"&type=hyb";
+		write "Request : " + request;
+		static_map_request <- image_file(request);
 	}
  
 	init
 	{
+		map answers <- user_input_dialog("Center of the map can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Center",map_center),enter("Zoom x",map_zoom),enter("Size", map_size)]);
+	    map_center <- answers["Center"]; 
+		map_zoom <- int(answers["Zoom x"]);
+		map_size <- point(answers["Size"]);
+		
 		do load_map;
 	}
 
@@ -31,17 +39,19 @@ global
 
 experiment Display
 {
-	
-	parameter "Zoom" var: zoom_text  {
+	parameter "Zoom" var: map_zoom  {
 		ask simulation  {do load_map;}
 		do update_outputs(true);
 	}
-	 
+
 	output
 	{
-		display "Google Map" type: 3d axes:false
+		
+		display "MapQuest" type: 3d axes:false
 		{
-			image static_map_request;
+			graphics toto {
+				draw static_map_request;
+			}
 		}
 
 	}
