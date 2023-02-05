@@ -122,8 +122,8 @@ public class ImageSaver {
 			fw.write(cw + "\n0.0\n0.0\n" + ch + "\n" + x + "\n" + y);
 		}
 		final BufferedImage image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_RGB);
-
-		final int[] imageData = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+		DataBufferInt buffer = (DataBufferInt) image.getRaster().getDataBuffer();
+		final int[] imageData = buffer.getData();
 		System.arraycopy(gp.getTopology().getPlaces().getDisplayData(), 0, imageData, 0, imageData.length);
 		// see #3592
 		// for (final Object g : gp.getAgents(scope).iterable(scope)) {
