@@ -402,28 +402,28 @@ public class Variable extends Symbol implements IVariable {
 			// }
 
 			// Cf. #3574
-			IExpression foundedInit;
+			IExpression foundInit;
 
 			if (cd.getFacetExpr(INIT) != null) {
-				foundedInit = cd.getFacetExpr(INIT);
+				foundInit = cd.getFacetExpr(INIT);
 			} else {
 				// Check if steps increment or not and init with corresponding limit range
 
 				IExpression step = cd.getFacetExpr(STEP);
-				if (step.isContextIndependant()) {
+				if (step != null && step.isContextIndependant()) {
 					Double stepValue = Cast.asFloat(null, step.getConstValue());
 					if (stepValue < 0) {
-						foundedInit = cd.getFacetExpr(MAX);
+						foundInit = cd.getFacetExpr(MAX);
 					} else {
-						foundedInit = cd.getFacetExpr(MIN);
+						foundInit = cd.getFacetExpr(MIN);
 					}
 				} else {
-					foundedInit = cd.getFacetExpr(MIN); // By default, we assume step is positive
+					foundInit = cd.getFacetExpr(MIN); // By default, we assume step is positive
 				}
 
 			}
 
-			final IExpression init = foundedInit;
+			final IExpression init = foundInit;
 
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
