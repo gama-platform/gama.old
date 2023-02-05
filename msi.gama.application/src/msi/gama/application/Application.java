@@ -177,6 +177,10 @@ public class Application implements IApplication {
 		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Device zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
+				+ DPIUtil.getDeviceZoom() + "%");
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
+				+ display.getPrimaryMonitor().getZoom() + "%");
 		// Issues #3596 #3308
 		boolean isWindows = PlatformHelper.isWindows();
 		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
