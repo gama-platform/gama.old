@@ -173,10 +173,12 @@ public class Application implements IApplication {
 	 * @return the display
 	 */
 	private Display configureDisplay() {
+		// Important to do it *before* creating the display
+		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
 		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
-		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
+
 		DEBUG.LOG(DEBUG.PAD("> GAMA: Device zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
 				+ DPIUtil.getDeviceZoom() + "%");
 		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
