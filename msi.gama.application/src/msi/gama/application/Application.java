@@ -117,12 +117,13 @@ public class Application implements IApplication {
 	 * @param display2
 	 */
 	public static void createProcessor(final Display display) {
-		// DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
-		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
-		// DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"),
-		// false);
-		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
-		// DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
+		// // DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
+		// System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
+		// // DEBUG.OUT("System property sun.java2d.uiScale.enabled = " +
+		// System.getProperty("sun.java2d.uiScale.enabled"),
+		// // false);
+		// System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
+		// // DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
 		if (display == null) return;
 		OPEN_DOCUMENT_PROCESSOR = new OpenDocumentEventProcessor(display);
 	}
@@ -141,6 +142,12 @@ public class Application implements IApplication {
 			}
 
 		});
+		// DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
+		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
+		// DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"),
+		// false);
+		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
+		// DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
 		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
