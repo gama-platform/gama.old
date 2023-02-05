@@ -117,13 +117,6 @@ public class Application implements IApplication {
 	 * @param display2
 	 */
 	public static void createProcessor(final Display display) {
-		// // DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
-		// System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
-		// // DEBUG.OUT("System property sun.java2d.uiScale.enabled = " +
-		// System.getProperty("sun.java2d.uiScale.enabled"),
-		// // false);
-		// System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
-		// // DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
 		if (display == null) return;
 		OPEN_DOCUMENT_PROCESSOR = new OpenDocumentEventProcessor(display);
 	}
@@ -168,7 +161,7 @@ public class Application implements IApplication {
 	}
 
 	/**
-	 * Configure display. Issues #3596 #3308
+	 * Configure display. Issues #3596 & #3308
 	 *
 	 * @return the display
 	 */
@@ -179,16 +172,12 @@ public class Application implements IApplication {
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
 
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Device zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor resolution ", 45, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
+				+ display.getPrimaryMonitor().getBounds().width + "x" + display.getPrimaryMonitor().getBounds().height);
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Display zoom ", 45, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
 				+ DPIUtil.getDeviceZoom() + "%");
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor zoom ", 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " "
-				+ display.getPrimaryMonitor().getZoom() + "%");
 
-		// boolean isWindows = PlatformHelper.isWindows();
-
-		// boolean hasHiDPI = DPIUtil.getDeviceZoom() > 100;
-		// boolean hasCustomZoom = isWindows && display.getPrimaryMonitor().getZoom() > 100;
-		//
+		// Not used right now
 		// System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(!hasHiDPI && hasCustomZoom));
 		return display;
 	}

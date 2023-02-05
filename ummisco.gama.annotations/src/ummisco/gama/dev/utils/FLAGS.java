@@ -98,10 +98,11 @@ public class FLAGS {
 	/**
 	 * Used in msi.gama.application.Application to transmit the value of "quarter" (if true) to property
 	 * org.eclipse.swt.internal.DPIUtil.SWT_AUTOSCALE, enabling more precise scaling methods for HiDPI screens.
-	 * Otherwise the default is used by DPIUtil (see #3180). False by default. Reinstantiates this flag to support #3596
-	 * and #3308
+	 * Otherwise the default of "integer200" is used by DPIUtil (see #3180). False by default.
+	 *
+	 * 05 Feb. 2023: Reinstantiates this flag to support #3596 and #3308, set to true by default now
 	 */
-	public static final boolean USE_PRECISE_SCALING = get("use_precise_scaling", false);
+	public static final boolean USE_PRECISE_SCALING = get("use_precise_scaling", true);
 
 	/**
 	 * Used in GamlEditor, see #2950. Set to true to disable editing gaml files. False by default.
