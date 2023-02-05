@@ -142,15 +142,7 @@ public class Application implements IApplication {
 			}
 
 		});
-		// DEBUG.OUT("System property swt.autoScale = " + System.getProperty("swt.autoScale"));
-		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
-		// DEBUG.OUT("System property sun.java2d.uiScale.enabled = " + System.getProperty("sun.java2d.uiScale.enabled"),
-		// false);
-		System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(DPIUtil.getDeviceZoom() > 100));
-		// DEBUG.OUT(" -- changed to = " + System.getProperty("sun.java2d.uiScale.enabled"));
-		final Display display = PlatformUI.createDisplay();
-		Display.setAppName("Gama Platform");
-		Display.setAppVersion(GAMA.VERSION_NUMBER);
+		final Display display = configureDisplay();
 		Object check = Display.getCurrent().syncCall(Application::checkWorkspace);
 		if (!EXIT_OK.equals(check)) {
 			try {
@@ -173,6 +165,22 @@ public class Application implements IApplication {
 		}
 		return EXIT_OK;
 
+	}
+
+	/**
+	 * Configure display.
+	 *
+	 * @return the display
+	 */
+	private Display configureDisplay() {
+		final Display display = PlatformUI.createDisplay();
+		Display.setAppName("Gama Platform");
+		Display.setAppVersion(GAMA.VERSION_NUMBER);
+		// Issues #3596 #3308
+		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
+		System.setProperty("sun.java2d.uiScale.enabled",
+				String.valueOf(DPIUtil.getDeviceZoom() > 100 || display.getPrimaryMonitor().getZoom() > 100));
+		return display;
 	}
 
 	/**

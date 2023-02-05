@@ -44,7 +44,7 @@
 -Denable_logging=true 
 -Denable_debug=true
 -Duse_global_preference_store=true 
--Duse_precise_autoscale=false 
+-Duse_precise_scaling=true 
 -Dread_only=false 
 -Duse_old_tabs=true 
 -Duse_legacy_drawers=false 
@@ -77,7 +77,6 @@
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
