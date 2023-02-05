@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlSearchField.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamlSearchField.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.access;
 
@@ -53,7 +53,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -183,8 +182,8 @@ public class GamlSearchField {
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).extendedMargins(0, 5, 5, 5).numColumns(2)
 				.equalWidth(false).applyTo(composite);
 		text = createText(composite);
-		final int height = PlatformHelper.isWindows() ? 16 : 24;
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).hint(200, height).applyTo(text);
+		final int height = 24;// PlatformHelper.isWindows() ? 16 : ;
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).hint(250, height).applyTo(text);
 
 		parent.getShell().addControlListener(new ControlListener() {
 			@Override
@@ -485,15 +484,13 @@ public class GamlSearchField {
 	 */
 	public void search() {
 		final IWorkbenchPart part = WorkbenchHelper.getActivePart();
-		if (part instanceof IEditorPart) {
-			final IEditorPart editor = (IEditorPart) part;
+		if (part instanceof IEditorPart editor) {
 			final IWorkbenchPartSite site = editor.getSite();
 			if (site != null) {
 				final ISelectionProvider provider = site.getSelectionProvider();
 				if (provider != null) {
 					final ISelection viewSiteSelection = provider.getSelection();
-					if (viewSiteSelection instanceof TextSelection) {
-						final TextSelection textSelection = (TextSelection) viewSiteSelection;
+					if (viewSiteSelection instanceof TextSelection textSelection) {
 						text.setText(textSelection.getText());
 					}
 				}
