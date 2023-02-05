@@ -182,7 +182,7 @@ public class GamlSearchField {
 		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).extendedMargins(0, 5, 5, 5).numColumns(2)
 				.equalWidth(false).applyTo(composite);
 		text = createText(composite);
-		final int height = 24;// PlatformHelper.isWindows() ? 16 : ;
+		final int height = 16;// PlatformHelper.isWindows() ? 16 : ;
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).hint(250, height).applyTo(text);
 
 		parent.getShell().addControlListener(new ControlListener() {
