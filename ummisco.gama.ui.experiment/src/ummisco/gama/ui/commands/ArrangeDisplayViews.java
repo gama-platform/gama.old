@@ -3,7 +3,7 @@
  * ArrangeDisplayViews.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -35,6 +35,7 @@ import com.google.common.collect.Iterables;
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGamaView.Display;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.util.tree.GamaNode;
@@ -169,8 +170,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				ph.setToBeRendered(true);
 				ph.setVisible(true);
 				getPartService().showPart(part, PartState.VISIBLE);
+				// getPartService().showPart(part, PartState.ACTIVATE);
 				// getPartService().activate(part, true);
 				// getPartService().bringToTop(part);
+
 			}
 
 		});
@@ -204,11 +207,13 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			}
 
 		});
-		// displays.forEach((d)-> ViewsHelper.activate((IWorkbenchPart) d));
+		// displays.forEach(d -> ViewsHelper.activate((IWorkbenchPart) d));
 		if (PerspectiveHelper.getBackground() != null) {
 			ThemeHelper.changeSashBackground(PerspectiveHelper.getBackground());
 			PerspectiveHelper.getActiveSimulationPerspective().setRestoreBackground(ThemeHelper::restoreSashBackground);
 		}
+		// Attempt to solve the problem expressed in #3587 by forcing the focus on the canvases at least once
+		displays.forEach(Display::focusCanvas);
 	}
 
 	/**
