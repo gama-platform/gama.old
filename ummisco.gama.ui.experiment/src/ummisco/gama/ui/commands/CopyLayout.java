@@ -1,14 +1,17 @@
 /*******************************************************************************************************
  *
- * CopyLayout.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * CopyLayout.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
+
+import static ummisco.gama.ui.commands.ArrangeDisplayViews.collectAndPrepareDisplayViews;
+import static ummisco.gama.ui.commands.LayoutTreeConverter.convertCurrentLayout;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -26,16 +29,13 @@ public class CopyLayout extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		final GamaTree<String> tree =
-				new LayoutTreeConverter().convertCurrentLayout(ArrangeDisplayViews.collectAndPrepareDisplayViews());
-		if (tree == null) { return this; }
+		final GamaTree<String> tree = convertCurrentLayout(collectAndPrepareDisplayViews());
+		if (tree == null) return this;
 		final GamaNode<String> firstSash = tree.getRoot().getChildren().get(0);
 		firstSash.setWeight(null);
 		final StringBuilder sb = new StringBuilder();
 		sb.append(" layout " + firstSash);
-		if (PerspectiveHelper.keepTabs() != null) {
-			sb.append(" tabs:").append(PerspectiveHelper.keepTabs());
-		}
+		if (PerspectiveHelper.keepTabs() != null) { sb.append(" tabs:").append(PerspectiveHelper.keepTabs()); }
 		if (PerspectiveHelper.keepToolbars() != null) {
 			sb.append(" toolbars:").append(PerspectiveHelper.keepToolbars());
 		}

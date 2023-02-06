@@ -1,14 +1,17 @@
 /*******************************************************************************************************
  *
- * ToggleDisplayTabs.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ToggleDisplayTabs.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
+
+import static ummisco.gama.ui.commands.ArrangeDisplayViews.collectAndPrepareDisplayViews;
+import static ummisco.gama.ui.commands.LayoutTreeConverter.convertCurrentLayout;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -26,11 +29,8 @@ public class ToggleDisplayTabs extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
-		if (sd != null) {
-			sd.keepTabs(!sd.keepTabs());
-		}
-		ArrangeDisplayViews
-				.execute(new LayoutTreeConverter().convertCurrentLayout(ArrangeDisplayViews.collectAndPrepareDisplayViews()));
+		if (sd != null) { sd.keepTabs(!sd.keepTabs()); }
+		ArrangeDisplayViews.execute(convertCurrentLayout(collectAndPrepareDisplayViews()));
 		return this;
 	}
 
