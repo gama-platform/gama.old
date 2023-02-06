@@ -54,6 +54,10 @@ import one.util.streamex.StreamEx;
  * @since 26 août 2013
  *
  */
+
+/**
+ * The Class GamaPreferences.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferences {
 
@@ -742,7 +746,9 @@ public class GamaPreferences {
 						.in(NAME, OPTIMIZATIONS).onChange(v -> {
 							try {
 								ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-							} catch (CoreException e) {}
+							} catch (
+										/** The e. */
+							CoreException e) {}
 						}).hidden();
 
 		/** The Constant AGENT_OPTIMIZATION. */
@@ -765,10 +771,11 @@ public class GamaPreferences {
 		// "Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
 		// IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 
+		/** The Constant QUADTREE_SYNCHRONIZATION. */
 		// /** The Constant QUADTREE_SYNCHRONIZATION. */
 		// public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
-		// "Forces the spatial index to synchronize its operations. Useful for interactive models where the user may
-		// interfere.",
+		// "Forces the spatial index to synchronize its operations. Useful for interactive models where the users
+		// interfere or parallel models with concurrency errors",
 		// true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 
 		/** The Constant USE_POOLING. */
@@ -898,7 +905,7 @@ public class GamaPreferences {
 
 		/** The Constant QUADTREE_SYNCHRONIZATION. */
 		public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
-				"Forces the spatial index to synchronize its operations. Useful for interactive models where the user may interfere.",
+				"Forces the spatial index to synchronize its operations. Useful for interactive models where the users interfere or parallel models with concurrency errors. Note that it may slow down simulations with a lot of mobile agents",
 				true, IType.BOOL, true).in(NAME, CATEGORY);
 
 	}

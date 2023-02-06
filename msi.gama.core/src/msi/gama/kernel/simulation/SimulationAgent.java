@@ -298,8 +298,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void setTopology(final IScope scope, final IShape shape) {
 		// A topology has already been computed. We update it and updates all
 		// the agents present in the spatial index
-		final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue()
-				|| GamaPreferences.Experimental.QUADTREE_SYNCHRONIZATION.getValue() };
+		final boolean[] parallel = { GamaExecutorService.CONCURRENCY_SPECIES.getValue() };
 
 		if (!parallel[0]) {
 			getSpecies().getDescription().visitMicroSpecies(s -> {

@@ -20,6 +20,7 @@ import com.google.common.collect.Ordering;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.IIntersectable;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -65,7 +66,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	final boolean parallel;
 
 	/**
-	 * Creates the.
+	 * Creates the spatial index. Returns a synchronized quadtree if necessary (cf. #3576)
 	 *
 	 * @param envelope
 	 *            the envelope
@@ -73,8 +74,70 @@ public class GamaQuadTree implements ISpatialIndex {
 	 *            the parallel
 	 * @return the gama quad tree
 	 */
-	public static GamaQuadTree create(final Envelope envelope, final boolean parallel) {
-		return new GamaQuadTree(envelope, parallel);
+	public static ISpatialIndex create(final Envelope envelope, final boolean parallel) {
+		ISpatialIndex qt = new GamaQuadTree(envelope, parallel);
+		if (GamaPreferences.Experimental.QUADTREE_SYNCHRONIZATION.getValue())
+			return new QuadTreeSynchronizer(qt);
+		return qt;
+	}
+
+	/**
+	 * The Class QuadTreeSynchronizer.
+	 */
+	static class QuadTreeSynchronizer implements ISpatialIndex {
+
+		/** The quadtree. */
+		private final ISpatialIndex quadtree;
+
+		/**
+		 * Instantiates a new quad tree synchronizer.
+		 *
+		 * @param qt
+		 *            the qt
+		 */
+		public QuadTreeSynchronizer(final ISpatialIndex qt) {
+			quadtree = qt;
+		}
+
+		@Override
+		public synchronized void insert(final IAgent agent) {
+			quadtree.insert(agent);
+		}
+
+		@Override
+		public synchronized void remove(final Envelope3D previous, final IAgent agent) {
+			quadtree.remove(previous, agent);
+		}
+
+		@Override
+		public synchronized IAgent firstAtDistance(final IScope scope, final IShape source, final double dist,
+				final IAgentFilter f) {
+			return quadtree.firstAtDistance(scope, source, dist, f);
+		}
+
+		@Override
+		public synchronized Collection<IAgent> firstAtDistance(final IScope scope, final IShape source,
+				final double dist, final IAgentFilter f, final int number, final Collection<IAgent> alreadyChosen) {
+			return quadtree.firstAtDistance(scope, source, dist, f, number, alreadyChosen);
+		}
+
+		@Override
+		public synchronized Collection<IAgent> allInEnvelope(final IScope scope, final IShape source,
+				final Envelope envelope, final IAgentFilter f, final boolean contained) {
+			return quadtree.allInEnvelope(scope, source, envelope, f, contained);
+		}
+
+		@Override
+		public synchronized Collection<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist,
+				final IAgentFilter f) {
+			return quadtree.allAtDistance(scope, source, dist, f);
+		}
+
+		@Override
+		public void dispose() {
+			quadtree.dispose();
+		}
+
 	}
 
 	/**
@@ -367,25 +430,28 @@ public class GamaQuadTree implements ISpatialIndex {
 		 * Split.
 		 */
 		private void split() {
-			final double maxx = bounds.getMaxX();
-			final double minx = bounds.getMinX();
-			final double miny = bounds.getMinY();
-			final double maxy = bounds.getMaxY();
-			nw = new QuadNode(new Envelope(minx, halfx, miny, halfy));
-			ne = new QuadNode(new Envelope(halfx, maxx, miny, halfy));
-			sw = new QuadNode(new Envelope(minx, halfx, halfy, maxy));
-			se = new QuadNode(new Envelope(halfx, maxx, halfy, maxy));
-			objects.forEach((a, e) -> {
-				if (a != null && !a.dead()) {
-					final IShape g = a.getGeometry();
-					if (g.isPoint()) {
-						add(g.getLocation(), a);
-					} else {
-						add(g.getEnvelope(), a);
+			try {
+				final double maxx = bounds.getMaxX();
+				final double minx = bounds.getMinX();
+				final double miny = bounds.getMinY();
+				final double maxy = bounds.getMaxY();
+				nw = new QuadNode(new Envelope(minx, halfx, miny, halfy));
+				ne = new QuadNode(new Envelope(halfx, maxx, miny, halfy));
+				sw = new QuadNode(new Envelope(minx, halfx, halfy, maxy));
+				se = new QuadNode(new Envelope(halfx, maxx, halfy, maxy));
+				objects.forEach((a, e) -> {
+					if (a != null && !a.dead()) {
+						final IShape g = a.getGeometry();
+						if (g.isPoint()) {
+							add(g.getLocation(), a);
+						} else {
+							add(g.getEnvelope(), a);
+						}
 					}
-				}
-			});
-			objects.clear();
+				});
+			} finally {
+				objects.clear();
+			}
 		}
 
 		/**
