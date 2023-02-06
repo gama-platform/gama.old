@@ -1,7 +1,7 @@
 /**
 * Name: Socket_TCP_HelloWorld_Server
 * Author: HUYNH Quang Nghi
-* Description: Simplest WebSocket server to test with external tools.
+* Description: Simplest WebSocket server to test with external tools. You can run the python script "client_ws.py" to interact with it
 * Tags: Network, TCP, Socket
 */
 model Socket_TCP_HelloWorld_Server
@@ -12,9 +12,7 @@ global {
 		create Server {
 			do connect protocol: "websocket_server" port: 3001 with_name: name raw: true;
 		}
-
 	}
-
 }
 
 species Server skills: [network] parallel: true {

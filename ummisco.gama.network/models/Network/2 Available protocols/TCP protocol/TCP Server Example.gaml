@@ -1,7 +1,7 @@
 /**
 * Name: Socket_TCP_HelloWorld_Server
 * Author: HUYNH Quang Nghi
-* Description: Simplest TCP server to test with external tools.
+* Description: Simplest TCP server to test with external tools. You can run the python script "client.py" to connect to it
 * Tags: Network, TCP, Socket
 */
 model Socket_TCP_HelloWorld_Server

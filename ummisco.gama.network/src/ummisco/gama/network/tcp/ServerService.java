@@ -63,6 +63,10 @@ public class ServerService extends Thread implements SocketService, IListener {
 	/** The connector. */
 	protected IConnector connector;
 
+	public IConnector getConnector() {
+		return connector;
+	}
+
 	/**
 	 * Instantiates a new server service.
 	 *
@@ -232,6 +236,7 @@ public class ServerService extends Thread implements SocketService, IListener {
 
 	@Override
 	public void receivedMessage(final String sender, final String message) {
+		
 		final MessageType mte = MessageFactory.identifyMessageType(message);
 		if (MessageType.COMMAND_MESSAGE.equals(mte)) {
 			((TCPConnector) connector).extractAndApplyCommand(sender, message);

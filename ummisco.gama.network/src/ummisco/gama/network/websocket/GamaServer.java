@@ -24,15 +24,10 @@ package ummisco.gama.network.websocket;
  *  OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.java_websocket.WebSocket;
@@ -41,20 +36,13 @@ import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.util.IList;
-import msi.gaml.operators.Cast;
-import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.network.tcp.ServerService;
-import ummisco.gama.network.tcp.TCPConnector;
  
 public class GamaServer extends WebSocketServer {
 //	private IAgent myAgent;
 	private ServerService myService;
 	public GamaServer(int port, ServerService agt) throws UnknownHostException {
 		super(new InetSocketAddress(port));
-//		myAgent=agt;
 		myService=agt;
 	}
 
@@ -68,11 +56,7 @@ public class GamaServer extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-//		conn.send("Welcome " + conn.getRemoteSocketAddress().getAddress().getHostAddress() + " to the server!");  
-//		broadcast("new connection: " + handshake.getResourceDescriptor()); // This method sends a message to all clients
-																			// connected
-		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-		 
+		System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!"); 
 	}
 
 	@Override
@@ -86,16 +70,17 @@ public class GamaServer extends WebSocketServer {
 //		broadcast(message);
 		System.out.println(conn + ": " + message);
 		String msg = message;
-		msg = msg.replaceAll("@n@", "\n");
-		msg = msg.replaceAll("@b@@r@", "\b\r");
+		if (!myService.getConnector().isRaw()) {
+			msg = msg.replaceAll("@n@", "\n");
+			msg = msg.replaceAll("@b@@r@", "\b\r");			
+		}
 		myService.receivedMessage(conn.toString(), msg);
 
 	}
 
 	@Override
 	public void onMessage(WebSocket conn, ByteBuffer message) {
-		broadcast(message.array());
-		System.out.println(conn + ": " + message);
+		onMessage(conn, StandardCharsets.UTF_8.decode(message).toString());
 	}
 
 	@Override

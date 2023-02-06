@@ -1,7 +1,7 @@
 /**
 * Name: Socket_TCP_HelloWorld_Server
 * Author: Arnaud Grignard
-* Description: Two clients are communicated throught the Socket WebSocket protocol.
+* Description: Two clients are communicating throught the Socket WebSocket protocol.
 * Tags: Network, TCP, Socket
 */
 model WebSocket_HelloWorld

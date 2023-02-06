@@ -125,6 +125,8 @@ experiment start
 		}
 	}
 	output{
+		layout horizontal([0::5000, 1::5000, 2::5000]) tabs: true editors: false;
+		
 		display map{
 			species Pong;
 			species Buffer transparency:0.5;

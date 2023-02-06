@@ -10,28 +10,13 @@
  ********************************************************************************************************/
 package ummisco.gama.network.websocket;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.util.IList;
-import msi.gaml.operators.Cast;
-import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.common.MessageFactory;
 import ummisco.gama.network.common.MessageFactory.MessageType;
-import ummisco.gama.network.common.socket.SocketService;
-import ummisco.gama.network.skills.INetworkSkill;
-import ummisco.gama.network.tcp.ClientService;
 import ummisco.gama.network.tcp.ServerService;
 import ummisco.gama.network.tcp.TCPConnector;
 
@@ -75,16 +60,11 @@ public class WebSocketServerService extends ServerService {
 	public void sendMessage(final String msg) throws IOException {
 		String message = msg;
 		if (serverSocket == null || !isOnline()) return;
-		message = message.replace("\n", "@n@");
-		message = message.replace("\b\r", "@b@@r@");
+		if (!connector.isRaw()) {
+			message = message.replace("\n", "@n@");
+			message = message.replace("\b\r", "@b@@r@");			
+		}
 		serverSocket.broadcast(message);
-//		sender = new PrintWriter(new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream())), true);
-//		sender.println(message );//+"\n" 
-//		sender.flush();
-		
-//		DataOutputStream outToServer = new DataOutputStream(currentSocket.getOutputStream());  
-//		outToServer.writeUTF(message +"\n");
-//		outToServer.flush();
 	}
 
 	@Override
