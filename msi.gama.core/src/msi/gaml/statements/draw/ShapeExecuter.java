@@ -3,7 +3,7 @@
  * ShapeExecuter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -27,6 +27,7 @@ import java.util.List;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
+import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.interfaces.IGraphics;
@@ -57,9 +58,6 @@ class ShapeExecuter extends DrawExecuter {
 
 	/** The has arrows. */
 	final boolean hasArrows;
-
-	/** The center. */
-	final GamaPoint center = new GamaPoint();
 
 	/**
 	 * Instantiates a new shape executer.
@@ -118,9 +116,12 @@ class ShapeExecuter extends DrawExecuter {
 
 		// If the graphics is 2D, we pre-translate and pre-rotate the geometry
 		if (gr.is2D()) {
-			ic.getCenter(center);
-			rotate(gg, center, attributes.getRotation());
+			/** The center. */
+			final GamaPoint center = ic.getCenter();
+			final AxisAngle rot = attributes.getRotation();
 			final GamaPoint location = attributes.getLocation();
+			if (rot != null || location != null) { gg = gg.copy(); }
+			rotate(gg, center, rot);
 			if (location != null) {
 				if (gg.getNumPoints() == 1) {
 					gg = GEOMETRY_FACTORY.createPoint(location);
@@ -128,7 +129,7 @@ class ShapeExecuter extends DrawExecuter {
 					translate(gg, center, location);
 				}
 			}
-			gg.geometryChanged();
+			// gg.geometryChanged();
 		}
 		if (hasArrows) {
 			final Geometry withArrows = addArrows(scope, gg, !attributes.isEmpty());
