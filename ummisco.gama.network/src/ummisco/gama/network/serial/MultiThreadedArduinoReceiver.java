@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.network.serial;
 
-import arduino.Arduino;
 import msi.gama.extensions.messaging.GamaMailbox;
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.extensions.messaging.MessagingSkill;
@@ -35,7 +34,7 @@ public class MultiThreadedArduinoReceiver extends Thread {
 	private int timer = 1000;
 
 	/** The arduino. */
-	private final Arduino arduino;
+	private final MyArduino arduino;
 
 	/**
 	 * Instantiates a new multi threaded arduino receiver.
@@ -47,7 +46,7 @@ public class MultiThreadedArduinoReceiver extends Thread {
 	 * @param ard
 	 *            the ard
 	 */
-	public MultiThreadedArduinoReceiver(final IAgent a, final int _timer, final Arduino ard) {
+	public MultiThreadedArduinoReceiver(final IAgent a, final int _timer, final MyArduino ard) {
 		myAgent = a;
 		arduino = ard;
 		timer = _timer;

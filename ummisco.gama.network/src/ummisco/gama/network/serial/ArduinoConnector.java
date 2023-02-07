@@ -9,9 +9,7 @@
  * 
  ********************************************************************************************************/
 package ummisco.gama.network.serial;
-
-import arduino.Arduino;
-import arduino.PortDropdownMenu;
+ 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import ummisco.gama.network.common.Connector;
@@ -24,7 +22,7 @@ import ummisco.gama.network.common.socket.SocketService;
 public class ArduinoConnector extends Connector {
 
 	/** The arduino. */
-	Arduino arduino;
+	MyArduino arduino;
 	
 	/** The port. */
 	String PORT = "";
@@ -44,7 +42,7 @@ public class ArduinoConnector extends Connector {
 	
 	@Override
 	protected void connectToServer(IAgent agent) throws GamaNetworkException {
-		PortDropdownMenu portList = new PortDropdownMenu();
+		MyPortDropdownMenu portList = new MyPortDropdownMenu();
 		portList.refreshMenu();
 		
 		// cu.usbmodem1441012		
@@ -55,7 +53,7 @@ public class ArduinoConnector extends Connector {
 				PORT = portList.getItemAt(i);
 			}
 		}		
-		arduino = new Arduino(PORT,BAUD);
+		arduino = new MyArduino(PORT,BAUD);
 		
 		if(arduino.openConnection()){
 			System.out.println("CONNECTION OPENED");
