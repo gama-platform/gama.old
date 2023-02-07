@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DrawStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * DrawStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
@@ -27,6 +27,8 @@ import static msi.gama.common.interfaces.IKeyword.TEXTURE;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.WeakHashMap;
+import java.util.function.Supplier;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGraphics;
@@ -327,10 +329,13 @@ public class DrawStatement extends AbstractStatementSequence {
 	public static final String BEGIN_ARROW = "begin_arrow";
 
 	/** The executer. */
-	private final DrawExecuter executer;
+	private final WeakHashMap<IGraphics, DrawExecuter> executers = new WeakHashMap<>();
+
+	/** The get executer. */
+	private final Supplier<DrawExecuter> executerSupplier;
 
 	/** The data. */
-	private final ThreadLocal<DrawingData> data;
+	private final WeakHashMap<IGraphics, DrawingData> data = new WeakHashMap<>();
 
 	/**
 	 * Instantiates a new draw statement.
@@ -343,16 +348,15 @@ public class DrawStatement extends AbstractStatementSequence {
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);
-		data = ThreadLocal.withInitial(() -> new DrawingData(this));
 		if (item == null) {
-			executer = null;
+			executerSupplier = () -> null;
 		} else if (item.getGamlType().getGamlType().id() == IType.FILE) {
-			executer = new FileExecuter(item);
+			executerSupplier = () -> new FileExecuter(item);
 		} else if (item.getGamlType().id() == IType.STRING) {
-			executer = new TextExecuter(item);
+			executerSupplier = () -> new TextExecuter(item);
 		} else {
 			// item is supposed to be castable into a geometry
-			executer = new ShapeExecuter(item, getFacet(BEGIN_ARROW), getFacet(END_ARROW));
+			executerSupplier = () -> new ShapeExecuter(item, getFacet(BEGIN_ARROW), getFacet(END_ARROW));
 		}
 	}
 
@@ -381,11 +385,20 @@ public class DrawStatement extends AbstractStatementSequence {
 	 *             the gama runtime exception
 	 */
 	private Rectangle2D privateExecuteIn(final IGraphicsScope scope) throws GamaRuntimeException {
-		if (executer == null) return null;
 		final IGraphics g = scope.getGraphics();
 		if (g == null) return null;
 		try {
-			final DrawingData d = data.get();
+			DrawExecuter executer = executers.get(g);
+			if (executer == null) {
+				if (executers.containsKey(g)) return null;
+				executer = executerSupplier.get();
+				executers.put(g, executer);
+			}
+			DrawingData d = data.get(g);
+			if (d == null) {
+				d = new DrawingData(this);
+				data.put(g, d);
+			}
 			d.refresh(scope);
 			final Rectangle2D result = executer.executeOn(scope, g, d);
 			if (result != null) { g.accumulateTemporaryEnvelope(result); }
@@ -397,6 +410,13 @@ public class DrawStatement extends AbstractStatementSequence {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public void dispose() {
+		data.clear();
+		executers.clear();
+		super.dispose();
 	}
 
 }

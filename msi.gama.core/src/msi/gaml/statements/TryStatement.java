@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TryStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TryStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -32,7 +32,7 @@ import msi.gaml.statements.TryStatement.IfSerializer;
 
 /**
  * IfPrototype.
- * 
+ *
  * @author drogoul 14 nov. 07
  */
 @symbol (
@@ -87,9 +87,9 @@ public class TryStatement extends AbstractStatementSequence {
 		protected void serializeChildren(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
-			final String[] catchString = new String[] { null };
+			final String[] catchString = { null };
 			desc.visitChildren(s -> {
-				if (s.getKeyword().equals(IKeyword.CATCH)) {
+				if (IKeyword.CATCH.equals(s.getKeyword())) {
 					catchString[0] = s.serialize(false) + Strings.LN;
 				} else {
 					serializeChild(s, sb, includingBuiltIn);
@@ -113,7 +113,7 @@ public class TryStatement extends AbstractStatementSequence {
 
 	/**
 	 * The Constructor.
-	 * 
+	 *
 	 * @param sim
 	 *            the sim
 	 */
@@ -125,11 +125,7 @@ public class TryStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
-		for (final ISymbol c : commands) {
-			if (c instanceof CatchStatement) {
-				catchStatement = (IStatement) c;
-			}
-		}
+		for (final ISymbol c : commands) { if (c instanceof CatchStatement) { catchStatement = (IStatement) c; } }
 		super.setChildren(Iterables.filter(commands, each -> each != catchStatement));
 	}
 
@@ -141,11 +137,18 @@ public class TryStatement extends AbstractStatementSequence {
 			result = super.privateExecuteIn(scope);
 		} catch (final GamaRuntimeException e) {
 			scope.disableTryMode();
-			if (catchStatement != null) { return scope.execute(catchStatement).getValue(); }
+			if (catchStatement != null) return scope.execute(catchStatement).getValue();
 		} finally {
 			scope.disableTryMode();
 		}
 		return result;
 
+	}
+
+	@Override
+	public void dispose() {
+		if (catchStatement != null) { catchStatement.dispose(); }
+		catchStatement = null;
+		super.dispose();
 	}
 }

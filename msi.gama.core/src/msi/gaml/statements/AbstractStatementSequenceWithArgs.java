@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractStatementSequenceWithArgs.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * AbstractStatementSequenceWithArgs.java, in msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -57,6 +57,14 @@ public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		scope.stackArguments(actualArgs.get());
 		return super.privateExecuteIn(scope);
+	}
+
+	@Override
+	public void dispose() {
+		Arguments args = actualArgs.get();
+		if (args != null) { args.dispose(); }
+		actualArgs.set(null);
+		super.dispose();
 	}
 
 }

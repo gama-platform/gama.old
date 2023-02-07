@@ -3,7 +3,7 @@
  * DrawingData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -260,12 +260,10 @@ public class DrawingData extends AttributeHolder {
 	 * @return the gama color
 	 */
 	private GamaColor constCastColor(final IExpression e) {
-		switch (e.getGamlType().id()) {
-			case IType.COLOR:
-				return Cast.asColor(null, e.getConstValue());
-			default:
-				return null;
-		}
+		return switch (e.getGamlType().id()) {
+			case IType.COLOR -> Cast.asColor(null, e.getConstValue());
+			default -> null;
+		};
 	}
 
 	/**
@@ -292,12 +290,10 @@ public class DrawingData extends AttributeHolder {
 	 * @return the gama color
 	 */
 	private GamaColor castColor(final IScope scope, final IExpression exp) {
-		switch (exp.getGamlType().id()) {
-			case IType.COLOR:
-				return Cast.asColor(scope, exp.value(scope));
-			default:
-				return null;
-		}
+		return switch (exp.getGamlType().id()) {
+			case IType.COLOR -> Cast.asColor(scope, exp.value(scope));
+			default -> null;
+		};
 	}
 
 	/**

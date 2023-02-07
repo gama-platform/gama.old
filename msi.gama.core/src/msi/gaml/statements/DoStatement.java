@@ -3,7 +3,7 @@
  * DoStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -44,7 +44,6 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.DoStatement.DoSerializer;
 import msi.gaml.statements.DoStatement.DoValidator;
 import msi.gaml.types.IType;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -299,11 +298,11 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	 * and we have to find the corresponding action. Otherwise, we return the species of the agent
 	 */
 	private ISpecies getContext(final IScope scope) {
-//		if ((targetSpecies != null) && "model".equals(targetSpecies)) {
-//
-//			DEBUG.OUT("Model found to execute " + name);
-//
-//		}
+		// if ((targetSpecies != null) && "model".equals(targetSpecies)) {
+		//
+		// DEBUG.OUT("Model found to execute " + name);
+		//
+		// }
 
 		return targetSpecies != null ? scope.getModel().getSpecies(targetSpecies) : scope.getAgent().getSpecies();
 	}
@@ -329,5 +328,12 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public void setRuntimeArgs(final IScope scope, final Arguments args) {}
+
+	@Override
+	public void dispose() {
+		if (args != null) { args.dispose(); }
+		args = null;
+		super.dispose();
+	}
 
 }

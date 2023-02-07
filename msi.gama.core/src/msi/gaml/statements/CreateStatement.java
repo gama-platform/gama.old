@@ -3,7 +3,7 @@
  * CreateStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -150,13 +150,12 @@ import msi.gaml.types.Types;
 						@example (
 								value = "create species_of(self) number: 5 returns: list5Agents;",
 								isTestOnly = false),
-//						@example (
-//								var = "list5Agents",
-//								returnType = "list",
-//								value = "5",
-//								isExecutable = false) 
-				}),
-				@usage ("If `number` equals 0 or species is not a species, the statement is ignored."), @usage (
+				// @example (
+				// var = "list5Agents",
+				// returnType = "list",
+				// value = "5",
+				// isExecutable = false)
+				}), @usage ("If `number` equals 0 or species is not a species, the statement is ignored."), @usage (
 						value = "In GAML modelers can create agents of species `a_species` (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
 						examples = @example (
 								value = "create a_species from: the_shapefile with: [type:: read('TYPE_OCC'), nature::read('NATURE')];",
@@ -235,10 +234,7 @@ import msi.gaml.types.Types;
 								isExecutable = false),
 								@example (
 										value = "create species: a_species number: an_int;",
-										isExecutable = false),
-								}
-						) 
-		})
+										isExecutable = false), }) })
 @validator (CreateValidator.class)
 @serializer (CreateSerializer.class)
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -602,5 +598,13 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 * @return
 	 */
 	public IExpression getHeader() { return header; }
+
+	@Override
+	public void dispose() {
+		if (init != null) { init.dispose(); }
+		init = null;
+		sequence.dispose();
+		super.dispose();
+	}
 
 }

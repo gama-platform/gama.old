@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PrimitiveStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * PrimitiveStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -23,9 +23,9 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator.NullValidator;
-import msi.gaml.compilation.annotations.validator;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.species.AbstractSpecies;
@@ -73,14 +73,15 @@ public class PrimitiveStatement extends ActionStatement {
 
 	/** The skill. */
 	private ISkill skill = null;
-	
+
 	/** The helper. */
 	private final IGamaHelper helper;
 
 	/**
 	 * Instantiates a new primitive statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
@@ -88,17 +89,14 @@ public class PrimitiveStatement extends ActionStatement {
 	}
 
 	@Override
-	public PrimitiveDescription getDescription() {
-		return (PrimitiveDescription) description;
-	}
+	public PrimitiveDescription getDescription() { return (PrimitiveDescription) description; }
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
 		scope.stackArguments(actualArgs.get());
 		final IAgent agent = scope.getAgent();
-		result = helper.run(scope, agent, skill == null ? agent : skill);
-		return result;
+		return helper.run(scope, agent, skill == null ? agent : skill);
 	}
 
 	@Override
@@ -111,6 +109,12 @@ public class PrimitiveStatement extends ActionStatement {
 		if (enclosing instanceof AbstractSpecies) {
 			skill = ((AbstractSpecies) enclosing).getSkillInstanceFor(helper.getSkillClass());
 		}
+	}
+
+	@Override
+	public void dispose() {
+		skill = null;
+		super.dispose();
 	}
 
 }

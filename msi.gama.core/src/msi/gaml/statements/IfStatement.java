@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IfStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * IfStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -161,9 +161,9 @@ public class IfStatement extends AbstractStatementSequence {
 		protected void serializeChildren(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
-			final String[] elseString = new String[] { null };
+			final String[] elseString = { null };
 			desc.visitChildren(s -> {
-				if (s.getKeyword().equals(IKeyword.ELSE)) {
+				if (IKeyword.ELSE.equals(s.getKeyword())) {
 					elseString[0] = s.serialize(false) + Strings.LN;
 				} else {
 					serializeChild(s, sb, includingBuiltIn);
@@ -184,7 +184,7 @@ public class IfStatement extends AbstractStatementSequence {
 
 	/** The alt. */
 	public IStatement alt;
-	
+
 	/** The cond. */
 	final IExpression cond;
 
@@ -203,9 +203,7 @@ public class IfStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
-		for (final ISymbol c : commands) {
-			if (c instanceof ElseStatement) { alt = (IStatement) c; }
-		}
+		for (final ISymbol c : commands) { if (c instanceof ElseStatement) { alt = (IStatement) c; } }
 		super.setChildren(Iterables.filter(commands, each -> each != alt));
 	}
 
@@ -215,5 +213,12 @@ public class IfStatement extends AbstractStatementSequence {
 		if (!(condition instanceof Boolean))
 			throw GamaRuntimeException.error("Impossible to evaluate condition " + cond.serialize(true), scope);
 		return (Boolean) condition ? super.privateExecuteIn(scope) : alt != null ? scope.execute(alt).getValue() : null;
+	}
+
+	@Override
+	public void dispose() {
+		if (alt != null) { alt.dispose(); }
+		alt = null;
+		super.dispose();
 	}
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MigrateStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * MigrateStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -114,20 +114,21 @@ public class MigrateStatement extends AbstractStatementSequence {
 	/** The source. */
 	// private IExpression source;
 	private final String source;
-	
+
 	/** The target. */
 	private final String target;
-	
+
 	/** The return string. */
 	private final String returnString;
-	
+
 	/** The sequence. */
-	private AbstractStatementSequence sequence = null;
+	private RemoteSequence sequence = null;
 
 	/**
 	 * Instantiates a new migrate statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public MigrateStatement(final IDescription desc) {
 		super(desc);
@@ -141,7 +142,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> com) {
-		sequence = new AbstractStatementSequence(description);
+		sequence = new RemoteSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);
 	}
@@ -167,10 +168,15 @@ public class MigrateStatement extends AbstractStatementSequence {
 		 * m.add((IAgent) immigrantCandidates); immigrants.addAll(executor.migrateMicroAgents(m, targetMicroSpecies)); }
 		 */
 
-		if (returnString != null) {
-			stack.setVarValue(returnString, immigrants);
-		}
+		if (returnString != null) { stack.setVarValue(returnString, immigrants); }
 
 		return null;
+	}
+
+	@Override
+	public void dispose() {
+		if (sequence != null) { sequence.dispose(); }
+		sequence = null;
+		super.dispose();
 	}
 }
