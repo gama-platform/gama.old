@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.operation.buffer.BufferParameters;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
@@ -120,7 +121,11 @@ class ShapeExecuter extends DrawExecuter {
 			final GamaPoint center = ic.getCenter();
 			final AxisAngle rot = attributes.getRotation();
 			final GamaPoint location = attributes.getLocation();
-			if (rot != null || location != null) { gg = gg.copy(); }
+			if (rot != null || location != null) {
+				// Do this instead of copy() or clone() to avoid the exception quoted in #3602
+				// Seems to work...
+				gg = gg.buffer(0.0, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT);
+			}
 			rotate(gg, center, rot);
 			if (location != null) {
 				if (gg.getNumPoints() == 1) {
