@@ -12,7 +12,6 @@ global
 {
 	list<being> moved_agents ;
 	geometry shape <- square(1000);
-	point target;
 	geometry zone <- circle(100);
 	bool can_drop;
 	init
@@ -27,12 +26,12 @@ global
 			do die;
 		}
 
-		moved_agents <- list<being>([]);
+		moved_agents <- [];
 	}
 
 	action duplicate 
 	{
-		geometry available_space <- (zone at_location target) - (union(moved_agents) + 10);
+		geometry available_space <- (zone at_location #user_location) - (union(moved_agents) + 10);
 		create being number: length(moved_agents) with: (location: any_location_in(available_space));
 	}
 
@@ -40,9 +39,8 @@ global
 	{
 		if (empty(moved_agents))
 		{
-			list<being> selected_agents <- being inside (zone at_location #user_location);
-			moved_agents <- selected_agents;
-			ask selected_agents
+			moved_agents <- being inside (zone at_location #user_location);
+			ask moved_agents
 			{
 				difference <- #user_location - location;
 				color <- # olive;
@@ -55,7 +53,7 @@ global
 				color <- # burlywood;
 			}
 
-			moved_agents <- list<being>([]);
+			moved_agents <- [];
 		}
 
 	}
@@ -63,7 +61,6 @@ global
 	action move 
 	{
 		can_drop <- true;
-		target <- #user_location;
 		list<being> other_agents <- (being inside (zone at_location #user_location)) - moved_agents;
 		geometry occupied <- geometry(other_agents);
 		ask moved_agents
@@ -100,7 +97,7 @@ species being skills: [moving]
 
 	aspect default
 	{
-		draw shape color: color at: location;
+		draw shape color: color at: location + {1,0,1};
 	}
 
 }
@@ -108,15 +105,31 @@ species being skills: [moving]
 experiment "Click and Move" type: gui
 {
 	font regular <- font("Helvetica", 14, # bold);
+	rgb c1 <- rgb(#darkseagreen, 120);
+	rgb c2 <- rgb(#firebrick, 120);
 	output
 	{
-		display "Click and Move [OPENGL]" type: 3d
+		layout #split;
+		display "Click and Move [JAVA3D]" type: 3d  axes: false parent: "Click and Move [JAVA2D]"
 		{
-			graphics "Empty target" 
+			light #ambient intensity: 100;
+		}
+		
+		
+		display "Click and Move [JAVA2D]" type: 2d 
+		{
+
+			graphics "Full target" 
 			{
-				if (empty(moved_agents))
+				int size <- length(moved_agents);
+				if (size > 0)
 				{
-					draw zone at: target wireframe: false border: false color: #wheat;
+					draw zone at: #user_location wireframe: false border: false color: (can_drop ? c1 : c2);
+					draw string(size) at: #user_location + { -30, -30 } font: regular color: # white;
+					draw "'r': remove" at: #user_location + { -30, 0 } font: regular color: # white;
+					draw "'c': copy" at: #user_location + { -30, 30 } font: regular color: # white;
+				} else {
+					draw zone at: #user_location wireframe: false border: false color: #wheat;
 				}
 
 			}
@@ -126,56 +139,10 @@ experiment "Click and Move" type: gui
 			event mouse_up action: click;
 			event 'r' action: kill;
 			event 'c' action: duplicate;
-			graphics "Full target" 
-			{
-				int size <- length(moved_agents);
-				if (size > 0)
-				{
-					rgb c1 <- rgb(#darkseagreen, 120);
-					rgb c2 <- rgb(#firebrick, 120);
-					draw zone at: target wireframe: false border: false color: (can_drop ? c1 : c2);
-					draw string(size) at: target + { -30, -30 } font: regular color: # white;
-					draw "'r': remove" at: target + { -30, 0 } font: regular color: # white;
-					draw "'c': copy" at: target + { -30, 30 } font: regular color: # white;
-				}
 
-			}
 
 		}
-		
-		display "Click and Move [JAVA2D]" type: 2d
-		{
-			graphics "Empty target" 
-			{
-				if (empty(moved_agents))
-				{
-					draw zone at: target wireframe: false border: false color: #wheat;
-				}
 
-			}
-
-			species being;
-			event mouse_move action: move;
-			event mouse_up action: click;
-			event 'r' action: kill;
-			event 'c' action: duplicate;
-			graphics "Full target" 
-			{
-				int size <- length(moved_agents);
-				if (size > 0)
-				{
-					rgb c1 <- rgb(#darkseagreen, 120);
-					rgb c2 <- rgb(#firebrick, 120);
-					draw zone at: target wireframe: false border: false color: (can_drop ? c1 : c2);
-					draw string(size) at: target + { -30, -30 } font: regular color: # white;
-					draw "'r': remove" at: target + { -30, 0 } font: regular color: # white;
-					draw "'c': copy" at: target + { -30, 30 } font: regular color: # white;
-				}
-
-			}
-
-		}
-		
 		
 		
 	}

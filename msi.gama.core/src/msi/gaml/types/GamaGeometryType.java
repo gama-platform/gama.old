@@ -3,7 +3,7 @@
  * GamaGeometryType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -878,14 +878,17 @@ public class GamaGeometryType extends GamaType<IShape> {
 				geom = geom.union();
 				if (!geom.isEmpty()) return new GamaShape(geom);
 			}
-		} catch (final AssertionFailedException | TopologyException | IllegalArgumentException e) {
+			// See Issue #3602
+		} catch (final NullPointerException | AssertionFailedException | TopologyException
+				| IllegalArgumentException e) {
 			// Geometry gs[] = new Geometry[geoms.length];
 			final List<Geometry> gs = new ArrayList(geoms.size());
 			for (final Geometry g : geoms) { gs.add(g.buffer(0.0)); }
 			try {
 				final Geometry geom = CascadedPolygonUnion.union(gs);
 				if (geom != null && !geom.isEmpty()) return new GamaShape(geom);
-			} catch (final AssertionFailedException | TopologyException | IllegalArgumentException e2) {}
+			} catch (final NullPointerException | AssertionFailedException | TopologyException
+					| IllegalArgumentException f) {}
 
 		}
 		return null;
