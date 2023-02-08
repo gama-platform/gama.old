@@ -12,10 +12,10 @@ import "Adapters/Evacuation Adapter.gaml" as Evacuation
 
 global
 {
-	//set the bound of environment
+	//set the bound of the environment
 	geometry shape <- envelope(file("../../../Toy Models/Flood Simulation/includes/mnt50.asc"));
 	geometry the_free_shape<-copy(shape);
-	//counting variable of casualty
+	//counter for casualties
 	int casualty <- 0;
 	
 	list<point> offset <- [{ 50, 1700 }, { 800, 3400 }, { 2900, 0 }, { 4200, 2900 }, { 5100, 1300 }];
@@ -52,11 +52,11 @@ global
 			do _step_;
 		}
 
-		//people evacate 
+		//evacuate people
 		ask Evacuation."Adapter of Evacuation" collect each.simulation
 		{
-			//depending on the real plan of evacuation, we can test the speed of the evacuation with the speed of flooding by doing more or less simulation step 
-				do _step_;
+			//depending on the real plan of evacuation, we can test the speed of the evacuation with the flooding speed by doing more or less simulation steps 
+			do _step_;
 		}
 		
 		//loop over the population
@@ -64,7 +64,7 @@ global
 		{
 			//get the cell at people's location 
 			cell theWater <- cell(first(Flooding."Adapter").get_cell_at(thePeople.location));
-			//if the water levele is high than 8 meters and people is overlapped, tell him that he must dead
+			//if the water level is higher than 8 meters and the cell overlaps people, kill the people
 			if (theWater.grid_value > 8.0)
 			{
 				ask thePeople

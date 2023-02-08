@@ -353,13 +353,13 @@ species ball_sp skills:[moving] {
 		
 		// anticipation of the ball position to detect a goal
 		if ((location.y+sin(heading)*speed) > 120) {
-			write "back team score a goal !!";
+			write "back team scores a goal !!";
 			ask first(soccer_game) {
 				do reinit_phase;
 			}
 		}
 		if ((location.y+sin(heading)*speed) < 0) {
-			write "front team score a goal !!";
+			write "front team scores a goal !!";
 			ask first(soccer_game) {
 				do reinit_phase;
 			}

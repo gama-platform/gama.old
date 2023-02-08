@@ -23,7 +23,7 @@ experiment overlay type: gui
 {
     output 
     {
-        display map type: 3d
+        display map type: 3d axes:false
         {
         	//define a new overlay layer positioned at the coordinate 5,5, with a constant size of 180 pixels per 100 pixels.
             overlay position: { 5, 5 } size: { 180 #px, 100 #px } background: # black transparency: 0.5 border: #black rounded: true

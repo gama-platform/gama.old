@@ -29,7 +29,7 @@ global {
    float dyke_width <- 15.0;
     
    //Shape of the environment using the dem file
-   geometry shape <- envelope(dem_file);
+   geometry shape <- envelope(dykes_shapefile);
    
    //List of the drain and river cells
    list<cell> drain_cells;
@@ -288,8 +288,8 @@ experiment Run type: gui {
          species dyke aspect: geometry ;
       }
       display chart_display refresh: every(24#cycles) { 
-         chart "Pressure on Dykes" type: series {
-            data "Mean pressure on dykes " value: mean(dyke collect (each.water_pressure)) style: line color: #magenta ;
+         chart "Pressure on Dykes" type: series legend_font: font("Helvetica", 18)  label_font: font("Helvetica", 20, #bold)  title_font: font("Helvetica", 24, #bold){
+            data "Mean pressure on dykes " value: mean(dyke collect (each.water_pressure)) style: line color: #magenta  ;
             data "Rate of dykes with max pressure" value: (dyke count (each.water_pressure = 1.0))/ length(dyke) style: line color: #red ;
             data "Rate of dykes with high pressure" value: (dyke count (each.water_pressure > 0.5))/ length(dyke) style: line color: #orange ;
             data "Rate of dykes with low pressure" value: (dyke count (each.water_pressure < 0.25))/ length(dyke) style: line color: #green ;

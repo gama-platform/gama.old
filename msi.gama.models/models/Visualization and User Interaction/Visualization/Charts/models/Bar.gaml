@@ -82,9 +82,9 @@ experiment "Multiple displays" type: gui {
 			chart "datalist_bar" type:histogram 
 			series_label_position: onchart
 			{
-				datalist legend:["A","B","C"] 
+				datalist legend:["cycle","cosinus normalized","offsetted cosinus normalized"] 
 					style: bar
-					value:[cycle,cos(100*cycle),cos(100*(cycle+30))] 
+					value:[cycle,(sin(100*cycle) +  1) * cycle/2,(sin(100*(cycle+30)) + 1) * cycle/2] 
 					color:[#green,#black,#purple];
 			}
 		}

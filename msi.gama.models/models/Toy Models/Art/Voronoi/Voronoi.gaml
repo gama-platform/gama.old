@@ -90,7 +90,7 @@ experiment voronoi type: gui autorun: true {
 	parameter "Complex blur" var: blur2;
 	output {
 		layout #split navigator: false tray: false toolbars: false consoles: false editors: false;
-		display "Voronoi 2D" background: #black type: opengl{
+		display "Voronoi 2D" background: #black type: 3d axes:false{
 			light #ambient intensity: 100;
 			grid cell;
 		}

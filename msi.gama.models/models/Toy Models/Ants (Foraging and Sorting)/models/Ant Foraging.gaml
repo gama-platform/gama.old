@@ -5,6 +5,7 @@
 * nest once they did find food.	
 * Tags: gui, fsm, grid, diffusion
 */
+@no_warning
 model ants
 
 global {
@@ -184,7 +185,7 @@ experiment "With Inspector" type: gui {
 	parameter 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
 	output {
 		layout #split editors: false;
-		display Ants type: 3d {
+		display Ants type: 3d axes:false{
 			image terrain position: {0.05, 0.05} size: {0.9, 0.9} refresh: false;
 			agents "agents" transparency: 0.7 position: {0.05, 0.05} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: {0.05, 0.05, 0.05} size: {0.9, 0.9} aspect: icon_svg;

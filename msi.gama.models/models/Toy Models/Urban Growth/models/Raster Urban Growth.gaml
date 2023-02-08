@@ -152,7 +152,7 @@ experiment raster type: gui {
  	parameter "Weight of the distance to roads criteria" var: weight_road_dist;
  	parameter "Weight of the distance to city center criteria" var: weight_cc_dist;
  	output {
- 		display map type: 3d {
+ 		display map type: 3d axes:false {
 			grid plot;
 			species roads;
 			species city_center;
