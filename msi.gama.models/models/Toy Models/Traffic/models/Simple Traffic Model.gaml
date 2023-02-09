@@ -14,7 +14,7 @@ global {
 	//Shapefile of the roads
 	file road_shapefile <- file("../includes/roads.shp");
 	//Shape of the environment
-	geometry shape <- envelope(road_shapefile);
+	geometry shape <- envelope(building_shapefile);
 	//Step value
 	float step <- 10 #s;
 	//Graph of the road network
@@ -124,7 +124,8 @@ grid cell height: 50 width: 50 neighbors: 8{
 experiment traffic type: gui {
 	float minimum_cycle_duration <- 0.01;
 	output {
-		display carte type: 3d{
+		display carte type: 3d axes:false {
+			camera 'default' location: {219.7351,3818.9602,2342.692} target: {1261.3366,1174.7007,0.0};			
 			species building;
 			species road ;
 			species people ;
