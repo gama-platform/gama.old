@@ -101,7 +101,7 @@ experiment "Game of Life" type: gui {
 	parameter 'Color of emerging cells:' var: emergingcolor category: 'Colors';
 	parameter 'Color of dead cells:' var: deadcolor category: 'Colors';
 	output {
-		display Life type: 3d{
+		display Life type: 3d axes:false{
 			grid life_cell;
 		}
 
