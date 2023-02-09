@@ -116,20 +116,18 @@ public class HTTPRequestConnector extends Connector {
 			// Element at 0 is the HTTP Method
 			String method = (String) listContent.get(0);
 
+			// Element at 1 is the content
+			String body = "";
+			if(listContent.size() > 1) {
+					body = (String) listContent.get(1);
+				//	body = Jsoner.serialize(listContent.get(1));
+			}		
+			
+			
 			// Element at 2 is the headers (including the Content-Type)
 			IMap<String, String> header =
 					listContent.size() > 2 ? (IMap<String, String>) listContent.get(2) : null;
 					
-			// Element at 1 is the content
-			String body = "";
-			if(listContent.size() > 1) {
-				if((header != null) && (header.containsKey("Content-Type")) && header.get("Content-Type").equals("text/plain")){
-					body = (String) listContent.get(1);
-				} else {
-					body = Jsoner.serialize(listContent.get(1));
-				}
-			}		
-
 			if (header != null) { for (String key : header.keySet()) { requestBuilder.header(key, header.get(key)); } }
 
 			request = switch (method) {

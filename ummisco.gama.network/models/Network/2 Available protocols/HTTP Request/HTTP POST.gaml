@@ -25,9 +25,9 @@ species NetworkingAgent skills:[network] {
 	reflex send when:  cycle = 0 {
 		write "sending message ";
 		
-		do send to: "/api/user/" contents: ["POST",["toto"::34,"titi"::world], ["Content-Type"::"application/json"] ];
+		do send to: "/test" contents: ["POST",as_json_string(["toto"::34,"titi"::world]), ["Content-Type"::"application/json"] ];
 // 		do send to: "/api/user/" contents: ["POST","raw-query-param", ["Content-Type"::"text/plain"] ];		
-//		do send to: "/api/user/" contents: ["PUT",["toto"::34,"titi"::12], ["Content-Type"::"application/json"]];
+//		do send to: "/api/user/" contents: ["PUT",as_json_string(["toto"::34,"titi"::12]), ["Content-Type"::"application/json"]];
 //		do send to: "/api/user/" contents: ["DELETE"];
 		
 	}
