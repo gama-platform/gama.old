@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TestStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TestStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.test;
 
@@ -94,31 +94,28 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 
 	/** The setup. */
 	SetUpStatement setup = null;
-	
+
 	/** The assertions. */
 	// Assertions contained in the test.
 	List<AssertStatement> assertions = new ArrayList<>();
-	
+
 	/** The summary. */
 	IndividualTestSummary summary;
 
 	/**
 	 * Instantiates a new test statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public TestStatement(final IDescription desc) {
 		super(desc);
-		if (hasFacet(IKeyword.NAME)) {
-			setName("test " + getLiteral(IKeyword.NAME));
-		}
+		if (hasFacet(IKeyword.NAME)) { setName("test " + getLiteral(IKeyword.NAME)); }
 	}
 
 	@Override
 	public IndividualTestSummary getSummary() {
-		if (summary == null) {
-			summary = new IndividualTestSummary(this);
-		}
+		if (summary == null) { summary = new IndividualTestSummary(this); }
 		return summary;
 	}
 
@@ -132,19 +129,13 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		super.setChildren(commands);
-		commands.forEach(s -> {
-			if (s instanceof AssertStatement) {
-				assertions.add((AssertStatement) s);
-			}
-		});
+		commands.forEach(s -> { if (s instanceof AssertStatement) { assertions.add((AssertStatement) s); } });
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		getSummary().reset();
-		if (setup != null) {
-			setup.setup(scope);
-		}
+		if (setup != null) { setup.setup(scope); }
 		Object lastResult = null;
 		try {
 			scope.enableTryMode();
@@ -153,10 +144,12 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 					// TODO Verify this call (wrt IScope.execute())
 					lastResult = statement.executeOn(scope);
 				} catch (final GamaAssertException e) {} catch (final GamaRuntimeException e) {
-					if (statement instanceof AssertStatement) {} else {
+					if (!(statement instanceof AssertStatement)) {
 						getSummary().setState(TestState.ABORTED);
 						getSummary().setError(e.getMessage());
+						break;
 					}
+
 				}
 			}
 		} finally {
@@ -167,13 +160,9 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 	}
 
 	@Override
-	public String getTitleForSummary() {
-		return "Test " + getName();
-	}
+	public String getTitleForSummary() { return "Test " + getName(); }
 
 	@Override
-	public Collection<? extends WithTestSummary<?>> getSubElements() {
-		return assertions;
-	}
+	public Collection<? extends WithTestSummary<?>> getSubElements() { return assertions; }
 
 }
