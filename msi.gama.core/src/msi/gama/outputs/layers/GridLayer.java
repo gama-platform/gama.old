@@ -73,8 +73,7 @@ public class GridLayer extends AbstractLayer implements IGridLayer {
 		if (data.drawLines()) { lineColor = data.getLineColor(); }
 		final double[] gridValueMatrix = data.getElevationMatrix(scope);
 		final GamaImageFile textureFile = data.textureFile();
-		final MeshDrawingAttributes attributes =
-				new MeshDrawingAttributes(getName(), lineColor, gridValueMatrix == null);
+		final MeshDrawingAttributes attributes = new MeshDrawingAttributes(getName(), gridValueMatrix == null);
 		attributes.setGrayscaled(data.isGrayScaled());
 		attributes.setEmpty(data.isWireframe());
 		final BufferedImage image = data.getImage();

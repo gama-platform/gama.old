@@ -3,7 +3,7 @@
  * GradientBasedMeshColorProvider.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -39,14 +39,15 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 		// each pair color::float represents a stop from 0 to 1
 		this.size = palette.size();
 
-		components = new double[size * 4]; // last value is the stop position
+		components = new double[size * 5]; // last value is the stop position
 
 		int i = 0;
 		for (GamaColor c : palette.keySet()) {
 			components[i * 4] = c.getRed() / 255d;
 			components[i * 4 + 1] = c.getGreen() / 255d;
 			components[i * 4 + 2] = c.getBlue() / 255d;
-			components[i * 4 + 3] = palette.get(c);
+			components[i * 4 + 3] = c.getAlpha() / 255d;
+			components[i * 4 + 4] = palette.get(c);
 			i++;
 		}
 	}
@@ -54,18 +55,19 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 	@Override
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
 		double[] result = rgb;
-		if (result == null) { result = new double[3]; }
+		if (result == null) { result = new double[4]; }
 		if (z <= min || max <= min) return components;
 		double position = (z - min) / (max - min);
 		// DEBUG.OUT("Position " + position + " corresponds to slot ", false);
 		for (int s = 0; s < size - 1; s++) {
-			var leftStop = components[s * 4 + 3];
-			var rightStop = components[(s + 1) * 4 + 3];
+			var leftStop = components[s * 4 + 4];
+			var rightStop = components[(s + 1) * 4 + 4];
 			if (position <= leftStop) {
 				// DEBUG.OUT(s);
 				result[0] = components[4 * s];
 				result[1] = components[4 * s + 1];
 				result[2] = components[4 * s + 2];
+				result[3] = components[4 * s + 3];
 				return result;
 			}
 			if (position < rightStop) {
@@ -75,6 +77,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 				result[0] = components[s * 4] * ir + components[(s + 1) * 4] * r;
 				result[1] = components[s * 4 + 1] * ir + components[(s + 1) * 4 + 1] * r;
 				result[2] = components[s * 4 + 2] * ir + components[(s + 1) * 4 + 2] * r;
+				result[3] = components[s * 4 + 3] * ir + components[(s + 1) * 4 + 3] * r;
 				return result;
 			}
 		}
@@ -82,6 +85,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 		result[0] = components[4 * (size - 1)];
 		result[1] = components[4 * (size - 1) + 1];
 		result[2] = components[4 * (size - 1) + 2];
+		result[2] = components[4 * (size - 1) + 3];
 		return result;
 	}
 

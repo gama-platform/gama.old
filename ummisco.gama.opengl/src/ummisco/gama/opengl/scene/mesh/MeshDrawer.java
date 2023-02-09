@@ -3,7 +3,7 @@
  * MeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -47,7 +47,13 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	/** The Constant BLACK. */
-	static final double[] BLACK = { 0, 0, 0 };
+	static final double[] BLACK = { 0, 0, 0, 255 };
+
+	/** The Constant BLACK. */
+	static final double[] TRANSPARENT = { 0, 0, 0, 0 };
+
+	/** The Constant TRANSPARENT. */
+	// static final double[] TRANSPARENT = { 0, 0, 0, 255 };
 
 	// ARRAYS
 	/** The data. */
@@ -75,9 +81,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	// The widht and height of each cell in world coordinates; the minimal and maximal values found in the data
 	private double cx, cy, min, max;
 
-	/** The no data. */
-	// The value representing the absence of data
+	/** no_data : value representing the absence of data and the value representing the minimal value to draw **/
 	private double noData;
+
+	/** above: value representing the absence of data and the value representing the minimal value to draw **/
+	private double above;
 
 	// FLAGS
 	/** The with text. */
@@ -95,7 +103,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	/** The rgb. */
 	// An array used for the transfer of colors from the color provider
-	double[] rgb = new double[3];
+	double[] rgb = new double[4];
 
 	/** The min max. */
 	double[] minMax = new double[2];
@@ -156,7 +164,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		outputsLines = gl.isWireframe() || line != null;
 		noData = attributes.getNoDataValue();
 		if (noData == IField.NO_NO_DATA) { noData = object.getObject().getNoData(null); }
-
+		above = attributes.getAbove();
 		this.cx = attributes.getCellSize().x;
 		this.cy = attributes.getCellSize().y;
 
@@ -195,7 +203,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		double min = Double.MAX_VALUE;
 		double max = Double.MIN_VALUE;
 		for (double f : data) {
-			if (f == noData) { continue; }
+			if (f == noData || f < above) { continue; }
 			if (f > max) {
 				max = f;
 			} else if (f < min) { min = f; }
@@ -227,7 +235,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8);
 			// }
 			// if (outputsColors) {
-			colorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
+			colorBuffer = newDirectDoubleBuffer(triangles ? length * 4 : lengthM1 * 16);
 			// }
 		} else {
 			vertexBuffer.clear();
@@ -321,7 +329,13 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	private void colorize(final double z, final int x, final int y) {
 		// Outputs either a texture coordinate or the color of the vertex
 		if (outputsTextures) { texBuffer.put((double) x / cols).put((double) y / rows); }
-		if (outputsColors) { colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb), 0, 3); }
+		if (outputsColors) {
+			if (z < above) {
+				colorBuffer.put(TRANSPARENT, 0, 4);
+			} else {
+				colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb), 0, 4);
+			}
+		}
 		// If the line color is specified, outputs it
 		if (outputsLines) {
 			if (useFillForLines) {
@@ -356,11 +370,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		gl.beginDrawing(GL.GL_TRIANGLES);
 		for (var index = 0; index < indexBuffer.limit(); index++) {
 			var i = indexBuffer.get(index);
-			int one = i * 3, two = i * 3 + 1, three = i * 3 + 2;
+			int one = i * 3, two = one + 1, three = one + 2, four = one + 3;
 			if (!gl.isWireframe() && outputsColors) {
 				// TODO Bug when using a gradient: some color components are outside the range
 				try {
-					gl.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three), 1);
+					gl.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three),
+							colorBuffer.get(four));
 				} catch (IllegalArgumentException e) {
 					DEBUG.OUT("Problem with following colors: " + colorBuffer.get(one) + " " + colorBuffer.get(two)
 							+ " " + colorBuffer.get(three));
@@ -414,7 +429,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			ogl.glNormalPointer(GL2GL3.GL_DOUBLE, 0, normalBuffer);
 
 			if (outputsTextures) { ogl.glTexCoordPointer(2, GL2GL3.GL_DOUBLE, 0, texBuffer); }
-			if (outputsColors) { ogl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, colorBuffer); }
+			if (outputsColors) { ogl.glColorPointer(4, GL2GL3.GL_DOUBLE, 0, colorBuffer); }
 
 			if (!gl.isWireframe()) {
 				ogl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);

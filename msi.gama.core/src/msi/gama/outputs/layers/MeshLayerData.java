@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MeshLayerData.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * MeshLayerData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -41,37 +41,40 @@ public class MeshLayerData extends LayerData {
 	IField values;
 
 	/** The line. */
-	Attribute<GamaColor> line;
+	final Attribute<GamaColor> line;
 
 	/** The texture. */
-	Attribute<GamaImageFile> texture;
+	final Attribute<GamaImageFile> texture;
 
 	/** The smooth. */
-	Attribute<Integer> smooth;
+	final Attribute<Integer> smooth;
 
 	/** The elevation. */
-	Attribute<IField> elevation;
+	final Attribute<IField> elevation;
 
 	/** The triangulation. */
-	Attribute<Boolean> triangulation;
+	final Attribute<Boolean> triangulation;
 
 	/** The grayscale. */
-	Attribute<Boolean> grayscale;
+	final Attribute<Boolean> grayscale;
 
 	/** The text. */
-	Attribute<Boolean> text;
+	final Attribute<Boolean> text;
 
 	/** The wireframe. */
-	Attribute<Boolean> wireframe;
+	final Attribute<Boolean> wireframe;
 
 	/** The no data. */
-	Attribute<Double> noData;
+	final Attribute<Double> noData;
 
 	/** The color. */
-	Attribute<Object> color;
+	final Attribute<Object> color;
 
 	/** The scale. */
-	Attribute<Double> scale;
+	final Attribute<Double> scale;
+
+	/** The above. */
+	final Attribute<Double> above;
 
 	/** The cell size. */
 	private GamaPoint cellSize;
@@ -117,6 +120,7 @@ public class MeshLayerData extends LayerData {
 		color = create(IKeyword.COLOR, Types.NO_TYPE, null);
 		scale = create(IKeyword.SCALE, Types.FLOAT, null);
 		noData = create("no_data", Types.FLOAT, IField.NO_NO_DATA);
+		above = create("above", Types.FLOAT, Double.MIN_VALUE);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
 			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);
@@ -267,5 +271,14 @@ public class MeshLayerData extends LayerData {
 	 */
 	@Override
 	public Boolean isSelectable() { return false; }
+
+	/**
+	 * Gets the above.
+	 *
+	 * @return the above
+	 */
+	public double getAbove() { // TODO Auto-generated method stub
+		return above.get();
+	}
 
 }

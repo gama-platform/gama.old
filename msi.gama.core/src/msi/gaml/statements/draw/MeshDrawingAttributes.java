@@ -3,7 +3,7 @@
  * MeshDrawingAttributes.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -45,6 +45,9 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	/** The no data. */
 	double noData;
 
+	/** The above. */
+	double above;
+
 	/** The smooth. */
 	int smooth;
 
@@ -58,9 +61,8 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	 * @param isImage
 	 *            the is image
 	 */
-	public MeshDrawingAttributes(final String name, final GamaColor border, final boolean isImage) {
+	public MeshDrawingAttributes(final String name, final boolean isImage) {
 		super(null, isImage);
-		setBorder(border);
 		speciesName = name;
 	}
 
@@ -267,5 +269,20 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	 * @return the no data value
 	 */
 	public double getNoDataValue() { return noData; }
+
+	/**
+	 * Sets the above.
+	 *
+	 * @param above2
+	 *            the new above
+	 */
+	public void setAbove(final double above2) { above = above2; }
+
+	/**
+	 * Gets the above.
+	 *
+	 * @return the above
+	 */
+	public double getAbove() { return above; }
 
 }

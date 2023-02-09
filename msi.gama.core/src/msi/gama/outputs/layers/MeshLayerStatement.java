@@ -3,7 +3,7 @@
  * MeshLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -68,6 +68,11 @@ import msi.gaml.types.IType;
 						type = { IType.FLOAT },
 						optional = true,
 						doc = @doc ("Defines the angle of rotation of this layer, in degrees, around the z-axis.")),
+				@facet (
+						name = "above",
+						type = { IType.FLOAT },
+						optional = true,
+						doc = @doc ("Can be used to specify a 'minimal' value under which the render will not render the cells with this value")),
 				@facet (
 						name = "no_data",
 						type = { IType.FLOAT },
