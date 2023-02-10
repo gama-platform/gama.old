@@ -51,7 +51,7 @@ global {
 		cell <- cell * 0.8;
 
 		//diffuse the pollutions to neighbor cells
-	//diffuse var: pollution on: cell proportion: 0.9;
+	diffuse var: pollution on: cell proportion: 0.9;
 	}
 
 }
@@ -98,7 +98,7 @@ species people skills: [moving] {
 species building {
 
 	aspect default {
-		draw shape color: darker(#darkgray).darker;
+		draw shape color: darker(#darkgray).darker depth: rnd(10) + 2;
 	}
 
 }
@@ -110,10 +110,10 @@ species road {
 	int nb_people <- 0 update: length(people at_distance 1);
 	//Speed coefficient computed using the number of people on the road and the capicity of the road
 	float speed_coeff <- 1.0 update: exp(-nb_people / capacity) min: 0.1;
-	int buffer <- 3;
+	int buffer <- 10;
 
 	aspect default {
-		draw (shape + buffer * speed_coeff * 2) color: #white;
+		draw (shape + 5) color: #white;
 	}
 
 }
@@ -121,43 +121,45 @@ species road {
 experiment traffic type: gui autorun: true{
 	float minimum_cycle_duration <- 0.01;
 	list<rgb> pal <- palette([ #black, #green, #yellow, #orange, #orange, #red, #red, #red]);
-	map<rgb,string> legends <- [#green::"Good",#yellow::"Average",#orange::"Bad",#red::"Hazardous"];
+	map<rgb,string> pollutions <- [#green::"Good",#yellow::"Average",#orange::"Bad",#red::"Hazardous"];
+	map<rgb,string> legends <- [rgb(darker(#darkgray).darker)::"Buildings",rgb(#dodgerblue)::"Cars",rgb(#white)::"Roads"];
+	font text <- font("Arial", 14, #bold);
+	font title <- font("Arial", 18, #bold);
 	
 	output synchronized: true{
-		display carte type: 3d axes: false background: #black fullscreen: true toolbar: false{
+		display carte type: 3d axes: false background: rgb(0,0,100) fullscreen: true toolbar: false{
 			
-			 overlay position: { 500#px,200#px} size: { 1 #px, 1 #px } background: # black border: #black rounded: false
+			 overlay position: { 500#px,200#px} size: { 1 #px, 1 #px } background: # black border: #black rounded: false 
             	{
             	//for each possible type, we draw a square with the corresponding color and we write the name of the type
-                float y <- 30#px;
-                loop p over: reverse(legends.pairs)
+                
+                draw "Pollution" at: {0, 0} anchor: #top_left  color: #white font: title;
+                float y <- 50#px;
+                draw rectangle(40#px, 160#px) at: {20#px, y + 60#px} wireframe: true color: #white;
+             
+                loop p over: reverse(pollutions.pairs)
                 {
                     draw square(40#px) at: { 20#px, y } color: rgb(p.key, 0.6) ;
-                    draw p.value at: { 60#px, y} anchor: #left_center color: # white font: font("Arial", 14, #bold);
+                    draw p.value at: { 60#px, y} anchor: #left_center color: # white font: text;
                     y <- y + 40#px;
                 }
-                draw rectangle(40#px, 160#px) at: {20#px, 90#px} wireframe: true color: #white;
                 
                 y <- y + 40#px;
-                draw square(40#px) at: { 20#px, y } color: rgb(darker(#darkgray).darker) ;
-                draw "Buildings" at: { 60#px, y} anchor: #left_center color: # lightblue font: font("Arial", 14, #bold);
-                
-                y <- y + 40#px;
-                draw square(40#px) at: { 20#px, y } color: rgb(#dodgerblue) ;
-                draw "Cars" at: { 60#px, y} anchor: #left_center color: #lightblue font: font("Arial", 14, #bold);
-
-                y <- y + 40#px;
-                draw square(40#px) at: { 20#px, y } color:rgb(#white) ;
-                draw "Road" at: { 60#px, y} anchor: #left_center color: #lightblue font: font("Arial", 14, #bold);
-                
-                draw rectangle(40#px, 120#px) at: {20#px, 270#px} wireframe: true color: #white;
-
+                draw "Legend" at: {0, y} anchor: #top_left  color: #white font: title;
+                y <- y + 50#px;
+                draw rectangle(40#px, 120#px) at: {20#px, y + 40#px} wireframe: true color: #white;
+                loop p over: legends.pairs
+                {
+                    draw square(40#px) at: { 20#px, y } color: rgb(p.key, 0.8) ;
+                    draw p.value at: { 60#px, y} anchor: #left_center color: # white font: text;
+                    y <- y + 40#px;
+                }
             }
 			
 			light #ambient intensity: 128;
 			camera 'default' location: {1245.8884, 3324.2908, 1231.2804} target: {1252.5405, 1418.6084, 0.0};
+			species road refresh: false;
 			species building refresh: false;
-			species road;
 			species people;
 
 			//display the pollution grid in 3D using triangulation.
