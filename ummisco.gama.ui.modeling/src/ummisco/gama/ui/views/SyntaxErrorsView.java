@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SyntaxErrorsView.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * SyntaxErrorsView.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
@@ -131,17 +131,14 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 			final boolean b = ((ToolItem) e.widget).getSelection();
 			GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
 		}, SWT.RIGHT);
-		warningAction.setSelection(GamaPreferences.Modeling.WARNINGS_ENABLED.getValue());
 
 		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", e -> {
 			final boolean b = ((ToolItem) e.widget).getSelection();
 			GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
 		}, SWT.RIGHT);
-		infoAction.setSelection(GamaPreferences.Modeling.INFO_ENABLED.getValue());
-
+		checkActions();
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button("build.all2", "", "Clean and validate all projects", e -> { build(); }, SWT.RIGHT);
-
 		tb.button("test.run2", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
 
 	}

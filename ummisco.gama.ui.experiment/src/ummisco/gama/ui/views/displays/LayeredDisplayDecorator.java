@@ -132,11 +132,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		toggleFullScreen = new GamaCommand("display.fullscreen2", "Toggle fullscreen ESC", e -> toggleFullScreen());
 		runExperiment = new GamaCommand(IGamaIcons.MENU_RUN_ACTION,
 				"Run or pause experiment " + GamaKeyBindings.PLAY_STRING, e -> {
+
 					final Item item = (Item) e.widget;
 					if (!GAMA.isPaused()) {
 						item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
 					} else {
-						item.setImage(GamaIcons.create("menu.pause4").image());
+						item.setImage(GamaIcons.create(IGamaIcons.MENU_PAUSE_ACTION).image());
 					}
 					GAMA.startPauseFrontmostExperiment();
 
@@ -289,7 +290,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		if (GAMA.isPaused()) {
 			item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
 		} else {
-			item.setImage(GamaIcons.create("menu.pause4").image());
+			item.setImage(GamaIcons.create(IGamaIcons.MENU_PAUSE_ACTION).image());
 		}
 		toolbar.button(stepExperiment, SWT.LEFT);
 		toolbar.control(create(toolbar.getToolbar(SWT.LEFT)), totalWidth(), SWT.LEFT);
@@ -503,15 +504,16 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	public void createToolItems(final GamaToolbar2 tb) {
 		toolbar = tb;
+		tb.setBackgroundColor(GamaColors.get(view.getOutput().getData().getToolbarColor()).color());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button(takeSnapshot, SWT.RIGHT);
 		ToolItem item = tb.check(antiAlias, SWT.RIGHT);
-		item.setSelection(view.getOutput().getData().isAntialias());
+		tb.setSelection(item, view.getOutput().getData().isAntialias());
 		fs = tb.button(toggleFullScreen, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.menu("display.layers", "Browse displayed agents by layers", "Properties and contents of layers",
 				trigger -> menuManager.buildToolbarMenu(trigger, (ToolItem) trigger.widget), SWT.RIGHT);
-		tb.setBackgroundColor(GamaColors.get(view.getOutput().getData().getToolbarColor()).color());
+
 	}
 
 	/**

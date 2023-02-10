@@ -1,16 +1,17 @@
 /*******************************************************************************************************
  *
- * GamaIcon.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamaIcon.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Rectangle;
@@ -30,13 +31,13 @@ public class GamaIcon {
 
 	/** The code. */
 	final String code;
-	
+
 	/** The path. */
 	final String path;
-	
+
 	/** The plugin. */
 	final String plugin;
-	
+
 	/** The descriptor. */
 	ImageDescriptor descriptor;
 
@@ -129,24 +130,79 @@ public class GamaIcon {
 	}
 
 	/**
+	 * Checked.
+	 *
+	 * @return the image
+	 */
+	public Image checked() {
+		final Image[] image = { GamaIcons.getInstance().getImageInCache(code + "_checked") };
+		if (image[0] == null) {
+			WorkbenchHelper.run(() -> image[0] =
+					GamaIcons.getInstance().putImageInCache(code + "_checked", checkedVersionOf(image())));
+		}
+		return image[0];
+	}
+
+	/**
 	 * Disabled version of.
 	 *
-	 * @param im the im
+	 * @param im
+	 *            the im
 	 * @return the image
 	 */
 	Image disabledVersionOf(final Image im) {
+		return new Image(im.getDevice(), im, SWT.IMAGE_DISABLE);
+
+		// Rectangle bounds = im.getBounds();
+		// ImageData srcData = im.getImageData();
+		// ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
+		// dstData.transparentPixel = srcData.transparentPixel;
+		// dstData.alpha = srcData.alpha;
+		// for (int sx = 0; sx < bounds.width; sx++) {
+		// for (int sy = 0; sy < bounds.height; sy++) {
+		// dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
+		// dstData.setPixel(sx, sy, srcData.getPixel(sx, sy));
+		// }
+		// }
+		// return new Image(im.getDevice(), dstData);
+	}
+
+	/**
+	 * Checked version of.
+	 *
+	 * @param im
+	 *            the im
+	 * @return the image
+	 */
+	Image checkedVersionOf(final Image im) {
 		Rectangle bounds = im.getBounds();
+		// Image result = new Image(im.getDevice(), im, SWT.IMAGE_GRAY);
+		// GC gc = new GC(result);
+		// gc.setForeground(GamaColors.system(SWT.COLOR_DARK_GREEN));
+		//
+
+		// gc.setLineWidth(3);
+		// gc.set
+		// gc.drawLine(bounds.width / 4, 3 * bounds.height / 4, bounds.width / 2, bounds.height);
+		// gc.drawLine(bounds.width, bounds.height / 2, bounds.width / 2, bounds.height);
+		// gc.dispose();
+		// return result;
+
+		// Rectangle bounds = im.getBounds();
+		// // Color color = GamaColors.system(SWT.COLOR_DARK_GREEN);
 		ImageData srcData = im.getImageData();
 		ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
 		dstData.transparentPixel = srcData.transparentPixel;
 		dstData.alpha = srcData.alpha;
 		for (int sx = 0; sx < bounds.width; sx++) {
 			for (int sy = 0; sy < bounds.height; sy++) {
-				dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
-				dstData.setPixel(sx, sy, srcData.getPixel(sx, sy));
+				// dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
+				int p = srcData.getPixel(sx, sy);
+				dstData.setPixel(sx, sy, p < 0x999999 ? 0x8800 : p);
 			}
 		}
 		return new Image(im.getDevice(), dstData);
+
 	}
 
 	/**
@@ -154,7 +210,5 @@ public class GamaIcon {
 	 *
 	 * @return the code
 	 */
-	public String getCode() {
-		return code;
-	}
+	public String getCode() { return code; }
 }

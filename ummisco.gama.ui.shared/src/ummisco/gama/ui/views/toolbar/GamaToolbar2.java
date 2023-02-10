@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolItem;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.FlatButton;
@@ -566,11 +567,21 @@ public class GamaToolbar2 extends Composite {
 		if (text != null && forceText) { button.setText(text); }
 		if (tip != null) { button.setToolTipText(tip); }
 		if (image != null) {
+			button.setData(image);
 			GamaIcon icon = GamaIcons.create(image);
 			button.setImage(icon.image());
 			button.setDisabledImage(icon.disabled());
 		}
-		if (listener != null) { button.addSelectionListener(listener); }
+		if (listener != null) {
+			if (style == SWT.CHECK) {
+				button.addSelectionListener((Selector) e -> {
+					checkSelectionIcon(button);
+					listener.widgetSelected(e);
+				});
+			} else {
+				button.addSelectionListener(listener);
+			}
+		}
 		if (control != null) {
 			// GamaColors.setBackground(control, getBackground());
 			button.setControl(control);
@@ -642,6 +653,39 @@ public class GamaToolbar2 extends Composite {
 	public void setDefaultHeight(final int height) {
 		this.height = height;
 
+	}
+
+	/**
+	 * Check selection icon.
+	 *
+	 * @param button
+	 *            the button
+	 * @param tb
+	 *            the tb
+	 */
+	private void checkSelectionIcon(final ToolItem button) {
+		String image = (String) button.getData();
+		if (image == null) return;
+		if (PlatformHelper.isMac() && GamaColors.isDark(getBackground()) && !ThemeHelper.isDark()) {
+			if (button.getSelection()) {
+				button.setImage(GamaIcons.create(image).checked());
+			} else {
+				button.setImage(GamaIcons.create(image).image());
+			}
+		}
+	}
+
+	/**
+	 * Sets the selection.
+	 *
+	 * @param item
+	 *            the item
+	 * @param selected
+	 *            the selected
+	 */
+	public void setSelection(final ToolItem item, final boolean selected) {
+		item.setSelection(selected);
+		checkSelectionIcon(item);
 	}
 
 }

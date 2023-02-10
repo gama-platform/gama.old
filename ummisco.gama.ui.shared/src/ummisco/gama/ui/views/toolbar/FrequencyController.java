@@ -3,7 +3,7 @@
  * FrequencyController.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -20,7 +20,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.StateListener;
 
 /**
- * The class SnapshotItem.
+ * The class FrequencyController.
  *
  * @author drogoul
  * @since 19 janv. 2012
@@ -33,9 +33,6 @@ public class FrequencyController implements StateListener {
 
 	/** The pause item. */
 	ToolItem pauseItem;
-
-	/** The sync item. */
-	// ToolItem syncItem;
 
 	/** The internal change. */
 	boolean internalChange;
@@ -64,54 +61,14 @@ public class FrequencyController implements StateListener {
 		view.pauseChanged();
 	}
 
-	// /**
-	// * Toggle sync.
-	// *
-	// * @param item
-	// * the item
-	// * @param out
-	// * the out
-	// */
-	// void toggleSync(final ToolItem item, final IDisplayOutput out) {
-	// if (out != null) {
-	// item.setToolTipText((GAMA.getGui().isSynchronized() ? "Desynchronize " : "Synchronize ") + out.getName());
-	// }
-	// view.synchronizeChanged();
-	// }
-
 	/**
 	 * @param tb
 	 */
 	public void install(final GamaToolbar2 tb) {
 
 		createPauseItem(tb);
-		// createSynchronizeItem(tb);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 	}
-
-	/**
-	 * Creates the synchronize item.
-	 *
-	 * @param tb
-	 *            the tb
-	 * @return the tool item
-	 */
-	// protected ToolItem createSynchronizeItem(final GamaToolbar2 tb) {
-	// syncItem = tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC, "Synchronize with simulation", "Synchronize", e -> {
-	// final IDisplayOutput output = view.getOutput();
-	// if (!internalChange && output != null) {
-	// if (GAMA.getGui().isSynchronized()) {
-	// GAMA.getGui().setSynchronized(false);
-	// } else {
-	// output.setSynchronized(true);
-	// }
-	// }
-	// toggleSync((ToolItem) e.widget, output);
-	// }, SWT.RIGHT);
-	// syncItem.setSelection(view.getOutput() != null && view.getOutput().isSynchronized()
-	// || GamaPreferences.Runtime.CORE_SYNC.getValue());
-	// return syncItem;
-	// }
 
 	/**
 	 * @param tb
@@ -140,8 +97,9 @@ public class FrequencyController implements StateListener {
 
 		WorkbenchHelper.run(() -> {
 			internalChange = true;
-			if (pauseItem != null && !pauseItem.isDisposed()) { pauseItem.setSelection(output.isPaused()); }
-			// if (syncItem != null && !syncItem.isDisposed()) { syncItem.setSelection(output.isSynchronized()); }
+			if (pauseItem != null && !pauseItem.isDisposed()) {
+				((GamaToolbar2) pauseItem.getParent().getParent()).setSelection(pauseItem, output.isPaused());
+			}
 			internalChange = false;
 		});
 
