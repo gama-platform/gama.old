@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SetStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * SetStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -79,11 +79,11 @@ public class SetStatement extends AbstractStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
-			if (desc == null) { return; }
+			if (desc == null) return;
 			final IExpressionDescription ed = desc.getFacet(VALUE);
-			if (ed == null) { return; }
+			if (ed == null) return;
 			final String exp = ed.serialize(includingBuiltIn);
-			if (exp == null) { return; }
+			if (exp == null) return;
 			sb.append(desc.getName());
 			sb.append(" <- ");
 			sb.append(exp);
@@ -107,11 +107,10 @@ public class SetStatement extends AbstractStatement {
 			final IExpressionDescription receiver = cd.getFacet(NAME);
 			// String name = cd.getName();
 			final IExpression expr = receiver.getExpression();
-			if (!(expr instanceof IVarExpression)) {
+			if (!(expr instanceof IVarExpression var)) {
 				cd.error("The expression " + cd.getLitteral(NAME) + " is not a reference to a variable ", NAME);
 				return;
 			}
-			final IVarExpression var = (IVarExpression) expr;
 			final IExpressionDescription assigned = cd.getFacet(VALUE);
 			if (assigned != null) {
 				Assert.typesAreCompatibleForAssignment(VALUE, cd, Cast.toGaml(expr), expr.getGamlType(), assigned);
@@ -123,13 +122,11 @@ public class SetStatement extends AbstractStatement {
 						+ " is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
 			}
 
-			if (var.getName().equals(IKeyword.SHAPE)) {
-				if (cd.getSpeciesContext() instanceof ModelDescription) {
-					cd.warning(
-							"Dynamically changing the shape of the world can lead to unexpected results. It is advised to redefine the attribute instead (e.g. 'geometry shape <- "
-									+ (assigned == null ? "..." : assigned.serialize(false)) + "')",
-							IKeyword.NAME);
-				}
+			if (IKeyword.SHAPE.equals(var.getName()) && (cd.getSpeciesContext() instanceof ModelDescription)) {
+				cd.warning(
+						"Dynamically changing the shape of the world can lead to unexpected results. It is advised to redefine the attribute instead (e.g. 'geometry shape <- "
+								+ (assigned == null ? "..." : assigned.serialize(false)) + "')",
+						IKeyword.NAME);
 			}
 
 		}
@@ -137,14 +134,15 @@ public class SetStatement extends AbstractStatement {
 
 	/** The var expr. */
 	protected final IVarExpression varExpr;
-	
+
 	/** The value. */
 	protected final IExpression value;
 
 	/**
 	 * Instantiates a new sets the statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public SetStatement(final IDescription desc) {
 		super(desc);
@@ -172,7 +170,7 @@ public class SetStatement extends AbstractStatement {
 	 * @return the var name
 	 */
 	public String getVarName() {
-		if (varExpr != null) { return varExpr.literalValue(); }
+		if (varExpr != null) return varExpr.literalValue();
 		return null;
 	}
 
