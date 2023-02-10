@@ -53,6 +53,9 @@ public class ArduinoConnector extends Connector {
 				PORT = portList.getItemAt(i);
 			}
 		}		
+		if("".equals(PORT)) {
+			PORT=this.getConfigurationParameter(SERVER_URL);
+		}
 		arduino = new MyArduino(PORT,BAUD);
 		
 		if(arduino.openConnection()){

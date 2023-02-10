@@ -243,6 +243,8 @@ public class NetworkSkill extends MessagingSkill {
 				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (INetworkSkill.ARDUINO.equals(protocol)) {
 				connector = new ArduinoConnector(scope);
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port);
 			} else if (INetworkSkill.HTTP_REQUEST.equals(protocol)) {
 				connector = new HTTPRequestConnector(scope);
 				connector.configure(IConnector.SERVER_URL, serverURL);
