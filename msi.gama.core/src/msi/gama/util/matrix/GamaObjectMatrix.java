@@ -3,7 +3,7 @@
  * GamaObjectMatrix.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -20,8 +20,6 @@ import com.google.common.collect.ImmutableList;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -104,8 +102,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		this(cols, rows, Types.FLOAT);
 		final int n = Math.min(objects.length, rows * cols);
 		for (int i = 0; i < n; i++) { matrix[i] = objects[i]; }
-		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0,
-		// FastMath.min(objects.length, rows * cols));
 	}
 
 	/**
@@ -174,11 +170,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		}
 	}
 
-	// public GamaObjectMatrix(final IScope scope, final Object[] mat) {
-	// super(1, mat.length);
-	// setMatrix(mat);
-	// }
-
 	@Override
 	public void _clear() {
 		Arrays.fill(getMatrix(), null);
@@ -239,54 +230,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		return c._reverse(scope);
 	}
 
-	// @Override
-	// public Double _max(final IScope scope) {
-	// Double max = -Double.MAX_VALUE;
-	// for ( int i = 0; i < matrix.length; i++ ) {
-	// Object o = matrix[i];
-	// if ( o instanceof Number && ((Number) o).doubleValue() > max ) {
-	// max = Double.valueOf(((Number) o).doubleValue());
-	// }
-	// }
-	// return max;
-	// }
-	//
-	// @Override
-	// public Double _min(final IScope scope) {
-	// Double min = Double.MAX_VALUE;
-	// for ( int i = 0; i < matrix.length; i++ ) {
-	// Object o = matrix[i];
-	// if ( o instanceof Number && ((Number) o).doubleValue() < min ) {
-	// min = Double.valueOf(((Number) o).doubleValue());
-	// }
-	// }
-	// return min;
-	// }
-	//
-	// @Override
-	// public Double _product(final IScope scope) {
-	// Double result = 1.0;
-	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
-	// Object d = matrix[i];
-	// if ( d instanceof Number ) {
-	// result *= ((Number) d).doubleValue();
-	// }
-	// }
-	// return result;
-	// }
-	//
-	// @Override
-	// public Double _sum(final IScope scope) {
-	// Double result = 0.0;
-	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
-	// Object d = matrix[i];
-	// if ( d instanceof Number ) {
-	// result += ((Number) d).doubleValue();
-	// }
-	// }
-	// return result;
-	// }
-	//
 	@Override
 	public boolean _isEmpty(final IScope scope) {
 		for (int i = 0; i < getMatrix().length; i++) { if (getMatrix()[i] != null) return false; }
@@ -352,17 +295,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 *            the o
 	 */
 	public void fillWith(final IScope scope, final Object o) {
-		// We copy the element with which to fill the matrix if it is a
-		// (possibly) complex value
-		// WARNING TODO WHY ???
-		// if ( o instanceof IValue ) {
-		// IValue v = (IValue) o;
-		// for ( int i = 0; i < matrix.length; i++ ) {
-		// matrix[i] = v.copy(scope);
-		// }
-		// } else {
 		Arrays.fill(getMatrix(), o);
-		// }
 	}
 
 	@Override
@@ -412,28 +345,6 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	@Override
 	public void shuffleWith(final RandomUtils randomAgent) {
 		randomAgent.shuffleInPlace(getMatrix());
-	}
-
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder(numRows * numCols * 5);
-		sb.append('[');
-		GAMA.run(new InScope.Void() {
-
-			@Override
-			public void process(final IScope scope) {
-				for (int row = 0; row < numRows; row++) {
-					for (int col = 0; col < numCols; col++) {
-						sb.append(get(scope, col, row));
-						if (col < numCols - 1) { sb.append(','); }
-					}
-					if (row < numRows - 1) { sb.append(';'); }
-				}
-			}
-		});
-
-		sb.append(']');
-		return sb.toString();
 	}
 
 	/**

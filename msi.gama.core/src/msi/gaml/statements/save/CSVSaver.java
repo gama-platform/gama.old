@@ -1,3 +1,12 @@
+/*******************************************************************************************************
+ *
+ * CSVSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
 import java.io.File;
@@ -13,6 +22,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -20,20 +30,67 @@ import msi.gaml.operators.Strings;
 import msi.gaml.statements.SaveStatement;
 import msi.gaml.types.IType;
 
+/**
+ * The Class CSVSaver.
+ */
 public class CSVSaver {
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param os
+	 *            the os
+	 * @param header
+	 *            the header
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public void save(final IScope scope, final IExpression item, final OutputStream os, final boolean header)
 			throws GamaRuntimeException {
 		if (os == null) return;
 		save(scope, new OutputStreamWriter(os), header, item);
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param f
+	 *            the f
+	 * @param header
+	 *            the header
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public void save(final IScope scope, final IExpression item, final File f, final boolean header)
 			throws GamaRuntimeException, IOException {
 		if (f == null) return;
 		save(scope, new FileWriter(f, true), header, item);
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param fw
+	 *            the fw
+	 * @param header
+	 *            the header
+	 * @param item
+	 *            the item
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	private void save(final IScope scope, final Writer fw, final boolean header, final IExpression item)
 			throws GamaRuntimeException {
 		try (fw) {
@@ -82,11 +139,9 @@ public class CSVSaver {
 					fw.write(Strings.LN);
 				}
 				if (itemType.id() == IType.MATRIX) {
-					final String[] tmpValue = value.toString().replace("[", "").replace("]", "").split(",");
-					for (int i = 0; i < tmpValue.length; i++) {
-						if (i > 0) { fw.write(','); }
-						fw.write(toCleanString(tmpValue[i]));
-					}
+					GamaMatrix<?> matrix = (GamaMatrix) value;
+					matrix.rowByRow(scope, v -> fw.write(toCleanString(v)), () -> fw.write(","),
+							() -> fw.write(Strings.LN));
 				} else {
 					final int size = values.size();
 					for (int i = 0; i < size; i++) {

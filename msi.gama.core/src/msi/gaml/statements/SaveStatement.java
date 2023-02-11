@@ -3,7 +3,7 @@
  * SaveStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -179,13 +179,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	/** The Constant GEOTIFF. */
 	private static final String GEOTIFF = "geotiff";
-
-	/** The Constant DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE. */
-	private static final String DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE =
-			" does not correspond to a known EPSG code. GAMA is unable to save ";
-
-	/** The Constant THE_CODE. */
-	private static final String THE_CODE = "The code ";
 
 	/** The Constant EPSG_LABEL. */
 	private static final String EPSG_LABEL = "EPSG:";

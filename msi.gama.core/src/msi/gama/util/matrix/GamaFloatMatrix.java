@@ -3,7 +3,7 @@
  * GamaFloatMatrix.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -148,8 +148,6 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	public GamaFloatMatrix(final int cols, final int rows, final int[] objects) {
 		this(cols, rows);
 		for (int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++) { matrix[i] = objects[i]; }
-		// java.lang.System.arraycopy(objects, 0, getMatrix(), 0,
-		// FastMath.min(objects.length, rows * cols));
 	}
 
 	/**
@@ -409,21 +407,6 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder(numRows * numCols * 5);
-		sb.append('[');
-		for (int row = 0; row < numRows; row++) {
-			for (int col = 0; col < numCols; col++) {
-				sb.append(get(null, col, row));
-				if (col < numCols - 1) { sb.append(','); }
-			}
-			if (row < numRows - 1) { sb.append(';'); }
-		}
-		sb.append(']');
-		return sb.toString();
-	}
-
-	@Override
 	public java.lang.Iterable<Double> iterable(final IScope scope) {
 		return Doubles.asList(getMatrix());
 	}
@@ -553,11 +536,6 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	protected void setNthElement(final IScope scope, final int index, final Object value) {
 		getMatrix()[index] = Cast.asFloat(scope, value);
 	}
-	//
-	// @Override
-	// public String serialize(final boolean includingBuiltIn) {
-	// return "matrix<float>(" + getRowsList(null).serialize(includingBuiltIn) + ")";
-	// }
 
 	@Override
 	public IContainerType getGamlType() { return Types.MATRIX.of(Types.FLOAT); }
