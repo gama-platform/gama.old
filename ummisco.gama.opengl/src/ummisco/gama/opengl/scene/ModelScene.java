@@ -3,7 +3,7 @@
  * ModelScene.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -77,12 +77,6 @@ public class ModelScene {
 	/** The max Z. */
 	final double maxZ;
 
-	/** The index. */
-	private static int INDEX = 0;
-
-	/** The my index. */
-	private final int myIndex = INDEX++;
-
 	/**
 	 * Instantiates a new model scene.
 	 *
@@ -93,6 +87,7 @@ public class ModelScene {
 	 */
 	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
+		// maxZ = 1/ renderer.getMaxEnvDim() ;
 		maxZ = renderer.getMaxEnvDim() / 2000d;
 		if (withWorld) { initWorld(); }
 	}
@@ -162,7 +157,7 @@ public class ModelScene {
 	 * @return the double
 	 */
 	private double computeVisualZIncrement() {
-		if (objectNumber <= 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) return 0d;
+		if (objectNumber < 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) return 0d;
 		// The maximum visual z allowance between the object at the bottom and the one at the top
 
 		// The increment is simply
