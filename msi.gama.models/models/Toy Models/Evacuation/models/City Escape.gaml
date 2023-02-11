@@ -248,7 +248,7 @@ species inhabitant skills:[moving] {
 	}
 	
 	aspect default {
-		draw drowned ? cross(4,0.2) : circle(1#m) color:drowned ? #black : (alerted ? #red : #green);
+		draw  sphere(1#m) color:drowned ? #black : (alerted ? #red : #green);
 	}
 	
 }
@@ -305,7 +305,7 @@ species road {
  */
 species building {
 	aspect default {
-		draw shape color: #gray border: #black;
+		draw shape color: #gray border: #black depth: 1;
 	}
 }
 
@@ -326,9 +326,9 @@ experiment "Run" {
 	output {
 		display my_display type:3d axes:false{ 
 			species road;
-			species hazard;
 			species evacuation_point;
 			species building;
+			species hazard ;
 			species inhabitant;
 		}
 		monitor "Number of casualties" value:casualties;
