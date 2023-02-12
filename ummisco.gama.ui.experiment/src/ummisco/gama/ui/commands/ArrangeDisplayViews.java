@@ -35,7 +35,6 @@ import com.google.common.collect.Iterables;
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.interfaces.IGamaView.Display;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.util.tree.GamaNode;
@@ -101,6 +100,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void execute(final Object layout) {
 		// collectAndPrepareDisplayViews();
 		if (layout instanceof Integer i) {
+			new LayoutTreeConverter();
 			execute(LayoutTreeConverter.convert(i));
 		} else if (layout instanceof GamaTree t) {
 			execute(t);
@@ -213,7 +213,10 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			PerspectiveHelper.getActiveSimulationPerspective().setRestoreBackground(ThemeHelper::restoreSashBackground);
 		}
 		// Attempt to solve the problem expressed in #3587 by forcing the focus on the canvases at least once
-		displays.forEach(Display::focusCanvas);
+		// Modified to only target 2d displays as it was creating a problem on macOS (perspective not able to go back to
+		// modeling and forth)
+		displays.forEach(d -> { if (d.is2D()) { d.focusCanvas(); } });
+
 	}
 
 	/**
