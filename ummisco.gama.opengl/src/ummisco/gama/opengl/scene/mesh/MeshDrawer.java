@@ -26,6 +26,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.layers.MeshLayerData;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.IMeshColorProvider;
 import ummisco.gama.dev.utils.DEBUG;
@@ -49,11 +50,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/** The Constant BLACK. */
 	static final double[] BLACK = { 0, 0, 0, 255 };
 
-	/** The Constant BLACK. */
-	static final double[] TRANSPARENT = { 0, 0, 0, 0 };
-
 	/** The Constant TRANSPARENT. */
-	// static final double[] TRANSPARENT = { 0, 0, 0, 255 };
+	static final double[] TRANSPARENT = { 0, 0, 0, 0 };
 
 	// ARRAYS
 	/** The data. */
@@ -330,11 +328,20 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		// Outputs either a texture coordinate or the color of the vertex
 		if (outputsTextures) { texBuffer.put((double) x / cols).put((double) y / rows); }
 		if (outputsColors) {
-			if (z < above) {
+			if (above != MeshLayerData.ABOVE && z < above) {
+				// if (z < above) {
 				colorBuffer.put(TRANSPARENT, 0, 4);
 			} else {
-				colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb), 0, 4);
+				fill.getColor(y * cols + x, z, min, max, rgb);
+				// rgb[3] = 1d;
+				if (rgb[3] < 1d) {
+
+					// DEBUG.OUT("Value Alpha 100 = " + rgb[3]);
+
+				}
+				colorBuffer.put(rgb, 0, 4);
 			}
+			// }
 		}
 		// If the line color is specified, outputs it
 		if (outputsLines) {

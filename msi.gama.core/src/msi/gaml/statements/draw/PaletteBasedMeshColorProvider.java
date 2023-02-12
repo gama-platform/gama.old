@@ -37,14 +37,14 @@ public class PaletteBasedMeshColorProvider implements IMeshColorProvider {
 			components[i * 3] = c.getRed() / 255d;
 			components[i * 3 + 1] = c.getGreen() / 255d;
 			components[i * 3 + 2] = c.getBlue() / 255d;
-			components[i * 3 + 3] = c.getBlue() / 255d;
+			components[i * 3 + 3] = c.getAlpha() / 255d;
 		}
 	}
 
 	@Override
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
 		var result = rgb;
-		if (result == null) { result = new double[4]; }
+		if (result == null) { result = newArray(); }
 		if (min > max || z <= min) {
 			result[0] = components[0];
 			result[1] = components[1];
@@ -63,7 +63,7 @@ public class PaletteBasedMeshColorProvider implements IMeshColorProvider {
 			result[0] = components[intervali * 3] * ir + components[(intervali + 1) * 3] * r;
 			result[1] = components[intervali * 3 + 1] * ir + components[(intervali + 1) * 3 + 1] * r;
 			result[2] = components[intervali * 3 + 2] * ir + components[(intervali + 1) * 3 + 2] * r;
-			result[3] = components[intervali * 3 + 3] * ir + components[(intervali + 1) * 3 + 3] * r;
+			result[3] = 1d; // Math.max(components[intervali * 3 + 3], components[(intervali + 1) * 3 + 3]);
 		}
 		return result;
 	}

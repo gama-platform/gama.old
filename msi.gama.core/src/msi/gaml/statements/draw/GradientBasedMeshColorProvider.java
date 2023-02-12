@@ -55,7 +55,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 	@Override
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
 		double[] result = rgb;
-		if (result == null) { result = new double[4]; }
+		if (result == null) { result = newArray(); }
 		if (z <= min || max <= min) return components;
 		double position = (z - min) / (max - min);
 		// DEBUG.OUT("Position " + position + " corresponds to slot ", false);
@@ -77,7 +77,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 				result[0] = components[s * 4] * ir + components[(s + 1) * 4] * r;
 				result[1] = components[s * 4 + 1] * ir + components[(s + 1) * 4 + 1] * r;
 				result[2] = components[s * 4 + 2] * ir + components[(s + 1) * 4 + 2] * r;
-				result[3] = components[s * 4 + 3] * ir + components[(s + 1) * 4 + 3] * r;
+				result[3] = 1d; // Math.max(components[s * 4 + 3], components[(s + 1) * 4 + 3]);
 				return result;
 			}
 		}
@@ -85,7 +85,7 @@ public class GradientBasedMeshColorProvider implements IMeshColorProvider {
 		result[0] = components[4 * (size - 1)];
 		result[1] = components[4 * (size - 1) + 1];
 		result[2] = components[4 * (size - 1) + 2];
-		result[2] = components[4 * (size - 1) + 3];
+		result[3] = 1d; // components[4 * (size - 1) + 3];
 		return result;
 	}
 

@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
 
-import java.awt.Color;
 import java.util.Map;
 
 import msi.gama.common.preferences.GamaPreferences;
@@ -43,16 +42,16 @@ public class ScaleBasedMeshColorProvider implements IMeshColorProvider {
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
 		double[] result = rgb;
 		if (result == null) { result = new double[4]; }
-		Color chosen = GamaPreferences.Displays.CORE_COLOR.getValue();
+		GamaColor chosen = GamaPreferences.Displays.CORE_COLOR.getValue();
 		for (Map.Entry<Double, GamaColor> entry : scale.entrySet()) {
 			if (z < entry.getKey()) { break; }
 			chosen = entry.getValue();
 		}
-		final Color c = chosen;
+		final GamaColor c = chosen;
 		result[0] = c.getRed() / 255d;
 		result[1] = c.getGreen() / 255d;
 		result[2] = c.getBlue() / 255d;
-		result[3] = c.getAlpha() / 255d;
+		result[3] = 1d; // c.getAlpha() / 255d;
 		return result;
 	}
 

@@ -36,12 +36,12 @@ public class ColorBasedMeshColorProvider implements IMeshColorProvider {
 	@Override
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
 		double[] result = rgb;
-		if (result == null) { result = new double[4]; }
+		if (result == null) { result = newArray(); }
 		double ratio = (z - min) * 1.5 / (max - min); // we lighten it a bit
 		result[0] = r * ratio;
 		result[1] = g * ratio;
 		result[2] = b * ratio;
-		result[3] = a;
+		result[3] = 1d; // a;
 		return result;
 	}
 

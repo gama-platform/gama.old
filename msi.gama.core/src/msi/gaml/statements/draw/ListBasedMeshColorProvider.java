@@ -38,10 +38,14 @@ public class ListBasedMeshColorProvider implements IMeshColorProvider {
 		this.size = colors.size();
 		components = new double[size * 4];
 		for (int i = 0; i < size; ++i) {
-			components[i * 3] = colors.get(i).getRed() / 255d;
-			components[i * 3 + 1] = colors.get(i).getGreen() / 255d;
-			components[i * 3 + 2] = colors.get(i).getBlue() / 255d;
-			components[i * 3 + 3] = colors.get(i).getAlpha() / 255d;
+			Color color = colors.get(i);
+			if (color != null) {
+				components[i * 3] = color.getRed() / 255d;
+				components[i * 3 + 1] = color.getGreen() / 255d;
+				components[i * 3 + 2] = color.getBlue() / 255d;
+				components[i * 3 + 3] = color.getAlpha() / 255d;
+			}
+
 		}
 	}
 
@@ -54,7 +58,7 @@ public class ListBasedMeshColorProvider implements IMeshColorProvider {
 		result[0] = components[i * 3];
 		result[1] = components[i * 3 + 1];
 		result[2] = components[i * 3 + 2];
-		result[3] = components[i * 3 + 3];
+		result[3] = 1d; // components[i * 3 + 3];
 		return result;
 	}
 

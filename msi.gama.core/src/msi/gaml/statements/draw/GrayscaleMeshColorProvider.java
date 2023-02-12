@@ -18,7 +18,7 @@ public class GrayscaleMeshColorProvider implements IMeshColorProvider {
 	@Override
 	public double[] getColor(final int index, final double z, final double min, final double max, final double[] rgb) {
 		double[] result = rgb;
-		if (result == null) { result = new double[4]; }
+		if (result == null) { result = newArray(); }
 		result[0] = result[1] = result[2] = (z - min) / (max - min);
 		result[3] = 1;
 		return result;

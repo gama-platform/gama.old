@@ -37,6 +37,9 @@ public class MeshLayerData extends LayerData {
 	/** The should compute values. */
 	boolean shouldComputeValues = true;
 
+	/** The Constant ABOVE. */
+	public static final Double ABOVE = (double) -Integer.MAX_VALUE;
+
 	/** The values. */
 	IField values;
 
@@ -120,7 +123,7 @@ public class MeshLayerData extends LayerData {
 		color = create(IKeyword.COLOR, Types.NO_TYPE, null);
 		scale = create(IKeyword.SCALE, Types.FLOAT, null);
 		noData = create("no_data", Types.FLOAT, IField.NO_NO_DATA);
-		above = create("above", Types.FLOAT, Double.MIN_VALUE);
+		above = create("above", Types.FLOAT, ABOVE);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
 			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);

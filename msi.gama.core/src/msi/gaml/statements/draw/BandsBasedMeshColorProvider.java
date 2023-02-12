@@ -55,7 +55,7 @@ public class BandsBasedMeshColorProvider implements IMeshColorProvider {
 	public double[] getColor(final int index, final double elevation, final double min, final double max,
 			final double[] rgb) {
 		double[] result = rgb;
-		if (result == null) { result = new double[4]; }
+		if (result == null) { result = newArray(); }
 		result[0] = components[index * 3];
 		result[1] = components[index * 3 + 1];
 		result[2] = components[index * 3 + 2];

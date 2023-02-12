@@ -42,4 +42,15 @@ public interface IMeshColorProvider {
 	 */
 	double[] getColor(int index, double z, double min, double max, double[] rgb);
 
+	/**
+	 * New array.
+	 *
+	 * @return the double[]
+	 */
+	default double[] newArray() {
+		double[] d = new double[4];
+		d[3] = 1;
+		return d;
+	}
+
 }
