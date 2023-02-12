@@ -77,8 +77,8 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	 */
 	public SWTLayeredDisplayMultiListener(final LayeredDisplayDecorator deco, final IDisplaySurface surface) {
 		int zoom = ViewsHelper.getMonitorOf(deco.view).getZoom();
-		isJava2DOnWindows =
-				!surface.getData().is3D() && PlatformHelper.isWindows() && zoomLevelsWithIssues.contains(zoom);
+		isJava2DOnWindows = surface != null && !surface.getData().is3D() && PlatformHelper.isWindows()
+				&& zoomLevelsWithIssues.contains(zoom);
 		UIZoomLevel = zoom / 100d;
 
 		delegate = new LayeredDisplayMultiListener(surface, deco);

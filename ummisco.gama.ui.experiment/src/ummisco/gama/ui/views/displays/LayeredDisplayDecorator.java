@@ -29,11 +29,9 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
 import msi.gama.application.workbench.PerspectiveHelper;
@@ -112,9 +110,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	LayeredDisplayDecorator(final LayeredDisplayView view) {
 		this.view = view;
 		createCommands();
-		final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-		ps.addPartListener(overlayListener);
-
+		WorkbenchHelper.getPage().addPartListener(overlayListener);
 	}
 
 	/**
@@ -163,7 +159,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			if (ok(partRef)) {
 				// DEBUG.STACK();
 				WorkbenchHelper.runInUI("", 0, m -> {
-					DEBUG.OUT("Part Activated:" + partRef.getTitle());
+					// DEBUG.OUT("Part Activated:" + partRef.getTitle());
 					view.showCanvas();
 					if (overlay != null) { overlay.display(); }
 				});
