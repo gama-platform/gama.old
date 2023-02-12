@@ -3,7 +3,7 @@
  * GamaFieldType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -207,6 +207,35 @@ public class GamaFieldType extends GamaMatrixType {
 	@no_test
 	public static IField buildField(final IScope scope, final int cols, final int rows, final double init) {
 		return buildField(scope, cols, rows, init, IField.NO_NO_DATA);
+	}
+
+	/**
+	 * Builds the field with.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param size
+	 *            the size
+	 * @param init
+	 *            the init
+	 * @return the i matrix
+	 */
+	@operator (
+			value = "field_with",
+			content_type = IType.FLOAT,
+			can_be_const = true,
+			category = { IOperatorCategory.CASTING },
+			concept = { IConcept.CAST, IConcept.CONTAINER })
+	@doc (
+			value = "creates a field with a size provided by the first operand, and filled by the evaluation of the second operand for each cell",
+			comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
+			see = { IKeyword.MATRIX, "as_matrix" })
+	public static IField buildFieldWith(final IScope scope, final GamaPoint size, final IExpression init) {
+		if (size == null) throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope);
+		IField field = buildField(scope, (int) size.x, (int) size.y, 0d);
+		double[] matrix = field.getMatrix();
+		for (int i = 0; i < matrix.length; i++) { matrix[i] = Cast.asFloat(scope, init.value(scope)); }
+		return field;
 	}
 
 	/**
