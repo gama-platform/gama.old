@@ -127,9 +127,9 @@ experiment traffic type: gui autorun: true{
 	font title <- font("Arial", 18, #bold);
 	
 	output synchronized: true{
-		display carte type: 3d axes: false background: rgb(0,0,100) fullscreen: true toolbar: false{
+		display carte type: 3d axes: false background: rgb(50,50,50) fullscreen: true toolbar: false{
 			
-			 overlay position: { 500#px,200#px} size: { 1 #px, 1 #px } background: # black border: #black rounded: false 
+			 overlay position: { 50#px,50#px} size: { 1 #px, 1 #px } background: # black border: #black rounded: false 
             	{
             	//for each possible type, we draw a square with the corresponding color and we write the name of the type
                 
@@ -157,7 +157,7 @@ experiment traffic type: gui autorun: true{
             }
 			
 			light #ambient intensity: 128;
-			camera 'default' location: {1245.8884, 3324.2908, 1231.2804} target: {1252.5405, 1418.6084, 0.0};
+			camera 'default' location: {1254.041,2938.6921,1792.4286} target: {1258.8966,1547.6862,0.0};
 			species road refresh: false;
 			species building refresh: false;
 			species people;
