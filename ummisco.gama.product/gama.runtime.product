@@ -45,7 +45,7 @@
 -Denable_logging=true 
 -Denable_debug=true
 -Duse_global_preference_store=true 
--Duse_precise_scaling=true 
+-Duse_precise_autoscale=true 
 -Dread_only=false 
 -Duse_old_tabs=true 
 -Duse_legacy_drawers=false 
@@ -297,6 +297,7 @@
    <repositories>
       <repository location="https://updates.gama-platform.org/1.9.0" enabled="true" />
       <repository location="https://updates.gama-platform.org/experimental/1.9.0" enabled="true" />
+      <repository location="https://github.com/anb0s/EasyShell/releases/tag/v2.2.1" enabled="true" />
       <repository location="https://anb0s.github.io/EasyShell/release/" enabled="true" />
    </repositories>
 
