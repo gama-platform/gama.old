@@ -48,7 +48,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	/** The Constant BLACK. */
-	static final double[] BLACK = { 0, 0, 0, 255 };
+	static final double[] BLACK = { 0, 0, 0, 1 };
 
 	/** The Constant TRANSPARENT. */
 	static final double[] TRANSPARENT = { 0, 0, 0, 0 };
@@ -156,7 +156,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		useFillForLines = line == null && gl.isWireframe() && fill != null;
 		this.fill = attributes.getColorProvider();
 		this.lineColor = line != null
-				? new double[] { line.getRed() / 255d, line.getGreen() / 255d, line.getBlue() / 255d } : BLACK;
+				? new double[] { line.getRed() / 255d, line.getGreen() / 255d, line.getBlue() / 255d, 1 } : BLACK;
 		outputsTextures = gl.isTextured() && !grayscale;
 		outputsColors = (fill != null || grayscale) && !gl.isWireframe();
 		outputsLines = gl.isWireframe() || line != null;
@@ -227,7 +227,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			// AD : fix for #3299. outputsLines and outputsColors can change overtime and it is necessary to maintain
 			// the buffers if the size doesnt change
 			// if (outputsLines) {
-			lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
+			lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 4 : lengthM1 * 16);
 			// }
 			// if (outputsTextures) {
 			texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8);
@@ -397,7 +397,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			for (var index = 0; index < indexBuffer.limit(); index++) {
 				var i = indexBuffer.get(index);
 				gl.setCurrentColor(lineColorBuffer.get(i * 3), lineColorBuffer.get(i * 3 + 1),
-						lineColorBuffer.get(i + 1), 1);
+						lineColorBuffer.get(i * 3 + 2), lineColorBuffer.get(i * 3 + 4));
 				gl.outputVertex(vertexBuffer.get(i * 3), vertexBuffer.get(i * 3 + 1), vertexBuffer.get(i * 3 + 2));
 			}
 			gl.setObjectWireframe(previous);
@@ -443,7 +443,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			}
 			if (outputsLines) {
 				if (!outputsColors) { gl.enable(GLPointerFunc.GL_COLOR_ARRAY); }
-				ogl.glColorPointer(3, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
+				ogl.glColorPointer(4, GL2GL3.GL_DOUBLE, 0, lineColorBuffer);
 				boolean previous = gl.setObjectWireframe(true);
 				ogl.glDrawElements(GL.GL_TRIANGLES, indexBuffer.limit(), GL.GL_UNSIGNED_INT, indexBuffer);
 				gl.setObjectWireframe(previous);

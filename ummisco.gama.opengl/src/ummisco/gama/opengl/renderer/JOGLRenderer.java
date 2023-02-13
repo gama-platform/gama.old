@@ -366,8 +366,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) return;
 		double stepX, stepY;
-		final double cellWidth = getEnvHeight() / dimensions.x;
-		final double cellHeight = getEnvWidth() / dimensions.y;
+		final double cellWidth = getEnvWidth() / dimensions.x;
+		final double cellHeight = getEnvHeight() / dimensions.y;
 		final GamaColor color = GamaColor.getInt(lineColor.getRGB());
 		final DrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
 		attributes.setEmpty(true);
