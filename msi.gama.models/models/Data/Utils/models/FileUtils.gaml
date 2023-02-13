@@ -29,6 +29,18 @@ global {
 		bool delete_folder_ok <- delete_file("a_folder");
 	
 		write "delete folder is ok: " + delete_folder_ok;
+		
+		bool folder_exist_ok <- folder_exists("..");
+		
+		write "folder exists ok: " + folder_exist_ok;
+		
+		file current_folder <- folder(".");
+		
+		write "folder the model is in: "+current_folder;
+		
+		list folder_contents <- current_folder.contents;
+		
+		write "list of file inside the model folder: "+ folder_contents;
 			
 	}
 	
