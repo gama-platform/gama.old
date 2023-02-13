@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IMap.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * IMap.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -47,8 +46,10 @@ import msi.gaml.types.Types;
 /**
  * The Interface IMap.
  *
- * @param <K> the key type
- * @param <V> the value type
+ * @param <K>
+ *            the key type
+ * @param <V>
+ *            the value type
  */
 @vars ({ @variable (
 		name = GamaMap.KEYS,
@@ -63,7 +64,7 @@ import msi.gaml.types.Types;
 		@variable (
 				name = GamaMap.PAIRS,
 				type = IType.LIST,
-				of = IType.PAIR,
+				of = ITypeProvider.KEY_AND_CONTENT_TYPE_AT_INDEX + 1,
 				doc = { @doc ("Returns the list of pairs (key, value) that compose this map") }) })
 @SuppressWarnings ("unchecked")
 
@@ -72,8 +73,10 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * The Interface IPairList.
 	 *
-	 * @param <K> the key type
-	 * @param <V> the value type
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
 	 */
 	interface IPairList<K, V> extends Set<Map.Entry<K, V>>, IList<Map.Entry<K, V>> {
 
@@ -91,17 +94,18 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 
 	/** The keys. */
 	String KEYS = "keys";
-	
+
 	/** The values. */
 	String VALUES = "values";
-	
+
 	/** The pairs. */
 	String PAIRS = "pairs";
 
 	/**
 	 * String value.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the string
 	 */
 	@Override
@@ -150,9 +154,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 			final Iterable list = values.iterable(scope);
 			setValueAtIndex(scope, index, (V) Iterables.getLast(list));
 		} else {
-			for (final Object o : values.iterable(scope)) {
-				addValue(scope, (V) o);
-			}
+			for (final Object o : values.iterable(scope)) { addValue(scope, (V) o); }
 		}
 	}
 
@@ -169,10 +171,13 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Contains key.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	default boolean containsKey(final IScope scope, final Object o) throws GamaRuntimeException {
@@ -182,7 +187,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Length.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the int
 	 */
 	@Override
@@ -193,7 +199,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Checks if is empty.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if is empty
 	 */
 	@Override
@@ -204,7 +211,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Any value.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the v
 	 */
 	@Override
@@ -218,9 +226,11 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * First value.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the v
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	default V firstValue(final IScope scope) throws GamaRuntimeException {
@@ -231,9 +241,11 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Last value.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the v
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	default V lastValue(final IScope scope) throws GamaRuntimeException {
@@ -244,7 +256,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Value at.
 	 *
-	 * @param index the index
+	 * @param index
+	 *            the index
 	 * @return the v
 	 */
 	default V valueAt(final int index) {
@@ -260,9 +273,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default void removeValues(final IScope scope, final IContainer<?, ?> values) {
 		// we suppose we have pairs
-		for (final Object o : values.iterable(scope)) {
-			removeValue(scope, o);
-		}
+		for (final Object o : values.iterable(scope)) { removeValue(scope, o); }
 	}
 
 	/**
@@ -282,9 +293,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 */
 	@Override
 	default void removeIndexes(final IScope scope, final IContainer<?, ?> index) {
-		for (final Object key : index.iterable(scope)) {
-			remove(key);
-		}
+		for (final Object key : index.iterable(scope)) { remove(key); }
 	}
 
 	/**
@@ -325,7 +334,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Iterable.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the java.lang. iterable
 	 */
 	@Override
@@ -336,10 +346,13 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Gets the from indices list.
 	 *
-	 * @param scope the scope
-	 * @param indices the indices
+	 * @param scope
+	 *            the scope
+	 * @param indices
+	 *            the indices
 	 * @return the from indices list
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	default V getFromIndicesList(final IScope scope, final IList<K> indices) throws GamaRuntimeException {
@@ -353,8 +366,10 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Contains.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return true, if successful
 	 */
 	@Override
@@ -370,21 +385,24 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 */
 	@Override
 	default IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy) {
-		if (!GamaType.requiresCasting(contentsType, getGamlType().getContentType())) {
-			if (!copy) return GamaListFactory.wrap(contentsType, values());
-			return GamaListFactory.createWithoutCasting(contentsType, values());
-		} else
+		if (GamaType.requiresCasting(contentsType, getGamlType().getContentType()))
 			return GamaListFactory.create(scope, contentsType, values());
+		if (!copy) return GamaListFactory.wrap(contentsType, values());
+		return GamaListFactory.createWithoutCasting(contentsType, values());
 	}
 
 	/**
 	 * Matrix value.
 	 *
-	 * @param scope the scope
-	 * @param contentsType the contents type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param contentsType
+	 *            the contents type
+	 * @param copy
+	 *            the copy
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	default IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
@@ -404,12 +422,17 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Matrix value.
 	 *
-	 * @param scope the scope
-	 * @param contentsType the contents type
-	 * @param preferredSize the preferred size
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param contentsType
+	 *            the contents type
+	 * @param preferredSize
+	 *            the preferred size
+	 * @param copy
+	 *            the copy
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	default IMatrix matrixValue(final IScope scope, final IType contentsType, final GamaPoint preferredSize,
@@ -420,7 +443,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Serialize.
 	 *
-	 * @param includingBuiltIn the including built in
+	 * @param includingBuiltIn
+	 *            the including built in
 	 * @return the string
 	 */
 	@Override
@@ -431,10 +455,14 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Map value.
 	 *
-	 * @param scope the scope
-	 * @param keyType the key type
-	 * @param contentsType the contents type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param keyType
+	 *            the key type
+	 * @param contentsType
+	 *            the contents type
+	 * @param copy
+	 *            the copy
 	 * @return the i map
 	 */
 	@Override
@@ -448,17 +476,17 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 						coerceValue ? result.buildValue(scope, entry.getValue()) : entry.getValue());
 			}
 			return result;
-		} else if (copy)
-			return copy(scope);
-		else
-			return this;
+		}
+		if (copy) return copy(scope);
+		return this;
 
 	}
 
 	/**
 	 * Copy.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i map
 	 */
 	@Override
@@ -482,7 +510,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Reverse.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i map
 	 */
 	@operator (
@@ -505,9 +534,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	@Override
 	default IMap reverse(final IScope scope) {
 		final IMap map = GamaMapFactory.create(getGamlType().getContentType(), getGamlType().getKeyType());
-		for (final Map.Entry<K, V> entry : entrySet()) {
-			map.put(entry.getValue(), entry.getKey());
-		}
+		for (final Map.Entry<K, V> entry : entrySet()) { map.put(entry.getValue(), entry.getKey()); }
 		return map;
 	}
 
@@ -530,9 +557,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	default void removeValue(final IScope scope, final Object value) {
 		// Dont know what to do... Removing the first pair with value = value ?
 		final Collection<V> values = values();
-		final Iterator<V> it = values.iterator();
-		while (it.hasNext()) {
-			final V v = it.next();
+		for (V v : values) {
 			if (Objects.equal(v, value)) {
 				values.remove(v);
 				return;
@@ -564,10 +589,13 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * Gets the.
 	 *
-	 * @param scope the scope
-	 * @param index the index
+	 * @param scope
+	 *            the scope
+	 * @param index
+	 *            the index
 	 * @return the v
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	default V get(final IScope scope, final K index) throws GamaRuntimeException {
@@ -589,7 +617,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 *
 	 * @return the pairs
 	 */
-	@getter ("pairs")
+	@getter (PAIRS)
 	default IPairList getPairs() {
 		// FIXME: in the future, this method will be directly operating upon the
 		// entry set (so as to
@@ -603,15 +631,12 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * For each pair.
 	 *
-	 * @param visitor the visitor
+	 * @param visitor
+	 *            the visitor
 	 * @return true, if successful
 	 */
 	default boolean forEachPair(final BiConsumerWithPruning<K, V> visitor) {
-		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		while (it.hasNext()) {
-			final Map.Entry<K, V> entry = it.next();
-			if (!visitor.process(entry.getKey(), entry.getValue())) return false;
-		}
+		for (Entry<K, V> entry : entrySet()) { if (!visitor.process(entry.getKey(), entry.getValue())) return false; }
 		return true;
 	}
 
@@ -625,7 +650,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * For each value.
 	 *
-	 * @param visitor the visitor
+	 * @param visitor
+	 *            the visitor
 	 * @return true, if successful
 	 */
 	default boolean forEachValue(final ConsumerWithPruning<? super V> visitor) {
@@ -640,15 +666,12 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	/**
 	 * For each key.
 	 *
-	 * @param visitor the visitor
+	 * @param visitor
+	 *            the visitor
 	 * @return true, if successful
 	 */
 	default boolean forEachKey(final ConsumerWithPruning<K> visitor) {
-		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		while (it.hasNext()) {
-			final Map.Entry<K, V> entry = it.next();
-			if (!visitor.process(entry.getKey())) return false;
-		}
+		for (Entry<K, V> entry : entrySet()) { if (!visitor.process(entry.getKey())) return false; }
 		return true;
 	}
 

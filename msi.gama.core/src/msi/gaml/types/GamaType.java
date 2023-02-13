@@ -2,7 +2,7 @@
  *
  * GamaType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -465,6 +465,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	/** The Constant DENOTED. */
 	public static final int DENOTED = 3;
+
+	/** The Constant PAIR_OF_TYPES. */
+	public static final int PAIR_OF_TYPES = 4;
 
 	/**
 	 * Find common type.

@@ -3,7 +3,7 @@
  * UnaryOperator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,6 +15,7 @@ import static msi.gama.precompiler.ITypeProvider.DENOTED_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE;
 import static msi.gama.precompiler.ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE;
 import static msi.gama.precompiler.ITypeProvider.FLOAT_IN_CASE_OF_INT;
+import static msi.gama.precompiler.ITypeProvider.KEY_AND_CONTENT_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.KEY_TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.TYPE_AT_INDEX;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
@@ -200,7 +201,10 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 				result = t == TYPE_AT_INDEX + 1 ? child.getGamlType()
 						: t == CONTENT_TYPE_AT_INDEX + 1 ? child.getGamlType().getContentType()
 						: t == KEY_TYPE_AT_INDEX + 1 ? child.getGamlType().getKeyType() : t >= 0 ? Types.get(t)
-						: t == DENOTED_TYPE_AT_INDEX + 1 ? child.getDenotedType() : def;
+						: t == DENOTED_TYPE_AT_INDEX + 1 ? child.getDenotedType()
+						: t == KEY_AND_CONTENT_TYPE_AT_INDEX + 1
+								? Types.PAIR.of(child.getGamlType().getKeyType(), child.getGamlType().getContentType())
+						: def;
 				break;
 		}
 		if (returnFloatsInsteadOfInts && result == Types.INT) return Types.FLOAT;
@@ -214,7 +218,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		type = computeType(prototype.typeProvider, type);
 		if (type.isContainer()) {
 			IType contentType = computeType(prototype.contentTypeProvider, type.getContentType());
-			if (contentType.isContainer()) {
+			if (contentType.isParametricFormOf(Types.PAIR) && type == Types.LIST) {
+				type = Types.LIST.of(contentType);
+			} else if (contentType.isContainer()) {
 				// WARNING Special case for pairs of map. See if it works for other
 				// fields as well
 				if (contentType.getKeyType() == Types.NO_TYPE && contentType.getContentType() == Types.NO_TYPE) {
@@ -224,13 +230,12 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 				final IType contentContentType =
 						computeType(prototype.contentTypeContentTypeProvider, contentType.getContentType());
 				contentType = ((IContainerType<?>) contentType).of(contentContentType);
+
 			}
-
+			if (!type.isParametricFormOf(Types.LIST)) {
 			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
-			type = GamaType.from(type, keyType, contentType);
-
+			type = GamaType.from(type, keyType, contentType);}
 		}
-
 	}
 
 	@Override
