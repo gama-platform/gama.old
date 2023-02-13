@@ -217,7 +217,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	protected void computeType() {
 		type = computeType(prototype.typeProvider, type);
 		if (type.isContainer()) {
-			IType contentType = computeType(prototype.contentTypeProvider, type.getContentType());
+			IType<?> contentType = computeType(prototype.contentTypeProvider, type.getContentType());
 			if (contentType.isParametricFormOf(Types.PAIR) && type == Types.LIST) {
 				type = Types.LIST.of(contentType);
 			} else if (contentType.isContainer()) {
@@ -233,8 +233,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 			}
 			if (!type.isParametricFormOf(Types.LIST)) {
-			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
-			type = GamaType.from(type, keyType, contentType);}
+				final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType());
+				type = GamaType.from(type, keyType, contentType);
+			}
 		}
 	}
 

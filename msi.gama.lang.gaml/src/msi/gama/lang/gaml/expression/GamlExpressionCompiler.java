@@ -446,7 +446,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (isIterator) {
 			final IType t = left.getGamlType().getContentType();
 			final String argName = findIteratorArgName(rightMember);
-			rightMember = findIteratorExpr(rightMember);
+			rightMember = findIteratorExpr(op, rightMember);
 			iteratorContexts.push(new EachExpression(argName, t));
 		}
 		// If the right-hand expression is a list of expression, then we have a
@@ -491,14 +491,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	/**
 	 * Find iterator expr.
 	 *
+	 * @param op
+	 *
 	 * @param e2
 	 *            the e 2
 	 * @return the expression
 	 */
-	private Expression findIteratorExpr(final Expression e2) {
+	private Expression findIteratorExpr(final String op, final Expression e2) {
 		if (!(e2 instanceof ExpressionList params)) return e2;
 		final List<Expression> exprs = EGaml.getInstance().getExprsOf(params);
-		if (exprs == null || exprs.isEmpty()) return e2;
+		// Could be technically possible to allow 2 or more arguments (see #3619)
+		if (exprs == null || exprs.size() != 1) return e2;
 		final Expression arg = exprs.get(0);
 		if (!(arg instanceof Parameter p)) return arg;
 		return p.getRight();
