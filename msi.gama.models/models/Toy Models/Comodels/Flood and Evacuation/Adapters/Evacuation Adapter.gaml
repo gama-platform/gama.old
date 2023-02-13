@@ -28,8 +28,8 @@ experiment "Adapter of Evacuation" type: gui
 		{
 			t.speed <- t.speed * 10;
 			t.size <- t.size * 10;
-			t.shape <- t.shape * 10;
 			t.location <- (t.location * 10) + centroid;
+			t.shape<-(square(1) at_location t.location); 
 			t.target_loc <- target_point;
 		}
 

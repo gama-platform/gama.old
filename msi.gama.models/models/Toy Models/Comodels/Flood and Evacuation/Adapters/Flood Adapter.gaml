@@ -10,13 +10,11 @@ import "../../../../Toy Models/Flood Simulation/models/Hydrological Model.gaml"
 experiment "Adapter" type: gui
 {
 	point newSize <- { 0.07, 0.07 };
-	cell get_cell_at (point p)
-	{
-		ask simulation
-		{
+	cell get_cell_at (agent p)
+	{	 
+		using topology(cell) {
 			return first(cell overlapping p);
-		}
-
+		} 
 	}
 
 	list<cell> get_cell

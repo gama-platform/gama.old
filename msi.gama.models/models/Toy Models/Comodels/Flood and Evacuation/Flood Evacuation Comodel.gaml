@@ -27,7 +27,8 @@ global
 		create Flooding."Adapter";
 	
 		//create the Evacuation micro-model's experiment
-		create Evacuation."Adapter of Evacuation" number:length(offset)
+		create Evacuation."Adapter of Evacuation" number:length(offset);// with:[nb_people::1];
+		ask Evacuation."Adapter of Evacuation"
 		{
 			centroid <- myself.offset[int(self)];
 			target_point <- myself.exits[int(self)];
@@ -63,7 +64,7 @@ global
 		loop thePeople over: Evacuation."Adapter of Evacuation"  accumulate each.get_people()
 		{
 			//get the cell at people's location 
-			cell theWater <- cell(first(Flooding."Adapter").get_cell_at(thePeople.location));
+			cell theWater <- cell(first(Flooding."Adapter").get_cell_at(thePeople));
 			//if the water level is higher than 8 meters and the cell overlaps people, kill the people
 			if (theWater.grid_value > 8.0)
 			{

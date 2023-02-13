@@ -31,8 +31,8 @@ global
 	init
 	{  
 		int i <- -1;
-		create Preydator.Adapter2 number: grid_size_Preydator*grid_size_Preydator
-		{
+		create Preydator.Adapter2 number: grid_size_Preydator*grid_size_Preydator;
+		ask Preydator.Adapter2{
 			seed<-float(rnd(1111));
 			i<-i+1;
 			centroid <- myself.offset_Preydator[i];
@@ -40,8 +40,8 @@ global
 		}
 		
 		 i <- -1;
-		create Sugar.Adapter number: grid_size_Sugar*grid_size_Sugar  with:[shape::envelope(100)]
-		{
+		create Sugar.Adapter number: grid_size_Sugar*grid_size_Sugar  with:[shape::envelope(100)];
+		ask Sugar.Adapter{
 			seed<-float(rnd(1111));
 			i<-i+1;
 			centroid <- myself.offset_Sugar[i]; 
