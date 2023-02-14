@@ -3,7 +3,7 @@
  * IExpressionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -267,5 +267,20 @@ public interface IExpressionFactory {
 	 * @return the i expression
 	 */
 	IExpression createAs(IDescription context, IExpression toCast, IExpression createTypeExpression);
+
+	/**
+	 * Creates a new IExpression object.
+	 *
+	 * @param context
+	 *            the context
+	 * @param toCast
+	 *            the to cast
+	 * @param type
+	 *            the type
+	 * @return the i expression
+	 */
+	default IExpression createAs(final IDescription context, final IExpression toCast, final IType<?> type) {
+		return createAs(context, toCast, createTypeExpression(type));
+	}
 
 }

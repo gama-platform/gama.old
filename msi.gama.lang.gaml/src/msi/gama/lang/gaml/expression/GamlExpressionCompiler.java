@@ -712,6 +712,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (fieldExpr instanceof VariableRef) {
 			final String var = EGaml.getInstance().getKeyOf(fieldExpr);
 			IExpression expr = species.getVarExpr(var, true);
+
 			if (expr == null) {
 				if (species instanceof ModelDescription && ((ModelDescription) species).hasExperiment(var)) {
 					final IType t = Types.get(IKeyword.SPECIES);
@@ -724,7 +725,18 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 							IGamlIssue.UNKNOWN_VAR, fieldExpr.eContainer(), var, species.getName());
 					return null;
 				}
+				// special case for #3621. We cast the "simulation" and "simulations" variables of "experiment"
+				// A more correct fix would have been to make `experiment` a parametric type that explicitly refers to
+				// the species of the model as its contents type though...
+			} else if (IKeyword.SIMULATION.equals(var) && expr.getGamlType().equals(Types.get(IKeyword.MODEL))) {
+				ModelDescription md = getContext().getModelDescription();
+				if (md != null) { expr = getFactory().createAs(currentContext, expr, md.getGamlType()); }
+			} else if (IKeyword.SIMULATIONS.equals(var)
+					&& expr.getGamlType().getContentType().equals(Types.get(IKeyword.MODEL))) {
+				ModelDescription md = getContext().getModelDescription();
+				if (md != null) { expr = getFactory().createAs(currentContext, expr, Types.LIST.of(md.getGamlType())); }
 			}
+
 			getContext().document(fieldExpr, expr);
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
 		}
