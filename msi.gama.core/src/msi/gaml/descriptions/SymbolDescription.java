@@ -3,7 +3,7 @@
  * SymbolDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -599,7 +599,7 @@ public abstract class SymbolDescription implements IDescription {
 	 */
 	protected IType<?> computeType() {
 
-		// Adapter ca pour prendre ne ocmpte les ITypeProvider
+		// Adapter ca pour prendre en compte les ITypeProvider
 		// 13/02/20: Addition of VALUE (see #2932)
 		IType<?> tt = getTypeDenotedByFacet(DATA, TYPE, SPECIES, AS, TARGET, ON, VALUE);
 		IType<?> kt = getTypeDenotedByFacet(INDEX, tt.getKeyType());

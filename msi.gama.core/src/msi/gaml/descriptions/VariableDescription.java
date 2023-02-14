@@ -3,7 +3,7 @@
  * VariableDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
@@ -229,10 +230,10 @@ public class VariableDescription extends SymbolDescription {
 				case ITypeProvider.MODEL_TYPE: // This represents the type of the
 												// model (used for simulations)
 					final ModelDescription md = this.getModelDescription();
-					if (md == null) return Types.get("model");
+					if (md == null) return Types.get(IKeyword.MODEL);
 					return md.getGamlType();
 				case ITypeProvider.EXPERIMENT_TYPE:
-					return Types.get("experiment");
+					return Types.get(IKeyword.EXPERIMENT);
 				case ITypeProvider.MIRROR_TYPE:
 					if (getEnclosingDescription() == null) return null;
 					final IExpression mirrors = getEnclosingDescription().getFacetExpr(MIRRORS);
