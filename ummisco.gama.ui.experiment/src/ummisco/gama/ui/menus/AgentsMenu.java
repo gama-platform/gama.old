@@ -3,7 +3,7 @@
  * AgentsMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -396,8 +396,8 @@ public class AgentsMenu extends ContributionItem {
 		final List<IAgent> agents = new ArrayList<>(species);
 		final int size = agents.size();
 		// if (size > 1 && !isSimulations) { GamaMenu.separate(menu, "Actions"); }
-		if (size > 1) { browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image()); }
-		if (size > 1 && !isSimulations) {
+		if (size >= 1) { browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image()); }
+		if (size >= 1 && !isSimulations) {
 			GamaMenu.separate(menu);
 			GamaMenu.separate(menu, "Agents");
 		}
