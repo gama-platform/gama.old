@@ -26,7 +26,7 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>buchen-maven-repo</id>
+			<id>portfolio-non-maven-dependencies</id>
 			<url>https://buchen.github.io/maven-repo</url>
 			<layout>default</layout>
 		</pluginRepository>
@@ -117,7 +117,7 @@
 	<repositories>
 		<repository>
 			<id>eclipse-swt</id>
-			<url>http://download.eclipse.org/releases/2022-12</url>
+			<url>https://download.eclipse.org/releases/2022-12</url>
 			<layout>p2</layout>
 			<releases>
 				<enabled>true</enabled>
@@ -210,7 +210,7 @@
 	<properties>
 		<project.version>1.9.0-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.1</tycho.version>
+		<tycho.version>3.0.2</tycho.version>
 		<jdk.version>17</jdk.version>
 		<codehaus.wagon.version>2.0.2</codehaus.wagon.version>
 		<wagon.version>3.5.3</wagon.version>
@@ -506,9 +506,9 @@
 		</plugin>
 
 		<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-clean-plugin</artifactId>
-    <version>3.2.0</version>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-clean-plugin</artifactId>
+		    <version>3.2.0</version>
 			<configuration>
 				<filesets>
 					<fileset>

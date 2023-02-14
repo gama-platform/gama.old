@@ -24,13 +24,12 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.1</tycho.version>
+		<tycho.version>3.0.2</tycho.version>
 		<jdk.version>17</jdk.version>
 		<codehaus.wagon.version>2.0.2</codehaus.wagon.version>
 		<wagon.version>3.5.3</wagon.version>
 		<maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
 		<maven.plugins.version>3.0.0</maven.plugins.version>
-		<maven.plugins.compiler.versions>3.10.1</maven.plugins.compiler.versions>
 	</properties>
 
 	<profiles>
@@ -154,7 +153,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.plugins.compiler.versions}</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
