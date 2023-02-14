@@ -9,8 +9,8 @@
 model HTTPGET
 
 global {
-	int port <- 8989;     // for HTPP : 80 http, for HTTPS : 443 
-	string url <- "localhost";	
+	int port <- 5000;     // for HTPP : 80 http, for HTTPS : 443 
+	string url <- "127.0.0.1";	
 	
 	init {
 		create NetworkingAgent number: 1 {
@@ -26,10 +26,11 @@ species NetworkingAgent skills:[network] {
 		write "sending message ";
 		
 		do send to: "/test" contents: ["POST",as_json_string(["toto"::34,"titi"::world]), ["Content-Type"::"application/json"] ];
+		
+//		do send to: "/test" contents: ["POST",as_json_string(["toto"::34,"titi"::world]) ];
 // 		do send to: "/api/user/" contents: ["POST","raw-query-param", ["Content-Type"::"text/plain"] ];		
 //		do send to: "/api/user/" contents: ["PUT",as_json_string(["toto"::34,"titi"::12]), ["Content-Type"::"application/json"]];
 //		do send to: "/api/user/" contents: ["DELETE"];
-		
 	}
 
 	reflex get_message {

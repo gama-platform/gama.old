@@ -25,6 +25,7 @@ species NetworkingAgent skills:[network] {
 	reflex send when:  cycle = 0 {
 		write "sending message ";		
 		do send to: "/search/authors.json?q=j%20k%20rowling" contents: ["GET"];
+	//	do send to: "/search/authors.json?q=j%20k%20rowling" contents: ["GET", ["Content-Type"::"application/json"]];		
 	}
 
 	reflex get_message {

@@ -25,7 +25,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.socket.SocketService;
@@ -112,23 +111,34 @@ public class HTTPRequestConnector extends Connector {
 				e.printStackTrace();
 			}
 			Builder requestBuilder = HttpRequest.newBuilder().uri(uri);
-			// Management of the content. A list [method,body,headers] or [method] are expected
+			// Management of the content. 
+			// The various cases are the following ones:
+			// - [method] or [method,headers] if method ="GET" or "DELETE"
+			// - [method,body] or [method,body,headers] otherwise ("POST", "PUT")
+			
+			IMap<String, String> headers = null;
+			String body = "";
+			
 			// Element at 0 is the HTTP Method
 			String method = (String) listContent.get(0);
 
-			// Element at 1 is the content
-			String body = "";
-			if(listContent.size() > 1) {
-					body = (String) listContent.get(1);
-				//	body = Jsoner.serialize(listContent.get(1));
-			}		
-			
-			
-			// Element at 2 is the headers (including the Content-Type)
-			IMap<String, String> header =
-					listContent.size() > 2 ? (IMap<String, String>) listContent.get(2) : null;
-					
-			if (header != null) { for (String key : header.keySet()) { requestBuilder.header(key, header.get(key)); } }
+			if("GET".equals(method) || "DELETE".equals(method)) {
+				// either no headers or headers at location 1 of the listContent
+				headers = listContent.size() > 1 ? (IMap<String, String>) listContent.get(1) : null;
+				if(listContent.size() > 2) {
+					throw GamaNetworkException.cannotSendMessage(null, ""+uri+". GET/DELETE HTTP method are expecting [method] or [method,headers] only. No body.");
+				}				
+			} else {  // "POST" / "PUT"
+				if(listContent.size() > 1) {
+					body = (String) listContent.get(1);		
+					//	body = Jsoner.serialize(listContent.get(1));					
+				} else {
+					throw GamaNetworkException.cannotSendMessage(null, ""+uri+". POST/PUT HTTP method are expecting a body.");
+				}
+				headers = listContent.size() > 2 ? (IMap<String, String>) listContent.get(2) : null;
+			}
+	
+			if (headers != null) { for (String key : headers.keySet()) { requestBuilder.header(key, headers.get(key)); } }
 
 			request = switch (method) {
 				case "GET" -> requestBuilder.GET().build();
