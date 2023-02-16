@@ -44,7 +44,7 @@
 -Denable_logging=true 
 -Denable_debug=true
 -Duse_global_preference_store=true 
--Duse_precise_scaling=true 
+-Dswt.autoScale=exact
 -Dread_only=false 
 -Duse_old_tabs=true 
 -Duse_legacy_drawers=false 
@@ -57,7 +57,7 @@
 --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread 
-         -Dorg.eclipse.swt.internal.carbon.smallFonts
+-Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
       <vmArgsWin>-Dfile.encoding=UTF-8
       </vmArgsWin>
