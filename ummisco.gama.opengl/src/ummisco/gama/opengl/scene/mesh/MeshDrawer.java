@@ -115,7 +115,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	// NORMALS
 	/** The quad normals. */
 	// The normals used for quads drawing
-	final double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	final static double[] quadNormals = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
 
 	/** The surface. */
 	// The temporary coordinate sequence used to hold vertices to compute normals
@@ -163,6 +163,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		noData = attributes.getNoDataValue();
 		if (noData == IField.NO_NO_DATA) { noData = object.getObject().getNoData(null); }
 		above = attributes.getAbove();
+
 		this.cx = attributes.getCellSize().x;
 		this.cy = attributes.getCellSize().y;
 
@@ -221,27 +222,24 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		if (length > previous) {
 			realIndexes = new int[length];
 			final var lengthM1 = (cols - 1) * (rows - 1);
-			vertexBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
-			normalBuffer = newDirectDoubleBuffer(triangles ? length * 3 : lengthM1 * 12);
+			int colors = triangles ? length * 4 : lengthM1 * 16;
+			int points = triangles ? length * 3 : lengthM1 * 12;
+			int textures = triangles ? length * 2 : lengthM1 * 8;
+			vertexBuffer = newDirectDoubleBuffer(points);
+			normalBuffer = newDirectDoubleBuffer(points);
 			indexBuffer = newDirectIntBuffer(lengthM1 * 6);
 			// AD : fix for #3299. outputsLines and outputsColors can change overtime and it is necessary to maintain
 			// the buffers if the size doesnt change
-			// if (outputsLines) {
-			lineColorBuffer = newDirectDoubleBuffer(triangles ? length * 4 : lengthM1 * 16);
-			// }
-			// if (outputsTextures) {
-			texBuffer = newDirectDoubleBuffer(triangles ? length * 2 : lengthM1 * 8);
-			// }
-			// if (outputsColors) {
-			colorBuffer = newDirectDoubleBuffer(triangles ? length * 4 : lengthM1 * 16);
-			// }
+			lineColorBuffer = newDirectDoubleBuffer(colors);
+			texBuffer = newDirectDoubleBuffer(textures);
+			colorBuffer = newDirectDoubleBuffer(colors);
 		} else {
 			vertexBuffer.clear();
 			normalBuffer.clear();
 			indexBuffer.clear();
-			if (lineColorBuffer != null) { lineColorBuffer.clear(); }
-			if (texBuffer != null) { texBuffer.clear(); }
-			if (colorBuffer != null) { colorBuffer.clear(); }
+			lineColorBuffer.clear();
+			texBuffer.clear();
+			colorBuffer.clear();
 		}
 
 	}
@@ -263,9 +261,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	private void fillBuffersWithRectangles() {
 		int index = 0;
 		for (var i = 0; i < cols - 1; ++i) {
-			double x1 = i * cx, x2 = (i + 1) * cx;
+			double x1 = i * cx /* + cx / 2 */, x2 = (i + 1) * cx /* + cx / 2 */;
 			for (var j = 0; j < rows - 1; ++j) {
-				double y1 = -j * cy, y2 = -(j + 1) * cy, z = data[j * cols + i];
+				double y1 = -j * cy /*- cy / 2*/, y2 = -(j + 1) * cy /*- cy / 2*/, z = data[j * cols + i];
 				if (z == noData) { continue; }
 				vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
 				colorize(z, i, j);
@@ -286,9 +284,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	private void fillBuffersWithTriangles() {
 		var realIndex = 0;
 		for (var j = 0; j < rows; j++) {
-			var y = j * cy;
+			var y = j * cy /* + cy / 2 */;
 			for (var i = 0; i < cols; i++) {
-				var x = i * cx;
+				var x = i * cx/* + cx / 2 */;
 				var index = j * cols + i;
 				var z = data[index];
 				realIndexes[index] = z == noData ? -1 : realIndex++;
@@ -329,24 +327,15 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		if (outputsTextures) { texBuffer.put((double) x / cols).put((double) y / rows); }
 		if (outputsColors) {
 			if (above != MeshLayerData.ABOVE && z < above) {
-				// if (z < above) {
 				colorBuffer.put(TRANSPARENT, 0, 4);
 			} else {
-				fill.getColor(y * cols + x, z, min, max, rgb);
-				// rgb[3] = 1d;
-				if (rgb[3] < 1d) {
-
-					// DEBUG.OUT("Value Alpha 100 = " + rgb[3]);
-
-				}
-				colorBuffer.put(rgb, 0, 4);
+				colorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb), 0, 4);
 			}
-			// }
 		}
 		// If the line color is specified, outputs it
 		if (outputsLines) {
 			if (useFillForLines) {
-				lineColorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb));
+				lineColorBuffer.put(fill.getColor(y * cols + x, z, min, max, rgb), 0, 4);
 			} else {
 				lineColorBuffer.put(lineColor);
 			}

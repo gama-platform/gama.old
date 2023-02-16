@@ -118,7 +118,7 @@ public class GridLayerData extends LayerData {
 				}
 			}
 			return null;
-		}, Types.NO_TYPE, (double[]) null, null);
+		}, Types.NO_TYPE, (double[]) null);
 		triangulation = create(IKeyword.TRIANGULATION, Types.BOOL, false);
 		smooth = create(IKeyword.SMOOTH, Types.BOOL, false);
 		grayscale = create(IKeyword.GRAYSCALE, Types.BOOL, false);
@@ -127,7 +127,7 @@ public class GridLayerData extends LayerData {
 			final Object result = exp.value(scope);
 			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);
 			throw GamaRuntimeException.error("The texture of a grid must be an image file", scope);
-		}, Types.FILE, null, null);
+		}, Types.FILE, null);
 	}
 
 	@Override

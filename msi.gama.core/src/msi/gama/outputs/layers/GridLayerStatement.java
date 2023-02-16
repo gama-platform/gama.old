@@ -3,7 +3,7 @@
  * GridLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -243,21 +243,18 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			if (lines != null) { d.setFacet(BORDER, lines); }
 			final IExpression tx = d.getFacetExpr(TEXTURE);
 			final IExpression el = d.getFacetExpr(ELEVATION);
-			if (el == null || FALSE.equals(el.serialize(true))) {
-				if (tx == null) {
-					d.setFacet("flat", TRUE_EXPR);
-				} else {
-					// if texture is defined and elevation no, we need to set a fake elevation otherwise texture will
-					// not be drawn
-					d.setFacet(ELEVATION, GAML.getExpressionFactory().createConst(0.0, Types.FLOAT));
-				}
+			if ((el == null || FALSE.equals(el.serialize(true))) && tx != null) {
+				// if texture is defined and elevation no, we need to set a fake elevation otherwise texture will
+				// not be drawn
+				d.setFacet(ELEVATION, GAML.getExpressionFactory().createConst(0.0, Types.FLOAT));
 			}
 		}
 
 	}
 
 	/** The is flat grid. */
-	final boolean isHexagonal, isFlatGrid;
+	final boolean isHexagonal;
+	// isFlatGrid;
 
 	/**
 	 * Instantiates a new grid layer statement.
@@ -271,7 +268,8 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
 		isHexagonal = desc.hasFacet("hexagonal");
-		isFlatGrid = desc.hasFacet("flat");
+		IExpression exp = desc.getFacetExpr(IKeyword.ELEVATION);
+		// isFlatGrid = exp == null || exp.isConst() && !Cast.asBool(null, exp.getConstValue());
 	}
 
 	@Override
@@ -279,21 +277,13 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
-	/**
-	 * Checks if is open GL flat grid.
-	 *
-	 * @param out
-	 *            the out
-	 * @return true, if is open GL flat grid
-	 */
-	boolean isOpenGLFlatGrid(final LayeredDisplayOutput out) {
-		final boolean isOpenGL = out.getData().is3D();
-		return isOpenGL && isFlatGrid;
-	}
-
 	@Override
 	public LayerType getType(final LayeredDisplayOutput out) {
-		return isHexagonal || isOpenGLFlatGrid(out) ? LayerType.GRID_AGENTS : LayerType.GRID;
+
+		// if (isHexagonal)
+
+		// if (out.getData().is3D()) return isFlatGrid ? LayerType.GRID : LayerType.GRID_AGENTS;
+		return isHexagonal ? LayerType.GRID_AGENTS : LayerType.GRID;
 	}
 
 	@Override

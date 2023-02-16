@@ -3,7 +3,7 @@
  * AttributeHolder.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -13,7 +13,6 @@ package msi.gaml.statements.draw;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
@@ -326,7 +325,7 @@ public abstract class AttributeHolder {
 	 */
 	protected <T extends IType<V>, V> Attribute<V> create(final String facet, final T type, final V def) {
 		final IExpression exp = symbol.getFacet(facet);
-		return create(facet, exp, type, def, e -> type.cast(null, e.getConstValue(), null, true));
+		return create(facet, exp, type, def);
 	}
 
 	/**
@@ -349,14 +348,15 @@ public abstract class AttributeHolder {
 	 * @return the attribute
 	 */
 	protected <T extends IType<V>, V> Attribute<V> create(final String facet, final IExpression exp, final T type,
-			final V def, final Function<IExpression, V> cc) {
+			final V def) {
 		Attribute<V> result;
-		Function<IExpression, V> constCaster = cc == null ? e -> type.cast(null, e.getConstValue(), null, true) : cc;
+		// Function<IExpression, V> constCaster =
+		// /* cc == null ? */ e -> type.cast(null, e.getConstValue(), null, true) /* : cc */;
 		// AD 10/12/19 Changed because it was creating problems with constant
 		// boolean values meant to indicate the presence or absence of the property
 		// see #2902 and #2913
-		if (exp == null || exp.isConst() && exp.isContextIndependant() && exp.getGamlType() != Types.BOOL) {
-			result = new ConstantAttribute<>(exp == null ? def : constCaster.apply(exp));
+		if (exp == null || exp.isConst() && exp.isContextIndependant() && type != Types.BOOL) {
+			result = new ConstantAttribute<>(exp == null ? def : type.cast(null, exp.getConstValue(), null, true));
 		} else {
 			result = new ExpressionAttribute<>(type, exp, def);
 		}
@@ -384,14 +384,15 @@ public abstract class AttributeHolder {
 	 * @return the attribute
 	 */
 	protected <T extends IType<V>, V> Attribute<V> create(final String facet, final IExpressionWrapper<V> ev,
-			final T type, final V def, final Function<IExpression, V> constCaster) {
+			final T type, final V def/* , final Function<IExpression, V> constCaster */) {
 		final IExpression exp = symbol.getFacet(facet);
 		Attribute<V> result;
 		// AD 10/12/19 Changed because it was creating problems with constant
 		// boolean values meant to indicate the presence or absence of the property
 		// see #2902 and #2913
-		if (exp == null || exp.isConst() && exp.isContextIndependant() && exp.getGamlType() != Types.BOOL) {
-			result = new ConstantAttribute<>(exp == null ? def : constCaster != null ? constCaster.apply(exp) : def);
+		if (exp == null /* || exp.isConst() && exp.isContextIndependant() && exp.getGamlType() != Types.BOOL */) {
+			result = new ConstantAttribute<>(
+					/* exp == null ? def : constCaster != null ? constCaster.apply(exp) : */ def);
 		} else {
 			result = new ExpressionEvaluator<>(ev, exp);
 		}

@@ -100,23 +100,17 @@ public class MeshLayerData extends LayerData {
 			Object result = exp.value(scope);
 			if (result instanceof Number) return new GamaPoint(1, 1, ((Number) result).doubleValue());
 			return Cast.asPoint(scope, result);
-		}, Types.POINT, new GamaPoint(1, 1, 1), e -> {
-			Object v = e.getConstValue();
-			return v instanceof Number ? new GamaPoint(1, 1, ((Number) v).doubleValue()) : Cast.asPoint(null, v);
-		});
+		}, Types.POINT, new GamaPoint(1, 1, 1));
 		line = create(IKeyword.BORDER, Types.COLOR, null);
 		elevation = create(IKeyword.SOURCE, (scope, exp) -> {
 			if (exp != null) return buildValues(scope, exp.value(scope));
 			return null;
-		}, Types.NO_TYPE, (IField) null, null);
+		}, Types.NO_TYPE, (IField) null);
 		triangulation = create(IKeyword.TRIANGULATION, Types.BOOL, false);
 		smooth = create(IKeyword.SMOOTH, (scope, exp) -> {
 			final Object result = exp.value(scope);
 			return result instanceof Boolean ? (Boolean) result ? 1 : 0 : Cast.asInt(scope, result);
-		}, Types.INT, 0, e -> {
-			Object v = e.getConstValue();
-			return v instanceof Boolean ? (Boolean) v ? 1 : 0 : Cast.asInt(null, v);
-		});
+		}, Types.INT, 0);
 		grayscale = create(IKeyword.GRAYSCALE, Types.BOOL, false);
 		wireframe = create(IKeyword.WIREFRAME, Types.BOOL, false);
 		text = create(IKeyword.TEXT, Types.BOOL, false);
@@ -128,7 +122,7 @@ public class MeshLayerData extends LayerData {
 			final Object result = exp.value(scope);
 			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);
 			throw GamaRuntimeException.error("The texture of a field must be an image file", scope);
-		}, Types.FILE, null, null);
+		}, Types.FILE, null);
 	}
 
 	@Override
@@ -280,8 +274,6 @@ public class MeshLayerData extends LayerData {
 	 *
 	 * @return the above
 	 */
-	public double getAbove() { // TODO Auto-generated method stub
-		return above.get();
-	}
+	public double getAbove() { return above.get(); }
 
 }

@@ -15,6 +15,7 @@ import java.awt.Color;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.layers.MeshLayerData;
 import msi.gama.util.GamaColor;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.IField;
@@ -43,10 +44,10 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	Double scale;
 
 	/** The no data. */
-	double noData;
+	double noData = IField.NO_NO_DATA;
 
 	/** The above. */
-	double above;
+	double above = MeshLayerData.ABOVE;
 
 	/** The smooth. */
 	int smooth;

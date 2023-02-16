@@ -97,18 +97,18 @@ public class DrawingData extends AttributeHolder {
 	 */
 	public DrawingData(final DrawStatement symbol) {
 		super(symbol);
-		this.size = create(IKeyword.SIZE, this::castSize, Types.POINT, null, this::constCastSize);
+		this.size = create(IKeyword.SIZE, this::castSize, Types.POINT, null);
 		this.lighting = create(IKeyword.LIGHTED, Types.BOOL, true);
 		this.depth = create(IKeyword.DEPTH, Types.FLOAT, null);
 		this.precision = create("precision", Types.FLOAT, 0.01);
-		this.rotation = create(IKeyword.ROTATE, this::castRotation, Types.NO_TYPE, null, this::constCastRotation);
-		this.anchor = create(IKeyword.ANCHOR, this::castAnchor, Types.POINT, IUnits.bottom_left, this::constCastAnchor);
+		this.rotation = create(IKeyword.ROTATE, this::castRotation, Types.NO_TYPE, null);
+		this.anchor = create(IKeyword.ANCHOR, this::castAnchor, Types.POINT, IUnits.bottom_left);
 		this.location = create(IKeyword.AT, Types.POINT, null);
 		this.empty = create(IKeyword.WIREFRAME, Types.BOOL, false);
-		this.border = create(IKeyword.BORDER, this::castBorder, Types.COLOR, null, this::constCastBorder);
-		this.color = create(IKeyword.COLOR, this::castColor, Types.COLOR, null, this::constCastColor);
+		this.border = create(IKeyword.BORDER, this::castBorder, Types.COLOR, null);
+		this.color = create(IKeyword.COLOR, this::castColor, Types.COLOR, null);
 		this.font = create(IKeyword.FONT, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
-		this.texture = create(IKeyword.TEXTURE, this::castTexture, Types.LIST, null, this::constCastTexture);
+		this.texture = create(IKeyword.TEXTURE, this::castTexture, Types.LIST, null);
 		this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);
 		this.perspective = create(IKeyword.PERSPECTIVE, Types.BOOL, true);
 		this.lineWidth = create(IKeyword.WIDTH, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
