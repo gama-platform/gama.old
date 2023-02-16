@@ -3,7 +3,7 @@
  * SpeciesConstantExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -22,6 +22,10 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.types.IType;
+
+/**
+ * The Class SpeciesConstantExpression.
+ */
 
 /**
  * The Class SpeciesConstantExpression.
@@ -95,6 +99,9 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	@Override
 	public boolean isContextIndependant() { return false; }
+
+	@Override
+	public boolean isAllowedInParameters() { return true; } // verify this
 
 	@Override
 	public void collectUsedVarsOf(final SpeciesDescription species,

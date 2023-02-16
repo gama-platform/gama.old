@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -54,7 +53,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.ListExpression;
-import msi.gaml.expressions.units.TimeUnitConstantExpression.ITimeFloatExpression;
+import msi.gaml.expressions.units.TimeUnitConstantExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.AbstractSpecies;
 import msi.gaml.statements.IExecutable;
@@ -223,7 +222,7 @@ public class Variable extends Symbol implements IVariable {
 				// May 2019: a warning is emitted instead (see why in #2574)
 				if (STEP.equals(name) && cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
 					final IExpression expr = cd.getFacetExpr(INIT);
-					if (expr.findAny(e -> e instanceof ITimeFloatExpression)) {
+					if (expr.findAny(e -> e instanceof TimeUnitConstantExpression tu && !tu.isConst())) {
 						cd.warning(
 								"Time dependent constants used to define the step at initialization are computed once based on the current_date. The resulting durations may be irrelevant after a few cycles. An 'update:' facet should be defined with the same expression to recompute the step every cycle",
 								IGamlIssue.CONFLICTING_FACETS, INIT);
@@ -431,21 +430,33 @@ public class Variable extends Symbol implements IVariable {
 						Cast.toGaml(cd.getGamlType().getDefault()));
 				return;
 			}
-			// Cf. #3493
-			IDescription oneExperiment = Iterables.getFirst(cd.getModelDescription().getExperiments(), null);
-			if (oneExperiment != null) {
-				for (String f : VariableDescription.INIT_DEPENDENCIES_FACETS) {
-					IExpressionDescription initExpr = cd.getFacet(f);
-					if (initExpr != null) {
-						IExpressionDescription ed = initExpr.cleanCopy();
-						if (GAML.getExpressionFactory().getParser().compile(ed, oneExperiment) == null) {
-							cd.error(
-									"This expression cannot be used in the context of experiments. Please use a constant expression or redeclare this parameter in the experiments",
-									IGamlIssue.WRONG_CONTEXT, f);
-						}
-					}
+			// Cf. #3493 && #3622
+			for (String f : VariableDescription.INIT_DEPENDENCIES_FACETS) {
+				IExpression initExpr = cd.getFacetExpr(f);
+				if (initExpr != null && !initExpr.isAllowedInParameters()) {
+					cd.error(initExpr.serialize(true)
+							+ " cannot be used in the context of experiments. Please use a constant expression or redeclare this parameter in the experiments",
+							IGamlIssue.WRONG_CONTEXT, f);
 				}
 			}
+
+			// IDescription oneExperiment = Iterables.getFirst(cd.getModelDescription().getExperiments(), null);
+			// if (oneExperiment != null) {
+			// for (String f : VariableDescription.INIT_DEPENDENCIES_FACETS) {
+			// IExpressionDescription initExpr = cd.getFacet(f);
+			// if (initExpr != null) {
+			// IExpressionDescription ed = initExpr.cleanCopy();
+			// if (GAML.getExpressionFactory().getParser().compile(ed, oneExperiment) == null) {
+			// // COMPLETEMENT FAUX == RENVOIE NULL dans le Cas de Month car ce n'est pas une constante,
+			// // mais c'est tout. Du coup 1#month passe sans problème ..car..car
+			// cd.error(
+			// "This expression cannot be used in the context of experiments. Please use a constant expression or
+			// redeclare this parameter in the experiments",
+			// IGamlIssue.WRONG_CONTEXT, f);
+			// }
+			// }
+			// }
+			// }
 
 			// AD 6/2/22 Restriction removed: non-boolean vars can "enable" or "disable" others based on the cast of
 			// their value to bool

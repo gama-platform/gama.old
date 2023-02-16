@@ -46,4 +46,6 @@ public class PixelUnitExpression extends UnitConstantExpression {
 	@Override
 	public boolean isContextIndependant() { return false; }
 
+	@Override
+	public boolean isAllowedInParameters() { return false; }
 }

@@ -271,6 +271,9 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public boolean isContextIndependant() { return child.isContextIndependant(); }
 
 	@Override
+	public boolean isAllowedInParameters() { return child.isAllowedInParameters(); }
+
+	@Override
 	public OperatorProto getPrototype() { return prototype; }
 
 	@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * BinaryOperator.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * BinaryOperator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
@@ -31,9 +31,12 @@ public class BinaryOperator extends AbstractNAryOperator {
 	/**
 	 * Creates the.
 	 *
-	 * @param proto the proto
-	 * @param context the context
-	 * @param child the child
+	 * @param proto
+	 *            the proto
+	 * @param context
+	 *            the context
+	 * @param child
+	 *            the child
 	 * @return the i expression
 	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context,
@@ -47,9 +50,12 @@ public class BinaryOperator extends AbstractNAryOperator {
 	/**
 	 * Instantiates a new binary operator.
 	 *
-	 * @param proto the proto
-	 * @param context the context
-	 * @param args the args
+	 * @param proto
+	 *            the proto
+	 * @param context
+	 *            the context
+	 * @param args
+	 *            the args
 	 */
 	public BinaryOperator(final OperatorProto proto, final IDescription context, final IExpression... args) {
 		super(proto, args);
@@ -117,10 +123,14 @@ public class BinaryOperator extends AbstractNAryOperator {
 		/**
 		 * Instantiates a new binary var operator.
 		 *
-		 * @param proto the proto
-		 * @param context the context
-		 * @param target the target
-		 * @param var the var
+		 * @param proto
+		 *            the proto
+		 * @param context
+		 *            the context
+		 * @param target
+		 *            the target
+		 * @param var
+		 *            the var
 		 */
 		public BinaryVarOperator(final OperatorProto proto, final IDescription context, final IExpression target,
 				final IVarExpression var) {
@@ -158,6 +168,9 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 		@Override
 		public boolean isContextIndependant() { return false; }
+
+		@Override
+		public boolean isAllowedInParameters() { return true; }
 
 		@Override
 		public BinaryVarOperator copy() {

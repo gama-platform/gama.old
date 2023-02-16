@@ -2,7 +2,7 @@
  *
  * IUnits.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -756,7 +756,7 @@ public interface IUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
-					value = "month time unit: defines an exact duration of 30 days. WARNING: this duration is of course not correct in terms of calendar")) double month =
+					value = "month time unit: an approximate duration of 30 days. The number of days of each #month depend of course on the current_date of the model and cannot be constant")) double month =
 							30 * day, months = month;
 
 	/** The Constant y. */
@@ -766,7 +766,7 @@ public interface IUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
-					value = "year time unit: defines an exact duration of 365 days. WARNING: this duration is of course not correct in terms of calendar")) double year =
+					value = "year time unit: an approximate duration of 365 days. The value of #year in number of days varies depending on leap years, etc. and is dependend on the current_date of the model")) double year =
 							365 * day, years = year, y = year;
 
 	/** The Constant msec. */

@@ -3,7 +3,7 @@
  * UnitConstantExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.precompiler.GamlProperties;
+import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.LabelExpressionDescription;
@@ -169,7 +170,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 
 	@Override
 	public IExpression compile(final IDescription context) {
-		return this;
+		return getExpression();
 	}
 
 	@Override
@@ -223,5 +224,10 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	 * @return true, if is deprecated
 	 */
 	public boolean isDeprecated() { return isDeprecated; }
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return getExpression();
+	}
 
 }
