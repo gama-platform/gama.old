@@ -167,7 +167,7 @@ public class Application implements IApplication {
 	 */
 	private Display configureDisplay() {
 		// Important to do it *before* creating the display
-		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
+		//System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
 		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);

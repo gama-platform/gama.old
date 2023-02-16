@@ -100,9 +100,10 @@ public class FLAGS {
 	 * org.eclipse.swt.internal.DPIUtil.SWT_AUTOSCALE, enabling more precise scaling methods for HiDPI screens.
 	 * Otherwise the default of "integer200" is used by DPIUtil (see #3180). False by default.
 	 *
-	 * 05 Feb. 2023: Reinstantiates this flag to support #3596 and #3308, set to true by default now
+	 * 05 Feb. 2023: Reinstantiates this flag to support #3596 and #3308, set to true by default now 16 Feb. 2023: Again
+	 * commented for issue #3604 -- -Dswt.autoScale=exact is used directly instead
 	 */
-	public static final boolean USE_PRECISE_SCALING = get("use_precise_scaling", true);
+	// public static final boolean USE_PRECISE_SCALING = get("use_precise_scaling", true);
 
 	/**
 	 * Used in GamlEditor, see #2950. Set to true to disable editing gaml files. False by default.
