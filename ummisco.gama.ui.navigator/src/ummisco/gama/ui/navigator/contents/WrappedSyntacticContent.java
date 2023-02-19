@@ -3,7 +3,7 @@
  * WrappedSyntacticContent.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -21,8 +21,6 @@ import org.eclipse.swt.graphics.Image;
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -88,7 +86,8 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	}
 
 	@Override
-	public Image getImage() { return (Image) WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element); }
+	public Image getImage() { return null; }// return (Image)
+											// WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element); }
 
 	// @Override
 	// public Color getColor() {
@@ -159,11 +158,5 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public String getStatusMessage() { return getName(); }
-
-	@Override
-	public GamaUIColor getStatusColor() { return IGamaColors.BLACK; }
-
-	@Override
-	public Image getStatusImage() { return getImage(); }
 
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * NavigatorRoot.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * NavigatorRoot.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -21,9 +21,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.GamlFileExtension;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The Class NavigatorRoot.
@@ -33,19 +30,19 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	/** The user folder. */
 	private TopLevelFolder userFolder;
-	
+
 	/** The test folder. */
 	private TopLevelFolder testFolder;
-	
+
 	/** The plugin folder. */
 	private TopLevelFolder pluginFolder;
-	
+
 	/** The library folder. */
 	private TopLevelFolder libraryFolder;
-	
+
 	/** The Constant instance. */
 	private final static NavigatorRoot instance = new NavigatorRoot();
-	
+
 	/** The mapper. */
 	private ResourceManager mapper;
 
@@ -99,7 +96,8 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 	/**
 	 * Reset virtual folders.
 	 *
-	 * @param manager the manager
+	 * @param manager
+	 *            the manager
 	 */
 	public void resetVirtualFolders(final ResourceManager manager) {
 		if (manager != null) { this.setManager(manager); }
@@ -193,40 +191,35 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 
 	}
 
-	@Override
-	public String getStatusTooltip() { return ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString(); }
-
-	@Override
-	public GamaUIColor getStatusColor() { return IGamaColors.NEUTRAL; }
-
-	@Override
-	public Image getStatusImage() { return GamaIcons.create("menu.about2").image(); }
-
 	/**
 	 * Sets the library folder.
 	 *
-	 * @param libraryFolder the new library folder
+	 * @param libraryFolder
+	 *            the new library folder
 	 */
 	public void setLibraryFolder(final TopLevelFolder libraryFolder) { this.libraryFolder = libraryFolder; }
 
 	/**
 	 * Sets the plugin folder.
 	 *
-	 * @param pluginFolder the new plugin folder
+	 * @param pluginFolder
+	 *            the new plugin folder
 	 */
 	public void setPluginFolder(final TopLevelFolder pluginFolder) { this.pluginFolder = pluginFolder; }
 
 	/**
 	 * Sets the user folder.
 	 *
-	 * @param userFolder the new user folder
+	 * @param userFolder
+	 *            the new user folder
 	 */
 	public void setUserFolder(final TopLevelFolder userFolder) { this.userFolder = userFolder; }
 
 	/**
 	 * Sets the test folder.
 	 *
-	 * @param testFolder the new test folder
+	 * @param testFolder
+	 *            the new test folder
 	 */
 	public void setTestFolder(final TopLevelFolder testFolder) { this.testFolder = testFolder; }
 
@@ -236,14 +229,16 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 	/**
 	 * Sets the manager.
 	 *
-	 * @param mapper the new manager
+	 * @param mapper
+	 *            the new manager
 	 */
 	public void setManager(final ResourceManager mapper) { this.mapper = mapper; }
 
 	/**
 	 * Gets the folder.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the folder
 	 */
 	public TopLevelFolder getFolder(final String s) {

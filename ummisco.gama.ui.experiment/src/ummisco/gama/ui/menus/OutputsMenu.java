@@ -3,7 +3,7 @@
  * OutputsMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -75,7 +75,8 @@ public class OutputsMenu extends ContributionItem {
 		GamaMenu.separate(main);
 		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(),
 				"Pause all");
-		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), create("action.update2").image(), "Update all");
+		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), create("menu.display.update").image(),
+				"Update all");
 		menuItem(main, e -> GAMA.getExperiment().resumeAllOutputs(),
 				create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
 		menuItem(main, e -> GAMA.getExperiment().synchronizeAllOutputs(),
@@ -128,7 +129,7 @@ public class OutputsMenu extends ContributionItem {
 			} else {
 				menuItem(sub, e -> output.setPaused(true), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause");
 			}
-			menuItem(sub, e -> output.update(), create("action.update2").image(), "Force update");
+			menuItem(sub, e -> output.update(), create("menu.display.update").image(), "Force update");
 			// if (output.isSynchronized()) {
 			// menuItem(sub, e -> output.setSynchronized(false), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
 			// "Desynchronize");

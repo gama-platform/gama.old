@@ -113,7 +113,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 		final MenuItem mark = new MenuItem(menu, SWT.PUSH);
 		mark.setText(" Validate all");
-		mark.setImage(GamaIcons.create("build.all2").image());
+		mark.setImage(GamaIcons.create("build/build.all").image());
 		mark.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -149,7 +149,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 		final MenuItem usedIn = new MenuItem(menu, SWT.CASCADE);
 		usedIn.setText(" Other experiments...");
-		usedIn.setImage(GamaIcons.create("other.experiments").image());
+		usedIn.setImage(GamaIcons.create("editor/other.experiments").image());
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {
@@ -242,7 +242,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createUsedIn(final Menu menu) {
 		final MenuItem usedIn = new MenuItem(menu, SWT.CASCADE);
 		usedIn.setText(" Imported in...");
-		usedIn.setImage(GamaIcons.create("imported.in").image());
+		usedIn.setImage(GamaIcons.create("editor/imported.in").image());
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {
@@ -329,7 +329,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createValidate(final Menu menu) {
 		final MenuItem validate = new MenuItem(menu, SWT.PUSH);
 		validate.setText(" Validate");
-		validate.setImage(create("build.project2").image());
+		validate.setImage(create("build/build.project").image());
 		validate.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -350,7 +350,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createBoxToggle(final Menu menu) {
 		final MenuItem box = new MenuItem(menu, SWT.PUSH);
 		box.setText(" Toggle code sections colorization");
-		box.setImage(create("toggle.box").image());
+		box.setImage(create("editor/toggle.box").image());
 		box.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -371,7 +371,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		boolean selected = markPref.getValue();
 		mark.setText(selected ? " Do not mark symbols occurences" : " Mark occurences of symbols");
 		// mark.setSelection(markPref.getValue());
-		mark.setImage(create("toggle.mark").image());
+		mark.setImage(create("editor/toggle.mark").image());
 
 		mark.addSelectionListener(new SelectionAdapter() {
 
@@ -394,7 +394,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		boolean selected = getEditor().isOverviewRulerVisible();
 		overview.setText(selected ? " Hide markers overview" : " Show markers overview");
 		// overview.setSelection(selected);
-		overview.setImage(create("toggle.overview").image());
+		overview.setImage(create("editor/toggle.overview").image());
 		overview.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -419,7 +419,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		folding.setText(selected ? " Unfold code sections" : " Fold code sections");
 
 		folding.setSelection(selected);
-		folding.setImage(create("toggle.folding").image());
+		folding.setImage(create("editor/toggle.folding").image());
 		folding.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -439,7 +439,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		line.setText(selected ? " Hide line numbers" : " Display line numbers");
 
 		// line.setSelection(selected);
-		line.setImage(create("toggle.numbers").image());
+		line.setImage(create("editor/toggle.numbers").image());
 		line.addSelectionListener(new SelectionAdapter() {
 
 			@Override

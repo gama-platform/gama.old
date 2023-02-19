@@ -184,13 +184,13 @@
             </visibleWhen>
          </menu>
          <menu
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.general.png"
                id="menu.gama.import"
                label="Import..."
                mnemonic=" ">
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.project2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.project.png"
                   label="Project…"
                   style="push">
                <parameter
@@ -215,7 +215,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.disk2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.disk.png"
                   label="From disk..."
                   style="push">
                <parameter
@@ -225,7 +225,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.archive.png"
                   label="From archive..."
                   style="push">
                <parameter
@@ -239,7 +239,7 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.general.png"
                   label="Other..."
                   style="push">
             </command>
@@ -275,7 +275,7 @@
                label="Export...">
             <command
                   commandId="org.eclipse.ui.file.export"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.project2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.project.png"
                   label="Project…"
                   style="push">
                <parameter
@@ -309,7 +309,7 @@
          </separator>
          <command
                commandId="org.eclipse.ui.ide.showInSystemExplorer"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.searchfile2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/file.reveal.png"
                label="Reveal in OS"
                style="push">
             <visibleWhen
@@ -328,7 +328,7 @@
          </command>
          <command
                commandId="ummisco.gama.navigator.reveal"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.searchfile2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/file.reveal.png"
                label="Reveal in Workspace"
                style="push">
             <visibleWhen
@@ -721,8 +721,8 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.navigator.GamaNavigator"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.navigator2.png"
-            id="msi.gama.gui.view.GamaNavigator"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.navigator.png"
+            id="msi.gama.gui.view.GamaNavigator" 
             name="Models"
             restorable="true">
       </view>
@@ -853,21 +853,21 @@ type="java.lang.Object">
        <wizard
              category="msi.gama.gui.wizards.GAMA"
              class="ummisco.gama.ui.wizards.ImportProjectWizard"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.project2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.project.png"
              id="ummisco.gama.ui.import.ExternalProject"
              name="GAMA Project">
        </wizard>
        <wizard
              category="msi.gama.gui.wizards.GAMA"
              class="ummisco.gama.ui.wizards.FileImportWizard"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.disk2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.disk.png"
              id="ummisco.gama.ui.import.ExternalFile"
              name="External files from disk">
        </wizard>
        <wizard
              category="msi.gama.gui.wizards.GAMA"
              class="ummisco.gama.ui.wizards.ZipImportWizard"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.archive.png"
              id="ummisco.gama.ui.import.ZipFile"
              name="External files from archive">
        </wizard>
@@ -920,14 +920,14 @@ type="java.lang.Object">
        <wizard
              category="msi.gama.gui.wizards.GAMA"
              class="ummisco.gama.ui.wizards.ExportProjectWizard"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.archive.png"
              id="ummisco.gama.ui.export.ExternalProject"
              name="GAMA Project">
        </wizard>
        <wizard
              category="msi.gama.gui.wizards.GAMA"
              class="ummisco.gama.ui.wizards.ZipExportWizard"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.archive.png"
              id="ummisco.gama.ui.export.ZipFile"
              name="External files to archive">
        </wizard>

@@ -244,7 +244,7 @@ public class GamaNavigator extends CommonNavigator
 	}
 
 	/** The by date. */
-	final GamaCommand byDate = new GamaCommand("action.toolbar.sort2", "", "Sort by modification date", trigger -> {
+	final GamaCommand byDate = new GamaCommand("small.toolbar.sort", "", "Sort by modification date", trigger -> {
 		final boolean enabled = ((ToolItem) trigger.widget).getSelection();
 
 		try {
@@ -261,7 +261,7 @@ public class GamaNavigator extends CommonNavigator
 
 	/** The link command. */
 	final GamaCommand linkCommand =
-			new GamaCommand("navigator/navigator.link3", "", "Stay in sync with the editor", e -> link.run());
+			new GamaCommand("navigator/editor.link", "", "Stay in sync with the editor", e -> link.run());
 
 	/**
 	 * Method createToolItem()

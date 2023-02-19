@@ -127,18 +127,18 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 
-		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", e -> {
+		warningAction = tb.check("build/toggle.warnings", "", "Toggle display of warning markers", e -> {
 			final boolean b = ((ToolItem) e.widget).getSelection();
 			GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 
-		infoAction = tb.check("build.infos2", "", "Toggle display of information markers", e -> {
+		infoAction = tb.check("build/toggle.infos", "", "Toggle display of information markers", e -> {
 			final boolean b = ((ToolItem) e.widget).getSelection();
 			GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 		checkActions();
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("build.all2", "", "Clean and validate all projects", e -> { build(); }, SWT.RIGHT);
+		tb.button("build/build.all", "", "Clean and validate all projects", e -> { build(); }, SWT.RIGHT);
 		tb.button("test.run2", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
 
 	}

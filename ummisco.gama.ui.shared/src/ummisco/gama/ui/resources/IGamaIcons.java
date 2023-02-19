@@ -103,10 +103,10 @@ public interface IGamaIcons {
 	// Actions
 
 	/** The action revert. */
-	String ACTION_REVERT = "action.revert2";
+	String ACTION_REVERT = "action.revert";
 
 	/** The action clear. */
-	String ACTION_CLEAR = "action.clear2";
+	String ACTION_CLEAR = "console.clear";
 
 	// User Panels
 
@@ -130,25 +130,25 @@ public interface IGamaIcons {
 	// Navigator
 
 	/** The folder builtin. */
-	String FOLDER_BUILTIN = "navigator/folder.library2";
+	String FOLDER_BUILTIN = "navigator/folder.library";
 
 	/** The folder plugin. */
-	String FOLDER_PLUGIN = "navigator/folder.plugin2";
+	String FOLDER_PLUGIN = "navigator/folder.plugin";
 
 	/** The folder test. */
-	String FOLDER_TEST = "navigator/folder.test2";
+	String FOLDER_TEST = "navigator/folder.test";
 
 	/** The folder project. */
-	String FOLDER_PROJECT = "navigator/folder.user2";
+	String FOLDER_PROJECT = "navigator/folder.project";
 
 	/** The folder model. */
-	String FOLDER_MODEL = "navigator/folder.model3";
+	String FOLDER_MODEL = "navigator/folder.model";
 
 	/** The folder resources. */
-	String FOLDER_RESOURCES = "navigator/folder.resources2";
+	String FOLDER_RESOURCES = "navigator/folder.resources";
 
 	/** The file icon. */
-	String FILE_ICON = "navigator/file.icon2";
+	String FILE_ICON = "navigator/file.model";
 
 	/** The folder user. */
 	String FOLDER_USER = "navigator/folder.user";

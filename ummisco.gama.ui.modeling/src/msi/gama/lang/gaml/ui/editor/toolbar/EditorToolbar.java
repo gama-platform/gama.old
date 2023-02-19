@@ -3,7 +3,7 @@
  * EditorToolbar.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -96,10 +96,10 @@ public class EditorToolbar {
 	 */
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
 
-		previous = toolbar.button("editor.lastedit2", null, "Previous edit location", globalPrevious);
-		next = toolbar.button("editor.nextedit2", null, "Next edit location", globalNext);
+		previous = toolbar.button("editor/command.lastedit", null, "Previous edit location", globalPrevious);
+		next = toolbar.button("editor/command.nextedit", null, "Next edit location", globalNext);
 		find = new EditorSearchControls(editor).fill(toolbar);
-		toolbar.menu("editor.outline2", null, "Show outline", new SelectionAdapter() {
+		toolbar.menu("editor/command.outline", null, "Show outline", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {

@@ -117,7 +117,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 		// Issue #2816
-		this.setTitleImage(GamaIcons.create("view.interactive2").image());
+		this.setTitleImage(GamaIcons.create("views/view.interactive").image());
 	}
 
 	@Override

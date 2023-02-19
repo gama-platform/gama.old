@@ -433,7 +433,7 @@
           allowMultiple="false"
           category="msi.gama.gui.category.gama"
           class="org.eclipse.ui.views.contentoutline.ContentOutline"
-          icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.outline2.png"
+          icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.outline.png"
           id="msi.gama.application.outline"
           name="Outline"
           restorable="true">
@@ -442,7 +442,7 @@
           allowMultiple="false"
           category="msi.gama.gui.category.gama"
           class="ummisco.gama.ui.views.SyntaxErrorsView"
-          icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.problems2.png"
+          icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.problems.png"
           id="msi.gama.application.problems"
           name="Validation"
           restorable="true">

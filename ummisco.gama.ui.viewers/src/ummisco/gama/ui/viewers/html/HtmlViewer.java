@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * HtmlViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * HtmlViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.viewers.html;
 
@@ -44,7 +44,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 
 	/** The browser. */
 	Browser browser;
-	
+
 	/** The home. */
 	ToolItem back, forward, home;
 
@@ -70,7 +70,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 	 * Open input.
 	 */
 	private void openInput() {
-		if (browser == null) { return; }
+		if (browser == null) return;
 		if (getEditorInput() instanceof FileEditorInput) {
 			final FileEditorInput input = (FileEditorInput) getEditorInput();
 			try {
@@ -83,21 +83,17 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 			try {
 				this.setUrl(input.getURI().toURL().toString());
 			} catch (final MalformedURLException e) {
-				
+
 				e.printStackTrace();
 			}
 		}
 	}
 
 	@Override
-	public boolean isDirty() {
-		return false;
-	}
+	public boolean isDirty() { return false; }
 
 	@Override
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
+	public boolean isSaveAsAllowed() { return false; }
 
 	@Override
 	public void createPartControl(final Composite parent) {
@@ -142,9 +138,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 	 *
 	 * @return the sizable font control
 	 */
-	public Control getSizableFontControl() {
-		return browser;
-	}
+	public Control getSizableFontControl() { return browser; }
 
 	/**
 	 * Method createToolItem()
@@ -168,8 +162,8 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 			checkButtons();
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("browser/refresh", "Refresh", "Refresh current page", e -> browser.refresh(), SWT.RIGHT);
-		tb.button("browser/stop", "Stop", "Stop loading page", e -> browser.stop(), SWT.RIGHT);
+		tb.button("menu.reload4", "Refresh", "Refresh current page", e -> browser.refresh(), SWT.RIGHT);
+		tb.button("toolbar.stop2", "Stop", "Stop loading page", e -> browser.stop(), SWT.RIGHT);
 
 	}
 

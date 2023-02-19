@@ -37,25 +37,25 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.console.ConsoleView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.console2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.console.png"
             id="msi.gama.application.view.ConsoleView"
             name="Console"
             restorable="false">
       </view>
       <view
             allowMultiple="true"
-            category="msi.gama.gui.category.gama"
+            category="msi.gama.gui.category.gama" 
             class="ummisco.gama.ui.views.inspectors.PopulationInspectView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.browser2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.browser.png"
             id="msi.gama.application.view.TableAgentInspectView"
-            name="Browser"
+            name="Browser" 
             restorable="false">
       </view>
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.AgentInspectView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.inspector2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.inspector.png"
             id="msi.gama.application.view.AgentInspectView"
             name="Inspector"
             restorable="false">
@@ -64,7 +64,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.MonitorView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.monitors2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.monitors.png"
             id="msi.gama.application.view.MonitorView"
             name="Monitors"
             restorable="false">
@@ -73,7 +73,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.ExperimentParametersView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.parameters2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.parameters.png"
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
             restorable="false">
@@ -82,7 +82,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.ErrorView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.errors2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.errors.png"
             id="msi.gama.application.view.ErrorView"
             name="Errors"
             restorable="false">
@@ -91,10 +91,10 @@
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.user.UserControlView"
             fastViewWidthRatio="0.2"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.panel2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.panel.png"
             id="msi.gama.views.userControlView"
             name="User Control"
-            restorable="false">
+            restorable="false"> 
       </view>
    </extension>
    <extension
@@ -242,7 +242,7 @@
                label="Views">
             <command
                   commandId="msi.gama.application.command.interactive"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.interactive.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.interactive2.png"
                   label="Interactive Console"
                   style="push">
             </command>
@@ -471,7 +471,7 @@
             </command>
             <command
                   commandId="ummisco.gama.ui.experiment.dummy"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/windows_spacer.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/spacer.png"
                   style="push"
                   tooltip="  ">
             </command>
@@ -481,9 +481,9 @@
             </control>
             <command
                   commandId="ummisco.gama.ui.experiment.dummy"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/windows_spacer.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/spacer.png"
                   style="push"
-                  tooltip="  ">
+                  tooltip="  "> 
             </command>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"

@@ -3,7 +3,7 @@
  * WrappedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -56,6 +56,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	/** The image. */
 	Image image;
 
+	/** The color. */
 	Color color;
 
 	/**
@@ -79,12 +80,12 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile f = getResource();
 		if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
 			if (isShapeFileSupport) {
-				image = GamaIcons.create("navigator/file.shapesupport2").image();
+				image = GamaIcons.create("navigator/file.shapesupport").image();
 			} else {
 				image = DEFAULT_LABEL_PROVIDER.getImage(f);
 			}
 		} else {
-			image = GamaIcons.create("navigator/file.text2").image();
+			image = GamaIcons.create("navigator/file.text").image();
 		}
 
 	}

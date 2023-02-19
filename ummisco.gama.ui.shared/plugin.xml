@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/folder.model3.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/folder.model.png"
             id="msi.gama.application.nature.gamaNature.img"
             natureId="msi.gama.application.gamaNature">
       </image>
@@ -62,16 +62,16 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.InteractiveConsoleView"
-            icon="/icons/view.interactive2.png"
+            icon="/icons/views/view.interactive.png"
             id="msi.gama.application.view.InteractiveConsoleView"
             name="Interactive console"
             restorable="true">
       </view>
-            <view
+            <view 
                   allowMultiple="false"
                   category="msi.gama.gui.category.gama"
                   class="ummisco.gama.ui.views.TestView"
-                  icon="/icons/view.test2.png"
+                  icon="/icons/views/view.test.png"
                   id="msi.gama.application.view.TestView"
                   name="Tests"
                   restorable="false">
@@ -138,7 +138,7 @@
       </image>
       <image
             commandId="org.eclipse.ui.file.refresh"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.refresh2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/file.refresh.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.export"
@@ -147,10 +147,6 @@
       <image
             commandId="org.eclipse.ui.file.import"
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.import2.png">
-      </image>
-      <image
-            commandId="org.eclipse.ui.navigate.collapseAll"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.collapse2.png">
       </image>
       <image
             commandId="org.eclipse.ui.window.preferences"

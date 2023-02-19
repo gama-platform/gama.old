@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ColorReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ColorReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
 
@@ -26,10 +26,10 @@ import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * The class EditToolbarColorMenu.
- * 
+ *
  * @author drogoul
  * @since 5 déc. 2014
- * 
+ *
  */
 public class ColorReferenceMenu extends GamlReferenceMenu {
 
@@ -54,9 +54,7 @@ public class ColorReferenceMenu extends GamlReferenceMenu {
 
 	@Override
 	protected void open(final Decorations parent, final SelectionEvent trigger) {
-		if (colorMenu == null) {
-			colorMenu = new GamaColorMenu(mainMenu);
-		}
+		if (colorMenu == null) { colorMenu = new GamaColorMenu(mainMenu); }
 		final ToolItem target = (ToolItem) trigger.widget;
 		final ToolBar toolBar = target.getParent();
 		colorMenu.open(toolBar, trigger, colorInserter, runnable);
@@ -82,16 +80,12 @@ public class ColorReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() {
-		return GamaIcons.create("reference.colors").image();
-	}
+	protected Image getImage() { return GamaIcons.create("editor/reference.colors").image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()
 	 */
 	@Override
-	protected String getTitle() {
-		return "Colors";
-	}
+	protected String getTitle() { return "Colors"; }
 
 }

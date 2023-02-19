@@ -3,7 +3,7 @@
  * GamaToolbarFactory.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -138,7 +138,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("action.toolbar.expand2").descriptor());
+			setImageDescriptor(GamaIcons.create("small.toolbar.expand").descriptor());
 		}
 
 	}
@@ -160,29 +160,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("action.toolbar.collapse2").descriptor());
-		}
-
-	}
-
-	/**
-	 * The Class ToggleSideControls.
-	 */
-	public static class ToggleSideControls extends Action {
-
-		/**
-		 * Instantiates a new toggle side controls.
-		 */
-		ToggleSideControls() {
-			super("Toggle Side Controls", IAction.AS_PUSH_BUTTON);
-			setIcon();
-		}
-
-		/**
-		 * Sets the icon.
-		 */
-		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("action.toolbar.toggle.side2").descriptor());
+			setImageDescriptor(GamaIcons.create("small.toolbar.collapse").descriptor());
 		}
 
 	}
@@ -197,20 +175,13 @@ public class GamaToolbarFactory {
 		 */
 		ToggleOverlay() {
 			super("Toggle Overlay", IAction.AS_PUSH_BUTTON);
-			setIcon();
-		}
-
-		/**
-		 * Sets the icon.
-		 */
-		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("action.toolbar.toggle.overlay2").descriptor());
+			setImageDescriptor(GamaIcons.create("small.toolbar.overlay.toggle").descriptor());
 		}
 
 	}
 
 	/** The toolbar height. */
-	public static int TOOLBAR_HEIGHT = 24; // CORE_ICONS_HEIGHT.getValue();
+	public static int TOOLBAR_HEIGHT = 24; // CORE_ICONS_HEIGHT.getValue();Ì
 
 	/** The toolbar sep. */
 	public static int TOOLBAR_SEP = 4;
@@ -337,8 +308,7 @@ public class GamaToolbarFactory {
 
 			@Override
 			protected void setIcon(final boolean show) {
-				setImageDescriptor(GamaIcons
-						.create(show ? "action.toolbar.toggle.small2" : "action.toolbar.toggle.small3").descriptor());
+				setImageDescriptor(GamaIcons.create(show ? "small.toolbar.show" : "small.toolbar.hide").descriptor());
 			}
 		};
 
@@ -350,30 +320,21 @@ public class GamaToolbarFactory {
 			final IToolBarManager tm = ((IViewSite) site).getActionBars().getToolBarManager();
 			tm.add(toggle);
 			if (view instanceof IToolbarDecoratedView.Expandable) {
-				final Action collapseAll = new CollapseAll() {
+				tm.add(new CollapseAll() {
 					@Override
 					public void run() {
 						((IToolbarDecoratedView.Expandable) view).collapseAll();
 					}
-				};
-				final Action expandAll = new ExpandAll() {
+				});
+				tm.add(new ExpandAll() {
 					@Override
 					public void run() {
 						((IToolbarDecoratedView.Expandable) view).expandAll();
 					}
-				};
-				tm.add(collapseAll);
-				tm.add(expandAll);
+				});
 			}
 
 			if (view instanceof IGamaView.Display) {
-				// final Action toggleSideControls = new ToggleSideControls() {
-				// @Override
-				// public void run() {
-				// ((IGamaView.Display) view).toggleSideControls();
-				// }
-				// };
-
 				final Action toggleOverlay = new ToggleOverlay() {
 					@Override
 					public void run() {
@@ -381,7 +342,6 @@ public class GamaToolbarFactory {
 					}
 				};
 				tm.add(toggleOverlay);
-				// tm.add(toggleSideControls);
 			}
 			tm.update(true);
 		}

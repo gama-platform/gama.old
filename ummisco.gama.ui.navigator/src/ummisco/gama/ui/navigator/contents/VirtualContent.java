@@ -3,7 +3,7 @@
  * VirtualContent.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -22,9 +22,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The Class VirtualContent.
@@ -69,7 +67,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 			put(IMarker.SEVERITY_INFO, GamaIcons.create(OVERLAY_OK).descriptor());
 			put(IMarker.SEVERITY_WARNING, GamaIcons.create("navigator/overlay.warning2").descriptor());
 			put(IMarker.SEVERITY_ERROR, GamaIcons.create("navigator/overlay.error2").descriptor());
-			put(LINK_OK, GamaIcons.create("navigator/overlay.ok").descriptor());
+			put(LINK_OK, GamaIcons.create("navigator/overlay.link.ok").descriptor());
 			put(LINK_BROKEN, GamaIcons.create("navigator/overlay.link.broken").descriptor());
 			put(WEBLINK_OK, GamaIcons.create("navigator/overlay.cloud").descriptor());
 			put(WEBLINK_BROKEN, GamaIcons.create("navigator/overlay.link.broken").descriptor());
@@ -184,6 +182,11 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	 */
 	public abstract Image getImage();
 
+	/**
+	 * Gets the color.
+	 *
+	 * @return the color
+	 */
 	public Color getColor() { return null; }
 
 	/**
@@ -241,27 +244,6 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	 * @return the status message
 	 */
 	public String getStatusMessage() { return getName(); }
-
-	/**
-	 * Gets the status tooltip.
-	 *
-	 * @return the status tooltip
-	 */
-	public String getStatusTooltip() { return null; }
-
-	/**
-	 * Gets the status color.
-	 *
-	 * @return the status color
-	 */
-	public GamaUIColor getStatusColor() { return IGamaColors.GRAY_LABEL; }
-
-	/**
-	 * Gets the status image.
-	 *
-	 * @return the status image
-	 */
-	public Image getStatusImage() { return getImage(); }
 
 	/**
 	 * Checks if is contained in.

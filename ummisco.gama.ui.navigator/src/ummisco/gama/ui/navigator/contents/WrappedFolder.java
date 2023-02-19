@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WrappedFolder.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * WrappedFolder.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -23,7 +23,7 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 
 	/** The image. */
 	Image image;
-	
+
 	/** The can be decorated. */
 	// Font font;
 	boolean canBeDecorated;
@@ -31,8 +31,10 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 	/**
 	 * Instantiates a new wrapped folder.
 	 *
-	 * @param root the root
-	 * @param wrapped the wrapped
+	 * @param root
+	 *            the root
+	 * @param wrapped
+	 *            the wrapped
 	 */
 	public WrappedFolder(final WrappedContainer<?> root, final IFolder wrapped) {
 		super(root, wrapped);
@@ -46,8 +48,8 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 		if (modelsCount == NOT_COMPUTED) {
 			super.countModels();
 			final var isExternal = "external".equals(getName());
-			image = GamaIcons.create(isExternal ? "navigator/file.svn2" : modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES
-					: IGamaIcons.FOLDER_MODEL).image();
+			image = GamaIcons.create(isExternal ? "navigator/file.cloud"
+					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
 			// font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
 			canBeDecorated = modelsCount > 0;
 		}

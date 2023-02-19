@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExportProjectWizard.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ExportProjectWizard.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.wizards;
 
@@ -28,10 +28,10 @@ public class ExportProjectWizard extends Wizard implements IExportWizard {
 
 	/** The Constant EXTERNAL_PROJECT_SECTION. */
 	private static final String EXTERNAL_PROJECT_SECTION = "ExternalProjectExportWizard";//$NON-NLS-1$
-	
+
 	/** The main page. */
 	private ExportProjectWizardPage mainPage;
-	
+
 	/** The current selection. */
 	private IStructuredSelection currentSelection = null;
 	// private String initialPath = null;
@@ -46,7 +46,8 @@ public class ExportProjectWizard extends Wizard implements IExportWizard {
 	/**
 	 * Instantiates a new export project wizard.
 	 *
-	 * @param initialPath the initial path
+	 * @param initialPath
+	 *            the initial path
 	 */
 	public ExportProjectWizard(final String initialPath) {
 		// this.initialPath = initialPath;
@@ -54,9 +55,7 @@ public class ExportProjectWizard extends Wizard implements IExportWizard {
 		final IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
 
 		IDialogSettings wizardSettings = workbenchSettings.getSection(EXTERNAL_PROJECT_SECTION);
-		if (wizardSettings == null) {
-			wizardSettings = workbenchSettings.addNewSection(EXTERNAL_PROJECT_SECTION);
-		}
+		if (wizardSettings == null) { wizardSettings = workbenchSettings.addNewSection(EXTERNAL_PROJECT_SECTION); }
 		setDialogSettings(wizardSettings);
 	}
 
@@ -79,11 +78,9 @@ public class ExportProjectWizard extends Wizard implements IExportWizard {
 
 	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-		setDefaultPageImageDescriptor(GamaIcons.create("navigator/navigator.import.project2").descriptor());
+		setDefaultPageImageDescriptor(GamaIcons.create("navigator/import.project").descriptor());
 		final Object[] all = selection.toArray();
-		for (int i = 0; i < all.length; i++) {
-			all[i] = ResourceManager.getResource(all[i]);
-		}
+		for (int i = 0; i < all.length; i++) { all[i] = ResourceManager.getResource(all[i]); }
 		this.currentSelection = new StructuredSelection(all);
 
 	}

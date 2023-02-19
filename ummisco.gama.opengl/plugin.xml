@@ -10,7 +10,7 @@
              allowMultiple="true"
              category="msi.gama.gui.category.gama"
              class="ummisco.gama.opengl.view.OpenGLDisplayView"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.display2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.display.png"
              id="msi.gama.application.view.OpenGLDisplayView"
              name="3D"
              restorable="false">

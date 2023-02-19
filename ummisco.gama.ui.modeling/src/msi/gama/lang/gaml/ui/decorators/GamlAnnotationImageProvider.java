@@ -3,16 +3,18 @@
  * GamlAnnotationImageProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
+import static msi.gama.application.workbench.ThemeHelper.isDark;
 import static org.eclipse.xtext.ui.editor.XtextEditor.ERROR_ANNOTATION_TYPE;
 import static org.eclipse.xtext.ui.editor.XtextEditor.INFO_ANNOTATION_TYPE;
 import static org.eclipse.xtext.ui.editor.XtextEditor.WARNING_ANNOTATION_TYPE;
+import static ummisco.gama.ui.resources.GamaIcons.create;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +28,7 @@ import org.eclipse.xtext.ui.editor.validation.XtextAnnotation;
 
 import com.google.inject.Inject;
 
-import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaIcon;
-import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * The Class GamlAnnotationImageProvider.
@@ -36,14 +36,29 @@ import ummisco.gama.ui.resources.GamaIcons;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvider {
 
+	/** The Constant DELETED. */
+	private static final GamaIcon DELETED = create("markers/marker.deleted");
+
+	/** The Constant ERROR. */
+	private static final GamaIcon ERROR = create(isDark() ? "markers/marker.error.dark" : "markers/marker.error");
+
+	/** The Constant WARNING. */
+	private static final GamaIcon WARNING = create("markers/marker.warning");
+
+	/** The Constant INFO. */
+	private static final GamaIcon INFO = create(isDark() ? "markers/marker.info.dark" : "markers/marker.info");
+
+	/** The Constant TASK. */
+	private static final GamaIcon TASK = create("markers/marker.task");
+
 	/** The Constant fixables. */
 	private static final Map<String, GamaIcon> fixables = new HashMap() {
 
 		{
-			put(ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.error2"));
-			put(WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.warning2"));
-			put(INFO_ANNOTATION_TYPE, GamaIcons.create("marker.info2"));
-			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
+			put(ERROR_ANNOTATION_TYPE, ERROR);
+			put(WARNING_ANNOTATION_TYPE, WARNING);
+			put(INFO_ANNOTATION_TYPE, INFO);
+			put("org.eclipse.ui.workbench.texteditor.task", TASK);
 		}
 	};
 
@@ -51,10 +66,10 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 	private static final Map<String, GamaIcon> nonFixables = new HashMap() {
 
 		{
-			put(ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.error2"));
-			put(WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.warning2"));
-			put(INFO_ANNOTATION_TYPE, GamaIcons.create("marker.info2"));
-			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.task2"));
+			put(ERROR_ANNOTATION_TYPE, ERROR);
+			put(WARNING_ANNOTATION_TYPE, WARNING);
+			put(INFO_ANNOTATION_TYPE, INFO);
+			put("org.eclipse.ui.workbench.texteditor.task", TASK);
 		}
 	};
 
@@ -62,10 +77,10 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 	private static final Map<String, GamaIcon> deleted = new HashMap() {
 
 		{
-			put(ERROR_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
-			put(WARNING_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
-			put(INFO_ANNOTATION_TYPE, GamaIcons.create("marker.deleted2"));
-			put("org.eclipse.ui.workbench.texteditor.task", GamaIcons.create("marker.deleted2"));
+			put(ERROR_ANNOTATION_TYPE, DELETED);
+			put(WARNING_ANNOTATION_TYPE, DELETED);
+			put(INFO_ANNOTATION_TYPE, DELETED);
+			put("org.eclipse.ui.workbench.texteditor.task", DELETED);
 		}
 	};
 
@@ -120,24 +135,13 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 	 * @return the image
 	 */
 	public GamaIcon getImage(final String type) {
-		switch (type) {
-			case ERROR_ANNOTATION_TYPE:
-				if (!ThemeHelper.isDark())
-					return GamaIcons.create("marker.error2");
-				else
-					return GamaIcons.create("marker.error2.dark");
-			case WARNING_ANNOTATION_TYPE:
-				return GamaIcons.create("marker.warning2");
-			case INFO_ANNOTATION_TYPE:
-				if (!ThemeHelper.isDark())
-					return GamaIcons.create("marker.info2");
-				else
-					return GamaIcons.create("marker.info2.dark");
-			case "org.eclipse.ui.workbench.texteditor.task":
-				return GamaIcons.create("marker.task2");
-			default:
-				return null;
-		}
+		return switch (type) {
+			case ERROR_ANNOTATION_TYPE -> ERROR;
+			case WARNING_ANNOTATION_TYPE -> WARNING;
+			case INFO_ANNOTATION_TYPE -> INFO;
+			case "org.eclipse.ui.workbench.texteditor.task" -> TASK;
+			default -> null;
+		};
 	}
 
 }
