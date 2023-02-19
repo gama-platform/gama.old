@@ -75,7 +75,7 @@ public class OutputsMenu extends ContributionItem {
 		GamaMenu.separate(main);
 		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(),
 				"Pause all");
-		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), create("menu.display.update").image(),
+		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), create(IGamaIcons.DISPLAY_UPDATE).image(),
 				"Update all");
 		menuItem(main, e -> GAMA.getExperiment().resumeAllOutputs(),
 				create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
@@ -129,7 +129,7 @@ public class OutputsMenu extends ContributionItem {
 			} else {
 				menuItem(sub, e -> output.setPaused(true), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause");
 			}
-			menuItem(sub, e -> output.update(), create("menu.display.update").image(), "Force update");
+			menuItem(sub, e -> output.update(), create(IGamaIcons.DISPLAY_UPDATE).image(), "Force update");
 			// if (output.isSynchronized()) {
 			// menuItem(sub, e -> output.setSynchronized(false), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
 			// "Desynchronize");
@@ -145,8 +145,8 @@ public class OutputsMenu extends ContributionItem {
 				GamaMenu.separate(sub);
 				menuItem(sub, e -> ldo.getView().takeSnapshot(), create(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT).image(),
 						"Take a snapshot");
-				menuItem(sub, e -> ldo.getView().toggleFullScreen(), create("display.fullscreen2").image(),
-						"Toggle fullscreen");
+				menuItem(sub, e -> ldo.getView().toggleFullScreen(),
+						create(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image(), "Toggle fullscreen");
 			}
 		} else {
 			menuItem(sub, e -> manager.open(scope, output), null, "Reopen");

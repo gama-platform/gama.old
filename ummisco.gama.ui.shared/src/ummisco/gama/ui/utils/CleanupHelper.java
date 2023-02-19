@@ -320,25 +320,25 @@ public class CleanupHelper {
 		/** The Constant MENU_IMAGES. */
 		public final static Map<String, String> MENU_IMAGES = new HashMap<>() {
 			{
-				put("print", "menu.print2");
-				put("save", "menu.save2");
-				put("saveAs", "menu.saveas2");
-				put("saveAll", "menu.saveall2");
-				put("revert", "menu.revert2");
+				put("print", "generic/menu.print");
+				put("save", "generic/menu.save");
+				put("saveAs", "generic/menu.saveas");
+				put("saveAll", "generic/menu.saveall");
+				put("revert", "generic/menu.revert");
 				put("refresh", "navigator/file.refresh");
 				put("new", "navigator/navigator.new2");
-				put("import", "menu.import2");
-				put("export", "menu.export2");
-				put("undo", "menu.undo2");
-				put("redo", "menu.redo2");
-				put("cut", "menu.cut2");
-				put("copy", "menu.copy2");
-				put("paste", "menu.paste2");
-				put("delete", "menu.delete2");
-				put("helpContents", "menu.help2");
-				put("org.eclipse.search.OpenSearchDialog", "menu.search2");
+				put("import", "navigator/menu.import");
+				put("export", "navigator/menu.export");
+				put("undo", "generic/menu.undo");
+				put("redo", "generic/menu.redo");
+				put("cut", "generic/menu.cut");
+				put("copy", "generic/menu.copy");
+				put("paste", "generic/menu.paste");
+				put("delete", "generic/menu.delete");
+				put("helpContents", "generic/menu.help");
+				put("org.eclipse.search.OpenSearchDialog", "generic/menu.search");
 				put("org.eclipse.ui.openLocalFile", "navigator/navigator.open2");
-				put("converstLineDelimitersTo", "menu.delimiter2");
+				put("converstLineDelimitersTo", "editor/menu.delimiter");
 			}
 		};
 

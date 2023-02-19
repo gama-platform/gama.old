@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ImageViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ImageViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.viewers.image;
 
@@ -93,28 +93,28 @@ public class ImageViewer extends EditorPart
 
 	/** The toolbar. */
 	GamaToolbar2 toolbar;
-	
+
 	/** The image. */
 	Image image;
-	
+
 	/** The image data. */
 	ImageData imageData;
-	
+
 	/** The scroll. */
 	ScrolledComposite scroll;
-	
+
 	/** The intermediate. */
 	Composite intermediate;
-	
+
 	/** The image canvas. */
 	Canvas imageCanvas;
-	
+
 	/** The zoom factor. */
 	double zoomFactor = 1.0d;
-	
+
 	/** The max zoom factor. */
 	double maxZoomFactor = 1.0d;
-	
+
 	/** The input listener. */
 	ImageResourceChangeListener inputListener = null;
 
@@ -135,8 +135,10 @@ public class ImageViewer extends EditorPart
 	/**
 	 * Sets the input.
 	 *
-	 * @param input the input
-	 * @param notify the notify
+	 * @param input
+	 *            the input
+	 * @param notify
+	 *            the notify
 	 */
 	void setInput(final IEditorInput input, final boolean notify) {
 		final IEditorInput old = getEditorInput();
@@ -178,9 +180,8 @@ public class ImageViewer extends EditorPart
 	 * Get the IFile corresponding to the specified editor input, or null for none.
 	 */
 	IFile getFileFor(final IEditorInput input) {
-		if (input instanceof IFileEditorInput)
-			return ((IFileEditorInput) input).getFile();
-		else if (input instanceof IStorageEditorInput) {
+		if (input instanceof IFileEditorInput) return ((IFileEditorInput) input).getFile();
+		if (input instanceof IStorageEditorInput) {
 			try {
 				final IStorage storage = ((IStorageEditorInput) input).getStorage();
 				if (storage instanceof IFile) return (IFile) storage;
@@ -297,7 +298,8 @@ public class ImageViewer extends EditorPart
 	/**
 	 * Resize canvas.
 	 *
-	 * @param p the p
+	 * @param p
+	 *            the p
 	 */
 	void resizeCanvas(final Point p) {
 		final Rectangle scrollSize = scroll.getClientArea();
@@ -433,9 +435,7 @@ public class ImageViewer extends EditorPart
 	}
 
 	@Override
-	public boolean isDirty() {
-		return false;
-	}
+	public boolean isDirty() { return false; }
 
 	@Override
 	public void doSave(final IProgressMonitor monitor) {}
@@ -492,10 +492,9 @@ public class ImageViewer extends EditorPart
 			protected void execute(final IProgressMonitor monitor)
 					throws CoreException, InvocationTargetException, InterruptedException {
 				try {
-					if (dest.exists()) {
-						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK())
-							return;
-					}
+					if (dest.exists()
+							&& !dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK())
+						return;
 					saveTo(imageData, dest, imageType, monitor);
 				} catch (final IOException ex) {
 					throw new InvocationTargetException(ex);
@@ -529,13 +528,20 @@ public class ImageViewer extends EditorPart
 	/**
 	 * Save to.
 	 *
-	 * @param imageData the image data
-	 * @param dest the dest
-	 * @param imageType the image type
-	 * @param monitor the monitor
-	 * @throws CoreException the core exception
-	 * @throws InterruptedException the interrupted exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @param imageData
+	 *            the image data
+	 * @param dest
+	 *            the dest
+	 * @param imageType
+	 *            the image type
+	 * @param monitor
+	 *            the monitor
+	 * @throws CoreException
+	 *             the core exception
+	 * @throws InterruptedException
+	 *             the interrupted exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	void saveTo(final ImageData imageData, final IFile dest, final int imageType, final IProgressMonitor monitor)
 			throws CoreException, InterruptedException, IOException {
@@ -612,18 +618,14 @@ public class ImageViewer extends EditorPart
 	}
 
 	@Override
-	public boolean isSaveAsAllowed() {
-		return true;
-	}
+	public boolean isSaveAsAllowed() { return true; }
 
 	/**
 	 * Gets the image data.
 	 *
 	 * @return the image data
 	 */
-	public ImageData getImageData() {
-		return imageData;
-	}
+	public ImageData getImageData() { return imageData; }
 
 	/**
 	 * Get the current image information.
@@ -650,9 +652,7 @@ public class ImageViewer extends EditorPart
 	/**
 	 * Get the current zoom factor.
 	 */
-	public double getZoomFactor() {
-		return this.zoomFactor;
-	}
+	public double getZoomFactor() { return this.zoomFactor; }
 
 	/**
 	 * Update the zoom factor. This can safely called from any thread. It will trigger an image redraw is needed. If the
@@ -694,9 +694,7 @@ public class ImageViewer extends EditorPart
 	}
 
 	@Override
-	public Control[] getZoomableControls() {
-		return new Control[] { intermediate, imageCanvas };
-	}
+	public Control[] getZoomableControls() { return new Control[] { intermediate, imageCanvas }; }
 
 	/**
 	 * This handles changes to a file-based editor input.
@@ -709,7 +707,8 @@ public class ImageViewer extends EditorPart
 		/**
 		 * Instantiates a new image resource change listener.
 		 *
-		 * @param imageFile the image file
+		 * @param imageFile
+		 *            the image file
 		 */
 		public ImageResourceChangeListener(final IResource imageFile) {
 			this.imageFile = imageFile;
@@ -759,7 +758,7 @@ public class ImageViewer extends EditorPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.saveas2", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
+		tb.button("generic/menu.saveas", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
 
 	}
 
@@ -769,9 +768,7 @@ public class ImageViewer extends EditorPart
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#getColorLabels()
 	 */
 	@Override
-	public String[] getColorLabels() {
-		return new String[] { "Set background color..." };
-	}
+	public String[] getColorLabels() { return new String[] { "Set background color..." }; }
 
 	/**
 	 * Method getColor()

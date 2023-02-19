@@ -60,7 +60,7 @@ public class RefactorActionProvider extends CommonActionProvider {
 		historyAction = new ShowLocalHistory(sp);
 		historyAction.setImageDescriptor(GamaIcons.create("navigator/local.history").descriptor());
 		compareAction = new CompareWithEachOtherAction(sp);
-		compareAction.setImageDescriptor(GamaIcons.create("layout.horizontal").descriptor());
+		compareAction.setImageDescriptor(GamaIcons.create("layout/layout.horizontal").descriptor());
 	}
 
 	@Override

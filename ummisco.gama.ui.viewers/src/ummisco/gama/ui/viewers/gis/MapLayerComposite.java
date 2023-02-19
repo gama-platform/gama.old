@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MapLayerComposite.java, in ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * MapLayerComposite.java, in ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package ummisco.gama.ui.viewers.gis;
@@ -26,7 +26,6 @@ import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Displays a list of the map layers in an associated and provides controls to set the visibility, selection and style
@@ -47,7 +46,7 @@ public class MapLayerComposite extends Composite {
 
 	/** The pane. */
 	protected SwtMapPane pane;
-	
+
 	/** The map layer table viewer. */
 	protected MaplayerTableViewer mapLayerTableViewer;
 
@@ -74,9 +73,7 @@ public class MapLayerComposite extends Composite {
 
 		final MapContent mapContent = pane.getMapContent();
 		final List<Layer> layers = mapContent.layers();
-		for (final Layer mapLayer : layers) {
-			mapLayerTableViewer.addLayer(mapLayer);
-		}
+		for (final Layer mapLayer : layers) { mapLayerTableViewer.addLayer(mapLayer); }
 	}
 
 	/**
@@ -134,7 +131,7 @@ public class MapLayerComposite extends Composite {
 		final Button showLayersButton = new Button(buttonComposite, SWT.PUSH);
 		showLayersButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		showLayersButton.setToolTipText("Show all layers");
-		showLayersButton.setImage(GamaIcons.create(IGamaIcons.CHECKED).image());
+		showLayersButton.setImage(GamaIcons.create("small.inspect").image());
 		showLayersButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -146,7 +143,7 @@ public class MapLayerComposite extends Composite {
 		final Button hideLayersButton = new Button(buttonComposite, SWT.PUSH);
 		hideLayersButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		hideLayersButton.setToolTipText("Hide all layers");
-		hideLayersButton.setImage(GamaIcons.create(IGamaIcons.UNCHECKED).image());
+		hideLayersButton.setImage(GamaIcons.create("small.hidden").image());
 		hideLayersButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -158,7 +155,7 @@ public class MapLayerComposite extends Composite {
 		final Button layerUpButton = new Button(buttonComposite, SWT.PUSH);
 		layerUpButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		layerUpButton.setToolTipText("Layer up");
-		layerUpButton.setImage(GamaIcons.create(IGamaIcons.UP).image());
+		layerUpButton.setImage(GamaIcons.create("small.collapse2").image());
 		layerUpButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -170,7 +167,7 @@ public class MapLayerComposite extends Composite {
 		final Button layerDownButton = new Button(buttonComposite, SWT.PUSH);
 		layerDownButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		layerDownButton.setToolTipText("Layer down");
-		layerDownButton.setImage(GamaIcons.create(IGamaIcons.DOWN).image());
+		layerDownButton.setImage(GamaIcons.create("small.expand2").image());
 		layerDownButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -189,7 +186,7 @@ public class MapLayerComposite extends Composite {
 	 */
 	void moveLayer(final int delta) {
 		final Layer selectedMapLayer = mapLayerTableViewer.getSelectedMapLayer();
-		if (selectedMapLayer == null) { return; }
+		if (selectedMapLayer == null) return;
 		final List<Layer> layersList = mapLayerTableViewer.getLayersList();
 		final MapContent mapContent = pane.getMapContent();
 
@@ -197,14 +194,14 @@ public class MapLayerComposite extends Composite {
 
 		final int viewerIndex = layersList.indexOf(selectedMapLayer);
 		final int newViewerIndex = viewerIndex + delta;
-		if (newViewerIndex < 0 || newViewerIndex > layersList.size() - 1) { return; }
+		if (newViewerIndex < 0 || newViewerIndex > layersList.size() - 1) return;
 
 		/*
 		 * MapLayerTable stores layers in the reverse order to DefaultMapContext (see comment in javadocs for this
 		 * class)
 		 */
 		final int newContextIndex = contextIndex - delta;
-		if (newContextIndex < 0 || newContextIndex > mapContent.layers().size() - 1) { return; }
+		if (newContextIndex < 0 || newContextIndex > mapContent.layers().size() - 1) return;
 
 		if (contextIndex != newContextIndex) {
 			mapContent.moveLayer(contextIndex, newContextIndex);
@@ -221,9 +218,7 @@ public class MapLayerComposite extends Composite {
 	void onShowAllLayers() {
 		if (pane != null && pane.getMapContent() != null) {
 			for (final Layer layer : pane.getMapContent().layers()) {
-				if (!layer.isVisible()) {
-					layer.setVisible(true);
-				}
+				if (!layer.isVisible()) { layer.setVisible(true); }
 			}
 			mapLayerTableViewer.refresh();
 			pane.redraw();
@@ -236,9 +231,7 @@ public class MapLayerComposite extends Composite {
 	void onHideAllLayers() {
 		if (pane != null && pane.getMapContent() != null) {
 			for (final Layer layer : pane.getMapContent().layers()) {
-				if (layer.isVisible()) {
-					layer.setVisible(false);
-				}
+				if (layer.isVisible()) { layer.setVisible(false); }
 			}
 			mapLayerTableViewer.refresh();
 			pane.redraw();
@@ -250,8 +243,6 @@ public class MapLayerComposite extends Composite {
 	 *
 	 * @return the map layer table viewer
 	 */
-	public MaplayerTableViewer getMapLayerTableViewer() {
-		return mapLayerTableViewer;
-	}
+	public MaplayerTableViewer getMapLayerTableViewer() { return mapLayerTableViewer; }
 
 }

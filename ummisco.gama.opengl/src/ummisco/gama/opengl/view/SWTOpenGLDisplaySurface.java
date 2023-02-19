@@ -600,7 +600,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final Map<String, Runnable> actions = new LinkedHashMap<>();
 		final Map<String, Image> images = new HashMap<>();
 		images.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
-				GamaIcons.create(IGamaIcons.MENU_FOLLOW).image());
+				GamaIcons.create("menu.inspect2").image());
 		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
 		actions.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
 				() -> renderer.getCameraHelper().toogleROI());

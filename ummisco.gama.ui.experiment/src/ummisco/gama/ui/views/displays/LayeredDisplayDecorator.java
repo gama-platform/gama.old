@@ -121,29 +121,30 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	private void createCommands() {
 		toggleOverlay =
-				new GamaCommand("display.overlay2", "Toggle overlay " + format(COMMAND, 'O'), e -> toggleOverlay());
+				new GamaCommand("toggle.overlay", "Toggle overlay " + format(COMMAND, 'O'), e -> toggleOverlay());
 		takeSnapshot = new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", e -> view.takeSnapshot());
-		antiAlias = new GamaCommand("display.antialias", "Turn antialias on/off",
+		antiAlias = new GamaCommand("display/toggle.antialias", "Turn antialias on/off",
 				e -> view.getOutput().getData().setAntialias(!view.getOutput().getData().isAntialias()));
-		toggleFullScreen = new GamaCommand("display.fullscreen2", "Toggle fullscreen ESC", e -> toggleFullScreen());
-		runExperiment = new GamaCommand(IGamaIcons.MENU_RUN_ACTION,
+		toggleFullScreen =
+				new GamaCommand(IGamaIcons.DISPLAY_FULLSCREEN_ENTER, "Toggle fullscreen ESC", e -> toggleFullScreen());
+		runExperiment = new GamaCommand("action/experiment.run",
 				"Run or pause experiment " + GamaKeyBindings.PLAY_STRING, e -> {
 
 					final Item item = (Item) e.widget;
 					if (!GAMA.isPaused()) {
-						item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
+						item.setImage(GamaIcons.create("action/experiment.run").image());
 					} else {
 						item.setImage(GamaIcons.create(IGamaIcons.MENU_PAUSE_ACTION).image());
 					}
 					GAMA.startPauseFrontmostExperiment();
 
 				});
-		stepExperiment = new GamaCommand("menu.step4", "Step experiment " + GamaKeyBindings.STEP_STRING,
+		stepExperiment = new GamaCommand("action/experiment.step", "Step experiment " + GamaKeyBindings.STEP_STRING,
 				e -> GAMA.stepFrontmostExperiment());
-		closeExperiment = new GamaCommand("toolbar.stop2", "Closes experiment " + GamaKeyBindings.QUIT_STRING,
+		closeExperiment = new GamaCommand("action/experiment.stop", "Closes experiment " + GamaKeyBindings.QUIT_STRING,
 				e -> new Thread(() -> GAMA.closeAllExperiments(true, false)).start());
-		relaunchExperiment = new GamaCommand("menu.reload4", "Reload experiment" + GamaKeyBindings.RELOAD_STRING,
-				e -> GAMA.reloadFrontmostExperiment());
+		relaunchExperiment = new GamaCommand("action/experiment.reload",
+				"Reload experiment" + GamaKeyBindings.RELOAD_STRING, e -> GAMA.reloadFrontmostExperiment());
 	}
 
 	/** The overlay listener. */
@@ -220,7 +221,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
 			// DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
-			fs.setImage(GamaIcons.create("display.fullscreen2").image());
+			fs.setImage(GamaIcons.create(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image());
 			// Toolbar
 			if (!toolbar.isDisposed()) {
 				toolbar.wipe(SWT.LEFT, true);
@@ -235,7 +236,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			ViewsHelper.activate(view);
 			fullScreenShell = createFullScreenShell();
 			if (fullScreenShell == null) return;
-			fs.setImage(GamaIcons.create("display.fullscreen3").image());
+			fs.setImage(GamaIcons.create(IGamaIcons.DISPLAY_FULLSCREEN_EXIT).image());
 			normalParentOfFullScreenControl = view.getCentralPanel().getParent();
 			view.getCentralPanel().setParent(fullScreenShell);
 			fullScreenShell.layout(true, true);
@@ -284,7 +285,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
 		final ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
 		if (GAMA.isPaused()) {
-			item.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
+			item.setImage(GamaIcons.create("action/experiment.run").image());
 		} else {
 			item.setImage(GamaIcons.create(IGamaIcons.MENU_PAUSE_ACTION).image());
 		}
@@ -477,12 +478,14 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	private Function<Menu, Menu> presentationMenu() {
 
 		return parentMenu -> {
-			Menu sub = GamaMenu.sub(parentMenu, "Presentation", "", GamaIcons.create("display.sidebar2").image());
+			Menu sub =
+					GamaMenu.sub(parentMenu, "Presentation", "", GamaIcons.create("display/menu.presentation").image());
 
 			toggleOverlay.toItem(sub);
 			GamaMenu.action(sub, "Toggle toolbar " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
 					t -> toggleToolbar(),
-					GamaIcons.create(this.isFullScreen() ? "display.fullscreen.toolbar2" : "display.toolbar2").image());
+					GamaIcons.create(this.isFullScreen() ? "display/toolbar.fullscreen" : "display/toolbar.regular")
+							.image());
 			GamaColorMenu.addColorSubmenuTo(sub, "Background", c -> {
 				view.getDisplaySurface().getData().setBackgroundColor(c);
 				view.getDisplaySurface().updateDisplay(true);
@@ -507,7 +510,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		tb.setSelection(item, view.getOutput().getData().isAntialias());
 		fs = tb.button(toggleFullScreen, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.menu("display.layers", "Browse displayed agents by layers", "Properties and contents of layers",
+		tb.menu("layer/layers.menu", "Browse displayed agents by layers", "Properties and contents of layers",
 				trigger -> menuManager.buildToolbarMenu(trigger, (ToolItem) trigger.widget), SWT.RIGHT);
 
 	}

@@ -22,28 +22,37 @@ public interface IGamaIcons {
 	// Display toolbar
 
 	/** The display toolbar pause. */
-	String DISPLAY_TOOLBAR_PAUSE = "display.pause3";
+	String DISPLAY_TOOLBAR_PAUSE = "display/action.pause";
+
+	/** The display update. */
+	String DISPLAY_UPDATE = "display/action.update";
 
 	/** The display toolbar sync. */
-	String DISPLAY_TOOLBAR_SYNC = "display.sync3";
+	String DISPLAY_TOOLBAR_SYNC = "action/experiment.sync";
 
 	/** The display toolbar snapshot. */
-	String DISPLAY_TOOLBAR_SNAPSHOT = "display.snapshot2";
+	String DISPLAY_TOOLBAR_SNAPSHOT = "display/action.snapshot";
+
+	/** The display fullscreen enter. */
+	String DISPLAY_FULLSCREEN_ENTER = "display/fullscreen.enter";
+
+	/** The display fullscreen exit. */
+	String DISPLAY_FULLSCREEN_EXIT = "display/fullscreen.exit";
 
 	/** The display toolbar zoomin. */
-	String DISPLAY_TOOLBAR_ZOOMIN = "display.zoomin2";
+	String DISPLAY_TOOLBAR_ZOOMIN = "zoom.in";
 
 	/** The display toolbar csvexport. */
-	String DISPLAY_TOOLBAR_CSVEXPORT = "menu.saveas2";
+	String DISPLAY_TOOLBAR_CSVEXPORT = "generic/menu.saveas";
 
 	/** The display toolbar zoomout. */
-	String DISPLAY_TOOLBAR_ZOOMOUT = "display.zoomout2";
+	String DISPLAY_TOOLBAR_ZOOMOUT = "zoom.out";
 
 	/** The display toolbar zoomfit. */
-	String DISPLAY_TOOLBAR_ZOOMFIT = "display.zoomfit2";
+	String DISPLAY_TOOLBAR_ZOOMFIT = "zoom.fit";
 
 	/** The display toolbar camera. */
-	String DISPLAY_TOOLBAR_CAMERA = "display.camera2";
+	String DISPLAY_TOOLBAR_CAMERA = "display/camera.full";
 
 	// Menus
 
@@ -51,7 +60,7 @@ public interface IGamaIcons {
 	String MENU_BROWSE = "menu.browse2";
 
 	/** The menu population. */
-	String MENU_POPULATION = "display.agents2";
+	String MENU_POPULATION = "menus/agents.submenu";
 
 	/** The menu agent. */
 	String MENU_AGENT = "menu.agent2";
@@ -68,42 +77,39 @@ public interface IGamaIcons {
 	/** The menu focus. */
 	String MENU_FOCUS = "menu.focus2";
 
-	/** The menu follow. */
-	String MENU_FOLLOW = "menu.follow2";
-
 	/** The menu add monitor. */
-	String MENU_ADD_MONITOR = "menu.monitor2";
+	String MENU_ADD_MONITOR = "views/open.monitor";
 
 	/** The menu run action. */
 	String MENU_RUN_ACTION = "menu.action2";
 
 	/** The menu pause action. */
-	String MENU_PAUSE_ACTION = "menu.pause4";
+	String MENU_PAUSE_ACTION = "action/experiment.pause";
 
 	// Layers
 
 	/** The layer grid. */
-	String LAYER_GRID = "layer.grid2";
+	String LAYER_GRID = "layer/layer.grid";
 
 	/** The layer species. */
-	String LAYER_SPECIES = "layer.species2";
+	String LAYER_SPECIES = "layer/layer.species";
 
 	/** The layer agents. */
-	String LAYER_AGENTS = "layer.agents2";
+	String LAYER_AGENTS = "layer/layer.agents";
 
 	/** The layer graphics. */
-	String LAYER_GRAPHICS = "layer.graphics2";
+	String LAYER_GRAPHICS = "layer/layer.graphics";
 
 	/** The layer image. */
-	String LAYER_IMAGE = "layer.image2";
+	String LAYER_IMAGE = "layer/layer.image";
 
 	/** The layer chart. */
-	String LAYER_CHART = "layer.chart2";
+	String LAYER_CHART = "layer/layer.chart";
 
 	// Actions
 
 	/** The action revert. */
-	String ACTION_REVERT = "action.revert";
+	String ACTION_REVERT = "generic/menu.undo";
 
 	/** The action clear. */
 	String ACTION_CLEAR = "console.clear";
@@ -111,7 +117,7 @@ public interface IGamaIcons {
 	// User Panels
 
 	/** The panel continue. */
-	String PANEL_CONTINUE = "panel.continue2";
+	String PANEL_CONTINUE = "action/experiment.continue";
 
 	/** The panel inspect. */
 	String PANEL_INSPECT = MENU_INSPECT;
@@ -200,25 +206,5 @@ public interface IGamaIcons {
 
 	/** The overlay ok. */
 	String OVERLAY_OK = "navigator/overlay.ok2";
-
-	// Viewers
-
-	/** The checked. */
-	String CHECKED = "viewers/checked";
-
-	/** The unchecked. */
-	String UNCHECKED = "viewers/unchecked";
-
-	/** The style. */
-	String STYLE = "viewers/style";
-
-	/** The feature. */
-	String FEATURE = "viewers/feature";
-
-	/** The up. */
-	String UP = "viewers/up";
-
-	/** The down. */
-	String DOWN = "viewers/down";
 
 }

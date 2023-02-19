@@ -741,7 +741,7 @@
              visible="true">
           <action
                 class="msi.gama.lang.gaml.ui.editor.DelegateForAllElements"
-                icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.searchtext2.png"
+                icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.searchtext.png"
                 id="msi.gama.application.action1"
                 label="GAML elements in models..."
                 menubarPath="org.eclipse.search.menu/extraSearchGroup"
@@ -750,7 +750,7 @@
           </action>
        </actionSet>
     </extension>
-    <extension
+    <extension 
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
              targetID="msi.gama.application.perspectives.ModelingPerspective">
@@ -814,10 +814,10 @@
        <perspective
              class="ummisco.gama.ui.perspective.ModelingPerspective"
              fixed="false"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.modeling.png"
              id="msi.gama.application.perspectives.ModelingPerspective"
              name="Modeling">
-          <description>
+          <description> 
              The perspective used to edit GAMA models
           </description>
        </perspective>

@@ -356,10 +356,11 @@ public class DisplaySurfaceMenu {
 				}, GamaIcons.create("menu.inspect2").image());
 				if (!pop.isEmpty()) {
 					GamaMenu.action(submenu, select ? "Forbid selection" : "Allow selection",
-							t -> layer.getData().setSelectable(!select), GamaIcons.create("menu.follow2").image());
+							t -> layer.getData().setSelectable(!select),
+							GamaIcons.create("layer/layer.selection").image());
 				}
 				Menu transparency =
-						GamaMenu.sub(submenu, "Transparency", "", GamaIcons.create("layer.transparency").image());
+						GamaMenu.sub(submenu, "Transparency", "", GamaIcons.create("layer/layer.transparency").image());
 				transparency.setEnabled(layer.getData().isDynamic());
 				Double td = layer.getData().getTransparency(GAMA.getRuntimeScope());
 				int ti = (int) (td == null ? 0 : Math.round(td * 10) * 10);
@@ -390,7 +391,7 @@ public class DisplaySurfaceMenu {
 								((ChartLayerStatement) definition).getChart(), p);
 						editor.open();
 						surface.updateDisplay(true);
-					}, GamaIcons.create("chart.parameters").image());
+					}, GamaIcons.create("layer/chart.parameters").image());
 					if (chart.keepsHistory()) {
 						GamaMenu.action(submenu, "Save history...", t -> chart.saveHistory(),
 								GamaIcons.create("menu.browse2").image());
@@ -407,7 +408,8 @@ public class DisplaySurfaceMenu {
 					final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 							"Focus on this display");
 					final MenuAction[] actions2 = { focus };
-					Menu agentsMenu = GamaMenu.sub(submenu, "Agents", "", GamaIcons.create("display.agents2").image());
+					Menu agentsMenu =
+							GamaMenu.sub(submenu, "Agents", "", GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
 					AgentsMenu.fillPopulationSubMenu(agentsMenu, pop, actions2);
 				}
 			}

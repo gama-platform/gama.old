@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * EditActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * EditActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
@@ -34,19 +34,19 @@ public class EditActionProvider extends CommonActionProvider {
 
 	/** The clipboard. */
 	private Clipboard clipboard;
-	
+
 	/** The copy action. */
 	private CopyAction copyAction;
-	
+
 	/** The delete action. */
 	private DeleteResourceAction deleteAction;
-	
+
 	/** The paste action. */
 	private PasteAction pasteAction;
-	
+
 	/** The text action handler. */
 	private TextActionHandler textActionHandler;
-	
+
 	/** The shell. */
 	private Shell shell;
 
@@ -68,17 +68,17 @@ public class EditActionProvider extends CommonActionProvider {
 		clipboard = new Clipboard(shell.getDisplay());
 
 		pasteAction = new PasteAction(shell, clipboard);
-		pasteAction.setImageDescriptor(GamaIcons.create("menu.paste2").descriptor());
+		pasteAction.setImageDescriptor(GamaIcons.create("generic/menu.paste").descriptor());
 		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
-		copyAction.setImageDescriptor(GamaIcons.create("menu.copy2").descriptor());
+		copyAction.setImageDescriptor(GamaIcons.create("generic/menu.copy").descriptor());
 		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 
 		final IShellProvider sp = () -> shell;
 
 		deleteAction = new DeleteResourceAction(sp);
-		deleteAction.setImageDescriptor(GamaIcons.create("menu.delete2").descriptor());
+		deleteAction.setImageDescriptor(GamaIcons.create("generic/menu.delete").descriptor());
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 
 	}
@@ -100,9 +100,7 @@ public class EditActionProvider extends CommonActionProvider {
 	 */
 	public void handleKeyPressed(final KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
-			if (deleteAction.isEnabled()) {
-				deleteAction.run();
-			}
+			if (deleteAction.isEnabled()) { deleteAction.run(); }
 
 			// Swallow the event.
 			event.doit = false;

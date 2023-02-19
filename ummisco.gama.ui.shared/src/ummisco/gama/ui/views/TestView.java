@@ -3,7 +3,7 @@
  * TestView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -220,7 +220,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		super.createToolItems(tb);
 		TESTS_SORTED.removeChangeListeners();
 		FAILED_TESTS.removeChangeListeners();
-		final ToolItem t = tb.check(GamaIcons.create("test.sort2").getCode(), "Sort by severity",
+		final ToolItem t = tb.check(GamaIcons.create("action/test.sort").getCode(), "Sort by severity",
 				"When checked, sort the tests by their decreasing state severity (i.e. errored > failed > warning > passed > not run). Otherwise they are sorted by their order of execution.",
 				e -> {
 					TESTS_SORTED.set(!TESTS_SORTED.getValue());
@@ -230,7 +230,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		t.setSelection(TESTS_SORTED.getValue());
 		TESTS_SORTED.onChange(v -> t.setSelection(v));
 
-		final ToolItem t2 = tb.check(GamaIcons.create("test.filter2").getCode(), "Filter tests",
+		final ToolItem t2 = tb.check(GamaIcons.create("action/test.filter").getCode(), "Filter tests",
 				"When checked, show only errored and failed tests and assertions", e -> {
 					FAILED_TESTS.set(!FAILED_TESTS.getValue());
 					TestView.super.reset();

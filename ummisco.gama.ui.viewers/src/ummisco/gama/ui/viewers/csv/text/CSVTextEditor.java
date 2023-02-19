@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CSVTextEditor.java, in ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * CSVTextEditor.java, in ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.viewers.csv.text;
 
@@ -21,7 +21,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 /**
  * {@link CSVTextEditor} extends basic {@link TextEditor} adding syntax highlighting for the separated elements
- * 
+ *
  * @author J. Andres Pizarro Gascon
  */
 public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.Sizable {
@@ -29,14 +29,15 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.S
 	/** The ancestor. */
 	// GamaToolbar2 toolbar;
 	Composite ancestor;
-	
+
 	/** The parent. */
 	Composite parent;
 
 	/**
 	 * Instantiates a new CSV text editor.
 	 *
-	 * @param delimiter the delimiter
+	 * @param delimiter
+	 *            the delimiter
 	 */
 	public CSVTextEditor(final char delimiter) {
 		final CSVTextSourceViewerConfiguration csvTextConfig =
@@ -55,7 +56,8 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.S
 	/**
 	 * Sets the delimiter.
 	 *
-	 * @param delimiter the new delimiter
+	 * @param delimiter
+	 *            the new delimiter
 	 */
 	public void setDelimiter(final char delimiter) {
 		final CSVTextSourceViewerConfiguration csvTextConfig =
@@ -67,20 +69,20 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.S
 
 	@Override
 	public Control getSizableFontControl() {
-		if (getSourceViewer() == null) { return null; }
+		if (getSourceViewer() == null) return null;
 		return getSourceViewer().getTextWidget();
 	}
 
 	/**
 	 * Method createToolItem()
-	 * 
+	 *
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
 	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 
-		tb.button("menu.saveas2", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
+		tb.button("generic/menu.saveas", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
 
 	}
 	//

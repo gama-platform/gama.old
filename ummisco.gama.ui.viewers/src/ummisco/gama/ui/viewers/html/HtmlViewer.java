@@ -162,8 +162,8 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 			checkButtons();
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.reload4", "Refresh", "Refresh current page", e -> browser.refresh(), SWT.RIGHT);
-		tb.button("toolbar.stop2", "Stop", "Stop loading page", e -> browser.stop(), SWT.RIGHT);
+		tb.button("action/experiment.reload", "Refresh", "Refresh current page", e -> browser.refresh(), SWT.RIGHT);
+		tb.button("action/experiment.stop", "Stop", "Stop loading page", e -> browser.stop(), SWT.RIGHT);
 
 	}
 

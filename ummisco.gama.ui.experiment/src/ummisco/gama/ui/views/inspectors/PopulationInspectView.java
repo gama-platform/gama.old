@@ -3,7 +3,7 @@
  * PopulationInspectView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -79,6 +79,7 @@ import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.parameters.ExpressionControl;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -917,14 +918,14 @@ public class PopulationInspectView extends GamaViewPart
 								editor.widgetDefaultSelected(null);
 							}
 
-						}, GamaIcons.create("display.agents2").image());
+						}, GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
 					}
 				}
 			};
 			menu.open(toolbar.getToolbar(SWT.RIGHT), trigger);
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.saveas2", "Save as CSV", "Save the agents and their attributes into a CSV file",
+		tb.button("generic/menu.saveas", "Save as CSV", "Save the agents and their attributes into a CSV file",
 				e -> saveAsCSV(), SWT.RIGHT);
 	}
 

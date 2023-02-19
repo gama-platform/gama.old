@@ -438,7 +438,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 			setId("preferences");
 			setText("Preferences");
 			setToolTipText("Open GAMA preferences");
-			setImageDescriptor(icons.desc("menu.open.preferences2"));
+			setImageDescriptor(icons.desc("generic/menu.open.preferences"));
 			window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 		}
 
@@ -471,7 +471,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 */
 	public void createAboutAction(final IWorkbenchWindow aWindow) {
 		aboutAction = ActionFactory.ABOUT.create(aWindow);
-		aboutAction.setImageDescriptor(icons.desc("menu.about2"));
+		aboutAction.setImageDescriptor(icons.desc("generic/menu.about"));
 		register(aboutAction);
 	}
 
@@ -488,7 +488,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 			setId("helpContents");
 			setText("GAMA documentation");
 			setToolTipText("GAMA online documentation");
-			setImageDescriptor(icons.desc("menu.help2"));
+			setImageDescriptor(icons.desc("generic/menu.help"));
 			window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
 		}
 
@@ -613,7 +613,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the cut item
 	 */
 	private IContributionItem getCutItem() {
-		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(), "menu.cut2", null,
+		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(), "generic/menu.cut", null,
 				WorkbenchMessages.Workbench_cut, WorkbenchMessages.Workbench_cutToolTip, null);
 	}
 
@@ -623,7 +623,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the copy item
 	 */
 	private IContributionItem getCopyItem() {
-		return getItem(ActionFactory.COPY.getId(), ActionFactory.COPY.getCommandId(), "menu.copy2", null,
+		return getItem(ActionFactory.COPY.getId(), ActionFactory.COPY.getCommandId(), "generic/menu.copy", null,
 				WorkbenchMessages.Workbench_copy, WorkbenchMessages.Workbench_copyToolTip, null);
 	}
 
@@ -633,7 +633,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the paste item
 	 */
 	private IContributionItem getPasteItem() {
-		return getItem(ActionFactory.PASTE.getId(), ActionFactory.PASTE.getCommandId(), "menu.paste2", null,
+		return getItem(ActionFactory.PASTE.getId(), ActionFactory.PASTE.getCommandId(), "generic/menu.paste", null,
 				WorkbenchMessages.Workbench_paste, WorkbenchMessages.Workbench_pasteToolTip, null);
 	}
 
@@ -643,7 +643,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the prints the item
 	 */
 	private IContributionItem getPrintItem() {
-		return getItem(ActionFactory.PRINT.getId(), ActionFactory.PRINT.getCommandId(), "menu.print2", null,
+		return getItem(ActionFactory.PRINT.getId(), ActionFactory.PRINT.getCommandId(), "generic/menu.print", null,
 				WorkbenchMessages.Workbench_print, WorkbenchMessages.Workbench_printToolTip, null);
 	}
 
@@ -653,8 +653,9 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the select all item
 	 */
 	private IContributionItem getSelectAllItem() {
-		return getItem(ActionFactory.SELECT_ALL.getId(), ActionFactory.SELECT_ALL.getCommandId(), "action.selectall",
-				null, WorkbenchMessages.Workbench_selectAll, WorkbenchMessages.Workbench_selectAllToolTip, null);
+		return getItem(ActionFactory.SELECT_ALL.getId(), ActionFactory.SELECT_ALL.getCommandId(),
+				"generic/action.selectall", null, WorkbenchMessages.Workbench_selectAll,
+				WorkbenchMessages.Workbench_selectAllToolTip, null);
 	}
 
 	/**
@@ -673,7 +674,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the delete item
 	 */
 	private IContributionItem getDeleteItem() {
-		return getItem(ActionFactory.DELETE.getId(), ActionFactory.DELETE.getCommandId(), "menu.delete2", null,
+		return getItem(ActionFactory.DELETE.getId(), ActionFactory.DELETE.getCommandId(), "generic/menu.delete", null,
 				WorkbenchMessages.Workbench_delete, WorkbenchMessages.Workbench_deleteToolTip,
 				IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
 	}
@@ -699,8 +700,9 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the properties item
 	 */
 	private IContributionItem getPropertiesItem() {
-		return getItem(ActionFactory.PROPERTIES.getId(), ActionFactory.PROPERTIES.getCommandId(), "display.sidebar2",
-				null, WorkbenchMessages.Workbench_properties, WorkbenchMessages.Workbench_propertiesToolTip, null);
+		return getItem(ActionFactory.PROPERTIES.getId(), ActionFactory.PROPERTIES.getCommandId(),
+				"generic/action.properties", null, WorkbenchMessages.Workbench_properties,
+				WorkbenchMessages.Workbench_propertiesToolTip, null);
 	}
 
 	/**

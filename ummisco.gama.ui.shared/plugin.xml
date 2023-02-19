@@ -98,43 +98,43 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.edit.copy"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.copy2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.copy.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.cut"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.cut2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.cut.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.delete"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.delete2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.delete.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.paste"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.paste2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.paste.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.print"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.print2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.print.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.undo"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.undo2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.undo.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.redo"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.redo2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.redo.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.save"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.save2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.save.png"> 
       </image>
       <image
             commandId="org.eclipse.ui.file.saveAll"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.saveall2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.saveall.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.saveAs"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.saveas2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.saveas.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.refresh"
@@ -142,15 +142,15 @@
       </image>
       <image
             commandId="org.eclipse.ui.file.export"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.export2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/menu.export.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.import"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.import2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/menu.import.png">
       </image>
       <image
             commandId="org.eclipse.ui.window.preferences"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.preferences2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.open.preferences.png">
       </image>
    </extension>
    <extension
@@ -213,8 +213,8 @@
                label="Common">
             <command
                   commandId="msi.gama.application.goto.modeling"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.disabled.png"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.modeling.disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.modeling.png"
                   label="Modeling perspective"
                   style="push"
                   tooltip="Open modeling perspective">
@@ -238,13 +238,13 @@
             locationURI="menu:file?after=open.ext">
          <command
                commandId="ummisco.gama.ui.switchWorkspace"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.switch2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.switch.png"
                label="Switch workspace..."
                style="push">
          </command>
          <command
                commandId="ummisco.gama.ui.restart"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.restart2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.restart.png"
                label="Restart GAMA"
                style="push">
          </command>
@@ -258,19 +258,19 @@
          </separator>
          <command
                commandId="ummisco.gama.ui.update"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.update2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.update.png"
                label="Check for updates"
                style="push">
          </command>
          <command
                commandId="ummisco.gama.ui.install"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.install2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.install.png"
                label="Install new plugins..."
                style="push">
          </command>
          <command 
                commandId="ummisco.gama.ui.details"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.details2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.details.png"
                label="Installation details"
                style="push">
          </command>
@@ -280,7 +280,7 @@
          </separator>
          <command
                commandId="msi.gama.application.command.web"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.web2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.web.png"
                label="Welcome page"
                style="push">
          </command>

@@ -129,8 +129,8 @@ public class ZoomController {
 								}
 
 							}, p.equals(view.getCameraHelper().getCameraName())
-									? GamaIcons.create("display.camera2").image()
-									: GamaIcons.create("display.color3").image());
+									? GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CAMERA).image()
+									: GamaIcons.create("display/camera.empty").image());
 						}
 						sep();
 						action("Copy current camera", new SelectionAdapter() {
@@ -141,12 +141,12 @@ public class ZoomController {
 								WorkbenchHelper.copy(text);
 							}
 
-						}, GamaIcons.create("menu.paste2").image());
+						}, GamaIcons.create("generic/menu.paste").image());
 					}
 				};
 				menu.open(tb.getToolbar(SWT.RIGHT), trigger, tb.height, 96);
 			}, SWT.RIGHT);
-			cameraLocked = tb.check("display.lock", "Lock/unlock", "Lock/unlock camera", e -> {
+			cameraLocked = tb.check("display/camera.lock", "Lock/unlock", "Lock/unlock camera", e -> {
 				view.getCameraHelper().toggleCamera();
 			}, SWT.RIGHT);
 		}

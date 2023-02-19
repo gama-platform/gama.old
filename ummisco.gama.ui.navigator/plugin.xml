@@ -184,7 +184,7 @@
             </visibleWhen>
          </menu>
          <menu
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.general.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/menu.import.png"
                id="menu.gama.import"
                label="Import..."
                mnemonic=" ">
@@ -239,7 +239,7 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/import.general.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/menu.import.png"
                   label="Other..."
                   style="push">
             </command>
@@ -270,7 +270,7 @@
                visible="true">
          </separator>
          <menu
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.export2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/menu.export.png"
                id="menu.gama.export"
                label="Export...">
             <command
@@ -347,7 +347,7 @@
          </command>
          <command
                commandId="org.eclipse.ui.file.properties"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/display.sidebar2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/action.properties.png"
                label="Properties"
                style="push">
             <visibleWhen
