@@ -3,7 +3,7 @@
  * GamlMarkerImageProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,6 +16,7 @@ import org.eclipse.ui.internal.ide.IMarkerImageProvider;
 import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class GamlMarkerImageProvider.
@@ -68,21 +69,14 @@ public class GamlMarkerImageProvider implements IMarkerImageProvider {
 	 * @return the image
 	 */
 	public static GamaIcon getImage(final int severity) {
-		switch (severity) {
-			case IMarker.SEVERITY_ERROR:
-				if (ThemeHelper.isDark()) return GamaIcons.create("marker.error2.dark");
-				return GamaIcons.create("marker.error2");
-			case IMarker.SEVERITY_WARNING:
-				return GamaIcons.create("marker.warning2");
-			case IMarker.SEVERITY_INFO:
-				if (ThemeHelper.isDark()) return GamaIcons.create("marker.info2.dark");
-				return GamaIcons.create("marker.info2");
-			case -1: {
-				return GamaIcons.create("marker.task2");
-			}
-		}
+		return switch (severity) {
+			case IMarker.SEVERITY_ERROR -> GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.MARKER_ERROR_DARK : IGamaIcons.MARKER_ERROR);
+			case IMarker.SEVERITY_WARNING -> GamaIcons.create(IGamaIcons.MARKER_WARNING);
+			case IMarker.SEVERITY_INFO -> GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.MARKER_INFO_DARK : IGamaIcons.MARKER_INFO);
+			case -1 -> GamaIcons.create(IGamaIcons.MARKER_TASK);
+			default -> null;
+		};
 
-		return null;
 	}
 
 }

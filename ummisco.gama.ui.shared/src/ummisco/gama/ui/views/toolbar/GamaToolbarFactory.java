@@ -138,7 +138,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("small.toolbar.expand").descriptor());
+			setImageDescriptor(GamaIcons.create("mini/tree.expand").descriptor());
 		}
 
 	}
@@ -160,7 +160,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("small.toolbar.collapse").descriptor());
+			setImageDescriptor(GamaIcons.create("mini/tree.collapse").descriptor());
 		}
 
 	}
@@ -175,7 +175,7 @@ public class GamaToolbarFactory {
 		 */
 		ToggleOverlay() {
 			super("Toggle Overlay", IAction.AS_PUSH_BUTTON);
-			setImageDescriptor(GamaIcons.create("small.toolbar.overlay.toggle").descriptor());
+			setImageDescriptor(GamaIcons.create("mini/overlay.toggle").descriptor());
 		}
 
 	}
@@ -308,7 +308,7 @@ public class GamaToolbarFactory {
 
 			@Override
 			protected void setIcon(final boolean show) {
-				setImageDescriptor(GamaIcons.create(show ? "small.toolbar.show" : "small.toolbar.hide").descriptor());
+				setImageDescriptor(GamaIcons.create(show ? "mini/toolbar.show" : "mini/toolbar.hide").descriptor());
 			}
 		};
 

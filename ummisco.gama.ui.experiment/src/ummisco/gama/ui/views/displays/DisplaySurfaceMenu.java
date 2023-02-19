@@ -357,10 +357,10 @@ public class DisplaySurfaceMenu {
 				if (!pop.isEmpty()) {
 					GamaMenu.action(submenu, select ? "Forbid selection" : "Allow selection",
 							t -> layer.getData().setSelectable(!select),
-							GamaIcons.create("layer/layer.selection").image());
+							GamaIcons.create(IGamaIcons.LAYER_SELECTION).image());
 				}
-				Menu transparency =
-						GamaMenu.sub(submenu, "Transparency", "", GamaIcons.create("layer/layer.transparency").image());
+				Menu transparency = GamaMenu.sub(submenu, "Transparency", "",
+						GamaIcons.create(IGamaIcons.LAYER_TRANSPARENCY).image());
 				transparency.setEnabled(layer.getData().isDynamic());
 				Double td = layer.getData().getTransparency(GAMA.getRuntimeScope());
 				int ti = (int) (td == null ? 0 : Math.round(td * 10) * 10);
@@ -372,7 +372,8 @@ public class DisplaySurfaceMenu {
 					}, null);
 				}
 				if (definition instanceof SpeciesLayerStatement spec) {
-					Menu aspectMenu = GamaMenu.sub(submenu, "Aspect", "", GamaIcons.create("menu.agent2").image());
+					Menu aspectMenu =
+							GamaMenu.sub(submenu, "Aspect", "", GamaIcons.create(IGamaIcons.MENU_AGENT).image());
 					aspectMenu.setEnabled(layer.getData().isDynamic());
 					String current = spec.getAspectName();
 					for (String aspect : spec.getAspects()) {
@@ -391,7 +392,7 @@ public class DisplaySurfaceMenu {
 								((ChartLayerStatement) definition).getChart(), p);
 						editor.open();
 						surface.updateDisplay(true);
-					}, GamaIcons.create("layer/chart.parameters").image());
+					}, GamaIcons.create(IGamaIcons.CHART_PARAMETERS).image());
 					if (chart.keepsHistory()) {
 						GamaMenu.action(submenu, "Save history...", t -> chart.saveHistory(),
 								GamaIcons.create("menu.browse2").image());

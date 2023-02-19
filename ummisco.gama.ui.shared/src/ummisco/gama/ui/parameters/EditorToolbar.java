@@ -3,7 +3,7 @@
  * EditorToolbar.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -119,14 +119,14 @@ public class EditorToolbar<T> {
 	final Composite group;
 
 	static {
-		commands[REVERT] = build("small.revert", null, "Revert to original value", null);
+		commands[REVERT] = build("overlays/small.revert", null, "Revert to original value", null);
 		commands[PLUS] = build(SMALL_PLUS, null, "Increment the value", null);
 		commands[MINUS] = build(SMALL_MINUS, null, "Decrement the value ", null);
-		commands[EDIT] = build("small.edit", null, "Edit the parameter", null);
-		commands[INSPECT] = build("small.inspect", null, "Inspect the agent", null);
-		commands[BROWSE] = build("small.browse", null, "Browse the list of agents", null);
-		commands[CHANGE] = build("small.change", null, "Choose another agent", null);
-		commands[DEFINE] = build("small.undefine", null, "Set the parameter to undefined", null);
+		commands[EDIT] = build("overlays/small.edit", null, "Edit the parameter", null);
+		commands[INSPECT] = build("overlays/small.inspect", null, "Inspect the agent", null);
+		commands[BROWSE] = build("overlays/small.browse", null, "Browse the list of agents", null);
+		commands[CHANGE] = build("overlays/small.change", null, "Choose another agent", null);
+		commands[DEFINE] = build("overlays/small.undefine", null, "Set the parameter to undefined", null);
 		commands[VALUE] = build(null, "", "Value of the parameter", null);
 		// commands[SAVE] = build("small.save", null, "Save the values", null);
 	}

@@ -3,7 +3,7 @@
  * ParameterExpandItem.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -179,15 +179,15 @@ public class ParameterExpandItem extends Item {
 		}
 
 		if (parent.hasVisibleToggle) {
-			final var image = parent.isVisible(this) ? GamaIcons.create("small.inspect").image()
-					: GamaIcons.create("small.hidden").image();
+			final var image = parent.isVisible(this) ? GamaIcons.create("overlays/small.inspect").image()
+					: GamaIcons.create("overlays/small.hidden").image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			visiblePosition = endX;
 			gc.drawImage(image, endX, imageY);
 		}
 		if (parent.hasSelectableToggle) {
 			final var image = isSelectable ? GamaIcons.create("small.selectable").image()
-					: GamaIcons.create("small.unselectable").image();
+					: GamaIcons.create("overlays/small.unselectable").image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			selectablePosition = endX;
 			gc.drawImage(image, endX, imageY);

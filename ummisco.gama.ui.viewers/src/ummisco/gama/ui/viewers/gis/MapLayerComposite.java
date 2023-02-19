@@ -26,6 +26,7 @@ import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Displays a list of the map layers in an associated and provides controls to set the visibility, selection and style
@@ -131,7 +132,7 @@ public class MapLayerComposite extends Composite {
 		final Button showLayersButton = new Button(buttonComposite, SWT.PUSH);
 		showLayersButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		showLayersButton.setToolTipText("Show all layers");
-		showLayersButton.setImage(GamaIcons.create("small.inspect").image());
+		showLayersButton.setImage(GamaIcons.create("overlays/small.inspect").image());
 		showLayersButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -143,7 +144,7 @@ public class MapLayerComposite extends Composite {
 		final Button hideLayersButton = new Button(buttonComposite, SWT.PUSH);
 		hideLayersButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		hideLayersButton.setToolTipText("Hide all layers");
-		hideLayersButton.setImage(GamaIcons.create("small.hidden").image());
+		hideLayersButton.setImage(GamaIcons.create("overlays/small.hidden").image());
 		hideLayersButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -155,7 +156,7 @@ public class MapLayerComposite extends Composite {
 		final Button layerUpButton = new Button(buttonComposite, SWT.PUSH);
 		layerUpButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		layerUpButton.setToolTipText("Layer up");
-		layerUpButton.setImage(GamaIcons.create("small.collapse2").image());
+		layerUpButton.setImage(GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).image());
 		layerUpButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -167,7 +168,7 @@ public class MapLayerComposite extends Composite {
 		final Button layerDownButton = new Button(buttonComposite, SWT.PUSH);
 		layerDownButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		layerDownButton.setToolTipText("Layer down");
-		layerDownButton.setImage(GamaIcons.create("small.expand2").image());
+		layerDownButton.setImage(GamaIcons.create("overlays/small.expand2").image());
 		layerDownButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlEditorTickUpdater.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamlEditorTickUpdater.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
@@ -36,9 +36,9 @@ public class GamlEditorTickUpdater extends XtextEditorErrorTickUpdater {
 		if (severity == null || severity == Severity.INFO) {
 			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor();
 		} else if (severity == Severity.ERROR) {
-			descriptor = GamaIcons.create("navigator/overlay.error2").descriptor();
+			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_ERROR).descriptor();
 		} else if (severity == Severity.WARNING) {
-			descriptor = GamaIcons.create("navigator/overlay.warning2").descriptor();
+			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_WARNING).descriptor();
 		} else {
 			super.updateEditorImage(editor);
 			return;

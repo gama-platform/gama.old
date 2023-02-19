@@ -3,7 +3,7 @@
  * ConsoleView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -33,7 +33,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -243,8 +242,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(GamaIcons.create(IGamaIcons.ACTION_CLEAR).getCode(), "Clear", "Clear the console", e -> reset(),
-				SWT.RIGHT);
+		tb.button(IGamaIcons.ACTION_CLEAR, "Clear", "Clear the console", e -> reset(), SWT.RIGHT);
 
 	}
 

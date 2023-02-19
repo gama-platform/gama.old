@@ -23,6 +23,7 @@ import msi.gama.util.GamaColor;
 import ummisco.gama.ui.menus.GamaColorMenu;
 import ummisco.gama.ui.menus.GamaColorMenu.IColorRunnable;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class EditToolbarColorMenu.
@@ -80,7 +81,7 @@ public class ColorReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() { return GamaIcons.create("editor/reference.colors").image(); }
+	protected Image getImage() { return GamaIcons.create(IGamaIcons.REFERENCE_COLORS).image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UserControlView.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * UserControlView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.user;
 
@@ -114,8 +114,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 		body.setLayout(layout);
 		// body.setBackground(IGamaColors.WHITE.color());
 		for (final IStatement statement : panel.getUserCommands()) {
-			if (statement instanceof UserCommandStatement) {
-				final UserCommandStatement c = (UserCommandStatement) statement;
+			if (statement instanceof UserCommandStatement c) {
 				final EditorsGroup commandComposite = new EditorsGroup(body, SWT.NONE);
 				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false, 3, 1);
 				commandComposite.setLayoutData(data);
@@ -127,7 +126,9 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 				final int nbCol = inputs.size() > 0 ? 1 : 3;
 				GamaUIColor color = GamaColors.get(c.getColor(scope));
 				if (color == null) { color = IGamaColors.BLUE; }
-				final Image image = GamaIcons.create(c.isContinue(scope) ? "small.continue" : "small.run").image();
+				final Image image = GamaIcons
+						.create(c.isContinue(scope) ? "overlays/small.continue" : "overlays/small.exp.run.white")
+						.image();
 				final FlatButton b = FlatButton.button(commandComposite, color, c.getName(), image);
 				b.setEnabled(c.isEnabled(scope));
 				final GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, true, nbCol, nbLines);

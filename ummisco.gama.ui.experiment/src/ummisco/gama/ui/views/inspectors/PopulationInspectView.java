@@ -187,7 +187,7 @@ public class PopulationInspectView extends GamaViewPart
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		this.setTitleImage(GamaIcons.create("view.browser2").image());
+		this.setTitleImage(GamaIcons.create("views/view.browser").image());
 	}
 
 	/** The provider. */
@@ -894,7 +894,7 @@ public class PopulationInspectView extends GamaViewPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		if (getOutput() == null) return;
 		super.createToolItems(tb);
-		tb.check("population.lock2", "", "Lock the current population (prevents editing it)", e -> {
+		tb.check(IGamaIcons.LOCK_POPULATION, "", "Lock the current population (prevents editing it)", e -> {
 			locked = !locked;
 			editor.getControl().setEnabled(!locked);
 			populationMenu.setEnabled(!locked);
@@ -902,7 +902,7 @@ public class PopulationInspectView extends GamaViewPart
 			// TODO let the list of agents remain the same ??
 		}, SWT.RIGHT);
 		createExpressionComposite();
-		populationMenu = tb.menu("population.list2", "", "Browse a species", trigger -> {
+		populationMenu = tb.menu(IGamaIcons.BROWSE_POPULATIONS, "", "Browse a species", trigger -> {
 			if (locked) return;
 			final GamaMenu menu = new GamaMenu() {
 
@@ -925,7 +925,7 @@ public class PopulationInspectView extends GamaViewPart
 			menu.open(toolbar.getToolbar(SWT.RIGHT), trigger);
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("generic/menu.saveas", "Save as CSV", "Save the agents and their attributes into a CSV file",
+		tb.button(IGamaIcons.SAVE_AS, "Save as CSV", "Save the agents and their attributes into a CSV file",
 				e -> saveAsCSV(), SWT.RIGHT);
 	}
 

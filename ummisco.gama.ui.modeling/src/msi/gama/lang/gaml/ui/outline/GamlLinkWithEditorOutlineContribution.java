@@ -14,6 +14,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.xtext.ui.editor.outline.actions.LinkWithEditorOutlineContribution;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class GamlLinkWithEditorOutlineContribution.
@@ -32,7 +33,7 @@ public class GamlLinkWithEditorOutlineContribution extends LinkWithEditorOutline
 	@Override
 	protected void configureAction(final Action action) {
 		super.configureAction(action);
-		action.setImageDescriptor(GamaIcons.create("navigator/editor.link").descriptor());
+		action.setImageDescriptor(GamaIcons.create(IGamaIcons.EDITOR_LINK).descriptor());
 	}
 
 }

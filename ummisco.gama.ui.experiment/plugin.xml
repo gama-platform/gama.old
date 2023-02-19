@@ -381,7 +381,7 @@
                </command>
             </menu>
             <menu
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.other.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.other.png"
                   label="Other...">
                <menu
                      icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/menu.open.perspective.png"
@@ -443,7 +443,7 @@
                </menu>
                <command
                      commandId="org.eclipse.ui.ToggleCoolbarAction"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.toolbar2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/toggle.toolbar.png"
                      label="Toggle Toolbar"
                      style="push"
                      tooltip="Toggle the main toolbar on and off">

@@ -244,7 +244,7 @@ public class GamaNavigator extends CommonNavigator
 	}
 
 	/** The by date. */
-	final GamaCommand byDate = new GamaCommand("small.toolbar.sort", "", "Sort by modification date", trigger -> {
+	final GamaCommand byDate = new GamaCommand("mini/tree.sort", "", "Sort by modification date", trigger -> {
 		final boolean enabled = ((ToolItem) trigger.widget).getSelection();
 
 		try {

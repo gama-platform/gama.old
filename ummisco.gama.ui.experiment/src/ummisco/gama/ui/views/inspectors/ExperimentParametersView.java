@@ -12,6 +12,8 @@ package ummisco.gama.ui.views.inspectors;
 
 import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
 import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
+import static ummisco.gama.ui.resources.IGamaIcons.ACTION_REVERT;
+import static ummisco.gama.ui.resources.IGamaIcons.MENU_ADD_MONITOR;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -211,18 +213,17 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
+		tb.button(GamaIcons.create(ACTION_REVERT).getCode(), "Revert parameter values",
 				"Revert parameters to their initial values", e -> {
 					final EditorsList<?> eds = editors;
 					if (eds != null) { eds.revertToDefaultValue(); }
 				}, SWT.RIGHT);
 		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) {
-			tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(),
-					SWT.RIGHT);
+			tb.button(MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(), SWT.RIGHT);
 			tb.sep(SWT.RIGHT);
 		}
 
-		tb.button("menu.add2", "Add simulation",
+		tb.button(IGamaIcons.ADD_SIMULATION, "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", e -> {
 					final SimulationAgent sim =
 							GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
