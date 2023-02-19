@@ -3,7 +3,7 @@
  * IKeyword.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -84,7 +84,8 @@ public interface IKeyword {
 
 	/** The at. */
 	String AT = "at";
-	
+
+	/** The as json string. */
 	String AS_JSON_STRING = "as_json_string";
 
 	/** The attributes. */
@@ -383,7 +384,7 @@ public interface IKeyword {
 
 	/** The extensions. */
 	String EXTENSIONS = "extensions";
-	
+
 	/** Factorial sampling */
 	String FACTORIAL = "factorial";
 
@@ -514,7 +515,7 @@ public interface IKeyword {
 	String HEADING = "heading";
 
 	/** The headless ui. */
-	String HEADLESS_UI = "headless";
+	// String HEADLESS_UI = "headless";
 
 	/** The heatmap. */
 	String HEATMAP = "heatmap";
@@ -1261,10 +1262,10 @@ public interface IKeyword {
 
 	/** The type. */
 	String TYPE = "type";
-	
+
 	/** Uniform sampling */
 	String UNIFORM = "uniform";
-	
+
 	/** The unit. */
 	String UNIT = "unit";
 
