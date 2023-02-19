@@ -25,13 +25,13 @@ public interface IGamaIcons {
 	String DISPLAY_TOOLBAR_PAUSE = "display/action.pause";
 
 	/** The experiment run. */
-	String EXPERIMENT_RUN = "action/experiment.run";
+	String EXPERIMENT_RUN = "experiment/experiment.run";
 
 	/** The display update. */
 	String DISPLAY_UPDATE = "display/action.update";
 
 	/** The display toolbar sync. */
-	String DISPLAY_TOOLBAR_SYNC = "action/experiment.sync";
+	String DISPLAY_TOOLBAR_SYNC = "experiment/experiment.sync";
 
 	/** The display toolbar snapshot. */
 	String DISPLAY_TOOLBAR_SNAPSHOT = "display/action.snapshot";
@@ -60,34 +60,34 @@ public interface IGamaIcons {
 	// Menus
 
 	/** The menu browse. */
-	String MENU_BROWSE = "menu.browse2";
+	String MENU_BROWSE = "views/open.browser";
 
 	/** The menu population. */
-	String MENU_POPULATION = "menus/agents.submenu";
+	String MENU_POPULATION = "agents/agents.submenu";
 
 	/** The menu agent. */
-	String MENU_AGENT = "menus/agent.submenu";
+	String MENU_AGENT = "agents/agent.submenu";
 
 	/** The menu inspect. */
-	String MENU_INSPECT = "menu.inspect2";
+	String MENU_INSPECT = "views/open.inspector";
 
 	/** The menu highlight. */
-	String MENU_HIGHLIGHT = "menu.highlight2";
+	String MENU_HIGHLIGHT = "display/action.highlight";
 
 	/** The menu kill. */
-	String MENU_KILL = "menu.kill2";
+	String MENU_KILL = "agents/agent.kill";
 
 	/** The menu focus. */
-	String MENU_FOCUS = "menu.focus2";
+	String MENU_FOCUS = "display/action.focus";
 
 	/** The menu add monitor. */
 	String MENU_ADD_MONITOR = "views/open.monitor";
 
 	/** The menu run action. */
-	String MENU_RUN_ACTION = "menu.action2";
+	String MENU_RUN_ACTION = "agents/agent.actions";
 
 	/** The menu pause action. */
-	String MENU_PAUSE_ACTION = "action/experiment.pause";
+	String MENU_PAUSE_ACTION = "experiment/experiment.pause";
 
 	// Layers
 
@@ -121,12 +121,12 @@ public interface IGamaIcons {
 	String ACTION_REVERT = "generic/menu.undo";
 
 	/** The action clear. */
-	String ACTION_CLEAR = "console.clear";
+	String ACTION_CLEAR = "console/console.clear";
 
 	// User Panels
 
 	/** The panel continue. */
-	String PANEL_CONTINUE = "action/experiment.continue";
+	String PANEL_CONTINUE = "experiment/experiment.continue";
 
 	/** The panel inspect. */
 	String PANEL_INSPECT = MENU_INSPECT;
@@ -232,25 +232,25 @@ public interface IGamaIcons {
 	String TOGGLE_OVERLAY = "display/toggle.overlay";
 
 	/** The experiment step. */
-	String EXPERIMENT_STEP = "action/experiment.step";
+	String EXPERIMENT_STEP = "experiment/experiment.step";
 
 	/** The experiment stop. */
-	String EXPERIMENT_STOP = "action/experiment.stop";
+	String EXPERIMENT_STOP = "experiment/experiment.stop";
 
 	/** The experiment reload. */
-	String EXPERIMENT_RELOAD = "action/experiment.reload";
+	String EXPERIMENT_RELOAD = "experiment/experiment.reload";
 
 	/** The presentation menu. */
 	String PRESENTATION_MENU = "display/menu.presentation";
 
 	/** The add simulation. */
-	String ADD_SIMULATION = "action/add.simulation";
+	String ADD_SIMULATION = "experiment/add.simulation";
 
 	/** The lock population. */
-	String LOCK_POPULATION = "population.lock2";
+	String LOCK_POPULATION = "agents/population.lock";
 
 	/** The browse populations. */
-	String BROWSE_POPULATIONS = "population.list2";
+	String BROWSE_POPULATIONS = "agents/population.list";
 
 	/** The save as. */
 	String SAVE_AS = "generic/menu.saveas";

@@ -92,9 +92,9 @@ public class FontSizer {
 			}
 
 		});
-		tb.button("action/font.increase", "Increase font size", "Increase font size", e -> changeFontSize(2),
+		tb.button("console/font.increase", "Increase font size", "Increase font size", e -> changeFontSize(2),
 				SWT.RIGHT);
-		tb.button("action/font.decrease", "Decrease font size", "Decrease font size", e -> changeFontSize(-2),
+		tb.button("console/font.decrease", "Decrease font size", "Decrease font size", e -> changeFontSize(-2),
 				SWT.RIGHT);
 
 		tb.sep(16, SWT.RIGHT);

@@ -353,7 +353,7 @@ public class DisplaySurfaceMenu {
 				GamaMenu.action(submenu, visible ? "Hide" : "Show", t -> {
 					layer.getData().setVisible(!visible);
 					surface.updateDisplay(true);
-				}, GamaIcons.create("menu.inspect2").image());
+				}, GamaIcons.create(IGamaIcons.MENU_INSPECT).image());
 				if (!pop.isEmpty()) {
 					GamaMenu.action(submenu, select ? "Forbid selection" : "Allow selection",
 							t -> layer.getData().setSelectable(!select),
@@ -395,14 +395,14 @@ public class DisplaySurfaceMenu {
 					}, GamaIcons.create(IGamaIcons.CHART_PARAMETERS).image());
 					if (chart.keepsHistory()) {
 						GamaMenu.action(submenu, "Save history...", t -> chart.saveHistory(),
-								GamaIcons.create("menu.browse2").image());
+								GamaIcons.create(IGamaIcons.MENU_BROWSE).image());
 					}
 				} else if (definition instanceof GridLayerStatement grid) {
 					boolean lines = ((IGridLayer) layer).getData().drawLines();
 					GamaMenu.action(submenu, lines ? "Hide lines" : "Draw lines", t -> {
 						((IGridLayer) layer).getData().setDrawLines(!lines);
 						surface.updateDisplay(true);
-					}, GamaIcons.create("menu.browse2").image());
+					}, GamaIcons.create(IGamaIcons.MENU_BROWSE).image());
 				}
 				if (select) {
 					final FocusOnSelection adapter = new FocusOnSelection(surface);

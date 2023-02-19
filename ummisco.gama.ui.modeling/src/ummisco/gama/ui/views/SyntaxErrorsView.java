@@ -139,7 +139,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		checkActions();
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.button("build/build.all", "", "Clean and validate all projects", e -> { build(); }, SWT.RIGHT);
-		tb.button("action/test.run", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
+		tb.button("test/test.run", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
 
 	}
 

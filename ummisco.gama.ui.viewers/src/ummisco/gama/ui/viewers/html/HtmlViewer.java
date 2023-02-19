@@ -28,6 +28,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
 import msi.gama.common.interfaces.IGamaView;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -162,8 +163,8 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 			checkButtons();
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("action/experiment.reload", "Refresh", "Refresh current page", e -> browser.refresh(), SWT.RIGHT);
-		tb.button("action/experiment.stop", "Stop", "Stop loading page", e -> browser.stop(), SWT.RIGHT);
+		tb.button(IGamaIcons.EXPERIMENT_RELOAD, "Refresh", "Refresh current page", e -> browser.refresh(), SWT.RIGHT);
+		tb.button(IGamaIcons.EXPERIMENT_STOP, "Stop", "Stop loading page", e -> browser.stop(), SWT.RIGHT);
 
 	}
 

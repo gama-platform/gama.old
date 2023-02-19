@@ -68,7 +68,7 @@ public class RefreshActionProvider extends CommonActionProvider {
 		refreshAction.setImageDescriptor(GamaIcons.create("navigator/file.refresh").descriptor());//$NON-NLS-1$
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 		runAllTestsAction = new RunAllTestsAction(sp, "Run all tests");
-		runAllTestsAction.setImageDescriptor(GamaIcons.create("action/test.run").descriptor());
+		runAllTestsAction.setImageDescriptor(GamaIcons.create("test/test.run").descriptor());
 
 	}
 

@@ -25,7 +25,7 @@
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.display.png"
             id="msi.gama.application.view.LayeredDisplayView"
             name="Display"
-            restorable="false">
+            restorable="false"> 
       </view>
    </extension>
    <extension
