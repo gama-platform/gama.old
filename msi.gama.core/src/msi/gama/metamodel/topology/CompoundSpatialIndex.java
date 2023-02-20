@@ -4,7 +4,7 @@
  * CompoundSpatialIndex.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -37,6 +37,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.Types;
 
 /**
  * The Class CompoundSpatialIndex.
@@ -265,7 +266,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 				(Collection<IPopulation<? extends IAgent>>) ((IPopulationSet) filter).getPopulations(scope),
 				each -> add(each, true));
 		ISpecies species = filter.getSpecies();
-		if (species == null) return spatialIndexes.values();
+		if (species == null || species.getDescription() == Types.AGENT.getSpecies()) return spatialIndexes.values();
 		if (!cachedSpeciesIndices.containsKey(species)) {
 			cachedSpeciesIndices.put(species,
 					transform(concat(singleton(species), species.getSubSpecies(scope)), s -> add(scope, s, true)));
