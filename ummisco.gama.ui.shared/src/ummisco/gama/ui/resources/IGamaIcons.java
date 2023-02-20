@@ -43,16 +43,16 @@ public interface IGamaIcons {
 	String DISPLAY_FULLSCREEN_EXIT = "display/fullscreen.exit";
 
 	/** The display toolbar zoomin. */
-	String DISPLAY_TOOLBAR_ZOOMIN = "zoom.in";
+	String DISPLAY_TOOLBAR_ZOOMIN = "display/zoom.in";
 
 	/** The display toolbar csvexport. */
 	String DISPLAY_TOOLBAR_CSVEXPORT = "generic/menu.saveas";
 
 	/** The display toolbar zoomout. */
-	String DISPLAY_TOOLBAR_ZOOMOUT = "zoom.out";
+	String DISPLAY_TOOLBAR_ZOOMOUT = "display/zoom.out";
 
 	/** The display toolbar zoomfit. */
-	String DISPLAY_TOOLBAR_ZOOMFIT = "zoom.fit";
+	String DISPLAY_TOOLBAR_ZOOMFIT = "display/zoom.fit";
 
 	/** The display toolbar camera. */
 	String DISPLAY_TOOLBAR_CAMERA = "display/camera.full";
