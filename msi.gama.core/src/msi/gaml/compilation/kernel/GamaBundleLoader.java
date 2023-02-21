@@ -192,9 +192,7 @@ public class GamaBundleLoader {
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 45, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
 		// findFeatures();
-		TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 45, ' ') + PAD(" done in", 15, '_'), () -> {
-			PARSER_PLUGIN.start();
-		});
+
 		DEBUG.TIMER(DEBUG.PAD("> GAMA: all plugins", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			final IExtensionRegistry registry = Platform.getExtensionRegistry();
 			// We retrieve the elements declared as extensions to the GAML language,
@@ -319,6 +317,9 @@ public class GamaBundleLoader {
 			Types.init();
 			IUnits.init();
 			GamaMetaModel.INSTANCE.getPlatformSpeciesDescription().validate();
+		});
+		TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 45, ' ') + PAD(" done in", 15, '_'), () -> {
+			PARSER_PLUGIN.start();
 		});
 	}
 
