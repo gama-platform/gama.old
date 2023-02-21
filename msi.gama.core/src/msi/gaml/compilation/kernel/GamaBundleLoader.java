@@ -3,7 +3,7 @@
  * GamaBundleLoader.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -104,6 +104,9 @@ public class GamaBundleLoader {
 	/** The core plugin. */
 	public static final Bundle CORE_PLUGIN = Platform.getBundle("msi.gama.core");
 
+	/** The Constant PARSER_PLUGIN. */
+	public static final Bundle PARSER_PLUGIN = Platform.getBundle("msi.gama.lang.gaml");
+
 	/** The core models. */
 	public static final Bundle CORE_MODELS = Platform.getBundle("msi.gama.models");
 
@@ -189,6 +192,9 @@ public class GamaBundleLoader {
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 45, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
 		// findFeatures();
+		TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 45, ' ') + PAD(" done in", 15, '_'), () -> {
+			PARSER_PLUGIN.start();
+		});
 		DEBUG.TIMER(DEBUG.PAD("> GAMA: all plugins", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			final IExtensionRegistry registry = Platform.getExtensionRegistry();
 			// We retrieve the elements declared as extensions to the GAML language,

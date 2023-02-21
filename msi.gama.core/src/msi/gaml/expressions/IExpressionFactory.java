@@ -146,7 +146,7 @@ public interface IExpressionFactory {
 	 *
 	 * @return the parser
 	 */
-	IExpressionCompiler getParser();
+	// IExpressionCompiler getParser();
 
 	/**
 	 * Creates a new IExpression object.

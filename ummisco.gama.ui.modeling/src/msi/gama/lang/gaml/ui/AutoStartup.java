@@ -3,7 +3,7 @@
  * AutoStartup.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.lang.gaml.GamlRuntimeModule;
 import msi.gama.lang.gaml.ui.editor.GamlEditorBindings;
 import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.util.GamaColor;
@@ -77,7 +76,7 @@ public class AutoStartup implements IStartup {
 			GamaPreferences.Modeling.OPERATORS_MENU_SORT
 					.onChange(newValue -> OperatorsReferenceMenu.byName = "Name".equals(newValue));
 		});
-		GamlRuntimeModule.staticInitialize();
+		// GamlRuntimeModule.staticInitialize();
 		GamlEditorBindings.install();
 		GamlReferenceSearch.install();
 		DEBUG.OUT("Startup of editor plugin finished");
