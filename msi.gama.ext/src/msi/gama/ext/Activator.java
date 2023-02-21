@@ -60,7 +60,7 @@ public class Activator implements BundleActivator {
 		// See FLAGS.java
 		String log = System.getProperty("enable_logging");
 		if (log == null || "true".equals(log)) {
-			System.out.println(PAD("> JAI : ImageIO extensions", 45, ' ') + PAD(" loaded for", 15, '_') + " "
+			System.out.println(PAD("> JAI : ImageIO extensions",55, ' ') + PAD(" loaded for", 15, '_') + " "
 					+ StreamEx.of(ImageIO.getReaderFileSuffixes()).joining("|"));
 		}
 	}

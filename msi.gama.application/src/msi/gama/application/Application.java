@@ -172,9 +172,9 @@ public class Application implements IApplication {
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
 
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor resolution ", 45, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor resolution ",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
 				+ display.getPrimaryMonitor().getBounds().width + "x" + display.getPrimaryMonitor().getBounds().height);
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Display zoom ", 45, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Display zoom ",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
 				+ DPIUtil.getDeviceZoom() + "%");
 
 		// Not used right now

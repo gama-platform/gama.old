@@ -197,7 +197,7 @@ public class WorkspacePreferences {
 
 			String date = localDateTime.format(DateTimeFormatter.ofPattern("MMM dd,yyyy HH:mm:ss"));
 
-			DEBUG.LOG(DEBUG.PAD("> GAMA: models library ", 45, ' ') + DEBUG.PAD(" modified", 15, '_') + " " + date);
+			DEBUG.LOG(DEBUG.PAD("> GAMA: models library ",55, ' ') + DEBUG.PAD(" modified", 15, '_') + " " + date);
 		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -313,7 +313,7 @@ public class WorkspacePreferences {
 	 */
 	public static boolean testWorkspaceSanity(final Path workspacePath) {
 
-		return DEBUG.TIMER(DEBUG.PAD("> GAMA: checking workspace ", 45, ' ') + DEBUG.PAD(" done in", 15, '_'), () -> {
+		return DEBUG.TIMER(DEBUG.PAD("> GAMA: checking workspace ",55, ' ') + DEBUG.PAD(" done in", 15, '_'), () -> {
 			File workspace = workspacePath.toFile();
 			File[] files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
 			if (files == null || files.length == 0) return true;

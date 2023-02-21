@@ -41,7 +41,7 @@ public class OpenGLInitializer extends AbstractServiceFactory implements ummisco
 		// // Necessary to load the native libraries correctly (see
 		// //
 		// http://forum.jogamp.org/Return-of-the-quot-java-lang-UnsatisfiedLinkError-Can-t-load-library-System-Library-Frameworks-glueg-td4034549.html)
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: OpenGL", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
+		DEBUG.TIMER(DEBUG.PAD("> GAMA: OpenGL",55, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			if (!isInitialized) {
 
 				JarUtil.setResolver(url -> {

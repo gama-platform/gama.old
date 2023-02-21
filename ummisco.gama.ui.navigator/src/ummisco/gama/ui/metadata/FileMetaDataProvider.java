@@ -690,7 +690,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if (started) return;
 		started = true;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
+		DEBUG.TIMER(DEBUG.PAD("> GAMA: workspace metadata ",55, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
 			try {
 				workspace.getRoot().accept(resource -> {
 					if (resource.isAccessible()) {
@@ -703,7 +703,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		new Thread(() -> {
 			try {
 				TIMER_WITH_EXCEPTIONS(
-						DEBUG.PAD("> GAMA: workspace projects ", 45, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
+						DEBUG.PAD("> GAMA: workspace projects ",55, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
 							workspace.build(IncrementalProjectBuilder.FULL_BUILD, null);
 						});
 			} catch (CoreException e) {
@@ -731,7 +731,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				if (context.getKind() != ISaveContext.FULL_SAVE) return;
 
 				TIMER_WITH_EXCEPTIONS(
-						DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" saved in", 15, '_'), () -> {
+						DEBUG.PAD("> GAMA: workspace metadata ",55, ' ') + DEBUG.PAD(" saved in", 15, '_'), () -> {
 							getWorkspace().getRoot().accept(resource -> {
 								String toSave = null;
 								try {

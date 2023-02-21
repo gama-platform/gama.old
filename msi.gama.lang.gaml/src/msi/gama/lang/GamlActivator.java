@@ -26,7 +26,7 @@ public class GamlActivator implements BundleActivator {
 
 	@Override
 	public void start(final BundleContext context) throws Exception {
-		// TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 45, ' ') + PAD(" done in", 15, '_'), () -> {
+		// TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser",55, ' ') + PAD(" done in", 15, '_'), () -> {
 		GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
 		GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
 		GAML.registerGamlEcoreUtils(EGaml.getInstance());

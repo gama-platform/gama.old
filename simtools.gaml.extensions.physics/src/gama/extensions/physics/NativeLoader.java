@@ -53,7 +53,7 @@ public class NativeLoader {
 		if (NATIVE_BULLET_LIBRARY_LOADED == null) {
 			NATIVE_BULLET_LIBRARY_LOADED = false;
 			if (LOAD_NATIVE_BULLET_LIBRARY) {
-				TIMER_WITH_EXCEPTIONS(PAD("> GAMA: native Bullet library", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
+				TIMER_WITH_EXCEPTIONS(PAD("> GAMA: native Bullet library",55, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
 						() -> {
 							try {
 								Platform platform = JmeSystem.getPlatform();
