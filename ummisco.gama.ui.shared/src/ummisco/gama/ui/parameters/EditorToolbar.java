@@ -20,8 +20,14 @@ import static ummisco.gama.ui.interfaces.IParameterEditor.PLUS;
 import static ummisco.gama.ui.interfaces.IParameterEditor.REVERT;
 import static ummisco.gama.ui.interfaces.IParameterEditor.VALUE;
 import static ummisco.gama.ui.resources.GamaIcons.create;
+import static ummisco.gama.ui.resources.IGamaIcons.SMALL_BROWSE;
+import static ummisco.gama.ui.resources.IGamaIcons.SMALL_CHANGE;
+import static ummisco.gama.ui.resources.IGamaIcons.SMALL_EDIT;
+import static ummisco.gama.ui.resources.IGamaIcons.SMALL_INSPECT;
 import static ummisco.gama.ui.resources.IGamaIcons.SMALL_MINUS;
 import static ummisco.gama.ui.resources.IGamaIcons.SMALL_PLUS;
+import static ummisco.gama.ui.resources.IGamaIcons.SMALL_REVERT;
+import static ummisco.gama.ui.resources.IGamaIcons.SMALL_UNDEFINE;
 import static ummisco.gama.ui.views.toolbar.GamaCommand.build;
 
 import org.eclipse.jface.layout.RowDataFactory;
@@ -119,14 +125,14 @@ public class EditorToolbar<T> {
 	final Composite group;
 
 	static {
-		commands[REVERT] = build("overlays/small.revert", null, "Revert to original value", null);
+		commands[REVERT] = build(SMALL_REVERT, null, "Revert to original value", null);
 		commands[PLUS] = build(SMALL_PLUS, null, "Increment the value", null);
 		commands[MINUS] = build(SMALL_MINUS, null, "Decrement the value ", null);
-		commands[EDIT] = build("overlays/small.edit", null, "Edit the parameter", null);
-		commands[INSPECT] = build("overlays/small.inspect", null, "Inspect the agent", null);
-		commands[BROWSE] = build("overlays/small.browse", null, "Browse the list of agents", null);
-		commands[CHANGE] = build("overlays/small.change", null, "Choose another agent", null);
-		commands[DEFINE] = build("overlays/small.undefine", null, "Set the parameter to undefined", null);
+		commands[EDIT] = build(SMALL_EDIT, null, "Edit the parameter", null);
+		commands[INSPECT] = build(SMALL_INSPECT, null, "Inspect the agent", null);
+		commands[BROWSE] = build(SMALL_BROWSE, null, "Browse the list of agents", null);
+		commands[CHANGE] = build(SMALL_CHANGE, null, "Choose another agent", null);
+		commands[DEFINE] = build(SMALL_UNDEFINE, null, "Set the parameter to undefined", null);
 		commands[VALUE] = build(null, "", "Value of the parameter", null);
 		// commands[SAVE] = build("small.save", null, "Save the values", null);
 	}

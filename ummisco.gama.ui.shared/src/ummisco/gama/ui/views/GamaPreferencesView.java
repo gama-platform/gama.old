@@ -3,7 +3,7 @@
  * GamaPreferencesView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -127,9 +127,9 @@ public class GamaPreferencesView {
 	static {
 		prefs_images.put(GamaPreferences.Interface.NAME, GamaIcons.create(IGamaIcons.PREFS_GENERAL).image());
 		prefs_images.put(GamaPreferences.Modeling.NAME, GamaIcons.create(IGamaIcons.PREFS_EDITOR).image());
-		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcons.create("prefs/prefs.simulations2").image());
-		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcons.create("prefs/prefs.runtime2").image());
-		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcons.create("prefs/prefs.ui2").image());
+		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcons.create(IGamaIcons.PREFS_RUNTIME).image());
+		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcons.create(IGamaIcons.PREFS_SIMULATION).image());
+		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcons.create(IGamaIcons.PREFS_UI).image());
 		prefs_images.put(GamaPreferences.External.NAME, GamaIcons.create(IGamaIcons.PREFS_LIBS).image());
 
 	}

@@ -515,7 +515,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		tb.setSelection(item, view.getOutput().getData().isAntialias());
 		fs = tb.button(toggleFullScreen, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.menu("layer/layers.menu", "Browse displayed agents by layers", "Properties and contents of layers",
+		tb.menu(IGamaIcons.LAYERS_MENU, "Browse displayed agents by layers", "Properties and contents of layers",
 				trigger -> menuManager.buildToolbarMenu(trigger, (ToolItem) trigger.widget), SWT.RIGHT);
 
 	}

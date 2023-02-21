@@ -35,6 +35,7 @@ import org.geotools.map.StyleLayer;
 import org.geotools.styling.Style;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.styling.SimpleConfigurator;
 
 /**
@@ -142,8 +143,8 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 			@Override
 			public Image getImage(final Object element) {
 				if (element instanceof Layer p) {
-					if (p.isVisible()) return GamaIcons.create("small.inspect").image();
-					return GamaIcons.create("small.hidden").image();
+					if (p.isVisible()) return GamaIcons.create(IGamaIcons.SMALL_INSPECT).image();
+					return GamaIcons.create(IGamaIcons.SMALL_HIDDEN).image();
 				}
 				return null;
 			}
@@ -158,7 +159,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(final Object element) {
-				return GamaIcons.create("small.selectable").image();
+				return GamaIcons.create(IGamaIcons.SMALL_SELECTABLE).image();
 			}
 
 			@Override

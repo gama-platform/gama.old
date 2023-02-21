@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.editors.text.TextEditor;
 
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -82,7 +83,7 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.S
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 
-		tb.button("generic/menu.saveas", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
+		tb.button(IGamaIcons.SAVE_AS, "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
 
 	}
 	//

@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.Selector;
@@ -228,7 +229,7 @@ public class GamaColorMenu extends GamaMenu {
 	 *            the selector
 	 */
 	public static void addColorSubmenuTo(final Menu menu, final String text, final Consumer<GamaColor> selector) {
-		Menu subMenu = sub(menu, text, text, GamaIcons.create("editor/reference.colors").image());
+		Menu subMenu = sub(menu, text, text, GamaIcons.create(IGamaIcons.REFERENCE_COLORS).image());
 		final List<String> names = new ArrayList(GamaColor.colors.keySet());
 		Collections.sort(names, colorComp);
 		for (final String current : names) {

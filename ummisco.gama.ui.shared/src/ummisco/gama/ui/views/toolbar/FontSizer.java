@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
 
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -92,9 +93,9 @@ public class FontSizer {
 			}
 
 		});
-		tb.button("console/font.increase", "Increase font size", "Increase font size", e -> changeFontSize(2),
+		tb.button(IGamaIcons.FONT_INCREASE, "Increase font size", "Increase font size", e -> changeFontSize(2),
 				SWT.RIGHT);
-		tb.button("console/font.decrease", "Decrease font size", "Decrease font size", e -> changeFontSize(-2),
+		tb.button(IGamaIcons.FONT_DECREASE, "Decrease font size", "Decrease font size", e -> changeFontSize(-2),
 				SWT.RIGHT);
 
 		tb.sep(16, SWT.RIGHT);

@@ -150,15 +150,15 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView, IGa
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 
-		back = tb.button("browser/back", "Back", "Go to previous page in history", e -> {
+		back = tb.button(IGamaIcons.BROWSER_BACK, "Back", "Go to previous page in history", e -> {
 			browser.back();
 			checkButtons();
 		}, SWT.RIGHT);
-		home = tb.button("browser/home", "Home", "Go back to the welcome page", e -> {
+		home = tb.button(IGamaIcons.BROWSER_HOME, "Home", "Go back to the welcome page", e -> {
 			browser.setUrl(WebHelper.getWelcomePageURL().toString());
 			checkButtons();
 		}, SWT.RIGHT);
-		forward = tb.button("browser/forward", "Forward", "Go to next page in history", e -> {
+		forward = tb.button(IGamaIcons.BROWSER_FORWARD, "Forward", "Go to next page in history", e -> {
 			browser.forward();
 			checkButtons();
 		}, SWT.RIGHT);

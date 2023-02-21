@@ -33,6 +33,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -127,19 +128,19 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 
-		warningAction = tb.check("build/toggle.warnings", "", "Toggle display of warning markers", e -> {
+		warningAction = tb.check(IGamaIcons.TOGGLE_WARNINGS, "", "Toggle display of warning markers", e -> {
 			final boolean b = ((ToolItem) e.widget).getSelection();
 			GamaPreferences.Modeling.WARNINGS_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 
-		infoAction = tb.check("build/toggle.infos", "", "Toggle display of information markers", e -> {
+		infoAction = tb.check(IGamaIcons.TOGGLE_INFOS, "", "Toggle display of information markers", e -> {
 			final boolean b = ((ToolItem) e.widget).getSelection();
 			GamaPreferences.Modeling.INFO_ENABLED.set(b).save();
 		}, SWT.RIGHT);
 		checkActions();
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("build/build.all", "", "Clean and validate all projects", e -> { build(); }, SWT.RIGHT);
-		tb.button("test/test.run", "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
+		tb.button(IGamaIcons.BUILD_ALL, "", "Clean and validate all projects", e -> { build(); }, SWT.RIGHT);
+		tb.button(IGamaIcons.TEST_RUN, "", "Run all tests", e -> TestsRunner.start(), SWT.RIGHT);
 
 	}
 

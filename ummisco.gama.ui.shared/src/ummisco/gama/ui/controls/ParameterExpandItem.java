@@ -179,15 +179,15 @@ public class ParameterExpandItem extends Item {
 		}
 
 		if (parent.hasVisibleToggle) {
-			final var image = parent.isVisible(this) ? GamaIcons.create("overlays/small.inspect").image()
-					: GamaIcons.create("overlays/small.hidden").image();
+			final var image = parent.isVisible(this) ? GamaIcons.create(IGamaIcons.SMALL_INSPECT).image()
+					: GamaIcons.create(IGamaIcons.SMALL_HIDDEN).image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			visiblePosition = endX;
 			gc.drawImage(image, endX, imageY);
 		}
 		if (parent.hasSelectableToggle) {
-			final var image = isSelectable ? GamaIcons.create("small.selectable").image()
-					: GamaIcons.create("overlays/small.unselectable").image();
+			final var image = isSelectable ? GamaIcons.create(IGamaIcons.SMALL_SELECTABLE).image()
+					: GamaIcons.create(IGamaIcons.SMALL_UNSELECTABLE).image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			selectablePosition = endX;
 			gc.drawImage(image, endX, imageY);

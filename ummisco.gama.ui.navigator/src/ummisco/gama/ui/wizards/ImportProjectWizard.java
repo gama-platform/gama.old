@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class ImportProjectWizard.
@@ -78,7 +79,7 @@ public class ImportProjectWizard extends Wizard implements IImportWizard {
 
 	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection currentSelection) {
-		setDefaultPageImageDescriptor(GamaIcons.create("navigator/import.project").descriptor());
+		setDefaultPageImageDescriptor(GamaIcons.create(IGamaIcons.IMPORT_PROJECT).descriptor());
 	}
 
 	@Override

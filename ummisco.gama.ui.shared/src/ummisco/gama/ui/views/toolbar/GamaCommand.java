@@ -3,7 +3,7 @@
  * GamaCommand.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -51,21 +51,6 @@ public class GamaCommand {
 	public static GamaCommand build(final String image, final String text, final String tooltip,
 			final Selector runner) {
 		return new GamaCommand(image, text, tooltip, runner);
-	}
-
-	/**
-	 * Builds the.
-	 *
-	 * @param image
-	 *            the image
-	 * @param text
-	 *            the text
-	 * @param runner
-	 *            the runner
-	 * @return the gama command
-	 */
-	public static GamaCommand build(final String image, final String text, final Selector runner) {
-		return new GamaCommand(image, text, runner);
 	}
 
 	/** The image. */
@@ -249,6 +234,13 @@ public class GamaCommand {
 		return i;
 	}
 
+	/**
+	 * To item.
+	 *
+	 * @param m
+	 *            the m
+	 * @return the menu item
+	 */
 	public MenuItem toItem(final Menu m) {
 		final var i = new MenuItem(m, SWT.PUSH);
 		if (text != null) { i.setText(text); }

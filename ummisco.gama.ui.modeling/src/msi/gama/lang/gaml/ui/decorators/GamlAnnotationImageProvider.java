@@ -110,9 +110,9 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 		// ProjectionAnnotation projection = (ProjectionAnnotation)
 		// annotation;
 		// if ( projection.isCollapsed() ) {
-		// return GamaIcons.create("marker.collapsed2").image();
+		// return GamaIcons.create ("marker.collapsed2").image();
 		// } else {
-		// return GamaIcons.create("marker.expanded2").image();
+		// return GamaIcons.create ("marker.expanded2").image();
 		// }
 		else if (annotation instanceof XtextAnnotation ma) {
 			result = getImage(annotation.getType());

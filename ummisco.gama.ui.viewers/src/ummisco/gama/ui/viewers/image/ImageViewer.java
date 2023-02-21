@@ -79,6 +79,7 @@ import ummisco.gama.ui.metadata.ImageDataLoader;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -758,7 +759,7 @@ public class ImageViewer extends EditorPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("generic/menu.saveas", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
+		tb.button(IGamaIcons.SAVE_AS, "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
 
 	}
 

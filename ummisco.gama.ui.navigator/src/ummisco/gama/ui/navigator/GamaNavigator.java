@@ -53,6 +53,7 @@ import ummisco.gama.ui.navigator.contents.WrappedContainer;
 import ummisco.gama.ui.navigator.contents.WrappedFile;
 import ummisco.gama.ui.navigator.contents.WrappedResource;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -244,7 +245,7 @@ public class GamaNavigator extends CommonNavigator
 	}
 
 	/** The by date. */
-	final GamaCommand byDate = new GamaCommand("mini/tree.sort", "", "Sort by modification date", trigger -> {
+	final GamaCommand byDate = new GamaCommand(IGamaIcons.TREE_SORT, "", "Sort by modification date", trigger -> {
 		final boolean enabled = ((ToolItem) trigger.widget).getSelection();
 
 		try {
@@ -261,7 +262,7 @@ public class GamaNavigator extends CommonNavigator
 
 	/** The link command. */
 	final GamaCommand linkCommand =
-			new GamaCommand("navigator/editor.link", "", "Stay in sync with the editor", e -> link.run());
+			new GamaCommand(IGamaIcons.EDITOR_LINK, "", "Stay in sync with the editor", e -> link.run());
 
 	/**
 	 * Method createToolItem()

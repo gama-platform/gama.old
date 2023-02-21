@@ -37,6 +37,7 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 
 /**
@@ -80,12 +81,12 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile f = getResource();
 		if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
 			if (isShapeFileSupport) {
-				image = GamaIcons.create("navigator/file.shapesupport").image();
+				image = GamaIcons.create(IGamaIcons.FILE_SHAPESUPPORT).image();
 			} else {
 				image = DEFAULT_LABEL_PROVIDER.getImage(f);
 			}
 		} else {
-			image = GamaIcons.create("navigator/file.text").image();
+			image = GamaIcons.create(IGamaIcons.FILE_TEXT).image();
 		}
 
 	}

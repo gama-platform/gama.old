@@ -34,6 +34,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class WrappedGamaFile.
@@ -104,9 +105,9 @@ public class WrappedGamaFile extends WrappedFile {
 	protected void computeFileImage() {
 		// final IFile f = getResource();
 		if (isExperiment) {
-			image = GamaIcons.create("navigator/file.experiment").image();
+			image = GamaIcons.create(IGamaIcons.FILE_EXPERIMENT).image();
 		} else {
-			image = GamaIcons.create("navigator/file.model").image();
+			image = GamaIcons.create(IGamaIcons.FILE_MODEL).image();
 		}
 
 	}

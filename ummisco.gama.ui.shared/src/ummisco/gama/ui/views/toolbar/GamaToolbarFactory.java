@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
-import static msi.gama.application.workbench.ThemeHelper.isDark;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
@@ -25,12 +23,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.IGamaView;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class GamaToolbarFactory.
@@ -138,7 +138,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("mini/tree.expand").descriptor());
+			setImageDescriptor(GamaIcons.create(IGamaIcons.TREE_EXPAND).descriptor());
 		}
 
 	}
@@ -160,7 +160,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create("mini/tree.collapse").descriptor());
+			setImageDescriptor(GamaIcons.create(IGamaIcons.TREE_COLLAPSE).descriptor());
 		}
 
 	}
@@ -175,7 +175,7 @@ public class GamaToolbarFactory {
 		 */
 		ToggleOverlay() {
 			super("Toggle Overlay", IAction.AS_PUSH_BUTTON);
-			setImageDescriptor(GamaIcons.create("mini/overlay.toggle").descriptor());
+			setImageDescriptor(GamaIcons.create(IGamaIcons.OVERLAY_TOGGLE).descriptor());
 		}
 
 	}
@@ -262,7 +262,8 @@ public class GamaToolbarFactory {
 		layout.marginHeight = margin;
 		toolbarComposite.setLayout(layout);
 		// toolbarComposite.setBackground(IGamaColors.WHITE.color());
-		GamaColors.setBackground(isDark() ? composite.getShell().getBackground() : IGamaColors.WHITE.color(),
+		GamaColors.setBackground(
+				ThemeHelper.isDark() ? composite.getShell().getBackground() : IGamaColors.WHITE.color(),
 				toolbarComposite);
 		return toolbarComposite;
 
@@ -308,7 +309,8 @@ public class GamaToolbarFactory {
 
 			@Override
 			protected void setIcon(final boolean show) {
-				setImageDescriptor(GamaIcons.create(show ? "mini/toolbar.show" : "mini/toolbar.hide").descriptor());
+				setImageDescriptor(
+						GamaIcons.create(show ? IGamaIcons.TOOLBAR_SHOW : IGamaIcons.TOOLBAR_HIDE).descriptor());
 			}
 		};
 

@@ -24,6 +24,7 @@ import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * @since 3.2
@@ -55,12 +56,12 @@ public class RefactorActionProvider extends CommonActionProvider {
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		renameAction = new RenameResourceAction(sp);
-		renameAction.setImageDescriptor(GamaIcons.create("navigator/file.rename").descriptor());
+		renameAction.setImageDescriptor(GamaIcons.create(IGamaIcons.FILE_RENAME).descriptor());
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 		historyAction = new ShowLocalHistory(sp);
-		historyAction.setImageDescriptor(GamaIcons.create("navigator/local.history").descriptor());
+		historyAction.setImageDescriptor(GamaIcons.create(IGamaIcons.LOCAL_HISTORY).descriptor());
 		compareAction = new CompareWithEachOtherAction(sp);
-		compareAction.setImageDescriptor(GamaIcons.create("layout/layout.horizontal").descriptor());
+		compareAction.setImageDescriptor(GamaIcons.create(IGamaIcons.LAYOUT_HORIZONTAL).descriptor());
 	}
 
 	@Override

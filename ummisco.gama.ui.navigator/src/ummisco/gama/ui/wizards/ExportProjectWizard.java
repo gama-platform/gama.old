@@ -20,6 +20,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 import ummisco.gama.ui.navigator.contents.ResourceManager;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class ExportProjectWizard.
@@ -78,7 +79,7 @@ public class ExportProjectWizard extends Wizard implements IExportWizard {
 
 	@Override
 	public void init(final IWorkbench workbench, final IStructuredSelection selection) {
-		setDefaultPageImageDescriptor(GamaIcons.create("navigator/import.project").descriptor());
+		setDefaultPageImageDescriptor(GamaIcons.create(IGamaIcons.IMPORT_PROJECT).descriptor());
 		final Object[] all = selection.toArray();
 		for (int i = 0; i < all.length; i++) { all[i] = ResourceManager.getResource(all[i]); }
 		this.currentSelection = new StructuredSelection(all);

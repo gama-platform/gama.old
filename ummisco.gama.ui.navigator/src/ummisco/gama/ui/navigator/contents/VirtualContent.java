@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
-import static ummisco.gama.ui.resources.IGamaIcons.OVERLAY_OK;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class VirtualContent.
@@ -62,15 +61,15 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	public static final Map<Integer, ImageDescriptor> DESCRIPTORS = new HashMap<>() {
 		{
 
-			put(CLOSED, GamaIcons.create("navigator/overlay.closed2").descriptor());
-			put(NO_PROBLEM, GamaIcons.create(OVERLAY_OK).descriptor());
-			put(IMarker.SEVERITY_INFO, GamaIcons.create(OVERLAY_OK).descriptor());
-			put(IMarker.SEVERITY_WARNING, GamaIcons.create("navigator/overlay.warning2").descriptor());
-			put(IMarker.SEVERITY_ERROR, GamaIcons.create("navigator/overlay.error2").descriptor());
-			put(LINK_OK, GamaIcons.create("navigator/overlay.link.ok").descriptor());
-			put(LINK_BROKEN, GamaIcons.create("navigator/overlay.link.broken").descriptor());
-			put(WEBLINK_OK, GamaIcons.create("navigator/overlay.cloud").descriptor());
-			put(WEBLINK_BROKEN, GamaIcons.create("navigator/overlay.link.broken").descriptor());
+			put(CLOSED, GamaIcons.create(IGamaIcons.OVERLAY_CLOSED).descriptor());
+			put(NO_PROBLEM, GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor());
+			put(IMarker.SEVERITY_INFO, GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor());
+			put(IMarker.SEVERITY_WARNING, GamaIcons.create(IGamaIcons.OVERLAY_WARNING).descriptor());
+			put(IMarker.SEVERITY_ERROR, GamaIcons.create(IGamaIcons.OVERLAY_ERROR).descriptor());
+			put(LINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_LINK_OK).descriptor());
+			put(LINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_LINK_BROKEN).descriptor());
+			put(WEBLINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_CLOUD).descriptor());
+			put(WEBLINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_LINK_BROKEN).descriptor());
 		}
 	};
 

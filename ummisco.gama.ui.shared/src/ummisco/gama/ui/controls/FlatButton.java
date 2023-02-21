@@ -31,6 +31,7 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class FlatButton.
@@ -151,7 +152,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 */
 	public static FlatButton menu(final Composite comp, final GamaUIColor color, final String text) {
 		return button(comp, color, text).setImageStyle(IMAGE_RIGHT)
-				.setImage(GamaIcons.create("overlays/small.dropdown").image());
+				.setImage(GamaIcons.create(IGamaIcons.SMALL_DROPDOWN).image());
 	}
 
 	/** The image. */

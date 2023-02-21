@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
+import static ummisco.gama.ui.resources.IGamaIcons.CAMERA_EMPTY;
+import static ummisco.gama.ui.resources.IGamaIcons.CAMERA_LOCK;
+import static ummisco.gama.ui.resources.IGamaIcons.DISPLAY_TOOLBAR_CAMERA;
+
 import java.util.Collection;
 
 import org.eclipse.swt.SWT;
@@ -100,7 +104,7 @@ public class ZoomController {
 						// toolbar
 					}
 				}
-				if (view.getCameraHelper() != null) {
+				if (view.getCameraHelper() != null && cameraLocked != null) {
 					tb.setSelection(cameraLocked, view.getCameraHelper().isCameraLocked());
 				}
 				tb.removeControlListener(this);
@@ -112,7 +116,7 @@ public class ZoomController {
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT, "Zoom out", "Zoom out", e -> view.zoomOut(), SWT.RIGHT);
 		tb.sep(SWT.RIGHT);
 		if (view.hasCameras()) {
-			tb.menu(IGamaIcons.DISPLAY_TOOLBAR_CAMERA, "", "Choose a camera...", trigger -> {
+			tb.menu(DISPLAY_TOOLBAR_CAMERA, "", "Choose a camera...", trigger -> {
 				final GamaMenu menu = new GamaMenu() {
 
 					@Override
@@ -129,8 +133,8 @@ public class ZoomController {
 								}
 
 							}, p.equals(view.getCameraHelper().getCameraName())
-									? GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CAMERA).image()
-									: GamaIcons.create("display/camera.empty").image());
+									? GamaIcons.create(DISPLAY_TOOLBAR_CAMERA).image()
+									: GamaIcons.create(CAMERA_EMPTY).image());
 						}
 						sep();
 						action("Copy current camera", new SelectionAdapter() {
@@ -141,12 +145,12 @@ public class ZoomController {
 								WorkbenchHelper.copy(text);
 							}
 
-						}, GamaIcons.create("generic/menu.paste").image());
+						}, GamaIcons.create(IGamaIcons.PASTE).image());
 					}
 				};
 				menu.open(tb.getToolbar(SWT.RIGHT), trigger, tb.height, 96);
 			}, SWT.RIGHT);
-			cameraLocked = tb.check("display/camera.lock", "Lock/unlock", "Lock/unlock camera", e -> {
+			cameraLocked = tb.check(CAMERA_LOCK, "Lock/unlock", "Lock/unlock camera", e -> {
 				view.getCameraHelper().toggleCamera();
 			}, SWT.RIGHT);
 		}

@@ -46,6 +46,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 import ummisco.gama.ui.menus.GamaMenu;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.csv.model.CSVModel;
 import ummisco.gama.ui.viewers.csv.model.CSVRow;
@@ -513,7 +514,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 			}
 		});
 
-		tb.menu("viewers/action.set.delimiter2", "Determine which character should be used as delimiter of fields",
+		tb.menu(IGamaIcons.SET_DELIMITER, "Determine which character should be used as delimiter of fields",
 				"Determine which character should be used as delimiter of fields", e -> {
 					final GamaMenu menu = new GamaMenu() {
 
@@ -573,14 +574,14 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 					};
 					menu.open(tb.getToolbar(SWT.RIGHT), e);
 				}, SWT.RIGHT);
-		final ToolItem t = tb.check("viewers/action.set.header2", "First line is header", "First line is header", e -> {
+		final ToolItem t = tb.check(IGamaIcons.SET_HEADER, "First line is header", "First line is header", e -> {
 			final ToolItem t1 = (ToolItem) e.widget;
 			model.setFirstLineHeader(t1.getSelection());
 			refreshWithDelimiter(null);
 		}, SWT.RIGHT);
 		t.setSelection(model.isFirstLineHeader());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("viewers/action.add.row2", "Add row",
+		tb.button(IGamaIcons.ADD_ROW, "Add row",
 				"Insert a new row before the currently selected one or at the end of the file if none is selected",
 				e -> {
 					final CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
@@ -591,7 +592,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 					}
 					tableModified();
 				}, SWT.RIGHT);
-		tb.button("viewers/action.delete.row2", "Delete row", "Delete currently selected rows", e -> {
+		tb.button(IGamaIcons.DELETE_ROW, "Delete row", "Delete currently selected rows", e -> {
 
 			CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 
@@ -605,7 +606,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		if (model.isFirstLineHeader()) {
-			tb.button("viewers/action.add.column2", "Add column", "Add new column", arg0 -> {
+			tb.button(IGamaIcons.ADD_COLUMN, "Add column", "Add new column", arg0 -> {
 				// call insert/add column page
 				final InsertColumnPage acPage = new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
 				if (acPage.open() == Window.OK) {
@@ -626,7 +627,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 
 		}
 		if (model.isFirstLineHeader()) {
-			tb.button("viewers/action.delete.column2", "Delete column", "Delete one or several column(s)", e -> {
+			tb.button(IGamaIcons.DELETE_COLUMN, "Delete column", "Delete one or several column(s)", e -> {
 
 				// call delete column page
 				final DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());

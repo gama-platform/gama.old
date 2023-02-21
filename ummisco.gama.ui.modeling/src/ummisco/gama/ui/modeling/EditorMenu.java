@@ -113,7 +113,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 		final MenuItem mark = new MenuItem(menu, SWT.PUSH);
 		mark.setText(" Validate all");
-		mark.setImage(GamaIcons.create("build/build.all").image());
+		mark.setImage(GamaIcons.create(IGamaIcons.BUILD_ALL).image());
 		mark.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -149,7 +149,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 		final MenuItem usedIn = new MenuItem(menu, SWT.CASCADE);
 		usedIn.setText(" Other experiments...");
-		usedIn.setImage(GamaIcons.create("editor/other.experiments").image());
+		usedIn.setImage(GamaIcons.create(IGamaIcons.OTHER_EXPERIMENTS).image());
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {
@@ -242,7 +242,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createUsedIn(final Menu menu) {
 		final MenuItem usedIn = new MenuItem(menu, SWT.CASCADE);
 		usedIn.setText(" Imported in...");
-		usedIn.setImage(GamaIcons.create("editor/imported.in").image());
+		usedIn.setImage(GamaIcons.create(IGamaIcons.IMPORTED_IN).image());
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {

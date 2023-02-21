@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * OpenCloseActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * OpenCloseActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
@@ -25,19 +25,20 @@ import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * @since 3.2
  *
  */
 public class OpenCloseActionProvider extends CommonActionProvider {
-	
+
 	/** The open project action. */
 	private OpenResourceAction openProjectAction;
-	
+
 	/** The close project action. */
 	private CloseResourceAction closeProjectAction;
-	
+
 	/** The shell. */
 	private Shell shell;
 
@@ -86,9 +87,7 @@ public class OpenCloseActionProvider extends CommonActionProvider {
 
 			if (next instanceof IProject) {
 				project = (IProject) next;
-			} else if (next instanceof IAdaptable) {
-				project = ((IAdaptable) next).getAdapter(IProject.class);
-			}
+			} else if (next instanceof IAdaptable) { project = ((IAdaptable) next).getAdapter(IProject.class); }
 
 			if (project == null) {
 				isProjectSelection = false;
@@ -120,10 +119,10 @@ public class OpenCloseActionProvider extends CommonActionProvider {
 		final IShellProvider sp = () -> shell;
 
 		openProjectAction = new OpenResourceAction(sp);
-		openProjectAction.setImageDescriptor(GamaIcons.create("navigator/project.open2").descriptor());
+		openProjectAction.setImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_OPEN).descriptor());
 
 		closeProjectAction = new CloseResourceAction(sp);
-		closeProjectAction.setImageDescriptor(GamaIcons.create("navigator/project.close2").descriptor());
+		closeProjectAction.setImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_CLOSE).descriptor());
 
 	}
 

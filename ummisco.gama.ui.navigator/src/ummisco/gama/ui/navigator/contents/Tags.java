@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Class ImportFolder.
@@ -74,7 +75,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return GamaIcons.create("gaml/_attributes").image(); }
+	public Image getImage() { return GamaIcons.create(IGamaIcons.ATTRIBUTES).image(); }
 
 	/**
 	 * Method getColor()

@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
+import static ummisco.gama.ui.resources.IGamaIcons.BROWSE_POPULATIONS;
+import static ummisco.gama.ui.resources.IGamaIcons.LOCK_POPULATION;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,7 +190,7 @@ public class PopulationInspectView extends GamaViewPart
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		this.setTitleImage(GamaIcons.create("views/view.browser").image());
+		this.setTitleImage(GamaIcons.create(IGamaIcons.VIEW_BROWSER).image());
 	}
 
 	/** The provider. */
@@ -894,7 +897,7 @@ public class PopulationInspectView extends GamaViewPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		if (getOutput() == null) return;
 		super.createToolItems(tb);
-		tb.check(IGamaIcons.LOCK_POPULATION, "", "Lock the current population (prevents editing it)", e -> {
+		tb.check(LOCK_POPULATION, "", "Lock the current population (prevents editing it)", e -> {
 			locked = !locked;
 			editor.getControl().setEnabled(!locked);
 			populationMenu.setEnabled(!locked);
@@ -902,7 +905,7 @@ public class PopulationInspectView extends GamaViewPart
 			// TODO let the list of agents remain the same ??
 		}, SWT.RIGHT);
 		createExpressionComposite();
-		populationMenu = tb.menu(IGamaIcons.BROWSE_POPULATIONS, "", "Browse a species", trigger -> {
+		populationMenu = tb.menu(BROWSE_POPULATIONS, "", "Browse a species", trigger -> {
 			if (locked) return;
 			final GamaMenu menu = new GamaMenu() {
 

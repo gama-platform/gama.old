@@ -132,7 +132,7 @@ public class MapLayerComposite extends Composite {
 		final Button showLayersButton = new Button(buttonComposite, SWT.PUSH);
 		showLayersButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		showLayersButton.setToolTipText("Show all layers");
-		showLayersButton.setImage(GamaIcons.create("overlays/small.inspect").image());
+		showLayersButton.setImage(GamaIcons.create(IGamaIcons.SMALL_INSPECT).image());
 		showLayersButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -144,7 +144,7 @@ public class MapLayerComposite extends Composite {
 		final Button hideLayersButton = new Button(buttonComposite, SWT.PUSH);
 		hideLayersButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		hideLayersButton.setToolTipText("Hide all layers");
-		hideLayersButton.setImage(GamaIcons.create("overlays/small.hidden").image());
+		hideLayersButton.setImage(GamaIcons.create(IGamaIcons.SMALL_HIDDEN).image());
 		hideLayersButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -168,7 +168,7 @@ public class MapLayerComposite extends Composite {
 		final Button layerDownButton = new Button(buttonComposite, SWT.PUSH);
 		layerDownButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		layerDownButton.setToolTipText("Layer down");
-		layerDownButton.setImage(GamaIcons.create("overlays/small.expand2").image());
+		layerDownButton.setImage(GamaIcons.create(IGamaIcons.SMALL_EXPAND).image());
 		layerDownButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override

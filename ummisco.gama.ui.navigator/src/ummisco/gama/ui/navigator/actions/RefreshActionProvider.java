@@ -22,6 +22,7 @@ import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class RefreshActionProvider.
@@ -65,10 +66,10 @@ public class RefreshActionProvider extends CommonActionProvider {
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		refreshAction = new RefreshAction(sp);
-		refreshAction.setImageDescriptor(GamaIcons.create("navigator/file.refresh").descriptor());//$NON-NLS-1$
+		refreshAction.setImageDescriptor(GamaIcons.create(IGamaIcons.FILE_REFRESH).descriptor());
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 		runAllTestsAction = new RunAllTestsAction(sp, "Run all tests");
-		runAllTestsAction.setImageDescriptor(GamaIcons.create("test/test.run").descriptor());
+		runAllTestsAction.setImageDescriptor(GamaIcons.create(IGamaIcons.TEST_RUN).descriptor());
 
 	}
 

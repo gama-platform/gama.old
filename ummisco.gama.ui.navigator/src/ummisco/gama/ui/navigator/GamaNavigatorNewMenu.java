@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaNavigatorNewMenu.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamaNavigatorNewMenu.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Class GamaNavigatorMenus.
@@ -27,11 +28,12 @@ import ummisco.gama.ui.resources.GamaIcons;
 public class GamaNavigatorNewMenu extends GamaNavigatorMenu { // NO_UCD (unused code)
 
 	/**
-  * Instantiates a new gama navigator new menu.
-  *
-  * @param selection the selection
-  */
- public GamaNavigatorNewMenu(final IStructuredSelection selection) {
+	 * Instantiates a new gama navigator new menu.
+	 *
+	 * @param selection
+	 *            the selection
+	 */
+	public GamaNavigatorNewMenu(final IStructuredSelection selection) {
 		this.selection = selection;
 	}
 
@@ -67,7 +69,7 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu { // NO_UCD (unused 
 		}
 
 	};
-	
+
 	/** The new folder. */
 	private final SelectionListener newFolder = new SelectionAdapter() {
 
@@ -99,15 +101,15 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu { // NO_UCD (unused 
 
 	@Override
 	protected void fillMenu() {
-		action("New Model file...", newModel, GamaIcons.create("navigator/new.model2").image());
-		action("New Experiment file...", newExperiment, GamaIcons.create("navigator/new.model2").image());
-		action("New Project...", newProject, GamaIcons.create("navigator/new.project2").image());
+		action("New Model file...", newModel, GamaIcons.create(IGamaIcons.NEW_MODEL).image());
+		action("New Experiment file...", newExperiment, GamaIcons.create(IGamaIcons.NEW_MODEL).image());
+		action("New Project...", newProject, GamaIcons.create(IGamaIcons.NEW_PROJECT).image());
 		sep();
-		action("New Test Experiment file...", newTestExperiment, GamaIcons.create("navigator/new.model2").image());
+		action("New Test Experiment file...", newTestExperiment, GamaIcons.create(IGamaIcons.NEW_MODEL).image());
 		sep();
-		action("New Folder...", newFolder, GamaIcons.create("navigator/new.folder2").image());
+		action("New Folder...", newFolder, GamaIcons.create(IGamaIcons.NEW_FOLDER).image());
 		// sep();
-		// action("Other...", newOther, GamaIcons.create("navigator/navigator.new2").image());
+		// action("Other...", newOther, GamaIcons.create ("navigator/navigator.new2").image());
 	}
 
 }
