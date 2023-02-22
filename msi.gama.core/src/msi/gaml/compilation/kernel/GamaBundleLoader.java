@@ -244,10 +244,10 @@ public class GamaBundleLoader {
 						preBuild(CORE_PLUGIN);
 
 						// Force the GAML grammar plugin to load very early so that the parser is created early too
-						TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 55, ' ') + PAD(" done in", 15, '_'),
-								() -> {
-									PARSER_PLUGIN.start();
-								});
+						// TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 55, ' ') + PAD(" done in", 15, '_'),
+						// () -> {
+						// PARSER_PLUGIN.start();
+						// });
 					} catch (final Exception e2) {
 						ERR(ERROR_MESSAGE);
 						ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
