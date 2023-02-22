@@ -10,9 +10,22 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import static ummisco.gama.dev.utils.DEBUG.PAD;
+import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -20,8 +33,10 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.osgi.framework.Bundle;
 
 import msi.gama.application.workbench.IIconProvider;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -33,6 +48,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public class GamaIcons implements IIconProvider {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The Constant PLUGIN_ID. */
 	public static final String PLUGIN_ID = "ummisco.gama.ui.shared";
@@ -324,10 +343,25 @@ public class GamaIcons implements IIconProvider {
 		return icon.descriptor();
 	}
 
-	@Override
-	public Image image(final String name) {
-		final GamaIcon icon = create(name);
-		return icon.image();
+	/**
+	 * Preload icons.
+	 *
+	 * @param bundle
+	 *            the bundle
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public static void preloadIcons() throws IOException, URISyntaxException {
+		Bundle bundle = Platform.getBundle(PLUGIN_ID);
+		final URL fileURL = bundle.getEntry(GamaIcons.DEFAULT_PATH);
+		final URL resolvedFileURL = FileLocator.toFileURL(fileURL);
+		// We need to use the 3-arg constructor of URI in order to properly escape file system chars
+		final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+		Path path = new File(resolvedURI).toPath();
+		List<String> files =
+				Files.walk(path).map(f -> path.relativize(f).toString()).filter(n -> n.endsWith(".png")).toList();
+		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: Preloading " + files.size() + " icons", 55, ' ') + PAD(" done in", 15, '_'),
+				() -> files.forEach(n -> create(n.replace(".png", "")).image()));
 	}
 
 }
