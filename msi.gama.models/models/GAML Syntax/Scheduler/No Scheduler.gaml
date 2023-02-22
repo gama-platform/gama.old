@@ -18,8 +18,8 @@ global
 			cpt<-cpt+1;
 			nb_generated<-cpt;
 		}
-		write "With an empty list given inside the schedules facet of the species, it will not be executed 
-				so, nothing will be written inside the console";
+		write "With an empty list given inside the schedules facet of the species, it will not be executed \n"
+			+ "so, nothing will be written inside the console";
 	}
 }
 species no_scheduler schedules:[]

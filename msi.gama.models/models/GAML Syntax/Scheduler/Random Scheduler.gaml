@@ -20,8 +20,10 @@ global
 			cpt<-cpt+1;
 			nb_generated<-cpt;
 		}
-		write "To randomize the way agents of a same species are executed, it is possible to use the operator shuffle in the schedules facet. In this case, agents
-			will write their number, but they are executed in a random way";
+		write "To randomize the way agents of a same species are executed,\n" 
+			+ "it is possible to use the operator shuffle in the schedules facet. \n"
+			+ "In this case, agents will write their number,\n"
+			+ "but they are executed in a random way";
 	}
 	
 	reflex write_new_step

@@ -28,8 +28,8 @@ global {
 grid cell height: 10 width: 10 neighbors: 6 horizontal_orientation: orientation = "horizontal";
 
 
-experiment hexagonal type: gui {
-	output {
+experiment hexagonal type: gui{
+	output  synchronized:true{
 		display view type: 3d{
 			grid cell border: #black ;
 		}

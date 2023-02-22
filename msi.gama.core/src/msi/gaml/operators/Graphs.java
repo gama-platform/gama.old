@@ -3870,9 +3870,9 @@ public class Graphs {
 	@doc (
 			value = "returns a random graph.",
 			usages = { @usage (
-					value = "\"nbNodes\": number of nodes to created;\"nbEdges\": number of edges to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes; \"edges_species\": the species of edges ",
+					value = "`nbNodes`: number of nodes to be created; `nbEdges`: number of edges to be created; `directed`: is the graph has to be directed or not;`node_species`: the species of nodes; `edges_species`: the species of edges ",
 					examples = { @example (
-							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_random_graph(",
+							value = "graph<node_species,edge_species> myGraph <- generate_random_graph(",
 							isExecutable = false),
 							@example (
 									value = "50,",
