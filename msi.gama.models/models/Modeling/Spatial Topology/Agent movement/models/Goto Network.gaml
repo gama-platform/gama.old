@@ -11,7 +11,7 @@ model Network
 global {
 	file shape_file_in <- file('../includes/gis/roads.shp') ;
 	graph the_graph; 
-	geometry shape <- envelope(shape_file_in);
+	geometry shape <- envelope(shape_file_in) + 100;
 	bool save_shortest_paths <- false;
 	bool load_shortest_paths <- false;
 	string shortest_paths_file <- "../includes/shortest_paths.csv";

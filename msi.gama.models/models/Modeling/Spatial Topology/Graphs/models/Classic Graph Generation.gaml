@@ -19,16 +19,16 @@ global {
 	init {
 		switch graph_type {
 			match "random" {
-				the_graph <- generate_random_graph(nb_nodes,nb_edges, true,node_agent,edge_agent);
+				the_graph <- generate_random_graph(nb_nodes,nb_edges, true, node_agent, edge_agent);
 			}
 			match "scale-free" {
-				the_graph <- generate_barabasi_albert(int(nb_nodes/2), 5, nb_nodes,true,node_agent,edge_agent);	
+				the_graph <- generate_barabasi_albert(int(nb_nodes/2), 5, nb_nodes, true, node_agent, edge_agent);	
 			}
 			match "small-world" {
 				the_graph <- generate_watts_strogatz(nb_nodes, p, k, true,node_agent, edge_agent);	
 			}
 			match "complete" {
-				the_graph <- generate_complete_graph(nb_nodes, true,node_agent,edge_agent);
+				the_graph <- generate_complete_graph(nb_nodes, true, node_agent, edge_agent);
 			}
 				
 		}
@@ -59,7 +59,7 @@ experiment loadgraph type: gui {
 	parameter "Number of edges added per novel node" var: m min: 1 max: 10 category: "scale-free";
 	
 	output {
-		display map type: 3d{
+		display map type: 2d{
 			species edge_agent ;
 			species node_agent ;
 		}
