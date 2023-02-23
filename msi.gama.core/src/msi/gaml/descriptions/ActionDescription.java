@@ -3,7 +3,7 @@
  * ActionDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -24,6 +24,7 @@ import msi.gaml.statements.Facets;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ActionDescription.
@@ -50,6 +51,11 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	public ActionDescription(final String keyword, final IDescription superDesc, final Iterable<IDescription> cp,
 			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, true, source, facets, null);
+		if ("later".equals(getName())) {
+
+			DEBUG.OUT("");
+
+		}
 		setIf(Flag.Abstract, TRUE.equals(getLitteral(VIRTUAL)));
 		if (getName() != null && getName().startsWith(SYNTHETIC)) {
 			set(Flag.Synthetic);
@@ -124,6 +130,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				if (arg.value != null && arg.value.getExpression() != null) {
 					final IDescription formalArg =
 							Iterables.find(formalArgs, input -> input.getName().equals(the_name));
+					if (formalArg.isID()) { continue; }
 					final IType<?> formalType = formalArg.getGamlType();
 					final IType<?> callerType = arg.value.getExpression().getGamlType();
 					if (Types.intFloatCase(formalType, callerType)) {

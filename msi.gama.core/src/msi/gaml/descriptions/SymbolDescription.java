@@ -451,7 +451,7 @@ public abstract class SymbolDescription implements IDescription {
 		if (hasFacets()) { facets.dispose(); }
 		facets = null;
 		enclosing = null;
-		type = null;
+		setType(null);
 	}
 
 	@Override
@@ -588,7 +588,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IType<?> getGamlType() {
-		if (type == null) { type = computeType(); }
+		if (type == null) { setType(computeType()); }
 		return type;
 	}
 
@@ -1089,5 +1089,15 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public void replaceChildrenWith(final Iterable<IDescription> array) {}
+
+	/**
+	 * Sets the type.
+	 *
+	 * @param type
+	 *            the new type
+	 */
+	private void setType(final IType<?> type) {
+		this.type = type;
+	}
 
 }
