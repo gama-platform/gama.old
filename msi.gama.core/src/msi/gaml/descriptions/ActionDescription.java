@@ -24,7 +24,6 @@ import msi.gaml.statements.Facets;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ActionDescription.
@@ -51,11 +50,6 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	public ActionDescription(final String keyword, final IDescription superDesc, final Iterable<IDescription> cp,
 			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, true, source, facets, null);
-		if ("later".equals(getName())) {
-
-			DEBUG.OUT("");
-
-		}
 		setIf(Flag.Abstract, TRUE.equals(getLitteral(VIRTUAL)));
 		if (getName() != null && getName().startsWith(SYNTHETIC)) {
 			set(Flag.Synthetic);
