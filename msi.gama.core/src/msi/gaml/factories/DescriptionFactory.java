@@ -3,7 +3,7 @@
  * DescriptionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -27,7 +27,6 @@ import static msi.gama.precompiler.ISymbolKind.Variable.CONTAINER;
 import static msi.gama.precompiler.ISymbolKind.Variable.NUMBER;
 import static msi.gama.precompiler.ISymbolKind.Variable.REGULAR;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +43,8 @@ import com.google.common.collect.Iterables;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ast.ISyntacticElement;
@@ -562,7 +563,7 @@ public class DescriptionFactory {
 		}
 		Iterable<IDescription> children = cp;
 		if (children == null) {
-			final List<IDescription> childrenList = new ArrayList<>();
+			final ICollector<IDescription> childrenList = Collector.getList();
 			final SyntacticVisitor visitor = element -> {
 				final IDescription desc = create(element, superDesc, null);
 				if (desc != null) { childrenList.add(desc); }
@@ -572,7 +573,7 @@ public class DescriptionFactory {
 			source.visitGrids(visitor);
 			source.visitSpecies(visitor);
 			source.visitExperiments(visitor);
-			children = childrenList;
+			children = childrenList.items();
 		}
 		final Facets facets = source.copyFacets(md);
 		final EObject element = source.getElement();
