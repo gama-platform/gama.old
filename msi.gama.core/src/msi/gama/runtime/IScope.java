@@ -578,6 +578,21 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 *             the gama runtime exception
 	 */
 
+	default Object getArg(final String string) {
+		return getArg(string, IType.NONE);
+	}
+
+	/**
+	 * Gets the arg with a cast
+	 *
+	 * @param string
+	 *            the string
+	 * @param type
+	 *            the type
+	 * @return the arg
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	Object getArg(String string, int type) throws GamaRuntimeException;
 
 	/**
