@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ArgStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ArgStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -56,9 +56,15 @@ import msi.gaml.types.IType;
 						doc = @doc ("a boolean specifying if the argument is optional (false by default) (only in an action statement)")),
 				@facet (
 						name = IKeyword.VALUE,
-						type = { IType.NONE },
+						type = IType.NONE,
 						optional = true,
 						doc = @doc ("the value of the argument (only in a do statement)")),
+				@facet (
+						name = IKeyword.ID,
+						type = IType.BOOL,
+						internal = true,
+						optional = true,
+						doc = @doc ("whether the argument is to be treated as an id or as a value")),
 				@facet (
 						name = IKeyword.DEFAULT,
 						type = { IType.NONE },
@@ -117,7 +123,8 @@ public class ArgStatement extends AbstractPlaceHolderStatement {
 	/**
 	 * Instantiates a new arg statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	// A placeholder for arguments of actions
 	public ArgStatement(final IDescription desc) {
