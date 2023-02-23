@@ -3,7 +3,7 @@
  * AbstractGamlAdditions.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -400,6 +400,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 * @return the i description
 	 */
 	public IDescription _arg(final String name, final int type, final boolean optional) {
+		// For IDs and labels, we add a specific facet (ID) -- see #3627
+		if (type <= IType.LABEL) return desc(IKeyword.ARG, IKeyword.NAME, name, IKeyword.ID, "true", IKeyword.TYPE,
+				String.valueOf(type), IKeyword.OPTIONAL, optional ? "true" : "false");
 		return desc(IKeyword.ARG, IKeyword.NAME, name, IKeyword.TYPE, String.valueOf(type), IKeyword.OPTIONAL,
 				optional ? "true" : "false");
 	}
