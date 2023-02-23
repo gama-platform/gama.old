@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AssertStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * AssertStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.test;
 
@@ -46,6 +46,11 @@ import msi.gaml.types.IType;
 				optional = false,
 				doc = @doc ("a boolean expression. If its evaluation is true, the assertion is successful. Otherwise, an error (or a warning) is raised.")),
 				@facet (
+						name = "label",
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("a string displayed instead of the failed expression in order to customize the error or warning if the assertion is false")),
+				@facet (
 						name = "warning",
 						type = IType.BOOL,
 						optional = true,
@@ -68,20 +73,22 @@ import msi.gaml.types.IType;
 public class AssertStatement extends AbstractStatement implements WithTestSummary<AssertionSummary> {
 
 	/** The warn. */
-	final IExpression value, warn;
-	
+	final IExpression value, warn, label;
+
 	/** The summary. */
 	final AssertionSummary summary;
 
 	/**
 	 * Instantiates a new assert statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AssertStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
 		warn = getFacet("warning");
+		label = getFacet("label");
 		summary = new AssertionSummary(this);
 	}
 
@@ -99,7 +106,10 @@ public class AssertStatement extends AbstractStatement implements WithTestSummar
 		if (!result) {
 			final TestState s = isWarning(scope) ? TestState.WARNING : TestState.FAILED;
 			summary.setState(s);
-			throw new GamaAssertException(scope, "Assert failed: " + getTitleForSummary(), isWarning(scope));
+			throw new GamaAssertException(scope,
+					"Assert failed: "
+							+ (label == null ? getTitleForSummary() : Cast.asString(scope, label.value(scope))),
+					isWarning(scope));
 		}
 		summary.setState(TestState.PASSED);
 		return result;
@@ -108,7 +118,8 @@ public class AssertStatement extends AbstractStatement implements WithTestSummar
 	/**
 	 * Checks if is warning.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if is warning
 	 */
 	public boolean isWarning(final IScope scope) {
