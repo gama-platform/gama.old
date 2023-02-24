@@ -1750,16 +1750,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		int minY = 0;
 		int maxX = numCols - 1;
 		int maxY = numRows - 1;
-
 		if (this.isHexagon) {
+			
 			if (this.isHorizontalOrientation) {
-				minX = max(0, (int) (env.getMinX() / (cellWidth / 0.75)));
-				minY = max(0, (int) (env.getMinY() / cellHeight));
+				minX = max(0, (int) (Math.max(0,(env.getMinX() - cellWidth/2.0))/ (cellWidth / 0.75)));
+				minY = max(0, (int) (Math.max(0,(env.getMinY() - cellHeight/2.0)) / cellHeight));
 				maxX = min(numCols - 1, (int) (env.getMaxX() / (cellWidth * 0.75)));
 				maxY = min(numRows - 1, (int) (env.getMaxY() / cellHeight));
 			} else {
-				minX = max(0, (int) (env.getMinX() / cellWidth));
-				minY = max(0, (int) (env.getMinY() / (cellHeight / 0.75)));
+				minX = max(0, (int) (Math.max(0,(env.getMinX() - cellWidth/2.0))/ (cellWidth )));
+				minY = max(0, (int) (Math.max(0,(env.getMinY() - cellHeight/2.0)) / (cellHeight/ 0.75)));
 				maxX = min(numCols - 1, (int) (env.getMaxX() / cellWidth));
 				maxY = min(numRows - 1, (int) (env.getMaxY() / (cellHeight * 0.75)));
 			}
@@ -1797,7 +1797,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final Envelope3D e = each.getEnvelope();
 			return each.getAgent() == null || !(covered ? env.covers(e) : env.intersects(e));
 		});
-
+		
 		if (f != null) { f.filter(scope, source, shapes); }
 		return shapes;
 	}
