@@ -40,6 +40,7 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 
 /**
@@ -196,24 +197,32 @@ public class SobolExploration extends AExplorationAlgorithm {
 		LinkedHashMap<String, List<Object>> problem = new LinkedHashMap<>();
 		for (int j = 0; j < parameters.size(); j++) {
 			List<Object> var_info = new ArrayList<>();
-
+			
 			switch (parameters.get(j).getType().id()) {
 				case IType.INT:
 					var_info.add(parameters.get(j).getMinValue(scope));
 					var_info.add(parameters.get(j).getMaxValue(scope));
 					break;
-
 				case IType.FLOAT:
 					var_info.add(parameters.get(j).getMinValue(scope));
 					var_info.add(parameters.get(j).getMaxValue(scope));
 					break;
-
 				case IType.BOOL:
 					var_info.add(false);
 					var_info.add(true);
 					break;
-
-				// TODO Handle other types of variables (points, dates, discrete variables ...)
+				case IType.DATE:
+					var_info.add(GamaDateType.staticCast(scope, parameters.get(j).getMinValue(scope), null, false));
+					var_info.add(GamaDateType.staticCast(scope, parameters.get(j).getMaxValue(scope), null, false));
+					break;
+				case IType.POINT:
+					var_info.add(Cast.asPoint(scope, parameters.get(j).getMinValue(scope)));
+					var_info.add(Cast.asPoint(scope, parameters.get(j).getMaxValue(scope)));
+					break;
+				case IType.STRING:
+					if (parameters.get(j).getAmongValue(scope).isEmpty()) { throw GamaRuntimeException.error("Trying to force a string variable in sampling without among facets", scope); }
+					var_info.addAll(parameters.get(j).getAmongValue(scope));
+					break;
 				default:
 					throw GamaRuntimeException.error("Trying to add a variable of unknown type "
 							+ parameters.get(j).getType().id() + " to a parameter set", scope);
