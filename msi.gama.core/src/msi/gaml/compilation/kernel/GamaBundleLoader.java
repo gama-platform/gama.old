@@ -104,8 +104,8 @@ public class GamaBundleLoader {
 	/** The core plugin. */
 	public static final Bundle CORE_PLUGIN = Platform.getBundle("msi.gama.core");
 
-	/** The Constant PARSER_PLUGIN. */
-	public static final Bundle PARSER_PLUGIN = Platform.getBundle("msi.gama.lang.gaml");
+	// /** The Constant PARSER_PLUGIN. */
+	// public static final Bundle PARSER_PLUGIN = Platform.getBundle("msi.gama.lang.gaml");
 
 	/** The core models. */
 	public static final Bundle CORE_MODELS = Platform.getBundle("msi.gama.models");
