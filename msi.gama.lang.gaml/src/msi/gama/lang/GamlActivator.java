@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package msi.gama.lang;
 
+import static ummisco.gama.dev.utils.DEBUG.PAD;
+
+import java.util.concurrent.CompletableFuture;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -18,6 +22,7 @@ import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
 import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class GamlActivator.
@@ -26,11 +31,14 @@ public class GamlActivator implements BundleActivator {
 
 	@Override
 	public void start(final BundleContext context) throws Exception {
-		// TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser",55, ' ') + PAD(" done in", 15, '_'), () -> {
-		GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
-		GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
-		GAML.registerGamlEcoreUtils(EGaml.getInstance());
-		// });
+		// Spawns a new thread in order to escape the "activator/osgi" thread as soon as possible (see #3636)
+		CompletableFuture.runAsync(() -> {
+			DEBUG.TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 55, ' ') + PAD(" done in", 15, '_'), () -> {
+				GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
+				GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
+				GAML.registerGamlEcoreUtils(EGaml.getInstance());
+			});
+		});
 
 	}
 

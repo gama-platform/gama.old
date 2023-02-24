@@ -3,7 +3,7 @@
  * SwtGui.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -77,7 +77,6 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
 import ummisco.gama.ui.interfaces.IModelRunner;
-import ummisco.gama.ui.interfaces.IOpenGLInitializer;
 import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.interfaces.IUserDialogFactory;
@@ -114,7 +113,7 @@ public class SwtGui implements IGui {
 	static {
 		PreferencesHelper.initialize();
 		ImageUtils.getCachedGC();
-		initializeOpenGL();
+		// initializeOpenGL();
 	}
 
 	/**
@@ -474,10 +473,10 @@ public class SwtGui implements IGui {
 	/**
 	 * Initialize open GL.
 	 */
-	private static void initializeOpenGL() {
-		final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
-		if (initializer != null && !initializer.isDone()) { new Thread(initializer).start(); }
-	}
+	// private static void initializeOpenGL() {
+	// final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
+	// if (initializer != null && !initializer.isDone()) { new Thread(initializer).start(); }
+	// }
 
 	/**
 	 * Method cleanAfterExperiment()
@@ -575,7 +574,8 @@ public class SwtGui implements IGui {
 	public String getExperimentState() {
 		final IExperimentController controller = GAMA.getFrontmostController();
 		if (controller != null) {
-			if (controller.isPaused()) return PAUSED; else return RUNNING;
+			if (controller.isPaused()) return PAUSED;
+			return RUNNING;
 		}
 		return NONE;
 	}

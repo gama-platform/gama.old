@@ -351,17 +351,33 @@ public class GamaIcons implements IIconProvider {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static void preloadIcons() throws IOException, URISyntaxException {
+	public static void preloadIcons() {
+		// CompletableFuture.runAsync(() -> {
 		Bundle bundle = Platform.getBundle(PLUGIN_ID);
 		final URL fileURL = bundle.getEntry(GamaIcons.DEFAULT_PATH);
-		final URL resolvedFileURL = FileLocator.toFileURL(fileURL);
+		URL resolvedFileURL;
+		try {
+			resolvedFileURL = FileLocator.toFileURL(fileURL);
+		} catch (IOException e) {
+			return;
+		}
 		// We need to use the 3-arg constructor of URI in order to properly escape file system chars
-		final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+		URI resolvedURI;
+		try {
+			resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+		} catch (URISyntaxException e) {
+			return;
+		}
 		Path path = new File(resolvedURI).toPath();
-		List<String> files =
-				Files.walk(path).map(f -> path.relativize(f).toString()).filter(n -> n.endsWith(".png")).toList();
+		List<String> files;
+		try {
+			files = Files.walk(path).map(f -> path.relativize(f).toString()).filter(n -> n.endsWith(".png")).toList();
+		} catch (IOException e) {
+			return;
+		}
 		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: Preloading " + files.size() + " icons", 55, ' ') + PAD(" done in", 15, '_'),
 				() -> files.forEach(n -> create(n.replace(".png", "")).image()));
+		// });
 	}
 
 }
