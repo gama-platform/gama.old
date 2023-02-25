@@ -10,7 +10,7 @@ model Fields
 
 global  {
 	field field_display <-  field(grid_file("includes/Lesponne.tif"));
-	field var_field <- field(field_display - mean(field_display));
+	field var_field <- copy(field_display) - mean(field_display);
 }
 
 species declaring_field {
