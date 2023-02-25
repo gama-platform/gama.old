@@ -10,18 +10,16 @@
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
-import static ummisco.gama.dev.utils.DEBUG.ERR;
-import static ummisco.gama.dev.utils.DEBUG.PAD;
-import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
-
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IBundleGroup;
-import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
@@ -29,6 +27,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
 import org.eclipse.equinox.p2.core.ProvisionException;
@@ -46,7 +45,6 @@ import org.osgi.framework.ServiceReference;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IEventLayerDelegate;
@@ -77,10 +75,10 @@ public class GamaBundleLoader {
 	 * @param e
 	 *            the e
 	 */
-	public static void ERROR(final Exception e) {
+	public static void ERROR(final String message, final Exception e) {
+		DEBUG.ERR(ERROR_MESSAGE);
 		ERRORED = true;
-		LAST_EXCEPTION = e;
-		e.printStackTrace();
+		DEBUG.ERR(message, e);
 	}
 
 	/** The Constant LINE. */
@@ -98,14 +96,8 @@ public class GamaBundleLoader {
 	/** The errored. */
 	public volatile static boolean ERRORED = false;
 
-	/** The last exception. */
-	public volatile static Exception LAST_EXCEPTION = null;
-
 	/** The core plugin. */
 	public static final Bundle CORE_PLUGIN = Platform.getBundle("msi.gama.core");
-
-	// /** The Constant PARSER_PLUGIN. */
-	// public static final Bundle PARSER_PLUGIN = Platform.getBundle("msi.gama.lang.gaml");
 
 	/** The core models. */
 	public static final Bundle CORE_MODELS = Platform.getBundle("msi.gama.models");
@@ -153,13 +145,13 @@ public class GamaBundleLoader {
 	public static final String CONTENT_EXTENSION = "org.eclipse.core.contenttype.contentTypes";
 
 	/** The gama plugins. */
-	private static final Set<Bundle> GAMA_PLUGINS = new HashSet<>();
+	private static final List<Bundle> GAMA_PLUGINS = new ArrayList<>();
 
 	/** The Constant GAMA_PLUGINS_NAMES. */
-	private static final Set<String> GAMA_PLUGINS_NAMES = new HashSet<>();
+	private static final Set<String> GAMA_PLUGINS_NAMES = new LinkedHashSet<>();
 
 	/** The Constant GAMA_PLUGINS_NAMES. */
-	private static final Set<String> GAMA_DISPLAY_PLUGINS_NAMES = new HashSet<>();
+	private static final Set<String> GAMA_DISPLAY_PLUGINS_NAMES = new LinkedHashSet<>();
 
 	/** The model plugins. */
 	private static final Multimap<Bundle, String> MODEL_PLUGINS = ArrayListMultimap.create();
@@ -168,7 +160,7 @@ public class GamaBundleLoader {
 	private static final Multimap<Bundle, String> TEST_PLUGINS = ArrayListMultimap.create();
 
 	/** The handled file extensions. */
-	public static final Set<String> HANDLED_FILE_EXTENSIONS = new HashSet<>();
+	public static final Set<String> HANDLED_FILE_EXTENSIONS = new LinkedHashSet<>();
 
 	/** The Constant SYS_ARCH. */
 	public static final String SYS_ARCH = Platform.getOSArch(); // System.getProperty("os.arch");
@@ -191,24 +183,24 @@ public class GamaBundleLoader {
 	public static void preBuildContributions() throws Exception {
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 55, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
-		// findFeatures();
+		listFeatures();
 
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		// We retrieve the elements declared as extensions to the GAML language,
 		// either with the new or the deprecated extension
-		final Set<IExtension> extensions = new HashSet<>();
+		final Set<IExtension> extensions = new LinkedHashSet<>();
 		try {
 			IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 			extensions.addAll(Arrays.asList(p.getExtensions()));
 			p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
 			extensions.addAll(Arrays.asList(p.getExtensions()));
 		} catch (final InvalidRegistryObjectException e) {
-			ERROR(e);
+
+			ERROR("Error in retrieving GAMA plugins. One is invalid. ", e);
 		}
 
-		DEBUG.TIMER(
-				DEBUG.PAD("> GAMA: All " + extensions.size() + " plugins", 55, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
-				() -> {
+		DEBUG.TIMER(DEBUG.PAD("> GAML: All " + extensions.size() + " plugins with language additions", 55, ' ')
+				+ DEBUG.PAD(" loaded in", 15, '_'), () -> {
 
 					// We retrieve their contributor plugin and add them to the
 					// GAMA_PLUGINS. In addition, we verify if they declare a folder called
@@ -230,27 +222,14 @@ public class GamaBundleLoader {
 							TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
 						}
 					}
-					// LOG(">GAMA plugins with language additions: "
-					// + StreamEx.of(GAMA_PLUGINS).map(e -> e.getSymbolicName()).toSet());
-					// LOG(">GAMA plugins with models: " + StreamEx.of(MODEL_PLUGINS.keySet()).map(e
-					// ->
-					// e.getSymbolicName()).toSet());
-					// LOG(">GAMA plugins with tests: " + StreamEx.of(TEST_PLUGINS.keySet()).map(e
-					// -> e.getSymbolicName()).toSet());
-
+					GAMA_PLUGINS.sort(Comparator.comparing(Bundle::getSymbolicName));
 					// We remove the core plugin, in order to build it first (important)
 					GAMA_PLUGINS.remove(CORE_PLUGIN);
 					try {
 						preBuild(CORE_PLUGIN);
-
-						// Force the GAML grammar plugin to load very early so that the parser is created early too
-						// TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 55, ' ') + PAD(" done in", 15, '_'),
-						// () -> {
-						// PARSER_PLUGIN.start();
-						// });
 					} catch (final Exception e2) {
-						ERR(ERROR_MESSAGE);
-						ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e2.getMessage());
+						ERROR("Error in loading core GAML language definition. ", e2);
+						// We exit in case the core cannot be built, as there is no point in continuing past this point
 						System.exit(0);
 						return;
 					}
@@ -260,10 +239,11 @@ public class GamaBundleLoader {
 						try {
 							preBuild(addition);
 						} catch (final Exception e1) {
-							ERR(ERROR_MESSAGE);
-							ERR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ": " + e1.getMessage());
-							// System.exit(0);
-							return;
+							ERROR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ". ", e1);
+							// We do not systematically exit in case of additional plugins failing to load, so as to
+							// give the platform a chance to execute even in case of errors (to save files, to remove
+							// offending plugins, etc.)
+							continue;
 						}
 					}
 					CURRENT_PLUGIN_NAME = null;
@@ -276,11 +256,12 @@ public class GamaBundleLoader {
 							cd = (ICreateDelegate) e.createExecutableExtension("class");
 							if (cd != null) { CreateStatement.addDelegate(cd); }
 						} catch (final Exception e1) {
-							ERR(ERROR_MESSAGE);
-							ERR("Error in loading CreateStatement delegate : " + e1.getMessage());
-							// System.exit(0);
-							return;
-
+							ERROR("Error in loading CreateStatement delegate from "
+									+ e.getDeclaringExtension().getContributor().getName(), e1);
+							// We do not systematically exit in case of additional plugins failing to load, so as to
+							// give the platform a chance to execute even in case of errors (to save files, to remove
+							// offending plugins, etc.)
+							continue;
 						}
 					}
 
@@ -290,13 +271,13 @@ public class GamaBundleLoader {
 						try {
 							// TODO Add the defining plug-in
 							EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
-						} catch (final CoreException e1) {
-
-							ERR(ERROR_MESSAGE);
-							ERR("Error in loading EventLayerStatement delegate : " + e1.getMessage());
-							// System.exit(0);
-							return;
-
+						} catch (final Exception e1) {
+							ERROR("Error in loading EventLayerStatement delegate : "
+									+ e.getDeclaringExtension().getContributor().getName(), e1);
+							// We do not systematically exit in case of additional plugins failing to load, so as to
+							// give the platform a chance to execute even in case of errors (to save files, to remove
+							// offending plugins, etc.)
+							continue;
 						}
 					}
 
@@ -305,10 +286,6 @@ public class GamaBundleLoader {
 					for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
 						MODEL_PLUGINS.put(Platform.getBundle(e.getContributor().getName()), e.getAttribute("name"));
 					}
-					// CRUCIAL INITIALIZATIONS
-					LOADED = true;
-					GamaMetaModel.INSTANCE.build();
-					// Types.init();
 
 					// We gather all the content types extensions defined in GAMA plugins
 					// (not in the other ones)
@@ -323,7 +300,12 @@ public class GamaBundleLoader {
 						}
 					}
 
-					// We reinit the type hierarchy to gather additional types
+					// CRUCIAL INITIALIZATIONS
+					LOADED = true;
+					// We init the meta-model of GAMA (i.e. abstract agent, model, experiment species)
+					GamaMetaModel.INSTANCE.build();
+
+					// We init the type hierarchy, the units and the agent representing the GAMA platform
 					Types.init();
 					IUnits.init();
 					GamaMetaModel.INSTANCE.getPlatformSpeciesDescription().validate();
@@ -341,35 +323,27 @@ public class GamaBundleLoader {
 	 */
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
-		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: Plugin " + bundle.getSymbolicName(), 55, ' ') + PAD(" loaded in", 15, '_'),
+		DEBUG.TIMER_WITH_EXCEPTIONS(
+				DEBUG.PAD("> GAMA: Plugin " + bundle.getSymbolicName(), 55, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
 				() -> {
 					String shortcut = bundle.getSymbolicName();
 					shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
 					GamaClassLoader.getInstance().addBundle(bundle);
 					Class<IGamlAdditions> clazz = null;
+					String classPath = ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME;
+					String error =
+							">> Impossible to load additions from " + bundle + " because " + classPath + " cannot be ";
 					try {
-						clazz = (Class<IGamlAdditions>) bundle
-								.loadClass(ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME);
-					} catch (final ClassNotFoundException e1) {
-						ERR(">> Impossible to load additions from " + bundle.toString() + " because of " + e1);
-						throw e1;
-
-					}
-
-					IGamlAdditions add = null;
-					try {
-						add = clazz.getConstructor().newInstance();
-					} catch (final Exception e) {
-						ERR(">> Impossible to instantiate additions from " + bundle);
-						throw e;
-					}
-					try {
-						add.initialize();
+						clazz = (Class<IGamlAdditions>) bundle.loadClass(classPath);
+						clazz.getConstructor().newInstance().initialize();
+					} catch (final ClassNotFoundException e) {
+						throw new WrappedException(error + "found.", e);
 					} catch (final SecurityException | NoSuchMethodException e) {
-						ERR(">> Impossible to instantiate additions from " + bundle);
-						throw e;
+						throw new WrappedException(error + "initialized.", e);
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+							| InvocationTargetException e) {
+						throw new WrappedException(error + "instantiated.", e);
 					}
-
 				});
 	}
 
@@ -404,21 +378,21 @@ public class GamaBundleLoader {
 	 *
 	 * @return the sets the
 	 */
-	public static Set<String> findAndListFeatures() {
-		Set<String> result = Sets.newHashSet();
-		for (IBundleGroupProvider provider : Platform.getBundleGroupProviders()) {
-			for (IBundleGroup feature : provider.getBundleGroups()) {
-				final String providerName = feature.getProviderName();
-				final String featureId = feature.getIdentifier();
-				result.add(featureId);
-				DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("from", 15) + providerName);
-				// for (Bundle bundle : feature.getBundles()) {
-				//
-				// }
-			}
-		}
-		return result;
-	}
+	// public static Set<String> findAndListFeatures() {
+	// Set<String> result = Sets.newHashSet();
+	// for (IBundleGroupProvider provider : Platform.getBundleGroupProviders()) {
+	// for (IBundleGroup feature : provider.getBundleGroups()) {
+	// final String providerName = feature.getProviderName();
+	// final String featureId = feature.getIdentifier();
+	// result.add(featureId);
+	// DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("from", 15) + providerName);
+	// // for (Bundle bundle : feature.getBundles()) {
+	// //
+	// // }
+	// }
+	// }
+	// return result;
+	// }
 
 	/**
 	 * Find features.
@@ -427,7 +401,7 @@ public class GamaBundleLoader {
 	 * @throws ProvisionException
 	 *             the provision exception
 	 */
-	static Set<IInstallableUnit> findFeatures() throws ProvisionException {
+	static Set<IInstallableUnit> listFeatures() throws ProvisionException {
 
 		// 1. initialize necessary p2 services
 		BundleContext ctx = FrameworkUtil.getBundle(GamaBundleLoader.class).getBundleContext();
@@ -448,54 +422,17 @@ public class GamaBundleLoader {
 
 		// 3. perform query
 		IQueryResult<IInstallableUnit> queryResult = orofile.query(query, null);
-		for (IInstallableUnit feature : queryResult) {
-			final String version = feature.getVersion().toString();
-			final String featureId = feature.getId();
-			if (featureId.contains("gama") || featureId.contains("gaml")) {
-				DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("version", 15) + version);
-			}
-		}
+		List<IInstallableUnit> list = queryResult.toSet().stream()
+				.filter(f -> f.getId().contains("gama") || f.getId().contains("gaml")).toList();
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Features installed", 55) + DEBUG.PAD(" total", 15, '_') + " " + list.size());
+		// for (IInstallableUnit feature : list) {
+		// final String version = feature.getVersion().toString();
+		// final String featureId = feature.getId();
+		// DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("version", 15) + version);
+		// }
 
 		return queryResult.toSet();
 	}
-
-	/**
-	 * Find features 2.
-	 *
-	 * @return the sets the
-	 * @throws ProvisionException
-	 *             the provision exception
-	 */
-	// static Set<IInstallableUnit> findFeatures2() throws ProvisionException {
-	// ProvisioningUI provisioningUI = ProvisioningUI.getDefaultUI();
-	// if (provisioningUI == null) return null;
-	//
-	// String profileId = provisioningUI.getProfileId();
-	// ProvisioningSession session = provisioningUI.getSession();
-	// if (profileId == null || session == null) return null;
-	//
-	// IProvisioningAgent provisioningAgent = session.getProvisioningAgent();
-	// if (provisioningAgent == null) return null;
-	//
-	// IProfileRegistry registry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
-	// if (registry == null) return null;
-	//
-	// IProfile profile = registry.getProfile(profileId);
-	// if (profile == null) return null;
-	//
-	// // 2. create a query (check QueryUtil for options)
-	// IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery();
-	//
-	// // 3. perform query
-	// IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
-	// for (IInstallableUnit feature : queryResult) {
-	// final String version = feature.getVersion().toString();
-	// final String featureId = feature.getId();
-	// DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("version", 15) + version);
-	// }
-	//
-	// return queryResult.toSet();
-	// }
 
 	/**
 	 * Gaml plugin exists.

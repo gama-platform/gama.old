@@ -3,7 +3,7 @@
  * WorkspaceModelsManager.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -147,7 +147,7 @@ public class WorkspaceModelsManager {
 					Thread.sleep(100);
 					DEBUG.OUT(Thread.currentThread().getName() + ": waiting for the GUI to become available");
 				} catch (final InterruptedException e2) {
-					
+
 					e2.printStackTrace();
 				}
 			}
@@ -424,13 +424,9 @@ public class WorkspaceModelsManager {
 		while (!GamaBundleLoader.LOADED && !GamaBundleLoader.ERRORED) {
 			try {
 				Thread.sleep(100);
-				// DEBUG.OUT("Waiting for GAML subsystem to load...");
-			} catch (final InterruptedException e) {}
-		}
-		if (GamaBundleLoader.ERRORED) {
-			GAMA.getGui().openErrorDialog(GAMA.getRuntimeScope(),
-					"Error in loading GAML language subsystem. Please consult the logs");
-			return;
+			} catch (final InterruptedException e) {
+				GamaBundleLoader.ERROR("Impossible to load the Built-in Models Library", e);
+			}
 		}
 		// DEBUG.OUT("Synchronous link of models library...");
 		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();
