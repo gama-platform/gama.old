@@ -3,7 +3,7 @@
  * DocumentationNode.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -33,11 +33,9 @@ public class DocumentationNode implements IGamlDescription {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	DocumentationNode(final IGamlDescription desc) throws IOException {
+	DocumentationNode(final IGamlDescription desc) {
 		title = desc.getTitle();
 		doc = desc.getDocumentation();
-		// final String plugin = desc.getDefiningPlugin();
-		// if (plugin != null && !plugin.isBlank()) { doc.append("\n<p/><i> [defined in " + plugin + "] </i>"); }
 	}
 
 	@Override

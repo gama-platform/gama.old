@@ -3,7 +3,7 @@
  * GamlFileInfo.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -69,6 +69,13 @@ public class GamlFileInfo extends GamaFileMetaData {
 	}
 
 	/**
+	 * Checks if is valid.
+	 *
+	 * @return true, if is valid
+	 */
+	public boolean isValid() { return !invalid; }
+
+	/**
 	 * Gets the imports.
 	 *
 	 * @return the imports
@@ -107,7 +114,8 @@ public class GamlFileInfo extends GamaFileMetaData {
 		final String[] values = split(propertyString);
 		int size = values.length;
 		final List<String> declaredImports = asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
-		this.imports = declaredImports == null || declaredImports.isEmpty() || declaredImports.contains(null) ? null : declaredImports;
+		this.imports = declaredImports == null || declaredImports.isEmpty() || declaredImports.contains(null) ? null
+				: declaredImports;
 		final List<String> declaredUses = asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
 		this.uses = declaredUses == null || declaredUses.isEmpty() || declaredUses.contains(null) ? null : declaredUses;
 		final List<String> exps = asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
