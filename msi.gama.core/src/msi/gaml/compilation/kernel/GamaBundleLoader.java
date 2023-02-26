@@ -11,9 +11,9 @@
 package msi.gaml.compilation.kernel;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -402,26 +402,23 @@ public class GamaBundleLoader {
 	 *             the provision exception
 	 */
 	static Set<IInstallableUnit> listFeatures() throws ProvisionException {
-
 		// 1. initialize necessary p2 services
 		BundleContext ctx = FrameworkUtil.getBundle(GamaBundleLoader.class).getBundleContext();
+		if (ctx == null) return Collections.EMPTY_SET;
 		ServiceReference<IProvisioningAgentProvider> ref = ctx.getServiceReference(IProvisioningAgentProvider.class);
-
+		if (ref == null) return Collections.EMPTY_SET;
 		IProvisioningAgentProvider agentProvider = ctx.getService(ref);
-
-		String profileId = IProfileRegistry.SELF; // the profile id for the currently running system
-		URI location = null; // the location for the currently running system is null
-
-		IProvisioningAgent provisioningAgent = agentProvider.createAgent(location);
-		IProfileRegistry profileRegistry =
-				(IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
-		IProfile orofile = profileRegistry.getProfile(profileId);
-
+		if (agentProvider == null) return Collections.EMPTY_SET;
+		IProvisioningAgent provisioningAgent = agentProvider.createAgent(null);
+		if (provisioningAgent == null) return Collections.EMPTY_SET;
+		IProfileRegistry registry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
+		if (registry == null) return Collections.EMPTY_SET;
+		IProfile profile = registry.getProfile(IProfileRegistry.SELF);
+		if (profile == null) return Collections.EMPTY_SET;
 		// 2. create a query (check QueryUtil for options)
 		IQuery<IInstallableUnit> query = QueryUtil.createMatchQuery(ExpressionUtil.TRUE_EXPRESSION); // QueryUtil.createIUGroupQuery();
-
 		// 3. perform query
-		IQueryResult<IInstallableUnit> queryResult = orofile.query(query, null);
+		IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
 		List<IInstallableUnit> list = queryResult.toSet().stream()
 				.filter(f -> f.getId().contains("gama") || f.getId().contains("gaml")).toList();
 		DEBUG.LOG(DEBUG.PAD("> GAMA: Features installed", 55) + DEBUG.PAD(" total", 15, '_') + " " + list.size());
@@ -430,7 +427,6 @@ public class GamaBundleLoader {
 		// final String featureId = feature.getId();
 		// DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("version", 15) + version);
 		// }
-
 		return queryResult.toSet();
 	}
 
