@@ -386,7 +386,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	 */
 	private Rectangle2D privateExecuteIn(final IGraphicsScope scope) throws GamaRuntimeException {
 		final IGraphics g = scope.getGraphics();
-		if (g == null) return null;
+		if (scope.interrupted() || g == null || scope.getAgent() == null) return null;
 		try {
 			DrawExecuter executer = executers.get(g);
 			if (executer == null) {
