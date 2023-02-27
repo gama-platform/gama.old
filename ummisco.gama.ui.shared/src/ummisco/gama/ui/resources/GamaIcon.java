@@ -10,10 +10,12 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import java.io.InputStream;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -77,6 +79,21 @@ public class GamaIcon {
 		code = c;
 		path = p;
 		this.plugin = plugin;
+	}
+
+	/**
+	 * Instantiates a new gama icon.
+	 *
+	 * @param c
+	 *            the c
+	 * @param stream
+	 *            the stream
+	 */
+	public GamaIcon(final String c, final InputStream stream) {
+		code = c;
+		path = c;
+		plugin = c;
+		descriptor = ImageDescriptor.createFromImageData(new ImageLoader().load(stream)[0]);
 	}
 
 	/**
@@ -151,20 +168,20 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	Image disabledVersionOf(final Image im) {
-		return new Image(im.getDevice(), im, SWT.IMAGE_DISABLE);
+		// return new Image(im.getDevice(), im, SWT.IMAGE_DISABLE);
 
-		// Rectangle bounds = im.getBounds();
-		// ImageData srcData = im.getImageData();
-		// ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
-		// dstData.transparentPixel = srcData.transparentPixel;
-		// dstData.alpha = srcData.alpha;
-		// for (int sx = 0; sx < bounds.width; sx++) {
-		// for (int sy = 0; sy < bounds.height; sy++) {
-		// dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
-		// dstData.setPixel(sx, sy, srcData.getPixel(sx, sy));
-		// }
-		// }
-		// return new Image(im.getDevice(), dstData);
+		Rectangle bounds = im.getBounds();
+		ImageData srcData = im.getImageData();
+		ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
+		dstData.transparentPixel = srcData.transparentPixel;
+		dstData.alpha = srcData.alpha;
+		for (int sx = 0; sx < bounds.width; sx++) {
+			for (int sy = 0; sy < bounds.height; sy++) {
+				dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
+				dstData.setPixel(sx, sy, srcData.getPixel(sx, sy));
+			}
+		}
+		return new Image(im.getDevice(), dstData);
 	}
 
 	/**
