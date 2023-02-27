@@ -1,1 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="-992.5 -3690.5 13 13"><g fill="none"><circle cx="-986" cy="-3684" r="6" fill="#8494b4"/><path fill="#9da9b5" d="M-986-3690c-3.318 0-6 2.682-6 6s2.682 6 6 6 6-2.682 6-6-2.682-6-6-6Zm3 8.154-.846.846-2.154-2.154-2.154 2.154-.846-.846 2.154-2.154-2.154-2.154.846-.846 2.154 2.154 2.154-2.154.846.846-2.154 2.154 2.154 2.154Z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-992 -3690 12 12" width="12" height="12">
+  <defs/>
+  <g id="ICONES" stroke="none" fill="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1">
+    <title>ICONES</title>
+    <g id="ICONES_Calque_1">
+      <title>Calque 1</title>
+      <g id="Group_3082">
+        <title>markers/marker.deleted</title>
+        <g id="Graphic_2108">
+          <circle cx="-986" cy="-3684" r="6.00000958741111" fill="#8494b4"/>
+        </g>
+        <g id="Graphic_2107">
+          <path d="M -986 -3690 C -989.318 -3690 -992 -3687.318 -992 -3684 C -992 -3680.682 -989.318 -3678 -986 -3678 C -982.682 -3678 -980 -3680.682 -980 -3684 C -980 -3687.318 -982.682 -3690 -986 -3690 Z M -983 -3681.846 L -983.846 -3681 L -986 -3683.154 L -988.154 -3681 L -989 -3681.846 L -986.846 -3684 L -989 -3686.154 L -988.154 -3687 L -986 -3684.846 L -983.846 -3687 L -983 -3686.154 L -985.154 -3684 L -983 -3681.846 Z" fill="#9da9b5"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

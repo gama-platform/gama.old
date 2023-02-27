@@ -1,1 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="-952.5 -3690.5 13 13"><g fill="none"><circle cx="-946" cy="-3684" r="6" fill="#fff"/><path fill="#ff0818" d="M-946-3690c-3.318 0-6 2.682-6 6s2.682 6 6 6 6-2.682 6-6-2.682-6-6-6Zm3 8.154-.846.846-2.154-2.154-2.154 2.154-.846-.846 2.154-2.154-2.154-2.154.846-.846 2.154 2.154 2.154-2.154.846.846-2.154 2.154 2.154 2.154Z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-952 -3690 12 12" width="12" height="12">
+  <defs/>
+  <g id="ICONES" stroke="none" fill="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1">
+    <title>ICONES</title>
+    <g id="ICONES_Calque_1">
+      <title>Calque 1</title>
+      <g id="Group_3211">
+        <title>markers/marker.error.dark</title>
+        <g id="Graphic_3213">
+          <circle cx="-946" cy="-3684" r="6.00000958741114" fill="white"/>
+        </g>
+        <g id="Graphic_3212">
+          <path d="M -946 -3690 C -949.318 -3690 -952 -3687.318 -952 -3684 C -952 -3680.682 -949.318 -3678 -946 -3678 C -942.682 -3678 -940 -3680.682 -940 -3684 C -940 -3687.318 -942.682 -3690 -946 -3690 Z M -943 -3681.846 L -943.846 -3681 L -946 -3683.154 L -948.154 -3681 L -949 -3681.846 L -946.846 -3684 L -949 -3686.154 L -948.154 -3687 L -946 -3684.846 L -943.846 -3687 L -943 -3686.154 L -945.154 -3684 L -943 -3681.846 Z" fill="#ff0818"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
