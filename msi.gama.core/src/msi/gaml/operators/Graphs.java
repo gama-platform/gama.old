@@ -3925,7 +3925,7 @@ public class Graphs {
 	@doc (
 			value = "returns a random graph.",
 			usages = { @usage (
-					value = "\"nbNodes\": number of nodes to created;\"nbEdges\": number of edges to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes",
+					value = "`nbNodes`: number of nodes to create;`nbEdges`: number of edges to create;`directed`: is the graph directed or not;`node_species`: the species of nodes",
 					examples = { @example (
 							value = "graph myGraph <- generate_random_graph(",
 							isExecutable = false),
@@ -3968,7 +3968,7 @@ public class Graphs {
 	@doc (
 			value = "returns a random graph.",
 			usages = { @usage (
-					value = "\"nbNodes\": number of nodes to created;\"nbEdges\": number of edges to created;\"directed\": is the graph has to be directed or not",
+					value = "`nbNodes`: number of nodes to create;`nbEdges`: number of edges to create;`directed`: is the graph directed or not",
 					examples = { @example (
 							value = "graph myGraph <- generate_random_graph(",
 							isExecutable = false),
@@ -4079,7 +4079,7 @@ public class Graphs {
 	@doc (
 			value = "returns a fully connected graph.",
 			usages = { @usage (
-					value = "\"nbNodes\": number of nodes to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes; \"edges_species\": the species of edges ",
+					value = "`nbNodes`: number of nodes to create;`directed`: is the graph directed or not;`node_species`: the species of nodes; `edges_species`: the species of edges ",
 					examples = { @example (
 							value = "graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(",
 							isExecutable = false),
@@ -4129,7 +4129,7 @@ public class Graphs {
 	@doc (
 			value = "returns a fully connected graph.",
 			usages = { @usage (
-					value = "\"nbNodes\": number of nodes to created;\"directed\": is the graph has to be directed or not;\"node_species\": the species of nodes",
+					value = "`nbNodes`: number of nodes to create;`directed`: is the graph directed or not;`node_species`: the species of nodes",
 					examples = { @example (
 							value = "graph myGraph <- generate_complete_graph(",
 							isExecutable = false),
@@ -4167,7 +4167,7 @@ public class Graphs {
 	@doc (
 			value = "returns a fully connected graph.",
 			usages = { @usage (
-					value = "\"nbNodes\": number of nodes to created;\"directed\": is the graph has to be directed or not",
+					value = "`nbNodes`: number of nodes to create;`directed`: is the graph directed or not",
 					examples = { @example (
 							value = "graph myGraph <- generate_complete_graph(",
 							isExecutable = false),

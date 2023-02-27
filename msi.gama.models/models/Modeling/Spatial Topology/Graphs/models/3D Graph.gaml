@@ -85,7 +85,8 @@ species node_agent skills: [moving3D] {
 experiment Display type: gui {
 	output {
 		display WanderingSphere type: 3d { 
-			camera 'default' location: {-709.2414,1192.6439,463.0556} target: {250.0,250.0,0.0};			species node_agent aspect: dynamic;
+			camera 'default' location: {-709.2414,1192.6439,463.0556} target: {250.0,250.0,0.0};			
+			species node_agent aspect: dynamic;
 			graphics "edges" {
 				//Creation of the edges of adjacence
 				if (my_graph != nil) {
@@ -105,7 +106,8 @@ experiment Display type: gui {
 experiment SimpleDisplay type: gui {
 	output {
 		display WanderingSphere type: 3d { 
-			camera 'default' location: {-855.0927,1355.0928,779.1678} target: {250.0,250.0,0.0};			species node_agent aspect: base;
+			camera 'default' location: {-855.0927,1355.0928,779.1678} target: {250.0,250.0,0.0};			
+			species node_agent aspect: base;
 			graphics "edges" {
 				if (my_graph != nil) {
 					loop eg over: my_graph.edges {
