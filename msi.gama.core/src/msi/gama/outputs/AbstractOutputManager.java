@@ -3,7 +3,7 @@
  * AbstractOutputManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -133,7 +133,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		// monitors.add(monitor);
 		// }
 		else {
-			outputs.put(output.getId(), output);
+			synchronized (outputs) {
+				outputs.put(output.getId(), output);
+			}
 		}
 	}
 
@@ -144,7 +146,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			// AD: explicit addition of an ArrayList to prevent dispose errors
 			// (when outputs remove themselves from the list)
 			GAMA.desynchronizeFrontmostExperiment();
-			for (final IOutput output : new ArrayList<>(outputs.values())) { output.dispose(); }
+			synchronized (outputs) {
+				for (final IOutput output : new ArrayList<>(outputs.values())) { output.dispose(); }
+			}
 			// for (final IOutput output : new ArrayList<>(monitors)) { output.dispose(); }
 			clear();
 		} catch (final Exception e) {
@@ -157,7 +161,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	// for instant, multi-simulation cannot have their owns outputs display at
 	// same time.
 	public void clear() {
-		outputs.clear();
+		synchronized (outputs) {
+			outputs.clear();
+		}
 	}
 
 	@Override
@@ -332,11 +338,13 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		getDisplayOutputs().forEach(each -> { each.setRendered(false); });
-		outputs.forEach((name, each) -> {
-			if (each instanceof LayeredDisplayOutput ldo) { ldo.linkScopeWithGraphics(); }
-			if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
-		});
+		synchronized (outputs) {
+			getDisplayOutputs().forEach(each -> { each.setRendered(false); });
+			outputs.forEach((name, each) -> {
+				if (each instanceof LayeredDisplayOutput ldo) { ldo.linkScopeWithGraphics(); }
+				if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
+			});
+		}
 		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
 			while (!allOutputsRendered()) {
 				try {
