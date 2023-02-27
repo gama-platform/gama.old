@@ -3,7 +3,7 @@
  * ExecutionContext.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -109,7 +109,6 @@ public class ExecutionContext implements IExecutionContext {
 		} else {
 			local.put(name, value);
 		}
-
 	}
 
 	@Override
@@ -123,7 +122,10 @@ public class ExecutionContext implements IExecutionContext {
 	public ExecutionContext createCopy() {
 		final ExecutionContext r = create(scope, outer);
 		if (local != null) {
-			r.local = GamaMapFactory.createWithoutCasting(Types.NO_TYPE, Types.NO_TYPE, local, false);
+			synchronized (local) {
+				r.local = Collections.synchronizedMap(
+						GamaMapFactory.createWithoutCasting(Types.NO_TYPE, Types.NO_TYPE, local, false));
+			}
 		}
 		return r;
 	}
@@ -140,12 +142,16 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void clearLocalVars() {
-		local = null;
+		if (local != null) {
+			synchronized (local) {
+				local = null;
+			}
+		}
 	}
 
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
-		if (local == null) { local = GamaMapFactory.createUnordered(); }
+		if (local == null) { local = Collections.synchronizedMap(GamaMapFactory.createUnordered()); }
 		local.put(varName, val);
 	}
 

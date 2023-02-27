@@ -46,6 +46,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.COUNTER;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class AbstractScope.
@@ -364,19 +365,24 @@ public class ExecutionScope implements IScope {
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
 	 */
 	// @Override
+
+	private final Object lock = new Object();
+
 	@Override
-	public synchronized boolean push(final IAgent agent) {
-		final IAgent a = agentContext == null ? null : agentContext.getAgent();
-		if (a == null) {
-			if (agent instanceof ITopLevelAgent) {
-				// Previous context didnt have a root.
-				setRoot((ITopLevelAgent) agent);
-			}
-			// get rid of the previous context **important**
-			agentContext = null;
-		} else if (a == agent) return false;
-		agentContext = createChildContext(agent);
-		return true;
+	public boolean push(final IAgent agent) {
+		synchronized (lock) {
+			final IAgent a = agentContext == null ? null : agentContext.getAgent();
+			if (a == null) {
+				if (agent instanceof ITopLevelAgent) {
+					// Previous context didnt have a root.
+					setRoot((ITopLevelAgent) agent);
+				}
+				// get rid of the previous context **important**
+				agentContext = null;
+			} else if (a == agent) return false;
+			agentContext = createChildContext(agent);
+			return true;
+		}
 	}
 
 	/**
@@ -394,13 +400,18 @@ public class ExecutionScope implements IScope {
 	 */
 	// @Override
 	@Override
-	public void pop(final IAgent agent) {
-		if (agentContext == null) throw GamaRuntimeException.warning("Agents stack is empty", this);
-		final AgentExecutionContext previous = agentContext;
-		agentContext = agentContext.getOuterContext();
-		previous.dispose();
-		getAndClearDeathStatus();
-		// _agent_halted = false;
+	public synchronized void pop(final IAgent agent) {
+		synchronized (lock) {
+			if (agentContext == null) {
+				DEBUG.OUT("Agents stack is empty");
+				return;
+			}
+			final AgentExecutionContext previous = agentContext;
+			agentContext = agentContext.getOuterContext();
+			previous.dispose();
+			getAndClearDeathStatus();
+			// _agent_halted = false;
+		}
 	}
 
 	/**
