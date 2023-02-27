@@ -93,11 +93,6 @@ public class GamaIcon {
 		code = c;
 		path = c;
 		plugin = c;
-		if ("navigator/editor.link".equals(code)) {
-
-			DEBUG.OUT("");
-		}
-
 		descriptor = ImageDescriptor.createFromImageData(new ImageLoader().load(stream)[0]);
 		image();
 	}
