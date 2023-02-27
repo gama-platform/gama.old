@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/folder.model.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/files/folder.model.png"
             id="msi.gama.application.nature.gamaNature.img"
             natureId="msi.gama.application.gamaNature">
       </image>
@@ -62,7 +62,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.InteractiveConsoleView"
-            icon="/icons/views/view.interactive.png"
+            icon="/icons/views/tabs/view.interactive.png"
             id="msi.gama.application.view.InteractiveConsoleView"
             name="Interactive console"
             restorable="true">
@@ -71,11 +71,11 @@
                   allowMultiple="false"
                   category="msi.gama.gui.category.gama"
                   class="ummisco.gama.ui.views.TestView"
-                  icon="/icons/views/view.test.png"
+                  icon="/icons/views/tabs/view.test.png"
                   id="msi.gama.application.view.TestView"
                   name="Tests"
-                  restorable="false">
-            </view>
+                  restorable="false"> 
+            </view> 
    </extension>
    <extension
          point="org.eclipse.ui.commands">

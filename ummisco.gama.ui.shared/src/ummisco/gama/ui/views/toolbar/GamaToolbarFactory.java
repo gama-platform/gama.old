@@ -358,6 +358,7 @@ public class GamaToolbarFactory {
 	 */
 	public static GridData layoutDataForToolbar() {
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		//data.minimumHeight = TOOLBAR_HEIGHT;
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
 		return data;
 	}

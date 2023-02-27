@@ -50,6 +50,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.GamaPreferencesView;
 
 /**
@@ -325,7 +326,7 @@ public class CleanupHelper {
 				put("saveAs", "generic/menu.saveas");
 				put("saveAll", "generic/menu.saveall");
 				put("revert", "generic/menu.revert");
-				put("refresh", "navigator/file.refresh");
+				put("refresh", IGamaIcons.FILE_REFRESH);
 				put("new", "navigator/navigator.new2");
 				put("import", "navigator/menu.import");
 				put("export", "navigator/menu.export");

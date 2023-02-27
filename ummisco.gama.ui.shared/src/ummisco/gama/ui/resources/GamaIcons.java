@@ -13,8 +13,11 @@ package ummisco.gama.ui.resources;
 import static ummisco.gama.dev.utils.DEBUG.PAD;
 import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,6 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -68,6 +75,9 @@ public class GamaIcons implements IIconProvider {
 
 	/** The Constant DEFAULT_PATH. */
 	static public final String DEFAULT_PATH = "/icons/";
+
+	/** The Constant DVG_PATH. */
+	static public final String SVG_PATH = "/svg/";
 
 	/** The Constant SIZER_PREFIX. */
 	static final String SIZER_PREFIX = "sizer_";
@@ -196,6 +206,24 @@ public class GamaIcons implements IIconProvider {
 		GamaIcon result = getInstance().getIcon(code);
 		if (result == null) {
 			result = new GamaIcon(code, path, plugin);
+			getInstance().putIconInCache(code, result);
+		}
+		return result;
+	}
+
+	/**
+	 * Creates the.
+	 *
+	 * @param code
+	 *            the code
+	 * @param stream
+	 *            the stream
+	 * @return the gama icon
+	 */
+	private static GamaIcon create(final String code, final InputStream stream) {
+		GamaIcon result = getInstance().getIcon(code);
+		if (result == null) {
+			result = new GamaIcon(code, stream);
 			getInstance().putIconInCache(code, result);
 		}
 		return result;
@@ -378,6 +406,72 @@ public class GamaIcons implements IIconProvider {
 		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: Preloading " + files.size() + " icons", 55, ' ') + PAD(" done in", 15, '_'),
 				() -> files.forEach(n -> create(n.replace(".png", "")).image()));
 		// });
+	}
+
+	/**
+	 * Builds the icons.
+	 */
+	public static void buildIcons() {
+		// CompletableFuture.runAsync(() -> {
+		Bundle bundle = Platform.getBundle(PLUGIN_ID);
+		final URL fileURL = bundle.getEntry(GamaIcons.SVG_PATH);
+		URL resolvedFileURL;
+		try {
+			resolvedFileURL = FileLocator.toFileURL(fileURL);
+		} catch (IOException e) {
+			return;
+		}
+		// We need to use the 3-arg constructor of URI in order to properly escape file system chars
+		URI resolvedURI;
+		try {
+			resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
+		} catch (URISyntaxException e) {
+			return;
+		}
+		Path path = new File(resolvedURI).toPath();
+		List<Path> files;
+		try {
+			files = Files.walk(path).filter(n -> n.toString().endsWith(".svg")).toList();
+		} catch (IOException e) {
+			return;
+		}
+		PNGTranscoder pt = new PNGTranscoder();
+		// pt.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, 24f);
+		// pt.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, 24f);
+		TIMER_WITH_EXCEPTIONS(PAD("> GAMA: Preloading " + files.size() + " icons", 55, ' ') + PAD(" done in", 15, '_'),
+				() -> files.forEach(n -> {
+					try {
+
+						// 1. Lire le SVG en inputStream + taille préférée (ou la mettre dans le fichier ... ?) et
+						// conserver dans GamaIcon sous la forme d'un ImageDataProvider
+						// 2. Fournir l'icone en tenant compte du zoom (le descripteur gardé en mémoire en fonction du
+						// zoom
+						// 3. Fournir en parallèle les icones décrites dans plugin.xml sous la forme de @2x...
+
+						// Use this to Read a Local Path
+						//
+						// Read Remote Location for SVG
+						String svgUriInputLocation = n.toUri().toURL().toString();
+						TranscoderInput transcoderInput = new TranscoderInput(svgUriInputLocation);
+
+						// Define OutputStream Location
+						try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+							TranscoderOutput transcoderOutput = new TranscoderOutput(outputStream);
+
+							// Convert SVG to PNG and Save to File System
+
+							pt.transcode(transcoderInput, transcoderOutput);
+							// Clean Up
+							outputStream.flush();
+							InputStream is = new ByteArrayInputStream(outputStream.toByteArray());
+							String p = path.relativize(n).toString().replace(".svg", "");
+							create(p, is);
+						}
+					} catch (IOException | TranscoderException ex) {
+						System.out.println("Exception Thrown: " + ex);
+					}
+				}));
+
 	}
 
 }

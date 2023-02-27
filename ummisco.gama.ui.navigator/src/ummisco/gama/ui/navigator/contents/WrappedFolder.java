@@ -48,7 +48,7 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 		if (modelsCount == NOT_COMPUTED) {
 			super.countModels();
 			final var isExternal = "external".equals(getName());
-			image = GamaIcons.create(isExternal ? "navigator/file.cloud"
+			image = GamaIcons.create(isExternal ? "navigator/files/file.cloud"
 					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
 			// font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
 			canBeDecorated = modelsCount > 0;

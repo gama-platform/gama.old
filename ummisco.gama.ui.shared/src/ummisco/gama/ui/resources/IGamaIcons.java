@@ -139,13 +139,13 @@ public interface IGamaIcons {
 	String EXPERIMENT_STOP = "experiment/experiment.stop";
 
 	/** The file experiment. */
-	String FILE_EXPERIMENT = "navigator/file.experiment";
+	String FILE_EXPERIMENT = "navigator/files/file.experiment";
 
 	/** The file icon. */
-	String FILE_ICON = "navigator/file.model";
+	String FILE_ICON = "navigator/files/file.model";
 
 	/** The file model. */
-	String FILE_MODEL = "navigator/file.model";
+	String FILE_MODEL = "navigator/files/file.model";
 
 	/** The file refresh. */
 	String FILE_REFRESH = "navigator/file.refresh";
@@ -154,25 +154,25 @@ public interface IGamaIcons {
 	String FILE_RENAME = "navigator/file.rename";
 
 	/** The file shapesupport. */
-	String FILE_SHAPESUPPORT = "navigator/file.shapesupport";
+	String FILE_SHAPESUPPORT = "navigator/files/file.shapesupport";
 
 	/** The file text. */
-	String FILE_TEXT = "navigator/file.text";
+	String FILE_TEXT = "navigator/files/file.text";
 
 	/** The folder builtin. */
 	String FOLDER_BUILTIN = "navigator/folder.library";
 
 	/** The folder model. */
-	String FOLDER_MODEL = "navigator/folder.model";
+	String FOLDER_MODEL = "navigator/files/folder.model";
 
 	/** The folder plugin. */
 	String FOLDER_PLUGIN = "navigator/folder.plugin";
 
 	/** The folder project. */
-	String FOLDER_PROJECT = "navigator/folder.project";
+	String FOLDER_PROJECT = "navigator/files/folder.project";
 
 	/** The folder resources. */
-	String FOLDER_RESOURCES = "navigator/folder.resources";
+	String FOLDER_RESOURCES = "navigator/files/folder.resources";
 
 	// Small Icons
 
@@ -314,28 +314,28 @@ public interface IGamaIcons {
 	String OTHER_EXPERIMENTS = "editor/other.experiments";
 
 	/** The overlay closed. */
-	String OVERLAY_CLOSED = "navigator/overlay.closed2";
+	String OVERLAY_CLOSED = "navigator/overlays/overlay.closed2";
 
 	/** The overlay cloud. */
-	String OVERLAY_CLOUD = "navigator/overlay.cloud";
+	String OVERLAY_CLOUD = "navigator/overlays/overlay.cloud";
 
 	/** The overlay error. */
-	String OVERLAY_ERROR = "navigator/overlay.error2";
+	String OVERLAY_ERROR = "navigator/overlays/overlay.error2";
 
 	/** The overlay link broken. */
-	String OVERLAY_LINK_BROKEN = "navigator/overlay.link.broken";
+	String OVERLAY_LINK_BROKEN = "navigator/overlays/overlay.link.broken";
 
 	/** The overlay link ok. */
-	String OVERLAY_LINK_OK = "navigator/overlay.link.ok";
+	String OVERLAY_LINK_OK = "navigator/overlays/overlay.link.ok";
 
 	/** The overlay ok. */
-	String OVERLAY_OK = "navigator/overlay.ok2";
+	String OVERLAY_OK = "navigator/overlays/overlay.ok2";
 
 	/** The overlay toggle. */
 	String OVERLAY_TOGGLE = "mini/overlay.toggle";
 
 	/** The overlay warning. */
-	String OVERLAY_WARNING = "navigator/overlay.warning2";
+	String OVERLAY_WARNING = "navigator/overlays/overlay.warning2";
 
 	/** The panel continue. */
 	String PANEL_CONTINUE = "experiment/experiment.continue";
@@ -488,9 +488,9 @@ public interface IGamaIcons {
 	String TREE_SORT = "mini/tree.sort";
 
 	/** The view browser. */
-	String VIEW_BROWSER = "views/view.browser";
+	String VIEW_BROWSER = "views/tabs/view.browser";
 
 	/** The view interactive. */
-	String VIEW_INTERACTIVE = "views/view.interactive";
+	String VIEW_INTERACTIVE = "views/tabs/view.interactive";
 
 }

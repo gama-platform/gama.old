@@ -37,7 +37,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.console.ConsoleView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.console.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.console.png"
             id="msi.gama.application.view.ConsoleView"
             name="Console"
             restorable="false">
@@ -46,7 +46,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama" 
             class="ummisco.gama.ui.views.inspectors.PopulationInspectView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.browser.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.browser.png"
             id="msi.gama.application.view.TableAgentInspectView"
             name="Browser" 
             restorable="false">
@@ -55,7 +55,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.AgentInspectView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.inspector.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.inspector.png"
             id="msi.gama.application.view.AgentInspectView"
             name="Inspector"
             restorable="false">
@@ -64,7 +64,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.MonitorView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.monitors.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.monitors.png"
             id="msi.gama.application.view.MonitorView"
             name="Monitors"
             restorable="false">
@@ -73,7 +73,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.ExperimentParametersView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.parameters.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.parameters.png"
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
             restorable="false">
@@ -82,7 +82,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.ErrorView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.errors.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.errors.png"
             id="msi.gama.application.view.ErrorView"
             name="Errors"
             restorable="false">
@@ -91,7 +91,7 @@
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.user.UserControlView"
             fastViewWidthRatio="0.2"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.panel.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.panel.png"
             id="msi.gama.views.userControlView"
             name="User Control"
             restorable="false"> 

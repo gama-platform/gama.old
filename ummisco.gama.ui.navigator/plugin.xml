@@ -721,7 +721,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.navigator.GamaNavigator"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.navigator.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.navigator.png"
             id="msi.gama.gui.view.GamaNavigator" 
             name="Models"
             restorable="true">

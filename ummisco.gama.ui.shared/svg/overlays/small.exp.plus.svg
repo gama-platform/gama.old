@@ -1,14 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-426 -3478 24 24.000156" width="24" height="24.000156">
-  <defs/>
-  <g id="Icons_1" stroke-dasharray="none" fill-opacity="1" stroke="none" stroke-opacity="1" fill="none">
-    <title>Icons 1</title>
-    <g id="Icons_1_Calque_1">
-      <title>Calque 1</title>
-      <g id="Graphic_2917">
-        <path d="M -410.94653 -3462.9464 L -402 -3462.9464 L -402 -3469.0534 L -410.94653 -3469.0534 L -410.94653 -3478 L -417.05347 -3478 L -417.05347 -3469.0534 L -426 -3469.0534 L -426 -3462.9464 L -417.05347 -3462.9464 L -417.05347 -3454 L -410.94653 -3454 Z" fill="white"/>
-      </g>
-    </g>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-992.5 -3450.5 13 13" width="13" height="13"><g fill="none"><path d="M-984.473-3442.473H-980v-3.054h-4.473V-3450h-3.054v4.473H-992v3.054h4.473v4.473h3.054Z" fill="#fff"/></g></svg>

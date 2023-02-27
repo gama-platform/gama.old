@@ -57,7 +57,7 @@ public class FLAGS {
 		String v = System.getProperty(name);
 		if (v == null) return def;
 		// DEBUG.LOG("> FLAG " + name + " with value " + v);
-		System.out.println(DEBUG.PAD("> FLAG: " + name,55, ' ') + DEBUG.PAD(" set to", 15, '_') + " " + v);
+		System.out.println(DEBUG.PAD("> FLAG: " + name, 55, ' ') + DEBUG.PAD(" set to", 15, '_') + " " + v);
 		return Boolean.parseBoolean(v);
 	}
 
@@ -135,5 +135,8 @@ public class FLAGS {
 	 * few glitches remain (esp. on macOS). True by defautl
 	 */
 	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
+
+	/** The Constant USE_DYNAMIC_ICONS. */
+	public static final boolean USE_DYNAMIC_ICONS = get("use_dynamic_icons", false);
 
 }
