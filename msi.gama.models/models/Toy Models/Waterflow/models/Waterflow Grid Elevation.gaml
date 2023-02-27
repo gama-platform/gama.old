@@ -19,12 +19,13 @@ model Waterflowgridelevation
 
 global {
 	file dem_file <- file("../includes/DEM_100m_PP.asc");
-	file river_file <- file("../includes/rivers_PP.shp");
+	file river_file <- file("../includes/river.shp");
+ 
   	 //Shape of the environment using the dem file
   	 geometry shape <- envelope(dem_file);
 	
 	//Diffusion rate
-	float diffusion_rate <- 0.6;
+	float diffusion_rate <- 0.8;
 	
 	list<cell> drain_cells;
 	list<cell> source_cells;
@@ -50,8 +51,8 @@ global {
    }	
    
    action init_water {
-      ask cell where(each.altitude < 0) {
-         water_height <- 3.0;
+      ask cell overlapping first(river) {
+         //water_height <- 3.0;
          is_source <- grid_y = 0;
          is_drain <- grid_y = matrix(cell).rows - 1;
       }
@@ -149,7 +150,7 @@ experiment hydro type: gui {
 	output {
 		display d {
 			grid cell border: #black;
-			species river;
+			//species river;
 		}
 	}
 }

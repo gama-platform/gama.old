@@ -50,18 +50,18 @@ grid cell  width: image_size height: image_size schedules: reverse(river sort_by
 		water_volume <- 0.1*water_volume;
 	}
 	
-	reflex water_source when: source and every(3 #cycle) {
+	reflex water_source when: source and every(20 #cycle) {
 		water_volume <- water_volume + entrance_water;
 	}
 		
 	
 	aspect default {
-		draw shape color: is_river_cell? rgb(0,0,water_volume) : #lightgreen border: #grey;
+		draw shape color: is_river_cell? rgb(0,0,2 * water_volume) : #lightgreen border: #grey;
 	}
 }
 
 experiment Waterflowgridneighborhood type: gui {
-	output {
+	output synchronized: true{
 		display flow {
 			species cell;
 		}		
