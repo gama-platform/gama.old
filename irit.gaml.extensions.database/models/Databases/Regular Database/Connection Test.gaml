@@ -8,8 +8,13 @@ model test_connection
 
 global {
 	map<string, string> MySQL <- ['host'::'localhost', 'dbtype'::'mysql', 'database'::'', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
-	map<string, string> POSTGRES <- ['host'::'localhost', 'dbtype'::'postgres', 'database'::'postgres', 'port'::'5432', 'user'::'postgres', 'passwd'::''];
 	map<string, string> SQLITE <- ['dbtype'::'sqlite', 'database'::'../includes/meteo.db'];
+
+	// Note that the postgis extension needs to be installed in the postgres database.
+	// Enable the postGIS extension in the database with: CREATE EXTENSION postgis;
+	// https://postgis.net/install/
+	map<string, string> POSTGRES <- ['host'::'localhost', 'dbtype'::'postgres', 'database'::'postgres', 'port'::'5432', 'user'::'postgres', 'passwd'::''];
+	
 	init {
 		
 		write "This model will work only if the corresponding database is installed and the database management server launched." color: #red;
@@ -22,6 +27,10 @@ global {
 		create AgentDB_MySQL;	
 		create AgentDB_SQLITE;
 		create AgentDB_POSTGRESQL;		
+		
+		ask AgentDB_MySQL {do die;}
+		ask AgentDB_SQLITE {do die;}
+		ask AgentDB_POSTGRESQL {do die;}
 	}
 
 }
