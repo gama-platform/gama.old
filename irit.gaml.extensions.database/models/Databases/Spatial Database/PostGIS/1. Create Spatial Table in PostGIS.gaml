@@ -8,6 +8,7 @@ model CreateBuildingTablePostGIS
 
 global {
 	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'postgres', 'database'::'', 'port'::'5432', 'user'::'postgres', 'passwd'::''];
+	string database_name <- "spatial_db"; // "spatial_db2d" or "spatial_db3d"
 
 	init {
 		write "This model will work only if the corresponding database is installed." color: #red;
@@ -21,12 +22,12 @@ global {
 		create dummy;
 		ask dummy {
 			if (testConnection(PARAMS)) {
-				do executeUpdate params: PARAMS updateComm: "DROP DATABASE IF EXISTS spatial_db ;";
-				do executeUpdate params: PARAMS updateComm: "CREATE DATABASE spatial_db with TEMPLATE = template_postgis;";
+				do executeUpdate params: PARAMS updateComm: "DROP DATABASE IF EXISTS " + database_name + " ;";
+				do executeUpdate params: PARAMS updateComm: "CREATE DATABASE "+ database_name +" with TEMPLATE = template_postgis;";
 				write "spatial_BD database has been created. ";
 
 				// remove "database" from: PARAMS;
-				put "spatial_db" key: "database" in: PARAMS;
+				put database_name key: "database" in: PARAMS;
 				do executeUpdate params: PARAMS updateComm: "CREATE TABLE bounds" + "( " + " geom GEOMETRY " + ")";
 				write "bounds table has been created.";
 				do executeUpdate params: PARAMS updateComm: "CREATE TABLE buildings " + "( " + " name character varying(255), " + " type character varying(255), " + " geom GEOMETRY " + ")";
