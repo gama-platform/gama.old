@@ -1,7 +1,7 @@
 /**
 * Name: MQTT__Send
 * Author: Nicolas Marilleau and Arnaud Grignard
-* Description: Two clients are communicated throught the MQTT protocol.
+* Description: Two clients are communicated through the MQTT protocol.
 * Tags: Network, MQTT
 */
 
@@ -33,27 +33,26 @@ global {
 species NetworkingAgent skills:[network]{
 	string name; 
 	string dest;
+	
 	reflex send when: cycle mod 10  = 3
 	{
-		write "sending message: " + "This message a string" + name;
-		do send to:"sender" contents:"This message a string" + name;
-		do send to:"receiver" contents:self;		
+		write "sending message: " + "This message a string from " + name;
+		do send to:"sender" contents:"This message a string from " + name;
+		do send to:"receiver" contents:"This message a string from " + name;
 	}
+	
 	reflex send2 when: cycle mod 10  = 5
 	{
 		int a <- 0;		
 		write "sending message: " + a;
 		do send to:"sender" contents:a;
 		do send to:"receiver" contents:a;		
-	}
-	
+	}	
 
 	reflex send3 when: cycle mod 10  = 8
 	{
 		write "sending message: " + self;
 		do send to:"sender" contents:self;
-// 		
-//		do send to:"receiver" contents:self;
 	}
 	
 	reflex receive

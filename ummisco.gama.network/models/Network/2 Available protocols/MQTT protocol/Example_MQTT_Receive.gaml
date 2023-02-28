@@ -14,7 +14,7 @@ global {
 		write "A MQTT server should run." color: #red;
 		write "Another instance of GAMA should run the model Example_MQTT_Send.gaml, so that an agent can send messages.";
 		
-		create NetworkingAgent number:1{
+		create NetworkingAgent number:1 {
 			/**
 			 * Demo connection based on the demo gama server. 
 			 * Using the demo gama server requires an available internet connection. Depending on your web access, It could slow down the simulation. 
@@ -32,18 +32,12 @@ global {
 species NetworkingAgent skills:[network]{
 	string name;
 	string dest;
-	reflex fetch when:has_more_message()
-	{	
-		message mess <- fetch_message();
-//		let contents <- NetworkingAgent(mess.contents);
-//		if contents != nil {
-//			write "agent received: " + contents.name;
-//		}
-//		else {
-//			write string(mess);		
-//		}
-		write "fetch this message: " + mess;		
-		
+
+	reflex fetch when:has_more_message() {	
+		loop while: has_more_message() {
+			message mess <- fetch_message();
+			write "fetch this message: " + mess;				
+		}
 	}
 }
 
