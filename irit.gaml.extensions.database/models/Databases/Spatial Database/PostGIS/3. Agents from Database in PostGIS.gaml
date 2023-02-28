@@ -8,7 +8,7 @@
 model DB2agentPOSTGIS 
 
 global {
-	map<string,string> BOUNDS <- [	//'srid'::'32648', // optinal
+	map<string,string> BOUNDS <- [	//'srid'::'32648', // optional
 	 								'host'::'localhost',
 									'dbtype'::'postgis',
 									'database'::'spatial_db',
@@ -16,7 +16,7 @@ global {
 									'user'::'postgres',
 									'passwd'::'',
 								  	'select'::'SELECT ST_AsEWKB(geom) as geom FROM bounds;' ];
-	map<string,string> PARAMS <- [	//'srid'::'32648', // optinal
+	map<string,string> PARAMS <- [	//'srid'::'32648', // optional
 									'host'::'localhost',
 									'dbtype'::'postgis',
 									'database'::'spatial_db',

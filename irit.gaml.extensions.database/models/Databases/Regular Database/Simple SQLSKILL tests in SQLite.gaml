@@ -49,8 +49,18 @@ global {
 
 species DB_Accessor skills: [SQLSKILL] {
 	reflex select {
-		list<list> t <- list<list> (select(PARAMS, "SELECT * FROM registration"));
+		list<list> t <- select(PARAMS, "SELECT * FROM registration");
 		write "Select before updated " + t;
+		write "    Metadata (column names): " + t[0];
+		write "    Metadata (column types): " + t[1];
+		write "    Data                   : " + t[2]; 
+	}
+
+	reflex select_parametric {
+		list<list> t <- self.select(params: PARAMS, 
+                            select: "SELECT * FROM registration WHERE age < ?;",
+                            values: [26] );
+		write "Parametric select before updated " + t;
 		write "    Metadata (column names): " + t[0];
 		write "    Metadata (column types): " + t[1];
 		write "    Data                   : " + t[2]; 
@@ -59,7 +69,7 @@ species DB_Accessor skills: [SQLSKILL] {
 	reflex update {
 		do executeUpdate params: PARAMS updateComm: "UPDATE registration SET age = 30 WHERE id IN (100, 101)";
 		do executeUpdate params: PARAMS updateComm: "DELETE FROM registration where id=103 ";
-		list<list> t <- list<list> (select(PARAMS, "SELECT * FROM registration"));
+		list<list> t <- select(PARAMS, "SELECT * FROM registration");
 		write "Select after updated " + t;
 	}
 
