@@ -17,6 +17,7 @@ global {
 
 	//current action type
 	int action_type <- -1;	
+	list<point> clicks <- [];
 	
 	//images used for the buttons
 	list<file> images <- [
@@ -25,6 +26,8 @@ global {
 		file("../images/eraser.jpg"),
 		file("../images/empty.png")
 	]; 
+	
+
 	
 	reflex pauseAtConvergence when: converged { }
 	
@@ -44,25 +47,40 @@ global {
 		}
 	}
 	
-	action cell_management {
-		write agents;
+	// We register the clicks asynchronously (when the user presses the mouse button)
+	// No need to register the type of action as the simulation is supposed to run fast, so that 
+	// the user doesnt have the time, in one step, to click two times and change the action type in-between.
+	// See issue #3626 on GAMA platform Github
+	action register_click {
+		clicks << #user_location;
+	}
+	
+	// .. and we manage the points synchronously, in the normal scheduling of the model. The worst that can happen is 
+	// to miss one click if the user clicks very fast. 
+	reflex manage_clicks {
+		loop p over: clicks {
+			do cell_management(p);
+		}
+		clicks <- [];
+	}
+	
+	action cell_management(point the_location) {
+		//write agents;
 		switch action_type {
 			match 0 {
-				create datapoints with:(location : #user_location);
+				create datapoints with:(location : the_location);
 			}
 			
 			match 1 {
-			
-				create centroids with:(location : #user_location);
+				create centroids with:(location : the_location);
 				int K <- length(centroids);
 		  		loop i from:0 to: K-1 { ask centroids[i] { color_kmeans  <- hsb(i/K,1,1); }}
 		   }
-		
 				
 			match 2 {
-				list<agent> close_ag <- (datapoints+centroids) overlapping (circle(5) at_location #user_location);
+				list<agent> close_ag <- (datapoints+centroids) overlapping (circle(5) at_location the_location);
 				if not empty(close_ag) {
-					ask close_ag closest_to #user_location {
+					ask close_ag closest_to the_location {
 						if (self is datapoints ) {
 							centroids c <- datapoints(self).mycenter;
 							if (c != nil) {
@@ -101,14 +119,12 @@ grid button width:2 height:2
 experiment clustering2D type: gui virtual: true;
 experiment clustering3D type: gui virtual: true;
 
-experiment SelectPoints2Cluster2D type: gui {
+experiment SelectPoints2Cluster2D type: gui autorun: true{
 	output {
 		layout horizontal([0.0::8000,1::2000]) tabs:true;
 		
 		display map  {
-			
-			
-			event mouse_down action:cell_management;
+			event mouse_down action:register_click;
 			species datapoints aspect: kmeans_aspect2D transparency:0.5;
 			species centroids aspect: kmeans_aspect2D;
 			graphics "Full target"
