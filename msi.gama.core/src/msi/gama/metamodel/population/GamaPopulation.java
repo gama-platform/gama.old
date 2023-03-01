@@ -523,8 +523,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			}
 			list.add(a);
 		}
-		addAll(list);
+
 		createVariablesFor(scope, list, initialValues);
+		// Change the order of the two statements (#3626)
+		addAll(list);
 		if (!isRestored) {
 			for (final IAgent a : list) {
 				// if agent is restored (on the capture or release); then don't
