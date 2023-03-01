@@ -525,7 +525,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		}
 
 		createVariablesFor(scope, list, initialValues);
-		// Change the order of the two statements (#3626)
+		// #3626 ??
 		addAll(list);
 		if (!isRestored) {
 			for (final IAgent a : list) {
