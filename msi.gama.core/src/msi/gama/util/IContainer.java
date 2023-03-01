@@ -1,16 +1,17 @@
 /*******************************************************************************************************
  *
- * IContainer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * IContainer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
 import java.util.Collection;
+
+import com.google.common.collect.ImmutableList;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
@@ -51,9 +52,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * List value.
 	 *
-	 * @param scope the scope
-	 * @param contentType the content type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param copy
+	 *            the copy
 	 * @return the i list
 	 */
 	IList<ValueType> listValue(IScope scope, IType<?> contentType, boolean copy);
@@ -61,9 +65,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Matrix value.
 	 *
-	 * @param scope the scope
-	 * @param contentType the content type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param copy
+	 *            the copy
 	 * @return the i matrix
 	 */
 	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, boolean copy);
@@ -71,10 +78,14 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Matrix value.
 	 *
-	 * @param scope the scope
-	 * @param contentType the content type
-	 * @param size the size
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param size
+	 *            the size
+	 * @param copy
+	 *            the copy
 	 * @return the i matrix
 	 */
 	IMatrix<?> matrixValue(IScope scope, IType<?> contentType, GamaPoint size, boolean copy);
@@ -82,12 +93,18 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Map value.
 	 *
-	 * @param <D> the generic type
-	 * @param <C> the generic type
-	 * @param scope the scope
-	 * @param keyType the key type
-	 * @param contentType the content type
-	 * @param copy the copy
+	 * @param <D>
+	 *            the generic type
+	 * @param <C>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param keyType
+	 *            the key type
+	 * @param contentType
+	 *            the content type
+	 * @param copy
+	 *            the copy
 	 * @return the i map
 	 */
 	<D, C> IMap<C, D> mapValue(IScope scope, IType<C> keyType, IType<D> contentType, boolean copy);
@@ -95,7 +112,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Iterable.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the iterable<? extends value type>
 	 */
 	java.lang.Iterable<? extends ValueType> iterable(final IScope scope);
@@ -110,6 +128,9 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	 */
 	@SuppressWarnings ("unchecked")
 	default StreamEx<ValueType> stream(final IScope scope) {
+		// #creates an explicit copy (see #3626) -- maybe too expensive though...
+		//if (this instanceof Collection)
+			//return StreamEx.of(ImmutableList.<ValueType> builder().addAll(this.iterable(scope)).build());
 		if (this instanceof Collection) return StreamEx.of(((Collection<ValueType>) this).stream());
 		return StreamEx.of(listValue(scope, Types.NO_TYPE, false));
 	}
@@ -117,7 +138,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Parallel stream.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the stream ex
 	 */
 	default StreamEx<ValueType> parallelStream(final IScope scope) {
@@ -127,18 +149,23 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * The Interface Addressable.
 	 *
-	 * @param <KeyType> the generic type
-	 * @param <ValueType> the generic type
+	 * @param <KeyType>
+	 *            the generic type
+	 * @param <ValueType>
+	 *            the generic type
 	 */
 	public interface Addressable<KeyType, ValueType> {
 
 		/**
 		 * Gets the.
 		 *
-		 * @param scope the scope
-		 * @param index the index
+		 * @param scope
+		 *            the scope
+		 * @param index
+		 *            the index
 		 * @return the value type
-		 * @throws GamaRuntimeException the gama runtime exception
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
 		 */
 		ValueType get(IScope scope, KeyType index) throws GamaRuntimeException;
 
@@ -159,8 +186,10 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * The Interface Modifiable.
 	 *
-	 * @param <KeyType> the generic type
-	 * @param <ValueType> the generic type
+	 * @param <KeyType>
+	 *            the generic type
+	 * @param <ValueType>
+	 *            the generic type
 	 */
 	public interface Modifiable<KeyType, ValueType> {
 
@@ -170,8 +199,10 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		/**
 		 * Adds the value.
 		 *
-		 * @param scope the scope
-		 * @param value the value
+		 * @param scope
+		 *            the scope
+		 * @param value
+		 *            the value
 		 */
 		// The simple method, that simply contains the object to add
 		void addValue(IScope scope, final ValueType value);
@@ -179,9 +210,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		/**
 		 * Adds the value at index.
 		 *
-		 * @param scope the scope
-		 * @param index the index
-		 * @param value the value
+		 * @param scope
+		 *            the scope
+		 * @param index
+		 *            the index
+		 * @param value
+		 *            the value
 		 */
 		// The same but with an index
 		void addValueAtIndex(IScope scope, final Object index, final ValueType value);
@@ -189,9 +223,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		/**
 		 * Sets the value at index.
 		 *
-		 * @param scope the scope
-		 * @param index the index
-		 * @param value the value
+		 * @param scope
+		 *            the scope
+		 * @param index
+		 *            the index
+		 * @param value
+		 *            the value
 		 */
 		// Set, that takes a mandatory index
 		void setValueAtIndex(IScope scope, final Object index, final ValueType value);
@@ -201,9 +238,12 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		/**
 		 * Adds the values.
 		 *
-		 * @param scope the scope
-		 * @param index the index
-		 * @param values the values
+		 * @param scope
+		 *            the scope
+		 * @param index
+		 *            the index
+		 * @param values
+		 *            the values
 		 */
 		// AD July 2020: Addition of the index (see #2985)
 		void addValues(IScope scope, Object index, IContainer<?, ?> values);
@@ -211,8 +251,10 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		/**
 		 * Adds the values.
 		 *
-		 * @param scope the scope
-		 * @param values the values
+		 * @param scope
+		 *            the scope
+		 * @param values
+		 *            the values
 		 */
 		default void addValues(final IScope scope, final IContainer<?, ?> values) {
 			addValues(scope, null, values);
@@ -222,8 +264,10 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		/**
 		 * Sets the all values.
 		 *
-		 * @param scope the scope
-		 * @param value the value
+		 * @param scope
+		 *            the scope
+		 * @param value
+		 *            the value
 		 */
 		// otherwise replaces the values with this one
 		void setAllValues(IScope scope, ValueType value);
@@ -231,40 +275,50 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		/**
 		 * Removes the value.
 		 *
-		 * @param scope the scope
-		 * @param value the value
+		 * @param scope
+		 *            the scope
+		 * @param value
+		 *            the value
 		 */
 		void removeValue(IScope scope, Object value);
 
 		/**
 		 * Removes the index.
 		 *
-		 * @param scope the scope
-		 * @param index the index
+		 * @param scope
+		 *            the scope
+		 * @param index
+		 *            the index
 		 */
 		void removeIndex(IScope scope, Object index);
 
 		/**
 		 * Removes the indexes.
 		 *
-		 * @param scope the scope
-		 * @param index the index
+		 * @param scope
+		 *            the scope
+		 * @param index
+		 *            the index
 		 */
 		void removeIndexes(IScope scope, IContainer<?, ?> index);
 
 		/**
 		 * Removes the values.
 		 *
-		 * @param scope the scope
-		 * @param values the values
+		 * @param scope
+		 *            the scope
+		 * @param values
+		 *            the values
 		 */
 		void removeValues(IScope scope, IContainer<?, ?> values);
 
 		/**
 		 * Removes the all occurrences of value.
 		 *
-		 * @param scope the scope
-		 * @param value the value
+		 * @param scope
+		 *            the scope
+		 * @param value
+		 *            the value
 		 */
 		void removeAllOccurrencesOfValue(IScope scope, Object value);
 
@@ -275,10 +329,13 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Contains.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "contains", "contains_value" },
@@ -309,10 +366,13 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Contains key.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "contains_key", "contains_node" },
@@ -346,9 +406,11 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * First value.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the value type
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "first",
@@ -386,9 +448,11 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Last value.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the value type
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "last",
@@ -426,7 +490,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Length.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the int
 	 */
 	@operator (
@@ -458,7 +523,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Checks if is empty.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if is empty
 	 */
 	@operator (
@@ -492,9 +558,11 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	/**
 	 * Reverse.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i container
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = "reverse",
