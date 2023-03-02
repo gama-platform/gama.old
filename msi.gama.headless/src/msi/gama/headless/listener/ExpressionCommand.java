@@ -36,14 +36,16 @@ public class ExpressionCommand implements ISocketCommand {
 		var gama_exp = gamaWebSocketServer.get_listener().getExperiment(socket_id, exp_id);
 		if (gama_exp != null && gama_exp.getSimulation() != null) {
 
-			final boolean wasPaused = gama_exp.controller.isPaused();
-			gama_exp.controller.directPause();
-
-			if (!wasPaused) {
-				gama_exp.controller.userStart();
-			}
-			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully,
-					processInput(gama_exp.controller.getExperiment().getAgent(), expr.toString()), map, escaped);
+//			final boolean wasPaused = gama_exp.controller.isPaused();
+//			gama_exp.controller.directPause();
+//			while(gama_exp.controller.running) {
+////				System.out.println("request pause");
+//			}
+			final String res=processInput(gama_exp.controller.getExperiment().getAgent(), expr.toString());
+//			if (!wasPaused) {
+//				gama_exp.controller.userStart();
+//			}
+			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully,res, map, escaped);
 
 		} else {
 			return new CommandResponse(GamaServerMessageType.UnableToExecuteRequest,

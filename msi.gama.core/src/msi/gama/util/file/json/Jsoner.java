@@ -423,7 +423,7 @@ public class Jsoner {
 	 */
 	public static String escape(final String escapable) {
 		final StringBuilder builder = new StringBuilder();
-		final int characters = escapable.length();
+		final int characters = escapable == null ? 0 : escapable.length();
 		for (int i = 0; i < characters; i++) {
 			final char character = escapable.charAt(i);
 			switch (character) {

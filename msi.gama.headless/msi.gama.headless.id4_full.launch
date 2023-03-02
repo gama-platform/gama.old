@@ -213,9 +213,9 @@
     <setAttribute key="selected_workspace_bundles">
         <setEntry value="espacedev.gaml.extensions.genstar@default:default"/>
         <setEntry value="irit.gaml.extensions.database@default:default"/>
+        <setEntry value="miat.gaml.extensions.pedestrian@default:default"/>
         <setEntry value="msi.gama.application@default:default"/>
         <setEntry value="msi.gama.core@default:default"/>
-        <setEntry value="msi.gama.documentation@default:default"/>
         <setEntry value="msi.gama.ext@default:default"/>
         <setEntry value="msi.gama.headless@default:default"/>
         <setEntry value="msi.gama.lang.gaml@default:default"/>
@@ -226,12 +226,8 @@
         <setEntry value="simtools.gaml.extensions.physics@default:default"/>
         <setEntry value="simtools.gaml.extensions.traffic@default:default"/>
         <setEntry value="ummisco.gama.annotations@default:default"/>
-        <setEntry value="ummisco.gama.java2d@default:default"/>
         <setEntry value="ummisco.gama.network@default:default"/>
-        <setEntry value="ummisco.gama.opengl@default:default"/>
         <setEntry value="ummisco.gama.serialize@default:default"/>
-        <setEntry value="ummisco.gama.ui.experiment@default:default"/>
-        <setEntry value="ummisco.gama.ui.shared@default:default"/>
         <setEntry value="ummisco.gaml.extensions.maths@default:default"/>
         <setEntry value="ummisco.gaml.extensions.stats@default:default"/>
     </setAttribute>
