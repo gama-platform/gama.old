@@ -105,7 +105,8 @@ experiment hydro type: gui {
 	parameter "Input water at source" var: input_water <- 1.0 min: 0.0 max: 3.0 step: 0.1;
 	parameter "Fill the river" var: fill <- true;
 	output {
-		display d type: 3d camera:#isometric{
+		display d type: 3d {
+			camera 'default' location: {7071.9529,10484.5136,5477.0823} target: {3450.0,3220.0,0.0};
 			mesh terrain scale: 10 triangulation: true  color: palette([#burlywood, #saddlebrown, #darkgreen, #green]) refresh: false smooth: true;
 			mesh flow scale: 10 triangulation: true color: palette(reverse(brewer_colors("Blues"))) transparency: 0.5 no_data:0.0 ;
 		}
