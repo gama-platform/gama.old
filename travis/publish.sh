@@ -43,8 +43,8 @@ deploy(){
 }
 
 release_continuous(){	
-	echo "Update release tag"
-	update_tag 1.9.0
+	#echo "Update release tag"
+	#update_tag 1.9.0
 
 	echo "Upload continuous/on-demand release to github"
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
