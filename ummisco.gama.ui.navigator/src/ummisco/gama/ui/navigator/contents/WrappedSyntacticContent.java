@@ -86,13 +86,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	}
 
 	@Override
-	public Image getImage() { return null; }// return (Image)
-											// WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element); }
-
-	// @Override
-	// public Color getColor() {
-	// return ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.inactive();
-	// }
+	public Image getImage() { return (Image) WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element); }
 
 	@Override
 	public boolean handleDoubleClick() {
@@ -119,7 +113,6 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 		final var e = o.element;
 		if (element.isSpecies()) {
 			if (e.isSpecies()) return getName().compareTo(o.getName());
-			// if (IKeyword.GRID.equals(element.getKeyword())) {}
 			return 1;
 		}
 		if (e.isSpecies()) return -1;

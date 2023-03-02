@@ -164,11 +164,6 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		}
 		return VirtualContent.EMPTY;
 	}
-	//
-	// @Override
-	// public Font getFont() {
-	// return GamaFonts.getNavigFileFont();
-	// }
 
 	@Override
 	public Image getImage() {

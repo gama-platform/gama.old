@@ -12,6 +12,8 @@ package ummisco.gama.ui.views;
 
 import static msi.gama.common.preferences.GamaPreferences.Runtime.FAILED_TESTS;
 import static msi.gama.common.preferences.GamaPreferences.Runtime.TESTS_SORTED;
+import static ummisco.gama.ui.resources.IGamaIcons.TEST_FILTER;
+import static ummisco.gama.ui.resources.IGamaIcons.TEST_SORT;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,9 +44,7 @@ import ummisco.gama.ui.parameters.AssertEditor;
 import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -221,7 +221,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		super.createToolItems(tb);
 		TESTS_SORTED.removeChangeListeners();
 		FAILED_TESTS.removeChangeListeners();
-		final ToolItem t = tb.check(GamaIcons.create(IGamaIcons.TEST_SORT).getCode(), "Sort by severity",
+		final ToolItem t = tb.check(TEST_SORT, "Sort by severity",
 				"When checked, sort the tests by their decreasing state severity (i.e. errored > failed > warning > passed > not run). Otherwise they are sorted by their order of execution.",
 				e -> {
 					TESTS_SORTED.set(!TESTS_SORTED.getValue());
@@ -231,7 +231,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		t.setSelection(TESTS_SORTED.getValue());
 		TESTS_SORTED.onChange(v -> t.setSelection(v));
 
-		final ToolItem t2 = tb.check(GamaIcons.create(IGamaIcons.TEST_FILTER).getCode(), "Filter tests",
+		final ToolItem t2 = tb.check(TEST_FILTER, "Filter tests",
 				"When checked, show only errored and failed tests and assertions", e -> {
 					FAILED_TESTS.set(!FAILED_TESTS.getValue());
 					TestView.super.reset();

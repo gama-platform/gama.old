@@ -50,7 +50,6 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 			final var isExternal = "external".equals(getName());
 			image = GamaIcons.create(isExternal ? "navigator/files/file.cloud"
 					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
-			// font = modelsCount == 0 ? GamaFonts.getResourceFont() : GamaFonts.getNavigFolderFont();
 			canBeDecorated = modelsCount > 0;
 		}
 		return modelsCount;
@@ -67,17 +66,6 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 		countModels();
 		return image;
 	}
-	//
-	// @Override
-	// public Color getColor() {
-	// return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
-	// }
-
-	// @Override
-	// public Font getFont() {
-	// countModels();
-	// return font;
-	// }
 
 	@Override
 	public VirtualContentType getType() { return VirtualContentType.FOLDER; }

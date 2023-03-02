@@ -3,7 +3,7 @@
  * GamlLabelProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -41,6 +41,8 @@ import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.operators.Strings;
+import msi.gaml.types.Types;
 
 /**
  * Provides labels for a EObjects.
@@ -177,7 +179,10 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 			}
 
 		}
-		return "Attribute " + (name == null ? "" : name)
+		String first = "Attribute ";
+		if (Types.get(type) == Types.NO_TYPE) { first = Strings.capitalize(type) + " "; }
+
+		return first + (name == null ? "" : name)
 				+ (type == null ? "" : " (" + type + ") " + (key == null ? "" : "(" + key + ") "));
 
 	}
@@ -225,9 +230,6 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 				}
 			}
 		}
-		// if ( type == null ) {
-		// type = "parameter";
-		// }
 		String name = null;
 		f = map.get(IKeyword.NAME);
 		if (f == null) {

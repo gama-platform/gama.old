@@ -66,10 +66,10 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 			put(IMarker.SEVERITY_INFO, GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor());
 			put(IMarker.SEVERITY_WARNING, GamaIcons.create(IGamaIcons.OVERLAY_WARNING).descriptor());
 			put(IMarker.SEVERITY_ERROR, GamaIcons.create(IGamaIcons.OVERLAY_ERROR).descriptor());
-			put(LINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_LINK_OK).descriptor());
-			put(LINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_LINK_BROKEN).descriptor());
-			put(WEBLINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_CLOUD).descriptor());
-			put(WEBLINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_LINK_BROKEN).descriptor());
+			put(LINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor());
+			put(LINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_ERROR).descriptor());
+			// put(WEBLINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_CLOUD).descriptor());
+			// put(WEBLINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_LINK_BROKEN).descriptor());
 		}
 	};
 

@@ -558,9 +558,9 @@ public class GamaToolbar2 extends Composite {
 			if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
 			final var icon = GamaIcons.createSizer(getBackground(), 2, h);
 			final var button = new ToolItem(tb, SWT.NONE);
-			final var im = GamaIcons.create(icon.getCode()).image();
+			final var im = icon.image();
 			button.setImage(im);
-			button.setDisabledImage(icon.image());
+			button.setDisabledImage(im);
 			button.setEnabled(false);
 		}
 		final var button = new ToolItem(tb, style);

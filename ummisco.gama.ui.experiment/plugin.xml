@@ -8,7 +8,7 @@
       <perspective
             class="ummisco.gama.ui.perspective.SimulationPerspective"
             fixed="false"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.simulation.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
             id="msi.gama.application.perspectives.SimulationPerspective"
             name="Simulation">
          <description>
@@ -248,7 +248,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.window.hideShowEditors"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/menu.save.perspective.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.save.png"
                   label="Hide/Show Editors"
                   style="push"
                   tooltip="Hide or show the editors">
@@ -298,7 +298,7 @@
                   visible="true">
             </separator>
             <menu
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout/layout.stack.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.stack.png"
                   label="Manage outputs...">
                <visibleWhen
                      checkEnabled="false">
@@ -312,11 +312,11 @@
                </dynamic>
             </menu>
             <menu
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout/menu.layout.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.menu.png"
                   label="Layout Displays... (Experimental)">
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout/layout.stack.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.stack.png"
                      label="Stacked"
                      style="push">
                   <parameter
@@ -326,7 +326,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout/layout.grid.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.grid.png"
                      label="Split"
                      style="push">
                   <parameter
@@ -336,7 +336,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout/layout.horizontal.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.horizontal.png"
                      label="Horizontally"
                      style="push">
                   <parameter
@@ -346,7 +346,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout/layout.vertical.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.vertical.png"
                      label="Vertically"
                      style="push">
                   <parameter
@@ -384,11 +384,11 @@
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.other.png"
                   label="Other...">
                <menu
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/menu.open.perspective.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.open.png"
                      label="Switch to Perspective...">
                   <command
                         commandId="msi.gama.application.goto.modeling"
-                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.modeling.png"
+                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling.png"
                         label="Modeling"
                         style="push"
                         tooltip="Open modeling perspective">
@@ -403,7 +403,7 @@
                   </command>
                   <command
                         commandId="msi.gama.application.goto.simulation"
-                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.simulation.png"
+                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
                         label="Simulation"
                         style="push"
                         tooltip="Open simulation perspective">
@@ -419,7 +419,7 @@
                </menu>
                <command
                      commandId="ummisco.gama.ui.resetPerspective"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/menu.reset.perspective.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.reset.png"
                      label="Reset Perspective (restart required)..."
                      style="push">
                   <visibleWhen
@@ -455,8 +455,8 @@
             locationURI="toolbar:msi.gama.application.common.toolbar?after=msi.gama.application.goto.modeling">
             <command
                   commandId="msi.gama.application.goto.simulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.simulation.disabled.png"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.simulation.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
                   label="Simulation perspective"
                   style="push"
                   tooltip="Open simulation perspective">

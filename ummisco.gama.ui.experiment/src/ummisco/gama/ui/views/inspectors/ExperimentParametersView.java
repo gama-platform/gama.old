@@ -49,7 +49,6 @@ import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.parameters.MonitorDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -213,11 +212,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		tb.button(GamaIcons.create(ACTION_REVERT).getCode(), "Revert parameter values",
-				"Revert parameters to their initial values", e -> {
-					final EditorsList<?> eds = editors;
-					if (eds != null) { eds.revertToDefaultValue(); }
-				}, SWT.RIGHT);
+		tb.button(ACTION_REVERT, "Revert parameter values", "Revert parameters to their initial values", e -> {
+			final EditorsList<?> eds = editors;
+			if (eds != null) { eds.revertToDefaultValue(); }
+		}, SWT.RIGHT);
 		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) {
 			tb.button(MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(), SWT.RIGHT);
 			tb.sep(SWT.RIGHT);

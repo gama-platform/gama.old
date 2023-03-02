@@ -1,18 +1,17 @@
 /*******************************************************************************************************
  *
- * CSVExportationController.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * CSVExportationController.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
 import org.eclipse.swt.SWT;
 
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -38,8 +37,7 @@ public class CSVExportationController {
 	 * @param tb
 	 */
 	public void install(final GamaToolbar2 tb) {
-		tb.button(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CSVEXPORT).getCode(), "CSV Export", "CSV Export",
-				e -> view.saveAsCSV(), SWT.RIGHT);
+		tb.button(IGamaIcons.DISPLAY_TOOLBAR_CSVEXPORT, "CSV Export", "CSV Export", e -> view.saveAsCSV(), SWT.RIGHT);
 
 	}
 

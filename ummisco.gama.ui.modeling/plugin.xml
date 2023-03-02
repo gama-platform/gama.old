@@ -814,7 +814,7 @@
        <perspective
              class="ummisco.gama.ui.perspective.ModelingPerspective"
              fixed="false"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective/perspective.modeling.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling.png"
              id="msi.gama.application.perspectives.ModelingPerspective"
              name="Modeling">
           <description> 

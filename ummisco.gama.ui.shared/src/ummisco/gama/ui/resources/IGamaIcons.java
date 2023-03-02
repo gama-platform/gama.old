@@ -20,19 +20,19 @@ package ummisco.gama.ui.resources;
 public interface IGamaIcons {
 
 	/** The action clear. */
-	String ACTION_CLEAR = "console/console.clear";
+	String ACTION_CLEAR = "viewers/erase.contents";
 
 	/** The action revert. */
 	String ACTION_REVERT = "generic/menu.undo";
 
 	/** The add column. */
-	String ADD_COLUMN = "viewers/action.add.column2";
+	String ADD_COLUMN = "viewers/add.column";
 
 	/** The add experiment. */
 	String ADD_EXPERIMENT = "overlays/small.exp.plus";
 
 	/** The add row. */
-	String ADD_ROW = "viewers/action.add.row2";
+	String ADD_ROW = "viewers/add.row";
 
 	/** The add simulation. */
 	String ADD_SIMULATION = "experiment/add.simulation";
@@ -40,17 +40,14 @@ public interface IGamaIcons {
 	/** The attributes. */
 	String ATTRIBUTES = "gaml/_attributes";
 
-	/** The browse populations. */
-	String BROWSE_POPULATIONS = "agents/population.list";
-
 	/** The browser back. */
-	String BROWSER_BACK = "browser/back";
+	String BROWSER_BACK = "editor/command.lastedit";
 
 	/** The browser forward. */
-	String BROWSER_FORWARD = "browser/forward";
+	String BROWSER_FORWARD = "editor/command.nextedit";
 
 	/** The browser home. */
-	String BROWSER_HOME = "browser/home";
+	String BROWSER_HOME = "generic/menu.about";
 
 	/** The build all. */
 	String BUILD_ALL = "build/build.all";
@@ -83,10 +80,10 @@ public interface IGamaIcons {
 	String DELETE = "generic/menu.delete";
 
 	/** The delete column. */
-	String DELETE_COLUMN = "viewers/action.delete.column2";
+	String DELETE_COLUMN = "viewers/delete.column";
 
 	/** The delete row. */
-	String DELETE_ROW = "viewers/action.delete.row2";
+	String DELETE_ROW = "viewers/delete.row";
 
 	/** The display fullscreen enter. */
 	String DISPLAY_FULLSCREEN_ENTER = "display/fullscreen.enter";
@@ -183,10 +180,10 @@ public interface IGamaIcons {
 	String FOLDER_USER = "navigator/folder.user";
 
 	/** The font decrease. */
-	String FONT_DECREASE = "console/font.decrease";
+	String FONT_DECREASE = "viewers/font.decrease";
 
 	/** The font increase. */
-	String FONT_INCREASE = "console/font.increase";
+	String FONT_INCREASE = "viewers/font.increase";
 
 	/** The import archive. */
 	String IMPORT_ARCHIVE = "navigator/import.archive";
@@ -230,7 +227,7 @@ public interface IGamaIcons {
 	String LAYERS_MENU = "layer/layers.menu";
 
 	/** The layout horizontal. */
-	String LAYOUT_HORIZONTAL = "layout/layout.horizontal";
+	String LAYOUT_HORIZONTAL = "views/layout.horizontal";
 
 	/** The lexical sort. */
 	String LEXICAL_SORT = "editor/lexical.sort";
@@ -239,7 +236,7 @@ public interface IGamaIcons {
 	String LOCAL_HISTORY = "navigator/local.history";
 
 	/** The lock population. */
-	String LOCK_POPULATION = "agents/population.lock";
+	String LOCK_POPULATION = CAMERA_LOCK;
 
 	/** The marker deleted. */
 	String MARKER_DELETED = "markers/marker.deleted";
@@ -278,13 +275,13 @@ public interface IGamaIcons {
 	String MENU_BROWSE = "views/open.browser";
 
 	/** The menu focus. */
-	String MENU_FOCUS = "display/action.focus";
+	String MENU_FOCUS = "agents/action.focus";
 
 	/** The button gui. */
 	String MENU_GUI = "overlays/small.exp.run.green";
 
 	/** The menu highlight. */
-	String MENU_HIGHLIGHT = "display/action.highlight";
+	String MENU_HIGHLIGHT = "agents/action.highlight";
 
 	/** The menu inspect. */
 	String MENU_INSPECT = "views/open.inspector";
@@ -314,28 +311,28 @@ public interface IGamaIcons {
 	String OTHER_EXPERIMENTS = "editor/other.experiments";
 
 	/** The overlay closed. */
-	String OVERLAY_CLOSED = "navigator/overlays/overlay.closed2";
+	String OVERLAY_CLOSED = "navigator/overlays/overlay.closed";
 
 	/** The overlay cloud. */
 	String OVERLAY_CLOUD = "navigator/overlays/overlay.cloud";
 
 	/** The overlay error. */
-	String OVERLAY_ERROR = "navigator/overlays/overlay.error2";
+	String OVERLAY_ERROR = "navigator/overlays/overlay.error";
 
-	/** The overlay link broken. */
-	String OVERLAY_LINK_BROKEN = "navigator/overlays/overlay.link.broken";
-
-	/** The overlay link ok. */
-	String OVERLAY_LINK_OK = "navigator/overlays/overlay.link.ok";
+	// /** The overlay link broken. */
+	// String OVERLAY_LINK_BROKEN = "navigator/overlays/overlay.link.broken";
+	//
+	// /** The overlay link ok. */
+	// String OVERLAY_LINK_OK = "navigator/overlays/overlay.link.ok";
 
 	/** The overlay ok. */
-	String OVERLAY_OK = "navigator/overlays/overlay.ok2";
+	String OVERLAY_OK = "navigator/overlays/overlay.ok";
 
 	/** The overlay toggle. */
 	String OVERLAY_TOGGLE = "mini/overlay.toggle";
 
 	/** The overlay warning. */
-	String OVERLAY_WARNING = "navigator/overlays/overlay.warning2";
+	String OVERLAY_WARNING = "navigator/overlays/overlay.warning";
 
 	/** The panel continue. */
 	String PANEL_CONTINUE = "experiment/experiment.continue";
@@ -389,10 +386,10 @@ public interface IGamaIcons {
 	String SAVE_AS = "generic/menu.saveas";
 
 	/** The set delimiter. */
-	String SET_DELIMITER = "viewers/action.set.delimiter2";
+	String SET_DELIMITER = "viewers/set.delimiter";
 
 	/** The set header. */
-	String SET_HEADER = "viewers/action.set.header2";
+	String SET_HEADER = "viewers/toggle.header";
 
 	/** The small browse. */
 	String SMALL_BROWSE = "overlays/small.browse";
@@ -452,13 +449,13 @@ public interface IGamaIcons {
 	String STATUS_CLOCK = "overlays/status.clock";
 
 	/** The test filter. */
-	String TEST_FILTER = "test/test.filter";
+	String TEST_FILTER = "build/test.filter";
 
 	/** The test run. */
-	String TEST_RUN = "test/test.run";
+	String TEST_RUN = "build/test.run";
 
 	/** The test sort. */
-	String TEST_SORT = "test/test.sort";
+	String TEST_SORT = "build/test.sort";
 
 	/** The toggle antialias. */
 	String TOGGLE_ANTIALIAS = "display/toggle.antialias";
@@ -492,5 +489,8 @@ public interface IGamaIcons {
 
 	/** The view interactive. */
 	String VIEW_INTERACTIVE = "views/tabs/view.interactive";
+
+	/** The browse populations. */
+	String BROWSE_POPULATIONS = MENU_POPULATION;
 
 }

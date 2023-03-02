@@ -278,7 +278,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	@Override
 	public void reset() {
-		msgConsole.clearConsole();
+		if (msgConsole != null) { msgConsole.clearConsole(); }
 		setExecutorAgent(null);
 		showPrompt();
 	}

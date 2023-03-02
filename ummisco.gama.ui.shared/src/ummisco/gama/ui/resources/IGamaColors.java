@@ -1,19 +1,18 @@
 /*******************************************************************************************************
  *
- * IGamaColors.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * IGamaColors.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
 import static msi.gama.application.workbench.ThemeHelper.isDark;
 import static ummisco.gama.ui.resources.GamaColors.get;
 import static ummisco.gama.ui.resources.GamaColors.system;
-import static ummisco.gama.ui.resources.GamaIcons.create;
 
 import org.eclipse.swt.SWT;
 
@@ -29,25 +28,25 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 public interface IGamaColors {
 
 	/** The blue. */
-	GamaUIColor BLUE =
-			isDark() ? get(get(create("palette/palette.blue2")).lighter()) : get(create("palette/palette.blue2"));
+	GamaUIColor BLUE = isDark() ? get(get(92, 118, 161).lighter()) : get(92, 118, 161);
+	// isDark() ? get(get(create("palette/palette.blue2")).lighter()) : get(create("palette/palette.blue2"));
 
 	/** The error. */
-	GamaUIColor ERROR =
-			isDark() ? get(get(create("palette/palette.red2")).lighter()) : get(create("palette/palette.red2"));
+	GamaUIColor ERROR = isDark() ? get(get(158, 77, 77).lighter()) : get(158, 77, 77);
+	// isDark() ? get(get(create("palette/palette.red2")).lighter()) : get(create("palette/palette.red2"));
 
 	/** The ok. */
-	GamaUIColor OK =
-			isDark() ? get(get(create("palette/palette.green2")).lighter()) : get(create("palette/palette.green2"));
+	GamaUIColor OK = isDark() ? get(get(81, 135, 56).lighter()) : get(81, 135, 56);
+	// isDark() ? get(get(create("palette/palette.green2")).lighter()) : get(create("palette/palette.green2"));
 
 	/** The warning. */
-	GamaUIColor WARNING = get(create("palette/palette.orange2"));
+	GamaUIColor WARNING = get(207, 119, 56); // get(create("palette/palette.orange2"));
 
 	/** The neutral. */
-	GamaUIColor NEUTRAL = get(create("palette/palette.gray2"));
+	GamaUIColor NEUTRAL = get(102, 114, 126); // get(create("palette/palette.gray2"));
 
 	/** The tooltip. */
-	GamaUIColor TOOLTIP = get(create("palette/palette.yellow2"));
+	GamaUIColor TOOLTIP = get(248, 233, 100); // get(create("palette/palette.yellow2"));
 
 	/** The gray label. */
 	GamaUIColor GRAY_LABEL = get(136, 136, 136);

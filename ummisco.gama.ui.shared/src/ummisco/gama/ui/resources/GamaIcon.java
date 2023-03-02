@@ -11,16 +11,23 @@
 package ummisco.gama.ui.resources;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.concurrent.Callable;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+// import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class GamaIcon.
@@ -34,36 +41,11 @@ public class GamaIcon {
 	/** The code. */
 	final String code;
 
-	/** The path. */
-	final String path;
-
-	/** The plugin. */
-	final String plugin;
+	/** The url. */
+	final URL url;
 
 	/** The descriptor. */
-	ImageDescriptor descriptor;
-
-	/**
-	 * Constructor for dynamic icons
-	 *
-	 * @param c
-	 *            the code
-	 */
-	GamaIcon(final String c) {
-		this(c, c);
-	}
-
-	/**
-	 * Constructor for images loaded from the main application plugin
-	 *
-	 * @param c
-	 *            the code
-	 * @param p
-	 *            the path (in the 'icons' folder)
-	 */
-	GamaIcon(final String c, final String p) {
-		this(c, p, GamaIcons.PLUGIN_ID);
-	}
+	final ImageDescriptor descriptor;
 
 	/**
 	 * Constructor for images loaded from a plugin
@@ -75,10 +57,26 @@ public class GamaIcon {
 	 * @param plugin
 	 *            the id of the plugin in which the 'icons' folder resides
 	 */
-	GamaIcon(final String c, final String p, final String plugin) {
+	public GamaIcon(final String c) {
 		code = c;
-		path = p;
-		this.plugin = plugin;
+		url = computeURL(code);
+		descriptor = ImageDescriptor.createFromURL(url);
+		image();
+	}
+
+	/**
+	 * Compute URL.
+	 *
+	 * @return the url
+	 */
+	public static URL computeURL(final String code) {
+		IPath uriPath = new Path("/plugin").append(GamaIcons.PLUGIN_ID).append(GamaIcons.DEFAULT_PATH + code + ".png"); //$NON-NLS-1$
+		try {
+			URI uri = new URI("platform", null, uriPath.toString(), null); //$NON-NLS-1$
+			return uri.toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -89,11 +87,25 @@ public class GamaIcon {
 	 * @param stream
 	 *            the stream
 	 */
-	public GamaIcon(final String c, final InputStream stream) {
-		code = c;
-		path = c;
-		plugin = c;
+	public GamaIcon(final String path, final InputStream stream) {
+		code = path;
+		url = computeURL(code);
 		descriptor = ImageDescriptor.createFromImageData(new ImageLoader().load(stream)[0]);
+		image();
+	}
+
+	/**
+	 * Instantiates a new gama icon.
+	 *
+	 * @param name
+	 *            the name
+	 * @param im
+	 *            the im
+	 */
+	public GamaIcon(final String path, final Image im) {
+		code = path;
+		url = computeURL(code);
+		descriptor = ImageDescriptor.createFromImage(im);
 		image();
 	}
 
@@ -103,19 +115,6 @@ public class GamaIcon {
 	 * @return the image descriptor
 	 */
 	public ImageDescriptor descriptor() {
-		if (descriptor == null) {
-			final Image image = GamaIcons.getInstance().getImageInCache(code);
-			if (image != null) {
-				descriptor = ImageDescriptor.createFromImage(image);
-			} else {
-				descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(plugin, GamaIcons.DEFAULT_PATH + path + ".png");
-			}
-
-			if (descriptor == null) {
-				DEBUG.ERR("ERROR: Cannot find icon " + GamaIcons.DEFAULT_PATH + path + ".png in plugin: " + plugin);
-				descriptor = ImageDescriptor.getMissingImageDescriptor();
-			}
-		}
 		return descriptor;
 	}
 
@@ -124,13 +123,23 @@ public class GamaIcon {
 	 *
 	 * @return the image
 	 */
-	public Image image() {
-		final Image[] image = { GamaIcons.getInstance().getImageInCache(code) };
-		if (image[0] == null) {
-			WorkbenchHelper
-					.run(() -> image[0] = GamaIcons.getInstance().putImageInCache(code, descriptor().createImage()));
+	private Image image(final String key, final Callable<Image> imageCreator) {
+		final Image image = JFaceResources.getImage(key);
+		if (image == null) {
+			try {
+				JFaceResources.getImageRegistry().put(key, imageCreator.call());
+			} catch (Exception e) {}
 		}
-		return image[0];
+		return JFaceResources.getImage(key);
+	}
+
+	/**
+	 * Image.
+	 *
+	 * @return the image
+	 */
+	public Image image() {
+		return image(url.toString(), () -> descriptor().createImage());
 	}
 
 	/**
@@ -139,12 +148,7 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image disabled() {
-		final Image[] image = { GamaIcons.getInstance().getImageInCache(code + "_disabled") };
-		if (image[0] == null) {
-			WorkbenchHelper.run(() -> image[0] =
-					GamaIcons.getInstance().putImageInCache(code + "_disabled", disabledVersionOf(image())));
-		}
-		return image[0];
+		return image(code + "_disabled", () -> disabledVersionOf(image()));
 	}
 
 	/**
@@ -153,12 +157,7 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image checked() {
-		final Image[] image = { GamaIcons.getInstance().getImageInCache(code + "_checked") };
-		if (image[0] == null) {
-			WorkbenchHelper.run(() -> image[0] =
-					GamaIcons.getInstance().putImageInCache(code + "_checked", checkedVersionOf(image())));
-		}
-		return image[0];
+		return image(code + "_checked", () -> checkedVersionOf(image()));
 	}
 
 	/**
@@ -169,8 +168,6 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	Image disabledVersionOf(final Image im) {
-		// return new Image(im.getDevice(), im, SWT.IMAGE_DISABLE);
-
 		Rectangle bounds = im.getBounds();
 		ImageData srcData = im.getImageData();
 		ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
@@ -194,20 +191,6 @@ public class GamaIcon {
 	 */
 	Image checkedVersionOf(final Image im) {
 		Rectangle bounds = im.getBounds();
-		// Image result = new Image(im.getDevice(), im, SWT.IMAGE_GRAY);
-		// GC gc = new GC(result);
-		// gc.setForeground(GamaColors.system(SWT.COLOR_DARK_GREEN));
-		//
-
-		// gc.setLineWidth(3);
-		// gc.set
-		// gc.drawLine(bounds.width / 4, 3 * bounds.height / 4, bounds.width / 2, bounds.height);
-		// gc.drawLine(bounds.width, bounds.height / 2, bounds.width / 2, bounds.height);
-		// gc.dispose();
-		// return result;
-
-		// Rectangle bounds = im.getBounds();
-		// // Color color = GamaColors.system(SWT.COLOR_DARK_GREEN);
 		ImageData srcData = im.getImageData();
 		ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
 		dstData.transparentPixel = srcData.transparentPixel;
@@ -229,4 +212,5 @@ public class GamaIcon {
 	 * @return the code
 	 */
 	public String getCode() { return code; }
+
 }
