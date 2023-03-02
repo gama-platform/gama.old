@@ -47,11 +47,11 @@ global {
 
 	//Reflex to decrease and diffuse the pollution of the environment
 	reflex pollution_evolution {
-	//ask all cells to decrease their level of pollution
+		//ask all cells to decrease their level of pollution
 		cell <- cell * 0.8;
-
+	
 		//diffuse the pollutions to neighbor cells
-	diffuse var: pollution on: cell proportion: 0.9;
+		diffuse var: pollution on: cell proportion: 0.9;
 	}
 
 }
@@ -76,14 +76,8 @@ species people skills: [moving] {
 		path path_followed <- goto(target: target, on: road_network, recompute_path: false, return_path: true, move_weights: road_weights);
 
 		//if the path followed is not nil (i.e. the agent moved this step), we use it to increase the pollution level of overlapping cell
-		if (path_followed != nil) {
-			try {
-				cell[path_followed.shape.location] <- cell[path_followed.shape.location] + 10;
-			}
-
-			catch {
-			}
-
+		if (path_followed != nil and path_followed.shape != nil) {
+			cell[path_followed.shape.location] <- cell[path_followed.shape.location] + 10;					
 		}
 
 		if (location = target) {
