@@ -722,8 +722,10 @@ public class FileUtils {
 	 * @return the string
 	 */
 	public static String constructAbsoluteTempFilePath(final IScope scope, final URL url) {
+		String query = url.getQuery();
+		if (query != null) { query = "?" + query; }
 		return CACHE.getAbsolutePath() + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
-				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT);
+				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT) + checkSum(query);
 
 	}
 
@@ -737,9 +739,26 @@ public class FileUtils {
 	 * @return the string
 	 */
 	private static String constructRelativeTempFilePath(final IScope scope, final URL url) {
+		String query = url.getQuery();
+		if (query != null) { query = "?" + query; }
 		return "" + CacheLocationProvider.NAME + "" + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
-				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT) + url.getQuery();
+				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT) + checkSum(query);
 
+	}
+
+	/**
+	 * Check sum. Provides a unique long number for query strings
+	 *
+	 * @param string
+	 *            the string
+	 * @return the long
+	 */
+	private static long checkSum(final String string) {
+		if (string == null) return 0;
+		long h = 1125899906842597L; // prime
+		int len = string.length();
+		for (int i = 0; i < len; i++) { h = 31 * h + string.charAt(i); }
+		return h;
 	}
 
 	/**
