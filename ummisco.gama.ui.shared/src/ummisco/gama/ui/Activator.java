@@ -17,6 +17,7 @@ import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIconsRenderer;
 import ummisco.gama.ui.utils.SwtGui;
 
 /**
@@ -33,8 +34,10 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		if (GAMA.getRegularGui() == null) { GAMA.setRegularGui(new SwtGui()); }
 		DEBUG.OUT("Regular GUI has been set");
-		if (FLAGS.USE_DYNAMIC_ICONS) {
-			GamaIcons.buildIcons();
+		if (FLAGS.PRODUCE_ICONS) {
+			// We produce the icons and then leave the application immediately
+			GamaIconsRenderer.buildIconsOnDisk();
+			System.exit(0);
 		} else {
 			GamaIcons.preloadIcons();
 		}

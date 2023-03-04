@@ -10,9 +10,9 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
-import java.awt.RenderingHints;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import static ummisco.gama.dev.utils.DEBUG.PAD;
+import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,19 +21,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.gvt.renderer.ImageRenderer;
-import org.apache.batik.gvt.renderer.StaticRenderer;
-import org.apache.batik.transcoder.SVGAbstractTranscoder;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
-import org.apache.batik.util.XMLResourceDescriptor;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -43,15 +33,11 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
-import org.osgi.framework.Bundle;
-import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import msi.gama.application.workbench.IIconProvider;
-import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -65,35 +51,8 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class GamaIcons implements IIconProvider {
 
-	/**
-	 * The Class CustomTranscoder.
-	 */
-	public static final class CustomTranscoder extends PNGTranscoder {
-		@Override
-		protected ImageRenderer createRenderer() {
-			ImageRenderer renderer = new StaticRenderer();
-			RenderingHints renderHints = renderer.getRenderingHints();
-			renderHints.add(
-					new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF));
-			renderHints.add(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-			renderHints.add(new RenderingHints(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE));
-			renderHints.add(
-					new RenderingHints(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC));
-			renderHints.add(new RenderingHints(RenderingHints.KEY_ALPHA_INTERPOLATION,
-					RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY));
-			renderHints.add(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
-			renderHints.add(
-					new RenderingHints(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY));
-			renderHints.add(new RenderingHints(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE));
-			renderHints.add(new RenderingHints(RenderingHints.KEY_FRACTIONALMETRICS,
-					RenderingHints.VALUE_FRACTIONALMETRICS_ON));
-			renderer.setRenderingHints(renderHints);
-			return renderer;
-		}
-	}
-
 	/** The icon cache. */
-	private static Cache<String, GamaIcon> ICON_CACHE = CacheBuilder.newBuilder().build();
+	public static Cache<String, GamaIcon> ICON_CACHE = CacheBuilder.newBuilder().build();
 
 	/** The Constant PLUGIN_ID. */
 	public static final String PLUGIN_ID = "ummisco.gama.ui.shared";
@@ -184,7 +143,7 @@ public class GamaIcons implements IIconProvider {
 	 *            the stream
 	 * @return the gama icon
 	 */
-	private static GamaIcon create(final String code, final InputStream stream) {
+	public static GamaIcon create(final String code, final InputStream stream) {
 		try {
 			return ICON_CACHE.get(code, () -> new GamaIcon(code, stream));
 		} catch (ExecutionException e) {
@@ -369,157 +328,17 @@ public class GamaIcons implements IIconProvider {
 	 * @throws URISyntaxException
 	 */
 	public static void preloadIcons() {
-		// CompletableFuture.runAsync(() -> {
-		Bundle bundle = Platform.getBundle(PLUGIN_ID);
-		final URL fileURL = bundle.getEntry(GamaIcons.DEFAULT_PATH);
-		URL resolvedFileURL;
 		try {
-			resolvedFileURL = FileLocator.toFileURL(fileURL);
-		} catch (IOException e) {
-			return;
+			URL url = FileLocator.toFileURL(Platform.getBundle(PLUGIN_ID).getEntry(GamaIcons.DEFAULT_PATH));
+			Path path = new File(new URI(url.getProtocol(), url.getPath(), null).normalize()).toPath();
+			List<String> files = Files.walk(path).map(f -> path.relativize(f).toString())
+					.filter(n -> n.endsWith(".png") && !n.contains("@")).toList();
+			TIMER_WITH_EXCEPTIONS(
+					PAD("> GAMA: Preloading " + files.size() + " icons", 55, ' ') + PAD(" done in", 15, '_'),
+					() -> files.forEach(n -> create(n.replace(".png", "")).image()));
+		} catch (IOException | URISyntaxException e) {
+			DEBUG.ERR("Error when loading GAMA icons ", e);
 		}
-		// We need to use the 3-arg constructor of URI in order to properly escape file system chars
-		URI resolvedURI;
-		try {
-			resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
-		} catch (URISyntaxException e) {
-			return;
-		}
-		java.nio.file.Path path = new File(resolvedURI).toPath();
-		List<String> files;
-		try {
-			files = Files.walk(path).map(f -> path.relativize(f).toString()).filter(n -> n.endsWith(".png")).toList();
-		} catch (IOException e) {
-			return;
-		}
-		DEBUG.TIMER_WITH_EXCEPTIONS(
-				DEBUG.PAD("> GAMA: Preloading " + files.size() + " icons", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
-				() -> files.forEach(n -> create(n.replace(".png", "")).image()));
-		// });
-	}
-
-	/**
-	 * Strip off px.
-	 *
-	 * @param dimensionString
-	 *            the dimension string
-	 * @return the string
-	 */
-	private static String stripOffPx(final String dimensionString) {
-		if (dimensionString.endsWith("px")) return dimensionString.substring(0, dimensionString.length() - 2);
-		return dimensionString;
-	}
-
-	/**
-	 * Builds the icons.
-	 */
-	public static void buildIcons() {
-		Bundle bundle = Platform.getBundle(PLUGIN_ID);
-		final URL fileURL = bundle.getEntry(GamaIcons.SVG_PATH);
-		URL resolvedFileURL;
-		try {
-			resolvedFileURL = FileLocator.toFileURL(fileURL);
-		} catch (IOException e) {
-			return;
-		}
-		// We need to use the 3-arg constructor of URI in order to properly escape file system chars
-		URI resolvedURI;
-		try {
-			resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
-		} catch (URISyntaxException e) {
-			return;
-		}
-
-		File entry = new File(resolvedURI);
-
-		java.nio.file.Path path = entry.toPath();
-		List<java.nio.file.Path> files;
-		try {
-			files = new ArrayList<>(Files.walk(path).filter(n -> n.toString().endsWith(".svg")).toList());
-			files.sort(Path::compareTo);
-		} catch (IOException e) {
-			return;
-		}
-		PNGTranscoder pt = new CustomTranscoder();
-
-		DEBUG.TIMER_WITH_EXCEPTIONS(
-				DEBUG.PAD("> GAMA: Building " + files.size() + " icons", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
-				() -> {
-					for (java.nio.file.Path n : files) {
-
-						try {
-							String svgUriInputLocation = n.toUri().toURL().toString();
-							String p = path.relativize(n).toString().replace(".svg", "");
-							if (ICON_CACHE.getIfPresent(p) != null) { continue; }
-							SVGDocument svg = null;
-							try {
-								String parser = XMLResourceDescriptor.getXMLParserClassName();
-								SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
-								svg = f.createSVGDocument(svgUriInputLocation);
-							} catch (Exception e3) {
-								DEBUG.OUT("Error parsing SVG icon : " + e3.getMessage());
-								continue;
-							}
-
-							Element node = svg.getDocumentElement();
-							String nativeWidthStr = node.getAttribute("width");
-							String nativeHeightStr = node.getAttribute("height");
-							String nativeViewBoxX = "0", nativeViewBoxY = "0";
-							String viewBoxStr = node.getAttribute("viewBox");
-							// DEBUG.OUT("Icon " + p + " Original Viewbox= " + viewBoxStr);
-							String[] splitted = viewBoxStr.split(" ");
-							if (splitted.length > 1) {
-								nativeViewBoxX = splitted[0];
-								nativeViewBoxY = splitted[1];
-							}
-							int nativeWidth = -1;
-							int nativeHeight = -1;
-
-							if (("".equals(nativeWidthStr) || "".equals(nativeHeightStr)) && splitted.length == 4) {
-								nativeWidthStr = splitted[2];
-								nativeHeightStr = splitted[3];
-							}
-							nativeWidthStr = stripOffPx(nativeWidthStr);
-							nativeHeightStr = stripOffPx(nativeHeightStr);
-							double floatWidth = Cast.asFloat(null, nativeWidthStr);
-							double floatHeight = Cast.asFloat(null, nativeHeightStr);
-							nativeWidth = (int) Math.round(floatWidth);
-							nativeHeight = (int) Math.round(floatHeight);
-							node.setAttribute("width", String.valueOf(nativeWidth));
-							node.setAttribute("height", String.valueOf(nativeHeight));
-							node.setAttribute("viewBox",
-									nativeViewBoxX + " " + nativeViewBoxY + " " + nativeWidth + " " + nativeHeight);
-							// DEBUG.OUT(" --- > Dimensions set to " + nativeWidth + "x" + nativeHeight + " from "
-							// + nativeWidthStr + "x" + nativeHeightStr, false);
-							// DEBUG.OUT(" -- New Viewbox= " + node.getAttribute("viewBox"));
-
-							/// SCALE
-							double outputScale = 1d;
-							float outputWidth = (float) (nativeWidth * outputScale);
-							float outputHeight = (float) (nativeHeight * outputScale);
-							pt.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, outputWidth);
-							pt.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, outputWidth);
-
-							// Guesstimate the PNG size in memory, BAOS will enlarge if necessary.
-							int outputInitSize = (int) (outputWidth * outputHeight * 4 + 1024);
-							TranscoderInput input = new TranscoderInput(svg);
-							input.setURI(svg.getDocumentURI());
-							// Define OutputStream Location
-							try (ByteArrayOutputStream iconOutput = new ByteArrayOutputStream(outputInitSize)) {
-								TranscoderOutput transcoderOutput = new TranscoderOutput(iconOutput);
-								pt.transcode(input, transcoderOutput);
-								// Clean Up
-								iconOutput.flush();
-								InputStream is = new ByteArrayInputStream(iconOutput.toByteArray());
-								create(p, is);
-							}
-						} catch (IOException | TranscoderException ex) {
-							System.out.println("Exception Thrown: " + ex);
-						}
-
-					}
-				});
-
 	}
 
 }
