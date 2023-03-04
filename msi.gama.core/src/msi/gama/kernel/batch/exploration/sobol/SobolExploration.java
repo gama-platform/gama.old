@@ -3,7 +3,7 @@
  * SobolExploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -146,6 +146,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 
 		/* Disable repetitions / repeat argument */
 		currentExperiment.setSeeds(new Double[1]);
+		// TODO : why doesnt it take into account the value of 'keep_simulations:' ?
 		currentExperiment.setKeepSimulations(false);
 		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(solutions);
@@ -197,7 +198,7 @@ public class SobolExploration extends AExplorationAlgorithm {
 		LinkedHashMap<String, List<Object>> problem = new LinkedHashMap<>();
 		for (int j = 0; j < parameters.size(); j++) {
 			List<Object> var_info = new ArrayList<>();
-			
+
 			switch (parameters.get(j).getType().id()) {
 				case IType.INT:
 					var_info.add(parameters.get(j).getMinValue(scope));
@@ -220,7 +221,8 @@ public class SobolExploration extends AExplorationAlgorithm {
 					var_info.add(Cast.asPoint(scope, parameters.get(j).getMaxValue(scope)));
 					break;
 				case IType.STRING:
-					if (parameters.get(j).getAmongValue(scope).isEmpty()) { throw GamaRuntimeException.error("Trying to force a string variable in sampling without among facets", scope); }
+					if (parameters.get(j).getAmongValue(scope).isEmpty()) throw GamaRuntimeException
+							.error("Trying to force a string variable in sampling without among facets", scope);
 					var_info.addAll(parameters.get(j).getAmongValue(scope));
 					break;
 				default:

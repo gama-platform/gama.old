@@ -31,6 +31,7 @@ import msi.gama.kernel.batch.optimization.AOptimizationAlgorithm;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
+import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.FileOutput;
@@ -160,6 +161,7 @@ public class BatchAgent extends ExperimentAgent {
 		final boolean hasSimulations = pop != null && !pop.isEmpty();
 		try {
 			if (hasSimulations) {
+				// TODO : verify why the flag simDispose is not used here (instead of a plain true).
 				for (final IAgent sim : pop.toArray()) { manageOutputAndCloseSimulation(sim, null, true, true); }
 				pop.clear();
 			}
@@ -224,7 +226,7 @@ public class BatchAgent extends ExperimentAgent {
 			}
 		}
 
-		if (dispose) { sim.dispose(); }
+		if (dispose && sim instanceof AbstractAgent agent) { agent.primDie(sim.getScope()); }
 		return out;
 	}
 

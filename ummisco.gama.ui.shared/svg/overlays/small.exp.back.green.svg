@@ -1,1 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="21.214" height="12" viewBox="-501.59 -3532.622 21.214 12"><g fill="none"><path fill="#4e8034" d="m-489.805-3532.622 9.429 6-9.429 6ZM-492.162-3520.622l-9.428-6 9.428-6Z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-472 -3530 21.214286 12" width="21.214286" height="12">
+  <defs/>
+  <g id="ICONES" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>ICONES</title>
+    <g id="ICONES_Calque_1">
+      <title>Calque 1</title>
+      <g id="Group_2910">
+        <title>overlays/small.exp.back.green</title>
+        <g id="Graphic_2912">
+          <path d="M -460.2143 -3530 L -450.7857 -3524 L -460.2143 -3518 Z" fill="#4e8034"/>
+        </g>
+        <g id="Graphic_2911">
+          <path d="M -462.57143 -3518 L -472 -3524 L -462.57143 -3530 Z" fill="#4e8034"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
