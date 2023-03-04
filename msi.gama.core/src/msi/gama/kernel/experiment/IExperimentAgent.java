@@ -42,13 +42,13 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return the working paths
 	 */
 	List<String> getWorkingPaths();
-
-	/**
-	 * Gets the warnings as errors.
-	 *
-	 * @return the warnings as errors
-	 */
-	Boolean getWarningsAsErrors();
+	//
+	// /**
+	// * Gets the warnings as errors. Deprecated
+	// *
+	// * @return the warnings as errors
+	// */
+	// Boolean getWarningsAsErrors();
 
 	/**
 	 * Gets the minimum duration.

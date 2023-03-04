@@ -2,7 +2,7 @@
  *
  * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -273,8 +273,20 @@ public class GAMA {
 	 *
 	 */
 
+	/**
+	 * Report Error: tries to report (on the UI) and returns true if the simulation should continue
+	 *
+	 * @param scope
+	 * @param g
+	 * @param shouldStopSimulation
+	 * @return
+	 */
 	public static boolean reportError(final IScope scope, final GamaRuntimeException g,
 			final boolean shouldStopSimulation) {
+		final boolean shouldStop = (g.isWarning() && GamaPreferences.Runtime.CORE_WARNINGS.getValue()
+				|| !g.isWarning() && shouldStopSimulation) && GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue();
+
+		if (g.isReported()) return !shouldStop;
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null || controller.isDisposing()
 				|| controller.getExperiment().getAgent() == null)
@@ -289,9 +301,6 @@ public class GAMA {
 		if (scope != null && scope.getGui() != null) { scope.getGui().runtimeError(scope, g); }
 		g.setReported();
 
-		final boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
-		final boolean shouldStop =
-				isError && shouldStopSimulation && GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue();
 		return !shouldStop;
 	}
 
@@ -307,7 +316,7 @@ public class GAMA {
 	 */
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 			final boolean shouldStopSimulation) {
-		if (g.isReported()) return;
+		// See #3641 -- move this sentence to reportError(): if (g.isReported()) return;
 		if (getExperiment() == null && !(g instanceof GamaRuntimeFileException) && scope != null
 				&& !scope.reportErrors()) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -316,13 +325,14 @@ public class GAMA {
 		}
 
 		// DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
-		if (scope != null && scope.getAgent() != null) {
-			final String name = scope.getAgent().getName();
-			if (!g.getAgentsNames().contains(name)) { g.addAgent(name); }
+		if (scope != null) {
+			if (scope.getAgent() != null) {
+				final String name = scope.getAgent().getName();
+				if (!g.getAgentsNames().contains(name)) { g.addAgent(name); }
+			}
+			scope.setCurrentError(g);
+			if (scope.isInTryMode()) throw g;
 		}
-		if (scope != null) { scope.setCurrentError(g); }
-		final boolean isInTryMode = scope != null && scope.isInTryMode();
-		if (isInTryMode) throw g;
 		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if (shouldStop) {
 			if (isInHeadLessMode() && !isInServerMode()) throw g;

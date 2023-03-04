@@ -179,7 +179,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	final protected ExperimentClock ownClock;
 
 	/** The warnings as errors. */
-	protected boolean warningsAsErrors = GamaPreferences.Runtime.CORE_WARNINGS.getValue();
+	// Removed while working on #3641 : is redundant with gama.prefs_errors_warnings_errors
+	// protected boolean warningsAsErrors = GamaPreferences.Runtime.CORE_WARNINGS.getValue();
 
 	/** The own model path. */
 	protected String ownModelPath;
@@ -601,21 +602,21 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return this;
 
 	}
-
-	@Override
-	@getter (
-			value = GAMA._WARNINGS,
-			initializer = true)
-	public Boolean getWarningsAsErrors() { return warningsAsErrors; }
-
-	/**
-	 * Sets the warnings as errors.
-	 *
-	 * @param t
-	 *            the new warnings as errors
-	 */
-	@setter (GAMA._WARNINGS)
-	public void setWarningsAsErrors(final boolean t) { warningsAsErrors = t; }
+	//
+	// @Override
+	// @getter (
+	// value = GAMA._WARNINGS,
+	// initializer = true)
+	// public Boolean getWarningsAsErrors() { return warningsAsErrors; }
+	//
+	// /**
+	// * Sets the warnings as errors.
+	// *
+	// * @param t
+	// * the new warnings as errors
+	// */
+	// @setter (GAMA._WARNINGS)
+	// public void setWarningsAsErrors(final boolean t) { warningsAsErrors = t; }
 
 	/**
 	 * Gets the seed.

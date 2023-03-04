@@ -157,6 +157,9 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	@Override
 	public void start() {
 		running = true;
+		// Reinits remainingTime (issue found while working in #3641 : two executions in a row would lead to the second
+		// one not reporting any error)
+		remainingTime = 5000;
 		schedule();
 
 	}
