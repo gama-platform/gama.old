@@ -57,7 +57,7 @@ public class GAMA {
 	public static final String VERSION = "GAMA " + VERSION_NUMBER;
 
 	/** The Constant _WARNINGS. */
-	public static final String _WARNINGS = "warnings";
+	// public static final String _WARNINGS = "warnings";
 
 	/** The agent. */
 	private static volatile PlatformAgent agent;

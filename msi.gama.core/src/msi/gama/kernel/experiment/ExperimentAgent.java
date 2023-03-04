@@ -86,12 +86,12 @@ import ummisco.gama.dev.utils.DEBUG;
 				doc = @doc (
 						value = "Contains a reference to the current simulation being run by this experiment",
 						comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
-		@variable (
-				name = GAMA._WARNINGS,
-				type = IType.BOOL,
-				doc = @doc (
-						deprecated = "use gama.pref_errors_warnings_errors instead",
-						value = "The value of the preference 'Consider warnings as errors'")),
+		// @variable (
+		// name = GAMA._WARNINGS,
+		// type = IType.BOOL,
+		// doc = @doc (
+		// deprecated = "use gama.pref_errors_warnings_errors instead",
+		// value = "The value of the preference 'Consider warnings as errors'")),
 		@variable (
 				name = ExperimentAgent.MODEL_PATH,
 				type = IType.STRING,
