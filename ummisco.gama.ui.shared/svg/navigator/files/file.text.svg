@@ -1,1 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16.766" height="17" viewBox="-621.965 -3613.122 16.766 17"><g fill="none"><path fill="#fff" d="M-609.275-3612.622h-8.455v16h12.03v-12.485Z"/><path stroke="#9da9b5" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25" d="M-609.275-3612.622h-8.455v16h12.03v-12.485Z"/><path fill="#fff" d="m-609.276-3612.622 3.576 3.556h-3.576Z"/><path stroke="#9da9b5" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25" d="m-609.276-3612.622 3.576 3.556h-3.576Z"/><path fill="#999" d="M-615.076-3605.892h6.412v.411h-6.412z"/><path stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25" d="M-615.076-3605.892h6.412v.411h-6.412z"/><path fill="#999" d="M-615.076-3602.764h6.412v.411h-6.412z"/><path stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25" d="M-615.076-3602.764h6.412v.411h-6.412z"/><path fill="#999" d="M-614.921-3599.636h6.412v.411h-6.412z"/><path stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width=".25" d="M-614.921-3599.636h6.412v.411h-6.412z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-592.375 -3610.5312 20.76953 21.0625" width="20.76953" height="21.0625">
+  <defs/>
+  <g id="ICONES" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>ICONES</title>
+    <g id="ICONES_Calque_1">
+      <title>Calque 1</title>
+      <g id="Group_3750">
+        <g id="Graphic_3294"/>
+        <g id="Group_3038">
+          <g id="Graphic_1426">
+            <path d="M -576.60645 -3610 L -587.1743 -3610 L -587.1743 -3590 L -572.1367 -3590 L -572.1367 -3605.607 Z" fill="white"/>
+            <path d="M -576.60645 -3610 L -587.1743 -3610 L -587.1743 -3590 L -572.1367 -3590 L -572.1367 -3605.607 Z" stroke="#9da9b5" stroke-linecap="round" stroke-linejoin="round" stroke-width=".3125"/>
+          </g>
+          <g id="Graphic_1425">
+            <path d="M -576.6076 -3610 L -572.1367 -3605.555 L -576.6076 -3605.555 Z" fill="white"/>
+            <path d="M -576.6076 -3610 L -572.1367 -3605.555 L -576.6076 -3605.555 Z" stroke="#9da9b5" stroke-linecap="round" stroke-linejoin="round" stroke-width=".3125"/>
+          </g>
+        </g>
+        <g id="Graphic_3055">
+          <rect x="-584.0697" y="-3602.282" width="8.014727" height=".5133399" fill="#999"/>
+          <rect x="-584.0697" y="-3602.282" width="8.014727" height=".5133399" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width=".3125"/>
+        </g>
+        <g id="Graphic_3053">
+          <rect x="-584.0697" y="-3598.372" width="8.014727" height=".5133399" fill="#999"/>
+          <rect x="-584.0697" y="-3598.372" width="8.014727" height=".5133399" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width=".3125"/>
+        </g>
+        <g id="Graphic_3442">
+          <rect x="-584.0697" y="-3594.7255" width="8.014727" height=".5133399" fill="#999"/>
+          <rect x="-584.0697" y="-3594.7255" width="8.014727" height=".5133399" stroke="#999" stroke-linecap="round" stroke-linejoin="round" stroke-width=".3125"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
