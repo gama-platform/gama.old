@@ -41,7 +41,7 @@ species a {
 experiment "Run me" {
 	
 	abort {
-		do tell ("You are now leaving this experiment. Hope you enjoyed it ! ");
+		do tell ("You are now leaving this experiment. Hope you enjoyed it ! ", false);
 	}
 	
 }
