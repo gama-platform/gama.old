@@ -1,1 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-661.59 -3332.622 16 16" width="16" height="16"><g fill="none"><path fill="#5c76a2" d="M-661.59-3332.622h4.683v5.333h-4.683zM-656.127-3330.844h10.537v1.778h-10.537zM-661.59-3321.955h4.683v5.333h-4.683zM-656.127-3320.177h10.537v1.778h-10.537zM-656.127-3325.511h10.537v1.778h-10.537z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-632 -3330 16 16" width="16" height="16">
+  <defs/>
+  <g id="ICONES" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>ICONES</title>
+    <g id="ICONES_Calque_1">
+      <title>Calque 1</title>
+      <g id="Group_3249">
+        <title>views/tabs/view.outline</title>
+        <g id="Graphic_3254">
+          <rect x="-632" y="-3330" width="4.682927" height="5.3333333" fill="#5c76a2"/>
+        </g>
+        <g id="Graphic_3253">
+          <rect x="-626.5366" y="-3328.2222" width="10.536585" height="1.7777778" fill="#5c76a2"/>
+        </g>
+        <g id="Graphic_3252">
+          <rect x="-632" y="-3319.3333" width="4.682927" height="5.3333333" fill="#5c76a2"/>
+        </g>
+        <g id="Graphic_3251">
+          <rect x="-626.5366" y="-3317.5556" width="10.536585" height="1.7777778" fill="#5c76a2"/>
+        </g>
+        <g id="Graphic_3250">
+          <rect x="-626.5366" y="-3322.889" width="10.536585" height="1.7777778" fill="#5c76a2"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

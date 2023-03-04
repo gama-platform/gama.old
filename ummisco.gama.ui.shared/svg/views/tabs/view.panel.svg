@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-621.59 -3332.622 16 16" width="16" height="16"><g fill="none"><path d="M-613.59-3324.622c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4Z" fill="#5c76a2"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-592 -3330 16 16" width="16" height="16">
+  <defs/>
+  <g id="ICONES" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>ICONES</title>
+    <g id="ICONES_Calque_1">
+      <title>Calque 1</title>
+      <g id="Group_3258">
+        <title>views/tabs/view.panel</title>
+        <g id="Graphic_3259">
+          <path d="M -583.9999 -3322 C -581.7901 -3322 -579.99994 -3323.79 -579.99994 -3326 C -579.99994 -3328.21 -581.7901 -3330 -583.9999 -3330 C -586.2099 -3330 -588.00006 -3328.21 -588.00006 -3326 C -588.00006 -3323.79 -586.2099 -3322 -583.9999 -3322 Z M -583.9999 -3320 C -586.66996 -3320 -592 -3318.66 -592 -3316 L -592 -3314 L -576 -3314 L -576 -3316 C -576 -3318.6598 -581.33004 -3320 -583.9999 -3320 Z" fill="#5c76a2"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
