@@ -136,7 +136,10 @@ public class FLAGS {
 	 */
 	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
 
-	/** The Constant USE_DYNAMIC_ICONS. */
-	public static final boolean USE_DYNAMIC_ICONS = get("use_dynamic_icons", false);
+	/**
+	 * The Constant USE_DYNAMIC_ICONS. Used to tell GAMA to produce the PNG icons from the SVG ones in
+	 * ummisco.gama.ui.shared
+	 */
+	public static final boolean PRODUCE_ICONS = get("produce_icons", false);
 
 }
