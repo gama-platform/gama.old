@@ -6,13 +6,13 @@
     <title>ICONES</title>
     <g id="ICONES_Calque_1">
       <title>Calque 1</title>
-      <g id="Group_3758">
+      <g id="Group_3773">
+        <g id="Graphic_3757"/>
         <g id="Graphic_2780">
           <title>overlays/small.collapse</title>
-          <path d="M -668.59 -3526 L -664 -3521.0553 L -659.41 -3526 L -658 -3524.4777 L -664 -3518 L -670 -3524.4777 Z" fill="black"/>
-          <path d="M -668.59 -3526 L -664 -3521.0553 L -659.41 -3526 L -658 -3524.4777 L -664 -3518 L -670 -3524.4777 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5000006"/>
+          <path d="M -668.59 -3526 L -664 -3521.0553 L -659.41 -3526 L -658 -3524.4777 L -664 -3518 L -670 -3524.4777 Z" fill="#999"/>
+          <path d="M -668.59 -3526 L -664 -3521.0553 L -659.41 -3526 L -658 -3524.4777 L -664 -3518 L -670 -3524.4777 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"/>
         </g>
-        <g id="Graphic_3757"/>
       </g>
     </g>
   </g>

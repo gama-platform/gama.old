@@ -1,1 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="-192 -3530 16 16"><g fill="none"><path fill="#000" d="m-188-3517.41 4.945-4.59-4.945-4.59 1.522-1.41 6.478 6-6.478 6Z"/><path stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5" d="m-188-3517.41 4.945-4.59-4.945-4.59 1.522-1.41 6.478 6-6.478 6Z"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-192 -3530 16 16" width="16" height="16">
+  <defs/>
+  <g id="ICONES" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
+    <title>ICONES</title>
+    <g id="ICONES_Calque_1">
+      <title>Calque 1</title>
+      <g id="Group_3764">
+        <g id="Graphic_2022">
+          <title>overlays/small.expand</title>
+          <path d="M -188 -3517.41 L -183.05533 -3522 L -188 -3526.59 L -186.47773 -3528 L -180 -3522 L -186.47773 -3516 Z" fill="#999"/>
+          <path d="M -188 -3517.41 L -183.05533 -3522 L -188 -3526.59 L -186.47773 -3528 L -180 -3522 L -186.47773 -3516 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"/>
+        </g>
+        <g id="Graphic_3763"/>
+      </g>
+    </g>
+  </g>
+</svg>
