@@ -2,7 +2,7 @@
  *
  * Jsoner.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -422,8 +422,9 @@ public class Jsoner {
 	 *         [u2000..u20FF] with a backslash (\) which itself must be escaped by the backslash in a java string.
 	 */
 	public static String escape(final String escapable) {
+		if (escapable == null) return "";
 		final StringBuilder builder = new StringBuilder();
-		final int characters = escapable == null ? 0 : escapable.length();
+		final int characters = escapable.length();
 		for (int i = 0; i < characters; i++) {
 			final char character = escapable.charAt(i);
 			switch (character) {
@@ -747,14 +748,13 @@ public class Jsoner {
 			writableDestination.write(']');
 
 		} else if (jsonSerializable instanceof GamaPair p) {
-			//Considers gamapairs as json
+			// Considers gamapairs as json
 			writableDestination.write('{');
 			Jsoner.serialize(p.key, writableDestination, flags);
 			writableDestination.write(':');
 			Jsoner.serialize(p.value, writableDestination, flags);
 			writableDestination.write('}');
-			
-			
+
 		} else if (jsonSerializable instanceof byte[] bw) {
 			final int numberOfElements = bw.length;
 			writableDestination.write('[');
