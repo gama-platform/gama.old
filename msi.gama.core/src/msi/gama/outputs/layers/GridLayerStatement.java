@@ -268,7 +268,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
 		isHexagonal = desc.hasFacet("hexagonal");
-		IExpression exp = desc.getFacetExpr(IKeyword.ELEVATION);
+		// IExpression exp = desc.getFacetExpr(IKeyword.ELEVATION);
 		// isFlatGrid = exp == null || exp.isConst() && !Cast.asBool(null, exp.getConstValue());
 	}
 
