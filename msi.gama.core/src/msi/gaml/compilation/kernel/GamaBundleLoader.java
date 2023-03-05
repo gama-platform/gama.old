@@ -55,6 +55,7 @@ import msi.gaml.operators.IUnits;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.FLAGS;
 
 /**
  * The class GamaBundleLoader.
@@ -181,6 +182,7 @@ public class GamaBundleLoader {
 	 *             the exception
 	 */
 	public static void preBuildContributions() throws Exception {
+
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 55, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
 		listFeatures();
@@ -233,73 +235,79 @@ public class GamaBundleLoader {
 						System.exit(0);
 						return;
 					}
-					// We then build the other extensions to the language
-					for (final Bundle addition : GAMA_PLUGINS) {
-						CURRENT_PLUGIN_NAME = addition.getSymbolicName();
-						try {
-							preBuild(addition);
-						} catch (final Exception e1) {
-							ERROR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ". ", e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to remove
-							// offending plugins, etc.)
-							continue;
+					if (!FLAGS.PRODUCE_ICONS) {
+						// We then build the other extensions to the language
+						for (final Bundle addition : GAMA_PLUGINS) {
+							CURRENT_PLUGIN_NAME = addition.getSymbolicName();
+							try {
+								preBuild(addition);
+							} catch (final Exception e1) {
+								ERROR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ". ", e1);
+								// We do not systematically exit in case of additional plugins failing to load, so as to
+								// give the platform a chance to execute even in case of errors (to save files, to
+								// remove
+								// offending plugins, etc.)
+								continue;
+							}
+						}
+						CURRENT_PLUGIN_NAME = null;
+						// We gather all the extensions to the `create` statement and add them
+						// as delegates to CreateStatement. If an exception occurs, we discard it
+						for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
+							ICreateDelegate cd = null;
+							try {
+								// TODO Add the defining plug-in
+								cd = (ICreateDelegate) e.createExecutableExtension("class");
+								if (cd != null) { CreateStatement.addDelegate(cd); }
+							} catch (final Exception e1) {
+								ERROR("Error in loading CreateStatement delegate from "
+										+ e.getDeclaringExtension().getContributor().getName(), e1);
+								// We do not systematically exit in case of additional plugins failing to load, so as to
+								// give the platform a chance to execute even in case of errors (to save files, to
+								// remove
+								// offending plugins, etc.)
+								continue;
+							}
+						}
+
+						// We gather all the extensions to the `event` statement and add them
+						// as delegates to EventLayerStatement
+						for (final IConfigurationElement e : registry
+								.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
+							try {
+								// TODO Add the defining plug-in
+								EventLayerStatement
+										.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
+							} catch (final Exception e1) {
+								ERROR("Error in loading EventLayerStatement delegate : "
+										+ e.getDeclaringExtension().getContributor().getName(), e1);
+								// We do not systematically exit in case of additional plugins failing to load, so as to
+								// give the platform a chance to execute even in case of errors (to save files, to
+								// remove
+								// offending plugins, etc.)
+								continue;
+							}
+						}
+
+						// We gather all the GAMA_PLUGINS that explicitly declare models using
+						// the non-default scheme (plugin > models ...).
+						for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
+							MODEL_PLUGINS.put(Platform.getBundle(e.getContributor().getName()), e.getAttribute("name"));
+						}
+
+						// We gather all the content types extensions defined in GAMA plugins
+						// (not in the other ones)
+						final IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
+						final Set<IExtension> contentExtensions = new HashSet<>();
+						contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
+						for (final IExtension ext : contentExtensions) {
+							final IConfigurationElement[] configs = ext.getConfigurationElements();
+							for (final IConfigurationElement config : configs) {
+								final String s = config.getAttribute("file-extensions");
+								if (s != null) { HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(","))); }
+							}
 						}
 					}
-					CURRENT_PLUGIN_NAME = null;
-					// We gather all the extensions to the `create` statement and add them
-					// as delegates to CreateStatement. If an exception occurs, we discard it
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
-						ICreateDelegate cd = null;
-						try {
-							// TODO Add the defining plug-in
-							cd = (ICreateDelegate) e.createExecutableExtension("class");
-							if (cd != null) { CreateStatement.addDelegate(cd); }
-						} catch (final Exception e1) {
-							ERROR("Error in loading CreateStatement delegate from "
-									+ e.getDeclaringExtension().getContributor().getName(), e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to remove
-							// offending plugins, etc.)
-							continue;
-						}
-					}
-
-					// We gather all the extensions to the `event` statement and add them
-					// as delegates to EventLayerStatement
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
-						try {
-							// TODO Add the defining plug-in
-							EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
-						} catch (final Exception e1) {
-							ERROR("Error in loading EventLayerStatement delegate : "
-									+ e.getDeclaringExtension().getContributor().getName(), e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to remove
-							// offending plugins, etc.)
-							continue;
-						}
-					}
-
-					// We gather all the GAMA_PLUGINS that explicitly declare models using
-					// the non-default scheme (plugin > models ...).
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
-						MODEL_PLUGINS.put(Platform.getBundle(e.getContributor().getName()), e.getAttribute("name"));
-					}
-
-					// We gather all the content types extensions defined in GAMA plugins
-					// (not in the other ones)
-					final IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
-					final Set<IExtension> contentExtensions = new HashSet<>();
-					contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
-					for (final IExtension ext : contentExtensions) {
-						final IConfigurationElement[] configs = ext.getConfigurationElements();
-						for (final IConfigurationElement config : configs) {
-							final String s = config.getAttribute("file-extensions");
-							if (s != null) { HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(","))); }
-						}
-					}
-
 					// CRUCIAL INITIALIZATIONS
 					LOADED = true;
 					// We init the meta-model of GAMA (i.e. abstract agent, model, experiment species)
