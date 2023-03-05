@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
-import static ummisco.gama.ui.resources.IGamaIcons.CAMERA_EMPTY;
-import static ummisco.gama.ui.resources.IGamaIcons.CAMERA_LOCK;
 import static ummisco.gama.ui.resources.IGamaIcons.DISPLAY_TOOLBAR_CAMERA;
 
 import java.util.Collection;
@@ -30,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
 
 import ummisco.gama.ui.menus.GamaMenu;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -133,8 +131,8 @@ public class ZoomController {
 								}
 
 							}, p.equals(view.getCameraHelper().getCameraName())
-									? GamaIcons.create(DISPLAY_TOOLBAR_CAMERA).image()
-									: GamaIcons.create(CAMERA_EMPTY).image());
+									? GamaIcon.named(DISPLAY_TOOLBAR_CAMERA).image()
+									: GamaIcon.named(IGamaIcons.CAMERA_EMPTY).image());
 						}
 						sep();
 						action("Copy current camera", new SelectionAdapter() {
@@ -145,12 +143,12 @@ public class ZoomController {
 								WorkbenchHelper.copy(text);
 							}
 
-						}, GamaIcons.create(IGamaIcons.PASTE).image());
+						}, GamaIcon.named(IGamaIcons.PASTE).image());
 					}
 				};
 				menu.open(tb.getToolbar(SWT.RIGHT), trigger, tb.height, 96);
 			}, SWT.RIGHT);
-			cameraLocked = tb.check(CAMERA_LOCK, "Lock/unlock", "Lock/unlock camera", e -> {
+			cameraLocked = tb.check(IGamaIcons.CAMERA_LOCK, "Lock/unlock", "Lock/unlock camera", e -> {
 				view.getCameraHelper().toggleCamera();
 			}, SWT.RIGHT);
 		}

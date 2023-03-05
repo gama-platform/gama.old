@@ -53,7 +53,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.ViewsHelper;
@@ -117,7 +117,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 		// Issue #2816
-		this.setTitleImage(GamaIcons.create(IGamaIcons.VIEW_INTERACTIVE).image());
+		this.setTitleImage(GamaIcon.named(IGamaIcons.VIEW_INTERACTIVE).image());
 	}
 
 	@Override
@@ -346,7 +346,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		} else {
 			scope = new ExecutionScope(agent, " in console", this);
 			agent.getSpecies().getDescription().attachAlternateVarDescriptionProvider(this);
-			WorkbenchHelper.asyncRun(() -> toolbar.status(GamaIcons.create(IGamaIcons.MENU_AGENT).image(),
+			WorkbenchHelper.asyncRun(() -> toolbar.status(GamaIcon.named(IGamaIcons.MENU_AGENT).image(),
 					"Listening agent: " + Cast.toGaml(agent), IGamaColors.NEUTRAL, SWT.LEFT));
 		}
 

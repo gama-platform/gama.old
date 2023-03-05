@@ -40,7 +40,7 @@ import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.ViewsHelper;
@@ -126,8 +126,8 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 				final int nbCol = inputs.size() > 0 ? 1 : 3;
 				GamaUIColor color = GamaColors.get(c.getColor(scope));
 				if (color == null) { color = IGamaColors.BLUE; }
-				final Image image = GamaIcons
-						.create(c.isContinue(scope) ? "overlays/small.continue" : "overlays/small.exp.run.white")
+				final Image image = GamaIcon
+						.named(c.isContinue(scope) ? "overlays/small.continue" : "overlays/small.exp.run.white")
 						.image();
 				final FlatButton b = FlatButton.button(commandComposite, color, c.getName(), image);
 				b.setEnabled(c.isEnabled(scope));

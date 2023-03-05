@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -84,7 +84,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		this.statusMessage = statusMessage;
 		this.nature = nature;
 		this.location = location;
-		icon = GamaIcons.create(iconName).image();
+		icon = GamaIcon.named(iconName).image();
 		initializeChildren();
 	}
 

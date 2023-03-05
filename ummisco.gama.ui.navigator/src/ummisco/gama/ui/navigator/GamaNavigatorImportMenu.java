@@ -15,7 +15,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -72,12 +72,11 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu { // NO_UCD (unus
 
 	@Override
 	protected void fillMenu() {
-		action("Import project...", project, GamaIcons.create(IGamaIcons.IMPORT_PROJECT).image());
+		action("Import project...", project, GamaIcon.named(IGamaIcons.IMPORT_PROJECT).image());
 		sep();
-		action("Import resources into projects from disk...", fromDisk,
-				GamaIcons.create(IGamaIcons.IMPORT_DISK).image());
+		action("Import resources into projects from disk...", fromDisk, GamaIcon.named(IGamaIcons.IMPORT_DISK).image());
 		action("Import resources into projects from archive...", fromArchive,
-				GamaIcons.create(IGamaIcons.IMPORT_ARCHIVE).image());
+				GamaIcon.named(IGamaIcons.IMPORT_ARCHIVE).image());
 	}
 
 }

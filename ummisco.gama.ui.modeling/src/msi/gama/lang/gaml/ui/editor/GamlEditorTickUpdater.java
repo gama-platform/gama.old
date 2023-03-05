@@ -17,7 +17,7 @@ import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.XtextEditorErrorTickUpdater;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -34,11 +34,11 @@ public class GamlEditorTickUpdater extends XtextEditorErrorTickUpdater {
 		Severity severity = getSeverity(editor);
 		ImageDescriptor descriptor = null;
 		if (severity == null || severity == Severity.INFO) {
-			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor();
+			descriptor = GamaIcon.named(IGamaIcons.OVERLAY_OK).descriptor();
 		} else if (severity == Severity.ERROR) {
-			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_ERROR).descriptor();
+			descriptor = GamaIcon.named(IGamaIcons.OVERLAY_ERROR).descriptor();
 		} else if (severity == Severity.WARNING) {
-			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_WARNING).descriptor();
+			descriptor = GamaIcon.named(IGamaIcons.OVERLAY_WARNING).descriptor();
 		} else {
 			super.updateEditorImage(editor);
 			return;

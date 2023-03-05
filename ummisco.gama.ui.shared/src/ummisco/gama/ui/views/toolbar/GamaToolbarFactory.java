@@ -28,7 +28,7 @@ import msi.gama.common.interfaces.IGamaView;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -138,7 +138,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create(IGamaIcons.TREE_EXPAND).descriptor());
+			setImageDescriptor(GamaIcon.named(IGamaIcons.TREE_EXPAND).descriptor());
 		}
 
 	}
@@ -160,7 +160,7 @@ public class GamaToolbarFactory {
 		 * Sets the icon.
 		 */
 		protected void setIcon() {
-			setImageDescriptor(GamaIcons.create(IGamaIcons.TREE_COLLAPSE).descriptor());
+			setImageDescriptor(GamaIcon.named(IGamaIcons.TREE_COLLAPSE).descriptor());
 		}
 
 	}
@@ -175,7 +175,7 @@ public class GamaToolbarFactory {
 		 */
 		ToggleOverlay() {
 			super("Toggle Overlay", IAction.AS_PUSH_BUTTON);
-			setImageDescriptor(GamaIcons.create(IGamaIcons.OVERLAY_TOGGLE).descriptor());
+			setImageDescriptor(GamaIcon.named(IGamaIcons.OVERLAY_TOGGLE).descriptor());
 		}
 
 	}
@@ -310,7 +310,7 @@ public class GamaToolbarFactory {
 			@Override
 			protected void setIcon(final boolean show) {
 				setImageDescriptor(
-						GamaIcons.create(show ? IGamaIcons.TOOLBAR_SHOW : IGamaIcons.TOOLBAR_HIDE).descriptor());
+						GamaIcon.named(show ? IGamaIcons.TOOLBAR_SHOW : IGamaIcons.TOOLBAR_HIDE).descriptor());
 			}
 		};
 
@@ -358,7 +358,7 @@ public class GamaToolbarFactory {
 	 */
 	public static GridData layoutDataForToolbar() {
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		//data.minimumHeight = TOOLBAR_HEIGHT;
+		// data.minimumHeight = TOOLBAR_HEIGHT;
 		data.minimumWidth = TOOLBAR_HEIGHT * 2;
 		return data;
 	}

@@ -19,7 +19,6 @@ import static ummisco.gama.ui.interfaces.IParameterEditor.MINUS;
 import static ummisco.gama.ui.interfaces.IParameterEditor.PLUS;
 import static ummisco.gama.ui.interfaces.IParameterEditor.REVERT;
 import static ummisco.gama.ui.interfaces.IParameterEditor.VALUE;
-import static ummisco.gama.ui.resources.GamaIcons.create;
 import static ummisco.gama.ui.resources.IGamaIcons.SMALL_BROWSE;
 import static ummisco.gama.ui.resources.IGamaIcons.SMALL_CHANGE;
 import static ummisco.gama.ui.resources.IGamaIcons.SMALL_EDIT;
@@ -46,6 +45,7 @@ import org.eclipse.swt.widgets.Label;
 import msi.gama.kernel.experiment.IParameter;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 
 /**
@@ -95,7 +95,7 @@ public class EditorToolbar<T> {
 		void enable(final boolean enable) {
 
 			if (command.getImage() != null) {
-				label.setImage(enable ? create(command.getImage()).image() : create(command.getImage()).disabled());
+				label.setImage(enable ? GamaIcon.named(command.getImage()).image() : GamaIcon.named(command.getImage()).disabled());
 			}
 			label.removeMouseListener(listener);
 			if (enable) { label.addMouseListener(listener); }

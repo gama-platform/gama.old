@@ -13,7 +13,7 @@ package ummisco.gama.ui.navigator.contents;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.swt.graphics.Image;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -48,7 +48,7 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 		if (modelsCount == NOT_COMPUTED) {
 			super.countModels();
 			final var isExternal = "external".equals(getName());
-			image = GamaIcons.create(isExternal ? "navigator/files/file.cloud"
+			image = GamaIcon.named(isExternal ? "navigator/files/file.cloud"
 					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
 			canBeDecorated = modelsCount > 0;
 		}

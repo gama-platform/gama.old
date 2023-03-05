@@ -69,7 +69,7 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
@@ -600,8 +600,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final Map<String, Runnable> actions = new LinkedHashMap<>();
 		final Map<String, Image> images = new HashMap<>();
 		images.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
-				GamaIcons.create(IGamaIcons.MENU_INSPECT).image());
-		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
+				GamaIcon.named(IGamaIcons.MENU_INSPECT).image());
+		images.put("Focus on region", GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
 		actions.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
 				() -> renderer.getCameraHelper().toogleROI());
 		actions.put("Focus on region", () -> renderer.getCameraHelper().zoomFocus(env));

@@ -23,7 +23,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -56,16 +56,16 @@ public class RefactorActionProvider extends CommonActionProvider {
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		renameAction = new RenameResourceAction(sp);
-		renameAction.setImageDescriptor(GamaIcons.create(IGamaIcons.FILE_RENAME).descriptor());
-		renameAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.FILE_RENAME).disabledDescriptor());
+		renameAction.setImageDescriptor(GamaIcon.named(IGamaIcons.FILE_RENAME).descriptor());
+		renameAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.FILE_RENAME).disabledDescriptor());
 
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 		historyAction = new ShowLocalHistory(sp);
-		historyAction.setImageDescriptor(GamaIcons.create(IGamaIcons.LOCAL_HISTORY).descriptor());
-		historyAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.LOCAL_HISTORY).disabledDescriptor());
+		historyAction.setImageDescriptor(GamaIcon.named(IGamaIcons.LOCAL_HISTORY).descriptor());
+		historyAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.LOCAL_HISTORY).disabledDescriptor());
 		compareAction = new CompareWithEachOtherAction(sp);
-		compareAction.setImageDescriptor(GamaIcons.create(IGamaIcons.LAYOUT_HORIZONTAL).descriptor());
-		compareAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.LAYOUT_HORIZONTAL).disabledDescriptor());
+		compareAction.setImageDescriptor(GamaIcon.named(IGamaIcons.LAYOUT_HORIZONTAL).descriptor());
+		compareAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.LAYOUT_HORIZONTAL).disabledDescriptor());
 	}
 
 	@Override

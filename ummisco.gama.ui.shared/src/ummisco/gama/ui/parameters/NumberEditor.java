@@ -20,7 +20,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.interfaces.EditorListener;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -93,11 +93,11 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 		if (t == null || t.isDisposed()) return;
 		if (param.isDefined()) {
 			t.setToolTipText("Set the parameter to undefined");
-			t.setImage(GamaIcons.create(IGamaIcons.SMALL_UNDEFINE).image());
+			t.setImage(GamaIcon.named(IGamaIcons.SMALL_UNDEFINE).image());
 			editorControl.setActive(true);
 		} else {
 			t.setToolTipText("Define the parameter (currently undefined)");
-			t.setImage(GamaIcons.create(IGamaIcons.SMALL_DEFINE).image());
+			t.setImage(GamaIcon.named(IGamaIcons.SMALL_DEFINE).image());
 			editorControl.setActive(false);
 		}
 	}

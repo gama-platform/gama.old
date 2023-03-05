@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.menus;
 
-import static ummisco.gama.ui.resources.GamaIcons.create;
-
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,6 +28,7 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -73,16 +72,16 @@ public class OutputsMenu extends ContributionItem {
 			managementSubMenu(main, sim.getScope(), sim.getOutputManager());
 		}
 		GamaMenu.separate(main);
-		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(),
+		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(),
 				"Pause all");
-		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), create(IGamaIcons.DISPLAY_UPDATE).image(),
+		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), GamaIcon.named(IGamaIcons.DISPLAY_UPDATE).image(),
 				"Update all");
 		menuItem(main, e -> GAMA.getExperiment().resumeAllOutputs(),
-				create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
+				GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
 		menuItem(main, e -> GAMA.getExperiment().synchronizeAllOutputs(),
-				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(), "Synchronize all");
+				GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(), "Synchronize all");
 		menuItem(main, e -> GAMA.getExperiment().desynchronizeAllOutputs(),
-				create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).disabled(), "Desynchronize all");
+				GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SYNC).disabled(), "Desynchronize all");
 	}
 
 	/**
@@ -127,9 +126,9 @@ public class OutputsMenu extends ContributionItem {
 			if (output.isPaused()) {
 				menuItem(sub, e -> output.setPaused(false), null, "Resume");
 			} else {
-				menuItem(sub, e -> output.setPaused(true), create(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause");
+				menuItem(sub, e -> output.setPaused(true), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause");
 			}
-			menuItem(sub, e -> output.update(), create(IGamaIcons.DISPLAY_UPDATE).image(), "Force update");
+			menuItem(sub, e -> output.update(), GamaIcon.named(IGamaIcons.DISPLAY_UPDATE).image(), "Force update");
 			// if (output.isSynchronized()) {
 			// menuItem(sub, e -> output.setSynchronized(false), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
 			// "Desynchronize");
@@ -139,14 +138,14 @@ public class OutputsMenu extends ContributionItem {
 			// }
 			if (output instanceof LayeredDisplayOutput ldo) {
 				GamaMenu.separate(sub);
-				menuItem(sub, e -> ldo.zoom(1), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN).image(), "Zoom in");
-				menuItem(sub, e -> ldo.zoom(0), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image(), "Zoom to fit view");
-				menuItem(sub, e -> ldo.zoom(-1), create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT).image(), "Zoom out");
+				menuItem(sub, e -> ldo.zoom(1), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN).image(), "Zoom in");
+				menuItem(sub, e -> ldo.zoom(0), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image(), "Zoom to fit view");
+				menuItem(sub, e -> ldo.zoom(-1), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT).image(), "Zoom out");
 				GamaMenu.separate(sub);
-				menuItem(sub, e -> ldo.getView().takeSnapshot(), create(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT).image(),
+				menuItem(sub, e -> ldo.getView().takeSnapshot(), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT).image(),
 						"Take a snapshot");
 				menuItem(sub, e -> ldo.getView().toggleFullScreen(),
-						create(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image(), "Toggle fullscreen");
+						GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image(), "Toggle fullscreen");
 			}
 		} else {
 			menuItem(sub, e -> manager.open(scope, output), null, "Reopen");

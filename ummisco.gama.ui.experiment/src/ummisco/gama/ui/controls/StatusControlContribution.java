@@ -41,7 +41,7 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
@@ -301,7 +301,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 		// updater.run();
 		if (m.getIcon() != null) {
-			label.setImage(GamaIcons.create(m.getIcon()).image());
+			label.setImage(GamaIcon.named(m.getIcon()).image());
 		} else {
 			label.setImage(null);
 		}

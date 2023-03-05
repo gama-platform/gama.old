@@ -15,7 +15,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -101,13 +101,13 @@ public class GamaNavigatorNewMenu extends GamaNavigatorMenu { // NO_UCD (unused 
 
 	@Override
 	protected void fillMenu() {
-		action("New Model file...", newModel, GamaIcons.create(IGamaIcons.NEW_MODEL).image());
-		action("New Experiment file...", newExperiment, GamaIcons.create(IGamaIcons.NEW_MODEL).image());
-		action("New Project...", newProject, GamaIcons.create(IGamaIcons.NEW_PROJECT).image());
+		action("New Model file...", newModel, GamaIcon.named(IGamaIcons.NEW_MODEL).image());
+		action("New Experiment file...", newExperiment, GamaIcon.named(IGamaIcons.NEW_MODEL).image());
+		action("New Project...", newProject, GamaIcon.named(IGamaIcons.NEW_PROJECT).image());
 		sep();
-		action("New Test Experiment file...", newTestExperiment, GamaIcons.create(IGamaIcons.NEW_MODEL).image());
+		action("New Test Experiment file...", newTestExperiment, GamaIcon.named(IGamaIcons.NEW_MODEL).image());
 		sep();
-		action("New Folder...", newFolder, GamaIcons.create(IGamaIcons.NEW_FOLDER).image());
+		action("New Folder...", newFolder, GamaIcon.named(IGamaIcons.NEW_FOLDER).image());
 		// sep();
 		// action("Other...", newOther, GamaIcons.create ("navigator/navigator.new2").image());
 	}

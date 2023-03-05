@@ -3,7 +3,7 @@
  * AgentEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -25,7 +25,7 @@ import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IAgentMenuFactory;
 import ummisco.gama.ui.menus.MenuAction;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -72,7 +72,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 				if (a != null && !a.dead()) { modifyAndDisplayValue(a); }
 			}
 
-		}, GamaIcons.create(IGamaIcons.MENU_AGENT).image(), "Choose");
+		}, GamaIcon.named(IGamaIcons.MENU_AGENT).image(), "Choose");
 
 		final Menu dropMenu = new Menu(shell);
 		final IAgent a = (IAgent) (currentValue instanceof IAgent ? currentValue : getAgent());
@@ -103,7 +103,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 
 	@Override
 	protected void applyInspect() {
-		if ((currentValue instanceof IAgent a) && !a.dead()) { getScope().getGui().setSelectedAgent(a); }
+		if (currentValue instanceof IAgent a && !a.dead()) { getScope().getGui().setSelectedAgent(a); }
 
 	}
 

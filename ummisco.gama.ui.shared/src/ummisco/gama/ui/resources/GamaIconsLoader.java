@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GamaIconsRenderer.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * GamaIconsLoader.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -48,11 +48,14 @@ import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -63,11 +66,14 @@ import org.apache.batik.gvt.renderer.StaticRenderer;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
 
 import msi.gaml.operators.Cast;
+import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -78,20 +84,35 @@ import ummisco.gama.dev.utils.DEBUG;
  * @goal render-icons
  * @phase generate-resources
  */
-public class GamaIconsRenderer {
+public class GamaIconsLoader {
 
 	static {
 		DEBUG.ON();
 	}
 
+	/** The Constant DEFAULT_PATH. */
+	static public final String DEFAULT_PATH = "/icons/";
+
+	/** The Constant DVG_PATH. */
+	static public final String SVG_PATH = "/svg/";
+
+	/** The Constant PLUGIN_ID. */
+	public static final String PLUGIN_ID = "ummisco.gama.ui.shared";
+
 	/** The Constant DISABLED_SUFFIX. */
 	public static final String DISABLED_SUFFIX = "_disabled";
+
+	/** The Constant DISABLED_SUFFIX. */
+	public static final String TEMPLATES = "templates";
 
 	/** The svg factory. */
 	static final SAXSVGDocumentFactory SVG_FACTORY = new SAXSVGDocumentFactory(getXMLParserClassName());
 
 	/** The png transcoder. */
 	static final PNGTranscoder PNG_TRANSCODER = new CustomTranscoder();
+
+	/** The Constant filter. */
+	static final DisabledFilter FILTER = new DisabledFilter();
 
 	/** The Constant SCALES. Change it to create new sizes */
 	static final String[] SCALES = { "1", "1.5", "2" };
@@ -119,37 +140,6 @@ public class GamaIconsRenderer {
 	}
 
 	/**
-	 * Builds the icons in memory
-	 *
-	 * @throws Exception
-	 */
-	// public static void buildIconsInMemory() throws Exception {
-	// Map<String, SVGDocument> icons = gatherAllIcons();
-	// DEBUG.TIMER_WITH_EXCEPTIONS(
-	// DEBUG.PAD("> GAMA: Building " + icons.size() + " icons", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
-	// () -> {
-	// icons.forEach((iconPathAndName, svg) -> {
-	// try {
-	// Point dim = correctSizeOf(svg);
-	// PNG_TRANSCODER.addTranscodingHint(KEY_HEIGHT, (float) dim.x);
-	// PNG_TRANSCODER.addTranscodingHint(KEY_WIDTH, (float) dim.y);
-	// TranscoderInput input = new TranscoderInput(svg);
-	// input.setURI(svg.getDocumentURI());
-	// // Define OutputStream Location
-	// try (ByteArrayOutputStream output = new ByteArrayOutputStream(dim.x * dim.y * 4 + 1024)) {
-	// PNG_TRANSCODER.transcode(input, new TranscoderOutput(output));
-	// output.flush();
-	// GamaIcons.create(iconPathAndName, new ByteArrayInputStream(output.toByteArray()));
-	// }
-	// } catch (Exception ex) {
-	// DEBUG.OUT(
-	// "Exception when building icon: " + iconPathAndName + " (" + ex.getMessage() + ")");
-	// }
-	// });
-	// });
-	// }
-
-	/**
 	 * Builds the icons.
 	 *
 	 * @throws Exception
@@ -157,6 +147,7 @@ public class GamaIconsRenderer {
 	public static void buildIconsOnDisk() throws Exception {
 		Map<String, SVGDocument> icons = gatherAllIcons();
 		Path outputPath = outputPath();
+
 		TIMER_WITH_EXCEPTIONS(
 				PAD("> GAMA: Exporting " + icons.size() * SCALES.length + " icons", 55, ' ') + PAD(" done in", 15, '_'),
 				() -> {
@@ -180,8 +171,7 @@ public class GamaIconsRenderer {
 									output.flush();
 								}
 								BufferedImage image = ImageIO.read(outputFile);
-								DisabledFilter filter = new DisabledFilter();
-								ImageProducer prod = new FilteredImageSource(image.getSource(), filter);
+								ImageProducer prod = new FilteredImageSource(image.getSource(), FILTER);
 								Image gray = Toolkit.getDefaultToolkit().createImage(prod);
 								DEBUG.OUT("Exporting " + outputDisabledFile);
 								ImageIO.write(toBufferedImage(gray), "png", outputDisabledFile);
@@ -291,14 +281,15 @@ public class GamaIconsRenderer {
 	 * @return the map
 	 */
 	private static Map<String, SVGDocument> gatherAllIcons() throws Exception {
-		URL inputFolderURL = toFileURL(getBundle(GamaIcons.PLUGIN_ID).getEntry(GamaIcons.SVG_PATH));
+		URL inputFolderURL = toFileURL(getBundle(PLUGIN_ID).getEntry(SVG_PATH));
 		Path inputPath = Path.of(new URI(inputFolderURL.getProtocol(), inputFolderURL.getPath(), null).normalize());
 		Map<String, SVGDocument> result = new LinkedHashMap<>();
-		for (Path path : Files.walk(inputPath).filter(n -> n.toString().endsWith(".svg")).sorted().toList()) {
-			String iconPathAndName = inputPath.relativize(path).toString().replace(".svg", "");
-			if (GamaIcons.ICON_CACHE.getIfPresent(iconPathAndName) != null) { continue; }
-			result.put(iconPathAndName, SVG_FACTORY.createSVGDocument(path.toUri().toURL().toString()));
-		}
+		StreamEx.of(Files.walk(inputPath)).filter(n -> n.toString().endsWith(".svg")).forEach(p -> {
+			try {
+				result.put(inputPath.relativize(p).toString().replace(".svg", ""),
+						SVG_FACTORY.createSVGDocument(p.toUri().toURL().toString()));
+			} catch (IOException e) {}
+		});
 		return result;
 	}
 
@@ -308,7 +299,7 @@ public class GamaIconsRenderer {
 	 * @return the path
 	 */
 	private static Path outputPath() throws Exception {
-		URL outputFolderURL = toFileURL(getBundle(GamaIcons.PLUGIN_ID).getEntry(GamaIcons.DEFAULT_PATH));
+		URL outputFolderURL = toFileURL(getBundle(PLUGIN_ID).getEntry(DEFAULT_PATH));
 		return Path.of(new URI(outputFolderURL.getProtocol(), outputFolderURL.getPath(), null).normalize());
 	}
 
@@ -322,6 +313,28 @@ public class GamaIconsRenderer {
 	private static String stripOffPx(final String dimensionString) {
 		if (dimensionString.endsWith("px")) return dimensionString.substring(0, dimensionString.length() - 2);
 		return dimensionString;
+	}
+
+	/**
+	 * Preload icons.
+	 *
+	 * @param bundle
+	 *            the bundle
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public static void preloadIcons() {
+		try {
+			URL url = FileLocator.toFileURL(Platform.getBundle(PLUGIN_ID).getEntry(DEFAULT_PATH));
+			Path path = new File(new URI(url.getProtocol(), url.getPath(), null).normalize()).toPath();
+			List<String> files = Files.walk(path).map(f -> path.relativize(f).toString())
+					.filter(n -> n.endsWith(".png") && !n.contains("@")).toList();
+			TIMER_WITH_EXCEPTIONS(
+					PAD("> GAMA: Preloading " + files.size() + " icons", 55, ' ') + PAD(" done in", 15, '_'),
+					() -> files.forEach(n -> GamaIcon.named(n.replace(".png", "")).image()));
+		} catch (IOException | URISyntaxException e) {
+			DEBUG.ERR("Error when loading GAMA icons ", e);
+		}
 	}
 
 }

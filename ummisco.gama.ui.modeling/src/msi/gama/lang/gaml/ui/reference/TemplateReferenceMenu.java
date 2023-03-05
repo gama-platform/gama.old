@@ -30,7 +30,7 @@ import org.eclipse.ui.PartInitException;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gaml.operators.Strings;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -370,7 +370,7 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() { return GamaIcons.create(IGamaIcons.REFERENCE_TEMPLATES).image(); }
+	protected Image getImage() { return GamaIcon.named(IGamaIcons.REFERENCE_TEMPLATES).image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()

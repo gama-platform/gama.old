@@ -3,14 +3,12 @@
  * LayeredDisplayView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
-
-import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_BORDER;
 
 import java.awt.Color;
 
@@ -37,6 +35,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -45,7 +44,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
@@ -151,7 +150,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			if (scope != null && scope.getSimulation() != null) {
 				final ITopLevelAgent root = scope.getRoot();
 				final Color color = root.getColor();
-				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
+				this.setTitleImage(GamaIcon.ofColor(GamaColors.get(color), true).image());
 			}
 		}
 
@@ -193,7 +192,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		 *            the style
 		 */
 		public CentralPanel(final Composite c) {
-			super(c, CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
+			super(c, GamaPreferences.Displays.CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
 			setLayout(emptyLayout());
 			setLayoutData(fullData());
 			setParentComposite(this);

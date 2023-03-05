@@ -15,7 +15,6 @@ import org.eclipse.ui.internal.ide.IMarkerImageProvider;
 
 import msi.gama.application.workbench.ThemeHelper;
 import ummisco.gama.ui.resources.GamaIcon;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -70,10 +69,12 @@ public class GamlMarkerImageProvider implements IMarkerImageProvider {
 	 */
 	public static GamaIcon getImage(final int severity) {
 		return switch (severity) {
-			case IMarker.SEVERITY_ERROR -> GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.MARKER_ERROR_DARK : IGamaIcons.MARKER_ERROR);
-			case IMarker.SEVERITY_WARNING -> GamaIcons.create(IGamaIcons.MARKER_WARNING);
-			case IMarker.SEVERITY_INFO -> GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.MARKER_INFO_DARK : IGamaIcons.MARKER_INFO);
-			case -1 -> GamaIcons.create(IGamaIcons.MARKER_TASK);
+			case IMarker.SEVERITY_ERROR -> GamaIcon
+					.named(ThemeHelper.isDark() ? IGamaIcons.MARKER_ERROR_DARK : IGamaIcons.MARKER_ERROR);
+			case IMarker.SEVERITY_WARNING -> GamaIcon.named(IGamaIcons.MARKER_WARNING);
+			case IMarker.SEVERITY_INFO -> GamaIcon
+					.named(ThemeHelper.isDark() ? IGamaIcons.MARKER_INFO_DARK : IGamaIcons.MARKER_INFO);
+			case -1 -> GamaIcon.named(IGamaIcons.MARKER_TASK);
 			default -> null;
 		};
 

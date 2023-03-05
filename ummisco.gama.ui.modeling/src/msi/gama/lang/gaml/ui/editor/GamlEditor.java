@@ -10,13 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import static ummisco.gama.ui.resources.IGamaIcons.BUTTON_BACK;
-import static ummisco.gama.ui.resources.IGamaIcons.BUTTON_BATCH;
-import static ummisco.gama.ui.resources.IGamaIcons.BUTTON_GUI;
-import static ummisco.gama.ui.resources.IGamaIcons.MENU_BACK;
-import static ummisco.gama.ui.resources.IGamaIcons.MENU_BATCH;
-import static ummisco.gama.ui.resources.IGamaIcons.MENU_GUI;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -144,7 +137,7 @@ import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -189,14 +182,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
 		store.setDefault("spellingEnabled", false);
 		store.setValue("spellingEnabled", false);
-		images.put(IKeyword.BATCH, GamaIcons.create(IGamaIcons.BUTTON_BATCH).image());
-		images.put(IKeyword.MEMORIZE, GamaIcons.create(IGamaIcons.BUTTON_BACK).image());
-		images.put("regular", GamaIcons.create(BUTTON_GUI).image());
-		menu_images.put(IKeyword.BATCH, GamaIcons.create(ThemeHelper.isDark() ? BUTTON_BATCH : MENU_BATCH).image());
-		menu_images.put(IKeyword.MEMORIZE, GamaIcons.create(ThemeHelper.isDark() ? BUTTON_BACK : MENU_BACK).image());
-		menu_images.put("regular", GamaIcons.create(ThemeHelper.isDark() ? BUTTON_GUI : MENU_GUI).image());
+		images.put(IKeyword.BATCH, GamaIcon.named(IGamaIcons.BUTTON_BATCH).image());
+		images.put(IKeyword.MEMORIZE, GamaIcon.named(IGamaIcons.BUTTON_BACK).image());
+		images.put("regular", GamaIcon.named(IGamaIcons.BUTTON_GUI).image());
+		menu_images.put(IKeyword.BATCH,
+				GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_BATCH : IGamaIcons.MENU_BATCH).image());
+		menu_images.put(IKeyword.MEMORIZE,
+				GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_BACK : IGamaIcons.MENU_BACK).image());
+		menu_images.put("regular",
+				GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_GUI : IGamaIcons.MENU_GUI).image());
 
-		images.put("new", GamaIcons.create(IGamaIcons.ADD_EXPERIMENT).image());
+		images.put("new", GamaIcon.named(IGamaIcons.ADD_EXPERIMENT).image());
 		for (Image im : images.values()) { maxImageHeight = Math.max(maxImageHeight, im.getBounds().height); }
 	}
 
@@ -371,8 +367,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	 */
 	private void buildRightToolbar() {
 		toolbar.wipe(SWT.LEFT, true);
-		final var t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...",
-				GamaIcons.create(IGamaIcons.STATUS_CLOCK).image(), null, SWT.LEFT);
+		final var t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...", GamaIcon.named(IGamaIcons.STATUS_CLOCK).image(),
+				null, SWT.LEFT);
 		toolbar.sep(4, SWT.LEFT);
 		findControl = new EditorToolbar(this).fill(toolbar.getToolbar(SWT.RIGHT));
 
@@ -586,7 +582,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 					listener = new OpenExperimentSelectionListener(GamlEditor.this, newState, runner);
 				}
 				if (msg != null) {
-					final var t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener, SWT.LEFT);
+					final var t = toolbar.button(c, msg, GamaIcon.named(imageName).image(), listener, SWT.LEFT);
 					final FlatButton b = (FlatButton) t.getControl();
 					b.setRightPadding(buttonPadding);
 				} else if (newState.showExperiments) {

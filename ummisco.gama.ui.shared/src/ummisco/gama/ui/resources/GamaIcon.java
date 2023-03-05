@@ -15,22 +15,112 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 // import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.ImageDataProvider;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class GamaIcon.
  */
 public class GamaIcon {
+
+	/** The icon cache. */
+	public static Cache<String, GamaIcon> ICON_CACHE = CacheBuilder.newBuilder().build();
+
+	/** The Constant SIZER_PREFIX. */
+	static final String SIZER_PREFIX = "sizer_";
+
+	/**
+	 * Returns the icon named after the path (eg "templates/square.template")
+	 *
+	 * @param path
+	 *            the path
+	 * @return the gama icon
+	 */
+	public static GamaIcon named(final String s) {
+		try {
+			return ICON_CACHE.get(s, () -> new GamaIcon(s));
+		} catch (ExecutionException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Creates a color icon, either a round square or a circle
+	 *
+	 * @param gcolor
+	 *            the gcolor
+	 * @param square
+	 *            the square
+	 * @return the image
+	 */
+	public static GamaIcon ofColor(final GamaUIColor gcolor, final boolean square) {
+		String shape = square ? "square" : "circle";
+		final String name = shape + ".color" + gcolor.getRGB().toString();
+		try {
+			return ICON_CACHE.get(name, () -> {
+				// We use the fact that URLImageDescriptor (not API) implements ImageDataProvider
+				Image image = new Image(WorkbenchHelper.getDisplay(),
+						(ImageDataProvider) named("templates/" + shape + "_template").descriptor());
+				final GC gc = new GC(image);
+				gc.setBackground(gcolor.color());
+				int size = image.getBounds().width;
+				if (square) {
+					gc.fillRoundRectangle(size / 4, size / 4, size / 2 + 1, size / 2 + 1, 4, 4);
+				} else {
+					gc.fillOval(size / 4, size / 4, size / 2 + 1, size / 2 + 1);
+				}
+				gc.dispose();
+				return new GamaIcon(name, image);
+			});
+		} catch (ExecutionException e) {
+			return null;
+		}
+
+	}
+
+	/**
+	 * Creates a sizer of a given color
+	 *
+	 * @param color
+	 *            the color
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @return the gama icon
+	 */
+	public static GamaIcon ofSize(final Color color, final int width, final int height) {
+		final String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
+		try {
+			return ICON_CACHE.get(name, () -> {
+				final Image sizerImage = new Image(WorkbenchHelper.getDisplay(), width, height);
+				final GC gc = new GC(sizerImage);
+				gc.setBackground(color);
+				gc.fillRectangle(0, 0, width, height);
+				gc.dispose();
+				return new GamaIcon(name, sizerImage);
+			});
+		} catch (ExecutionException e) {
+			return null;
+		}
+
+	}
 
 	static {
 		DEBUG.ON();
@@ -55,10 +145,10 @@ public class GamaIcon {
 	 * @param plugin
 	 *            the id of the plugin in which the 'icons' folder resides
 	 */
-	public GamaIcon(final String c) {
+	private GamaIcon(final String c) {
 		code = c;
 		url = computeURL(code);
-		disabledUrl = computeURL(code + GamaIconsRenderer.DISABLED_SUFFIX);
+		disabledUrl = computeURL(code + GamaIconsLoader.DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromURL(url);
 		disabledDescriptor = ImageDescriptor.createFromURL(disabledUrl);
 		image();
@@ -69,10 +159,11 @@ public class GamaIcon {
 	 *
 	 * @return the url
 	 */
-	public static URL computeURL(final String code) {
-		IPath uriPath = new Path("/plugin").append(GamaIcons.PLUGIN_ID).append(GamaIcons.DEFAULT_PATH + code + ".png"); //$NON-NLS-1$
+	private URL computeURL(final String code) {
+		IPath uriPath = new Path("/plugin").append(GamaIconsLoader.PLUGIN_ID)
+				.append(GamaIconsLoader.DEFAULT_PATH + code + ".png");
 		try {
-			URI uri = new URI("platform", null, uriPath.toString(), null); //$NON-NLS-1$
+			URI uri = new URI("platform", null, uriPath.toString(), null);
 			return uri.toURL();
 		} catch (MalformedURLException | URISyntaxException e) {
 			return null;
@@ -80,34 +171,19 @@ public class GamaIcon {
 	}
 
 	/**
-	 * Instantiates a new gama icon.
-	 *
-	 * @param c
-	 *            the c
-	 * @param stream
-	 *            the stream
-	 */
-	// public GamaIcon(final String path, final InputStream stream) {
-	// code = path;
-	// url = computeURL(code);
-	// descriptor = ImageDescriptor.createFromImageData(new ImageLoader().load(stream)[0]);
-	// image();
-	// }
-
-	/**
-	 * Instantiates a new gama icon.
+	 * Instantiates a new gama icon directly from an image. We do not produce disabled versions
 	 *
 	 * @param name
 	 *            the name
 	 * @param im
 	 *            the im
 	 */
-	public GamaIcon(final String path, final Image im) {
+	private GamaIcon(final String path, final Image im) {
 		code = path;
 		url = computeURL(code);
-		disabledUrl = computeURL(code + GamaIconsRenderer.DISABLED_SUFFIX);
+		disabledUrl = url;
 		descriptor = ImageDescriptor.createFromImage(im);
-		disabledDescriptor = ImageDescriptor.createFromImage(disabledVersionOf(im));
+		disabledDescriptor = descriptor;
 		image();
 	}
 
@@ -159,29 +235,7 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image checked() {
-		return image(code + "_checked", () -> checkedVersionOf(image()));
-	}
-
-	/**
-	 * Disabled version of image. Used only for internally created images
-	 *
-	 * @param im
-	 *            the im
-	 * @return the image
-	 */
-	Image disabledVersionOf(final Image im) {
-		Rectangle bounds = im.getBounds();
-		ImageData srcData = im.getImageData();
-		ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
-		dstData.transparentPixel = srcData.transparentPixel;
-		dstData.alpha = srcData.alpha;
-		for (int sx = 0; sx < bounds.width; sx++) {
-			for (int sy = 0; sy < bounds.height; sy++) {
-				dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
-				dstData.setPixel(sx, sy, srcData.getPixel(sx, sy));
-			}
-		}
-		return new Image(im.getDevice(), dstData);
+		return image(code + "_checked", this::checkedVersion);
 	}
 
 	/**
@@ -191,21 +245,14 @@ public class GamaIcon {
 	 *            the im
 	 * @return the image
 	 */
-	Image checkedVersionOf(final Image im) {
-		Rectangle bounds = im.getBounds();
-		ImageData srcData = im.getImageData();
-		ImageData dstData = new ImageData(bounds.width, bounds.height, srcData.depth, srcData.palette);
-		dstData.transparentPixel = srcData.transparentPixel;
-		dstData.alpha = srcData.alpha;
-		for (int sx = 0; sx < bounds.width; sx++) {
-			for (int sy = 0; sy < bounds.height; sy++) {
-				// dstData.setAlpha(sx, sy, srcData.getAlpha(sx, sy) / 2);
-				int p = srcData.getPixel(sx, sy);
-				dstData.setPixel(sx, sy, p < 0x999999 ? 0x8800 : p);
-			}
-		}
-		return new Image(im.getDevice(), dstData);
-
+	private Image checkedVersion() {
+		Image im = new Image(null, (ImageDataProvider) descriptor());
+		GC gc = new GC(im);
+		gc.setForeground(IGamaColors.LIGHT_GRAY.color());
+		gc.setLineWidth(6);
+		gc.drawRectangle(im.getBounds());
+		gc.dispose();
+		return im;
 	}
 
 	/**

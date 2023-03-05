@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
-import static msi.gama.common.GamlFileExtension.isExperiment;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +31,7 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IExpressionDescription;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -105,9 +103,9 @@ public class WrappedGamaFile extends WrappedFile {
 	protected void computeFileImage() {
 		// final IFile f = getResource();
 		if (isExperiment) {
-			image = GamaIcons.create(IGamaIcons.FILE_EXPERIMENT).image();
+			image = GamaIcon.named(IGamaIcons.FILE_EXPERIMENT).image();
 		} else {
-			image = GamaIcons.create(IGamaIcons.FILE_MODEL).image();
+			image = GamaIcon.named(IGamaIcons.FILE_MODEL).image();
 		}
 
 	}
@@ -115,7 +113,7 @@ public class WrappedGamaFile extends WrappedFile {
 	@Override
 	protected void computeFileType() {
 		final IFile f = getResource();
-		isExperiment = isExperiment(f.getName());
+		isExperiment = GamlFileExtension.isExperiment(f.getName());
 	}
 
 	/**

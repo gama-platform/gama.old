@@ -10,12 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_CT_ID;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.getContentTypeId;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.isSupport;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.shapeFileSupportedBy;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,9 +28,10 @@ import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 
@@ -81,12 +76,12 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile f = getResource();
 		if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
 			if (isShapeFileSupport) {
-				image = GamaIcons.create(IGamaIcons.FILE_SHAPESUPPORT).image();
+				image = GamaIcon.named(IGamaIcons.FILE_SHAPESUPPORT).image();
 			} else {
 				image = DEFAULT_LABEL_PROVIDER.getImage(f);
 			}
 		} else {
-			image = GamaIcons.create(IGamaIcons.FILE_TEXT).image();
+			image = GamaIcon.named(IGamaIcons.FILE_TEXT).image();
 		}
 
 	}
@@ -96,8 +91,9 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	 */
 	protected void computeFileType() {
 		final IFile f = getResource();
-		isShapeFile = SHAPEFILE_CT_ID.equals(getContentTypeId(f));
-		isShapeFileSupport = SHAPEFILE_SUPPORT_CT_ID.equals(getContentTypeId(f));
+		isShapeFile = FileMetaDataProvider.SHAPEFILE_CT_ID.equals(FileMetaDataProvider.getContentTypeId(f));
+		isShapeFileSupport =
+				FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID.equals(FileMetaDataProvider.getContentTypeId(f));
 	}
 
 	/**
@@ -105,7 +101,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	 */
 	private void computeFileParent() {
 		if (isShapeFileSupport) {
-			final IResource shape = shapeFileSupportedBy(getResource());
+			final IResource shape = FileMetaDataProvider.shapeFileSupportedBy(getResource());
 			if (shape != null) { fileParent = (WrappedFile) getManager().findWrappedInstanceOf(shape); }
 		}
 	}
@@ -143,7 +139,9 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 			final IContainer folder = p.getParent();
 			final List<VirtualContent> sub = new ArrayList<>();
 			for (final IResource r : folder.members()) {
-				if (r instanceof IFile && isSupport(p, (IFile) r)) { sub.add(getManager().findWrappedInstanceOf(r)); }
+				if (r instanceof IFile && FileMetaDataProvider.isSupport(p, (IFile) r)) {
+					sub.add(getManager().findWrappedInstanceOf(r));
+				}
 			}
 			final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, false);
 			Map<String, String> attributes;

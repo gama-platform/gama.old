@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
-import static ummisco.gama.ui.resources.GamaIcons.create;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
@@ -173,7 +171,7 @@ public class GamaCommand {
 			}
 		};
 
-		result.setImageDescriptor(create(image).descriptor());
+		result.setImageDescriptor(GamaIcon.named(image).descriptor());
 		result.setToolTipText(tooltip);
 		result.setId(image);
 		return result;
@@ -194,7 +192,7 @@ public class GamaCommand {
 			}
 		};
 
-		result.setImageDescriptor(create(image).descriptor());
+		result.setImageDescriptor(GamaIcon.named(image).descriptor());
 		result.setToolTipText(tooltip);
 		result.setId(image);
 		return result;
@@ -226,7 +224,7 @@ public class GamaCommand {
 		if (text != null) { i.setText(text); }
 		i.setToolTipText(tooltip);
 		if (image != null) {
-			GamaIcon icon = create(image);
+			GamaIcon icon = GamaIcon.named(image);
 			i.setImage(icon.image());
 			i.setDisabledImage(icon.disabled());
 		}
@@ -245,7 +243,7 @@ public class GamaCommand {
 		final var i = new MenuItem(m, SWT.PUSH);
 		if (text != null) { i.setText(text); }
 		i.setToolTipText(tooltip);
-		if (image != null) { i.setImage(create(image).image()); }
+		if (image != null) { i.setImage(GamaIcon.named(image).image()); }
 		i.addSelectionListener(selector);
 		return i;
 	}
@@ -264,7 +262,7 @@ public class GamaCommand {
 
 		if (text != null) { i.setText(text); }
 		i.setToolTipText(tooltip);
-		if (image != null) { i.setImage(create(image).image()); }
+		if (image != null) { i.setImage(GamaIcon.named(image).image()); }
 		i.addSelectionListener(selector2);
 		return i;
 	}
@@ -282,7 +280,7 @@ public class GamaCommand {
 		final Label i = new Label(t, SWT.NONE);
 		if (text != null) { i.setText(text); }
 		i.setToolTipText(tooltip);
-		if (image != null) { i.setImage(create(image).image()); }
+		if (image != null) { i.setImage(GamaIcon.named(image).image()); }
 		i.addMouseListener(selector2);
 		return i;
 	}
@@ -307,7 +305,7 @@ public class GamaCommand {
 		final ImageHyperlink i = new ImageHyperlink(t, SWT.FLAT);
 		if (text != null) { i.setText(text); }
 		i.setToolTipText(tooltip);
-		i.setImage(create(image).image());
+		i.setImage(GamaIcon.named(image).image());
 		i.setUnderlined(false);
 		return i;
 	}

@@ -24,7 +24,7 @@ import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -119,12 +119,12 @@ public class OpenCloseActionProvider extends CommonActionProvider {
 		final IShellProvider sp = () -> shell;
 
 		openProjectAction = new OpenResourceAction(sp);
-		openProjectAction.setImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_OPEN).descriptor());
-		openProjectAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_OPEN).disabledDescriptor());
+		openProjectAction.setImageDescriptor(GamaIcon.named(IGamaIcons.PROJECT_OPEN).descriptor());
+		openProjectAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.PROJECT_OPEN).disabledDescriptor());
 
 		closeProjectAction = new CloseResourceAction(sp);
-		closeProjectAction.setImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_CLOSE).descriptor());
-		closeProjectAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_CLOSE).disabledDescriptor());
+		closeProjectAction.setImageDescriptor(GamaIcon.named(IGamaIcons.PROJECT_CLOSE).descriptor());
+		closeProjectAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.PROJECT_CLOSE).disabledDescriptor());
 
 	}
 

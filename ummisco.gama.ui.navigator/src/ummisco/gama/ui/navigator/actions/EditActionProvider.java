@@ -24,7 +24,7 @@ import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -69,17 +69,17 @@ public class EditActionProvider extends CommonActionProvider {
 		clipboard = new Clipboard(shell.getDisplay());
 
 		pasteAction = new PasteAction(shell, clipboard);
-		pasteAction.setImageDescriptor(GamaIcons.create(IGamaIcons.PASTE).descriptor());
+		pasteAction.setImageDescriptor(GamaIcon.named(IGamaIcons.PASTE).descriptor());
 		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
-		copyAction.setImageDescriptor(GamaIcons.create(IGamaIcons.COPY).descriptor());
+		copyAction.setImageDescriptor(GamaIcon.named(IGamaIcons.COPY).descriptor());
 		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 
 		final IShellProvider sp = () -> shell;
 
 		deleteAction = new DeleteResourceAction(sp);
-		deleteAction.setImageDescriptor(GamaIcons.create(IGamaIcons.DELETE).descriptor());
+		deleteAction.setImageDescriptor(GamaIcon.named(IGamaIcons.DELETE).descriptor());
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 
 	}

@@ -13,7 +13,7 @@ package msi.gama.lang.gaml.ui.outline;
 import org.eclipse.jface.action.Action;
 import org.eclipse.xtext.ui.editor.outline.actions.SortOutlineContribution;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -33,8 +33,8 @@ public class GamlSortOutlineContribution extends SortOutlineContribution {
 	@Override
 	protected void configureAction(final Action action) {
 		super.configureAction(action);
-		action.setImageDescriptor(GamaIcons.create(IGamaIcons.LEXICAL_SORT).descriptor());
-		action.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.LEXICAL_SORT).disabledDescriptor());
+		action.setImageDescriptor(GamaIcon.named(IGamaIcons.LEXICAL_SORT).descriptor());
+		action.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.LEXICAL_SORT).disabledDescriptor());
 	}
 
 }

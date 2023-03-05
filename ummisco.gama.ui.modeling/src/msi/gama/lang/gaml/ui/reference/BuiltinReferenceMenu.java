@@ -34,7 +34,7 @@ import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.Types;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -293,7 +293,7 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() { return GamaIcons.create(IGamaIcons.REFERENCE_BUILTIN).image(); }
+	protected Image getImage() { return GamaIcon.named(IGamaIcons.REFERENCE_BUILTIN).image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()

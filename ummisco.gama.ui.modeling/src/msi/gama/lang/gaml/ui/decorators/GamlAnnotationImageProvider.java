@@ -14,7 +14,6 @@ import static msi.gama.application.workbench.ThemeHelper.isDark;
 import static org.eclipse.xtext.ui.editor.XtextEditor.ERROR_ANNOTATION_TYPE;
 import static org.eclipse.xtext.ui.editor.XtextEditor.INFO_ANNOTATION_TYPE;
 import static org.eclipse.xtext.ui.editor.XtextEditor.WARNING_ANNOTATION_TYPE;
-import static ummisco.gama.ui.resources.GamaIcons.create;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,19 +37,19 @@ import ummisco.gama.ui.resources.IGamaIcons;
 public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvider {
 
 	/** The Constant DELETED. */
-	private static final GamaIcon DELETED = create(IGamaIcons.MARKER_DELETED);
+	private static final GamaIcon DELETED = GamaIcon.named(IGamaIcons.MARKER_DELETED);
 
 	/** The Constant ERROR. */
-	private static final GamaIcon ERROR = create(isDark() ? IGamaIcons.MARKER_ERROR_DARK : IGamaIcons.MARKER_ERROR);
+	private static final GamaIcon ERROR = GamaIcon.named(isDark() ? IGamaIcons.MARKER_ERROR_DARK : IGamaIcons.MARKER_ERROR);
 
 	/** The Constant WARNING. */
-	private static final GamaIcon WARNING = create(IGamaIcons.MARKER_WARNING);
+	private static final GamaIcon WARNING = GamaIcon.named(IGamaIcons.MARKER_WARNING);
 
 	/** The Constant INFO. */
-	private static final GamaIcon INFO = create(isDark() ? IGamaIcons.MARKER_INFO_DARK : IGamaIcons.MARKER_INFO);
+	private static final GamaIcon INFO = GamaIcon.named(isDark() ? IGamaIcons.MARKER_INFO_DARK : IGamaIcons.MARKER_INFO);
 
 	/** The Constant TASK. */
-	private static final GamaIcon TASK = create(IGamaIcons.MARKER_TASK);
+	private static final GamaIcon TASK = GamaIcon.named(IGamaIcons.MARKER_TASK);
 
 	/** The Constant fixables. */
 	private static final Map<String, GamaIcon> fixables = new HashMap() {

@@ -10,10 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views;
 
-import static msi.gama.application.workbench.ThemeHelper.isDark;
-import static ummisco.gama.ui.resources.IGamaColors.DARK_GRAY;
-import static ummisco.gama.ui.resources.IGamaColors.VERY_LIGHT_GRAY;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,6 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -54,7 +51,8 @@ import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.EditorsGroup;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.Selector;
@@ -125,12 +123,12 @@ public class GamaPreferencesView {
 	}
 
 	static {
-		prefs_images.put(GamaPreferences.Interface.NAME, GamaIcons.create(IGamaIcons.PREFS_GENERAL).image());
-		prefs_images.put(GamaPreferences.Modeling.NAME, GamaIcons.create(IGamaIcons.PREFS_EDITOR).image());
-		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcons.create(IGamaIcons.PREFS_RUNTIME).image());
-		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcons.create(IGamaIcons.PREFS_SIMULATION).image());
-		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcons.create(IGamaIcons.PREFS_UI).image());
-		prefs_images.put(GamaPreferences.External.NAME, GamaIcons.create(IGamaIcons.PREFS_LIBS).image());
+		prefs_images.put(GamaPreferences.Interface.NAME, GamaIcon.named(IGamaIcons.PREFS_GENERAL).image());
+		prefs_images.put(GamaPreferences.Modeling.NAME, GamaIcon.named(IGamaIcons.PREFS_EDITOR).image());
+		prefs_images.put(GamaPreferences.Runtime.NAME, GamaIcon.named(IGamaIcons.PREFS_RUNTIME).image());
+		prefs_images.put(GamaPreferences.Simulations.NAME, GamaIcon.named(IGamaIcons.PREFS_SIMULATION).image());
+		prefs_images.put(GamaPreferences.Displays.NAME, GamaIcon.named(IGamaIcons.PREFS_UI).image());
+		prefs_images.put(GamaPreferences.External.NAME, GamaIcon.named(IGamaIcons.PREFS_LIBS).image());
 
 	}
 
@@ -183,7 +181,8 @@ public class GamaPreferencesView {
 	 */
 	private void buildContentsFor(final CTabItem tab, final Map<String, List<Pref>> entries) {
 		final var viewer = new ParameterExpandBar(tab.getParent(), SWT.V_SCROLL);
-		viewer.setBackground(!isDark() ? VERY_LIGHT_GRAY.color() : DARK_GRAY.darker());
+		viewer.setBackground(
+				!ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.DARK_GRAY.darker());
 		viewer.setSpacing(5);
 		tab.setControl(viewer);
 
@@ -354,7 +353,7 @@ public class GamaPreferencesView {
 
 		final var buttonRevert = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonRevert.setText("Revert to defaults");
-		buttonRevert.setImage(GamaIcons.create(IGamaIcons.ACTION_REVERT).image());
+		buttonRevert.setImage(GamaIcon.named(IGamaIcons.ACTION_REVERT).image());
 		buttonRevert.setToolTipText("Restore default values for all preferences");
 
 		final var buttonAdvanced = new Button(group1, SWT.PUSH | SWT.FLAT);

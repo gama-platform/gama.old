@@ -21,7 +21,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -66,12 +66,12 @@ public class RefreshActionProvider extends CommonActionProvider {
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		refreshAction = new RefreshAction(sp);
-		refreshAction.setImageDescriptor(GamaIcons.create(IGamaIcons.FILE_REFRESH).descriptor());
-		refreshAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.FILE_REFRESH).disabledDescriptor());
+		refreshAction.setImageDescriptor(GamaIcon.named(IGamaIcons.FILE_REFRESH).descriptor());
+		refreshAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.FILE_REFRESH).disabledDescriptor());
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 		runAllTestsAction = new RunAllTestsAction(sp, "Run all tests");
-		runAllTestsAction.setImageDescriptor(GamaIcons.create(IGamaIcons.TEST_RUN).descriptor());
-		runAllTestsAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.TEST_RUN).disabledDescriptor());
+		runAllTestsAction.setImageDescriptor(GamaIcon.named(IGamaIcons.TEST_RUN).descriptor());
+		runAllTestsAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.TEST_RUN).disabledDescriptor());
 
 	}
 

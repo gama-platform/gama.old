@@ -53,7 +53,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.osgi.framework.Bundle;
 
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.GamaPreferencesView;
 
@@ -426,7 +426,7 @@ public class CleanupHelper {
 				}
 				if (item.isGroupMarker() || item.isSeparator() || !item.isVisible()) { continue; }
 				if (MENU_IMAGES.containsKey(name)) {
-					changeIcon(menu, item, GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
+					changeIcon(menu, item, GamaIcon.named(MENU_IMAGES.get(name)).descriptor());
 				}
 				// sb.append(Strings.LN).append(Strings.TAB);
 				// sb.append(name).append('[').append(item.getClass().getSimpleName()).append("]:: ");

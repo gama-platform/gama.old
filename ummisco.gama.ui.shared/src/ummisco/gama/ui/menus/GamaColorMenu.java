@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -211,9 +211,7 @@ public class GamaColorMenu extends GamaMenu {
 			}
 			final MenuItem item = action(subMenu, "#" + current, defaultListener);
 			final GamaColor color = GamaColor.colors.get(current);
-			item.setImage(
-					GamaIcons.createColorIcon(current, GamaColors.get(color.red(), color.green(), color.blue()), 16, 16)
-							.image());
+			item.setImage(GamaIcon.ofColor(GamaColors.get(color.red(), color.green(), color.blue()), true).image());
 		}
 
 	}
@@ -229,15 +227,13 @@ public class GamaColorMenu extends GamaMenu {
 	 *            the selector
 	 */
 	public static void addColorSubmenuTo(final Menu menu, final String text, final Consumer<GamaColor> selector) {
-		Menu subMenu = sub(menu, text, text, GamaIcons.create(IGamaIcons.REFERENCE_COLORS).image());
+		Menu subMenu = sub(menu, text, text, GamaIcon.named(IGamaIcons.REFERENCE_COLORS).image());
 		final List<String> names = new ArrayList(GamaColor.colors.keySet());
 		Collections.sort(names, colorComp);
 		for (final String current : names) {
 			final GamaColor color = GamaColor.colors.get(current);
 			final MenuItem item = action(subMenu, "#" + current, t -> selector.accept(GamaColor.colors.get(current)));
-			item.setImage(
-					GamaIcons.createColorIcon(current, GamaColors.get(color.red(), color.green(), color.blue()), 16, 16)
-							.image());
+			item.setImage(GamaIcon.ofColor(GamaColors.get(color.red(), color.green(), color.blue()), true).image());
 		}
 	}
 

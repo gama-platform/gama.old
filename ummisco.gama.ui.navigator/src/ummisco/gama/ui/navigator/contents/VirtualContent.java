@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -61,15 +61,15 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	public static final Map<Integer, ImageDescriptor> DESCRIPTORS = new HashMap<>() {
 		{
 
-			put(CLOSED, GamaIcons.create(IGamaIcons.OVERLAY_CLOSED).descriptor());
-			put(NO_PROBLEM, GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor());
-			put(IMarker.SEVERITY_INFO, GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor());
-			put(IMarker.SEVERITY_WARNING, GamaIcons.create(IGamaIcons.OVERLAY_WARNING).descriptor());
-			put(IMarker.SEVERITY_ERROR, GamaIcons.create(IGamaIcons.OVERLAY_ERROR).descriptor());
-			put(LINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor());
-			put(LINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_ERROR).descriptor());
-			// put(WEBLINK_OK, GamaIcons.create(IGamaIcons.OVERLAY_CLOUD).descriptor());
-			// put(WEBLINK_BROKEN, GamaIcons.create(IGamaIcons.OVERLAY_LINK_BROKEN).descriptor());
+			put(CLOSED, GamaIcon.named(IGamaIcons.OVERLAY_CLOSED).descriptor());
+			put(NO_PROBLEM, GamaIcon.named(IGamaIcons.OVERLAY_OK).descriptor());
+			put(IMarker.SEVERITY_INFO, GamaIcon.named(IGamaIcons.OVERLAY_OK).descriptor());
+			put(IMarker.SEVERITY_WARNING, GamaIcon.named(IGamaIcons.OVERLAY_WARNING).descriptor());
+			put(IMarker.SEVERITY_ERROR, GamaIcon.named(IGamaIcons.OVERLAY_ERROR).descriptor());
+			put(LINK_OK, GamaIcon.named(IGamaIcons.OVERLAY_OK).descriptor());
+			put(LINK_BROKEN, GamaIcon.named(IGamaIcons.OVERLAY_ERROR).descriptor());
+			// put(WEBLINK_OK, GamaIcon.named(IGamaIcons.OVERLAY_CLOUD).descriptor());
+			// put(WEBLINK_BROKEN, GamaIcon.named(IGamaIcons.OVERLAY_LINK_BROKEN).descriptor());
 		}
 	};
 

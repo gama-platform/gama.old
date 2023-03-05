@@ -10,9 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
-import static ummisco.gama.ui.resources.IGamaIcons.BROWSE_POPULATIONS;
-import static ummisco.gama.ui.resources.IGamaIcons.LOCK_POPULATION;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +78,7 @@ import ummisco.gama.ui.controls.SwitchButton;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.parameters.ExpressionControl;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -190,7 +187,7 @@ public class PopulationInspectView extends GamaViewPart
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		this.setTitleImage(GamaIcons.create(IGamaIcons.VIEW_BROWSER).image());
+		this.setTitleImage(GamaIcon.named(IGamaIcons.VIEW_BROWSER).image());
 	}
 
 	/** The provider. */
@@ -897,7 +894,7 @@ public class PopulationInspectView extends GamaViewPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		if (getOutput() == null) return;
 		super.createToolItems(tb);
-		tb.check(LOCK_POPULATION, "", "Lock the current population (prevents editing it)", e -> {
+		tb.check(IGamaIcons.LOCK_POPULATION, "", "Lock the current population (prevents editing it)", e -> {
 			locked = !locked;
 			editor.getControl().setEnabled(!locked);
 			populationMenu.setEnabled(!locked);
@@ -905,7 +902,7 @@ public class PopulationInspectView extends GamaViewPart
 			// TODO let the list of agents remain the same ??
 		}, SWT.RIGHT);
 		createExpressionComposite();
-		populationMenu = tb.menu(BROWSE_POPULATIONS, "", "Browse a species", trigger -> {
+		populationMenu = tb.menu(IGamaIcons.BROWSE_POPULATIONS, "", "Browse a species", trigger -> {
 			if (locked) return;
 			final GamaMenu menu = new GamaMenu() {
 
@@ -921,7 +918,7 @@ public class PopulationInspectView extends GamaViewPart
 								editor.widgetDefaultSelected(null);
 							}
 
-						}, GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
+						}, GamaIcon.named(IGamaIcons.MENU_POPULATION).image());
 					}
 				}
 			};

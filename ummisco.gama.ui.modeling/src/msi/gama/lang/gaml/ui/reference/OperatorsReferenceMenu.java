@@ -29,7 +29,7 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.types.Signature;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -167,7 +167,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() { return GamaIcons.create(IGamaIcons.REFERENCE_OPERATORS).image(); }
+	protected Image getImage() { return GamaIcon.named(IGamaIcons.REFERENCE_OPERATORS).image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UserControlDialog.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * UserControlDialog.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.user;
 
@@ -43,7 +43,7 @@ import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.EditorsGroup;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -152,7 +152,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		createButton(parent, IDialogConstants.OK_ID, "Continue", true);
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
 				"Inspect " + scope.getAgent().getName() + "...", false);
-		detailsButton.setImage(GamaIcons.create(IGamaIcons.MENU_INSPECT).image());
+		detailsButton.setImage(GamaIcon.named(IGamaIcons.MENU_INSPECT).image());
 
 	}
 
