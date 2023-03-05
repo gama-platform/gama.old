@@ -3,7 +3,7 @@
  * GamaMapFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -183,6 +183,25 @@ public class GamaMapFactory {
 	 */
 	public static IMap createUnordered() {
 		final Map map = new HashMap();
+		return new GamaMapSimpleWrapper() {
+
+			@Override
+			public boolean isOrdered() { return false; }
+
+			@Override
+			protected Map delegate() {
+				return map;
+			}
+		};
+	}
+
+	/**
+	 * Creates a new GamaMap object.
+	 *
+	 * @return the i map
+	 */
+	public static IMap createSynchronizedUnordered() {
+		final Map map = Collections.synchronizedMap(new HashMap());
 		return new GamaMapSimpleWrapper() {
 
 			@Override
