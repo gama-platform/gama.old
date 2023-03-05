@@ -96,7 +96,7 @@ public class VariableDescription extends SymbolDescription {
 			if (!hasFacet(TYPE) && !isExperimentParameter()) { facets.putAsLabel(TYPE, keyword); }
 			setIf(Flag.isFunction, hasFacet(FUNCTION));
 			setIf(Flag.isContextualType, computesContextualType());
-			setIf(Flag.IsParameter, isExperimentParameter() || hasFacet(PARAMETER) && facets.equals(PARAMETER, TRUE));
+			setIf(Flag.IsParameter, isExperimentParameter() || hasFacet(PARAMETER) && !facets.equals(PARAMETER, FALSE));
 			setIf(Flag.Global, superDesc instanceof ModelDescription);
 			setIf(Unmodifiable, (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE)) && !isParameter());
 			setIf(Updatable, !isSet(Unmodifiable) && (hasFacet(VALUE) || hasFacet(UPDATE)));
