@@ -151,7 +151,7 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
-		if (local == null) { local = Collections.synchronizedMap(GamaMapFactory.createUnordered()); }
+		if (local == null) { local = GamaMapFactory.createSynchronizedUnordered(); }
 		local.put(varName, val);
 	}
 
