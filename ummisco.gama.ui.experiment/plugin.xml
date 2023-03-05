@@ -112,7 +112,7 @@
             </visibleWhen>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run.disabled.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run_disabled.png"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run.png"
                   label="Run Experiment"
                   style="push">
@@ -126,6 +126,7 @@
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause.png"
+                   disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause_disabled.png"
                   label="Pause Experiment"
                   mnemonic="M1+P"
                   style="push">
@@ -138,7 +139,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.disabled.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step_disabled.png"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.png"
                   label="Step Experiment"
                   style="push"
@@ -153,6 +154,7 @@
             <command
                   commandId="msi.gama.application.commands.StepBackSimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back_disabled.png"
                   label="Step Back Experiment"
                   style="push"
                   tooltip="Make One step back in the simulation">
@@ -175,6 +177,7 @@
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.reload.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.reload_disabled.png"
                   label="Reload Experiment"
                   mnemonic="M1+M2+R"
                   style="push">
@@ -208,6 +211,7 @@
             <command
                   commandId="msi.gama.application.commands.Cancel"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop_disabled.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the current experiment and dispose of it.">
@@ -389,6 +393,7 @@
                   <command
                         commandId="msi.gama.application.goto.modeling"
                         icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling.png"
+                         disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling_disabled.png"
                         label="Modeling"
                         style="push"
                         tooltip="Open modeling perspective">
@@ -404,6 +409,7 @@
                   <command
                         commandId="msi.gama.application.goto.simulation"
                         icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
+                        disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation_disabled.png"
                         label="Simulation"
                         style="push"
                         tooltip="Open simulation perspective">
@@ -455,7 +461,7 @@
             locationURI="toolbar:msi.gama.application.common.toolbar?after=msi.gama.application.goto.modeling">
             <command
                   commandId="msi.gama.application.goto.simulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.disabled.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation_disabled.png"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
                   label="Simulation perspective"
                   style="push"
@@ -471,7 +477,7 @@
             </command>
             <command
                   commandId="ummisco.gama.ui.experiment.dummy"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/spacer.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/spacer.png" 
                   style="push"
                   tooltip="  ">
             </command>
@@ -488,6 +494,7 @@
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run_disabled.png"
                   label="Run Experiment"
                   style="push"
                   tooltip="Run the currently opened experiment">
@@ -500,7 +507,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause_disabled.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause.png"
                   label="Pause Experiment"
                   style="push"
                   tooltip="Pause the currently opened experiment">
@@ -513,7 +521,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.disabled.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step_disabled.png"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.png"
                   label="Step Experiment"
                   style="push"
@@ -528,6 +536,7 @@
             <command
                   commandId="msi.gama.application.commands.StepBackSimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back_disabled.png"
                   label="Step Back"
                   style="push"
                   tooltip="Make One step back in the simulation">
@@ -591,6 +600,7 @@
             <command
                   commandId="msi.gama.application.commands.Cancel"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop_disabled.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the currently opened experiment and closes its perspective">

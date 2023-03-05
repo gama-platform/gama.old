@@ -38,9 +38,14 @@ import static org.eclipse.core.runtime.Platform.getBundle;
 import static ummisco.gama.dev.utils.DEBUG.PAD;
 import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
+import java.awt.image.RGBImageFilter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URI;
@@ -49,6 +54,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.gvt.renderer.ImageRenderer;
@@ -76,6 +83,9 @@ public class GamaIconsRenderer {
 	static {
 		DEBUG.ON();
 	}
+
+	/** The Constant DISABLED_SUFFIX. */
+	public static final String DISABLED_SUFFIX = "_disabled";
 
 	/** The svg factory. */
 	static final SAXSVGDocumentFactory SVG_FACTORY = new SAXSVGDocumentFactory(getXMLParserClassName());
@@ -113,31 +123,31 @@ public class GamaIconsRenderer {
 	 *
 	 * @throws Exception
 	 */
-	public static void buildIconsInMemory() throws Exception {
-		Map<String, SVGDocument> icons = gatherAllIcons();
-		DEBUG.TIMER_WITH_EXCEPTIONS(
-				DEBUG.PAD("> GAMA: Building " + icons.size() + " icons", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
-				() -> {
-					icons.forEach((iconPathAndName, svg) -> {
-						try {
-							Point dim = correctSizeOf(svg);
-							PNG_TRANSCODER.addTranscodingHint(KEY_HEIGHT, (float) dim.x);
-							PNG_TRANSCODER.addTranscodingHint(KEY_WIDTH, (float) dim.y);
-							TranscoderInput input = new TranscoderInput(svg);
-							input.setURI(svg.getDocumentURI());
-							// Define OutputStream Location
-							try (ByteArrayOutputStream output = new ByteArrayOutputStream(dim.x * dim.y * 4 + 1024)) {
-								PNG_TRANSCODER.transcode(input, new TranscoderOutput(output));
-								output.flush();
-								GamaIcons.create(iconPathAndName, new ByteArrayInputStream(output.toByteArray()));
-							}
-						} catch (Exception ex) {
-							DEBUG.OUT(
-									"Exception when building icon: " + iconPathAndName + " (" + ex.getMessage() + ")");
-						}
-					});
-				});
-	}
+	// public static void buildIconsInMemory() throws Exception {
+	// Map<String, SVGDocument> icons = gatherAllIcons();
+	// DEBUG.TIMER_WITH_EXCEPTIONS(
+	// DEBUG.PAD("> GAMA: Building " + icons.size() + " icons", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
+	// () -> {
+	// icons.forEach((iconPathAndName, svg) -> {
+	// try {
+	// Point dim = correctSizeOf(svg);
+	// PNG_TRANSCODER.addTranscodingHint(KEY_HEIGHT, (float) dim.x);
+	// PNG_TRANSCODER.addTranscodingHint(KEY_WIDTH, (float) dim.y);
+	// TranscoderInput input = new TranscoderInput(svg);
+	// input.setURI(svg.getDocumentURI());
+	// // Define OutputStream Location
+	// try (ByteArrayOutputStream output = new ByteArrayOutputStream(dim.x * dim.y * 4 + 1024)) {
+	// PNG_TRANSCODER.transcode(input, new TranscoderOutput(output));
+	// output.flush();
+	// GamaIcons.create(iconPathAndName, new ByteArrayInputStream(output.toByteArray()));
+	// }
+	// } catch (Exception ex) {
+	// DEBUG.OUT(
+	// "Exception when building icon: " + iconPathAndName + " (" + ex.getMessage() + ")");
+	// }
+	// });
+	// });
+	// }
 
 	/**
 	 * Builds the icons.
@@ -161,12 +171,20 @@ public class GamaIconsRenderer {
 								PNG_TRANSCODER.addTranscodingHint(KEY_WIDTH, dim.x * scale);
 								File outputFile = new File(outputPath.toString() + separator + iconPathAndName
 										+ (scale == 1f ? "" : "@" + ss + "x") + ".png");
+								File outputDisabledFile = new File(outputPath.toString() + separator + iconPathAndName
+										+ DISABLED_SUFFIX + (scale == 1f ? "" : "@" + ss + "x") + ".png");
 								outputFile.getParentFile().mkdirs();
 								try (FileOutputStream output = new FileOutputStream(outputFile.getAbsolutePath())) {
 									DEBUG.OUT("Exporting " + outputFile);
 									PNG_TRANSCODER.transcode(input, new TranscoderOutput(output));
 									output.flush();
 								}
+								BufferedImage image = ImageIO.read(outputFile);
+								DisabledFilter filter = new DisabledFilter();
+								ImageProducer prod = new FilteredImageSource(image.getSource(), filter);
+								Image gray = Toolkit.getDefaultToolkit().createImage(prod);
+								DEBUG.OUT("Exporting " + outputDisabledFile);
+								ImageIO.write(toBufferedImage(gray), "png", outputDisabledFile);
 							}
 						} catch (Exception ex) {
 							DEBUG.OUT(
@@ -175,6 +193,57 @@ public class GamaIconsRenderer {
 					});
 				});
 
+	}
+
+	/**
+	 * To buffered image.
+	 *
+	 * @param img
+	 *            the img
+	 * @return the buffered image
+	 */
+	public static BufferedImage toBufferedImage(final Image img) {
+		if (img instanceof BufferedImage) return (BufferedImage) img;
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+		return bimage;
+	}
+
+	/**
+	 * The Class DisabledFilter.
+	 */
+	private static class DisabledFilter extends RGBImageFilter {
+
+		/** The min. */
+		private final float min;
+
+		/** The factor. */
+		private final float factor;
+
+		/**
+		 * Instantiates a new disabled filter.
+		 *
+		 * @param min
+		 *            the min
+		 * @param max
+		 *            the max
+		 */
+		DisabledFilter() {
+			canFilterIndexColorModel = true;
+			this.min = 160;
+			this.factor = (255 - min) / 255f;
+		}
+
+		@Override
+		public int filterRGB(final int x, final int y, final int rgb) {
+			// Coefficients are from the sRGB color space:
+			int gray = Math.min(255,
+					(int) ((0.2125f * (rgb >> 16 & 0xFF) + 0.7154f * (rgb >> 8 & 0xFF) + 0.0721f * (rgb & 0xFF) + .5f)
+							* factor + min));
+			return rgb & 0xff000000 | gray << 16 | gray << 8 | gray << 0;
+		}
 	}
 
 	/**

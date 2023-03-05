@@ -26,4 +26,13 @@ public interface IIconProvider {
 	 */
 	ImageDescriptor desc(String name);
 
+	/**
+	 * Disabled.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the image descriptor
+	 */
+	ImageDescriptor disabled(String name);
+
 }

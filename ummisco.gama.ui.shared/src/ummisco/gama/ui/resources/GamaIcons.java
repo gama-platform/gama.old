@@ -15,7 +15,6 @@ import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -133,23 +132,23 @@ public class GamaIcons implements IIconProvider {
 			return null;
 		}
 	}
-
-	/**
-	 * Creates the.
-	 *
-	 * @param code
-	 *            the code
-	 * @param stream
-	 *            the stream
-	 * @return the gama icon
-	 */
-	public static GamaIcon create(final String code, final InputStream stream) {
-		try {
-			return ICON_CACHE.get(code, () -> new GamaIcon(code, stream));
-		} catch (ExecutionException e) {
-			return null;
-		}
-	}
+	//
+	// /**
+	// * Creates the.
+	// *
+	// * @param code
+	// * the code
+	// * @param stream
+	// * the stream
+	// * @return the gama icon
+	// */
+	// public static GamaIcon create(final String code, final InputStream stream) {
+	// try {
+	// return ICON_CACHE.get(code, () -> new GamaIcon(code, stream));
+	// } catch (ExecutionException e) {
+	// return null;
+	// }
+	// }
 
 	/**
 	 * Creates the color icon.
@@ -317,6 +316,12 @@ public class GamaIcons implements IIconProvider {
 	public ImageDescriptor desc(final String name) {
 		final GamaIcon icon = create(name);
 		return icon.descriptor();
+	}
+
+	@Override
+	public ImageDescriptor disabled(final String name) {
+		final GamaIcon icon = create(name);
+		return icon.disabledDescriptor();
 	}
 
 	/**

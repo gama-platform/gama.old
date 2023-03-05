@@ -120,9 +120,11 @@ public class OpenCloseActionProvider extends CommonActionProvider {
 
 		openProjectAction = new OpenResourceAction(sp);
 		openProjectAction.setImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_OPEN).descriptor());
+		openProjectAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_OPEN).disabledDescriptor());
 
 		closeProjectAction = new CloseResourceAction(sp);
 		closeProjectAction.setImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_CLOSE).descriptor());
+		closeProjectAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.PROJECT_CLOSE).disabledDescriptor());
 
 	}
 

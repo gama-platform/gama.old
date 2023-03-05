@@ -11,7 +11,7 @@
             name="Gama">
          <property
                name="windowImages"
-               value="branding_icons/icon16.png,branding_icons/icon32.png,branding_icons/icon48.png,branding_icons/icon64.png,branding_icons/icon128.png,branding_icons/icon256.png">
+               value="platform:/plugin/ummisco.gama.ui.shared/icons/window/icon16.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon32.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon48.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon64.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon128.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon256.png">
          </property> 
          <property
                name="aboutText"
@@ -19,7 +19,7 @@
          </property>
          <property
                name="aboutImage"
-               value="branding_icons/icon128.png">
+               value="platform:/plugin/ummisco.gama.ui.shared/icons/window/icon128.png">
          </property>
          <property
                name="startupProgressRect"
@@ -99,7 +99,7 @@
                   name="Gama (runtime)">
                <property
                      name="windowImages"
-                     value="branding_icons/icon16.png,branding_icons/icon32.png,branding_icons/icon48.png,branding_icons/icon64.png,branding_icons/icon128.png,branding_icons/icon256.png">
+                     value="platform:/plugin/ummisco.gama.ui.shared/icons/window/icon16.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon32.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon48.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon64.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon128.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon256.png">
                </property>
                <property
                      name="aboutText"

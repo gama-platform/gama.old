@@ -439,6 +439,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 			setText("Preferences");
 			setToolTipText("Open GAMA preferences");
 			setImageDescriptor(icons.desc("generic/menu.open.preferences"));
+			setDisabledImageDescriptor(icons.disabled("generic/menu.open.preferences"));
 			window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 		}
 
@@ -472,6 +473,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	public void createAboutAction(final IWorkbenchWindow aWindow) {
 		aboutAction = ActionFactory.ABOUT.create(aWindow);
 		aboutAction.setImageDescriptor(icons.desc("generic/menu.about"));
+		aboutAction.setDisabledImageDescriptor(icons.disabled("generic/menu.about"));
 		register(aboutAction);
 	}
 
@@ -489,6 +491,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 			setText("GAMA documentation");
 			setToolTipText("GAMA online documentation");
 			setImageDescriptor(icons.desc("generic/menu.help"));
+			setDisabledImageDescriptor(icons.disabled("generic/menu.help"));
 			window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
 		}
 
@@ -613,8 +616,8 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the cut item
 	 */
 	private IContributionItem getCutItem() {
-		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(), "generic/menu.cut", null,
-				WorkbenchMessages.Workbench_cut, WorkbenchMessages.Workbench_cutToolTip, null);
+		return getItem(ActionFactory.CUT.getId(), ActionFactory.CUT.getCommandId(), "generic/menu.cut",
+				"generic/menu.cut", WorkbenchMessages.Workbench_cut, WorkbenchMessages.Workbench_cutToolTip, null);
 	}
 
 	/**
@@ -623,8 +626,8 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the copy item
 	 */
 	private IContributionItem getCopyItem() {
-		return getItem(ActionFactory.COPY.getId(), ActionFactory.COPY.getCommandId(), "generic/menu.copy", null,
-				WorkbenchMessages.Workbench_copy, WorkbenchMessages.Workbench_copyToolTip, null);
+		return getItem(ActionFactory.COPY.getId(), ActionFactory.COPY.getCommandId(), "generic/menu.copy",
+				"generic/menu.copy", WorkbenchMessages.Workbench_copy, WorkbenchMessages.Workbench_copyToolTip, null);
 	}
 
 	/**
@@ -633,8 +636,9 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the paste item
 	 */
 	private IContributionItem getPasteItem() {
-		return getItem(ActionFactory.PASTE.getId(), ActionFactory.PASTE.getCommandId(), "generic/menu.paste", null,
-				WorkbenchMessages.Workbench_paste, WorkbenchMessages.Workbench_pasteToolTip, null);
+		return getItem(ActionFactory.PASTE.getId(), ActionFactory.PASTE.getCommandId(), "generic/menu.paste",
+				"generic/menu.paste", WorkbenchMessages.Workbench_paste, WorkbenchMessages.Workbench_pasteToolTip,
+				null);
 	}
 
 	/**
@@ -643,8 +647,9 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the prints the item
 	 */
 	private IContributionItem getPrintItem() {
-		return getItem(ActionFactory.PRINT.getId(), ActionFactory.PRINT.getCommandId(), "generic/menu.print", null,
-				WorkbenchMessages.Workbench_print, WorkbenchMessages.Workbench_printToolTip, null);
+		return getItem(ActionFactory.PRINT.getId(), ActionFactory.PRINT.getCommandId(), "generic/menu.print",
+				"generic/menu.print", WorkbenchMessages.Workbench_print, WorkbenchMessages.Workbench_printToolTip,
+				null);
 	}
 
 	/**
@@ -654,7 +659,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 */
 	private IContributionItem getSelectAllItem() {
 		return getItem(ActionFactory.SELECT_ALL.getId(), ActionFactory.SELECT_ALL.getCommandId(),
-				"generic/action.selectall", null, WorkbenchMessages.Workbench_selectAll,
+				"generic/action.selectall", "generic/action.selectall", WorkbenchMessages.Workbench_selectAll,
 				WorkbenchMessages.Workbench_selectAllToolTip, null);
 	}
 
@@ -674,8 +679,8 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the delete item
 	 */
 	private IContributionItem getDeleteItem() {
-		return getItem(ActionFactory.DELETE.getId(), ActionFactory.DELETE.getCommandId(), "generic/menu.delete", null,
-				WorkbenchMessages.Workbench_delete, WorkbenchMessages.Workbench_deleteToolTip,
+		return getItem(ActionFactory.DELETE.getId(), ActionFactory.DELETE.getCommandId(), "generic/menu.delete",
+				"generic/menu.delete", WorkbenchMessages.Workbench_delete, WorkbenchMessages.Workbench_deleteToolTip,
 				IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
 	}
 
@@ -691,7 +696,8 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 */
 	private IContributionItem getRefreshItem() {
 		return getItem(ActionFactory.REFRESH.getId(), ActionFactory.REFRESH.getCommandId(), "navigator/file.refresh",
-				null, WorkbenchMessages.Workbench_refresh, WorkbenchMessages.Workbench_refreshToolTip, null);
+				"navigator/file.refresh", WorkbenchMessages.Workbench_refresh,
+				WorkbenchMessages.Workbench_refreshToolTip, null);
 	}
 
 	/**
@@ -701,7 +707,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 */
 	private IContributionItem getPropertiesItem() {
 		return getItem(ActionFactory.PROPERTIES.getId(), ActionFactory.PROPERTIES.getCommandId(),
-				"generic/action.properties", null, WorkbenchMessages.Workbench_properties,
+				"generic/action.properties", "generic/action.properties", WorkbenchMessages.Workbench_properties,
 				WorkbenchMessages.Workbench_propertiesToolTip, null);
 	}
 
@@ -711,8 +717,8 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the move item
 	 */
 	private IContributionItem getMoveItem() {
-		return getItem(ActionFactory.MOVE.getId(), ActionFactory.MOVE.getCommandId(), "navigator/file.move", null,
-				WorkbenchMessages.Workbench_move, WorkbenchMessages.Workbench_moveToolTip, null);
+		return getItem(ActionFactory.MOVE.getId(), ActionFactory.MOVE.getCommandId(), "navigator/file.move",
+				"navigator/file.move", WorkbenchMessages.Workbench_move, WorkbenchMessages.Workbench_moveToolTip, null);
 	}
 
 	/**
@@ -721,8 +727,9 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * @return the rename item
 	 */
 	private IContributionItem getRenameItem() {
-		return getItem(ActionFactory.RENAME.getId(), ActionFactory.RENAME.getCommandId(), "navigator/file.rename", null,
-				WorkbenchMessages.Workbench_rename, WorkbenchMessages.Workbench_renameToolTip, null);
+		return getItem(ActionFactory.RENAME.getId(), ActionFactory.RENAME.getCommandId(), "navigator/file.rename",
+				"navigator/file.rename", WorkbenchMessages.Workbench_rename, WorkbenchMessages.Workbench_renameToolTip,
+				null);
 	}
 
 	/**
@@ -751,8 +758,8 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 		acms.map(actionId, commandId);
 
 		final CommandContributionItemParameter commandParm = new CommandContributionItemParameter(getWindow(), actionId,
-				commandId, null, image != null ? icons.desc(image) : null, null, null, label, null, tooltip,
-				CommandContributionItem.STYLE_PUSH, null, false);
+				commandId, null, image != null ? icons.desc(image) : null, image != null ? icons.disabled(image) : null,
+				null, label, null, tooltip, CommandContributionItem.STYLE_PUSH, null, false);
 		return new CommandContributionItem(commandParm);
 	}
 }

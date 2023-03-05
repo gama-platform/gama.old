@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,7 +23,6 @@ import org.eclipse.jface.resource.JFaceResources;
 // import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Rectangle;
 
 import ummisco.gama.dev.utils.DEBUG;
@@ -42,10 +40,10 @@ public class GamaIcon {
 	final String code;
 
 	/** The url. */
-	final URL url;
+	final URL url, disabledUrl;
 
 	/** The descriptor. */
-	final ImageDescriptor descriptor;
+	final ImageDescriptor descriptor, disabledDescriptor;
 
 	/**
 	 * Constructor for images loaded from a plugin
@@ -60,7 +58,9 @@ public class GamaIcon {
 	public GamaIcon(final String c) {
 		code = c;
 		url = computeURL(code);
+		disabledUrl = computeURL(code + GamaIconsRenderer.DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromURL(url);
+		disabledDescriptor = ImageDescriptor.createFromURL(disabledUrl);
 		image();
 	}
 
@@ -87,12 +87,12 @@ public class GamaIcon {
 	 * @param stream
 	 *            the stream
 	 */
-	public GamaIcon(final String path, final InputStream stream) {
-		code = path;
-		url = computeURL(code);
-		descriptor = ImageDescriptor.createFromImageData(new ImageLoader().load(stream)[0]);
-		image();
-	}
+	// public GamaIcon(final String path, final InputStream stream) {
+	// code = path;
+	// url = computeURL(code);
+	// descriptor = ImageDescriptor.createFromImageData(new ImageLoader().load(stream)[0]);
+	// image();
+	// }
 
 	/**
 	 * Instantiates a new gama icon.
@@ -105,7 +105,9 @@ public class GamaIcon {
 	public GamaIcon(final String path, final Image im) {
 		code = path;
 		url = computeURL(code);
+		disabledUrl = computeURL(code + GamaIconsRenderer.DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromImage(im);
+		disabledDescriptor = ImageDescriptor.createFromImage(disabledVersionOf(im));
 		image();
 	}
 
@@ -139,7 +141,7 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image image() {
-		return image(url.toString(), () -> descriptor().createImage());
+		return image(url.toString(), () -> descriptor.createImage());
 	}
 
 	/**
@@ -148,7 +150,7 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image disabled() {
-		return image(code + "_disabled", () -> disabledVersionOf(image()));
+		return image(disabledUrl.toString(), () -> disabledDescriptor.createImage());
 	}
 
 	/**
@@ -161,7 +163,7 @@ public class GamaIcon {
 	}
 
 	/**
-	 * Disabled version of.
+	 * Disabled version of image. Used only for internally created images
 	 *
 	 * @param im
 	 *            the im
@@ -212,5 +214,14 @@ public class GamaIcon {
 	 * @return the code
 	 */
 	public String getCode() { return code; }
+
+	/**
+	 * Disabled descriptor.
+	 *
+	 * @return the image descriptor
+	 */
+	public ImageDescriptor disabledDescriptor() {
+		return disabledDescriptor;
+	}
 
 }

@@ -34,6 +34,7 @@ public class GamlSortOutlineContribution extends SortOutlineContribution {
 	protected void configureAction(final Action action) {
 		super.configureAction(action);
 		action.setImageDescriptor(GamaIcons.create(IGamaIcons.LEXICAL_SORT).descriptor());
+		action.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.LEXICAL_SORT).disabledDescriptor());
 	}
 
 }

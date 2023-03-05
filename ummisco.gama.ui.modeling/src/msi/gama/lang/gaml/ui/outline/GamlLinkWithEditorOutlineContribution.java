@@ -34,6 +34,8 @@ public class GamlLinkWithEditorOutlineContribution extends LinkWithEditorOutline
 	protected void configureAction(final Action action) {
 		super.configureAction(action);
 		action.setImageDescriptor(GamaIcons.create(IGamaIcons.EDITOR_LINK).descriptor());
+		action.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.EDITOR_LINK).disabledDescriptor());
+
 	}
 
 }

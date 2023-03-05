@@ -57,11 +57,15 @@ public class RefactorActionProvider extends CommonActionProvider {
 		final IShellProvider sp = () -> shell;
 		renameAction = new RenameResourceAction(sp);
 		renameAction.setImageDescriptor(GamaIcons.create(IGamaIcons.FILE_RENAME).descriptor());
+		renameAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.FILE_RENAME).disabledDescriptor());
+
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 		historyAction = new ShowLocalHistory(sp);
 		historyAction.setImageDescriptor(GamaIcons.create(IGamaIcons.LOCAL_HISTORY).descriptor());
+		historyAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.LOCAL_HISTORY).disabledDescriptor());
 		compareAction = new CompareWithEachOtherAction(sp);
 		compareAction.setImageDescriptor(GamaIcons.create(IGamaIcons.LAYOUT_HORIZONTAL).descriptor());
+		compareAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.LAYOUT_HORIZONTAL).disabledDescriptor());
 	}
 
 	@Override

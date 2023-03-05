@@ -67,9 +67,11 @@ public class RefreshActionProvider extends CommonActionProvider {
 		final IShellProvider sp = () -> shell;
 		refreshAction = new RefreshAction(sp);
 		refreshAction.setImageDescriptor(GamaIcons.create(IGamaIcons.FILE_REFRESH).descriptor());
+		refreshAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.FILE_REFRESH).disabledDescriptor());
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 		runAllTestsAction = new RunAllTestsAction(sp, "Run all tests");
 		runAllTestsAction.setImageDescriptor(GamaIcons.create(IGamaIcons.TEST_RUN).descriptor());
+		runAllTestsAction.setDisabledImageDescriptor(GamaIcons.create(IGamaIcons.TEST_RUN).disabledDescriptor());
 
 	}
 
