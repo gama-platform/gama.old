@@ -100,7 +100,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	public static void execute(final Object layout) {
 		// collectAndPrepareDisplayViews();
 		if (layout instanceof Integer i) {
-			new LayoutTreeConverter();
 			execute(LayoutTreeConverter.convert(i));
 		} else if (layout instanceof GamaTree t) {
 			execute(t);
