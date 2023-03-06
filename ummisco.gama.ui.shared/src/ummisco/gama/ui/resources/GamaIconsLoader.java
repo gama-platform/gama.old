@@ -49,6 +49,7 @@ import java.awt.image.RGBImageFilter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -67,6 +68,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.graphics.Point;
 import org.w3c.dom.Element;
@@ -334,6 +336,22 @@ public class GamaIconsLoader {
 					() -> files.forEach(n -> GamaIcon.named(n.replace(".png", "")).image()));
 		} catch (IOException | URISyntaxException e) {
 			DEBUG.ERR("Error when loading GAMA icons ", e);
+		}
+	}
+
+	/**
+	 * Compute URL.
+	 *
+	 * @return the url
+	 */
+	public static URL computeURL(final String code) {
+		IPath uriPath =
+				new org.eclipse.core.runtime.Path("/plugin").append(PLUGIN_ID).append(DEFAULT_PATH + code + ".png");
+		try {
+			URI uri = new URI("platform", null, uriPath.toString(), null);
+			return uri.toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
+			return computeURL(GamaIcon.MISSING);
 		}
 	}
 

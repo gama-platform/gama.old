@@ -10,20 +10,14 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-// import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageDataProvider;
 
@@ -45,6 +39,9 @@ public class GamaIcon {
 	/** The Constant SIZER_PREFIX. */
 	static final String SIZER_PREFIX = "sizer_";
 
+	/** The Constant MISSING. */
+	static final String MISSING = "gaml/_unknown";
+
 	/**
 	 * Returns the icon named after the path (eg "templates/square.template")
 	 *
@@ -54,10 +51,9 @@ public class GamaIcon {
 	 */
 	public static GamaIcon named(final String s) {
 		try {
-			return ICON_CACHE.get(s, () -> new GamaIcon(s));
-		} catch (ExecutionException e) {
-			return null;
-		}
+			if (s != null) return ICON_CACHE.get(s, () -> new GamaIcon(s));
+		} catch (ExecutionException e) {}
+		return named(MISSING);
 	}
 
 	/**
@@ -147,27 +143,11 @@ public class GamaIcon {
 	 */
 	private GamaIcon(final String c) {
 		code = c;
-		url = computeURL(code);
-		disabledUrl = computeURL(code + GamaIconsLoader.DISABLED_SUFFIX);
+		url = GamaIconsLoader.computeURL(code);
+		disabledUrl = GamaIconsLoader.computeURL(code + GamaIconsLoader.DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromURL(url);
 		disabledDescriptor = ImageDescriptor.createFromURL(disabledUrl);
 		image();
-	}
-
-	/**
-	 * Compute URL.
-	 *
-	 * @return the url
-	 */
-	private URL computeURL(final String code) {
-		IPath uriPath = new Path("/plugin").append(GamaIconsLoader.PLUGIN_ID)
-				.append(GamaIconsLoader.DEFAULT_PATH + code + ".png");
-		try {
-			URI uri = new URI("platform", null, uriPath.toString(), null);
-			return uri.toURL();
-		} catch (MalformedURLException | URISyntaxException e) {
-			return null;
-		}
 	}
 
 	/**
@@ -180,7 +160,7 @@ public class GamaIcon {
 	 */
 	private GamaIcon(final String path, final Image im) {
 		code = path;
-		url = computeURL(code);
+		url = GamaIconsLoader.computeURL(code);
 		disabledUrl = url;
 		descriptor = ImageDescriptor.createFromImage(im);
 		disabledDescriptor = descriptor;
@@ -206,7 +186,9 @@ public class GamaIcon {
 		if (image == null) {
 			try {
 				JFaceResources.getImageRegistry().put(key, imageCreator.call());
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				return named(MISSING).image();
+			}
 		}
 		return JFaceResources.getImage(key);
 	}
