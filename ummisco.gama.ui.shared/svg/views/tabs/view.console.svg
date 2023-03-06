@@ -1,15 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-912 -3330 16 16" width="16" height="16">
-  <defs/>
-  <g id="ICONES" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none" fill-opacity="1">
-    <title>ICONES</title>
-    <g id="ICONES_Calque_1">
-      <title>Calque 1</title>
-      <g id="Graphic_2961">
-        <title>views/tabs/view.console</title>
-        <path d="M -904 -3330 C -899.5815 -3330 -896 -3326.8946 -896 -3323.0634 C -896 -3319.2323 -899.5815 -3316.127 -904 -3316.127 C -904.4245 -3316.127 -904.841 -3316.1557 -905.2475 -3316.211 C -906.9655 -3314.3772 -909.017 -3314.0486 -911 -3314 L -911 -3314.4487 C -909.929 -3315.0085 -909 -3316.0287 -909 -3317.194 C -909 -3317.3568 -909.012 -3317.5163 -909.034 -3317.6726 C -910.843 -3318.944 -912 -3320.8864 -912 -3323.0634 C -912 -3326.8946 -908.4185 -3330 -904 -3330 Z" fill="#5c76a1"/>
-      </g>
-    </g>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-912 -3330 16 16" width="16" height="16"><g fill="none"><path d="M-904-3330c4.418 0 8 3.105 8 6.937 0 3.83-3.582 6.936-8 6.936-.424 0-.841-.029-1.247-.084-1.719 1.834-3.77 2.162-5.753 2.211v-.449c1.071-.56 2-1.58 2-2.745 0-.163-.012-.322-.034-.479-1.809-1.271-2.966-3.213-2.966-5.39 0-3.832 3.582-6.937 8-6.937Z" fill="#5c76a1"/></g></svg>

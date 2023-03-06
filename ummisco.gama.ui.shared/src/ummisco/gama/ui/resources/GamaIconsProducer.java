@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GamaIconsLoader.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * GamaIconsProducer.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -60,6 +60,8 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGDocument;
 
 /**
@@ -147,7 +149,7 @@ public class GamaIconsProducer {
 	public static int produceIcons(final Path inputPath, final Path outputPath) {
 		int[] counter = { 0 };
 		try {
-			Files.walk(inputPath).filter(n -> n.toString().endsWith(".svg")).forEach(p -> {
+			Files.walk(inputPath).filter(n -> n.toString().endsWith(".svg")).sorted().forEach(p -> {
 				String iconPathAndName = inputPath.relativize(p).toString().replace(".svg", "");
 				try {
 					SVGDocument svg = SVG_FACTORY.createSVGDocument(p.toUri().toURL().toString());
@@ -162,7 +164,6 @@ public class GamaIconsProducer {
 						File outputDisabledFile = buildOutputFile(outputPath, iconPathAndName + DISABLED_SUFFIX, ss);
 						outputFile.getParentFile().mkdirs();
 						try (FileOutputStream output = new FileOutputStream(outputFile.getAbsolutePath())) {
-							// System.out.println("Exporting " + outputFile);
 							PNG_TRANSCODER.transcode(input, new TranscoderOutput(output));
 							output.flush();
 						}
@@ -170,8 +171,6 @@ public class GamaIconsProducer {
 						BufferedImage image = ImageIO.read(outputFile);
 						ImageProducer prod = new FilteredImageSource(image.getSource(), FILTER);
 						Image gray = Toolkit.getDefaultToolkit().createImage(prod);
-						// System.out.println("Exporting " + outputDisabledFile);
-
 						ImageIO.write(toBufferedImage(gray), "png", outputDisabledFile);
 						counter[0]++;
 					}
@@ -264,6 +263,14 @@ public class GamaIconsProducer {
 	 */
 	private static Dimension correctSizeOf(final String name, final SVGDocument svg) {
 		Element node = svg.getDocumentElement();
+		NodeList list = svg.getElementsByTagName("g");
+		for (int i = 0; i < list.getLength(); i++) {
+			Node n = list.item(i);
+			Node id = n.getAttributes().getNamedItem("id");
+			if (id != null && "ICONES".equals(id.getTextContent())) {
+				out.println("==> WARNING: " + name + " can be optimized. ");
+			}
+		}
 		String nativeWidthStr = node.getAttribute("width");
 		String nativeHeightStr = node.getAttribute("height");
 		String nativeViewBoxX = "0", nativeViewBoxY = "0";
@@ -283,13 +290,17 @@ public class GamaIconsProducer {
 		nativeHeightStr = stripOffPx(nativeHeightStr);
 		float floatWidth = Float.parseFloat(nativeWidthStr);
 		float floatHeight = Float.parseFloat(nativeHeightStr);
-		if (floatWidth != (int) floatWidth) { out.println("WARNING: width of " + name + " is " + floatWidth); }
-		if (floatHeight != (int) floatHeight) { out.println("WARNING: height of " + name + " is " + floatHeight); }
+		if (floatWidth != (int) floatWidth) {
+			out.println("==> WARNING: width of " + name + " is " + floatWidth + " (its height is " + floatHeight + ")");
+		} else if (floatHeight != (int) floatHeight) {
+			out.println("==> WARNING: height of " + name + " is " + floatHeight + " (its width is " + floatWidth + ")");
+		}
 		nativeWidth = Math.round(floatWidth);
 		nativeHeight = Math.round(floatHeight);
 		node.setAttribute("width", String.valueOf(nativeWidth));
 		node.setAttribute("height", String.valueOf(nativeHeight));
 		node.setAttribute("viewBox", nativeViewBoxX + " " + nativeViewBoxY + " " + nativeWidth + " " + nativeHeight);
+		out.println("Processing " + name + " in " + nativeWidth + "x" + nativeHeight);
 		return new Dimension(nativeWidth, nativeHeight);
 	}
 

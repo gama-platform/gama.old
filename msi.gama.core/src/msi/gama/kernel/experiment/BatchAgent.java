@@ -457,7 +457,7 @@ public class BatchAgent extends ExperimentAgent {
 				repeatIndex++;
 				if (repeatIndex == getSeeds().length || dead) { break; }
 			}
-			int i = 0;
+			String suffix = "";
 			while (pop.hasScheduledSimulations() && !dead) {
 				// We step all the simulations
 				pop.step(getScope());
@@ -483,12 +483,12 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 				if (!dead) {
-					getScope().getGui().getStatus().setStatus(
-							getScope(), "Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
-									+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
-							"overlays/small.batch" + i / 5);
+					getScope().getGui().getStatus().setStatus(getScope(),
+							"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length + " simulations (using "
+									+ pop.getNumberOfActiveThreads() + " threads)",
+							"overlays/small.exp.batch.white" + suffix);
 				}
-				if (++i == 20) { i = 0; }
+				suffix = suffix == "" ? "2" : "";
 				// We then verify that the front scheduler has not been paused
 				while (getSpecies().getController().isPaused() && !dead) {
 					try {
