@@ -10,10 +10,17 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
@@ -41,6 +48,19 @@ public class GamaIcon {
 
 	/** The Constant MISSING. */
 	static final String MISSING = "gaml/_unknown";
+
+	/**
+	 * Preload icons.
+	 *
+	 * @param bundle
+	 *            the bundle
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	public static void preloadFrom(final Path path) throws IOException {
+		Files.walk(path).map(f -> path.relativize(f).toString()).filter(n -> n.endsWith(".png") && !n.contains("@"))
+				.forEach(f -> GamaIcon.named(f.replace(".png", "")));
+	}
 
 	/**
 	 * Returns the icon named after the path (eg "templates/square.template")
@@ -143,8 +163,8 @@ public class GamaIcon {
 	 */
 	private GamaIcon(final String c) {
 		code = c;
-		url = GamaIconsLoader.computeURL(code);
-		disabledUrl = GamaIconsLoader.computeURL(code + GamaIconsLoader.DISABLED_SUFFIX);
+		url = computeURL(code);
+		disabledUrl = computeURL(code + GamaIconsProducer.DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromURL(url);
 		disabledDescriptor = ImageDescriptor.createFromURL(disabledUrl);
 		image();
@@ -160,7 +180,7 @@ public class GamaIcon {
 	 */
 	private GamaIcon(final String path, final Image im) {
 		code = path;
-		url = GamaIconsLoader.computeURL(code);
+		url = computeURL(code);
 		disabledUrl = url;
 		descriptor = ImageDescriptor.createFromImage(im);
 		disabledDescriptor = descriptor;
@@ -251,6 +271,22 @@ public class GamaIcon {
 	 */
 	public ImageDescriptor disabledDescriptor() {
 		return disabledDescriptor;
+	}
+
+	/**
+	 * Compute URL.
+	 *
+	 * @return the url
+	 */
+	public static URL computeURL(final String code) {
+		IPath uriPath = new org.eclipse.core.runtime.Path("/plugin").append(GamaIconsProducer.PLUGIN_ID)
+				.append(GamaIconsProducer.DEFAULT_PATH + code + ".png");
+		try {
+			URI uri = new URI("platform", null, uriPath.toString(), null);
+			return uri.toURL();
+		} catch (MalformedURLException | URISyntaxException e) {
+			return computeURL(GamaIcon.MISSING);
+		}
 	}
 
 }
