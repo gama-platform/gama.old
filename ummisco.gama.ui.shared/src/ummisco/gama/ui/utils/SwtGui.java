@@ -32,6 +32,7 @@ import org.eclipse.ui.services.ISourceProviderService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.SimulationPerspectiveDescriptor;
+import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -666,6 +667,16 @@ public class SwtGui implements IGui {
 	public boolean isHiDPI() {
 		int zoom = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getPrimaryMonitor().getZoom());
 		return zoom > 100;
+	}
+
+	@Override
+	public void askBeforeRebuildingWorkspace(final Boolean v) {
+		WorkspacePreferences.askBeforeRebuildingWorkspace(v);
+	}
+
+	@Override
+	public void askBeforeUsingOutdatedWorkspace(final Boolean v) {
+		WorkspacePreferences.askBeforeUsingOutdatedWorkspace(v);
 	}
 
 }

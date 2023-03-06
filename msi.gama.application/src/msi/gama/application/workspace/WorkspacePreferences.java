@@ -3,7 +3,7 @@
  * WorkspacePreferences.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
@@ -183,21 +184,15 @@ public class WorkspacePreferences {
 			final URI resolvedURI = new URI(resolvedFileURL.getProtocol(), resolvedFileURL.getPath(), null).normalize();
 			final File modelsRep = new File(resolvedURI);
 
-			// loading file from URL Path is not a good idea. There are some bugs
-			// File modelsRep = new File(urlRep.getPath());
-
 			final long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
-			// DEBUG.OUT(">GAMA version " + Platform.getProduct().getDefiningBundle().getVersion().toString()
-			// + " loading...");
-			// DEBUG.OUT(">GAMA models library version: " + gamaStamp);
 
 			LocalDateTime localDateTime = Files.getLastModifiedTime(modelsRep.toPath()).toInstant()
 					.atZone(ZoneId.systemDefault()).toLocalDateTime();
 
 			String date = localDateTime.format(DateTimeFormatter.ofPattern("MMM dd,yyyy HH:mm:ss"));
 
-			DEBUG.LOG(DEBUG.PAD("> GAMA: models library ",55, ' ') + DEBUG.PAD(" modified", 15, '_') + " " + date);
+			DEBUG.LOG(DEBUG.PAD("> GAMA: models library ", 55, ' ') + DEBUG.PAD(" modified", 15, '_') + " " + date);
 		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -244,27 +239,20 @@ public class WorkspacePreferences {
 		}
 
 		if (!Files.isReadable(workspaceDirectoryPath)) return "The selected directory is not readable";
-		// if (!f.canRead()) return "The selected directory is not readable";
 
 		if (!Files.isDirectory(workspaceDirectoryPath)) return "The selected path is not a directory";
-		// if (!f.isDirectory()) return "The selected path is not a directory";
 
 		testWorkspaceSanity(workspaceDirectoryPath);
 
-		// final File wsTest = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
 		if (fromDialog) {
 			if (Files.notExists(workspaceIdentifierFilePath)) {
-				// if (!wsTest.exists()) {
 				final boolean create = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
 						"New Workspace", "The directory '" + workspaceIdentifierFilePath.toAbsolutePath()
 								+ "' exists but is not identified as a GAMA workspace. \n\nWould you like to use it anyway ?");
 				if (!create) return "Please select a directory for your workspace";
 				try {
 					Files.createDirectories(workspaceDirectoryPath);
-					// f.mkdirs();
-					// final File wsDot = new File(workspaceLocation + File.separator + WORKSPACE_IDENTIFIER);
 					Files.createFile(workspaceIdentifierFilePath);
-					// wsDot.createNewFile();
 				} catch (final Exception err) {
 					return "Error creating directories, please check folder permissions";
 				}
@@ -313,29 +301,38 @@ public class WorkspacePreferences {
 	 */
 	public static boolean testWorkspaceSanity(final Path workspacePath) {
 
-		return DEBUG.TIMER(DEBUG.PAD("> GAMA: checking workspace ",55, ' ') + DEBUG.PAD(" done in", 15, '_'), () -> {
+		return DEBUG.TIMER(DEBUG.PAD("> GAMA: checking workspace ", 55, ' ') + DEBUG.PAD(" done in", 15, '_'), () -> {
 			File workspace = workspacePath.toFile();
-			File[] files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
-			if (files == null || files.length == 0) return true;
-			final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
-			if (logs != null) { for (final File log : logs) { log.delete(); } }
-			files = files[0].listFiles((FileFilter) file -> ".plugins".equals(file.getName()));
-			if (files == null) return false;
-			if (files.length == 0) return true;
-			files = files[0].listFiles((FileFilter) file -> "org.eclipse.core.resources".equals(file.getName()));
-			if (files == null) return false;
-			if (files.length == 0) return true;
-			files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
-			if (files == null) return false;
-			DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));
-			if (files.length == 0) return true;
-			boolean rebuild = true;
-			if (askBeforeRebuildingWorkspace()) {
-				rebuild = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
-						"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
+			// In light of issue #3445, allows a .rebuild file to trigger the rebuild
+			File[] files = workspace.listFiles((FileFilter) file -> ".rebuild".equals(file.getName()));
+			boolean rebuild = false;
+			if (files != null && files.length == 1) {
+				if (files[0].exists()) { files[0].delete(); }
+				rebuild = true;
+			}
+			if (!rebuild) {
+				files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
+				if (files == null || files.length == 0) return true;
+				final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
+				if (logs != null) { for (final File log : logs) { log.delete(); } }
+				files = files[0].listFiles((FileFilter) file -> ".plugins".equals(file.getName()));
+				if (files == null) return false;
+				if (files.length == 0) return true;
+				files = files[0].listFiles((FileFilter) file -> "org.eclipse.core.resources".equals(file.getName()));
+				if (files == null) return false;
+				if (files.length == 0) return true;
+				files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
+				if (files == null) return false;
+				// DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));>
+				if (files.length == 0) return true;
+
+				if (askBeforeRebuildingWorkspace()) {
+					rebuild = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
+							"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
+				}
 			}
 			if (rebuild) {
-				for (final File file : files) { if (file.exists()) { file.delete(); } }
+				if (files != null) { for (final File file : files) { if (file.exists()) { file.delete(); } } }
 				Application.clearWorkspace(true);
 				return false;
 			}
@@ -351,6 +348,19 @@ public class WorkspacePreferences {
 	public static String getModelIdentifier() {
 		if (MODEL_IDENTIFIER == null) { MODEL_IDENTIFIER = getCurrentGamaStampString(); }
 		return MODEL_IDENTIFIER;
+	}
+
+	/**
+	 * Force workspace rebuild.
+	 */
+	public static void forceWorkspaceRebuild() {
+		File f = new File(Platform.getInstanceLocation().getURL().getPath() + File.separator + ".rebuild");
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

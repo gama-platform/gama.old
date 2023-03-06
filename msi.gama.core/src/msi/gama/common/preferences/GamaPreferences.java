@@ -91,11 +91,12 @@ public class GamaPreferences {
 		/** The Constant CORE_ASK_REBUILD. */
 		public static final Pref<Boolean> CORE_ASK_REBUILD =
 				create("pref_ask_rebuild", "Ask before rebuilding a corrupted workspace", true, IType.BOOL, false)
-						.in(NAME, STARTUP);
+						.in(NAME, STARTUP).onChange(v -> GAMA.getGui().askBeforeRebuildingWorkspace(v));
 
 		/** The Constant CORE_ASK_OUTDATED. */
-		public static final Pref<Boolean> CORE_ASK_OUTDATED = create("pref_ask_outdated",
-				"Ask before using a workspace created by another version", true, IType.BOOL, false).in(NAME, STARTUP);
+		public static final Pref<Boolean> CORE_ASK_OUTDATED =
+				create("pref_ask_outdated", "Ask before using a workspace created by another version", true, IType.BOOL,
+						false).in(NAME, STARTUP).onChange(v -> GAMA.getGui().askBeforeUsingOutdatedWorkspace(v));
 
 		/** The Constant CORE_ASK_REBUILD. */
 		public static final Pref<Boolean> CORE_STARTUP_MODEL =
