@@ -12,13 +12,13 @@ model Issue3649
 global {
 	
 	abort {
-		// This sentence should be written whatever the type of experiment used (GUI or BATCH)
+		// This sentence should be written whatever the type of experiment used (GUI or Batch)
 		write "The simulation is aborted";
 	}
 }
 
 
-experiment 'GUI' {
+experiment 'Verify me in GUI' {
 	init {
 		ask simulations {
 			do die;
@@ -26,4 +26,4 @@ experiment 'GUI' {
 	}
 }
 
-experiment 'BATCH' type: batch until: cycle > 1 autorun: true keep_simulations: false;
+experiment 'Verify me in Batch' type: batch until: cycle > 1 autorun: true keep_simulations: false;

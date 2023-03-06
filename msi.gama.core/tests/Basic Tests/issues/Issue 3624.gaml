@@ -1,6 +1,7 @@
 /**
 * Name: Issue3624
 * A simple model to verify that issue #3624 has been addressed  
+* See https://github.com/gama-platform/gama/issues/3624
 * Author: A. Drogoul
 * Tags: 
 */
@@ -16,4 +17,4 @@ global {
 	}
 }
 
-experiment "Run me"; 
+experiment "Verify me"; 
