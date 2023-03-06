@@ -3,7 +3,7 @@
 * Model created to test Issue #3649
 * See https://github.com/gama-platform/gama/issues/3649
 * Author: A. Drogoul
-* Tags: batch abort
+* Tags: batch, abort
 */
 
 

@@ -2,7 +2,7 @@
 * Name: Exploration
 * Based on the internal empty template. 
 * Author: kevinchapuis
-* Tags: 
+* Tags: batch
 */
 
 

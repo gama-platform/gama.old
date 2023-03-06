@@ -3,7 +3,7 @@
 * A simple model to verify that issue #3624 has been addressed  
 * See https://github.com/gama-platform/gama/issues/3624
 * Author: A. Drogoul
-* Tags: 
+* Tags: assert, test
 */
 
 
