@@ -182,15 +182,15 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	private Image image(final String key, final Callable<Image> imageCreator) {
-		final Image image = JFaceResources.getImage(key);
+		Image image = JFaceResources.getImage(key);
 		if (image == null) {
 			try {
-				JFaceResources.getImageRegistry().put(key, imageCreator.call());
-			} catch (Exception e) {
-				return named(MISSING).image();
-			}
+				image = imageCreator.call();
+			} catch (Exception e) {}
+			if (image == null) { image = named(MISSING).image(); }
+			JFaceResources.getImageRegistry().put(key, image);
 		}
-		return JFaceResources.getImage(key);
+		return image;
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image image() {
-		return image(url.toString(), () -> descriptor.createImage());
+		return image(url.toString(), () -> descriptor.createImage(false));
 	}
 
 	/**
@@ -208,7 +208,7 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image disabled() {
-		return image(disabledUrl.toString(), () -> disabledDescriptor.createImage());
+		return image(disabledUrl.toString(), () -> disabledDescriptor.createImage(false));
 	}
 
 	/**
