@@ -22,7 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 
 import ummisco.gama.ui.resources.GamaIcon;
-import ummisco.gama.ui.resources.GamaIconsProducer;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class GamlImageHelper.
@@ -48,8 +48,8 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	 * @return true, if successful
 	 */
 	public boolean exist(final String name) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(GamaIconsProducer.PLUGIN_ID,
-				GamaIconsProducer.DEFAULT_PATH + name + ".png") != null;
+		return AbstractUIPlugin.imageDescriptorFromPlugin(IGamaIcons.PLUGIN_ID,
+				IGamaIcons.DEFAULT_PATH + name + ".png") != null;
 	}
 
 	/**

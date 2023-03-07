@@ -74,20 +74,8 @@ import org.w3c.dom.svg.SVGDocument;
  */
 public class GamaIconsProducer {
 
-	/** The Constant DEFAULT_PATH. */
-	static public final String DEFAULT_PATH = "/icons/";
-
-	/** The Constant DVG_PATH. */
-	static public final String SVG_PATH = "/svg/";
-
-	/** The Constant PLUGIN_ID. */
-	public static final String PLUGIN_ID = "ummisco.gama.ui.shared";
-
 	/** The Constant DISABLED_SUFFIX. */
 	public static final String DISABLED_SUFFIX = "_disabled";
-
-	/** The Constant DISABLED_SUFFIX. */
-	public static final String TEMPLATES = "templates";
 
 	/** The svg factory. */
 	static final SAXSVGDocumentFactory SVG_FACTORY = new SAXSVGDocumentFactory(getXMLParserClassName());

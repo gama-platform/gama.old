@@ -493,4 +493,13 @@ public interface IGamaIcons {
 	/** The browse populations. */
 	String BROWSE_POPULATIONS = MENU_POPULATION;
 
+	/** The Constant DEFAULT_PATH. */
+	String DEFAULT_PATH = "/icons/";
+
+	/** The Constant PLUGIN_ID. */
+	String PLUGIN_ID = "ummisco.gama.ui.shared";
+
+	/** The Constant DVG_PATH. */
+	String SVG_PATH = "/svg/";
+
 }

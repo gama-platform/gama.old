@@ -49,6 +49,9 @@ public class GamaIcon {
 	/** The Constant MISSING. */
 	static final String MISSING = "gaml/_unknown";
 
+	/** The Constant DISABLED_SUFFIX. */
+	public static final String DISABLED_SUFFIX = "_disabled";
+
 	/**
 	 * Preload icons.
 	 *
@@ -279,8 +282,8 @@ public class GamaIcon {
 	 * @return the url
 	 */
 	public static URL computeURL(final String code) {
-		IPath uriPath = new org.eclipse.core.runtime.Path("/plugin").append(GamaIconsProducer.PLUGIN_ID)
-				.append(GamaIconsProducer.DEFAULT_PATH + code + ".png");
+		IPath uriPath = new org.eclipse.core.runtime.Path("/plugin").append(IGamaIcons.PLUGIN_ID)
+				.append(IGamaIcons.DEFAULT_PATH + code + ".png");
 		try {
 			URI uri = new URI("platform", null, uriPath.toString(), null);
 			return uri.toURL();
