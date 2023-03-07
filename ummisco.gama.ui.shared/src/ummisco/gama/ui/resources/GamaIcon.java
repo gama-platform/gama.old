@@ -167,7 +167,7 @@ public class GamaIcon {
 	private GamaIcon(final String c) {
 		code = c;
 		url = computeURL(code);
-		disabledUrl = computeURL(code + GamaIconsProducer.DISABLED_SUFFIX);
+		disabledUrl = computeURL(code + DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromURL(url);
 		disabledDescriptor = ImageDescriptor.createFromURL(disabledUrl);
 		image();
