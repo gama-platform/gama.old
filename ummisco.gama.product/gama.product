@@ -4,7 +4,7 @@
 <product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.9.0.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
-      <image path="/ummisco.gama.ui.shared/icons/window/icon128.png"/>
+      <image path="icons/icon128.png"/>
       <text>
          GAMA Platform - V1.9.0 http://gama-platform.org
 
@@ -63,7 +63,7 @@
       </vmArgsWin>
    </launcherArgs>
 
-   <windowImages i16="/ummisco.gama.ui.shared/icons/window/icon16.png" i32="/ummisco.gama.ui.shared/icons/window/icon32.png" i48="/ummisco.gama.ui.shared/icons/window/icon48.png" i64="/ummisco.gama.ui.shared/icons/window/icon64.png" i128="/ummisco.gama.ui.shared/icons/window/icon128.png" i256="/ummisco.gama.ui.shared/icons/window/icon256.png"/>
+   <windowImages i16="icons/icon16.png" i32="icons/icon32.png" i48="icons/icon48.png" i64="icons/icon64.png" i128="icons/icon128.png" i256="icons/icon256.png"/>
 
    <splash
       location="msi.gama.application"
