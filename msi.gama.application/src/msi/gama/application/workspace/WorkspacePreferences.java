@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
 import msi.gama.application.Application;
+import msi.gama.common.preferences.GamaPreferences;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -120,18 +121,8 @@ public class WorkspacePreferences {
 	 */
 	public static boolean askBeforeRebuildingWorkspace() {
 		// true by default
-		return getStore().getBoolean(KEY_ASK_REBUILD, true);
-	}
-
-	/**
-	 * Ask before rebuilding workspace.
-	 *
-	 * @param ask
-	 *            the ask
-	 */
-	public static void askBeforeRebuildingWorkspace(final boolean ask) {
-		// true by default
-		getStore().putBoolean(KEY_ASK_REBUILD, ask);
+		return GamaPreferences.Interface.CORE_ASK_REBUILD.getValue();
+		// return getStore().getBoolean(KEY_ASK_REBUILD, true);
 	}
 
 	/**
@@ -141,18 +132,8 @@ public class WorkspacePreferences {
 	 */
 	public static boolean askBeforeUsingOutdatedWorkspace() {
 		// true by default
-		return getStore().getBoolean(KEY_ASK_OUTDATED, true);
-	}
-
-	/**
-	 * Ask before using outdated workspace.
-	 *
-	 * @param ask
-	 *            the ask
-	 */
-	public static void askBeforeUsingOutdatedWorkspace(final boolean ask) {
-		// true by default
-		getStore().putBoolean(KEY_ASK_OUTDATED, ask);
+		return GamaPreferences.Interface.CORE_ASK_OUTDATED.getValue();
+		// return getStore().getBoolean(KEY_ASK_OUTDATED, true);
 	}
 
 	/**

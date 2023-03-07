@@ -58,6 +58,10 @@ import one.util.streamex.StreamEx;
 /**
  * The Class GamaPreferences.
  */
+
+/**
+ * The Class GamaPreferences.
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferences {
 
@@ -91,12 +95,12 @@ public class GamaPreferences {
 		/** The Constant CORE_ASK_REBUILD. */
 		public static final Pref<Boolean> CORE_ASK_REBUILD =
 				create("pref_ask_rebuild", "Ask before rebuilding a corrupted workspace", true, IType.BOOL, false)
-						.in(NAME, STARTUP).onChange(v -> GAMA.getGui().askBeforeRebuildingWorkspace(v));
+						.in(NAME, STARTUP);// .onChange(v -> GAMA.getGui().askBeforeRebuildingWorkspace(v));
 
 		/** The Constant CORE_ASK_OUTDATED. */
-		public static final Pref<Boolean> CORE_ASK_OUTDATED =
-				create("pref_ask_outdated", "Ask before using a workspace created by another version", true, IType.BOOL,
-						false).in(NAME, STARTUP).onChange(v -> GAMA.getGui().askBeforeUsingOutdatedWorkspace(v));
+		public static final Pref<Boolean> CORE_ASK_OUTDATED = create("pref_ask_outdated",
+				"Ask before using a workspace created by another version", true, IType.BOOL, false).in(NAME, STARTUP);
+		// .onChange(v -> GAMA.getGui().askBeforeUsingOutdatedWorkspace(v));
 
 		/** The Constant CORE_ASK_REBUILD. */
 		public static final Pref<Boolean> CORE_STARTUP_MODEL =
@@ -195,12 +199,9 @@ public class GamaPreferences {
 		 * Options
 		 */
 		public static final String OPTIONS = "Options";
-		// public static final Pref<Boolean> CORE_PERSPECTIVE = create("pref_switch_perspective",
-		// "Switch to modeling perspective when editing a model", false, IType.BOOL, false).in(NAME, OPTIONS);
 		/**
 		 * Validation
 		 */
-		// public static final String VALIDATION = "Validation of Models";
 		public static final Pref<Boolean> WARNINGS_ENABLED =
 				create("pref_editor_enable_warnings", "Show warning markers in the editor", true, IType.BOOL, false)
 						.in(NAME, OPTIONS);
@@ -221,37 +222,36 @@ public class GamaPreferences {
 				true, IType.BOOL, false).in(Modeling.NAME, Modeling.OPTIONS);
 
 		/** The operators menu sort. */
-		public static Pref<String> OPERATORS_MENU_SORT = GamaPreferences
-				.create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
-				.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
+		public static Pref<String> OPERATORS_MENU_SORT =
+				create("pref_menu_operators_sort", "Sort operators menu by", "Category", IType.STRING, false)
+						.among("Name", "Category").in(Interface.NAME, Interface.MENUS);
 
 		/** The Constant CORE_CLOSE_QUOTE. */
-		public static final Pref<Boolean> CORE_CLOSE_QUOTE = GamaPreferences
-				.create("pref_editor_close_quote", "Automatically close single quotes — '..'", true, IType.BOOL, false)
-				.in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_QUOTE =
+				create("pref_editor_close_quote", "Automatically close single quotes — '..'", true, IType.BOOL, false)
+						.in(NAME, TEXT);
 
 		/** The Constant CORE_CLOSE_DOUBLE. */
-		public static final Pref<Boolean> CORE_CLOSE_DOUBLE = GamaPreferences.create("pref_editor_close_double",
+		public static final Pref<Boolean> CORE_CLOSE_DOUBLE = create("pref_editor_close_double",
 				"Automatically close double quotes — \"..\"", true, IType.BOOL, false).in(NAME, TEXT);
 
 		/** The Constant CORE_CLOSE_CURLY. */
-		public static final Pref<Boolean> CORE_CLOSE_CURLY = GamaPreferences
-				.create("pref_editor_close_curly", "Automatically close curly brackets — {..}", true, IType.BOOL, false)
-				.in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_CURLY =
+				create("pref_editor_close_curly", "Automatically close curly brackets — {..}", true, IType.BOOL, false)
+						.in(NAME, TEXT);
 
 		/** The Constant CORE_CLOSE_SQUARE. */
-		public static final Pref<Boolean> CORE_CLOSE_SQUARE = GamaPreferences.create("pref_editor_close_square",
+		public static final Pref<Boolean> CORE_CLOSE_SQUARE = create("pref_editor_close_square",
 				"Automatically close square brackets — [..]", true, IType.BOOL, false).in(NAME, TEXT);
 
 		/** The Constant CORE_CLOSE_PARENTHESES. */
-		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES =
-				GamaPreferences.create("pref_editor_close_parentheses", "Automatically close parentheses — (..)", true,
-						IType.BOOL, false).in(NAME, TEXT);
+		public static final Pref<Boolean> CORE_CLOSE_PARENTHESES = create("pref_editor_close_parentheses",
+				"Automatically close parentheses — (..)", true, IType.BOOL, false).in(NAME, TEXT);
 
 		/** The Constant EDITOR_CLEAN_UP. */
 		public static final Pref<Boolean> EDITOR_CLEAN_UP =
-				GamaPreferences.create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL, false)
-						.in(NAME, GamaPreferences.Modeling.OPTIONS);
+				create("pref_editor_save_format", "Apply formatting on save", false, IType.BOOL, false).in(NAME,
+						GamaPreferences.Modeling.OPTIONS);
 
 		/** The Constant EDITOR_SAVE. */
 		public static final Pref<Boolean> EDITOR_SAVE =
@@ -261,13 +261,13 @@ public class GamaPreferences {
 						.in(NAME, GamaPreferences.Modeling.OPTIONS).activates("pref_editor_ask_save");
 
 		/** The Constant EDITOR_DRAG_RESOURCES. */
-		public static final Pref<Boolean> EDITOR_DRAG_RESOURCES = GamaPreferences.create("pref_editor_drag_resources",
+		public static final Pref<Boolean> EDITOR_DRAG_RESOURCES = create("pref_editor_drag_resources",
 				"Drag files and resources as references in GAML files", true, IType.BOOL, false).in(NAME, OPTIONS);
 
 		/** The Constant EDITOR_SAVE_ASK. */
 		public static final Pref<Boolean> EDITOR_SAVE_ASK =
-				GamaPreferences.create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL, false)
-						.in(NAME, OPTIONS);
+				create("pref_editor_ask_save", "Ask before saving each file", false, IType.BOOL, false).in(NAME,
+						OPTIONS);
 
 		/** The Constant EDITBOX_ENABLED. */
 		public static final Pref<Boolean> EDITBOX_ENABLED = GamaPreferences
@@ -279,9 +279,8 @@ public class GamaPreferences {
 				.create("pref_editor_font", "Font of editors", (GamaFont) null, IType.FONT, false).in(NAME, TEXT);
 
 		/** The Constant EDITOR_BACKGROUND_COLOR. */
-		public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR =
-				GamaPreferences.create("pref_editor_background_color", "Background color of editors", (GamaColor) null,
-						IType.COLOR, false).in(NAME, TEXT);
+		public static final Pref<GamaColor> EDITOR_BACKGROUND_COLOR = create("pref_editor_background_color",
+				"Background color of editors", (GamaColor) null, IType.COLOR, false).in(NAME, TEXT);
 
 		/** The Constant EDITOR_MARK_OCCURRENCES. */
 		public static final Pref<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
@@ -296,22 +295,11 @@ public class GamaPreferences {
 						.deactivates("pref_editor_collapse_buttons").in(NAME, TEXT);
 
 		/** The Constant EDITOR_COLLAPSE_BUTTONS. */
-		public static final Pref<Boolean> EDITOR_COLLAPSE_BUTTONS = GamaPreferences.create(
-				"pref_editor_collapse_buttons",
+		public static final Pref<Boolean> EDITOR_COLLAPSE_BUTTONS = create("pref_editor_collapse_buttons",
 				"Display experiments as a menu when the combined width of the buttons exceed the width of the toolbar",
 				PlatformHelper.isLinux(), IType.BOOL, false).in(NAME, TEXT);
 
-		// .activates("pref_tests_period");
-		// public static final Pref<String> TESTS_PERIOD = create("pref_tests_period", "Every", "Update", IType.STRING)
-		// .among(Arrays.asList("Day", "Week", "Month", "Update")).in(NAME, TESTS);
-
 	}
-	//
-	// public static class Experiments {
-	// public static final String NAME = "Experiments";
-	//
-	// // Unused for the moment
-	// }
 
 	/**
 	 *
@@ -490,9 +478,8 @@ public class GamaPreferences {
 		public static final Pref<String> CORE_DISPLAY_LAYOUT =
 				create("pref_display_view_layout", "Default layout of display views", "Split", IType.STRING, true)
 						.among(LAYOUTS.toArray(new String[LAYOUTS.size()])).in(NAME, PRESENTATION);
-		// public static final Pref<Boolean> CORE_DISPLAY_ORDER = create("pref_display_same_order",
+
 		/** The Constant CORE_DISPLAY_BORDER. */
-		// "Stack displays in the order defined in the model", true, IType.BOOL, true).in(NAME, PRESENTATION);
 		public static final Pref<Boolean> CORE_DISPLAY_BORDER =
 				create("pref_display_show_border", "Display a border around display views", false, IType.BOOL, true)
 						.in(NAME, PRESENTATION);
@@ -666,11 +653,6 @@ public class GamaPreferences {
 				create("pref_display_camera", "Default camera to use when none is specified", "From above",
 						IType.STRING, true).among(ICameraDefinition.PRESETS).in(NAME, RENDERING);
 
-		// /** The Constant OPENGL_CLIPBOARD_CAM. */
-		// public static final Pref<Boolean> OPENGL_CLIPBOARD_CAM = create("pref_display_clipboard_cam",
-		// "Copy the camera definition to the clipboard when it is changed on the display", false, IType.BOOL,
-		// true).in(NAME, RENDERING);
-
 		/** The Constant OPENGL_USE_IMAGE_CACHE. */
 		public static final Pref<Boolean> OPENGL_USE_IMAGE_CACHE = create("pref_display_use_cache",
 				"Use GAMA image cache when building textures in OpenGL (potentially faster when running several simulations, but uses more memory)",
@@ -752,11 +734,6 @@ public class GamaPreferences {
 							CoreException e) {}
 						}).hidden();
 
-		/** The Constant AGENT_OPTIMIZATION. */
-		// public static final Pref<Boolean> AGENT_OPTIMIZATION =
-		// create("pref_optimize_agent_memory", "Optimize agents memory", true, IType.BOOL, true).in(NAME,
-		// OPTIMIZATIONS);
-
 		/** The Constant AT_DISTANCE_OPTIMIZATION. */
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL, true)
@@ -766,18 +743,6 @@ public class GamaPreferences {
 		public static final Pref<Boolean> PATH_COMPUTATION_OPTIMIZATION = create("pref_optimize_path_computation",
 				"Optimize the path computation operators and goto action (but with possible 'jump' issues)", false,
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
-
-		// /** The Constant QUADTREE_OPTIMIZATION. */
-		// public static final Pref<Boolean> QUADTREE_OPTIMIZATION = create("pref_optimize_quadtree",
-		// "Optimize spatial queries: add agents only when necessary in the quadtree (still experimental)", false,
-		// IType.BOOL, true).in(NAME, OPTIMIZATIONS);
-
-		/** The Constant QUADTREE_SYNCHRONIZATION. */
-		// /** The Constant QUADTREE_SYNCHRONIZATION. */
-		// public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
-		// "Forces the spatial index to synchronize its operations. Useful for interactive models where the users
-		// interfere or parallel models with concurrency errors",
-		// true, IType.BOOL, true).in(NAME, OPTIMIZATIONS);
 
 		/** The Constant USE_POOLING. */
 		public static final Pref<Boolean> USE_POOLING =
@@ -796,23 +761,6 @@ public class GamaPreferences {
 
 		/**
 		 * Paths to libraries
-		 */
-		// public static final String PATHS = "External libraries support";
-		//
-		// /** The Constant LIB_SPATIALITE. */
-		// public static final Pref<? extends IGamaFile> LIB_SPATIALITE =
-		// create("pref_lib_spatialite", "Path to Spatialite library (http://www.gaia-gis.it/gaia-sins/)",
-		// () -> new GenericFile("Enter path", false), IType.FILE, true).in(NAME, PATHS);
-
-		/** The Constant jriFile. */
-		// public static final String jriFile = isMac() ? "libjri.jnilib" : isLinux() ? "libjri.so" : "jri.dll";
-
-		// /** The Constant LIB_R. */
-		// public static final Pref<? extends IGamaFile> LIB_R = create("pref_lib_r",
-		// "Path to JRI library ($R_HOME/library/rJava/jri/" + jriFile + ") (http://www.r-project.org)",
-		// () -> new GenericFile(getDefaultRPath(), false), IType.FILE, true).in(NAME, PATHS);
-		/**
-		 * GeoTools
 		 */
 		public static final String GEOTOOLS =
 				"GIS Coordinate Reference Systems (http://spatialreference.org/ref/epsg/ for EPSG codes)";
@@ -858,22 +806,6 @@ public class GamaPreferences {
 							if (codes.isEmpty()) return false;
 							return true;
 						});
-
-		// RScript adress:
-		// "/Library/Frameworks/R.framework/Versions/3.4/Resources/bin/exec/x86_64/RScript"
-		// "usr/bin/RScript"
-		// "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe"
-		/**
-		 * Gets the default R path.
-		 *
-		 * @return the default R path
-		 */
-		// "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe"
-		// private static String getDefaultRPath() {
-		// if (isMac()) return "/Library/Frameworks/R.framework/Resources/library/rJava/jri/libjri.jnilib";
-		// if (isLinux()) return "/usr/local/lib/libjri.so";
-		// return "C:\\Program Files\\R\\R-3.4.0\\library\\rJava\\jri\\jri.dll";
-		// }
 	}
 
 	/**

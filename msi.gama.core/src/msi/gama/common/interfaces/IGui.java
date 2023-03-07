@@ -699,27 +699,4 @@ public interface IGui {
 	 */
 	default void hideParameters() {}
 
-	/**
-	 * Ask before rebuilding workspace.
-	 *
-	 * @param v
-	 *            the v
-	 */
-	default void askBeforeRebuildingWorkspace(final Boolean v) {}
-
-	/**
-	 * Ask before using outdated workspace.
-	 *
-	 * @param v
-	 *            the v
-	 */
-	default void askBeforeUsingOutdatedWorkspace(final Boolean v) {}
-
-	/**
-	 * Checks if is synchronized.
-	 *
-	 * @return true, if is synchronized
-	 */
-	// boolean isSynchronized();
-
 }
