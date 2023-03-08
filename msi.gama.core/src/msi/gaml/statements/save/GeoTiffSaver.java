@@ -1,7 +1,18 @@
+/*******************************************************************************************************
+ *
+ * GeoTiffSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
@@ -20,9 +31,37 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 
-public class GeoTiffSaver {
+/**
+ * The Class GeoTiffSaver.
+ */
+public class GeoTiffSaver extends AbstractSaver {
 
-	public void save(final IScope scope, final IExpression item, final File file) throws IOException {
+	/** The Constant GEOTIFF. */
+	private static final String GEOTIFF = "geotiff";
+
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param file
+	 *            the file
+	 * @param code
+	 *            the code
+	 * @param addHeader
+	 *            the add header
+	 * @param type
+	 *            the type
+	 * @param attributesToSave
+	 *            the attributes to save
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Override
+	public void save(final IScope scope, final IExpression item, final File file, final String code,
+			final boolean addHeader, final String type, final Object attributesToSave) throws IOException {
 		if (file == null) return;
 		File f = file;
 		if (f.exists()) { f.delete(); }
@@ -40,6 +79,20 @@ public class GeoTiffSaver {
 		}
 	}
 
+	/**
+	 * Save grid.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param species
+	 *            the species
+	 * @param file
+	 *            the file
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void saveGrid(final IScope scope, final ISpecies species, final File file)
 			throws IllegalArgumentException, IOException {
 		final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
@@ -77,6 +130,20 @@ public class GeoTiffSaver {
 
 	}
 
+	/**
+	 * Save field.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param f
+	 *            the f
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void saveField(final IScope scope, final GamaField field, final File f)
 			throws IllegalArgumentException, IOException {
 		if (field.isEmpty(scope)) return;
@@ -107,5 +174,10 @@ public class GeoTiffSaver {
 		final GridCoverageWriter writer = format.getWriter(f);
 		writer.write(coverage, (GeneralParameterValue[]) null);
 
+	}
+
+	@Override
+	public Set<String> computeFileTypes() {
+		return Set.of(GEOTIFF);
 	}
 }

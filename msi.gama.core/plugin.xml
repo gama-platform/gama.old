@@ -4,6 +4,7 @@
    <extension-point id="gaml.grammar.addition" name="Addition to the grammar of GAML" schema="schema/gaml.grammar.addition.exsd"/>
    <extension-point id="gama.display" name="Implementations of IDisplaySurface" schema="schema/gama.display.exsd"/>
    <extension-point id="gama.create" name="Implementations of ICreateDelegate" schema="schema/gama.create.exsd"/>
+   <extension-point id="gama.save" name="Implementations of ISaveDelegate" schema="schema/gama.save.exsd"/>
    <extension-point id="gama.event_layer" name="Implementations of IEventLayerDelegate" schema="schema/gama.event_layer.exsd"/>
    <extension-point id="gaml.extension" name="Additions to the GAML language" schema="schema/gaml.extension.exsd"/>
    <extension-point id="gama.models" name="Allow plugins to add sample models to GAMA" schema="schema/gama.models.exsd"/>
@@ -16,32 +17,21 @@
       </implementation>
    </extension>
    <extension
-         name="csv"
          point="gama.create">
       <implementation
-            class="msi.gaml.statements.CreateFromCSVDelegate"
-            description="Create agents from CSV files">
-      </implementation>
-   </extension>
-   <extension
-         name="shapes"
-         point="gama.create">
-      <implementation
-            class="msi.gaml.statements.CreateFromGeometriesDelegate">
-      </implementation>
-   </extension>
-   <extension
-         point="gama.create">
-      <implementation
-            class="msi.gaml.statements.CreateFromGridFileDelegate"
+            class="msi.gaml.statements.create.CreateFromGridFileDelegate"
             description="Create agents from a grid file">
       </implementation>
-   </extension>
-   <extension
-         point="gama.create">
       <implementation
-            class="msi.gaml.statements.CreateFromNullDelegate"
+            class="msi.gaml.statements.create.CreateFromNullDelegate"
             description="Create agents with no source">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.create.CreateFromGeometriesDelegate">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.create.CreateFromCSVDelegate"
+            description="Create agents from CSV files">
       </implementation>
    </extension>
    <extension
@@ -53,9 +43,6 @@
             class="msi.gama.kernel.experiment.ExperimentAgent"
             keyword="gui">
       </implementation>
-   </extension>
-   <extension
-         point="gama.experiment">
       <implementation
             class="msi.gama.kernel.experiment.BatchAgent"
             keyword="batch">
@@ -73,6 +60,45 @@
             class="msi.gama.util.file.CacheLocationProvider"
             variable="CACHE_LOC">
       </variableResolver>
+   </extension>
+   <extension
+         point="gama.save">
+      <implementation
+            class="msi.gaml.statements.save.ASCSaver"
+            description="Saves in .asc files">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.CSVSaver"
+            description="Saves as .csv files">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.GeoJSonSaver"
+            description="Saves geometries as .json files">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.GeoTiffSaver"
+            description="Saves grids and matrices as .tiff files ">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.GraphSaver"
+            description="Saves graphs in different formats (from JGraphT)">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.ImageSaver"
+            description="Saves images in different formats">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.KmlSaver"
+            description="Saves .kml or .kmz files">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.ShapeSaver"
+            description="Saves geometries and agents as shapefiles">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.save.TextSaver"
+            description="Saves items in plain text (default saver)">
+      </implementation>
    </extension>
 
 </plugin>

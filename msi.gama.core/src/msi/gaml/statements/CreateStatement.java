@@ -305,12 +305,12 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			if (exp != null) {
 				final IType type = exp.getGamlType();
 				boolean found = false;
-				for (final IType delegateType : delegateTypes) {
+				for (final IType delegateType : DELEGATE_TYPES) {
 					found = delegateType.isAssignableFrom(type);
 					if (found) { break; }
 				}
 				if (!found) {
-					cd.warning("Facet 'from' expects an expression with one of the following types: " + delegateTypes,
+					cd.warning("Facet 'from' expects an expression with one of the following types: " + DELEGATE_TYPES,
 							WRONG_TYPE, FROM);
 				}
 			}
@@ -361,18 +361,18 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private final RemoteSequence sequence;
 
 	/** The delegates. */
-	static List<ICreateDelegate> delegates = new ArrayList<>();
+	static List<ICreateDelegate> DELEGATES = new ArrayList<>();
 
 	/** The delegate types. */
-	static List<IType> delegateTypes = new ArrayList<>();
+	static List<IType> DELEGATE_TYPES = new ArrayList<>();
 
 	/**
 	 * @param createExecutableExtension
 	 */
 	public static void addDelegate(final ICreateDelegate delegate) {
-		delegates.add(delegate);
+		DELEGATES.add(delegate);
 		final IType delegateType = delegate.fromFacetType();
-		if (delegateType != null && delegateType != Types.NO_TYPE) { delegateTypes.add(delegate.fromFacetType()); }
+		if (delegateType != null && delegateType != Types.NO_TYPE) { DELEGATE_TYPES.add(delegate.fromFacetType()); }
 	}
 
 	/**
@@ -382,7 +382,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 *            the cd
 	 */
 	public static void removeDelegate(final ICreateDelegate cd) {
-		delegates.remove(cd);
+		DELEGATES.remove(cd);
 	}
 
 	/**
@@ -463,7 +463,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
 		final List<Map<String, Object>> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
 		final Object source = getSource(scope);
-		for (final ICreateDelegate delegate : delegates) {
+		for (final ICreateDelegate delegate : DELEGATES) {
 			if (delegate.acceptSource(scope, source)) {
 
 				delegate.createFrom(scope, inits, max, source, init, this);

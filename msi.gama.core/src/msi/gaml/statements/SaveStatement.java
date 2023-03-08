@@ -10,36 +10,19 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
-import static msi.gama.common.geometry.GeometryUtils.cleanGeometryCollection;
-import static msi.gama.common.geometry.GeometryUtils.fixesPolygonCWS;
-import static msi.gama.common.util.FileUtils.constructAbsoluteFilePath;
-
-import java.awt.image.DataBuffer;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.media.jai.RasterFactory;
-
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.GridCoverageFactory;
-import org.jgrapht.nio.GraphExporter;
-import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.geometry.Envelope;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.ITyped;
-import msi.gama.common.util.StringUtils;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.common.interfaces.ISaveDelegate;
+import msi.gama.common.util.FileUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -53,8 +36,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.IGamaFile;
-import msi.gama.util.graph.IGraph;
-import msi.gama.util.graph.writer.GraphExporters;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
@@ -64,17 +45,10 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.SaveStatement.SaveValidator;
-import msi.gaml.statements.save.ASCSaver;
-import msi.gaml.statements.save.CSVSaver;
-import msi.gaml.statements.save.GeoJSonSaver;
-import msi.gaml.statements.save.GeoTiffSaver;
-import msi.gaml.statements.save.ImageSaver;
-import msi.gaml.statements.save.ShapeSaver;
-import msi.gaml.statements.save.TextSaver;
 import msi.gaml.types.GamaFileType;
-import msi.gaml.types.GamaKmlExport;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class SaveStatement.
@@ -177,11 +151,33 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	/** The Constant GEOTIFF. */
-	private static final String GEOTIFF = "geotiff";
+	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
+	public static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES =
+			Set.of(IKeyword.PEERS, IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE);
 
 	/** The Constant EPSG_LABEL. */
 	private static final String EPSG_LABEL = "EPSG:";
+
+	/** The Constant DELEGATES. */
+	private static final Set<String> SAVING_TYPES = new HashSet<>();
+
+	/** The Constant DELEGATES_BY_GAML_TYPE. */
+	private static final Map<ISaveDelegate, IType> DELEGATES_BY_GAML_TYPE = new HashMap<>();
+
+	/**
+	 * @param createExecutableExtension
+	 */
+	public static void addDelegate(final ISaveDelegate delegate) {
+		Set<String> files = delegate.getFileTypes();
+		for (String f : files) {
+			if (SAVING_TYPES.contains(f)) {
+				DEBUG.LOG("WARNING: Extensions to SaveStatement already registered for file type " + f);
+			}
+			SAVING_TYPES.add(f);
+		}
+		final IType t = delegate.getDataType();
+		if (t != null) { DELEGATES_BY_GAML_TYPE.put(delegate, t); }
+	}
 
 	/**
 	 * The Class SaveValidator.
@@ -335,15 +331,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		}
 
-		// These statements will need to be completely rethought because of the
-		// possibility to now use the GamaFile infrastructure for this.
-		// For instance, TYPE is not needed anymore (the name of the file / its
-		// inner type will be enough), like in save json_file("ddd.json",
-		// my_map); which we can probably allow to be written save my_map to:
-		// json_file("ddd.json"); see #1362
-
 		try {
-			final String path = constructAbsoluteFilePath(scope, Cast.asString(scope, file.value(scope)), false);
+			final String path =
+					FileUtils.constructAbsoluteFilePath(scope, Cast.asString(scope, file.value(scope)), false);
 			if (path == null || "".equals(path)) return null;
 			final File fileToSave = new File(path);
 			Files.createDirectories(fileToSave.toPath().getParent());
@@ -362,156 +352,26 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					code = EPSG_LABEL + Cast.asInt(scope, crsCode.value(scope));
 				} else if (tt.id() == IType.STRING) { code = (String) crsCode.value(scope); }
 			}
+			Object attributesToSave = attributesFacet == null ? withFacet : attributesFacet;
 			//
-			switch (type) {
-				case "json":
-					new GeoJSonSaver().save(scope, item, fileToSave, code, withFacet, attributesFacet);
-					break;
-				case "shp":
-					new ShapeSaver().save(scope, item, fileToSave, code, withFacet, attributesFacet);
-					break;
-				case "text":
-					new TextSaver().save(scope, item, fileToSave, addHeader);
-					break;
-				case "csv":
-					new CSVSaver().save(scope, item, fileToSave, addHeader);
-					break;
-				case "asc":
-					new ASCSaver().save(scope, item, fileToSave);
-					break;
-				case "image":
-					new ImageSaver().save(scope, item, fileToSave);
-					break;
-				case GEOTIFF:
-					new GeoTiffSaver().save(scope, item, fileToSave);
-					break;
-				case "kml", "kmz":
-					final Object kml = item.value(scope);
-					if (!(kml instanceof GamaKmlExport export)) return null;
-					if ("kml".equals(type)) {
-						export.saveAsKml(scope, path);
-					} else {
-						export.saveAsKmz(scope, path);
+
+			IType itemType = item.getGamlType();
+
+			for (Entry<ISaveDelegate, IType> entry : DELEGATES_BY_GAML_TYPE.entrySet()) {
+				if (entry.getValue().isAssignableFrom(itemType)) {
+					ISaveDelegate delegate = entry.getKey();
+					if (delegate.getFileTypes().contains(type)) {
+						delegate.save(scope, item, fileToSave, code, addHeader, type, attributesToSave);
+						return Cast.asString(scope, file.value(scope));
 					}
-					break;
-				default:
-					GraphExporter<?, ?> exp = GraphExporters.getGraphWriter(type);
-					if (exp == null)
-						throw GamaRuntimeException.error("Format is not recognized ('" + type + "')", scope);
-					final IGraph g = Cast.asGraph(scope, item);
-					if (g == null) return null;
-					exp.exportGraph(g, fileToSave.getAbsoluteFile());
+				}
 			}
+			throw GamaRuntimeException.error("Format not recognized: " + type, scope);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-		return Cast.asString(scope, file.value(scope));
-	}
-
-	/**
-	 * Creates the coverage byte from float.
-	 *
-	 * @param name
-	 *            the name
-	 * @param matrix
-	 *            the matrix
-	 * @param envelope
-	 *            the envelope
-	 * @return the grid coverage 2 D
-	 */
-	// from org.geotools.coverage.grid.GridCoverageFactory
-	public static GridCoverage2D createCoverageByteFromFloat(final CharSequence name, final float[][] matrix,
-			final Envelope envelope) {
-
-		int width = 0;
-		final int height = matrix.length;
-		for (int j = 0; j < height; j++) {
-			final float[] row = matrix[j];
-			if (row != null && row.length > width) { width = row.length; }
-		}
-
-		final WritableRaster raster;
-		raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, 1, null);
-		for (int j = 0; j < height; j++) {
-			int i = 0;
-			final float[] row = matrix[j];
-			if (row != null) { for (; i < row.length; i++) { raster.setSample(i, j, 0, (byte) Math.round(row[i])); } }
-			for (; i < width; i++) { raster.setSample(i, j, 0, (byte) 255); }
-		}
-
-		return new GridCoverageFactory().create(name, raster, envelope);
-	}
-
-	/**
-	 * Type.
-	 *
-	 * @param theVar
-	 *            the var
-	 * @return the string
-	 */
-	public static String type(final ITyped theVar) {
-		return switch (theVar.getGamlType().id()) {
-			case IType.BOOL -> "Boolean";
-			case IType.INT -> "Integer";
-			case IType.FLOAT -> "Double";
-			default -> "String";
-		};
-	}
-
-	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
-	public static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES =
-			Set.of(IKeyword.PEERS, IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE);
-
-	/**
-	 * Builds the feature.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param ff
-	 *            the ff
-	 * @param ag
-	 *            the ag
-	 * @param gis
-	 *            the gis
-	 * @param attributeValues
-	 *            the attribute values
-	 * @return true, if successful
-	 */
-	public static boolean buildFeature(final IScope scope, final SimpleFeature ff, final IShape ag,
-			final IProjection gis, final Collection<IExpression> attributeValues) {
-		final List<Object> values = new ArrayList<>();
-		// geometry is by convention (in specs) at position 0
-		Geometry g = ag.getInnerGeometry();
-		if (g == null) return false;
-		if (gis != null) { g = gis.inverseTransform(g); }
-		g = cleanGeometryCollection(fixesPolygonCWS(g));
-		values.add(g);
-		if (ag instanceof IAgent ia) {
-			for (final IExpression variable : attributeValues) {
-				Object val = scope.evaluate(variable, ia).getValue();
-				if (variable.getGamlType().equals(Types.STRING)) {
-					val = val == null ? "" : StringUtils.toJavaString(val.toString());
-				}
-				values.add(val);
-			}
-		} else {
-			// see #2982. Assume it is an attribute of the shape
-			for (final IExpression variable : attributeValues) {
-				final Object val = variable.value(scope);
-				if (val instanceof String s) {
-					values.add(ag.getAttribute(s));
-				} else {
-					values.add("");
-				}
-			}
-		}
-		// AD Assumes that the type is ok.
-		// AD WARNING Would require some sort of iterator operator that
-		// would collect the values beforehand
-		ff.setAttributes(values);
-		return true;
 	}
 
 	@Override

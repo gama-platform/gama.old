@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gaml.statements;
+package msi.gaml.statements.create;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,8 @@ import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 

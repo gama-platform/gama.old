@@ -49,7 +49,7 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	 */
 	public boolean exist(final String name) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(IGamaIcons.PLUGIN_ID,
-				IGamaIcons.DEFAULT_PATH + name + ".png") != null;
+				IGamaIcons.ICONS_PATH + name + ".png") != null;
 	}
 
 	/**

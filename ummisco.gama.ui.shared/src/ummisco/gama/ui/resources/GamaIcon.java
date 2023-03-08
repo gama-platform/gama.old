@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import static org.eclipse.core.runtime.FileLocator.toFileURL;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -21,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
@@ -60,9 +63,13 @@ public class GamaIcon {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static void preloadFrom(final Path path) throws IOException {
-		Files.walk(path).map(f -> path.relativize(f).toString()).filter(n -> n.endsWith(".png") && !n.contains("@"))
-				.forEach(f -> GamaIcon.named(f.replace(".png", "")));
+	public static void preloadAllIcons() throws IOException, URISyntaxException {
+		URL pngFolderURL = toFileURL(Platform.getBundle(IGamaIcons.PLUGIN_ID).getEntry(IGamaIcons.ICONS_PATH));
+		Path path = Path.of(new URI(pngFolderURL.getProtocol(), pngFolderURL.getPath(), null).normalize());
+		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
+				() -> Files.walk(path).map(f -> path.relativize(f).toString())
+						.filter(n -> n.endsWith(".png") && !n.contains("@"))
+						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));
 	}
 
 	/**
@@ -283,7 +290,7 @@ public class GamaIcon {
 	 */
 	public static URL computeURL(final String code) {
 		IPath uriPath = new org.eclipse.core.runtime.Path("/plugin").append(IGamaIcons.PLUGIN_ID)
-				.append(IGamaIcons.DEFAULT_PATH + code + ".png");
+				.append(IGamaIcons.ICONS_PATH + code + ".png");
 		try {
 			URI uri = new URI("platform", null, uriPath.toString(), null);
 			return uri.toURL();

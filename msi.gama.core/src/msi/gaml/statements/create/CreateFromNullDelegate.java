@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gaml.statements;
+package msi.gaml.statements.create;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,8 @@ import java.util.Map;
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMapFactory;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.CreateStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 

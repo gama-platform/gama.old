@@ -48,11 +48,13 @@ import com.google.common.collect.Multimap;
 
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IEventLayerDelegate;
+import msi.gama.common.interfaces.ISaveDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.CreateStatement;
+import msi.gaml.statements.SaveStatement;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -125,6 +127,9 @@ public class GamaBundleLoader {
 
 	/** The create extension. */
 	public static final String CREATE_EXTENSION = "gama.create";
+
+	/** The create extension. */
+	public static final String SAVE_EXTENSION = "gama.save";
 
 	/** The event layer extension. */
 	public static final String EVENT_LAYER_EXTENSION = "gama.event_layer";
@@ -261,6 +266,25 @@ public class GamaBundleLoader {
 							if (cd != null) { CreateStatement.addDelegate(cd); }
 						} catch (final Exception e1) {
 							ERROR("Error in loading CreateStatement delegate from "
+									+ e.getDeclaringExtension().getContributor().getName(), e1);
+							// We do not systematically exit in case of additional plugins failing to load, so as to
+							// give the platform a chance to execute even in case of errors (to save files, to
+							// remove
+							// offending plugins, etc.)
+							continue;
+						}
+					}
+
+					// We gather all the extensions to the `save` statement and add them
+					// as delegates to SaveStatement. If an exception occurs, we discard it
+					for (final IConfigurationElement e : registry.getConfigurationElementsFor(SAVE_EXTENSION)) {
+						ISaveDelegate sd = null;
+						try {
+							// TODO Add the defining plug-in
+							sd = (ISaveDelegate) e.createExecutableExtension("class");
+							if (sd != null) { SaveStatement.addDelegate(sd); }
+						} catch (final Exception e1) {
+							ERROR("Error in loading SaveStatement delegate from "
 									+ e.getDeclaringExtension().getContributor().getName(), e1);
 							// We do not systematically exit in case of additional plugins failing to load, so as to
 							// give the platform a chance to execute even in case of errors (to save files, to

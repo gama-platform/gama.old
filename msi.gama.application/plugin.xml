@@ -99,7 +99,7 @@
                   name="Gama (runtime)">
                <property
                      name="windowImages"
-                     value="platform:/plugin/ummisco.gama.ui.shared/icons/window/icon16.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon32.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon48.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon64.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon128.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon256.png">
+                     value="icons/icon16.png,icons/icon32.png,icons/icon48.png,icons/icon64.png,icons/icon128.png,icons/icon256.png">
                </property>
                <property
                      name="aboutText"
@@ -107,7 +107,7 @@
                </property>
                <property
                      name="aboutImage"
-                     value="branding_icons/icon128.png">
+                     value="icons/icon128.png">
                </property>
                <property
                      name="appName"

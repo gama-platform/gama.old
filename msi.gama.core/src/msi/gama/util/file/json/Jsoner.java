@@ -40,7 +40,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaPair;
 import msi.gama.util.serialize.IStreamConverter;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.statements.SaveStatement;
+import msi.gaml.statements.save.AbstractShapeSaver;
 
 /**
  * Jsoner provides JSON utilities for escaping strings to be JSON compatible, thread safe parsing (RFC 4627) JSON
@@ -895,7 +895,7 @@ public class Jsoner {
 				final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
 				final SimpleFeature ff = builder.buildFeature("");
 
-				SaveStatement.buildFeature(null, ff, agentOrIShape, null, Collections.emptyList());
+				AbstractShapeSaver.buildFeature(null, ff, agentOrIShape, null, Collections.emptyList());
 
 				final FeatureJSON io = new FeatureJSON(new GeometryJSON(20));
 				writableDestination.write(io.toString(ff));

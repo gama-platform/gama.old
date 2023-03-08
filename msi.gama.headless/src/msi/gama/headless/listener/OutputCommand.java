@@ -24,6 +24,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.statements.Arguments;
 import msi.gaml.statements.SaveStatement;
 import msi.gaml.statements.save.GeoJSonSaver;
 import ummisco.gama.dev.utils.DEBUG;
@@ -98,17 +99,14 @@ public class OutputCommand implements ISocketCommand {
 			final String gis_code) throws GamaRuntimeException {
 		final GeoJSonSaver gjsoner = new GeoJSonSaver();
 		try {
+			Arguments args = new Arguments();
 			for (final String var : species.getAttributeNames()) {
-				// System.out.println(var);
-				// if(var.equals("state")){ attributes.put(var, species.getVarExpr(var, false));
-				// }
 				if (!SaveStatement.NON_SAVEABLE_ATTRIBUTE_NAMES.contains(var) && filterAttr.contains(var)) {
-					gjsoner.addAttibutes(var, species.getVarExpr(var, false));
+					args.put(var, species.getVarExpr(var, false));
 				}
 			}
-
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			gjsoner.save(scope, species.getSpeciesExpr(), baos, gis_code, null, null);
+			gjsoner.save(scope, species.getSpeciesExpr(), baos, gis_code, args);
 			return baos.toString(StandardCharsets.UTF_8);
 
 		} catch (final GamaRuntimeException e) {
