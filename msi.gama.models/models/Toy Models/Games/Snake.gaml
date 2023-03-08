@@ -36,22 +36,22 @@ global {
 	}
 	
 	action move_up {
-		if (the_snake.heading != 90) {
+		if (the_snake.heading_last != 90) {
 			the_snake.heading <- -90.0;
 		}
 	}
 	action move_down {
-		if (the_snake.heading != -90) {
+		if (the_snake.heading_last != -90) {
 			the_snake.heading <- 90.0;
 		}
 	}
 	action move_left {
-		if (the_snake.heading != 0) {
+		if (the_snake.heading_last != 0) {
 			the_snake.heading <- 180.0;
 		}
 	}
 	action move_right {
-		if (the_snake.heading != 180) {
+		if (the_snake.heading_last != 180) {
 			the_snake.heading <- 0.0;
 		}
 	}
@@ -84,10 +84,10 @@ species food {
 	}
 }
 species snake  {
+	float heading_last <- 0.0;
 	float heading <- 0.0;
 	cell my_cell;
 	list<cell> cells;
-	
 	aspect default {
 		loop c over: cells {
 			draw c.shape color: #blue;
@@ -103,6 +103,7 @@ species snake  {
 	}
 	
 	reflex move {
+		heading_last <- heading;
 		switch heading {
 			match 0.0 {
 				if (my_cell.grid_x < (environment_size -1)) {
