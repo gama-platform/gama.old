@@ -106,31 +106,27 @@ species snake  {
 		heading_last <- heading;
 		switch heading {
 			match 0.0 {
-				if (my_cell.grid_x < (environment_size -1)) {
-					my_cell <- cell[my_cell.grid_x +1, my_cell.grid_y];
-				} else {
+				my_cell <- cell[my_cell.grid_x +1, my_cell.grid_y];
+				if (my_cell.grid_x = (environment_size -1)) {
 					do end_of_game;
 				}
 				
 			}
 			match 180.0 {
-				if (my_cell.grid_x > 0) {
-					my_cell <- cell[my_cell.grid_x -1, my_cell.grid_y];
-				} else {
+				my_cell <- cell[my_cell.grid_x -1, my_cell.grid_y];
+				if (my_cell.grid_x = 0) {
 					do end_of_game;
 				}
 			}
 			match -90.0 {
-				if (my_cell.grid_y > 0) {
-					my_cell <- cell[my_cell.grid_x, my_cell.grid_y -1];
-				} else {
+				my_cell <- cell[my_cell.grid_x, my_cell.grid_y -1];
+				if (my_cell.grid_y = 0) {
 					do end_of_game;
 				}
 			}
 			match 90.0 {
-				if (my_cell.grid_y < (environment_size -1)) {
-					my_cell <- cell[my_cell.grid_x, my_cell.grid_y +1];
-				} else {
+				my_cell <- cell[my_cell.grid_x, my_cell.grid_y +1];
+				if (my_cell.grid_y = (environment_size -1)) {
 					do end_of_game;
 				}
 			}
