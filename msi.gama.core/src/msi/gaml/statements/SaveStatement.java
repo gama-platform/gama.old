@@ -404,10 +404,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	private ISaveDelegate findDelegate(final IType dataType, final String fileType) {
 		Map<IType, ISaveDelegate> map = DELEGATES.get(fileType);
 		if (map == null) return null;
+		int distance = Integer.MAX_VALUE;
+		ISaveDelegate closest = null;
 		for (Entry<IType, ISaveDelegate> entry : map.entrySet()) {
-			if (entry.getKey().isAssignableFrom(dataType)) return entry.getValue();
+			if (entry.getKey().isAssignableFrom(dataType)) {
+				int d = dataType.distanceTo(entry.getKey());
+				if (d < distance) {
+					distance = d;
+					closest = entry.getValue();
+				}
+			}
 		}
-		return null;
+		return closest;
 	}
 
 	@Override
