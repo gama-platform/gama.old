@@ -740,9 +740,10 @@ public class FileUtils {
 	 */
 	private static String constructRelativeTempFilePath(final IScope scope, final URL url) {
 		String query = url.getQuery();
-		if (query != null) { query = "?" + query; }
-		return "" + CacheLocationProvider.NAME + "" + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
-				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT) + checkSum(query);
+		long q = checkSum(query);
+		String suffix = q == 0l ? "" : String.valueOf(q);
+		return CacheLocationProvider.NAME + "" + SEPARATOR + url.getHost() + URL_SEPARATOR_REPLACEMENT
+				+ url.getPath().replace(SEPARATOR, URL_SEPARATOR_REPLACEMENT) + suffix;
 
 	}
 
