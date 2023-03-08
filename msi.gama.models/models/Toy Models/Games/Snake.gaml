@@ -9,6 +9,7 @@ model snake
 global {
 	list<cell> cells_not_wall;
 	int environment_size <- 20;
+	bool game_is_running;
 	
 	geometry shape <- square(environment_size);
 	snake the_snake;
@@ -17,45 +18,62 @@ global {
 		create wall with: (shape: rectangle(environment_size,1), location:{environment_size/2.0,0.5});
 		create wall with: (shape: rectangle(1, 100.0), location:{0.5,environment_size/2.0});
 		create wall with: (shape: rectangle(1, 100.0), location:{environment_size -0.5,environment_size/2.0});
-		create snake with:(shape: square(1), location:location, heading: 0.0) {
+		cells_not_wall <- cell where (not each.is_wall);
+
+		do init_game;		
+		write "***** TO PLAY *****";
+		write "Up: 'e'\nDown: 'd'\nRight: 'f'\nLeft: ''s";
+		create HUD;
+
+	}
+	
+	action init_game {
+		game_is_running <- false;
+		
+		ask snake{
+			do die;
+		}
+		ask food {
+			do die;
+		}
+		
+		create snake with:(shape: square(1), location:location, headings: [0.0]) {
 			my_cell <- cell(location);
 			cells << my_cell;
 		}
 		the_snake <- first(snake);
-		cells_not_wall <- cell where (not each.is_wall);
 		create food with: (location:(one_of(free_cells()).location)) {
 			ask cell(location) {
 				is_food <- true;
 			}
 		}
-		
-		write "***** TO PLAY *****";
-		write "Up: 'e'\nDown: 'd'\nRight: 'f'\nLeft: ''s";
-		do tell("Start of the game",false);
-		
 	}
 	
 	action move_up {
-		if (the_snake.heading_last != 90) {
-			the_snake.heading <- -90.0;
+		if (last(the_snake.headings) != 90) {
+			the_snake.headings <+ -90.0;
 		}
 	}
 	action move_down {
-		if (the_snake.heading_last != -90) {
-			the_snake.heading <- 90.0;
+		if (last(the_snake.headings) != -90) {
+			the_snake.headings <+ 90.0;
 		}
 	}
 	action move_left {
-		if (the_snake.heading_last != 0) {
-			the_snake.heading <- 180.0;
+		if (last(the_snake.headings)!= 0) {
+			the_snake.headings <+ 180.0;
 		}
 	}
 	action move_right {
-		if (the_snake.heading_last != 180) {
-			the_snake.heading <- 0.0;
+		if (last(the_snake.headings)!= 180) {
+			the_snake.headings <+ 0.0;
 		}
 	}
-	
+	action start_count_down {
+		ask HUD{
+			do start_count_down;
+		}
+	}
 	list<cell> free_cells {
 		return cells_not_wall - the_snake.cells;
 	}
@@ -84,8 +102,8 @@ species food {
 	}
 }
 species snake  {
-	float heading_last <- 0.0;
-	float heading <- 0.0;
+	float current_heading <- 0.0;
+	list<float> headings <- [0.0];
 	cell my_cell;
 	list<cell> cells;
 	aspect default {
@@ -98,13 +116,16 @@ species snake  {
 		
 		ask world {
 			do tell("End of game, score: " + length(myself.cells), false);
-			do pause;
+			do init_game;
 		}
 	}
 	
-	reflex move {
-		heading_last <- heading;
-		switch heading {
+	reflex move when:game_is_running{
+		if ! empty(headings){
+			current_heading <- first(headings); 	
+			remove from:headings index:0;
+		}
+		switch current_heading {
 			match 0.0 {
 				if (my_cell.grid_x < (environment_size -1)) {
 					my_cell <- cell[my_cell.grid_x +1, my_cell.grid_y];
@@ -152,6 +173,47 @@ species snake  {
 	}
 }
 
+species HUD skills:[thread]{
+	
+	font hud_font <- font("Helvetica", 80, #bold) ;
+	int count <- 3;
+	bool is_counting <- false;
+	
+	aspect default {
+		if is_counting {
+			draw ""+count at:{world.shape.width/2-1, world.shape.height/2-1} 
+							color: rnd_color(255) 
+							font:hud_font ;
+		}
+		else if ! game_is_running{
+			draw "Press space to"at:{1, 10}  font:hud_font color:#red;
+			draw "start the game" at:{2, 20}  font:hud_font color:#red;
+		}
+	}
+	
+	action start_count_down {
+		count <- 5;
+		is_counting <- true;
+		
+		do run_thread interval:1#second;
+	}
+	
+	//counting down
+	action thread_action {
+		count <- count - 1;
+		if count = 0 {
+			do end_thread;
+			is_counting <- false;
+			ask world {
+				game_is_running <- true;
+			}
+		}
+	}
+	
+	
+}
+
+
 experiment snake_game type: gui autorun: true{
 	float minimum_cycle_duration <- 0.3;
 	parameter "Size of the environment" var: environment_size <- 30 min: 10 max: 100;
@@ -161,11 +223,15 @@ experiment snake_game type: gui autorun: true{
 			species wall;
 			species snake;
 			species food;
+			species HUD;
 			event "e" action: move_up;
 			event "d" action: move_down;
 			event "f" action: move_right;
 			event "s" action: move_left;
+			event " " action:start_count_down;
 			
 		}
 	}
 }
+
+
