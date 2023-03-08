@@ -112,9 +112,6 @@ public class GamaBundleLoader {
 	/** The current plugin name. */
 	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN.getSymbolicName();
 
-	/** The additions. */
-	public static final String ADDITIONS = "gaml.additions.GamlAdditions";
-
 	/** The Constant ADDITIONS_PACKAGE_BASE. */
 	public static final String ADDITIONS_PACKAGE_BASE = "gaml.additions";
 

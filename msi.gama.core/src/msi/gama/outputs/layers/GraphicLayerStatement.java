@@ -120,8 +120,8 @@ import ummisco.gama.dev.utils.COUNTER;
 						@example (
 								value = "}",
 								isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-				IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 public class GraphicLayerStatement extends AbstractLayerStatement {
 
 	/** The aspect. */

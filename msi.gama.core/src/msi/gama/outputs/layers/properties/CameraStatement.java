@@ -91,8 +91,8 @@ import msi.gaml.types.IType;
 				+ "These cameras are unlocked (so that they can be manipulated by the user), look at the center of the world from a symbolic position, and the distance between this position and the target is equal to the maximum of the width and height of the world's shape. "
 				+ "These preset cameras can be reused when defining new cameras, since their names can become symbolic positions for them. For instance: camera 'my_camera' location: #from_top distance: 10; will lower (or extend) the distance between the camera and the center of the world to 10. "
 				+ "camera 'my_camera' locked: true location: #from_up_front target: people(0); will continuously follow the first agent of the people species from the up-front position. ",
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-				IKeyword.IMAGE, IKeyword.POPULATION, })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.IMAGE, IKeyword.SPECIES_LAYER, })
 @validator (OpenGLSpecificLayerValidator.class)
 public class CameraStatement extends AbstractLayerStatement {
 

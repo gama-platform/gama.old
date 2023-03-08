@@ -50,7 +50,7 @@ import msi.gaml.types.Types;
  *
  */
 @symbol (
-		name = IKeyword.GRID_POPULATION,
+		name = IKeyword.GRID_LAYER,
 		kind = ISymbolKind.LAYER,
 		with_sequence = true, // Necessary to declare the elevation facet as remote itself
 		remote_context = true,
@@ -173,7 +173,7 @@ import msi.gaml.types.Types;
 						doc = @doc ("(openGL only) specify whether the display of the species is refreshed. (true by default, usefull in case of agents that do not move)")) },
 		omissible = IKeyword.SPECIES)
 @doc (
-		value = "`" + IKeyword.GRID_POPULATION + "` is used using the `" + IKeyword.GRID
+		value = "`" + IKeyword.GRID_LAYER + "` is used using the `" + IKeyword.GRID
 				+ "` keyword. It allows the modeler to display in an optimized way all cell agents of a grid (i.e. all agents of a species having a grid topology).",
 		usages = { @usage (
 				value = "The general syntax is:",
@@ -198,7 +198,7 @@ import msi.gaml.types.Types;
 										value = "}",
 										isExecutable = false) }) },
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.IMAGE,
-				IKeyword.OVERLAY, IKeyword.POPULATION })
+				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 @serializer (GridLayerSerializer.class)
 @validator (GridLayerValidator.class)
 public class GridLayerStatement extends AbstractLayerStatement {

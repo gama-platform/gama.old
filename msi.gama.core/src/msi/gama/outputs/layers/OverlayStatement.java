@@ -116,8 +116,8 @@ import msi.gaml.types.IType;
 				examples = { @example (
 						value = "overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
 						isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-				IKeyword.IMAGE, IKeyword.POPULATION })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.IMAGE, IKeyword.SPECIES_LAYER })
 public class OverlayStatement extends GraphicLayerStatement implements IOverlayProvider<OverlayInfo> {
 
 	/** The color. */

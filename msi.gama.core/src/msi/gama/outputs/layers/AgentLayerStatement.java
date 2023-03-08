@@ -151,8 +151,8 @@ import msi.gaml.types.IType;
 								@example (
 										value = "}",
 										isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
-				IKeyword.OVERLAY, IKeyword.POPULATION })
+		see = { IKeyword.DISPLAY, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER, IKeyword.IMAGE,
+				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 public class AgentLayerStatement extends AbstractLayerStatement {
 
 	/**

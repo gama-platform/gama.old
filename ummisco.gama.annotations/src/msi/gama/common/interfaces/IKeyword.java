@@ -491,7 +491,7 @@ public interface IKeyword {
 	String GRID = "grid";
 
 	/** The grid population. */
-	String GRID_POPULATION = "display_grid";
+	String GRID_LAYER = "display_grid";
 
 	/** The grid value. */
 	String GRID_VALUE = "grid_value";
@@ -552,6 +552,9 @@ public interface IKeyword {
 
 	/** The image. */
 	String IMAGE = "image";
+
+	/** The display image. */
+	String IMAGE_LAYER = "image_layer";
 
 	/** The in. */
 	String IN = "in";
@@ -934,7 +937,7 @@ public interface IKeyword {
 	String POINT = "point";
 
 	/** The population. */
-	String POPULATION = "display_population";
+	String SPECIES_LAYER = "species_layer";
 
 	/** The position. */
 	String POSITION = "position";

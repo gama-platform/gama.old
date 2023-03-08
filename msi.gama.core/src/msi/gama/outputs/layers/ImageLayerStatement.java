@@ -3,7 +3,7 @@
  * ImageLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
  *
  */
 @symbol (
-		name = IKeyword.IMAGE,
+		name = IKeyword.IMAGE_LAYER,
 		kind = ISymbolKind.LAYER,
 		with_sequence = false,
 		concept = { IConcept.DISPLAY, IConcept.FILE, IConcept.LOAD_FILE })
@@ -95,7 +95,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("in the case of a shapefile, this the color used to fill in geometries of the shapefile. In the case of an image, it is used to tint the image")),
 				@facet (
 						name = IKeyword.MATRIX,
-						type = { IType.MATRIX},
+						type = { IType.MATRIX },
 						optional = true,
 						doc = @doc ("the matrix containing the values of each pixel as integer following ARGB format")),
 				@facet (
@@ -103,7 +103,7 @@ import msi.gaml.types.IType;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("(openGL only) specify whether the image display is refreshed or not. (false by default, true should be used in cases of images that are modified over the simulation)")) },
-			omissible = IKeyword.NAME)
+		omissible = IKeyword.NAME)
 @doc (
 		value = "`" + IKeyword.IMAGE
 				+ "` allows modeler to display an image (e.g. as background of a simulation). Note that this image will not be dynamically changed or moved in OpenGL, unless the refresh: facet is set to true.",
@@ -168,8 +168,8 @@ import msi.gaml.types.IType;
 								@example (
 										value = "}",
 										isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-				IKeyword.OVERLAY, IKeyword.POPULATION })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 @validator (ImageLayerValidator.class)
 public class ImageLayerStatement extends AbstractLayerStatement {
 
@@ -182,7 +182,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		public void validate(final StatementDescription description) {
 			if (!description.hasFacet(GIS)) {
 				if (!description.hasFacet(NAME) && !description.hasFacet(FILE) && !description.hasFacet(MATRIX)) {
-					description.error("Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE + " or " + IKeyword.MATRIX,
+					description.error(
+							"Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE + " or " + IKeyword.MATRIX,
 							IGamlIssue.MISSING_FACET, description.getUnderlyingElement(), FILE, "\"\"");
 				}
 			} else if (description.hasFacet(FILE)) {
@@ -194,7 +195,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	/** The file. */
 	IExpression file;
-	
+
+	/** The matrix. */
 	IExpression matrix;
 
 	/**

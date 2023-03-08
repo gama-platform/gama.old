@@ -55,6 +55,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.statements.draw.DrawStatement.DrawValidator;
 import msi.gaml.types.IType;
@@ -395,16 +396,8 @@ public class DrawStatement extends AbstractStatementSequence {
 					break;
 				}
 			}
-			if (executer == null) return null;
-			// final IExpression item = getFacet(IKeyword.GEOMETRY);
-			// if (item.getGamlType().getGamlType().id() == IType.FILE) {
-			// executer = new FileDrawer();
-			// } else if (item.getGamlType().id() == IType.STRING) {
-			// executer = new TextDrawer();
-			// } else {
-			// // item is supposed to be castable into a geometry
-			// executer = new ShapeDrawer();
-			// }
+			if (executer == null)
+				throw GamaRuntimeException.error("No drawer found to draw " + Cast.toGaml(item), scope);
 			DrawingData d = data.get(g);
 			if (d == null) {
 				d = new DrawingData(this);

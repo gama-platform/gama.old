@@ -54,13 +54,13 @@ import msi.gaml.types.IType;
  *
  */
 @symbol (
-		name = IKeyword.POPULATION,
+		name = IKeyword.SPECIES_LAYER,
 		kind = ISymbolKind.LAYER,
 		with_sequence = true,
 		remote_context = true,
 		concept = { IConcept.DISPLAY, IConcept.SPECIES })
 @inside (
-		symbols = { IKeyword.DISPLAY, IKeyword.POPULATION })
+		symbols = { IKeyword.DISPLAY, IKeyword.SPECIES_LAYER })
 @facets (
 		value = { @facet (
 				name = IKeyword.POSITION,
@@ -119,7 +119,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("(openGL only) specify whether the display of the species is refreshed. (true by default, usefull in case of agents that do not move)")) },
 		omissible = IKeyword.SPECIES)
 @doc (
-		value = "The `" + IKeyword.POPULATION
+		value = "The `" + IKeyword.SPECIES_LAYER
 				+ "` statement is used using the `species keyword`. It allows modeler to display all the agent of a given species in the current display. In particular, modeler can choose the aspect used to display them.",
 		usages = { @usage (
 				value = "The general syntax is:",
@@ -166,7 +166,7 @@ import msi.gaml.types.IType;
 								@example (
 										value = "}",
 										isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
 				IKeyword.IMAGE, IKeyword.OVERLAY })
 @serializer (SpeciesLayerSerializer.class)
 @validator (SpeciesLayerValidator.class)

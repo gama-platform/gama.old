@@ -28,7 +28,6 @@ import static msi.gama.common.interfaces.IKeyword.FILE;
 import static msi.gama.common.interfaces.IKeyword.FROM;
 import static msi.gama.common.interfaces.IKeyword.FUNCTION;
 import static msi.gama.common.interfaces.IKeyword.GRID;
-import static msi.gama.common.interfaces.IKeyword.GRID_POPULATION;
 import static msi.gama.common.interfaces.IKeyword.GUI_;
 import static msi.gama.common.interfaces.IKeyword.IN;
 import static msi.gama.common.interfaces.IKeyword.INDEX;
@@ -41,7 +40,7 @@ import static msi.gama.common.interfaces.IKeyword.MODEL;
 import static msi.gama.common.interfaces.IKeyword.NAME;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT_FILE;
-import static msi.gama.common.interfaces.IKeyword.POPULATION;
+import static msi.gama.common.interfaces.IKeyword.SPECIES_LAYER;
 import static msi.gama.common.interfaces.IKeyword.PUT;
 import static msi.gama.common.interfaces.IKeyword.REMOVE;
 import static msi.gama.common.interfaces.IKeyword.SAVE;
@@ -738,10 +737,12 @@ public class GamlSyntacticConverter {
 			keyword = SAVE_BATCH;
 		} else if (OUTPUT.equals(upper) && FILE.equals(keyword)) {
 			keyword = OUTPUT_FILE;
-		} else if (DISPLAY.equals(upper) || POPULATION.equals(upper)) {
+		} else if (DISPLAY.equals(upper) || SPECIES_LAYER.equals(upper)) {
 			if (SPECIES.equals(keyword)) {
-				keyword = POPULATION;
-			} else if (GRID.equals(keyword)) { keyword = GRID_POPULATION; }
+				keyword = SPECIES_LAYER;
+			} else if (GRID.equals(keyword)) {
+				keyword = IKeyword.GRID_LAYER;
+			} else if (IKeyword.IMAGE.equals(keyword)) { keyword = IKeyword.IMAGE_LAYER; }
 		}
 		return keyword;
 	}
