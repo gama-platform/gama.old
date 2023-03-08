@@ -17,13 +17,13 @@ global {
 	/*
 	 * Import the image to vectorize
 	 */
-	image_file image <- image_file("../images/drawing.png");
+	image_file im <- image_file("../images/drawing.png");
 	
 	/*
 	 * Get the resolution of the image
 	 */
-	int res_x <- matrix(image).columns;
-	int res_y <- matrix(image).rows;
+	int res_x <-envelope(im).width;
+	int res_y <- envelope(im).height;
 	
 	/*
 	 * 
@@ -45,7 +45,6 @@ global {
 	];
 	
 	init {
-		
 		float t <- machine_time;
 		
 		write "START CREATION OF THE ENVIRONMENT";
@@ -58,7 +57,7 @@ global {
 		float factorDiscret_width <- res_y / g_y;
 		float factorDiscret_height <- res_x / g_x;
 		ask cell {		
-			color <-rgb( (image) at {grid_x * factorDiscret_height,grid_y * factorDiscret_width}) ;
+			color <-rgb( (im) at {grid_x * factorDiscret_height,grid_y * factorDiscret_width}) ;
 		}
 		
 		/*
@@ -168,7 +167,7 @@ experiment Vectorize type: gui {
 			species building;
 		}
 		display image {
-			image image;
+			image im;
 		}
 	}
 }

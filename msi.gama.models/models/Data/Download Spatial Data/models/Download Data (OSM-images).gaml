@@ -421,9 +421,9 @@ global {
 
 //action for vectorizing an existing google image
 	action load_google_image {
-		image_file image <- image_file(googlemap_path);
+		image_file im <- image_file(googlemap_path);
 		ask cell_google {		
-			color <-rgb( (image) at {grid_x ,grid_y }) ;
+			color <-rgb( (im) at {grid_x ,grid_y }) ;
 		}
 			
 		building_google <- building_google + define_building_from_image(cell_google collect each.shape, cell_google collect each.color);
