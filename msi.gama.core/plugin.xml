@@ -5,6 +5,7 @@
    <extension-point id="gama.display" name="Implementations of IDisplaySurface" schema="schema/gama.display.exsd"/>
    <extension-point id="gama.create" name="Implementations of ICreateDelegate" schema="schema/gama.create.exsd"/>
    <extension-point id="gama.save" name="Implementations of ISaveDelegate" schema="schema/gama.save.exsd"/>
+   <extension-point id="gama.draw" name="Implementations of IDrawDelegate" schema="schema/gama.draw.exsd"/>
    <extension-point id="gama.event_layer" name="Implementations of IEventLayerDelegate" schema="schema/gama.event_layer.exsd"/>
    <extension-point id="gaml.extension" name="Additions to the GAML language" schema="schema/gaml.extension.exsd"/>
    <extension-point id="gama.models" name="Allow plugins to add sample models to GAMA" schema="schema/gama.models.exsd"/>
@@ -98,6 +99,21 @@
       <implementation
             class="msi.gaml.statements.save.TextSaver"
             description="Saves items in plain text (default saver)">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.draw">
+      <implementation
+            class="msi.gaml.statements.draw.FileDrawer"
+            description="Allows to draw objects contained in files">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.draw.ShapeDrawer"
+            description="Allows to draw geometries and agents">
+      </implementation>
+      <implementation
+            class="msi.gaml.statements.draw.TextDrawer"
+            description="Allows to draw text">
       </implementation>
    </extension>
 

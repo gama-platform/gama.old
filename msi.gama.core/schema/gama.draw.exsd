@@ -3,10 +3,10 @@
 <schema targetNamespace="msi.gama.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="msi.gama.core" id="gama.save" name="Implementations of ISaveDelegate"/>
+         <meta.schema plugin="msi.gama.core" id="gama.draw" name="Implementations of IDrawDelegate"/>
       </appinfo>
       <documentation>
-         Allows plug-in developers to add new implementations of ISaveDelegate, so that the &quot;save&quot; statement can be extended with new types of data and files
+         Allows plug-in developers to add new implementations of IDrawDelegate, so that the &quot;draw&quot; statement can be extended with new types to draw or new techniques for drawing
       </documentation>
    </annotation>
 
@@ -52,17 +52,17 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Class that implements ISaveDelegate in the plugin
+                  Class that implements IDrawDelegate in the plugin
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":msi.gama.common.interfaces.ISaveDelegate"/>
+                  <meta.attribute kind="java" basedOn=":msi.gama.common.interfaces.IDrawDelegate"/>
                </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A description of the source that this ISaveDelegate accepts (optional)
+                  A description of the source that this IDrawDelegate accepts (optional)
                </documentation>
             </annotation>
          </attribute>

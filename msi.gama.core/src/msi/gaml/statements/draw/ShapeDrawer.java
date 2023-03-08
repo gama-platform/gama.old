@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * ShapeExecuter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * ShapeDrawer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -9,17 +9,6 @@
  *
  ********************************************************************************************************/
 package msi.gaml.statements.draw;
-
-import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
-import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
-import static msi.gama.common.geometry.GeometryUtils.getPointsOf;
-import static msi.gama.common.geometry.GeometryUtils.rotate;
-import static msi.gama.common.geometry.GeometryUtils.translate;
-import static msi.gama.common.geometry.Scaling3D.of;
-import static msi.gaml.operators.Cast.asFloat;
-import static msi.gaml.operators.Cast.asGeometry;
-import static msi.gaml.types.GamaFileType.createFile;
-import static msi.gaml.types.GamaGeometryType.buildArrow;
 
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -30,8 +19,10 @@ import org.locationtech.jts.operation.buffer.BufferParameters;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
-import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.geometry.Scaling3D;
+import msi.gama.common.interfaces.IDrawDelegate;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -42,81 +33,43 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaFileType;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * The Class ShapeExecuter.
  */
-class ShapeExecuter extends DrawExecuter {
-
-	/** The begin arrow. */
-	final IExpression endArrow, beginArrow;
-
-	/** The constant shape. */
-	final IShape constantShape;
-
-	/** The constant begin. */
-	final Double constantEnd, constantBegin;
-
-	/** The has arrows. */
-	final boolean hasArrows;
+public class ShapeDrawer implements IDrawDelegate {
 
 	/**
-	 * Instantiates a new shape executer.
+	 * Execute on.
 	 *
-	 * @param item
-	 *            the item
-	 * @param beginArrow
-	 *            the begin arrow
-	 * @param endArrow
-	 *            the end arrow
+	 * @param scope
+	 *            the scope
+	 * @param gr
+	 *            the gr
+	 * @param data
+	 *            the data
+	 * @return the rectangle 2 D
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	ShapeExecuter(final IExpression item, final IExpression beginArrow, final IExpression endArrow)
-			throws GamaRuntimeException {
-		super(item);
-		constantShape = item.isConst() ? asGeometry(null, item.getConstValue()) : null;
-		hasArrows = beginArrow != null || endArrow != null;
-		if (beginArrow != null) {
-			if (beginArrow.isConst()) {
-				constantBegin = asFloat(null, beginArrow.getConstValue());
-				this.beginArrow = null;
-			} else {
-				constantBegin = null;
-				this.beginArrow = beginArrow;
-			}
-		} else {
-			this.beginArrow = null;
-			constantBegin = null;
-		}
-		if (endArrow != null) {
-			if (endArrow.isConst()) {
-				constantEnd = asFloat(null, endArrow.getConstValue());
-				this.endArrow = null;
-			} else {
-				constantEnd = null;
-				this.endArrow = beginArrow;
-			}
-		} else {
-			this.endArrow = null;
-			constantEnd = null;
-		}
-
-	}
-
 	@Override
-	Rectangle2D executeOn(final IGraphicsScope scope, final IGraphics gr, final DrawingData data)
+	public Rectangle2D executeOn(final IGraphicsScope scope, final DrawingData data, final IExpression... items)
 			throws GamaRuntimeException {
-		final IShape shape = constantShape == null ? asGeometry(scope, item.value(scope), false) : constantShape;
+		final IShape shape = Cast.asGeometry(scope, items[0].value(scope), false);
 		if (shape == null) return null;
 		final DrawingAttributes attributes = computeAttributes(scope, data, shape);
 		Geometry gg = shape.getInnerGeometry();
 		if (gg == null) return null;
-		final ICoordinates ic = getContourCoordinates(gg);
+		final ICoordinates ic = GeometryUtils.getContourCoordinates(gg);
 		ic.ensureClockwiseness();
 
 		// If the graphics is 2D, we pre-translate and pre-rotate the geometry
-		if (gr.is2D()) {
+		if (scope.getGraphics().is2D()) {
 			/** The center. */
 			final GamaPoint center = ic.getCenter();
 			final AxisAngle rot = attributes.getRotation();
@@ -126,18 +79,19 @@ class ShapeExecuter extends DrawExecuter {
 				// Seems to work...
 				gg = gg.buffer(0.0, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT);
 			}
-			rotate(gg, center, rot);
+			GeometryUtils.rotate(gg, center, rot);
 			if (location != null) {
 				if (gg.getNumPoints() == 1) {
-					gg = GEOMETRY_FACTORY.createPoint(location);
+					gg = GeometryUtils.GEOMETRY_FACTORY.createPoint(location);
 				} else {
-					translate(gg, center, location);
+					GeometryUtils.translate(gg, center, location);
 				}
 			}
 			// gg.geometryChanged();
 		}
-		if (hasArrows) {
-			final Geometry withArrows = addArrows(scope, gg, !attributes.isEmpty());
+		// Items is of length 3 , but let's verify anyway
+		if (items.length > 1) {
+			final Geometry withArrows = addArrows(scope, gg, items[1], items[2], !attributes.isEmpty());
 			if (withArrows != gg) {
 				gg = withArrows;
 				attributes.setType(IShape.Type.NULL);
@@ -153,7 +107,7 @@ class ShapeExecuter extends DrawExecuter {
 		if (GamaPreferences.Displays.DISPLAY_ONLY_VISIBLE.getValue() && !scope.getExperiment().isHeadless()) {
 			final Envelope3D e = shape.getEnvelope();
 			try {
-				final Envelope visible = gr.getVisibleRegion();
+				final Envelope visible = scope.getGraphics().getVisibleRegion();
 				if (visible != null && !visible.intersects(e)) return null;
 			} finally {
 				e.dispose();
@@ -163,7 +117,7 @@ class ShapeExecuter extends DrawExecuter {
 		// The textures are computed as well in advance
 		addTextures(scope, attributes);
 		// And we ask the IGraphics object to draw the shape
-		return gr.drawShape(gg, attributes);
+		return scope.getGraphics().drawShape(gg, attributes);
 	}
 
 	/**
@@ -180,7 +134,7 @@ class ShapeExecuter extends DrawExecuter {
 	DrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
 		Double depth = data.depth.get();
 		if (depth == null) { depth = shape.getDepth(); }
-		return new ShapeDrawingAttributes(of(data.size.get()), depth, data.rotation.get(), data.getLocation(),
+		return new ShapeDrawingAttributes(Scaling3D.of(data.size.get()), depth, data.rotation.get(), data.getLocation(),
 				data.empty.get(), data.color.get(), /* data.getColors(), */
 				data.border.get(), data.texture.get(), data.material.get(), scope.getAgent(),
 				shape.getGeometricalType(), data.lineWidth.get(), data.lighting.get());
@@ -197,7 +151,9 @@ class ShapeExecuter extends DrawExecuter {
 			GamaImageFile image = null;
 			if (s instanceof GamaImageFile) {
 				image = (GamaImageFile) s;
-			} else if (s instanceof String) { image = (GamaImageFile) createFile(scope, (String) s, null); }
+			} else if (s instanceof String) {
+				image = (GamaImageFile) GamaFileType.createFile(scope, (String) s, null);
+			}
 			if (image == null || !image.exists(scope))
 				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
 			return image;
@@ -215,7 +171,7 @@ class ShapeExecuter extends DrawExecuter {
 		final ITopology t = scope.getTopology();
 		if (t != null && t.isTorus()) {
 			final List<Geometry> geoms = t.listToroidalGeometries(shape);
-			final Geometry all = GEOMETRY_FACTORY.buildGeometry(geoms);
+			final Geometry all = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
 			final Geometry world = scope.getSimulation().getInnerGeometry();
 			result = all.intersection(world);
 			// WARNING Does not correctly handle rotations or translations
@@ -237,29 +193,42 @@ class ShapeExecuter extends DrawExecuter {
 	 *            the fill
 	 * @return the geometry
 	 */
-	private Geometry addArrows(final IScope scope, final Geometry g1, final Boolean fill) {
+	private Geometry addArrows(final IScope scope, final Geometry g1, final IExpression beginArrow,
+			final IExpression endArrow, final Boolean fill) {
 		if (g1 == null) return g1;
-		final GamaPoint[] points = getPointsOf(g1);
+		final GamaPoint[] points = GeometryUtils.getPointsOf(g1);
 		final int size = points.length;
 		if (size < 2) return g1;
 		Geometry end = null, begin = null;
-		if (endArrow != null || constantEnd != null) {
-			final double width = constantEnd == null ? asFloat(scope, endArrow.value(scope)) : constantEnd;
+		if (endArrow != null) {
+			final double width = Cast.asFloat(scope, endArrow.value(scope));
 			if (width > 0) {
-				end = buildArrow(points[size - 2], points[size - 1], width, width + width / 3, fill).getInnerGeometry();
+				end = GamaGeometryType.buildArrow(points[size - 2], points[size - 1], width, width + width / 3, fill)
+						.getInnerGeometry();
 			}
 		}
-		if (beginArrow != null || constantBegin != null) {
-			final double width = constantBegin == null ? asFloat(scope, beginArrow.value(scope)) : constantBegin;
+		if (beginArrow != null) {
+			final double width = Cast.asFloat(scope, beginArrow.value(scope));
 			if (width > 0) {
-				begin = buildArrow(points[1], points[0], width, width + width / 3, fill).getInnerGeometry();
+				begin = GamaGeometryType.buildArrow(points[1], points[0], width, width + width / 3, fill)
+						.getInnerGeometry();
 			}
 		}
 		if (end == null) {
 			if (begin == null) return g1;
-			return GEOMETRY_FACTORY.createCollection(g1, begin);
+			return GeometryUtils.GEOMETRY_FACTORY.createCollection(g1, begin);
 		}
-		if (begin == null) return GEOMETRY_FACTORY.createCollection(g1, end);
+		if (begin == null) return GeometryUtils.GEOMETRY_FACTORY.createCollection(g1, end);
 		return g1;
+	}
+
+	/**
+	 * Type drawn.
+	 *
+	 * @return the i type
+	 */
+	@Override
+	public IType<?> typeDrawn() {
+		return Types.GEOMETRY;
 	}
 }

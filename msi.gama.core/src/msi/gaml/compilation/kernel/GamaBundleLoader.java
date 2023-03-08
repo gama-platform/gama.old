@@ -47,6 +47,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.common.interfaces.IDrawDelegate;
 import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.ISaveDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
@@ -55,6 +56,7 @@ import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.SaveStatement;
+import msi.gaml.statements.draw.DrawStatement;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -128,8 +130,11 @@ public class GamaBundleLoader {
 	/** The create extension. */
 	public static final String CREATE_EXTENSION = "gama.create";
 
-	/** The create extension. */
+	/** The save extension. */
 	public static final String SAVE_EXTENSION = "gama.save";
+
+	/** The draw extension. */
+	public static final String DRAW_EXTENSION = "gama.draw";
 
 	/** The event layer extension. */
 	public static final String EVENT_LAYER_EXTENSION = "gama.event_layer";
@@ -269,8 +274,7 @@ public class GamaBundleLoader {
 									+ e.getDeclaringExtension().getContributor().getName(), e1);
 							// We do not systematically exit in case of additional plugins failing to load, so as to
 							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove
-							// offending plugins, etc.)
+							// remove offending plugins, etc.)
 							continue;
 						}
 					}
@@ -288,8 +292,25 @@ public class GamaBundleLoader {
 									+ e.getDeclaringExtension().getContributor().getName(), e1);
 							// We do not systematically exit in case of additional plugins failing to load, so as to
 							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove
-							// offending plugins, etc.)
+							// remove offending plugins, etc.)
+							continue;
+						}
+					}
+
+					// We gather all the extensions to the `draw` statement and add them
+					// as delegates to DrawStatement. If an exception occurs, we discard it
+					for (final IConfigurationElement e : registry.getConfigurationElementsFor(DRAW_EXTENSION)) {
+						IDrawDelegate sd = null;
+						try {
+							// TODO Add the defining plug-in
+							sd = (IDrawDelegate) e.createExecutableExtension("class");
+							if (sd != null) { DrawStatement.addDelegate(sd); }
+						} catch (final Exception e1) {
+							ERROR("Error in loading DrawStatement delegate from "
+									+ e.getDeclaringExtension().getContributor().getName(), e1);
+							// We do not systematically exit in case of additional plugins failing to load, so as to
+							// give the platform a chance to execute even in case of errors (to save files, to
+							// remove offending plugins, etc.)
 							continue;
 						}
 					}
