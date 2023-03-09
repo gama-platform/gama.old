@@ -22,8 +22,8 @@ global {
 	/*
 	 * Get the resolution of the image
 	 */
-	int res_x <-envelope(im).width;
-	int res_y <- envelope(im).height;
+	int res_x <- int(envelope(im).width);
+	int res_y <- int(envelope(im).height);
 	
 	/*
 	 * 
