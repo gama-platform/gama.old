@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RefreshAction.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * RefreshAction.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
@@ -22,7 +22,6 @@ import static ummisco.gama.ui.navigator.contents.ResourceManager.getInstance;
 import static ummisco.gama.ui.utils.WorkbenchHelper.runInUI;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.filesystem.IFileInfo;
@@ -170,11 +169,9 @@ public class RefreshAction extends WorkspaceAction {
 		return new WorkspaceModifyOperation() {
 			@Override
 			public void execute(final IProgressMonitor monitor) {
-				final Iterator<? extends IResource> resourcesEnum = resources.iterator();
 				try {
-					while (resourcesEnum.hasNext()) {
+					for (IResource resource : resources) {
 						try {
-							final IResource resource = resourcesEnum.next();
 							refreshResource(resource, null);
 						} catch (final CoreException e) {}
 						if (monitor.isCanceled()) throw new OperationCanceledException();
@@ -211,7 +208,6 @@ public class RefreshAction extends WorkspaceAction {
 		resource.getParent().refreshLocal(DEPTH_INFINITE, monitor);
 
 		runInUI("Refreshing " + resource.getName(), 0, m -> {
-
 			FileMetaDataProvider.getInstance().storeMetaData(resource, null, true);
 			FileMetaDataProvider.getInstance().getMetaData(resource, false, true);
 			getNavigator().getCommonViewer().refresh(getInstance().findWrappedInstanceOf(resource), true);
