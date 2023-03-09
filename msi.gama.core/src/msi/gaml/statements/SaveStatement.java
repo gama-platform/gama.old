@@ -246,7 +246,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			} else if (type != null) {
 				String id = type.literalValue();
 				if (!DELEGATES.containsKey(id)) {
-					desc.error("Unknown file type", IGamlIssue.UNKNOWN_ARGUMENT, TYPE);
+					desc.error(
+							"Unknown file type. Accepted types are: " + DELEGATES.keySet().stream().sorted().toList(),
+							IGamlIssue.UNKNOWN_ARGUMENT, TYPE);
 					return;
 				}
 			}
