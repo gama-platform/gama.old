@@ -26,7 +26,6 @@ public class CommandExecutor {
 		cmds.put("pause", new PauseCommand());
 		cmds.put("stop", new StopCommand());
 		cmds.put("reload", new ReloadCommand());
-//		cmds.put("output", new OutputCommand());
 		cmds.put("expression", new ExpressionCommand());
 		cmds.put("exit", new ExitCommand());
 
