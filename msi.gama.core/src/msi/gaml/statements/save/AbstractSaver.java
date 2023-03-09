@@ -25,7 +25,7 @@ public abstract class AbstractSaver implements ISaveDelegate {
 	Set<String> fileTypes = computeFileTypes();
 
 	@Override
-	public final Set<String> getFileTypes() { return fileTypes; }
+	public Set<String> getFileTypes() { return fileTypes; }
 
 	/**
 	 * Compute file types.

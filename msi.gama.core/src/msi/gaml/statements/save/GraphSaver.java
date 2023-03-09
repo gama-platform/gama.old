@@ -11,6 +11,7 @@ package msi.gaml.statements.save;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 
 import org.jgrapht.nio.GraphExporter;
@@ -58,10 +59,14 @@ public class GraphSaver extends AbstractSaver {
 	 * @return the string[]
 	 */
 	@Override
-	public Set<String> computeFileTypes() {
-		return GraphExporters.getAvailableWriters();
-	}
+	public Set<String> getFileTypes() { return GraphExporters.getAvailableWriters(); }
 
 	@Override
 	public IType getDataType() { return Types.GRAPH; }
+
+	@Override
+	protected Set<String> computeFileTypes() {
+		// Let them be retrieved dynamically and not cached
+		return Collections.EMPTY_SET;
+	}
 }
