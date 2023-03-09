@@ -203,7 +203,6 @@ public class GamaBundleLoader {
 			p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
 			extensions.addAll(Arrays.asList(p.getExtensions()));
 		} catch (final InvalidRegistryObjectException e) {
-
 			ERROR("Error in retrieving GAMA plugins. One is invalid. ", e);
 		}
 
@@ -249,11 +248,10 @@ public class GamaBundleLoader {
 						try {
 							preBuild(addition);
 						} catch (final Exception e1) {
-							ERROR("Error in loading plugin " + CORE_PLUGIN.getSymbolicName() + ". ", e1);
+							ERROR("Error in loading plugin " + CURRENT_PLUGIN_NAME + ". ", e1);
 							// We do not systematically exit in case of additional plugins failing to load, so as to
 							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove
-							// offending plugins, etc.)
+							// remove offending plugins, etc.)
 							continue;
 						}
 					}
@@ -385,12 +383,18 @@ public class GamaBundleLoader {
 						clazz = (Class<IGamlAdditions>) bundle.loadClass(classPath);
 						clazz.getConstructor().newInstance().initialize();
 					} catch (final ClassNotFoundException e) {
+						DEBUG.LOG(error + "found.");
 						throw new WrappedException(error + "found.", e);
 					} catch (final SecurityException | NoSuchMethodException e) {
+						DEBUG.LOG(error + "initialized.");
 						throw new WrappedException(error + "initialized.", e);
 					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException e) {
+						DEBUG.LOG(error + "instantiated.");
 						throw new WrappedException(error + "instantiated.", e);
+					} catch (Exception e) {
+						DEBUG.LOG(e.getMessage());
+						throw new WrappedException(error + "run.", e);
 					}
 				});
 	}
