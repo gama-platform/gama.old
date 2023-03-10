@@ -3,7 +3,7 @@
  * ApplicationWorkbenchWindowAdvisor.java, in msi.gama.application, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -68,7 +68,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		final Bundle bundle = Platform.getBundle("msi.gama.application");
 
 		final ImageDescriptor myImage =
-				ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("branding_icons/icon256.png"), null));
+				ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("icons/icon256.png"), null));
 		configurer.getWindow().getShell().setImage(myImage.createImage());
 		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor finished");
 	}
