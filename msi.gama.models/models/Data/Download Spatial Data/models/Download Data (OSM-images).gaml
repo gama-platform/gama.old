@@ -394,7 +394,7 @@ global {
 			
 		string info <- ""  + width +"\n0.0\n0.0\n"+height+"\n"+min(pt1.x,pt2.x)+"\n"+(height < 0 ? max(pt1.y,pt2.y) : min(pt1.y,pt2.y));
 	
-		save info to: exporting_path +"satellite.pgw";
+		save info to: exporting_path +"satellite.pgw" type: "text";
 	}
 	
 	action load_satellite_image
