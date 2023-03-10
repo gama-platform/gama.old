@@ -64,6 +64,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		super(adv, configurer);
 		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor begins");
 		// Hack and workaround for the inability to find launcher icons...
+		// See also #3654 -- is this workaround still necessary ?
 
 		final Bundle bundle = Platform.getBundle("msi.gama.application");
 
