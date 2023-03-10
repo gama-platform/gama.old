@@ -10,10 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Resource;
@@ -29,7 +25,6 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
-import org.osgi.framework.Bundle;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
@@ -62,16 +57,6 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 			final IWorkbenchWindowConfigurer configurer) {
 		super(adv, configurer);
-		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor begins");
-		// Hack and workaround for the inability to find launcher icons...
-		// See also #3654 -- is this workaround still necessary ?
-
-		final Bundle bundle = Platform.getBundle("msi.gama.application");
-
-		final ImageDescriptor myImage =
-				ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("icons/icon256.png"), null));
-		configurer.getWindow().getShell().setImage(myImage.createImage());
-		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor finished");
 	}
 
 	@Override
