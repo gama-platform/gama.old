@@ -4,7 +4,7 @@
 <product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.9.0.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
-      <image path="/msi.gama.application/icons/icon128.png"/>
+      <image path="/ummisco.gama.ui.shared/icons/window/icon128.png"/>
       <text>
          GAMA Platform - V1.9.0 http://gama-platform.org
 
@@ -63,16 +63,16 @@
       </vmArgsWin>
    </launcherArgs>
 
-   <windowImages i16="/msi.gama.application/icons/icon16.png" i32="/msi.gama.application/icons/icon32.png" i48="/msi.gama.application/icons/icon48.png" i64="/msi.gama.application/icons/icon64.png" i128="/msi.gama.application/icons/icon128.png" i256="/msi.gama.application/icons/icon256.png"/>
+   <windowImages i16="/ummisco.gama.ui.shared/icons/window/icon16.png" i32="/ummisco.gama.ui.shared/icons/window/icon32.png" i48="/ummisco.gama.ui.shared/icons/window/icon48.png" i64="/ummisco.gama.ui.shared/icons/window/icon64.png" i128="/ummisco.gama.ui.shared/icons/window/icon128.png" i256="/ummisco.gama.ui.shared/icons/window/icon256.png"/>
 
    <splash
-      location="msi.gama.application"
+      location="ummisco.gama.ui.shared"
       startupProgressRect="71,515,500,12" />
    <launcher name="Gama">
-      <linux icon="/ummisco.gama.product/launcher_icons/icon.xpm"/>
-      <macosx icon="/ummisco.gama.product/launcher_icons/icon.icns"/>
+      <linux icon="/ummisco.gama.ui.shared/icons/app/icon.xpm"/>
+      <macosx icon="/ummisco.gama.ui.shared/icons/app/icon.icns"/>
       <win useIco="true">
-         <ico path="/ummisco.gama.product/launcher_icons/icon.ico"/>
+         <ico path="/ummisco.gama.ui.shared/icons/app/icon.ico"/>
          <bmp/>
       </win>
    </launcher>

@@ -11,7 +11,7 @@
             name="Gama">
          <property
                name="windowImages"
-               value="icons/icon16.png,icons/icon32.png,icons/icon48.png,icons/icon64.png,icons/icon128.png,icons/icon256.png">
+               value="platform:/plugin/ummisco.gama.ui.shared/icons/window/icon16.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon32.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon48.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon64.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon128.png,platform:/plugin/ummisco.gama.ui.shared/icons/window/icon256.png">
          </property> 
          <property
                name="aboutText"
@@ -19,7 +19,7 @@
          </property>
          <property
                name="aboutImage"
-               value="icons/icon128.png">
+               value="platform:/plugin/ummisco.gama.ui.shared/icons/window/icon128.png">
          </property>
          <property
                name="startupProgressRect"
@@ -40,8 +40,8 @@
          id="GamaApplication"
          name="Gama"
          point="org.eclipse.core.runtime.applications">
-      <application
-            icon="icons/icon256.png">
+       <application
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/window/icon256.png">
          <run
                class="msi.gama.application.Application">
             <parameter
