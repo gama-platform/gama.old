@@ -13,7 +13,6 @@ package msi.gaml.compilation.kernel;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -21,27 +20,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.WrappedException;
-import org.eclipse.equinox.p2.core.IProvisioningAgent;
-import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
-import org.eclipse.equinox.p2.core.ProvisionException;
-import org.eclipse.equinox.p2.engine.IProfile;
-import org.eclipse.equinox.p2.engine.IProfileRegistry;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.expression.ExpressionUtil;
-import org.eclipse.equinox.p2.query.IQuery;
-import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.equinox.p2.query.QueryUtil;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -52,12 +37,14 @@ import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.ISaveDelegate;
 import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IGamlAdditions;
-import msi.gaml.operators.IUnits;
+import msi.gaml.constants.IConstantsSupplier;
 import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.SaveStatement;
 import msi.gaml.statements.draw.DrawStatement;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -133,6 +120,9 @@ public class GamaBundleLoader {
 	/** The draw extension. */
 	public static final String DRAW_EXTENSION = "gama.draw";
 
+	/** The draw extension. */
+	public static final String CONSTANTS_EXTENSION = "gama.constants";
+
 	/** The event layer extension. */
 	public static final String EVENT_LAYER_EXTENSION = "gama.event_layer";
 
@@ -191,45 +181,21 @@ public class GamaBundleLoader {
 
 		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 55, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
 				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
-		listFeatures();
 
-		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		// We retrieve the elements declared as extensions to the GAML language,
-		// either with the new or the deprecated extension
-		final Set<IExtension> extensions = new LinkedHashSet<>();
-		try {
-			IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
-			extensions.addAll(Arrays.asList(p.getExtensions()));
-			p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
-			extensions.addAll(Arrays.asList(p.getExtensions()));
-		} catch (final InvalidRegistryObjectException e) {
-			ERROR("Error in retrieving GAMA plugins. One is invalid. ", e);
-		}
-
-		DEBUG.TIMER(DEBUG.PAD("> GAML: All " + extensions.size() + " plugins with language additions", 55, ' ')
-				+ DEBUG.PAD(" loaded in", 15, '_'), () -> {
-
-					// We retrieve their contributor plugin and add them to the
-					// GAMA_PLUGINS. In addition, we verify if they declare a folder called
-					// `models` or `tests` or if they have generated tests
-					// TEST_PLUGINS.put(CORE_MODELS, REGULAR_TESTS_LAYOUT);
-					MODEL_PLUGINS.put(CORE_MODELS, REGULAR_MODELS_LAYOUT);
-					for (final IExtension e : extensions) {
-						final IContributor plugin = e.getContributor();
-						final Bundle bundle = Platform.getBundle(plugin.getName());
-
-						GAMA_PLUGINS.add(bundle);
-						GAMA_PLUGINS_NAMES.add(bundle.getSymbolicName());
-						if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null) {
-							MODEL_PLUGINS.put(bundle, REGULAR_MODELS_LAYOUT);
-						}
-						if (bundle.getEntry(
-								REGULAR_TESTS_LAYOUT) != null) { TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT); }
-						if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null) {
-							TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT);
-						}
+		DEBUG.TIMER(DEBUG.PAD("> GAML: Plugins with language additions", 55, ' '), DEBUG.PAD(" loaded in", 15, '_'),
+				() -> {
+					final IExtensionRegistry registry = Platform.getExtensionRegistry();
+					// We retrieve the elements declared as extensions to the GAML language,
+					// either with the new or the deprecated extension, and add their contributor plugin to GAMA_PLUGINS
+					try {
+						StreamEx.of(registry.getExtensionPoint(GRAMMAR_EXTENSION).getExtensions())
+								.append(StreamEx
+										.of(registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED).getExtensions()))
+								.map(e -> Platform.getBundle(e.getContributor().getName()))
+								.sorted(Comparator.comparing(Bundle::getSymbolicName)).into(GAMA_PLUGINS);
+					} catch (final InvalidRegistryObjectException e) {
+						ERROR("Error in retrieving GAMA plugins. One is invalid. ", e);
 					}
-					GAMA_PLUGINS.sort(Comparator.comparing(Bundle::getSymbolicName));
 					// We remove the core plugin, in order to build it first (important)
 					GAMA_PLUGINS.remove(CORE_PLUGIN);
 					try {
@@ -240,8 +206,6 @@ public class GamaBundleLoader {
 						System.exit(0);
 						return;
 					}
-					// if (!FLAGS.PRODUCE_ICONS) {}
-
 					// We then build the other extensions to the language
 					for (final Bundle addition : GAMA_PLUGINS) {
 						CURRENT_PLUGIN_NAME = addition.getSymbolicName();
@@ -256,107 +220,224 @@ public class GamaBundleLoader {
 						}
 					}
 					CURRENT_PLUGIN_NAME = null;
-					// We gather all the extensions to the `create` statement and add them
-					// as delegates to CreateStatement. If an exception occurs, we discard it
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
-						ICreateDelegate cd = null;
-						try {
-							// TODO Add the defining plug-in
-							cd = (ICreateDelegate) e.createExecutableExtension("class");
-							if (cd != null) { CreateStatement.addDelegate(cd); }
-						} catch (final Exception e1) {
-							ERROR("Error in loading CreateStatement delegate from "
-									+ e.getDeclaringExtension().getContributor().getName(), e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove offending plugins, etc.)
-							continue;
-						}
-					}
-
-					// We gather all the extensions to the `save` statement and add them
-					// as delegates to SaveStatement. If an exception occurs, we discard it
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(SAVE_EXTENSION)) {
-						ISaveDelegate sd = null;
-						try {
-							// TODO Add the defining plug-in
-							sd = (ISaveDelegate) e.createExecutableExtension("class");
-							if (sd != null) { SaveStatement.addDelegate(sd); }
-						} catch (final Exception e1) {
-							ERROR("Error in loading SaveStatement delegate from "
-									+ e.getDeclaringExtension().getContributor().getName(), e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove offending plugins, etc.)
-							continue;
-						}
-					}
-
-					// We gather all the extensions to the `draw` statement and add them
-					// as delegates to DrawStatement. If an exception occurs, we discard it
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(DRAW_EXTENSION)) {
-						IDrawDelegate sd = null;
-						try {
-							// TODO Add the defining plug-in
-							sd = (IDrawDelegate) e.createExecutableExtension("class");
-							if (sd != null) { DrawStatement.addDelegate(sd); }
-						} catch (final Exception e1) {
-							ERROR("Error in loading DrawStatement delegate from "
-									+ e.getDeclaringExtension().getContributor().getName(), e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove offending plugins, etc.)
-							continue;
-						}
-					}
-
-					// We gather all the extensions to the `event` statement and add them
-					// as delegates to EventLayerStatement
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
-						try {
-							// TODO Add the defining plug-in
-							EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
-						} catch (final Exception e1) {
-							ERROR("Error in loading EventLayerStatement delegate : "
-									+ e.getDeclaringExtension().getContributor().getName(), e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove
-							// offending plugins, etc.)
-							continue;
-						}
-					}
-
-					// We gather all the GAMA_PLUGINS that explicitly declare models using
-					// the non-default scheme (plugin > models ...).
-					for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
-						MODEL_PLUGINS.put(Platform.getBundle(e.getContributor().getName()), e.getAttribute("name"));
-					}
-
-					// We gather all the content types extensions defined in GAMA plugins
-					// (not in the other ones)
-					final IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
-					final Set<IExtension> contentExtensions = new HashSet<>();
-					contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
-					for (final IExtension ext : contentExtensions) {
-						final IConfigurationElement[] configs = ext.getConfigurationElements();
-						for (final IConfigurationElement config : configs) {
-							final String s = config.getAttribute("file-extensions");
-							if (s != null) { HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(","))); }
-						}
-					}
+					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to 'create'", 55, ' '),
+							DEBUG.PAD(" done in", 15, '_'), () -> {
+								loadCreateExtensions(registry);
+							});
+					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to 'save'", 55, ' '),
+							DEBUG.PAD(" done in", 15, '_'), () -> {
+								loadSaveExtensions(registry);
+							});
+					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to 'draw'", 55, ' '),
+							DEBUG.PAD(" done in", 15, '_'), () -> {
+								loadDrawExtensions(registry);
+							});
+					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to event layers", 55, ' '),
+							DEBUG.PAD(" done in", 15, '_'), () -> {
+								loadEventLayerExtensions(registry);
+							});
+					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Gathering all the built-in models", 55, ' '),
+							DEBUG.PAD(" done in", 15, '_'), () -> {
+								loadModels(registry);
+							});
+					loadContentExtensions(registry);
 
 					// CRUCIAL INITIALIZATIONS
 					LOADED = true;
 					// We init the meta-model of GAMA (i.e. abstract agent, model, experiment species)
 					GamaMetaModel.INSTANCE.build();
-
 					// We init the type hierarchy, the units and the agent representing the GAMA platform
 					Types.init();
-					IUnits.init();
+					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading constants", 55, ' '),
+							DEBUG.PAD(" done in", 15, '_'), () -> {
+								loadConstants(registry);
+							});
 					GamaMetaModel.INSTANCE.getPlatformSpeciesDescription().validate();
 				});
 
+	}
+
+	/**
+	 * Load create extensions.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @throws InvalidRegistryObjectException
+	 *             the invalid registry object exception
+	 */
+	private static void loadCreateExtensions(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+		// We gather all the extensions to the `create` statement and add them
+		// as delegates to CreateStatement. If an exception occurs, we discard it
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
+			ICreateDelegate cd = null;
+			try {
+				// TODO Add the defining plug-in
+				cd = (ICreateDelegate) e.createExecutableExtension("class");
+				if (cd != null) { CreateStatement.addDelegate(cd); }
+			} catch (final Exception e1) {
+				ERROR("Error in loading CreateStatement delegate from "
+						+ e.getDeclaringExtension().getContributor().getName(), e1);
+				// We do not systematically exit in case of additional plugins failing to load, so as to
+				// give the platform a chance to execute even in case of errors (to save files, to
+				// remove offending plugins, etc.)
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * Load save extensions.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @throws InvalidRegistryObjectException
+	 *             the invalid registry object exception
+	 */
+	private static void loadSaveExtensions(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+		// We gather all the extensions to the `save` statement and add them
+		// as delegates to SaveStatement. If an exception occurs, we discard it
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(SAVE_EXTENSION)) {
+			ISaveDelegate sd = null;
+			try {
+				// TODO Add the defining plug-in
+				sd = (ISaveDelegate) e.createExecutableExtension("class");
+				if (sd != null) { SaveStatement.addDelegate(sd); }
+			} catch (final Exception e1) {
+				ERROR("Error in loading SaveStatement delegate from "
+						+ e.getDeclaringExtension().getContributor().getName(), e1);
+				// We do not systematically exit in case of additional plugins failing to load, so as to
+				// give the platform a chance to execute even in case of errors (to save files, to
+				// remove offending plugins, etc.)
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * Load draw extensions.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @throws InvalidRegistryObjectException
+	 *             the invalid registry object exception
+	 */
+	private static void loadDrawExtensions(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+		// We gather all the extensions to the `draw` statement and add them
+		// as delegates to DrawStatement. If an exception occurs, we discard it
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(DRAW_EXTENSION)) {
+			IDrawDelegate sd = null;
+			try {
+				// TODO Add the defining plug-in
+				sd = (IDrawDelegate) e.createExecutableExtension("class");
+				if (sd != null) { DrawStatement.addDelegate(sd); }
+			} catch (final Exception e1) {
+				ERROR("Error in loading DrawStatement delegate from "
+						+ e.getDeclaringExtension().getContributor().getName(), e1);
+				// We do not systematically exit in case of additional plugins failing to load, so as to
+				// give the platform a chance to execute even in case of errors (to save files, to
+				// remove offending plugins, etc.)
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * Load event layer extensions.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @throws InvalidRegistryObjectException
+	 *             the invalid registry object exception
+	 */
+	private static void loadEventLayerExtensions(final IExtensionRegistry registry)
+			throws InvalidRegistryObjectException {
+		// We gather all the extensions to the `event` statement and add them
+		// as delegates to EventLayerStatement
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
+			try {
+				// TODO Add the defining plug-in
+				EventLayerStatement.addDelegate((IEventLayerDelegate) e.createExecutableExtension("class"));
+			} catch (final Exception e1) {
+				ERROR("Error in loading EventLayerStatement delegate : "
+						+ e.getDeclaringExtension().getContributor().getName(), e1);
+				// We do not systematically exit in case of additional plugins failing to load, so as to
+				// give the platform a chance to execute even in case of errors (to save files, to
+				// remove
+				// offending plugins, etc.)
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * Load models.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @throws InvalidRegistryObjectException
+	 *             the invalid registry object exception
+	 */
+	private static void loadModels(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+		MODEL_PLUGINS.put(CORE_MODELS, REGULAR_MODELS_LAYOUT);
+		GAMA_PLUGINS.forEach(bundle -> {
+			if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null) { MODEL_PLUGINS.put(bundle, REGULAR_MODELS_LAYOUT); }
+			if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null) { TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT); }
+			if (bundle.getEntry(GENERATED_TESTS_LAYOUT) != null) { TEST_PLUGINS.put(bundle, GENERATED_TESTS_LAYOUT); }
+		});
+		// We gather all the GAMA_PLUGINS that explicitly declare models using
+		// the non-default scheme (plugin > models ...).
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(MODELS_EXTENSION)) {
+			MODEL_PLUGINS.put(Platform.getBundle(e.getContributor().getName()), e.getAttribute("name"));
+		}
+	}
+
+	/**
+	 * Load content extensions.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @throws InvalidRegistryObjectException
+	 *             the invalid registry object exception
+	 */
+	private static void loadContentExtensions(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+		// We gather all the content types extensions defined in GAMA plugins
+		// (not in the other ones)
+		final IExtensionPoint contentType = registry.getExtensionPoint(CONTENT_EXTENSION);
+		final Set<IExtension> contentExtensions = new HashSet<>();
+		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
+		for (final IExtension ext : contentExtensions) {
+			final IConfigurationElement[] configs = ext.getConfigurationElements();
+			for (final IConfigurationElement config : configs) {
+				final String s = config.getAttribute("file-extensions");
+				if (s != null) { HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(","))); }
+			}
+		}
+	}
+
+	/**
+	 * Load constants.
+	 *
+	 * @param registry
+	 *            the registry
+	 * @throws InvalidRegistryObjectException
+	 *             the invalid registry object exception
+	 */
+	private static void loadConstants(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+		// We gather all the extensions to the constants and add them
+		// as delegates to GAML. If an exception occurs, we discard it
+		for (final IConfigurationElement e : registry.getConfigurationElementsFor(CONSTANTS_EXTENSION)) {
+			IConstantsSupplier sd = null;
+			try {
+				sd = (IConstantsSupplier) e.createExecutableExtension("class");
+				if (sd != null) { sd.supplyConstantsTo(GAML.getConstantAcceptor()); }
+			} catch (final Exception e1) {
+				ERROR("Error in loading constants from " + e.getDeclaringExtension().getContributor().getName(), e1);
+				// We do not systematically exit in case of additional plugins failing to load, so as to
+				// give the platform a chance to execute even in case of errors (to save files, to
+				// remove offending plugins, etc.)
+				continue;
+			}
+		}
 	}
 
 	/**
@@ -369,9 +450,8 @@ public class GamaBundleLoader {
 	 */
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
-		DEBUG.TIMER_WITH_EXCEPTIONS(
-				DEBUG.PAD("> GAMA: Plugin " + bundle.getSymbolicName(), 55, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
-				() -> {
+		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Plugin " + bundle.getSymbolicName(), 55, ' '),
+				DEBUG.PAD(" loaded in", 15, '_'), () -> {
 					String shortcut = bundle.getSymbolicName();
 					shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
 					GamaClassLoader.getInstance().addBundle(bundle);
@@ -412,75 +492,6 @@ public class GamaBundleLoader {
 	 * @return the plugins with tests
 	 */
 	public static Multimap<Bundle, String> getPluginsWithTests() { return TEST_PLUGINS; }
-
-	/**
-	 * Find feature of.
-	 *
-	 * @param plugin
-	 *            the plugin
-	 * @return the string
-	 */
-	public static String findFeatureOf(final String plugin) {
-
-		return plugin;
-	}
-
-	/**
-	 * Find and list features.
-	 *
-	 * @return the sets the
-	 */
-	// public static Set<String> findAndListFeatures() {
-	// Set<String> result = Sets.newHashSet();
-	// for (IBundleGroupProvider provider : Platform.getBundleGroupProviders()) {
-	// for (IBundleGroup feature : provider.getBundleGroups()) {
-	// final String providerName = feature.getProviderName();
-	// final String featureId = feature.getIdentifier();
-	// result.add(featureId);
-	// DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("from", 15) + providerName);
-	// // for (Bundle bundle : feature.getBundles()) {
-	// //
-	// // }
-	// }
-	// }
-	// return result;
-	// }
-
-	/**
-	 * Find features.
-	 *
-	 * @return the sets the
-	 * @throws ProvisionException
-	 *             the provision exception
-	 */
-	static Set<IInstallableUnit> listFeatures() throws ProvisionException {
-		// 1. initialize necessary p2 services
-		BundleContext ctx = FrameworkUtil.getBundle(GamaBundleLoader.class).getBundleContext();
-		if (ctx == null) return Collections.EMPTY_SET;
-		ServiceReference<IProvisioningAgentProvider> ref = ctx.getServiceReference(IProvisioningAgentProvider.class);
-		if (ref == null) return Collections.EMPTY_SET;
-		IProvisioningAgentProvider agentProvider = ctx.getService(ref);
-		if (agentProvider == null) return Collections.EMPTY_SET;
-		IProvisioningAgent provisioningAgent = agentProvider.createAgent(null);
-		if (provisioningAgent == null) return Collections.EMPTY_SET;
-		IProfileRegistry registry = (IProfileRegistry) provisioningAgent.getService(IProfileRegistry.SERVICE_NAME);
-		if (registry == null) return Collections.EMPTY_SET;
-		IProfile profile = registry.getProfile(IProfileRegistry.SELF);
-		if (profile == null) return Collections.EMPTY_SET;
-		// 2. create a query (check QueryUtil for options)
-		IQuery<IInstallableUnit> query = QueryUtil.createMatchQuery(ExpressionUtil.TRUE_EXPRESSION); // QueryUtil.createIUGroupQuery();
-		// 3. perform query
-		IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
-		List<IInstallableUnit> list = queryResult.toSet().stream()
-				.filter(f -> f.getId().contains("gama") || f.getId().contains("gaml")).toList();
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Features installed", 55) + DEBUG.PAD(" total", 15, '_') + " " + list.size());
-		// for (IInstallableUnit feature : list) {
-		// final String version = feature.getVersion().toString();
-		// final String featureId = feature.getId();
-		// DEBUG.LOG(DEBUG.PAD("> GAMA: Feature " + featureId, 45) + DEBUG.PAD("version", 15) + version);
-		// }
-		return queryResult.toSet();
-	}
 
 	/**
 	 * Gaml plugin exists.

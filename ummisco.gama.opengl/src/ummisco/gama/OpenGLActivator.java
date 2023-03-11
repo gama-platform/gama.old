@@ -38,7 +38,7 @@ public class OpenGLActivator extends AbstractUIPlugin {
 		// //
 		// http://forum.jogamp.org/Return-of-the-quot-java-lang-UnsatisfiedLinkError-Can-t-load-library-System-Library-Frameworks-glueg-td4034549.html)
 		CompletableFuture.runAsync(() -> {
-			DEBUG.TIMER(DEBUG.PAD("> GAMA: Preloading OpenGL subsystem", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
+			DEBUG.TIMER(DEBUG.PAD("> GAMA: Preloading OpenGL subsystem", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
 					() -> {
 
 						JarUtil.setResolver(url -> {

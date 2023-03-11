@@ -56,9 +56,9 @@ public class FLAGS {
 	private static boolean get(final String name, final boolean def) {
 		String v = System.getProperty(name);
 		if (v == null) return def;
-		// DEBUG.LOG("> FLAG " + name + " with value " + v);
-		System.out.println(DEBUG.PAD("> FLAG: " + name, 55, ' ') + DEBUG.PAD(" set to", 15, '_') + " " + v);
-		return Boolean.parseBoolean(v);
+		boolean b = Boolean.parseBoolean(v);
+		if (b) { System.out.println(DEBUG.PAD("> FLAG: " + name, 55, ' ') + DEBUG.PAD(" set to", 15, '_') + " " + b); }
+		return b;
 	}
 
 	/**
@@ -114,27 +114,27 @@ public class FLAGS {
 	 * Used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to impose the use of the "classic" view
 	 * tabs (with a visible border) and inject a specific CSS stylesheet. See #3187. True by default.
 	 */
-	public static final boolean USE_OLD_TABS = get("use_old_tabs", true);
+	// public static final boolean USE_OLD_TABS = get("use_old_tabs", true);
 
 	/**
 	 * Used in ummisco.gama.opengl.OpenGL to impose the use of the "legacy" text and mesh drawers (ie without VBO/VBA).
 	 * False by default.
 	 */
-	public static final boolean USE_LEGACY_DRAWERS = get("use_legacy_drawers", false);
+	// public static final boolean USE_LEGACY_DRAWERS = get("use_legacy_drawers", false);
 
 	/**
 	 * Originally used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to work around issue #3195.
 	 * If true, makes the workbench window resize its views asynchronously. Could prove useful in all environments, for
 	 * instance in the presence of slow graphic cards/computers. False by default
 	 */
-	public static final boolean USE_DELAYED_RESIZE = get("use_delayed_resize", false);
+	// public static final boolean USE_DELAYED_RESIZE = get("use_delayed_resize", true);
 
 	/**
 	 * Used in JOGL displays, esp. ummisco.gama.opengl.view.SWTOpenGLDisplaySurface to create a NEWT window instead of a
 	 * GLCanvas. Advantages are multiple (smaller memory footprint, immediate opening and resizing, etc.), and only a
 	 * few glitches remain (esp. on macOS). True by defautl
 	 */
-	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
+	public static final boolean USE_NATIVE_OPENGL_WINDOW = true; // get("use_native_opengl_window", true);
 
 	/**
 	 * The Constant PRODUCE_ICONS. Used to tell GAMA to produce the PNG icons from the SVG ones in

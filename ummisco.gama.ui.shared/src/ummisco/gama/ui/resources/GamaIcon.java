@@ -66,7 +66,7 @@ public class GamaIcon {
 	public static void preloadAllIcons() throws IOException, URISyntaxException {
 		URL pngFolderURL = toFileURL(Platform.getBundle(IGamaIcons.PLUGIN_ID).getEntry(IGamaIcons.ICONS_PATH));
 		Path path = Path.of(new URI(pngFolderURL.getProtocol(), pngFolderURL.getPath(), null).normalize());
-		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
+		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
 				() -> Files.walk(path).map(f -> path.relativize(f).toString())
 						.filter(n -> n.endsWith(".png") && !n.contains("@"))
 						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));

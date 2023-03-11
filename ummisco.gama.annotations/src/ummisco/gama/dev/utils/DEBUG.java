@@ -157,14 +157,14 @@ public class DEBUG {
 	 * @throws Exception
 	 */
 
-	public static void TIMER(final String title, final Runnable runnable) {
+	public static void TIMER(final String begin, final String end, final Runnable runnable) {
 		if (!ENABLE_LOGGING) {
 			runnable.run();
 			return;
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(title + " " + (currentTimeMillis() - start) + "ms");
+		LOG(begin + end + " " + (currentTimeMillis() - start) + "ms");
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class DEBUG {
 	 * @throws T
 	 *             the t
 	 */
-	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String title,
+	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String begin, final String end,
 			final RunnableWithException<T> runnable) throws T {
 		if (!ENABLE_LOGGING) {
 			runnable.run();
@@ -187,7 +187,7 @@ public class DEBUG {
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(title + " " + (currentTimeMillis() - start) + "ms");
+		LOG(begin + end + " " + (currentTimeMillis() - start) + "ms");
 	}
 
 	/**

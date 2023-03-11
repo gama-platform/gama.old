@@ -3,7 +3,7 @@
  * ExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -303,7 +303,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void playAndDispose() {
-		DEBUG.TIMER("Simulation duration", () -> {
+		DEBUG.TIMER("Simulation running ", "for: ", () -> {
 			play();
 			dispose();
 		});
@@ -349,14 +349,12 @@ public class ExperimentJob implements IExperimentJob {
 		this.step = simulator.step();
 		this.exportVariables();
 	}
-	
 
 	@Override
 	public void doBackStep() {
 		this.step = simulator.backStep();
-		//this.exportVariables(); ?
+		// this.exportVariables(); ?
 	}
-	
 
 	@Override
 	public String getExperimentID() { return experimentID; }
@@ -369,6 +367,11 @@ public class ExperimentJob implements IExperimentJob {
 	 */
 	public void setExperimentID(final String experimentID) { this.experimentID = experimentID; }
 
+	/**
+	 * Gets the variable listeners.
+	 *
+	 * @return the variable listeners
+	 */
 	public ListenedVariable[] getListenedVariables() { return listenedVariables; }
 
 	/**

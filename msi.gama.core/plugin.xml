@@ -10,6 +10,7 @@
    <extension-point id="gaml.extension" name="Additions to the GAML language" schema="schema/gaml.extension.exsd"/>
    <extension-point id="gama.models" name="Allow plugins to add sample models to GAMA" schema="schema/gama.models.exsd"/>
    <extension-point id="gama.experiment" name="Implementations of IExperimentAgent" schema="schema/gama.experiment.exsd"/>
+   <extension-point id="gama.constants" name="Implementations of IConstantsSupplier" schema="schema/gama.constants.exsd"/>
    <extension
          point="gama.display">
       <implementation
@@ -114,6 +115,12 @@
       <implementation
             class="msi.gaml.statements.draw.TextDrawer"
             description="Allows to draw text">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.constants">
+      <implementation
+            class="msi.gaml.constants.CoreConstantsSupplier">
       </implementation>
    </extension>
 

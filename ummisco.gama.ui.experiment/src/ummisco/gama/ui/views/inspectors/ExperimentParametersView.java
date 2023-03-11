@@ -11,7 +11,6 @@
 package ummisco.gama.ui.views.inspectors;
 
 import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
-import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
 import static ummisco.gama.ui.resources.IGamaIcons.ACTION_REVERT;
 import static ummisco.gama.ui.resources.IGamaIcons.MENU_ADD_MONITOR;
 
@@ -39,7 +38,7 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gaml.operators.IUnits;
+import msi.gaml.constants.GamlCoreConstants;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
@@ -228,9 +227,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					if (sim == null) return;
 					WorkbenchHelper.runInUI("", 0, m -> {
 						if ("None".equals(CORE_DISPLAY_LAYOUT.getValue())) {
-							ArrangeDisplayViews.execute(IUnits.split);
+							ArrangeDisplayViews.execute(GamlCoreConstants.split);
 						} else {
-							ArrangeDisplayViews.execute(LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
+							ArrangeDisplayViews
+									.execute(GamaPreferences.Displays.LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 						}
 					});
 				}, SWT.RIGHT);

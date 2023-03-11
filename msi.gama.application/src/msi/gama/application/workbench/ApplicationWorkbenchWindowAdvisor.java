@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -30,7 +28,6 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 
 /**
  * The Class ApplicationWorkbenchWindowAdvisor.
@@ -97,9 +94,9 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			public void pageOpened(final IWorkbenchPage page) {}
 		});
 		// See #3187 -
-		if (FLAGS.USE_OLD_TABS) {
-			ThemeHelper.injectCSS(".MPartStack {\n" + " swt-tab-renderer: null;\n" + " swt-simple: true;\n" + "}");
-		}
+		// if (FLAGS.USE_OLD_TABS) {
+		ThemeHelper.injectCSS(".MPartStack {\n" + " swt-tab-renderer: null;\n" + " swt-simple: true;\n" + "}");
+		// }
 		// ThemeHelper.injectCSS(".MPartSashContainer{ jsash-width: 0px; } ");
 		ThemeHelper.restoreSashBackground();
 		configurer.setShowMenuBar(true);
@@ -119,17 +116,17 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public void postWindowCreate() {
 		final IWorkbenchWindow window = getWindowConfigurer().getWindow();
 		window.getShell().setMaximized(GamaPreferences.Interface.CORE_SHOW_MAXIMIZED.getValue());
-		if (FLAGS.USE_DELAYED_RESIZE) {
-			window.getShell().addControlListener(new ControlAdapter() {
-
-				@Override
-				public void controlResized(final ControlEvent e) {
-					// window.getShell().layout(true, true);
-					window.getShell().requestLayout();
-				}
-
-			});
-		}
+		// if (FLAGS.USE_DELAYED_RESIZE) {
+		// window.getShell().addControlListener(new ControlAdapter() {
+		//
+		// @Override
+		// public void controlResized(final ControlEvent e) {
+		// // window.getShell().layout(true, true);
+		// window.getShell().requestLayout();
+		// }
+		//
+		// });
+		// }
 	}
 
 	@Override
