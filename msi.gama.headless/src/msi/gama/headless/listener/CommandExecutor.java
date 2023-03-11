@@ -28,6 +28,7 @@ public class CommandExecutor {
 		cmds.put("reload", new ReloadCommand());
 		cmds.put("expression", new ExpressionCommand());
 		cmds.put("exit", new ExitCommand());
+		cmds.put("fetch", new FetchCommand());
 
 		COMMANDS = Collections.unmodifiableMap(cmds);
 	}
