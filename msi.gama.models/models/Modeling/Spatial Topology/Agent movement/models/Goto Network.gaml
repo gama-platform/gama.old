@@ -47,7 +47,7 @@ global {
 		//computes all the shortest paths, puts them in a matrix, then saves the matrix in a file
 		if save_shortest_paths {
 			matrix ssp <- all_pairs_shortest_path(the_graph);
-			save ssp type:"text" to:shortest_paths_file;
+			save ssp format:"text" to:shortest_paths_file;
 			
 		//loads the file of the shortest paths as a matrix and uses it to initialize all the shortest paths of the graph
 		} else if load_shortest_paths {

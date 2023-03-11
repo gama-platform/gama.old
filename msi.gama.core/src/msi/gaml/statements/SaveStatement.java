@@ -38,16 +38,22 @@ import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.SaveStatement.SaveValidator;
+import msi.gaml.statements.save.ImageSaver;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
+
+/**
+ * The Class SaveStatement.
+ */
 
 /**
  * The Class SaveStatement.
@@ -63,15 +69,24 @@ import ummisco.gama.dev.utils.DEBUG;
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets (
 		value = { @facet (
-				name = IKeyword.TYPE,
+				name = IKeyword.FORMAT,
 				type = IType.ID,
 				optional = true,
-				doc = @doc ("a string representing the type of the output file (e.g. \"shp\", \"asc\", \"geotiff\", \"png\", \"text\", \"csv\") ")),
+				doc = @doc (
+						value = "a string representing the format of the output file (e.g. \"shp\", \"asc\", \"geotiff\", \"png\", \"text\", \"csv\"). If the file extension is non ambiguous in facet 'to:', this format does not need to be specified. However, in many cases, it can be useful to do it (for instance, when saving a string to a .pgw file, it is always better to clearly indicate that the expected format is 'text'). ")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.ID,
+						optional = true,
+
+						doc = @doc (
+								deprecated = "Use 'format' instead",
+								value = "a string representing the type of the output file (e.g. \"shp\", \"asc\", \"geotiff\", \"png\", \"text\", \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("the data that will be saved to the file")),
+						doc = @doc ("the data that will be saved to the file or the file itself to save when data is used in its simplest form")),
 				@facet (
 						name = IKeyword.REWRITE,
 						type = IType.BOOL,
@@ -155,9 +170,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/** The Constant EPSG_LABEL. */
 	private static final String EPSG_LABEL = "EPSG:";
 
-	/** The Constant DELEGATES. */
-	// private static final Set<String> SAVING_TYPES = new HashSet<>();
-
 	/** The Constant DELEGATES_BY_GAML_TYPE. */
 	private static final Map<String, Map<IType, ISaveDelegate>> DELEGATES = new HashMap<>();
 
@@ -168,10 +180,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		Set<String> files = delegate.getFileTypes();
 		final IType t = delegate.getDataType();
 		for (String f : files) {
-			// if (SAVING_TYPES.contains(f)) {
-			// DEBUG.LOG("WARNING: Extensions to SaveStatement already registered for file type " + f);
-			// }
-			// SAVING_TYPES.add(f);
 			Map<IType, ISaveDelegate> map = DELEGATES.get(f);
 			if (map == null) {
 				map = new HashMap<>();
@@ -203,7 +211,62 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final StatementDescription desc = description;
 			final Facets with = desc.getPassedArgs();
 			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
-			final IExpression type = desc.getFacetExpr(TYPE);
+			final IExpressionDescription type = desc.getFacet(FORMAT, TYPE);
+			desc.removeFacets(TYPE);
+			if (type != null) { desc.setFacet(FORMAT, type); }
+			final IExpression format = type == null ? null : type.getExpression();
+
+			final IExpression data = desc.getFacetExpr(DATA);
+			if (data == null) return;
+			final IType<?> dataType = data.getGamlType();
+			final IExpression to = desc.getFacetExpr(TO);
+
+			boolean isAFile = Types.FILE.isAssignableFrom(dataType);
+			boolean hasTo = to != null;
+			String ext = null;
+			if (hasTo && to.isConst()) { ext = com.google.common.io.Files.getFileExtension(to.literalValue()); }
+			boolean hasFormat = format != null;
+
+			if (isAFile && hasTo) {
+				desc.warning("The destination will not be taking into account when saving an already existing file",
+						IGamlIssue.UNMATCHED_OPERANDS);
+			}
+			if (isAFile && hasFormat) {
+				desc.warning("The file format will not be taken into account when saving an already existing file ",
+						IGamlIssue.CONFLICTING_FACETS, FORMAT);
+			}
+
+			if (!isAFile && !hasTo) {
+				desc.error("No file specified", IGamlIssue.MISSING_FACET);
+				return;
+			}
+
+			if (!isAFile && !hasFormat && hasTo && ext != null && !DELEGATES.containsKey(ext)) {
+				if (dataType != Types.STRING && dataType != Types.INT && dataType != Types.FLOAT) {
+					desc.error("Unknown file extension. Accepted formats are: "
+							+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
+					return;
+				}
+				desc.warning("Unknown file format, will default to 'text'. Accepted formats are: "
+						+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
+			}
+
+			if (!isAFile && hasFormat && hasTo) {
+				String id = format.literalValue();
+				if (!DELEGATES.containsKey(id)) {
+					desc.error(
+							"Unknown file format. Accepted formats are: "
+									+ DELEGATES.keySet().stream().sorted().toList(),
+							IGamlIssue.UNKNOWN_ARGUMENT, FORMAT);
+					return;
+				}
+				if (ext != null && !id.equals(ext) && (!IMAGE.equals(id) || !ImageSaver.FILE_FORMATS.contains(ext))) {
+					desc.info("The extension of the file and the format differ. Make sure they are compatible",
+							IGamlIssue.CONFLICTING_FACETS);
+				}
+
+			}
+
 			final boolean isMap = att instanceof MapExpression;
 			if (att != null) {
 				if (!isMap && !att.getGamlType().isTranslatableInto(Types.LIST.of(Types.STRING))) {
@@ -227,33 +290,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 							IGamlIssue.CONFLICTING_FACETS, ATTRIBUTES, WITH);
 				}
 
-				if (type == null || !"shp".equals(type.literalValue()) && !"json".equals(type.literalValue())) {
+				if (ext != null && format == null && !"shp".equals(ext) && !"json".equals(ext) || format != null
+						&& !"shp".equals(format.literalValue()) && !"json".equals(format.literalValue())) {
 					desc.warning("Attributes can only be defined for shape or json files", IGamlIssue.WRONG_TYPE,
 							ATTRIBUTES);
 				}
 
 			}
 
-			final IExpression data = desc.getFacetExpr(DATA);
-			if (data == null) return;
-
-			final IType<?> dataType = data.getGamlType();
-			if (Types.FILE.isAssignableFrom(dataType)) {
-				if (type != null) {
-					desc.warning("The file type will not be taken into account when saving an existing file ",
-							IGamlIssue.CONFLICTING_FACETS, TYPE);
-				}
-			} else if (type != null) {
-				String id = type.literalValue();
-				if (!DELEGATES.containsKey(id)) {
-					desc.error(
-							"Unknown file type. Accepted types are: " + DELEGATES.keySet().stream().sorted().toList(),
-							IGamlIssue.UNKNOWN_ARGUMENT, TYPE);
-					return;
-				}
-			}
-
+			/** The t. */
 			final IType<?> t = dataType.getContentType();
+
+			/** The species. */
 			final SpeciesDescription species = t.getSpecies();
 
 			if (att == null && !with.exists()) return;
@@ -286,9 +334,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/** The attributes facet. */
 	private final IExpression attributesFacet;
 
-	/** The header. */
-	private final IExpression crsCode;
-
 	/** The item. */
 	private final IExpression item;
 
@@ -298,9 +343,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/** The rewrite expr. */
 	private final IExpression rewriteExpr;
 
-	/** The header. */
-	private final IExpression header;
-
 	/**
 	 * Instantiates a new save statement.
 	 *
@@ -309,11 +351,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 */
 	public SaveStatement(final IDescription desc) {
 		super(desc);
-		crsCode = desc.getFacetExpr("crs");
 		item = desc.getFacetExpr(IKeyword.DATA);
 		file = getFacet(IKeyword.TO);
 		rewriteExpr = getFacet(IKeyword.REWRITE);
-		header = getFacet(IKeyword.HEADER);
 		attributesFacet = getFacet(IKeyword.ATTRIBUTES);
 	}
 
@@ -347,7 +387,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String filePath = FileUtils.constructAbsoluteFilePath(scope, fileName, false);
 		if (filePath == null || "".equals(filePath)) return null;
 		final File fileToSave = new File(filePath);
-		String typeExp = getLiteral(IKeyword.TYPE);
+		String typeExp = getLiteral(IKeyword.FORMAT);
 		// Second case: a filename is indicated but not the type. In that case,
 		// we try to build a new GamaFile from it and save it
 		if (typeExp == null) {
@@ -369,9 +409,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				fileToSave.delete();
 				exists = false;
 			}
+			IExpression header = getFacet(IKeyword.HEADER);
 			final boolean addHeader = !exists && (header == null || Cast.asBool(scope, header.value(scope)));
 			final String type = (typeExp != null ? typeExp : "text").trim().toLowerCase();
 			String code = null;
+			IExpression crsCode = getFacet("crs");
 			if (crsCode != null) {
 				final IType tt = crsCode.getGamlType();
 				if (tt.id() == IType.INT || tt.id() == IType.FLOAT) {
@@ -381,7 +423,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			Object attributesToSave = attributesFacet == null ? withFacet : attributesFacet;
 			//
 			IType itemType = item.getGamlType();
-			ISaveDelegate delegate = findDelegate(itemType, typeExp);
+			ISaveDelegate delegate = findDelegate(itemType, type);
 			if (delegate != null) {
 				delegate.save(scope, item, fileToSave, code, addHeader, type, attributesToSave);
 				return Cast.asString(scope, file.value(scope));
@@ -399,18 +441,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 *
 	 * @param dataType
 	 *            the data type
-	 * @param fileType
+	 * @param fileFormat
 	 *            the file type
 	 * @return the i save delegate
 	 */
-	private ISaveDelegate findDelegate(final IType dataType, final String fileType) {
-		Map<IType, ISaveDelegate> map = DELEGATES.get(fileType);
+	private ISaveDelegate findDelegate(final IType dataType, final String fileFormat) {
+		Map<IType, ISaveDelegate> map = DELEGATES.get(fileFormat);
 		if (map == null) return null;
 		int distance = Integer.MAX_VALUE;
 		ISaveDelegate closest = null;
 		for (Entry<IType, ISaveDelegate> entry : map.entrySet()) {
 			if (entry.getKey().isAssignableFrom(dataType)) {
-				int d = dataType.distanceTo(entry.getKey());
+				@SuppressWarnings ("unchecked") int d = dataType.distanceTo(entry.getKey());
 				if (d < distance) {
 					distance = d;
 					closest = entry.getValue();

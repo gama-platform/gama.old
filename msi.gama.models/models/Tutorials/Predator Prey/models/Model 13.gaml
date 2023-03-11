@@ -43,7 +43,7 @@ global {
 	   		+ "; nbPredators: " + nb_predators           
 	   		+ "; minEnergyPredators: " + (predator min_of each.energy)          
 	   		+ "; maxSizePredators: " + (predator max_of each.energy)) 
-	   		to: "results.txt" type: "text" rewrite: (cycle = 0) ? true : false;
+	   		to: "results.txt" rewrite: (cycle = 0) ? true : false;
 	}
 	
 	reflex stop_simulation when: ((nb_preys = 0) or (nb_predators = 0)) and !is_batch {
@@ -243,7 +243,7 @@ experiment Optimization type: batch repeat: 2 keep_seed: true until: ( time > 20
 	reflex save_results_explo {
 		ask simulations {
 			save [int(self),prey_max_transfer,prey_energy_reproduce,predator_energy_transfer,predator_energy_reproduce,self.nb_predators,self.nb_preys] 
-		   		to: "results.csv" type: "csv" rewrite: (int(self) = 0) ? true : false header: true;
+		   		to: "results.csv" rewrite: (int(self) = 0) ? true : false header: true;
 		}		
 	}
 }

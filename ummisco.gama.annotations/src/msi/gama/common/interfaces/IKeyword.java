@@ -427,6 +427,9 @@ public interface IKeyword {
 	/** The footer. */
 	String FOOTER = "footer";
 
+	/** The format. */
+	String FORMAT = "format";
+
 	/** The fragment. */
 	String FRAGMENT = "fragment";
 

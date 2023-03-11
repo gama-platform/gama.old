@@ -47,7 +47,7 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 		//in this example, we ask all the simulation agents of the run to save (at the end of the simulation) the people population in a shapefile with their is_infected and is_immune attributes 
 		ask simulations
 		{
-			save [nb_preys,nb_predators] type: csv to: "Results/preypredator.csv";
+			save [nb_preys,nb_predators] to: "Results/preypredator.csv";
 		}
 	}
 }

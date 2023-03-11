@@ -114,11 +114,11 @@ global {
 		write "END - TIME ELAPSE: "+((machine_time-t)/1000)+"sec";
 		
 		write "EXPORT TO FILES";
-		save water to:"../results/water_body.shp" type:shp;
-		save ground to:"../results/ground.shp" type:shp;
-		save beach to:"../results/beach.shp" type:shp;
-		save tree to:"../results/trees.shp" type:shp;
-		save building to:"../results/building.shp" type:shp;
+		save water to:"../results/water_body.shp" format:shp;
+		save ground to:"../results/ground.shp" format:shp;
+		save beach to:"../results/beach.shp" format:shp;
+		save tree to:"../results/trees.shp" format:shp;
+		save building to:"../results/building.shp" format:shp;
 		
 	}
 	
