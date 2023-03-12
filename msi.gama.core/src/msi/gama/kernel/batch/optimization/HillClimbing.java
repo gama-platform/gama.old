@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * HillClimbing.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * HillClimbing.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.kernel.batch.optimization;
@@ -100,32 +100,35 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 
 	/** The Constant ITER_MAX. */
 	protected static final String ITER_MAX = "iter_max";
-	
+
 	/** The stopping criterion. */
 	StoppingCriterion stoppingCriterion = null;
-	
+
 	/** The max it. */
 	int maxIt;
 
 	/**
 	 * Instantiates a new hill climbing.
 	 *
-	 * @param species the species
+	 * @param species
+	 *            the species
 	 */
 	public HillClimbing(final IDescription species) {
 		super(species);
 		initParams();
-		
+
 	}
 
 	/**
 	 * Keep sol.
 	 *
-	 * @param neighborSol the neighbor sol
-	 * @param neighborFitness the neighbor fitness
+	 * @param neighborSol
+	 *            the neighbor sol
+	 * @param neighborFitness
+	 *            the neighbor fitness
 	 * @return true, if successful
 	 */
-	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness ) {
+	public boolean keepSol(final ParametersSet neighborSol, final Double neighborFitness) {
 		if (isMaximize() && neighborFitness.doubleValue() > getBestFitness()
 				|| !isMaximize() && neighborFitness.doubleValue() < getBestFitness()) {
 			setBestFitness(neighborFitness);
@@ -133,11 +136,12 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		setBestSolution(this.solutionInit);
-		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(getBestSolution()).get(IKeyword.FITNESS).get(0);
+		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(getBestSolution())
+				.get(IKeyword.FITNESS).get(0);
 		initializeTestedSolutions();
 		testedSolutions.put(getBestSolution(), currentFitness);
 		int nbIt = 0;
@@ -146,38 +150,31 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (stoppingCriterion == null || !stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, getBestSolution());
-			if (neighbors.isEmpty()) {
-				break;
-			}
+			if (neighbors.isEmpty()) { break; }
 			setBestFitness(currentFitness);
 			ParametersSet bestNeighbor = null;
-			
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
-				Map<ParametersSet,Double> result = testSolutions(neighbors);
+
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
+					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				if (result.containsKey(bestSolution)) { bestNeighbor = bestSolution; }
 			} else {
 				for (final ParametersSet neighborSol : neighbors) {
-					if (neighborSol == null) {
-						continue;
-					}
+					if (neighborSol == null) { continue; }
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null) {
-						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS).get(0);
+						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
+								.get(IKeyword.FITNESS).get(0);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
-					if (neighborSol.equals(bestSolution)) { bestNeighbor = neighborSol;}	
-					
+					if (neighborSol.equals(bestSolution)) { bestNeighbor = neighborSol; }
+
 				}
 			}
-				
-			
-			
-			if (bestNeighbor != null) {
-				setBestSolution(bestNeighbor);
-				currentFitness = getBestFitness();
-			} else {
-				break;
-			}
+
+			if (bestNeighbor == null) { break; }
+			setBestSolution(bestNeighbor);
+			currentFitness = getBestFitness();
 			nbIt++;
 			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
@@ -190,7 +187,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 	// public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 	// super.initializeFor(scope, agent);
 	// }
- 
+
 	@Override
 	protected void initParams(final IScope scope) {
 		final IExpression maxItExp = getFacet(ITER_MAX);

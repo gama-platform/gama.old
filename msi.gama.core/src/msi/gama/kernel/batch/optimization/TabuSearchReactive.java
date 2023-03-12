@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TabuSearchReactive.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TabuSearchReactive.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.kernel.batch.optimization;
@@ -62,7 +62,7 @@ import msi.gaml.types.IType;
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("number of iterations. this number corresponds to the number of \"moves\" in the parameter space. For each move, the algorithm will test the whole neighborhood of the current solution, each neighbor corresponding to a particular set of parameters and thus to a run. Thus, there can be several runs per iteration (maximum: 2^(number of parameters)).")),
-					@facet (
+				@facet (
 						name = HillClimbing.INIT_SOL,
 						type = IType.MAP,
 						optional = true,
@@ -130,50 +130,51 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 
 	/** The tabu list size init. */
 	int tabuListSizeInit = 5;
-	
+
 	/** The tabu list size max. */
 	int tabuListSizeMax = 2;
-	
+
 	/** The tabu list size min. */
 	int tabuListSizeMin = 10;
-	
+
 	/** The nb test without collision max. */
 	int nbTestWithoutCollisionMax = 20;
-	
+
 	/** The cycle size max. */
 	int cycleSizeMax = 20;
-	
+
 	/** The cycle size min. */
 	int cycleSizeMin = 2;
-	
+
 	/** The stopping criterion. */
 	StoppingCriterion stoppingCriterion = new StoppingCriterionMaxIt(100);
 
 	/** The Constant ITER_MAX. */
 	protected static final String ITER_MAX = "iter_max";
-	
+
 	/** The Constant LIST_SIZE_INIT. */
 	protected static final String LIST_SIZE_INIT = "tabu_list_size_init";
-	
+
 	/** The Constant LIST_SIZE_MAX. */
 	protected static final String LIST_SIZE_MAX = "tabu_list_size_max";
-	
+
 	/** The Constant LIST_SIZE_MIN. */
 	protected static final String LIST_SIZE_MIN = "tabu_list_size_min";
-	
+
 	/** The Constant NB_TESTS_MAX. */
 	protected static final String NB_TESTS_MAX = "nb_tests_wthout_col_max";
-	
+
 	/** The Constant CYCLE_SIZE_MAX. */
 	protected static final String CYCLE_SIZE_MAX = "cycle_size_max";
-	
+
 	/** The Constant CYCLE_SIZE_MIN. */
 	protected static final String CYCLE_SIZE_MIN = "cycle_size_min";
 
 	/**
 	 * Instantiates a new tabu search reactive.
 	 *
-	 * @param species the species
+	 * @param species
+	 *            the species
 	 */
 	public TabuSearchReactive(final IDescription species) {
 		super(species);
@@ -197,45 +198,36 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 			stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
 		}
 		final IExpression listSizeInit = getFacet(LIST_SIZE_INIT);
-		if (listSizeInit != null) {
-			tabuListSizeInit = Cast.asInt(scope, listSizeInit.value(scope));
-		}
+		if (listSizeInit != null) { tabuListSizeInit = Cast.asInt(scope, listSizeInit.value(scope)); }
 		final IExpression listSizeMax = getFacet(LIST_SIZE_MAX);
-		if (listSizeMax != null) {
-			tabuListSizeMax = Cast.asInt(scope, listSizeMax.value(scope));
-		}
+		if (listSizeMax != null) { tabuListSizeMax = Cast.asInt(scope, listSizeMax.value(scope)); }
 		final IExpression listSizeMin = getFacet(LIST_SIZE_MIN);
-		if (listSizeMin != null) {
-			tabuListSizeMin = Cast.asInt(scope, listSizeMin.value(scope));
-		}
+		if (listSizeMin != null) { tabuListSizeMin = Cast.asInt(scope, listSizeMin.value(scope)); }
 		final IExpression nbTestWtoutColMax = getFacet(NB_TESTS_MAX);
 		if (nbTestWtoutColMax != null) {
 			nbTestWithoutCollisionMax = Cast.asInt(scope, nbTestWtoutColMax.value(scope));
 		}
 		final IExpression cycleMax = getFacet(CYCLE_SIZE_MAX);
-		if (cycleMax != null) {
-			cycleSizeMax = Cast.asInt(scope, cycleMax.value(scope));
-		}
+		if (cycleMax != null) { cycleSizeMax = Cast.asInt(scope, cycleMax.value(scope)); }
 		final IExpression cycleMin = getFacet(CYCLE_SIZE_MIN);
-		if (cycleMin != null) {
-			cycleSizeMin = Cast.asInt(scope, cycleMin.value(scope));
-		}
+		if (cycleMin != null) { cycleSizeMin = Cast.asInt(scope, cycleMin.value(scope)); }
 	}
-	
+
 	/**
 	 * Keep sol.
 	 *
-	 * @param neighborSol the neighbor sol
-	 * @param neighborFitness the neighbor fitness
-	 * @param bestFitnessAlgo the best fitness algo
+	 * @param neighborSol
+	 *            the neighbor sol
+	 * @param neighborFitness
+	 *            the neighbor fitness
+	 * @param bestFitnessAlgo
+	 *            the best fitness algo
 	 * @return true, if successful
 	 */
-	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness, Double bestFitnessAlgo ) {
-		if (isMaximize() && neighborFitness > bestFitnessAlgo
-				|| !isMaximize() && neighborFitness < bestFitnessAlgo)  {
-			//setBestFitness(neighborFitness);
+	public boolean keepSol(final ParametersSet neighborSol, final Double neighborFitness,
+			final Double bestFitnessAlgo) {
+		if (isMaximize() && neighborFitness > bestFitnessAlgo || !isMaximize() && neighborFitness < bestFitnessAlgo) // setBestFitness(neighborFitness);
 			return true;
-		}
 		return false;
 	}
 
@@ -246,11 +238,10 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 		int tabuListSize = tabuListSizeInit;
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
-		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo)
-				.get(IKeyword.FITNESS).get(0);
+		double currentFitness =
+				(Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo).get(IKeyword.FITNESS).get(0);
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 
-		
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
 
@@ -266,11 +257,9 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 			nbTestWithoutCollision++;
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, getBestSolution());
 			neighbors.removeAll(tabuList);
-			if (neighbors.isEmpty()) {
-				break;
-			}
+			if (neighbors.isEmpty()) { break; }
 			double bestFitnessAlgo;
-				
+
 			if (isMaximize()) {
 				bestFitnessAlgo = Double.NEGATIVE_INFINITY;
 			} else {
@@ -278,31 +267,24 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 			}
 			ParametersSet bestNeighbor = null;
 
-			
-
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
-				Map<ParametersSet,Double> result = testSolutions(neighbors);
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
+					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				for (ParametersSet p : result.keySet()) {
 					if (keepSol(p, result.get(p), bestFitnessAlgo)) {
 						bestNeighbor = p;
 						if (testedSolutions.containsKey(p)) {
 							nbTestWithoutCollision = 0;
-							if (tabuListSize < tabuListSizeMax) {
-								tabuListSize++;
-							}
+							if (tabuListSize < tabuListSizeMax) { tabuListSize++; }
 						}
-					}	
+					}
 				}
 			} else {
 				for (final ParametersSet neighborSol : neighbors) {
-					if (neighborSol == null) {
-						continue;
-					}
+					if (neighborSol == null) { continue; }
 					if (testedSolutions.containsKey(neighborSol)) {
 						nbTestWithoutCollision = 0;
-						if (tabuListSize < tabuListSizeMax) {
-							tabuListSize++;
-						}
+						if (tabuListSize < tabuListSizeMax) { tabuListSize++; }
 					}
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
@@ -310,15 +292,11 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 								.get(IKeyword.FITNESS).get(0);
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
-					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) {
-						bestNeighbor = neighborSol;
-					}
+					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) { bestNeighbor = neighborSol; }
 				}
 			}
-			
-			if (bestNeighbor == null) {
-				break;
-			}
+
+			if (bestNeighbor == null) { break; }
 			if (this.testedSolutions.containsKey(bestNeighbor)) {
 				currentCycleSize++;
 			} else {
@@ -336,39 +314,29 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 					for (int i = 0; i < depl; i++) {
 						final List<ParametersSet> neighborsAlea = neighborhood.neighbor(scope, bestSolutionAlgo);
 						neighborsAlea.removeAll(tabuList);
-						if (neighborsAlea.isEmpty()) {
-							break;
-						}
+						if (neighborsAlea.isEmpty()) { break; }
 						bestSolutionAlgo = neighborsAlea.get(scope.getRandom().between(0, neighborsAlea.size() - 1));
-						if (tabuList.size() == tabuListSize) {
-							tabuList.remove(0);
-						}
+						if (tabuList.size() == tabuListSize) { tabuList.remove(0); }
 						tabuList.add(bestSolutionAlgo);
 					}
 					currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo)
 							.get(IKeyword.FITNESS).get(0);
 					testedSolutions.put(bestSolutionAlgo, currentFitness);
-					if (nbIt > iterMax) {
-						break;
-					}
+					if (nbIt > iterMax) { break; }
 				}
 			}
 			bestSolutionAlgo = bestNeighbor;
 			tabuList.add(bestSolutionAlgo);
-			if (tabuList.size() > tabuListSize) {
-				tabuList.remove(0);
-			}
+			if (tabuList.size() > tabuListSize) { tabuList.remove(0); }
 			if (nbTestWithoutCollision == nbTestWithoutCollisionMax) {
 				nbTestWithoutCollision = 0;
-				if (tabuListSize > this.tabuListSizeMin) {
-					tabuListSize--;
-				}
+				if (tabuListSize > this.tabuListSizeMin) { tabuListSize--; }
 			}
 
 			nbIt++;
 			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
-	
+
 		return getBestSolution();
 	}
 

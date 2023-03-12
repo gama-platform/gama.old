@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * InitializationUniform.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * InitializationUniform.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.kernel.batch.optimization.genetic;
@@ -37,17 +37,16 @@ public class InitializationUniform implements Initialization {
 		final int nbPrelimGenerations = algo.getNbPrelimGenerations();
 		final int populationDim = algo.getPopulationDim();
 		for (int i = 0; i < nbPrelimGenerations; i++) {
-			for (int j = 0; j < populationDim; j++) {
-				populationInit.add(new Chromosome(scope, variables, true));
-			}
+			for (int j = 0; j < populationDim; j++) { populationInit.add(new Chromosome(scope, variables, true)); }
 		}
-		/*for (final Chromosome chromosome : populationInit) {
-			algo.computeChroFitness(scope, chromosome);
-		}*/
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue())
-			algo.computePopFitnessAll(scope, populationInit); 
-		else
+		/*
+		 * for (final Chromosome chromosome : populationInit) { algo.computeChroFitness(scope, chromosome); }
+		 */
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(scope.getExperiment())) {
+			algo.computePopFitnessAll(scope, populationInit);
+		} else {
 			algo.computePopFitness(scope, populationInit);
+		}
 		final List<Chromosome> populationInitOrd = new ArrayList<>(populationInit);
 		Collections.sort(populationInitOrd);
 		if (algo.isMaximize()) { Collections.reverse(populationInitOrd); }

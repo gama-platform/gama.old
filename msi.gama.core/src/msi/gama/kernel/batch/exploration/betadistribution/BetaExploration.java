@@ -182,7 +182,7 @@ public class BetaExploration extends AExplorationAlgorithm {
 		currentExperiment.setSeeds(new Double[1]);
 		// TODO : why doesnt it take into account the value of 'keep_simulations:' ?
 		currentExperiment.setKeepSimulations(false);
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(sets);
 		} else {
 			res_outputs = GamaMapFactory.create();
