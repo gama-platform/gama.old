@@ -35,7 +35,7 @@ public class CoreConstantsSupplier implements IConstantsSupplier {
 
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();
-			final String doc = "Standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", "
+			final String doc = "Standard CSS color corresponding to rgb (" + c.red() + ", " + c.green() + ", "
 					+ c.blue() + "," + c.getAlpha() + ")";
 			acceptor.accept(entry.getKey(), c, doc, null, false);
 		}
@@ -44,12 +44,6 @@ public class CoreConstantsSupplier implements IConstantsSupplier {
 			final String doc = "Constant corresponding to the " + entry + " event";
 			acceptor.accept(entry, entry, doc, null, false);
 		}
-
-		// for (final Map.Entry<String, GamaMaterial> entry : GamaMaterial.materials.entrySet()) {
-		// final GamaMaterial m = entry.getValue();
-		// final String doc = "Standard material " + entry.getKey();
-		// acceptor.accept(entry.getKey(), m, doc, null, false);
-		// }
 
 	}
 
