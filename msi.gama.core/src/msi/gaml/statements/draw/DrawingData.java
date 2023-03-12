@@ -22,7 +22,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gaml.constants.GamlCoreConstants;
@@ -75,7 +74,7 @@ public class DrawingData extends AttributeHolder {
 	final Attribute<IList> texture;
 
 	/** The material. */
-	final Attribute<GamaMaterial> material;
+	// final Attribute<GamaMaterial> material;
 
 	/** The perspective. */
 	final Attribute<Boolean> perspective;
@@ -109,7 +108,7 @@ public class DrawingData extends AttributeHolder {
 		this.color = create(IKeyword.COLOR, this::castColor, Types.COLOR, null);
 		this.font = create(IKeyword.FONT, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
 		this.texture = create(IKeyword.TEXTURE, this::castTexture, Types.LIST, null);
-		this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);
+		// this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);
 		this.perspective = create(IKeyword.PERSPECTIVE, Types.BOOL, true);
 		this.lineWidth = create(IKeyword.WIDTH, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 	}

@@ -22,7 +22,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaMaterial;
 import msi.gama.util.file.GamaGifFile;
 import msi.gaml.constants.GamlCoreConstants;
 import ummisco.gama.dev.utils.DEBUG;
@@ -111,7 +110,7 @@ public class DrawingAttributes {
 	List<?> textures;
 
 	/** The material. */
-	GamaMaterial material;
+	// GamaMaterial material;
 
 	/**
 	 * Instantiates a new drawing attributes.
@@ -545,22 +544,15 @@ public class DrawingAttributes {
 	}
 
 	/**
-	 * Method getMaterial()
-	 *
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
-	 */
-	public GamaMaterial getMaterial() { return material; }
-
-	/**
 	 * Sets the material.
 	 *
 	 * @param m
 	 *            the new material
 	 */
-	public void setMaterial(final GamaMaterial m) {
-		material = m;
-
-	}
+	// public void setMaterial(final GamaMaterial m) {
+	// material = m;
+	//
+	// }
 
 	/**
 	 * Checks if is sets the.

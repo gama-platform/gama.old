@@ -693,9 +693,6 @@ public interface IKeyword {
 	/** The match regex. */
 	String MATCH_REGEX = "match_regex";
 
-	/** The material. */
-	String MATERIAL = "material";
-
 	/** The matrix. */
 	String MATRIX = "matrix";
 

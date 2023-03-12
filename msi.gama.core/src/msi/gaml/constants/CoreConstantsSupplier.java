@@ -17,7 +17,6 @@ import msi.gama.outputs.layers.MouseEventLayerDelegate;
 import msi.gama.outputs.layers.properties.ICameraDefinition;
 import msi.gama.outputs.layers.properties.ILightDefinition;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaMaterial;
 
 /**
  * The Class CoreConstantsSupplier.
@@ -46,11 +45,11 @@ public class CoreConstantsSupplier implements IConstantsSupplier {
 			acceptor.accept(entry, entry, doc, null, false);
 		}
 
-		for (final Map.Entry<String, GamaMaterial> entry : GamaMaterial.materials.entrySet()) {
-			final GamaMaterial m = entry.getValue();
-			final String doc = "Standard material " + entry.getKey();
-			acceptor.accept(entry.getKey(), m, doc, null, false);
-		}
+		// for (final Map.Entry<String, GamaMaterial> entry : GamaMaterial.materials.entrySet()) {
+		// final GamaMaterial m = entry.getValue();
+		// final String doc = "Standard material " + entry.getKey();
+		// acceptor.accept(entry.getKey(), m, doc, null, false);
+		// }
 
 	}
 
