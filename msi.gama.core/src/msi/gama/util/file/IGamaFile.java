@@ -2,7 +2,7 @@
  *
  * IGamaFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,7 +11,8 @@ package msi.gama.util.file;
 
 import org.eclipse.emf.common.util.URI;
 
-import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IAsset;
+import msi.gama.common.interfaces.IEnvelopeProvider;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -75,7 +76,7 @@ import msi.gaml.types.IType;
 				doc = { @doc ("Returns the contents of the receiver file in the form of a container") }) })
 @SuppressWarnings ({ "rawtypes" })
 public interface IGamaFile<C extends IModifiableContainer, Contents>
-		extends IAddressableContainer, IModifiableContainer {
+		extends IAddressableContainer, IModifiableContainer, IEnvelopeProvider, IAsset {
 
 	/**
 	 * Sets the writable.
@@ -229,15 +230,6 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	Boolean isWritable(IScope scope);
 
 	/**
-	 * Compute envelope.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @return the envelope 3 D
-	 */
-	Envelope3D computeEnvelope(final IScope scope);
-
-	/**
 	 * Save.
 	 *
 	 * @param scope
@@ -268,6 +260,14 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 		final C contents = getContents(scope);
 		return contents != null && contents.contains(scope, o);
 	}
+
+	/**
+	 * Gets the id.
+	 *
+	 * @return the id
+	 */
+	@Override
+	default String getId() { return this.getOriginalPath(); }
 
 	/**
 	 * Gets the URI relative to workspace.

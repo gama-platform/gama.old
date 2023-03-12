@@ -23,6 +23,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IDrawDelegate;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -148,14 +149,16 @@ public class ShapeDrawer implements IDrawDelegate {
 	private void addTextures(final IScope scope, final DrawingAttributes attributes) {
 		if (attributes.getTextures() == null) return;
 		attributes.getTextures().replaceAll(s -> {
-			GamaImageFile image = null;
-			if (s instanceof GamaImageFile) {
-				image = (GamaImageFile) s;
+			IImageProvider image = null;
+			if (s instanceof IImageProvider) {
+				image = (IImageProvider) s;
 			} else if (s instanceof String) {
-				image = (GamaImageFile) GamaFileType.createFile(scope, (String) s, null);
+				GamaImageFile file = (GamaImageFile) GamaFileType.createFile(scope, (String) s, null);
+				if (file == null || !file.exists(scope))
+					throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
+				image = file;
 			}
-			if (image == null || !image.exists(scope))
-				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
+
 			return image;
 
 		});

@@ -3,7 +3,7 @@
  * TextureCache2.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,11 +11,9 @@
 package ummisco.gama.opengl.renderer.caches;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -28,8 +26,8 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 
@@ -50,7 +48,7 @@ public class TextureCache2 implements ITextureCache {
 			CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.SECONDS).build();
 
 	/** The textures to process. */
-	final List<String> texturesToProcess = new CopyOnWriteArrayList<>();
+	final Map<String, IImageProvider> texturesToProcess = new ConcurrentHashMap<>();
 
 	/** The gl. */
 	final OpenGL gl;
@@ -112,14 +110,24 @@ public class TextureCache2 implements ITextureCache {
 		staticTextures.cleanUp();
 	}
 
+	/**
+	 * Processs.
+	 *
+	 * @param file
+	 *            the file
+	 */
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see ummisco.gama.opengl.renderer.caches.ITextureCache#processs(java.io.File)
 	 */
 	@Override
-	public void processs(final File file) {
-		if (!texturesToProcess.contains(file.getAbsolutePath())) { texturesToProcess.add(file.getAbsolutePath()); }
+	public void processs(final IImageProvider file) {
+
+		if (!texturesToProcess.containsKey(file.getId())) {
+			DEBUG.LOG("Adding image to process " + file.getId());
+			texturesToProcess.put(file.getId(), file);
+		}
 	}
 
 	/*
@@ -129,7 +137,8 @@ public class TextureCache2 implements ITextureCache {
 	 */
 	@Override
 	public void processUnloaded() {
-		for (final String path : texturesToProcess) { getTexture(new File(path), false, true); }
+		texturesToProcess.forEach((n, i) -> { getTexture(i, false, true); });
+		// texturesToProcess.clear();
 	}
 
 	/*
@@ -148,22 +157,37 @@ public class TextureCache2 implements ITextureCache {
 		return texture;
 	}
 
+	/**
+	 * Gets the texture.
+	 *
+	 * @param file
+	 *            the file
+	 * @param isAnimated
+	 *            the is animated
+	 * @param useCache
+	 *            the use cache
+	 * @return the texture
+	 */
 	@Override
-	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
+	public Texture getTexture(final IImageProvider file, final boolean isAnimated, final boolean useCache) {
 		if (file == null) return null;
 		Texture texture = null;
 		if (isAnimated || !useCache) {
-			String path = file.getAbsolutePath();
+			String path = file.getId();
 			texture = volatileTextures.get(path);
 			if (texture == null) {
-				final BufferedImage image = ImageUtils.getInstance().getImageFromFile(file, useCache, true, null,null);
-				// DEBUG.OUT("Building a new volatile texture... ");
+				final BufferedImage image = file.getImage(null, useCache, true);
+				DEBUG.LOG("Building a new volatile texture... " + file.getId());
 				texture = this.buildTexture(gl.getGL(), image);
 				volatileTextures.put(path, texture);
 			}
 		} else {
 			try {
-				texture = staticTextures.get(file.getAbsolutePath(), () -> buildTexture(gl.getGL(), file));
+
+				texture = staticTextures.get(file.getId(), () -> {
+					DEBUG.LOG("Building a new static texture... " + file.getId());
+					return buildTexture(gl.getGL(), file);
+				});
 			} catch (final ExecutionException e) {
 				e.printStackTrace();
 			}
@@ -180,9 +204,9 @@ public class TextureCache2 implements ITextureCache {
 	 *            the file
 	 * @return the texture
 	 */
-	private Texture buildTexture(final GL gl, final File file) {
-		return buildTexture(gl, ImageUtils.getInstance().getImageFromFile(file,
-				GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue(), true, null, null));
+	private Texture buildTexture(final GL gl, final IImageProvider file) {
+		DEBUG.LOG("Build texture from " + file.getId());
+		return buildTexture(gl, file.getImage(null, GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue(), true));
 	}
 
 	/**
@@ -196,6 +220,7 @@ public class TextureCache2 implements ITextureCache {
 	 */
 	Texture buildTexture(final GL gl, final BufferedImage im) {
 		try {
+			DEBUG.LOG("Build texture from " + im.toString());
 			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);
 			final Texture texture = new Texture(gl, data);
 			data.flush();

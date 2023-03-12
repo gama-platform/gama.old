@@ -26,7 +26,7 @@ import msi.gaml.operators.Colors.GamaScale;
 /**
  * The Class MeshDrawingAttributes.
  */
-public class MeshDrawingAttributes extends FileDrawingAttributes {
+public class MeshDrawingAttributes extends AssetDrawingAttributes {
 
 	/** The color. */
 	public IMeshColorProvider color;

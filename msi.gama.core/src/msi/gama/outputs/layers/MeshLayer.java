@@ -13,8 +13,8 @@ import java.util.Arrays;
 
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.runtime.IScope.IGraphicsScope;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 
@@ -46,7 +46,7 @@ public class MeshLayer extends AbstractLayer {
 
 		final MeshLayerData data = getData();
 		final IField values = data.getElevationMatrix(scope);
-		final GamaImageFile textureFile = data.textureFile();
+		final IImageProvider textureFile = data.textureFile();
 		final MeshDrawingAttributes attributes = new MeshDrawingAttributes("", false);
 		attributes.setGrayscaled(data.isGrayScaled());
 		attributes.setEmpty(data.isWireframe());

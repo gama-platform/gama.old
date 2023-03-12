@@ -20,7 +20,7 @@ import msi.gama.util.GamaColor;
 /**
  * The Class FileDrawingAttributes.
  */
-public class FileDrawingAttributes extends DrawingAttributes {
+public class AssetDrawingAttributes extends DrawingAttributes {
 
 	/** The agent identifier. */
 	public final IAgent agentIdentifier;
@@ -47,7 +47,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	 * @param lighting
 	 *            the lighting
 	 */
-	public FileDrawingAttributes(final Scaling3D size, final AxisAngle rotation, final GamaPoint location,
+	public AssetDrawingAttributes(final Scaling3D size, final AxisAngle rotation, final GamaPoint location,
 			final GamaColor color, final GamaColor border, final IAgent agent, final Double lineWidth,
 			final boolean isImage, final Boolean lighting) {
 		super(size, rotation, location, color, border, lighting);
@@ -65,7 +65,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	 * @param isImage
 	 *            the is image
 	 */
-	public FileDrawingAttributes(final GamaPoint location, final boolean isImage) {
+	public AssetDrawingAttributes(final GamaPoint location, final boolean isImage) {
 		super(null, null, location, null, null, null);
 		agentIdentifier = null;
 		setType(isImage ? IShape.Type.POLYGON : IShape.Type.THREED_FILE);

@@ -14,11 +14,11 @@ import java.util.List;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Scaling3D;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaImageFile;
 
 /**
  * The Class ShapeDrawingAttributes.
@@ -28,7 +28,7 @@ import msi.gama.util.file.GamaImageFile;
  * The Class ShapeDrawingAttributes.
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class ShapeDrawingAttributes extends FileDrawingAttributes {
+public class ShapeDrawingAttributes extends AssetDrawingAttributes {
 
 	/**
 	 * Instantiates a new shape drawing attributes.
@@ -62,7 +62,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	 */
 	public ShapeDrawingAttributes(final Scaling3D size, final Double depth, final AxisAngle rotation,
 			final GamaPoint location, final Boolean empty, final GamaColor color, /* final List<GamaColor> colors, */
-			final GamaColor border, final List<GamaImageFile> textures,
+			final GamaColor border, final List<IImageProvider> textures,
 			/* final GamaMaterial material, */ final IAgent agent, final IShape.Type type, final Double lineWidth,
 			final Boolean lighting) {
 		super(size, rotation, location, color, border, agent, lineWidth, false, lighting);

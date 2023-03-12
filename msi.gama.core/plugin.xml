@@ -105,7 +105,7 @@
    <extension
          point="gama.draw">
       <implementation
-            class="msi.gaml.statements.draw.FileDrawer"
+            class="msi.gaml.statements.draw.AssetDrawer"
             description="Allows to draw objects contained in files">
       </implementation>
       <implementation

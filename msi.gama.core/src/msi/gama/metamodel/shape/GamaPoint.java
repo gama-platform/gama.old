@@ -2,7 +2,7 @@
  *
  * GamaPoint.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -469,6 +469,14 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 */
 	@Override
 	public Envelope3D getEnvelope() { return Envelope3D.of((Coordinate) this); }
+
+	/**
+	 * Returns the envelope considering this point as bounds
+	 */
+	@Override
+	public Envelope3D computeEnvelope(final IScope scope) {
+		return Envelope3D.of(0, x, 0, y, 0, z);
+	}
 
 	@Override
 	public boolean equals(final Object o) {

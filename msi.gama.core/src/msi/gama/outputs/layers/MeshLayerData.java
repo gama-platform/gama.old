@@ -15,12 +15,12 @@ import java.awt.Color;
 import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaFieldType;
@@ -47,7 +47,7 @@ public class MeshLayerData extends LayerData {
 	final Attribute<GamaColor> line;
 
 	/** The texture. */
-	final Attribute<GamaImageFile> texture;
+	final Attribute<IImageProvider> texture;
 
 	/** The smooth. */
 	final Attribute<Integer> smooth;
@@ -120,7 +120,7 @@ public class MeshLayerData extends LayerData {
 		above = create("above", Types.FLOAT, ABOVE);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
-			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);
+			if (result instanceof IImageProvider) return (IImageProvider) result;
 			throw GamaRuntimeException.error("The texture of a field must be an image file", scope);
 		}, Types.FILE, null);
 	}
@@ -187,7 +187,7 @@ public class MeshLayerData extends LayerData {
 	 *
 	 * @return the gama image file
 	 */
-	public GamaImageFile textureFile() {
+	public IImageProvider textureFile() {
 		return texture.get();
 	}
 

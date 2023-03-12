@@ -47,46 +47,46 @@ public class DrawingData extends AttributeHolder {
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
 	/** The size. */
-	final Attribute<GamaPoint> size;
+	public final Attribute<GamaPoint> size;
 
 	/** The depth. */
-	final Attribute<Double> depth;
+	public final Attribute<Double> depth;
 
 	/** The rotation. */
-	final Attribute<AxisAngle> rotation;
+	public final Attribute<AxisAngle> rotation;
 
 	/** The location. */
-	final Attribute<GamaPoint> location;
+	public final Attribute<GamaPoint> location;
 
 	/** The anchor. */
-	final Attribute<GamaPoint> anchor;
+	public final Attribute<GamaPoint> anchor;
 
 	/** The empty. */
-	final Attribute<Boolean> empty;
+	public final Attribute<Boolean> empty;
 
 	/** The color. */
-	final Attribute<GamaColor> border, color;
+	public final Attribute<GamaColor> border, color;
 
 	/** The font. */
-	final Attribute<GamaFont> font;
+	public final Attribute<GamaFont> font;
 
 	/** The texture. */
-	final Attribute<IList> texture;
+	public final Attribute<IList> texture;
 
 	/** The material. */
 	// final Attribute<GamaMaterial> material;
 
 	/** The perspective. */
-	final Attribute<Boolean> perspective;
+	public final Attribute<Boolean> perspective;
 
 	/** The line width. */
-	final Attribute<Double> lineWidth;
+	public final Attribute<Double> lineWidth;
 
 	/** The lighting. */
-	final Attribute<Boolean> lighting;
+	public final Attribute<Boolean> lighting;
 
 	/** The precision. */
-	final Attribute<Double> precision;
+	public final Attribute<Double> precision;
 
 	/**
 	 * Instantiates a new drawing data.

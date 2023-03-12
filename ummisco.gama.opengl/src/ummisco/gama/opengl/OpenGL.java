@@ -19,7 +19,6 @@ import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -47,11 +46,11 @@ import msi.gama.common.geometry.ICoordinates.VertexVisitor;
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.geometry.UnboundedCoordinateSequence;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.DrawingAttributes.DrawerType;
@@ -1154,7 +1153,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param file
 	 *            the file
 	 */
-	public void cacheTexture(final File file) {
+	public void cacheTexture(final IImageProvider file) {
 		if (file == null) return;
 		textureCache.processs(file);
 	}
@@ -1168,8 +1167,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the use cache
 	 * @return the texture id
 	 */
-	public int getTextureId(final GamaImageFile file, final boolean useCache) {
-		final Texture r = textureCache.getTexture(file.getFile(null), file.isAnimated(), useCache);
+	public int getTextureId(final IImageProvider file, final boolean useCache) {
+		final Texture r = textureCache.getTexture(file, file.isAnimated(), useCache);
 		if (r == null) return NO_TEXTURE;
 		return r.getTextureObject();
 	}
@@ -1198,7 +1197,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the use cache
 	 * @return the texture
 	 */
-	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
+	public Texture getTexture(final IImageProvider file, final boolean isAnimated, final boolean useCache) {
 		return textureCache.getTexture(file, isAnimated, useCache);
 	}
 
