@@ -55,6 +55,16 @@ public class GamaIcon {
 	/** The Constant DISABLED_SUFFIX. */
 	public static final String DISABLED_SUFFIX = "_disabled";
 
+	/** The Constant PATH_TO_ICONS. */
+	public static Path PATH_TO_ICONS;
+
+	static {
+		try {
+			URL pngFolderURL = toFileURL(Platform.getBundle(IGamaIcons.PLUGIN_ID).getEntry(IGamaIcons.ICONS_PATH));
+			PATH_TO_ICONS = Path.of(new URI(pngFolderURL.getProtocol(), pngFolderURL.getPath(), null).normalize());
+		} catch (Exception e) {}
+	}
+
 	/**
 	 * Preload icons.
 	 *
@@ -63,12 +73,10 @@ public class GamaIcon {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	public static void preloadAllIcons() throws IOException, URISyntaxException {
-		URL pngFolderURL = toFileURL(Platform.getBundle(IGamaIcons.PLUGIN_ID).getEntry(IGamaIcons.ICONS_PATH));
-		Path path = Path.of(new URI(pngFolderURL.getProtocol(), pngFolderURL.getPath(), null).normalize());
+	public static void preloadAllIcons() throws IOException {
 		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
-				() -> Files.walk(path).map(f -> path.relativize(f).toString())
-						.filter(n -> n.endsWith(".png") && !n.contains("@"))
+				() -> Files.walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
+						.filter(n -> !n.contains("templates/") && n.endsWith(".png") && !n.contains("@"))
 						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));
 	}
 
@@ -100,9 +108,8 @@ public class GamaIcon {
 		final String name = shape + ".color" + gcolor.getRGB().toString();
 		try {
 			return ICON_CACHE.get(name, () -> {
-				// We use the fact that URLImageDescriptor (not API) implements ImageDataProvider
-				Image image = new Image(WorkbenchHelper.getDisplay(),
-						(ImageDataProvider) named("templates/" + shape + "_template").descriptor());
+				Image image =
+						ImageDescriptor.createFromURL(computeURL("templates/" + shape + "_template")).createImage();
 				final GC gc = new GC(image);
 				gc.setBackground(gcolor.color());
 				int size = image.getBounds().width;
