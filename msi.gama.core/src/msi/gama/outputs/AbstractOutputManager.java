@@ -62,7 +62,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	LayoutStatement layout;
 
 	/** The outputs. */
-	protected final IMap<String, IOutput> outputs = GamaMapFactory.create();
+	protected final IMap<String, IOutput> outputs = GamaMapFactory.concurrentMap();
 
 	// protected final IList<MonitorOutput> monitors = GamaListFactory.create();
 
@@ -346,11 +346,13 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			});
 		}
 		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
-			while (!allOutputsRendered()) {
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					// e.printStackTrace();
+			synchronized (outputs) {
+				while (!allOutputsRendered()) {
+					try {
+						Thread.sleep(5);
+					} catch (InterruptedException e) {
+						// e.printStackTrace();
+					}
 				}
 			}
 		}
