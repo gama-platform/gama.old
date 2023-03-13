@@ -3,6 +3,7 @@
 target/
 *.orig
 build/
+!ummisco.gama.ui.shared/icons/build/
 dist/
 private/
 release/
