@@ -76,8 +76,9 @@ public class GamaIcon {
 	public static void preloadAllIcons() throws IOException {
 		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
 				() -> Files.walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
-						.filter(n -> !n.contains("templates/") && n.endsWith(".png") && !n.contains("@"))
-						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));
+						.filter(n -> !n.contains("templates/") && n.endsWith(".png") && !n.contains("@")
+								&& !n.contains(DISABLED_SUFFIX))
+						.sorted().forEach(f -> GamaIcon.named(f.replace(".png", ""))));
 	}
 
 	/**
@@ -88,6 +89,7 @@ public class GamaIcon {
 	 * @return the gama icon
 	 */
 	public static GamaIcon named(final String s) {
+
 		try {
 			if (s != null) return ICON_CACHE.get(s, () -> new GamaIcon(s));
 		} catch (ExecutionException e) {}
@@ -105,7 +107,8 @@ public class GamaIcon {
 	 */
 	public static GamaIcon ofColor(final GamaUIColor gcolor, final boolean square) {
 		String shape = square ? "square" : "circle";
-		final String name = shape + ".color" + gcolor.getRGB().toString();
+		final String name = "colors/" + shape + ".color." + String.format("%X", gcolor.gamaColor().getRGB());
+		// DEBUG.LOG("Looking for " + shape + ".color" + String.format("%X", gcolor.gamaColor().getRGB()) + ".png");
 		try {
 			return ICON_CACHE.get(name, () -> {
 				Image image =
@@ -121,7 +124,7 @@ public class GamaIcon {
 				gc.dispose();
 				return new GamaIcon(name, image);
 			});
-		} catch (ExecutionException e) {
+		} catch (Exception e) {
 			return null;
 		}
 
@@ -179,6 +182,7 @@ public class GamaIcon {
 	 *            the id of the plugin in which the 'icons' folder resides
 	 */
 	private GamaIcon(final String c) {
+		// DEBUG.LOG("Creation of icon " + c);
 		code = c;
 		url = computeURL(code);
 		disabledUrl = computeURL(code + DISABLED_SUFFIX);
