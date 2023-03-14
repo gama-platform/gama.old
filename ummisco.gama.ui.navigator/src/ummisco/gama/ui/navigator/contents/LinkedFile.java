@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
@@ -68,9 +69,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public ImageDescriptor getImageDescriptor() {
-		return ImageDescriptor.createFromImage(DEFAULT_LABEL_PROVIDER.getImage(file.getResource()));
-	}
+	public Image getImage() { return DEFAULT_LABEL_PROVIDER.getImage(file.getResource()); }
 
 	@Override
 	public boolean handleDoubleClick() {

@@ -86,10 +86,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	}
 
 	@Override
-	public ImageDescriptor getImageDescriptor() {
-		return ImageDescriptor
-				.createFromImage((Image) WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element));
-	}
+	public Image getImage() { return (Image) WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element); }
 
 	@Override
 	public boolean handleDoubleClick() {

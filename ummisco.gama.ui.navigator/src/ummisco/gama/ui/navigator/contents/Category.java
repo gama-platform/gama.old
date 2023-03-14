@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.util.FileUtils;
 import ummisco.gama.ui.resources.GamaIcon;
@@ -89,9 +90,7 @@ public class Category extends VirtualContent<WrappedFile> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public ImageDescriptor getImageDescriptor() {
-		return GamaIcon.named("gaml/_" + getName().toLowerCase()).descriptor();
-	}
+	public Image getImage() { return GamaIcon.named("gaml/_" + getName().toLowerCase()).image(); }
 
 	/**
 	 * Method getColor()

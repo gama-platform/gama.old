@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gaml.statements.test.AbstractSummary;
@@ -78,7 +78,7 @@ public class WrappedProject extends WrappedContainer<IProject> {
 	public Object[] getNavigatorChildren() { return isOpen() ? super.getNavigatorChildren() : EMPTY; }
 
 	@Override
-	public ImageDescriptor getImageDescriptor() { return GamaIcon.named(IGamaIcons.FOLDER_PROJECT).descriptor(); }
+	public Image getImage() { return GamaIcon.named(IGamaIcons.FOLDER_PROJECT).image(); }
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {

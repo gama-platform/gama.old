@@ -19,9 +19,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
@@ -50,7 +50,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	boolean isShapeFileSupport;
 
 	/** The image. */
-	ImageDescriptor image;
+	Image image;
 
 	/** The color. */
 	Color color;
@@ -76,12 +76,12 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile f = getResource();
 		if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
 			if (isShapeFileSupport) {
-				image = GamaIcon.named(IGamaIcons.FILE_SHAPESUPPORT).descriptor();
+				image = GamaIcon.named(IGamaIcons.FILE_SHAPESUPPORT).image();
 			} else {
-				image = ImageDescriptor.createFromImage(DEFAULT_LABEL_PROVIDER.getImage(f));
+				image = DEFAULT_LABEL_PROVIDER.getImage(f);
 			}
 		} else {
-			image = GamaIcon.named(IGamaIcons.FILE_TEXT).descriptor();
+			image = GamaIcon.named(IGamaIcons.FILE_TEXT).image();
 		}
 
 	}
@@ -163,13 +163,8 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		return VirtualContent.EMPTY;
 	}
 
-	/**
-	 * Gets the image.
-	 *
-	 * @return the image
-	 */
 	@Override
-	public ImageDescriptor getImageDescriptor() {
+	public Image getImage() {
 		if (image == null) { computeFileImage(); }
 		return image;
 	}
