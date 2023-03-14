@@ -15,7 +15,6 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.resources.GamaColors;
@@ -75,7 +74,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return GamaIcon.named(IGamaIcons.ATTRIBUTES).image(); }
+	public ImageDescriptor getImageDescriptor() { return GamaIcon.named(IGamaIcons.ATTRIBUTES).descriptor(); }
 
 	/**
 	 * Method getColor()

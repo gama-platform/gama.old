@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import ummisco.gama.ui.resources.GamaIcon;
@@ -179,7 +178,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	 *
 	 * @return the image
 	 */
-	public abstract Image getImage();
+	public abstract ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Gets the color.

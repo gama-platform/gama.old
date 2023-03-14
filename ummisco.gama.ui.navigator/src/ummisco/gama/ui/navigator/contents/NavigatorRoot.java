@@ -18,7 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.GamlFileExtension;
 
@@ -138,7 +137,7 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 	}
 
 	@Override
-	public Image getImage() { return null; }
+	public ImageDescriptor getImageDescriptor() { return null; }
 
 	// @Override
 	// public Color getColor() {

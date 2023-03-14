@@ -3,7 +3,7 @@
  * Tag.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -13,7 +13,6 @@ package ummisco.gama.ui.navigator.contents;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 
 import ummisco.gama.ui.resources.GamaColors;
 
@@ -66,7 +65,7 @@ public class Tag extends VirtualContent<Tags> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return null; }
+	public ImageDescriptor getImageDescriptor() { return null; }
 
 	@Override
 	public boolean handleDoubleClick() {

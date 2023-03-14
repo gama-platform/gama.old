@@ -1,17 +1,16 @@
 /*******************************************************************************************************
  *
- * TopLevelFolderPropertyPage.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TopLevelFolderPropertyPage.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.properties;
 
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,7 +37,6 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 	 * Constructor for SamplePropertyPage.
 	 */
 	public TopLevelFolderPropertyPage() {
-		super();
 		noDefaultAndApplyButton();
 	}
 
@@ -47,14 +45,13 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 	 *
 	 * @return the folder
 	 */
-	public TopLevelFolder getFolder() {
-		return super.getElement().getAdapter(TopLevelFolder.class);
-	}
+	public TopLevelFolder getFolder() { return super.getElement().getAdapter(TopLevelFolder.class); }
 
 	/**
 	 * Adds the first section.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 */
 	private void addFirstSection(final Composite parent) {
 		final Composite composite = createDefaultComposite(parent);
@@ -71,7 +68,8 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 	/**
 	 * Adds the separator.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 */
 	private void addSeparator(final Composite parent) {
 		final Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -84,7 +82,8 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 	/**
 	 * Adds the second section.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 */
 	private void addSecondSection(final Composite parent) {
 		final Composite composite = createDefaultComposite(parent);
@@ -107,7 +106,8 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 	/**
 	 * Adds the third section.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 */
 	private void addThirdSection(final Composite parent) {
 		final Composite composite = createDefaultComposite(parent);
@@ -144,7 +144,7 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 		addSecondSection(composite);
 		addThirdSection(composite);
 		setTitle(getFolder().getStatusMessage());
-		setImageDescriptor(ImageDescriptor.createFromImage(getFolder().getImage()));
+		setImageDescriptor(getFolder().getImageDescriptor());
 		getContainer().updateTitle();
 		return composite;
 	}
@@ -152,7 +152,8 @@ public class TopLevelFolderPropertyPage extends PropertyPage {
 	/**
 	 * Creates the default composite.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 * @return the composite
 	 */
 	private Composite createDefaultComposite(final Composite parent) {

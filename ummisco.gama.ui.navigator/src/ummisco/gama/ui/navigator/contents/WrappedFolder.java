@@ -11,7 +11,7 @@
 package ummisco.gama.ui.navigator.contents;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -22,7 +22,7 @@ import ummisco.gama.ui.resources.IGamaIcons;
 public class WrappedFolder extends WrappedContainer<IFolder> {
 
 	/** The image. */
-	Image image;
+	ImageDescriptor image;
 
 	/** The can be decorated. */
 	// Font font;
@@ -49,7 +49,7 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 			super.countModels();
 			final var isExternal = "external".equals(getName());
 			image = GamaIcon.named(isExternal ? "navigator/files/file.cloud"
-					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).image();
+					: modelsCount == 0 ? IGamaIcons.FOLDER_RESOURCES : IGamaIcons.FOLDER_MODEL).descriptor();
 			canBeDecorated = modelsCount > 0;
 		}
 		return modelsCount;
@@ -61,8 +61,13 @@ public class WrappedFolder extends WrappedContainer<IFolder> {
 		return canBeDecorated;
 	}
 
+	/**
+	 * Gets the image.
+	 *
+	 * @return the image
+	 */
 	@Override
-	public Image getImage() {
+	public ImageDescriptor getImageDescriptor() {
 		countModels();
 		return image;
 	}

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import one.util.streamex.StreamEx;
@@ -62,7 +61,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	WrappedProject[] children;
 
 	/** The status icon. */
-	final Image icon;
+	final ImageDescriptor icon;
 
 	/** The nature. */
 	final String statusMessage, nature;
@@ -84,7 +83,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		this.statusMessage = statusMessage;
 		this.nature = nature;
 		this.location = location;
-		icon = GamaIcon.named(iconName).image();
+		icon = GamaIcon.named(iconName).descriptor();
 		initializeChildren();
 	}
 
@@ -177,8 +176,13 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		return desc.getNatureIds().length < 3;
 	}
 
+	/**
+	 * Gets the image.
+	 *
+	 * @return the image
+	 */
 	@Override
-	public final Image getImage() { return icon; }
+	public final ImageDescriptor getImageDescriptor() { return icon; }
 
 	@Override
 	public String getStatusMessage() { return statusMessage; }
