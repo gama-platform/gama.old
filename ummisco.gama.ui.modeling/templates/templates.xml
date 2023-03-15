@@ -73,7 +73,7 @@ ${cursor}
 	// Define parameters to explore here if necessary
 	// parameter "My parameter" category: "My parameters" var: one_global_attribute;
 	// Define a method of exploration
-	// method exhaustive minimize: one_expression;
+	// method exploration;
 	// Define attributes, actions, a init section and behaviors if necessary
 	// init { }
 	
@@ -96,7 +96,7 @@ ${cursor}
 	// Define parameters to explore here if necessary
 	// parameter "My parameter" category: "My parameters" var: one_global_attribute;
 	// Define a method of exploration
-	// method exhaustive minimize: one_expression;
+	// method exploration;
 	// Define attributes, actions, a init section and behaviors if necessary
 	// init { }
 
