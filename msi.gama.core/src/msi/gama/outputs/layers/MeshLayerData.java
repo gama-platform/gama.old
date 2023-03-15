@@ -12,8 +12,6 @@ package msi.gama.outputs.layers;
 
 import java.awt.Color;
 
-import org.locationtech.jts.geom.Envelope;
-
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.IKeyword;
@@ -79,9 +77,6 @@ public class MeshLayerData extends LayerData {
 	/** The above. */
 	final Attribute<Double> above;
 
-	/** The cell size. */
-	private GamaPoint cellSize;
-
 	/** The dim. */
 	private final GamaPoint dim = new GamaPoint();
 
@@ -127,13 +122,8 @@ public class MeshLayerData extends LayerData {
 
 	@Override
 	public boolean compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		final Envelope env2 = scope.getSimulation().getEnvelope();
-		final double width = env2.getWidth();
-		final double height = env2.getHeight();
 		boolean result = super.compute(scope, g);
 		shouldComputeValues = super.getRefresh();
-		// The size
-		cellSize = new GamaPoint(width / dim.x, height / dim.y);
 		return result;
 	}
 
@@ -206,13 +196,6 @@ public class MeshLayerData extends LayerData {
 	public boolean drawLines() {
 		return line.get() != null || wireframe.get();
 	}
-
-	/**
-	 * Gets the cell size.
-	 *
-	 * @return the cell size
-	 */
-	public GamaPoint getCellSize() { return cellSize; }
 
 	/**
 	 * Gets the dimension.

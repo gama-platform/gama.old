@@ -14,8 +14,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 
-import org.locationtech.jts.geom.Envelope;
-
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.IKeyword;
@@ -73,9 +71,9 @@ public class GridLayerData extends LayerData {
 
 	/** The text. */
 	Attribute<Boolean> text;
-
-	/** The cell size. */
-	private GamaPoint cellSize;
+	//
+	// /** The cell size. */
+	// private GamaPoint cellSize;
 
 	/** The wireframe. */
 	Attribute<Boolean> wireframe;
@@ -137,14 +135,14 @@ public class GridLayerData extends LayerData {
 			if (!gridPop.isGrid()) throw GamaRuntimeException.error("Species named " + name + " is not a grid", scope);
 			grid = (IGrid) gridPop.getTopology().getPlaces();
 			// final Envelope env = grid.getEnvironmentFrame().getEnvelope();
-			final Envelope env2 = scope.getSimulation().getEnvelope();
-			final double width = env2.getWidth();
-			final double height = env2.getHeight();
+			// final Envelope env2 = scope.getSimulation().getEnvelope();
+			// final double width = env2.getWidth();
+			// final double height = env2.getHeight();
 			// final double width2 = env2.getWidth();
 			// final double height2 = env2.getHeight();
-			final double cols = grid.getCols(scope);
-			final double rows = grid.getRows(scope);
-			cellSize = new GamaPoint(width / cols, height / rows);
+			// final double cols = grid.getCols(scope);
+			// final double rows = grid.getRows(scope);
+			// cellSize = new GamaPoint(width / (cols - 1), height / (rows - 1));
 			dim.setLocation(grid.getDimensions());
 		}
 		boolean result = super.compute(scope, g);
@@ -230,7 +228,7 @@ public class GridLayerData extends LayerData {
 	 *
 	 * @return the cell size
 	 */
-	public GamaPoint getCellSize() { return cellSize; }
+	// public GamaPoint getCellSize() { return cellSize; }
 
 	/**
 	 * Gets the image.

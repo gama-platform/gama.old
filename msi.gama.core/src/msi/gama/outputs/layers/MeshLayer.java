@@ -55,7 +55,6 @@ public class MeshLayer extends AbstractLayer {
 		attributes.setLocation(data.getPosition());
 		attributes.setTriangulated(data.isTriangulated());
 		attributes.setWithText(data.isShowText());
-		attributes.setCellSize(data.getCellSize());
 		attributes.setXYDimension(data.getDimension());
 		attributes.setSize(Scaling3D.of(data.getSize()));
 		attributes.setScale(data.getScale());

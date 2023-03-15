@@ -86,7 +86,6 @@ public class GridLayer extends AbstractLayer implements IGridLayer {
 		}
 		attributes.setTriangulated(data.isTriangulated());
 		attributes.setWithText(data.isShowText());
-		attributes.setCellSize(data.getCellSize());
 		attributes.setBorder(lineColor);
 		attributes.setXYDimension(data.getDimensions());
 		attributes.setSmooth(data.isSmooth() ? 1 : 0);

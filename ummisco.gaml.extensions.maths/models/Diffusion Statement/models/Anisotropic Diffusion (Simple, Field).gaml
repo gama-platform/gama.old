@@ -41,11 +41,11 @@ global {
 	}
 }
 
-experiment diffusion type: gui autorun: true{
+experiment diffusion type: gui autorun: true {
 	output synchronized: true {
 		layout #split;
 		display "Brewer" type: 3d  background: #black antialias:true  {
-			camera 'default' location: {50.7757,142.7832,27.2522} target: {50.3509,7.5626,0.0};
+			camera 'default' location: {-36.7763,-33.4928,81.1831} target: {30.905,35.6694,0.0};
 			light #default intensity: 60;
 			mesh cells scale: 5 grayscale: true color:(brewer_colors("Set3")) triangulation: true;
 		}

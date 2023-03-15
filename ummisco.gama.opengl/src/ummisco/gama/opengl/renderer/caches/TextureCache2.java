@@ -205,7 +205,6 @@ public class TextureCache2 implements ITextureCache {
 	 * @return the texture
 	 */
 	private Texture buildTexture(final GL gl, final IImageProvider file) {
-		DEBUG.LOG("Build texture from " + file.getId());
 		return buildTexture(gl, file.getImage(null, GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue(), true));
 	}
 
@@ -220,7 +219,6 @@ public class TextureCache2 implements ITextureCache {
 	 */
 	Texture buildTexture(final GL gl, final BufferedImage im) {
 		try {
-			DEBUG.LOG("Build texture from " + im.toString());
 			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);
 			final Texture texture = new Texture(gl, data);
 			data.flush();
