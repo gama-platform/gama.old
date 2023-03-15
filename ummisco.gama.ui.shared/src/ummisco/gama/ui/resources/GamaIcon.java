@@ -12,12 +12,10 @@ package ummisco.gama.ui.resources;
 
 import static org.eclipse.core.runtime.FileLocator.toFileURL;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -63,22 +61,6 @@ public class GamaIcon {
 			URL pngFolderURL = toFileURL(Platform.getBundle(IGamaIcons.PLUGIN_ID).getEntry(IGamaIcons.ICONS_PATH));
 			PATH_TO_ICONS = Path.of(new URI(pngFolderURL.getProtocol(), pngFolderURL.getPath(), null).normalize());
 		} catch (Exception e) {}
-	}
-
-	/**
-	 * Preload icons.
-	 *
-	 * @param bundle
-	 *            the bundle
-	 * @throws IOException
-	 * @throws URISyntaxException
-	 */
-	public static void preloadAllIcons() throws IOException {
-		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
-				() -> Files.walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
-						.filter(n -> !n.contains("templates/") && n.endsWith(".png") && !n.contains("@")
-								&& !n.contains(DISABLED_SUFFIX))
-						.sorted().forEach(f -> GamaIcon.named(f.replace(".png", ""))));
 	}
 
 	/**
@@ -188,7 +170,7 @@ public class GamaIcon {
 		disabledUrl = computeURL(code + DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromURL(url);
 		disabledDescriptor = ImageDescriptor.createFromURL(disabledUrl);
-		image();
+		// image();
 	}
 
 	/**
@@ -215,6 +197,15 @@ public class GamaIcon {
 	 */
 	public ImageDescriptor descriptor() {
 		return descriptor;
+	}
+
+	/**
+	 * Disabled descriptor.
+	 *
+	 * @return the image descriptor
+	 */
+	public ImageDescriptor disabledDescriptor() {
+		return disabledDescriptor;
 	}
 
 	/**
@@ -258,24 +249,15 @@ public class GamaIcon {
 	 * @return the image
 	 */
 	public Image checked() {
-		return image(code + "_checked", this::checkedVersion);
-	}
-
-	/**
-	 * Checked version of.
-	 *
-	 * @param im
-	 *            the im
-	 * @return the image
-	 */
-	private Image checkedVersion() {
-		Image im = new Image(null, (ImageDataProvider) descriptor());
-		GC gc = new GC(im);
-		gc.setForeground(IGamaColors.LIGHT_GRAY.color());
-		gc.setLineWidth(6);
-		gc.drawRectangle(im.getBounds());
-		gc.dispose();
-		return im;
+		return image(code + "_checked", () -> {
+			Image im = new Image(null, (ImageDataProvider) descriptor());
+			GC gc = new GC(im);
+			gc.setForeground(IGamaColors.LIGHT_GRAY.color());
+			gc.setLineWidth(6);
+			gc.drawRectangle(im.getBounds());
+			gc.dispose();
+			return im;
+		});
 	}
 
 	/**
@@ -284,15 +266,6 @@ public class GamaIcon {
 	 * @return the code
 	 */
 	public String getCode() { return code; }
-
-	/**
-	 * Disabled descriptor.
-	 *
-	 * @return the image descriptor
-	 */
-	public ImageDescriptor disabledDescriptor() {
-		return disabledDescriptor;
-	}
 
 	/**
 	 * Compute URL.

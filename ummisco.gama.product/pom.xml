@@ -84,7 +84,7 @@
 								<!--
 								Linux
 								-->
-								<copy file="../ummisco.gama.ui.shared/icons/app/icon.icns"
+								<copy file="../ummisco.gama.product/extraresources/launcher/icon.icns"
 									todir="./target/products/ummisco.gama.application.product/linux/gtk/x86_64/" />
 								<copy
 									todir="./target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless">
