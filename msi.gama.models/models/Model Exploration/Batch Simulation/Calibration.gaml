@@ -2,7 +2,7 @@
 * Name:  Model using Batch mode
 * Author:  Patrick Taillandier
 * Description: A model showing how to use batch experiments to find the best combination of parameters to minimize the numbers of infected people 
-*      in a SIR infection model where agents infect others and become immune after a certain time and has a probability to die. The batch mode uses five different methods : Exhaustive, Hill climbing
+*      in a SIR infection model where agents infect others and become immune after a certain time and has a probability to die. The batch mode uses seven different methods: Hill climbing
 *      GA, PSO, Tabu Search, Reactive Tabu Search, Simulated Annealing, and Explicit exploration. The model proposes five experiments : one simple with a User Interface, one running 10 experiments and saving the data, and one 
 *      for each strategy. 
 * Tags: batch, algorithm, save_file

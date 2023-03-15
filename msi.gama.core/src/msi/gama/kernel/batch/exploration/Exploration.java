@@ -113,11 +113,11 @@ import msi.gaml.types.IType;
 		},
 		omissible = IKeyword.NAME)
 @doc (
-		value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. You can also choose a sampling method for the exploration. See [batch161 the batch dedicated page].",
+		value = "This is the standard batch method. The exploration mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. You can also choose a sampling method for the exploration. See [batch161 the batch dedicated page].",
 		usages = { @usage (
-				value = "As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ",
+				value = "As other batch methods, the basic syntax of the exploration statement uses `method exploration` instead of the expected `exploration name: id` : ",
 				examples = { @example (
-						value = "method exhaustive [facet: value];",
+						value = "method exploration;",
 						isExecutable = false) }),
 				@usage (
 						value = "Simplest example: ",
