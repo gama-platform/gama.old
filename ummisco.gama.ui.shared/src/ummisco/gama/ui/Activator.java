@@ -15,6 +15,7 @@ import org.osgi.framework.BundleContext;
 
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.utils.SwtGui;
 
 /**
@@ -30,7 +31,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(final BundleContext context) throws Exception {
 		super.start(context);
 		GAMA.setRegularGui(new SwtGui());
-		// GamaIcon.preloadAllIcons();
+		GamaIcon.preloadAllIcons();
 	}
 
 }

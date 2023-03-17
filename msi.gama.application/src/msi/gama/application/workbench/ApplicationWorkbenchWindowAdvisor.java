@@ -10,7 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.graphics.Resource;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -36,6 +38,17 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	static {
 		DEBUG.OFF();
+	}
+
+	@Override
+	public IStatus saveState(final IMemento memento) {
+		return super.saveState(memento);
+	}
+
+	@Override
+	public IStatus restoreState(final IMemento memento) {
+		// TODO Auto-generated method stub
+		return super.restoreState(memento);
 	}
 
 	@Override
@@ -115,18 +128,20 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	@Override
 	public void postWindowCreate() {
 		final IWorkbenchWindow window = getWindowConfigurer().getWindow();
-		window.getShell().setMaximized(GamaPreferences.Interface.CORE_SHOW_MAXIMIZED.getValue());
-		// if (FLAGS.USE_DELAYED_RESIZE) {
-		// window.getShell().addControlListener(new ControlAdapter() {
-		//
-		// @Override
-		// public void controlResized(final ControlEvent e) {
-		// // window.getShell().layout(true, true);
-		// window.getShell().requestLayout();
-		// }
-		//
-		// });
-		// }
+		if (!GamaPreferences.Interface.CORE_REMEMBER_WINDOW.getValue()) {
+			window.getShell().setMaximized(GamaPreferences.Interface.CORE_SHOW_MAXIMIZED.getValue());
+			// if (FLAGS.USE_DELAYED_RESIZE) {
+			// window.getShell().addControlListener(new ControlAdapter() {
+			//
+			// @Override
+			// public void controlResized(final ControlEvent e) {
+			// // window.getShell().layout(true, true);
+			// window.getShell().requestLayout();
+			// }
+			//
+			// });
+			// }
+		}
 	}
 
 	@Override

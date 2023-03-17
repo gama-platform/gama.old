@@ -33,8 +33,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.matrix.IField;
-import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.AssetDrawingAttributes;
+import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
@@ -231,7 +231,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
-		int width = DPIHelper.autoScaleDown(w), height = DPIHelper.autoScaleDown(h);
+		int width = DPIHelper.autoScaleDown(getCanvas().getMonitor(), w),
+				height = DPIHelper.autoScaleDown(getCanvas().getMonitor(), h);
 		// int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
 		// width = scaleDownIfMac(width);
@@ -419,18 +420,19 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		return DPIHelper.autoScaleDown(openGL.getRatios().x);
+		return DPIHelper.autoScaleDown(getCanvas().getMonitor(), openGL.getRatios().x);
 	}
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		return DPIHelper.autoScaleDown(openGL.getRatios().y);
+		return DPIHelper.autoScaleDown(getCanvas().getMonitor(), openGL.getRatios().y);
 	}
 
 	@Override
 	public double getAbsoluteRatioBetweenPixelsAndModelsUnits() {
-		return Math.min(DPIHelper.autoScaleDown(canvas.getSurfaceHeight() / data.getEnvHeight()),
-				DPIHelper.autoScaleDown(canvas.getSurfaceWidth() / data.getEnvWidth()));
+		return Math.min(
+				DPIHelper.autoScaleDown(getCanvas().getMonitor(), canvas.getSurfaceHeight() / data.getEnvHeight()),
+				DPIHelper.autoScaleDown(getCanvas().getMonitor(), canvas.getSurfaceWidth() / data.getEnvWidth()));
 	}
 
 	/*

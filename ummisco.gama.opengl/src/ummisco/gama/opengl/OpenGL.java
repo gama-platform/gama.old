@@ -368,9 +368,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		DEBUG.OUT("Ratio width/height in pixels ", 35, envWidth / envHeight);
 		DEBUG.OUT("Window pixels/env pixels ", 35, width / envWidth + " | " + height / envHeight);
 		DEBUG.OUT("Current XRatio pixels/env in units ", 35, xRatio + " | " + yRatio);
-		DEBUG.OUT("Device Zoom =  " + DPIHelper.getDeviceZoom());
+		DEBUG.OUT("Device Zoom =  " + DPIHelper.getDeviceZoom(renderer.getCanvas().getMonitor()));
 		DEBUG.OUT("AutoScale down = ", false);
-		DEBUG.OUT(" " + DPIHelper.autoScaleDown(width) + " " + DPIHelper.autoScaleDown(height));
+		DEBUG.OUT(" " + DPIHelper.autoScaleDown(getCanvas().getMonitor(), width) + " "
+				+ DPIHelper.autoScaleDown(getCanvas().getMonitor(), height));
 		// DEBUG.OUT("Client area of window:" + getRenderer().getCanvas().getClientArea());
 	}
 

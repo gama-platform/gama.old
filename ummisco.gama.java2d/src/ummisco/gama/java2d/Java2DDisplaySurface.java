@@ -34,6 +34,7 @@ import java.util.concurrent.Semaphore;
 import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Monitor;
 import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -819,13 +820,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public Font computeFont(final Font f) {
 		if (f == null) return null;
-		if (PlatformHelper.isWindows() && DPIHelper.isHiDPI()) return f.deriveFont(DPIHelper.autoScaleUp(f.getSize()));
+		if (monitor != null && PlatformHelper.isWindows() && DPIHelper.isHiDPI(monitor))
+			return f.deriveFont(DPIHelper.autoScaleUp(monitor, f.getSize()));
 		return f;
 
 	}
 
 	/** The visibility block. */
 	java.util.function.Supplier<Boolean> visibilityBlock;
+
+	/** The monitor. */
+	private Monitor monitor;
 
 	/**
 	 * Sets the visibility.
@@ -843,6 +848,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if (!v) return false;
 		if (visibilityBlock == null) return v;
 		return visibilityBlock.get();
+	}
+
+	/**
+	 * Sets the monitor.
+	 *
+	 * @param monitor
+	 *            the new monitor
+	 */
+	public void setMonitor(final Monitor monitor) {
+		this.monitor = monitor;
+
 	}
 
 }

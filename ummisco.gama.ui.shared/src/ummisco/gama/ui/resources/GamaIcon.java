@@ -12,10 +12,12 @@ package ummisco.gama.ui.resources;
 
 import static org.eclipse.core.runtime.FileLocator.toFileURL;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -61,6 +63,20 @@ public class GamaIcon {
 			URL pngFolderURL = toFileURL(Platform.getBundle(IGamaIcons.PLUGIN_ID).getEntry(IGamaIcons.ICONS_PATH));
 			PATH_TO_ICONS = Path.of(new URI(pngFolderURL.getProtocol(), pngFolderURL.getPath(), null).normalize());
 		} catch (Exception e) {}
+	}
+
+	/**
+	 * Preload icons.
+	 *
+	 * @param bundle
+	 *            the bundle
+	 * @throws IOException
+	 */
+	public static void preloadAllIcons() throws IOException {
+		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
+				() -> Files.walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
+						.filter(n -> n.endsWith(".png") && !n.contains("@"))
+						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));
 	}
 
 	/**

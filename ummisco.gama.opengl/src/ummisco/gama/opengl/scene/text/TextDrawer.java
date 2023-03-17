@@ -145,7 +145,7 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 			drawBitmap(s.getObject(), attributes);
 		} else {
 			Font font = attributes.getFont();
-			final int fontSize = DPIHelper.autoScaleUp(font.getSize());
+			final int fontSize = DPIHelper.autoScaleUp(gl.getRenderer().getCanvas().getMonitor(), font.getSize());
 			if (fontSize != font.getSize()) { font = font.deriveFont((float) fontSize); }
 			Shape shape = font.createGlyphVector(context, s.getObject()).getOutline();
 			final Rectangle2D bounds = shape.getBounds2D();
@@ -266,8 +266,8 @@ public class TextDrawer extends ObjectDrawer<StringObject> implements ITesselato
 		try {
 			GamaPoint anchor = attributes.getAnchor();
 			applyRotation(attributes, p);
-			final float scale =
-					1f / (float) DPIHelper.autoScaleUp(gl.getRenderer().getAbsoluteRatioBetweenPixelsAndModelsUnits());
+			final float scale = 1f / (float) DPIHelper.autoScaleUp(gl.getRenderer().getCanvas().getMonitor(),
+					gl.getRenderer().getAbsoluteRatioBetweenPixelsAndModelsUnits());
 			gl.translateBy(p.x - width * scale * anchor.x, p.y + y * scale * anchor.y, p.z);
 			gl.scaleBy(scale, scale, scale);
 			if (!gl.isWireframe()) {
