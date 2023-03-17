@@ -38,6 +38,7 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -152,7 +153,7 @@ public class Application implements IApplication {
 				}
 			} finally {
 				if (display != null) { display.dispose(); }
-				final Location instanceLoc = Platform.getInstanceLocation();
+ 				final Location instanceLoc = Platform.getInstanceLocation();
 				if (instanceLoc != null) { instanceLoc.release(); }
 			}
 		}
@@ -172,10 +173,23 @@ public class Application implements IApplication {
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
 
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor resolution ",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
-				+ display.getPrimaryMonitor().getBounds().width + "x" + display.getPrimaryMonitor().getBounds().height);
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Display zoom ",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
-				+ DPIUtil.getDeviceZoom() + "%");
+		Monitor primary = display.getPrimaryMonitor();
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Primary monitor resolution ",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
+				+ primary.getBounds().width + "x" +primary.getBounds().height);
+		DEBUG.LOG(DEBUG.PAD("> GAMA: Primary monitor zoom ",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
+				+ primary.getZoom() + "%");
+		Monitor[] monitors = display.getMonitors();
+		if (monitors.length > 1) {
+			int i = 0;
+			for (Monitor m : monitors) {
+				if (m == primary) continue;
+				i++;
+				DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor #"+ i + " resolution ",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
+						+ m.getBounds().width + "x" +m.getBounds().height);
+				DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor #" + i+" zoom",55, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
+						+ m.getZoom() + "%");
+			}
+		}
 
 		// Not used right now
 		// System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(!hasHiDPI && hasCustomZoom));
