@@ -12,6 +12,7 @@ package ummisco.gama.ui.resources;
 
 import static org.eclipse.core.runtime.FileLocator.toFileURL;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -19,6 +20,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -42,6 +44,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * The Class GamaIcon.
  */
 public class GamaIcon {
+	
+	static {
+		DEBUG.OFF();					
+	}
 
 	/** The icon cache. */
 	public static Cache<String, GamaIcon> ICON_CACHE = CacheBuilder.newBuilder().build();
@@ -50,10 +56,14 @@ public class GamaIcon {
 	static final String SIZER_PREFIX = "sizer_";
 
 	/** The Constant MISSING. */
-	static final String MISSING = "gaml/_unknown";
+	static final String MISSING = "gaml" + File.pathSeparator + "_unknown";
 
 	/** The Constant DISABLED_SUFFIX. */
 	public static final String DISABLED_SUFFIX = "_disabled";
+
+	public static final String TEMPLATES = "templates" + File.separator;
+
+	public static final String COLORS = "colors" + File.separator;
 
 	/** The Constant PATH_TO_ICONS. */
 	public static Path PATH_TO_ICONS;
@@ -75,7 +85,7 @@ public class GamaIcon {
 	public static void preloadAllIcons() throws IOException {
 		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
 				() -> Files.walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
-						.filter(n -> n.endsWith(".png") && !n.contains("@"))
+						.filter(n -> n.endsWith(".png") && !n.contains("@") && !n.contains(DISABLED_SUFFIX))
 						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));
 	}
 
@@ -89,6 +99,7 @@ public class GamaIcon {
 	public static GamaIcon named(final String s) {
 
 		try {
+			DEBUG.OUT("Looking for icon "  + s);
 			if (s != null) return ICON_CACHE.get(s, () -> new GamaIcon(s));
 		} catch (ExecutionException e) {}
 		return named(MISSING);
@@ -105,12 +116,12 @@ public class GamaIcon {
 	 */
 	public static GamaIcon ofColor(final GamaUIColor gcolor, final boolean square) {
 		String shape = square ? "square" : "circle";
-		final String name = "colors/" + shape + ".color." + String.format("%X", gcolor.gamaColor().getRGB());
-		// DEBUG.LOG("Looking for " + shape + ".color" + String.format("%X", gcolor.gamaColor().getRGB()) + ".png");
+		final String name = (COLORS + shape + ".color." + String.format("%X", gcolor.gamaColor().getRGB()));
+		DEBUG.OUT("Looking for " + name + ".png");
 		try {
 			return ICON_CACHE.get(name, () -> {
-				Image image =
-						ImageDescriptor.createFromURL(computeURL("templates/" + shape + "_template")).createImage();
+				DEBUG.OUT(name + " not found. Building it");
+				Image image = ImageDescriptor.createFromURL(computeURL(TEMPLATES + shape + "_template")).createImage();
 				final GC gc = new GC(image);
 				gc.setBackground(gcolor.color());
 				int size = image.getBounds().width;
@@ -156,10 +167,6 @@ public class GamaIcon {
 
 	}
 
-	static {
-		DEBUG.ON();
-	}
-
 	/** The code. */
 	final String code;
 
@@ -180,13 +187,13 @@ public class GamaIcon {
 	 *            the id of the plugin in which the 'icons' folder resides
 	 */
 	private GamaIcon(final String c) {
-		// DEBUG.LOG("Creation of icon " + c);
+		DEBUG.OUT("Creation of icon " + c, false);
 		code = c;
 		url = computeURL(code);
+		DEBUG.OUT(" with URL " + url);
 		disabledUrl = computeURL(code + DISABLED_SUFFIX);
 		descriptor = ImageDescriptor.createFromURL(url);
 		disabledDescriptor = ImageDescriptor.createFromURL(disabledUrl);
-		// image();
 	}
 
 	/**
@@ -203,7 +210,6 @@ public class GamaIcon {
 		disabledUrl = url;
 		descriptor = ImageDescriptor.createFromImage(im);
 		disabledDescriptor = descriptor;
-		image();
 	}
 
 	/**
@@ -281,7 +287,9 @@ public class GamaIcon {
 	 *
 	 * @return the code
 	 */
-	public String getCode() { return code; }
+	public String getCode() {
+		return code;
+	}
 
 	/**
 	 * Compute URL.
