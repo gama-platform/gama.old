@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="id4"
+         id="product"
          name="Headless Gama"
          point="org.eclipse.core.runtime.applications">
       <application
@@ -21,7 +21,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="msi.gama.headless.id4"
+            application="msi.gama.headless.product"
             name="msi.gama.headless">
          <property
                name="appName"
