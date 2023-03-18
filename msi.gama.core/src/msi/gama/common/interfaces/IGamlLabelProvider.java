@@ -31,6 +31,7 @@ public interface IGamlLabelProvider {
 	 * @param element the element
 	 * @return the image
 	 */
-	Object getImage(ISyntacticElement element);
+	
+	Object getImageDescriptor(ISyntacticElement element);
 
 }

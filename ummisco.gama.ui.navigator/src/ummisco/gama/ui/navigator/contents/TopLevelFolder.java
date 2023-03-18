@@ -62,7 +62,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	WrappedProject[] children;
 
 	/** The status icon. */
-	final Image icon;
+	final ImageDescriptor icon;
 
 	/** The nature. */
 	final String statusMessage, nature;
@@ -84,7 +84,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 		this.statusMessage = statusMessage;
 		this.nature = nature;
 		this.location = location;
-		icon = GamaIcon.named(iconName).image();
+		icon = GamaIcon.named(iconName).descriptor();
 		initializeChildren();
 	}
 
@@ -178,7 +178,7 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	}
 
 	@Override
-	public final Image getImage() { return icon; }
+	public final ImageDescriptor getImageDescriptor() { return icon; }
 
 	@Override
 	public String getStatusMessage() { return statusMessage; }

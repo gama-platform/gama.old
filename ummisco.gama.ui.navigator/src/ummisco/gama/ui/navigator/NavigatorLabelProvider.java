@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -33,7 +34,10 @@ public class NavigatorLabelProvider extends CellLabelProvider
 
 	@Override
 	public Image getImage(final Object element) {
-		if (element instanceof VirtualContent) return ((VirtualContent<?>) element).getImage();
+		if (element instanceof VirtualContent vc) {
+			ImageDescriptor id = vc.getImageDescriptor();
+			if (id != null) return id.createImage();
+		}
 		return null;
 	}
 

@@ -75,7 +75,7 @@ public class Tags extends VirtualContent<WrappedFile> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return GamaIcon.named(IGamaIcons.ATTRIBUTES).image(); }
+	public ImageDescriptor getImageDescriptor() { return GamaIcon.named(IGamaIcons.ATTRIBUTES).descriptor(); }
 
 	/**
 	 * Method getColor()
