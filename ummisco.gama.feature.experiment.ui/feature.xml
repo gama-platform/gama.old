@@ -4,7 +4,7 @@
       label="UI Components for running experiments in  GAMA"
       version="1.9.0.qualifier"
       provider-name="UMMISCO"
-      plugin="ummisco.gama.feature.experiment.ui.branding">
+      plugin="ummisco.gama.ui.experiment">
 
    <description url="http://gama-platform.org">
       The UI components for running experiments in GAMA
@@ -23,7 +23,6 @@
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core.ui" version="1.9.0.qualifier"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="msi.gama.ext"/>
       <import plugin="msi.gama.core"/>
@@ -42,6 +41,7 @@
       <import plugin="org.eclipse.core.commands"/>
       <import plugin="com.google.guava"/>
       <import plugin="ummisco.gama.annotations"/>
+      <import feature="ummisco.gama.feature.core.ui" version="1.9.0.qualifier"/>
    </requires>
 
    <plugin
@@ -64,11 +64,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.feature.experiment.ui.branding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
 </feature>

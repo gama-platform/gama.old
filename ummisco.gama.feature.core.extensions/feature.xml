@@ -4,7 +4,7 @@
       label="Standard Extensions to the Core of GAMA"
       version="1.9.0.qualifier"
       provider-name="UMMISCO, ESPACE-DEV, IRIT &amp; MIAT"
-      plugin="ummisco.gama.feature.core.extensions.branding">
+      plugin="ummisco.gaml.extensions.maths">
 
    <description url="http://gama-platform.org">
       Direct extensions to the core of GAMA
@@ -87,12 +87,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.feature.core.extensions.branding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="miat.gaml.extensions.pedestrian"

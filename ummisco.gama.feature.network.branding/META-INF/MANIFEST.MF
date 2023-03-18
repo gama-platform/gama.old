@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Adds networking capabilities to GAMA agents
-Bundle-SymbolicName: ummisco.gama.feature.network.branding
-Bundle-Version: 1.9.0.qualifier
-Bundle-Vendor: Network — UMMISCO & IRIT
-Automatic-Module-Name: ummisco.gama.feature.network.branding
