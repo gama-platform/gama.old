@@ -217,6 +217,20 @@
         </visibleWhen>
      </dynamic>
   </menuContribution>
+     <menuContribution
+           allPopups="false"
+           locationURI="menu:file?before=save.ext">
+        <command
+              commandId="ummisco.command.clean.build"
+              disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/build/build.all_disabled.png"
+              icon="platform:/plugin/ummisco.gama.ui.shared/icons/build/build.all.png"
+              label="Clean and validate all"
+              style="push">
+           <visibleWhen
+                 checkEnabled="true">
+           </visibleWhen>
+        </command>
+     </menuContribution>
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 		<handler
@@ -334,6 +348,11 @@
 			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
 			name="Quick Outline">
 		</command>
+  <command
+        defaultHandler="ummisco.gama.ui.modeling.CleanBuildCommand"
+        id="ummisco.command.clean.build"
+        name="Clean and build all models">
+  </command>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
 		<menuContribution

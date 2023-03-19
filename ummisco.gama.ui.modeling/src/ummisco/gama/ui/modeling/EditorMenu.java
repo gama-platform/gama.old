@@ -19,11 +19,7 @@ import java.util.Set;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -98,33 +94,6 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				createOtherExperiments(menu);
 				GamaMenu.separate(menu);
 				createValidate(menu);
-			}
-			createValidateAll(menu);
-		});
-
-	}
-
-	/**
-	 * @param menu
-	 */
-	private void createValidateAll(final Menu menu) {
-
-		final MenuItem mark = new MenuItem(menu, SWT.PUSH);
-		mark.setText(" Validate all");
-		mark.setImage(GamaIcon.named(IGamaIcons.BUILD_ALL).image());
-		mark.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-
-				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				try {
-					GamlResourceIndexer.eraseIndex();
-					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
-				} catch (final CoreException ex) {
-					ex.printStackTrace();
-				}
-
 			}
 		});
 
