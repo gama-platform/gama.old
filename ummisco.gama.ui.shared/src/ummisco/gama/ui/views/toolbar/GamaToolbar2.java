@@ -178,24 +178,6 @@ public class GamaToolbar2 extends Composite {
 		return new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR);
 	}
 
-	/**
-	 * Sep.
-	 *
-	 * @param width
-	 *            the n
-	 * @param side
-	 *            the side
-	 * @param height
-	 *            the height
-	 * @return the tool item
-	 */
-	public ToolItem sep(final int width, final int height, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		final var icon = GamaIcon.ofSize(getBackground(), width, height);
-		final var item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
-		item.setDisabledImage(icon.image());
-		if (!PlatformHelper.isLinux()) { item.setEnabled(false); }
-		return item;
-	}
 
 	/**
 	 * Status.
@@ -552,16 +534,17 @@ public class GamaToolbar2 extends Composite {
 			final int style, final boolean forceText, final Control control,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final var tb = getToolbar(side);
-		if (side == SWT.LEFT && tb.getItemCount() == 0 && PlatformHelper.isWindows()) {
-			int h = height;
-			if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
-			final var icon = GamaIcon.ofSize(getBackground(), 2, h);
-			final var button = new ToolItem(tb, SWT.NONE);
-			final var im = icon.image();
-			button.setImage(im);
-			button.setDisabledImage(im);
-			button.setEnabled(false);
-		}
+//		DOES NOT SEEM TO BE NECESSARY ANYMORE (SEE #3677)		
+//		if ( tb.getItemCount() == 0 && PlatformHelper.isWindows()) {
+//			int h = height;
+//			if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
+//			final var icon = GamaIcon.ofSize(getBackground(), 2, h);
+//			final var button = new ToolItem(tb, SWT.NONE);
+//			final var im = icon.image();
+//			button.setImage(im);
+//			button.setDisabledImage(im);
+//			button.setEnabled(false);
+//		}
 		final var button = new ToolItem(tb, style);
 		if (text != null && forceText) { button.setText(text); }
 		if (tip != null) { button.setToolTipText(tip); }

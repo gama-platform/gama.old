@@ -52,9 +52,6 @@ public class GamaIcon {
 	/** The icon cache. */
 	public static Cache<String, GamaIcon> ICON_CACHE = CacheBuilder.newBuilder().build();
 
-	/** The Constant SIZER_PREFIX. */
-	static final String SIZER_PREFIX = "sizer_";
-
 	/** The Constant MISSING. */
 	static final String MISSING = "gaml" + File.pathSeparator + "_unknown";
 
@@ -139,33 +136,7 @@ public class GamaIcon {
 
 	}
 
-	/**
-	 * Creates a sizer of a given color
-	 *
-	 * @param color
-	 *            the color
-	 * @param width
-	 *            the width
-	 * @param height
-	 *            the height
-	 * @return the gama icon
-	 */
-	public static GamaIcon ofSize(final Color color, final int width, final int height) {
-		final String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
-		try {
-			return ICON_CACHE.get(name, () -> {
-				final Image sizerImage = new Image(WorkbenchHelper.getDisplay(), width, height);
-				final GC gc = new GC(sizerImage);
-				gc.setBackground(color);
-				gc.fillRectangle(0, 0, width, height);
-				gc.dispose();
-				return new GamaIcon(name, sizerImage);
-			});
-		} catch (ExecutionException e) {
-			return null;
-		}
 
-	}
 
 	/** The code. */
 	final String code;
