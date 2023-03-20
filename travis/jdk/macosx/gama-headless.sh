@@ -44,7 +44,7 @@ else
   passWork=.workspace$(find ./ -maxdepth 1 -name ".workspace*" | wc -l)
 fi
 
-if ! "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../jdk/Contents/Home/bin/java -cp "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx$memory -Djava.awt.headless=true org.eclipse.core.launcher.Main -application msi.gama.headless.product -data $passWork "$@"; then
+if ! "$( dirname "${BASH_SOURCE[0]}" )"/../jdk/Contents/Home/bin/java -cp "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx$memory -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration "$( dirname "${BASH_SOURCE[0]}" )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
     echo "Error in you command, here's the log :"
     cat $passWork/.metadata/.log
     exit 1
