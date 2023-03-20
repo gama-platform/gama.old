@@ -3,7 +3,6 @@
 
 <product name="msi.gama.headless" uid="gama.headless" id="msi.gama.headless.product" application="msi.gama.headless.product" version="1.9.0.qualifier" useFeatures="true" includeLaunchers="false" autoIncludeRequirements="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -12,17 +11,14 @@
 
    <windowImages/>
 
-
    <launcher>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
    </plugins>
@@ -34,6 +30,13 @@
       <feature id="ummisco.gama.feature.models" version="1.9.0.qualifier" installMode="root"/>
    </features>
 
+   <configurations>
+      <plugin id="org.apache.felix.scr" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
+   </configurations>
 
    <preferencesInfo>
       <targetfile overwrite="false"/>
