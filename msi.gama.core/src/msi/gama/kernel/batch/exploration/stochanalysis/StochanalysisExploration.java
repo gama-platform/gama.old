@@ -3,7 +3,7 @@
  * StochanalysisExploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -173,21 +173,20 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 			case IKeyword.FACTORIAL -> {
 				List<ParametersSet> ps = null;
 				if (hasFacet(Exploration.SAMPLE_FACTORIAL)) {
-					@SuppressWarnings("unchecked")
-					int[] factors = Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope))
-						.stream().mapToInt(o -> Integer.valueOf(o.toString()))
-						.toArray();
+					@SuppressWarnings ("unchecked") int[] factors =
+							Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope)).stream()
+									.mapToInt(o -> Integer.parseInt(o.toString())).toArray();
 					ps = RandomSampling.FactorialUniformSampling(scope, factors, params);
 				} else {
 					ps = RandomSampling.FactorialUniformSampling(scope, sample_size, params);
 				}
-				
+
 				yield ps;
 			}
 			default -> RandomSampling.UniformSampling(scope, sample_size, params);
 		};
 
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(sets);
 		} else {
 			res_outputs = GamaMapFactory.create();
@@ -236,7 +235,7 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 	@Override
 	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
-		
+
 		return null;
 	}
 }

@@ -427,6 +427,9 @@ public interface IKeyword {
 	/** The footer. */
 	String FOOTER = "footer";
 
+	/** The format. */
+	String FORMAT = "format";
+
 	/** The fragment. */
 	String FRAGMENT = "fragment";
 
@@ -689,9 +692,6 @@ public interface IKeyword {
 
 	/** The match regex. */
 	String MATCH_REGEX = "match_regex";
-
-	/** The material. */
-	String MATERIAL = "material";
 
 	/** The matrix. */
 	String MATRIX = "matrix";

@@ -10,7 +10,7 @@ model SavetoGeotiff
 global {
 	init {	 
 		//save grid "grid_value" attribute into the geotiff file.
-		save cell to:"../results/grid.tif" type:"geotiff";
+		save cell to:"../results/grid.tif" format:"geotiff";
 	}
 }
 

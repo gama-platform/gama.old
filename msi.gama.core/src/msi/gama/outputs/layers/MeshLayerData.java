@@ -12,15 +12,13 @@ package msi.gama.outputs.layers;
 
 import java.awt.Color;
 
-import org.locationtech.jts.geom.Envelope;
-
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaFieldType;
@@ -47,7 +45,7 @@ public class MeshLayerData extends LayerData {
 	final Attribute<GamaColor> line;
 
 	/** The texture. */
-	final Attribute<GamaImageFile> texture;
+	final Attribute<IImageProvider> texture;
 
 	/** The smooth. */
 	final Attribute<Integer> smooth;
@@ -78,9 +76,6 @@ public class MeshLayerData extends LayerData {
 
 	/** The above. */
 	final Attribute<Double> above;
-
-	/** The cell size. */
-	private GamaPoint cellSize;
 
 	/** The dim. */
 	private final GamaPoint dim = new GamaPoint();
@@ -120,20 +115,15 @@ public class MeshLayerData extends LayerData {
 		above = create("above", Types.FLOAT, ABOVE);
 		texture = create(IKeyword.TEXTURE, (scope, exp) -> {
 			final Object result = exp.value(scope);
-			if (result instanceof GamaImageFile) return (GamaImageFile) exp.value(scope);
+			if (result instanceof IImageProvider) return (IImageProvider) result;
 			throw GamaRuntimeException.error("The texture of a field must be an image file", scope);
 		}, Types.FILE, null);
 	}
 
 	@Override
 	public boolean compute(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		final Envelope env2 = scope.getSimulation().getEnvelope();
-		final double width = env2.getWidth();
-		final double height = env2.getHeight();
 		boolean result = super.compute(scope, g);
 		shouldComputeValues = super.getRefresh();
-		// The size
-		cellSize = new GamaPoint(width / dim.x, height / dim.y);
 		return result;
 	}
 
@@ -187,7 +177,7 @@ public class MeshLayerData extends LayerData {
 	 *
 	 * @return the gama image file
 	 */
-	public GamaImageFile textureFile() {
+	public IImageProvider textureFile() {
 		return texture.get();
 	}
 
@@ -206,13 +196,6 @@ public class MeshLayerData extends LayerData {
 	public boolean drawLines() {
 		return line.get() != null || wireframe.get();
 	}
-
-	/**
-	 * Gets the cell size.
-	 *
-	 * @return the cell size
-	 */
-	public GamaPoint getCellSize() { return cellSize; }
 
 	/**
 	 * Gets the dimension.

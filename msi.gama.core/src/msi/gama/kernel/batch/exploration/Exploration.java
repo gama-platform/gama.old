@@ -3,7 +3,7 @@
  * Exploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -113,11 +113,11 @@ import msi.gaml.types.IType;
 		},
 		omissible = IKeyword.NAME)
 @doc (
-		value = "This is the standard batch method. The exhaustive mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. You can also choose a sampling method for the exploration. See [batch161 the batch dedicated page].",
+		value = "This is the standard batch method. The exploration mode is defined by default when there is no method element present in the batch section. It explores all the combination of parameter values in a sequential way. You can also choose a sampling method for the exploration. See [batch161 the batch dedicated page].",
 		usages = { @usage (
-				value = "As other batch methods, the basic syntax of the exhaustive statement uses `method exhaustive` instead of the expected `exhaustive name: id` : ",
+				value = "As other batch methods, the basic syntax of the exploration statement uses `method exploration` instead of the expected `exploration name: id` : ",
 				examples = { @example (
-						value = "method exhaustive [facet: value];",
+						value = "method exploration;",
 						isExecutable = false) }),
 				@usage (
 						value = "Simplest example: ",
@@ -241,7 +241,7 @@ public class Exploration extends AExplorationAlgorithm {
 		};
 		if (sets.isEmpty()) { sets.add(new ParametersSet()); }
 
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			currentExperiment.launchSimulationsWithSolution(sets);
 		} else {
 			for (ParametersSet sol : sets) { currentExperiment.launchSimulationsWithSolution(sol); }
@@ -370,10 +370,12 @@ public class Exploration extends AExplorationAlgorithm {
 				while (minValue <= maxValue) {
 					if (stepValue >= 0) {
 						res.add(minValue);
-						minValue = minValue + (int) stepValue + (Random.opFlip(scope, stepValue - (int) stepValue) ? 1 : 0);
+						minValue = minValue + (int) stepValue
+								+ (Random.opFlip(scope, stepValue - (int) stepValue) ? 1 : 0);
 					} else {
 						res.add(maxValue);
-						maxValue = maxValue + (int) stepValue - (Random.opFlip(scope, stepValue - (int) stepValue) ? 1 : 0);
+						maxValue = maxValue + (int) stepValue
+								- (Random.opFlip(scope, stepValue - (int) stepValue) ? 1 : 0);
 					}
 				}
 				break;
@@ -391,9 +393,8 @@ public class Exploration extends AExplorationAlgorithm {
 					if (stepFloatValue >= 0) {
 						res.add(minFloatValue);
 						minFloatValue = minFloatValue + stepFloatValue;
-						
-					}
-					else { 
+
+					} else {
 						res.add(maxFloatValue);
 						maxFloatValue = maxFloatValue + stepFloatValue;
 					}
@@ -402,7 +403,7 @@ public class Exploration extends AExplorationAlgorithm {
 			case IType.DATE:
 				GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
 				GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
-				Double stepVal = Cast.asFloat(scope,  var.getStepValue(scope));
+				Double stepVal = Cast.asFloat(scope, var.getStepValue(scope));
 				while (dateValue.isSmallerThan(maxDateValue, false)) {
 					if (stepVal > 0) {
 						res.add(dateValue);
@@ -410,7 +411,7 @@ public class Exploration extends AExplorationAlgorithm {
 					} else {
 						res.add(maxDateValue);
 						maxDateValue = maxDateValue.minus(Math.abs(stepVal.longValue()), ChronoUnit.SECONDS);
-					}		
+					}
 				}
 				break;
 			case IType.POINT:
@@ -418,10 +419,10 @@ public class Exploration extends AExplorationAlgorithm {
 				GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
 				GamaPoint increment = null;
 				Double stepV = null;
-						
+
 				if (var.getStepValue(scope) != null) {
 					increment = GamaPointType.staticCast(scope, var.getStepValue(scope), true);
-					
+
 					if (increment == null) {
 						Double d = GamaFloatType.staticCast(scope, var.getStepValue(scope), null, false);
 						if (d == null) {
@@ -432,16 +433,17 @@ public class Exploration extends AExplorationAlgorithm {
 							increment = new GamaPoint(d, d, d);
 						}
 					} else {
-						stepV = (increment.x + increment.y + increment.z)/3.0;
-						
+						stepV = (increment.x + increment.y + increment.z) / 3.0;
+
 					}
-					
+
 				} else {
-					increment = new GamaPoint((maxPointValue.x - pointValue.x)/10.0,(maxPointValue.y - pointValue.y)/10.0,(maxPointValue.z - pointValue.z)/10.0);
-					
+					increment = new GamaPoint((maxPointValue.x - pointValue.x) / 10.0,
+							(maxPointValue.y - pointValue.y) / 10.0, (maxPointValue.z - pointValue.z) / 10.0);
+
 				}
 				while (pointValue.smallerThanOrEqualTo(maxPointValue)) {
-					if ((stepV == null) || (stepV> 0)) {
+					if (stepV == null || stepV > 0) {
 						res.add(pointValue);
 						pointValue = pointValue.plus(Cast.asPoint(scope, increment));
 					} else {
@@ -460,25 +462,28 @@ public class Exploration extends AExplorationAlgorithm {
 					floatcrement = (maxVarValue - varValue) / __default_step_factor;
 				}
 				while (varValue <= maxVarValue) {
-					
+
 					if (var.getType().id() == IType.INT) {
-						if (floatcrement >= 0) 
+						if (floatcrement >= 0) {
 							res.add((int) varValue);
-						 else 
+						} else {
 							res.add((int) maxVarValue);
-						
+						}
+
 					} else if (var.getType().id() == IType.FLOAT) {
-						if (floatcrement >= 0) 
+						if (floatcrement >= 0) {
 							res.add(varValue);
-						else 
+						} else {
 							res.add(maxVarValue);
+						}
 					} else {
 						continue;
 					}
-					if (floatcrement >= 0) 
+					if (floatcrement >= 0) {
 						varValue = varValue + floatcrement;
-					else 
+					} else {
 						maxVarValue = maxVarValue + floatcrement;
+					}
 				}
 		}
 		return res;

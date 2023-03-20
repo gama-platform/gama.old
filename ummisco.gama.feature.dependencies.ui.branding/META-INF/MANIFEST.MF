@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: External UI Dependencies of GAMA
-Bundle-SymbolicName: ummisco.gama.feature.dependencies.ui.branding
-Bundle-Version: 1.9.0.qualifier
-Bundle-Vendor: UI Dependencies — UMMISCO & CTU
-Automatic-Module-Name: ummisco.gama.feature.dependencies.ui.branding

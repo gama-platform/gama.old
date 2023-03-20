@@ -105,7 +105,7 @@ public class TextSaver extends AbstractSaver {
 
 	@Override
 	protected Set<String> computeFileTypes() {
-		return Set.of("text");
+		return Set.of("text", "txt");
 	}
 
 }

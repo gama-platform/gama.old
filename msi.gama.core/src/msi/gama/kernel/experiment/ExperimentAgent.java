@@ -193,7 +193,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private volatile boolean isOnUserHold = false;
 
 	/** The default population factory for this kind of experiment. */
-	private final IPopulationFactory populationFactory;
+	private IPopulationFactory populationFactory;
 
 	/**
 	 * Instantiates a new experiment agent.
@@ -247,6 +247,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected IPopulationFactory initializePopulationFactory() {
 		return new DefaultPopulationFactory();
 	}
+
+	/**
+	 * Sets the default population factory for this kind of experiment.
+	 *
+	 * @param factory
+	 *            the new default population factory for this kind of experiment
+	 */
+	public final void setPopulationFactory(final IPopulationFactory factory) { populationFactory = factory; }
 
 	@Override
 	public SimulationClock getClock() { return ownClock; }

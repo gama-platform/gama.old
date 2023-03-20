@@ -47,7 +47,6 @@ import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.expressions.IExpressionFactory;
-import msi.gaml.operators.IUnits;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -69,7 +68,7 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider implements IUnits {
+public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	/**
 	 * The Class EClassBasedScope.
@@ -169,7 +168,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: GAML artefacts", 55, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
+		DEBUG.TIMER(DEBUG.PAD("> GAMA: GAML artefacts", 55, ' '), DEBUG.PAD(" built in", 15, '_'), () -> {
 			scopes.put(eType, new EClassBasedScope("types.xmi"));
 			scopes.put(eVar, new EClassBasedScope("vars.xmi"));
 			scopes.put(eSkill, new EClassBasedScope("skills.xmi"));

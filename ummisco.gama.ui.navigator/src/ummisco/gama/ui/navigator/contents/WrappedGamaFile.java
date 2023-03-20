@@ -103,9 +103,9 @@ public class WrappedGamaFile extends WrappedFile {
 	protected void computeFileImage() {
 		// final IFile f = getResource();
 		if (isExperiment) {
-			image = GamaIcon.named(IGamaIcons.FILE_EXPERIMENT).image();
+			image = GamaIcon.named(IGamaIcons.FILE_EXPERIMENT).descriptor();
 		} else {
-			image = GamaIcon.named(IGamaIcons.FILE_MODEL).image();
+			image = GamaIcon.named(IGamaIcons.FILE_MODEL).descriptor();
 		}
 
 	}

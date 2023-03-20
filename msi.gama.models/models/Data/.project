@@ -28,6 +28,11 @@
 			<locationURI>CACHE_LOC/dev.virtualearth.net+_++_+REST+_+v1+_+Imagery+_+Map+_+Aerial+_+3670743811607723075</locationURI>
 		</link>
 		<link>
+			<name>external/andorra-latest.osm.pbf</name>
+			<type>1</type>
+			<locationURI>CACHE_LOC/download.geofabrik.de+_++_+europe+_+andorra-latest.osm.pbf</locationURI>
+		</link>
+		<link>
 			<name>external/copy of mapArea=49.40450058608339,-2.4007613217308785,49.45320767277169,-2.330828350439121&amp;mapSize=1500,1500&amp;key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln</name>
 			<type>1</type>
 			<locationURI>CACHE_LOC/dev.virtualearth.net+_++_+REST+_+v1+_+Imagery+_+Map+_+Aerial+_+mapArea=49.40450058608339,-2.4007613217308785,49.45320767277169,-2.330828350439121&amp;mapSize=1500,1500&amp;key=AvZ5t7w-HChgI2LOFoy_UF4cf77ypi2ctGYxCgWOLGFwMGIGrsiDpCDCjliUliln</locationURI>

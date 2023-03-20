@@ -22,12 +22,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
+import msi.gaml.constants.GamlCoreConstants;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.IUnits;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.IType;
@@ -48,46 +47,46 @@ public class DrawingData extends AttributeHolder {
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
 	/** The size. */
-	final Attribute<GamaPoint> size;
+	public final Attribute<GamaPoint> size;
 
 	/** The depth. */
-	final Attribute<Double> depth;
+	public final Attribute<Double> depth;
 
 	/** The rotation. */
-	final Attribute<AxisAngle> rotation;
+	public final Attribute<AxisAngle> rotation;
 
 	/** The location. */
-	final Attribute<GamaPoint> location;
+	public final Attribute<GamaPoint> location;
 
 	/** The anchor. */
-	final Attribute<GamaPoint> anchor;
+	public final Attribute<GamaPoint> anchor;
 
 	/** The empty. */
-	final Attribute<Boolean> empty;
+	public final Attribute<Boolean> empty;
 
 	/** The color. */
-	final Attribute<GamaColor> border, color;
+	public final Attribute<GamaColor> border, color;
 
 	/** The font. */
-	final Attribute<GamaFont> font;
+	public final Attribute<GamaFont> font;
 
 	/** The texture. */
-	final Attribute<IList> texture;
+	public final Attribute<IList> texture;
 
 	/** The material. */
-	final Attribute<GamaMaterial> material;
+	// final Attribute<GamaMaterial> material;
 
 	/** The perspective. */
-	final Attribute<Boolean> perspective;
+	public final Attribute<Boolean> perspective;
 
 	/** The line width. */
-	final Attribute<Double> lineWidth;
+	public final Attribute<Double> lineWidth;
 
 	/** The lighting. */
-	final Attribute<Boolean> lighting;
+	public final Attribute<Boolean> lighting;
 
 	/** The precision. */
-	final Attribute<Double> precision;
+	public final Attribute<Double> precision;
 
 	/**
 	 * Instantiates a new drawing data.
@@ -102,14 +101,14 @@ public class DrawingData extends AttributeHolder {
 		this.depth = create(IKeyword.DEPTH, Types.FLOAT, null);
 		this.precision = create("precision", Types.FLOAT, 0.01);
 		this.rotation = create(IKeyword.ROTATE, this::castRotation, Types.NO_TYPE, null);
-		this.anchor = create(IKeyword.ANCHOR, this::castAnchor, Types.POINT, IUnits.bottom_left);
+		this.anchor = create(IKeyword.ANCHOR, this::castAnchor, Types.POINT, GamlCoreConstants.bottom_left);
 		this.location = create(IKeyword.AT, Types.POINT, null);
 		this.empty = create(IKeyword.WIREFRAME, Types.BOOL, false);
 		this.border = create(IKeyword.BORDER, this::castBorder, Types.COLOR, null);
 		this.color = create(IKeyword.COLOR, this::castColor, Types.COLOR, null);
 		this.font = create(IKeyword.FONT, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
 		this.texture = create(IKeyword.TEXTURE, this::castTexture, Types.LIST, null);
-		this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);
+		// this.material = create(IKeyword.MATERIAL, Types.MATERIAL, null);
 		this.perspective = create(IKeyword.PERSPECTIVE, Types.BOOL, true);
 		this.lineWidth = create(IKeyword.WIDTH, Types.FLOAT, GamaPreferences.Displays.CORE_LINE_WIDTH.getValue());
 	}

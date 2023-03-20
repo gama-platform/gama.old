@@ -3,7 +3,7 @@
  * GamaGLCanvas.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,6 +19,7 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Monitor;
 
 import com.jogamp.common.util.locks.RecursiveLock;
 import com.jogamp.nativewindow.NativeSurface;
@@ -54,7 +55,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegateEventsToParent, FPSCounter {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The canvas. */
@@ -78,6 +79,9 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	/** The visible. */
 	volatile boolean visible;
 
+	/** The monitor. */
+	private Monitor monitor;
+
 	/**
 	 * Instantiates a new gama GL canvas.
 	 *
@@ -90,6 +94,19 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 */
 	public GamaGLCanvas(final Composite parent, final IOpenGLRenderer renderer, final SWTOpenGLDisplaySurface surface) {
 		super(parent, SWT.NONE);
+		parent.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlMoved(final ControlEvent e) {
+				DEBUG.OUT("Setting monitor for GLCanvas " + parent.getMonitor().toString());
+				GamaGLCanvas.this.setMonitor(parent.getMonitor());
+			}
+
+			@Override
+			public void controlResized(final ControlEvent e) {
+				DEBUG.OUT("Setting monitor for GLCanvas " + parent.getMonitor().toString());
+				GamaGLCanvas.this.setMonitor(parent.getMonitor());
+			}
+		});
 		this.surface = surface;
 		this.name = surface.getOutput().getName();
 		parent.setLayout(new FillLayout());
@@ -107,13 +124,13 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 						final var isDetached = parent.getShell().getText().length() == 0;
 						if (isDetached) {
 							if (!detached) {
-								// DEBUG.OUT("Reparenting because of detached");
+//								DEBUG.OUT("Reparenting because of detached");
 								reparentWindow();
 								detached = true;
 							}
 
 						} else if (detached) {
-							// DEBUG.OUT("Reparenting because of attached");
+//							DEBUG.OUT("Reparenting because of attached");
 							reparentWindow();
 							detached = false;
 						}
@@ -132,6 +149,20 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		renderer.setCanvas(this);
 		addDisposeListener(e -> new Thread(() -> { animator.stop(); }).start());
 	}
+
+	/**
+	 * Sets the monitor.
+	 *
+	 * @param monitor
+	 *            the new monitor
+	 */
+	protected void setMonitor(final Monitor monitor) { this.monitor = monitor; }
+
+	@Override
+	public Monitor getMonitor() { return monitor; }
+
+	@Override
+	protected void checkWidget() {}
 
 	/**
 	 * Define capabilities.

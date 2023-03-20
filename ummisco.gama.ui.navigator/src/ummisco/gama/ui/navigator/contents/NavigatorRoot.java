@@ -138,12 +138,7 @@ public class NavigatorRoot extends VirtualContent implements IAdaptable {
 	}
 
 	@Override
-	public Image getImage() { return null; }
-
-	// @Override
-	// public Color getColor() {
-	// return null;
-	// }
+	public ImageDescriptor getImageDescriptor() { return null; }
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {}

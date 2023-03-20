@@ -88,6 +88,11 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_SHOW_PAGE =
 				create("pref_show_welcome_page", "Display welcome page", true, IType.BOOL, false).in(NAME, STARTUP);
 
+		/** The Constant CORE_REMEMBER_WINDOW. */
+		public static final Pref<Boolean> CORE_REMEMBER_WINDOW =
+				create("pref_remember_window", "Remember GAMA window size and position", true, IType.BOOL, false)
+						.in(NAME, STARTUP).deactivates("pref_show_maximized");
+
 		/** The Constant CORE_SHOW_MAXIMIZED. */
 		public static final Pref<Boolean> CORE_SHOW_MAXIMIZED =
 				create("pref_show_maximized", "Maximize GAMA window", true, IType.BOOL, false).in(NAME, STARTUP);

@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ObjFileDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.opengl.files;
 
 import java.io.File;
@@ -9,11 +19,23 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.file.GamaObjFile;
 import ummisco.gama.opengl.OpenGL;
 
+/**
+ * The Class ObjFileDrawer.
+ */
 public class ObjFileDrawer {
 
+	/**
+	 * Draw to open GL.
+	 *
+	 * @param file
+	 *            the file
+	 * @param gl
+	 *            the gl
+	 */
 	public static void drawToOpenGL(final GamaObjFile file, final OpenGL gl) {
 
 		int nextmat = -1;
@@ -52,11 +74,11 @@ public class ObjFileDrawer {
 					} else if (mapKa != null) {
 						path.append(mapKa);
 					} else if (mapKd != null) { path.append(mapKd); }
-					f = new File(path.toString());
-					if (f.exists()) {
+					GamaImageFile asset = new GamaImageFile(null, path.toString());
+					if (asset.exists(null)) {
 						// Solves Issue #1951. Asynchronous loading of textures
 						// was not possible when displaying the file
-						texture = gl.getTexture(f, false, true);
+						texture = gl.getTexture(asset, false, true);
 						gl.setCurrentTextures(texture.getTextureObject(), texture.getTextureObject());
 						texture.setTexParameteri(gl.getGL(), GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 						texture.setTexParameteri(gl.getGL(), GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);

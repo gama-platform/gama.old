@@ -3,7 +3,7 @@
  * OpenGL.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,7 +19,6 @@ import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
@@ -47,16 +46,15 @@ import msi.gama.common.geometry.ICoordinates.VertexVisitor;
 import msi.gama.common.geometry.Rotation3D;
 import msi.gama.common.geometry.Scaling3D;
 import msi.gama.common.geometry.UnboundedCoordinateSequence;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.Maths;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.DrawingAttributes.DrawerType;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.caches.GeometryCache;
 import ummisco.gama.opengl.renderer.caches.GeometryCache.BuiltInGeometry;
@@ -67,10 +65,8 @@ import ummisco.gama.opengl.renderer.helpers.KeystoneHelper;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.geometry.GeometryDrawer;
-import ummisco.gama.opengl.scene.mesh.LegacyMeshDrawer;
 import ummisco.gama.opengl.scene.mesh.MeshDrawer;
 import ummisco.gama.opengl.scene.resources.ResourceDrawer;
-import ummisco.gama.opengl.scene.text.LegacyTextDrawer;
 import ummisco.gama.opengl.scene.text.TextDrawer;
 import ummisco.gama.ui.utils.DPIHelper;
 
@@ -233,9 +229,11 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, this);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
-		drawers.put(DrawerType.STRING, FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : new TextDrawer(this));
+		drawers.put(DrawerType.STRING,
+				/* FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : */ new TextDrawer(this));
 		drawers.put(DrawerType.GEOMETRY, new GeometryDrawer(this));
-		drawers.put(DrawerType.MESH, FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : new MeshDrawer(this));
+		drawers.put(DrawerType.MESH,
+				/* FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : */ new MeshDrawer(this));
 		drawers.put(DrawerType.RESOURCE, new ResourceDrawer(this));
 	}
 
@@ -370,9 +368,10 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		DEBUG.OUT("Ratio width/height in pixels ", 35, envWidth / envHeight);
 		DEBUG.OUT("Window pixels/env pixels ", 35, width / envWidth + " | " + height / envHeight);
 		DEBUG.OUT("Current XRatio pixels/env in units ", 35, xRatio + " | " + yRatio);
-		DEBUG.OUT("Device Zoom =  " + DPIHelper.getDeviceZoom());
+		DEBUG.OUT("Device Zoom =  " + DPIHelper.getDeviceZoom(renderer.getCanvas().getMonitor()));
 		DEBUG.OUT("AutoScale down = ", false);
-		DEBUG.OUT(" " + DPIHelper.autoScaleDown(width) + " " + DPIHelper.autoScaleDown(height));
+		DEBUG.OUT(" " + DPIHelper.autoScaleDown(getCanvas().getMonitor(), width) + " "
+				+ DPIHelper.autoScaleDown(getCanvas().getMonitor(), height));
 		// DEBUG.OUT("Client area of window:" + getRenderer().getCanvas().getClientArea());
 	}
 
@@ -1155,7 +1154,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param file
 	 *            the file
 	 */
-	public void cacheTexture(final File file) {
+	public void cacheTexture(final IImageProvider file) {
 		if (file == null) return;
 		textureCache.processs(file);
 	}
@@ -1169,8 +1168,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the use cache
 	 * @return the texture id
 	 */
-	public int getTextureId(final GamaImageFile file, final boolean useCache) {
-		final Texture r = textureCache.getTexture(file.getFile(null), file.isAnimated(), useCache);
+	public int getTextureId(final IImageProvider file, final boolean useCache) {
+		final Texture r = textureCache.getTexture(file, file.isAnimated(), useCache);
 		if (r == null) return NO_TEXTURE;
 		return r.getTextureObject();
 	}
@@ -1199,7 +1198,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the use cache
 	 * @return the texture
 	 */
-	public Texture getTexture(final File file, final boolean isAnimated, final boolean useCache) {
+	public Texture getTexture(final IImageProvider file, final boolean isAnimated, final boolean useCache) {
 		return textureCache.getTexture(file, isAnimated, useCache);
 	}
 

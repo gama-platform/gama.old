@@ -4,14 +4,14 @@
 <product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.9.0.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
-      <image path="/msi.gama.application/icons/icon128.png"/>
+      <image path="/msi.gama.application/icons/window/icon128.png"/>
       <text>
          GAMA Platform - V1.9.0 http://gama-platform.org
 
 (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
 (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
 (c) 2012-2017 UMI 209 UMMISCO IRD/UPMC &amp; Partners
-(c) 2018-2022 UMI 209 UMMISCO IRD/SU &amp; Partners
+(c) 2018-2023 UMI 209 UMMISCO IRD/SU &amp; Partners
       </text>
    </aboutInfo>
 
@@ -63,16 +63,16 @@
       </vmArgsWin>
    </launcherArgs>
 
-   <windowImages i16="/msi.gama.application/icons/icon16.png" i32="/msi.gama.application/icons/icon32.png" i48="/msi.gama.application/icons/icon48.png" i64="/msi.gama.application/icons/icon64.png" i128="/msi.gama.application/icons/icon128.png" i256="/msi.gama.application/icons/icon256.png"/>
+   <windowImages i16="/msi.gama.application/icons/window/icon16.png" i32="/msi.gama.application/icons/window/icon32.png" i48="/msi.gama.application/icons/window/icon48.png" i64="/msi.gama.application/icons/window/icon64.png" i128="/msi.gama.application/icons/window/icon128.png" i256="/msi.gama.application/icons/window/icon256.png"/>
 
    <splash
       location="msi.gama.application"
       startupProgressRect="71,515,500,12" />
    <launcher name="Gama">
-      <linux icon="/ummisco.gama.product/launcher_icons/icon.xpm"/>
-      <macosx icon="/ummisco.gama.product/launcher_icons/icon.icns"/>
+      <linux icon="extraresources/launcher/icon.xpm"/>
+      <macosx icon="extraresources/launcher/icon.icns"/>
       <win useIco="true">
-         <ico path="/ummisco.gama.product/launcher_icons/icon.ico"/>
+         <ico path="extraresources/launcher/icon.ico"/>
          <bmp/>
       </win>
    </launcher>

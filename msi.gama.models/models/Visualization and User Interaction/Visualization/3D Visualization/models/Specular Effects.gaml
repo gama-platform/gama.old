@@ -16,28 +16,24 @@ global {
 	init {
 		create sphere_species {
 			location <- {50, 50, 15};
-			sphere_mat <- material(10, 1); // create a steel-like material
 			color <- #grey;
 			size <- 10.0;
 		}
 
 		create cube_species {
 			location <- {70, 20, 5};
-			cube_mat <- material(10, 1); // create a steel-like material : maximal reflectivity
 			color <- #orange;
 			size <- 14.0;
 		}
 
 		create sphere_species {
 			location <- {30, 55, 13};
-			sphere_mat <- material(0, 0); // create a gum-like material : minimal reflectivity
 			color <- #red;
 			size <- 8.0;
 		}
 
 		create cylinder_species {
 			location <- {80, 65, 4};
-			cylinder_mat <- material(10, 1); // create a steel-like material : maximal reflectivity
 			color <- #darkolivegreen;
 			size <- 8.0;
 		}
@@ -55,51 +51,44 @@ global {
 }
 
 species sphere_species {
-	material sphere_mat;
 	rgb color;
 	float size;
 
 	aspect base {
-		draw sphere(size) material: sphere_mat color: color;
+		draw sphere(size) color: color;
 	}
 
 }
 
 species cube_species {
-	material cube_mat;
 	rgb color;
 	float size;
 
 	aspect base {
-		draw cube(size) material: cube_mat color: color;
+		draw cube(size) color: color;
 	}
 
 }
 
 species cylinder_species {
-	material cylinder_mat;
 	rgb color;
 	float size;
 
 	aspect base {
-		draw cone3D(size, size * 2) rotated_by (90, {1, 0, 0}) material: cylinder_mat color: color;
+		draw cone3D(size, size * 2) rotated_by (90, {1, 0, 0}) color: color;
 	}
 
 }
 
 species board {
-	material mat;
 
-	init {
-		mat <- material(10, 0.2); // create a varnish-like wood : moderated reflectivity
-	}
 
 	aspect base {
 		draw rectangle(100, 100) texture: "../includes/wood.jpg";
-		draw rectangle(100, 10) at: {50, 5} depth: 10 material: mat texture: "../includes/wood.jpg";
-		draw rectangle(100, 10) at: {50, 95} depth: 10 material: mat texture: "../includes/wood.jpg";
-		draw rectangle(10, 100) at: {5, 50} depth: 10 material: mat texture: "../includes/wood.jpg";
-		draw rectangle(10, 100) at: {95, 50} depth: 10 material: mat texture: "../includes/wood.jpg";
+		draw rectangle(100, 10) at: {50, 5} depth: 10 texture: "../includes/wood.jpg";
+		draw rectangle(100, 10) at: {50, 95} depth: 10 texture: "../includes/wood.jpg";
+		draw rectangle(10, 100) at: {5, 50} depth: 10 texture: "../includes/wood.jpg";
+		draw rectangle(10, 100) at: {95, 50} depth: 10 texture: "../includes/wood.jpg";
 	}
 
 }

@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Swarm.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * Swarm.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch.optimization;
 
@@ -115,50 +114,51 @@ public class Swarm extends AOptimizationAlgorithm {
 
 	/** The Constant DEFAULT_INERTIA. */
 	public static final double DEFAULT_INERTIA = 0.729844;
-	
+
 	/** The Constant DEFAULT_COGNITIVE. */
 	public static final double DEFAULT_COGNITIVE = 1.496180; // Cognitive component.
-	
+
 	/** The Constant DEFAULT_SOCIAL. */
 	public static final double DEFAULT_SOCIAL = 1.496180; // Social component.
 
 	/** The Constant ITER_MAX. */
 	protected static final String ITER_MAX = "iter_max";
-	
+
 	/** The Constant NUM_PARTICLES. */
 	protected static final String NUM_PARTICLES = "num_particles";
-	
+
 	/** The Constant INERTIA_WEIGHT. */
 	protected static final String INERTIA_WEIGHT = "weight_inertia";
-	
+
 	/** The Constant COGNITIVE_WEIGHT. */
 	protected static final String COGNITIVE_WEIGHT = "weight_cognitive";
-	
+
 	/** The Constant SOCIAL_WEIGHT. */
 	protected static final String SOCIAL_WEIGHT = "weight_social";
 
 	/** The stopping criterion. */
 	StoppingCriterion stoppingCriterion = null;
-	
+
 	/** The max it. */
 	int maxIt;
-	
+
 	/** The num particles. */
 	int numParticles;
-	
+
 	/** The weight inertia. */
 	double weightInertia;
-	
+
 	/** The weight cognitive. */
 	double weightCognitive;
-	
+
 	/** The weight social. */
 	double weightSocial;
 
 	/**
 	 * Instantiates a new swarm.
 	 *
-	 * @param species the species
+	 * @param species
+	 *            the species
 	 */
 	public Swarm(final IDescription species) {
 		super(species);
@@ -213,7 +213,7 @@ public class Swarm extends AOptimizationAlgorithm {
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			Map<ParametersSet, List<Particle>> soltTotest = GamaMapFactory.create();
 
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
 					&& !currentExperiment.getParametersToExplore().isEmpty()) {
 				for (Particle particle : particles) {
 					List<Particle> ps = null;
@@ -242,7 +242,8 @@ public class Swarm extends AOptimizationAlgorithm {
 	/**
 	 * Test solutions.
 	 *
-	 * @param solutions the solutions
+	 * @param solutions
+	 *            the solutions
 	 * @return the map
 	 */
 	public Map<ParametersSet, Double> testSolutions(final Collection<ParametersSet> solutions) {
@@ -267,11 +268,13 @@ public class Swarm extends AOptimizationAlgorithm {
 	/**
 	 * Evaluation.
 	 *
-	 * @param particles the particles
-	 * @param soltTotest the solt totest
+	 * @param particles
+	 *            the particles
+	 * @param soltTotest
+	 *            the solt totest
 	 */
 	public void evaluation(final Particle[] particles, final Map<ParametersSet, List<Particle>> soltTotest) {
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
 				&& !currentExperiment.getParametersToExplore().isEmpty()) {
 			Map<ParametersSet, Double> res = testSolutions(soltTotest.keySet());
 			for (ParametersSet ps : res.keySet()) {
@@ -304,7 +307,7 @@ public class Swarm extends AOptimizationAlgorithm {
 		for (int i = 0; i < numParticles; i++) {
 			Particle particle = new Particle(scope, currentExperiment, this, testedSolutions);
 			particles[i] = particle;
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
 					&& !currentExperiment.getParametersToExplore().isEmpty()) {
 				List<Particle> ps = null;
 				if (soltTotest.containsKey(particle.getPosition())) {
@@ -358,9 +361,12 @@ public class Swarm extends AOptimizationAlgorithm {
 	/**
 	 * Mul.
 	 *
-	 * @param scope the scope
-	 * @param set the set
-	 * @param val the val
+	 * @param scope
+	 *            the scope
+	 * @param set
+	 *            the set
+	 * @param val
+	 *            the val
 	 * @return the parameters set
 	 */
 	protected ParametersSet mul(final IScope scope, final ParametersSet set, final double val) {
@@ -371,9 +377,12 @@ public class Swarm extends AOptimizationAlgorithm {
 	/**
 	 * Sub.
 	 *
-	 * @param scope the scope
-	 * @param set1 the set 1
-	 * @param set2 the set 2
+	 * @param scope
+	 *            the scope
+	 * @param set1
+	 *            the set 1
+	 * @param set2
+	 *            the set 2
 	 * @return the parameters set
 	 */
 	protected ParametersSet sub(final IScope scope, final ParametersSet set1, final ParametersSet set2) {
@@ -386,9 +395,12 @@ public class Swarm extends AOptimizationAlgorithm {
 	/**
 	 * Adds the.
 	 *
-	 * @param scope the scope
-	 * @param set1 the set 1
-	 * @param set2 the set 2
+	 * @param scope
+	 *            the scope
+	 * @param set1
+	 *            the set 1
+	 * @param set2
+	 *            the set 2
 	 * @return the parameters set
 	 */
 	protected ParametersSet add(final IScope scope, final ParametersSet set1, final ParametersSet set2) {

@@ -66,7 +66,7 @@ public class Tag extends VirtualContent<Tags> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return null; }
+	public ImageDescriptor getImageDescriptor() { return null; }
 
 	@Override
 	public boolean handleDoubleClick() {

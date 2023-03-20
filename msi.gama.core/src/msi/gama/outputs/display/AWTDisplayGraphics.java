@@ -3,7 +3,7 @@
  * AWTDisplayGraphics.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -61,6 +61,8 @@ import com.google.common.cache.LoadingCache;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.IAsset;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -68,9 +70,7 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
@@ -199,16 +199,16 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 		final List<?> textures = attributes.getTextures();
 		if (textures == null) return null;
 		final Object image = textures.get(0);
-		if (image instanceof GamaFile) return drawFile((GamaFile<?, ?>) image, attributes);
+		if (image instanceof IImageProvider im) return drawAsset(im, attributes);
 		if (image instanceof BufferedImage) return drawImage((BufferedImage) image, attributes);
 		return null;
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile<?, ?> file, final DrawingAttributes attributes) {
+	public Rectangle2D drawAsset(final IAsset file, final DrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
-		if (file instanceof GamaImageFile)
-			return drawImage(((GamaImageFile) file).getImage(scope, attributes.useCache()), attributes);
+		if (file instanceof IImageProvider im)
+			return drawImage(im.getImage(scope, attributes.useCache(), false), attributes);
 		if (!(file instanceof GamaGeometryFile)) return null;
 		IShape shape = Cast.asGeometry(scope, file);
 		if (shape == null) return null;

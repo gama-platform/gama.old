@@ -18,11 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IBundleGroup;
-import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -50,7 +47,6 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
-import org.osgi.framework.Bundle;
 
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaIcon;
@@ -70,42 +66,6 @@ public class CleanupHelper {
 	 * Run.
 	 */
 	public static void run() {
-		Platform.registerBundleGroupProvider(new IBundleGroupProvider() {
-
-			@Override
-			public String getName() { // TODO Auto-generated method stub
-				return "toto";
-			}
-
-			@Override
-			public IBundleGroup[] getBundleGroups() { // TODO Auto-generated method stub
-				return new IBundleGroup[] { new IBundleGroup() {
-
-					@Override
-					public String getIdentifier() { return "id"; }
-
-					@Override
-					public String getName() { return "name"; }
-
-					@Override
-					public String getVersion() { return "version"; }
-
-					@Override
-					public String getDescription() { return "description"; }
-
-					@Override
-					public String getProviderName() { return "provider name"; }
-
-					@Override
-					public Bundle[] getBundles() { return Platform.getBundles("ummisco.gama.ui.shared", null); }
-
-					@Override
-					public String getProperty(final String key) {
-						return "property";
-					}
-				} };
-			}
-		});
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
 		RearrangeMenus.run();

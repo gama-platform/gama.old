@@ -47,7 +47,7 @@ global {
 	reflex end_sim when: cycle = 5 {
 		
 		// export the kml to a kmz/kml file
-		save kml_export to:"../results/result.kmz" type:"kmz";
+		save kml_export to:"../results/result.kmz";
 		do pause;
 	}
 }

@@ -1,19 +1,20 @@
 /*******************************************************************************************************
  *
- * ITextureCache.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ITextureCache.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.caches;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 
 import com.jogamp.opengl.util.texture.Texture;
+
+import msi.gama.common.interfaces.IImageProvider;
 
 /**
  * The Interface ITextureCache.
@@ -38,9 +39,10 @@ public interface ITextureCache {
 	/**
 	 * Processs.
 	 *
-	 * @param file the file
+	 * @param file
+	 *            the file
 	 */
-	void processs(File file);
+	void processs(IImageProvider file);
 
 	/**
 	 * Process unloaded.
@@ -50,7 +52,8 @@ public interface ITextureCache {
 	/**
 	 * Gets the texture.
 	 *
-	 * @param img the img
+	 * @param img
+	 *            the img
 	 * @return the texture
 	 */
 	Texture getTexture(BufferedImage img);
@@ -58,11 +61,14 @@ public interface ITextureCache {
 	/**
 	 * Gets the texture.
 	 *
-	 * @param file the file
-	 * @param isAnimated the is animated
-	 * @param useCache the use cache
+	 * @param file
+	 *            the file
+	 * @param isAnimated
+	 *            the is animated
+	 * @param useCache
+	 *            the use cache
 	 * @return the texture
 	 */
-	Texture getTexture(File file, boolean isAnimated, boolean useCache);
+	Texture getTexture(IImageProvider id, boolean isAnimated, boolean useCache);
 
 }

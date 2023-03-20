@@ -113,19 +113,19 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 			for (final Statement s : EGaml.getInstance().getStatementsOf(block)) {
 				if (isAttribute(s)) {
 					if (attributesNode == null) {
-						attributesNode = new AbstractOutlineNode(parentNode, provider.convertToImage("_attributes.png"),
+						attributesNode = new AbstractOutlineNode(parentNode, provider.convertToImageDescriptor("_attributes.png"),
 								"Attributes", false) {};
 					}
 					createNode(attributesNode, s);
 				} else if (IKeyword.PARAMETER.equals(s.getKey())) {
 					if (parametersNode == null) {
-						parametersNode = new AbstractOutlineNode(parentNode, provider.convertToImage("_parameter.png"),
+						parametersNode = new AbstractOutlineNode(parentNode, provider.convertToImageDescriptor("_parameter.png"),
 								"Parameters", false) {};
 					}
 					createNode(parametersNode, s);
 				} else if (isAction(s)) {
 					if (actionsNode == null) {
-						actionsNode = new AbstractOutlineNode(parentNode, provider.convertToImage("_action.png"),
+						actionsNode = new AbstractOutlineNode(parentNode, provider.convertToImageDescriptor("_action.png"),
 								"Actions", false) {};
 					}
 					createNode(actionsNode, s);

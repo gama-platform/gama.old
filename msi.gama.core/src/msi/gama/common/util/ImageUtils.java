@@ -2,7 +2,7 @@
  *
  * ImageUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -823,7 +823,8 @@ public class ImageUtils {
 	 * @throws IOException
 	 */
 	public BufferedImage getImageFromFile(final IScope scope, final String fileName, final boolean useCache,
-			final IIOReadProgressListener listener, final String extension) throws IOException {
+			final boolean forOpenGL, final IIOReadProgressListener listener, final String extension)
+			throws IOException {
 		if (useCache) {
 			final BufferedImage image = cache.getIfPresent(fileName);
 			if (image != null) return image;
@@ -832,7 +833,7 @@ public class ImageUtils {
 		}
 		// final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(fileName);
-		final BufferedImage result = getImageFromFile(f, useCache, false, listener,extension);
+		final BufferedImage result = getImageFromFile(f, useCache, forOpenGL, listener, extension);
 		return result == getNoImage() ? null : result;
 	}
 
@@ -870,10 +871,10 @@ public class ImageUtils {
 	 * @param forOpenGL
 	 *            the for open GL
 	 * @param listener
-	 *            the listener 
+	 *            the listener
 	 * @param extension
 	 *            the optional extension
-	 *         
+	 *
 	 * @return the buffered image
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
@@ -906,7 +907,8 @@ public class ImageUtils {
 		}
 
 		try {
-			result = forOpenGL ? ioRead(file, listener, extension) : toCompatibleImage(ioRead(file, listener, extension));
+			result = forOpenGL ? ioRead(file, listener, extension)
+					: toCompatibleImage(ioRead(file, listener, extension));
 		} catch (final Exception e) {
 			return getNoImage();
 		}
@@ -924,11 +926,13 @@ public class ImageUtils {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	private BufferedImage ioRead(final File file, final IIOReadProgressListener listener, final String extension) throws IOException {
+	private BufferedImage ioRead(final File file, final IIOReadProgressListener listener, final String extension)
+			throws IOException {
 		ImageReader imageReader = null;
 		ImageInputStream imageInputStream = null;
 		try {
-			Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix(extension != null ? extension: Files.getFileExtension(file.getName()));
+			Iterator<ImageReader> readers = ImageIO
+					.getImageReadersBySuffix(extension != null ? extension : Files.getFileExtension(file.getName()));
 			imageReader = readers.next();
 			imageInputStream = ImageIO.createImageInputStream(file);
 
@@ -968,7 +972,7 @@ public class ImageUtils {
 	 * @param forOpenGL
 	 *            the for open GL
 	 * @param listener
-	 *            the listener 
+	 *            the listener
 	 * @param extension
 	 *            the optional extension
 	 * @return the image from file
@@ -988,9 +992,11 @@ public class ImageUtils {
 				}
 			} else if (useCache) {
 				if (forOpenGL) {
-					image = openGLCache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, true, listener,extension));
+					image = openGLCache.get(file.getAbsolutePath(),
+							() -> privateReadFromFile(file, true, listener, extension));
 				} else {
-					image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file, false, listener, extension));
+					image = cache.get(file.getAbsolutePath(),
+							() -> privateReadFromFile(file, false, listener, extension));
 				}
 			} else {
 				image = privateReadFromFile(file, forOpenGL, listener, extension);
@@ -1162,6 +1168,23 @@ public class ImageUtils {
 	public void clearCache(final String pathName) {
 		cache.invalidate(pathName);
 		openGLCache.invalidate(pathName);
+
+	}
+
+	/**
+	 * Force cache image.
+	 *
+	 * @param im
+	 *            the im
+	 * @param filename
+	 *            the filename
+	 */
+	public void forceCacheImage(final BufferedImage im, final String filename, final boolean forOpenGL) {
+		if (forOpenGL) {
+			openGLCache.put(filename, im);
+		} else {
+			cache.put(filename, im);
+		}
 
 	}
 

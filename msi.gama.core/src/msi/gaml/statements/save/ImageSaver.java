@@ -36,6 +36,9 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class ImageSaver extends AbstractSaver {
 
+	/** The Constant FILE_FORMATS. */
+	public static final Set<String> FILE_FORMATS = Set.of("image", "jpg", "jpeg", "png", "gif");
+
 	/**
 	 * Save.
 	 *
@@ -184,6 +187,6 @@ public class ImageSaver extends AbstractSaver {
 
 	@Override
 	public Set<String> computeFileTypes() {
-		return Set.of("image", "jpg", "jpeg", "png", "gif");
+		return FILE_FORMATS;
 	}
 }

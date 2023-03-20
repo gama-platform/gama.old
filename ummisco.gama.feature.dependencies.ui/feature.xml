@@ -4,7 +4,7 @@
       label="UI Dependencies of GAMA"
       version="1.9.0.qualifier"
       provider-name="UMMISCO"
-      plugin="ummisco.gama.feature.dependencies.ui.branding">
+      plugin="msi.gama.application">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -455,12 +455,6 @@
          unpack="false"/>
 
    <plugin
-         id="ummisco.gama.feature.dependencies.ui.branding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.eclipse.search"
          download-size="0"
          install-size="0"
@@ -480,5 +474,11 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="msi.gama.application"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

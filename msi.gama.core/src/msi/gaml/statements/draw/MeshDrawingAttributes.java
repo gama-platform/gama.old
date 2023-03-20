@@ -26,10 +26,13 @@ import msi.gaml.operators.Colors.GamaScale;
 /**
  * The Class MeshDrawingAttributes.
  */
-public class MeshDrawingAttributes extends FileDrawingAttributes {
+public class MeshDrawingAttributes extends AssetDrawingAttributes {
+
+	/** The smooth provider. */
+	public IMeshSmoothProvider smoothProvider;
 
 	/** The color. */
-	public IMeshColorProvider color;
+	public IMeshColorProvider colorProvider;
 
 	/** The species name. */
 	public String speciesName;
@@ -65,6 +68,7 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	public MeshDrawingAttributes(final String name, final boolean isImage) {
 		super(null, isImage);
 		speciesName = name;
+		smoothProvider = IMeshSmoothProvider.NULL;
 	}
 
 	/**
@@ -84,24 +88,24 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	@SuppressWarnings ("unchecked")
 	public void setColors(final Object colors) {
 		if (colors instanceof GamaColor) {
-			color = new ColorBasedMeshColorProvider((GamaColor) colors);
+			colorProvider = new ColorBasedMeshColorProvider((GamaColor) colors);
 		} else if (colors instanceof GamaPalette) {
-			color = new PaletteBasedMeshColorProvider((GamaPalette) colors);
+			colorProvider = new PaletteBasedMeshColorProvider((GamaPalette) colors);
 		} else if (colors instanceof GamaScale) {
-			color = new ScaleBasedMeshColorProvider((GamaScale) colors);
+			colorProvider = new ScaleBasedMeshColorProvider((GamaScale) colors);
 		} else if (colors instanceof GamaGradient) {
-			color = new GradientBasedMeshColorProvider((GamaGradient) colors);
+			colorProvider = new GradientBasedMeshColorProvider((GamaGradient) colors);
 		} else if (colors instanceof IList) {
 			if (((IList) colors).get(0) instanceof IField) {
 				// We have bands
-				color = new BandsBasedMeshColorProvider((IList<IField>) colors);
+				colorProvider = new BandsBasedMeshColorProvider((IList<IField>) colors);
 			} else {
-				color = new ListBasedMeshColorProvider((IList<Color>) colors);
+				colorProvider = new ListBasedMeshColorProvider((IList<Color>) colors);
 			}
 		} else if (isGrayscaled()) {
-			color = IMeshColorProvider.GRAYSCALE;
+			colorProvider = IMeshColorProvider.GRAYSCALE;
 		} else {
-			color = IMeshColorProvider.DEFAULT;
+			colorProvider = IMeshColorProvider.DEFAULT;
 		}
 	}
 
@@ -116,7 +120,7 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 		if (isSet(Flag.Selected)) return new ColorBasedMeshColorProvider(SELECTED_COLOR);
 		if (highlight != null) return new ColorBasedMeshColorProvider(highlight);
 		if (isSet(Flag.Empty)) return null;
-		return color;
+		return colorProvider;
 	}
 
 	@Override
@@ -152,14 +156,14 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	 * @param p
 	 *            the new cell size
 	 */
-	public void setCellSize(final GamaPoint p) { cellSize = p; }
+	// public void setCellSize(final GamaPoint p) { cellSize = p; }
 
 	/**
 	 * Gets the cell size.
 	 *
 	 * @return the cell size
 	 */
-	public GamaPoint getCellSize() { return cellSize; }
+	// public GamaPoint getCellSize() { return cellSize; }
 
 	/**
 	 * Sets the scale.
@@ -217,7 +221,7 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	 *            the new grayscaled
 	 */
 	public void setGrayscaled(final Boolean grayScaled2) {
-		if (color == null) { color = new GrayscaleMeshColorProvider(); }
+		if (colorProvider == null) { colorProvider = new GrayscaleMeshColorProvider(); }
 		setFlag(Flag.Grayscaled, grayScaled2);
 	}
 
@@ -242,12 +246,15 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	/**
-	 * Sets the smooth.
+	 * Sets the smooth. Reinitialized the smooth provider
 	 *
 	 * @param smooth
 	 *            the new smooth
 	 */
-	public void setSmooth(final int smooth) { this.smooth = smooth; }
+	public void setSmooth(final int smooth) {
+		this.smooth = smooth;
+		smoothProvider = IMeshSmoothProvider.FOR(smooth, noData);
+	}
 
 	/**
 	 * Gets the smooth.
@@ -262,7 +269,10 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	 * @param noData
 	 *            the new no data
 	 */
-	public void setNoData(final double noData) { this.noData = noData; }
+	public void setNoData(final double noData) {
+		this.noData = noData;
+		smoothProvider = IMeshSmoothProvider.FOR(smooth, noData);
+	}
 
 	/**
 	 * Gets the no data value.
@@ -285,5 +295,12 @@ public class MeshDrawingAttributes extends FileDrawingAttributes {
 	 * @return the above
 	 */
 	public double getAbove() { return above; }
+
+	/**
+	 * Gets the smooth provider.
+	 *
+	 * @return the smooth provider
+	 */
+	public IMeshSmoothProvider getSmoothProvider() { return smoothProvider; }
 
 }

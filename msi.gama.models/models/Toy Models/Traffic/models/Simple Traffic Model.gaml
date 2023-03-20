@@ -16,7 +16,7 @@ global {
 	geometry shape <- envelope(building_shapefile) + envelope(road_shapefile);
 	//Step value
 	float step <- 10 #s;
-	field cell <- field(200, 200);
+	field cell <- field(300,300);
 	//Graph of the road network
 	graph road_network;
 	//Map containing all the weights for the road network graph
@@ -157,7 +157,7 @@ experiment traffic type: gui autorun: true{
 			species people;
 
 			//display the pollution grid in 3D using triangulation.
-			mesh cell scale: 9 triangulation: true transparency: 0.4 smooth: 4 above: 0.8 color: pal;
+			mesh cell scale: 9 triangulation: true transparency: 0.4 smooth: 3 above: 0.8 color: pal;
 		}
 
 	}

@@ -2,7 +2,7 @@
  *
  * GAML.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -50,6 +50,7 @@ import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
+import msi.gaml.constants.IConstantAcceptor;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
@@ -65,6 +66,7 @@ import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.ModelFactory;
+import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
 
@@ -474,6 +476,24 @@ public class GAML {
 		final Map<Signature, OperatorProto> map = OPERATORS.get(name);
 		for (final Signature s : map.keySet()) { if (s.isUnary()) return true; }
 		return false;
+	}
+
+	/**
+	 * Gets the constant acceptor.
+	 *
+	 * @return the constant acceptor
+	 */
+	public static IConstantAcceptor getConstantAcceptor() {
+		return (name, value, doc, deprec, isTime, names) -> {
+			if (UNITS.containsKey(name)) return false;
+			// DEBUG.LOG("Added constant " + name);
+			final IType t = Types.get(value.getClass());
+			final UnitConstantExpression exp =
+					getExpressionFactory().createUnit(value, t, name, doc, deprec, isTime, names);
+			UNITS.put(name, exp);
+			if (names != null) { for (final String s : names) { UNITS.put(s, exp); } }
+			return true;
+		};
 	}
 
 }

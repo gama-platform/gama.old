@@ -33,7 +33,7 @@ public class GamlActivator implements BundleActivator {
 	public void start(final BundleContext context) throws Exception {
 		// Spawns a new thread in order to escape the "activator/osgi" thread as soon as possible (see #3636)
 		CompletableFuture.runAsync(() -> {
-			DEBUG.TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 55, ' ') + PAD(" done in", 15, '_'), () -> {
+			DEBUG.TIMER_WITH_EXCEPTIONS(PAD("> GAML: Initializing parser", 55, ' '), PAD(" done in", 15, '_'), () -> {
 				GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
 				GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
 				GAML.registerGamlEcoreUtils(EGaml.getInstance());

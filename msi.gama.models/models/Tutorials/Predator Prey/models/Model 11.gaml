@@ -36,7 +36,7 @@ global {
 	   		+ "; nbPredators: " + nb_predators           
 	   		+ "; minEnergyPredators: " + (predator min_of each.energy)          
 	   		+ "; maxSizePredators: " + (predator max_of each.energy)) 
-	   		to: "results.txt" type: "text" rewrite: (cycle = 0) ? true : false;
+	   		to: "results.txt" rewrite: (cycle = 0) ? true : false;
 	}
 	
 	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {

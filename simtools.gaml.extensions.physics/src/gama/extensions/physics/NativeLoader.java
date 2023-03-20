@@ -3,7 +3,7 @@
  * NativeLoader.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -39,7 +39,8 @@ public class NativeLoader {
 
 	/** The Constant MAC_NATIVE_LIBRARY_NAME. */
 	public static final String MAC_NATIVE_LIBRARY_NAME = "MacOSX64ReleaseDp_libbulletjme.dylib";
-	
+
+	/** The Constant MAC_ARM_NATIVE_LIBRARY_NAME. */
 	public static final String MAC_ARM_NATIVE_LIBRARY_NAME = "MacOSX_ARM64ReleaseDp_libbulletjme.dylib";
 
 	/** The Constant WIN_NATIVE_LIBRARY_NAME. */
@@ -53,7 +54,7 @@ public class NativeLoader {
 		if (NATIVE_BULLET_LIBRARY_LOADED == null) {
 			NATIVE_BULLET_LIBRARY_LOADED = false;
 			if (LOAD_NATIVE_BULLET_LIBRARY) {
-				TIMER_WITH_EXCEPTIONS(PAD("> GAMA: native Bullet library",55, ' ') + DEBUG.PAD(" loaded in", 15, '_'),
+				TIMER_WITH_EXCEPTIONS(PAD("> GAMA: native Bullet library", 55, ' '), DEBUG.PAD(" loaded in", 15, '_'),
 						() -> {
 							try {
 								Platform platform = JmeSystem.getPlatform();

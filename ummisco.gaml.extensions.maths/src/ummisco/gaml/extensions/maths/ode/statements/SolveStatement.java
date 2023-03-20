@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SolveStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * SolveStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
@@ -43,6 +43,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gaml.extensions.maths.ode.MathConstants;
 import ummisco.gaml.extensions.maths.ode.statements.SolveStatement.SolveValidator;
 import ummisco.gaml.extensions.maths.ode.utils.solver.AdamsBashforthSolver;
 import ummisco.gaml.extensions.maths.ode.utils.solver.AdamsMoultonSolver;
@@ -87,7 +88,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 						type = IType.LIST,
 						optional = true,
 						doc = @doc (
-								deprecated = "do not work anymore, use S[], I[] or any variable of the equations instead; it is automatically updated.",								
+								deprecated = "do not work anymore, use S[], I[] or any variable of the equations instead; it is automatically updated.",
 								value = "list of variables's value inside integration process")),
 				@facet (
 						name = "t0",
@@ -160,7 +161,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 						value = "solve SIR method: #rk4 step:0.001;",
 						isExecutable = false) }) })
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class SolveStatement extends AbstractStatement implements ISolvers {
+public class SolveStatement extends AbstractStatement implements MathConstants {
 
 	/**
 	 * The Class SolveValidator.
@@ -208,22 +209,21 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 	}
 
 	/** The Constant Fixed_Step_Integrators. */
-	final static List<String> Fixed_Step_Integrators =
-			Arrays.asList(new String[] { Euler, ThreeEighthes, Midpoint, Gill, Luther, rk4 });
-	
+	final static List<String> Fixed_Step_Integrators = Arrays.asList(Euler, ThreeEighthes, Midpoint, Gill, Luther, rk4);
+
 	/** The Constant Adaptive_Stepsize_Integrators. */
-	final static List<String> Adaptive_Stepsize_Integrators = Arrays.asList(
-			new String[] { dp853, AdamsBashforth, AdamsMoulton, DormandPrince54, GraggBulirschStoer, HighamHall54 });
+	final static List<String> Adaptive_Stepsize_Integrators =
+			Arrays.asList(dp853, AdamsBashforth, AdamsMoulton, DormandPrince54, GraggBulirschStoer, HighamHall54);
 
 	/** The equation name. */
 	final String equationName;
-	
+
 	/** The solver name. */
 	String solverName;
-	
+
 	/** The system of equations. */
 	SystemOfEquationsStatement systemOfEquations;
-	
+
 	/** The time final exp. */
 	final IExpression solverExp, stepExp, nStepsExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
 			timeFinalExp;// ,discretExp,integrationTimesExp,cycleExp,
@@ -232,7 +232,8 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 	/**
 	 * Instantiates a new solve statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public SolveStatement(final IDescription desc) {
 		super(desc);
@@ -254,7 +255,8 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 	/**
 	 * Inits the system of equations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if successful
 	 */
 	private boolean initSystemOfEquations(final IScope scope) {
@@ -264,16 +266,13 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 			} else {
 				solverName = Cast.asString(scope, solverExp.value(scope));
 				if (Adaptive_Stepsize_Integrators.contains(solverName)) {
-					if (minStepExp == null || maxStepExp == null || absTolerExp == null || relTolerExp == null) {
+					if (minStepExp == null || maxStepExp == null || absTolerExp == null || relTolerExp == null)
 						throw GamaRuntimeException.error(
 								"For Adaptive Stepsize Integrators, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined. Example: min_step:0.01 max_step:0.1 scalAbsoluteTolerance:0.0001 scalRelativeTolerance:0.0001",
 								scope);
-					}
-				} else if (!Fixed_Step_Integrators.contains(solverName)) {
-					throw GamaRuntimeException.error(
-							"The method must be either 'Euler', 'ThreeEighthes', 'Midpoint', 'Gill', 'Luther', 'rk4', 'dp853','AdamsBashforth', 'AdamsMoulton', 'DormandPrince54', 'GraggBulirschStoer' or 'HighamHall54'",
-							scope);
-				}
+				} else if (!Fixed_Step_Integrators.contains(solverName)) throw GamaRuntimeException.error(
+						"The method must be either 'Euler', 'ThreeEighthes', 'Midpoint', 'Gill', 'Luther', 'rk4', 'dp853','AdamsBashforth', 'AdamsMoulton', 'DormandPrince54', 'GraggBulirschStoer' or 'HighamHall54'",
+						scope);
 
 			}
 		}
@@ -290,11 +289,15 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 	/**
 	 * Internal integrated value.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
-	 * @param var the var
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param var
+	 *            the var
 	 * @return the i list
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = { "internal_integrated_value" },
@@ -309,13 +312,13 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		final IAgent a = Cast.asAgent(scope, agent.value(scope));
 		// if a not null
 		final IMap<String, IList<Double>> result = (IMap<String, IList<Double>>) a.getAttribute("__integrated_values");
-		if (result != null) { return result.get(a + var.getName()); }
+		if (result != null) return result.get(a + var.getName());
 		return GamaListFactory.EMPTY_LIST;
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if (!initSystemOfEquations(scope)) { return null; }
+		if (!initSystemOfEquations(scope)) return null;
 
 		final double simStepDurationFromUnit = scope.getSimulation().getTimeStep(scope);
 		double stepSize = Cast.asFloat(scope, stepExp.value(scope));
@@ -325,7 +328,7 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 		}
 
 		final Solver solver = createSolver(scope, stepSize);
-//		if (solver == null) { return null; }
+		// if (solver == null) { return null; }
 		final double timeInit =
 				timeInitExp == null ? scope.getSimulation().getClock().getCycle() * simStepDurationFromUnit
 						: Cast.asFloat(scope, timeInitExp.value(scope));
@@ -340,8 +343,10 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 	/**
 	 * Creates the solver.
 	 *
-	 * @param scope the scope
-	 * @param step the step
+	 * @param scope
+	 *            the scope
+	 * @param step
+	 *            the step
 	 * @return the solver
 	 */
 	private Solver createSolver(final IScope scope, final double step) {
@@ -354,63 +359,37 @@ public class SolveStatement extends AbstractStatement implements ISolvers {
 			maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
 			scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
 			scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
-			if (nStepsExp != null) {
-				nSteps = Cast.asInt(scope, nStepsExp.value(scope));
-			}
+			if (nStepsExp != null) { nSteps = Cast.asInt(scope, nStepsExp.value(scope)); }
 		}
 
-		switch (solverName) {
-			case Euler:
-				return new EulerSolver(step, integratedValues);
-
-			case ThreeEighthes:
-				return new ThreeEighthesSolver(step, integratedValues);
-
-			case Midpoint:
-				return new MidpointSolver(step, integratedValues);
-
-			case Gill:
-				return new GillSolver(step, integratedValues);
-
-			case Luther:
-				return new LutherSolver(step, integratedValues);
-
-			case rk4:
-				return new Rk4Solver(step, integratedValues);
-
-			case dp853:
-				return new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-						integratedValues);
-
-			case DormandPrince54:
-				return new DormandPrince54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-						integratedValues);
-
-			case GraggBulirschStoer:
-				return new GraggBulirschStoerSolver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-						integratedValues);
-
-			case HighamHall54:
-				return new HighamHall54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-						integratedValues);
-
-			case AdamsBashforth:
-				return new AdamsBashforthSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-						integratedValues);
-
-			case AdamsMoulton:
-				return new AdamsMoultonSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-						integratedValues);
-
-			default:
-				return new Rk4Solver(step, integratedValues);
-		}
+		return switch (solverName) {
+			case Euler -> new EulerSolver(step, integratedValues);
+			case ThreeEighthes -> new ThreeEighthesSolver(step, integratedValues);
+			case Midpoint -> new MidpointSolver(step, integratedValues);
+			case Gill -> new GillSolver(step, integratedValues);
+			case Luther -> new LutherSolver(step, integratedValues);
+			case rk4 -> new Rk4Solver(step, integratedValues);
+			case dp853 -> new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
+			case DormandPrince54 -> new DormandPrince54Solver(minStep, maxStep, scalAbsoluteTolerance,
+					scalRelativeTolerance, integratedValues);
+			case GraggBulirschStoer -> new GraggBulirschStoerSolver(minStep, maxStep, scalAbsoluteTolerance,
+					scalRelativeTolerance, integratedValues);
+			case HighamHall54 -> new HighamHall54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
+			case AdamsBashforth -> new AdamsBashforthSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance,
+					scalRelativeTolerance, integratedValues);
+			case AdamsMoulton -> new AdamsMoultonSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance,
+					scalRelativeTolerance, integratedValues);
+			default -> new Rk4Solver(step, integratedValues);
+		};
 	}
 
 	/**
 	 * Gets the integrated values.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the integrated values
 	 */
 	private IMap<String, IList<Double>> getIntegratedValues(final IScope scope) {

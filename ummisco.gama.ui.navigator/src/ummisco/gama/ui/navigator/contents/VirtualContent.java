@@ -179,7 +179,7 @@ public abstract class VirtualContent<P extends VirtualContent<?>> {
 	 *
 	 * @return the image
 	 */
-	public abstract Image getImage();
+	public abstract ImageDescriptor getImageDescriptor();
 
 	/**
 	 * Gets the color.

@@ -3,7 +3,7 @@
  * SimulationClock.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -303,13 +303,17 @@ public class SimulationClock {
 	public StringBuilder getInfo(final StringBuilder sb) {
 		final int c = getCycle();
 		final ITopLevelAgent agent = clockScope.getRoot();
-		sb.append(agent.getName()).append(": ").append(c).append(c <= 1 ? " cycle " : " cycles ").append("elapsed ");
-		try {
-			GamaDate d = getCurrentDate();
-			final String date =
-					outputAsDuration ? asDuration(getStartingDate(), d) : d.toString("yyyy-MM-dd HH:mm:ss", "en");
-			sb.append("[").append(date).append("]");
-		} catch (final DateTimeException e) {}
+		if (agent != null) {
+			sb.append(agent.getName()).append(": ").append(c).append(c <= 1 ? " cycle " : " cycles ")
+					.append("elapsed ");
+
+			try {
+				GamaDate d = getCurrentDate();
+				final String date =
+						outputAsDuration ? asDuration(getStartingDate(), d) : d.toString("yyyy-MM-dd HH:mm:ss", "en");
+				sb.append("[").append(date).append("]");
+			} catch (final DateTimeException e) {}
+		}
 		return sb;
 	}
 

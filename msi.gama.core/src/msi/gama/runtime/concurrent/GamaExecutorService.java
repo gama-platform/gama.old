@@ -3,7 +3,7 @@
  * GamaExecutorService.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,6 +19,7 @@ import java.util.concurrent.ForkJoinTask;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.FlowStatus;
@@ -359,6 +360,18 @@ public abstract class GamaExecutorService {
 	public static void execute(final IScope scope, final IExecutable executable, final List<? extends IAgent> list,
 			final IExpression parallel) throws GamaRuntimeException {
 		execute(scope, executable, list.toArray(new IAgent[list.size()]), parallel);
+	}
+
+	/**
+	 * Should run all simulations in parallel.
+	 *
+	 * @param experiment
+	 *            the experiment
+	 * @return true, if successful
+	 */
+	public static boolean shouldRunAllSimulationsInParallel(final IExperimentAgent experiment) {
+		boolean pref = CONCURRENCY_SIMULATIONS_ALL.getValue();
+		return experiment == null ? pref : pref || experiment.isHeadless() && experiment.getSpecies().isBatch();
 	}
 
 }

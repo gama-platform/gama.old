@@ -175,13 +175,7 @@ import msi.gaml.types.Types;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc (
-								value = "Whether to render the text in perspective or facing the user. Default is true.")),
-				@facet (
-						name = IKeyword.MATERIAL,
-						type = IType.MATERIAL,
-						optional = true,
-						doc = @doc (
-								value = "Set a particular material to the object (only if you use it in an \"opengl2\" display).")),
+								value = "Whether to render the text in perspective or facing the user. Default is in perspective.")),
 				@facet (
 						name = IKeyword.WIDTH,
 						type = IType.FLOAT,

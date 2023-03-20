@@ -16,6 +16,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -67,10 +68,6 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		super(delegate);
 	}
 
-	@Override
-	public Image convertToImage(final Object imageDescription) {
-		return super.convertToImage(imageDescription);
-	}
 
 	/**
 	 * Image.
@@ -360,8 +357,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getImage(msi.gaml.compilation.ast.ISyntacticElement)
 	 */
 	@Override
-	public Object getImage(final ISyntacticElement element) {
-		return this.getImage(element.getElement());
+	public ImageDescriptor getImageDescriptor(final ISyntacticElement element) {
+		return this.getImageDescriptor(element.getElement());
+	}
+	
+	public ImageDescriptor convertToImageDescriptor(final Object obj) {
+		return super.convertToImageDescriptor(obj);
 	}
 
 }

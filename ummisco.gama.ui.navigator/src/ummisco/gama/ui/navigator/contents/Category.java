@@ -90,7 +90,7 @@ public class Category extends VirtualContent<WrappedFile> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return GamaIcon.named("gaml/_" + getName().toLowerCase()).image(); }
+	public ImageDescriptor getImageDescriptor() { return GamaIcon.named("gaml/_" + getName().toLowerCase()).descriptor(); }
 
 	/**
 	 * Method getColor()
