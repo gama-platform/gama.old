@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Experiment_plan>
-	<Simulation experiment="prey_predatorExp" finalStep="1000" id="0" seed="1.0" sourcePath="./samples/predatorPrey/predatorPrey.gaml">
+	<Simulation experiment="prey_predatorExp" finalStep="1000" id="0" seed="1.0" sourcePath="./predatorPrey/predatorPrey.gaml">
 		<Parameters>
 			<Parameter name="Nb Preys: " type="INT" value="200" var="nb_preys_init"/>
 			<Parameter name="Prey max energy: " type="FLOAT" value="1.0" var="prey_max_energy"/>

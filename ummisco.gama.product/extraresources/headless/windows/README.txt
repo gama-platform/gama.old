@@ -1,16 +1,39 @@
-*******************************************************************
-* GAMA version 1.8.1     	                                          *
-*http://gama-platform.org			                              *
-* (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners                  *
-*******************************************************************
+# GAMA Headless
 
-How to start GAMA in headless mode with script file
+## Getting started
 
-   command:
-	gama-headless.bat [opt] xmlInputFile outputDirectory
+You can start GAMA in headless mode using the custom script file. 
 
-   option:
-	-m to define the memory allocated by the simulation"
+Several options are available, you can run the help to command to have a better view of what is available as follow : 
 
-How to start GAMA in headless mode with java command line
-    java -cp GAMA_JARS  -Xms512m -Xmx2048 -Djava.awt.headless=true  org.eclipse.core.launcher.Main  -application msi.gama.headless.product XMLInputFile OutputDirectory
+```bash
+.\gama-headless.bat -help
+```
+
+### GUI experiment
+
+You can run a GUI experimenta as follow : 
+
+```bash
+.\gama-headless.bat [options] [xmlInputFile] [outputDirectory]
+```
+
+You can try for example this sample file : 
+
+```bash 
+.\gama-headless.bat ./samples/roadTraffic.xml ./output-folder
+```
+
+### Batch experiment
+
+You can also run a batch experimenta as follow : 
+
+```bash
+.\gama-headless.bat [options] -batch [experimentName] [modelFile.gaml]
+```
+
+You can try for example this sample file : 
+
+```bash 
+.\gama-headless.bat -batch Optimization ./samples/predatorPrey/predatorPrey.gaml
+```
