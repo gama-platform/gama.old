@@ -13,7 +13,7 @@ How to start GAMA in headless mode with script file
 	-m to define the memory allocated by the simulation"
 
 How to start GAMA in headless mode with java command line
-    java -cp GAMA_JARS  -Xms512m -Xmx2048 -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 XMLInputFile OutputDirectory
+    java -cp GAMA_JARS  -Xms512m -Xmx2048 -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.product XMLInputFile OutputDirectory
 
 === Run GAMA headless experiment from Eclipse & GAMA Git Version ===
 

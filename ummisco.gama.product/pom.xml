@@ -60,6 +60,11 @@
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
 								</copy>
+								<copy 
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless/configuration">
+									<fileset dir="./target/products/gama.headless/macosx/cocoa/x86_64/Eclipse.app/Contents/Eclipse/configuration" />
+								</copy>
+
 								<!-- aarch64 -->
 								<copy file="../ummisco.gama.product/extraresources/Model.icns"
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Resources/" />
@@ -71,6 +76,10 @@
 									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
 								</copy>
+								<copy 
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless/configuration">
+									<fileset dir="./target/products/gama.headless/macosx/cocoa/aarch64/Eclipse.app/Contents/Eclipse/configuration" />
+								</copy>
 								
 								<!--
 								Windows
@@ -79,6 +88,10 @@
 									todir="./target/products/ummisco.gama.application.product/win32/win32/x86_64/headless">
 									<fileset
 										dir="../ummisco.gama.product/extraresources/headless/windows" />
+								</copy>
+								<copy 
+									todir="./target/products/ummisco.gama.application.product/win32/win32/x86_64/headless/configuration">
+									<fileset dir="./target/products/gama.headless/win32/win32/x86_64/configuration" />
 								</copy>
 								
 								<!--
@@ -89,6 +102,10 @@
 								<copy
 									todir="./target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/unix" />
+								</copy>
+								<copy 
+									todir="./target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless/configuration">
+									<fileset dir="./target/products/gama.headless/linux/gtk/x86_64/configuration" />
 								</copy>
 			                </target>
 						</configuration>
@@ -127,8 +144,16 @@
 						see http://www.eclipse.org/tycho/sitedocs/tycho-p2/tycho-p2-director-plugin/materialize-products-mojo.html -->
 					<!-- If the project contains more than one product file ... -->
 					<products>
+
+						<product>
+							<id>gama.headless</id>
+					        <attachId>gama.headless</attachId>
+							<archiveFileName>Gama-rsc-headless</archiveFileName>
+						</product>
+
 						<product>
 							<id>ummisco.gama.application.product</id>
+							<attachId>ummisco.gama.application.product</attachId>
 							<archiveFileName>Gama1.7</archiveFileName>
 							<rootFolders>
 								<macosx>Gama.app</macosx>

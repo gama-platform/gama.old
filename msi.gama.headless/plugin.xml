@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="id4"
+         id="product"
          name="Headless Gama"
          point="org.eclipse.core.runtime.applications">
       <application
