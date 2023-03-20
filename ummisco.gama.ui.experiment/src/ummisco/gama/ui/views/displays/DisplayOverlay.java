@@ -3,7 +3,7 @@
  * DisplayOverlay.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -32,7 +32,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 
@@ -59,15 +58,118 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
+	/**
+	 * The Class Label.
+	 */
+	class Label extends Canvas {
+
+		/** The alignment. */
+		final int alignment;
+
+		/** The text. */
+		final StringBuilder text = new StringBuilder();
+
+		/** The data. */
+		final GridData data;
+
+		/**
+		 * Instantiates a new label.
+		 *
+		 * @param parent
+		 *            the parent
+		 * @param style
+		 *            the style
+		 */
+		public Label(final Composite parent, final int style) {
+			super(parent, SWT.NONE);
+			setVisible(true);
+			alignment = style;
+			addPaintListener(e -> paint(e.gc));
+			data = infoData(style);
+			setLayoutData(data);
+			GamaColors.setBackAndForeground(parent.getBackground(), IGamaColors.WHITE.color(), this);
+			addMouseListener(toggleListener);
+		}
+
+		/**
+		 * Info data.
+		 *
+		 * @param horizontalAlign
+		 *            the horizontal align
+		 * @return the grid data
+		 */
+		private GridData infoData(final int horizontalAlign) {
+			final GridData d = new GridData(horizontalAlign, SWT.CENTER, true, false);
+			d.minimumHeight = 24;
+			d.heightHint = 24;
+			d.minimumWidth = 140;
+			d.widthHint = 140;
+			return d;
+		}
+
+		/**
+		 * Sets the width.
+		 *
+		 * @param width
+		 *            the new width
+		 */
+		public void setWidth(final int width) {
+			if (width <= data.minimumWidth) return;
+			data.minimumWidth = width;
+			data.widthHint = width;
+			getParent().requestLayout();
+		}
+
+		/**
+		 * Paint.
+		 *
+		 * @param gc
+		 *            the gc
+		 * @return the object
+		 */
+		private void paint(final GC gc) {
+			final int width = getBounds().width;
+			gc.setForeground(IGamaColors.WHITE.color());
+			String string = text.toString();
+			Point extent = gc.stringExtent(string);
+			if (extent.x > width) {
+				setWidth(extent.x);
+				return;
+			}
+			int height = getBounds().height;
+			int y = (height - extent.y) / 2;
+			int x = switch (alignment) {
+				case SWT.RIGHT -> width - extent.x;
+				case SWT.CENTER -> (width - extent.x) / 2;
+				default -> 0;
+			};
+			gc.drawString(string, x, y, true);
+		}
+
+		/**
+		 * Sets the text.
+		 *
+		 * @param string
+		 *            the new text
+		 */
+		public void setText(final String string) {
+			text.setLength(0);
+			text.append(string);
+			redraw();
+		}
+
+	}
+
 	static {
 		DEBUG.OFF();
 	}
 
 	/** The right. */
-	Label coord, zoom, left, center, right;
+	Label coord, zoom, left, middle, right;
 
-	/** The text. */
-	StringBuilder text = new StringBuilder();
+	// /** The text. */
+	// StringBuilder csb = new StringBuilder(), zsb = new StringBuilder(), lsb = new StringBuilder(),
+	// msb = new StringBuilder(), rsb = new StringBuilder();
 
 	/** The scalebar. */
 	Canvas scalebar;
@@ -101,13 +203,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 		@Override
 		public void run() {
-			WorkbenchHelper.asyncRun(() -> {
-				if (!zoom.isDisposed()) {
-					text.setLength(0);
-					getOverlayZoomInfo(text);
-					zoom.setText(text.toString());
-				}
-			});
+			WorkbenchHelper.asyncRun(() -> { if (!zoom.isDisposed()) { zoom.redraw(); } });
 
 		}
 	}
@@ -185,36 +281,12 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	// }
 
 	/**
-	 * Label.
-	 *
-	 * @param c
-	 *            the c
-	 * @param horizontalAlign
-	 *            the horizontal align
-	 * @return the label
-	 */
-	private Label label(final Composite c, final int horizontalAlign) {
-		final Label l = new Label(c, SWT.INHERIT_DEFAULT);
-		GamaColors.setForeground(IGamaColors.WHITE.color(), l);
-		l.setText(" ");
-		l.setLayoutData(infoData(horizontalAlign));
-		l.addMouseListener(toggleListener);
-		return l;
-	}
-
-	/**
 	 * Info data.
 	 *
 	 * @param horizontalAlign
 	 *            the horizontal align
 	 * @return the grid data
 	 */
-	private GridData infoData(final int horizontalAlign) {
-		final GridData data = new GridData(horizontalAlign, SWT.CENTER, true, false);
-		data.minimumHeight = 24;
-		data.heightHint = 24;
-		return data;
-	}
 
 	/**
 	 * Creates the popup control.
@@ -231,16 +303,16 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		// top.setBackground(IGamaColors.BLACK.color());
 		if (createExtraInfo) {
 			// left overlay info
-			left = label(top, SWT.LEFT);
+			left = new Label(top, SWT.LEFT);
 			// center overlay info
-			center = label(top, SWT.CENTER);
+			middle = new Label(top, SWT.CENTER);
 			// right overlay info
-			right = label(top, SWT.RIGHT);
+			right = new Label(top, SWT.RIGHT);
 		}
 		// coordinates overlay info
-		coord = label(top, SWT.LEFT);
+		coord = new Label(top, SWT.LEFT);
 		// zoom overlay info
-		zoom = label(top, SWT.CENTER);
+		zoom = new Label(top, SWT.CENTER);
 		// scalebar overlay info
 		scalebar = new Canvas(top, SWT.None);
 		scalebar.setVisible(true);
@@ -288,8 +360,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		gc.setLineWidth(BAR_WIDTH);
 		gc.drawPath(path);
 		gc.setFont(coord.getFont());
-		drawStringCentered(gc, "0", barStartX, barStartY - 6, false);
-		drawStringCentered(gc, getScaleRight(), barStartX + width, barStartY - 6, false);
+		drawStringCentered(gc, "0", barStartX, barStartY - 6);
+		drawStringCentered(gc, getScaleRight(), barStartX + width, barStartY - 6);
 		path.dispose();
 	}
 
@@ -339,27 +411,21 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 			if (getPopup().isDisposed()) return;
 			if (!coord.isDisposed()) {
 				try {
-					text.setLength(0);
-					getOverlayCoordInfo(text);
-					coord.setText(text.toString());
+					getOverlayCoordInfo(coord.text);
+					coord.redraw();
 				} catch (final Exception e) {
 					coord.setText("Not initialized yet");
 				}
 			}
 			if (!zoom.isDisposed()) {
 				try {
-					text.setLength(0);
-					getOverlayZoomInfo(text);
-					zoom.setText(text.toString());
+					getOverlayZoomInfo(zoom.text);
+					zoom.redraw();
 				} catch (final Exception e) {
-					DEBUG.OUT("Error in updating overlay: " + e.getMessage());
 					zoom.setText("Not initialized yet");
 				}
 			}
-			if (!scalebar.isDisposed()) {
-				scalebar.redraw();
-				scalebar.update();
-			}
+			if (!scalebar.isDisposed()) { scalebar.redraw(); }
 			getPopup().layout(true);
 		} finally {
 			isBusy = false;
@@ -404,16 +470,11 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	 * @param filled
 	 *            the filled
 	 */
-	private void drawStringCentered(final GC gc, final String string, final int xCenter, final int yBase,
-			final boolean filled) {
+	private void drawStringCentered(final GC gc, final String string, final int xCenter, final int yBase) {
 		final Point extent = gc.textExtent(string);
 		final int xx = xCenter - extent.x / 2;
-		gc.drawText(string, xx, yBase - extent.y, !filled);
+		gc.drawText(string, xx, yBase - extent.y, true);
 	}
-
-	// public void displayScale(final Boolean newValue) {
-	// scalebar.setVisible(newValue);
-	// }
 
 	/**
 	 * @param left2
@@ -436,16 +497,16 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		final String[] infos = m.infos;
 		final List<int[]> colors = m.colors;
 		if (infos[0] != null) {
-			left.setText(infos[0]);
 			if (colors != null) { setForeground(left, GamaColors.get(colors.get(0)).color()); }
+			left.setText(infos[0]);
 		}
 		if (infos[1] != null) {
-			center.setText(infos[1]);
-			if (colors != null) { setForeground(center, GamaColors.get(colors.get(1)).color()); }
+			if (colors != null) { setForeground(middle, GamaColors.get(colors.get(1)).color()); }
+			middle.setText(infos[1]);
 		}
 		if (infos[2] != null) {
-			right.setText(infos[2]);
 			if (colors != null) { setForeground(right, GamaColors.get(colors.get(2)).color()); }
+			right.setText(infos[2]);
 		}
 
 		getPopup().layout(true);
@@ -614,6 +675,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	public void getOverlayCoordInfo(final StringBuilder sb) {
 		final LayeredDisplayOutput output = view.getOutput();
 		if (output == null) return;
+		sb.setLength(0);
 		final boolean paused = output.isPaused();
 		final boolean synced = GAMA.isSynchronized();
 		final IDisplaySurface surface = view.getDisplaySurface();
@@ -632,6 +694,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 	public void getOverlayZoomInfo(final StringBuilder sb) {
 		final IDisplaySurface surface = view.getDisplaySurface();
 		if (surface == null) return;
+		sb.setLength(0);
 		// if (CORE_SHOW_FPS.getValue()) {
 		sb.append(surface.getFPS());
 		sb.append(" fps | ");

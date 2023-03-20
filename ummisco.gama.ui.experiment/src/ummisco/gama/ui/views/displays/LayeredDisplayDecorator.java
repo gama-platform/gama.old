@@ -123,29 +123,35 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 *            the view
 	 */
 	private void createCommands() {
-		toggleOverlay = new GamaCommand(TOGGLE_OVERLAY, "Toggle overlay " + format(COMMAND, 'O'), e -> toggleOverlay());
-		takeSnapshot = new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", e -> view.takeSnapshot());
-		antiAlias = new GamaCommand(TOGGLE_ANTIALIAS, "Turn antialias on/off",
+		int pad = 25;
+		toggleOverlay = new GamaCommand(TOGGLE_OVERLAY, DEBUG.PAD("Toggle overlay", pad) + format(COMMAND, 'O'),
+				e -> toggleOverlay());
+		takeSnapshot =
+				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, DEBUG.PAD("Take a snapshot", pad), e -> view.takeSnapshot());
+		antiAlias = new GamaCommand(TOGGLE_ANTIALIAS, DEBUG.PAD("Turn antialias on/off", pad),
 				e -> view.getOutput().getData().setAntialias(!view.getOutput().getData().isAntialias()));
-		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, "Toggle fullscreen ESC", e -> toggleFullScreen());
-		runExperiment = new GamaCommand(EXPERIMENT_RUN, "Run or pause experiment " + GamaKeyBindings.PLAY_STRING, e -> {
+		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, DEBUG.PAD("Toggle fullscreen", pad) + "ESC",
+				e -> toggleFullScreen());
+		runExperiment = new GamaCommand(EXPERIMENT_RUN,
+				DEBUG.PAD("Run or pause experiment", pad) + GamaKeyBindings.PLAY_STRING, e -> {
 
-			final Item item = (Item) e.widget;
-			if (!GAMA.isPaused()) {
-				item.setImage(GamaIcon.named(EXPERIMENT_RUN).image());
-			} else {
-				item.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
-			}
-			GAMA.startPauseFrontmostExperiment();
+					final Item item = (Item) e.widget;
+					if (!GAMA.isPaused()) {
+						item.setImage(GamaIcon.named(EXPERIMENT_RUN).image());
+					} else {
+						item.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+					}
+					GAMA.startPauseFrontmostExperiment();
 
-		});
-		stepExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_STEP, "Step experiment " + GamaKeyBindings.STEP_STRING,
-				e -> GAMA.stepFrontmostExperiment());
-		closeExperiment =
-				new GamaCommand(IGamaIcons.EXPERIMENT_STOP, "Closes experiment " + GamaKeyBindings.QUIT_STRING,
-						e -> new Thread(() -> GAMA.closeAllExperiments(true, false)).start());
+				});
+		stepExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_STEP,
+				DEBUG.PAD("Step experiment", pad) + GamaKeyBindings.STEP_STRING, e -> GAMA.stepFrontmostExperiment());
+		closeExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_STOP,
+				DEBUG.PAD("Closes experiment", pad) + GamaKeyBindings.QUIT_STRING,
+				e -> new Thread(() -> GAMA.closeAllExperiments(true, false)).start());
 		relaunchExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_RELOAD,
-				"Reload experiment" + GamaKeyBindings.RELOAD_STRING, e -> GAMA.reloadFrontmostExperiment());
+				DEBUG.PAD("Reload experiment", pad) + GamaKeyBindings.RELOAD_STRING,
+				e -> GAMA.reloadFrontmostExperiment());
 	}
 
 	/** The overlay listener. */
@@ -223,6 +229,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		if (isFullScreen()) {
 			// DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
 			fs.setImage(GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image());
+			fs.setToolTipText(DEBUG.PAD("Enter fullscreen", 25) + "ESC");
+			toggleFullScreen.setImage(IGamaIcons.DISPLAY_FULLSCREEN_ENTER);
+			toggleFullScreen.setText(DEBUG.PAD("Enter fullscreen", 25) + "ESC");
 			// Toolbar
 			if (!toolbar.isDisposed()) {
 				toolbar.wipe(SWT.LEFT, true);
@@ -238,6 +247,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			fullScreenShell = createFullScreenShell();
 			if (fullScreenShell == null) return;
 			fs.setImage(GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_EXIT).image());
+			fs.setToolTipText(DEBUG.PAD("Exit fullscreen", 25) + "ESC");
+			toggleFullScreen.setImage(IGamaIcons.DISPLAY_FULLSCREEN_EXIT);
+			toggleFullScreen.setText(DEBUG.PAD("Exit fullscreen", 25) + "ESC");
 			normalParentOfFullScreenControl = view.getCentralPanel().getParent();
 			view.getCentralPanel().setParent(fullScreenShell);
 			fullScreenShell.layout(true, true);
@@ -482,13 +494,14 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		return parentMenu -> {
 			Menu sub =
 					GamaMenu.sub(parentMenu, "Presentation", "", GamaIcon.named(IGamaIcons.PRESENTATION_MENU).image());
-
+			toggleFullScreen.toItem(sub);
 			toggleOverlay.toItem(sub);
-			GamaMenu.action(sub, "Toggle toolbar " + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
+			GamaMenu.action(sub,
+					DEBUG.PAD("Toggle toolbar ", 25) + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
 					t -> toggleToolbar(),
 					GamaIcon.named(this.isFullScreen() ? "display/toolbar.fullscreen" : "display/toolbar.regular")
 							.image());
-			GamaColorMenu.addColorSubmenuTo(sub, "Background", c -> {
+			GamaColorMenu.addColorSubmenuTo(sub, DEBUG.PAD("Background", 25), c -> {
 				view.getDisplaySurface().getData().setBackgroundColor(c);
 				view.getDisplaySurface().updateDisplay(true);
 			});

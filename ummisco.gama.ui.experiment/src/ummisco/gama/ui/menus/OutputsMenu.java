@@ -72,8 +72,8 @@ public class OutputsMenu extends ContributionItem {
 			managementSubMenu(main, sim.getScope(), sim.getOutputManager());
 		}
 		GamaMenu.separate(main);
-		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(),
-				"Pause all");
+		menuItem(main, e -> GAMA.getExperiment().pauseAllOutputs(),
+				GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause all");
 		menuItem(main, e -> GAMA.getExperiment().refreshAllOutputs(), GamaIcon.named(IGamaIcons.DISPLAY_UPDATE).image(),
 				"Update all");
 		menuItem(main, e -> GAMA.getExperiment().resumeAllOutputs(),
@@ -122,28 +122,24 @@ public class OutputsMenu extends ContributionItem {
 		final Menu sub = new Menu(item);
 		item.setMenu(sub);
 		if (output.isOpen()) {
-			// menuItem(sub, e -> output.close(), null, "Close");
 			if (output.isPaused()) {
 				menuItem(sub, e -> output.setPaused(false), null, "Resume");
 			} else {
-				menuItem(sub, e -> output.setPaused(true), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(), "Pause");
+				menuItem(sub, e -> output.setPaused(true), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).image(),
+						"Pause");
 			}
 			menuItem(sub, e -> output.update(), GamaIcon.named(IGamaIcons.DISPLAY_UPDATE).image(), "Force update");
-			// if (output.isSynchronized()) {
-			// menuItem(sub, e -> output.setSynchronized(false), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
-			// "Desynchronize");
-			// } else {
-			// menuItem(sub, e -> output.setSynchronized(true), create(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(),
-			// "Synchronize");
-			// }
+
 			if (output instanceof LayeredDisplayOutput ldo) {
 				GamaMenu.separate(sub);
 				menuItem(sub, e -> ldo.zoom(1), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN).image(), "Zoom in");
-				menuItem(sub, e -> ldo.zoom(0), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image(), "Zoom to fit view");
-				menuItem(sub, e -> ldo.zoom(-1), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT).image(), "Zoom out");
+				menuItem(sub, e -> ldo.zoom(0), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image(),
+						"Zoom to fit view");
+				menuItem(sub, e -> ldo.zoom(-1), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT).image(),
+						"Zoom out");
 				GamaMenu.separate(sub);
-				menuItem(sub, e -> ldo.getView().takeSnapshot(), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT).image(),
-						"Take a snapshot");
+				menuItem(sub, e -> ldo.getView().takeSnapshot(),
+						GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT).image(), "Take a snapshot");
 				menuItem(sub, e -> ldo.getView().toggleFullScreen(),
 						GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image(), "Toggle fullscreen");
 			}
