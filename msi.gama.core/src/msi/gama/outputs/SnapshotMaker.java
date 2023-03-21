@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -58,34 +59,63 @@ public class SnapshotMaker {
 	 * @param composite
 	 *            the composite
 	 */
-	public void doSnapshot(final IDisplaySurface surface, final Rectangle composite) {
-		if (surface == null || composite == null) return;
+	public BufferedImage doSnapshot(final IDisplaySurface surface) {
+		if (surface == null) return null;
 		final IScope scope = surface.getScope();
-		final LayeredDisplayData data = surface.getData();
-		final int w = (int) data.getImageDimension().getX();
-		final int h = (int) data.getImageDimension().getY();
-
-		int width = w == -1 ? surface.getWidth() : w;
-		int height = h == -1 ? surface.getHeight() : h;
-		if (width == 0 || height == 0) {
-			width = composite.width;
-			height = composite.height;
-		}
-		final String autosavePath = data.getAutosavePath();
-
+		final String autosavePath = surface.getData().getAutosavePath();
 		String fileName;
 		if (autosavePath == null || autosavePath.isBlank()) {
 			final String snapshotFile = FileUtils.constructAbsoluteFilePath(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME
 					+ "/" + GAMA.getModel().getName() + "_display_" + surface.getOutput().getName(), false);
-			fileName = snapshotFile + "_size_" + width + "x" + height + "_cycle_" + scope.getClock().getCycle()
-					+ "_time_" + java.lang.System.currentTimeMillis() + ".png";
+			fileName = snapshotFile + "_cycle_" + scope.getClock().getCycle() + "_time_"
+					+ java.lang.System.currentTimeMillis() + ".png";
 		} else {
 			fileName = FileUtils.constructAbsoluteFilePath(scope,
 					IDisplaySurface.SNAPSHOT_FOLDER_NAME + "/" + autosavePath, false);
 			if (!fileName.endsWith(".png")) { fileName += ".png"; }
 		}
+		BufferedImage image = captureImage(surface);
+		if (scope.interrupted() || image == null) return null;
 
+		try {
+			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
+		} catch (final GamaRuntimeException e1) {
+			// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to
+			// prevent the exceptions from being masked.
+			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
+			e1.printStackTrace();
+			return null;
+		}
+
+		try {
+			if (!ImageIO.write(image, "png", new File(fileName)))
+				throw new RuntimeException("Impossible to write image");
+			// image.flush();
+			return image;
+		} catch (final Exception ex) {
+			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
+			e.addContext("Unable to create output stream for snapshot image");
+			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
+		}
+		return null;
+	}
+
+	/**
+	 * Capture image.
+	 *
+	 * @param surface
+	 *            the surface
+	 * @return the buffered image
+	 */
+	public BufferedImage captureImage(final IDisplaySurface surface) {
+		final LayeredDisplayData data = surface.getData();
 		BufferedImage image = null;
+		GamaPoint p = data.getImageDimension();
+		Rectangle composite = surface.getBoundsForSnapshot();
+		final int width = p == null || p.x <= 0 ? composite.width : (int) p.x;
+		final int height = p == null || p.y <= 0 ? composite.height : (int) p.y;
+
 		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
 				DEBUG.OUT("Trying to snapshot with dimensions " + composite);
@@ -100,28 +130,7 @@ public class SnapshotMaker {
 			DEBUG.OUT("Trying to snapshot with dimensions " + width + " " + height);
 			image = surface.getImage(width, height);
 		}
-		if (scope.interrupted() || image == null) return;
-
-		try {
-			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
-		} catch (final GamaRuntimeException e1) {
-			// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to
-			// prevent the exceptions from being masked.
-			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-			e1.printStackTrace();
-			return;
-		}
-
-		try {
-			if (!ImageIO.write(image, "png", new File(fileName)))
-				throw new RuntimeException("Impossible to write image");
-			image.flush();
-		} catch (final Exception ex) {
-			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
-		}
+		return image;
 	}
 
 	/**

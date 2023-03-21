@@ -11,6 +11,7 @@
 package ummisco.gama.opengl.view;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
@@ -50,6 +51,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -71,6 +73,7 @@ import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
@@ -167,8 +170,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getImage()
 	 */
 	@Override
-	public BufferedImage getImage(final int w, final int h) {
-		if (w == 0 || h == 0 || !renderer.hasDrawnOnce()) return null;
+	public BufferedImage getImage(final int desiredWidth, final int desiredHeight) {
+		if (desiredWidth == 0 || desiredHeight == 0 || !renderer.hasDrawnOnce()) return null;
+		// We first render at the right dimensions and then we scale
+		Rectangle dimensions = this.getBoundsForSnapshot();
+		int w = dimensions.width;
+		int h = dimensions.height;
 		final GLAutoDrawable glad = renderer.getCanvas();
 		if (glad == null) return null;
 		GL2 gl = glad.getGL().getGL2();
@@ -177,23 +184,29 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (context == null) return null;
 		final boolean current = context.isCurrent();
 		if (!current) { context.makeCurrent(); }
-		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
+		BufferedImage[] image = new BufferedImage[1];
+		glad.invoke(true, drawable -> {
+			// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
+			final ByteBuffer buffer = getBuffer(w, h);
+			// be sure we are reading from the right fbo (here is supposed to be the default one)
+			// bind the right buffer to read from
+			gl.glReadBuffer(GL.GL_BACK); // or GL.GL_FRONT ?
+			gl.glReadPixels(0, 0, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+			ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+			ColorModel cm = new ComponentColorModel(cs, new int[] { 8, 8, 8, 8 }, true, false, Transparency.TRANSLUCENT,
+					DataBuffer.TYPE_BYTE);
+			SampleModel sm = cm.createCompatibleSampleModel(w, h);
+			WritableRaster raster = new WritableRaster(sm, dbuf, new Point()) {};
+			BufferedImage im = new BufferedImage(cm, raster, false, null);
+			// TODO Seems to take a very long time -- verify
 
-		final ByteBuffer buffer = getBuffer(w, h);
-		// be sure we are reading from the right fbo (here is supposed to be the default one)
-		// bind the right buffer to read from
-		gl.glReadBuffer(GL.GL_BACK); // or GL.GL_FRONT ?
-		gl.glReadPixels(0, 0, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-		ColorModel cm = new ComponentColorModel(cs, new int[] { 8, 8, 8, 8 }, true, false, Transparency.TRANSLUCENT,
-				DataBuffer.TYPE_BYTE);
-		SampleModel sm = cm.createCompatibleSampleModel(w, h);
-		WritableRaster raster = new WritableRaster(sm, dbuf, new Point()) {};
-		BufferedImage image = new BufferedImage(cm, raster, false, null);
-		// TODO Seems to take a very long time -- verify
-		ImageUtil.flipImageVertically(image);
+			if (desiredWidth != w || desiredHeight != h) { im = ImageUtils.resize(im, desiredWidth, desiredHeight); }
+			ImageUtil.flipImageVertically(im);
+			image[0] = im;
+			return true;
+		});
 		if (!current) { glad.getGL().getContext().release(); }
-		return image;
+		return image[0];
 	}
 
 	/** The buffer. */
@@ -786,5 +799,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public IGraphics getIGraphics() { return renderer; }
+
+	@Override
+	public Rectangle getBoundsForSnapshot() {
+		var rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
+				WorkbenchHelper.displaySizeOf(renderer.getCanvas()));
+
+		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
+	}
 
 }

@@ -3,7 +3,7 @@
  * ImageDisplaySurface.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -13,6 +13,7 @@ package msi.gama.outputs;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.DataOutputStream;
@@ -230,7 +231,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void zoomIn() {
-		
 
 	}
 
@@ -241,7 +241,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void zoomOut() {
-		
 
 	}
 
@@ -252,7 +251,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void zoomFit() {
-		
 
 	}
 
@@ -263,7 +261,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	// @Override
 	// public void fireSelectionChanged(final Object a) {
-	// 
+	//
 	//
 	// }
 
@@ -274,7 +272,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {
-		
 
 	}
 
@@ -535,5 +532,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public IGraphics getIGraphics() { return displayGraphics; }
+
+	@Override
+	public Rectangle getBoundsForSnapshot() { return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight()); }
 
 }

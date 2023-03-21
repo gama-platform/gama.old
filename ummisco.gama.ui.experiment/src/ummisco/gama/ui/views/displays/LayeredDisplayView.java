@@ -11,6 +11,7 @@
 package ummisco.gama.ui.views.displays;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -416,10 +417,13 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public void takeSnapshot() {
-		Rectangle dim = WorkbenchHelper.displaySizeOf(surfaceComposite);
-		java.awt.Rectangle r = new java.awt.Rectangle(dim.x, dim.y, dim.width, dim.height);
-		SnapshotMaker.getInstance().doSnapshot(getDisplaySurface(), r);
+	public BufferedImage takeSnapshot() {
+		return SnapshotMaker.getInstance().doSnapshot(getDisplaySurface());
+	}
+
+	@Override
+	public BufferedImage saveSnapshot() {
+		return SnapshotMaker.getInstance().captureImage(getDisplaySurface());
 	}
 
 	/**
