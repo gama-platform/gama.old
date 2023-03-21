@@ -379,6 +379,7 @@ public class GamaBundleLoader {
 	 */
 	private static void loadModels(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
 		MODEL_PLUGINS.put(CORE_MODELS, REGULAR_MODELS_LAYOUT);
+		GAMA_PLUGINS.add(CORE_PLUGIN); // We add it back to gather tests
 		GAMA_PLUGINS.forEach(bundle -> {
 			if (bundle.getEntry(REGULAR_MODELS_LAYOUT) != null) { MODEL_PLUGINS.put(bundle, REGULAR_MODELS_LAYOUT); }
 			if (bundle.getEntry(REGULAR_TESTS_LAYOUT) != null) { TEST_PLUGINS.put(bundle, REGULAR_TESTS_LAYOUT); }
