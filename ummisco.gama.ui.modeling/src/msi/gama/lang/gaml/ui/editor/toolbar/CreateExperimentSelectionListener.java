@@ -1,17 +1,16 @@
 /*******************************************************************************************************
  *
- * CreateExperimentSelectionListener.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * CreateExperimentSelectionListener.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import org.eclipse.jface.text.templates.Template;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Control;
 
@@ -32,7 +31,7 @@ public class CreateExperimentSelectionListener implements Selector {
 
 	/** The editor. */
 	GamlEditor editor;
-	
+
 	/** The control. */
 	Control control;
 
@@ -54,17 +53,10 @@ public class CreateExperimentSelectionListener implements Selector {
 
 			@Override
 			protected void fillMenu() {
-				final String[] paths = new String[] { "Experiment.Gui.1", "Experiment.Batch.2", "Experiment.Batch.1" };
+				final String[] paths = { "Experiment.Gui.1", "Experiment.Batch.2", "Experiment.Batch.1" };
 				for (final String path : paths) {
 					final Template t = editor.getTemplateStore().getTemplateData(path).getTemplate();
-					action(t.getDescription(), new SelectionAdapter() {
-
-						@Override
-						public void widgetSelected(final SelectionEvent e) {
-							editor.applyTemplateAtTheEnd(t);
-						}
-
-					});
+					action(t.getDescription(), e1 -> editor.applyTemplateAtTheEnd(t));
 				}
 
 			}

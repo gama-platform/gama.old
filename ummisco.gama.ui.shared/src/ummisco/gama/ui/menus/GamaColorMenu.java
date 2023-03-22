@@ -183,14 +183,7 @@ public class GamaColorMenu extends GamaMenu {
 		}
 		if (getReverse() == null) { setReverse(PreferencesHelper.COLOR_MENU_REVERSE.getValue() ? -1 : 1); }
 		if (breakdown == null) { breakdown = PreferencesHelper.COLOR_MENU_GROUP.getValue(); }
-		action("Custom...", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				openView(currentRunnable, null);
-			}
-
-		});
+		action("Custom...", e -> openView(currentRunnable, null));
 		final Menu optionMenu = sub("Options");
 		final Menu sortMenu = sub(optionMenu, "Sort by...");
 		check(optionMenu, "Breakdown", breakdown, chooseBreak);

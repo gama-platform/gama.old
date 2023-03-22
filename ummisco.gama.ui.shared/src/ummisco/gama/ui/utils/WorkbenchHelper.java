@@ -482,4 +482,21 @@ public class WorkbenchHelper {
 		return result;
 	}
 
+	/**
+	 * Gets the number of monitors.
+	 *
+	 * @return the number of monitors
+	 */
+	public static int getNumberOfMonitors() { return getMonitors().length; }
+
+	/**
+	 * Gets the monitors.
+	 *
+	 * @return the monitors
+	 */
+	public static Monitor[] getMonitors() {
+		Display d = getDisplay();
+		return d == null ? new Monitor[0] : d.getMonitors();
+	}
+
 }

@@ -57,6 +57,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The Class LayeredDisplayDecorator.
@@ -130,8 +131,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, DEBUG.PAD("Take a snapshot", pad), e -> view.takeSnapshot());
 		antiAlias = new GamaCommand(TOGGLE_ANTIALIAS, DEBUG.PAD("Turn antialias on/off", pad),
 				e -> view.getOutput().getData().setAntialias(!view.getOutput().getData().isAntialias()));
-		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, DEBUG.PAD("Toggle fullscreen", pad) + "ESC",
-				e -> toggleFullScreen());
+		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, DEBUG.PAD("Toggle fullscreen", pad) + "ESC", e -> {
+			toggleFullScreen();
+		});
 		runExperiment = new GamaCommand(EXPERIMENT_RUN,
 				DEBUG.PAD("Run or pause experiment", pad) + GamaKeyBindings.PLAY_STRING, e -> {
 
@@ -227,7 +229,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	public void toggleFullScreen() {
 		if (isFullScreen()) {
-			// DEBUG.OUT("Is already full screen in display thread " + WorkbenchHelper.isDisplayThread());
+			DEBUG.OUT("Is already full screen: exiting");
 			fs.setImage(GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image());
 			fs.setToolTipText(DEBUG.PAD("Enter fullscreen", 25) + "ESC");
 			toggleFullScreen.setImage(IGamaIcons.DISPLAY_FULLSCREEN_ENTER);
@@ -243,6 +245,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			normalParentOfFullScreenControl.requestLayout();
 			destroyFullScreenShell();
 		} else {
+			DEBUG.OUT("Is not full screen: entering");
 			ViewsHelper.activate(view);
 			fullScreenShell = createFullScreenShell();
 			if (fullScreenShell == null) return;
@@ -263,7 +266,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				toolbar.setParent(fullScreenShell);
 			}
 		}
-		toolbar.refresh(true);
+		if (!toolbar.isDisposed()) {
+			toolbar.wipe(SWT.RIGHT, true);
+			GamaToolbarFactory.buildToolbar(view, toolbar);
+			toolbar.refresh(true);
+		}
 		if (overlay.isVisible()) {
 			WorkbenchHelper.runInUI("Overlay", 50, m -> {
 				toggleOverlay();
@@ -410,16 +417,16 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	private Shell createFullScreenShell() {
 		final int monitorId = view.getOutput().getData().fullScreen();
-		final Monitor[] monitors = WorkbenchHelper.getDisplay().getMonitors();
+		final Monitor[] monitors = WorkbenchHelper.getMonitors();
 		int monitorId1 = Math.min(monitors.length - 1, Math.max(0, monitorId));
 		final Rectangle bounds = monitors[monitorId1].getBounds();
 		if (ViewsHelper.registerFullScreenView(monitorId1, view)) {
-			final Shell fullScreenShell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
-			fullScreenShell.setBounds(bounds);
+			final Shell shell = new Shell(WorkbenchHelper.getDisplay(), SWT.NO_TRIM | SWT.ON_TOP);
+			shell.setBounds(bounds);
 			// For DEBUG purposes:
 			// fullScreenShell.setBounds(new Rectangle(0, 0, bounds.width / 2, bounds.height / 2));
-			fullScreenShell.setLayout(shellLayout());
-			return fullScreenShell;
+			shell.setLayout(shellLayout());
+			return shell;
 		}
 		return null;
 	}
@@ -494,7 +501,22 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		return parentMenu -> {
 			Menu sub =
 					GamaMenu.sub(parentMenu, "Presentation", "", GamaIcon.named(IGamaIcons.PRESENTATION_MENU).image());
-			toggleFullScreen.toItem(sub);
+			if (!isFullScreen() && WorkbenchHelper.getNumberOfMonitors() > 1) {
+				Menu mon = GamaMenu.sub(sub, "Enter fullscreen", "", GamaIcon.named(DISPLAY_FULLSCREEN_ENTER).image());
+				Monitor[] mm = WorkbenchHelper.getMonitors();
+				for (int i = 0; i < mm.length; i++) {
+					Monitor monitor = mm[i];
+					Rectangle bounds = monitor.getBounds();
+					String text = "Monitor " + i + " (" + bounds.width + "x" + bounds.height + ")";
+					final int monitorId = i;
+					GamaMenu.action(mon, text, e -> {
+						view.getOutput().getData().setFullScreen(monitorId);
+						toggleFullScreen();
+					});
+				}
+			} else {
+				toggleFullScreen.toItem(sub);
+			}
 			toggleOverlay.toItem(sub);
 			GamaMenu.action(sub,
 					DEBUG.PAD("Toggle toolbar ", 25) + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
@@ -523,7 +545,32 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		tb.button(takeSnapshot, SWT.RIGHT);
 		ToolItem item = tb.check(antiAlias, SWT.RIGHT);
 		tb.setSelection(item, view.getOutput().getData().isAntialias());
-		fs = tb.button(toggleFullScreen, SWT.RIGHT);
+		if (!isFullScreen() && WorkbenchHelper.getNumberOfMonitors() > 1) {
+			fs = tb.menu(DISPLAY_FULLSCREEN_ENTER, "", "Enter fullscreen", e -> {
+				final GamaMenu menu = new GamaMenu() {
+
+					@Override
+					protected void fillMenu() {
+						Monitor[] monitors = WorkbenchHelper.getMonitors();
+						for (int i = 0; i < monitors.length; i++) {
+							Rectangle bounds = monitors[i].getBounds();
+							String text = "Enter fullscreen on monitor " + i + " (" + bounds.width + "x" + bounds.height
+									+ ")";
+							final int monitorId = i;
+
+							action(text, (Selector) e -> {
+								view.getOutput().getData().setFullScreen(monitorId);
+								toggleFullScreen();
+							});
+						}
+					}
+				};
+				menu.open(toolbar.getToolbar(SWT.RIGHT), e);
+			}, SWT.RIGHT);
+
+		} else {
+			fs = tb.button(toggleFullScreen, SWT.RIGHT);
+		}
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		tb.menu(IGamaIcons.LAYERS_MENU, "Browse displayed agents by layers", "Properties and contents of layers",
 				trigger -> menuManager.buildToolbarMenu(trigger, (ToolItem) trigger.widget), SWT.RIGHT);
