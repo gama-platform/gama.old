@@ -135,7 +135,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	private LinkedList<IPopulation.Listener> listeners = null;
 
 	/** The ordered var names. */
-	private final LinkedHashSet<String> orderedVarNames = new LinkedHashSet<>();
+	public final LinkedHashSet<String> orderedVarNames = new LinkedHashSet<>();
 
 	/** The Constant isLiving. */
 	public final static IPopulation.IsLiving isLiving = new IPopulation.IsLiving();
@@ -690,7 +690,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 *            the host
 	 * @return the i topology
 	 */
-	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
+	public static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
 		IExpression exp = species.getFacet(WIDTH);
 		final Envelope3D env = scope.getSimulation().getGeometry().getEnvelope();
 		final int rows = exp == null

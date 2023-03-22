@@ -959,6 +959,9 @@ public interface IKeyword {
 
 	/** The pso. */
 	String PSO = "pso";
+	
+	/** The proxy. */
+	String PROXY = "proxy";
 
 	/** The put. */
 	String PUT = "put";
