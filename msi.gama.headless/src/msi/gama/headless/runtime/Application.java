@@ -90,6 +90,15 @@ public class Application implements IApplication {
 	/** The Constant SECURE_SSL_SOCKET_PARAMETER. */
 	final public static String SSOCKET_PARAMETER = "-ssocket";
 
+	/** The Constant SECURE_SSL_SOCKET_PARAMETER_JKSPATH. */
+	final public static String SSOCKET_PARAMETER_JKSPATH = "-jks";
+
+	/** The Constant SECURE_SSL_SOCKET_PARAMETER_SPWD. */
+	final public static String SSOCKET_PARAMETER_SPWD = "-spwd";
+
+	/** The Constant SECURE_SSL_SOCKET_PARAMETER_KPWD. */
+	final public static String SSOCKET_PARAMETER_KPWD = "-kpwd";
+
 	/** The Constant TUNNELING_PARAMETER. */
 	final public static String TUNNELING_PARAMETER = "-p";
 
@@ -354,10 +363,13 @@ public class Application implements IApplication {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
 			// GamaListener.newInstance(this.socket, this);
-			new GamaListener(this.socket, this, false);
-		} else if (args.contains(SSOCKET_PARAMETER)) {
-			// GamaListener.newInstance(this.socket, this);
-			new GamaListener(this.socket, this, true);
+			new GamaListener(this.socket, this, false,"","","");
+		} else if (args.contains(SSOCKET_PARAMETER)) { 
+			final String jks = args.contains(SSOCKET_PARAMETER_JKSPATH) ? after(args, SSOCKET_PARAMETER_JKSPATH) : "";
+			final String spwd = args.contains(SSOCKET_PARAMETER_SPWD) ? after(args, SSOCKET_PARAMETER_SPWD) : "";
+			final String kpwd = args.contains(SSOCKET_PARAMETER_KPWD) ? after(args, SSOCKET_PARAMETER_KPWD) : "";
+//			System.out.println(jks+" "+spwd+" "+kpwd);
+			new GamaListener(this.socket, this, true, jks, spwd, kpwd);
 		} else {
 			runSimulation(args);
 		}

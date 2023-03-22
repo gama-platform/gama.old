@@ -32,7 +32,7 @@ public class GamaListener {
 
 	private static PrintStream errorStream;
 
-	public GamaListener(final int p, final Application a, final boolean secure) {
+	public GamaListener(final int p, final Application a, final boolean secure, final String jksPath, final String spwd, final String kpwd) {
 		File currentJavaJarFile = new File(
 				GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 		String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
@@ -41,7 +41,7 @@ public class GamaListener {
 
 		Globals.IMAGES_PATH = Globals.TEMP_PATH + "\\snapshot";
 		GAMA.setHeadLessMode(true, new GamaServerGUIHandler()); //todo: done here and in headless simulation loader, should be refactored
-		createSocketServer(p, a, secure);
+		createSocketServer(p, a, secure, jksPath, spwd, kpwd);
 	}
 	
 	/**
@@ -49,8 +49,8 @@ public class GamaListener {
 	 *
 	 * @throws UnknownHostException the unknown host exception
 	 */
-	public void createSocketServer(final int port, final Application a, final boolean ssl) {
-		instance = new GamaWebSocketServer(port, a, this, ssl);
+	public void createSocketServer(final int port, final Application a, final boolean ssl, final String jksPath, final String spwd, final String kpwd) {
+		instance = new GamaWebSocketServer(port, a, this, ssl,jksPath,spwd,kpwd);
 		instance.start();
 		System.out.println("Gama Listener started on port: " + instance.getPort());
 		

@@ -17,5 +17,13 @@
    <extension
          point="gaml.extension">
    </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="msi.gama.headless.product"
+            name="msi.gama.headless">
+      </product>
+   </extension>
 
 </plugin>
