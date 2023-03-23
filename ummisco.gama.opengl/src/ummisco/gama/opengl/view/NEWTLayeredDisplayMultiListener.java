@@ -1,16 +1,15 @@
 /*******************************************************************************************************
  *
- * NEWTLayeredDisplayMultiListener.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * NEWTLayeredDisplayMultiListener.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
 
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.jogamp.newt.Window;
@@ -26,7 +25,6 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.LayeredDisplayDecorator;
 import ummisco.gama.ui.views.displays.LayeredDisplayMultiListener;
 
@@ -37,7 +35,7 @@ import ummisco.gama.ui.views.displays.LayeredDisplayMultiListener;
 public class NEWTLayeredDisplayMultiListener implements MouseListener, KeyListener, WindowListener, IDisposable {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The delegate. */
@@ -70,11 +68,11 @@ public class NEWTLayeredDisplayMultiListener implements MouseListener, KeyListen
 			if (!viewOk) return false;
 			final boolean controlOk = control != null /* && !control.isDisposed() */;
 			if (!controlOk) return false;
-			final boolean surfaceOk = surface != null && !surface.isDisposed();
-//			if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
-//				WorkbenchHelper.getPage().activate(deco.view);
-//			}
-			return surfaceOk;
+
+			// if (!Objects.equals(WorkbenchHelper.getActivePart(), deco.view)) {
+			// WorkbenchHelper.getPage().activate(deco.view);
+			// }
+			return surface != null && !surface.isDisposed();
 		};
 
 		control.addKeyListener(this);
@@ -140,7 +138,11 @@ public class NEWTLayeredDisplayMultiListener implements MouseListener, KeyListen
 	public void mousePressed(final MouseEvent e) {
 		if (!ok.get()) return;
 		DEBUG.OUT("Mouse pressed with button " + e.getButton() + " modifiers " + e.getModifiersString(null));
-		delegate.mouseDown(e.getX(), e.getY(), e.getButton(), hasModifiers(e));
+		if (e.getButton() == 3 || e.isControlDown()) {
+			delegate.menuDetected(e.getX(), e.getY());
+		} else {
+			delegate.mouseDown(e.getX(), e.getY(), e.getButton(), hasModifiers(e));
+		}
 	}
 
 	@Override

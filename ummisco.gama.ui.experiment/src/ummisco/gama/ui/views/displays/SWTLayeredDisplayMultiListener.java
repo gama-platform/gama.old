@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
-import java.util.Set;
 import java.util.function.Supplier;
 
 import org.eclipse.swt.SWT;
@@ -32,10 +31,8 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
-import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.utils.ViewsHelper;
 
 /**
  * The listener interface for receiving mouse and key events. When an event occurs, that object's appropriate method is
@@ -59,13 +56,13 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	final Supplier<Boolean> ok;
 
 	/** See issue #3308 */
-	final boolean isJava2DOnWindows;
+	// final boolean isJava2DOnWindows;
 
 	/** The UI zoom level. */
-	final double UIZoomLevel;
+	// final double UIZoomLevel;
 
 	/** The zoom levels with issues. */
-	final Set<Integer> zoomLevelsWithIssues = Set.of(175, 225, 250);
+	// final Set<Integer> zoomLevelsWithIssues = Set.of(175, 225, 250);
 
 	/**
 	 * Instantiates a new SWT layered display multi listener.
@@ -76,10 +73,10 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	 *            the surface
 	 */
 	public SWTLayeredDisplayMultiListener(final LayeredDisplayDecorator deco, final IDisplaySurface surface) {
-		int zoom = ViewsHelper.getMonitorOf(deco.view).getZoom();
-		isJava2DOnWindows = surface != null && !surface.getData().is3D() && PlatformHelper.isWindows()
-				&& zoomLevelsWithIssues.contains(zoom);
-		UIZoomLevel = zoom / 100d;
+		// int zoom = ViewsHelper.getMonitorOf(deco.view).getZoom();
+		// isJava2DOnWindows = surface != null && !surface.getData().is3D() && PlatformHelper.isWindows()
+		// && zoomLevelsWithIssues.contains(zoom);
+		// UIZoomLevel = zoom / 100d;
 
 		delegate = new LayeredDisplayMultiListener(surface, deco);
 		control = deco.view.getInteractionControl();
@@ -194,7 +191,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	public void mouseDown(final MouseEvent e) {
 		if (!ok.get()) return;
 		filter(e);
-		// DEBUG.OUT("Mouse down " + e);
+		DEBUG.OUT("Mouse down " + e);
 		delegate.mouseDown(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
@@ -202,7 +199,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	public void mouseUp(final MouseEvent e) {
 		if (!ok.get()) return;
 		filter(e);
-		// DEBUG.OUT("Mouse up " + e);
+		DEBUG.OUT("Mouse up " + e);
 		delegate.mouseUp(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
@@ -210,7 +207,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	public void menuDetected(final MenuDetectEvent e) {
 		if (!ok.get()) return;
 		// Verify if the same "filter" is not needed here too.
-		// DEBUG.LOG("Menu detected on " + view.getPartName());
+		DEBUG.LOG("Menu detected ");
 		final Point p = control.toControl(e.x, e.y);
 		delegate.menuDetected(p.x, p.y);
 	}

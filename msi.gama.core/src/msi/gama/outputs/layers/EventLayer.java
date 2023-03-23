@@ -2,7 +2,7 @@
  *
  * EventLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -97,14 +97,17 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	 * @return the listening event
 	 */
 	private int getListeningEvent(final String eventTypeName) {
-		if (IKeyword.MOUSE_DOWN.equals(eventTypeName)) return MOUSE_PRESS;
-		if (IKeyword.MOUSE_UP.equals(eventTypeName)) return MOUSE_RELEASED;
-		if (IKeyword.MOUSE_CLICKED.equals(eventTypeName)) return MOUSE_CLICKED;
-		if (IKeyword.MOUSE_MOVED.equals(eventTypeName)) return MOUSE_MOVED;
-		if (IKeyword.MOUSE_ENTERED.equals(eventTypeName)) return MOUSE_ENTERED;
-		if (IKeyword.MOUSE_EXITED.equals(eventTypeName)) return MOUSE_EXITED;
-		if (IKeyword.MOUSE_MENU.equals(eventTypeName)) return MOUSE_MENU;
-		return KEY_PRESSED;
+		return switch (eventTypeName) {
+			case IKeyword.MOUSE_DOWN -> MOUSE_PRESS;
+			case IKeyword.MOUSE_UP -> MOUSE_RELEASED;
+			case IKeyword.MOUSE_CLICKED -> MOUSE_CLICKED;
+			case IKeyword.MOUSE_MOVED -> MOUSE_MOVED;
+			case IKeyword.MOUSE_ENTERED -> MOUSE_ENTERED;
+			case IKeyword.MOUSE_EXITED -> MOUSE_EXITED;
+			case IKeyword.MOUSE_MENU -> MOUSE_MENU;
+			default -> KEY_PRESSED;
+		};
+
 	}
 
 	@Override
