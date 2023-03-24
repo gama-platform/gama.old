@@ -348,6 +348,9 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public void dispatchKeyEvent(final char character) {}
 
 	@Override
+	public void dispatchSpecialKeyEvent(final int e) {}
+
+	@Override
 	public void dispatchMouseEvent(final int swtEventType, final int x, final int y) {}
 
 	@Override

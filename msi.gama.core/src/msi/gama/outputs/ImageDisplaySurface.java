@@ -506,6 +506,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void dispatchKeyEvent(final char character) {}
 
+	@Override
+	public void dispatchSpecialKeyEvent(final int e) {}
+
 	/**
 	 * Dispatch mouse event.
 	 *

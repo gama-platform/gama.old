@@ -35,29 +35,28 @@ public interface IConstantsSupplier {
 	/**
 	 * Browse.
 	 *
-	 * @param cc
+	 * @param theClass
 	 *            the cc
 	 * @param acceptor
 	 *            the acceptor
 	 */
-	default void browse(final Class cc, final IConstantAcceptor acceptor) {
+	default void browse(final Class theClass, final IConstantAcceptor acceptor) {
 		String[] names = null;
 		boolean isTime = false;
 		String deprecated = null;
 		Object value = null;
-		for (final Field f : cc.getDeclaredFields()) {
-			if (Modifier.isStatic(f.getModifiers())) {
+		for (final Field field : theClass.getDeclaredFields()) {
+			if (Modifier.isStatic(field.getModifiers())) {
 				try {
-					if (Modifier.isStatic(f.getModifiers())) { value = f.get(cc); }
+					value = field.get(theClass);
 				} catch (SecurityException | IllegalArgumentException | IllegalAccessException e1) {
 					e1.printStackTrace();
 					continue;
 				}
-				final constant annotation = f.getAnnotation(constant.class);
+				final constant annotation = field.getAnnotation(constant.class);
 				if (annotation != null) {
 					names = annotation.altNames();
-					StringBuilder documentation =
-							new StringBuilder("Its value is <b>").append(Cast.toGaml(value)).append(". </b><p/>");
+					StringBuilder documentation = new StringBuilder();
 					final doc[] ds = annotation.doc();
 					if (ds != null && ds.length > 0) {
 						final doc d = ds[0];
@@ -66,7 +65,8 @@ public interface IConstantsSupplier {
 						if (deprecated.isEmpty()) { deprecated = null; }
 						isTime = Arrays.asList(annotation.category()).contains(IConstantCategory.TIME);
 					}
-					acceptor.accept(f.getName(), value, documentation.toString(), deprecated, isTime, names);
+					documentation.append(". Its internal value is <b>").append(Cast.toGaml(value)).append(". </b><p/>");
+					acceptor.accept(annotation.value(), value, documentation.toString(), deprecated, isTime, names);
 				}
 			}
 		}

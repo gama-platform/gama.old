@@ -193,7 +193,7 @@ experiment "Play !" type: gui autorun: true   {
 				}
 			}
 
-			event "mouse_down"  {
+			event #mouse_down  {
 				target <- #user_location;
 				float divisor <- distance_to(target, white.location);
 				point direction <- (target - white.location) /divisor;
@@ -202,7 +202,7 @@ experiment "Play !" type: gui autorun: true   {
 					do apply impulse: {strength * direction.x * 4, strength * direction.y * 4, 0};
 				}
 			}
-			event "mouse_move" {
+			event #mouse_move {
 				target <- #user_location;	
 			}
 			species ground refresh: false {

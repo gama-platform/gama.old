@@ -28,30 +28,6 @@ import ummisco.gama.dev.utils.DEBUG;
 
 public class EventLayer extends AbstractLayer implements IEventLayerListener {
 
-	/** The Constant MOUSE_PRESS. */
-	private final static int MOUSE_PRESS = 0;
-
-	/** The Constant MOUSE_RELEASED. */
-	private final static int MOUSE_RELEASED = 1;
-
-	/** The Constant MOUSE_CLICKED. */
-	private final static int MOUSE_CLICKED = 2;
-
-	/** The Constant MOUSE_MOVED. */
-	private final static int MOUSE_MOVED = 4;
-
-	/** The Constant MOUSE_ENTERED. */
-	private final static int MOUSE_ENTERED = 5;
-
-	/** The Constant MOUSE_EXITED. */
-	private final static int MOUSE_EXITED = 6;
-
-	/** The Constant MOUSE_MENU. */
-	private final static int MOUSE_MENU = 7;
-
-	/** The Constant KEY_PRESSED. */
-	private final static int KEY_PRESSED = 3;
-
 	static {
 		DEBUG.OFF();
 	}
@@ -98,13 +74,23 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	 */
 	private int getListeningEvent(final String eventTypeName) {
 		return switch (eventTypeName) {
-			case IKeyword.MOUSE_DOWN -> MOUSE_PRESS;
-			case IKeyword.MOUSE_UP -> MOUSE_RELEASED;
-			case IKeyword.MOUSE_CLICKED -> MOUSE_CLICKED;
-			case IKeyword.MOUSE_MOVED -> MOUSE_MOVED;
-			case IKeyword.MOUSE_ENTERED -> MOUSE_ENTERED;
-			case IKeyword.MOUSE_EXITED -> MOUSE_EXITED;
-			case IKeyword.MOUSE_MENU -> MOUSE_MENU;
+			case MouseEventLayerDelegate.MOUSE_DOWN -> MOUSE_PRESS;
+			case MouseEventLayerDelegate.MOUSE_UP -> MOUSE_RELEASED;
+			case MouseEventLayerDelegate.MOUSE_CLICKED -> MOUSE_CLICKED;
+			case MouseEventLayerDelegate.MOUSE_MOVED -> MOUSE_MOVED;
+			case MouseEventLayerDelegate.MOUSE_ENTERED -> MOUSE_ENTERED;
+			case MouseEventLayerDelegate.MOUSE_EXITED -> MOUSE_EXITED;
+			case MouseEventLayerDelegate.MOUSE_MENU -> MOUSE_MENU;
+			case KeyboardEventLayerDelegate.ARROW_DOWN -> ARROW_DOWN;
+			case KeyboardEventLayerDelegate.ARROW_UP -> ARROW_UP;
+			case KeyboardEventLayerDelegate.ARROW_LEFT -> ARROW_LEFT;
+			case KeyboardEventLayerDelegate.ARROW_RIGHT -> ARROW_RIGHT;
+			case KeyboardEventLayerDelegate.KEY_ESC -> KEY_ESC;
+			case KeyboardEventLayerDelegate.KEY_PAGE_DOWN -> KEY_PAGE_DOWN;
+			case KeyboardEventLayerDelegate.KEY_PAGE_UP -> KEY_PAGE_UP;
+			case KeyboardEventLayerDelegate.KEY_ENTER -> KEY_RETURN;
+			case KeyboardEventLayerDelegate.KEY_TAB -> KEY_TAB;
+
 			default -> KEY_PRESSED;
 		};
 
@@ -226,4 +212,9 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	 * @return the event
 	 */
 	public String getEvent() { return event; }
+
+	@Override
+	public void specialKeyPressed(final int keyCode) {
+		if (keyCode == listenedEvent) { executeEvent(-1, -1); }
+	}
 }

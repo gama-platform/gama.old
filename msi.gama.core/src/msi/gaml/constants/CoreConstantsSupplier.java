@@ -12,8 +12,9 @@ package msi.gaml.constants;
 
 import java.util.Map;
 
+import msi.gama.common.interfaces.IEventLayerDelegate;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.outputs.layers.MouseEventLayerDelegate;
+import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.outputs.layers.properties.ICameraDefinition;
 import msi.gama.outputs.layers.properties.ILightDefinition;
 import msi.gama.util.GamaColor;
@@ -33,6 +34,7 @@ public class CoreConstantsSupplier implements IConstantsSupplier {
 
 		acceptor.accept(IKeyword.DEFAULT, IKeyword.DEFAULT, "Default value for cameras and lights", null, false);
 
+		// We build constants based on the colors declared in GamaColor / ColorCSS
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();
 			final String doc = "Standard CSS color corresponding to rgb (" + c.red() + ", " + c.green() + ", "
@@ -40,9 +42,10 @@ public class CoreConstantsSupplier implements IConstantsSupplier {
 			acceptor.accept(entry.getKey(), c, doc, null, false);
 		}
 
-		for (final String entry : MouseEventLayerDelegate.EVENTS) {
-			final String doc = "Constant corresponding to the " + entry + " event";
-			acceptor.accept(entry, entry, doc, null, false);
+		// We browse all the constants declared in the event layer delegates and add them (like mouse or keyboard
+		// events)
+		for (final IEventLayerDelegate delegate : EventLayerStatement.delegates) {
+			browse(delegate.getClass(), acceptor);
 		}
 
 	}

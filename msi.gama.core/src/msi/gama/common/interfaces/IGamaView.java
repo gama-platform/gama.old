@@ -271,6 +271,13 @@ public interface IGamaView {
 		 * @return true, if is 2d
 		 */
 		boolean is2D();
+
+		/**
+		 * Checks if is esc redefined.
+		 *
+		 * @return true, if is esc redefined
+		 */
+		boolean isEscRedefined();
 	}
 
 	/**

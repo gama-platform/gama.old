@@ -463,6 +463,17 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	/**
+	 * Checks if is esc refefined.
+	 *
+	 * @return true, if is esc refefined
+	 */
+	@Override
+	public boolean isEscRedefined() {
+		IDisplaySurface surface = getDisplaySurface();
+		return surface != null && surface.isEscRedefined();
+	}
+
+	/**
 	 * Compute hi DPI.
 	 *
 	 * @return true, if successful

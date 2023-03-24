@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
+import msi.gama.outputs.layers.IEventLayerListener;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
@@ -121,16 +122,46 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		if (!ok.get()) return;
+		if (!ok.get() || e.stateMask != 0) return;
 		// DEBUG.OUT("Key pressed " + e);
-		delegate.keyPressed(e.character);
+		switch (e.keyCode) {
+			case SWT.ARROW_DOWN:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_DOWN);
+				return;
+			case SWT.ARROW_UP:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_UP);
+				return;
+			case SWT.ARROW_LEFT:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_LEFT);
+				return;
+			case SWT.ARROW_RIGHT:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_RIGHT);
+				return;
+			case SWT.ESC:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_ESC);
+				return;
+			case SWT.TAB:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_TAB);
+				return;
+			case SWT.PAGE_DOWN:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_PAGE_DOWN);
+				return;
+			case SWT.PAGE_UP:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_PAGE_UP);
+				return;
+			case SWT.CR, SWT.KEYPAD_CR:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_RETURN);
+				return;
+
+		}
+		delegate.keyPressed(e.character, GamaKeyBindings.ctrl(e));
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		if (!ok.get()) return;
 		// DEBUG.OUT("Key released " + e);
-		delegate.keyReleased(e.keyCode, GamaKeyBindings.ctrl(e));
+		delegate.keyReleased(e.character, GamaKeyBindings.ctrl(e));
 	}
 
 	/**
@@ -244,8 +275,23 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 				// Necessary to filter by the time to avoid repetitions
 				if (e.getWhen() == previous) return;
 				previous = e.getWhen();
-				// DEBUG.OUT("Key received by the AWT listener " + e.getKeyChar() + " " + e.getWhen());
-				delegate.keyPressed(e.getKeyChar());
+				DEBUG.LOG("Key received by the AWT listener. Code " + e.getKeyCode() + " Action ? " + e.isActionKey());
+				if (!e.isActionKey()) {
+					delegate.keyPressed(e.getKeyChar(), e.isControlDown());
+				} else if (e.getModifiersEx() == 0) {
+					delegate.specialKeyPressed(switch (e.getKeyCode()) {
+						case java.awt.event.KeyEvent.VK_UP, java.awt.event.KeyEvent.VK_KP_UP -> IEventLayerListener.ARROW_UP;
+						case java.awt.event.KeyEvent.VK_DOWN, java.awt.event.KeyEvent.VK_KP_DOWN -> IEventLayerListener.ARROW_DOWN;
+						case java.awt.event.KeyEvent.VK_LEFT, java.awt.event.KeyEvent.VK_KP_LEFT -> IEventLayerListener.ARROW_LEFT;
+						case java.awt.event.KeyEvent.VK_RIGHT, java.awt.event.KeyEvent.VK_KP_RIGHT -> IEventLayerListener.ARROW_RIGHT;
+						case java.awt.event.KeyEvent.VK_PAGE_UP -> IEventLayerListener.KEY_PAGE_UP;
+						case java.awt.event.KeyEvent.VK_PAGE_DOWN -> IEventLayerListener.KEY_PAGE_DOWN;
+						case java.awt.event.KeyEvent.VK_ESCAPE -> IEventLayerListener.KEY_ESC;
+						case java.awt.event.KeyEvent.VK_ENTER -> IEventLayerListener.KEY_RETURN;
+						case java.awt.event.KeyEvent.VK_TAB -> IEventLayerListener.KEY_TAB;
+						default -> 0;
+					});
+				}
 			}
 
 			@Override

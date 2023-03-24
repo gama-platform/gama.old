@@ -3,7 +3,7 @@
  * CameraHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -50,40 +50,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		DEBUG.ON();
 	}
 
-	// class IntermediaryState {
-	//
-	// private GamaPoint cameraPos;
-	// private GamaPoint cameraTarget;
-	// private Double zoomLevel;
-	// private String cameraName;
-	// private Double cameraDistance;
-	// private Boolean cameraLocked;
-	//
-	// public void setCameraPos(final GamaPoint p) { cameraPos = p; }
-	//
-	// public void setCameraTarget(final GamaPoint p) { cameraTarget = p; }
-	//
-	// public void setZoomLevel(final Double z) { zoomLevel = z; }
-	//
-	// public void setCameraLocked(final boolean b) { cameraLocked = b; }
-	//
-	// public void setCameraNameFromUser(final String p) { cameraName = p; }
-	//
-	// public void setCameraDistance(final double d) { cameraDistance = d; }
-	//
-	// public void transferToData() {
-	// if (cameraPos != null) { data.setCameraPos(cameraPos); }
-	// if (cameraTarget != null) { data.setCameraTarget(cameraTarget); }
-	// if (cameraLocked != null) { data.setCameraLocked(cameraLocked); }
-	// if (zoomLevel != null) { data.setZoomLevel(zoomLevel, true); }
-	// if (cameraName != null) { data.setCameraNameFromUser(cameraName); }
-	// if (cameraDistance != null) { data.setCameraDistance(cameraDistance); }
-	// }
-	//
-	// }
-
-	// private final IntermediaryState intermediaryState = new IntermediaryState();
-
 	/** The glu. */
 	private final GLU glu;
 
@@ -94,6 +60,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	// Mouse
 	private final GamaPoint mousePosition = new GamaPoint(0, 0);
 
+	/** The position in the world. */
 	private final GamaPoint positionInTheWorld = new GamaPoint();
 
 	/** The last mouse pressed position. */
@@ -151,6 +118,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	/** The is ROI sticky. */
 	private boolean isROISticky;
 
+	/** The are arrow keys redefined. */
+	final boolean areArrowKeysRedefined;
+
 	/**
 	 * Instantiates a new abstract camera.
 	 *
@@ -159,6 +129,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	public CameraHelper(final IOpenGLRenderer renderer2) {
 		super(renderer2);
+		areArrowKeysRedefined = renderer2.getSurface().isArrowRedefined();
 		glu = new GLU();
 		applyPreset(data.getCameraName());
 		initialize();
@@ -859,8 +830,14 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		}
 	}
 
+	/**
+	 * Gets the world position of mouse.
+	 *
+	 * @return the world position of mouse
+	 */
 	public GamaPoint getWorldPositionOfMouse() { return positionInTheWorld; }
 
+	/** The pixel depth. */
 	FloatBuffer pixelDepth = Buffers.newDirectFloatBuffer(1);
 
 	/**
@@ -988,22 +965,36 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		invokeOnGLThread(drawable -> {
 			if (!keystoneMode) {
 				boolean cameraInteraction = !data.isCameraLocked();
+				// setShiftPressed(GamaKeyBindings.shift(e));
+
 				switch (e.keyCode) {
 					case SWT.ARROW_LEFT:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) { CameraHelper.this.strafeLeft = true; }
+						if (cameraInteraction
+								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
+							CameraHelper.this.strafeLeft = true;
+						}
 						break;
 					case SWT.ARROW_RIGHT:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) { CameraHelper.this.strafeRight = true; }
+						if (cameraInteraction
+								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
+							CameraHelper.this.strafeRight = true;
+						}
 						break;
 					case SWT.ARROW_UP:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) { CameraHelper.this.goesForward = true; }
+						if (cameraInteraction
+								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
+							CameraHelper.this.goesForward = true;
+						}
 						break;
 					case SWT.ARROW_DOWN:
 						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction) { CameraHelper.this.goesBackward = true; }
+						if (cameraInteraction
+								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
+							CameraHelper.this.goesBackward = true;
+						}
 						break;
 					case SWT.SPACE:
 						if (cameraInteraction) { resetPivot(); }
@@ -1055,7 +1046,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			// (like CTRL+SHIFT+H)
 			// First the global keystrokes
 			case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
-				ViewsHelper.toggleFullScreenMode();
+				if (getRenderer().getSurface().isEscRedefined()) { ViewsHelper.toggleFullScreenMode(); }
 				return;
 			case 'p':
 			case 'P':
@@ -1080,7 +1071,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			case 'X':
 			case 'x':
 				if (isControlDown(e) && e.isShiftDown()) { GAMA.closeAllExperiments(true, false); }
-				return;
 		}
 
 		invokeOnGLThread(drawable -> {
@@ -1099,25 +1089,35 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 						setCtrlPressed(!firsttimeMouseDown);
 						break;
 				}
+				// setShiftPressed(e.isShiftDown());
 				switch (e.getKeyCode()) {
 					// Finally the keystrokes for the display itself
 					case com.jogamp.newt.event.KeyEvent.VK_LEFT:
 						setCtrlPressed(isControlDown(e));
-						if (cameraInteraction) { CameraHelper.this.strafeLeft = true; }
+						if (cameraInteraction && (!areArrowKeysRedefined || isControlDown(e) || e.isShiftDown())) {
+							CameraHelper.this.strafeLeft = true;
+						}
 						break;
 					case com.jogamp.newt.event.KeyEvent.VK_RIGHT:
 						setCtrlPressed(isControlDown(e));
-						if (cameraInteraction) { CameraHelper.this.strafeRight = true; }
+						if (cameraInteraction && (!areArrowKeysRedefined || isControlDown(e) || e.isShiftDown())) {
+							CameraHelper.this.strafeRight = true;
+						}
 						break;
 					case com.jogamp.newt.event.KeyEvent.VK_UP:
 						setCtrlPressed(isControlDown(e));
-						if (cameraInteraction) { CameraHelper.this.goesForward = true; }
+						if (cameraInteraction && (!areArrowKeysRedefined || isControlDown(e) || e.isShiftDown())) {
+							CameraHelper.this.goesForward = true;
+						}
 						break;
 					case com.jogamp.newt.event.KeyEvent.VK_DOWN:
 						setCtrlPressed(isControlDown(e));
-						if (cameraInteraction) { CameraHelper.this.goesBackward = true; }
+						if (cameraInteraction && (!areArrowKeysRedefined || isControlDown(e) || e.isShiftDown())) {
+							CameraHelper.this.goesBackward = true;
+						}
 						break;
 				}
+
 				switch (e.getKeyChar()) {
 					case 0:
 						setCtrlPressed(e.isControlDown() || PlatformHelper.isMac() && e.isMetaDown());

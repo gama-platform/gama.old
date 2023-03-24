@@ -57,6 +57,12 @@
       </implementation>
    </extension>
    <extension
+         point="gama.event_layer">
+      <implementation
+            class="msi.gama.outputs.layers.KeyboardEventLayerDelegate">
+      </implementation>
+   </extension>
+   <extension
          point="org.eclipse.core.resources.variableResolvers">
       <variableResolver
             class="msi.gama.util.file.CacheLocationProvider"

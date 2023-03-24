@@ -29,7 +29,7 @@ public interface GamlCoreUnits {
 			altNames = { "meter", "meters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = @doc ("meter: the length basic unit")) double m = 1, meter = m, meters = m;
+			doc = @doc ("meter: the length basic unit")) double m = 1;
 
 	/** The Constant cm. */
 	@constant (
@@ -37,7 +37,7 @@ public interface GamlCoreUnits {
 			altNames = { "centimeter", "centimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("centimeter unit") }) double cm = 0.01d * m, centimeter = cm, centimeters = cm;
+			doc = { @doc ("centimeter unit") }) double cm = 0.01d * m;
 
 	/** The Constant dm. */
 	@constant (
@@ -45,7 +45,7 @@ public interface GamlCoreUnits {
 			altNames = { "decimeter", "decimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("decimeter unit") }) double dm = 0.1d * m, decimeter = dm, decimeters = dm;
+			doc = { @doc ("decimeter unit") }) double dm = 0.1d * m;
 
 	/** The Constant mm. */
 	@constant (
@@ -53,7 +53,7 @@ public interface GamlCoreUnits {
 			altNames = { "milimeter", "milimeters" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("millimeter unit") }) double mm = cm / 10d, millimeter = mm, millimeters = mm;
+			doc = { @doc ("millimeter unit") }) double mm = cm / 10d;
 
 	/** The micrometers. */
 	@constant (
@@ -61,7 +61,7 @@ public interface GamlCoreUnits {
 			altNames = { "micrometer", "micrometers" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("micrometer unit") }) double µm = mm / 1000d, micrometer = µm, micrometers = µm;
+			doc = { @doc ("micrometer unit") }) double µm = mm / 1000d;
 
 	/** The nanometers. */
 	@constant (
@@ -69,7 +69,7 @@ public interface GamlCoreUnits {
 			altNames = { "nanometer", "nanometers" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("nanometer unit") }) double nm = µm / 1000d, nanometer = nm, nanometers = nm;
+			doc = { @doc ("nanometer unit") }) double nm = µm / 1000d;
 
 	/** The Constant km. */
 	@constant (
@@ -77,7 +77,7 @@ public interface GamlCoreUnits {
 			altNames = { "kilometer", "kilometers" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("kilometer unit") }) double km = 1000 * m, kilometer = km, kilometers = km;
+			doc = { @doc ("kilometer unit") }) double km = 1000 * m;
 
 	/** The Constant mile. */
 	@constant (
@@ -85,7 +85,7 @@ public interface GamlCoreUnits {
 			altNames = { "miles" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("mile unit") }) double mile = 1.609344d * km, miles = mile;
+			doc = { @doc ("mile unit") }) double mile = 1.609344d * km;
 
 	/** The Constant yard. */
 	@constant (
@@ -109,7 +109,7 @@ public interface GamlCoreUnits {
 			altNames = { "feet", "ft" },
 			category = { IConstantCategory.LENGTH },
 			concept = { IConcept.DIMENSION, IConcept.LENGTH_UNIT },
-			doc = { @doc ("foot unit") }) double foot = 30.48d * cm, feet = foot, ft = foot;
+			doc = { @doc ("foot unit") }) double foot = 30.48d * cm;
 
 	/*
 	 *
@@ -163,7 +163,7 @@ public interface GamlCoreUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc ("cycle: the discrete measure of time in the simulation. Used to force a temporal expression to be expressed in terms of cycles rather than seconds")) int cycle =
-					1, cycles = cycle;
+					1;
 
 	/** The Constant s. */
 	@constant (
@@ -172,7 +172,7 @@ public interface GamlCoreUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc ("second: the time basic unit, with a fixed value of 1. All other durations are expressed with respect to it")) double sec =
-					1d, second = sec, seconds = sec, s = sec;
+					1d;
 
 	/** The Constant mn. */
 	@constant (
@@ -180,8 +180,7 @@ public interface GamlCoreUnits {
 			altNames = { "minutes", "mn" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("minute time unit: defined an exact duration of 60 seconds") }) double minute = 60d * sec,
-					minutes = minute, mn = minute;
+			doc = { @doc ("minute time unit: defined an exact duration of 60 seconds") }) double minute = 60d * sec;
 
 	/** The Constant h. */
 	@constant (
@@ -189,17 +188,15 @@ public interface GamlCoreUnits {
 			altNames = { "hour", "hours" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("hour time unit: defines an exact duration of 60 minutes") }) double h = 60d * minute,
-					hour = h, hours = h;
+			doc = { @doc ("hour time unit: defines an exact duration of 60 minutes") }) double h = 60d * minute;
 
 	/** The Constant d. */
 	@constant (
 			value = "day",
-			altNames = { "days" },
+			altNames = { "d", "days" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("day time unit: defines an exact duration of 24 hours") }) double day = 24d * h, days = day,
-					d = day;
+			doc = { @doc ("day time unit: defines an exact duration of 24 hours") }) double day = 24d * h;
 
 	/** The Constant week */
 	@constant (
@@ -207,8 +204,7 @@ public interface GamlCoreUnits {
 			altNames = { "weeks" },
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
-			doc = { @doc ("week time unit: defines an exact duration of 7 days") }) double week = 7d * day,
-					weeks = week;
+			doc = { @doc ("week time unit: defines an exact duration of 7 days") }) double week = 7d * day;
 
 	/** The Constant month. */
 	@constant (
@@ -218,7 +214,7 @@ public interface GamlCoreUnits {
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
 					value = "month time unit: an approximate duration of 30 days. The number of days of each #month depend of course on the current_date of the model and cannot be constant")) double month =
-							30 * day, months = month;
+							30 * day;
 
 	/** The Constant y. */
 	@constant (
@@ -228,7 +224,7 @@ public interface GamlCoreUnits {
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = @doc (
 					value = "year time unit: an approximate duration of 365 days. The value of #year in number of days varies depending on leap years, etc. and is dependend on the current_date of the model")) double year =
-							365 * day, years = year, y = year;
+							365 * day;
 
 	/** The Constant msec. */
 	@constant (
@@ -237,7 +233,7 @@ public interface GamlCoreUnits {
 			category = { IConstantCategory.TIME },
 			concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT, IConcept.TIME },
 			doc = { @doc ("millisecond time unit: defines an exact duration of 0.001 second") }) double msec =
-					sec / 1000d, millisecond = msec, milliseconds = msec, ms = msec;
+					sec / 1000d;
 
 	/** The Constant msec. */
 	@constant (
@@ -266,7 +262,7 @@ public interface GamlCoreUnits {
 			altNames = { "grams" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("gram unit") }) double gram = kg / 1000, grams = gram;
+			doc = { @doc ("gram unit") }) double gram = kg / 1000;
 
 	/** The Constant ton. */
 	@constant (
@@ -274,7 +270,7 @@ public interface GamlCoreUnits {
 			altNames = { "tons" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("ton unit") }) double ton = 1000 * kg, tons = ton;
+			doc = { @doc ("ton unit") }) double ton = 1000 * kg;
 
 	/** The Constant ounce. */
 	@constant (
@@ -282,7 +278,7 @@ public interface GamlCoreUnits {
 			altNames = { "oz", "ounces" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("ounce unit") }) double ounce = 28.349523125 * gram, oz = ounce, ounces = ounce;
+			doc = { @doc ("ounce unit") }) double ounce = 28.349523125 * gram;
 
 	/** The Constant pound. */
 	@constant (
@@ -290,7 +286,7 @@ public interface GamlCoreUnits {
 			altNames = { "lb", "pounds", "lbm" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("pound unit") }) double pound = 0.45359237 * kg, lb = pound, pounds = pound, lbm = pound;
+			doc = { @doc ("pound unit") }) double pound = 0.45359237 * kg;
 
 	/** The Constant stone. */
 	@constant (
@@ -298,7 +294,7 @@ public interface GamlCoreUnits {
 			altNames = { "st" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("stone unit") }) double stone = 14 * pound, st = stone;
+			doc = { @doc ("stone unit") }) double stone = 14 * pound;
 
 	/** The Constant short ton. */
 	@constant (
@@ -306,7 +302,7 @@ public interface GamlCoreUnits {
 			altNames = { "ston" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("short ton unit") }) double shortton = 2000 * pound, ston = shortton;
+			doc = { @doc ("short ton unit") }) double shortton = 2000 * pound;
 
 	/** The Constant long ton. */
 	@constant (
@@ -314,7 +310,7 @@ public interface GamlCoreUnits {
 			altNames = { "lton" },
 			category = { IConstantCategory.WEIGHT },
 			concept = { IConcept.DIMENSION, IConcept.WEIGHT_UNIT },
-			doc = { @doc ("short ton unit") }) double longton = 2240 * pound, lton = longton;
+			doc = { @doc ("short ton unit") }) double longton = 2240 * pound;
 
 	/*
 	 *
@@ -333,7 +329,7 @@ public interface GamlCoreUnits {
 			altNames = { "liter", "liters", "dm3" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("liter unit") }) double l = m3 / 1000, liter = l, liters = l, dm3 = l;
+			doc = { @doc ("liter unit") }) double l = m3 / 1000;
 
 	/** The Constant cl. */
 	@constant (
@@ -341,7 +337,7 @@ public interface GamlCoreUnits {
 			altNames = { "centiliter", "centiliters" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("centiliter unit") }) double cl = l / 100, centiliter = cl, centiliters = cl;
+			doc = { @doc ("centiliter unit") }) double cl = l / 100;
 
 	/** The Constant dl. */
 	@constant (
@@ -349,7 +345,7 @@ public interface GamlCoreUnits {
 			altNames = { "deciliter", "deciliters" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("deciliter unit") }) double dl = l / 10, deciliter = dl, deciliters = dl;
+			doc = { @doc ("deciliter unit") }) double dl = l / 10;
 
 	/** The Constant hl. */
 	@constant (
@@ -357,7 +353,7 @@ public interface GamlCoreUnits {
 			altNames = { "hectoliter", "hectoliters" },
 			category = { IConstantCategory.VOLUME },
 			concept = { IConcept.DIMENSION, IConcept.VOLUME_UNIT },
-			doc = { @doc ("hectoliter unit") }) double hl = l * 100, hectoliter = hl, hectoliters = hl;
+			doc = { @doc ("hectoliter unit") }) double hl = l * 100;
 	/*
 	 *
 	 * Surface conversions
@@ -367,8 +363,7 @@ public interface GamlCoreUnits {
 			value = "m2",
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = @doc ("square meter: the basic unit for surfaces")) double m2 = m * m, square_meter = m2,
-					square_meters = m2;
+			doc = @doc ("square meter: the basic unit for surfaces")) double m2 = m * m;
 
 	/** The Constant square inch. */
 	@constant (
@@ -376,7 +371,7 @@ public interface GamlCoreUnits {
 			altNames = { "square_inch", "square_inches" },
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = { @doc ("square inch unit") }) double sqin = inch * inch, square_inch = sqin, square_inches = sqin;
+			doc = { @doc ("square inch unit") }) double sqin = inch * inch;
 
 	/** The Constant square foot. */
 	@constant (
@@ -384,7 +379,7 @@ public interface GamlCoreUnits {
 			altNames = { "square_foot", "square_feet" },
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = { @doc ("square foot unit") }) double sqft = foot * foot, square_foot = sqft, square_feet = sqft;
+			doc = { @doc ("square foot unit") }) double sqft = foot * foot;
 
 	/** The Constant square mile. */
 	@constant (
@@ -392,6 +387,6 @@ public interface GamlCoreUnits {
 			altNames = { "square_mile", "square_miles" },
 			category = { IConstantCategory.SURFACE },
 			concept = { IConcept.DIMENSION, IConcept.SURFACE_UNIT },
-			doc = { @doc ("square mile unit") }) double sqmi = mile * mile, square_mile = sqmi, square_miles = sqmi;
+			doc = { @doc ("square mile unit") }) double sqmi = mile * mile;
 
 }

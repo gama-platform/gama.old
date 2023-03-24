@@ -198,6 +198,18 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
 
+	/**
+	 * Dispatch key event.
+	 *
+	 * @param e
+	 *            the e
+	 */
+	@Override
+	public void dispatchSpecialKeyEvent(final int e) {
+		DEBUG.OUT("Special key received by the surface " + e);
+		for (final IEventLayerListener gl : listeners) { gl.specialKeyPressed(e); }
+	}
+
 	@Override
 	public void setMousePosition(final int xm, final int ym) {
 		final int x = xm;

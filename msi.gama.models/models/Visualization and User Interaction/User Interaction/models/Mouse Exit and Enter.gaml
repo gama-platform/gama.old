@@ -46,22 +46,22 @@ experiment Run {
 
 			species eyes aspect: inside;
 			species eyes aspect: outside transparency: closed ? 0.1 : 0.5;
-			event mouse_exit {
+			event #mouse_exit {
 				closed <- true;
 			}
 
-			event mouse_enter {
+			event #mouse_enter {
 				closed <- false;
 			}
 
-			event mouse_move {
+			event #mouse_move {
 				ask eyes {
 					do follow;
 				}
 
 			}
 
-			event mouse_menu {
+			event #mouse_menu {
 				closed <- !closed;
 			}
 

@@ -756,27 +756,6 @@ public interface IKeyword {
 	/** The Morris method */
 	String MORRIS = "morris";
 
-	/** The mouse clicked. */
-	String MOUSE_CLICKED = "mouse_click";
-
-	/** The mouse down. */
-	String MOUSE_DOWN = "mouse_down";
-
-	/** The mouse entered. */
-	String MOUSE_ENTERED = "mouse_enter";
-
-	/** The mouse exited. */
-	String MOUSE_EXITED = "mouse_exit";
-
-	/** The mouse menu. */
-	String MOUSE_MENU = "mouse_menu";
-
-	/** The mouse moved. */
-	String MOUSE_MOVED = "mouse_move";
-
-	/** The mouse up. */
-	String MOUSE_UP = "mouse_up";
-
 	/** The moving 3d skill. */
 	String MOVING_3D_SKILL = "moving3D";
 
@@ -959,7 +938,7 @@ public interface IKeyword {
 
 	/** The pso. */
 	String PSO = "pso";
-	
+
 	/** The proxy. */
 	String PROXY = "proxy";
 
@@ -1418,9 +1397,6 @@ public interface IKeyword {
 
 	/** The zero. */
 	String ZERO = "internal_zero_order_equation";
-
-	/** The event type. */
-	String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 
 	/** The methods. */
 	String[] METHODS =

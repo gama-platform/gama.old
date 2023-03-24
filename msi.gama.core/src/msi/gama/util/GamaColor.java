@@ -2,7 +2,7 @@
  *
  * GamaColor.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,12 +16,10 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.precompiler.IConstantCategory;
 import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
@@ -59,12 +57,7 @@ import msi.gaml.types.Types;
 public class GamaColor extends Color implements IValue, Comparable<Color>/* implements IContainer<Integer, Integer> */ {
 
 	/** The Constant array. */
-	@constant (
-			value = "the set of CSS colors",
-			category = IConstantCategory.COLOR_CSS,
-			concept = {},
-			doc = @doc ("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}")) public final static Object[] array =
-					ColorCSS.array;
+	public final static Object[] array = ColorCSS.array;
 
 	/** The Constant colors. */
 	public final static Map<String, GamaColor> colors = GamaMapFactory.createUnordered();
@@ -316,8 +309,6 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	public String stringValue(final IScope scope) {
 		return toString();
 	}
-	
-	
 
 	/**
 	 * Red.
@@ -442,6 +433,13 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 				c2.getRed() * 0.21d + c2.getGreen() * 0.72d + c2.getBlue() * 0.07d);
 	}
 
+	/**
+	 * Compare to.
+	 *
+	 * @param c2
+	 *            the c 2
+	 * @return the int
+	 */
 	@Override
 	public int compareTo(final Color c2) {
 		return compareRgbTo(c2);

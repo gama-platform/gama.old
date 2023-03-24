@@ -81,6 +81,8 @@ import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.outputs.layers.KeyboardEventLayerDelegate;
+import msi.gama.outputs.layers.MouseEventLayerDelegate;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -935,15 +937,27 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseUnitName(final UnitName object) {
 		final String s = EGaml.getInstance().getKeyOf(object);
-		if (GAML.UNITS.containsKey(s)) {
-			final UnitConstantExpression exp = getFactory().getUnitExpr(s);
-			if (exp.isDeprecated()) {
-				getContext().warning(s + " is deprecated.", IGamlIssue.DEPRECATED, object, (String[]) null);
-			}
-			// Make sure we can return "special" expression like #month or #year -- see #3590
-			return exp.getExpression();
+		UnitConstantExpression exp = caseUnitName(s);
+		if (exp == null) {
+			getContext().error(s + " is not a unit or constant name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+			return null;
 		}
-		getContext().error(s + " is not a unit or constant name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+		if (exp.isDeprecated()) {
+			getContext().warning(s + " is deprecated.", IGamlIssue.DEPRECATED, object, (String[]) null);
+		}
+		return exp;
+	}
+
+	/**
+	 * Case unit name.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the i expression
+	 */
+	public UnitConstantExpression caseUnitName(final String name) {
+		if (GAML.UNITS.containsKey(name)) // Make sure we return "special" expressions like #month or #year -- see #3590
+			return getFactory().getUnitExpr(name);
 		return null;
 	}
 
@@ -1368,6 +1382,22 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (sd.hasBehavior(varName)) return new DenotedActionExpression(sd.getBehavior(varName));
 			if (sd.hasAspect(varName)) return new DenotedActionExpression(sd.getAspect(varName));
 
+			// A last possibility is to offer some transition guidance to users who used to write event layer names as
+			// labels (neither as string or constant). For instance : mouse_move instead of "mouse_move" or #mouse_move.
+			// For that, we emit simply a warning (not an error) and we return the corresponding constant.
+
+			if (MouseEventLayerDelegate.EVENTS.contains(varName)
+					|| KeyboardEventLayerDelegate.EVENTS.contains(varName)) {
+				UnitConstantExpression exp = this.caseUnitName(varName);
+				if (exp != null) {
+					getContext().warning(
+							"The direct usage of the event name (" + varName
+									+ ") is now deprecated and should be replaced either by a string ('" + varName
+									+ "') or a constant if it has been defined (#" + varName + ")",
+							IGamlIssue.UNKNOWN_VAR, object, varName);
+					return exp;
+				}
+			}
 			getContext().error(
 					"The variable " + varName
 							+ " is not defined or accessible in this context. Check its name or declare it",

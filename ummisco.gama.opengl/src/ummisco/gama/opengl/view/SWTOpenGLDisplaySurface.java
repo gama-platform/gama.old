@@ -144,11 +144,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copyForGraphics("in opengl display"));
-		renderer = createRenderer();
-		animator = new GamaGLCanvas(parent, renderer, this).getAnimator();
 		layerManager = new LayerManager(this, output);
 		if (!layerManager.stayProportional()) { output.getData().setDrawEnv(false); }
-		// temp_focus = output.getFacet(IKeyword.FOCUS);
+		renderer = createRenderer();
+		animator = new GamaGLCanvas(parent, renderer, this).getAnimator();
 		animator.start();
 	}
 
@@ -743,6 +742,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void dispatchKeyEvent(final char e) {
 		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
+	}
+
+	@Override
+	public void dispatchSpecialKeyEvent(final int e) {
+		DEBUG.OUT("Special key received by the surface " + e);
+		for (final IEventLayerListener gl : listeners) { gl.specialKeyPressed(e); }
 	}
 
 	@Override

@@ -3,7 +3,7 @@
  * LayerManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -13,11 +13,12 @@ package msi.gama.outputs.display;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.metamodel.shape.IShape;
@@ -25,13 +26,16 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.outputs.layers.AgentLayer;
 import msi.gama.outputs.layers.EventLayer;
+import msi.gama.outputs.layers.EventLayerStatement;
 import msi.gama.outputs.layers.GisLayer;
 import msi.gama.outputs.layers.GraphicLayer;
 import msi.gama.outputs.layers.GridAgentLayer;
 import msi.gama.outputs.layers.GridLayer;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.ImageLayer;
+import msi.gama.outputs.layers.KeyboardEventLayerDelegate;
 import msi.gama.outputs.layers.MeshLayer;
+import msi.gama.outputs.layers.MouseEventLayerDelegate;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.charts.ChartLayer;
@@ -76,6 +80,9 @@ public class LayerManager implements ILayerManager {
 	/** The enabled layers. */
 	private final ILayer[] layers;
 
+	/** The event layers. */
+	private final Map<String, EventLayerStatement> eventLayers = new HashMap<>();
+
 	/** The surface. */
 	final IDisplaySurface surface;
 
@@ -95,6 +102,7 @@ public class LayerManager implements ILayerManager {
 		OverlayLayer overlay = null;
 		final List<ILayer> layers = new ArrayList<>();
 		for (final AbstractLayerStatement layer : output.getLayers()) {
+			if (layer instanceof EventLayerStatement el) { eventLayers.put(el.getName(), el); }
 			if (layer.isToCreate()) {
 				final ILayer result = createLayer(output, layer);
 				if (result instanceof OverlayLayer) {
@@ -270,10 +278,25 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public boolean hasMouseMenuEventLayer() {
-		for (final ILayer i : layers) {
-			if (i instanceof EventLayer && IKeyword.MOUSE_MENU.equals(((EventLayer) i).getEvent())) return true;
-		}
-		return false;
+		return eventLayers.containsKey(MouseEventLayerDelegate.MOUSE_MENU);
+	}
+
+	@Override
+	public boolean hasEscEventLayer() {
+		return eventLayers.containsKey(KeyboardEventLayerDelegate.KEY_ESC);
+	}
+
+	/**
+	 * Checks for arrow event layer.
+	 *
+	 * @return true, if successful
+	 */
+	@Override
+	public boolean hasArrowEventLayer() {
+		return eventLayers.containsKey(KeyboardEventLayerDelegate.ARROW_DOWN)
+				|| eventLayers.containsKey(KeyboardEventLayerDelegate.ARROW_UP)
+				|| eventLayers.containsKey(KeyboardEventLayerDelegate.ARROW_RIGHT)
+				|| eventLayers.containsKey(KeyboardEventLayerDelegate.ARROW_LEFT);
 	}
 
 	@Override

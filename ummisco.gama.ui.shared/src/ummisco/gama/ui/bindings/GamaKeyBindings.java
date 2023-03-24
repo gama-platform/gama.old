@@ -3,7 +3,7 @@
  * GamaKeyBindings.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -205,6 +205,18 @@ public class GamaKeyBindings implements Listener {
 	 */
 	public static boolean ctrl(final MouseEvent e) {
 		return (e.stateMask & COMMAND) != 0;
+	}
+
+	/**
+	 * Shift.
+	 *
+	 * @param e
+	 *            the e
+	 * @return true, if successful
+	 */
+
+	public static boolean shift(final KeyEvent e) {
+		return (e.stateMask & SWT.SHIFT) != 0;
 	}
 
 	/**

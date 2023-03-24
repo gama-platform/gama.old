@@ -336,6 +336,14 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	void dispatchKeyEvent(char character);
 
 	/**
+	 * Dispatch special key event.
+	 *
+	 * @param keyCode
+	 *            the key code
+	 */
+	void dispatchSpecialKeyEvent(int keyCode);
+
+	/**
 	 * Dispatch mouse event.
 	 *
 	 * @param swtEventType
@@ -428,4 +436,18 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 * @return the bounds for snapshot
 	 */
 	Rectangle getBoundsForSnapshot();
+
+	/**
+	 * Checks if the esc key has been redefined as an event in an event layer of this surface
+	 *
+	 * @return true, if is esc redefined
+	 */
+	default boolean isEscRedefined() { return getManager().hasEscEventLayer(); }
+
+	/**
+	 * Checks if is arrow redefined.
+	 *
+	 * @return true, if is arrow redefined
+	 */
+	default boolean isArrowRedefined() { return getManager().hasArrowEventLayer(); }
 }
