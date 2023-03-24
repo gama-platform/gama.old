@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration.stochanalysis;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.exploration.Exploration;
 import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
@@ -68,7 +70,9 @@ import msi.gaml.types.IType;
 						type = IType.ID,
 						optional = true,
 						doc = @doc ("The sampling method to build parameters sets. Available methods are: "
-								+ IKeyword.LHS + ", " + IKeyword.ORTHOGONAL)),
+								+ IKeyword.LHS + ", " + IKeyword.ORTHOGONAL + ", " 
+								+ IKeyword.FACTORIAL + ", "+ IKeyword.UNIFORM + ", " 
+								+ IKeyword.SALTELLI + ", "+ IKeyword.MORRIS)),
 				@facet (
 						name = IKeyword.BATCH_VAR_OUTPUTS,
 						type = IType.LIST,
@@ -80,26 +84,15 @@ import msi.gaml.types.IType;
 						optional = true,
 						doc = @doc ("The number of sample required , 10 by default")),
 				@facet (
-						name = Exploration.SAMPLE_FACTORIAL,
-						type = IType.LIST,
-						of = IType.INT,
-						optional = true,
-						doc = @doc ("The number of sample required.")),
+						name = IKeyword.BATCH_REPORT,
+						type = IType.STRING,
+						optional = false,
+						doc = @doc ("The path to the file where the Sobol report will be written")),
 				@facet (
 						name = IKeyword.BATCH_OUTPUT,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("The path to the file where the automatic batch report will be written")),
-				@facet (
-						name = Exploration.NB_LEVELS,
-						type = IType.INT,
-						optional = true,
-						doc = @doc ("The number of level required, 4 by default")),
-				@facet (
-						name = StochanalysisExploration.THRESHOLD,
-						type = IType.FLOAT,
-						optional = true,
-						doc = @doc ("The threshold for the stochanalysis, will perform an automatic analysis by default"))
+						doc = @doc ("The path to the file where the automatic batch report will be written"))
 
 		},
 		omissible = IKeyword.NAME)
@@ -111,9 +104,6 @@ import msi.gaml.types.IType;
 						value = "method stochanalyse sampling:'latinhypercube' outputs:['my_var'] replicat:10 results:'../path/to/report/file.txt'; ",
 						isExecutable = false) }) })
 public class StochanalysisExploration extends AExplorationAlgorithm {
-
-	/** The Constant THRESHOLD. */
-	public static final String THRESHOLD = "threshold";
 
 	/** The method. */
 	public String method = IKeyword.LHS;
@@ -154,9 +144,6 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 		if (hasFacet(Exploration.SAMPLE_SIZE)) {
 			this.sample_size = Cast.asInt(scope, getFacet(Exploration.SAMPLE_SIZE).value(scope));
-		}
-		if (hasFacet(StochanalysisExploration.THRESHOLD)) {
-			this.threshold = Cast.asFloat(scope, getFacet(StochanalysisExploration.THRESHOLD).value(scope));
 		}
 		if (hasFacet(Exploration.METHODS)) {
 			method = Cast.asString(scope, getFacet(Exploration.METHODS).value(scope));
@@ -205,31 +192,31 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 					Collections.emptyList(), 99.0, Collections.emptyList(), -1.0, Collections.emptyList()));
 			IMap<ParametersSet, List<Object>> sp = GamaMapFactory.create();
 			for (ParametersSet ps : res_outputs.keySet()) { sp.put(ps, res_outputs.get(ps).get(out.toString())); }
-			if (threshold == -1) {
-				List<Double> keys = res_val.keySet().stream().toList();
-				for (Double thresh : keys) {
-					if (res_val.get(thresh).isEmpty()) {
-						res_val.replace(thresh, Stochanalysis.StochasticityAnalysis(sp, thresh, scope));
-					}
+			List<Double> keys = res_val.keySet().stream().toList();
+			for (Double thresh : keys) {
+				if (res_val.get(thresh).isEmpty()) {
+					res_val.replace(thresh, Stochanalysis.StochasticityAnalysis(sp, thresh, scope));
 				}
-				MapOutput.put(out.toString(), res_val);
-			} else {
-				res = Cast.asInt(scope, Stochanalysis.StochasticityAnalysis(sp, threshold, scope).get(0));
 			}
+			MapOutput.put(out.toString(), res_val);
 		}
-		if (threshold == -1) {
-			if (hasFacet(IKeyword.BATCH_OUTPUT)) {
-				String path = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
-				String new_path = scope.getExperiment().getWorkingPath() + "/" + path;
-				Stochanalysis.WriteAndTellResultList(new_path, MapOutput, scope);
-			}
-		} else {
-			res = res / outputs.size();
-			if (hasFacet(IKeyword.BATCH_OUTPUT)) {
-				String path = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
-				String new_path = scope.getExperiment().getWorkingPath() + "/" + path;
-				Stochanalysis.WriteAndTellResult(new_path, res, scope);
-			}
+		
+		// Build report
+		String path = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+		final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
+		final File parent = f.getParentFile();
+		if (!parent.exists()) { parent.mkdirs(); }
+		if (f.exists()) { f.delete(); }
+		Stochanalysis.WriteAndTellReport(f, MapOutput, scope);
+		
+		/* Save the simulation values in the provided .csv file (input and corresponding output) */
+		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
+			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+			final File fo = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+			final File parento = fo.getParentFile();
+			if (!parento.exists()) { parento.mkdirs(); }
+			if (fo.exists()) { fo.delete(); }
+			Stochanalysis.WriteAndTellResult(fo, res_outputs, scope);
 		}
 	}
 

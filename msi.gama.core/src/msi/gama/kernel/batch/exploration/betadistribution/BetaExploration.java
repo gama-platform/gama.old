@@ -102,7 +102,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.BATCH_REPORT,
 						type = IType.STRING,
-						optional = true,
+						optional = false,
 						doc = @doc ("The path to the file where the Betad report will be written")) },
 		omissible = IKeyword.NAME)
 @doc (
@@ -217,10 +217,7 @@ public class BetaExploration extends AExplorationAlgorithm {
 	}
 
 	@Override
-	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
-
-		return null;
-	}
+	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) { return null; }
 
 	/**
 	 * Builds the report string.

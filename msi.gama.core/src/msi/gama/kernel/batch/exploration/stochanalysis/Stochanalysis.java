@@ -26,11 +26,11 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.map.HashedMap;
 
-import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IMap;
+import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gaml.operators.Cast;
 
 /**
@@ -51,7 +51,7 @@ import msi.gaml.operators.Cast;
 public class Stochanalysis {
 
 	/**
-	 * We decided to select alpha = 95% We decided to select beta = 90%
+	 * We decided to select alpha = 95%
 	 * https://en.wikipedia.org/wiki/Student%27s_t-distribution
 	 */
 	final static double[] Talpha = { 6.314, 2.920, 2.353, 2.132, 2.015, 1.943, 1.895, 1.860, 1.833, 1.812, 1.796, 1.782,
@@ -62,11 +62,6 @@ public class Stochanalysis {
 	final static double[] Tbeta = { 3.078, 1.886, 1.638, 1.533, 1.476, 1.440, 1.415, 1.397, 1.383, 1.372, 1.363, 1.356,
 			1.350, 1.345, 1.341, 1.337, 1.333, 1.330, 1.328, 1.325, 1.323, 1.321, 1.319, 1.318, 1.316, 1.315, 1.314,
 			1.313, 1.311, 1.310, 1.303, 1.299, 1.296, 1.292, 1.290, 1.289, 1.282 };
-	// Map<String,List<Double>> Outputs;
-	// List<Map<String,Object>> MySample;
-	// List<String> ParametersNames;
-	// double threshold;
-	// int min_replicat;
 
 	/** The Constant CI. */
 	// 90, 95 and 99% CI interval
@@ -131,7 +126,7 @@ public class Stochanalysis {
 		sb.append("On average requires: " + all_vals.stream().mapToDouble(i -> i * 1d).average().orElse(0.0));
 		sb.append("\tHighest requirements: " + Collections.max(all_vals));
 		sb.append("\tLowest requirements: " + Collections.min(all_vals));
-		sb.append("\n\n");
+		sb.append("--- End of summary ---\n\n");
 		for (String outputs : Out.keySet()) {
 			Map<Double, List<Object>> tmp_map = Out.get(outputs);
 			sb.append("## Output : ");
@@ -257,7 +252,7 @@ public class Stochanalysis {
 	}
 
 	/**
-	 * Write and tell result list.
+	 * Write and tell report.
 	 *
 	 * @param path
 	 *            the path
@@ -266,63 +261,62 @@ public class Stochanalysis {
 	 * @param scope
 	 *            the scope
 	 */
-	public static void WriteAndTellResultList(final String path, final Map<String, Map<Double, List<Object>>> Outputs,
+	public static void WriteAndTellReport(final File f, final Map<String, Map<Double, List<Object>>> outputs,
 			final IScope scope) {
 
 		try {
-			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
-			final File parent = f.getParentFile();
-			if (!parent.exists()) { parent.mkdirs(); }
-			if (f.exists()) { f.delete(); }
 			try (FileWriter fw = new FileWriter(f, false)) {
-				fw.write(buildResultMap(Outputs, scope));
+				fw.write(buildResultMap(outputs, scope));
 			}
 		} catch (IOException e) {
-			throw GamaRuntimeException.error("File " + path + " not found", scope);
+			throw GamaRuntimeException.error("File " + f.toString() + " not found", scope);
 		}
 	}
-
+	
 	/**
-	 * Builds the result txt.
-	 *
-	 * @param nb_replicat
-	 *            the nb replicat
-	 * @return the string
-	 */
-	private static String buildResultTxt(final int nb_replicat) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("STOCHASTICITY ANALYSIS: \n");
-		sb.append("\n");
-		sb.append("Nb minimum replicat found: ");
-		sb.append(nb_replicat);
-		return sb.toString();
-
-	}
-
-	/**
-	 * Write and tell result.
-	 *
-	 * @param path
-	 *            the path
-	 * @param val
-	 *            the val
+	 * Rebuild simulations ouptuts to be written in a file
+	 * 
+	 * @param Outputs
 	 * @param scope
-	 *            the scope
+	 * @return
 	 */
-	public static void WriteAndTellResult(final String path, final int val, final IScope scope) {
-		try {
-			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
-			final File parent = f.getParentFile();
-			if (!parent.exists()) { parent.mkdirs(); }
-			if (f.exists()) { f.delete(); }
-			try (FileWriter fw = new FileWriter(f, false)) {
-				fw.write(buildResultTxt(val));
+	public static String buildSimulationCsv(final IMap<ParametersSet, Map<String, List<Object>>> outputs, IScope scope) {
+		StringBuilder sb = new StringBuilder();
+		String sep = CSVInfo.DELIMITER;
+		
+		// Write the header
+		for (String param : outputs.keySet().stream().findFirst().get().keySet()) { sb.append(param).append(sep); }
+		for (String output : outputs.anyValue(scope).keySet()) { sb.append(output).append(sep); }
+		
+		// Find results and append to global string
+		for (ParametersSet ps : outputs.keySet()) {
+			Map<String, List<Object>> res = outputs.get(ps);
+			int nbr = res.values().stream().findAny().get().size();
+			if (!res.values().stream().allMatch(r -> r.size()==nbr)) { 
+				GamaRuntimeException.warning("Not all sample of stochastic analysis have the same number of replicates", scope); 
 			}
-		} catch (
+			for (int r = 0; r < nbr; r++) {
+				for (Object pvalue : ps.values()) { sb.append(pvalue); }
+				for (String output : res.keySet()) { sb.append(res.get(output).get(r)); }
+			}
+		}
 
-		/** The e. */
-		IOException e) {
-			throw GamaRuntimeException.error("File " + path + " not found", scope);
+		return sb.toString();
+	}
+	
+	/**
+	 * Write and tell row results from simulations
+	 * 
+	 * @param path
+	 * @param Outputs
+	 * @param scope
+	 */
+	public static void WriteAndTellResult(final File f, final IMap<ParametersSet, Map<String, List<Object>>> outputs,
+			final IScope scope) {
+		try (FileWriter fw = new FileWriter(f, false)) {
+			fw.write(buildSimulationCsv(outputs, scope));
+		} catch (Exception e) {
+			throw GamaRuntimeException.error("File " + f.toString() + " not found", scope);
 		}
 	}
 
@@ -345,15 +339,7 @@ public class Stochanalysis {
 		return mean;
 	}
 
-	/**
-	 * Compute mean combination.
-	 *
-	 * @param val
-	 *            the val
-	 * @param scope
-	 *            the scope
-	 * @return the list
-	 */
+
 	/*
 	 * Compute all possible means of combinationSize elements of the list
 	 *
@@ -363,7 +349,7 @@ public class Stochanalysis {
 	 *
 	 * @param combinationSize : size of the local mean to assess
 	 *
-	 * @return return the mean for each number of replicates
+	 * @return the mean for each number of replicates
 	 */
 	private static List<Double> computeMeanCombination(final List<Object> val, final IScope scope) {
 		List<Double> mean = new ArrayList<>();

@@ -315,7 +315,7 @@ public class Sobol {
 	 */
 	public String buildReportString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("SOBOL ANALYSIS :\n");
+		sb.append("SOBOL ANALYSIS:\n");
 		for (String output_name : sobol_analysis.keySet()) {
 			sb.append("##############################\n");
 			sb.append("output variable : " + output_name).append(Strings.LN);

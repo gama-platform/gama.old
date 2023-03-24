@@ -82,7 +82,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.BATCH_REPORT,
 						type = IType.STRING,
-						optional = true,
+						optional = false,
 						doc = @doc ("The path to the file where the Sobol report will be written")),
 				@facet (
 						name = IKeyword.PATH,
@@ -173,14 +173,12 @@ public class SobolExploration extends AExplorationAlgorithm {
 		}
 
 		/* Save the Sobol analysis report in a .txt file */
-		if (hasFacet(IKeyword.BATCH_REPORT)) {
-			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
-			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
-			final File parent = f.getParentFile();
-			if (!parent.exists()) { parent.mkdirs(); }
-			if (f.exists()) { f.delete(); }
-			sobol_analysis.saveResult(f);
-		}
+		String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
+		final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+		final File parent = f.getParentFile();
+		if (!parent.exists()) { parent.mkdirs(); }
+		if (f.exists()) { f.delete(); }
+		sobol_analysis.saveResult(f);
 	}
 
 	@SuppressWarnings ("unchecked")

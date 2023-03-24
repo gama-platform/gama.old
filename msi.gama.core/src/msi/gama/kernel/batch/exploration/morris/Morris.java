@@ -71,10 +71,10 @@ public class Morris {
 
 	/** ########################## SAVING/LOADING METHODS ############################# */
 
-	public static String buildResultTxt(final String name, final boolean first, final Map<String, Double> mu,
+	public static String buildResultTxt(final String name, final Map<String, Double> mu,
 			final Map<String, Double> mu_star, final Map<String, Double> sigma) {
 		StringBuilder sb = new StringBuilder();
-		if (first) { sb.append("==MORRIS ANALYSIS : \n"); }
+		sb.append("MORRIS ANALYSIS : \n");
 		sb.append("\n");
 		sb.append("Result for output :" + name + "\n");
 		sb.append("mu : \n");
@@ -119,7 +119,7 @@ public class Morris {
 	 * @param morris_coefficient
 	 *            the morris coefficient
 	 */
-	public static void WriteAndTellResult(final String name, final String path, final boolean first, final IScope scope,
+	public static void WriteAndTellResult(final String name, final String path, final IScope scope,
 			final List<Map<String, Double>> morris_coefficient) {
 		Map<String, Double> mu = morris_coefficient.get(0);
 		Map<String, Double> mu_star = morris_coefficient.get(1);
@@ -127,7 +127,7 @@ public class Morris {
 		try {
 			File file = new File(path);
 			try (FileWriter fw = new FileWriter(file, false)) {
-				fw.write(buildResultTxt(name, first, mu, mu_star, sigma));
+				fw.write(buildResultTxt(name, mu, mu_star, sigma));
 			}
 		} catch (IOException e) {
 			throw GamaRuntimeException.error("File " + path + " not found", scope);
