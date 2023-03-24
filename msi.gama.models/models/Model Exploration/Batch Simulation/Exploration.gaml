@@ -58,7 +58,7 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 // 3. coefficient of variation 
 experiment replication_analysis parent: batch_abstract type: batch until: world.stop_sim() or ( time > end_cycle ) 
 	repeat:40 keep_simulations:false {
-	method stochanalyse outputs:["nb_preys", "nb_predators"] results:"Results/stochanalysis.txt" sample:3;
+	method stochanalyse outputs:["nb_preys", "nb_predators"] report:"Results/stochanalysis.txt" sample:3;
 } 
 
 // This experiment explores two parameters with an exhaustive strategy (default sampling method for exploration),
