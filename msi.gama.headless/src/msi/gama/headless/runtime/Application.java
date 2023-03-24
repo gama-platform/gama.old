@@ -3,7 +3,7 @@
  * Application.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -363,12 +363,12 @@ public class Application implements IApplication {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
 			// GamaListener.newInstance(this.socket, this);
-			new GamaListener(this.socket, this, false,"","","");
-		} else if (args.contains(SSOCKET_PARAMETER)) { 
+			new GamaListener(this.socket, this, false, "", "", "");
+		} else if (args.contains(SSOCKET_PARAMETER)) {
 			final String jks = args.contains(SSOCKET_PARAMETER_JKSPATH) ? after(args, SSOCKET_PARAMETER_JKSPATH) : "";
 			final String spwd = args.contains(SSOCKET_PARAMETER_SPWD) ? after(args, SSOCKET_PARAMETER_SPWD) : "";
 			final String kpwd = args.contains(SSOCKET_PARAMETER_KPWD) ? after(args, SSOCKET_PARAMETER_KPWD) : "";
-//			System.out.println(jks+" "+spwd+" "+kpwd);
+			// System.out.println(jks+" "+spwd+" "+kpwd);
 			new GamaListener(this.socket, this, true, jks, spwd, kpwd);
 		} else {
 			runSimulation(args);
@@ -573,7 +573,13 @@ public class Application implements IApplication {
 		final GamlModelBuilder builder = new GamlModelBuilder(injector);
 
 		final List<GamlCompilationError> errors = new ArrayList<>();
-		final IModel mdl = builder.compile(URI.createURI(pathToModel), errors);
+		URI uri;
+		try {
+			uri = URI.createFileURI(pathToModel);
+		} catch (Exception e) {
+			uri = URI.createURI(pathToModel);
+		}
+		final IModel mdl = builder.compile(uri, errors);
 
 		GamaExecutorService.CONCURRENCY_SIMULATIONS.set(true);
 		GamaExecutorService.THREADS_NUMBER.set(processorQueue.getCorePoolSize());
@@ -637,8 +643,10 @@ public class Application implements IApplication {
 	/**
 	 * Assert is experiment.
 	 *
-	 * @param experimentName the experiment name
-	 * @param expPlan the exp plan
+	 * @param experimentName
+	 *            the experiment name
+	 * @param expPlan
+	 *            the exp plan
 	 */
 	private void assertIsExperiment(final String experimentName, final IExperimentPlan expPlan) {
 		if (expPlan == null) {
