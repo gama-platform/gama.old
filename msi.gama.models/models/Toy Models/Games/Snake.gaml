@@ -50,22 +50,31 @@ global {
 	}
 	
 	action move_up {
-		if (last(the_snake.headings) != 90) {
+		
+		if ( ! empty(the_snake.headings) and last(the_snake.headings) != 90
+			or empty(the_snake.headings) and the_snake.headings != 90
+		) {
 			the_snake.headings <+ -90.0;
 		}
 	}
 	action move_down {
-		if (last(the_snake.headings) != -90) {
+		if ( ! empty(the_snake.headings) and last(the_snake.headings) != -90
+			or empty(the_snake.headings) and the_snake.headings != -90
+		) {
 			the_snake.headings <+ 90.0;
 		}
 	}
 	action move_left {
-		if (last(the_snake.headings)!= 0) {
+		if ( ! empty(the_snake.headings) and length(the_snake.headings) > 0 and last(the_snake.headings) != 0
+			or empty(the_snake.headings) and the_snake.headings != 0
+		) {
 			the_snake.headings <+ 180.0;
 		}
 	}
 	action move_right {
-		if (last(the_snake.headings)!= 180) {
+		if ( ! empty(the_snake.headings) and last(the_snake.headings)!= 180
+			or empty(the_snake.headings) and the_snake.headings != 180
+		) {
 			the_snake.headings <+ 0.0;
 		}
 	}
