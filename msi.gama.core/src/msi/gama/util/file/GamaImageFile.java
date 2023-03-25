@@ -343,7 +343,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 		try {
 			final File f = getFile(scope);
 			f.setWritable(true);
-			ImageIO.write(imageFromMatrix(scope), getExtension(scope), f);
+			ImageIO.write(GamaIntMatrix.constructBufferedImageFromMatrix(scope, getBuffer()), getExtension(scope), f);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
@@ -426,7 +426,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 	 *            the preferred size
 	 * @return the i matrix
 	 */
-	private IMatrix matrixValueFromImage(final IScope scope, final BufferedImage image, final GamaPoint preferredSize) {
+	public static IMatrix matrixValueFromImage(final IScope scope, final BufferedImage image,
+			final GamaPoint preferredSize) {
 		int xSize, ySize;
 		BufferedImage resultingImage = image;
 		if (preferredSize == null) {
@@ -446,24 +447,6 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer> implement
 			for (int j = 0; j < ySize; j++) { matrix.set(scope, i, j, resultingImage.getRGB(i, j)); }
 		}
 		return matrix;
-
-	}
-
-	/**
-	 * Image from matrix.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @return the buffered image
-	 */
-	private BufferedImage imageFromMatrix(final IScope scope) {
-		final int xSize = getBuffer().getCols(scope);
-		final int ySize = getBuffer().getRows(scope);
-		final BufferedImage resultingImage = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
-		for (int i = 0; i < xSize; i++) {
-			for (int j = 0; j < ySize; j++) { resultingImage.setRGB(i, j, getBuffer().get(scope, i, j)); }
-		}
-		return resultingImage;
 
 	}
 
