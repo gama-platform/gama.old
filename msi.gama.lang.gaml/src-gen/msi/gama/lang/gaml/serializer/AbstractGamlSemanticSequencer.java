@@ -65,6 +65,7 @@ import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.VarFakeDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
+import msi.gama.lang.gaml.gaml.imageDisplayStatement;
 import msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement;
 import msi.gama.lang.gaml.services.GamlGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
@@ -358,6 +359,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				return; 
 			case GamlPackage.VARIABLE_REF:
 				sequence_VariableRef(context, (VariableRef) semanticObject); 
+				return; 
+			case GamlPackage.IMAGE_DISPLAY_STATEMENT:
+				sequence_imageDisplayStatement(context, (imageDisplayStatement) semanticObject); 
 				return; 
 			case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT:
 				sequence_speciesOrGridDisplayStatement(context, (speciesOrGridDisplayStatement) semanticObject); 
@@ -1976,7 +1980,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     TypeRef returns TypeRef
 	 *
 	 * Constraint:
-	 *     ((ref=[TypeDefinition|ID] parameter=TypeInfo?) | parameter=TypeInfo)
+	 *     ((ref=[TypeDefinition|ID] parameter=TypeInfo?) | parameter=TypeInfo)?
 	 * </pre>
 	 */
 	protected void sequence_TypeRef(ISerializationContext context, TypeRef semanticObject) {
@@ -2203,6 +2207,21 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 * </pre>
 	 */
 	protected void sequence_displayBlock(ISerializationContext context, Block semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     displayStatement returns imageDisplayStatement
+	 *     imageDisplayStatement returns imageDisplayStatement
+	 *
+	 * Constraint:
+	 *     (key=_ImageLayerKey expr=Expression facets+=Facet*)
+	 * </pre>
+	 */
+	protected void sequence_imageDisplayStatement(ISerializationContext context, imageDisplayStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

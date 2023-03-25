@@ -221,6 +221,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createspeciesOrGridDisplayStatementAdapter();
       }
       @Override
+      public Adapter caseimageDisplayStatement(imageDisplayStatement object)
+      {
+        return createimageDisplayStatementAdapter();
+      }
+      @Override
       public Adapter caseActionArguments(ActionArguments object)
       {
         return createActionArgumentsAdapter();
@@ -878,6 +883,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createspeciesOrGridDisplayStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.imageDisplayStatement <em>image Display Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.imageDisplayStatement
+   * @generated
+   */
+  public Adapter createimageDisplayStatementAdapter()
   {
     return null;
   }

@@ -79,6 +79,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Display/name"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//speciesOrGridDisplayStatement"/>
+    <genClasses ecoreClass="Gaml.ecore#//imageDisplayStatement"/>
     <genClasses ecoreClass="Gaml.ecore#//ActionArguments">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ActionArguments/args"/>
     </genClasses>

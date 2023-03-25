@@ -285,6 +285,15 @@ public interface GamlFactory extends EFactory
   speciesOrGridDisplayStatement createspeciesOrGridDisplayStatement();
 
   /**
+   * Returns a new object of class '<em>image Display Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>image Display Statement</em>'.
+   * @generated
+   */
+  imageDisplayStatement createimageDisplayStatement();
+
+  /**
    * Returns a new object of class '<em>Action Arguments</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

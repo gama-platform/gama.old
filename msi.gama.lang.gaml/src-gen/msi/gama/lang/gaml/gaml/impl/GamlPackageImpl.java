@@ -74,6 +74,7 @@ import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VarFakeDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
+import msi.gama.lang.gaml.gaml.imageDisplayStatement;
 import msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -293,6 +294,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass speciesOrGridDisplayStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass imageDisplayStatementEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1279,6 +1287,17 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EClass getspeciesOrGridDisplayStatement()
   {
     return speciesOrGridDisplayStatementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getimageDisplayStatement()
+  {
+    return imageDisplayStatementEClass;
   }
 
   /**
@@ -2356,6 +2375,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     speciesOrGridDisplayStatementEClass = createEClass(SPECIES_OR_GRID_DISPLAY_STATEMENT);
 
+    imageDisplayStatementEClass = createEClass(IMAGE_DISPLAY_STATEMENT);
+
     actionArgumentsEClass = createEClass(ACTION_ARGUMENTS);
     createEReference(actionArgumentsEClass, ACTION_ARGUMENTS__ARGS);
 
@@ -2545,6 +2566,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     s_SolveEClass.getESuperTypes().add(this.getStatement());
     s_DisplayEClass.getESuperTypes().add(this.getStatement());
     speciesOrGridDisplayStatementEClass.getESuperTypes().add(this.getStatement());
+    imageDisplayStatementEClass.getESuperTypes().add(this.getStatement());
     argumentDefinitionEClass.getESuperTypes().add(this.getVarDefinition());
     facetEClass.getESuperTypes().add(this.getVarDefinition());
     argumentPairEClass.getESuperTypes().add(this.getExpression());
@@ -2671,6 +2693,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEAttribute(getS_Display_Name(), ecorePackage.getEString(), "name", null, 0, 1, S_Display.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(speciesOrGridDisplayStatementEClass, speciesOrGridDisplayStatement.class, "speciesOrGridDisplayStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(imageDisplayStatementEClass, imageDisplayStatement.class, "imageDisplayStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(actionArgumentsEClass, ActionArguments.class, "ActionArguments", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getActionArguments_Args(), this.getArgumentDefinition(), null, "args", null, 0, -1, ActionArguments.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
