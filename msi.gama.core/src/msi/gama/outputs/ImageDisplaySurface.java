@@ -27,6 +27,7 @@ import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
@@ -55,7 +56,7 @@ import msi.gaml.operators.Files;
  * The Class ImageDisplaySurface.
  */
 @display (
-		value = "image")
+		value = IKeyword.IMAGE)
 @doc ("A display used to save the graphical representations of agents into image files")
 public class ImageDisplaySurface implements IDisplaySurface {
 

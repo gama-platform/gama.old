@@ -353,8 +353,8 @@ import msi.gaml.types.Types;
 						@example (
 								value = "}",
 								isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER, IKeyword.IMAGE,
-				IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.SPECIES_LAYER, IKeyword.TEXT })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.IMAGE_LAYER, IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.SPECIES_LAYER, IKeyword.TEXT })
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	/** The Constant XRANGE. */

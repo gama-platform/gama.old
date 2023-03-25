@@ -18,7 +18,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
@@ -45,8 +44,7 @@ import msi.gaml.types.IType;
 		kind = ISymbolKind.LAYER,
 		with_sequence = false,
 		concept = { IConcept.DISPLAY, IConcept.FILE, IConcept.LOAD_FILE })
-@inside (
-		symbols = IKeyword.DISPLAY)
+
 @facets (
 		value = { @facet (
 				name = IKeyword.FILE,
@@ -105,7 +103,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("(openGL only) specify whether the image display is refreshed or not. (false by default, true should be used in cases of images that are modified over the simulation)")) },
 		omissible = IKeyword.NAME)
 @doc (
-		value = "`" + IKeyword.IMAGE
+		value = "`" + IKeyword.IMAGE_LAYER
 				+ "` allows modeler to display an image (e.g. as background of a simulation). Note that this image will not be dynamically changed or moved in OpenGL, unless the refresh: facet is set to true.",
 		usages = { @usage (
 				value = "The general syntax is:",

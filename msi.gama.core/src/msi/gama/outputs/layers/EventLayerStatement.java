@@ -129,8 +129,8 @@ import msi.gaml.types.IType;
 								@example (
 										value = "}",
 										isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, "graphics", IKeyword.GRID_LAYER, IKeyword.IMAGE,
-				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER, })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.IMAGE_LAYER, IKeyword.OVERLAY, IKeyword.SPECIES_LAYER, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
 	/**
