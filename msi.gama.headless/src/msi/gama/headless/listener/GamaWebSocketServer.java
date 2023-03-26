@@ -212,6 +212,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 			IMap<String, Object> map = extractParam(socket, message);
 			map.put("server", this);
 			DEBUG.OUT(map.get("type"));
+			DEBUG.OUT(map.get("expr"));
 			final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
 			final String socket_id = map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
 			if(get_listener().getExperiment(socket_id, exp_id)!=null  && !get_listener().getExperiment(socket_id, exp_id).controller.isPaused() ) {
