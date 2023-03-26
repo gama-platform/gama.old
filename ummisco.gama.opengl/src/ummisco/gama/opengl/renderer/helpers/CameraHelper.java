@@ -1046,7 +1046,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			// (like CTRL+SHIFT+H)
 			// First the global keystrokes
 			case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
-				if (getRenderer().getSurface().isEscRedefined()) { ViewsHelper.toggleFullScreenMode(); }
+				if (!getRenderer().getSurface().isEscRedefined()) { ViewsHelper.toggleFullScreenMode(); }
 				return;
 			case 'p':
 			case 'P':
