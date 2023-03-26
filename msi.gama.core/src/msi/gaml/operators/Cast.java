@@ -601,7 +601,7 @@ public class Cast {
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST, IConcept.CONTAINER })
 	@doc (
-			value = "creates a matrix with a size provided by the first operand, and filled with the second operand",
+			value = "creates a matrix with a size provided by the first operand, and filled with the second operand. The given expression, unless constant, is evaluated for each cell ",
 			comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
 			see = { IKeyword.MATRIX, "as_matrix" })
 	@test ("{2,2} matrix_with (1) = matrix([1,1],[1,1])")
