@@ -281,7 +281,7 @@ init {
 	gama.pref_display_antialias <- false;
 
 	//Default background color ('background' facet of 'display')
-	gama.pref_display_background_color <- °white;
+	gama.pref_display_background_color <- #white;
 
 	//Continue to draw displays when in Modeling perspective
 	gama.pref_display_continue_drawing <- false;
@@ -290,7 +290,7 @@ init {
 	gama.pref_display_default <- 'Java2D';
 
 	//Default color of agents
-	gama.pref_display_default_color <- °yellow;
+	gama.pref_display_default_color <- #yellow;
 
 	//Default font to use in 'draw'
 	gama.pref_display_default_font <- font('Helvetica',12.0,#plain);

@@ -23,8 +23,8 @@ global {
 experiment urlImage {
 	output {
 		display 'display' background: #white {
-			image "Copy" file: copy;
-			image "URL Image" file: im ;
+			image  copy;
+			image im ;
 		}
 
 	}

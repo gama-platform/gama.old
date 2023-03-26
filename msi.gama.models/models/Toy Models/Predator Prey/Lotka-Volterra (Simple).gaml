@@ -61,7 +61,7 @@ experiment maths type: gui {
 		}
 		display PhasePortrait  {																// creation of a display to show the phase portait, values are plotted at every time step
 			chart "Lotka Volterra Phase Portrait" type: xy background: #white {							// the chart, os type 'xy', is named Lotka Volterra Phase portrait, it shows a quantity according to another one, and the background is white
-			data ' ' value: {predator_death_rate / predation_efficiency, prey_birth_rate/predation_rate} color: °blue; // equilibrium point
+			data ' ' value: {predator_death_rate / predation_efficiency, prey_birth_rate/predation_rate} color: #blue; // equilibrium point
 			data 'Number of preys according to number of predators' value:{first(LotkaVolterra_agent).nb_prey, first(LotkaVolterra_agent).nb_predator} color: #black ;	// number of predators according to the number of preys plotted in black
 			}
 		}

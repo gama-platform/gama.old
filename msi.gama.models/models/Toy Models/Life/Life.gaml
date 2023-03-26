@@ -23,13 +23,13 @@ global torus: torus_environment {
 	//Conditions to birth
 	list<int> birth_conditions <- [3];
 	//Color for living cells
-	rgb livingcolor <- °white;
+	rgb livingcolor <- #white;
 	//Color for dying cells
-	rgb dyingcolor <- °red;
+	rgb dyingcolor <- #red;
 	//Color for emerging cells
-	rgb emergingcolor <- °orange;
+	rgb emergingcolor <- #orange;
 	//Color for dead cells
-	rgb deadcolor <- °black;
+	rgb deadcolor <- #black;
 	//Shape of the environment
 	geometry shape <- rectangle(environment_width, environment_height);
 	

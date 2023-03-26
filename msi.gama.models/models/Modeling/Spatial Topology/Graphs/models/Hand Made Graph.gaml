@@ -47,20 +47,20 @@ experiment create_graph type: gui {
 		display graph1 type: 3d{
 			graphics "the graph 1" {
 				loop e over: the_graph1.edges {
-					draw e color: °blue; 
+					draw e color: #blue; 
 				}
 				loop n over: the_graph1.vertices {
-					draw circle(2) at: point(n) color: °blue; 
+					draw circle(2) at: point(n) color: #blue; 
 				}
 			}
 		}
 		display graph2 type: 3d{
 			graphics "the graph 2" {
 				loop e over: the_graph2.edges {
-					draw e color: °red; 
+					draw e color: #red; 
 				}
 				loop n over: the_graph2.vertices {
-					draw circle(2) at: point(n) color: °red; 
+					draw circle(2) at: point(n) color: #red; 
 				}
 			}
 		}

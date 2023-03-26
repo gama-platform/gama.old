@@ -21,7 +21,7 @@ species object skills: [moving] {
 	}
 
 	aspect default {
-		draw sphere(5) at: location color: °white border: #gray;
+		draw sphere(5) at: location color: #white border: #gray;
 	}
 
 }

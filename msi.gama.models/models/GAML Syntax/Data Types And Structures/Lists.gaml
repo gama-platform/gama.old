@@ -75,7 +75,7 @@ species declaring_list_attributes {
 		// Some special casting operations are applied to specific types, like points...
 		write sample(list(any(my_agents).location));
 		// ... colors ...
-		write sample(list(°pink));
+		write sample(list(#pink));
 		// ... or strings
 		write sample(list("This is a string"));
 		

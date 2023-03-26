@@ -94,7 +94,7 @@ grid cells height:cell_max_size width:cell_max_size {
 			// display each cell as a square. The color is linked to the value of the diffused variable.
 			draw square(size_cell) color:hsb(value,1.0,1.0) border:#black at:pos;
 			// display the ratio in each square.
-			draw string(value) at: pos + {-size_cell/3,0,2} color: °black font: font("Helvetica", size_cell * #zoom * 2/3, #bold) perspective:true;
+			draw string(value) at: pos + {-size_cell/3,0,2} color: #black font: font("Helvetica", size_cell * #zoom * 2/3, #bold) perspective:true;
 		}
 	}
 }

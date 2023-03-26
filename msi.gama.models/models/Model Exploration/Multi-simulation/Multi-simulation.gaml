@@ -46,7 +46,7 @@ experiment main type: gui {
 			//we use an overlay to display the speed of the agents in the simulation
 			overlay position: { 5, 5 } size: { 180 #px, 30 #px } background: # black transparency: 0.5 border: #black rounded: true
             {
-               draw "agent_speed: " + agent_speed color: # white font: font("SansSerif", 20, #bold) at: { 10°px, 20°px };
+               draw "agent_speed: " + agent_speed color: # white font: font("SansSerif", 20, #bold) at: { 10#px, 20#px };
             }
 			species dummy;
 		}

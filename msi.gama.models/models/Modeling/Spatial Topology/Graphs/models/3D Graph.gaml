@@ -73,7 +73,7 @@ species node_agent skills: [moving3D] {
 	}
 
     aspect base {
-		draw sphere(10) color:°black;
+		draw sphere(10) color:#black;
 	}
 	
 	aspect dynamic {
@@ -113,7 +113,7 @@ experiment SimpleDisplay type: gui {
 					loop eg over: my_graph.edges {
 						geometry edge_geom <- geometry(eg);
 						float val <- 255 * edge_geom.perimeter / distance; 
-						draw line(edge_geom.points) color:°black;
+						draw line(edge_geom.points) color:#black;
 					}
 				}
 				

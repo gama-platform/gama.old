@@ -240,7 +240,7 @@ species branch parent: tree_part {
 	aspect default {
 		draw line([base, end], width) color: season.branch_color; // border: #green;
 		if (season.current_season = "winter") and (abs(beta) < 50) {
-			draw line([base + {0, 0, 1.2 * width}, end + {0, 0, 1.2 * width}], width * sin(180 * season.current_day / season.season_duration)) color: °white;
+			draw line([base + {0, 0, 1.2 * width}, end + {0, 0, 1.2 * width}], width * sin(180 * season.current_day / season.season_duration)) color: #white;
 		}
 
 	}

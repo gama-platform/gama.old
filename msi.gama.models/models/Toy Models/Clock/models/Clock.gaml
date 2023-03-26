@@ -61,14 +61,14 @@ species  clock {
 		}
 		aspect default {
 			draw clock_normal size: 10*zoom;
-			draw string(" " + cycle + " cycles")  size:zoom/2 font:"times" color:°black at:{clock_x-5,clock_y+5};
+			draw string(" " + cycle + " cycles")  size:zoom/2 font:"times" color:#black at:{clock_x-5,clock_y+5};
 			draw clock_big_hand rotate: nb_minutes*(360/60)  + 90  size: {7 * zoom, 2} at:location + {0,0,0.1}; //Modulo with the representation of a minute in ms and divided by 10000 to get the degree of rotation
 			draw clock_small_hand rotate: nb_hours*(360/12)  + 90  size:{5*zoom, 2} at:location + {0,0,0.1};			
 			draw clock_alarm rotate:      (alarmCycle/12000)  size: zoom/3 at:location + {0,0,0.1}; // Alarm time
-			draw string( " " + int(nb_days) + " Days")  size:zoom/2 font:"times" color:°black at:{clock_x-5,clock_y+8};
-			draw string( " " + int(nb_hours) + " Hours")  size:zoom/2 font:"times" color:°black at:{clock_x-5,clock_y+10};
-			draw string( " " + int(nb_minutes) + " Minutes")  size:zoom/2 font:"times" color:°black at:{clock_x-5,clock_y+12};
-			draw string( " " + timeElapsed + " Seconds")  size:zoom/2 font:"times" color:°black at:{clock_x-5,clock_y+14};
+			draw string( " " + int(nb_days) + " Days")  size:zoom/2 font:"times" color:#black at:{clock_x-5,clock_y+8};
+			draw string( " " + int(nb_hours) + " Hours")  size:zoom/2 font:"times" color:#black at:{clock_x-5,clock_y+10};
+			draw string( " " + int(nb_minutes) + " Minutes")  size:zoom/2 font:"times" color:#black at:{clock_x-5,clock_y+12};
+			draw string( " " + timeElapsed + " Seconds")  size:zoom/2 font:"times" color:#black at:{clock_x-5,clock_y+14};
 			 
 		}
  

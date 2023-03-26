@@ -37,7 +37,7 @@ global {
    
    
   
-   float step <- 1°h;
+   float step <- 1#h;
    
    init {
    	 //Initialization of the cells
