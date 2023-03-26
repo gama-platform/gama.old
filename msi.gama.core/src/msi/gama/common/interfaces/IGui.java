@@ -303,6 +303,15 @@ public interface IGui {
 	}
 
 	/**
+	 * Copy text from clipboard.
+	 *
+	 * @return the string
+	 */
+	default String copyTextFromClipboard() {
+		return null;
+	}
+
+	/**
 	 * Open simulation perspective.
 	 *
 	 * @param model

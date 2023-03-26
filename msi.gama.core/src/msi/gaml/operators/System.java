@@ -2,7 +2,7 @@
  *
  * System.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -62,6 +62,16 @@ import msi.gaml.types.Types;
  *
  */
 public class System {
+
+	/**
+	 * Op dead.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @return the boolean
+	 */
 
 	/**
 	 * Op dead.
@@ -144,6 +154,20 @@ public class System {
 	 *            the expr
 	 * @return the boolean
 	 */
+
+	/**
+	 * Checks if is reachable.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param address
+	 *            the address
+	 * @param openPort
+	 *            the open port
+	 * @param timeout
+	 *            the timeout
+	 * @return the boolean
+	 */
 	@operator (
 			value = "is_reachable",
 			can_be_const = true,
@@ -165,6 +189,16 @@ public class System {
 			return false;
 		}
 	}
+
+	/**
+	 * Play sound.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @return the boolean
+	 */
 
 	/**
 	 * Play sound.
@@ -210,6 +244,18 @@ public class System {
 	 *            the expr
 	 * @return the boolean
 	 */
+
+	/**
+	 * Checks if is reachable.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param address
+	 *            the address
+	 * @param timeout
+	 *            the timeout
+	 * @return the boolean
+	 */
 	@operator (
 			value = "is_reachable",
 			concept = IConcept.TEST)
@@ -222,6 +268,16 @@ public class System {
 	public static Boolean is_reachable(final IScope scope, final String address, final int timeout) {
 		return is_reachable(scope, address, 80, timeout);
 	}
+
+	/**
+	 * Console.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @return the string
+	 */
 
 	/**
 	 * Console.
@@ -255,6 +311,18 @@ public class System {
 	 *            the directory
 	 * @return the string
 	 */
+
+	/**
+	 * Console.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param directory
+	 *            the directory
+	 * @return the string
+	 */
 	@operator (
 			value = "command",
 			category = { IOperatorCategory.SYSTEM },
@@ -264,6 +332,20 @@ public class System {
 	public static String console(final IScope scope, final String s, final String directory) {
 		return console(scope, s, directory, GamaMapFactory.create());
 	}
+
+	/**
+	 * Console.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param directory
+	 *            the directory
+	 * @param environment
+	 *            the environment
+	 * @return the string
+	 */
 
 	/**
 	 * Console.
@@ -332,6 +414,20 @@ public class System {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Op get value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param a
+	 *            the a
+	 * @param s
+	 *            the s
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = { IKeyword._DOT, IKeyword.OF },
 			type = ITypeProvider.TYPE_AT_INDEX + 2,
@@ -380,6 +476,18 @@ public class System {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
+
+	/**
+	 * Op copy.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@operator (
 			value = "copy",
 			type = ITypeProvider.TYPE_AT_INDEX + 1,
@@ -393,6 +501,18 @@ public class System {
 		if (o instanceof IValue) return ((IValue) o).copy(scope);
 		return o;
 	}
+
+	/**
+	 * User input.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param map
+	 *            the map
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
 
 	/**
 	 * User input.
@@ -451,6 +571,20 @@ public class System {
 	 *            the font
 	 * @return the i map
 	 */
+
+	/**
+	 * User input.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param map
+	 *            the map
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
 	@operator (
 			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -484,6 +618,18 @@ public class System {
 	 *            the font
 	 * @return the i map
 	 */
+
+	/**
+	 * User input deprecated.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
 	@operator (
 			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -504,6 +650,16 @@ public class System {
 		return userInputDialog(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", parameters, font,
 				null);
 	}
+
+	/**
+	 * User input.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param map
+	 *            the map
+	 * @return the i map
+	 */
 
 	/**
 	 * User input.
@@ -557,6 +713,18 @@ public class System {
 	 *            the map
 	 * @return the i map
 	 */
+
+	/**
+	 * User input.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param map
+	 *            the map
+	 * @return the i map
+	 */
 	@operator (
 			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -578,6 +746,18 @@ public class System {
 		map.forEach((k, v) -> { parameters.add(enterValue(scope, k, v)); });
 		return userInputDialog(scope, title, parameters);
 	}
+
+	/**
+	 * User input deprecated.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @return the i map
+	 */
 
 	/**
 	 * User input deprecated.
@@ -620,6 +800,16 @@ public class System {
 	 *            the parameters
 	 * @return the i map
 	 */
+
+	/**
+	 * User input deprecated.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param parameters
+	 *            the parameters
+	 * @return the i map
+	 */
 	@operator (
 			value = IKeyword.USER_INPUT,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -637,6 +827,20 @@ public class System {
 	public static IMap<String, Object> userInputDeprecated(final IScope scope, final IList parameters) {
 		return userInputDialog(scope, parameters);
 	}
+
+	/**
+	 * User input deprecated.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
 
 	/**
 	 * User input deprecated.
@@ -685,6 +889,22 @@ public class System {
 	 *            the font
 	 * @return the i map
 	 */
+
+	/**
+	 * User input deprecated.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @param color
+	 *            the color
+	 * @return the i map
+	 */
 	@SuppressWarnings ("unchecked")
 	@operator (
 			value = IKeyword.USER_INPUT,
@@ -705,6 +925,18 @@ public class System {
 			final IList parameters, final GamaFont font, final GamaColor color) {
 		return userInputDialog(scope, title, parameters, font, color);
 	}
+
+	/**
+	 * User input dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @return the i map
+	 */
 
 	/**
 	 * User input dialog.
@@ -745,6 +977,16 @@ public class System {
 	 *            the parameters
 	 * @return the i map
 	 */
+
+	/**
+	 * User input dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param parameters
+	 *            the parameters
+	 * @return the i map
+	 */
 	@operator (
 			value = IKeyword.USER_INPUT_DIALOG,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -761,6 +1003,20 @@ public class System {
 		final IAgent agent = scope.getAgent();
 		return userInputDialog(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", parameters);
 	}
+
+	/**
+	 * User input dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
 
 	/**
 	 * User input dialog.
@@ -809,6 +1065,22 @@ public class System {
 	 *            the font
 	 * @return the i map
 	 */
+
+	/**
+	 * User input dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @param color
+	 *            the color
+	 * @return the i map
+	 */
 	@SuppressWarnings ("unchecked")
 	@operator (
 			value = IKeyword.USER_INPUT_DIALOG,
@@ -841,6 +1113,24 @@ public class System {
 	 *            the font
 	 * @return the i map
 	 */
+
+	/**
+	 * User input dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @param color
+	 *            the color
+	 * @param showTitle
+	 *            the show title
+	 * @return the i map
+	 */
 	@SuppressWarnings ("unchecked")
 	@operator (
 			value = IKeyword.USER_INPUT_DIALOG,
@@ -861,6 +1151,20 @@ public class System {
 		return GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE,
 				scope.getGui().openUserInputDialog(scope, title, parameters, font, color, showTitle));
 	}
+
+	/**
+	 * Open wizard.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param finish
+	 *            the finish
+	 * @param pages
+	 *            the pages
+	 * @return the i map
+	 */
 
 	/**
 	 * Open wizard.
@@ -903,6 +1207,18 @@ public class System {
 	 *            the pages
 	 * @return the i map
 	 */
+
+	/**
+	 * Open wizard.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param pages
+	 *            the pages
+	 * @return the i map
+	 */
 	@operator (
 			value = IKeyword.WIZARD,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -917,6 +1233,20 @@ public class System {
 			final IList<IMap<String, Object>> pages) {
 		return scope.getGui().openWizard(scope, title, null, pages);
 	}
+
+	/**
+	 * Wizard page.
+	 *
+	 * @param title
+	 *            the title
+	 * @param description
+	 *            the description
+	 * @param parameters
+	 *            the parameters
+	 * @param font
+	 *            the font
+	 * @return the i map
+	 */
 
 	/**
 	 * Wizard page.
@@ -962,6 +1292,18 @@ public class System {
 	 *            the parameters
 	 * @return the i map
 	 */
+
+	/**
+	 * Wizard page.
+	 *
+	 * @param title
+	 *            the title
+	 * @param description
+	 *            the description
+	 * @param parameters
+	 *            the parameters
+	 * @return the i map
+	 */
 	@operator (
 			value = IKeyword.WIZARD_PAGE,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -980,6 +1322,18 @@ public class System {
 		results.put(IKeyword.PARAMETERS, parameters);
 		return results;
 	}
+
+	/**
+	 * User confirm dialog.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param message
+	 *            the message
+	 * @return the boolean
+	 */
 
 	/**
 	 * User confirm dialog.
@@ -1017,6 +1371,18 @@ public class System {
 	 *            the type
 	 * @return the i parameter
 	 */
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param type
+	 *            the type
+	 * @return the i parameter
+	 */
 	@operator (
 			can_be_const = false,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -1027,6 +1393,18 @@ public class System {
 	public static IParameter enterValue(final IScope scope, final String title, final IType type) {
 		return enterValue(scope, title, type, type.getDefault());
 	}
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @return the i parameter
+	 */
 
 	/**
 	 * Enter value.
@@ -1065,6 +1443,22 @@ public class System {
 	 *            the max
 	 * @return the i parameter
 	 */
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @return the i parameter
+	 */
 	@operator (
 			can_be_const = false,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -1077,6 +1471,24 @@ public class System {
 			final Integer max) {
 		return new InputParameter(title, init, min, max);
 	}
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
+	 * @return the i parameter
+	 */
 
 	/**
 	 * Enter value.
@@ -1134,6 +1546,22 @@ public class System {
 	 *            the max
 	 * @return the i parameter
 	 */
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @return the i parameter
+	 */
 	@operator (
 			can_be_const = false,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -1146,6 +1574,24 @@ public class System {
 			final Double max) {
 		return new InputParameter(title, init, min, max);
 	}
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
+	 * @param step
+	 *            the step
+	 * @return the i parameter
+	 */
 
 	/**
 	 * Enter value.
@@ -1188,6 +1634,18 @@ public class System {
 	 *            the init
 	 * @return the i parameter
 	 */
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @return the i parameter
+	 */
 	@operator (
 			can_be_const = false,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -1198,6 +1656,18 @@ public class System {
 	public static IParameter enterValue(final IScope scope, final String title, final Double init) {
 		return enterValue(scope, title, Types.FLOAT, init);
 	}
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @return the i parameter
+	 */
 
 	/**
 	 * Enter value.
@@ -1240,6 +1710,18 @@ public class System {
 	 *            the init
 	 * @return the i parameter
 	 */
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @return the i parameter
+	 */
 	@operator (
 			can_be_const = false,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -1265,6 +1747,20 @@ public class System {
 	 *            the init
 	 * @return the i parameter
 	 */
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param type
+	 *            the type
+	 * @param init
+	 *            the init
+	 * @return the i parameter
+	 */
 	@operator (
 			can_be_const = false,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -1275,6 +1771,18 @@ public class System {
 	public static IParameter enterValue(final IScope scope, final String title, final IType type, final Object init) {
 		return new InputParameter(title, init, type);
 	}
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param init
+	 *            the init
+	 * @return the i parameter
+	 */
 
 	/**
 	 * Enter value.
@@ -1313,6 +1821,22 @@ public class System {
 	 *            the among
 	 * @return the i parameter
 	 */
+
+	/**
+	 * Enter value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param title
+	 *            the title
+	 * @param type
+	 *            the type
+	 * @param init
+	 *            the init
+	 * @param among
+	 *            the among
+	 * @return the i parameter
+	 */
 	@operator (
 			can_be_const = false,
 			category = { IOperatorCategory.SYSTEM, IOperatorCategory.USER_CONTROL },
@@ -1324,6 +1848,16 @@ public class System {
 			final IList among) {
 		return new InputParameter(title, init, type, among);
 	}
+
+	/**
+	 * Op eval gaml.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param gaml
+	 *            the gaml
+	 * @return the object
+	 */
 
 	/**
 	 * Op eval gaml.
@@ -1368,6 +1902,16 @@ public class System {
 	 *            the text
 	 * @return the boolean
 	 */
+
+	/**
+	 * Copy to clipboard.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param text
+	 *            the text
+	 * @return the boolean
+	 */
 	@operator (
 			value = "copy_to_clipboard",
 			can_be_const = false,
@@ -1380,6 +1924,30 @@ public class System {
 	public static Boolean copyToClipboard(final IScope scope, final String text) {
 		return scope.getGui().copyToClipboard(text);
 	}
+
+	/**
+	 * Copy from clipboard.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param type
+	 *            the type
+	 * @return the boolean
+	 */
+	@operator (
+			value = "copy_from_clipboard",
+			can_be_const = false,
+			type = ITypeProvider.DENOTED_TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.SYSTEM },
+			concept = { IConcept.SYSTEM })
+	@doc (
+			examples = @example ("string copied  <- copy_from_clipboard(string);"),
+			value = "Tries to copy data from the clipboard by passing its expected type. Returns nil if it has not been correctly retrieved, or not retrievable using the given type or if GAMA is in a headless environment")
+	@no_test ()
+	public static Object copyFromClipboard(final IScope scope, final IType type) {
+		return type.copyFromClipboard(scope);
+	}
+
 	// @operator(value = "eval_java", can_be_const = false)
 	// @doc(value = "evaluates the given java code string.", deprecated = "Does
 	// not work", see = { "eval_gaml",

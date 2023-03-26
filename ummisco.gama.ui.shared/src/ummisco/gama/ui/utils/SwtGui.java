@@ -11,6 +11,7 @@
 package ummisco.gama.ui.utils;
 
 import static ummisco.gama.ui.utils.ViewsHelper.hideView;
+import static ummisco.gama.ui.utils.WorkbenchHelper.getClipboard;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
@@ -230,17 +230,20 @@ public class SwtGui implements IGui {
 		return result[0];
 	}
 
+	/** The transfers. */
+	static Transfer[] transfers = { TextTransfer.getInstance() };
+
 	@Override
 	public boolean copyToClipboard(final String text) {
-		WorkbenchHelper.asyncRun(() -> {
-			final Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
-			final TextTransfer textTransfer = TextTransfer.getInstance();
-			final Transfer[] transfers = { textTransfer };
-			final Object[] data = { text };
-			clipboard.setContents(data, transfers);
-			clipboard.dispose();
-		});
+		if (getClipboard() == null || text == null) return false;
+		WorkbenchHelper.asyncRun(() -> { getClipboard().setContents(new String[] { text }, transfers); });
 		return true;
+	}
+
+	@Override
+	public String copyTextFromClipboard() {
+		if (getClipboard() == null) return null;
+		return (String) WorkbenchHelper.run(() -> getClipboard().getContents(TextTransfer.getInstance()));
 	}
 
 	@Override

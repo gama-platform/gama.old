@@ -117,7 +117,7 @@ public class WorkbenchHelper {
 	 * @return the clipboard
 	 */
 	public static Clipboard getClipboard() {
-		if (CLIPBOARD == null) { CLIPBOARD = new Clipboard(getDisplay()); }
+		if (CLIPBOARD == null) { CLIPBOARD = run(() -> new Clipboard(getDisplay())); }
 		return CLIPBOARD;
 	}
 
