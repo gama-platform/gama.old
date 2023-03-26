@@ -28,6 +28,8 @@ global {
 	image_file ant_shape const: true <- file('../images/ant.png');
 	svg_file ant_shape_svg const: true <- svg_file("../images/ant.svg");
 	obj_file ant3D_shape const: true <- obj_file('../images/fire-ant.obj', '../images/fire-ant.mtl', -90::{1, 0, 0});
+	font regular <- font("Helvetica", 14, #bold);
+	font bigger <- font("Helvetica", 18, #bold);
 
 	//The center of the grid that will be considered as the nest location
 	point center const: true <- {round(gridsize / 2), round(gridsize / 2)};
@@ -155,13 +157,9 @@ species ant skills: [moving] control: fsm {
 			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1.2;
 		}
 
-		if (state != "wandering") {
-		//draw circle(4) wireframe: true color: #white;
-			if (display_state) {
-				draw string(self as int) color: #white font: font("Helvetica", 14, #bold) at: my location - {1, 1, -0.5};
-				draw state color: #yellow font: font("Helvetica", 18, #bold) at: my location + {1, 1, 0.5};
-			}
-
+		if (display_state) {
+			draw string(self as int) color: #white font: regular at: my location + {0, -1, 0.5} anchor: #center;
+			draw state color: #yellow font: bigger at: my location + {0, 0, 0.5} anchor: #center;
 		}
 
 	}

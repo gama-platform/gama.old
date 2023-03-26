@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 
 import javax.annotation.Nonnegative;
 
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.runtime.IScope;
 
 /**
@@ -39,6 +40,18 @@ public interface IImageProvider extends IEnvelopeProvider, IAsset {
 	 */
 	@Nonnegative
 	int getCols(IScope scope);
+
+	/**
+	 * Compute envelope.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the envelope 3 D
+	 */
+	@Override
+	default Envelope3D computeEnvelope(final IScope scope) {
+		return Envelope3D.of(0, getCols(scope), 0, getRows(scope), 0, 0);
+	}
 
 	/**
 	 * Gets the image.

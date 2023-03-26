@@ -48,9 +48,11 @@ import msi.gaml.types.IType;
 @facets (
 		value = { @facet (
 				name = IKeyword.FILE,
-				type = { IType.STRING, IType.FILE },
+				type = { IType.NONE },
 				optional = true,
-				doc = @doc ("the name/path of the image (in the case of a raster image)")),
+				doc = @doc (
+						deprecated = "Directly pass the name or the file itself to the default facet",
+						value = "the name/path of the image (in the case of a raster image), a matrix of int, an image file")),
 				@facet (
 						name = IKeyword.ROTATE,
 						type = { IType.FLOAT },
@@ -78,9 +80,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("Defines whether this layer is visible or not")),
 				@facet (
 						name = IKeyword.NAME,
-						type = { IType.STRING, IType.FILE },
+						type = { IType.NONE },
 						optional = true,
-						doc = @doc ("Human readable title of the image layer")),
+						doc = @doc ("the name/path of the image (in the case of a raster image), a matrix of int, an image file")),
 				@facet (
 						name = IKeyword.GIS,
 						type = { IType.FILE, IType.STRING },
@@ -95,7 +97,9 @@ import msi.gaml.types.IType;
 						name = IKeyword.MATRIX,
 						type = { IType.MATRIX },
 						optional = true,
-						doc = @doc ("the matrix containing the values of each pixel as integer following ARGB format")),
+						doc = @doc (
+								value = "the matrix containing the values of each pixel as integer following ARGB format",
+								deprecated = "Use a 'field' and a 'mesh' layer instead, or simply pass the matrix to the default facet")),
 				@facet (
 						name = IKeyword.REFRESH,
 						type = IType.BOOL,
@@ -111,7 +115,7 @@ import msi.gaml.types.IType;
 						value = "display my_display {",
 						isExecutable = false),
 						@example (
-								value = "   image layer_name file: image_file [additional options];",
+								value = "   image image_file [additional options];",
 								isExecutable = false),
 						@example (
 								value = "}",
@@ -122,7 +126,7 @@ import msi.gaml.types.IType;
 								value = "display my_display {",
 								isExecutable = false),
 								@example (
-										value = "   image background file:\"../images/my_backgound.jpg\";",
+										value = "   image \"../images/my_backgound.jpg\";",
 										isExecutable = false),
 								@example (
 										value = "}",
@@ -133,7 +137,7 @@ import msi.gaml.types.IType;
 								value = "display my_display {",
 								isExecutable = false),
 								@example (
-										value = "   image in_matrix value: my_image_matrix;",
+										value = "   image my_image_matrix;",
 										isExecutable = false),
 								@example (
 										value = "}",
@@ -155,13 +159,13 @@ import msi.gaml.types.IType;
 								value = "display my_display {",
 								isExecutable = false),
 								@example (
-										value = "  image image1 file:\"../images/image1.jpg\";",
+										value = "  image \"../images/image1.jpg\";",
 										isExecutable = false),
 								@example (
-										value = "  image image2 file:\"../images/image2.jpg\";",
+										value = "  image \"../images/image2.jpg\";",
 										isExecutable = false),
 								@example (
-										value = "  image image3 file:\"../images/image3.jpg\" position: {0,0,0.5};",
+										value = "  image \"../images/image3.jpg\" position: {0,0,0.5};",
 										isExecutable = false),
 								@example (
 										value = "}",
@@ -208,7 +212,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		file = getFacet(IKeyword.FILE, IKeyword.NAME);
-		matrix = getFacet(IKeyword.MATRIX);
+		matrix = file == null ? getFacet(IKeyword.MATRIX, IKeyword.NAME) : null;
 	}
 
 	/**

@@ -18,6 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.common.primitives.Ints;
 
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
@@ -37,7 +38,7 @@ import one.util.streamex.StreamEx;
  * The Class GamaIntMatrix.
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class GamaIntMatrix extends GamaMatrix<Integer> {
+public class GamaIntMatrix extends GamaMatrix<Integer> implements IImageProvider {
 
 	/**
 	 * From.
@@ -592,15 +593,19 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	 * @return
 	 */
 	public static BufferedImage constructBufferedImageFromMatrix(final IScope scope, final IMatrix<Integer> matrix) {
+		if (!(matrix instanceof GamaIntMatrix gim)) return null;
+		return gim.getImage(scope);
+	}
 
-		if (matrix == null) return null;
+	@Override
+	public String getId() { return "matrix" + hashCode(); }
 
-		int w = matrix.getCols(scope);
-		int h = matrix.getRows(scope);
-
+	@Override
+	public BufferedImage getImage(final IScope scope, final boolean useCache, final boolean forOpenGL) {
+		int w = getCols(scope);
+		int h = getRows(scope);
 		BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-
-		for (int i = 0; i < w; i++) { for (int j = 0; j < h; j++) { ret.setRGB(i, j, matrix.get(scope, i, j)); } }
+		for (int i = 0; i < w; i++) { for (int j = 0; j < h; j++) { ret.setRGB(i, j, get(scope, i, j)); } }
 		return ret;
 	}
 
