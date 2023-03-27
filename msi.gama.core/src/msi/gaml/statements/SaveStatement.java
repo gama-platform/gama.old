@@ -252,6 +252,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
 			}
 
+			if (!isAFile && !hasFormat && hasTo) {
+				desc.info(
+						"'save' will use the extension of the file to determine its format. If you are unsure about this, please specify the format of the file using the 'format:' facet",
+						IGamlIssue.UNKNOWN_ARGUMENT);
+			}
+
 			if (!isAFile && hasFormat && hasTo) {
 				String id = format.literalValue();
 				if (!DELEGATES.containsKey(id)) {
