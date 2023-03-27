@@ -230,6 +230,7 @@
 		<module>../ummisco.gama.feature.modeling.ui</module>
 		<module>../ummisco.gama.feature.serialize</module>
 		<module>../ummisco.gama.feature.network</module>
+		<module>../ummisco.gama.feature.image</module>
 
 		<module>../msi.gaml.extensions.fipa</module>
 		<module>../msi.gama.headless</module>
@@ -258,6 +259,7 @@
 
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
+		<module>../ummisco.gaml.extensions.image</module>
 
 		<module>../ummisco.gama.product</module>
 

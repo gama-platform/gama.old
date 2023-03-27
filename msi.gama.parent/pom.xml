@@ -170,6 +170,7 @@
 
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
+		<module>../ummisco.gaml.extensions.image</module>
 		
 		
 		
@@ -183,6 +184,7 @@
 		<module>../ummisco.gama.feature.experiment.ui</module>
 		<module>../ummisco.gama.feature.modeling.ui</module>
 		<module>../ummisco.gama.feature.stats</module>
+		<module>../ummisco.gama.feature.image</module>
 
 
 		<module>../ummisco.gama.product</module>

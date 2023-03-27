@@ -254,7 +254,7 @@ public class ImageOperators {
 	 *
 	 * @see Mode
 	 */
-	private static GamaImage resize(final GamaImage src, final Mode resizeMode, int targetWidth, int targetHeight)
+	static GamaImage resize(final GamaImage src, final Mode resizeMode, int targetWidth, int targetHeight)
 			throws IllegalArgumentException, ImagingOpException {
 		GamaImage result = null;
 		int currentWidth = src.getWidth();
@@ -285,7 +285,7 @@ public class ImageOperators {
 	 *            The target height for the scaled image.
 	 * @return the result of scaling the original <code>src</code> to the given dimensions
 	 */
-	private static GamaImage scaleImage(final GamaImage src, final int targetWidth, final int targetHeight) {
+	static GamaImage scaleImage(final GamaImage src, final int targetWidth, final int targetHeight) {
 		GamaImage result = GamaImage.bestFor(src, targetWidth, targetHeight);
 		Graphics2D resultGraphics = result.createGraphics();
 		resultGraphics.setRenderingHints(ImageOperators.HINTS);
@@ -311,7 +311,7 @@ public class ImageOperators {
 	 *
 	 * @return an image scaled to the given dimensions using the given rendering hint.
 	 */
-	private static GamaImage scaleImageIncrementally(GamaImage src, final int targetWidth, final int targetHeight) {
+	static GamaImage scaleImageIncrementally(GamaImage src, final int targetWidth, final int targetHeight) {
 		boolean hasReassignedSrc = false;
 		int currentWidth = src.getWidth();
 		int currentHeight = src.getHeight();

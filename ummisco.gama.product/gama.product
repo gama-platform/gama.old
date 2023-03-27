@@ -77,7 +77,6 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
 
@@ -97,6 +96,7 @@
       <feature id="ummisco.gama.feature.models" version="1.9.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.9.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.modeling.ui" version="1.9.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.image" version="1.9.0.qualifier" installMode="root"/>
    </features>
 
    <configurations>

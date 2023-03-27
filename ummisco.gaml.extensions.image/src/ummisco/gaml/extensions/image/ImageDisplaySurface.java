@@ -1,14 +1,14 @@
 /*******************************************************************************************************
  *
- * ImageDisplaySurface.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * ImageDisplaySurface.java, in ummisco.gaml.extensions.image, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.outputs;
+package ummisco.gaml.extensions.image;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -31,11 +31,12 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.Changes;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.AWTDisplayGraphics;
 import msi.gama.outputs.display.LayerManager;
 import msi.gama.outputs.layers.IEventLayerListener;
@@ -47,6 +48,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Files;
+import ummisco.gaml.extensions.image.ImageOperators.Mode;
 
 /**
  * The Class ImageDisplaySurface.
@@ -65,7 +67,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/** The buff image. */
 	// private final boolean needsUpdate = true;
-	private BufferedImage buffImage = null;
+	private GamaImage buffImage = null;
 
 	/** The g 2. */
 	private Graphics2D g2 = null;
@@ -195,7 +197,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * Creates the buff image.
 	 */
 	private void createBuffImage() {
-		buffImage = ImageUtils.createCompatibleImage(width, height, false);
+		buffImage = GamaImage.ofDimensions(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
 		displayGraphics = new AWTDisplayGraphics((Graphics2D) buffImage.getGraphics());
 		((AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D) buffImage.getGraphics());
@@ -222,7 +224,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public BufferedImage getImage(final int w, final int h) {
 		paint();
-		return ImageUtils.resize(buffImage, w, h);
+		return ImageOperators.resize(buffImage, Mode.FIT_EXACT, w, h);
 	}
 
 	/*

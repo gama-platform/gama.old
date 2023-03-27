@@ -12,13 +12,6 @@
    <extension-point id="gama.experiment" name="Implementations of IExperimentAgent" schema="schema/gama.experiment.exsd"/>
    <extension-point id="gama.constants" name="Implementations of IConstantsSupplier" schema="schema/gama.constants.exsd"/>
    <extension
-         point="gama.display">
-      <implementation
-            class="msi.gama.outputs.ImageDisplaySurface"
-            keyword="image">
-      </implementation>
-   </extension>
-   <extension
          point="gama.create">
       <implementation
             class="msi.gaml.statements.create.CreateFromGridFileDelegate"

@@ -2,6 +2,13 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
+         point="gama.display">
+      <implementation
+            class="ummisco.gaml.extensions.image.ImageDisplaySurface"
+            keyword="image">
+      </implementation>
+   </extension>
+   <extension
          point="gama.save">
       <implementation
             class="ummisco.gaml.extensions.image.ImageSaver">
@@ -17,4 +24,4 @@
       </implementation>
    </extension>
 
-</plugin>
+</plugin> 
