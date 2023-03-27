@@ -311,15 +311,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 					final int[] point = computeBoundsFrom(width, height);
 					viewPort.width = point[0];
 					viewPort.height = point[1];
-					// resizeImage(width, height, false);
-
 				}
 				// Use printComponent() instead of print() as it prevents from changing the clip (see #3570)
 				printComponent(g);
-				if (!sameSize) {
-					// resizeImage(previousWidth, previousHeight, false);
-					viewPort.setBounds(old);
-				}
+				if (!sameSize) { viewPort.setBounds(old); }
 
 			});
 		} catch (InvocationTargetException | InterruptedException e) {

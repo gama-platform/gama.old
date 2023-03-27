@@ -65,9 +65,10 @@ global {
 species support {
 	image img;
 
+	
 	aspect default {
-		draw shape texture: img;
-		draw name font: title at: location + {0, 0, 1} anchor: #center color: #white border: #black;
+		draw img at: location size: {shape.width, shape.height};
+		draw name font: title at: location + {0, 0, 10} anchor: #center color: #white border: #black;
 	}
 
 }

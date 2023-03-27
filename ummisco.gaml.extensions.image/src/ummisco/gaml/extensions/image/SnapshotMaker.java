@@ -11,6 +11,7 @@
 package ummisco.gaml.extensions.image;
 
 import java.awt.AWTException;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -210,7 +211,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 	}
 
 	/**
-	 * Gets the screen total area.
+	 * Gets the screen total area. Capture all the screens at once
 	 *
 	 * @param windowOrNull
 	 *            the window or null
@@ -218,7 +219,14 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 */
 	static public Rectangle getScreenTotalArea() {
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		return ge.getDefaultScreenDevice().getDefaultConfiguration().getBounds();
+		GraphicsDevice[] screens = ge.getScreenDevices();
+		Rectangle allScreenBounds = new Rectangle();
+		for (GraphicsDevice screen : screens) {
+			Rectangle screenBounds = screen.getDefaultConfiguration().getBounds();
+			allScreenBounds.width += screenBounds.width;
+			allScreenBounds.height = Math.max(allScreenBounds.height, screenBounds.height);
+		}
+		return allScreenBounds;
 	}
 
 }
