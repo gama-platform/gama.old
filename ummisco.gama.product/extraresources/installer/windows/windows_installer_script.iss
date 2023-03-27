@@ -43,6 +43,7 @@ SetupIconFile={#SetupIconPath}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+DisableDirPage=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -79,6 +80,9 @@ Source: "{#AppDirPath}\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#AppDirPath}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;Permissions: users-full
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+[Dirs]
+Name: "{app}\headless"; Permissions: users-full
+ 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
