@@ -12,7 +12,7 @@ global {
 	// We modify a bit the image 
 	matrix<int> shuffle <- shuffle(im.contents);
 	// We create a file with the new contents
-	image_file copy <- image_file("../images/local_copy.jpg", shuffle);
+	image_file copy <- image_file("../images/local_copy.png", shuffle);
 	init {
 		// And save it
 		save copy;

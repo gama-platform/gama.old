@@ -12,12 +12,12 @@ global {
 		graph the_graph <- generate_random_graph(20, 20, true,node_agent, edge_agent);
 		
 		//save the graph with different format.
-		save the_graph to:"../results/my_graph.gml";
-		save the_graph to:"../results/my_graph.dimacs";
-		save the_graph to:"../results/my_graph.dot";
-		save the_graph to:"../results/my_graph.graphml";
+		save the_graph to:"../results/my_graph.gml" format:"gml";
+		save the_graph to:"../results/my_graph.dimacs" format:"dimacs";
+		save the_graph to:"../results/my_graph.dot" format:"dot";
+		save the_graph to:"../results/my_graph.graphml" format:"graphml";
 		save the_graph to:"../results/my_graph.g6" format: "graph6" ;
-		save the_graph to:"../results/my_graph.gexf" ;
+		save the_graph to:"../results/my_graph.gexf" format:"gexf" ;
 		
 		
 	}

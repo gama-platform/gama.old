@@ -243,7 +243,7 @@ experiment Optimization type: batch repeat: 2 keep_seed: true until: ( time > 20
 	reflex save_results_explo {
 		ask simulations {
 			save [int(self),prey_max_transfer,prey_energy_reproduce,predator_energy_transfer,predator_energy_reproduce,self.nb_predators,self.nb_preys] 
-		   		to: "results.csv" rewrite: (int(self) = 0) ? true : false header: true;
+		   		to: "results.csv" format:"csv" rewrite: (int(self) = 0) ? true : false header: true;
 		}		
 	}
 }
