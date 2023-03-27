@@ -98,6 +98,9 @@ public interface IGui {
 	/** The null status displayer. */
 	IStatusDisplayer NULL_STATUS_DISPLAYER = new IStatusDisplayer() {};
 
+	/** The null snapshot maker. */
+	ISnapshotMaker NULL_SNAPSHOT_MAKER = new ISnapshotMaker() {};
+
 	/** The error. */
 	int ERROR = 0;
 
@@ -187,6 +190,15 @@ public interface IGui {
 	 * @return the status
 	 */
 	default IStatusDisplayer getStatus() { return NULL_STATUS_DISPLAYER; }
+
+	/**
+	 * Gets the snapshot maker for this UI. Returns the instance that should have been set in GAMA (by default, unless
+	 * set, NULL_SNAPSHOT_MAKER)
+	 *
+	 * @return the snapshot maker
+	 */
+
+	default ISnapshotMaker getSnapshotMaker() { return GAMA.getSnapshotMaker(); }
 
 	/**
 	 * Gets the console.

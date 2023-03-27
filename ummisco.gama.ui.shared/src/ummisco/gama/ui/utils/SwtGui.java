@@ -607,11 +607,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IStatusDisplayer getStatus() {
-
-		return WorkbenchHelper.getService(IStatusDisplayer.class);
-
-	}
+	public IStatusDisplayer getStatus() { return WorkbenchHelper.getService(IStatusDisplayer.class); }
 
 	@Override
 	public IConsoleDisplayer getConsole() { return WorkbenchHelper.getService(IConsoleDisplayer.class); }

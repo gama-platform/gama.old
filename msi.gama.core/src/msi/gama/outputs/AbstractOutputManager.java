@@ -235,25 +235,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
-		// if (this.hasFacet("synchronized")) {
-		// boolean sync = this.getFacetValue(scope, "synchronized", false);
-		// if (sync) {
-		// scope.getExperiment().getSpecies().synchronizeAllOutputs();
-		// } else {
-		// scope.getExperiment().getSpecies().desynchronizeAllOutputs();
-		// }
-		// }
-		// boolean atLeastOneOutputAutosaving = false;<>
-		for (final IOutput output : ImmutableList.copyOf(this)) {
-			if (!open(scope, output)) return false;
-			// if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isAutoSave()) {
-			// atLeastOneOutputAutosaving = true;
-			// }
-		}
-		// atLeastOneOutputAutosaving |=
+		for (final IOutput output : ImmutableList.copyOf(this)) { if (!open(scope, output)) return false; }
 		evaluateAutoSave(scope);
-		// if (atLeastOneOutputAutosaving) { GAMA.synchronizeFrontmostExperiment(); }
-
 		return true;
 	}
 
@@ -276,7 +259,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			} else {
 				isAutosaving = Cast.asBool(scope, autosave.value(scope));
 			}
-			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, path); }
+			if (isAutosaving) { scope.getGui().getSnapshotMaker().takeAndSaveScreenshot(scope, path); }
 		}
 		return isAutosaving;
 	}
@@ -365,7 +348,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			} else {
 				isAutosaving = Cast.asBool(scope, autosave.value(scope));
 			}
-			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, autosavingPath); }
+			if (isAutosaving) { scope.getGui().getSnapshotMaker().takeAndSaveScreenshot(scope, autosavingPath); }
 		}
 
 		return true;

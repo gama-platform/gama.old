@@ -1,29 +1,30 @@
 /*******************************************************************************************************
  *
- * SnapshotMaker.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * SnapshotMaker.java, in ummisco.gaml.extensions.image, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.outputs;
+package ummisco.gaml.extensions.image;
 
 import java.awt.AWTException;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
 
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.ISnapshotMaker;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -33,7 +34,7 @@ import ummisco.gama.dev.utils.DEBUG;
 /**
  * The Class SnapshotMaker.
  */
-public class SnapshotMaker {
+public class SnapshotMaker implements ISnapshotMaker {
 
 	static {
 		DEBUG.ON();
@@ -59,8 +60,9 @@ public class SnapshotMaker {
 	 * @param composite
 	 *            the composite
 	 */
-	public BufferedImage doSnapshot(final IDisplaySurface surface) {
-		if (surface == null) return null;
+	@Override
+	public void takeAndSaveSnapshot(final IDisplaySurface surface) {
+		if (surface == null) return;
 		final IScope scope = surface.getScope();
 		final String autosavePath = surface.getData().getAutosavePath();
 		String fileName;
@@ -74,8 +76,8 @@ public class SnapshotMaker {
 					IDisplaySurface.SNAPSHOT_FOLDER_NAME + "/" + autosavePath, false);
 			if (!fileName.endsWith(".png")) { fileName += ".png"; }
 		}
-		BufferedImage image = captureImage(surface);
-		if (scope.interrupted() || image == null) return null;
+		GamaImage image = captureImage(surface);
+		if (scope.interrupted() || image == null) return;
 
 		try {
 			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
@@ -85,20 +87,18 @@ public class SnapshotMaker {
 			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
 			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 			e1.printStackTrace();
-			return null;
+			return;
 		}
 
 		try {
 			if (!ImageIO.write(image, "png", new File(fileName)))
 				throw new RuntimeException("Impossible to write image");
-			// image.flush();
-			return image;
+			image.flush();
 		} catch (final Exception ex) {
 			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 			e.addContext("Unable to create output stream for snapshot image");
 			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 		}
-		return null;
 	}
 
 	/**
@@ -108,9 +108,10 @@ public class SnapshotMaker {
 	 *            the surface
 	 * @return the buffered image
 	 */
-	public BufferedImage captureImage(final IDisplaySurface surface) {
+	@Override
+	public GamaImage captureImage(final IDisplaySurface surface) {
 		final LayeredDisplayData data = surface.getData();
-		BufferedImage image = null;
+		GamaImage image = null;
 		GamaPoint p = data.getImageDimension();
 		Rectangle composite = surface.getBoundsForSnapshot();
 		final int width = p == null || p.x <= 0 ? composite.width : (int) p.x;
@@ -118,9 +119,10 @@ public class SnapshotMaker {
 
 		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
-				DEBUG.OUT("Trying to snapshot with dimensions " + composite);
-				image = robot.createScreenCapture(composite);
-				image = ImageUtils.resize(image, width, height);
+				DEBUG.OUT("Snapshot with dimensions " + composite);
+				Image im = robot.createScreenCapture(composite);
+				image = ImageOperators.scaleImage(im, width, height);
+				im.flush();
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
@@ -128,7 +130,7 @@ public class SnapshotMaker {
 		// in case it has not worked, snapshot is still null
 		if (image == null) {
 			DEBUG.OUT("Trying to snapshot with dimensions " + width + " " + height);
-			image = surface.getImage(width, height);
+			image = (GamaImage) surface.getImage(width, height);
 		}
 		return image;
 	}
@@ -141,7 +143,8 @@ public class SnapshotMaker {
 	 * @param autosavePath
 	 *            the autosave path
 	 */
-	public void doSnapshot(final IScope scope, final String autosavePath) {
+	@Override
+	public void takeAndSaveScreenshot(final IScope scope, final String autosavePath) {
 		if (scope == null) return;
 
 		String fileName;
@@ -156,11 +159,12 @@ public class SnapshotMaker {
 			if (!fileName.endsWith(".png")) { fileName += ".png"; }
 		}
 
-		BufferedImage image = null;
+		GamaImage image = null;
 		try {
-			// final Robot robot = new Robot();
 			Rectangle r = getScreenTotalArea();
-			image = robot.createScreenCapture(r);
+			Image im = robot.createScreenCapture(r);
+			image = GamaImage.from(im, false);
+			im.flush();
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

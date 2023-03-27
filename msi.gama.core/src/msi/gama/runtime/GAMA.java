@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.ISnapshotMaker;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.common.util.RandomUtils;
@@ -61,6 +62,9 @@ public class GAMA {
 
 	/** The agent. */
 	private static volatile PlatformAgent agent;
+
+	/** The snapshot agent. */
+	private static ISnapshotMaker snapshotAgent = IGui.NULL_SNAPSHOT_MAKER;
 
 	/** The benchmark agent. */
 	private static Benchmark benchmarkAgent;
@@ -668,4 +672,21 @@ public class GAMA {
 		if (exp != null) { exp.synchronizeAllOutputs(); }
 
 	}
+
+	/**
+	 * Sets the snapshot maker.
+	 *
+	 * @param instance
+	 *            the new snapshot maker
+	 */
+	public static void setSnapshotMaker(final ISnapshotMaker instance) {
+		if (instance != null) { snapshotAgent = instance; }
+	}
+
+	/**
+	 * Gets the snapshot maker.
+	 *
+	 * @return the snapshot maker
+	 */
+	public static ISnapshotMaker getSnapshotMaker() { return snapshotAgent; }
 }

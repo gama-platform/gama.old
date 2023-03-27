@@ -11,7 +11,6 @@
 package ummisco.gama.ui.views.displays;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -40,7 +39,6 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.SnapshotMaker;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
@@ -417,13 +415,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public BufferedImage takeSnapshot() {
-		return SnapshotMaker.getInstance().doSnapshot(getDisplaySurface());
-	}
-
-	@Override
-	public BufferedImage saveSnapshot() {
-		return SnapshotMaker.getInstance().captureImage(getDisplaySurface());
+	public void takeSnapshot() {
+		GAMA.getSnapshotMaker().takeAndSaveSnapshot(getDisplaySurface());
 	}
 
 	/**

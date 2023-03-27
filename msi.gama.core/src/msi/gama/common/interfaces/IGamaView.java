@@ -9,8 +9,6 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.awt.image.BufferedImage;
-
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -234,14 +232,7 @@ public interface IGamaView {
 		 *
 		 * @return
 		 */
-		BufferedImage takeSnapshot();
-
-		/**
-		 * Save snapshot. Same as takeSnapshot(), but saves the image on disk in addition to returning it
-		 *
-		 * @return the buffered image
-		 */
-		BufferedImage saveSnapshot();
+		void takeSnapshot();
 
 		/**
 		 * Hide canvas.

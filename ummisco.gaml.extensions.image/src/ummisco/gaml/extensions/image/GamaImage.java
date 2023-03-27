@@ -11,6 +11,7 @@
 package ummisco.gaml.extensions.image;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.PixelGrabber;
@@ -117,24 +118,11 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	/**
 	 * From.
 	 *
-	 * @param img
-	 *            the img
-	 * @param withAlpha
-	 *            the with alpha
-	 * @return the gama image
-	 */
-	public static GamaImage from(final GamaImage img, final boolean withAlpha) {
-		return from((BufferedImage) img, withAlpha);
-	}
-
-	/**
-	 * From.
-	 *
 	 * @param image
 	 *            the image
 	 * @return the gama image
 	 */
-	public static GamaImage from(final BufferedImage image, final boolean withAlpha) {
+	public static GamaImage from(final Image image, final boolean withAlpha) {
 		return from(image, withAlpha, "image" + System.currentTimeMillis());
 	}
 
@@ -149,8 +137,10 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	 *            the id
 	 * @return the gama image
 	 */
-	public static GamaImage from(final BufferedImage image, final boolean withAlpha, final String id) {
-		GamaImage gi = new GamaImage(image.getWidth(), image.getHeight(), withAlpha ? TYPE_INT_ARGB : TYPE_INT_RGB, id);
+	public static GamaImage from(final Image image, final boolean withAlpha, final String id) {
+		if (image == null) return null;
+		GamaImage gi = new GamaImage(image.getWidth(null), image.getHeight(null),
+				withAlpha ? TYPE_INT_ARGB : TYPE_INT_RGB, id);
 		Graphics2D g = gi.createGraphics();
 		g.drawImage(image, 0, 0, null);
 		g.dispose();
@@ -287,9 +277,9 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	 *            the height
 	 * @return the gama image
 	 */
-	public static GamaImage bestFor(final GamaImage src, final int width, final int height) {
+	public static GamaImage bestFor(final Image src, final int width, final int height) {
 		return ofDimensions(width, height,
-				src != null && src.getTransparency() == OPAQUE ? TYPE_INT_RGB : TYPE_INT_ARGB);
+				src instanceof BufferedImage bi && bi.getTransparency() == OPAQUE ? TYPE_INT_RGB : TYPE_INT_ARGB);
 	}
 
 	@Override

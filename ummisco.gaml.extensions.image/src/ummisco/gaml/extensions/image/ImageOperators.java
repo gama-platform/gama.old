@@ -42,7 +42,6 @@ import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.SnapshotMaker;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -277,7 +276,7 @@ public class ImageOperators {
 	 * This method uses the Oracle-encouraged method of <code>Graphics2D.drawImage(...)</code> to scale the given image
 	 * with the given interpolation hint.
 	 *
-	 * @param src
+	 * @param bufferedImage
 	 *            The image that will be scaled.
 	 * @param targetWidth
 	 *            The target width for the scaled image.
@@ -285,11 +284,11 @@ public class ImageOperators {
 	 *            The target height for the scaled image.
 	 * @return the result of scaling the original <code>src</code> to the given dimensions
 	 */
-	static GamaImage scaleImage(final GamaImage src, final int targetWidth, final int targetHeight) {
-		GamaImage result = GamaImage.bestFor(src, targetWidth, targetHeight);
+	static GamaImage scaleImage(final Image bufferedImage, final int targetWidth, final int targetHeight) {
+		GamaImage result = GamaImage.bestFor(bufferedImage, targetWidth, targetHeight);
 		Graphics2D resultGraphics = result.createGraphics();
 		resultGraphics.setRenderingHints(ImageOperators.HINTS);
-		resultGraphics.drawImage(src, 0, 0, targetWidth, targetHeight, null);
+		resultGraphics.drawImage(bufferedImage, 0, 0, targetWidth, targetHeight, null);
 		resultGraphics.dispose();
 		return result;
 	}
@@ -401,7 +400,7 @@ public class ImageOperators {
 		}
 		if (!(output instanceof LayeredDisplayOutput ldo)) return null;
 		IDisplaySurface surface = ldo.getSurface();
-		return GamaImage.from(SnapshotMaker.getInstance().captureImage(surface), false);
+		return SnapshotMaker.getInstance().captureImage(surface);
 	}
 
 	/**
