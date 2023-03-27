@@ -34,6 +34,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.GamaFile.FlushBufferException;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
@@ -393,9 +394,22 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (typeExp == null) {
 			final Object contents = item.value(scope);
 			if (contents instanceof IModifiableContainer mc) {
-				final IGamaFile f = GamaFileType.createFile(scope, fileName, mc);
-				f.save(scope, description.getFacets());
-				return f;
+				try {
+					// We set a temporary flag to the scope, which should be readable by the GamaFile and indicate that
+					// the file is created "for saving" (and not reading). Otherwise it might create an exception if the
+					// file does not exist already (see #3684)
+					scope.setData(IGamaFile.KEY_TEMPORARY_OUTPUT, true);
+					final IGamaFile f = GamaFileType.createFile(scope, fileName, mc);
+					f.save(scope, description.getFacets());
+					return f;
+				} catch (FlushBufferException e) {
+					// Nothing to do : the corresponding GamaFile does not implement flushBuffer
+					// Not really clean but well... see #3684. We silently log the error and continue with the format
+					DEBUG.OUT(e.getMessage());
+				} finally {
+					// We remove the temporary flag
+					scope.setData(IGamaFile.KEY_TEMPORARY_OUTPUT, null);
+				}
 			}
 			typeExp = com.google.common.io.Files.getFileExtension(fileName);
 

@@ -79,6 +79,12 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 		extends IAddressableContainer, IModifiableContainer, IEnvelopeProvider, IAsset {
 
 	/**
+	 * The "temporary output" key. Used to indicate in the scope (see {@link IScope#setData(String, Object)} that the
+	 * current file is created for serving as an output file, for saving data
+	 */
+	String KEY_TEMPORARY_OUTPUT = "key_temporary_output";
+
+	/**
 	 * Sets the writable.
 	 *
 	 * @param scope
