@@ -168,7 +168,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: GAML artefacts", 55, ' '), DEBUG.PAD(" built in", 15, '_'), () -> {
+		DEBUG.TIMER("GAMA: GAML artefacts", "built in", () -> {
 			scopes.put(eType, new EClassBasedScope("types.xmi"));
 			scopes.put(eVar, new EClassBasedScope("vars.xmi"));
 			scopes.put(eSkill, new EClassBasedScope("skills.xmi"));

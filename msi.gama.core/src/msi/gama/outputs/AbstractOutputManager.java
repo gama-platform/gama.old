@@ -62,7 +62,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	LayoutStatement layout;
 
 	/** The outputs. */
-	protected final IMap<String, IOutput> outputs = GamaMapFactory.concurrentMap();
+	protected final Map<String, IOutput> outputs = GamaMapFactory.synchronizedOrderedMap();
 
 	// protected final IList<MonitorOutput> monitors = GamaListFactory.create();
 

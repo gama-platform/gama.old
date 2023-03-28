@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +41,6 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -61,6 +59,8 @@ import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
+import ummisco.gaml.extensions.image.GamaImage;
+import ummisco.gaml.extensions.image.ImageHelper;
 
 /**
  * The Class Java2DDisplaySurface.
@@ -287,13 +287,13 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void setFont(final Font f) {}
 
 	@Override
-	public BufferedImage getImage(final int w, final int h) {
+	public GamaImage getImage(final int w, final int h) {
 		final int previousWidth = getWidth();
 		final int previousHeight = getHeight();
 		final int width = w == -1 ? previousWidth : w;
 		final int height = h == -1 ? previousHeight : h;
 		final boolean sameSize = width == previousWidth && height == previousHeight;
-		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height, false);
+		final GamaImage newImage = ImageHelper.createCompatibleImage(width, height, false);
 		final Graphics g = newImage.getGraphics();
 
 		while (!rendered) {

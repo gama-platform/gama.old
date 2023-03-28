@@ -169,8 +169,7 @@ public class WorkspacePreferences {
 			LocalDateTime localDateTime = Files.getLastModifiedTime(modelsRep.toPath()).toInstant()
 					.atZone(ZoneId.systemDefault()).toLocalDateTime();
 			String date = localDateTime.format(DateTimeFormatter.ofPattern("MMM dd,yyyy HH:mm:ss"));
-			DEBUG.LOG(DEBUG.PAD("> GAMA: Checking date of models library ", 55, ' ') + DEBUG.PAD(" modified", 15, '_')
-					+ " " + date);
+			DEBUG.BANNER("GAMA: Checking date of models library", "modified", "" + date);
 		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -279,46 +278,44 @@ public class WorkspacePreferences {
 	 */
 	public static boolean testWorkspaceSanity(final Path workspacePath) {
 
-		return DEBUG.TIMER(DEBUG.PAD("> GAMA: Checking the workspace ", 55, ' ') + DEBUG.PAD(" done in", 15, '_'),
-				() -> {
-					File workspace = workspacePath.toFile();
-					// In light of issue #3445, allows a .rebuild file to trigger the rebuild
-					File[] files = workspace.listFiles((FileFilter) file -> ".rebuild".equals(file.getName()));
-					boolean rebuild = false;
-					if (files != null && files.length == 1) {
-						if (files[0].exists()) { files[0].delete(); }
-						rebuild = true;
-					}
-					if (!rebuild) {
-						files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
-						if (files == null || files.length == 0) return true;
-						final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
-						if (logs != null) { for (final File log : logs) { log.delete(); } }
-						files = files[0].listFiles((FileFilter) file -> ".plugins".equals(file.getName()));
-						if (files == null) return false;
-						if (files.length == 0) return true;
-						files = files[0]
-								.listFiles((FileFilter) file -> "org.eclipse.core.resources".equals(file.getName()));
-						if (files == null) return false;
-						if (files.length == 0) return true;
-						files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
-						if (files == null) return false;
-						// DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));>
-						if (files.length == 0) return true;
+		return DEBUG.TIMER("GAMA: Checking the workspace ", "done in", () -> {
+			File workspace = workspacePath.toFile();
+			// In light of issue #3445, allows a .rebuild file to trigger the rebuild
+			File[] files = workspace.listFiles((FileFilter) file -> ".rebuild".equals(file.getName()));
+			boolean rebuild = false;
+			if (files != null && files.length == 1) {
+				if (files[0].exists()) { files[0].delete(); }
+				rebuild = true;
+			}
+			if (!rebuild) {
+				files = workspace.listFiles((FileFilter) file -> ".metadata".equals(file.getName()));
+				if (files == null || files.length == 0) return true;
+				final File[] logs = files[0].listFiles((FileFilter) file -> file.getName().contains(".log"));
+				if (logs != null) { for (final File log : logs) { log.delete(); } }
+				files = files[0].listFiles((FileFilter) file -> ".plugins".equals(file.getName()));
+				if (files == null) return false;
+				if (files.length == 0) return true;
+				files = files[0].listFiles((FileFilter) file -> "org.eclipse.core.resources".equals(file.getName()));
+				if (files == null) return false;
+				if (files.length == 0) return true;
+				files = files[0].listFiles((FileFilter) file -> file.getName().contains("snap"));
+				if (files == null) return false;
+				// DEBUG.OUT("[GAMA] Workspace appears to be " + (files.length == 0 ? "clean" : "corrupted"));>
+				if (files.length == 0) return true;
 
-						if (askBeforeRebuildingWorkspace()) {
-							rebuild = MessageDialog.openQuestion(Display.getDefault().getActiveShell(),
-									"Corrupted workspace",
-									"The workspace appears to be corrupted (due to a previous crash) or it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
-						}
-					}
-					if (rebuild) {
-						if (files != null) { for (final File file : files) { if (file.exists()) { file.delete(); } } }
-						Application.clearWorkspace(true);
-						return false;
-					}
-					return true;
-				});
+				if (askBeforeRebuildingWorkspace()) {
+					rebuild = MessageDialog.openQuestion(Display.getDefault().getActiveShell(), "Corrupted workspace",
+							"The workspace appears to be corrupted (due to a previous crash) or "
+									+ "it is currently used by another instance of the platform. Would you like GAMA to clean it ?");
+				}
+			}
+			if (rebuild) {
+				if (files != null) { for (final File file : files) { if (file.exists()) { file.delete(); } } }
+				Application.clearWorkspace(true);
+				return false;
+			}
+			return true;
+		});
 	}
 
 	/**

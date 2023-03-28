@@ -10,10 +10,13 @@
  ********************************************************************************************************/
 package ummisco.gaml.extensions.image;
 
+import java.awt.GraphicsEnvironment;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class Activator.
@@ -34,7 +37,18 @@ public class Activator implements BundleActivator {
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		// We set the snapshot maker early so that it becomes available early from the IGui access
-		GAMA.setSnapshotMaker(SnapshotMaker.getInstance());
+		// In reference to #3689, the GraphicsEnvironment is queried earlier for headless mode.
+		String message, mode;
+
+		if (GraphicsEnvironment.isHeadless()) {
+			message = "inactive";
+			mode = "(headless mode)";
+		} else {
+			message = "active";
+			mode = "(gui mode)";
+			GAMA.setSnapshotMaker(SnapshotMaker.getInstance());
+		}
+		DEBUG.BANNER("GAMA: Snapshot services", message, mode);
 	}
 
 	@Override

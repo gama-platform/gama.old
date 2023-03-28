@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gaml.extensions.image;
 
-import static ummisco.gaml.extensions.image.ImageOperators.clipboard;
-
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -125,7 +123,7 @@ public class GamaImageType extends GamaType<GamaImage> {
 		}
 		if (obj instanceof GamaIntMatrix mat) return GamaImage.from(scope, mat);
 		if (obj instanceof BufferedImage im) return GamaImage.from(im, true);
-		if (obj instanceof Image im) return ImageOperators.copyToOptimalImage(im);
+		if (obj instanceof Image im) return ImageHelper.copyToOptimalImage(im);
 		if (obj instanceof GamaImageFile f) return GamaImage.from(f.getImage(scope, true), true, f.getOriginalPath());
 		if (obj instanceof GamaPoint p) return ImageOperators.image((int) p.getX(), (int) p.getY());
 		if (obj instanceof String s) return staticCast(scope, new GamaImageFile(scope, s), false);
@@ -158,8 +156,8 @@ public class GamaImageType extends GamaType<GamaImage> {
 
 	@Override
 	public GamaImage copyFromClipboard(final IScope scope) {
-		if (clipboard == null) return null;
-		Transferable content = clipboard.getContents(null);
+		if (ImageConstants.clipboard == null) return null;
+		Transferable content = ImageConstants.clipboard.getContents(null);
 		if (content == null || !content.isDataFlavorSupported(DataFlavor.imageFlavor)) return null;
 		try {
 			return staticCast(scope, content.getTransferData(DataFlavor.imageFlavor), false);

@@ -18,17 +18,18 @@ global {
 	image blank_transparent <- image(100, 100, true);
 
 	// a blank image with transparency, filled with a color
-	image colored <- image(100, 100, #black);
+	image colored <- image(100, 100, #red);
 
 	// an image read from the clipboard (nil if none is present)
 	image clip <- copy_from_clipboard(image);
-	// and of course, any image can be sent to the clipboard as well
-	bool copied <- copy_to_clipboard(colored);
+
 
 	// an image read from a file on disk
 	image on_disk <- image("../includes/Kandinsky.jpeg");
 	// a shortcut equivalent to:
 	image on_disk2 <- image(file("../includes/Kandinsky.jpeg"));
+	// and of course, any image can be sent to the clipboard as well
+	bool copied <- copy_to_clipboard(on_disk);
 	
 	// an image built from a field
 	field terrain <- generate_terrain(10,100,100,0.5,0.5,0.5);

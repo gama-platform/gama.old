@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gaml.compilation.kernel;
 
+import static ummisco.gama.dev.utils.DEBUG.TIMER;
+import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -179,81 +182,62 @@ public class GamaBundleLoader {
 	 */
 	public static void preBuildContributions() throws Exception {
 
-		DEBUG.LOG(DEBUG.PAD("> GAMA: version " + GAMA.VERSION_NUMBER, 55, ' ') + DEBUG.PAD(" loading on", 15, '_') + " "
-				+ SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
+		DEBUG.BANNER("GAMA: version " + GAMA.VERSION_NUMBER, "loading on",
+				SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
 
-		DEBUG.TIMER(DEBUG.PAD("> GAML: Plugins with language additions", 55, ' '), DEBUG.PAD(" loaded in", 15, '_'),
-				() -> {
-					final IExtensionRegistry registry = Platform.getExtensionRegistry();
-					// We retrieve the elements declared as extensions to the GAML language,
-					// either with the new or the deprecated extension, and add their contributor plugin to GAMA_PLUGINS
-					try {
-						StreamEx.of(registry.getExtensionPoint(GRAMMAR_EXTENSION).getExtensions())
-								.append(StreamEx
-										.of(registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED).getExtensions()))
-								.map(e -> Platform.getBundle(e.getContributor().getName()))
-								.sorted(Comparator.comparing(Bundle::getSymbolicName)).into(GAMA_PLUGINS);
-					} catch (final InvalidRegistryObjectException e) {
-						ERROR("Error in retrieving GAMA plugins. One is invalid. ", e);
-					}
-					// We remove the core plugin, in order to build it first (important)
-					GAMA_PLUGINS.remove(CORE_PLUGIN);
-					try {
-						preBuild(CORE_PLUGIN);
-					} catch (final Exception e2) {
-						ERROR("Error in loading core GAML language definition. ", e2);
-						// We exit in case the core cannot be built, as there is no point in continuing past this point
-						System.exit(0);
-						return;
-					}
-					// We then build the other extensions to the language
-					for (final Bundle addition : GAMA_PLUGINS) {
-						CURRENT_PLUGIN_NAME = addition.getSymbolicName();
-						try {
-							preBuild(addition);
-						} catch (final Exception e1) {
-							ERROR("Error in loading plugin " + CURRENT_PLUGIN_NAME + ". ", e1);
-							// We do not systematically exit in case of additional plugins failing to load, so as to
-							// give the platform a chance to execute even in case of errors (to save files, to
-							// remove offending plugins, etc.)
-							continue;
-						}
-					}
-					CURRENT_PLUGIN_NAME = null;
-					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to 'create'", 55, ' '),
-							DEBUG.PAD(" done in", 15, '_'), () -> {
-								loadCreateExtensions(registry);
-							});
-					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to 'save'", 55, ' '),
-							DEBUG.PAD(" done in", 15, '_'), () -> {
-								loadSaveExtensions(registry);
-							});
-					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to 'draw'", 55, ' '),
-							DEBUG.PAD(" done in", 15, '_'), () -> {
-								loadDrawExtensions(registry);
-							});
-					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading extensions to event layers", 55, ' '),
-							DEBUG.PAD(" done in", 15, '_'), () -> {
-								loadEventLayerExtensions(registry);
-							});
-					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Gathering all the built-in models", 55, ' '),
-							DEBUG.PAD(" done in", 15, '_'), () -> {
-								loadModels(registry);
-							});
-					loadContentExtensions(registry);
+		TIMER("GAML: Plugins with language additions", "loaded in", () -> {
+			final IExtensionRegistry registry = Platform.getExtensionRegistry();
+			// We retrieve the elements declared as extensions to the GAML language,
+			// either with the new or the deprecated extension, and add their contributor plugin to GAMA_PLUGINS
+			try {
+				StreamEx.of(registry.getExtensionPoint(GRAMMAR_EXTENSION).getExtensions())
+						.append(StreamEx.of(registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED).getExtensions()))
+						.map(e -> Platform.getBundle(e.getContributor().getName()))
+						.sorted(Comparator.comparing(Bundle::getSymbolicName)).into(GAMA_PLUGINS);
+			} catch (final InvalidRegistryObjectException e) {
+				ERROR("Error in retrieving GAMA plugins. One is invalid. ", e);
+			}
+			// We remove the core plugin, in order to build it first (important)
+			GAMA_PLUGINS.remove(CORE_PLUGIN);
+			try {
+				preBuild(CORE_PLUGIN);
+			} catch (final Exception e2) {
+				ERROR("Error in loading core GAML language definition. ", e2);
+				// We exit in case the core cannot be built, as there is no point in continuing past this point
+				System.exit(0);
+				return;
+			}
+			// We then build the other extensions to the language
+			for (final Bundle addition : GAMA_PLUGINS) {
+				CURRENT_PLUGIN_NAME = addition.getSymbolicName();
+				try {
+					preBuild(addition);
+				} catch (final Exception e1) {
+					ERROR("Error in loading plugin " + CURRENT_PLUGIN_NAME + ". ", e1);
+					// We do not systematically exit in case of additional plugins failing to load, so as to
+					// give the platform a chance to execute even in case of errors (to save files, to
+					// remove offending plugins, etc.)
+					continue;
+				}
+			}
+			CURRENT_PLUGIN_NAME = null;
+			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'create'", "done in",
+					() -> { loadCreateExt(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'save'", "done in", () -> { loadSaveExt(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'draw'", "done in", () -> { loadDrawExt(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'event'", "done in", () -> { loadEventExt(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA: Gathering built-in models", "done in", () -> { loadModels(registry); });
+			loadContentExtensions(registry);
 
-					// CRUCIAL INITIALIZATIONS
-					LOADED = true;
-					// We init the meta-model of GAMA (i.e. abstract agent, model, experiment species)
-					GamaMetaModel.INSTANCE.build();
-					// We init the type hierarchy, the units and the agent representing the GAMA platform
-					Types.init();
-					DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Loading constants", 55, ' '),
-							DEBUG.PAD(" done in", 15, '_'), () -> {
-								loadConstants(registry);
-							});
-					GamaMetaModel.INSTANCE.getPlatformSpeciesDescription().validate();
-				});
+			// CRUCIAL INITIALIZATIONS
+			LOADED = true;
+			// We init the meta-model of GAMA (i.e. abstract agent, model, experiment species)
+			GamaMetaModel.INSTANCE.build();
+			// We init the type hierarchy, the units and the agent representing the GAMA platform
+			Types.init();
+			TIMER_WITH_EXCEPTIONS("GAMA: Loading constants", "done in", () -> { loadConstants(registry); });
+			GamaMetaModel.INSTANCE.getPlatformSpeciesDescription().validate();
+		});
 
 	}
 
@@ -265,7 +249,7 @@ public class GamaBundleLoader {
 	 * @throws InvalidRegistryObjectException
 	 *             the invalid registry object exception
 	 */
-	private static void loadCreateExtensions(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+	private static void loadCreateExt(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
 		// We gather all the extensions to the `create` statement and add them
 		// as delegates to CreateStatement. If an exception occurs, we discard it
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(CREATE_EXTENSION)) {
@@ -293,7 +277,7 @@ public class GamaBundleLoader {
 	 * @throws InvalidRegistryObjectException
 	 *             the invalid registry object exception
 	 */
-	private static void loadSaveExtensions(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+	private static void loadSaveExt(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
 		// We gather all the extensions to the `save` statement and add them
 		// as delegates to SaveStatement. If an exception occurs, we discard it
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(SAVE_EXTENSION)) {
@@ -321,7 +305,7 @@ public class GamaBundleLoader {
 	 * @throws InvalidRegistryObjectException
 	 *             the invalid registry object exception
 	 */
-	private static void loadDrawExtensions(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
+	private static void loadDrawExt(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
 		// We gather all the extensions to the `draw` statement and add them
 		// as delegates to DrawStatement. If an exception occurs, we discard it
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(DRAW_EXTENSION)) {
@@ -349,8 +333,7 @@ public class GamaBundleLoader {
 	 * @throws InvalidRegistryObjectException
 	 *             the invalid registry object exception
 	 */
-	private static void loadEventLayerExtensions(final IExtensionRegistry registry)
-			throws InvalidRegistryObjectException {
+	private static void loadEventExt(final IExtensionRegistry registry) throws InvalidRegistryObjectException {
 		// We gather all the extensions to the `event` statement and add them
 		// as delegates to EventLayerStatement
 		for (final IConfigurationElement e : registry.getConfigurationElementsFor(EVENT_LAYER_EXTENSION)) {
@@ -451,33 +434,31 @@ public class GamaBundleLoader {
 	 */
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
-		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Plugin " + bundle.getSymbolicName(), 55, ' '),
-				DEBUG.PAD(" loaded in", 15, '_'), () -> {
-					String shortcut = bundle.getSymbolicName();
-					shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
-					GamaClassLoader.getInstance().addBundle(bundle);
-					Class<IGamlAdditions> clazz = null;
-					String classPath = ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME;
-					String error =
-							">> Impossible to load additions from " + bundle + " because " + classPath + " cannot be ";
-					try {
-						clazz = (Class<IGamlAdditions>) bundle.loadClass(classPath);
-						clazz.getConstructor().newInstance().initialize();
-					} catch (final ClassNotFoundException e) {
-						DEBUG.LOG(error + "found.");
-						throw new WrappedException(error + "found.", e);
-					} catch (final SecurityException | NoSuchMethodException e) {
-						DEBUG.LOG(error + "initialized.");
-						throw new WrappedException(error + "initialized.", e);
-					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException e) {
-						DEBUG.LOG(error + "instantiated.");
-						throw new WrappedException(error + "instantiated.", e);
-					} catch (Exception e) {
-						DEBUG.LOG(e.getMessage());
-						throw new WrappedException(error + "run.", e);
-					}
-				});
+		TIMER_WITH_EXCEPTIONS("GAMA: Plugin " + bundle.getSymbolicName(), "loaded in", () -> {
+			String shortcut = bundle.getSymbolicName();
+			shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
+			GamaClassLoader.getInstance().addBundle(bundle);
+			Class<IGamlAdditions> clazz = null;
+			String classPath = ADDITIONS_PACKAGE_BASE + "." + shortcut + "." + ADDITIONS_CLASS_NAME;
+			String error = ">> Impossible to load additions from " + bundle + " because " + classPath + " cannot be ";
+			try {
+				clazz = (Class<IGamlAdditions>) bundle.loadClass(classPath);
+				clazz.getConstructor().newInstance().initialize();
+			} catch (final ClassNotFoundException e) {
+				DEBUG.LOG(error + "found.");
+				throw new WrappedException(error + "found.", e);
+			} catch (final SecurityException | NoSuchMethodException e) {
+				DEBUG.LOG(error + "initialized.");
+				throw new WrappedException(error + "initialized.", e);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				DEBUG.LOG(error + "instantiated.");
+				throw new WrappedException(error + "instantiated.", e);
+			} catch (Exception e) {
+				DEBUG.LOG(e.getMessage());
+				throw new WrappedException(error + "run.", e);
+			}
+		});
 	}
 
 	/**

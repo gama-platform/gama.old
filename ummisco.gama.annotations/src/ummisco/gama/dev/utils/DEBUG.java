@@ -148,7 +148,7 @@ public class DEBUG {
 	 * outputs the title provided and the time taken once the runnable is finished, otherwise simply runs the runnable
 	 * (the overhead is minimal compared to simply executing the contents of the runnable).
 	 *
-	 * Usage: DEBUG.TIMER("Important task", ()-> importantTask(...)); Output: Important Taks: 100ms
+	 * Usage: DEBUG.TIMER("Important task", "done in", ()-> importantTask(...)); Output: Important Taks done in 100ms
 	 *
 	 * @param title
 	 *            a string that will prefix the number of ms in the output
@@ -164,7 +164,7 @@ public class DEBUG {
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(begin + end + " " + (currentTimeMillis() - start) + "ms");
+		BANNER(begin, end, currentTimeMillis() - start + "ms");
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class DEBUG {
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		LOG(begin + end + " " + (currentTimeMillis() - start) + "ms");
+		BANNER(begin, end, currentTimeMillis() - start + "ms");
 	}
 
 	/**
@@ -209,11 +209,11 @@ public class DEBUG {
 	 * @return The result of the supplier passed in argument
 	 */
 
-	public static <T> T TIMER(final String title, final Supplier<T> supplier) {
+	public static <T> T TIMER(final String title, final String end, final Supplier<T> supplier) {
 		if (!ENABLE_LOGGING) return supplier.get();
 		final long start = System.currentTimeMillis();
 		final T result = supplier.get();
-		LOG(title + " " + (System.currentTimeMillis() - start) + "ms");
+		BANNER(title, end, currentTimeMillis() - start + "ms");
 		return result;
 	}
 
@@ -276,6 +276,20 @@ public class DEBUG {
 	 */
 	public static void LOG(final Object string) {
 		if (ENABLE_LOGGING) { LOG(string, true); }
+	}
+
+	/**
+	 * Banner.
+	 *
+	 * @param title
+	 *            the title
+	 * @param state
+	 *            the state
+	 * @param result
+	 *            the result
+	 */
+	public static void BANNER(final String title, final String state, final String result) {
+		LOG(PAD("> " + title + " ", 55, ' ') + PAD(" " + state, 15, '_') + " " + result);
 	}
 
 	/**
