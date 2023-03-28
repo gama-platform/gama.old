@@ -55,7 +55,7 @@ experiment "Save Snapshots" type: gui {
 	reflex when: (cycle > 1) and every(100 #cycle) {
 		ask simulation {
 			// We choose a neutral background
-			save (snapshot("My Display")) format:image to: "snapshots/snapshot" + myself.i + ".jpg";
+			save (snapshot("My Display")) to: "snapshots/snapshot" + myself.i + ".png";
 		}
 		i <- i + 1;
 	}
