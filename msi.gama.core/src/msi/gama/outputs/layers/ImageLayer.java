@@ -24,10 +24,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.AssetDrawingAttributes;
 import msi.gaml.types.GamaFileType;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
@@ -76,8 +78,7 @@ public class ImageLayer extends AbstractLayer {
 	public ImageLayer(final IScope scope, final ILayerStatement layer) {
 		super(layer);
 		provider = ((ImageLayerStatement) definition).file;
-		isImageProvider = provider.getGamlType().getGamlType().equals(Types.FILE)
-				|| IImageProvider.class.isAssignableFrom(provider.getGamlType().toClass());
+		isImageProvider = isImageProvider();
 		isFilePotentiallyVariable = !provider.isContextIndependant();
 		matrix = ((ImageLayerStatement) definition).matrix;
 		isMatrixPotentiallyVariable = matrix == null ? false : !matrix.isContextIndependant();
@@ -103,6 +104,19 @@ public class ImageLayer extends AbstractLayer {
 			cachedBufferedImage = GamaIntMatrix.from(scope, Cast.asMatrix(scope, matrix.value(scope))).getImage(scope);
 		}
 
+	}
+
+	/**
+	 * Checks if is image provider.
+	 *
+	 * @return true, if is image provider
+	 */
+	private boolean isImageProvider() {
+		IType providerType = provider.getGamlType();
+		if (IImageProvider.class.isAssignableFrom(providerType.toClass())
+				|| IMatrix.class.isAssignableFrom(providerType.toClass()) && providerType.getContentType() == Types.INT)
+			return true;
+		return false;
 	}
 
 	@Override
