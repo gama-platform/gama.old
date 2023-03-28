@@ -28,6 +28,7 @@ global {
 	init {
 		create prey number: nb_preys_init;
 		create predator number: nb_predators_init;
+		write(self);
 	}	
 	
 	reflex stop_simulation when: ((nb_preys = 0) or (nb_predators = 0)) and !is_batch {

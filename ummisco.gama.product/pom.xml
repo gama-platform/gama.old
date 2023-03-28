@@ -61,7 +61,7 @@
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
 								</copy>
 								<copy
-									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless">
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless/samples">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/samples" />
 								</copy>
 								<copy 
@@ -81,7 +81,7 @@
 									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
 								</copy>
 								<copy
-									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless">
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless/samples">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/samples" />
 								</copy>
 								<copy 
@@ -98,7 +98,7 @@
 										dir="../ummisco.gama.product/extraresources/headless/windows" />
 								</copy>
 								<copy
-									todir="./target/products/ummisco.gama.application.product/win32/win32/x86_64/headless">
+									todir="./target/products/ummisco.gama.application.product/win32/win32/x86_64/headless/samples">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/samples" />
 								</copy>
 								<copy 
@@ -116,7 +116,7 @@
 									<fileset dir="../ummisco.gama.product/extraresources/headless/unix" />
 								</copy>
 								<copy
-									todir="./target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless">
+									todir="./target/products/ummisco.gama.application.product/linux/gtk/x86_64/headless/samples">
 									<fileset dir="../ummisco.gama.product/extraresources/headless/samples" />
 								</copy>
 								<copy 
