@@ -110,13 +110,13 @@ species dummy  {
 experiment Displays type: gui
 {
 	parameter "Radius of selection" var: radius ;	// The radius of the disk around the click 
-	output
+	output synchronized:true
 	{    
 		layout horizontal([0::5000,1::5000]) tabs:true editors: false;
 		display View_change_color
 		{
 			species cell;
-			species dummy transparency:0.9 aspect: aspect4ViewChangeColor ;
+			species dummy transparency:0.9 aspect: aspect4ViewChangeColor;
 			// event, launches the action change_color if the event mouse_down (ie. the user clicks on the layer event) is triggered
 			// the action can be either in the experiment or in the global section. If it is defined in both, the one in the experiment will be chosen in priority
 			event #mouse_down action: change_color;

@@ -284,7 +284,7 @@ public class ImageOperators {
 	 *            The target height for the scaled image.
 	 * @return the result of scaling the original <code>src</code> to the given dimensions
 	 */
-	static GamaImage scaleImage(final Image bufferedImage, final int targetWidth, final int targetHeight) {
+	public static GamaImage scaleImage(final Image bufferedImage, final int targetWidth, final int targetHeight) {
 		GamaImage result = GamaImage.bestFor(bufferedImage, targetWidth, targetHeight);
 		Graphics2D resultGraphics = result.createGraphics();
 		resultGraphics.setRenderingHints(ImageOperators.HINTS);
@@ -638,16 +638,12 @@ public class ImageOperators {
 		int newHeight = (int) Math.floor(h * cos + w * sin);
 		GamaImage rotated = GamaImage.ofDimensions(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = rotated.createGraphics();
-
+		// Make sure the background is transparent
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0f));
 		g2.setColor(new Color(0, 0, 0, 0));
 		g2.fillRect(0, 0, newWidth, newHeight);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-
-		// g2.setRenderingHints(HINTS);
-		// g2.setBackground(new Color(0, 0, 0, 0));
-		// graphics2d.setBackground(new Color(0, true));
-		// graphics2d.clearRect(0, 0, newWidth, newHeight);
+		g2.setRenderingHints(HINTS);
 		g2.translate((newWidth - w) / 2, (newHeight - h) / 2);
 		g2.rotate(rads, w / 2, h / 2);
 		g2.drawImage(image, 0, 0, null);

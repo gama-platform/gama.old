@@ -51,7 +51,6 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -76,6 +75,7 @@ import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
+import ummisco.gaml.extensions.image.ImageOperators;
 
 /**
  * Class OpenGLSWTDisplaySurface.
@@ -199,7 +199,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			BufferedImage im = new BufferedImage(cm, raster, false, null);
 			// TODO Seems to take a very long time -- verify
 
-			if (desiredWidth != w || desiredHeight != h) { im = ImageUtils.resize(im, desiredWidth, desiredHeight); }
+			if (desiredWidth != w || desiredHeight != h) {
+				im = ImageOperators.scaleImage(im, desiredWidth, desiredHeight);
+			}
 			ImageUtil.flipImageVertically(im);
 			image[0] = im;
 			return true;
