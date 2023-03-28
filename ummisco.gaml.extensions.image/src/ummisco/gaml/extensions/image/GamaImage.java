@@ -13,8 +13,10 @@ package ummisco.gaml.extensions.image;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DataBufferInt;
 import java.awt.image.PixelGrabber;
+import java.awt.image.WritableRaster;
 
 import msi.gama.common.interfaces.IAsset;
 import msi.gama.common.interfaces.IImageProvider;
@@ -76,6 +78,23 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	 */
 	private GamaImage(final int width, final int height, final int type, final String uniqueID) {
 		super(width, height, type);
+		id = uniqueID;
+	}
+
+	/**
+	 * Instantiates a new gama image.
+	 *
+	 * @param cm
+	 *            the cm
+	 * @param raster
+	 *            the raster
+	 * @param b
+	 *            the b
+	 * @param uniqueID
+	 *            the unique ID
+	 */
+	private GamaImage(final ColorModel cm, final WritableRaster raster, final boolean b, final String uniqueID) {
+		super(cm, raster, b, null);
 		id = uniqueID;
 	}
 
@@ -315,6 +334,21 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 			values[i] = pixels[i] & (index + 1) * 255;
 		}
 		return values;
+	}
+
+	/**
+	 * From.
+	 *
+	 * @param cm
+	 *            the cm
+	 * @param raster
+	 *            the raster
+	 * @param b
+	 *            the b
+	 * @return the gama image
+	 */
+	public static GamaImage from(final ColorModel cm, final WritableRaster raster, final boolean b) {
+		return new GamaImage(cm, raster, b, "raster" + System.currentTimeMillis());
 	}
 
 }

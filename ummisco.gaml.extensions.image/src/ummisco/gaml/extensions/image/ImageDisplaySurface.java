@@ -14,7 +14,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -48,7 +47,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Files;
-import ummisco.gaml.extensions.image.ImageOperators.Mode;
 
 /**
  * The Class ImageDisplaySurface.
@@ -222,9 +220,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public BufferedImage getImage(final int w, final int h) {
+	public GamaImage getImage(final int w, final int h) {
 		paint();
-		return ImageOperators.resize(buffImage, Mode.FIT_EXACT, w, h);
+		return ImageHelper.resize(buffImage, ummisco.gaml.extensions.image.ImageHelper.Mode.FIT_EXACT, w, h);
 	}
 
 	/*

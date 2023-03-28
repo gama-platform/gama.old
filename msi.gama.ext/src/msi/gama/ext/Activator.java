@@ -1,15 +1,12 @@
-/*********************************************************************************************
+/*******************************************************************************************************
  *
+ * Activator.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * 'Activator.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
- * platform. (v. 1.8.1)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/UPMC & Partners
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
- * Visit https://github.com/gama-platform/gama for license information and developers contact.
- *
- *
- **********************************************************************************************/
+ ********************************************************************************************************/
 package msi.gama.ext;
 
 import javax.imageio.ImageIO;
@@ -25,13 +22,20 @@ import org.osgi.framework.BundleContext;
 import it.geosolutions.jaiext.ConcurrentOperationRegistry;
 import one.util.streamex.StreamEx;
 
+/**
+ * The Class Activator.
+ */
 public class Activator implements BundleActivator {
 
+	/** The context. */
 	private static BundleContext context;
 
-	static BundleContext getContext() {
-		return context;
-	}
+	/**
+	 * Gets the context.
+	 *
+	 * @return the context
+	 */
+	static BundleContext getContext() { return context; }
 
 	/*
 	 * (non-Javadoc)
@@ -60,8 +64,7 @@ public class Activator implements BundleActivator {
 		// See FLAGS.java
 		String log = System.getProperty("enable_logging");
 		if (log == null || "true".equals(log)) {
-			System.out.println(PAD("> JAI : ImageIO extensions",55, ' ') + PAD(" loaded for", 15, '_') + " "
-					+ StreamEx.of(ImageIO.getReaderFileSuffixes()).joining("|"));
+			BANNER("JAI : ImageIO extensions", "loaded for", StreamEx.of(ImageIO.getReaderFileSuffixes()).joining("|"));
 		}
 	}
 
@@ -75,15 +78,38 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
+	/**
+	 * Pad.
+	 *
+	 * @param string
+	 *            the string
+	 * @param minLength
+	 *            the min length
+	 * @param pad
+	 *            the pad
+	 * @return the string
+	 */
 	// See DEBUG.java
 	public static String PAD(final String string, final int minLength, final char pad) {
 		if (string.length() >= minLength) return string;
 		final StringBuilder sb = new StringBuilder(minLength);
 		sb.append(string);
-		for (int i = string.length(); i < minLength; i++) {
-			sb.append(pad);
-		}
+		for (int i = string.length(); i < minLength; i++) { sb.append(pad); }
 		return sb.toString();
+	}
+
+	/**
+	 * Banner.
+	 *
+	 * @param title
+	 *            the title
+	 * @param state
+	 *            the state
+	 * @param result
+	 *            the result
+	 */
+	public static void BANNER(final String title, final String state, final String result) {
+		System.out.println(PAD("> " + title + " ", 55, ' ') + PAD(" " + state, 15, '_') + " " + result);
 	}
 
 }

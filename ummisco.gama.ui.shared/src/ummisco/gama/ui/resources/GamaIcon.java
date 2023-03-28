@@ -10,7 +10,9 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import static java.nio.file.Files.walk;
 import static org.eclipse.core.runtime.FileLocator.toFileURL;
+import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageDataProvider;
@@ -38,15 +37,14 @@ import com.google.common.cache.CacheBuilder;
 
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class GamaIcon.
  */
 public class GamaIcon {
-	
+
 	static {
-		DEBUG.OFF();					
+		DEBUG.OFF();
 	}
 
 	/** The icon cache. */
@@ -58,8 +56,10 @@ public class GamaIcon {
 	/** The Constant DISABLED_SUFFIX. */
 	public static final String DISABLED_SUFFIX = "_disabled";
 
+	/** The Constant TEMPLATES. */
 	public static final String TEMPLATES = "templates" + File.separator;
 
+	/** The Constant COLORS. */
 	public static final String COLORS = "colors" + File.separator;
 
 	/** The Constant PATH_TO_ICONS. */
@@ -80,8 +80,8 @@ public class GamaIcon {
 	 * @throws IOException
 	 */
 	public static void preloadAllIcons() throws IOException {
-		DEBUG.TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: Preloading icons", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
-				() -> Files.walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
+		TIMER_WITH_EXCEPTIONS("GAMA: Preloading icons", "done in",
+				() -> walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
 						.filter(n -> n.endsWith(".png") && !n.contains("@") && !n.contains(DISABLED_SUFFIX))
 						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));
 	}
@@ -96,7 +96,7 @@ public class GamaIcon {
 	public static GamaIcon named(final String s) {
 
 		try {
-			DEBUG.OUT("Looking for icon "  + s);
+			DEBUG.OUT("Looking for icon " + s);
 			if (s != null) return ICON_CACHE.get(s, () -> new GamaIcon(s));
 		} catch (ExecutionException e) {}
 		return named(MISSING);
@@ -113,7 +113,7 @@ public class GamaIcon {
 	 */
 	public static GamaIcon ofColor(final GamaUIColor gcolor, final boolean square) {
 		String shape = square ? "square" : "circle";
-		final String name = (COLORS + shape + ".color." + String.format("%X", gcolor.gamaColor().getRGB()));
+		final String name = COLORS + shape + ".color." + String.format("%X", gcolor.gamaColor().getRGB());
 		DEBUG.OUT("Looking for " + name + ".png");
 		try {
 			return ICON_CACHE.get(name, () -> {
@@ -135,8 +135,6 @@ public class GamaIcon {
 		}
 
 	}
-
-
 
 	/** The code. */
 	final String code;
@@ -258,9 +256,7 @@ public class GamaIcon {
 	 *
 	 * @return the code
 	 */
-	public String getCode() {
-		return code;
-	}
+	public String getCode() { return code; }
 
 	/**
 	 * Compute URL.

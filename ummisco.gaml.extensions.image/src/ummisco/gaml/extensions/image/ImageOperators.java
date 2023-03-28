@@ -10,32 +10,19 @@
  ********************************************************************************************************/
 package ummisco.gaml.extensions.image;
 
+import static ummisco.gaml.extensions.image.ImageHelper.HINTS;
+import static ummisco.gaml.extensions.image.ImageHelper.apply;
+import static ummisco.gaml.extensions.image.ImageHelper.resize;
+import static ummisco.gaml.extensions.image.ImageHelper.rotate;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;
-import java.awt.image.ConvolveOp;
-import java.awt.image.ImagingOpException;
-import java.awt.image.Kernel;
-import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
-import java.util.Map;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -53,6 +40,8 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IType;
+import ummisco.gaml.extensions.image.ImageHelper.Mode;
+import ummisco.gaml.extensions.image.ImageHelper.TransferableImage;
 
 /**
  * The Class ImageOperators. largely inspired from imgscalr library
@@ -60,280 +49,7 @@ import msi.gaml.types.IType;
  *
  * @author Riyad Kalla (software@thebuzzmedia.com)
  */
-public class ImageOperators {
-
-	/** The Constant clipboard. */
-	public static final Clipboard clipboard =
-			GraphicsEnvironment.isHeadless() ? null : Toolkit.getDefaultToolkit().getSystemClipboard();
-
-	/** The Constant FLIP_HORZ. */
-	public static final int FLIP_HORZ = 0;
-
-	/** The Constant FLIP_VERT. */
-	public static final int FLIP_VERT = 1;
-
-	/** The hints. */
-	static RenderingHints HINTS =
-			new RenderingHints(Map.of(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON,
-					RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC,
-					RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
-	/**
-	 * A {@link ConvolveOp} using a very light "blur" kernel that acts like an anti-aliasing filter (softens the image a
-	 * bit) when applied to an image.
-	 */
-	public static final ConvolveOp OP_ANTIALIAS =
-			new ConvolveOp(new Kernel(3, 3, new float[] { .0f, .08f, .0f, .08f, .68f, .08f, .0f, .08f, .0f }),
-					ConvolveOp.EDGE_NO_OP, HINTS);
-
-	/**
-	 * A {@link RescaleOp} used to make any input image 10% darker.
-	 */
-	public static final RescaleOp OP_DARKER = new RescaleOp(0.9f, 0, HINTS);
-
-	/**
-	 * A {@link RescaleOp} used to make any input image 10% brighter.
-	 */
-	public static final RescaleOp OP_BRIGHTER = new RescaleOp(1.1f, 0, HINTS);
-
-	/** The Constant OP_SHARPEN. */
-	public static final ConvolveOp OP_SHARPEN = new ConvolveOp(
-			new Kernel(3, 3, new float[] { -1.0f, -1.0f, -1.0f, -1.0f, 9.0f, -1.0f, -1.0f, -1.0f, -1.0f }),
-			ConvolveOp.EDGE_NO_OP, HINTS);
-
-	/** The Constant OP_BLUR. */
-	public static final ConvolveOp OP_BLUR = new ConvolveOp(
-			new Kernel(3, 3, new float[] { 0.0625f, 0.125f, 0.0625f, 0.125f, 0.25f, 0.125f, 0.0625f, 0.125f, 0.0625f }),
-			ConvolveOp.EDGE_NO_OP, HINTS);
-
-	/**
-	 * A {@link ColorConvertOp} used to convert any image to a grayscale color palette.
-	 */
-	public static final ColorConvertOp OP_GRAYSCALE =
-			new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-
-	/**
-	 * Used to apply a {@link BufferedImageOp}s to a given {@link GamaImage} and return the result.
-	 *
-	 * @param src
-	 *            The image that will have the ops applied to it.
-	 * @param op
-	 *            the to apply to the image.
-	 *
-	 * @return a new {@link GamaImage} that represents the <code>src</code> with the op applied to it.
-	 *
-	 */
-	private static GamaImage apply(GamaImage src, final BufferedImageOp op) {
-		int type = src.getType();
-		if (type != BufferedImage.TYPE_INT_RGB && type != BufferedImage.TYPE_INT_ARGB) {
-			src = copyToOptimalImage(src);
-		}
-		Rectangle2D bounds = op.getBounds2D(src);
-		if (bounds == null) return src;
-		GamaImage result =
-				GamaImage.bestFor(src, (int) Math.round(bounds.getWidth()), (int) Math.round(bounds.getHeight()));
-		op.filter(src, result);
-		return result;
-	}
-
-	/**
-	 * Used to copy a {@link Image} from a non-optimal type into a new {@link GamaImage} instance of an optimal type
-	 * (RGB or ARGB).
-	 *
-	 * @param src
-	 *            The image to copy (if necessary) into an optimally typed {@link BufferedImage}.
-	 *
-	 * @return a representation of the <code>src</code> image in an optimally typed {@link BufferedImage}, otherwise
-	 *         <code>src</code> if it was already of an optimal type.
-	 *
-	 */
-	protected static GamaImage copyToOptimalImage(final Image src) {
-		if (src == null) return null;
-		int type = src instanceof BufferedImage bu && bu.getTransparency() == Transparency.OPAQUE
-				? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-		GamaImage result = GamaImage.ofDimensions(src.getWidth(null), src.getHeight(null), type);
-		Graphics g = result.getGraphics();
-		g.drawImage(src, 0, 0, null);
-		g.dispose();
-		return result;
-	}
-
-	/**
-	 * Used to apply a quadrant / flip rotation to the image
-	 *
-	 * @param src
-	 *            The image that will have the rotation applied to it.
-	 * @param typeOfRotation
-	 *            The rotation that will be applied to the image.
-	 *
-	 * @return a new {@link BufferedImage} representing <code>src</code> rotated by the given amount and any optional
-	 *         ops applied to it.
-	 *
-	 */
-	private static GamaImage rotate(final GamaImage src, final int typeOfRotation)
-			throws IllegalArgumentException, ImagingOpException {
-		int newWidth = src.getWidth();
-		int newHeight = src.getHeight();
-		AffineTransform tx = new AffineTransform();
-		switch (typeOfRotation) {
-			case 90:
-				newWidth = newHeight;
-				newHeight = src.getWidth();
-				tx.translate(newWidth, 0);
-				tx.quadrantRotate(1);
-				break;
-			case 270:
-				newWidth = newHeight;
-				newHeight = src.getWidth();
-				tx.translate(0, newHeight);
-				tx.quadrantRotate(3);
-				break;
-			case 180:
-				tx.translate(newWidth, newHeight);
-				tx.quadrantRotate(2);
-				break;
-			case FLIP_HORZ:
-				tx.translate(newWidth, 0);
-				tx.scale(-1.0, 1.0);
-				break;
-			case FLIP_VERT:
-				tx.translate(0, newHeight);
-				tx.scale(1.0, -1.0);
-				break;
-		}
-		GamaImage result = GamaImage.bestFor(src, newWidth, newHeight);
-		Graphics2D g2d = result.createGraphics();
-		g2d.setRenderingHints(ImageOperators.HINTS);
-		g2d.drawImage(src, tx, null);
-		g2d.dispose();
-		return result;
-	}
-
-	/**
-	 * Used to define the different modes of resizing that the algorithm can use.
-	 *
-	 * @author Riyad Kalla (software@thebuzzmedia.com)
-	 * @since 3.1
-	 */
-	public enum Mode {
-		/**
-		 * Used to fit the image to the exact dimensions given regardless of the image's proportions. If the dimensions
-		 * are not proportionally correct, this will introduce vertical or horizontal stretching to the image.
-		 */
-		FIT_EXACT,
-
-		/**
-		 * Used to indicate that the scaling implementation should calculate dimensions for the resultant image that
-		 * best-fit within the given width, regardless of the orientation of the image.
-		 */
-		FIT_TO_WIDTH,
-		/**
-		 * Used to indicate that the scaling implementation should calculate dimensions for the resultant image that
-		 * best-fit within the given height, regardless of the orientation of the image.
-		 */
-		FIT_TO_HEIGHT;
-	}
-
-	/**
-	 * Resize a given image (maintaining its original proportion) to the target width and height (or fitting the image
-	 * to the given WIDTH or HEIGHT explicitly, depending on the {@link Mode} specified) using the given scaling method
-	 * to the result before returning it.
-	 *
-	 * @param src
-	 *            The image that will be scaled.
-	 * @param resizeMode
-	 *            Used to indicate how imgscalr should calculate the final target size for the image, either fitting the
-	 *            image to the given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image to the given height
-	 *            ({@link Mode#FIT_TO_HEIGHT}).
-	 * @param targetWidth
-	 *            The target width that you wish the image to have.
-	 * @param targetHeight
-	 *            The target height that you wish the image to have.
-	 * @return a new {@link BufferedImage} representing the scaled <code>src</code> image.
-	 *
-	 *
-	 * @see Mode
-	 */
-	static GamaImage resize(final GamaImage src, final Mode resizeMode, int targetWidth, int targetHeight)
-			throws IllegalArgumentException, ImagingOpException {
-		GamaImage result = null;
-		int currentWidth = src.getWidth();
-		int currentHeight = src.getHeight();
-		float ratio = (float) currentHeight / (float) currentWidth;
-		if (resizeMode == Mode.FIT_TO_WIDTH) {
-			targetHeight = (int) Math.ceil(targetWidth * ratio);
-		} else if (resizeMode == Mode.FIT_TO_HEIGHT) { targetWidth = Math.round(targetHeight / ratio); }
-		if (targetWidth > currentWidth || targetHeight > currentHeight) {
-			result = scaleImage(src, targetWidth, targetHeight);
-		} else {
-			result = scaleImageIncrementally(src, targetWidth, targetHeight);
-		}
-		return result;
-	}
-
-	/**
-	 * Used to implement a straight-forward image-scaling operation using Java 2D.
-	 * <p/>
-	 * This method uses the Oracle-encouraged method of <code>Graphics2D.drawImage(...)</code> to scale the given image
-	 * with the given interpolation hint.
-	 *
-	 * @param bufferedImage
-	 *            The image that will be scaled.
-	 * @param targetWidth
-	 *            The target width for the scaled image.
-	 * @param targetHeight
-	 *            The target height for the scaled image.
-	 * @return the result of scaling the original <code>src</code> to the given dimensions
-	 */
-	public static GamaImage scaleImage(final Image bufferedImage, final int targetWidth, final int targetHeight) {
-		GamaImage result = GamaImage.bestFor(bufferedImage, targetWidth, targetHeight);
-		Graphics2D resultGraphics = result.createGraphics();
-		resultGraphics.setRenderingHints(ImageOperators.HINTS);
-		resultGraphics.drawImage(bufferedImage, 0, 0, targetWidth, targetHeight, null);
-		resultGraphics.dispose();
-		return result;
-	}
-
-	/**
-	 * Used to implement Chris Campbell's incremental-scaling algorithm:
-	 * <a href="http://today.java.net/pub/a/today/2007/04/03/perils -of-image-getscaledinstance
-	 * .html">http://today.java.net/pub/a/today/2007/04/03/perils -of-image-getscaledinstance.html</a>.
-	 *
-	 * @param src
-	 *            The image that will be scaled.
-	 * @param targetWidth
-	 *            The target width for the scaled image.
-	 * @param targetHeight
-	 *            The target height for the scaled image.
-	 * @param scalingMethod
-	 *            The scaling method specified by the user (or calculated by imgscalr) to use for this incremental
-	 *            scaling operation.
-	 *
-	 * @return an image scaled to the given dimensions using the given rendering hint.
-	 */
-	static GamaImage scaleImageIncrementally(GamaImage src, final int targetWidth, final int targetHeight) {
-		boolean hasReassignedSrc = false;
-		int currentWidth = src.getWidth();
-		int currentHeight = src.getHeight();
-		do {
-			int prevCurrentWidth = currentWidth;
-			int prevCurrentHeight = currentHeight;
-			if (currentWidth > targetWidth) {
-				currentWidth -= currentWidth / 2;
-				if (currentWidth < targetWidth) { currentWidth = targetWidth; }
-			}
-			if (currentHeight > targetHeight) {
-				currentHeight -= currentHeight / 2;
-				if (currentHeight < targetHeight) { currentHeight = targetHeight; }
-			}
-			if (prevCurrentWidth == currentWidth && prevCurrentHeight == currentHeight) { break; }
-			GamaImage incrementalImage = scaleImage(src, currentWidth, currentHeight);
-			if (hasReassignedSrc) { src.flush(); }
-			src = incrementalImage;
-			hasReassignedSrc = true;
-		} while (currentWidth != targetWidth || currentHeight != targetHeight);
-
-		return src;
-	}
+public class ImageOperators implements ImageConstants {
 
 	/**
 	 * Snapshot.
@@ -583,7 +299,7 @@ public class ImageOperators {
 	@doc ("Returns an image flipped horizontally by reflecting the original image around the y axis. The original image is left untouched")
 	@no_test
 	public static GamaImage horizontalFlip(final IScope scope, final GamaImage image) {
-		return rotate(image, FLIP_HORZ);
+		return rotate(image, ImageHelper.FLIP_HORZ);
 	}
 
 	/**
@@ -599,7 +315,7 @@ public class ImageOperators {
 	@doc ("Returns an image flipped vertically by reflecting the original image around the x axis. The original image is left untouched")
 	@no_test
 	public static GamaImage verticalFlip(final IScope scope, final GamaImage image) {
-		return rotate(image, FLIP_VERT);
+		return rotate(image, ImageHelper.FLIP_VERT);
 	}
 
 	/**
@@ -773,7 +489,7 @@ public class ImageOperators {
 	@no_test
 	public static GamaImage blend(final IScope scope, final GamaImage image, final GamaImage overlay,
 			final double ratio) {
-		GamaImage composed = copyToOptimalImage(image);
+		GamaImage composed = ImageHelper.copyToOptimalImage(image);
 		Graphics2D g2d = composed.createGraphics();
 		g2d.setComposite(AlphaComposite.SrcOver.derive(Math.min(1f, Math.max((float) ratio, 0f))));
 		int x = (composed.getWidth() - overlay.getWidth()) / 2;
@@ -834,8 +550,8 @@ public class ImageOperators {
 	 */
 	@operator ({ "clipped_with", "cropped_to" })
 	@doc ("Used to crop the given image using a rectangle starting at the top-left x, y coordinates and expanding using the width and height. "
-			+ "If one of the dimensions of the resulting image is 0, returns nil. "
-			+ "If they are equal to that of the given image, it is returned.  The original image is left untouched")
+			+ "If one of the dimensions of the resulting image is 0, of if they are equal to that of the given image, returns it. "
+			+ " The original image is left untouched")
 	@no_test
 
 	public static GamaImage cropped(final IScope scope, final GamaImage image, final int ox, final int oy, final int ow,
@@ -846,39 +562,13 @@ public class ImageOperators {
 		int height = Math.min(ih, Math.max(0, oh));
 		int x = Math.min(iw, Math.max(0, ox));
 		int y = Math.min(ih, Math.max(0, oy));
-		if (x == width || width == 0 || height == 0 || y == height) return null;
+		if (x == width || width == 0 || height == 0 || y == height) return image;
 		if (x == 0 && y == 0 && width == iw && height == ih) return image;
 		GamaImage result = GamaImage.bestFor(image, width, height);
 		Graphics g = result.getGraphics();
 		g.drawImage(image, 0, 0, width, height, x, y, x + width, y + height, null);
 		g.dispose();
 		return result;
-	}
-
-	/**
-	 * The TransferableImage.
-	 */
-	private record TransferableImage(Image i) implements Transferable {
-
-		@Override
-		public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException {
-			if (flavor.equals(DataFlavor.imageFlavor) && i != null) return i;
-			throw new UnsupportedFlavorException(flavor);
-		}
-
-		@Override
-		public DataFlavor[] getTransferDataFlavors() {
-			DataFlavor[] flavors = new DataFlavor[1];
-			flavors[0] = DataFlavor.imageFlavor;
-			return flavors;
-		}
-
-		@Override
-		public boolean isDataFlavorSupported(final DataFlavor flavor) {
-			DataFlavor[] flavors = getTransferDataFlavors();
-			for (DataFlavor dataFlavor : flavors) { if (flavor.equals(dataFlavor)) return true; }
-			return false;
-		}
 	}
 
 	/**
@@ -900,8 +590,8 @@ public class ImageOperators {
 			value = "Tries to copy the given image to the clipboard and returns whether it has been correctly copied or not (for instance it might be impossible in a headless environment)")
 	@no_test ()
 	public static Boolean copyToClipboard(final IScope scope, final GamaImage image) {
-		if (image == null || clipboard == null) return false;
-		clipboard.setContents(new TransferableImage(image), null);
+		if (image == null || ImageHelper.clipboard == null) return false;
+		ImageHelper.clipboard.setContents(new TransferableImage(image), null);
 		return true;
 	}
 

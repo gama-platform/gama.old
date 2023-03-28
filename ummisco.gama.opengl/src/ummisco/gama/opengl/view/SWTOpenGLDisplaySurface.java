@@ -15,7 +15,6 @@ import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
@@ -43,7 +42,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLContext;
-import com.jogamp.opengl.util.awt.ImageUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -75,7 +73,8 @@ import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
-import ummisco.gaml.extensions.image.ImageOperators;
+import ummisco.gaml.extensions.image.GamaImage;
+import ummisco.gaml.extensions.image.ImageHelper;
 
 /**
  * Class OpenGLSWTDisplaySurface.
@@ -169,7 +168,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getImage()
 	 */
 	@Override
-	public BufferedImage getImage(final int desiredWidth, final int desiredHeight) {
+	public GamaImage getImage(final int desiredWidth, final int desiredHeight) {
 		if (desiredWidth == 0 || desiredHeight == 0 || !renderer.hasDrawnOnce()) return null;
 		// We first render at the right dimensions and then we scale
 		Rectangle dimensions = this.getBoundsForSnapshot();
@@ -183,7 +182,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (context == null) return null;
 		final boolean current = context.isCurrent();
 		if (!current) { context.makeCurrent(); }
-		BufferedImage[] image = new BufferedImage[1];
+		GamaImage[] image = new GamaImage[1];
 		glad.invoke(true, drawable -> {
 			// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
 			final ByteBuffer buffer = getBuffer(w, h);
@@ -196,13 +195,13 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					DataBuffer.TYPE_BYTE);
 			SampleModel sm = cm.createCompatibleSampleModel(w, h);
 			WritableRaster raster = new WritableRaster(sm, dbuf, new Point()) {};
-			BufferedImage im = new BufferedImage(cm, raster, false, null);
+			GamaImage im = GamaImage.from(cm, raster, false);
 			// TODO Seems to take a very long time -- verify
 
 			if (desiredWidth != w || desiredHeight != h) {
-				im = ImageOperators.scaleImage(im, desiredWidth, desiredHeight);
+				im = ImageHelper.scaleImage(im, desiredWidth, desiredHeight);
 			}
-			ImageUtil.flipImageVertically(im);
+			ImageHelper.flipImageVertically(im);
 			image[0] = im;
 			return true;
 		});

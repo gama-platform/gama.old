@@ -687,17 +687,16 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if (started) return;
 		started = true;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: Retrieving workspace metadata ", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
-				() -> {
-					try {
-						workspace.getRoot().accept(resource -> {
-							if (resource.isAccessible()) {
-								resource.setSessionProperty(CACHE_KEY, resource.getPersistentProperty(CACHE_KEY));
-							}
-							return true;
-						});
-					} catch (final CoreException e) {}
+		DEBUG.TIMER("GAMA: Retrieving workspace metadata", "done in", () -> {
+			try {
+				workspace.getRoot().accept(resource -> {
+					if (resource.isAccessible()) {
+						resource.setSessionProperty(CACHE_KEY, resource.getPersistentProperty(CACHE_KEY));
+					}
+					return true;
 				});
+			} catch (final CoreException e) {}
+		});
 		// new Thread(() -> {
 		// try {
 		// TIMER_WITH_EXCEPTIONS(
@@ -728,25 +727,24 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) return;
 
-				TIMER_WITH_EXCEPTIONS(DEBUG.PAD("> GAMA: workspace metadata ", 55, ' '),
-						DEBUG.PAD(" saved in", 15, '_'), () -> {
-							ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
-								String toSave = null;
-								try {
+				TIMER_WITH_EXCEPTIONS("GAMA: workspace metadata ", "saved in", () -> {
+					ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+						String toSave = null;
+						try {
 
-									if (resource.isAccessible()) {
-										toSave = (String) resource.getSessionProperty(CACHE_KEY);
-										resource.setPersistentProperty(CACHE_KEY, toSave);
-									}
-									return true;
-								} catch (final Exception e) {
-									DEBUG.ERR("Error for resource " + resource.getName());
-									if (toSave != null) { DEBUG.ERR("Trying to save " + toSave.length() + " bytes "); }
-									return true;
-								}
+							if (resource.isAccessible()) {
+								toSave = (String) resource.getSessionProperty(CACHE_KEY);
+								resource.setPersistentProperty(CACHE_KEY, toSave);
+							}
+							return true;
+						} catch (final Exception e) {
+							DEBUG.ERR("Error for resource " + resource.getName());
+							if (toSave != null) { DEBUG.ERR("Trying to save " + toSave.length() + " bytes "); }
+							return true;
+						}
 
-							});
-						});
+					});
+				});
 
 			}
 

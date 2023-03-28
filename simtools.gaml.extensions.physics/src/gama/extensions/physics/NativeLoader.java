@@ -11,7 +11,6 @@
 package gama.extensions.physics;
 
 import static ummisco.gama.dev.utils.DEBUG.ERR;
-import static ummisco.gama.dev.utils.DEBUG.PAD;
 import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
 import com.jme3.system.JmeSystem;
@@ -54,36 +53,35 @@ public class NativeLoader {
 		if (NATIVE_BULLET_LIBRARY_LOADED == null) {
 			NATIVE_BULLET_LIBRARY_LOADED = false;
 			if (LOAD_NATIVE_BULLET_LIBRARY) {
-				TIMER_WITH_EXCEPTIONS(PAD("> GAMA: native Bullet library", 55, ' '), DEBUG.PAD(" loaded in", 15, '_'),
-						() -> {
-							try {
-								Platform platform = JmeSystem.getPlatform();
-								String name;
-								switch (platform) {
-									case Windows64:
-										name = WIN_NATIVE_LIBRARY_NAME;
-										break;
-									case Linux64:
-										name = LIN_NATIVE_LIBRARY_NAME;
-										break;
-									case MacOSX64:
-										name = MAC_NATIVE_LIBRARY_NAME;
-										break;
-									case MacOSX_ARM64:
-										name = MAC_ARM_NATIVE_LIBRARY_NAME;
-										break;
-									default:
-										throw new RuntimeException("Platform " + platform + " is not supported");
-								}
+				TIMER_WITH_EXCEPTIONS("GAMA: native Bullet library", "loaded in", () -> {
+					try {
+						Platform platform = JmeSystem.getPlatform();
+						String name;
+						switch (platform) {
+							case Windows64:
+								name = WIN_NATIVE_LIBRARY_NAME;
+								break;
+							case Linux64:
+								name = LIN_NATIVE_LIBRARY_NAME;
+								break;
+							case MacOSX64:
+								name = MAC_NATIVE_LIBRARY_NAME;
+								break;
+							case MacOSX_ARM64:
+								name = MAC_ARM_NATIVE_LIBRARY_NAME;
+								break;
+							default:
+								throw new RuntimeException("Platform " + platform + " is not supported");
+						}
 
-								NativeUtils.loadLibraryFromJar(NATIVE_LIBRARY_LOCATION + name);
-								NATIVE_BULLET_LIBRARY_LOADED = true;
-							} catch (Throwable e) {
-								NATIVE_BULLET_LIBRARY_LOADED = false;
-								ERR(">> Impossible to load Bullet native library because " + e.getMessage());
-								ERR(">> GAMA will fall back to JBullet instead");
-							}
-						});
+						NativeUtils.loadLibraryFromJar(NATIVE_LIBRARY_LOCATION + name);
+						NATIVE_BULLET_LIBRARY_LOADED = true;
+					} catch (Throwable e) {
+						NATIVE_BULLET_LIBRARY_LOADED = false;
+						ERR(">> Impossible to load Bullet native library because " + e.getMessage());
+						ERR(">> GAMA will fall back to JBullet instead");
+					}
+				});
 
 			}
 		}

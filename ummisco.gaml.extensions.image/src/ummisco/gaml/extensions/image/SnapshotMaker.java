@@ -122,7 +122,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 			try {
 				DEBUG.OUT("Snapshot with dimensions " + composite);
 				Image im = robot.createScreenCapture(composite);
-				image = ImageOperators.scaleImage(im, width, height);
+				image = ImageHelper.scaleImage(im, width, height);
 				im.flush();
 			} catch (final Exception e) {
 				e.printStackTrace();

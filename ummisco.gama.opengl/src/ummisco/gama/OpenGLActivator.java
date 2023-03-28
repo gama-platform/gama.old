@@ -38,34 +38,33 @@ public class OpenGLActivator extends AbstractUIPlugin {
 		// //
 		// http://forum.jogamp.org/Return-of-the-quot-java-lang-UnsatisfiedLinkError-Can-t-load-library-System-Library-Frameworks-glueg-td4034549.html)
 		CompletableFuture.runAsync(() -> {
-			DEBUG.TIMER(DEBUG.PAD("> GAMA: Preloading OpenGL subsystem", 55, ' '), DEBUG.PAD(" done in", 15, '_'),
-					() -> {
+			DEBUG.TIMER("GAMA: Preloading OpenGL subsystem", "done in", () -> {
 
-						JarUtil.setResolver(url -> {
-							try {
-								final URL urlUnescaped = FileLocator.resolve(url);
-								return new URI(urlUnescaped.getProtocol(), urlUnescaped.getPath(), null).toURL();
-							} catch (final IOException | URISyntaxException urisyntaxexception) {
-								return url;
-							}
-						});
+				JarUtil.setResolver(url -> {
+					try {
+						final URL urlUnescaped = FileLocator.resolve(url);
+						return new URI(urlUnescaped.getProtocol(), urlUnescaped.getPath(), null).toURL();
+					} catch (final IOException | URISyntaxException urisyntaxexception) {
+						return url;
+					}
+				});
 
-						// Necessary to initialize very early because initializing it
-						// while opening a Java2D view before leads to a deadlock
-						try {
-							GLProfile.initSingleton();
-						} catch (Exception e1) {
-							DEBUG.ERR("Impossible to initialize OpenGL", e1);
-							return;
-						}
-						while (!GLProfile.isInitialized()) {
-							try {
-								Thread.sleep(100);
-							} catch (final InterruptedException e) {
-								DEBUG.ERR("Impossible to initialize OpenGL", e);
-							}
-						}
-					});
+				// Necessary to initialize very early because initializing it
+				// while opening a Java2D view before leads to a deadlock
+				try {
+					GLProfile.initSingleton();
+				} catch (Exception e1) {
+					DEBUG.ERR("Impossible to initialize OpenGL", e1);
+					return;
+				}
+				while (!GLProfile.isInitialized()) {
+					try {
+						Thread.sleep(100);
+					} catch (final InterruptedException e) {
+						DEBUG.ERR("Impossible to initialize OpenGL", e);
+					}
+				}
+			});
 
 		});
 	}
