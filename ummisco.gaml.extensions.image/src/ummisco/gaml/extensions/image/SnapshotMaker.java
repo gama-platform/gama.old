@@ -11,14 +11,18 @@
 package ummisco.gaml.extensions.image;
 
 import java.awt.AWTException;
+import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+
+import org.jfree.chart.JFreeChart;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ISnapshotMaker;
@@ -26,6 +30,8 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
+import msi.gama.outputs.layers.charts.ChartLayer;
+import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -63,8 +69,44 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 */
 	@Override
 	public void takeAndSaveSnapshot(final IDisplaySurface surface) {
+
 		if (surface == null) return;
 		final IScope scope = surface.getScope();
+		if (scope.interrupted()) return;
+		GamaImage image = captureImage(surface);
+		if (image == null) return;
+		String fileName = buildPath(scope, surface);
+		try {
+			if (fileName == null || !ImageIO.write(image, "png", new File(fileName)))
+				throw new RuntimeException("Impossible to write image");
+			image.flush();
+		} catch (final Exception ex) {
+			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
+			e.addContext("Unable to create output stream for snapshot image");
+			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
+		}
+	}
+
+	/**
+	 * Builds the path.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param surface
+	 *            the surface
+	 * @return the string
+	 */
+	private String buildPath(final IScope scope, final IDisplaySurface surface) {
+		try {
+			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
+		} catch (final GamaRuntimeException e1) {
+			// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to
+			// prevent the exceptions from being masked.
+			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
+			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
+			e1.printStackTrace();
+			return null;
+		}
 		final String autosavePath = surface.getData().getAutosavePath();
 		String fileName;
 		if (autosavePath == null || autosavePath.isBlank()) {
@@ -77,29 +119,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 					IDisplaySurface.SNAPSHOT_FOLDER_NAME + "/" + autosavePath, false);
 			if (!fileName.endsWith(".png")) { fileName += ".png"; }
 		}
-		GamaImage image = captureImage(surface);
-		if (scope.interrupted() || image == null) return;
-
-		try {
-			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
-		} catch (final GamaRuntimeException e1) {
-			// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to
-			// prevent the exceptions from being masked.
-			e1.addContext("Impossible to create folder " + IDisplaySurface.SNAPSHOT_FOLDER_NAME);
-			GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-			e1.printStackTrace();
-			return;
-		}
-
-		try {
-			if (!ImageIO.write(image, "png", new File(fileName)))
-				throw new RuntimeException("Impossible to write image");
-			image.flush();
-		} catch (final Exception ex) {
-			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
-		}
+		return fileName;
 	}
 
 	/**
@@ -120,7 +140,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 
 		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
-				DEBUG.OUT("Snapshot with dimensions " + composite);
+				DEBUG.OUT("Fast snapshot with dimensions " + composite);
 				Image im = robot.createScreenCapture(composite);
 				image = ImageHelper.scaleImage(im, width, height);
 				im.flush();
@@ -130,7 +150,21 @@ public class SnapshotMaker implements ISnapshotMaker {
 		}
 		// in case it has not worked, snapshot is still null
 		if (image == null) {
-			DEBUG.OUT("Trying to snapshot with dimensions " + width + " " + height);
+			DEBUG.OUT("Slow snapshot with dimensions " + width + " " + height);
+			// If the surface has only one chart, we ask it to draw itself (rather than asking the surface)
+			ChartLayer chart = surface.getManager().getOnlyChart();
+			if (chart != null) {
+				ChartOutput co = chart.getChart();
+				if (co != null) {
+					DEBUG.OUT("Chart is rendered on " + width + " " + height);
+					GamaImage im = GamaImage.ofDimensions(width, height, true);
+					JFreeChart jfc = co.getJFChart();
+					Graphics2D g2 = im.createGraphics();
+					jfc.draw(g2, new Rectangle2D.Float(0, 0, width, height));
+					g2.dispose();
+					return im;
+				}
+			}
 			image = (GamaImage) surface.getImage(width, height);
 		}
 		return image;
