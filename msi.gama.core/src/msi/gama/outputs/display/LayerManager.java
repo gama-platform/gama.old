@@ -310,4 +310,16 @@ public class LayerManager implements ILayerManager {
 		return false;
 	}
 
+	@Override
+	public ChartLayer getOnlyChart() {
+		ChartLayer result = null;
+		for (final ILayer i : layers) {
+			if (i instanceof ChartLayer cl) {
+				if (result != null) return null; // two chart layers
+				result = cl;
+			} else if (!(i instanceof EventLayer)) return null;
+		}
+		return result;
+	}
+
 }

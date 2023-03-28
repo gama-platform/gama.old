@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.charts.ChartLayer;
 
 /**
  * The class ILayerManager. Manages a fixed set of layers on behalf of a IDisplaySurface
@@ -110,5 +111,13 @@ public interface ILayerManager extends ItemList<ILayer>, IDisposable {
 	 * @return true, if successful
 	 */
 	boolean hasArrowEventLayer();
+
+	/**
+	 * Returns a ChartLayer if it is the only "physical" layer present in this manager (event layers do not count) or
+	 * null if there are none and/or other layers are displayed and visible
+	 *
+	 * @return the only chart
+	 */
+	ChartLayer getOnlyChart();
 
 }
