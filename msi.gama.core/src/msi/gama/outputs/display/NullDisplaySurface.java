@@ -373,5 +373,8 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public Rectangle getBoundsForSnapshot() { return new Rectangle(); }
+	
+	@Override
+	public boolean shouldWaitToBecomeRendered() { return false; }
 
 }

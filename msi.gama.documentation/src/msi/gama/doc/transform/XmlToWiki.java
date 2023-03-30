@@ -194,9 +194,6 @@ public class XmlToWiki {
 	 */
 	public static void createExtentionsWiki()
 			throws IOException, ParserConfigurationException, SAXException, TransformerException {
-		final WorkspaceManager ws = new WorkspaceManager(".", false);
-		final HashMap<String, File> hmExt = ws.getExtensionsDocFiles();
-
 		// Create the G__Extensions.md file as a toc to each G__extensions_plugin.md files
 		final String pathExtension = Constants.WIKI_FOLDER_EXT + File.separator + extFileName + suffix + ".md";
 		final File ext = new File(pathExtension);
@@ -217,22 +214,6 @@ public class XmlToWiki {
 			extBw.write(
 					"This page provides a link to each of the extension pages. Extensions are the additional GAMA plugins that exist in the GAMA GitHub repository but will not be packaged with the release. **These extensions are not maintained by GAMA core team but by their authors.**");
 			extBw.newLine();
-
-			for (final String pluginName : hmExt.keySet()) {
-				extBw.write("* [" + pluginName + "](" + extFolder + extFileName + "_" + pluginName + ")");
-				extBw.newLine();
-			}
-		}
-
-		// Create 1 G__extension_plugin.md file per plugin
-		for (final Entry<String, File> docPlug : hmExt.entrySet()) {
-			System.out.print("Creation of the wiki pages for extension: " + docPlug.getKey());
-			createWiki(docPlug.getValue().getAbsolutePath(),
-					Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Extensions-xml2md.xsl",
-					Constants.WIKI_FOLDER_EXT_PLUGIN + File.separator + extFileName + "_" + docPlug.getKey() + suffix
-							+ ".md",
-					docPlug.getKey());
-			System.out.println("Done");
 		}
 	}
 
