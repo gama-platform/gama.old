@@ -150,10 +150,6 @@ public interface IToolbarDecoratedView {
 		 */
 		IDisplayOutput getOutput();
 
-		/**
-		 * Synchronize changed.
-		 */
-		void synchronizeChanged();
 	}
 
 	/**

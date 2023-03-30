@@ -231,13 +231,6 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@Override
 	public void pauseChanged() {}
 
-	/**
-	 * Method synchronizeChanged()
-	 *
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
-	 */
-	@Override
-	public void synchronizeChanged() {}
 
 	/**
 	 * Method handleMenu()

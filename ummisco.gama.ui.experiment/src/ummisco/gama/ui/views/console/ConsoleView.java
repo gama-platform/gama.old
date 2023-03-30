@@ -268,13 +268,6 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 		return false;
 	}
 
-	/**
-	 * Method synchronizeChanged()
-	 *
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
-	 */
-	@Override
-	public void synchronizeChanged() {}
 
 	@Override
 	public String getContents() { return viewer.getDocument().get(); }

@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
@@ -232,7 +233,7 @@ public interface IGamaView {
 		 *
 		 * @return
 		 */
-		void takeSnapshot();
+		void takeSnapshot(GamaPoint customDimensions);
 
 		/**
 		 * Hide canvas.

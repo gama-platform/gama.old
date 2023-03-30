@@ -173,7 +173,7 @@ public class LayeredDisplayData {
 	private boolean isAntialiasing = GamaPreferences.Displays.CORE_ANTIALIAS.getValue();
 
 	/** The image dimension. */
-	private GamaPoint imageDimension = new GamaPoint(-1, -1);
+	private volatile GamaPoint imageDimension;
 
 	/** The zoom level. */
 	private Double zoomLevel = INITIAL_ZOOM;
@@ -363,7 +363,9 @@ public class LayeredDisplayData {
 	 * @param imageDimension
 	 *            the imageDimension to set
 	 */
-	public void setImageDimension(final GamaPoint imageDimension) { this.imageDimension = imageDimension; }
+	public void setImageDimension(final GamaPoint imageDimension) { 
+		//DEBUG.OUT("Setting image dimension to : " + imageDimension);
+		this.imageDimension = imageDimension; }
 
 	/**
 	 * @return the envWidth

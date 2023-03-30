@@ -27,6 +27,7 @@ import java.awt.image.WritableRaster;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.IOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -98,7 +99,7 @@ public class ImageOperators implements ImageConstants {
 			value = "snapshot",
 			can_be_const = false)
 	@doc ("Takes a snapshot of the display whose name is passed in parameter and returns the image. "
-			+ "The search for the display begins in the agent passed in parameter and, if not found, its experiment. "
+			+ "The search for the display begins in the agent passed in parameter and, if not found, its experiment. The size of the snapshot will be that of the view"
 			+ "Returns nil if no display can be found or the snapshot cannot be taken.")
 	@no_test
 	public static GamaImage snapshot(final IScope scope, final IAgent exp, final String displayName) {
@@ -116,7 +117,43 @@ public class ImageOperators implements ImageConstants {
 		}
 		if (!(output instanceof LayeredDisplayOutput ldo)) return null;
 		IDisplaySurface surface = ldo.getSurface();
-		return SnapshotMaker.getInstance().captureImage(surface);
+		return SnapshotMaker.getInstance().captureImage(surface, null);
+	}
+	
+	/**
+	 * Snapshot.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @param displayName
+	 *            the display name
+	 * @return the gama image
+	 */
+	@operator (
+			value = "snapshot",
+			can_be_const = false)
+	@doc ("Takes a snapshot of the display whose name is passed in parameter and returns the image. "
+			+ "The search for the display begins in the agent passed in parameter and, if not found, its experiment. A custom size (a point representing width x height) can be given "
+			+ "Returns nil if no display can be found or the snapshot cannot be taken.")
+	@no_test
+	public static GamaImage snapshot(final IScope scope, final IAgent exp, final String displayName, GamaPoint customDimensions) {
+		if (exp == null) return null;
+		ITopLevelAgent agentWithOutputs;
+		if (exp instanceof ITopLevelAgent top) {
+			agentWithOutputs = top;
+		} else {
+			agentWithOutputs = exp.getTopLevelHost();
+		}
+		IOutput output = null;
+		while (agentWithOutputs != null && output == null) {
+			output = agentWithOutputs.getOutputManager().getOutputWithOriginalName(displayName);
+			agentWithOutputs = agentWithOutputs.getTopLevelHost();
+		}
+		if (!(output instanceof LayeredDisplayOutput ldo)) return null;
+		IDisplaySurface surface = ldo.getSurface();
+		return SnapshotMaker.getInstance().captureImage(surface, customDimensions);
 	}
 
 	/**

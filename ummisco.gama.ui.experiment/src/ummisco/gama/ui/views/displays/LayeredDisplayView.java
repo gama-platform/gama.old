@@ -37,6 +37,7 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
@@ -311,10 +312,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		return false;
 	}
 
-	@Override
-	public void synchronizeChanged() {
-		decorator.updateOverlay();
-	}
 
 	@Override
 	public void zoomIn() {
@@ -342,18 +339,15 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			protected IStatus run(final IProgressMonitor monitor) {
 				// DEBUG.OUT("UPDATE THREAD: Entering");
 				final IDisplaySurface surface = getDisplaySurface();
-				// synchronizer.waitForSurfaceToBeRealized();
-				// DEBUG.OUT("UPDATE THREAD: Surface has been realized");
-
 				if (surface != null && !disposed && !surface.isDisposed()) {
 					try {
-						// synchronizer.waitForViewUpdateAuthorisation();
-
 						// DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
 						surface.updateDisplay(false);
 						if (surface.getScope().getClock().getCycle() > 0 && surface.getData().isAutosave()) {
-							WorkbenchHelper.run(() -> takeSnapshot());
+							WorkbenchHelper.run(() -> takeSnapshot(surface.getData().getImageDimension()));
+							//takeSnapshot(surface.getData().getImageDimension());
 						}
+						
 						// inInitPhase = false;
 
 					} catch (Exception e) {
@@ -365,13 +359,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		};
 	}
 
-	/**
-	 * Can be synchronized. Returns true if this can be synchronized: for instance, on macOS, hiding an OpenGL view will
-	 * prevent it from rendering, and the simulation should not wait for this invisible visualisation.
-	 *
-	 * @return true, if successful
-	 */
-	protected abstract boolean canBeSynchronized();
 
 	@Override
 	public boolean zoomWhenScrolling() {
@@ -415,8 +402,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public void takeSnapshot() {
-		GAMA.getSnapshotMaker().takeAndSaveSnapshot(getDisplaySurface());
+	public void takeSnapshot(GamaPoint customDimensions) {
+		GAMA.getSnapshotMaker().takeAndSaveSnapshot(getDisplaySurface(), customDimensions);
 	}
 
 	/**
