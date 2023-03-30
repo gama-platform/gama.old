@@ -38,7 +38,7 @@ public class Constants {
 	public final static String RELEASE_APPLICATION = "ummisco.gama.product";
 	
 	/** The Constant RELEASE_PRODUCT. */
-	public final static String RELEASE_PRODUCT = "gama.product";
+	public final static String RELEASE_PRODUCT = "gama.runtime.product";
 
 	// Repositories containing used files
 

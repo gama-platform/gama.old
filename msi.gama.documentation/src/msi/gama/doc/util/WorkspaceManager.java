@@ -167,6 +167,50 @@ public class WorkspaceManager {
 			}
 		}
 		return hmFilesPackages;
+ 	} 	
+ 	
+ 	/**
+	  * Gets the product doc files.
+	  *
+	  * @return the product doc files
+	  * @throws IOException Signals that an I/O exception has occurred.
+	  * @throws ParserConfigurationException the parser configuration exception
+	  * @throws SAXException the SAX exception
+	  */
+	 public HashMap<String, File> getProductDocFiles() throws IOException, ParserConfigurationException, SAXException{
+ 		HashMap<String, File> hmFilesPackages = isLocal ? getAllDocFilesLocal() : getAllDocFiles();
+ 		List<String> pluginsProduct = getAllGAMAPluginsInProduct();
+ 		HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+
+ 		for(Entry<String, File> eSF: hmFilesPackages.entrySet()) {
+ 			if(pluginsProduct.contains(eSF.getKey())) {
+ 				hmFilesRes.put(eSF.getKey(), eSF.getValue());
+ 			}
+ 		}
+ 		
+ 		return hmFilesRes;
+ 	}
+ 	
+ 	/**
+	  * Gets the extensions doc files.
+	  *
+	  * @return the extensions doc files
+	  * @throws IOException Signals that an I/O exception has occurred.
+	  * @throws ParserConfigurationException the parser configuration exception
+	  * @throws SAXException the SAX exception
+	  */
+	 public HashMap<String, File> getExtensionsDocFiles() throws IOException, ParserConfigurationException, SAXException{
+ 		HashMap<String, File> hmFilesPackages = isLocal ? getAllDocFilesLocal() : getAllDocFiles();
+ 		List<String> pluginsProduct = getAllGAMAPluginsInProduct();
+ 		HashMap<String, File> hmFilesRes = new HashMap<String, File>();
+
+ 		for(Entry<String, File> eSF: hmFilesPackages.entrySet()) {
+ 			if(!pluginsProduct.contains(eSF.getKey())) {
+ 				hmFilesRes.put(eSF.getKey(), eSF.getValue());
+ 			}
+ 		}
+ 		
+ 		return hmFilesRes;
  	}
  	
 	/**
@@ -225,6 +269,24 @@ public class WorkspaceManager {
 			org.w3c.dom.Element eltFeature = (org.w3c.dom.Element) nlFeatures.item(j);
 			listPlugins.add(eltFeature.getAttribute("id"));
 		}		
+		
+		return listPlugins;
+	}
+	
+	/**
+	 * Gets the all GAMA plugins in product.
+	 *
+	 * @return the all GAMA plugins in product
+	 * @throws ParserConfigurationException the parser configuration exception
+	 * @throws SAXException the SAX exception
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
+	public List<String> getAllGAMAPluginsInProduct() throws ParserConfigurationException, SAXException, IOException{
+		ArrayList<String> listPlugins = new ArrayList<String>();
+		List<String> initPluginList = getPluginsFromProduct(getProductFile());
+		for(String plugin : initPluginList){
+			listPlugins.addAll(getList(plugin));
+		}
 		
 		return listPlugins;
 	}
@@ -317,12 +379,39 @@ public class WorkspaceManager {
 	 */
 	public static void main(String[] arg) throws IOException, ParserConfigurationException, SAXException{
 		WorkspaceManager ws = new WorkspaceManager(".", false);
+		List<String> l = ws.getAllGAMAPluginsInProduct();
+		for(String name : l){
+			System.out.println(name);
+		}
+		System.out.println("----------");
 		
 		HashMap<String,File> hm = ws.getAllDocFiles();
 		for(Entry<String,File> e : hm.entrySet()){
 			System.out.println(e.getKey());
 		}
 		System.out.println("----------");
+		hm = ws.getProductDocFiles();
+		for(Entry<String,File> e : hm.entrySet()){
+			System.out.println(e.getKey());
+		}
+		System.out.println("----------");
+		hm = ws.getExtensionsDocFiles();
+		for(Entry<String,File> e : hm.entrySet()){
+			System.out.println(e.getKey());
+		}
+		System.out.println("----------");
+		
+		System.out.println("----------");
+		
+
+		
+		l = ws.getModelLibrary();
+		for(String name : l){
+			System.out.println(name);
+		}
+		System.out.println(l.size());
+		System.out.println("----------");
+		
 	}
 }
 
