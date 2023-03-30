@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gaml.extensions.image;
 
-import static ummisco.gaml.extensions.image.ImageHelper.HINTS;
 import static ummisco.gaml.extensions.image.ImageHelper.apply;
 import static ummisco.gaml.extensions.image.ImageHelper.resize;
 import static ummisco.gaml.extensions.image.ImageHelper.rotate;
@@ -38,7 +37,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.image.ImageHelper.Mode;
@@ -119,7 +118,7 @@ public class ImageOperators implements ImageConstants {
 		IDisplaySurface surface = ldo.getSurface();
 		return SnapshotMaker.getInstance().captureImage(surface, null);
 	}
-	
+
 	/**
 	 * Snapshot.
 	 *
@@ -138,7 +137,8 @@ public class ImageOperators implements ImageConstants {
 			+ "The search for the display begins in the agent passed in parameter and, if not found, its experiment. A custom size (a point representing width x height) can be given "
 			+ "Returns nil if no display can be found or the snapshot cannot be taken.")
 	@no_test
-	public static GamaImage snapshot(final IScope scope, final IAgent exp, final String displayName, GamaPoint customDimensions) {
+	public static GamaImage snapshot(final IScope scope, final IAgent exp, final String displayName,
+			final GamaPoint customDimensions) {
 		if (exp == null) return null;
 		ITopLevelAgent agentWithOutputs;
 		if (exp instanceof ITopLevelAgent top) {
@@ -336,7 +336,7 @@ public class ImageOperators implements ImageConstants {
 	@doc ("Returns an image flipped horizontally by reflecting the original image around the y axis. The original image is left untouched")
 	@no_test
 	public static GamaImage horizontalFlip(final IScope scope, final GamaImage image) {
-		return rotate(image, ImageHelper.FLIP_HORZ);
+		return rotate(image, ImageConstants.FLIP_HORZ);
 	}
 
 	/**
@@ -352,7 +352,7 @@ public class ImageOperators implements ImageConstants {
 	@doc ("Returns an image flipped vertically by reflecting the original image around the x axis. The original image is left untouched")
 	@no_test
 	public static GamaImage verticalFlip(final IScope scope, final GamaImage image) {
-		return rotate(image, ImageHelper.FLIP_VERT);
+		return rotate(image, ImageConstants.FLIP_VERT);
 	}
 
 	/**
@@ -627,8 +627,8 @@ public class ImageOperators implements ImageConstants {
 			value = "Tries to copy the given image to the clipboard and returns whether it has been correctly copied or not (for instance it might be impossible in a headless environment)")
 	@no_test ()
 	public static Boolean copyToClipboard(final IScope scope, final GamaImage image) {
-		if (image == null || ImageHelper.clipboard == null) return false;
-		ImageHelper.clipboard.setContents(new TransferableImage(image), null);
+		if (image == null || ImageConstants.clipboard == null) return false;
+		ImageConstants.clipboard.setContents(new TransferableImage(image), null);
 		return true;
 	}
 
@@ -713,7 +713,13 @@ public class ImageOperators implements ImageConstants {
 	@doc ("Returns the matrix<int> value of the image passed in parameter, where each pixel is represented by the RGB int value. The dimensions of the matrix are those of the image. ")
 	@no_test
 	public static IMatrix matrix(final IScope scope, final GamaImage image) {
-		return GamaImageFile.matrixValueFromImage(scope, image, null);
+		final int xSize = image.getWidth();
+		final int ySize = image.getHeight();
+		final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
+		for (int i = 0; i < xSize; i++) {
+			for (int j = 0; j < ySize; j++) { matrix.set(scope, i, j, image.getRGB(i, j)); }
+		}
+		return matrix;
 	}
 
 }

@@ -13,6 +13,8 @@ package msi.gaml.expressions.operators;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
@@ -20,8 +22,10 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.types.TypeExpression;
 import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.IType;
 
 /**
  * The Class BinaryOperator.
@@ -45,6 +49,54 @@ public class BinaryOperator extends AbstractNAryOperator {
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
 			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
 		return u;
+	}
+
+	@Override
+	public Doc getDocumentation() {
+		if (IKeyword.AS.equals(this.getName()) && exprs[1] instanceof TypeExpression) {
+			IType t = exprs[1].getDenotedType();
+			Doc doc = findDocOnType(t);
+			if (doc == null) { doc = findDocOnType(t.getGamlType()); }
+			if (doc != null) return doc;
+		}
+		return super.getDocumentation();
+	}
+
+	/**
+	 * Find doc on type.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the doc
+	 */
+	private Doc findDocOnType(final IType type) {
+		Class<? extends IType> clazz = type.getClass();
+		doc doc = null;
+		java.lang.reflect.Method m = null;
+		try {
+			m = clazz.getDeclaredMethod("cast", IScope.class, Object.class, Object.class, boolean.class);
+			if (m != null) { doc = m.getAnnotation(doc.class); }
+		} catch (NoSuchMethodException | SecurityException e) {}
+		if (doc == null) {
+			try {
+				m = clazz.getDeclaredMethod("cast", IScope.class, Object.class, Object.class, IType.class, IType.class,
+						boolean.class);
+				if (m != null) { doc = m.getAnnotation(doc.class); }
+			} catch (NoSuchMethodException | SecurityException e) {}
+		}
+		if (doc != null) {
+			Doc documentation = new RegularDoc(new StringBuilder(200));
+			String s = doc.value();
+			if (s != null && !s.isEmpty()) { documentation.append(s).append("<br/>"); }
+			usage[] usages = doc.usages();
+			for (usage u : usages) { documentation.append(u.value()).append("<br/>"); }
+			s = doc.deprecated();
+			if (s != null && !s.isEmpty()) {
+				documentation.append("<b>Deprecated</b>: ").append("<i>").append(s).append("</i><br/>");
+			}
+			return documentation;
+		}
+		return null;
 	}
 
 	/**

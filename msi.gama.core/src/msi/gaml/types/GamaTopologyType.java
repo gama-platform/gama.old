@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaTopologyType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamaTopologyType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -22,7 +22,9 @@ import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -51,11 +53,15 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param copy
+	 *            the copy
 	 * @return the i topology
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@SuppressWarnings ("rawtypes")
 	public static ITopology staticCast(final IScope scope, final Object obj, final boolean copy)
@@ -76,7 +82,24 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	 * @see msi.gama.internal.types.GamaType#cast(msi.gama.interfaces.IScope, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	@doc ("Transforms the parameter into a usable topology")
+	@doc (
+			value = "casting of the operand to a topology.",
+			usages = { @usage ("if the operand is a topology, returns the topology itself;"),
+					@usage ("if the operand is a spatial graph, returns the graph topology associated;"),
+					@usage ("if the operand is a population, returns the topology of the population;"),
+					@usage ("if the operand is a shape or a geometry, returns the continuous topology bounded by the geometry;"),
+					@usage ("if the operand is a matrix, returns the grid topology associated"),
+					@usage ("if the operand is another kind of container, returns the multiple topology associated to the container"),
+					@usage ("otherwise, casts the operand to a geometry and build a topology from it.") },
+			examples = { @example (
+					value = "topology(0)",
+					equals = "nil",
+					isExecutable = true),
+					@example (
+							value = "topology(a_graph)	--: Multiple topology in POLYGON ((24.712119771887785 7.867357373616512, 24.712119771887785 61.283226839310565, 82.4013676510046  7.867357373616512)) "
+									+ "at location[53.556743711446195;34.57529210646354]",
+							isExecutable = false) },
+			see = { "geometry" })
 	public ITopology cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		return staticCast(scope, obj, copy);
@@ -85,8 +108,10 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	/**
 	 * From.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the i topology
 	 */
 	public static ITopology from(final IScope scope, final IShape obj) {
@@ -101,10 +126,8 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	 */
 	private static ITopology from(final IScope scope, final IContainer<?, IShape> obj) throws GamaRuntimeException {
 		if (obj instanceof GamaSpatialGraph) return ((GamaSpatialGraph) obj).getTopology(scope);
-		if (obj instanceof IGrid)
-			return new GridTopology(scope, (IGrid) obj);
-		else
-			return new MultipleTopology(scope, obj);
+		if (obj instanceof IGrid) return new GridTopology(scope, (IGrid) obj);
+		return new MultipleTopology(scope, obj);
 	}
 
 	/**
