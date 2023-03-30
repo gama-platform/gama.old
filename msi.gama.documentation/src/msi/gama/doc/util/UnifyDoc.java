@@ -51,9 +51,7 @@ public class UnifyDoc {
 	 */
 	public static void unify(boolean local) {
 		try {
-
-			WorkspaceManager ws = new WorkspaceManager(".",local);
-			HashMap<String, File> hmFiles = ws.getProductDocFiles();
+			HashMap<String, File> hmFiles = new HashMap<String, File>();
 
 			Document doc = mergeFiles(hmFiles);
 
