@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 
 import java.awt.image.BufferedImage;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 
 /**
@@ -27,7 +28,7 @@ public interface ISnapshotMaker {
 	 * @param composite
 	 *            the composite
 	 */
-	default void takeAndSaveSnapshot(final IDisplaySurface surface) {}
+	default void takeAndSaveSnapshot(final IDisplaySurface surface, GamaPoint desiredDimensions) {}
 
 	/**
 	 * Capture image.
@@ -36,7 +37,7 @@ public interface ISnapshotMaker {
 	 *            the surface
 	 * @return the buffered image
 	 */
-	default BufferedImage captureImage(final IDisplaySurface surface) {
+	default BufferedImage captureImage(final IDisplaySurface surface, GamaPoint desiredDimensions) {
 		return null;
 	}
 

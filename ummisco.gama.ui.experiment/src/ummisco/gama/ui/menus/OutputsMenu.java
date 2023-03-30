@@ -138,7 +138,7 @@ public class OutputsMenu extends ContributionItem {
 				menuItem(sub, e -> ldo.zoom(-1), GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT).image(),
 						"Zoom out");
 				GamaMenu.separate(sub);
-				menuItem(sub, e -> ldo.getView().takeSnapshot(),
+				menuItem(sub, e -> ldo.getView().takeSnapshot(null),
 						GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT).image(), "Take a snapshot");
 				menuItem(sub, e -> ldo.getView().toggleFullScreen(),
 						GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image(), "Toggle fullscreen");

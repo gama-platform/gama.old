@@ -68,12 +68,12 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 *            the composite
 	 */
 	@Override
-	public void takeAndSaveSnapshot(final IDisplaySurface surface) {
+	public void takeAndSaveSnapshot(final IDisplaySurface surface, GamaPoint customDimensions) {
 
 		if (surface == null) return;
 		final IScope scope = surface.getScope();
 		if (scope.interrupted()) return;
-		GamaImage image = captureImage(surface);
+		GamaImage image = captureImage(surface,customDimensions);
 		if (image == null) return;
 		String fileName = buildPath(scope, surface);
 		try {
@@ -122,6 +122,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 		return fileName;
 	}
 
+
 	/**
 	 * Capture image.
 	 *
@@ -130,13 +131,14 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 * @return the buffered image
 	 */
 	@Override
-	public GamaImage captureImage(final IDisplaySurface surface) {
-		final LayeredDisplayData data = surface.getData();
+	public GamaImage captureImage(final IDisplaySurface surface, GamaPoint customDimensions) {
+		DEBUG.OUT("Entring image capture at cycle " + surface.getScope().getClock().getCycle());
+//		final LayeredDisplayData data = surface.getData();
 		GamaImage image = null;
-		GamaPoint p = data.getImageDimension();
+//		GamaPoint p = data.getImageDimension();
 		Rectangle composite = surface.getBoundsForSnapshot();
-		final int width = p == null || p.x <= 0 ? composite.width : (int) p.x;
-		final int height = p == null || p.y <= 0 ? composite.height : (int) p.y;
+		final int width = customDimensions == null || customDimensions.x <= 0 ? composite.width : (int) customDimensions.x;
+		final int height = customDimensions == null || customDimensions.y <= 0 ? composite.height : (int) customDimensions.y;
 
 		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
@@ -152,22 +154,23 @@ public class SnapshotMaker implements ISnapshotMaker {
 		if (image == null) {
 			DEBUG.OUT("Slow snapshot with dimensions " + width + " " + height);
 			// If the surface has only one chart, we ask it to draw itself (rather than asking the surface)
-			ChartLayer chart = surface.getManager().getOnlyChart();
-			if (chart != null) {
-				ChartOutput co = chart.getChart();
-				if (co != null) {
-					DEBUG.OUT("Chart is rendered on " + width + " " + height);
-					GamaImage im = GamaImage.ofDimensions(width, height, true);
-					JFreeChart jfc = co.getJFChart();
-					Graphics2D g2 = im.createGraphics();
-					jfc.draw(g2, new Rectangle2D.Float(0, 0, width, height));
-					g2.dispose();
-					return im;
-				}
-			}
-			image = (GamaImage) surface.getImage(width, height);
+			image = takeSnapshotOfChart(surface.getManager().getOnlyChart(), width, height);
 		}
+		if (image == null) { image = (GamaImage) surface.getImage(width, height); }
 		return image;
+	}
+
+	private GamaImage takeSnapshotOfChart(ChartLayer chart, final int width, final int height) {
+		if (chart == null) return null;
+		ChartOutput co = chart.getChart();
+		if (co == null) return null;
+		DEBUG.OUT("Chart is rendered on " + width + " " + height);
+		GamaImage im = GamaImage.ofDimensions(width, height, true);
+		JFreeChart jfc = co.getJFChart();
+		Graphics2D g2 = im.createGraphics();
+		jfc.draw(g2, new Rectangle2D.Float(0, 0, width, height));
+		g2.dispose();
+		return im;
 	}
 
 	/**

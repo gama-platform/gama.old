@@ -63,6 +63,7 @@ import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
+import msi.gama.runtime.PlatformHelper;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -808,7 +809,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public Rectangle getBoundsForSnapshot() {
-		var rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
+		var rect = WorkbenchHelper.displaySizeOf(renderer.getCanvas());
+		// For some reason, macOS requires the native dimension for the robot to snapsho correctly
+		if (PlatformHelper.isMac()) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
 				WorkbenchHelper.displaySizeOf(renderer.getCanvas()));
 
 		return new Rectangle(rect.x, rect.y, rect.width, rect.height);

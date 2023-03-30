@@ -128,7 +128,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		toggleOverlay = new GamaCommand(TOGGLE_OVERLAY, DEBUG.PAD("Toggle overlay", pad) + format(COMMAND, 'O'),
 				e -> toggleOverlay());
 		takeSnapshot =
-				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, DEBUG.PAD("Take a snapshot", pad), e -> view.takeSnapshot());
+				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, DEBUG.PAD("Take a snapshot", pad), e -> view.takeSnapshot(null));
 		antiAlias = new GamaCommand(TOGGLE_ANTIALIAS, DEBUG.PAD("Turn antialias on/off", pad),
 				e -> view.getOutput().getData().setAntialias(!view.getOutput().getData().isAntialias()));
 		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, DEBUG.PAD("Toggle fullscreen", pad) + "ESC", e -> {

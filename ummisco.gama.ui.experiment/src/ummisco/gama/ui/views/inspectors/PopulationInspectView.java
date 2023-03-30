@@ -950,12 +950,6 @@ public class PopulationInspectView extends GamaViewPart
 	@Override
 	public void pauseChanged() {}
 
-	/**
-	 * Method synchronizeChanged()
-	 *
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
-	 */
-	@Override
-	public void synchronizeChanged() {}
+
 
 }
