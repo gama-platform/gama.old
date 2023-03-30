@@ -135,13 +135,13 @@ experiment sugarscape type: gui{
 			grid sugar_cell;
 			species animal;
 		}
-		display chart refresh: every(5#cycles) {
+		display chart refresh: every(5#cycles)  type: 2d {
 			chart 'Energy' type: pie background: #white style: exploded label_background_color:#white{
 				data "strong" value: (animal as list) count (each.sugar > 8) color: #green;
 				data "weak" value: (animal as list) count (each.sugar < 9) color: #red;
 			}
 		}
-		display chart2 refresh: every(5#cycles) {
+		display chart2 refresh: every(5#cycles) type: 2d  {
 			chart 'Energy' type: histogram background: #white label_background_color:#white{
 				data "strong" value: (animal as list) count (each.sugar > 8)  color: #green;
 				data "weak" value: (animal as list) count (each.sugar < 9)  color: #red;

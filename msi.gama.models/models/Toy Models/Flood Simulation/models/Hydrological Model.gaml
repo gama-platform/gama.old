@@ -287,7 +287,7 @@ experiment Run type: gui {
          species buildings aspect: geometry refresh: false;
          species dyke aspect: geometry ;
       }
-      display chart_display refresh: every(24#cycles) { 
+      display chart_display refresh: every(24#cycles)  type: 2d  { 
          chart "Pressure on Dykes" type: series legend_font: font("Helvetica", 18)  label_font: font("Helvetica", 20, #bold)  title_font: font("Helvetica", 24, #bold){
             data "Mean pressure on dykes " value: mean(dyke collect (each.water_pressure)) style: line color: #magenta  ;
             data "Rate of dykes with max pressure" value: (dyke count (each.water_pressure = 1.0))/ length(dyke) style: line color: #red ;

@@ -181,7 +181,7 @@ experiment TraficGroup type: gui {
 		// The greeen time series correspond to the middle section (on which concentration and maximum speed are lower).
 		// The red time series correspond to the section just before the middle one.
 				
-		display Concentrations {
+		display Concentrations  type: 2d {
 			chart "Concentrations" type: series  {
 				data 'Section 0' value: section[0].current_concentration color: #gray marker: false ;				
 				data 'Section 1' value: section[1].current_concentration color: #gray marker: false;
@@ -196,7 +196,7 @@ experiment TraficGroup type: gui {
 				}
 			}
 			
-			display Flows {
+			display Flows  type: 2d {
 			    chart "Flows" type: series  {
 				data 'Section 0' value: section[0].current_flow color: #gray marker: false;				
 				data 'Section 1' value: section[1].current_flow color: #gray marker: false;

@@ -189,7 +189,7 @@ experiment prey_predator type: gui {
 			species predator aspect: info;
 		}
 
-		display Population_information refresh: every(5#cycles) {
+		display Population_information refresh: every(5#cycles)  type: 2d {
 			chart "Species evolution" type: series size: {1,0.5} position: {0, 0} {
 				data "number_of_preys" value: nb_preys color: #blue;
 				data "number_of_predator" value: nb_predators color: #red;

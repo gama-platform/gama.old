@@ -35,7 +35,7 @@ global {
 
 experiment main {
 	output {
-		display charts {
+		display charts  type: 2d {
 			//chart displaying the values of serie_y according to serie_x (for i from 0 to 100, x = serie_x[i], y = serie_y[i])
 			chart "serie_x and serie_y" type: xy size: {1.0,0.5}{
 				 data legend: "x" value:rows_list(matrix([serie_x,serie_y])) ;

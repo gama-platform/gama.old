@@ -36,7 +36,7 @@ experiment Rouentemplate type: gui {
 			species people;
 		}
 		
-		display c {
+		display c  type: 2d {
 			chart "ages" type: histogram {
 				loop i from: 0 to: 110 {
 					data ""+i value: people count(each.Age = i);
@@ -44,7 +44,7 @@ experiment Rouentemplate type: gui {
 			}
 		}
 		
-		display s {
+		display s  type: 2d {
 			chart "sex" type: pie {
 				loop se over: ["Hommes", "Femmes"] {
 					data se value: people count(each.Sexe = se);

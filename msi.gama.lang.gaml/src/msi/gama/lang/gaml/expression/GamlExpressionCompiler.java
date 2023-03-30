@@ -540,15 +540,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 */
 	private IExpression binaryAs(final IExpression left, final Expression e2) {
 		final String type = EGaml.getInstance().getKeyOf(e2);
-		// if ( isSpeciesName(type) ) { return factory.createOperator(op,
-		// context, e2, left, species(type)); }
-		// if ( isSkillName(type) ) { return
-		// factory.createOperator(AS_SKILL, context, e2, left, skill(type));
-		// }
 		if (isTypeName(type)) return casting(type, left, e2);
 		getContext().error("'as' must be followed by a type, species or skill name. " + type + " is neither of these.",
 				IGamlIssue.NOT_A_TYPE, e2, type);
-		// if (isTypeName(type)) { return casting(type, left, e2); }
 		return null;
 	}
 
@@ -1222,7 +1216,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// If there is none, it can't be a casting
 		if (size == 0) return false;
 		// If there is one, we match
-		if (size == 1) return true;
+		if (size == 1) {// If a unary function has been redefined with the type name as name and this specific argument,
+						// it takes precedence over the regular casting
+			IExpression expr = compile(args.get(0));
+			return !getFactory().hasExactOperator(op, expr);
+		}
+		// return true;
+
 		// If more than one, we need to check if there are operators that match. If yes, we return false
 		return !getFactory().hasOperator(op, toArray(transform(args, this::compile), IExpression.class));
 	}

@@ -68,7 +68,7 @@ experiment RepeatedSimulations type: gui {
 			species toto aspect: default;
 		}	
 		
-		display c {
+		display c  type: 2d {
 			chart "t" {
 				data "location" value: first(people).location.x;
 			}

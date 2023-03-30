@@ -31,8 +31,8 @@ species people {
 experiment Rouentemplate type: gui {
 	output {
 		display map { species people; }
-		display c { chart "ages" type: histogram { loop i over:["young","adult"] { data ""+i value: people count(each.Age = i); } } }
-		display s { chart "sex" type: pie {  loop se over: ["-1","0", "1"] { data se value: people count(each.Gender = int(se)); } } }
+		display c  type: 2d { chart "ages" type: histogram { loop i over:["young","adult"] { data ""+i value: people count(each.Age = i); } } }
+		display s  type: 2d { chart "sex" type: pie {  loop se over: ["-1","0", "1"] { data se value: people count(each.Gender = int(se)); } } }
 	}
 }
 

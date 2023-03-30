@@ -152,7 +152,7 @@ experiment "Experiment" type: gui {
 			grid ant_grid ;
 			species ant  ;
 		}
-		display ProportionCarryFood {
+		display ProportionCarryFood  type: 2d {
 			chart "Proportions carrying: Pie"  size: {0.5,0.5} position: {0, 0} type:pie
 			{
 				data "empty_ants" value:(ant count (!each.hasFood)) color:#red;
@@ -182,7 +182,7 @@ experiment "Experiment" type: gui {
 			}
 		}
 
-		display CentroidPosition {
+		display CentroidPosition  type: 2d {
 			chart "Positions and History of Centroide and size by Carry state" type:scatter
 			{
 				datalist ["avg-carry","avg-empty"] value:[mean((ant where (each.hasFood)) collect each.location),
@@ -201,7 +201,7 @@ experiment "Experiment" type: gui {
 
 			}
 		}	
-		display Distribution2dPosition {
+		display Distribution2dPosition  type: 2d {
 			chart "Distribution of the X positions"   size: {0.65,0.3} position: {0.05, 0} type:histogram
 			
 			{
@@ -225,7 +225,7 @@ experiment "Experiment" type: gui {
 			}
 		}
 		
-		display DistributionPosition {
+		display DistributionPosition  type: 2d {
 			chart "Distribution of the X positions"   size: {0.92,0.3} position: {0, 0} type:histogram
 			
 			{

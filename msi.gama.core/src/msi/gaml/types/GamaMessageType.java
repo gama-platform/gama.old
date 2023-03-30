@@ -3,7 +3,7 @@
  * GamaMessageType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -12,11 +12,7 @@ package msi.gaml.types;
 
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.no_test;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -46,29 +42,6 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 	@Override
 	protected boolean acceptNullInstances() {
 		return true;
-	}
-
-	/**
-	 * As message.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param val
-	 *            the val
-	 * @return the gama message
-	 * @throws GamaRuntimeException
-	 *             the gama runtime exception
-	 */
-	@operator (
-			value = GamaMessageType.MESSAGE_STR,
-			can_be_const = true,
-			category = { IOperatorCategory.FIPA },
-			concept = { IConcept.FIPA })
-	@doc (
-			value = "defines a new message that will be exchanged between agents.")
-	@no_test
-	public static GamaMessage asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
-		return GamaMessageType.staticCast(scope, val, null);
 	}
 
 	/**

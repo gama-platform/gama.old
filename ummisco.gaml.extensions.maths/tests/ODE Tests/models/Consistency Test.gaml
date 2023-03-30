@@ -126,7 +126,7 @@ experiment with_visualization type: gui {
 		create consistencyTest_model with: [with_viz::true];
 	}
 	output {
-		display "Numerical solutions" refresh: every(1 #cycle) {
+		display "Numerical solutions" refresh: every(1 #cycle)  type: 2d {
 			chart 'Comparision between the numerical solutions provided by EDO solvers' type: series background:  #white  { 
 				loop m over: EDO_model{
 					data m.my_method value: m.Im color: m.color marker: false;
