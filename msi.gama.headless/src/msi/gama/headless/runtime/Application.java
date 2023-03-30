@@ -580,6 +580,11 @@ public class Application implements IApplication {
 			uri = URI.createURI(pathToModel);
 		}
 		final IModel mdl = builder.compile(uri, errors);
+		
+		if (mdl == null) {
+			System.out.println("GAMA couldn't compile your input file. Please verify that the input file path is correct and ensure that there are no errors in the GAML model.");
+			System.exit(1);
+		}
 
 		GamaExecutorService.CONCURRENCY_SIMULATIONS.set(true);
 		GamaExecutorService.THREADS_NUMBER.set(processorQueue.getCorePoolSize());
