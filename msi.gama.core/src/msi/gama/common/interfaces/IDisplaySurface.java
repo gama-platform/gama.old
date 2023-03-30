@@ -450,4 +450,12 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 * @return true, if is arrow redefined
 	 */
 	default boolean isArrowRedefined() { return getManager().hasArrowEventLayer(); }
+
+	/**
+	 * Checks if this displaySuface needs to wait to be rendered by an external process (like a view, for instance)
+	 *
+	 * @return true, if is renderable
+	 */
+	default boolean shouldWaitToBecomeRendered() { return true; }
+
 }

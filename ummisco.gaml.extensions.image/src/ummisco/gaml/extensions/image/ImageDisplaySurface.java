@@ -133,7 +133,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			e1.printStackTrace();
 			return;
 		}
-
 		final String file =
 				snapshotFolder + "/" + GAMA.getModel().getName() + "_display_" + scope.getClock().getCycle() + ".png";
 		// DataOutputStream os = null;
@@ -539,5 +538,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public Rectangle getBoundsForSnapshot() { return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight()); }
+
+	@Override
+	public boolean shouldWaitToBecomeRendered() { return false; }
 
 }
