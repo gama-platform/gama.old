@@ -81,7 +81,7 @@ experiment schelling type: gui {
 			image bitmap_file_name.path ;
 			species people transparency: 0.5 aspect: geom;
 		}	
-		display Charts {
+		display Charts  type: 2d {
 			chart "Proportion of happiness" type: pie background: #lightgray style: exploded position: { 0, 0 } size: { 1.0, 0.5 } {
 				data "Unhappy" value: number_of_people - sum_happy_people color: #green;
 				data "Happy" value: sum_happy_people color: #yellow;

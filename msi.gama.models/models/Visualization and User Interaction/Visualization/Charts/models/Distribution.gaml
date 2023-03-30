@@ -84,44 +84,44 @@ global {
 experiment "Example of Distribution" type: gui {
 	output {
 		layout #split;
-		display "Gauss Distribution" {
+		display "Gauss Distribution"  type: 2d {
 			chart "Gauss Distribution" type: histogram {
 				datalist (gauss_distrib at "legend") value: (gauss_distrib at "values");
 			}
 		}
-		display "Gamma Distribution" {
+		display "Gamma Distribution"  type: 2d {
 			chart "Gamma Distribution" type: histogram {
 				datalist (gamma_distrib at "legend") value: (gamma_distrib at "values");
 			}
 		}
-		display "LogNormal Distribution" {
+		display "LogNormal Distribution"  type: 2d {
 			chart "LogNormal Distribution" type: histogram {
 				datalist (lognormal_distrib at "legend") value: (lognormal_distrib at "values");
 			}
 		}
-		display "Weibull Distribution" {
+		display "Weibull Distribution"  type: 2d {
 			chart "Weibull Distribution" type: histogram {
 				datalist (weibull_distrib at "legend") value: (weibull_distrib at "values");
 			}
 		}	
 		
 		
-		display "Truncated Gauss Distribution" {
+		display "Truncated Gauss Distribution"  type: 2d {
 			chart "Truncated Gauss Distribution truncated_gauss(10,10)" type: histogram {
 				datalist (gauss_trunc_distrib at "legend") value: (gauss_trunc_distrib at "values");
 			}
 		}
-		display "Truncated Gamma Distribution" {
+		display "Truncated Gamma Distribution"  type: 2d {
 			chart "Truncated Gamma Distribution gamma_trunc_rnd(10,0.5,6,true)" type: histogram {
 				datalist (gamma_trunc_distrib at "legend") value: (gamma_trunc_distrib at "values");
 			}
 		}
-		display "Truncated LogNormal Distribution" {
+		display "Truncated LogNormal Distribution"  type: 2d {
 			chart "Truncated LogNormal Distribution lognormal_trunc_rnd(10,0.5,17000,false)" type: histogram {
 				datalist (lognormal_trunc_distrib at "legend") value: (lognormal_trunc_distrib at "values");
 			}
 		}
-		display "Truncated Weibull Distribution" {
+		display "Truncated Weibull Distribution"  type: 2d {
 			chart "Truncated Weibull Distribution weibull_trunc_rnd(10,10,7,12)" type: histogram {
 				datalist (weibull_trunc_distrib at "legend") value: (weibull_trunc_distrib at "values");
 			}

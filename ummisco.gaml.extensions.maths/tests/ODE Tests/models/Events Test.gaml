@@ -168,7 +168,7 @@ global{
 
 experiment normal type: gui {
 	output {
-		display "Equation Tests" refresh: every(1 #cycle) {
+		display "Equation Tests" refresh: every(1 #cycle)  type: 2d {
 			chart '5 infected added at cycle=5, all infected at cycle=1' type: series background: #white y_range: {0,500} {
 				data "S" value: (first(SIR_model).Sm) color: #green marker: true line_visible: false; 
 				data "I" value: (first(SIR_model).Im) color: #red marker: true line_visible: false;
@@ -189,7 +189,7 @@ experiment dynamical_creation type: gui {
 	}
 	
 	output {
-		display "Equation Tests" refresh: every(1 #cycle) {
+		display "Equation Tests" refresh: every(1 #cycle)  type: 2d  {
 			chart '5 infected added at cycle=5, all infected at cycle=1' type: series background: #white y_range: {0,500} {
 				data "S" value: (first(SIR_model).Sm) color: #green marker: true line_visible: false; 
 				data "I" value: (first(SIR_model).Im) color: #red marker: true line_visible: false;

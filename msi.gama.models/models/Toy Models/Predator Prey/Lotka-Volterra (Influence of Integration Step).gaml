@@ -67,7 +67,7 @@ experiment maths type: gui {
 	parameter "Integration time step of the third chart " var:  integration_time_step3 <- 0.01  min: 0.0 max: 1.0 category: "Integration time steps"; 	// the user defines the value of the third integration step he wants to compare, the default value is 0.01 and this value must be between 0 and 1
 		
 	output {		
- 		display TimeSeries  {	// creation of a display to show time series of the model, values are plotted at every step. Since there is more than one chart plotted in one display, every chart has a position and a size
+ 		display TimeSeries  type: 2d  {	// creation of a display to show time series of the model, values are plotted at every step. Since there is more than one chart plotted in one display, every chart has a position and a size
 			chart "Lotka Volterra Time Series - Integration time step = 1 " type: series background: #white position: {0,0} size:{1,0.33} x_range: 1000 { 		// one chart, of type 'serie', is named Lotka Volterra Time Series - Integration time step = 1, it shows quantities according to time, and the background is white
 				data 'Number of preys' value: first(LotkaVolterra_agent where (each.integration_time_step = 1.0)).nb_prey color: #green ;			// number of preys in the case where the integration time step is 1 is plotted in green		
 				data 'Number of predators' value: first(LotkaVolterra_agent where (each.integration_time_step = 1.0)).nb_predator color: #red ; 	// number of predators in the case where the integration time step is 1 is plotted in red	
@@ -81,7 +81,7 @@ experiment maths type: gui {
 				data 'Number of predators' value: first(LotkaVolterra_agent where (each.integration_time_step = 0.01)).nb_predator color: #red ;
 			}
 		}
-		display PhasePortrait {			
+		display PhasePortrait  type: 2d {			
 			chart "Lotka Volterra Phase Portrait - Integration time step = 1" type: xy background: #white position: {0,0} size:{1,0.33} {		// creation of a display to show phase portrait of the model, values are plotted at every step. Since there is more than one chart plotted in one display, every chart has a position and a size
 			data 'Number of preys according to number of predators' value:{LV_agents[0].nb_prey, LV_agents[0].nb_predator} color: #black ;	// number of predators are plotted in black according to the number of preys in the case where the integration time step is 1		
 			}

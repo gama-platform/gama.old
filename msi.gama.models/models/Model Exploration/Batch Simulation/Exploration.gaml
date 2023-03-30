@@ -69,7 +69,7 @@ experiment exhaustive_exploration parent: batch_abstract type: batch repeat: 3 k
 	
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
-		display Comparison {
+		display Comparison  type: 2d {
 			chart "Number of people infected" type: series {
 				//we can access to all the simulations of a run (here composed of 5 simulation -> repeat: 5) by the variable "simulations" of the experiment.
 				//here we display for the 5 simulations, the mean, min and max values of the nb_infected variable.
@@ -98,7 +98,7 @@ experiment exploration_with_sampling  parent: batch_abstract repeat:3 type: batc
 	method exploration sampling:"latinhypercube" sample:100;
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
-		display Comparison {
+		display Comparison  type: 2d {
 			chart "Number of people infected" type: series {
 				//we can access to all the simulations of a run (here composed of 5 simulation -> repeat: 5) by the variable "simulations" of the experiment.
 				//here we display for the 5 simulations, the mean, min and max values of the nb_infected variable.

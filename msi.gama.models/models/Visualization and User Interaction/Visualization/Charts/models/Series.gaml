@@ -114,7 +114,7 @@ experiment "Different series" type: gui
 
 		}
 		
-		display "double axes" {
+		display "double axes"  type: 2d {
 			chart "double Y axes" y_label: "axis 1" y2_label: "axis 2" y_range: {-1,1} y2_range: {0,1000} y2_log_scale: true {
 				data "cos" value: cos(100 * cycle) color: #red;
 				data "cycle" value: cycle color: #green use_second_y_axis: true;

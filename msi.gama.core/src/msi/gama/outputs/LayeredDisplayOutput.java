@@ -452,6 +452,26 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				d.setFacet(TYPE, LabelExpressionDescription.create(cand));
 			}
 
+			// Addressing problems with charts in OpenGL
+			boolean isOpenGL = IKeyword._3D.equals(type.getExpression().literalValue());
+
+			if (isOpenGL) {
+				Boolean[] hasOnlyCharts = { null };
+				d.visitOwnChildren(c -> {
+					if (IKeyword.CHART.equals(c.getKeyword())) { hasOnlyCharts[0] = true; }
+					if (!IKeyword.CHART.equals(c.getKeyword()) && !IKeyword.EVENT.equals(c.getKeyword())) {
+						hasOnlyCharts[0] = false;
+						return false;
+					}
+					return true;
+				});
+				if (hasOnlyCharts[0]) {
+					d.warning(
+							"3d displays do not have any benefits for rendering charts, and they do not handle them very well. Consider switching to a 2d display if you only display charts",
+							IGamlIssue.CONFLICTING_FACETS, TYPE);
+				}
+			}
+
 			// final String camera = d.firstFacetFoundAmong(CAMERA_LOCATION, CAMERA_TARGET, CAMERA_ORIENTATION,
 			// CAMERA_LENS, "z_near", "z_far", IKeyword.CAMERA);
 			// if (!isOpenGLWanted && camera != null) {
