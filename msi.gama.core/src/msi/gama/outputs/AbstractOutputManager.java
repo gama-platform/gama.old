@@ -325,9 +325,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		});
 		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
 			while (!allOutputsRendered()) {
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {}
+				DEBUG.WAIT(20, "All the outputs are not rendered yet", "AbstractOutputManager.step() interrupted");
 			}
 		}
 		evaluateAutoSave(scope);
