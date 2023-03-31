@@ -554,17 +554,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 	/** The draw chart. */
 	boolean drawChart = true;
 
-	// @Override
-	// public Rectangle2D drawChart(final ChartOutput chart) {
-	// if (!drawChart) return chartRect;
-	// Double ratio = GamaPreferences.Displays.CHART_QUALITY.getValue();
-	// final BufferedImage im = chart.getImage((int) (getLayerWidth() * ratio), (int) (getLayerHeight() * ratio),
-	// getSurface().getData().isAntialias());
-	// drawChart = currentRenderer.drawImage(im, (int) getXOffsetInPixels(), (int) getYOffsetInPixels(),
-	// getLayerWidth(), getLayerHeight(), this);
-	// return chartRect;
-	// }
-	//
 	@Override
 	public Rectangle2D drawChart(final ChartOutput chart) {
 		if (!drawChart) return chartRect;
