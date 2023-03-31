@@ -49,6 +49,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 28 mai 2011
@@ -363,13 +364,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 			}
 			// We then verify that the front scheduler has not been paused
-			while (getSpecies().getController().isPaused() && !dead) {
-				try {
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			while (getSpecies().getController().isPaused() && !dead) { DEBUG.WAIT(100); }
 		}
 
 		// When the simulations are finished, we give a chance to the outputs of
@@ -490,13 +485,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				suffix = suffix == "" ? "2" : "";
 				// We then verify that the front scheduler has not been paused
-				while (getSpecies().getController().isPaused() && !dead) {
-					try {
-						Thread.sleep(100);
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+				while (getSpecies().getController().isPaused() && !dead) { DEBUG.WAIT(100); }
 			}
 
 		}
