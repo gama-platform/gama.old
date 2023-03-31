@@ -14,7 +14,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -88,9 +87,9 @@ public class SceneHelper extends AbstractRendererHelper {
 		// wait until it has been updated (put to null at the end of
 		// endUpdatingScene)
 		// TODO AD Is it still necessary ?
-		while (GAMA.isSynchronized() && backScene != null) {
-			if (!DEBUG.WAIT(20, "Internal synchronisation of ModelScene")) return false;
-		}
+		// while (GAMA.isSynchronized() && backScene != null) {
+		// if (!DEBUG.WAIT(20, "Internal synchronisation of ModelScene")) return false;
+		// }
 		// If we are not synchronized (or if the wait is over), we verify that
 		// backScene is null and create a new one
 		if (backScene != null) // We should also prevent the draw to happen by skipping everything
@@ -121,7 +120,6 @@ public class SceneHelper extends AbstractRendererHelper {
 		// this step
 		if (backScene == null) return;
 		// We ask the backScene to stop updating
-
 		backScene.endDrawingLayers();
 		// We create the static scene from it if it does not exist yet or if it
 		// has been discarded
