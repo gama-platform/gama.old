@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UserPanelStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * UserPanelStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.user;
 
@@ -33,6 +33,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class UserPanelStatement.
@@ -100,7 +101,8 @@ public class UserPanelStatement extends FsmStateStatement {
 	/**
 	 * Instantiates a new user panel statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public UserPanelStatement(final IDescription desc) {
 		super(desc);
@@ -108,11 +110,7 @@ public class UserPanelStatement extends FsmStateStatement {
 
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
-		for (final ISymbol c : children) {
-			if (c instanceof UserCommandStatement) {
-				userCommands.add((IStatement) c);
-			}
-		}
+		for (final ISymbol c : children) { if (c instanceof UserCommandStatement ucs) { userCommands.add(ucs); } }
 		super.setChildren(Iterables.filter(children, each -> !userCommands.contains(each)));
 	}
 
@@ -121,22 +119,14 @@ public class UserPanelStatement extends FsmStateStatement {
 	 *
 	 * @return the user commands
 	 */
-	public List<IStatement> getUserCommands() {
-		return userCommands;
-	}
+	public List<IStatement> getUserCommands() { return userCommands; }
 
 	@Override
 	protected Object bodyExecution(final IScope scope) throws GamaRuntimeException {
 		super.bodyExecution(scope);
 		if (!userCommands.isEmpty()) {
 			scope.getGui().openUserControlPanel(scope, this);
-			while (scope.isOnUserHold()) {
-				try {
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			while (scope.isOnUserHold()) { DEBUG.WAIT(100); }
 		}
 		return name;
 
