@@ -296,13 +296,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final GamaImage newImage = ImageHelper.createCompatibleImage(width, height, false);
 		final Graphics g = newImage.getGraphics();
 
-		while (!rendered) {
-			try {
-				Thread.sleep(10);
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		while (!rendered) { DEBUG.WAIT(20, "Surface is not rendered yet in Java2DDisplaySurface().getImage"); }
 		try {
 			EventQueue.invokeAndWait(() -> {
 				final Rectangle old = new Rectangle(viewPort);
@@ -498,21 +492,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		gg.setGraphics2D(g2d);
 		gg.setUntranslatedGraphics2D((Graphics2D) g);
 		layerManager.drawLayersOn(gg);
-		// if (temp_focus != null) {
-		// final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
-		// temp_focus = null;
-		// focusOn(geometry);
-		// rendered = true;
-		// synchronizer.signalRenderingIsFinished();
-		// return;
-		// }
-
-		// TODO Verify that the following expressions should not be also included in the "focus" block
 		g2d.dispose();
 		frames++;
 		rendered = true;
 		getOutput().setRendered(true);
-		// if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
 	}
 
 	/**
