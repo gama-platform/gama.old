@@ -293,38 +293,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public int getHeight() { return height; }
 
-	// /**
-	// * @see msi.gama.common.interfaces.IDisplaySurface#getImageWidth()
-	// */
-	// @Override
-	// public int getImageWidth() {
-	// return width;
-	// }
-	//
-	// /**
-	// * @see msi.gama.common.interfaces.IDisplaySurface#getImageHeight()
-	// */
-	// @Override
-	// public int getImageHeight() {
-	// return height;
-	// }
-
-	// /**
-	// * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
-	// */
-	// @Override
-	// public int getOriginX() {
-	// return 0;
-	// }
-	//
-	// /**
-	// * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
-	// */
-	// @Override
-	// public int getOriginY() {
-	// return 0;
-	// }
-
 	@Override
 	public void addListener(final IEventLayerListener e) {}
 
@@ -478,28 +446,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public int getFPS() { return 0; }
-	//
-	// @Override
-	// public boolean isRealized() {
-	// return true;
-	// }
-
-	/**
-	 * Method isRendered()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#isRendered()
-	 */
-	// @Override
-	// public boolean isRendered() { return true; }
 
 	@Override
 	public boolean isDisposed() { return false; }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesInfo()
-	 */
 	@Override
 	public void getModelCoordinatesInfo(final StringBuilder sb) {}
 
@@ -540,6 +490,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public Rectangle getBoundsForSnapshot() { return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight()); }
 
 	@Override
-	public boolean shouldWaitToBecomeRendered() { return false; }
+	public boolean shouldWaitToBecomeRendered() {
+		return false;
+	}
 
 }

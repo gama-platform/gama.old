@@ -195,9 +195,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public void forceUpdateOutputs() {
 		for (final IDisplayOutput o : getDisplayOutputs()) { o.update(); }
-		// if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && !monitors.isEmpty()) {
-		// GAMA.getGui().updateParameterView(monitors.get(0).getScope());
-		// }
 	}
 
 	@Override
@@ -321,36 +318,19 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		synchronized (outputs) {
-			getDisplayOutputs().forEach(each -> { each.setRendered(false); });
-			outputs.forEach((name, each) -> {
-				if (each instanceof LayeredDisplayOutput ldo) { ldo.linkScopeWithGraphics(); }
-				if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
-			});
-		}
+		getDisplayOutputs().forEach(each -> { each.setRendered(false); });
+		outputs.forEach((name, each) -> {
+			if (each instanceof LayeredDisplayOutput ldo) { ldo.linkScopeWithGraphics(); }
+			if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
+		});
 		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
-			synchronized (outputs) {
-				while (!allOutputsRendered()) {
-					try {
-						Thread.sleep(5);
-					} catch (InterruptedException e) {
-						// e.printStackTrace();
-					}
-				}
+			while (!allOutputsRendered()) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {}
 			}
 		}
-		if (autosave != null) {
-			boolean isAutosaving = false;
-			String autosavingPath = null;
-			if (autosave.getGamlType().equals(Types.STRING)) {
-				isAutosaving = true;
-				autosavingPath = Cast.asString(scope, autosave.value(scope));
-			} else {
-				isAutosaving = Cast.asBool(scope, autosave.value(scope));
-			}
-			if (isAutosaving) { scope.getGui().getSnapshotMaker().takeAndSaveScreenshot(scope, autosavingPath); }
-		}
-
+		evaluateAutoSave(scope);
 		return true;
 	}
 

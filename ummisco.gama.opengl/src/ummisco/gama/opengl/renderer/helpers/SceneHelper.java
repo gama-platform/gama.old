@@ -3,7 +3,7 @@
  * SceneHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -119,7 +119,6 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * End updating scene.
 	 */
 	public void endUpdatingScene() {
-
 		// If there is no scene to update, it means it has been cancelled by
 		// another thread (hiding/showing layers, most probably) so we just skip
 		// this step
