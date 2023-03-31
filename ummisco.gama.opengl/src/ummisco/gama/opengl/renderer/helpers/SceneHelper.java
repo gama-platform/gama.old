@@ -87,7 +87,10 @@ public class SceneHelper extends AbstractRendererHelper {
 		// If we are syncrhonized with the simulation and a backScene exists, we
 		// wait until it has been updated (put to null at the end of
 		// endUpdatingScene)
-		while (GAMA.isSynchronized() && backScene != null) { if (!DEBUG.WAIT(20, "Internal synchronisation of ModelScene")) return false; }
+		// TODO AD Is it still necessary ?
+		while (GAMA.isSynchronized() && backScene != null) {
+			if (!DEBUG.WAIT(20, "Internal synchronisation of ModelScene")) return false;
+		}
 		// If we are not synchronized (or if the wait is over), we verify that
 		// backScene is null and create a new one
 		if (backScene != null) // We should also prevent the draw to happen by skipping everything
