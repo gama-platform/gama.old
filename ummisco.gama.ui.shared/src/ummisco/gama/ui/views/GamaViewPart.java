@@ -323,12 +323,8 @@ public abstract class GamaViewPart extends ViewPart
 		if (job != null) {
 			if (GAMA.isSynchronized()) {
 				while (!previousUpdateOK) {
-					try {
-						DEBUG.OUT("Update job on " + getTitle() + " is not finished. Waiting");
-						Thread.sleep(20);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+					DEBUG.WAIT(20, "Update job on " + getTitle() + " is not finished",
+							"Update job on " + getTitle() + " interrupted");
 				}
 			} else if (!previousUpdateOK) return;
 			job.schedule();
