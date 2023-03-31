@@ -3,7 +3,7 @@
  * GamaViewPart.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,10 +16,10 @@ import static com.google.common.collect.Iterables.transform;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
@@ -53,7 +53,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * @author drogoul
  */
 public abstract class GamaViewPart extends ViewPart
-		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer, ControlListener {
+		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	static {
 		DEBUG.ON();
@@ -282,6 +282,9 @@ public abstract class GamaViewPart extends ViewPart
 	 */
 	public abstract void ownCreatePartControl(Composite parent);
 
+	/** The previous update OK. */
+	volatile boolean previousUpdateOK = true;
+
 	/**
 	 * Gets the update job.
 	 *
@@ -289,6 +292,21 @@ public abstract class GamaViewPart extends ViewPart
 	 */
 	protected final Job getUpdateJob() {
 		if (updateJob == null) { updateJob = createUpdateJob(); }
+		if (updateJob != null) {
+			updateJob.addJobChangeListener(new JobChangeAdapter() {
+
+				@Override
+				public void aboutToRun(final IJobChangeEvent event) {
+					previousUpdateOK = false;
+				}
+
+				@Override
+				public void done(final IJobChangeEvent event) {
+					previousUpdateOK = true;
+				}
+
+			});
+		}
 		return updateJob;
 	}
 
@@ -302,7 +320,19 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void update(final IDisplayOutput output) {
 		final Job job = getUpdateJob();
-		if (job != null) { job.schedule(); }
+		if (job != null) {
+			if (GAMA.isSynchronized()) {
+				while (!previousUpdateOK) {
+					try {
+						DEBUG.OUT("Update job on " + getTitle() + " is not finished. Waiting");
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			} else if (!previousUpdateOK) return;
+			job.schedule();
+		}
 	}
 
 	@Override
@@ -444,15 +474,5 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public boolean isVisible() { return true; }
-
-	@Override
-	public void controlMoved(final ControlEvent e) {
-		DEBUG.OUT("View " + this.getTitle() + " moved to " + rootComposite.getParent().toDisplay(0, 0));
-	}
-
-	@Override
-	public void controlResized(final ControlEvent e) {
-		DEBUG.OUT("View " + this.getTitle() + " resized to " + rootComposite.getSize());
-	}
 
 }
