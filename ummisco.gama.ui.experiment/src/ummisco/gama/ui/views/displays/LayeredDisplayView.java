@@ -312,7 +312,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		return false;
 	}
 
-
 	@Override
 	public void zoomIn() {
 		if (getDisplaySurface() != null) { getDisplaySurface().zoomIn(); }
@@ -345,11 +344,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 						surface.updateDisplay(false);
 						if (surface.getScope().getClock().getCycle() > 0 && surface.getData().isAutosave()) {
 							WorkbenchHelper.run(() -> takeSnapshot(surface.getData().getImageDimension()));
-							//takeSnapshot(surface.getData().getImageDimension());
 						}
-						
-						// inInitPhase = false;
-
 					} catch (Exception e) {
 						DEBUG.OUT("Error when updating " + getTitle() + ": " + e.getMessage());
 					}
@@ -358,7 +353,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			}
 		};
 	}
-
 
 	@Override
 	public boolean zoomWhenScrolling() {
@@ -371,10 +365,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		if (output == getOutput() && isFullScreen()) { WorkbenchHelper.run(decorator::toggleFullScreen); }
 		output.dispose();
 		outputs.remove(output);
-		if (outputs.isEmpty()) {
-			// synchronizer.authorizeViewUpdate();
-			close(GAMA.getRuntimeScope());
-		}
+		if (outputs.isEmpty()) { close(GAMA.getRuntimeScope()); }
 	}
 
 	@Override
@@ -402,7 +393,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public void takeSnapshot(GamaPoint customDimensions) {
+	public void takeSnapshot(final GamaPoint customDimensions) {
 		GAMA.getSnapshotMaker().takeAndSaveSnapshot(getDisplaySurface(), customDimensions);
 	}
 
