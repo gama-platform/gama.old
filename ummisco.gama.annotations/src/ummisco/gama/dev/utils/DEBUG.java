@@ -487,4 +487,29 @@ public class DEBUG {
 		LINE();
 	}
 
+	/**
+	 * Wait. Make the current thread wait for the specified amount of msec, and optionnaly outputs a text while it is
+	 * waiting and a text in case it is interrupted
+	 *
+	 * @param title
+	 *            the title
+	 * @param msec
+	 *            the msec
+	 * @return true, if successful
+	 */
+	public static boolean WAIT(final int msec, final String... texts) {
+		if (msec == 0) return true;
+		String title = texts.length == 0 ? null : texts[0];
+		String error = texts.length == 1 ? null : texts[1];
+		try {
+			if (title != null) { LOG(title + ". Waiting " + msec + "ms."); }
+			Thread.sleep(msec);
+		} catch (InterruptedException e) {
+			if (error != null) { DEBUG.ERR(error); }
+			// e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 }
