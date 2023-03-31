@@ -41,6 +41,9 @@ import msi.gaml.operators.Cast;
  */
 public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressListener {
 
+	/** The lock. */
+	Object lock = new Object();
+
 	/** The Constant defaultmarkers. */
 	public static final Shape[] defaultmarkers =
 			org.jfree.chart.plot.DefaultDrawingSupplier.createStandardSeriesShapes();
@@ -55,7 +58,7 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 	final List<Dataset> jfreedataset = new ArrayList<>();
 
 	/** The chart. */
-	JFreeChart chart = null;
+	JFreeChart chart, snapshot = null;
 
 	/** The area. */
 	final Rectangle2D area = new Rectangle2D.Double();
@@ -124,23 +127,19 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	@Override
 	public BufferedImage getImage(final int sizeX, final int sizeY, final boolean antiAlias) {
-		if (!ready) return frontImage;
-		if (antiAlias != oldAntiAlias) {
-			oldAntiAlias = antiAlias;
-			chart.setAntiAlias(antiAlias);
-			chart.setTextAntiAlias(antiAlias);
-		}
-
-		if ((int) area.getWidth() != sizeX || (int) area.getHeight() != sizeY) {
-			area.setRect(0, 0, sizeX, sizeY);
-			frontImage = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
-			backImage = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
-		}
+		// if (GAMA.isSynchronized()) { while (!ready) { DEBUG.WAIT(20); } }
+		// if (!ready) return frontImage;
+		adjustImage(sizeX, sizeY, antiAlias);
 
 		final Graphics2D g2D = backImage.createGraphics();
 		try {
-			chart.draw(g2D, area, info);
-		} catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
+			synchronized (lock) {
+				snapshot = (JFreeChart) chart.clone();
+				snapshot.addProgressListener(this);
+				snapshot.draw(g2D, area, info);
+			}
+		} catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException
+				| CloneNotSupportedException e) {
 			// Do nothing. See #1605
 			// e.printStackTrace();
 			// To force redrawing in case of error. See #3442
@@ -152,6 +151,35 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	}
 
+	/**
+	 * Adjust image.
+	 *
+	 * @param sizeX
+	 *            the size X
+	 * @param sizeY
+	 *            the size Y
+	 * @param antiAlias
+	 *            the anti alias
+	 */
+	private void adjustImage(final int sizeX, final int sizeY, final boolean antiAlias) {
+		if (antiAlias != oldAntiAlias) {
+			oldAntiAlias = antiAlias;
+			chart.setAntiAlias(antiAlias);
+			chart.setTextAntiAlias(antiAlias);
+		}
+		if ((int) area.getWidth() != sizeX || (int) area.getHeight() != sizeY) {
+			area.setRect(0, 0, sizeX, sizeY);
+			frontImage = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
+			backImage = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
+		}
+	}
+
+	/**
+	 * Chart progress.
+	 *
+	 * @param event
+	 *            the event
+	 */
 	@Override
 	public void chartProgress(final ChartProgressEvent event) {
 		ready = event.getType() == ChartProgressEvent.DRAWING_FINISHED;
@@ -164,9 +192,9 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	@Override
 	public void step(final IScope scope) {
-		chartdataset.updatedataset(scope, getChartCycle(scope));
-		if (!ready) return;
-		updateOutput(scope);
+		synchronized (lock) {
+			super.step(scope);
+		}
 	}
 
 	/**
@@ -209,8 +237,6 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 			chart.getLegend().setFrame(BlockBorder.NONE);
 			if (textColor != null) { chart.getLegend().setItemPaint(textColor); }
 		}
-
-		chart.addProgressListener(this);
 
 	}
 
