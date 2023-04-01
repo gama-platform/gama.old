@@ -336,15 +336,10 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				// DEBUG.OUT("UPDATE THREAD: Entering");
 				final IDisplaySurface surface = getDisplaySurface();
 				if (surface != null && !disposed && !surface.isDisposed()) {
 					try {
-						// DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
 						surface.updateDisplay(false);
-						if (surface.getScope().getClock().getCycle() > 0 && surface.getData().isAutosave()) {
-							WorkbenchHelper.run(() -> takeSnapshot(surface.getData().getImageDimension()));
-						}
 					} catch (Exception e) {
 						DEBUG.OUT("Error when updating " + getTitle() + ": " + e.getMessage());
 					}
@@ -352,6 +347,24 @@ public abstract class LayeredDisplayView extends GamaViewPart
 				return Status.OK_STATUS;
 			}
 		};
+	}
+
+	@Override
+	public void update(final IDisplayOutput output) {
+		super.update(output);
+		updateSnapshot();
+	}
+
+	/**
+	 * Update snapshot.
+	 */
+	private void updateSnapshot() {
+		if (disposed) return;
+		final IDisplaySurface surface = getDisplaySurface();
+		if (surface == null || surface.isDisposed()) return;
+		if (surface.getScope().getClock().getCycle() > 0 && surface.getData().isAutosave()) {
+			WorkbenchHelper.run(() -> takeSnapshot(surface.getData().getImageDimension()));
+		}
 	}
 
 	@Override
