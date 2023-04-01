@@ -11,15 +11,14 @@
 package ummisco.gama.dev.utils;
 
 import static java.lang.System.currentTimeMillis;
-import static java.lang.Thread.currentThread;
 import static ummisco.gama.dev.utils.FLAGS.ENABLE_DEBUG;
 import static ummisco.gama.dev.utils.FLAGS.ENABLE_LOGGING;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
+import java.lang.StackWalker.StackFrame;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -58,25 +57,11 @@ public class DEBUG {
 	/** The Constant COUNTERS. */
 	private static final ConcurrentHashMap<String, Integer> COUNTERS = new ConcurrentHashMap<>();
 
-	/** The Constant TO_STRING. */
-	private static final ConcurrentHashMap<Class<?>, Function<Object, String>> TO_STRING = new ConcurrentHashMap<>();
-
 	/** The Constant LOG_WRITERS. */
 	private static final ThreadLocal<PrintStream> LOG_WRITERS = ThreadLocal.withInitial(() -> System.out);
 
 	/** The Constant stackWalker. */
-	private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
-
-	static {
-		TO_STRING.put(int.class, o -> Arrays.toString((int[]) o));
-		TO_STRING.put(double.class, o -> Arrays.toString((double[]) o));
-		TO_STRING.put(float.class, o -> Arrays.toString((float[]) o));
-		TO_STRING.put(byte.class, o -> Arrays.toString((byte[]) o));
-		TO_STRING.put(boolean.class, o -> Arrays.toString((boolean[]) o));
-		TO_STRING.put(long.class, o -> Arrays.toString((long[]) o));
-		TO_STRING.put(short.class, o -> Arrays.toString((short[]) o));
-		TO_STRING.put(char.class, o -> Arrays.toString((char[]) o));
-	}
+	static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
 	/**
 	 * Uses a custom security manager to get the caller class name. Use of reflection would be faster, but more prone to
@@ -85,36 +70,10 @@ public class DEBUG {
 	 * @return the name of the class that has called the method that has called this method
 	 */
 	static String findCallingClassName() {
-		return SECURITY_MANAGER.getCallerClassName(3);
-	}
-
-	/**
-	 * Uses the stack trace to find the calling class. This one is 10x slower on average...
-	 *
-	 * @return
-	 */
-	static String findCallingClassNameOld() {
-		return currentThread().getStackTrace()[3].getClassName();
-	}
-
-	/**
-	 * Returns an automatically incremented integer count if the calling class is registered. -1 otherwise. Useful for
-	 * counting a number of invocations, etc. without having to define a static number on the class
-	 *
-	 * @return -1 if the class is not registered, 0 if it is the first call, otherwise an incremented integer
-	 */
-	public static Integer COUNT() {
-		final String s = findCallingClassName();
-		Integer result = -1;
-		if (REGISTERED.containsKey(s)) {
-			if (COUNTERS.containsKey(s)) {
-				result = COUNTERS.get(s) + 1;
-			} else {
-				result = 0;
-			}
-			COUNTERS.put(s, result);
-		}
-		return result;
+		Optional<String> caller = STACK_WALKER.walk(frames -> frames.map(StackFrame::getClassName)
+				.filter(s -> !s.contains("ummisco.gama.dev.utils")).findFirst());
+		if (caller.isEmpty()) return SECURITY_MANAGER.getCallerClassName(3);
+		return caller.get();
 	}
 
 	/**
@@ -255,7 +214,7 @@ public class DEBUG {
 	 */
 	public static final void ERR(final Object s) {
 		if (!ENABLE_DEBUG || !ENABLE_LOGGING) return;
-		System.err.println(TO_STRING(s));
+		System.err.println(STRINGS.TO_STRING(s));
 	}
 
 	/**
@@ -265,7 +224,7 @@ public class DEBUG {
 	 */
 	public static final void ERR(final Object s, final Throwable t) {
 		if (!ENABLE_DEBUG || !ENABLE_LOGGING) return;
-		System.err.println(TO_STRING(s));
+		System.err.println(STRINGS.TO_STRING(s));
 		t.printStackTrace();
 	}
 
@@ -289,7 +248,7 @@ public class DEBUG {
 	 *            the result
 	 */
 	public static void BANNER(final String title, final String state, final String result) {
-		LOG(PAD("> " + title + " ", 55, ' ') + PAD(" " + state, 15, '_') + " " + result);
+		LOG(STRINGS.PAD("> " + title + " ", 55, ' ') + STRINGS.PAD(" " + state, 15, '_') + " " + result);
 	}
 
 	/**
@@ -304,9 +263,9 @@ public class DEBUG {
 	public static void LOG(final Object object, final boolean newLine) {
 		if (ENABLE_LOGGING) {
 			if (newLine) {
-				LOG_WRITERS.get().println(TO_STRING(object));
+				LOG_WRITERS.get().println(STRINGS.TO_STRING(object));
 			} else {
-				LOG_WRITERS.get().print(TO_STRING(object));
+				LOG_WRITERS.get().print(STRINGS.TO_STRING(object));
 			}
 		}
 	}
@@ -329,32 +288,13 @@ public class DEBUG {
 	}
 
 	/**
-	 * Tries to obtain a correct string representation of the object, including when it is an array (or an array of
-	 * arrays). Made public to be used outside the debug sessions
-	 *
-	 * @param object
-	 *            any object
-	 * @return its string representation
-	 */
-	public static String TO_STRING(final Object object) {
-		if (object == null) return "null";
-		if (object.getClass().isArray()) {
-			final Class<?> clazz = object.getClass().getComponentType();
-			if (clazz.isPrimitive()) return TO_STRING.get(clazz).apply(object);
-			return Arrays.deepToString((Object[]) object);
-		}
-		return object.toString();
-
-	}
-
-	/**
 	 * Checks if is on.
 	 *
 	 * @param className
 	 *            the class name
 	 * @return true, if successful
 	 */
-	private static boolean IS_ON(final String className) {
+	static boolean IS_ON(final String className) {
 		// Necessary to loop on the names as the call can emanate from an inner class or an anonymous class of the
 		// "allowed" class
 		for (final String name : REGISTERED.keySet()) { if (className.startsWith(name)) return true; }
@@ -402,14 +342,14 @@ public class DEBUG {
 	 */
 	public static final void OUT(final String title, final int pad, final Object other) {
 		if (!ENABLE_DEBUG || !ENABLE_LOGGING || title == null) return;
-		if (IS_ON(findCallingClassName())) { LOG(PAD(title, pad) + TO_STRING(other)); }
+		if (IS_ON(findCallingClassName())) { LOG(STRINGS.PAD(title, pad) + STRINGS.TO_STRING(other)); }
 	}
 
 	/**
 	 * A utility method to output a line of 80 dashes.
 	 */
 	public static final void LINE() {
-		LOG(PAD("", 80, '-'));
+		LOG(STRINGS.PAD("", 80, '-'));
 	}
 
 	/**
@@ -419,97 +359,21 @@ public class DEBUG {
 	public static final void SECTION(final String s) {
 		if (s == null) return;
 		LINE();
-		LOG(PAD("---------- " + s.toUpperCase() + " ", 80, '-'));
+		LOG(STRINGS.PAD("---------- " + s.toUpperCase() + " ", 80, '-'));
 		LINE();
-	}
-
-	/**
-	 * A utility method for padding a string with spaces in order to obtain a length of "minLength"
-	 *
-	 * @param string
-	 *            the string to pad
-	 * @param minLength
-	 *            the minimum length to reach (if the string is longer, it will be return as is)
-	 * @return a string of minimum length minLength
-	 */
-	public static String PAD(final String string, final int minLength) {
-		return PAD(string, minLength, ' ');
-	}
-
-	/**
-	 * A utility method for padding a string with any character in order to obtain a length of "minLength"
-	 *
-	 * @param string
-	 *            the string to pad
-	 * @param minLength
-	 *            the minimum length to reach (if the string is longer, it will be return as is)
-	 * @return a string of minimum length minLength
-	 */
-
-	public static String PAD(final String string, final int minLength, final char c) {
-		if (string.length() >= minLength) return string;
-		final StringBuilder sb = new StringBuilder(minLength);
-		sb.append(string);
-		for (int i = string.length(); i < minLength; i++) { sb.append(c); }
-		return sb.toString();
-	}
-
-	/**
-	 * Return the caller method.
-	 *
-	 * @return the string
-	 */
-	public static String METHOD() {
-		StackWalker.StackFrame frame = STACK_WALKER.walk(stream1 -> stream1.skip(2).findFirst().orElse(null));
-		return frame == null ? "no calling method" : frame.getMethodName();
-	}
-
-	/**
-	 * Return the caller class.
-	 *
-	 * @return the string
-	 */
-	public static String CALLER() {
-		StackWalker.StackFrame frame = STACK_WALKER.walk(stream1 -> stream1.skip(2).findFirst().orElse(null));
-		return frame == null ? "no one" : frame.getClassName();
 	}
 
 	/**
 	 * Stack.
 	 */
 	public static void STACK() {
-		if (!ENABLE_LOGGING || !IS_ON(findCallingClassName())) return;
-		LOG(PAD("--- Stack trace ", 80, '-'));
-		STACK_WALKER.walk(stream1 -> {
-			stream1.skip(2).forEach(s -> LOG("> " + s));
+		if (!ENABLE_LOGGING || !DEBUG.IS_ON(DEBUG.findCallingClassName())) return;
+		DEBUG.LOG(STRINGS.PAD("--- Stack trace ", 80, '-'));
+		DEBUG.STACK_WALKER.walk(stream1 -> {
+			stream1.skip(2).forEach(s -> DEBUG.LOG("> " + s));
 			return null;
 		});
-		LINE();
-	}
-
-	/**
-	 * Wait. Make the current thread wait for the specified amount of msec, and optionnaly outputs a text while it is
-	 * waiting and a text in case it is interrupted
-	 *
-	 * @param title
-	 *            the title
-	 * @param msec
-	 *            the msec
-	 * @return true, if successful
-	 */
-	public static boolean WAIT(final int msec, final String... texts) {
-		if (msec == 0) return true;
-		String title = texts.length == 0 ? null : texts[0];
-		String error = texts.length == 1 ? null : texts[1];
-		try {
-			if (title != null) { LOG(title + ". Waiting " + msec + "ms."); }
-			Thread.sleep(msec);
-		} catch (InterruptedException e) {
-			if (error != null) { DEBUG.ERR(error); }
-			// e.printStackTrace();
-			return false;
-		}
-		return true;
+		DEBUG.LINE();
 	}
 
 }

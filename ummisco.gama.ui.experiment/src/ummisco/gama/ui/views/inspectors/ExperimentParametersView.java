@@ -39,6 +39,7 @@ import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.constants.GamlCoreConstants;
+import ummisco.gama.dev.utils.COUNTER;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
@@ -59,9 +60,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	/** The Constant MONITOR_CATEGORY. */
 	private static final String MONITOR_SECTION_NAME = "Monitors";
-
-	/** The count. */
-	private static int count = 0;
 
 	/** The Constant ID. */
 	public static final String ID = IGui.PARAMETER_VIEW_ID;
@@ -143,7 +141,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	private void createNewMonitor() {
 		createMonitorSectionIfNeeded(true);
 		IScope scope = GAMA.getRuntimeScope();
-		MonitorOutput m = new MonitorOutput(scope, "Monitor " + count++, null);
+		MonitorOutput m = new MonitorOutput(scope, "Monitor " + COUNTER.COUNT(), null);
 		MonitorDisplayer md = getEditorsList().addMonitor(m);
 		md.createControls((EditorsGroup) monitorSection.getControl());
 		monitorSection.setHeight(monitorSection.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);

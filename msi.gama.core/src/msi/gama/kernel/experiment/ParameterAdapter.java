@@ -28,7 +28,7 @@ import ummisco.gama.dev.utils.COUNTER;
 public abstract class ParameterAdapter implements IParameter.Batch {
 
 	/** The order. */
-	private final int order = COUNTER.GET();
+	private final int order = COUNTER.COUNT();
 
 	/** The title. */
 	protected String title;

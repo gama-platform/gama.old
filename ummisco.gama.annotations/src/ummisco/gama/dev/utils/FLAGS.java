@@ -57,7 +57,7 @@ public class FLAGS {
 		String v = System.getProperty(name);
 		if (v == null) return def;
 		boolean b = Boolean.parseBoolean(v);
-		if (b) { System.out.println(DEBUG.PAD("> FLAG: " + name, 55, ' ') + DEBUG.PAD(" set to", 15, '_') + " " + b); }
+		if (b) { System.out.println(STRINGS.PAD("> FLAG: " + name, 55, ' ') + STRINGS.PAD(" set to", 15, '_') + " " + b); }
 		return b;
 	}
 

@@ -3,7 +3,7 @@
  * MonitorView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -37,6 +37,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -51,9 +52,6 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MonitorView extends ExpandableItemsView<MonitorOutput> implements IToolbarDecoratedView.Pausable {
-
-	/** The count. */
-	private static int count = 0;
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
@@ -179,7 +177,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	@SuppressWarnings ("unused")
 	public static void createNewMonitor(final IScope scope) {
 		// TODO ADD the possibility to do it in several simulations
-		new MonitorOutput(scope, "monitor" + count++, "");
+		new MonitorOutput(scope, "monitor" + COUNTER.COUNT(), "");
 	}
 
 	@Override
@@ -230,7 +228,6 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	 */
 	@Override
 	public void pauseChanged() {}
-
 
 	/**
 	 * Method handleMenu()

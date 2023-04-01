@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ExpressionDescriptionBuilder.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ExpressionDescriptionBuilder.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
@@ -40,7 +40,8 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	/**
 	 * Sets the errors.
 	 *
-	 * @param errors the new errors
+	 * @param errors
+	 *            the new errors
 	 */
 	void setErrors(final Set<Diagnostic> errors) {
 		// currentErrors = errors;
@@ -100,9 +101,6 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		return ed;
 	}
 
-	/** The count. */
-	static int count;
-
 	@Override
 	public IExpressionDescription caseUnitName(final UnitName object) {
 		final String s = EGaml.getInstance().getKeyOf(object);
@@ -125,8 +123,10 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	/**
 	 * Creates the.
 	 *
-	 * @param e the e
-	 * @param errors the errors
+	 * @param e
+	 *            the e
+	 * @param errors
+	 *            the errors
 	 * @return the i expression description
 	 */
 	public static IExpressionDescription create(final ISyntacticElement e, final Set<Diagnostic> errors) {
@@ -136,7 +136,8 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	/**
 	 * Creates the.
 	 *
-	 * @param expr the expr
+	 * @param expr
+	 *            the expr
 	 * @return the i expression description
 	 */
 	public IExpressionDescription create(final EObject expr/* , final Set<Diagnostic> errors */) {

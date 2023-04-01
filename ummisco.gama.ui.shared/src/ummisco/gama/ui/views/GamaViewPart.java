@@ -16,9 +16,7 @@ import static com.google.common.collect.Iterables.transform;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -282,9 +280,6 @@ public abstract class GamaViewPart extends ViewPart
 	 */
 	public abstract void ownCreatePartControl(Composite parent);
 
-	/** The previous update OK. */
-	volatile boolean previousUpdateOK = true;
-
 	/**
 	 * Gets the update job.
 	 *
@@ -292,21 +287,6 @@ public abstract class GamaViewPart extends ViewPart
 	 */
 	protected final Job getUpdateJob() {
 		if (updateJob == null) { updateJob = createUpdateJob(); }
-		if (updateJob != null) {
-			updateJob.addJobChangeListener(new JobChangeAdapter() {
-
-				@Override
-				public void aboutToRun(final IJobChangeEvent event) {
-					previousUpdateOK = false;
-				}
-
-				@Override
-				public void done(final IJobChangeEvent event) {
-					previousUpdateOK = true;
-				}
-
-			});
-		}
 		return updateJob;
 	}
 
@@ -321,13 +301,14 @@ public abstract class GamaViewPart extends ViewPart
 	public void update(final IDisplayOutput output) {
 		final Job job = getUpdateJob();
 		if (job != null) {
-			if (GAMA.isSynchronized()) {
-				while (!previousUpdateOK) {
-					DEBUG.WAIT(20, "Update job on " + getTitle() + " is not finished",
-							"Update job on " + getTitle() + " interrupted");
-				}
-			} else if (!previousUpdateOK) return;
 			job.schedule();
+			if (GAMA.isSynchronized()) {
+				try {
+					job.join();
+				} catch (InterruptedException e) {
+					DEBUG.OUT("Update of " + getTitle() + " interrupted.");
+				}
+			}
 		}
 	}
 
@@ -389,6 +370,8 @@ public abstract class GamaViewPart extends ViewPart
 		WorkbenchHelper.asyncRun(() -> {
 			try {
 				ViewsHelper.hideView(GamaViewPart.this);
+				Job job = getUpdateJob();
+				if (job != null && job.getThread() != null) { job.getThread().interrupt(); }
 			} catch (final Exception e) {}
 		});
 

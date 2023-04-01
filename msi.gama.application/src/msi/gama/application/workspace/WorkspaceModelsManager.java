@@ -62,6 +62,7 @@ import com.google.common.collect.Multimap;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * Class InitialModelOpener.
@@ -143,13 +144,7 @@ public class WorkspaceModelsManager {
 				return;
 			}
 			while (GAMA.getRegularGui() == null) {
-				try {
-					Thread.sleep(100);
-					DEBUG.OUT(Thread.currentThread().getName() + ": waiting for the GUI to become available");
-				} catch (final InterruptedException e2) {
-
-					e2.printStackTrace();
-				}
+				THREADS.WAIT(100, Thread.currentThread().getName() + ": waiting for the GUI to become available");
 			}
 			if (en == null) {
 				// System.out
@@ -422,11 +417,7 @@ public class WorkspaceModelsManager {
 	 */
 	public void loadModelsLibrary() {
 		while (!GamaBundleLoader.LOADED && !GamaBundleLoader.ERRORED) {
-			try {
-				Thread.sleep(100);
-			} catch (final InterruptedException e) {
-				GamaBundleLoader.ERROR("Impossible to load the Built-in Models Library", e);
-			}
+			THREADS.WAIT(100, (String) null, "Impossible to load the Built-in Models Library");
 		}
 		// DEBUG.OUT("Synchronous link of models library...");
 		final Multimap<Bundle, String> pluginsWithModels = GamaBundleLoader.getPluginsWithModels();

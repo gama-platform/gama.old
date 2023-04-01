@@ -220,7 +220,7 @@ public class ExecutionScope implements IScope {
 	 */
 	public ExecutionScope(final ITopLevelAgent root, final String otherName, final IExecutionContext context,
 			final AgentExecutionContext agentContext, final SpecialContext specialContext) {
-		StringBuilder name = new StringBuilder("Scope #").append(COUNTER.GET());
+		StringBuilder name = new StringBuilder("Scope #").append(COUNTER.COUNT());
 		setRoot(root);
 		if (root != null) { name.append(" of ").append(root.stringValue(root.getScope())); }
 		name.append(otherName == null || otherName.isEmpty() ? "" : " (" + otherName + ")");

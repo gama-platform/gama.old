@@ -55,7 +55,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegateEventsToParent, FPSCounter {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The canvas. */
@@ -124,13 +124,13 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 						final var isDetached = parent.getShell().getText().length() == 0;
 						if (isDetached) {
 							if (!detached) {
-//								DEBUG.OUT("Reparenting because of detached");
+								// DEBUG.OUT("Reparenting because of detached");
 								reparentWindow();
 								detached = true;
 							}
 
 						} else if (detached) {
-//							DEBUG.OUT("Reparenting because of attached");
+							// DEBUG.OUT("Reparenting because of attached");
 							reparentWindow();
 							detached = false;
 						}

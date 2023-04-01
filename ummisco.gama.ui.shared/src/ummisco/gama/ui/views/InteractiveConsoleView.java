@@ -53,6 +53,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.THREADS;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -194,10 +195,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 		new Thread(() -> {
 			append(Strings.LN + PROMPT, false, false);
-			try {
-				// Wait for the output stream to finish
-				Thread.sleep(200);
-			} catch (final InterruptedException e) {}
+			THREADS.WAIT(200);
 			WorkbenchHelper.run(() -> {
 				if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed()) {
 					viewer.getTextWidget().setCaretOffset(viewer.getTextWidget().getCharCount());

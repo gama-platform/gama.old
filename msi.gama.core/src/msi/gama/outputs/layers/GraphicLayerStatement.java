@@ -138,7 +138,7 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 	public GraphicLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		final IDescription d =
-				DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + COUNTER.GET());
+				DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + COUNTER.COUNT());
 		aspect = new AspectStatement(d);
 	}
 

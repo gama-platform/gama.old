@@ -57,6 +57,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 import ummisco.gaml.extensions.image.GamaImage;
@@ -296,7 +297,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final GamaImage newImage = ImageHelper.createCompatibleImage(width, height, false);
 		final Graphics g = newImage.getGraphics();
 
-		while (!rendered) { DEBUG.WAIT(20, "Surface is not rendered yet in Java2DDisplaySurface().getImage"); }
+		while (!rendered) { THREADS.WAIT(20, "Surface is not rendered yet in Java2DDisplaySurface().getImage"); }
 		try {
 			EventQueue.invokeAndWait(() -> {
 				final Rectangle old = new Rectangle(viewPort);

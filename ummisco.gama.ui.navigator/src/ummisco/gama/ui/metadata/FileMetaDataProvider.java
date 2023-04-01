@@ -58,6 +58,7 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.GAML;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * Class FileMetaDataProvider.
@@ -356,15 +357,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			final boolean immediately) {
 		startup();
 		if (processing.contains(element)) {
-
-			while (processing.contains(element)) {
-				try {
-					Thread.currentThread();
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			while (processing.contains(element)) { THREADS.WAIT(100); }
 			return getMetaData(element, includeOutdated, immediately);
 
 		}

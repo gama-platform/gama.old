@@ -28,6 +28,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * The Class RuntimeExceptionHandler.
@@ -77,12 +78,8 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	protected IStatus run(final IProgressMonitor monitor) {
 		while (running) {
 			while (incomingExceptions.isEmpty() && running && remainingTime > 0) {
-				try {
-					Thread.sleep(500);
-					remainingTime -= 500;
-				} catch (final InterruptedException e) {
-					return Status.OK_STATUS;
-				}
+				if (!THREADS.WAIT(500)) return Status.OK_STATUS;
+				remainingTime -= 500;
 			}
 			if (!running) return Status.CANCEL_STATUS;
 			if (remainingTime <= 0) {

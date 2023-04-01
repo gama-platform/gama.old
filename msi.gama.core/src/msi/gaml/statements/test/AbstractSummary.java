@@ -37,7 +37,7 @@ public abstract class AbstractSummary<S extends WithTestSummary<?>> implements I
 	private final String title;
 
 	/** The index. */
-	public final int index = COUNTER.GET();
+	public final int index = COUNTER.GET_UNIQUE();
 
 	/** The error. */
 	public String error;

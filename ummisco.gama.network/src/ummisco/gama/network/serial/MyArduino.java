@@ -1,140 +1,247 @@
+/*******************************************************************************************************
+ *
+ * MyArduino.java, in ummisco.gama.network, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package ummisco.gama.network.serial;
 
 import java.awt.Dimension;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import com.fazecast.jSerialComm.*; 
+import com.fazecast.jSerialComm.SerialPort;
 
+import ummisco.gama.dev.utils.THREADS;
 
+/**
+ * The Class MyArduino.
+ */
 public class MyArduino {
+
+	/** The com port. */
 	private SerialPort comPort;
+
+	/** The port description. */
 	private String portDescription;
+
+	/** The baud rate. */
 	private int baud_rate;
-	
+
+	/**
+	 * Instantiates a new my arduino.
+	 */
 	public MyArduino() {
-		//empty constructor if port undecided
+		// empty constructor if port undecided
 	}
-	public MyArduino(String portDescription) {
-		//make sure to set baud rate after
+
+	/**
+	 * Instantiates a new my arduino.
+	 *
+	 * @param portDescription
+	 *            the port description
+	 */
+	public MyArduino(final String portDescription) {
+		// make sure to set baud rate after
 		this.portDescription = portDescription;
 		comPort = SerialPort.getCommPort(this.portDescription);
 	}
-	
-	public MyArduino(String portDescription, int baud_rate) {
-		//preferred constructor
+
+	/**
+	 * Instantiates a new my arduino.
+	 *
+	 * @param portDescription
+	 *            the port description
+	 * @param baud_rate
+	 *            the baud rate
+	 */
+	public MyArduino(final String portDescription, final int baud_rate) {
+		// preferred constructor
 		this.portDescription = portDescription;
 		comPort = SerialPort.getCommPort(this.portDescription);
 		this.baud_rate = baud_rate;
 		comPort.setBaudRate(this.baud_rate);
 	}
-	
-	
-	
-	public boolean openConnection(){
-		if(comPort.openPort()){
-			try {Thread.sleep(100);} catch(Exception e){}
+
+	/**
+	 * Open connection.
+	 *
+	 * @return true, if successful
+	 */
+	public boolean openConnection() {
+		if (comPort.openPort()) {
+			THREADS.WAIT(100);
 			return true;
 		}
-		else {
-			AlertBox alert = new AlertBox(new Dimension(400,100),"Error Connecting", "Try Another port");
-			alert.display();
-			return false;
-		}
+		AlertBox alert = new AlertBox(new Dimension(400, 100), "Error Connecting", "Try Another port");
+		alert.display();
+		return false;
 	}
-	
+
+	/**
+	 * Close connection.
+	 */
 	public void closeConnection() {
 		comPort.closePort();
 	}
-	
-	public void setPortDescription(String portDescription){
+
+	/**
+	 * Sets the port description.
+	 *
+	 * @param portDescription
+	 *            the new port description
+	 */
+	public void setPortDescription(final String portDescription) {
 		this.portDescription = portDescription;
 		comPort = SerialPort.getCommPort(this.portDescription);
 	}
-	public void setBaudRate(int baud_rate){
+
+	/**
+	 * Sets the baud rate.
+	 *
+	 * @param baud_rate
+	 *            the new baud rate
+	 */
+	public void setBaudRate(final int baud_rate) {
 		this.baud_rate = baud_rate;
 		comPort.setBaudRate(this.baud_rate);
 	}
-	
-	public String getPortDescription(){
-		return portDescription;
-	}
-	
-	public SerialPort getSerialPort(){
-		return comPort;
-	}
-	
-	
-	public String serialRead(){
-		//will be an infinite loop if incoming data is not bound
+
+	/**
+	 * Gets the port description.
+	 *
+	 * @return the port description
+	 */
+	public String getPortDescription() { return portDescription; }
+
+	/**
+	 * Gets the serial port.
+	 *
+	 * @return the serial port
+	 */
+	public SerialPort getSerialPort() { return comPort; }
+
+	/**
+	 * Serial read.
+	 *
+	 * @return the string
+	 */
+	public String serialRead() {
+		// will be an infinite loop if incoming data is not bound
 		comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
-		String out="";
+		StringBuilder out = new StringBuilder();
 		Scanner in = new Scanner(comPort.getInputStream());
-		try
-		{
-		   while(in.hasNext())
-		      out += (in.next()+"\n");
-		   	in.close();
-		} catch (Exception e) { e.printStackTrace(); }
-		return out;
+		try {
+			while (in.hasNext()) { out.append(in.next()).append("\n"); }
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return out.toString();
 	}
-	
-	public String serialRead(int limit){
-		//in case of unlimited incoming data, set a limit for number of readings
+
+	/**
+	 * Serial read.
+	 *
+	 * @param limit
+	 *            the limit
+	 * @return the string
+	 */
+	public String serialRead(final int limit) {
+		// in case of unlimited incoming data, set a limit for number of readings
 		comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
-		String out="";
-		int count=0;
+		StringBuilder out = new StringBuilder();
+		int count = 0;
 		Scanner in = new Scanner(comPort.getInputStream());
-		try
-		{
-		   while(in.hasNext()&&count<=limit){
-		      out += (in.next()+"\n");
-		      count++;
-		   }
-		   	in.close();
-		} catch (Exception e) { e.printStackTrace(); }
-		return out;
+		try {
+			while (in.hasNext() && count <= limit) {
+				out.append(in.next()).append("\n");
+				count++;
+			}
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return out.toString();
 	}
-	
-	public void serialWrite(String s){
-		//writes the entire string at once.
+
+	/**
+	 * Serial write.
+	 *
+	 * @param s
+	 *            the s
+	 */
+	public void serialWrite(final String s) {
+		// writes the entire string at once.
 		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-		try{Thread.sleep(5);} catch(Exception e){}
+		THREADS.WAIT(5);
 		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
 		pout.print(s);
 		pout.flush();
-		
+
 	}
-	public void serialWrite(String s,int noOfChars, int delay){
-		//writes the entire string at once.
+
+	/**
+	 * Serial write.
+	 *
+	 * @param s
+	 *            the s
+	 * @param noOfChars
+	 *            the no of chars
+	 * @param delay
+	 *            the delay
+	 */
+	public void serialWrite(final String s, final int noOfChars, final int delay) {
+		// writes the entire string at once.
 		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-		try{Thread.sleep(5);} catch(Exception e){}
+		THREADS.WAIT(5);
 		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
-		for(int i=0;i<s.length();i+=noOfChars){
-			pout.write(s.substring(i,i+noOfChars));
+		for (int i = 0; i < s.length(); i += noOfChars) {
+			pout.write(s.substring(i, i + noOfChars));
 			pout.flush();
-			System.out.println(s.substring(i,i+noOfChars));
-			try{Thread.sleep(delay);}catch(Exception e){}
+			System.out.println(s.substring(i, i + noOfChars));
+			THREADS.WAIT(delay);
+
 		}
 		pout.write(noOfChars);
 		pout.flush();
-		
+
 	}
-	
-	public void serialWrite(char c){
-		//writes the entire string at once.
+
+	/**
+	 * Serial write.
+	 *
+	 * @param c
+	 *            the c
+	 */
+	public void serialWrite(final char c) {
+		// writes the entire string at once.
 		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-		try{Thread.sleep(5);} catch(Exception e){}
-		PrintWriter pout = new PrintWriter(comPort.getOutputStream());pout.write(c);
+		THREADS.WAIT(5);
+		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
+		pout.write(c);
 		pout.flush();
 	}
-	
-	public void serialWrite(char c, int delay){
-		//writes the entire string at once.
+
+	/**
+	 * Serial write.
+	 *
+	 * @param c
+	 *            the c
+	 * @param delay
+	 *            the delay
+	 */
+	public void serialWrite(final char c, final int delay) {
+		// writes the entire string at once.
 		comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-		try{Thread.sleep(5);} catch(Exception e){}
-		PrintWriter pout = new PrintWriter(comPort.getOutputStream());pout.write(c);
+		THREADS.WAIT(5);
+		PrintWriter pout = new PrintWriter(comPort.getOutputStream());
+		pout.write(c);
 		pout.flush();
-		try{Thread.sleep(delay);}catch(Exception e){}
+		THREADS.WAIT(delay);
 	}
 }

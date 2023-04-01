@@ -33,7 +33,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
-import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * The Class UserPanelStatement.
@@ -126,7 +126,7 @@ public class UserPanelStatement extends FsmStateStatement {
 		super.bodyExecution(scope);
 		if (!userCommands.isEmpty()) {
 			scope.getGui().openUserControlPanel(scope, this);
-			while (scope.isOnUserHold()) { DEBUG.WAIT(100); }
+			while (scope.isOnUserHold()) { THREADS.WAIT(100); }
 		}
 		return name;
 

@@ -603,7 +603,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			if (s instanceof ICategory c) {
 				displayables.add(c);
 			} else if (s instanceof TextStatement t) {
-				// texts.add(t);
 				displayables.add(t);
 			} else if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;

@@ -34,6 +34,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * Class AbstractOutputManager.
@@ -45,7 +46,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The autosave. */
@@ -317,7 +318,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		});
 		if (GAMA.isSynchronized() && !inInitPhase) {
 			while (!allOutputsRendered()) {
-				DEBUG.WAIT(20, "All the outputs are not rendered yet", "AbstractOutputManager.step() interrupted");
+				THREADS.WAIT(20, "The outputs are not rendered yet", "AbstractOutputManager.step() interrupted");
 			}
 		}
 		evaluateAutoSave(scope);

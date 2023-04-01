@@ -23,6 +23,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
 import msi.gaml.operators.Dates;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * The class GamaRuntimeInformation.
@@ -268,11 +269,8 @@ public class SimulationClock {
 	 */
 	public void waitDelay() {
 		final double delay = getDelayInMilliseconds();
-		if (delay == 0d) return;
-		try {
-			if (duration >= delay) return;
-			Thread.sleep((long) delay - duration);
-		} catch (final InterruptedException e) {}
+		if ((delay == 0d) || (duration >= delay)) return;
+		THREADS.WAIT((long) delay - duration);
 	}
 
 	/**

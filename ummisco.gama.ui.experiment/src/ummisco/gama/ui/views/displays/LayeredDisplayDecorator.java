@@ -45,6 +45,7 @@ import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.STRINGS;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.controls.SimulationSpeedContributionItem;
 import ummisco.gama.ui.menus.GamaColorMenu;
@@ -125,17 +126,17 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 */
 	private void createCommands() {
 		int pad = 25;
-		toggleOverlay = new GamaCommand(TOGGLE_OVERLAY, DEBUG.PAD("Toggle overlay", pad) + format(COMMAND, 'O'),
+		toggleOverlay = new GamaCommand(TOGGLE_OVERLAY, STRINGS.PAD("Toggle overlay", pad) + format(COMMAND, 'O'),
 				e -> toggleOverlay());
 		takeSnapshot =
-				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, DEBUG.PAD("Take a snapshot", pad), e -> view.takeSnapshot(null));
-		antiAlias = new GamaCommand(TOGGLE_ANTIALIAS, DEBUG.PAD("Turn antialias on/off", pad),
+				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, STRINGS.PAD("Take a snapshot", pad), e -> view.takeSnapshot(null));
+		antiAlias = new GamaCommand(TOGGLE_ANTIALIAS, STRINGS.PAD("Turn antialias on/off", pad),
 				e -> view.getOutput().getData().setAntialias(!view.getOutput().getData().isAntialias()));
-		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, DEBUG.PAD("Toggle fullscreen", pad) + "ESC", e -> {
+		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, STRINGS.PAD("Toggle fullscreen", pad) + "ESC", e -> {
 			toggleFullScreen();
 		});
 		runExperiment = new GamaCommand(EXPERIMENT_RUN,
-				DEBUG.PAD("Run or pause experiment", pad) + GamaKeyBindings.PLAY_STRING, e -> {
+				STRINGS.PAD("Run or pause experiment", pad) + GamaKeyBindings.PLAY_STRING, e -> {
 
 					final Item item = (Item) e.widget;
 					if (!GAMA.isPaused()) {
@@ -147,12 +148,12 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 
 				});
 		stepExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_STEP,
-				DEBUG.PAD("Step experiment", pad) + GamaKeyBindings.STEP_STRING, e -> GAMA.stepFrontmostExperiment());
+				STRINGS.PAD("Step experiment", pad) + GamaKeyBindings.STEP_STRING, e -> GAMA.stepFrontmostExperiment());
 		closeExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_STOP,
-				DEBUG.PAD("Closes experiment", pad) + GamaKeyBindings.QUIT_STRING,
+				STRINGS.PAD("Closes experiment", pad) + GamaKeyBindings.QUIT_STRING,
 				e -> new Thread(() -> GAMA.closeAllExperiments(true, false)).start());
 		relaunchExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_RELOAD,
-				DEBUG.PAD("Reload experiment", pad) + GamaKeyBindings.RELOAD_STRING,
+				STRINGS.PAD("Reload experiment", pad) + GamaKeyBindings.RELOAD_STRING,
 				e -> GAMA.reloadFrontmostExperiment());
 	}
 
@@ -231,9 +232,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		if (isFullScreen()) {
 			DEBUG.OUT("Is already full screen: exiting");
 			fs.setImage(GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_ENTER).image());
-			fs.setToolTipText(DEBUG.PAD("Enter fullscreen", 25) + "ESC");
+			fs.setToolTipText(STRINGS.PAD("Enter fullscreen", 25) + "ESC");
 			toggleFullScreen.setImage(IGamaIcons.DISPLAY_FULLSCREEN_ENTER);
-			toggleFullScreen.setText(DEBUG.PAD("Enter fullscreen", 25) + "ESC");
+			toggleFullScreen.setText(STRINGS.PAD("Enter fullscreen", 25) + "ESC");
 			// Toolbar
 			if (!toolbar.isDisposed()) {
 				toolbar.wipe(SWT.LEFT, true);
@@ -250,9 +251,9 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			fullScreenShell = createFullScreenShell();
 			if (fullScreenShell == null) return;
 			fs.setImage(GamaIcon.named(IGamaIcons.DISPLAY_FULLSCREEN_EXIT).image());
-			fs.setToolTipText(DEBUG.PAD("Exit fullscreen", 25) + "ESC");
+			fs.setToolTipText(STRINGS.PAD("Exit fullscreen", 25) + "ESC");
 			toggleFullScreen.setImage(IGamaIcons.DISPLAY_FULLSCREEN_EXIT);
-			toggleFullScreen.setText(DEBUG.PAD("Exit fullscreen", 25) + "ESC");
+			toggleFullScreen.setText(STRINGS.PAD("Exit fullscreen", 25) + "ESC");
 			normalParentOfFullScreenControl = view.getCentralPanel().getParent();
 			view.getCentralPanel().setParent(fullScreenShell);
 			fullScreenShell.layout(true, true);
@@ -519,11 +520,11 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 			}
 			toggleOverlay.toItem(sub);
 			GamaMenu.action(sub,
-					DEBUG.PAD("Toggle toolbar ", 25) + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
+					STRINGS.PAD("Toggle toolbar ", 25) + GamaKeyBindings.format(GamaKeyBindings.COMMAND, 'T'),
 					t -> toggleToolbar(),
 					GamaIcon.named(this.isFullScreen() ? "display/toolbar.fullscreen" : "display/toolbar.regular")
 							.image());
-			GamaColorMenu.addColorSubmenuTo(sub, DEBUG.PAD("Background", 25), c -> {
+			GamaColorMenu.addColorSubmenuTo(sub, STRINGS.PAD("Background", 25), c -> {
 				view.getDisplaySurface().getData().setBackgroundColor(c);
 				view.getDisplaySurface().updateDisplay(true);
 			});

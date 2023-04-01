@@ -28,6 +28,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.services.ISourceProviderService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
@@ -452,6 +453,12 @@ public class SwtGui implements IGui {
 
 		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
+			WorkbenchHelper.getWindow().updateActionBars();
+
+			// To solve issue #3697
+			ICommandService hs = WorkbenchHelper.getService(ICommandService.class);
+			hs.refreshElements("msi.gama.application.commands.SynchronizeExperiment", null);
+
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 			getConsole().toggleConsoleViews(exp.getAgent(), showConsoles == null || showConsoles);
 			if (showNavigator != null && !showNavigator) { hideView(IGui.NAVIGATOR_VIEW_ID); }
@@ -556,10 +563,7 @@ public class SwtGui implements IGui {
 
 			for (final IViewReference view : views) {
 				final IViewPart part = view.getView(false);
-				if (part instanceof IGamaView) {
-
-					((IGamaView) part).close(scope);
-				}
+				if (part instanceof IGamaView) { ((IGamaView) part).close(scope); }
 			}
 			if (openModelingPerspective) {
 				DEBUG.OUT("Deleting simulation perspective and opening immediately the modeling perspective = "

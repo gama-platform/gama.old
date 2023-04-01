@@ -24,6 +24,7 @@ import com.jogamp.common.util.JarUtil;
 import com.jogamp.opengl.GLProfile;
 
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * The Class OpenGLActivator.
@@ -57,13 +58,7 @@ public class OpenGLActivator extends AbstractUIPlugin {
 					DEBUG.ERR("Impossible to initialize OpenGL", e1);
 					return;
 				}
-				while (!GLProfile.isInitialized()) {
-					try {
-						Thread.sleep(100);
-					} catch (final InterruptedException e) {
-						DEBUG.ERR("Impossible to initialize OpenGL", e);
-					}
-				}
+				while (!GLProfile.isInitialized()) { THREADS.WAIT(100, null, "Impossible to initialize OpenGL"); }
 			});
 
 		});

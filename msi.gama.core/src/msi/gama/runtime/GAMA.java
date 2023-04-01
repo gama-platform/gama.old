@@ -193,13 +193,6 @@ public class GAMA {
 
 	}
 
-	// public static void closeFrontmostExperiment() {
-	// final IExperimentController controller = getFrontmostController();
-	// if (controller == null || controller.getExperiment() == null) { return; }
-	// controller.close();
-	// controllers.remove(controller);
-	// }
-
 	/**
 	 * Close experiment.
 	 *
@@ -235,6 +228,7 @@ public class GAMA {
 	private static void closeController(final IExperimentController controller) {
 		if (controller == null) return;
 		stopBenchmark(controller.getExperiment());
+		desynchronizeFrontmostExperiment();
 		controller.close();
 		controllers.remove(controller);
 	}
@@ -529,8 +523,6 @@ public class GAMA {
 	 */
 	public static final void runAndUpdateAll(final Runnable r) {
 		r.run();
-		// SimulationAgent sim = getSimulation();
-		// if(sim.isPaused(sim.getScope()))
 		IExperimentPlan exp = getExperiment();
 		if (exp != null) { exp.refreshAllOutputs(); }
 	}
