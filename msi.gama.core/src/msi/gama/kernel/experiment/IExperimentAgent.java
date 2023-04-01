@@ -112,13 +112,6 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	boolean isHeadless();
 
 	/**
-	 * Checks if is synchronized.
-	 *
-	 * @return true, if is synchronized
-	 */
-	default boolean isSynchronized() { return getSpecies().isSynchronized(); }
-
-	/**
 	 * Returns the population factory of this type of experiment -- default is a DefaultPopulationFactory
 	 *
 	 * @return the population factory

@@ -362,7 +362,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private final boolean benchmarkable;
 
 	/** The sync. */
-	private volatile boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
 	/** The displayables. */
 	private final List<IExperimentDisplayable> displayables = new ArrayList();
@@ -613,7 +612,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			} else if (s instanceof BatchOutput) {
 				fileOutputDescription = (BatchOutput) s;
 			} else if (s instanceof SimulationOutputManager som) {
-				if (som.isSync()) { synchronizeAllOutputs(); }
 				if (originalSimulationOutputs != null) {
 					originalSimulationOutputs.setChildren(som);
 				} else {
@@ -633,7 +631,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					parameters.put(parameterName, pb);
 				}
 			} else if (s instanceof ExperimentOutputManager eom) {
-				if (eom.isSync()) { synchronizeAllOutputs(); }
 				if (experimentOutputs != null) {
 					experimentOutputs.setChildren(eom);
 				} else {
@@ -1036,16 +1033,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	@Override
-	public void synchronizeAllOutputs() {
-		sync = true;
-	}
-
-	@Override
-	public void desynchronizeAllOutputs() {
-		sync = false;
-	}
-
-	@Override
 	public void closeAllOutputs() {
 		for (final IOutputManager manager : getActiveOutputManagers()) { manager.close(); }
 	}
@@ -1089,9 +1076,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean shouldBeBenchmarked() {
 		return benchmarkable;
 	}
-
-	@Override
-	public boolean isSynchronized() { return sync; }
 
 	@Override
 	public List<IExperimentDisplayable> getDisplayables() { return displayables; }

@@ -72,19 +72,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	/** The display index. */
 	protected int displayIndex;
 
-	/** The sync. */
-	protected boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
-
 	/** The has monitors. */
 	protected boolean hasMonitors;
-
-	/**
-	 * Checks if is sync.
-	 *
-	 * @return the sync
-	 */
-	@Override
-	public boolean isSync() { return sync; }
 
 	/**
 	 * Instantiates a new abstract output manager.
@@ -95,8 +84,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 		autosave = desc.getFacetExpr(IKeyword.AUTOSAVE);
-		sync = "true".equals(desc.getLitteral("synchronized"))
+		boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue() || "true".equals(desc.getLitteral("synchronized"))
 				|| desc.hasFacet(IKeyword.AUTOSAVE) && !"false".equals(desc.getLitteral(IKeyword.AUTOSAVE));
+		if (sync) { GAMA.synchronizeFrontmostExperiment(); }
 	}
 
 	@Override
@@ -183,7 +173,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;
 			} else if (s instanceof IOutput o) {
-				if (o instanceof IDisplayOutput && ((IDisplayOutput) o).isAutoSave()) { sync = true; }
+				if (o instanceof IDisplayOutput && ((IDisplayOutput) o).isAutoSave()) {
+					GAMA.synchronizeFrontmostExperiment();
+				}
 				add(o);
 				o.setUserCreated(false);
 				if (o instanceof LayeredDisplayOutput ldo) { ldo.setIndex(displayIndex++); }
@@ -323,7 +315,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			if (each instanceof LayeredDisplayOutput ldo) { ldo.linkScopeWithGraphics(); }
 			if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
 		});
-		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
+		if (GAMA.isSynchronized() && !inInitPhase) {
 			while (!allOutputsRendered()) {
 				DEBUG.WAIT(20, "All the outputs are not rendered yet", "AbstractOutputManager.step() interrupted");
 			}

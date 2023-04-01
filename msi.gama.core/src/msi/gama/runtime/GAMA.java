@@ -75,6 +75,9 @@ public class GAMA {
 	/** The is in headless mode. */
 	private static boolean isInServerMode;
 
+	/** The is synchronized. */
+	private static volatile boolean isSynchronized;
+
 	/** The regular gui. */
 	private static IGui regularGui;
 
@@ -649,8 +652,7 @@ public class GAMA {
 	 * Toggle sync frontmost experiment.
 	 */
 	public static void desynchronizeFrontmostExperiment() {
-		IExperimentPlan exp = getExperiment();
-		if (exp != null) { exp.desynchronizeAllOutputs(); }
+		isSynchronized = false;
 	}
 
 	/**
@@ -658,19 +660,13 @@ public class GAMA {
 	 *
 	 * @return true, if is synchronized
 	 */
-	public static boolean isSynchronized() {
-		IExperimentPlan plan = getExperiment();
-		if (plan == null) return false;
-		return plan.isSynchronized();
-	}
+	public static boolean isSynchronized() { return isSynchronized; }
 
 	/**
 	 * Synchronize experiment.
 	 */
 	public static void synchronizeFrontmostExperiment() {
-		IExperimentPlan exp = getExperiment();
-		if (exp != null) { exp.synchronizeAllOutputs(); }
-
+		isSynchronized = true;
 	}
 
 	/**
