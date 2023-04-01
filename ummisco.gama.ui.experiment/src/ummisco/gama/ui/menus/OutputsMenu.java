@@ -78,9 +78,9 @@ public class OutputsMenu extends ContributionItem {
 				"Update all");
 		menuItem(main, e -> GAMA.getExperiment().resumeAllOutputs(),
 				GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_PAUSE).disabled(), "Resume all");
-		menuItem(main, e -> GAMA.getExperiment().synchronizeAllOutputs(),
+		menuItem(main, e -> GAMA.synchronizeFrontmostExperiment(),
 				GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SYNC).image(), "Synchronize all");
-		menuItem(main, e -> GAMA.getExperiment().desynchronizeAllOutputs(),
+		menuItem(main, e -> GAMA.desynchronizeFrontmostExperiment(),
 				GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_SYNC).disabled(), "Desynchronize all");
 	}
 
