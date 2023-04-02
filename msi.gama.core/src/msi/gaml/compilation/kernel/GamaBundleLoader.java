@@ -439,6 +439,7 @@ public class GamaBundleLoader {
 	public static void preBuild(final Bundle bundle) throws Exception {
 		TIMER_WITH_EXCEPTIONS("GAMA: Plugin " + bundle.getSymbolicName(), "loaded in", () -> {
 			String shortcut = bundle.getSymbolicName();
+			GAMA_PLUGINS_NAMES.add(shortcut);
 			shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);
 			GamaClassLoader.getInstance().addBundle(bundle);
 			Class<IGamlAdditions> clazz = null;
