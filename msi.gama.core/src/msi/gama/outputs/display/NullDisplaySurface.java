@@ -372,7 +372,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public IGraphics getIGraphics() { return null; }
 
 	@Override
-	public Rectangle getBoundsForSnapshot() { return new Rectangle(); }
+	public Rectangle getBoundsForRobotSnapshot() { return new Rectangle(); }
 	
 	@Override
 	public boolean shouldWaitToBecomeRendered() { return false; }
