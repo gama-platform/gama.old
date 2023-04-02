@@ -153,6 +153,9 @@ public class GamaBundleLoader {
 	/** The Constant GAMA_PLUGINS_NAMES. */
 	private static final Set<String> GAMA_DISPLAY_PLUGINS_NAMES = new LinkedHashSet<>();
 
+	/** The Constant GAMA_CORE_DISPLAY_PLUGINS. */
+	private static final Set<String> GAMA_CORE_DISPLAY_PLUGINS = Set.of("ummisco.gama.java2d", "ummisco.gama.opengl");
+
 	/** The model plugins. */
 	private static final Multimap<Bundle, String> MODEL_PLUGINS = ArrayListMultimap.create();
 
@@ -494,7 +497,7 @@ public class GamaBundleLoader {
 	 * @return true, if is display plugin
 	 */
 	public static boolean isDisplayPlugin(final String s) {
-		return GAMA_DISPLAY_PLUGINS_NAMES.contains(s);
+		return GAMA_DISPLAY_PLUGINS_NAMES.contains(s) || GAMA_CORE_DISPLAY_PLUGINS.contains(s);
 	}
 
 	/**
