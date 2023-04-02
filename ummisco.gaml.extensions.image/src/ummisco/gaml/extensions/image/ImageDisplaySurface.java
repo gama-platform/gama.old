@@ -487,7 +487,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public IGraphics getIGraphics() { return displayGraphics; }
 
 	@Override
-	public Rectangle getBoundsForSnapshot() { return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight()); }
+	public Rectangle getBoundsForRobotSnapshot() { return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight()); }
 
 	@Override
 	public boolean shouldWaitToBecomeRendered() {

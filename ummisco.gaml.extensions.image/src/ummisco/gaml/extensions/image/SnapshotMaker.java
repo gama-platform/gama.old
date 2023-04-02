@@ -136,7 +136,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 //		final LayeredDisplayData data = surface.getData();
 		GamaImage image = null;
 //		GamaPoint p = data.getImageDimension();
-		Rectangle composite = surface.getBoundsForSnapshot();
+		Rectangle composite = surface.getBoundsForRobotSnapshot();
 		final int width = customDimensions == null || customDimensions.x <= 0 ? composite.width : (int) customDimensions.x;
 		final int height = customDimensions == null || customDimensions.y <= 0 ? composite.height : (int) customDimensions.y;
 

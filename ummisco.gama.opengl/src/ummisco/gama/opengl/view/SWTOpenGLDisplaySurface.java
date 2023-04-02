@@ -172,7 +172,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public GamaImage getImage(final int desiredWidth, final int desiredHeight) {
 		if (desiredWidth == 0 || desiredHeight == 0 || !renderer.hasDrawnOnce()) return null;
 		// We first render at the right dimensions and then we scale
-		Rectangle dimensions = this.getBoundsForSnapshot();
+		Rectangle dimensions = this.getBoundsForRegularSnapshot();
 		int w = dimensions.width;
 		int h = dimensions.height;
 		final GLAutoDrawable glad = renderer.getCanvas();
@@ -808,12 +808,19 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public IGraphics getIGraphics() { return renderer; }
 
 	@Override
-	public Rectangle getBoundsForSnapshot() {
+	public Rectangle getBoundsForRobotSnapshot() {
 		var rect = WorkbenchHelper.displaySizeOf(renderer.getCanvas());
-		// For some reason, macOS requires the native dimension for the robot to snapsho correctly
-		if (PlatformHelper.isMac()) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
-				WorkbenchHelper.displaySizeOf(renderer.getCanvas()));
-
+		// For some reason, macOS requires the native dimension for the robot to snapshot correctly
+		if (PlatformHelper.isMac() ) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
+				rect);
+		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
+	}
+	
+	public Rectangle getBoundsForRegularSnapshot() {
+		var rect = WorkbenchHelper.displaySizeOf(renderer.getCanvas());
+		// For some reason, macOS and Windows require the native dimension for the internal process to snapshot correctly
+		if (PlatformHelper.isMac() || PlatformHelper.isWindows()) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
+				rect);
 		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
 	}
 

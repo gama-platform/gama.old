@@ -853,7 +853,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public Rectangle getBoundsForSnapshot() {
+	public Rectangle getBoundsForRobotSnapshot() {
 		Rectangle result = new Rectangle(getBounds());
 		result.setLocation(getLocationOnScreen());
 		return result;

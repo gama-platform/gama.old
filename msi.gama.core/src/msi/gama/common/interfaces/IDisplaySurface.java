@@ -435,7 +435,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 *
 	 * @return the bounds for snapshot
 	 */
-	Rectangle getBoundsForSnapshot();
+	Rectangle getBoundsForRobotSnapshot();
 
 	/**
 	 * Checks if the esc key has been redefined as an event in an event layer of this surface
