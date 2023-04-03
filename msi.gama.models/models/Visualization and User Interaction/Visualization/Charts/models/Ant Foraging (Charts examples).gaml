@@ -41,7 +41,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 use_regular_agents: 
 	int type <- int(types at {grid_x,grid_y}) ;
 	bool isNestLocation <- (self distance_to center) < 4 ; 
 	bool isFoodLocation <- type = 2 ; 
-	rgb color <- isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (#grey) : ((road > 0.2)? (#lightgrey) : (#darkgray)))))) update: isNestLocation ? °violet:((food > 0)? °blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? °white : ((road > 0.5)? (#grey) : ((road > 0.2)? (#lightgray) : (#darkgray)))))) ;
+	rgb color <- isNestLocation ? #violet:((food > 0)? #blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? #white : ((road > 0.5)? (#grey) : ((road > 0.2)? (#lightgrey) : (#darkgray)))))) update: isNestLocation ? #violet:((food > 0)? #blue : ((road < 0.001)? rgb ([100,100,100]) : ((road > 2)? #white : ((road > 0.5)? (#grey) : ((road > 0.2)? (#lightgray) : (#darkgray)))))) ;
 	int food <- isFoodLocation ? 5 : 0 ;
 	int nest const: true <- 300 - int(self distance_to center) ;
 	
@@ -152,11 +152,11 @@ experiment "Experiment" type: gui {
 			grid ant_grid ;
 			species ant  ;
 		}
-		display ProportionCarryFood {
+		display ProportionCarryFood  type: 2d {
 			chart "Proportions carrying: Pie"  size: {0.5,0.5} position: {0, 0} type:pie
 			{
-				data "empty_ants" value:(ant count (!each.hasFood)) color:°red;
-				data "carry_food_ants" value:(ant count (each.hasFood)) color:°green;
+				data "empty_ants" value:(ant count (!each.hasFood)) color:#red;
+				data "carry_food_ants" value:(ant count (each.hasFood)) color:#green;
 				
 			}
 			
@@ -166,10 +166,10 @@ experiment "Experiment" type: gui {
 			{
 				data "empty" value:(ant count (!each.hasFood)) 
 				accumulate_values:true
-				color:°red;				
+				color:#red;				
 				data "carry" value:(ant count (each.hasFood)) 
 				accumulate_values:true
-				color:°blue;				
+				color:#blue;				
 			}
 			
 			chart "Proportion: serie"   size: {1.0,0.5} position: {0, 0.5} type:series 
@@ -178,30 +178,30 @@ experiment "Experiment" type: gui {
 			{
 				datalist ["empty","carry"] accumulate_values:true 
 				value:[(ant count (!each.hasFood)),(ant count (each.hasFood))] 
-				color:[°red,°green];				
+				color:[#red,#green];				
 			}
 		}
 
-		display CentroidPosition {
+		display CentroidPosition  type: 2d {
 			chart "Positions and History of Centroide and size by Carry state" type:scatter
 			{
 				datalist ["avg-carry","avg-empty"] value:[mean((ant where (each.hasFood)) collect each.location),
 					mean((ant where (!each.hasFood)) collect each.location)
 				]
 				marker_size: [(ant count (each.hasFood))/20,(ant count (!each.hasFood))/20]
-					 color:[°red,°green] 
+					 color:[#red,#green] 
 					 fill:false
 					 line_visible:true;				
-				data "empty_ants" value:((ant where (!each.hasFood)) collect each.location) color:°red 
+				data "empty_ants" value:((ant where (!each.hasFood)) collect each.location) color:#red 
 				accumulate_values:false
 				line_visible:false;
 				data "carry_food_ants" value:((ant where (each.hasFood)) collect each.location) 
 				accumulate_values:false
-				color:°green line_visible:false;
+				color:#green line_visible:false;
 
 			}
 		}	
-		display Distribution2dPosition {
+		display Distribution2dPosition  type: 2d {
 			chart "Distribution of the X positions"   size: {0.65,0.3} position: {0.05, 0} type:histogram
 			
 			{
@@ -225,7 +225,7 @@ experiment "Experiment" type: gui {
 			}
 		}
 		
-		display DistributionPosition {
+		display DistributionPosition  type: 2d {
 			chart "Distribution of the X positions"   size: {0.92,0.3} position: {0, 0} type:histogram
 			
 			{

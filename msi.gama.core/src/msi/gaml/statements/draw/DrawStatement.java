@@ -27,9 +27,12 @@ import static msi.gama.common.interfaces.IKeyword.TEXTURE;
 
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.WeakHashMap;
-import java.util.function.Supplier;
 
+import msi.gama.common.interfaces.IDrawDelegate;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
@@ -52,6 +55,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.statements.draw.DrawStatement.DrawValidator;
 import msi.gaml.types.IType;
@@ -78,7 +82,7 @@ import msi.gaml.types.Types;
 				// AD 18/01/13: geometry is now accepting any type of data
 				@facet (
 						name = TEXTURE,
-						type = { IType.STRING, IType.LIST, IType.FILE },
+						type = { IType.NONE },
 						optional = true,
 						doc = @doc ("the texture(s) that should be applied to the geometry. Either a path to a file or a list of paths")),
 				@facet (
@@ -171,13 +175,7 @@ import msi.gaml.types.Types;
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc (
-								value = "Whether to render the text in perspective or facing the user. Default is true.")),
-				@facet (
-						name = IKeyword.MATERIAL,
-						type = IType.MATERIAL,
-						optional = true,
-						doc = @doc (
-								value = "Set a particular material to the object (only if you use it in an \"opengl2\" display).")),
+								value = "Whether to render the text in perspective or facing the user. Default is in perspective.")),
 				@facet (
 						name = IKeyword.WIDTH,
 						type = IType.FLOAT,
@@ -328,11 +326,16 @@ public class DrawStatement extends AbstractStatementSequence {
 	/** The Constant BEGIN_ARROW. */
 	public static final String BEGIN_ARROW = "begin_arrow";
 
-	/** The executer. */
-	private final WeakHashMap<IGraphics, DrawExecuter> executers = new WeakHashMap<>();
+	/** The Constant DELEGATES. */
+	private static final Map<IType, IDrawDelegate> DELEGATES = new HashMap<>();
 
-	/** The get executer. */
-	private final Supplier<DrawExecuter> executerSupplier;
+	/**
+	 * @param createExecutableExtension
+	 */
+	public static void addDelegate(final IDrawDelegate delegate) {
+		final IType t = delegate.typeDrawn();
+		if (t != null) { DELEGATES.put(t, delegate); }
+	}
 
 	/** The data. */
 	private final WeakHashMap<IGraphics, DrawingData> data = new WeakHashMap<>();
@@ -347,17 +350,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	 */
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		final IExpression item = getFacet(IKeyword.GEOMETRY);
-		if (item == null) {
-			executerSupplier = () -> null;
-		} else if (item.getGamlType().getGamlType().id() == IType.FILE) {
-			executerSupplier = () -> new FileExecuter(item);
-		} else if (item.getGamlType().id() == IType.STRING) {
-			executerSupplier = () -> new TextExecuter(item);
-		} else {
-			// item is supposed to be castable into a geometry
-			executerSupplier = () -> new ShapeExecuter(item, getFacet(BEGIN_ARROW), getFacet(END_ARROW));
-		}
+
 	}
 
 	/**
@@ -386,21 +379,26 @@ public class DrawStatement extends AbstractStatementSequence {
 	 */
 	private Rectangle2D privateExecuteIn(final IGraphicsScope scope) throws GamaRuntimeException {
 		final IGraphics g = scope.getGraphics();
-		if (g == null) return null;
+		if (scope.interrupted() || g == null || scope.getAgent() == null) return null;
 		try {
-			DrawExecuter executer = executers.get(g);
-			if (executer == null) {
-				if (executers.containsKey(g)) return null;
-				executer = executerSupplier.get();
-				executers.put(g, executer);
+			IDrawDelegate executer = null;
+			final IExpression item = getFacet(IKeyword.GEOMETRY);
+			final IType itemType = item.getGamlType();
+			for (Entry<IType, IDrawDelegate> entry : DELEGATES.entrySet()) {
+				if (entry.getKey().isAssignableFrom(itemType)) {
+					executer = entry.getValue();
+					break;
+				}
 			}
+			if (executer == null)
+				throw GamaRuntimeException.error("No drawer found to draw " + Cast.toGaml(item), scope);
 			DrawingData d = data.get(g);
 			if (d == null) {
 				d = new DrawingData(this);
 				data.put(g, d);
 			}
 			d.refresh(scope);
-			final Rectangle2D result = executer.executeOn(scope, g, d);
+			final Rectangle2D result = executer.executeOn(scope, d, item, getFacet(BEGIN_ARROW), getFacet(END_ARROW));
 			if (result != null) { g.accumulateTemporaryEnvelope(result); }
 			return result;
 		} catch (final GamaRuntimeException e) {
@@ -415,7 +413,6 @@ public class DrawStatement extends AbstractStatementSequence {
 	@Override
 	public void dispose() {
 		data.clear();
-		executers.clear();
 		super.dispose();
 	}
 

@@ -2360,7 +2360,6 @@ public class Stats {
 		// True or false ? Have to be tested
 		Map<String, List<Double>> output = Cast.asMap(scope, morris_simulation, false);
 		List<String> OutputsNames = output.keySet().stream().toList();
-		boolean temp = true;
 		StringBuilder s = new StringBuilder();
 
 		for (String name : OutputsNames) {
@@ -2369,7 +2368,7 @@ public class Stats {
 			Map<String, Double> mu = morris_coefficient.get(0);
 			Map<String, Double> mu_star = morris_coefficient.get(1);
 			Map<String, Double> sigma = morris_coefficient.get(2);
-			s.append(Morris.buildResultTxt(name, temp, mu, mu_star, sigma));
+			s.append(Morris.buildResultTxt(name, mu, mu_star, sigma));
 		}
 
 		return s.toString();

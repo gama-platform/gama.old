@@ -2,7 +2,7 @@
  *
  * ShapeSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.geotools.data.DataUtilities;
 import org.geotools.data.FeatureWriter;
@@ -40,7 +41,6 @@ import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.SaveStatement;
 
 /**
  * The Class ShapeSaver.
@@ -82,7 +82,7 @@ public class ShapeSaver extends AbstractShapeSaver {
 				if (isPolygon && (internal instanceof Polygon || internal instanceof MultiPolygon)
 						|| isLine && ag.isLine() || isPoint && ag.isPoint()) {
 					final SimpleFeature ff = (SimpleFeature) fw.next();
-					final boolean ok = SaveStatement.buildFeature(scope, ff, ag, gis, attributeValues);
+					final boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
 					if (!ok) { break; }
 				}
 
@@ -114,6 +114,11 @@ public class ShapeSaver extends AbstractShapeSaver {
 			final IProjection proj, final String epsgCode) throws IOException, SchemaException, GamaRuntimeException {
 		// Do nothing
 
+	}
+
+	@Override
+	public Set<String> computeFileTypes() {
+		return Set.of("shp", "shape");
 	}
 
 }

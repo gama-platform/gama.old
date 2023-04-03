@@ -340,6 +340,14 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
+	public boolean isAllowedInParameters() {
+		if (exprs != null) {
+			for (final IExpression e : exprs) { if (e != null && !e.isAllowedInParameters()) return false; }
+		}
+		return true;
+	}
+
+	@Override
 	public void visitSuboperators(final IOperatorVisitor visitor) {
 		if (exprs != null) {
 			for (final IExpression e : exprs) { if (e instanceof IOperator) { visitor.visit((IOperator) e); } }

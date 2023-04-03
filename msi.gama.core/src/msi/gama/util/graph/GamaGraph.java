@@ -421,7 +421,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 						edgeS.getPopulation(scope).createAgents(scope, 1, atts, false, true, null);
 				IAgent ag = listAgt.get(0);
 				if (e != null) {
-					ag.setName(e.toString());
+					ag.setName(ag.getSpeciesName() + ag.getIndex());
 					if (ag.hasAttribute(edgeAttr) && e instanceof GamaGraphMLEdgeImporter) {
 						ag.setAttribute(edgeAttr, GamaMapFactory.create(scope, Types.STRING, Types.STRING,
 								((GamaGraphMLEdgeImporter) e).getAttributes()));

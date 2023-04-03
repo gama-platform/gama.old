@@ -227,7 +227,7 @@ experiment exp {
 				draw line([#user_location + {1,0,0}, #user_location - {1,0,0}]) at:#user_location color: #red ;
 				draw line([#user_location + {0,1,0}, #user_location - {0,1,0}]) at:#user_location color: #red ;						
 			}
-			event mouse_move action: move;		
+			event #mouse_move action: move;		
 		}
 	}
 }

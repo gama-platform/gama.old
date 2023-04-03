@@ -195,7 +195,7 @@ public class StatementDescription extends SymbolDescription {
 				if (REFLEX.equals(getKeyword())) {
 					warning("Reflexes should be named", MISSING_NAME, getUnderlyingElement());
 				}
-				s = INTERNAL + getKeyword() + String.valueOf(COUNTER.GET());
+				s = INTERNAL + getKeyword() + String.valueOf(COUNTER.GET_UNIQUE());
 			}
 			setName(s);
 		}

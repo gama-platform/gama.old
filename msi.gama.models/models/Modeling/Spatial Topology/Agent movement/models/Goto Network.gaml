@@ -11,7 +11,7 @@ model Network
 global {
 	file shape_file_in <- file('../includes/gis/roads.shp') ;
 	graph the_graph; 
-	geometry shape <- envelope(shape_file_in);
+	geometry shape <- envelope(shape_file_in) + 100;
 	bool save_shortest_paths <- false;
 	bool load_shortest_paths <- false;
 	string shortest_paths_file <- "../includes/shortest_paths.csv";
@@ -47,7 +47,7 @@ global {
 		//computes all the shortest paths, puts them in a matrix, then saves the matrix in a file
 		if save_shortest_paths {
 			matrix ssp <- all_pairs_shortest_path(the_graph);
-			save ssp type:"text" to:shortest_paths_file;
+			save ssp format:"text" to:shortest_paths_file;
 			
 		//loads the file of the shortest paths as a matrix and uses it to initialize all the shortest paths of the graph
 		} else if load_shortest_paths {

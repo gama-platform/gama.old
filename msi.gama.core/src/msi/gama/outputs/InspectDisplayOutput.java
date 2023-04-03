@@ -3,7 +3,7 @@
  * InspectDisplayOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -47,6 +47,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 
 /**
  * The Class AbstractInspectOutput.
@@ -114,9 +115,6 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 
 	/** The Constant INSPECT_TABLE. */
 	public static final short INSPECT_TABLE = 3;
-
-	/** The count. */
-	static int count = 0;
 
 	/** The Constant types. */
 	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.DYNAMIC, IKeyword.SPECIES, IKeyword.TABLE);
@@ -221,7 +219,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		// Opens a table inspector on the agents of this species
 		IDescription desc = DescriptionFactory
 				.create(IKeyword.INSPECT, GAML.getExperimentContext(rootAgent), IKeyword.NAME,
-						StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE,
+						StringUtils.toGamlString("Browse(" + COUNTER.COUNT() + ")"), IKeyword.VALUE,
 						species == null ? "nil" : species.getName(), IKeyword.TYPE, types.get(INSPECT_TABLE))
 				.validate();
 		if (attributes != null) { desc.setFacet(IKeyword.ATTRIBUTES, attributes); }
@@ -242,8 +240,8 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 			final IExpression attributes) {
 		// Opens a table inspector on the agents of this container
 		IDescription desc = DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
-				StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
-				types.get(INSPECT_TABLE)).validate();
+				StringUtils.toGamlString("Browse(" + COUNTER.COUNT() + ")"), IKeyword.VALUE, Cast.toGaml(agents),
+				IKeyword.TYPE, types.get(INSPECT_TABLE)).validate();
 		if (attributes != null) { desc.setFacet(IKeyword.ATTRIBUTES, attributes); }
 		InspectDisplayOutput result = new InspectDisplayOutput(desc);
 		result.lastValue = agents;
@@ -262,9 +260,8 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 	static public InspectDisplayOutput browse(final IMacroAgent agent, final IExpression agents,
 			final IExpression attributes) {
 		// Opens a table inspector on the agents of this container
-		IDescription desc = DescriptionFactory
-				.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
-						StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.TYPE, types.get(INSPECT_TABLE))
+		IDescription desc = DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
+				StringUtils.toGamlString("Browse(" + COUNTER.COUNT() + ")"), IKeyword.TYPE, types.get(INSPECT_TABLE))
 				.validate();
 		desc.setFacet(IKeyword.VALUE, agents);
 		if (attributes != null) { desc.setFacet(IKeyword.ATTRIBUTES, attributes); }

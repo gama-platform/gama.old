@@ -27,10 +27,10 @@ global
 			cpt<-cpt+1;
 			nb_generated<-cpt;
 		}
-		write "If the schedules facet is not given, it will have its default value which is using the list of the species.
-			As the list of the species is created the same way the agents are created, it should be ordered. So the console
-			will be filled with messages with the agent with the number used to index them that should be ordered in a
-			forward sort with without agent writing first";
+		write "If the schedules facet is not given, it will have its default value which is using the list of the species.\n"
+			+ "As the list of the species is created the same way the agents are created, it should be ordered. So the console \n"
+			+ "will be filled with messages with the agent with the number used to index them that should be ordered in a\n"
+			+ "forward sort with without agent writing first";
 	}
 }
 species without_scheduler

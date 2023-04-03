@@ -26,7 +26,7 @@ experiment Simple type: gui
 		return list(predator);
 	}
 
-	//if we redefine the output, i.e, a blank output, the displays in parent experiement dont show.
+	//if we redefine the output, i.e, a blank output, the displays in parent experiment don't show.
 	output
 	{
 	}

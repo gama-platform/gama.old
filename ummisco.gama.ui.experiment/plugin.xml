@@ -8,7 +8,7 @@
       <perspective
             class="ummisco.gama.ui.perspective.SimulationPerspective"
             fixed="false"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
             id="msi.gama.application.perspectives.SimulationPerspective"
             name="Simulation">
          <description>
@@ -37,25 +37,25 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.console.ConsoleView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.console2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.console.png"
             id="msi.gama.application.view.ConsoleView"
             name="Console"
             restorable="false">
       </view>
       <view
             allowMultiple="true"
-            category="msi.gama.gui.category.gama"
+            category="msi.gama.gui.category.gama" 
             class="ummisco.gama.ui.views.inspectors.PopulationInspectView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.browser2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.browser.png"
             id="msi.gama.application.view.TableAgentInspectView"
-            name="Browser"
+            name="Browser" 
             restorable="false">
       </view>
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.AgentInspectView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.inspector2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.inspector.png"
             id="msi.gama.application.view.AgentInspectView"
             name="Inspector"
             restorable="false">
@@ -64,7 +64,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.MonitorView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.monitors2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.monitors.png"
             id="msi.gama.application.view.MonitorView"
             name="Monitors"
             restorable="false">
@@ -73,7 +73,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.inspectors.ExperimentParametersView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.parameters2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.parameters.png"
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
             restorable="false">
@@ -82,7 +82,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.ErrorView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.errors2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.errors.png"
             id="msi.gama.application.view.ErrorView"
             name="Errors"
             restorable="false">
@@ -91,10 +91,10 @@
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.ui.views.user.UserControlView"
             fastViewWidthRatio="0.2"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.panel2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.panel.png"
             id="msi.gama.views.userControlView"
             name="User Control"
-            restorable="false">
+            restorable="false"> 
       </view>
    </extension>
    <extension
@@ -112,8 +112,8 @@
             </visibleWhen>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.run4.disabled.png"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.run4.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run.png"
                   label="Run Experiment"
                   style="push">
                <visibleWhen
@@ -125,7 +125,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.pause4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause.png"
+                   disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause_disabled.png"
                   label="Pause Experiment"
                   mnemonic="M1+P"
                   style="push">
@@ -133,13 +134,13 @@
                      checkEnabled="false">
                   <reference
                         definitionId="isSimulationRunning">
-                  </reference>
+                  </reference> 
                </visibleWhen>
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.step4.disabled.png"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.step4.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.png"
                   label="Step Experiment"
                   style="push"
                   tooltip="Advance the experiment step by step">
@@ -152,7 +153,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepBackSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.stepBack1.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back_disabled.png"
                   label="Step Back Experiment"
                   style="push"
                   tooltip="Make One step back in the simulation">
@@ -174,7 +176,8 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reload4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.reload.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.reload_disabled.png"
                   label="Reload Experiment"
                   mnemonic="M1+M2+R"
                   style="push">
@@ -185,21 +188,21 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.PauseAndEdit"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.stop2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/errors.stop.png"
                   label="Stop at first error"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.commands.WarningsAsErrors"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.warning2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/errors.warnings.png"
                   label="Treat warnings like errors"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.ShowErrors"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.show2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/errors.show.png"
                   label="Display errors and warnings"
-                  style="toggle">
+                  style="toggle"> 
             </command>
             <separator
                   name="msi.gama.application.separator3"
@@ -207,7 +210,8 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/toolbar.stop2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop_disabled.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the current experiment and dispose of it.">
@@ -242,24 +246,24 @@
                label="Views">
             <command
                   commandId="msi.gama.application.command.interactive"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.interactive.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.interactive.console.png"
                   label="Interactive Console"
                   style="push">
             </command>
             <command
                   commandId="org.eclipse.ui.window.hideShowEditors"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.save.perspective.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.save.png"
                   label="Hide/Show Editors"
                   style="push"
                   tooltip="Hide or show the editors">
             </command>
-            <separator
+            <separator 
                   name="msi.gama.application.separator3"
                   visible="true">
             </separator>
             <command
                   commandId="msi.gama.application.commands.ShowHideParametersView"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.parameters2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.parameters.png"
                   label="Parameters"
                   style="push">
                <visibleWhen
@@ -271,11 +275,11 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.ShowHideConsoleView"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.console2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.console.png"
                   label="Console"
                   style="push">
                <visibleWhen
-                     checkEnabled="false">
+                     checkEnabled="false"> 
                   <reference
                         definitionId="isSimulationReady">
                   </reference>
@@ -283,11 +287,11 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.AddMonitor"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.monitor2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.monitor.png"
                   label="Add Monitor"
                   style="push">
                <visibleWhen
-                     checkEnabled="false">
+                     checkEnabled="false"> 
                   <reference
                         definitionId="isSimulationReady">
                   </reference>
@@ -298,7 +302,7 @@
                   visible="true">
             </separator>
             <menu
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.stack.png"
                   label="Manage outputs...">
                <visibleWhen
                      checkEnabled="false">
@@ -312,11 +316,11 @@
                </dynamic>
             </menu>
             <menu
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.layout.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.menu.png"
                   label="Layout Displays... (Experimental)">
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.stack.png"
                      label="Stacked"
                      style="push">
                   <parameter
@@ -326,7 +330,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.grid.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.grid.png"
                      label="Split"
                      style="push">
                   <parameter
@@ -336,7 +340,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.horizontal.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.horizontal.png"
                      label="Horizontally"
                      style="push">
                   <parameter
@@ -346,7 +350,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.vertical.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.vertical.png"
                      label="Vertically"
                      style="push">
                   <parameter
@@ -381,14 +385,15 @@
                </command>
             </menu>
             <menu
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.other.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.other.png"
                   label="Other...">
                <menu
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.perspective2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.open.png"
                      label="Switch to Perspective...">
                   <command
                         commandId="msi.gama.application.goto.modeling"
-                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
+                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling.png"
+                         disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling_disabled.png"
                         label="Modeling"
                         style="push"
                         tooltip="Open modeling perspective">
@@ -403,7 +408,8 @@
                   </command>
                   <command
                         commandId="msi.gama.application.goto.simulation"
-                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
+                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
+                        disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation_disabled.png"
                         label="Simulation"
                         style="push"
                         tooltip="Open simulation perspective">
@@ -419,7 +425,7 @@
                </menu>
                <command
                      commandId="ummisco.gama.ui.resetPerspective"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reset.perspective2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.reset.png"
                      label="Reset Perspective (restart required)..."
                      style="push">
                   <visibleWhen
@@ -434,7 +440,7 @@
                      visible="true">
                </separator>
                <menu
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.view2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.view.png"
                      label="Show View">
                   <dynamic
                         class="ummisco.gama.ui.commands.ShowViewContributionItem"
@@ -443,7 +449,7 @@
                </menu>
                <command
                      commandId="org.eclipse.ui.ToggleCoolbarAction"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.toolbar2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/toggle.toolbar.png"
                      label="Toggle Toolbar"
                      style="push"
                      tooltip="Toggle the main toolbar on and off">
@@ -455,8 +461,8 @@
             locationURI="toolbar:msi.gama.application.common.toolbar?after=msi.gama.application.goto.modeling">
             <command
                   commandId="msi.gama.application.goto.simulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.disabled.png"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
                   label="Simulation perspective"
                   style="push"
                   tooltip="Open simulation perspective">
@@ -471,7 +477,7 @@
             </command>
             <command
                   commandId="ummisco.gama.ui.experiment.dummy"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/windows_spacer.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/spacer.png" 
                   style="push"
                   tooltip="  ">
             </command>
@@ -481,13 +487,14 @@
             </control>
             <command
                   commandId="ummisco.gama.ui.experiment.dummy"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/windows_spacer.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/spacer.png"
                   style="push"
-                  tooltip="  ">
+                  tooltip="  "> 
             </command>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.run4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run_disabled.png"
                   label="Run Experiment"
                   style="push"
                   tooltip="Run the currently opened experiment">
@@ -500,7 +507,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.pause4.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause_disabled.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.pause.png"
                   label="Pause Experiment"
                   style="push"
                   tooltip="Pause the currently opened experiment">
@@ -513,8 +521,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.step4.disabled.png"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.step4.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.png"
                   label="Step Experiment"
                   style="push"
                   tooltip="Advance the experiment step by step">
@@ -527,7 +535,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepBackSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.stepBack1.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back_disabled.png"
                   label="Step Back"
                   style="push"
                   tooltip="Make One step back in the simulation">
@@ -555,7 +564,7 @@
             </control>
             <command
                   commandId="msi.gama.application.commands.SynchronizeExperiment"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/display.sync3.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.sync.png"
                   label="Synchronize Experiment"
                   style="toggle">
                <visibleWhen
@@ -572,7 +581,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reload4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.reload.png"
                   label="Reload Experiment"
                   mnemonic="M1+M2+R"
                   style="push">
@@ -590,7 +599,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/toolbar.stop2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop_disabled.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the currently opened experiment and closes its perspective">

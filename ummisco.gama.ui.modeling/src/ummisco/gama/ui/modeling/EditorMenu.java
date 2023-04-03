@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.modeling;
 
-import static ummisco.gama.ui.resources.GamaIcons.create;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,11 +19,7 @@ import java.util.Set;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -56,7 +50,7 @@ import msi.gama.util.Collector;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import ummisco.gama.ui.access.ModelsFinder;
 import ummisco.gama.ui.menus.GamaMenu;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -101,33 +95,6 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				GamaMenu.separate(menu);
 				createValidate(menu);
 			}
-			createValidateAll(menu);
-		});
-
-	}
-
-	/**
-	 * @param menu
-	 */
-	private void createValidateAll(final Menu menu) {
-
-		final MenuItem mark = new MenuItem(menu, SWT.PUSH);
-		mark.setText(" Validate all");
-		mark.setImage(GamaIcons.create("build.all2").image());
-		mark.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-
-				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				try {
-					GamlResourceIndexer.eraseIndex();
-					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
-				} catch (final CoreException ex) {
-					ex.printStackTrace();
-				}
-
-			}
 		});
 
 	}
@@ -149,7 +116,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 		final MenuItem usedIn = new MenuItem(menu, SWT.CASCADE);
 		usedIn.setText(" Other experiments...");
-		usedIn.setImage(GamaIcons.create("other.experiments").image());
+		usedIn.setImage(GamaIcon.named(IGamaIcons.OTHER_EXPERIMENTS).image());
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {
@@ -179,7 +146,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		for (final URI uri : map.keySet()) {
 			final MenuItem modelItem = new MenuItem(parentMenu, SWT.CASCADE);
 			modelItem.setText(URI.decode(uri.lastSegment()));
-			modelItem.setImage(GamaIcons.create(IGamaIcons.FILE_ICON).image());
+			modelItem.setImage(GamaIcon.named(IGamaIcons.FILE_ICON).image());
 			final Menu expMenu = new Menu(modelItem);
 			modelItem.setMenu(expMenu);
 			final List<String> expNames = map.get(uri);
@@ -189,7 +156,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 				expItem.setData("uri", uri);
 				expItem.setData("exp", name);
 				expItem.setImage(
-						GamaIcons.create(ThemeHelper.isDark() ? IGamaIcons.BUTTON_GUI : IGamaIcons.MENU_GUI).image());
+						GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_GUI : IGamaIcons.MENU_GUI).image());
 				expItem.addSelectionListener(OtherAdapter);
 			}
 		}
@@ -242,7 +209,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createUsedIn(final Menu menu) {
 		final MenuItem usedIn = new MenuItem(menu, SWT.CASCADE);
 		usedIn.setText(" Imported in...");
-		usedIn.setImage(GamaIcons.create("imported.in").image());
+		usedIn.setImage(GamaIcon.named(IGamaIcons.IMPORTED_IN).image());
 		final Menu sub = new Menu(usedIn);
 		usedIn.setMenu(sub);
 		sub.addListener(SWT.Show, e -> {
@@ -294,7 +261,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		for (final URI uri : importers) {
 			final MenuItem modelItem = new MenuItem(parentMenu, SWT.CASCADE);
 			modelItem.setText(URI.decode(uri.lastSegment()));
-			modelItem.setImage(GamaIcons.create(IGamaIcons.FILE_ICON).image());
+			modelItem.setImage(GamaIcon.named(IGamaIcons.FILE_ICON).image());
 			modelItem.setData("uri", uri);
 			modelItem.addSelectionListener(UsedInAdapter);
 		}
@@ -329,7 +296,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createValidate(final Menu menu) {
 		final MenuItem validate = new MenuItem(menu, SWT.PUSH);
 		validate.setText(" Validate");
-		validate.setImage(create("build.project2").image());
+		validate.setImage(GamaIcon.named("build/build.project").image());
 		validate.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -350,7 +317,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	private void createBoxToggle(final Menu menu) {
 		final MenuItem box = new MenuItem(menu, SWT.PUSH);
 		box.setText(" Toggle code sections colorization");
-		box.setImage(create("toggle.box").image());
+		box.setImage(GamaIcon.named("editor/toggle.box").image());
 		box.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -371,7 +338,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		boolean selected = markPref.getValue();
 		mark.setText(selected ? " Do not mark symbols occurences" : " Mark occurences of symbols");
 		// mark.setSelection(markPref.getValue());
-		mark.setImage(create("toggle.mark").image());
+		mark.setImage(GamaIcon.named("editor/toggle.mark").image());
 
 		mark.addSelectionListener(new SelectionAdapter() {
 
@@ -394,7 +361,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		boolean selected = getEditor().isOverviewRulerVisible();
 		overview.setText(selected ? " Hide markers overview" : " Show markers overview");
 		// overview.setSelection(selected);
-		overview.setImage(create("toggle.overview").image());
+		overview.setImage(GamaIcon.named("editor/toggle.overview").image());
 		overview.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -419,7 +386,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		folding.setText(selected ? " Unfold code sections" : " Fold code sections");
 
 		folding.setSelection(selected);
-		folding.setImage(create("toggle.folding").image());
+		folding.setImage(GamaIcon.named("editor/toggle.folding").image());
 		folding.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -439,7 +406,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 		line.setText(selected ? " Hide line numbers" : " Display line numbers");
 
 		// line.setSelection(selected);
-		line.setImage(create("toggle.numbers").image());
+		line.setImage(GamaIcon.named("editor/toggle.numbers").image());
 		line.addSelectionListener(new SelectionAdapter() {
 
 			@Override

@@ -76,7 +76,7 @@ experiment schelling type: gui {
 			grid space;
 		}
 
-		display Charts {
+		display Charts  type: 2d {
 			chart "Proportion of happiness" type: pie background: #lightgray style: exploded position: { 0, 0 } size: { 1.0, 0.5 } {
 				data "Unhappy" value: number_of_people - sum_happy_people color: #green;
 				data "Happy" value: sum_happy_people color: #yellow;

@@ -3,7 +3,7 @@
  * GeometryUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -52,6 +52,7 @@ import org.locationtech.jts.triangulate.VoronoiDiagramBuilder;
 import org.locationtech.jts.triangulate.quadedge.LocateFailureException;
 
 import msi.gama.common.interfaces.IEnvelopeComputer;
+import msi.gama.common.interfaces.IEnvelopeProvider;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -64,7 +65,6 @@ import msi.gama.util.Collector;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.ICollector;
 import msi.gama.util.IList;
-import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Files;
 import msi.gaml.operators.Graphs;
@@ -1149,20 +1149,17 @@ public class GeometryUtils {
 	 */
 	public static Envelope3D computeEnvelopeFrom(final IScope scope, final Object obj) {
 		Envelope3D result = null;
+		if (obj instanceof IEnvelopeProvider ep) return ep.computeEnvelope(scope);
 		if (obj instanceof ISpecies) return computeEnvelopeFrom(scope, ((ISpecies) obj).getPopulation(scope));
 		if (obj instanceof Number) {
 			final double size = ((Number) obj).doubleValue();
 			result = Envelope3D.of(0, size, 0, size, 0, size);
 		} else if (obj instanceof GamaPoint size) {
 			result = Envelope3D.of(0, size.getX(), 0, size.getY(), 0, size.getZ());
-		} else if (obj instanceof IShape) {
-			result = ((IShape) obj).getEnvelope();
 		} else if (obj instanceof Envelope) {
 			result = Envelope3D.of((Envelope) obj);
 		} else if (obj instanceof String) {
 			result = computeEnvelopeFrom(scope, Files.from(scope, (String) obj));
-		} else if (obj instanceof IGamaFile) {
-			result = ((IGamaFile) obj).computeEnvelope(scope);
 		} else if (obj instanceof IList) {
 			for (final Object bounds : (IList) obj) {
 				final Envelope3D env = computeEnvelopeFrom(scope, bounds);

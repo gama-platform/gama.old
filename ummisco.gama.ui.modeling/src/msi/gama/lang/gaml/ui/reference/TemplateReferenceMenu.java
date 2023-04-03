@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TemplateReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TemplateReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.reference;
 
@@ -30,7 +30,8 @@ import org.eclipse.ui.PartInitException;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gaml.operators.Strings;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -55,7 +56,8 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		/**
 		 * Instantiates a new node.
 		 *
-		 * @param parent the parent
+		 * @param parent
+		 *            the parent
 		 */
 		Node(final Node parent) {
 			this.parent = parent;
@@ -85,7 +87,8 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		/**
 		 * Fill menu.
 		 *
-		 * @param m the m
+		 * @param m
+		 *            the m
 		 */
 		abstract void fillMenu(Menu m);
 
@@ -98,22 +101,25 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 		/** The name. */
 		final String name;
-		
+
 		/** The desc. */
 		final String desc;
-		
+
 		/** The pattern. */
 		final String pattern;
-		
+
 		/** The rank. */
 		final int rank;
 
 		/**
 		 * Instantiates a new template node.
 		 *
-		 * @param parent the parent
-		 * @param t the t
-		 * @param rank the rank
+		 * @param parent
+		 *            the parent
+		 * @param t
+		 *            the t
+		 * @param rank
+		 *            the rank
 		 */
 		TemplateNode(final Node parent, final TemplatePersistenceData t, final int rank) {
 			super(parent);
@@ -124,21 +130,17 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		}
 
 		@Override
-		String getName() {
-			return name + ": " + desc;
-		}
+		String getName() { return name + ": " + desc; }
 
 		@Override
 		String getPath() {
 			final String s = parent.getPath();
-			if (s.isEmpty()) { return "" + rank; }
+			if (s.isEmpty()) return "" + rank;
 			return s + "." + rank;
 		}
 
 		@Override
-		Set<Node> getChildren() {
-			return Collections.EMPTY_SET;
-		}
+		Set<Node> getChildren() { return Collections.EMPTY_SET; }
 
 		@Override
 		void fillMenu(final Menu m) {
@@ -181,15 +183,17 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 		/** The children. */
 		final Set<Node> children = new LinkedHashSet<>();
-		
+
 		/** The name. */
 		final String name;
 
 		/**
 		 * Instantiates a new template tree.
 		 *
-		 * @param parent the parent
-		 * @param name the name
+		 * @param parent
+		 *            the parent
+		 * @param name
+		 *            the name
 		 */
 		TemplateTree(final Node parent, final String name) {
 			super(parent);
@@ -199,7 +203,8 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		/**
 		 * Adds the.
 		 *
-		 * @param t the t
+		 * @param t
+		 *            the t
 		 */
 		void add(final TemplatePersistenceData t) {
 			final String id = t.getId();
@@ -210,21 +215,22 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		/**
 		 * Child with name.
 		 *
-		 * @param s the s
+		 * @param s
+		 *            the s
 		 * @return the node
 		 */
 		Node childWithName(final String s) {
-			for (final Node n : getChildren()) {
-				if (n.getName().equals(s)) { return n; }
-			}
+			for (final Node n : getChildren()) { if (n.getName().equals(s)) return n; }
 			return null;
 		}
 
 		/**
 		 * Adds the.
 		 *
-		 * @param t the t
-		 * @param path the path
+		 * @param t
+		 *            the t
+		 * @param path
+		 *            the path
 		 */
 		void add(final TemplatePersistenceData t, final List<String> path) {
 			if (path.size() == 0) {
@@ -246,9 +252,7 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		@Override
 		void fillMenu(final Menu parent) {
 			final Menu menu = sub(parent, getName());
-			for (final Node node : children) {
-				node.fillMenu(menu);
-			}
+			for (final Node node : children) { node.fillMenu(menu); }
 			sep(menu);
 			action(menu, "Add new template here...", new SelectionAdapter() {
 
@@ -262,21 +266,17 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		}
 
 		@Override
-		String getName() {
-			return name;
-		}
+		String getName() { return name; }
 
 		@Override
 		String getPath() {
 			final String s = parent.getPath();
-			if (s.isEmpty()) { return getName(); }
+			if (s.isEmpty()) return getName();
 			return s + "." + getName();
 		}
 
 		@Override
-		Set<Node> getChildren() {
-			return children;
-		}
+		Set<Node> getChildren() { return children; }
 
 	}
 
@@ -294,9 +294,7 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 		@Override
 		void fillMenu(final Menu parent) {
-			for (final Node node : children) {
-				node.fillMenu(parent);
-			}
+			for (final Node node : children) { node.fillMenu(parent); }
 		}
 
 		/**
@@ -307,15 +305,13 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 		}
 
 		@Override
-		String getPath() {
-			return "";
-		}
+		String getPath() { return ""; }
 
 	}
 
 	/** The tree. */
 	TemplateRoot tree = null;
-	
+
 	/** The store. */
 	TemplateStore store;
 
@@ -326,9 +322,7 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 			tree = new TemplateRoot();
 			store = getEditor().getTemplateStore();
 			final TemplatePersistenceData[] templates = store.getTemplateData(false);
-			for (final TemplatePersistenceData t : templates) {
-				tree.add(t);
-			}
+			for (final TemplatePersistenceData t : templates) { tree.add(t); }
 		}
 		tree.fillMenu(mainMenu);
 	}
@@ -343,7 +337,8 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 	/**
 	 * Edits the template.
 	 *
-	 * @param dataId the data id
+	 * @param dataId
+	 *            the data id
 	 */
 	public void editTemplate(final String dataId) {
 		TemplatePersistenceData data = store.getTemplateData(dataId);
@@ -355,9 +350,7 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 					dataId);
 		}
 		final boolean succeed = editor.openEditTemplateDialog(data, edit);
-		if (succeed) {
-			reset();
-		}
+		if (succeed) { reset(); }
 
 	}
 
@@ -377,16 +370,12 @@ public class TemplateReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() {
-		return GamaIcons.create("reference.templates").image();
-	}
+	protected Image getImage() { return GamaIcon.named(IGamaIcons.REFERENCE_TEMPLATES).image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()
 	 */
 	@Override
-	protected String getTitle() {
-		return "Templates";
-	}
+	protected String getTitle() { return "Templates"; }
 
 }

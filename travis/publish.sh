@@ -37,75 +37,29 @@ function update_tag() {
 	git show-ref --tags
 }
 
-clean(){
-	echo "Clean p2 update site"		
-	sshpass -e ssh gamaws@51.255.46.42 /var/www/gama_updates/clean.sh
-}
-
 deploy(){	
 	echo "Deploy to p2 update site"	
 	bash ./travis/deploy.sh
 }
-release_official(){	
-	echo "Upload release to github"	
-	bash ./travis/github_release_official.sh "$TRAVIS_COMMIT"  
-}
-release_181(){	
-	echo "Upload continuous/on-demand release to github"	
-	bash ./travis/github_release_181_withjdk.sh "$TRAVIS_COMMIT" 
-}
+
 release_continuous(){	
-	echo "Upload continuous/on-demand release to github"	
+	#echo "Update release tag"
+	#update_tag 1.9.0
+
+	echo "Upload continuous/on-demand release to github"
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
 
 	echo "Trigger Docker build"
 	curl -H "Accept: application/vnd.github+json" -H "Authorization: token $BOT_TOKEN" --request POST --data '{"event_type": "automated-generation"}' https://api.github.com/repos/gama-platform/gama.docker/dispatches 
 }
-release_monthly(){	
-	echo "Upload monthly release to github"	
-	bash ./travis/github_release_monthly_withjdk.sh "$TRAVIS_COMMIT" 
-}
 
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
- 
-  
-  
-if  [[ ${MESSAGE} == *"ci ext"* ]]; then			
-	MSG+=" ci ext " 
-fi	
- 
-if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] || [[ $MSG == *"ci cron"* ]]; then 	
-	
-	change=$(git log --pretty=format: --name-only --since="1 day ago")
-	if [[ ${change} == *"msi.gama.ext"* ]]; then
-			MSG+=" ci ext "
-	fi
-	deploy
-	release_continuous
-	if [[ $(date +%d) =~ 0[1-1] ]]; then
-		release_monthly 
-	fi
 
+if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 	commit_wiki_files
-else
-	if  [[ ${MESSAGE} == *"ci deploy"* ]] || [[ $MSG == *"ci deploy"* ]]; then		
-		if  [[ ${MESSAGE} == *"ci clean"* ]] || [[ $MSG == *"ci clean"* ]]; then
-			clean
-			MSG+=" ci ext "
-			echo $MSG
-		fi 
-		deploy 
-	fi
-	if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
-		commit_wiki_files
-	fi	
-	if  [[ ${MESSAGE} == *"ci 181"* ]] || [[ $MSG == *"ci 181"* ]]; then
-		release_181
-	fi	
-	if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
-		release_continuous
-	fi	
-fi
-
+fi	
+if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
+	release_continuous
+fi	

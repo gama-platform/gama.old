@@ -3,7 +3,7 @@
  * SceneHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,7 +14,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
@@ -87,13 +86,10 @@ public class SceneHelper extends AbstractRendererHelper {
 		// If we are syncrhonized with the simulation and a backScene exists, we
 		// wait until it has been updated (put to null at the end of
 		// endUpdatingScene)
-		while (GAMA.isSynchronized() && backScene != null) {
-			try {
-				Thread.sleep(20);
-			} catch (final InterruptedException e) {
-				return false;
-			}
-		}
+		// TODO AD Is it still necessary ?
+		// while (GAMA.isSynchronized() && backScene != null) {
+		// if (!DEBUG.WAIT(20, "Internal synchronisation of ModelScene")) return false;
+		// }
 		// If we are not synchronized (or if the wait is over), we verify that
 		// backScene is null and create a new one
 		if (backScene != null) // We should also prevent the draw to happen by skipping everything
@@ -119,13 +115,11 @@ public class SceneHelper extends AbstractRendererHelper {
 	 * End updating scene.
 	 */
 	public void endUpdatingScene() {
-
 		// If there is no scene to update, it means it has been cancelled by
 		// another thread (hiding/showing layers, most probably) so we just skip
 		// this step
 		if (backScene == null) return;
 		// We ask the backScene to stop updating
-
 		backScene.endDrawingLayers();
 		// We create the static scene from it if it does not exist yet or if it
 		// has been discarded

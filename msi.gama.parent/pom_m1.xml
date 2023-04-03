@@ -104,21 +104,7 @@
 
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
-
-
-		<module>../ummisco.gama.feature.audio.branding</module>
-		<module>../ummisco.gama.feature.models.branding</module>
-		<module>../ummisco.gama.feature.dependencies.branding</module>
-		<module>../ummisco.gama.feature.dependencies.ui.branding</module>
-		<module>../ummisco.gama.feature.core.branding</module>
-		<module>../ummisco.gama.feature.core.extensions.branding</module>
-		<module>../ummisco.gama.feature.core.ui.branding</module>
-		<module>../ummisco.gama.feature.experiment.ui.branding</module>
-		<module>../ummisco.gama.feature.modeling.ui.branding</module>
-		<module>../ummisco.gama.feature.serialize.branding</module>
-		<module>../ummisco.gama.feature.network.branding</module>
-		<module>../ummisco.gama.feature.stats.branding</module>
-
+		<module>../ummisco.gaml.extensions.image</module>
 
 		<module>../ummisco.gama.feature.audio</module>
 		<module>../ummisco.gama.feature.models</module>
@@ -129,9 +115,8 @@
 		<module>../ummisco.gama.feature.core.ui</module>
 		<module>../ummisco.gama.feature.experiment.ui</module>
 		<module>../ummisco.gama.feature.modeling.ui</module>
-		<module>../ummisco.gama.feature.serialize</module>
-		<module>../ummisco.gama.feature.network</module>
 		<module>../ummisco.gama.feature.stats</module>
+		<module>../ummisco.gama.feature.image</module>
 
 
 		<module>../ummisco.gama.product</module>
@@ -142,7 +127,7 @@
 	<properties>
 		<project.version>1.9.0-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.1</tycho.version>
+		<tycho.version>3.0.3</tycho.version>
 		<jdk.version>17</jdk.version>
 		<codehaus.wagon.version>2.0.2</codehaus.wagon.version>
 		<wagon.version>3.5.3</wagon.version>

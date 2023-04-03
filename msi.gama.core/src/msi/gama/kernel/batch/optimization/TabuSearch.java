@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * TabuSearch.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TabuSearch.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch.optimization;
 
@@ -62,7 +61,7 @@ import msi.gaml.types.IType;
 						type = IType.INT,
 						optional = true,
 						doc = @doc ("number of iterations. this number corresponds to the number of \"moves\" in the parameter space. For each move, the algorithm will test the whole neighborhood of the current solution, each neighbor corresponding to a particular set of parameters and thus to a run. Thus, there can be several runs per iteration (maximum: 2^(number of parameters)).")),
-					@facet (
+				@facet (
 						name = HillClimbing.INIT_SOL,
 						type = IType.MAP,
 						optional = true,
@@ -105,20 +104,21 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 
 	/** The Constant ITER_MAX. */
 	protected static final String ITER_MAX = "iter_max";
-	
+
 	/** The Constant LIST_SIZE. */
 	protected static final String LIST_SIZE = "tabu_list_size";
 
 	/** The tabu list size. */
 	int tabuListSize = 5;
-	
+
 	/** The stopping criterion. */
 	StoppingCriterion stoppingCriterion = new StoppingCriterionMaxIt(50);
 
 	/**
 	 * Instantiates a new tabu search.
 	 *
-	 * @param species the species
+	 * @param species
+	 *            the species
 	 */
 	public TabuSearch(final IDescription species) {
 		super(species);
@@ -126,32 +126,33 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 
 	}
 
-	
 	/**
 	 * Keep sol.
 	 *
-	 * @param neighborSol the neighbor sol
-	 * @param neighborFitness the neighbor fitness
-	 * @param bestFitnessAlgo the best fitness algo
+	 * @param neighborSol
+	 *            the neighbor sol
+	 * @param neighborFitness
+	 *            the neighbor fitness
+	 * @param bestFitnessAlgo
+	 *            the best fitness algo
 	 * @return true, if successful
 	 */
-	public boolean keepSol(ParametersSet neighborSol, Double neighborFitness, Double bestFitnessAlgo ) {
+	public boolean keepSol(final ParametersSet neighborSol, final Double neighborFitness,
+			final Double bestFitnessAlgo) {
 		final boolean neighFitnessGreaterThanBest = neighborFitness > bestFitnessAlgo;
-		if (isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest) {
-			//setBestFitness(neighborFitness);
+		if (isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest) // setBestFitness(neighborFitness);
 			return true;
-		}
 		return false;
 	}
-	
+
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
 		final List<ParametersSet> tabuList = new ArrayList<>();
 		ParametersSet bestSolutionAlgo = this.solutionInit;
 		tabuList.add(bestSolutionAlgo);
-		final double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo)
-				.get(IKeyword.FITNESS).get(0);
+		final double currentFitness =
+				(Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo).get(IKeyword.FITNESS).get(0);
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
@@ -164,13 +165,11 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, bestSolutionAlgo);
 			neighbors.removeAll(tabuList);
 			if (neighbors.isEmpty()) {
-				if (tabuList.isEmpty()) {
-					break;
-				}
+				if (tabuList.isEmpty()) { break; }
 				neighbors.add(tabuList.get(scope.getRandom().between(0, tabuList.size() - 1)));
 			}
 			double bestFitnessAlgo;
-			
+
 			if (isMaximize()) {
 				bestFitnessAlgo = Double.NEGATIVE_INFINITY;
 			} else {
@@ -179,46 +178,32 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 			ParametersSet bestNeighbor = null;
 
 			nbIt++;
-			
-			
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
-				Map<ParametersSet,Double> result = testSolutions(neighbors);
+
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
+					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				for (ParametersSet p : result.keySet()) {
-					if (keepSol(p, result.get(p), bestFitnessAlgo)) {
-						bestNeighbor = p;
-					}	
+					if (keepSol(p, result.get(p), bestFitnessAlgo)) { bestNeighbor = p; }
 				}
 			} else {
 				for (final ParametersSet neighborSol : neighbors) {
-					if (neighborSol == null) {
-						continue;
-					}
+					if (neighborSol == null) { continue; }
 					Double neighborFitness = testedSolutions.get(neighborSol);
-					if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol
-								).get(IKeyword.FITNESS).get(0);
-					} else {
-						continue;
-					}
+					if ((neighborFitness != null) && (neighborFitness != Double.MAX_VALUE)) { continue; }
+					neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
+							.get(IKeyword.FITNESS).get(0);
 					testedSolutions.put(neighborSol, neighborFitness);
-					
-					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) {
-						bestNeighbor = neighborSol;
-					}
-					
+
+					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) { bestNeighbor = neighborSol; }
+
 				}
 			}
-			
-			if (bestNeighbor != null) {
-				bestSolutionAlgo = bestNeighbor;
-				tabuList.add(bestSolutionAlgo);
-				if (tabuList.size() > tabuListSize) {
-					tabuList.remove(0);
-				}
-				// currentFitness = bestFitnessAlgo;
-			} else {
-				break;
-			}
+
+			if (bestNeighbor == null) { break; }
+			bestSolutionAlgo = bestNeighbor;
+			tabuList.add(bestSolutionAlgo);
+			if (tabuList.size() > tabuListSize) { tabuList.remove(0); }
+			// currentFitness = bestFitnessAlgo;
 			endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		}
 		// DEBUG.LOG("Best solution : " + currentSol + " fitness : "
@@ -244,9 +229,7 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 			stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
 		}
 		final IExpression listsize = getFacet(LIST_SIZE);
-		if (listsize != null) {
-			tabuListSize = Cast.asInt(scope, listsize.value(scope));
-		}
+		if (listsize != null) { tabuListSize = Cast.asInt(scope, listsize.value(scope)); }
 	}
 
 	@Override

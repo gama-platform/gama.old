@@ -1,0 +1,57 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java#apache-maven-with-a-settings-path
+
+name: Regenerate PNG Icon
+
+on:
+  push:
+    paths:
+    - 'ummisco.gama.ui.shared/svg/**'
+  workflow_dispatch:  # For manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Adopt OpenJDK 17
+        uses: actions/setup-java@v2 
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          java-package: jdk
+
+      - name: Get Eclipse Image
+        run: |
+          cd $GITHUB_WORKSPACE/..
+          git clone https://github.com/eclipse-platform/eclipse.platform.images.git
+          cd eclipse.platform.images
+          mvn clean install
+          rm -fr eclipse-svg
+
+      - name: Regenerate icon from SVG
+        run: |
+          # Setup workflow
+          cd $GITHUB_WORKSPACE/../eclipse.platform.images/org.eclipse.images
+          cp -r $GITHUB_WORKSPACE/ummisco.gama.ui.shared/svg eclipse-svg
+          # Build images under 3 scales
+          mvn org.eclipse.images:org.eclipse.images.renderer:render-icons -Declipse.svg.renderthreads=$(nproc --all) -Declipse.svg.scale=1 -Declipse.svg.createFragments=false
+          mvn org.eclipse.images:org.eclipse.images.renderer:render-icons -Declipse.svg.renderthreads=$(nproc --all) -Declipse.svg.scale=1.5 -Declipse.svg.createFragments=false
+          mvn org.eclipse.images:org.eclipse.images.renderer:render-icons -Declipse.svg.renderthreads=$(nproc --all) -Declipse.svg.scale=2 -Declipse.svg.createFragments=false
+
+      - name: Reorganize branding icons in project
+        run:  |
+          # Move special 'branding' result
+          mv $GITHUB_WORKSPACE/../eclipse.platform.images/org.eclipse.images/eclipse-png/branding $GITHUB_WORKSPACE/..
+          echo "distribute branding icons"
+
+      - name: Replace UI icons with freshly generated ones
+        run: |
+          # Clear previous icons (folder only)
+          rm -fr $GITHUB_WORKSPACE/ummisco.gama.ui.shared/icons/*/
+          mv $GITHUB_WORKSPACE/../eclipse.platform.images/org.eclipse.images/eclipse-png/* $GITHUB_WORKSPACE/ummisco.gama.ui.shared/icons
+
+      - name: Publish updated icons
+        run: echo "Make commit"

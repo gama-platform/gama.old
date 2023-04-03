@@ -3,7 +3,7 @@
  * PopulationInspectView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -78,7 +78,8 @@ import ummisco.gama.ui.controls.SwitchButton;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.parameters.ExpressionControl;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -186,7 +187,7 @@ public class PopulationInspectView extends GamaViewPart
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
-		this.setTitleImage(GamaIcons.create("view.browser2").image());
+		this.setTitleImage(GamaIcon.named(IGamaIcons.VIEW_BROWSER).image());
 	}
 
 	/** The provider. */
@@ -893,7 +894,7 @@ public class PopulationInspectView extends GamaViewPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		if (getOutput() == null) return;
 		super.createToolItems(tb);
-		tb.check("population.lock2", "", "Lock the current population (prevents editing it)", e -> {
+		tb.check(IGamaIcons.LOCK_POPULATION, "", "Lock the current population (prevents editing it)", e -> {
 			locked = !locked;
 			editor.getControl().setEnabled(!locked);
 			populationMenu.setEnabled(!locked);
@@ -901,7 +902,7 @@ public class PopulationInspectView extends GamaViewPart
 			// TODO let the list of agents remain the same ??
 		}, SWT.RIGHT);
 		createExpressionComposite();
-		populationMenu = tb.menu("population.list2", "", "Browse a species", trigger -> {
+		populationMenu = tb.menu(IGamaIcons.BROWSE_POPULATIONS, "", "Browse a species", trigger -> {
 			if (locked) return;
 			final GamaMenu menu = new GamaMenu() {
 
@@ -917,14 +918,14 @@ public class PopulationInspectView extends GamaViewPart
 								editor.widgetDefaultSelected(null);
 							}
 
-						}, GamaIcons.create("display.agents2").image());
+						}, GamaIcon.named(IGamaIcons.MENU_POPULATION).image());
 					}
 				}
 			};
 			menu.open(toolbar.getToolbar(SWT.RIGHT), trigger);
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.saveas2", "Save as CSV", "Save the agents and their attributes into a CSV file",
+		tb.button(IGamaIcons.SAVE_AS, "Save as CSV", "Save the agents and their attributes into a CSV file",
 				e -> saveAsCSV(), SWT.RIGHT);
 	}
 
@@ -949,12 +950,6 @@ public class PopulationInspectView extends GamaViewPart
 	@Override
 	public void pauseChanged() {}
 
-	/**
-	 * Method synchronizeChanged()
-	 *
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
-	 */
-	@Override
-	public void synchronizeChanged() {}
+
 
 }

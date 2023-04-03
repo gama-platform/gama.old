@@ -3,7 +3,7 @@
  * WrappedProject.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -17,12 +17,13 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.xml.type.internal.DataValue.URI;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gaml.statements.test.AbstractSummary;
 import msi.gaml.statements.test.CompoundSummary;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -78,7 +79,7 @@ public class WrappedProject extends WrappedContainer<IProject> {
 	public Object[] getNavigatorChildren() { return isOpen() ? super.getNavigatorChildren() : EMPTY; }
 
 	@Override
-	public Image getImage() { return GamaIcons.create(IGamaIcons.FOLDER_PROJECT).image(); }
+	public ImageDescriptor getImageDescriptor() { return GamaIcon.named(IGamaIcons.FOLDER_PROJECT).descriptor(); }
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {

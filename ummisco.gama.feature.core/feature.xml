@@ -4,7 +4,7 @@
       label="Core plugins of GAMA"
       version="1.9.0.qualifier"
       provider-name="UMMISCO"
-      plugin="ummisco.gama.feature.core.branding">
+      plugin="msi.gama.core">
 
    <description url="http://gama-platform.org">
       The core of the GAMA Modeling and Simulation Platform
@@ -81,13 +81,6 @@
 
    <plugin
          id="ummisco.gaml.extensions.stats"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.feature.core.branding"
          download-size="0"
          install-size="0"
          version="0.0.0"

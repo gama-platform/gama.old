@@ -3,7 +3,7 @@
  * GamlSyntacticConverter.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -28,9 +28,7 @@ import static msi.gama.common.interfaces.IKeyword.FILE;
 import static msi.gama.common.interfaces.IKeyword.FROM;
 import static msi.gama.common.interfaces.IKeyword.FUNCTION;
 import static msi.gama.common.interfaces.IKeyword.GRID;
-import static msi.gama.common.interfaces.IKeyword.GRID_POPULATION;
 import static msi.gama.common.interfaces.IKeyword.GUI_;
-import static msi.gama.common.interfaces.IKeyword.HEADLESS_UI;
 import static msi.gama.common.interfaces.IKeyword.IN;
 import static msi.gama.common.interfaces.IKeyword.INDEX;
 import static msi.gama.common.interfaces.IKeyword.INIT;
@@ -42,7 +40,7 @@ import static msi.gama.common.interfaces.IKeyword.MODEL;
 import static msi.gama.common.interfaces.IKeyword.NAME;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT_FILE;
-import static msi.gama.common.interfaces.IKeyword.POPULATION;
+import static msi.gama.common.interfaces.IKeyword.SPECIES_LAYER;
 import static msi.gama.common.interfaces.IKeyword.PUT;
 import static msi.gama.common.interfaces.IKeyword.REMOVE;
 import static msi.gama.common.interfaces.IKeyword.SAVE;
@@ -326,7 +324,8 @@ public class GamlSyntacticConverter {
 	/**
 	 * Process experiment.
 	 *
-	 * @param elt the elt
+	 * @param elt
+	 *            the elt
 	 */
 	private void processExperiment(final ISyntacticElement elt) {
 		// We do it also for experiments, and change their name
@@ -525,10 +524,14 @@ public class GamlSyntacticConverter {
 	/**
 	 * Process equation assignment.
 	 *
-	 * @param elt the elt
-	 * @param expr the expr
-	 * @param errors the errors
-	 * @param value the value
+	 * @param elt
+	 *            the elt
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 * @param value
+	 *            the value
 	 */
 	private void processEquationAssignment(final ISyntacticElement elt, final Expression expr,
 			final Set<Diagnostic> errors, final IExpressionDescription value) {
@@ -547,15 +550,20 @@ public class GamlSyntacticConverter {
 	/**
 	 * Process removal assignment.
 	 *
-	 * @param elt the elt
-	 * @param expr the expr
-	 * @param errors the errors
-	 * @param value the value
-	 * @param keyword the keyword
+	 * @param elt
+	 *            the elt
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 * @param value
+	 *            the value
+	 * @param keyword
+	 *            the keyword
 	 * @return the string
 	 */
 	private String processRemovalAssignment(final ISyntacticElement elt, final Expression expr,
-			final Set<Diagnostic> errors, final IExpressionDescription value, String keyword) {
+			final Set<Diagnostic> errors, final IExpressionDescription value, final String keyword) {
 		// Translation of "container >> item" or "container >- item" to
 		// "remove item: item from: container"
 		// 08/01/14: Addition of the ">>-" keyword (remove all)
@@ -576,15 +584,20 @@ public class GamlSyntacticConverter {
 	/**
 	 * Process additive assignment.
 	 *
-	 * @param elt the elt
-	 * @param expr the expr
-	 * @param errors the errors
-	 * @param value the value
-	 * @param keyword the keyword
+	 * @param elt
+	 *            the elt
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 * @param value
+	 *            the value
+	 * @param keyword
+	 *            the keyword
 	 * @return the string
 	 */
 	private String processAdditiveAssignment(final ISyntacticElement elt, final Expression expr,
-			final Set<Diagnostic> errors, final IExpressionDescription value, String keyword) {
+			final Set<Diagnostic> errors, final IExpressionDescription value, final String keyword) {
 		elt.setKeyword(ADD);
 		addFacet(elt, TO, convExpr(expr, errors), errors);
 		addFacet(elt, ITEM, value, errors);
@@ -595,11 +608,16 @@ public class GamlSyntacticConverter {
 	/**
 	 * Process basic assignment.
 	 *
-	 * @param elt the elt
-	 * @param expr the expr
-	 * @param errors the errors
-	 * @param value the value
-	 * @param keyword the keyword
+	 * @param elt
+	 *            the elt
+	 * @param expr
+	 *            the expr
+	 * @param errors
+	 *            the errors
+	 * @param value
+	 *            the value
+	 * @param keyword
+	 *            the keyword
 	 * @return the string
 	 */
 	private String processBasicAssignment(final ISyntacticElement elt, final Expression expr,
@@ -701,7 +719,7 @@ public class GamlSyntacticConverter {
 		final IExpressionDescription ed = findExpr(stm, errors);
 		addFacet(elt, NAME, ed, errors);
 		addFacet(elt, TITLE, ed, errors);
-		if (!elt.hasFacet(TYPE)) { addFacet(elt, TYPE, convertToLabel(null, HEADLESS_UI), errors); }
+		// if (!elt.hasFacet(TYPE)) { addFacet(elt, TYPE, convertToLabel(null, HEADLESS_UI), errors); }
 	}
 
 	/**
@@ -719,10 +737,12 @@ public class GamlSyntacticConverter {
 			keyword = SAVE_BATCH;
 		} else if (OUTPUT.equals(upper) && FILE.equals(keyword)) {
 			keyword = OUTPUT_FILE;
-		} else if (DISPLAY.equals(upper) || POPULATION.equals(upper)) {
+		} else if (DISPLAY.equals(upper) || SPECIES_LAYER.equals(upper)) {
 			if (SPECIES.equals(keyword)) {
-				keyword = POPULATION;
-			} else if (GRID.equals(keyword)) { keyword = GRID_POPULATION; }
+				keyword = SPECIES_LAYER;
+			} else if (GRID.equals(keyword)) {
+				keyword = IKeyword.GRID_LAYER;
+			} else if (IKeyword.IMAGE.equals(keyword)) { keyword = IKeyword.IMAGE_LAYER; }
 		}
 		return keyword;
 	}

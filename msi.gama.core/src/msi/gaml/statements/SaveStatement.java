@@ -10,36 +10,18 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
-import static msi.gama.common.geometry.GeometryUtils.cleanGeometryCollection;
-import static msi.gama.common.geometry.GeometryUtils.fixesPolygonCWS;
-import static msi.gama.common.util.FileUtils.constructAbsoluteFilePath;
-
-import java.awt.image.DataBuffer;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.media.jai.RasterFactory;
-
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.grid.GridCoverageFactory;
-import org.jgrapht.nio.GraphExporter;
-import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.geometry.Envelope;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.ITyped;
-import msi.gama.common.util.StringUtils;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.common.interfaces.ISaveDelegate;
+import msi.gama.common.util.FileUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -52,29 +34,27 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.GamaFile.FlushBufferException;
 import msi.gama.util.file.IGamaFile;
-import msi.gama.util.graph.IGraph;
-import msi.gama.util.graph.writer.GraphExporters;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.SaveStatement.SaveValidator;
-import msi.gaml.statements.save.ASCSaver;
-import msi.gaml.statements.save.CSVSaver;
-import msi.gaml.statements.save.GeoJSonSaver;
-import msi.gaml.statements.save.GeoTiffSaver;
 import msi.gaml.statements.save.ImageSaver;
-import msi.gaml.statements.save.ShapeSaver;
-import msi.gaml.statements.save.TextSaver;
 import msi.gaml.types.GamaFileType;
-import msi.gaml.types.GamaKmlExport;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
+
+/**
+ * The Class SaveStatement.
+ */
 
 /**
  * The Class SaveStatement.
@@ -90,17 +70,24 @@ import msi.gaml.types.Types;
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets (
 		value = { @facet (
-				name = IKeyword.TYPE,
+				name = IKeyword.FORMAT,
 				type = IType.ID,
 				optional = true,
-				values = { "shp", "text", "csv", "asc", "geotiff", "image", "kml", "kmz", "json", "dimacs", "dot",
-						"gexf", "graphml", "gml", "graph6" },
-				doc = @doc ("an expression that evaluates to a string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
+				doc = @doc (
+						value = "a string representing the format of the output file (e.g. \"shp\", \"asc\", \"geotiff\", \"png\", \"text\", \"csv\"). If the file extension is non ambiguous in facet 'to:', this format does not need to be specified. However, in many cases, it can be useful to do it (for instance, when saving a string to a .pgw file, it is always better to clearly indicate that the expected format is 'text'). ")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.ID,
+						optional = true,
+
+						doc = @doc (
+								deprecated = "Use 'format' instead",
+								value = "a string representing the type of the output file (e.g. \"shp\", \"asc\", \"geotiff\", \"png\", \"text\", \"csv\") ")),
 				@facet (
 						name = IKeyword.DATA,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("the data that will be saved to the file")),
+						doc = @doc ("the data that will be saved to the file or the file itself to save when data is used in its simplest form")),
 				@facet (
 						name = IKeyword.REWRITE,
 						type = IType.BOOL,
@@ -177,11 +164,37 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "rawtypes" })
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	/** The Constant GEOTIFF. */
-	private static final String GEOTIFF = "geotiff";
+	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
+	public static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES =
+			Set.of(IKeyword.PEERS, IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE);
 
 	/** The Constant EPSG_LABEL. */
 	private static final String EPSG_LABEL = "EPSG:";
+
+	/** The Constant DELEGATES_BY_GAML_TYPE. */
+	private static final Map<String, Map<IType, ISaveDelegate>> DELEGATES = new HashMap<>();
+
+	/**
+	 * @param createExecutableExtension
+	 */
+	public static void addDelegate(final ISaveDelegate delegate) {
+		Set<String> files = delegate.getFileTypes();
+		final IType t = delegate.getDataType();
+		for (String f : files) {
+			Map<IType, ISaveDelegate> map = DELEGATES.get(f);
+			if (map == null) {
+				map = new HashMap<>();
+				DELEGATES.put(f, map);
+			}
+			if (map.containsKey(t)) {
+				DEBUG.LOG("WARNING: Extensions to SaveStatement already registered for file type " + f
+						+ " and data type " + t);
+			}
+			map.put(t, delegate);
+
+		}
+
+	}
 
 	/**
 	 * The Class SaveValidator.
@@ -199,6 +212,68 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final StatementDescription desc = description;
 			final Facets with = desc.getPassedArgs();
 			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
+			final IExpressionDescription type = desc.getFacet(FORMAT, TYPE);
+			desc.removeFacets(TYPE);
+			if (type != null) { desc.setFacet(FORMAT, type); }
+			final IExpression format = type == null ? null : type.getExpression();
+
+			final IExpression data = desc.getFacetExpr(DATA);
+			if (data == null) return;
+			final IType<?> dataType = data.getGamlType();
+			final IExpression to = desc.getFacetExpr(TO);
+
+			boolean isAFile = Types.FILE.isAssignableFrom(dataType);
+			boolean hasTo = to != null;
+			String ext = null;
+			if (hasTo && to.isConst()) { ext = com.google.common.io.Files.getFileExtension(to.literalValue()); }
+			boolean hasFormat = format != null;
+
+			if (isAFile && hasTo) {
+				desc.warning("The destination will not be taking into account when saving an already existing file",
+						IGamlIssue.UNMATCHED_OPERANDS);
+			}
+			if (isAFile && hasFormat) {
+				desc.warning("The file format will not be taken into account when saving an already existing file ",
+						IGamlIssue.CONFLICTING_FACETS, FORMAT);
+			}
+
+			if (!isAFile && !hasTo) {
+				desc.error("No file specified", IGamlIssue.MISSING_FACET);
+				return;
+			}
+
+			if (!isAFile && !hasFormat && hasTo && ext != null && !DELEGATES.containsKey(ext)) {
+				if (dataType != Types.STRING && dataType != Types.INT && dataType != Types.FLOAT) {
+					desc.error("Unknown file extension. Accepted formats are: "
+							+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
+					return;
+				}
+				desc.warning("Unknown file format, will default to 'text'. Accepted formats are: "
+						+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
+			}
+
+			if (!isAFile && !hasFormat && hasTo) {
+				desc.info(
+						"'save' will use the extension of the file to determine its format. If you are unsure about this, please specify the format of the file using the 'format:' facet",
+						IGamlIssue.UNKNOWN_ARGUMENT);
+			}
+
+			if (!isAFile && hasFormat && hasTo) {
+				String id = format.literalValue();
+				if (!DELEGATES.containsKey(id)) {
+					desc.error(
+							"Unknown file format. Accepted formats are: "
+									+ DELEGATES.keySet().stream().sorted().toList(),
+							IGamlIssue.UNKNOWN_ARGUMENT, FORMAT);
+					return;
+				}
+				if (ext != null && !id.equals(ext) && (!IMAGE.equals(id) || !ImageSaver.FILE_FORMATS.contains(ext))) {
+					desc.info("The extension of the file and the format differ. Make sure they are compatible",
+							IGamlIssue.CONFLICTING_FACETS);
+				}
+
+			}
+
 			final boolean isMap = att instanceof MapExpression;
 			if (att != null) {
 				if (!isMap && !att.getGamlType().isTranslatableInto(Types.LIST.of(Types.STRING))) {
@@ -221,17 +296,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 							"'with' and 'attributes' are mutually exclusive. Only the first one will be considered",
 							IGamlIssue.CONFLICTING_FACETS, ATTRIBUTES, WITH);
 				}
-				final IExpression type = desc.getFacetExpr(TYPE);
-				if (type == null || !"shp".equals(type.literalValue()) && !"json".equals(type.literalValue())) {
+
+				if (ext != null && format == null && !"shp".equals(ext) && !"json".equals(ext) || format != null
+						&& !"shp".equals(format.literalValue()) && !"json".equals(format.literalValue())) {
 					desc.warning("Attributes can only be defined for shape or json files", IGamlIssue.WRONG_TYPE,
 							ATTRIBUTES);
 				}
 
 			}
 
-			final IExpression data = desc.getFacetExpr(DATA);
-			if (data == null) return;
-			final IType<?> t = data.getGamlType().getContentType();
+			/** The t. */
+			final IType<?> t = dataType.getContentType();
+
+			/** The species. */
 			final SpeciesDescription species = t.getSpecies();
 
 			if (att == null && !with.exists()) return;
@@ -264,9 +341,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/** The attributes facet. */
 	private final IExpression attributesFacet;
 
-	/** The header. */
-	private final IExpression crsCode;
-
 	/** The item. */
 	private final IExpression item;
 
@@ -276,9 +350,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/** The rewrite expr. */
 	private final IExpression rewriteExpr;
 
-	/** The header. */
-	private final IExpression header;
-
 	/**
 	 * Instantiates a new save statement.
 	 *
@@ -287,11 +358,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	 */
 	public SaveStatement(final IDescription desc) {
 		super(desc);
-		crsCode = desc.getFacetExpr("crs");
 		item = desc.getFacetExpr(IKeyword.DATA);
 		file = getFacet(IKeyword.TO);
 		rewriteExpr = getFacet(IKeyword.REWRITE);
-		header = getFacet(IKeyword.HEADER);
 		attributesFacet = getFacet(IKeyword.ATTRIBUTES);
 	}
 
@@ -321,31 +390,38 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			return theFile;
 		}
-		final String typeExp = getLiteral(IKeyword.TYPE);
+		final String fileName = Cast.asString(scope, file.value(scope));
+		final String filePath = FileUtils.constructAbsoluteFilePath(scope, fileName, false);
+		if (filePath == null || "".equals(filePath)) return null;
+		final File fileToSave = new File(filePath);
+		String typeExp = getLiteral(IKeyword.FORMAT);
 		// Second case: a filename is indicated but not the type. In that case,
 		// we try to build a new GamaFile from it and save it
 		if (typeExp == null) {
-			final String theName = Cast.asString(scope, file.value(scope));
 			final Object contents = item.value(scope);
 			if (contents instanceof IModifiableContainer mc) {
-				final IGamaFile f = GamaFileType.createFile(scope, theName, mc);
-				f.save(scope, description.getFacets());
-				return f;
+				try {
+					// We set a temporary flag to the scope, which should be readable by the GamaFile and indicate that
+					// the file is created "for saving" (and not reading). Otherwise it might create an exception if the
+					// file does not exist already (see #3684)
+					scope.setData(IGamaFile.KEY_TEMPORARY_OUTPUT, true);
+					final IGamaFile f = GamaFileType.createFile(scope, fileName, mc);
+					f.save(scope, description.getFacets());
+					return f;
+				} catch (FlushBufferException e) {
+					// Nothing to do : the corresponding GamaFile does not implement flushBuffer
+					// Not really clean but well... see #3684. We silently log the error and continue with the format
+					DEBUG.OUT(e.getMessage());
+				} finally {
+					// We remove the temporary flag
+					scope.setData(IGamaFile.KEY_TEMPORARY_OUTPUT, null);
+				}
 			}
+			typeExp = com.google.common.io.Files.getFileExtension(fileName);
 
 		}
 
-		// These statements will need to be completely rethought because of the
-		// possibility to now use the GamaFile infrastructure for this.
-		// For instance, TYPE is not needed anymore (the name of the file / its
-		// inner type will be enough), like in save json_file("ddd.json",
-		// my_map); which we can probably allow to be written save my_map to:
-		// json_file("ddd.json"); see #1362
-
 		try {
-			final String path = constructAbsoluteFilePath(scope, Cast.asString(scope, file.value(scope)), false);
-			if (path == null || "".equals(path)) return null;
-			final File fileToSave = new File(path);
 			Files.createDirectories(fileToSave.toPath().getParent());
 			boolean exists = fileToSave.exists();
 			final boolean rewrite = shouldOverwrite(scope);
@@ -353,165 +429,57 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				fileToSave.delete();
 				exists = false;
 			}
+			IExpression header = getFacet(IKeyword.HEADER);
 			final boolean addHeader = !exists && (header == null || Cast.asBool(scope, header.value(scope)));
 			final String type = (typeExp != null ? typeExp : "text").trim().toLowerCase();
 			String code = null;
+			IExpression crsCode = getFacet("crs");
 			if (crsCode != null) {
 				final IType tt = crsCode.getGamlType();
 				if (tt.id() == IType.INT || tt.id() == IType.FLOAT) {
 					code = EPSG_LABEL + Cast.asInt(scope, crsCode.value(scope));
 				} else if (tt.id() == IType.STRING) { code = (String) crsCode.value(scope); }
 			}
+			Object attributesToSave = attributesFacet == null ? withFacet : attributesFacet;
 			//
-			switch (type) {
-				case "json":
-					new GeoJSonSaver().save(scope, item, fileToSave, code, withFacet, attributesFacet);
-					break;
-				case "shp":
-					new ShapeSaver().save(scope, item, fileToSave, code, withFacet, attributesFacet);
-					break;
-				case "text":
-					new TextSaver().save(scope, item, fileToSave, addHeader);
-					break;
-				case "csv":
-					new CSVSaver().save(scope, item, fileToSave, addHeader);
-					break;
-				case "asc":
-					new ASCSaver().save(scope, item, fileToSave);
-					break;
-				case "image":
-					new ImageSaver().save(scope, item, fileToSave);
-					break;
-				case GEOTIFF:
-					new GeoTiffSaver().save(scope, item, fileToSave);
-					break;
-				case "kml", "kmz":
-					final Object kml = item.value(scope);
-					if (!(kml instanceof GamaKmlExport export)) return null;
-					if ("kml".equals(type)) {
-						export.saveAsKml(scope, path);
-					} else {
-						export.saveAsKmz(scope, path);
-					}
-					break;
-				default:
-					GraphExporter<?, ?> exp = GraphExporters.getGraphWriter(type);
-					if (exp == null)
-						throw GamaRuntimeException.error("Format is not recognized ('" + type + "')", scope);
-					final IGraph g = Cast.asGraph(scope, item);
-					if (g == null) return null;
-					exp.exportGraph(g, fileToSave.getAbsoluteFile());
+			IType itemType = item.getGamlType();
+			ISaveDelegate delegate = findDelegate(itemType, type);
+			if (delegate != null) {
+				delegate.save(scope, item, fileToSave, code, addHeader, type, attributesToSave);
+				return Cast.asString(scope, file.value(scope));
 			}
+			throw GamaRuntimeException.error("Format not recognized: " + type, scope);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-		return Cast.asString(scope, file.value(scope));
 	}
 
 	/**
-	 * Creates the coverage byte from float.
+	 * Find delegate.
 	 *
-	 * @param name
-	 *            the name
-	 * @param matrix
-	 *            the matrix
-	 * @param envelope
-	 *            the envelope
-	 * @return the grid coverage 2 D
+	 * @param dataType
+	 *            the data type
+	 * @param fileFormat
+	 *            the file type
+	 * @return the i save delegate
 	 */
-	// from org.geotools.coverage.grid.GridCoverageFactory
-	public static GridCoverage2D createCoverageByteFromFloat(final CharSequence name, final float[][] matrix,
-			final Envelope envelope) {
-
-		int width = 0;
-		final int height = matrix.length;
-		for (int j = 0; j < height; j++) {
-			final float[] row = matrix[j];
-			if (row != null && row.length > width) { width = row.length; }
-		}
-
-		final WritableRaster raster;
-		raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, 1, null);
-		for (int j = 0; j < height; j++) {
-			int i = 0;
-			final float[] row = matrix[j];
-			if (row != null) { for (; i < row.length; i++) { raster.setSample(i, j, 0, (byte) Math.round(row[i])); } }
-			for (; i < width; i++) { raster.setSample(i, j, 0, (byte) 255); }
-		}
-
-		return new GridCoverageFactory().create(name, raster, envelope);
-	}
-
-	/**
-	 * Type.
-	 *
-	 * @param theVar
-	 *            the var
-	 * @return the string
-	 */
-	public static String type(final ITyped theVar) {
-		return switch (theVar.getGamlType().id()) {
-			case IType.BOOL -> "Boolean";
-			case IType.INT -> "Integer";
-			case IType.FLOAT -> "Double";
-			default -> "String";
-		};
-	}
-
-	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
-	public static final Set<String> NON_SAVEABLE_ATTRIBUTE_NAMES =
-			Set.of(IKeyword.PEERS, IKeyword.LOCATION, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS, IKeyword.SHAPE);
-
-	/**
-	 * Builds the feature.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param ff
-	 *            the ff
-	 * @param ag
-	 *            the ag
-	 * @param gis
-	 *            the gis
-	 * @param attributeValues
-	 *            the attribute values
-	 * @return true, if successful
-	 */
-	public static boolean buildFeature(final IScope scope, final SimpleFeature ff, final IShape ag,
-			final IProjection gis, final Collection<IExpression> attributeValues) {
-		final List<Object> values = new ArrayList<>();
-		// geometry is by convention (in specs) at position 0
-		Geometry g = ag.getInnerGeometry();
-		if (g == null) return false;
-		if (gis != null) { g = gis.inverseTransform(g); }
-		g = cleanGeometryCollection(fixesPolygonCWS(g));
-		values.add(g);
-		if (ag instanceof IAgent ia) {
-			for (final IExpression variable : attributeValues) {
-				Object val = scope.evaluate(variable, ia).getValue();
-				if (variable.getGamlType().equals(Types.STRING)) {
-					val = val == null ? "" : StringUtils.toJavaString(val.toString());
-				}
-				values.add(val);
-			}
-		} else {
-			// see #2982. Assume it is an attribute of the shape
-			for (final IExpression variable : attributeValues) {
-				final Object val = variable.value(scope);
-				if (val instanceof String s) {
-					values.add(ag.getAttribute(s));
-				} else {
-					values.add("");
+	private ISaveDelegate findDelegate(final IType dataType, final String fileFormat) {
+		Map<IType, ISaveDelegate> map = DELEGATES.get(fileFormat);
+		if (map == null) return null;
+		int distance = Integer.MAX_VALUE;
+		ISaveDelegate closest = null;
+		for (Entry<IType, ISaveDelegate> entry : map.entrySet()) {
+			if (entry.getKey().isAssignableFrom(dataType)) {
+				@SuppressWarnings ("unchecked") int d = dataType.distanceTo(entry.getKey());
+				if (d < distance) {
+					distance = d;
+					closest = entry.getValue();
 				}
 			}
 		}
-		// AD Assumes that the type is ok.
-		// AD WARNING Would require some sort of iterator operator that
-		// would collect the values beforehand
-		ff.setAttributes(values);
-		return true;
+		return closest;
 	}
 
 	@Override

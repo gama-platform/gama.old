@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
-import java.util.Set;
 import java.util.function.Supplier;
 
 import org.eclipse.swt.SWT;
@@ -32,10 +31,9 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
-import msi.gama.runtime.PlatformHelper;
+import msi.gama.outputs.layers.IEventLayerListener;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
-import ummisco.gama.ui.utils.ViewsHelper;
 
 /**
  * The listener interface for receiving mouse and key events. When an event occurs, that object's appropriate method is
@@ -59,13 +57,13 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	final Supplier<Boolean> ok;
 
 	/** See issue #3308 */
-	final boolean isJava2DOnWindows;
+	// final boolean isJava2DOnWindows;
 
 	/** The UI zoom level. */
-	final double UIZoomLevel;
+	// final double UIZoomLevel;
 
 	/** The zoom levels with issues. */
-	final Set<Integer> zoomLevelsWithIssues = Set.of(175, 225, 250);
+	// final Set<Integer> zoomLevelsWithIssues = Set.of(175, 225, 250);
 
 	/**
 	 * Instantiates a new SWT layered display multi listener.
@@ -76,10 +74,10 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	 *            the surface
 	 */
 	public SWTLayeredDisplayMultiListener(final LayeredDisplayDecorator deco, final IDisplaySurface surface) {
-		int zoom = ViewsHelper.getMonitorOf(deco.view).getZoom();
-		isJava2DOnWindows = surface != null && !surface.getData().is3D() && PlatformHelper.isWindows()
-				&& zoomLevelsWithIssues.contains(zoom);
-		UIZoomLevel = zoom / 100d;
+		// int zoom = ViewsHelper.getMonitorOf(deco.view).getZoom();
+		// isJava2DOnWindows = surface != null && !surface.getData().is3D() && PlatformHelper.isWindows()
+		// && zoomLevelsWithIssues.contains(zoom);
+		// UIZoomLevel = zoom / 100d;
 
 		delegate = new LayeredDisplayMultiListener(surface, deco);
 		control = deco.view.getInteractionControl();
@@ -124,16 +122,46 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		if (!ok.get()) return;
+		if (!ok.get() || e.stateMask != 0) return;
 		// DEBUG.OUT("Key pressed " + e);
-		delegate.keyPressed(e.character);
+		switch (e.keyCode) {
+			case SWT.ARROW_DOWN:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_DOWN);
+				return;
+			case SWT.ARROW_UP:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_UP);
+				return;
+			case SWT.ARROW_LEFT:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_LEFT);
+				return;
+			case SWT.ARROW_RIGHT:
+				delegate.specialKeyPressed(IEventLayerListener.ARROW_RIGHT);
+				return;
+			case SWT.ESC:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_ESC);
+				return;
+			case SWT.TAB:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_TAB);
+				return;
+			case SWT.PAGE_DOWN:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_PAGE_DOWN);
+				return;
+			case SWT.PAGE_UP:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_PAGE_UP);
+				return;
+			case SWT.CR, SWT.KEYPAD_CR:
+				delegate.specialKeyPressed(IEventLayerListener.KEY_RETURN);
+				return;
+
+		}
+		delegate.keyPressed(e.character, GamaKeyBindings.ctrl(e));
 	}
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		if (!ok.get()) return;
 		// DEBUG.OUT("Key released " + e);
-		delegate.keyReleased(e.keyCode, GamaKeyBindings.ctrl(e));
+		delegate.keyReleased(e.character, GamaKeyBindings.ctrl(e));
 	}
 
 	/**
@@ -194,7 +222,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	public void mouseDown(final MouseEvent e) {
 		if (!ok.get()) return;
 		filter(e);
-		// DEBUG.OUT("Mouse down " + e);
+		DEBUG.OUT("Mouse down " + e);
 		delegate.mouseDown(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
@@ -202,7 +230,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	public void mouseUp(final MouseEvent e) {
 		if (!ok.get()) return;
 		filter(e);
-		// DEBUG.OUT("Mouse up " + e);
+		DEBUG.OUT("Mouse up " + e);
 		delegate.mouseUp(e.x, e.y, e.button, (e.stateMask & SWT.MODIFIER_MASK) != 0);
 	}
 
@@ -210,7 +238,7 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	public void menuDetected(final MenuDetectEvent e) {
 		if (!ok.get()) return;
 		// Verify if the same "filter" is not needed here too.
-		// DEBUG.LOG("Menu detected on " + view.getPartName());
+		DEBUG.LOG("Menu detected ");
 		final Point p = control.toControl(e.x, e.y);
 		delegate.menuDetected(p.x, p.y);
 	}
@@ -247,8 +275,23 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 				// Necessary to filter by the time to avoid repetitions
 				if (e.getWhen() == previous) return;
 				previous = e.getWhen();
-				// DEBUG.OUT("Key received by the AWT listener " + e.getKeyChar() + " " + e.getWhen());
-				delegate.keyPressed(e.getKeyChar());
+				DEBUG.LOG("Key received by the AWT listener. Code " + e.getKeyCode() + " Action ? " + e.isActionKey());
+				if (!e.isActionKey()) {
+					delegate.keyPressed(e.getKeyChar(), e.isControlDown());
+				} else if (e.getModifiersEx() == 0) {
+					delegate.specialKeyPressed(switch (e.getKeyCode()) {
+						case java.awt.event.KeyEvent.VK_UP, java.awt.event.KeyEvent.VK_KP_UP -> IEventLayerListener.ARROW_UP;
+						case java.awt.event.KeyEvent.VK_DOWN, java.awt.event.KeyEvent.VK_KP_DOWN -> IEventLayerListener.ARROW_DOWN;
+						case java.awt.event.KeyEvent.VK_LEFT, java.awt.event.KeyEvent.VK_KP_LEFT -> IEventLayerListener.ARROW_LEFT;
+						case java.awt.event.KeyEvent.VK_RIGHT, java.awt.event.KeyEvent.VK_KP_RIGHT -> IEventLayerListener.ARROW_RIGHT;
+						case java.awt.event.KeyEvent.VK_PAGE_UP -> IEventLayerListener.KEY_PAGE_UP;
+						case java.awt.event.KeyEvent.VK_PAGE_DOWN -> IEventLayerListener.KEY_PAGE_DOWN;
+						case java.awt.event.KeyEvent.VK_ESCAPE -> IEventLayerListener.KEY_ESC;
+						case java.awt.event.KeyEvent.VK_ENTER -> IEventLayerListener.KEY_RETURN;
+						case java.awt.event.KeyEvent.VK_TAB -> IEventLayerListener.KEY_TAB;
+						default -> 0;
+					});
+				}
 			}
 
 			@Override

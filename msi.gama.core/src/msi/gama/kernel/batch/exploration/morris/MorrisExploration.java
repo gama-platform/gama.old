@@ -3,7 +3,7 @@
  * MorrisExploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -86,7 +86,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.BATCH_REPORT,
 						type = IType.STRING,
-						optional = true,
+						optional = false,
 						doc = @doc ("The path to the file where the Morris report will be written")),
 				@facet (
 						name = MorrisExploration.PARAMETER_CSV_PATH,
@@ -174,8 +174,9 @@ public class MorrisExploration extends AExplorationAlgorithm {
 		}
 		/* Disable repetitions / repeat argument */
 		currentExperiment.setSeeds(new Double[1]);
+		// TODO : why doesnt it take into account the value of 'keep_simulations:' ? because, by design, there is to many simulation to keep in memory... 
 		currentExperiment.setKeepSimulations(false);
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(solutions);
 		} else {
 			res_outputs = GamaMapFactory.create();
@@ -183,36 +184,31 @@ public class MorrisExploration extends AExplorationAlgorithm {
 				res_outputs.put(sol, currentExperiment.launchSimulationsWithSolution(sol));
 			}
 		}
+		
+		// The output of simulations
 		Map<String, List<Double>> rebuilt_output = rebuildOutput(scope, res_outputs);
 		List<String> output_names = rebuilt_output.keySet().stream().toList();
-		boolean firstime = true;
-		if (hasFacet(IKeyword.BATCH_REPORT)) {
-			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
-			String new_path = scope.getExperiment().getWorkingPath() + "/" + path_to + "/MorrisResults.txt";
-			final File f = new File(new_path);
-			final File parent = f.getParentFile();
-			if (!parent.exists()) { parent.mkdirs(); }
-			if (f.exists()) { f.delete(); }
-		}
+		
+		String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
+		final File fm = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+		final File parentm = fm.getParentFile();
+		if (!parentm.exists()) { parentm.mkdirs(); }
+		if (fm.exists()) { fm.delete(); }
+		
 		for (int i = 0; i < rebuilt_output.size(); i++) {
 			String tmp_name = output_names.get(i);
 			List<Map<String, Double>> morris_coefficient =
 					Morris.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name), MySamples);
-			if (hasFacet(IKeyword.BATCH_REPORT)) {
-				String path = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
-				String new_path = scope.getExperiment().getWorkingPath() + "/" + path + "/MorrisResults.txt";
-				Morris.WriteAndTellResult(tmp_name, new_path, firstime, scope, morris_coefficient);
-				firstime = false;
-			}
+			Morris.WriteAndTellResult(tmp_name, fm.getAbsolutePath(), scope, morris_coefficient);
 		}
 		/* Save the simulation values in the provided .csv file (input and corresponding output) */
 		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
-			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
-			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
-			final File parent = f.getParentFile();
-			if (!parent.exists()) { parent.mkdirs(); }
-			if (f.exists()) { f.delete(); }
-			saveSimulation(rebuilt_output, f, scope);
+			path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+			final File fo = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+			final File parento = fo.getParentFile();
+			if (!parento.exists()) { parento.mkdirs(); }
+			if (fo.exists()) { fo.delete(); }
+			saveSimulation(rebuilt_output, fo, scope);
 		}
 	}
 
@@ -222,7 +218,7 @@ public class MorrisExploration extends AExplorationAlgorithm {
 	@SuppressWarnings ("unchecked")
 	@Override
 	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
-		List<Batch> params = new ArrayList(currentExperiment.getParametersToExplore());
+		List<Batch> params = new ArrayList<>(currentExperiment.getParametersToExplore());
 		parameters = parameters == null ? params : parameters;
 		List<String> names = new ArrayList<>();
 		for (int i = 0; i < parameters.size(); i++) { names.add(parameters.get(i).getName()); }
@@ -232,6 +228,8 @@ public class MorrisExploration extends AExplorationAlgorithm {
 		this.MySamples = Cast.asList(scope, morris_samplings.get(0));
 		return Cast.asList(scope, morris_samplings.get(1));
 	}
+	
+	// ************************* END OF SUPER CLASS CONTRACT ************************* //
 
 	/**
 	 * Convert the output of Gaml so it can be read by the Sobol class

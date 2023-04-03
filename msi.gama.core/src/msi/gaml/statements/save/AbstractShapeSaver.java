@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * AbstractShapeSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
 import java.io.BufferedOutputStream;
@@ -6,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,10 +28,14 @@ import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.ITyped;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.StringUtils;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
@@ -38,13 +54,15 @@ import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.SaveStatement;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-public abstract class AbstractShapeSaver {
+/**
+ * The Class AbstractShapeSaver.
+ */
+public abstract class AbstractShapeSaver extends AbstractSaver {
 
 	/** The with facet. */
-
-	final Map<String, IExpression> attributes = GamaMapFactory.create();
 
 	/** The Constant DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE. */
 	private static final String DOES_NOT_CORRESPOND_TO_A_KNOWN_EPSG_CODE =
@@ -56,18 +74,74 @@ public abstract class AbstractShapeSaver {
 	/** The Constant EPSG_LABEL. */
 	private static final String EPSG_LABEL = "EPSG:";
 
-	public void save(final IScope scope, final IExpression item, final File f, final String epsgCode,
-			final Arguments withFacet, final IExpression attributesFacet) throws GamaRuntimeException {
-		save(scope, item, (Object) f, epsgCode, withFacet, attributesFacet);
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param f
+	 *            the f
+	 * @param epsgCode
+	 *            the epsg code
+	 * @param withFacet
+	 *            the with facet
+	 * @param attributesFacet
+	 *            the attributes facet
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	@Override
+	public void save(final IScope scope, final IExpression item, final File file, final String code,
+			final boolean addHeader, final String type, final Object attributesToSave) throws GamaRuntimeException {
+		save(scope, item, file, code, attributesToSave);
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param os
+	 *            the os
+	 * @param epsgCode
+	 *            the epsg code
+	 * @param withFacet
+	 *            the with facet
+	 * @param attributesFacet
+	 *            the attributes facet
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	public void save(final IScope scope, final IExpression item, final OutputStream os, final String epsgCode,
-			final Arguments withFacet, final IExpression attributesFacet) throws GamaRuntimeException {
-		save(scope, item, (Object) os, epsgCode, withFacet, attributesFacet);
+			final Object attributesToSave) throws GamaRuntimeException {
+		save(scope, item, (Object) os, epsgCode, attributesToSave);
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param object
+	 *            the object
+	 * @param epsgCode
+	 *            the epsg code
+	 * @param withFacet
+	 *            the with facet
+	 * @param attributesFacet
+	 *            the attributes facet
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	@SuppressWarnings ("unchecked")
 	private void save(final IScope scope, final IExpression item, final Object object, final String epsgCode,
-			final Arguments withFacet, final IExpression attributesFacet) throws GamaRuntimeException {
+			final Object attributesToSave) throws GamaRuntimeException {
 		Object value = item.value(scope);
 		IList<? extends IShape> agents;
 		if (value instanceof ISpecies is) {
@@ -86,18 +160,13 @@ public abstract class AbstractShapeSaver {
 			final SpeciesDescription species = agents instanceof IPopulation pop ? pop.getSpecies().getDescription()
 					: agents.getGamlType().getContentType().getSpecies();
 
-			// if (species != null) {
-			if (withFacet != null) {
-				computeInitsFromWithFacet(withFacet, attributes, species);
-			} else if (attributesFacet != null) {
-				computeInitsFromAttributesFacet(scope, attributesFacet, attributes, species);
-			}
+			final Map<String, IExpression> attributes = computeInits(scope, species, attributesToSave);
 			for (final Entry<String, IExpression> enty : attributes.entrySet()) {
 				String e = enty.getKey();
 				if (e == null) { continue; }
 				final IExpression theVar = enty.getValue();
 				String theName = e.replace("\"", "").replace("'", "").replace(":", "_");
-				final String type = SaveStatement.type(theVar);
+				final String type = type(theVar);
 				specs.append(',').append(theName).append(':').append(type);
 			}
 			// }
@@ -115,6 +184,48 @@ public abstract class AbstractShapeSaver {
 
 	}
 
+	/**
+	 * Type.
+	 *
+	 * @param theVar
+	 *            the var
+	 * @return the string
+	 */
+	public static String type(final ITyped theVar) {
+		return switch (theVar.getGamlType().id()) {
+			case IType.BOOL -> "Boolean";
+			case IType.INT -> "Integer";
+			case IType.FLOAT -> "Double";
+			default -> "String";
+		};
+	}
+
+	/**
+	 * Internal save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param f
+	 *            the f
+	 * @param agents
+	 *            the agents
+	 * @param specs
+	 *            the specs
+	 * @param geomType
+	 *            the geom type
+	 * @param attributes
+	 *            the attributes
+	 * @param gis
+	 *            the gis
+	 * @param epsgCode
+	 *            the epsg code
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws SchemaException
+	 *             the schema exception
+	 */
 	public void internalSave(final IScope scope, final File f, final List<? extends IShape> agents, final String specs,
 			final String geomType, final Map<String, IExpression> attributes, final IProjection gis,
 			final String epsgCode) throws GamaRuntimeException, IOException, SchemaException {
@@ -124,27 +235,94 @@ public abstract class AbstractShapeSaver {
 		}
 	}
 
+	/**
+	 * Internal save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param os
+	 *            the os
+	 * @param agents
+	 *            the agents
+	 * @param string
+	 *            the string
+	 * @param geomType
+	 *            the geom type
+	 * @param attributes
+	 *            the attributes
+	 * @param proj
+	 *            the proj
+	 * @param epsgCode
+	 *            the epsg code
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws SchemaException
+	 *             the schema exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	protected abstract void internalSave(IScope scope, OutputStream os, List<? extends IShape> agents, String string,
 			String geomType, Map<String, IExpression> attributes, IProjection proj, final String epsgCode)
 			throws IOException, SchemaException, GamaRuntimeException;
 
-	protected void computeInitsFromWithFacet(final Arguments withFacet, final Map<String, IExpression> values,
-			final SpeciesDescription species) throws GamaRuntimeException {
-		if (species == null) return;
-		if (withFacet.isEmpty()) {
-			for (final String theVar : species.getAttributeNames()) {
-				if (!SaveStatement.NON_SAVEABLE_ATTRIBUTE_NAMES.contains(theVar)) {
-					values.put(theVar, species.getVarExpr(theVar, false));
+	/**
+	 * Compute inits from with facet.
+	 *
+	 * @param attributes
+	 *            the with facet
+	 * @param result
+	 *            the values
+	 * @param species
+	 *            the species
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	protected final Map<String, IExpression> computeInits(final IScope scope, final SpeciesDescription species,
+			final Object attributes) throws GamaRuntimeException {
+		if (attributes == null) return Collections.EMPTY_MAP;
+		final Map<String, IExpression> result = GamaMapFactory.create();
+		if (attributes instanceof Arguments args && species != null) {
+			if (args.isEmpty()) {
+				for (final String theVar : species.getAttributeNames()) {
+					if (!SaveStatement.NON_SAVEABLE_ATTRIBUTE_NAMES.contains(theVar)) {
+						result.put(theVar, species.getVarExpr(theVar, false));
+					}
 				}
+			} else {
+				args.forEachFacet((key, value) -> {
+					result.put(value.getExpression().literalValue(), species.getVarExpr(key, false));
+					return true;
+				});
 			}
-		} else {
-			withFacet.forEachFacet((key, value) -> {
-				values.put(value.getExpression().literalValue(), species.getVarExpr(key, false));
-				return true;
+		} else if (attributes instanceof MapExpression me) {
+			final Map<IExpression, IExpression> map = me.getElements();
+			map.forEach((key, value) -> {
+				final String theName = Cast.asString(scope, key.value(scope));
+				result.put(theName, value);
 			});
+		} else if (attributes instanceof IExpression exp) {
+			@SuppressWarnings ("unchecked") final List<String> names =
+					GamaListFactory.create(scope, Types.STRING, Cast.asList(scope, exp.value(scope)));
+			if (species != null) {
+				names.forEach(n -> result.put(n,
+						species.hasAttribute(n) ? species.getVarExpr(n, false) : IExpressionFactory.NIL_EXPR));
+			} else {
+				// see #2982
+				names.forEach(n -> result.put(n, new ConstantExpression(n)));
+			}
 		}
+		return result;
 	}
 
+	/**
+	 * Define projection.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param epsgCode
+	 *            the epsg code
+	 * @return the i projection
+	 */
 	protected IProjection defineProjection(final IScope scope, final String epsgCode) {
 		String code = epsgCode;
 		IProjection gis;
@@ -196,27 +374,13 @@ public abstract class AbstractShapeSaver {
 		return gis;
 	}
 
-	protected void computeInitsFromAttributesFacet(final IScope scope, final IExpression attributesFacet,
-			final Map<String, IExpression> values, final SpeciesDescription species) throws GamaRuntimeException {
-		if (attributesFacet instanceof MapExpression me) {
-			final Map<IExpression, IExpression> map = me.getElements();
-			map.forEach((key, value) -> {
-				final String theName = Cast.asString(scope, key.value(scope));
-				values.put(theName, value);
-			});
-		} else {
-			@SuppressWarnings ("unchecked") final List<String> names =
-					GamaListFactory.create(scope, Types.STRING, Cast.asList(scope, attributesFacet.value(scope)));
-			if (species != null) {
-				names.forEach(n -> values.put(n,
-						species.hasAttribute(n) ? species.getVarExpr(n, false) : IExpressionFactory.NIL_EXPR));
-			} else {
-				// see #2982
-				names.forEach(n -> values.put(n, new ConstantExpression(n)));
-			}
-		}
-	}
-
+	/**
+	 * Geometry collection to simple management.
+	 *
+	 * @param gg
+	 *            the gg
+	 * @return the geometry
+	 */
 	protected Geometry geometryCollectionToSimpleManagement(final Geometry gg) {
 		if (gg instanceof GeometryCollection gc) {
 			final int nb = gc.getNumGeometries();
@@ -255,6 +419,56 @@ public abstract class AbstractShapeSaver {
 			}
 		}
 		return gg;
+	}
+
+	/**
+	 * Builds the feature.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param ff
+	 *            the ff
+	 * @param ag
+	 *            the ag
+	 * @param gis
+	 *            the gis
+	 * @param attributeValues
+	 *            the attribute values
+	 * @return true, if successful
+	 */
+	public static boolean buildFeature(final IScope scope, final SimpleFeature ff, final IShape ag,
+			final IProjection gis, final Collection<IExpression> attributeValues) {
+		final List<Object> values = new ArrayList<>();
+		// geometry is by convention (in specs) at position 0
+		Geometry g = ag.getInnerGeometry();
+		if (g == null) return false;
+		if (gis != null) { g = gis.inverseTransform(g); }
+		g = GeometryUtils.cleanGeometryCollection(GeometryUtils.fixesPolygonCWS(g));
+		values.add(g);
+		if (ag instanceof IAgent ia) {
+			for (final IExpression variable : attributeValues) {
+				Object val = scope.evaluate(variable, ia).getValue();
+				if (variable.getGamlType().equals(Types.STRING)) {
+					val = val == null ? "" : StringUtils.toJavaString(val.toString());
+				}
+				values.add(val);
+			}
+		} else {
+			// see #2982. Assume it is an attribute of the shape
+			for (final IExpression variable : attributeValues) {
+				final Object val = variable.value(scope);
+				if (val instanceof String s) {
+					values.add(ag.getAttribute(s));
+				} else {
+					values.add("");
+				}
+			}
+		}
+		// AD Assumes that the type is ok.
+		// AD WARNING Would require some sort of iterator operator that
+		// would collect the values beforehand
+		ff.setAttributes(values);
+		return true;
 	}
 
 }

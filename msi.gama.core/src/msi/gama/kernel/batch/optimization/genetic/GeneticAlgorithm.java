@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GeneticAlgorithm.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GeneticAlgorithm.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package msi.gama.kernel.batch.optimization.genetic;
@@ -14,6 +14,7 @@ package msi.gama.kernel.batch.optimization.genetic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -130,52 +131,52 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
 	/** The population dim. */
 	int populationDim = 3;
-	
+
 	/** The crossover prob. */
 	double crossoverProb = 0.7;
-	
+
 	/** The mutation prob. */
 	double mutationProb = 0.1;
-	
+
 	/** The nb prelim generations. */
 	int nbPrelimGenerations = 1;
-	
+
 	/** The max generations. */
 	int maxGenerations = 20;
 
 	/** The init pop. */
 	Initialization initPop;
-	
+
 	/** The cross over op. */
 	CrossOver crossOverOp;
-	
+
 	/** The mutation op. */
 	Mutation mutationOp;
-	
+
 	/** The selection op. */
 	Selection selectionOp;
-	
+
 	/** The improve solution. */
 	Boolean improveSolution;
 
 	/** The Constant POP_DIM. */
 	protected static final String POP_DIM = "pop_dim";
-	
+
 	/** The Constant CROSSOVER_PROB. */
 	protected static final String CROSSOVER_PROB = "crossover_prob";
-	
+
 	/** The Constant MUTATION_PROB. */
 	protected static final String MUTATION_PROB = "mutation_prob";
-	
+
 	/** The Constant NB_GEN. */
 	protected static final String NB_GEN = "nb_prelim_gen";
-	
+
 	/** The Constant MAX_GEN. */
 	protected static final String MAX_GEN = "max_gen";
-	
+
 	/** The Constant IMPROVE_SOL. */
 	protected static final String IMPROVE_SOL = "improve_sol";
-	
+
 	/** The Constant STOCHASTIC_SEL. */
 	protected static final String STOCHASTIC_SEL = "stochastic_sel";
 
@@ -185,7 +186,8 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	/**
 	 * Instantiates a new genetic algorithm.
 	 *
-	 * @param species the species
+	 * @param species
+	 *            the species
 	 */
 	public GeneticAlgorithm(final IDescription species) {
 		super(species);
@@ -196,9 +198,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		super.initializeFor(scope, agent);
 		final IExpression impSol = getFacet(IMPROVE_SOL);
-		if (impSol != null) {
-			improveSolution = Cast.asBool(scope, impSol.value(scope));
-		}
+		if (impSol != null) { improveSolution = Cast.asBool(scope, impSol.value(scope)); }
 		if (improveSolution != null && improveSolution) {
 			final List<IParameter.Batch> v = agent.getParametersToExplore();
 			neighborhood = new Neighborhood1Var(v);
@@ -223,25 +223,15 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 		}
 
 		final IExpression popDim = getFacet(POP_DIM);
-		if (popDim != null) {
-			populationDim = Cast.asInt(scope, popDim.value(scope));
-		}
+		if (popDim != null) { populationDim = Cast.asInt(scope, popDim.value(scope)); }
 		final IExpression crossOverPb = getFacet(CROSSOVER_PROB);
-		if (crossOverPb != null) {
-			crossoverProb = Cast.asFloat(scope, crossOverPb.value(scope));
-		}
+		if (crossOverPb != null) { crossoverProb = Cast.asFloat(scope, crossOverPb.value(scope)); }
 		final IExpression mutationPb = getFacet(MUTATION_PROB);
-		if (mutationPb != null) {
-			mutationProb = Cast.asFloat(scope, mutationPb.value(scope));
-		}
+		if (mutationPb != null) { mutationProb = Cast.asFloat(scope, mutationPb.value(scope)); }
 		final IExpression nbprelimgen = getFacet(NB_GEN);
-		if (nbprelimgen != null) {
-			nbPrelimGenerations = Cast.asInt(scope, nbprelimgen.value(scope));
-		}
+		if (nbprelimgen != null) { nbPrelimGenerations = Cast.asInt(scope, nbprelimgen.value(scope)); }
 		final IExpression maxgen = getFacet(MAX_GEN);
-		if (maxgen != null) {
-			maxGenerations = Cast.asInt(scope, maxgen.value(scope));
-		}
+		if (maxgen != null) { maxGenerations = Cast.asInt(scope, maxgen.value(scope)); }
 	}
 
 	@Override
@@ -270,10 +260,11 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				}
 				population.addAll(mutatePop.items());
 			}
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue())
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 				computePopFitnessAll(scope, population);
-			else
+			} else {
 				computePopFitness(scope, population);
+			}
 			population = population.stream().distinct().toList();
 			population = selectionOp.select(scope, population, populationDim, isMaximize());
 			nbGen++;
@@ -286,14 +277,15 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	/**
 	 * Compute pop fitness.
 	 *
-	 * @param scope the scope
-	 * @param population the population
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param population
+	 *            the population
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public void computePopFitness(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
-		for (final Chromosome chromosome : population) {
-			computeChroFitness(scope, chromosome);
-		}
+		for (final Chromosome chromosome : population) { computeChroFitness(scope, chromosome); }
 		if (this.improveSolution != null && improveSolution) {
 			for (final Chromosome chromosome : population) {
 				ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
@@ -304,40 +296,43 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 			}
 		}
 	}
-	
+
 	/**
 	 * Compute pop fitness all.
 	 *
-	 * @param scope the scope
-	 * @param population the population
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param population
+	 *            the population
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
-	public void computePopFitnessAll(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
+	public void computePopFitnessAll(final IScope scope, final List<Chromosome> population)
+			throws GamaRuntimeException {
 		List<ParametersSet> solTotest = new ArrayList<>();
-		Map<Chromosome,ParametersSet> paramToCh = GamaMapFactory.create();
+		Map<Chromosome, ParametersSet> paramToCh = GamaMapFactory.create();
 		for (final Chromosome chromosome : population) {
 			ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
-			paramToCh.put( chromosome, sol);
-			if (!testedSolutions.containsKey(sol)) {
-				solTotest.add(sol);
-			}
+			paramToCh.put(chromosome, sol);
+			if (!testedSolutions.containsKey(sol)) { solTotest.add(sol); }
 		}
-		Map<ParametersSet, Double> fitnessRes = currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream()
-				.collect(Collectors.toMap(
-						e -> e.getKey(), 
-						e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)
-						));
+		Map<ParametersSet, Double> fitnessRes =
+				currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream().collect(
+						Collectors.toMap(Entry::getKey, e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)));
 		testedSolutions.putAll(fitnessRes);
 		for (final Chromosome chromosome : population) {
 			ParametersSet ps = paramToCh.get(chromosome);
 			if (ps != null) {
 				Double fitness = fitnessRes.get(ps);
-				if (fitness != null) chromosome.setFitness(fitness);
-				else  chromosome.setFitness(testedSolutions.get(ps));
+				if (fitness != null) {
+					chromosome.setFitness(fitness);
+				} else {
+					chromosome.setFitness(testedSolutions.get(ps));
+				}
 			}
-				
+
 		}
-		
+
 		if (this.improveSolution != null && improveSolution) {
 			for (final Chromosome chromosome : population) {
 				ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
@@ -347,23 +342,22 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				chromosome.setFitness(fitness);
 			}
 		}
-		
-		
+
 	}
 
-	
 	/**
 	 * Compute chro fitness.
 	 *
-	 * @param scope the scope
-	 * @param chromosome the chromosome
+	 * @param scope
+	 *            the scope
+	 * @param chromosome
+	 *            the chromosome
 	 */
 	public void computeChroFitness(final IScope scope, final Chromosome chromosome) {
 		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
 		Double fitness = testedSolutions.get(sol);
 		if (fitness == null) {
-			fitness = (Double) currentExperiment.launchSimulationsWithSolution(sol)
-					.get(IKeyword.FITNESS).get(0);
+			fitness = (Double) currentExperiment.launchSimulationsWithSolution(sol).get(IKeyword.FITNESS).get(0);
 		}
 		testedSolutions.put(sol, fitness);
 		chromosome.setFitness(fitness);
@@ -415,8 +409,15 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
 				});
 	}
-	
-	public Map<ParametersSet, Double>  testSolutions(List<ParametersSet> solutions) {
+
+	/**
+	 * Test solutions.
+	 *
+	 * @param solutions
+	 *            the solutions
+	 * @return the map
+	 */
+	public Map<ParametersSet, Double> testSolutions(final List<ParametersSet> solutions) {
 		Map<ParametersSet, Double> results = GamaMapFactory.create();
 		solutions.removeIf(a -> a == null);
 		List<ParametersSet> solTotest = new ArrayList<>();
@@ -427,23 +428,23 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				solTotest.add(sol);
 			}
 		}
-		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest)
-				.entrySet().stream().collect(Collectors.toMap(
-						e -> e.getKey(), 
-						e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0))
-						);
+		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream()
+				.collect(Collectors.toMap(Entry::getKey, e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)));
 		testedSolutions.putAll(res);
 		results.putAll(res);
-		
+
 		return results;
 	}
 
 	/**
 	 * Improve solution.
 	 *
-	 * @param scope the scope
-	 * @param solution the solution
-	 * @param currentFitness the current fitness
+	 * @param scope
+	 *            the scope
+	 * @param solution
+	 *            the solution
+	 * @param currentFitness
+	 *            the current fitness
 	 * @return the parameters set
 	 */
 	private ParametersSet improveSolution(final IScope scope, final ParametersSet solution,
@@ -451,47 +452,44 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 		ParametersSet bestSol = solution;
 		double bestFitness = currentFitness;
 		while (true) {
-			final List<ParametersSet> neighbors = neighborhood.neighbor(scope,solution);
-			if (neighbors.isEmpty()) {
-				break;
-			}
+			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, solution);
+			if (neighbors.isEmpty()) { break; }
 			ParametersSet bestNeighbor = null;
-			
-			if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue() && ! currentExperiment.getParametersToExplore().isEmpty()) {
-				Map<ParametersSet,Double> result = testSolutions(neighbors);
+
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
+					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				for (ParametersSet p : result.keySet()) {
 					Double neighborFitness = result.get(p);
-					if (isMaximize() && neighborFitness > bestFitness || !isMaximize() && neighborFitness < bestFitness) {
+					if (isMaximize() && neighborFitness > bestFitness
+							|| !isMaximize() && neighborFitness < bestFitness) {
 						bestNeighbor = p;
 						bestFitness = neighborFitness;
 						bestSol = bestNeighbor;
-					}	
+					}
 				}
 			} else {
 				for (final ParametersSet neighborSol : neighbors) {
-					if (neighborSol == null) {
-						continue;
-					}
+					if (neighborSol == null) { continue; }
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null) {
-						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol).get(IKeyword.FITNESS).get(0);
+						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
+								.get(IKeyword.FITNESS).get(0);
 						testedSolutions.put(neighborSol, neighborFitness);
 					}
-					
-					if (isMaximize() && neighborFitness > bestFitness || !isMaximize() && neighborFitness < bestFitness) {
+
+					if (isMaximize() && neighborFitness > bestFitness
+							|| !isMaximize() && neighborFitness < bestFitness) {
 						bestNeighbor = neighborSol;
 						bestFitness = neighborFitness;
 						bestSol = bestNeighbor;
 					}
-					
+
 				}
 			}
-			if (bestNeighbor != null) {
-				bestSol = bestNeighbor;
-			} else {
-				break;
-			}
-			
+			if (bestNeighbor == null) { break; }
+			bestSol = bestNeighbor;
+
 		}
 
 		return bestSol;
@@ -502,44 +500,34 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	 *
 	 * @return the population dim
 	 */
-	public int getPopulationDim() {
-		return populationDim;
-	}
+	public int getPopulationDim() { return populationDim; }
 
 	/**
 	 * Gets the mutation prob.
 	 *
 	 * @return the mutation prob
 	 */
-	public double getMutationProb() {
-		return mutationProb;
-	}
+	public double getMutationProb() { return mutationProb; }
 
 	/**
 	 * Gets the nb prelim generations.
 	 *
 	 * @return the nb prelim generations
 	 */
-	public int getNbPrelimGenerations() {
-		return nbPrelimGenerations;
-	}
+	public int getNbPrelimGenerations() { return nbPrelimGenerations; }
 
 	/**
 	 * Gets the max generations.
 	 *
 	 * @return the max generations
 	 */
-	public int getMaxGenerations() {
-		return maxGenerations;
-	}
+	public int getMaxGenerations() { return maxGenerations; }
 
 	/**
 	 * Gets the mutation op.
 	 *
 	 * @return the mutation op
 	 */
-	public Mutation getMutationOp() {
-		return mutationOp;
-	}
+	public Mutation getMutationOp() { return mutationOp; }
 
 }

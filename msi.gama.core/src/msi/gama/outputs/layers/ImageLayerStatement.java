@@ -3,7 +3,7 @@
  * ImageLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,7 +18,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
@@ -41,18 +40,19 @@ import msi.gaml.types.IType;
  *
  */
 @symbol (
-		name = IKeyword.IMAGE,
+		name = IKeyword.IMAGE_LAYER,
 		kind = ISymbolKind.LAYER,
 		with_sequence = false,
 		concept = { IConcept.DISPLAY, IConcept.FILE, IConcept.LOAD_FILE })
-@inside (
-		symbols = IKeyword.DISPLAY)
+
 @facets (
 		value = { @facet (
 				name = IKeyword.FILE,
-				type = { IType.STRING, IType.FILE },
+				type = { IType.NONE },
 				optional = true,
-				doc = @doc ("the name/path of the image (in the case of a raster image)")),
+				doc = @doc (
+						deprecated = "Directly pass the name or the file itself to the default facet",
+						value = "the name/path of the image (in the case of a raster image), a matrix of int, an image file")),
 				@facet (
 						name = IKeyword.ROTATE,
 						type = { IType.FLOAT },
@@ -80,9 +80,9 @@ import msi.gaml.types.IType;
 						doc = @doc ("Defines whether this layer is visible or not")),
 				@facet (
 						name = IKeyword.NAME,
-						type = { IType.STRING, IType.FILE },
+						type = { IType.NONE },
 						optional = true,
-						doc = @doc ("Human readable title of the image layer")),
+						doc = @doc ("the name/path of the image (in the case of a raster image), a matrix of int, an image file")),
 				@facet (
 						name = IKeyword.GIS,
 						type = { IType.FILE, IType.STRING },
@@ -95,17 +95,19 @@ import msi.gaml.types.IType;
 						doc = @doc ("in the case of a shapefile, this the color used to fill in geometries of the shapefile. In the case of an image, it is used to tint the image")),
 				@facet (
 						name = IKeyword.MATRIX,
-						type = { IType.MATRIX},
+						type = { IType.MATRIX },
 						optional = true,
-						doc = @doc ("the matrix containing the values of each pixel as integer following ARGB format")),
+						doc = @doc (
+								value = "the matrix containing the values of each pixel as integer following ARGB format",
+								deprecated = "Use a 'field' and a 'mesh' layer instead, or simply pass the matrix to the default facet")),
 				@facet (
 						name = IKeyword.REFRESH,
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("(openGL only) specify whether the image display is refreshed or not. (false by default, true should be used in cases of images that are modified over the simulation)")) },
-			omissible = IKeyword.NAME)
+		omissible = IKeyword.NAME)
 @doc (
-		value = "`" + IKeyword.IMAGE
+		value = "`" + IKeyword.IMAGE_LAYER
 				+ "` allows modeler to display an image (e.g. as background of a simulation). Note that this image will not be dynamically changed or moved in OpenGL, unless the refresh: facet is set to true.",
 		usages = { @usage (
 				value = "The general syntax is:",
@@ -113,7 +115,7 @@ import msi.gaml.types.IType;
 						value = "display my_display {",
 						isExecutable = false),
 						@example (
-								value = "   image layer_name file: image_file [additional options];",
+								value = "   image image_file [additional options];",
 								isExecutable = false),
 						@example (
 								value = "}",
@@ -124,7 +126,7 @@ import msi.gaml.types.IType;
 								value = "display my_display {",
 								isExecutable = false),
 								@example (
-										value = "   image background file:\"../images/my_backgound.jpg\";",
+										value = "   image \"../images/my_backgound.jpg\";",
 										isExecutable = false),
 								@example (
 										value = "}",
@@ -135,7 +137,7 @@ import msi.gaml.types.IType;
 								value = "display my_display {",
 								isExecutable = false),
 								@example (
-										value = "   image in_matrix value: my_image_matrix;",
+										value = "   image my_image_matrix;",
 										isExecutable = false),
 								@example (
 										value = "}",
@@ -157,19 +159,19 @@ import msi.gaml.types.IType;
 								value = "display my_display {",
 								isExecutable = false),
 								@example (
-										value = "  image image1 file:\"../images/image1.jpg\";",
+										value = "  image \"../images/image1.jpg\";",
 										isExecutable = false),
 								@example (
-										value = "  image image2 file:\"../images/image2.jpg\";",
+										value = "  image \"../images/image2.jpg\";",
 										isExecutable = false),
 								@example (
-										value = "  image image3 file:\"../images/image3.jpg\" position: {0,0,0.5};",
+										value = "  image \"../images/image3.jpg\" position: {0,0,0.5};",
 										isExecutable = false),
 								@example (
 										value = "}",
 										isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-				IKeyword.OVERLAY, IKeyword.POPULATION })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 @validator (ImageLayerValidator.class)
 public class ImageLayerStatement extends AbstractLayerStatement {
 
@@ -182,7 +184,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		public void validate(final StatementDescription description) {
 			if (!description.hasFacet(GIS)) {
 				if (!description.hasFacet(NAME) && !description.hasFacet(FILE) && !description.hasFacet(MATRIX)) {
-					description.error("Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE + " or " + IKeyword.MATRIX,
+					description.error(
+							"Missing facets " + IKeyword.NAME + " or " + IKeyword.FILE + " or " + IKeyword.MATRIX,
 							IGamlIssue.MISSING_FACET, description.getUnderlyingElement(), FILE, "\"\"");
 				}
 			} else if (description.hasFacet(FILE)) {
@@ -194,7 +197,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	/** The file. */
 	IExpression file;
-	
+
+	/** The matrix. */
 	IExpression matrix;
 
 	/**
@@ -208,7 +212,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		file = getFacet(IKeyword.FILE, IKeyword.NAME);
-		matrix = getFacet(IKeyword.MATRIX);
+		matrix = file == null ? getFacet(IKeyword.MATRIX, IKeyword.NAME) : null;
 	}
 
 	/**

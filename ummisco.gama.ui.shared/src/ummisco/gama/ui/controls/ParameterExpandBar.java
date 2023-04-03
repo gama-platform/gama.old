@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ParameterExpandBar.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * ParameterExpandBar.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
@@ -29,7 +29,7 @@ import com.google.common.base.Objects;
 
 import msi.gama.common.interfaces.ItemList;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -476,8 +476,8 @@ public class ParameterExpandBar extends Composite {
 	void showItem(final ParameterExpandItem item) {
 		final var control = item.control;
 		if (control != null && !control.isDisposed()) {
-			item.setImage(item.expanded ? GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).image()
-					: GamaIcons.create(IGamaIcons.SMALL_EXPAND).image());
+			item.setImage(item.expanded ? GamaIcon.named(IGamaIcons.SMALL_COLLAPSE).image()
+					: GamaIcon.named(IGamaIcons.SMALL_EXPAND).image());
 			control.setVisible(item.expanded);
 		}
 		item.redraw();

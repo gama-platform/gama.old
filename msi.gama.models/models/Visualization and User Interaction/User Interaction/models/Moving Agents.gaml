@@ -135,8 +135,8 @@ experiment "Click and Move" type: gui
 			}
 
 			species being;
-			event mouse_move action: move;
-			event mouse_up action: click;
+			event #mouse_move action: move;
+			event #mouse_up action: click;
 			event 'r' action: kill;
 			event 'c' action: duplicate;
 

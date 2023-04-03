@@ -13,10 +13,9 @@ package msi.gaml.expressions.units;
 import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaDate;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 /**
  * Class UnitConstantExpression.
@@ -40,30 +39,8 @@ public class TimeUnitConstantExpression extends UnitConstantExpression {
 		return date.until(date.plus(1l, right), ChronoUnit.SECONDS);
 	}
 
-	/**
-	 * The Interface IFloatExpression.
-	 */
-	public interface ITimeFloatExpression extends IExpression {
-
-		/**
-		 * Gets the gaml type.
-		 *
-		 * @return the gaml type
-		 */
-		@Override
-		default IType<?> getGamlType() { return Types.FLOAT; }
-	}
-
 	/** The Constant UNCOMPUTABLE_DURATIONS. */
 	private static final Set<String> UNCOMPUTABLE_DURATIONS = Set.of("month", "year", "months", "years", "y");
-
-	/** The Constant MONTH_EXPR. */
-	private final static ITimeFloatExpression MONTH_EXPR =
-			scope -> approximalQuery(scope.getClock().getCurrentDate(), ChronoUnit.MONTHS);
-
-	/** The Constant YEAR_EXPR. */
-	private final static ITimeFloatExpression YEAR_EXPR =
-			scope -> approximalQuery(scope.getClock().getCurrentDate(), ChronoUnit.YEARS);
 
 	/** The is time dependent. */
 	final boolean isTimeDependent, isMonth;
@@ -90,9 +67,16 @@ public class TimeUnitConstantExpression extends UnitConstantExpression {
 	}
 
 	@Override
-	public IExpression getExpression() { return isTimeDependent ? isMonth ? MONTH_EXPR : YEAR_EXPR : this; }
+	public Object _value(final IScope scope) {
+		return isTimeDependent
+				? approximalQuery(scope.getClock().getCurrentDate(), isMonth ? ChronoUnit.MONTHS : ChronoUnit.YEARS)
+				: super._value(scope);
+	}
 
 	@Override
 	public boolean isConst() { return !isTimeDependent; }
+
+	@Override
+	public boolean isAllowedInParameters() { return !isTimeDependent; }
 
 }

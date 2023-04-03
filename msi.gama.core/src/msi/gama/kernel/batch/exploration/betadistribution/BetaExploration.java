@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * BetaExploration.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * BetaExploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch.exploration.betadistribution;
 
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -103,7 +102,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.BATCH_REPORT,
 						type = IType.STRING,
-						optional = true,
+						optional = false,
 						doc = @doc ("The path to the file where the Betad report will be written")) },
 		omissible = IKeyword.NAME)
 @doc (
@@ -125,7 +124,8 @@ public class BetaExploration extends AExplorationAlgorithm {
 	/**
 	 * Instantiates a new beta exploration.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public BetaExploration(final IDescription desc) {
 		super(desc);
@@ -141,8 +141,7 @@ public class BetaExploration extends AExplorationAlgorithm {
 		// == Parameters ==
 
 		List<Batch> params = currentExperiment.getParametersToExplore().stream()
-				.filter(p -> p.getMinValue(scope) != null && p.getMaxValue(scope) != null).map(p -> p)
-				.toList();
+				.filter(p -> p.getMinValue(scope) != null && p.getMaxValue(scope) != null).map(p -> p).toList();
 
 		parameters = parameters == null ? params : parameters;
 		List<ParametersSet> sets;
@@ -156,31 +155,34 @@ public class BetaExploration extends AExplorationAlgorithm {
 
 		String method = Cast.asString(scope, getFacet(Exploration.METHODS).value(scope));
 		sets = switch (method) {
-			case IKeyword.MORRIS -> throw GamaRuntimeException.error("Beta d indicator should use a factorial sampling design", scope);
-			case IKeyword.LHS -> throw GamaRuntimeException.error("Beta d indicator should use a factorial sampling design", scope);
-			case IKeyword.ORTHOGONAL -> throw GamaRuntimeException.error("Beta d indicator should use a factorial sampling design", scope);
-			
+			case IKeyword.MORRIS -> throw GamaRuntimeException
+					.error("Beta d indicator should use a factorial sampling design", scope);
+			case IKeyword.LHS -> throw GamaRuntimeException
+					.error("Beta d indicator should use a factorial sampling design", scope);
+			case IKeyword.ORTHOGONAL -> throw GamaRuntimeException
+					.error("Beta d indicator should use a factorial sampling design", scope);
+
 			case IKeyword.SALTELLI -> SaltelliSampling.MakeSaltelliSampling(scope, sample_size, parameters);
 			case IKeyword.FACTORIAL -> {
 				List<ParametersSet> ps = null;
 				if (hasFacet(Exploration.SAMPLE_FACTORIAL)) {
-					int[] factors = Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope))
-						.stream().mapToInt(o -> Integer.valueOf(o.toString()))
-						.toArray();
+					int[] factors = Cast.asList(scope, getFacet(Exploration.SAMPLE_FACTORIAL).value(scope)).stream()
+							.mapToInt(o -> Integer.parseInt(o.toString())).toArray();
 					ps = RandomSampling.FactorialUniformSampling(scope, factors, params);
 				} else {
 					ps = RandomSampling.FactorialUniformSampling(scope, sample_size, params);
 				}
 				yield ps;
 			}
-			case IKeyword.UNIFORM -> RandomSampling.UniformSampling(scope, sample_size, parameters); 
+			case IKeyword.UNIFORM -> RandomSampling.UniformSampling(scope, sample_size, parameters);
 			default -> buildParameterSets(scope, new ArrayList<>(), 0);
 		};
 
 		// == Launch simulations ==
 		currentExperiment.setSeeds(new Double[1]);
+		// TODO : why doesnt it take into account the value of 'keep_simulations:' ?
 		currentExperiment.setKeepSimulations(false);
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(sets);
 		} else {
 			res_outputs = GamaMapFactory.create();
@@ -215,15 +217,13 @@ public class BetaExploration extends AExplorationAlgorithm {
 	}
 
 	@Override
-	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) {
-		
-		return null;
-	}
+	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) { return null; }
 
 	/**
 	 * Builds the report string.
 	 *
-	 * @param res the res
+	 * @param res
+	 *            the res
 	 * @return the string
 	 */
 	public String buildReportString(final Map<String, Map<Batch, Double>> res) {

@@ -57,7 +57,7 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.menus.MenuAction;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -70,15 +70,15 @@ public class DisplaySurfaceMenu {
 	public static Map<Class<? extends ILayer>, Image> layer_images = new LinkedHashMap<>();
 
 	static {
-		layer_images.put(GridLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
-		layer_images.put(GridAgentLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
-		layer_images.put(MeshLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
-		layer_images.put(AgentLayer.class, GamaIcons.create(IGamaIcons.LAYER_AGENTS).image());
-		layer_images.put(ImageLayer.class, GamaIcons.create(IGamaIcons.LAYER_IMAGE).image());
-		layer_images.put(OverlayLayer.class, GamaIcons.create(IGamaIcons.LAYER_IMAGE).image());
-		layer_images.put(SpeciesLayer.class, GamaIcons.create(IGamaIcons.LAYER_SPECIES).image());
-		layer_images.put(ChartLayer.class, GamaIcons.create(IGamaIcons.LAYER_CHART).image());
-		layer_images.put(GraphicLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRAPHICS).image());
+		layer_images.put(GridLayer.class, GamaIcon.named(IGamaIcons.LAYER_GRID).image());
+		layer_images.put(GridAgentLayer.class, GamaIcon.named(IGamaIcons.LAYER_GRID).image());
+		layer_images.put(MeshLayer.class, GamaIcon.named(IGamaIcons.LAYER_GRID).image());
+		layer_images.put(AgentLayer.class, GamaIcon.named(IGamaIcons.LAYER_AGENTS).image());
+		layer_images.put(ImageLayer.class, GamaIcon.named(IGamaIcons.LAYER_IMAGE).image());
+		layer_images.put(OverlayLayer.class, GamaIcon.named(IGamaIcons.LAYER_IMAGE).image());
+		layer_images.put(SpeciesLayer.class, GamaIcon.named(IGamaIcons.LAYER_SPECIES).image());
+		layer_images.put(ChartLayer.class, GamaIcon.named(IGamaIcons.LAYER_CHART).image());
+		layer_images.put(GraphicLayer.class, GamaIcon.named(IGamaIcons.LAYER_GRAPHICS).image());
 	}
 
 	/** The menu. */
@@ -326,7 +326,7 @@ public class DisplaySurfaceMenu {
 				return;
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
 			final MenuAction focus =
-					new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(), "Focus on this display");
+					new MenuAction(adapter, GamaIcon.named(IGamaIcons.MENU_FOCUS).image(), "Focus on this display");
 			final MenuAction[] actions2 = new MenuAction[actions.length + 1];
 			for (int i = 0; i < actions.length; i++) { actions2[i + 1] = actions[i]; }
 			actions2[0] = focus;
@@ -353,13 +353,14 @@ public class DisplaySurfaceMenu {
 				GamaMenu.action(submenu, visible ? "Hide" : "Show", t -> {
 					layer.getData().setVisible(!visible);
 					surface.updateDisplay(true);
-				}, GamaIcons.create("menu.inspect2").image());
+				}, GamaIcon.named(IGamaIcons.MENU_INSPECT).image());
 				if (!pop.isEmpty()) {
 					GamaMenu.action(submenu, select ? "Forbid selection" : "Allow selection",
-							t -> layer.getData().setSelectable(!select), GamaIcons.create("menu.follow2").image());
+							t -> layer.getData().setSelectable(!select),
+							GamaIcon.named(IGamaIcons.LAYER_SELECTION).image());
 				}
-				Menu transparency =
-						GamaMenu.sub(submenu, "Transparency", "", GamaIcons.create("layer.transparency").image());
+				Menu transparency = GamaMenu.sub(submenu, "Transparency", "",
+						GamaIcon.named(IGamaIcons.LAYER_TRANSPARENCY).image());
 				transparency.setEnabled(layer.getData().isDynamic());
 				Double td = layer.getData().getTransparency(GAMA.getRuntimeScope());
 				int ti = (int) (td == null ? 0 : Math.round(td * 10) * 10);
@@ -371,7 +372,8 @@ public class DisplaySurfaceMenu {
 					}, null);
 				}
 				if (definition instanceof SpeciesLayerStatement spec) {
-					Menu aspectMenu = GamaMenu.sub(submenu, "Aspect", "", GamaIcons.create("menu.agent2").image());
+					Menu aspectMenu =
+							GamaMenu.sub(submenu, "Aspect", "", GamaIcon.named(IGamaIcons.MENU_AGENT).image());
 					aspectMenu.setEnabled(layer.getData().isDynamic());
 					String current = spec.getAspectName();
 					for (String aspect : spec.getAspects()) {
@@ -390,24 +392,25 @@ public class DisplaySurfaceMenu {
 								((ChartLayerStatement) definition).getChart(), p);
 						editor.open();
 						surface.updateDisplay(true);
-					}, GamaIcons.create("chart.parameters").image());
+					}, GamaIcon.named(IGamaIcons.CHART_PARAMETERS).image());
 					if (chart.keepsHistory()) {
 						GamaMenu.action(submenu, "Save history...", t -> chart.saveHistory(),
-								GamaIcons.create("menu.browse2").image());
+								GamaIcon.named(IGamaIcons.MENU_BROWSE).image());
 					}
 				} else if (definition instanceof GridLayerStatement grid) {
 					boolean lines = ((IGridLayer) layer).getData().drawLines();
 					GamaMenu.action(submenu, lines ? "Hide lines" : "Draw lines", t -> {
 						((IGridLayer) layer).getData().setDrawLines(!lines);
 						surface.updateDisplay(true);
-					}, GamaIcons.create("menu.browse2").image());
+					}, GamaIcon.named(IGamaIcons.MENU_BROWSE).image());
 				}
 				if (select) {
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
-					final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
+					final MenuAction focus = new MenuAction(adapter, GamaIcon.named(IGamaIcons.MENU_FOCUS).image(),
 							"Focus on this display");
 					final MenuAction[] actions2 = { focus };
-					Menu agentsMenu = GamaMenu.sub(submenu, "Agents", "", GamaIcons.create("display.agents2").image());
+					Menu agentsMenu =
+							GamaMenu.sub(submenu, "Agents", "", GamaIcon.named(IGamaIcons.MENU_POPULATION).image());
 					AgentsMenu.fillPopulationSubMenu(agentsMenu, pop, actions2);
 				}
 			}

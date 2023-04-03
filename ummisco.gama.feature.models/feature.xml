@@ -4,7 +4,7 @@
       label="Models"
       version="1.9.0.qualifier"
       provider-name="UMMISCO"
-      plugin="ummisco.gama.feature.models.branding"
+      plugin="msi.gama.models"
       colocation-affinity="ummisco.gama.feature.core">
 
    <description url="http://www.gama-platform.org">
@@ -25,12 +25,6 @@
 
    <plugin
          id="msi.gama.models"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="ummisco.gama.feature.models.branding"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

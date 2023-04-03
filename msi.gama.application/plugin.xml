@@ -11,7 +11,7 @@
             name="Gama">
          <property
                name="windowImages"
-               value="branding_icons/icon16.png,branding_icons/icon32.png,branding_icons/icon48.png,branding_icons/icon64.png,branding_icons/icon128.png,branding_icons/icon256.png">
+               value="icons/window/icon16.png,icons/window/icon32.png,icons/window/icon48.png,icons/window/icon64.png,icons/window/icon128.png,icons/window/icon256.png">
          </property> 
          <property
                name="aboutText"
@@ -19,7 +19,7 @@
          </property>
          <property
                name="aboutImage"
-               value="branding_icons/icon128.png">
+               value="icons/window/icon128.png">
          </property>
          <property
                name="startupProgressRect"
@@ -33,14 +33,6 @@
                name="preferenceCustomization"
                value="plugin_customization.ini">
          </property>
-         <property
-               name="startupForegroundColor"
-               value="165E93">
-         </property>
-         <property
-               name="startupMessageRect"
-               value="230,490,500,16">
-         </property>
       </product>
    </extension>
 
@@ -48,7 +40,8 @@
          id="GamaApplication"
          name="Gama"
          point="org.eclipse.core.runtime.applications">
-      <application>
+       <application
+            icon="/icons/window/icon256.png">
          <run
                class="msi.gama.application.Application">
             <parameter
@@ -98,38 +91,6 @@
             <requires-nature
                   id="msi.gama.application.gamaNature">
             </requires-nature>
-         </extension>
-         <extension
-               id="runtime"
-               point="org.eclipse.core.runtime.products">
-            <product
-                  application="msi.gama.application.GamaApplication"
-                  name="Gama (runtime)">
-               <property
-                     name="windowImages"
-                     value="branding_icons/icon16.png,branding_icons/icon32.png,branding_icons/icon48.png,branding_icons/icon64.png,branding_icons/icon128.png,branding_icons/icon256.png">
-               </property>
-               <property
-                     name="aboutText"
-                     value="GAMA Platform - V1.9.0 - http://gama-platform.org&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2017 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;(c) 2018-2022 UMI 209 UMMISCO IRD/SU &amp; Partners">
-               </property>
-               <property
-                     name="aboutImage"
-                     value="branding_icons/icon128.png">
-               </property>
-               <property
-                     name="appName"
-                     value="Gama (runtime)">
-               </property>
-               <property
-                     name="startupProgressRect"
-                     value="71,515,500,12">
-               </property>
-               <property
-                     name="preferenceCustomization"
-                     value="plugin_customization.ini">
-               </property>
-            </product>
          </extension>
 
          <extension

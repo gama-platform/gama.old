@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RefreshActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * RefreshActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
@@ -21,7 +21,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class RefreshActionProvider.
@@ -30,7 +31,7 @@ public class RefreshActionProvider extends CommonActionProvider {
 
 	/** The refresh action. */
 	private RefreshAction refreshAction;
-	
+
 	/** The run all tests action. */
 	private RunAllTestsAction runAllTestsAction;
 
@@ -55,8 +56,7 @@ public class RefreshActionProvider extends CommonActionProvider {
 		final IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
 		refreshAction.selectionChanged(selection);
 		runAllTestsAction.selectionChanged(selection);
-		if (runAllTestsAction.isEnabled())
-			menu.appendToGroup("group.refresh", runAllTestsAction);
+		if (runAllTestsAction.isEnabled()) { menu.appendToGroup("group.refresh", runAllTestsAction); }
 		menu.appendToGroup("group.refresh", refreshAction);
 	}
 
@@ -66,10 +66,12 @@ public class RefreshActionProvider extends CommonActionProvider {
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		refreshAction = new RefreshAction(sp);
-		refreshAction.setImageDescriptor(GamaIcons.create("navigator/navigator.refresh2").descriptor());//$NON-NLS-1$
+		refreshAction.setImageDescriptor(GamaIcon.named(IGamaIcons.FILE_REFRESH).descriptor());
+		refreshAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.FILE_REFRESH).disabledDescriptor());
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 		runAllTestsAction = new RunAllTestsAction(sp, "Run all tests");
-		runAllTestsAction.setImageDescriptor(GamaIcons.create("test.run2").descriptor());
+		runAllTestsAction.setImageDescriptor(GamaIcon.named(IGamaIcons.TEST_RUN).descriptor());
+		runAllTestsAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.TEST_RUN).disabledDescriptor());
 
 	}
 

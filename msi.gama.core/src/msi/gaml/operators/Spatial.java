@@ -2,7 +2,7 @@
  *
  * Spatial.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,7 +11,6 @@ package msi.gaml.operators;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -4374,7 +4373,8 @@ public abstract class Spatial {
 				} else {
 					comp = (o1, o2) -> Double.compare(o1.getLocation().getY(), o2.getLocation().getY());
 				}
-				ArrayList<IShape> listSq = new ArrayList(toSquares(scope, geom, dimension).stream().sorted(comp).toList());
+				ArrayList<IShape> listSq =
+						new ArrayList(toSquares(scope, geom, dimension).stream().sorted(comp).toList());
 				final Double sum = (Double) Containers.sum(scope, rates);
 				final int totalNumber = listSq.size();
 				for (final Double rate : rates) {
@@ -6831,7 +6831,9 @@ public abstract class Spatial {
 		 */
 		private static IAgent _closest(final IScope scope, final IAgentFilter filter, final Object source) {
 			if (filter == null || source == null) return null;
-			return scope.getTopology().getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter);
+			ITopology topology = scope.getTopology();
+			if (topology == null) return null;
+			return topology.getAgentClosestTo(scope, Cast.asGeometry(scope, source, false), filter);
 		}
 
 		/**
@@ -6922,69 +6924,68 @@ public abstract class Spatial {
 		/**
 		 * KNN from Nguyen Dich Nhat Minh
 		 * 
-		 * 	 */
-		
+		 */
+
 		@operator (
 				value = { "k_nearest_neighbors" },
 				content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.SP_STATISTICAL,
 						IOperatorCategory.STATISTICAL },
 				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.AGENT_LOCATION,
-						IConcept.STATISTIC }				
-					)
-		@doc(
+						IConcept.STATISTIC })
+		@doc (
 				value = "This operator allows user to find the attribute of an agent basing on its k-nearest agents",
 				comment = "In order to use this operator, users have to create a map which map the agents with"
 						+ " one of their attributes (for example color or size,..). In the example below, "
 						+ "'map' is the map that I mention above, 'k' is the number of the nearest agents that we are"
 						+ "considering",
 				examples = { @example (
-								value = "self k_nearest_neighbors (map,k)",
-								equals = "this will return the attribute which has highest frequency in the "
-										+ "k-nearest neighbors of our agent ",
-								isExecutable = false) }
-				)
-		public static Object KNN(final IScope scope, IAgent agent, final IMap<IAgent,Object>
-		agents, final int k)
-				{
-					/** Create an inner class named "DistanceCalc" with Comparable interface, we will use 
-					 * this later to compare the distance between our agent and other agents
-					*/
-					class DistanceCalc implements Comparable<DistanceCalc>{
-						public Object label;
-						public Double dist;
-						public DistanceCalc(IAgent a, IAgent b, Object label) {
-							this.label = label;
-							this.dist = scope.getTopology().distanceBetween(scope, a, b);
-						}
-						public int compareTo(DistanceCalc other) {
-							if(this.dist == other.dist) return 0;
-							else if(this.dist > other.dist) return 1;
-							else return -1;
-						}
-					}
-					ArrayList<DistanceCalc> result = new ArrayList<>();
-					for(var key:agents.getKeys()) {
-						result.add(new DistanceCalc(agent, key, agents.get(key)));
-					}
-					Collections.sort(result);
-					// store k nearest neighbors
-					ArrayList<Object> K_neighbors = new ArrayList<>();
-					for(int i = 0 ; i < Math.min(k, result.size()) ; i++) {
-						K_neighbors.add(result.get(i).label);
-					}
-					// find most frequent element (majority voting)
-					int mostFrequent = 0;
-					Object predictedLabel = null;
-					for(int i = 0 ; i < k ; i++) {
-						int temp = Collections.frequency(K_neighbors, K_neighbors.get(i));
-						if(temp > mostFrequent) {
-							mostFrequent = temp;
-							predictedLabel = K_neighbors.get(i);
-						}
-					}
-					return predictedLabel;
+						value = "self k_nearest_neighbors (map,k)",
+						equals = "this will return the attribute which has highest frequency in the "
+								+ "k-nearest neighbors of our agent ",
+						isExecutable = false) })
+		public static Object KNN(final IScope scope, final IAgent agent, final IMap<IAgent, Object> agents,
+				final int k) {
+			/**
+			 * Create an inner class named "DistanceCalc" with Comparable interface, we will use this later to compare
+			 * the distance between our agent and other agents
+			 */
+			class DistanceCalc implements Comparable<DistanceCalc> {
+				public Object label;
+				public Double dist;
+
+				public DistanceCalc(final IAgent a, final IAgent b, final Object label) {
+					this.label = label;
+					this.dist = scope.getTopology().distanceBetween(scope, a, b);
 				}
+
+				@Override
+				public int compareTo(final DistanceCalc other) {
+					if (this.dist == other.dist) return 0;
+					if (this.dist > other.dist)
+						return 1;
+					else
+						return -1;
+				}
+			}
+			ArrayList<DistanceCalc> result = new ArrayList<>();
+			for (var key : agents.getKeys()) { result.add(new DistanceCalc(agent, key, agents.get(key))); }
+			Collections.sort(result);
+			// store k nearest neighbors
+			ArrayList<Object> K_neighbors = new ArrayList<>();
+			for (int i = 0; i < Math.min(k, result.size()); i++) { K_neighbors.add(result.get(i).label); }
+			// find most frequent element (majority voting)
+			int mostFrequent = 0;
+			Object predictedLabel = null;
+			for (int i = 0; i < k; i++) {
+				int temp = Collections.frequency(K_neighbors, K_neighbors.get(i));
+				if (temp > mostFrequent) {
+					mostFrequent = temp;
+					predictedLabel = K_neighbors.get(i);
+				}
+			}
+			return predictedLabel;
+		}
 
 		/**
 		 * Simple clustering by distance.

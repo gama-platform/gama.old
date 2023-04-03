@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * BackgroundChooser.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * BackgroundChooser.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
@@ -21,7 +21,7 @@ import msi.gama.util.GamaColor;
 import ummisco.gama.ui.menus.GamaColorMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 
 /**
  * Class FontSizer.
@@ -34,17 +34,18 @@ public class BackgroundChooser {
 
 	/** The view. */
 	final IToolbarDecoratedView.Colorizable view;
-	
+
 	/** The labels. */
 	final String[] labels;
-	
+
 	/** The colors. */
 	final GamaUIColor[] colors;
 
 	/**
 	 * Instantiates a new background chooser.
 	 *
-	 * @param view the view
+	 * @param view
+	 *            the view
 	 */
 	public BackgroundChooser(final IToolbarDecoratedView.Colorizable view) {
 		// We add a control listener to the toolbar in order to install the
@@ -52,9 +53,7 @@ public class BackgroundChooser {
 		this.view = view;
 		labels = view.getColorLabels();
 		colors = new GamaUIColor[labels.length];
-		for (int i = 0; i < labels.length; i++) {
-			colors[i] = view.getColor(i);
-		}
+		for (int i = 0; i < labels.length; i++) { colors[i] = view.getColor(i); }
 	}
 
 	/**
@@ -64,7 +63,7 @@ public class BackgroundChooser {
 		for (int i = 0; i < labels.length; i++) {
 			final int index = i;
 			final ToolItem item = tb.button(null, labels[index], labels[index], null, SWT.RIGHT);
-			item.setImage(GamaIcons.createTempColorIcon(colors[index]));
+			item.setImage(GamaIcon.ofColor(colors[index], true).image());
 			item.addSelectionListener(new SelectionAdapter() {
 
 				SelectionListener listener = new SelectionAdapter() {
@@ -74,7 +73,7 @@ public class BackgroundChooser {
 						final MenuItem i = (MenuItem) e.widget;
 						final String color = i.getText().replace("#", "");
 						final GamaColor c = GamaColor.colors.get(color);
-						if (c == null) { return; }
+						if (c == null) return;
 						changeColor(c.red(), c.green(), c.blue());
 					}
 
@@ -83,7 +82,7 @@ public class BackgroundChooser {
 				void changeColor(final int r, final int g, final int b) {
 					colors[index] = GamaColors.get(r, g, b);
 					// Image temp = item.getImage();
-					item.setImage(GamaIcons.createTempColorIcon(colors[index]));
+					item.setImage(GamaIcon.ofColor(colors[index], true).image());
 					// temp.dispose();
 					view.setColor(index, colors[index]);
 				}
@@ -91,7 +90,7 @@ public class BackgroundChooser {
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 
-					new GamaColorMenu(null).open(item.getParent(), e, listener, (r, g, b) -> changeColor(r, g, b));
+					new GamaColorMenu(null).open(item.getParent(), e, listener, this::changeColor);
 
 				}
 			});

@@ -2,7 +2,7 @@
  *
  * IAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,6 +19,7 @@ import msi.gama.common.interfaces.INamed;
 import msi.gama.common.interfaces.IScoped;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.interfaces.IVarAndActionSupport;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -214,6 +215,18 @@ public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, I
 	 */
 	@getter (IKeyword.HOST)
 	IMacroAgent getHost();
+
+	/**
+	 * Gets the top level host.
+	 *
+	 * @return the top level host
+	 */
+	default ITopLevelAgent getTopLevelHost() {
+		IMacroAgent host = getHost();
+		if (host instanceof ITopLevelAgent top) return top;
+		if (host == null) return null;
+		return host.getTopLevelHost();
+	}
 
 	/**
 	 * Sets the host.

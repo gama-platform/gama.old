@@ -136,10 +136,10 @@ species people {
 		draw square(1.0) at: (location - {-2.0, 2.0, 0.0}) color: #tomato depth: 5.0 lighted: true;
 	}
 
-	// In a 3D display (openGL), agents can add texture (i.e. a picture on the geometry) or material (that influence the way light is reflected).
+	// In a 3D display (openGL), agents can add texture (i.e. a picture on the geometry) and can be lighted or not.
 	aspect textured {
-		draw sphere(2.0) color: #tomato material: material(0, 1);
-		draw sphere(2.0) at: (location - {4.0, 0.0, 0.0}) color: #tomato material: material(10, 10);
+		draw sphere(2.0) color: #tomato;
+		draw sphere(2.0) at: (location - {4.0, 0.0, 0.0}) color: #tomato lighted: false;
 		draw sphere(2.0) at: (location - {-4.0, 0.0, 0.0}) color: #tomato texture: wood0_image_file;
 	}
 

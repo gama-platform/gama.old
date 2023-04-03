@@ -3,7 +3,7 @@
  * ILayerManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.layers.charts.ChartLayer;
 
 /**
  * The class ILayerManager. Manages a fixed set of layers on behalf of a IDisplaySurface
@@ -96,5 +97,27 @@ public interface ILayerManager extends ItemList<ILayer>, IDisposable {
 	 * @return true, if successful
 	 */
 	boolean hasStructurallyChanged();
+
+	/**
+	 * Checks for esc event layer.
+	 *
+	 * @return true, if successful
+	 */
+	boolean hasEscEventLayer();
+
+	/**
+	 * Checks for arrow event layer.
+	 *
+	 * @return true, if successful
+	 */
+	boolean hasArrowEventLayer();
+
+	/**
+	 * Returns a ChartLayer if it is the only "physical" layer present in this manager (event layers do not count) or
+	 * null if there are none and/or other layers are displayed and visible
+	 *
+	 * @return the only chart
+	 */
+	ChartLayer getOnlyChart();
 
 }

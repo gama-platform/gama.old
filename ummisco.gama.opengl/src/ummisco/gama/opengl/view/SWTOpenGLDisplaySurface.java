@@ -11,10 +11,10 @@
 package ummisco.gama.opengl.view;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
@@ -42,7 +42,6 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLContext;
-import com.jogamp.opengl.util.awt.ImageUtil;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -64,15 +63,19 @@ import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
+import msi.gama.runtime.PlatformHelper;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.opengl.renderer.JOGLRenderer;
 import ummisco.gama.ui.menus.AgentsMenu;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
+import ummisco.gaml.extensions.image.GamaImage;
+import ummisco.gaml.extensions.image.ImageHelper;
 
 /**
  * Class OpenGLSWTDisplaySurface.
@@ -144,11 +147,10 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copyForGraphics("in opengl display"));
-		renderer = createRenderer();
-		animator = new GamaGLCanvas(parent, renderer, this).getAnimator();
 		layerManager = new LayerManager(this, output);
 		if (!layerManager.stayProportional()) { output.getData().setDrawEnv(false); }
-		// temp_focus = output.getFacet(IKeyword.FOCUS);
+		renderer = createRenderer();
+		animator = new GamaGLCanvas(parent, renderer, this).getAnimator();
 		animator.start();
 	}
 
@@ -170,8 +172,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getImage()
 	 */
 	@Override
-	public BufferedImage getImage(final int w, final int h) {
-		if (w == 0 || h == 0 || !renderer.hasDrawnOnce()) return null;
+	public GamaImage getImage(final int desiredWidth, final int desiredHeight) {
+		if (desiredWidth == 0 || desiredHeight == 0 || !renderer.hasDrawnOnce()) return null;
+		// We first render at the right dimensions and then we scale
+		Rectangle dimensions = this.getBoundsForRegularSnapshot();
+		int w = dimensions.width;
+		int h = dimensions.height;
 		final GLAutoDrawable glad = renderer.getCanvas();
 		if (glad == null) return null;
 		GL2 gl = glad.getGL().getGL2();
@@ -180,23 +186,31 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (context == null) return null;
 		final boolean current = context.isCurrent();
 		if (!current) { context.makeCurrent(); }
-		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
+		GamaImage[] image = new GamaImage[1];
+		glad.invoke(true, drawable -> {
+			// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
+			final ByteBuffer buffer = getBuffer(w, h);
+			// be sure we are reading from the right fbo (here is supposed to be the default one)
+			// bind the right buffer to read from
+			gl.glReadBuffer(GL.GL_BACK); // or GL.GL_FRONT ?
+			gl.glReadPixels(0, 0, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+			ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+			ColorModel cm = new ComponentColorModel(cs, new int[] { 8, 8, 8, 8 }, true, false, Transparency.TRANSLUCENT,
+					DataBuffer.TYPE_BYTE);
+			SampleModel sm = cm.createCompatibleSampleModel(w, h);
+			WritableRaster raster = new WritableRaster(sm, dbuf, new Point()) {};
+			GamaImage im = GamaImage.from(cm, raster, false);
+			// TODO Seems to take a very long time -- verify
 
-		final ByteBuffer buffer = getBuffer(w, h);
-		// be sure we are reading from the right fbo (here is supposed to be the default one)
-		// bind the right buffer to read from
-		gl.glReadBuffer(GL.GL_BACK); // or GL.GL_FRONT ?
-		gl.glReadPixels(0, 0, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-		ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-		ColorModel cm = new ComponentColorModel(cs, new int[] { 8, 8, 8, 8 }, true, false, Transparency.TRANSLUCENT,
-				DataBuffer.TYPE_BYTE);
-		SampleModel sm = cm.createCompatibleSampleModel(w, h);
-		WritableRaster raster = new WritableRaster(sm, dbuf, new Point()) {};
-		BufferedImage image = new BufferedImage(cm, raster, false, null);
-		// TODO Seems to take a very long time -- verify
-		ImageUtil.flipImageVertically(image);
+			if (desiredWidth != w || desiredHeight != h) {
+				im = ImageHelper.scaleImage(im, desiredWidth, desiredHeight);
+			}
+			ImageHelper.flipImageVertically(im);
+			image[0] = im;
+			return true;
+		});
 		if (!current) { glad.getGL().getContext().release(); }
-		return image;
+		return image[0];
 	}
 
 	/** The buffer. */
@@ -457,9 +471,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 		// By default, returns the coordinates in the world.
 		final GamaPoint point = getModelCoordinates();
-		final String x = point == null ? "N/A" : String.format("%8.6f", point.getX());
-		final String y = point == null ? "N/A" : String.format("%8.6f", point.getY());
-		sb.append(String.format("X%15s | Y%15s", x, y));
+		final String x = point == null ? "N/A" : String.format("%5.2f", point.getX());
+		final String y = point == null ? "N/A" : String.format("%5.2f", point.getY());
+		sb.append(String.format("X%8s | Y%8s", x, y));
 	}
 
 	@Override
@@ -607,8 +621,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final Map<String, Runnable> actions = new LinkedHashMap<>();
 		final Map<String, Image> images = new HashMap<>();
 		images.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
-				GamaIcons.create(IGamaIcons.MENU_FOLLOW).image());
-		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
+				GamaIcon.named(IGamaIcons.MENU_INSPECT).image());
+		images.put("Focus on region", GamaIcon.named(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
 		actions.put(renderer.getCameraHelper().isStickyROI() ? "Hide region" : "Keep region visible",
 				() -> renderer.getCameraHelper().toogleROI());
 		actions.put("Focus on region", () -> renderer.getCameraHelper().zoomFocus(env));
@@ -740,6 +754,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
+	public void dispatchSpecialKeyEvent(final int e) {
+		DEBUG.OUT("Special key received by the surface " + e);
+		for (final IEventLayerListener gl : listeners) { gl.specialKeyPressed(e); }
+	}
+
+	@Override
 	public void dispatchMouseEvent(final int swtMouseEvent, final int x, final int y) {
 		for (final IEventLayerListener gl : listeners) {
 			switch (swtMouseEvent) {
@@ -798,5 +818,22 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public IGraphics getIGraphics() { return renderer; }
+
+	@Override
+	public Rectangle getBoundsForRobotSnapshot() {
+		var rect = WorkbenchHelper.displaySizeOf(renderer.getCanvas());
+		// For some reason, macOS requires the native dimension for the robot to snapshot correctly
+		if (PlatformHelper.isMac() ) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
+				rect);
+		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
+	}
+	
+	public Rectangle getBoundsForRegularSnapshot() {
+		var rect = WorkbenchHelper.displaySizeOf(renderer.getCanvas());
+		// For some reason, macOS and Windows require the native dimension for the internal process to snapshot correctly
+		if (PlatformHelper.isMac() || PlatformHelper.isWindows()) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
+				rect);
+		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
+	}
 
 }

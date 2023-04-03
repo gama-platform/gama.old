@@ -1,13 +1,13 @@
 
 /*******************************************************************************************************
  *
- * AbstractObject.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * AbstractObject.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene;
 
@@ -15,8 +15,8 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import msi.gama.common.interfaces.IDisposable;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.DrawingAttributes.DrawerType;
 import ummisco.gama.opengl.OpenGL;
@@ -112,12 +112,10 @@ public abstract class AbstractObject<T, ATT extends DrawingAttributes> implement
 				obj = getAttributes().getTextures().get(order);
 			} catch (final IndexOutOfBoundsException e) {// do nothing. Can arrive in the new shader architecture
 			}
-			if (obj instanceof BufferedImage) {
-				textures[order] = gl.getTextureId((BufferedImage) obj);
-			} else if (obj instanceof GamaImageFile) {
+			if (obj instanceof IImageProvider im) {
 				final DrawingAttributes fd = getAttributes();
-				textures[order] = gl.getTextureId((GamaImageFile) obj, fd.useCache());
-			}
+				textures[order] = gl.getTextureId(im, fd.useCache());
+			} else if (obj instanceof BufferedImage im) { textures[order] = gl.getTextureId(im); }
 		}
 		return textures[order];
 	}

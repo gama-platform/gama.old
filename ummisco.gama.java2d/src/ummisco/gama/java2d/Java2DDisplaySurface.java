@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +33,7 @@ import java.util.concurrent.Semaphore;
 import javax.swing.JPanel;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Monitor;
 import org.locationtech.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -41,7 +41,6 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -58,8 +57,11 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 import ummisco.gama.ui.utils.DPIHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
+import ummisco.gaml.extensions.image.GamaImage;
+import ummisco.gaml.extensions.image.ImageHelper;
 
 /**
  * The Class Java2DDisplaySurface.
@@ -199,6 +201,18 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		for (final IEventLayerListener gl : listeners) { gl.keyPressed(String.valueOf(e)); }
 	}
 
+	/**
+	 * Dispatch key event.
+	 *
+	 * @param e
+	 *            the e
+	 */
+	@Override
+	public void dispatchSpecialKeyEvent(final int e) {
+		DEBUG.OUT("Special key received by the surface " + e);
+		for (final IEventLayerListener gl : listeners) { gl.specialKeyPressed(e); }
+	}
+
 	@Override
 	public void setMousePosition(final int xm, final int ym) {
 		final int x = xm;
@@ -281,22 +295,16 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void setFont(final Font f) {}
 
 	@Override
-	public BufferedImage getImage(final int w, final int h) {
+	public GamaImage getImage(final int w, final int h) {
 		final int previousWidth = getWidth();
 		final int previousHeight = getHeight();
 		final int width = w == -1 ? previousWidth : w;
 		final int height = h == -1 ? previousHeight : h;
 		final boolean sameSize = width == previousWidth && height == previousHeight;
-		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height, false);
+		final GamaImage newImage = ImageHelper.createCompatibleImage(width, height, false);
 		final Graphics g = newImage.getGraphics();
 
-		while (!rendered) {
-			try {
-				Thread.sleep(10);
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		while (!rendered) { THREADS.WAIT(20, "Surface is not rendered yet in Java2DDisplaySurface().getImage"); }
 		try {
 			EventQueue.invokeAndWait(() -> {
 				final Rectangle old = new Rectangle(viewPort);
@@ -305,15 +313,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 					final int[] point = computeBoundsFrom(width, height);
 					viewPort.width = point[0];
 					viewPort.height = point[1];
-					// resizeImage(width, height, false);
-
 				}
 				// Use printComponent() instead of print() as it prevents from changing the clip (see #3570)
 				printComponent(g);
-				if (!sameSize) {
-					// resizeImage(previousWidth, previousHeight, false);
-					viewPort.setBounds(old);
-				}
+				if (!sameSize) { viewPort.setBounds(old); }
 
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
@@ -505,21 +508,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		gg.setGraphics2D(g2d);
 		gg.setUntranslatedGraphics2D((Graphics2D) g);
 		layerManager.drawLayersOn(gg);
-		// if (temp_focus != null) {
-		// final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
-		// temp_focus = null;
-		// focusOn(geometry);
-		// rendered = true;
-		// synchronizer.signalRenderingIsFinished();
-		// return;
-		// }
-
-		// TODO Verify that the following expressions should not be also included in the "focus" block
 		g2d.dispose();
 		frames++;
 		rendered = true;
 		getOutput().setRendered(true);
-		// if (synchronizer != null) { synchronizer.signalRenderingIsFinished(); }
 	}
 
 	/**
@@ -834,13 +826,17 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public Font computeFont(final Font f) {
 		if (f == null) return null;
-		if (PlatformHelper.isWindows() && DPIHelper.isHiDPI()) return f.deriveFont(DPIHelper.autoScaleUp(f.getSize()));
+		if (monitor != null && PlatformHelper.isWindows() && DPIHelper.isHiDPI(monitor))
+			return f.deriveFont(DPIHelper.autoScaleUp(monitor, f.getSize()));
 		return f;
 
 	}
 
 	/** The visibility block. */
 	java.util.function.Supplier<Boolean> visibilityBlock;
+
+	/** The monitor. */
+	private Monitor monitor;
 
 	/**
 	 * Sets the visibility.
@@ -858,6 +854,24 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if (!v) return false;
 		if (visibilityBlock == null) return v;
 		return visibilityBlock.get();
+	}
+
+	/**
+	 * Sets the monitor.
+	 *
+	 * @param monitor
+	 *            the new monitor
+	 */
+	public void setMonitor(final Monitor monitor) {
+		this.monitor = monitor;
+
+	}
+
+	@Override
+	public Rectangle getBoundsForRobotSnapshot() {
+		Rectangle result = new Rectangle(getBounds());
+		result.setLocation(getLocationOnScreen());
+		return result;
 	}
 
 }

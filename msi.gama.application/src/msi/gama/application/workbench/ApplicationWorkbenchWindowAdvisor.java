@@ -3,20 +3,16 @@
  * ApplicationWorkbenchWindowAdvisor.java, in msi.gama.application, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.application.workbench;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.graphics.Resource;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -29,13 +25,11 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
-import org.osgi.framework.Bundle;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 
 /**
  * The Class ApplicationWorkbenchWindowAdvisor.
@@ -44,6 +38,17 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	static {
 		DEBUG.OFF();
+	}
+
+	@Override
+	public IStatus saveState(final IMemento memento) {
+		return super.saveState(memento);
+	}
+
+	@Override
+	public IStatus restoreState(final IMemento memento) {
+		// TODO Auto-generated method stub
+		return super.restoreState(memento);
 	}
 
 	@Override
@@ -62,15 +67,6 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 			final IWorkbenchWindowConfigurer configurer) {
 		super(adv, configurer);
-		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor begins");
-		// Hack and workaround for the inability to find launcher icons...
-
-		final Bundle bundle = Platform.getBundle("msi.gama.application");
-
-		final ImageDescriptor myImage =
-				ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("branding_icons/icon256.png"), null));
-		configurer.getWindow().getShell().setImage(myImage.createImage());
-		DEBUG.OUT("Instantiation of ApplicationWorkbenchWindowAdvisor finished");
 	}
 
 	@Override
@@ -111,9 +107,9 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			public void pageOpened(final IWorkbenchPage page) {}
 		});
 		// See #3187 -
-		if (FLAGS.USE_OLD_TABS) {
-			ThemeHelper.injectCSS(".MPartStack {\n" + " swt-tab-renderer: null;\n" + " swt-simple: true;\n" + "}");
-		}
+		// if (FLAGS.USE_OLD_TABS) {
+		ThemeHelper.injectCSS(".MPartStack {\n" + " swt-tab-renderer: null;\n" + " swt-simple: true;\n" + "}");
+		// }
 		// ThemeHelper.injectCSS(".MPartSashContainer{ jsash-width: 0px; } ");
 		ThemeHelper.restoreSashBackground();
 		configurer.setShowMenuBar(true);
@@ -132,17 +128,19 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	@Override
 	public void postWindowCreate() {
 		final IWorkbenchWindow window = getWindowConfigurer().getWindow();
-		window.getShell().setMaximized(GamaPreferences.Interface.CORE_SHOW_MAXIMIZED.getValue());
-		if (FLAGS.USE_DELAYED_RESIZE) {
-			window.getShell().addControlListener(new ControlAdapter() {
-
-				@Override
-				public void controlResized(final ControlEvent e) {
-					// window.getShell().layout(true, true);
-					window.getShell().requestLayout();
-				}
-
-			});
+		if (!GamaPreferences.Interface.CORE_REMEMBER_WINDOW.getValue()) {
+			window.getShell().setMaximized(GamaPreferences.Interface.CORE_SHOW_MAXIMIZED.getValue());
+			// if (FLAGS.USE_DELAYED_RESIZE) {
+			// window.getShell().addControlListener(new ControlAdapter() {
+			//
+			// @Override
+			// public void controlResized(final ControlEvent e) {
+			// // window.getShell().layout(true, true);
+			// window.getShell().requestLayout();
+			// }
+			//
+			// });
+			// }
 		}
 	}
 

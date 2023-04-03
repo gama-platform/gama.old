@@ -3,7 +3,7 @@
  * LayeredDisplayMultiListener.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -90,10 +90,26 @@ public class LayeredDisplayMultiListener {
 	 *
 	 * @param e
 	 *            the e
+	 * @param isCommand
 	 */
-	public void keyPressed(final char e) {
+	public void keyPressed(final char e, final boolean isCommand) {
+		if (isCommand) {
+			keyListener.accept(e);
+			return;
+		}
 		surface.dispatchKeyEvent(e);
 		WorkbenchHelper.asyncRun(view.displayOverlay);
+	}
+
+	/**
+	 * Special key pressed.
+	 *
+	 * @param keyCode
+	 *            the key code
+	 */
+	public void specialKeyPressed(final int keyCode) {
+		surface.dispatchSpecialKeyEvent(keyCode);
+		WorkbenchHelper.asyncRun(view.displayOverlay); // ??
 	}
 
 	/**
@@ -104,12 +120,7 @@ public class LayeredDisplayMultiListener {
 	 * @param command
 	 *            the command
 	 */
-	public void keyReleased(final int e, final boolean command) {
-		if (!command) return;
-
-		// TODO Verify this ...
-		keyListener.accept((char) e);
-	}
+	public void keyReleased(final char e, final boolean command) {}
 
 	/**
 	 * Mouse enter.
@@ -298,28 +309,12 @@ public class LayeredDisplayMultiListener {
 	/**
 	 * Focus gained.
 	 */
-	public void focusGained() {
-		// if (!ok()) { return; }
-		// if (suppressNextEnter) {
-		// DEBUG.LOG("One mouse enter suppressed");
-		// suppressNextEnter = false;
-		// return;
-		// }
-		// DEBUG.LOG("Control has gained focus");
-		// surface.dispatchMouseEvent(SWT.MouseEnter);
-		// Thread.dumpStack();
-	}
+	public void focusGained() {}
 
 	/**
 	 * Focus lost.
 	 */
-	public void focusLost() {
-		// if (!ok()) { return; }
-		// surface.dispatchMouseEvent(SWT.MouseExit);
-
-		// DEBUG.LOG("Control has lost focus");
-		// Thread.dumpStack();
-	}
+	public void focusLost() {}
 
 	/**
 	 * Sets the mouse position.

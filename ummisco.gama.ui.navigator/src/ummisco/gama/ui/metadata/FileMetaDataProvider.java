@@ -3,15 +3,13 @@
  * FileMetaDataProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.ui.metadata;
 
-import static org.eclipse.core.resources.ResourcesPlugin.getWorkspace;
-import static ummisco.gama.dev.utils.DEBUG.ERR;
 import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
 import java.net.MalformedURLException;
@@ -33,7 +31,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -61,6 +58,7 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.GAML;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * Class FileMetaDataProvider.
@@ -359,15 +357,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			final boolean immediately) {
 		startup();
 		if (processing.contains(element)) {
-
-			while (processing.contains(element)) {
-				try {
-					Thread.currentThread();
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			while (processing.contains(element)) { THREADS.WAIT(100); }
 			return getMetaData(element, includeOutdated, immediately);
 
 		}
@@ -690,7 +680,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if (started) return;
 		started = true;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" loaded in", 15, '_'), () -> {
+		DEBUG.TIMER("GAMA: Retrieving workspace metadata", "done in", () -> {
 			try {
 				workspace.getRoot().accept(resource -> {
 					if (resource.isAccessible()) {
@@ -700,16 +690,16 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				});
 			} catch (final CoreException e) {}
 		});
-		new Thread(() -> {
-			try {
-				TIMER_WITH_EXCEPTIONS(
-						DEBUG.PAD("> GAMA: workspace projects ", 45, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
-							workspace.build(IncrementalProjectBuilder.FULL_BUILD, null);
-						});
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}).start();
+		// new Thread(() -> {
+		// try {
+		// TIMER_WITH_EXCEPTIONS(
+		// DEBUG.PAD("> GAMA: workspace projects ", 55, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
+		// workspace.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		// });
+		// } catch (CoreException e) {
+		// e.printStackTrace();
+		// }
+		// }).start();
 
 		try {
 			workspace.addSaveParticipant("ummisco.gama.ui.modeling", getSaveParticipant());
@@ -730,25 +720,24 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) return;
 
-				TIMER_WITH_EXCEPTIONS(
-						DEBUG.PAD("> GAMA: workspace metadata ", 45, ' ') + DEBUG.PAD(" saved in", 15, '_'), () -> {
-							getWorkspace().getRoot().accept(resource -> {
-								String toSave = null;
-								try {
+				TIMER_WITH_EXCEPTIONS("GAMA: workspace metadata ", "saved in", () -> {
+					ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
+						String toSave = null;
+						try {
 
-									if (resource.isAccessible()) {
-										toSave = (String) resource.getSessionProperty(CACHE_KEY);
-										resource.setPersistentProperty(CACHE_KEY, toSave);
-									}
-									return true;
-								} catch (final Exception e) {
-									ERR("Error for resource " + resource.getName());
-									if (toSave != null) { ERR("Trying to save " + toSave.length() + " bytes "); }
-									return true;
-								}
+							if (resource.isAccessible()) {
+								toSave = (String) resource.getSessionProperty(CACHE_KEY);
+								resource.setPersistentProperty(CACHE_KEY, toSave);
+							}
+							return true;
+						} catch (final Exception e) {
+							DEBUG.ERR("Error for resource " + resource.getName());
+							if (toSave != null) { DEBUG.ERR("Trying to save " + toSave.length() + " bytes "); }
+							return true;
+						}
 
-							});
-						});
+					});
+				});
 
 			}
 

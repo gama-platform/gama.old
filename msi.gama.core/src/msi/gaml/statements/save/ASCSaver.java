@@ -1,3 +1,12 @@
+/*******************************************************************************************************
+ *
+ * ASCSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
 import java.io.File;
@@ -6,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Set;
 
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
@@ -17,10 +27,34 @@ import msi.gaml.operators.Comparison;
 import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
 
-public class ASCSaver {
+/**
+ * The Class ASCSaver.
+ */
+public class ASCSaver extends AbstractSaver {
 
-	public void save(final IScope scope, final IExpression item, final File file) throws IOException {
-		if (file == null) return;
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param file
+	 *            the file
+	 * @param code
+	 *            the code
+	 * @param addHeader
+	 *            the add header
+	 * @param type
+	 *            the type
+	 * @param attributesToSave
+	 *            the attributes to save
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	@Override
+	public void save(final IScope scope, final IExpression item, final File file, final String code,
+			final boolean addHeader, final String type, final Object attributesToSave) throws IOException {
 		if (file.exists()) { file.delete(); }
 		try {
 			save(scope, item, new FileWriter(file));
@@ -29,11 +63,35 @@ public class ASCSaver {
 		}
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param stream
+	 *            the stream
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public void save(final IScope scope, final IExpression item, final OutputStream stream) throws IOException {
 		if (stream == null) return;
 		save(scope, item, new OutputStreamWriter(stream));
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param item
+	 *            the item
+	 * @param fw
+	 *            the fw
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	public void save(final IScope scope, final IExpression item, final Writer fw) throws IOException {
 		try (fw) {
 			Object v = item.value(scope);
@@ -47,6 +105,18 @@ public class ASCSaver {
 		}
 	}
 
+	/**
+	 * Save grid.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param species
+	 *            the species
+	 * @param fw
+	 *            the fw
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void saveGrid(final IScope scope, final ISpecies species, final Writer fw) throws IOException {
 
 		StringBuilder headerBuilder = new StringBuilder();
@@ -83,6 +153,18 @@ public class ASCSaver {
 
 	}
 
+	/**
+	 * Save field.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param field
+	 *            the field
+	 * @param fw
+	 *            the fw
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void saveField(final IScope scope, final GamaField field, final Writer fw) throws IOException {
 
 		if (field == null || field.isEmpty(scope)) return;
@@ -117,6 +199,16 @@ public class ASCSaver {
 			fw.write(val.append(Strings.LN).toString());
 		}
 
+	}
+
+	/**
+	 * Compute file types.
+	 *
+	 * @return the string[]
+	 */
+	@Override
+	public Set<String> computeFileTypes() {
+		return Set.of("asc");
 	}
 
 }

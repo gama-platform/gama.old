@@ -41,7 +41,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -68,9 +68,9 @@ public class AgentsMenu extends ContributionItem {
 		result.setText(title);
 		Image image;
 		if (agent instanceof SimulationAgent sim) {
-			image = GamaIcons.createTempRoundColorIcon(GamaColors.get(sim.getColor()));
+			image = GamaIcon.ofColor(GamaColors.get(sim.getColor()), false).image();
 		} else {
-			image = GamaIcons.create(IGamaIcons.MENU_AGENT).image();
+			image = GamaIcon.named(IGamaIcons.MENU_AGENT).image();
 		}
 		result.setImage(image);
 		final Menu agentMenu = new Menu(result);
@@ -195,7 +195,7 @@ public class AgentsMenu extends ContributionItem {
 			final String prefix) {
 		final MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix + " " + command.getName());
-		result.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
+		result.setImage(GamaIcon.named(IGamaIcons.MENU_RUN_ACTION).image());
 		result.addSelectionListener(runner);
 		result.setData("agent", agent);
 		result.setData("command", command);
@@ -342,13 +342,13 @@ public class AgentsMenu extends ContributionItem {
 		GamaMenu.separate(menu, "Actions");
 		final boolean simulation = agent instanceof SimulationAgent;
 		if (withInspect) {
-			actionAgentMenuItem(menu, agent, inspector, GamaIcons.create(IGamaIcons.MENU_INSPECT).image(),
+			actionAgentMenuItem(menu, agent, inspector, GamaIcon.named(IGamaIcons.MENU_INSPECT).image(),
 					"Inspect" + (topLevel ? simulation ? " simulation" : " experiment" : ""));
 		}
 		if (!topLevel) {
-			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
+			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcon.named(IGamaIcons.MENU_FOCUS).image(),
 					"Focus on all displays");
-			actionAgentMenuItem(menu, agent, highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
+			actionAgentMenuItem(menu, agent, highlighter, GamaIcon.named(IGamaIcons.MENU_HIGHLIGHT).image(),
 					agent.getScope().getGui().getHighlightedAgent() == agent ? "Remove highlight" : "Highlight");
 		}
 		if (actions != null && !topLevel) {
@@ -364,14 +364,14 @@ public class AgentsMenu extends ContributionItem {
 
 		if (!topLevel) {
 			GamaMenu.separate(menu);
-			actionAgentMenuItem(menu, agent, killer, GamaIcons.create(IGamaIcons.MENU_KILL).image(), "Kill");
+			actionAgentMenuItem(menu, agent, killer, GamaIcon.named(IGamaIcons.MENU_KILL).image(), "Kill");
 		}
 		if (agent instanceof IMacroAgent macro && macro.hasMembers()) {
 			GamaMenu.separate(menu);
 			if (!topLevel) { GamaMenu.separate(menu, "Micro-populations"); }
 			for (final IPopulation<? extends IAgent> pop : macro.getMicroPopulations()) {
 				if (!pop.isEmpty()) {
-					cascadingPopulationMenuItem(menu, agent, pop, GamaIcons.create(IGamaIcons.MENU_POPULATION).image(),
+					cascadingPopulationMenuItem(menu, agent, pop, GamaIcon.named(IGamaIcons.MENU_POPULATION).image(),
 							actions);
 				}
 			}
@@ -396,7 +396,7 @@ public class AgentsMenu extends ContributionItem {
 		final List<IAgent> agents = new ArrayList<>(species);
 		final int size = agents.size();
 		// if (size > 1 && !isSimulations) { GamaMenu.separate(menu, "Actions"); }
-		if (size >= 1) { browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image()); }
+		if (size >= 1) { browsePopulationMenuItem(menu, species, GamaIcon.named(IGamaIcons.MENU_BROWSE).image()); }
 		if (size >= 1 && !isSimulations) {
 			GamaMenu.separate(menu);
 			GamaMenu.separate(menu, "Agents");
@@ -422,7 +422,7 @@ public class AgentsMenu extends ContributionItem {
 					final Menu rangeMenu = new Menu(rangeItem);
 					rangeItem.setMenu(rangeMenu);
 					rangeItem.setText("From " + agents.get(begin).getName() + " to " + agents.get(end - 1).getName());
-					rangeItem.setImage(GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
+					rangeItem.setImage(GamaIcon.named(IGamaIcons.MENU_POPULATION).image());
 					rangeMenu.addListener(SWT.Show, e -> {
 						if (!menu.isVisible()) return;
 						final MenuItem[] items = rangeMenu.getItems();
@@ -451,7 +451,7 @@ public class AgentsMenu extends ContributionItem {
 	 */
 	public static MenuAction getHighlightActionFor(final IAgent a) {
 		if (a == null) return null;
-		return new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(),
+		return new MenuAction(highlighter, GamaIcon.named(IGamaIcons.MENU_HIGHLIGHT).image(),
 				a.getScope().getGui().getHighlightedAgent() == a ? "Remove highlight" : "Highlight");
 	}
 

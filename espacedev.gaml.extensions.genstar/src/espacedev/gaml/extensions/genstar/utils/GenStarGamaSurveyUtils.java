@@ -28,6 +28,7 @@ import msi.gama.util.file.csv.CsvReader.Stats;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.STRINGS;
 
 /**
  * The Class GenStarGamaSurveyUtils.
@@ -190,7 +191,7 @@ public class GenStarGamaSurveyUtils {
 		try (CsvReader reader = new CsvReader(path.toString(), stats.delimiter)) {
 			int[] min = { inferRowHeaders(), inferColumnHeaders() };
 			int[] max = { columnHeaderNumber[0] + columnHeaderNumber[1], rowHeaderNumber[0] + rowHeaderNumber[1] };
-			DEBUG.OUT("Data matrix is" + DEBUG.TO_STRING(min) + DEBUG.TO_STRING(max));
+			DEBUG.OUT("Data matrix is" + STRINGS.TO_STRING(min) + STRINGS.TO_STRING(max));
 			int idx = min[0];
 			do { reader.skipLine(); } while (--idx > 0);
 

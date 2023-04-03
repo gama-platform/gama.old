@@ -43,6 +43,7 @@ SetupIconFile={#SetupIconPath}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+DisableDirPage=no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -79,12 +80,16 @@ Source: "{#AppDirPath}\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#AppDirPath}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;Permissions: users-full
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+[Dirs]
+Name: "{app}\headless"; Permissions: users-full
+ 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#AppExeName},0"
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExeName}"" ""%1"""
 Root: HKA; Subkey: "Software\Classes\Applications\{#AppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""
+Root: HKCU; Subkey: "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\{#AppExeName}"; ValueData: "DPIUNAWARE"
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#AppExeName}" 

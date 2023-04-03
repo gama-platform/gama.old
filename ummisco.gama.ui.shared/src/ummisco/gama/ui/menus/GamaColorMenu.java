@@ -3,7 +3,7 @@
  * GamaColorMenu.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -32,7 +32,8 @@ import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.Selector;
@@ -182,14 +183,7 @@ public class GamaColorMenu extends GamaMenu {
 		}
 		if (getReverse() == null) { setReverse(PreferencesHelper.COLOR_MENU_REVERSE.getValue() ? -1 : 1); }
 		if (breakdown == null) { breakdown = PreferencesHelper.COLOR_MENU_GROUP.getValue(); }
-		action("Custom...", new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				openView(currentRunnable, null);
-			}
-
-		});
+		action("Custom...", e -> openView(currentRunnable, null));
 		final Menu optionMenu = sub("Options");
 		final Menu sortMenu = sub(optionMenu, "Sort by...");
 		check(optionMenu, "Breakdown", breakdown, chooseBreak);
@@ -210,23 +204,29 @@ public class GamaColorMenu extends GamaMenu {
 			}
 			final MenuItem item = action(subMenu, "#" + current, defaultListener);
 			final GamaColor color = GamaColor.colors.get(current);
-			item.setImage(
-					GamaIcons.createColorIcon(current, GamaColors.get(color.red(), color.green(), color.blue()), 16, 16)
-							.image());
+			item.setImage(GamaIcon.ofColor(GamaColors.get(color.red(), color.green(), color.blue()), true).image());
 		}
 
 	}
 
+	/**
+	 * Adds the color submenu to.
+	 *
+	 * @param menu
+	 *            the menu
+	 * @param text
+	 *            the text
+	 * @param selector
+	 *            the selector
+	 */
 	public static void addColorSubmenuTo(final Menu menu, final String text, final Consumer<GamaColor> selector) {
-		Menu subMenu = sub(menu, text, text, GamaIcons.create("reference.colors").image());
+		Menu subMenu = sub(menu, text, text, GamaIcon.named(IGamaIcons.REFERENCE_COLORS).image());
 		final List<String> names = new ArrayList(GamaColor.colors.keySet());
 		Collections.sort(names, colorComp);
 		for (final String current : names) {
 			final GamaColor color = GamaColor.colors.get(current);
 			final MenuItem item = action(subMenu, "#" + current, t -> selector.accept(GamaColor.colors.get(current)));
-			item.setImage(
-					GamaIcons.createColorIcon(current, GamaColors.get(color.red(), color.green(), color.blue()), 16, 16)
-							.image());
+			item.setImage(GamaIcon.ofColor(GamaColors.get(color.red(), color.green(), color.blue()), true).image());
 		}
 	}
 

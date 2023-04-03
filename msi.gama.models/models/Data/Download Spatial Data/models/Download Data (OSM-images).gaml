@@ -321,15 +321,15 @@ global {
 		} else {
 			//at the end, save the building
 			if (not empty(building_google)) {
-				save building_google crs:"EPSG:3857" type: shp to:exporting_path +"google_map_building.shp";
+				save building_google crs:"EPSG:3857" format: shp to:exporting_path +"google_map_building.shp";
 			}
 			if (not empty(marker)) {
-				save marker type: shp   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
+				save marker format: shp   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
 			}
 			do pause;
 		}
 		
-		
+		 
 	}
 	
 	//a function used to compute the coordinate when retrieving google map images
@@ -337,7 +337,7 @@ global {
 		float res <- (2 * #pi * 6378137 / TILE_SIZE) / (2^zoom);
 		float originShift <- 2 * #pi * 6378137 / 2.0;
 		return { px * res - originShift,  - py * res + originShift};
-	}
+	} 
 	
 	//a function to compute the google map tile from coordinate
 	list<int> index_tile(point coord) {
@@ -363,14 +363,14 @@ global {
 	action save_data(list<OSM_agent> ags, string type, string geom_type) {
 		if (not empty(ags)) {
 	 		list<string> atts <-  remove_duplicates(ags accumulate each.shape.attributes.keys);
-	 		save (ags collect each.shape) type: shp to: exporting_path + type + "_" + geom_type+".shp" attributes: atts;
+	 		save (ags collect each.shape) format: shp to: exporting_path + type + "_" + geom_type+".shp" attributes: atts;
 	 	}
 	}
 	
 	action save_image (string rest_link) {
 		matrix mat <- (image_file(rest_link).contents);
 		write "Satellite image retrieved";
-		save mat to: exporting_path +"satellite.png" type: image; 
+		save mat to: exporting_path +"satellite.png" format: image; 
 	}
 	
 	action save_meta_data (string rest_link) {
@@ -378,7 +378,7 @@ global {
 		write "Satellite image retrieved";
 		int id <- 0;
 		loop i from: 0 to: length(v) - 1 {
-			if ("bbox" in v[i]) {
+			if ("bbox" in v[i]) { 
 				id <- i;
 				break;
 			}
@@ -394,7 +394,7 @@ global {
 			
 		string info <- ""  + width +"\n0.0\n0.0\n"+height+"\n"+min(pt1.x,pt2.x)+"\n"+(height < 0 ? max(pt1.y,pt2.y) : min(pt1.y,pt2.y));
 	
-		save info to: exporting_path +"satellite.pgw";
+		save info to: exporting_path +"satellite.pgw" format:"text";
 	}
 	
 	action load_satellite_image
@@ -415,24 +415,24 @@ global {
 		
 		write "Satellite image saved with the right meta-data";
 		 
-		
+		 
 	}
 
 
 //action for vectorizing an existing google image
 	action load_google_image {
-		image_file image <- image_file(googlemap_path);
+		image_file im <- image_file(googlemap_path);
 		ask cell_google {		
-			color <-rgb( (image) at {grid_x ,grid_y }) ;
+			color <-rgb( (im) at {grid_x ,grid_y }) ;
 		}
 			
 		building_google <- building_google + define_building_from_image(cell_google collect each.shape, cell_google collect each.color);
 					
 		if (not empty(building_google)) {
-			save building_google crs:"EPSG:3857" type: shp to:exporting_path +"google_map_building.shp";
+			save building_google crs:"EPSG:3857" format: shp to:exporting_path +"google_map_building.shp";
 		}
 		if (not empty(marker)) {
-			save marker type: shp   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
+			save marker format: shp   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
 		}
 			
 		write "google image vectorized";

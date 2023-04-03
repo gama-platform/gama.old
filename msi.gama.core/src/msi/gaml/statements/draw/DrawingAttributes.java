@@ -3,7 +3,7 @@
  * DrawingAttributes.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -22,9 +22,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaMaterial;
 import msi.gama.util.file.GamaGifFile;
-import msi.gaml.operators.IUnits;
+import msi.gaml.constants.GamlCoreConstants;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -111,7 +110,7 @@ public class DrawingAttributes {
 	List<?> textures;
 
 	/** The material. */
-	GamaMaterial material;
+	// GamaMaterial material;
 
 	/**
 	 * Instantiates a new drawing attributes.
@@ -250,7 +249,7 @@ public class DrawingAttributes {
 	 *
 	 * @return the anchor
 	 */
-	public GamaPoint getAnchor() { return IUnits.bottom_left; }
+	public GamaPoint getAnchor() { return GamlCoreConstants.bottom_left; }
 
 	/**
 	 * Gets the location.
@@ -545,22 +544,15 @@ public class DrawingAttributes {
 	}
 
 	/**
-	 * Method getMaterial()
-	 *
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
-	 */
-	public GamaMaterial getMaterial() { return material; }
-
-	/**
 	 * Sets the material.
 	 *
 	 * @param m
 	 *            the new material
 	 */
-	public void setMaterial(final GamaMaterial m) {
-		material = m;
-
-	}
+	// public void setMaterial(final GamaMaterial m) {
+	// material = m;
+	//
+	// }
 
 	/**
 	 * Checks if is sets the.

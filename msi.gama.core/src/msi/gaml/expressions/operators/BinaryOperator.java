@@ -1,18 +1,20 @@
 /*******************************************************************************************************
  *
- * BinaryOperator.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * BinaryOperator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GAML;
@@ -20,8 +22,10 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.types.TypeExpression;
 import msi.gaml.expressions.variables.VariableExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.IType;
 
 /**
  * The Class BinaryOperator.
@@ -31,9 +35,12 @@ public class BinaryOperator extends AbstractNAryOperator {
 	/**
 	 * Creates the.
 	 *
-	 * @param proto the proto
-	 * @param context the context
-	 * @param child the child
+	 * @param proto
+	 *            the proto
+	 * @param context
+	 *            the context
+	 * @param child
+	 *            the child
 	 * @return the i expression
 	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context,
@@ -44,12 +51,63 @@ public class BinaryOperator extends AbstractNAryOperator {
 		return u;
 	}
 
+	@Override
+	public Doc getDocumentation() {
+		if (IKeyword.AS.equals(this.getName()) && exprs[1] instanceof TypeExpression) {
+			IType t = exprs[1].getDenotedType();
+			Doc doc = findDocOnType(t);
+			if (doc == null) { doc = findDocOnType(t.getGamlType()); }
+			if (doc != null) return doc;
+		}
+		return super.getDocumentation();
+	}
+
+	/**
+	 * Find doc on type.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the doc
+	 */
+	private Doc findDocOnType(final IType type) {
+		Class<? extends IType> clazz = type.getClass();
+		doc doc = null;
+		java.lang.reflect.Method m = null;
+		try {
+			m = clazz.getDeclaredMethod("cast", IScope.class, Object.class, Object.class, boolean.class);
+			if (m != null) { doc = m.getAnnotation(doc.class); }
+		} catch (NoSuchMethodException | SecurityException e) {}
+		if (doc == null) {
+			try {
+				m = clazz.getDeclaredMethod("cast", IScope.class, Object.class, Object.class, IType.class, IType.class,
+						boolean.class);
+				if (m != null) { doc = m.getAnnotation(doc.class); }
+			} catch (NoSuchMethodException | SecurityException e) {}
+		}
+		if (doc != null) {
+			Doc documentation = new RegularDoc(new StringBuilder(200));
+			String s = doc.value();
+			if (s != null && !s.isEmpty()) { documentation.append(s).append("<br/>"); }
+			usage[] usages = doc.usages();
+			for (usage u : usages) { documentation.append(u.value()).append("<br/>"); }
+			s = doc.deprecated();
+			if (s != null && !s.isEmpty()) {
+				documentation.append("<b>Deprecated</b>: ").append("<i>").append(s).append("</i><br/>");
+			}
+			return documentation;
+		}
+		return null;
+	}
+
 	/**
 	 * Instantiates a new binary operator.
 	 *
-	 * @param proto the proto
-	 * @param context the context
-	 * @param args the args
+	 * @param proto
+	 *            the proto
+	 * @param context
+	 *            the context
+	 * @param args
+	 *            the args
 	 */
 	public BinaryOperator(final OperatorProto proto, final IDescription context, final IExpression... args) {
 		super(proto, args);
@@ -117,10 +175,14 @@ public class BinaryOperator extends AbstractNAryOperator {
 		/**
 		 * Instantiates a new binary var operator.
 		 *
-		 * @param proto the proto
-		 * @param context the context
-		 * @param target the target
-		 * @param var the var
+		 * @param proto
+		 *            the proto
+		 * @param context
+		 *            the context
+		 * @param target
+		 *            the target
+		 * @param var
+		 *            the var
 		 */
 		public BinaryVarOperator(final OperatorProto proto, final IDescription context, final IExpression target,
 				final IVarExpression var) {
@@ -158,6 +220,9 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 		@Override
 		public boolean isContextIndependant() { return false; }
+
+		@Override
+		public boolean isAllowedInParameters() { return true; }
 
 		@Override
 		public BinaryVarOperator copy() {

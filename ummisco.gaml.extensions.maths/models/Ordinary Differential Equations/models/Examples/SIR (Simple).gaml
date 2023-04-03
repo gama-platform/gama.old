@@ -44,14 +44,14 @@ experiment Simulation type: gui {
 	float minimum_cycle_duration <- 0.1#s;
 	output { 
 		layout #vertical tabs: true;
-		display display_charts toolbar: false {
+		display display_charts toolbar: false  type: 2d {
 			chart "Time series" type: series background: rgb(47,47,47) color: #white {
 				data 'S' value: first(agent_with_SIR_dynamic).S color: rgb(46,204,113) ;				
 				data 'I' value: first(agent_with_SIR_dynamic).I color: rgb(231,76,60) ;
 				data 'R' value: first(agent_with_SIR_dynamic).R color: rgb(52,152,219) ;
 			}
 		}
-		display display_phase_portrait toolbar: false {
+		display display_phase_portrait toolbar: false  type: 2d {
 			chart "Phase portrait" type: xy background: rgb(47,47,47) color: #white x_label:"S" y_label:"Y" x_range: {0,1600} y_range: {0,700}{
 				data 'I vs S' value: [first(agent_with_SIR_dynamic).S,first(agent_with_SIR_dynamic).I] color: rgb(243,156,18)  ;				
 			}

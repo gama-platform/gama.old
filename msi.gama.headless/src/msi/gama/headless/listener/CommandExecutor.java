@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.java_websocket.WebSocket;
+import org.java_websocket.enums.ReadyState;
 
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Jsoner;
@@ -25,9 +26,9 @@ public class CommandExecutor {
 		cmds.put("pause", new PauseCommand());
 		cmds.put("stop", new StopCommand());
 		cmds.put("reload", new ReloadCommand());
-//		cmds.put("output", new OutputCommand());
 		cmds.put("expression", new ExpressionCommand());
 		cmds.put("exit", new ExitCommand());
+		cmds.put("fetch", new FetchCommand());
 
 		COMMANDS = Collections.unmodifiableMap(cmds);
 	}
@@ -42,7 +43,8 @@ public class CommandExecutor {
 
 		var res = command.execute(socket, map);
 		if(res!=null) {			
-			socket.send(Jsoner.serialize(res));
+			if(socket.getReadyState().equals(ReadyState.OPEN))
+				socket.send(Jsoner.serialize(res));
 		}
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RefactorActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * RefactorActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package ummisco.gama.ui.navigator.actions;
@@ -23,7 +23,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * @since 3.2
@@ -33,13 +34,13 @@ public class RefactorActionProvider extends CommonActionProvider {
 
 	/** The rename action. */
 	private RenameResourceAction renameAction;
-	
+
 	/** The history action. */
 	private ShowLocalHistory historyAction;
-	
+
 	/** The compare action. */
 	private CompareWithEachOtherAction compareAction;
-	
+
 	/** The shell. */
 	private Shell shell;
 
@@ -55,12 +56,16 @@ public class RefactorActionProvider extends CommonActionProvider {
 	protected void makeActions() {
 		final IShellProvider sp = () -> shell;
 		renameAction = new RenameResourceAction(sp);
-		renameAction.setImageDescriptor(GamaIcons.create("navigator/navigator.rename2").descriptor());
+		renameAction.setImageDescriptor(GamaIcon.named(IGamaIcons.FILE_RENAME).descriptor());
+		renameAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.FILE_RENAME).disabledDescriptor());
+
 		renameAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
 		historyAction = new ShowLocalHistory(sp);
-		historyAction.setImageDescriptor(GamaIcons.create("navigator/navigator.date2").descriptor());
+		historyAction.setImageDescriptor(GamaIcon.named(IGamaIcons.LOCAL_HISTORY).descriptor());
+		historyAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.LOCAL_HISTORY).disabledDescriptor());
 		compareAction = new CompareWithEachOtherAction(sp);
-		compareAction.setImageDescriptor(GamaIcons.create("layout.horizontal").descriptor());
+		compareAction.setImageDescriptor(GamaIcon.named(IGamaIcons.LAYOUT_HORIZONTAL).descriptor());
+		compareAction.setDisabledImageDescriptor(GamaIcon.named(IGamaIcons.LAYOUT_HORIZONTAL).disabledDescriptor());
 	}
 
 	@Override
@@ -72,13 +77,12 @@ public class RefactorActionProvider extends CommonActionProvider {
 	/**
 	 * Handle key pressed.
 	 *
-	 * @param event the event
+	 * @param event
+	 *            the event
 	 */
 	public void handleKeyPressed(final KeyEvent event) {
 		if (event.keyCode == SWT.F2 && event.stateMask == 0) {
-			if (renameAction.isEnabled()) {
-				renameAction.run();
-			}
+			if (renameAction.isEnabled()) { renameAction.run(); }
 			// Swallow the event.
 			event.doit = false;
 		}
@@ -94,9 +98,7 @@ public class RefactorActionProvider extends CommonActionProvider {
 			compareAction.selectionChanged(selection);
 			menu.insertBefore(CopyAction.ID, renameAction);
 			menu.insertAfter("additions", historyAction);
-			if (selection.size() == 2) {
-				menu.insertAfter("additions", compareAction);
-			}
+			if (selection.size() == 2) { menu.insertAfter("additions", compareAction); }
 		}
 	}
 

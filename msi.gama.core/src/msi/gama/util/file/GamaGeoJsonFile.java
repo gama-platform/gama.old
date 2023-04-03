@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGeoJsonFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamaGeoJsonFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -21,7 +21,6 @@ import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 
-import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -36,7 +35,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.SaveStatement;
 import msi.gaml.statements.save.GeoJSonSaver;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -44,21 +42,31 @@ import msi.gaml.types.Types;
 /**
  * The Class GamaGeoJsonFile.
  */
-@file(name = "geojson", extensions = { "json", "geojson",
-		"geo.json" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
-				IConcept.GIS,
-				IConcept.FILE }, doc = @doc("Represents geospatial files written using the GeoJSON format. The internal representation is a list of geometries"))
+@file (
+		name = "geojson",
+		extensions = { "json", "geojson", "geo.json" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.GEOMETRY,
+		buffer_index = IType.INT,
+		concept = { IConcept.GIS, IConcept.FILE },
+		doc = @doc ("Represents geospatial files written using the GeoJSON format. The internal representation is a list of geometries"))
 public class GamaGeoJsonFile extends GamaGisFile {
 
 	/**
 	 * Instantiates a new gama geo json file.
 	 *
-	 * @param scope    the scope
-	 * @param pathName the path name
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
-	@doc(value = "This file constructor allows to read a geojson file (https://geojson.org/)", examples = {
-			@example(value = "file f <- geojson_file(\"file.json\");", isExecutable = false) })
+	@doc (
+			value = "This file constructor allows to read a geojson file (https://geojson.org/)",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\");",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
@@ -66,12 +74,18 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	/**
 	 * Instantiates a new gama geo json file.
 	 *
-	 * @param scope    the scope
-	 * @param pathName the path name
-	 * @param code     the code
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
 	 */
-	@doc(value = "This file constructor allows to read a geojson file and specifying the coordinates system code, as an int", examples = {
-			@example(value = "file f <- geojson_file(\"file.json\", 32648);", isExecutable = false) })
+	@doc (
+			value = "This file constructor allows to read a geojson file and specifying the coordinates system code, as an int",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", 32648);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final Integer code) {
 		super(scope, pathName, code);
 		// TODO Auto-generated constructor stub
@@ -80,12 +94,18 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	/**
 	 * Instantiates a new gama geo json file.
 	 *
-	 * @param scope    the scope
-	 * @param pathName the path name
-	 * @param code     the code
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
 	 */
-	@doc(value = "This file constructor allows to read a geojson file and specifying the coordinates system code (epg,...,), as a string", examples = {
-			@example(value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\");", isExecutable = false) })
+	@doc (
+			value = "This file constructor allows to read a geojson file and specifying the coordinates system code (epg,...,), as a string",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\");",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final String code) {
 		super(scope, pathName, code);
 		// TODO Auto-generated constructor stub
@@ -94,12 +114,18 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	/**
 	 * Instantiates a new gama geo json file.
 	 *
-	 * @param scope    the scope
-	 * @param pathName the path name
-	 * @param withZ    the with Z
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param withZ
+	 *            the with Z
 	 */
-	@doc(value = "This file constructor allows to read a geojson file and take a potential z value (not taken in account by default)", examples = {
-			@example(value = "file f <- geojson_file(\"file.json\", true);", isExecutable = false) })
+	@doc (
+			value = "This file constructor allows to read a geojson file and take a potential z value (not taken in account by default)",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", true);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final boolean withZ) {
 		super(scope, pathName, (Integer) null, withZ);
 		// TODO Auto-generated constructor stub
@@ -108,13 +134,20 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	/**
 	 * Instantiates a new gama geo json file.
 	 *
-	 * @param scope    the scope
-	 * @param pathName the path name
-	 * @param code     the code
-	 * @param withZ    the with Z
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
+	 * @param withZ
+	 *            the with Z
 	 */
-	@doc(value = "This file constructor allows to read a geojson file, specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)", examples = {
-			@example(value = "file f <- geojson_file(\"file.json\",32648, true);", isExecutable = false) })
+	@doc (
+			value = "This file constructor allows to read a geojson file, specifying the coordinates system code, as an int and take a potential z value (not taken in account by default)",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\",32648, true);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final Integer code, final boolean withZ) {
 		super(scope, pathName, code, withZ);
 		// TODO Auto-generated constructor stub
@@ -123,13 +156,20 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	/**
 	 * Instantiates a new gama geo json file.
 	 *
-	 * @param scope    the scope
-	 * @param pathName the path name
-	 * @param code     the code
-	 * @param withZ    the with Z
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param code
+	 *            the code
+	 * @param withZ
+	 *            the with Z
 	 */
-	@doc(value = "This file constructor allows to read a geojson file, specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default", examples = {
-			@example(value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\",true);", isExecutable = false) })
+	@doc (
+			value = "This file constructor allows to read a geojson file, specifying the coordinates system code (epg,...,), as a string and take a potential z value (not taken in account by default",
+			examples = { @example (
+					value = "file f <- geojson_file(\"file.json\", \"EPSG:32648\",true);",
+					isExecutable = false) })
 	public GamaGeoJsonFile(final IScope scope, final String pathName, final String code, final boolean withZ) {
 		super(scope, pathName, code, withZ);
 		// TODO Auto-generated constructor stub
@@ -137,9 +177,8 @@ public class GamaGeoJsonFile extends GamaGisFile {
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null)
-			return;
-		setBuffer(GamaListFactory.<IShape>create(Types.GEOMETRY));
+		if (getBuffer() != null) return;
+		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		readShapes(scope);
 	}
 
@@ -175,12 +214,20 @@ public class GamaGeoJsonFile extends GamaGisFile {
 	/**
 	 * To geojson.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the string
 	 */
-	@operator(value = "to_geojson", category = { IOperatorCategory.CASTING }, concept = { IConcept.CAST })
-	@doc(value = "returns geojson of species with crs", examples = {
-			@example(value = "to_geojson(boat,\"EPSG:4326\",[\"color\"])", equals = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[100.51155642068785,3.514781609095577E-4,0.0]},\"properties\":{},\"id\":\"0\"}]}") }, see = {})
+	@operator (
+			value = "to_geojson",
+			category = { IOperatorCategory.CASTING },
+			concept = { IConcept.CAST })
+	@doc (
+			value = "returns geojson of species with crs",
+			examples = { @example (
+					value = "to_geojson(boat,\"EPSG:4326\",[\"color\"])",
+					equals = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[100.51155642068785,3.514781609095577E-4,0.0]},\"properties\":{},\"id\":\"0\"}]}") },
+			see = {})
 	@no_test
 	public static String toGeoJSon(final IScope scope, final IExpression spec, final String epsgCode,
 			final IExpression attributesFacet) {
@@ -188,7 +235,7 @@ public class GamaGeoJsonFile extends GamaGisFile {
 		final GeoJSonSaver gjsoner = new GeoJSonSaver();
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			gjsoner.save(scope, spec, baos, epsgCode, null, attributesFacet);
+			gjsoner.save(scope, spec, baos, epsgCode, attributesFacet);
 			return baos.toString(StandardCharsets.UTF_8);
 
 		} catch (final GamaRuntimeException e) {

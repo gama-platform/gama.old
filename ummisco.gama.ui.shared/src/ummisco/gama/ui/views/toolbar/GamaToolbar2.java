@@ -35,7 +35,6 @@ import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcon;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory.ToggleAction;
 
@@ -179,24 +178,6 @@ public class GamaToolbar2 extends Composite {
 		return new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR);
 	}
 
-	/**
-	 * Sep.
-	 *
-	 * @param width
-	 *            the n
-	 * @param side
-	 *            the side
-	 * @param height
-	 *            the height
-	 * @return the tool item
-	 */
-	public ToolItem sep(final int width, final int height, final int side /* SWT.LEFT or SWT.RIGHT */) {
-		final var icon = GamaIcons.createSizer(getBackground(), width, height);
-		final var item = create(icon.getCode(), null, null, null, SWT.NONE, false, null, side);
-		item.setDisabledImage(icon.image());
-		if (!PlatformHelper.isLinux()) { item.setEnabled(false); }
-		return item;
-	}
 
 	/**
 	 * Status.
@@ -553,22 +534,23 @@ public class GamaToolbar2 extends Composite {
 			final int style, final boolean forceText, final Control control,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final var tb = getToolbar(side);
-		if (side == SWT.LEFT && tb.getItemCount() == 0 && PlatformHelper.isWindows()) {
-			int h = height;
-			if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
-			final var icon = GamaIcons.createSizer(getBackground(), 2, h);
-			final var button = new ToolItem(tb, SWT.NONE);
-			final var im = GamaIcons.create(icon.getCode()).image();
-			button.setImage(im);
-			button.setDisabledImage(icon.image());
-			button.setEnabled(false);
-		}
+//		DOES NOT SEEM TO BE NECESSARY ANYMORE (SEE #3677)		
+//		if ( tb.getItemCount() == 0 && PlatformHelper.isWindows()) {
+//			int h = height;
+//			if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
+//			final var icon = GamaIcon.ofSize(getBackground(), 2, h);
+//			final var button = new ToolItem(tb, SWT.NONE);
+//			final var im = icon.image();
+//			button.setImage(im);
+//			button.setDisabledImage(im);
+//			button.setEnabled(false);
+//		}
 		final var button = new ToolItem(tb, style);
 		if (text != null && forceText) { button.setText(text); }
 		if (tip != null) { button.setToolTipText(tip); }
 		if (image != null) {
 			button.setData(image);
-			GamaIcon icon = GamaIcons.create(image);
+			GamaIcon icon = GamaIcon.named(image);
 			button.setImage(icon.image());
 			button.setDisabledImage(icon.disabled());
 		}
@@ -668,9 +650,9 @@ public class GamaToolbar2 extends Composite {
 		if (image == null) return;
 		if (PlatformHelper.isMac() && GamaColors.isDark(getBackground()) && !ThemeHelper.isDark()) {
 			if (button.getSelection()) {
-				button.setImage(GamaIcons.create(image).checked());
+				button.setImage(GamaIcon.named(image).checked());
 			} else {
-				button.setImage(GamaIcons.create(image).image());
+				button.setImage(GamaIcon.named(image).image());
 			}
 		}
 	}

@@ -23,9 +23,13 @@ global skills:[network] {
 		// do connect to:"localhost" with_name: "receiver" login:"admin" password:"admin" port: 1883;
 	}
 	reflex receiveAgent when:has_more_message(){
-		write "fetch agent on the network";
+		// write "fetch agent on the network";
 		message mess <- fetch_message();
-		write name + " fecth this message: " + mess.contents;	
+		// write name + " fecth this message: " + mess.contents;	
+		
+		loop agt over: mess.contents as list{
+			create NetworkingAgent with: [shape::agt["shape"], color::agt["color"]];
+		}
 	}
 }
 
@@ -39,7 +43,7 @@ species NetworkingAgent{
 
 experiment Network_receiver type: gui {
 	output {
-		display view{
+		display view type: opengl {
 			species NetworkingAgent aspect:base;
 		}
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MultiPageCSVEditor.java, in ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * MultiPageCSVEditor.java, in ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.viewers.csv;
 
@@ -46,6 +46,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 import ummisco.gama.ui.menus.GamaMenu;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.viewers.csv.model.CSVModel;
 import ummisco.gama.ui.viewers.csv.model.CSVRow;
@@ -80,10 +81,10 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 
 	/** The table sorter. */
 	final CSVTableSorter tableSorter;
-	
+
 	/** The table filter. */
 	final CSVTableFilter tableFilter;
-	
+
 	/** The model. */
 	CSVModel model;
 
@@ -102,7 +103,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 
 	@Override
 	public Control getSizableFontControl() {
-		if (tableViewer == null) { return null; }
+		if (tableViewer == null) return null;
 		return tableViewer.getTable();
 	}
 
@@ -129,16 +130,16 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	/**
 	 * Gets the file for.
 	 *
-	 * @param input the input
+	 * @param input
+	 *            the input
 	 * @return the file for
 	 */
 	private static IFile getFileFor(final IEditorInput input) {
-		if (input instanceof IFileEditorInput) {
-			return ((IFileEditorInput) input).getFile();
-		} else if (input instanceof IStorageEditorInput) {
+		if (input instanceof IFileEditorInput) return ((IFileEditorInput) input).getFile();
+		if (input instanceof IStorageEditorInput) {
 			try {
 				final IStorage storage = ((IStorageEditorInput) input).getStorage();
-				if (storage instanceof IFile) { return (IFile) storage; }
+				if (storage instanceof IFile) return (IFile) storage;
 			} catch (final CoreException ignore) {
 				// intentionally blank
 			}
@@ -199,7 +200,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		tableViewer.setContentProvider(new CSVContentProvider());
 		// make the selection available
 		getSite().setSelectionProvider(tableViewer);
-		tableViewer.getTable().getDisplay().asyncExec(() -> updateTableFromTextEditor());
+		tableViewer.getTable().getDisplay().asyncExec(this::updateTableFromTextEditor);
 	}
 
 	/**
@@ -225,9 +226,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		model.removeModelListener(csvFileListener);
 		model.setInput(editor.getDocumentProvider().getDocument(editor.getEditorInput()).get());
 		final TableColumn[] columns = tableViewer.getTable().getColumns();
-		for (final TableColumn c : columns) {
-			c.dispose();
-		}
+		for (final TableColumn c : columns) { c.dispose(); }
 		for (int i = 0; i < model.getHeader().size(); i++) {
 			final TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.LEFT);
 			final int index = i;
@@ -274,7 +273,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		final TableColumn[] tableColumns = tableViewer.getTable().getColumns();
 		for (int i = 0; i < tableColumns.length; i++) {
 			final TableColumn column = tableColumns[i];
-			if (columnName.equalsIgnoreCase(column.getText())) { return i; }
+			if (columnName.equalsIgnoreCase(column.getText())) return i;
 		}
 		return index;
 	}
@@ -353,9 +352,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
 	@Override
-	public boolean isSaveAsAllowed() {
-		return true;
-	}
+	public boolean isSaveAsAllowed() { return true; }
 
 	/**
 	 * Saves the multi-page editor's document as another file. Also updates the text for page 0's tab, and updates this
@@ -381,9 +378,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	 */
 	@Override
 	protected void handlePropertyChange(final int propertyId) {
-		if (propertyId == IEditorPart.PROP_DIRTY) {
-			isPageModified = isDirty();
-		}
+		if (propertyId == IEditorPart.PROP_DIRTY) { isPageModified = isDirty(); }
 		super.handlePropertyChange(propertyId);
 	}
 
@@ -391,9 +386,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#isDirty()
 	 */
 	@Override
-	public boolean isDirty() {
-		return isPageModified || super.isDirty();
-	}
+	public boolean isDirty() { return isPageModified || super.isDirty(); }
 
 	/**
 	 * Calculates the contents of page 2 when the it is activated.
@@ -404,14 +397,10 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	protected void pageChange(final int newPageIndex) {
 		switch (newPageIndex) {
 			case indexSRC:
-				if (isDirty()) {
-					updateTextEditorFromTable();
-				}
+				if (isDirty()) { updateTextEditorFromTable(); }
 				break;
 			case indexTBL:
-				if (isDirty()) {
-					updateTableFromTextEditor();
-				}
+				if (isDirty()) { updateTableFromTextEditor(); }
 				break;
 		}
 		isPageModified = false;
@@ -475,7 +464,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 				else if (delta.getKind() == IResourceDelta.CHANGED) {
 					final int flags = delta.getFlags();
 					if ((flags & IResourceDelta.CONTENT) != 0 || (flags & IResourceDelta.LOCAL_CHANGED) != 0) {
-						WorkbenchHelper.asyncRun(() -> MultiPageCSVEditor.this.updateTableFromTextEditor());
+						WorkbenchHelper.asyncRun(MultiPageCSVEditor.this::updateTableFromTextEditor);
 					}
 				}
 			}
@@ -486,7 +475,8 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	/**
 	 * Refresh with delimiter.
 	 *
-	 * @param c the c
+	 * @param c
+	 *            the c
 	 */
 	void refreshWithDelimiter(final Character c) {
 		if (c != null) {
@@ -518,15 +508,13 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 				final String filterText = searchText.getText();
 				for (int i = 0; i < tableViewer.getColumnProperties().length; i++) {
 					final CellLabelProvider labelProvider = tableViewer.getLabelProvider(i);
-					if (labelProvider != null) {
-						((CSVLabelProvider) labelProvider).setSearchText(filterText);
-					}
+					if (labelProvider != null) { ((CSVLabelProvider) labelProvider).setSearchText(filterText); }
 				}
 				tableViewer.refresh();
 			}
 		});
 
-		tb.menu("viewers/action.set.delimiter2", "Determine which character should be used as delimiter of fields",
+		tb.menu(IGamaIcons.SET_DELIMITER, "Determine which character should be used as delimiter of fields",
 				"Determine which character should be used as delimiter of fields", e -> {
 					final GamaMenu menu = new GamaMenu() {
 
@@ -586,14 +574,14 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 					};
 					menu.open(tb.getToolbar(SWT.RIGHT), e);
 				}, SWT.RIGHT);
-		final ToolItem t = tb.check("viewers/action.set.header2", "First line is header", "First line is header", e -> {
+		final ToolItem t = tb.check(IGamaIcons.SET_HEADER, "First line is header", "First line is header", e -> {
 			final ToolItem t1 = (ToolItem) e.widget;
 			model.setFirstLineHeader(t1.getSelection());
 			refreshWithDelimiter(null);
 		}, SWT.RIGHT);
 		t.setSelection(model.isFirstLineHeader());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("viewers/action.add.row2", "Add row",
+		tb.button(IGamaIcons.ADD_ROW, "Add row",
 				"Insert a new row before the currently selected one or at the end of the file if none is selected",
 				e -> {
 					final CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
@@ -604,7 +592,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 					}
 					tableModified();
 				}, SWT.RIGHT);
-		tb.button("viewers/action.delete.row2", "Delete row", "Delete currently selected rows", e -> {
+		tb.button(IGamaIcons.DELETE_ROW, "Delete row", "Delete currently selected rows", e -> {
 
 			CSVRow row = (CSVRow) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 
@@ -618,7 +606,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		}, SWT.RIGHT);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
 		if (model.isFirstLineHeader()) {
-			tb.button("viewers/action.add.column2", "Add column", "Add new column", arg0 -> {
+			tb.button(IGamaIcons.ADD_COLUMN, "Add column", "Add new column", arg0 -> {
 				// call insert/add column page
 				final InsertColumnPage acPage = new InsertColumnPage(getSite().getShell(), model.getArrayHeader());
 				if (acPage.open() == Window.OK) {
@@ -639,7 +627,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 
 		}
 		if (model.isFirstLineHeader()) {
-			tb.button("viewers/action.delete.column2", "Delete column", "Delete one or several column(s)", e -> {
+			tb.button(IGamaIcons.DELETE_COLUMN, "Delete column", "Delete one or several column(s)", e -> {
 
 				// call delete column page
 				final DeleteColumnPage dcPage = new DeleteColumnPage(getSite().getShell(), model.getArrayHeader());
@@ -657,7 +645,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 			}, SWT.RIGHT);
 		}
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button("menu.saveas2", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
+		tb.button("generic/menu.saveas", "Save as...", "Save as...", e -> doSaveAs(), SWT.RIGHT);
 
 	}
 

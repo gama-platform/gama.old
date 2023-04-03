@@ -21,7 +21,7 @@ global {
 species GAMAGeometry2D {
 
 	aspect default {
-		draw sphere(10) at: location color: °white border: #gray;
+		draw sphere(10) at: location color: #white border: #gray;
 	}
 
 }

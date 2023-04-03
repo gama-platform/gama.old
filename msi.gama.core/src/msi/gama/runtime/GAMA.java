@@ -2,7 +2,7 @@
  *
  * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.ISnapshotMaker;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.common.util.RandomUtils;
@@ -57,10 +58,13 @@ public class GAMA {
 	public static final String VERSION = "GAMA " + VERSION_NUMBER;
 
 	/** The Constant _WARNINGS. */
-	public static final String _WARNINGS = "warnings";
+	// public static final String _WARNINGS = "warnings";
 
 	/** The agent. */
 	private static volatile PlatformAgent agent;
+
+	/** The snapshot agent. */
+	private static ISnapshotMaker snapshotAgent = IGui.NULL_SNAPSHOT_MAKER;
 
 	/** The benchmark agent. */
 	private static Benchmark benchmarkAgent;
@@ -70,6 +74,9 @@ public class GAMA {
 
 	/** The is in headless mode. */
 	private static boolean isInServerMode;
+
+	/** The is synchronized. */
+	private static volatile boolean isSynchronized;
 
 	/** The regular gui. */
 	private static IGui regularGui;
@@ -186,13 +193,6 @@ public class GAMA {
 
 	}
 
-	// public static void closeFrontmostExperiment() {
-	// final IExperimentController controller = getFrontmostController();
-	// if (controller == null || controller.getExperiment() == null) { return; }
-	// controller.close();
-	// controllers.remove(controller);
-	// }
-
 	/**
 	 * Close experiment.
 	 *
@@ -228,6 +228,7 @@ public class GAMA {
 	private static void closeController(final IExperimentController controller) {
 		if (controller == null) return;
 		stopBenchmark(controller.getExperiment());
+		desynchronizeFrontmostExperiment();
 		controller.close();
 		controllers.remove(controller);
 	}
@@ -273,8 +274,20 @@ public class GAMA {
 	 *
 	 */
 
+	/**
+	 * Report Error: tries to report (on the UI) and returns true if the simulation should continue
+	 *
+	 * @param scope
+	 * @param g
+	 * @param shouldStopSimulation
+	 * @return
+	 */
 	public static boolean reportError(final IScope scope, final GamaRuntimeException g,
 			final boolean shouldStopSimulation) {
+		final boolean shouldStop = (g.isWarning() && GamaPreferences.Runtime.CORE_WARNINGS.getValue()
+				|| !g.isWarning() && shouldStopSimulation) && GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue();
+
+		if (g.isReported()) return !shouldStop;
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null || controller.isDisposing()
 				|| controller.getExperiment().getAgent() == null)
@@ -289,9 +302,6 @@ public class GAMA {
 		if (scope != null && scope.getGui() != null) { scope.getGui().runtimeError(scope, g); }
 		g.setReported();
 
-		final boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
-		final boolean shouldStop =
-				isError && shouldStopSimulation && GamaPreferences.Runtime.CORE_REVEAL_AND_STOP.getValue();
 		return !shouldStop;
 	}
 
@@ -307,7 +317,7 @@ public class GAMA {
 	 */
 	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
 			final boolean shouldStopSimulation) {
-		if (g.isReported()) return;
+		// See #3641 -- move this sentence to reportError(): if (g.isReported()) return;
 		if (getExperiment() == null && !(g instanceof GamaRuntimeFileException) && scope != null
 				&& !scope.reportErrors()) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -316,13 +326,14 @@ public class GAMA {
 		}
 
 		// DEBUG.LOG("reportAndThrowIfNeeded : " + g.getMessage());
-		if (scope != null && scope.getAgent() != null) {
-			final String name = scope.getAgent().getName();
-			if (!g.getAgentsNames().contains(name)) { g.addAgent(name); }
+		if (scope != null) {
+			if (scope.getAgent() != null) {
+				final String name = scope.getAgent().getName();
+				if (!g.getAgentsNames().contains(name)) { g.addAgent(name); }
+			}
+			scope.setCurrentError(g);
+			if (scope.isInTryMode()) throw g;
 		}
-		if (scope != null) { scope.setCurrentError(g); }
-		final boolean isInTryMode = scope != null && scope.isInTryMode();
-		if (isInTryMode) throw g;
 		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if (shouldStop) {
 			if (isInHeadLessMode() && !isInServerMode()) throw g;
@@ -512,8 +523,6 @@ public class GAMA {
 	 */
 	public static final void runAndUpdateAll(final Runnable r) {
 		r.run();
-		// SimulationAgent sim = getSimulation();
-		// if(sim.isPaused(sim.getScope()))
 		IExperimentPlan exp = getExperiment();
 		if (exp != null) { exp.refreshAllOutputs(); }
 	}
@@ -635,8 +644,7 @@ public class GAMA {
 	 * Toggle sync frontmost experiment.
 	 */
 	public static void desynchronizeFrontmostExperiment() {
-		IExperimentPlan exp = getExperiment();
-		if (exp != null) { exp.desynchronizeAllOutputs(); }
+		isSynchronized = false;
 	}
 
 	/**
@@ -644,18 +652,29 @@ public class GAMA {
 	 *
 	 * @return true, if is synchronized
 	 */
-	public static boolean isSynchronized() {
-		IExperimentPlan plan = getExperiment();
-		if (plan == null) return false;
-		return plan.isSynchronized();
-	}
+	public static boolean isSynchronized() { return isSynchronized; }
 
 	/**
 	 * Synchronize experiment.
 	 */
 	public static void synchronizeFrontmostExperiment() {
-		IExperimentPlan exp = getExperiment();
-		if (exp != null) { exp.synchronizeAllOutputs(); }
-
+		isSynchronized = true;
 	}
+
+	/**
+	 * Sets the snapshot maker.
+	 *
+	 * @param instance
+	 *            the new snapshot maker
+	 */
+	public static void setSnapshotMaker(final ISnapshotMaker instance) {
+		if (instance != null) { snapshotAgent = instance; }
+	}
+
+	/**
+	 * Gets the snapshot maker.
+	 *
+	 * @return the snapshot maker
+	 */
+	public static ISnapshotMaker getSnapshotMaker() { return snapshotAgent; }
 }

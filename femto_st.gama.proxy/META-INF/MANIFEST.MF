@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Proxy
+Bundle-SymbolicName: femto_st.gama.proxy;singleton:=true
+Bundle-Version: 1.9.0.qualifier
+Automatic-Module-Name: femto.st.gama.proxy
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: msi.gama.precompiler,
+ msi.gaml.types
+Require-Bundle:  ummisco.gama.serialize,
+ ummisco.gama.network,
+ ummisco.gama.annotations,
+ msi.gama.core,
+ msi.gama.ext;bundle-version="1.9.0"
+Export-Package: proxy,
+ proxyExperiment,
+ proxyPopulation

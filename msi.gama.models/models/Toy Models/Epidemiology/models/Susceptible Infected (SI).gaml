@@ -120,7 +120,7 @@ experiment Simulation type: gui {
 	        species Host aspect: basic;
 	    }
 	        
-	    display chart refresh: every(10#cycles) axes: false {
+	    display chart refresh: every(10#cycles)  type: 2d  {
 			chart "Susceptible" type: series background: #white style: exploded {
 				data "susceptible" value: Host count (each.is_susceptible) color: rgb(46,204,113);
 				data "infected" value: Host count (each.is_infected) color: rgb(231,76,60);

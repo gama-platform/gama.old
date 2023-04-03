@@ -3,7 +3,7 @@
  * InstallHandler.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,6 +18,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.internal.AbstractEnabledHandler;
 
+import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.runtime.GAMA;
 
 /**
@@ -28,6 +29,7 @@ public class InstallHandler extends AbstractEnabledHandler implements IHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		runCommand(getCommand("org.eclipse.equinox.p2.ui.sdk.install"), event);
+		WorkspacePreferences.forceWorkspaceRebuild();
 		GAMA.getGui().refreshNavigator();
 		return this;
 	}

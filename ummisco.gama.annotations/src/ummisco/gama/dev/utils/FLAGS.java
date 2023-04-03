@@ -56,9 +56,9 @@ public class FLAGS {
 	private static boolean get(final String name, final boolean def) {
 		String v = System.getProperty(name);
 		if (v == null) return def;
-		// DEBUG.LOG("> FLAG " + name + " with value " + v);
-		System.out.println(DEBUG.PAD("> FLAG: " + name, 45, ' ') + DEBUG.PAD(" set to", 15, '_') + " " + v);
-		return Boolean.parseBoolean(v);
+		boolean b = Boolean.parseBoolean(v);
+		if (b) { System.out.println(STRINGS.PAD("> FLAG: " + name, 55, ' ') + STRINGS.PAD(" set to", 15, '_') + " " + b); }
+		return b;
 	}
 
 	/**
@@ -100,9 +100,10 @@ public class FLAGS {
 	 * org.eclipse.swt.internal.DPIUtil.SWT_AUTOSCALE, enabling more precise scaling methods for HiDPI screens.
 	 * Otherwise the default of "integer200" is used by DPIUtil (see #3180). False by default.
 	 *
-	 * 05 Feb. 2023: Reinstantiates this flag to support #3596 and #3308, set to true by default now
+	 * 05 Feb. 2023: Reinstantiates this flag to support #3596 and #3308, set to true by default now 16 Feb. 2023: Again
+	 * commented for issue #3604 -- -Dswt.autoScale=exact is used directly instead
 	 */
-	public static final boolean USE_PRECISE_SCALING = get("use_precise_scaling", true);
+	// public static final boolean USE_PRECISE_SCALING = get("use_precise_scaling", true);
 
 	/**
 	 * Used in GamlEditor, see #2950. Set to true to disable editing gaml files. False by default.
@@ -113,26 +114,32 @@ public class FLAGS {
 	 * Used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to impose the use of the "classic" view
 	 * tabs (with a visible border) and inject a specific CSS stylesheet. See #3187. True by default.
 	 */
-	public static final boolean USE_OLD_TABS = get("use_old_tabs", true);
+	// public static final boolean USE_OLD_TABS = get("use_old_tabs", true);
 
 	/**
 	 * Used in ummisco.gama.opengl.OpenGL to impose the use of the "legacy" text and mesh drawers (ie without VBO/VBA).
 	 * False by default.
 	 */
-	public static final boolean USE_LEGACY_DRAWERS = get("use_legacy_drawers", false);
+	// public static final boolean USE_LEGACY_DRAWERS = get("use_legacy_drawers", false);
 
 	/**
 	 * Originally used in msi.gama.application.workbench.ApplicationWorkbenchWindowAdvisor to work around issue #3195.
 	 * If true, makes the workbench window resize its views asynchronously. Could prove useful in all environments, for
 	 * instance in the presence of slow graphic cards/computers. False by default
 	 */
-	public static final boolean USE_DELAYED_RESIZE = get("use_delayed_resize", false);
+	// public static final boolean USE_DELAYED_RESIZE = get("use_delayed_resize", true);
 
 	/**
 	 * Used in JOGL displays, esp. ummisco.gama.opengl.view.SWTOpenGLDisplaySurface to create a NEWT window instead of a
 	 * GLCanvas. Advantages are multiple (smaller memory footprint, immediate opening and resizing, etc.), and only a
 	 * few glitches remain (esp. on macOS). True by defautl
 	 */
-	public static final boolean USE_NATIVE_OPENGL_WINDOW = get("use_native_opengl_window", true);
+	public static final boolean USE_NATIVE_OPENGL_WINDOW = true; // get("use_native_opengl_window", true);
+
+	/**
+	 * The Constant PRODUCE_ICONS. Used to tell GAMA to produce the PNG icons from the SVG ones in
+	 * ummisco.gama.ui.shared
+	 */
+	// public static final boolean PRODUCE_ICONS = get("produce_icons", false);
 
 }

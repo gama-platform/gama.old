@@ -52,7 +52,7 @@ public class Pref<T> implements IParameter {
 	}
 
 	/** The order. */
-	private final int order = COUNTER.GET();
+	private final int order = COUNTER.COUNT();
 
 	/** The in gaml. */
 	private final boolean inGaml;

@@ -91,7 +91,7 @@ experiment Simple_exp type: gui
 	output
 	{
 	 	layout horizontal([0::5000,vertical([1::5000,2::5000])::5000]) tabs:true editors: false;
-		display "Switch_SIR chart"
+		display "Switch_SIR chart" type: 2d 
 		{
 			chart "SIR_agent" type: series background: # white
 			{
@@ -101,7 +101,7 @@ experiment Simple_exp type: gui
 			}
 
 		}
-		display "EBM Disp" {			
+		display "EBM Disp"  type: 2d {			
 			chart "SIR_agent" type: series background: #white {
 				data 'S' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).S color: #green ;				
 				data 'I' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).I color: #red ;

@@ -217,6 +217,20 @@
         </visibleWhen>
      </dynamic>
   </menuContribution>
+     <menuContribution
+           allPopups="false"
+           locationURI="menu:file?before=save.ext">
+        <command
+              commandId="ummisco.command.clean.build"
+              disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/build/build.all_disabled.png"
+              icon="platform:/plugin/ummisco.gama.ui.shared/icons/build/build.all.png"
+              label="Clean and validate all"
+              style="push">
+           <visibleWhen
+                 checkEnabled="true">
+           </visibleWhen>
+        </command>
+     </menuContribution>
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 		<handler
@@ -334,6 +348,11 @@
 			id="org.eclipse.xtext.ui.editor.outline.QuickOutline"
 			name="Quick Outline">
 		</command>
+  <command
+        defaultHandler="ummisco.gama.ui.modeling.CleanBuildCommand"
+        id="ummisco.command.clean.build"
+        name="Clean and build all models">
+  </command>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
 		<menuContribution
@@ -433,7 +452,7 @@
           allowMultiple="false"
           category="msi.gama.gui.category.gama"
           class="org.eclipse.ui.views.contentoutline.ContentOutline"
-          icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.outline2.png"
+          icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.outline.png"
           id="msi.gama.application.outline"
           name="Outline"
           restorable="true">
@@ -442,7 +461,7 @@
           allowMultiple="false"
           category="msi.gama.gui.category.gama"
           class="ummisco.gama.ui.views.SyntaxErrorsView"
-          icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.problems2.png"
+          icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.problems.png"
           id="msi.gama.application.problems"
           name="Validation"
           restorable="true">
@@ -741,7 +760,7 @@
              visible="true">
           <action
                 class="msi.gama.lang.gaml.ui.editor.DelegateForAllElements"
-                icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.searchtext2.png"
+                icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.searchtext.png"
                 id="msi.gama.application.action1"
                 label="GAML elements in models..."
                 menubarPath="org.eclipse.search.menu/extraSearchGroup"
@@ -750,7 +769,7 @@
           </action>
        </actionSet>
     </extension>
-    <extension
+    <extension 
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
              targetID="msi.gama.application.perspectives.ModelingPerspective">
@@ -814,10 +833,10 @@
        <perspective
              class="ummisco.gama.ui.perspective.ModelingPerspective"
              fixed="false"
-             icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling.png"
              id="msi.gama.application.perspectives.ModelingPerspective"
              name="Modeling">
-          <description>
+          <description> 
              The perspective used to edit GAMA models
           </description>
        </perspective>

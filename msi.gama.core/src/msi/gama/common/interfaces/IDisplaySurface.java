@@ -3,7 +3,7 @@
  * IDisplaySurface.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 
@@ -340,6 +341,14 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	void dispatchKeyEvent(char character);
 
 	/**
+	 * Dispatch special key event.
+	 *
+	 * @param keyCode
+	 *            the key code
+	 */
+	void dispatchSpecialKeyEvent(int keyCode);
+
+	/**
 	 * Dispatch mouse event.
 	 *
 	 * @param swtEventType
@@ -419,6 +428,39 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 */
 	boolean isVisible();
 
+	/**
+	 * Gets the i graphics.
+	 *
+	 * @return the i graphics
+	 */
 	IGraphics getIGraphics();
+
+	/**
+	 * Gets the bounds for snapshot.
+	 *
+	 * @return the bounds for snapshot
+	 */
+	Rectangle getBoundsForRobotSnapshot();
+
+	/**
+	 * Checks if the esc key has been redefined as an event in an event layer of this surface
+	 *
+	 * @return true, if is esc redefined
+	 */
+	default boolean isEscRedefined() { return getManager().hasEscEventLayer(); }
+
+	/**
+	 * Checks if is arrow redefined.
+	 *
+	 * @return true, if is arrow redefined
+	 */
+	default boolean isArrowRedefined() { return getManager().hasArrowEventLayer(); }
+
+	/**
+	 * Checks if this displaySuface needs to wait to be rendered by an external process (like a view, for instance)
+	 *
+	 * @return true, if is renderable
+	 */
+	default boolean shouldWaitToBecomeRendered() { return true; }
 
 }

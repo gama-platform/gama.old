@@ -42,7 +42,7 @@ experiment 'Try Me !' {
 	output {
 		display Interaction {
 			species sign;
-			event mouse_down {
+			event #mouse_down {
 				if ((#user_location distance_to sign[0]) < 50) {
 					ask world {
 						do toggle;

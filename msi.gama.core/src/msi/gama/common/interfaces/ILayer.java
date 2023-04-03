@@ -2,7 +2,7 @@
  *
  * ILayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -268,9 +268,9 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	default void getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
 			final StringBuilder sb) {
 		final GamaPoint point = getModelCoordinatesFrom(xOnScreen, yOnScreen, g);
-		final String x = point == null ? "N/A" : String.format("%8.2f", point.getX());
-		final String y = point == null ? "N/A" : String.format("%8.2f", point.getY());
-		sb.append(String.format("X%10s | Y%10s", x, y));
+		final String x = point == null ? "N/A" : String.format("%5.2f", point.getX());
+		final String y = point == null ? "N/A" : String.format("%5.2f", point.getY());
+		sb.append(String.format("X%8s | Y%8s", x, y));
 	}
 
 	/**

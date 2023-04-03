@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlImageHelper.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamlImageHelper.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
@@ -21,7 +21,8 @@ import org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper;
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class GamlImageHelper.
@@ -35,19 +36,20 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 
 	/** The Constant path. */
 	private static final String path = "gaml";
-	
+
 	/** The registry. */
 	private final Map<ImageDescriptor, Image> registry = Maps.newHashMapWithExpectedSize(10);
 
 	/**
 	 * Exist.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return true, if successful
 	 */
 	public boolean exist(final String name) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(GamaIcons.PLUGIN_ID,
-				GamaIcons.DEFAULT_PATH + name + ".png") != null;
+		return AbstractUIPlugin.imageDescriptorFromPlugin(IGamaIcons.PLUGIN_ID,
+				IGamaIcons.ICONS_PATH + name + ".png") != null;
 	}
 
 	/**
@@ -56,14 +58,9 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	@Override
 	public ImageDescriptor getImageDescriptor(final String name) {
 		String s = name;
-		if (s.endsWith(".png")) {
-			s = s.replace(".png", "");
-		}
-		if (exist(path + "/" + s)) {
-			return GamaIcons.create(path + "/" + s).descriptor();
-		} else {
-			return GamaIcons.create(path + "/_agent").descriptor();
-		}
+		if (s.endsWith(".png")) { s = s.replace(".png", ""); }
+		if (exist(path + "/" + s)) return GamaIcon.named(path + "/" + s).descriptor();
+		return GamaIcon.named(path + "/_agent").descriptor();
 
 	}
 
@@ -73,7 +70,7 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	@Override
 	public ImageDescriptor getImageDescriptor(final Image image) {
 		for (final Map.Entry<ImageDescriptor, Image> entry : registry.entrySet()) {
-			if (entry.getValue().equals(image)) { return entry.getKey(); }
+			if (entry.getValue().equals(image)) return entry.getKey();
 		}
 		final ImageDescriptor newDescriptor = ImageDescriptor.createFromImage(image);
 		registry.put(newDescriptor, image);
@@ -87,14 +84,9 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	@Override
 	public Image getImage(final String name) {
 		String s = name;
-		if (s.endsWith(".png")) {
-			s = s.replace(".png", "");
-		}
-		if (exist(path + "/" + s)) {
-			return GamaIcons.create(path + "/" + s).image();
-		} else {
-			return GamaIcons.create(path + "/_agent").image();
-		}
+		if (s.endsWith(".png")) { s = s.replace(".png", ""); }
+		if (exist(path + "/" + s)) return GamaIcon.named(path + "/" + s).image();
+		return GamaIcon.named(path + "/_agent").image();
 	}
 
 	/**
@@ -103,16 +95,12 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	@Override
 	public Image getImage(final ImageDescriptor d) {
 		ImageDescriptor descriptor = d;
-		if (descriptor == null) {
-			descriptor = ImageDescriptor.getMissingImageDescriptor();
-		}
+		if (descriptor == null) { descriptor = ImageDescriptor.getMissingImageDescriptor(); }
 
 		Image result = registry.get(descriptor);
-		if (result != null) { return result; }
+		if (result != null) return result;
 		result = descriptor.createImage();
-		if (result != null) {
-			registry.put(descriptor, result);
-		}
+		if (result != null) { registry.put(descriptor, result); }
 		return result;
 	}
 

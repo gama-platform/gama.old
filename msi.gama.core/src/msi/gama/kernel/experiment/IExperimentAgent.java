@@ -42,13 +42,13 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return the working paths
 	 */
 	List<String> getWorkingPaths();
-
-	/**
-	 * Gets the warnings as errors.
-	 *
-	 * @return the warnings as errors
-	 */
-	Boolean getWarningsAsErrors();
+	//
+	// /**
+	// * Gets the warnings as errors. Deprecated
+	// *
+	// * @return the warnings as errors
+	// */
+	// Boolean getWarningsAsErrors();
 
 	/**
 	 * Gets the minimum duration.
@@ -110,13 +110,6 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return true, if is headless
 	 */
 	boolean isHeadless();
-
-	/**
-	 * Checks if is synchronized.
-	 *
-	 * @return true, if is synchronized
-	 */
-	default boolean isSynchronized() { return getSpecies().isSynchronized(); }
 
 	/**
 	 * Returns the population factory of this type of experiment -- default is a DefaultPopulationFactory

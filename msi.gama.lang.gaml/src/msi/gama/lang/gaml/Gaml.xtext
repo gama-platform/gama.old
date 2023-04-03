@@ -129,10 +129,13 @@ displayBlock returns Block:
 	{Block} '{' (statements+=displayStatement)* '}';
 
 displayStatement returns Statement:
-	=>speciesOrGridDisplayStatement | Statement;
+	=>speciesOrGridDisplayStatement | (=>imageDisplayStatement | Statement);
 
 speciesOrGridDisplayStatement:
 	key=_SpeciesKey expr=Expression (facets+=Facet)* (block=displayBlock | ";");
+	
+imageDisplayStatement:
+	key = _ImageLayerKey  expr=Expression (facets+=Facet)* ";";
 
 /**
  * Statement keys
@@ -145,6 +148,8 @@ _SolveKey:
 
 _SpeciesKey:
 	"species" | "grid";
+	
+_ImageLayerKey: "image";
 
 _ExperimentKey:
 	"experiment";
@@ -156,8 +161,8 @@ _1Expr_Facets_BlockOrEnd_Key:
 	"status" | "highlight" | "focus_on" | "layout";
 
 _LayerKey:
-	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" |
-	"display_grid" | "quadtree" | "event" | "overlay" | "datalist" | "mesh";
+	"light" | "camera" | "text" | "image_layer" | "data" | "chart" | "agents" | "graphics" | "display_population" |
+	"display_grid" | "event" | "overlay" | "datalist" | "mesh";
 
 _DoKey:
 	"do" | "invoke";
@@ -195,15 +200,14 @@ ClassicFacetKey:
 	(ID ':');
 
 DefinitionFacetKey:
-	"name:" | "returns:"; /*| "var:" */
+	"name:" | "returns:"; 
 
 TypeFacetKey:
 	("as:" | "of:" | "parent:" | "species:" | "type:");
 
 SpecialFacetKey:
 	'camera:' | 'data:' | 'when' ':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-	"layout:" |
-	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
+	"layout:" | "environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 
 ActionFacetKey:
 	"action:" | "on_change:";
@@ -342,8 +346,9 @@ UnitRef returns Expression:
 VariableRef:
 	{VariableRef} ref=[VarDefinition|Valid_ID];
 
+// Necessary to add "image" hardcoded here, because of the existence of the "image" layer
 TypeRef returns Expression:
-	{TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo);
+	{TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) | {TypeRef} ("image");
 
 TypeInfo:
 	('<' first=TypeRef ("," second=TypeRef)? ->'>');
@@ -392,7 +397,7 @@ EquationFakeDefinition:
 	'**equation*' name=Valid_ID;
 
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID |
+	_SpeciesKey | _ImageLayerKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID |
 	_ExperimentKey;
 
 /**
@@ -402,7 +407,6 @@ TerminalExpression:
 	StringLiteral |
 	{IntLiteral} op=INTEGER |
 	{DoubleLiteral} op=DOUBLE |
-	/*{ColorLiteral} op=COLOR |*/
 	{BooleanLiteral} op=BOOLEAN |
 	{ReservedLiteral} op=KEYWORD;
 
@@ -421,8 +425,6 @@ terminal BOOLEAN:
 terminal ID:
 	"2d" | "3d" | "2D" | "3D" | (('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | '0'..'9')*);
 
-//terminal COLOR:
-//	'#' ('0'..'9' | 'A'..'F')+;
 terminal DOUBLE:
 	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+'
 	|

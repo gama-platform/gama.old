@@ -94,7 +94,7 @@ public class EGaml implements IGamlEcoreUtils {
 	public String getNameOf(final EObject o) {
 		if (o instanceof S_Reflex) {
 			String s = ((S_Reflex) o).getName();
-			if (s == null) return IKeyword.INTERNAL + getKeyOf(o) + COUNTER.GET();
+			if (s == null) return IKeyword.INTERNAL + getKeyOf(o) + COUNTER.COUNT();
 		}
 		if (o instanceof GamlDefinition) return ((GamlDefinition) o).getName();
 		if (o instanceof S_Display) return ((S_Display) o).getName();

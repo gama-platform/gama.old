@@ -32,6 +32,7 @@ import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.STRINGS;
 
 /**
  * The Class ModelLibraryRunner.
@@ -149,7 +150,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 			final int[] countOfModelsValidated, final int[] returnCode, final URL pathToModel, final boolean expGUIOnly,
 			final int nbCycles) {
 		if (pathToModel.toString().contains("Database")) return;
-		DEBUG.PAD("", 80, '=');
+		STRINGS.PAD("", 80, '=');
 
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		final IModel mdl = builder.compile(pathToModel, errors);

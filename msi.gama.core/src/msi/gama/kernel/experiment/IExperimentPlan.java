@@ -3,7 +3,7 @@
  * IExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -79,16 +79,6 @@ public interface IExperimentPlan extends ISpecies {
 	 * Resume all outputs.
 	 */
 	void resumeAllOutputs();
-
-	/**
-	 * Synchronize all outputs.
-	 */
-	void synchronizeAllOutputs();
-
-	/**
-	 * Un synchronize all outputs.
-	 */
-	void desynchronizeAllOutputs();
 
 	/**
 	 * Close all outputs.
@@ -279,20 +269,6 @@ public interface IExperimentPlan extends ISpecies {
 	 * @return true, if successful
 	 */
 	boolean shouldBeBenchmarked();
-
-	/**
-	 * Gets the texts.
-	 *
-	 * @return the texts
-	 */
-	// List<TextStatement> getTexts();
-
-	/**
-	 * Checks if is synchronized.
-	 *
-	 * @return true, if is synchronized
-	 */
-	boolean isSynchronized();
 
 	/**
 	 * Gets the displayables.

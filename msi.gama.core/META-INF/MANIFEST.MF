@@ -324,6 +324,7 @@ Export-Package: msi.gama.common,
  msi.gaml.compilation.annotations,
  msi.gaml.compilation.ast,
  msi.gaml.compilation.kernel,
+ msi.gaml.constants,
  msi.gaml.descriptions;
   uses:="msi.gama.precompiler,
    msi.gaml.expressions,

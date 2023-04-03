@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaNavigatorImportMenu.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamaNavigatorImportMenu.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator;
 
@@ -15,7 +15,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Class GamaNavigatorMenus.
@@ -27,11 +28,12 @@ import ummisco.gama.ui.resources.GamaIcons;
 public class GamaNavigatorImportMenu extends GamaNavigatorMenu { // NO_UCD (unused code)
 
 	/**
-  * Instantiates a new gama navigator import menu.
-  *
-  * @param selection the selection
-  */
- public GamaNavigatorImportMenu(final IStructuredSelection selection) {
+	 * Instantiates a new gama navigator import menu.
+	 *
+	 * @param selection
+	 *            the selection
+	 */
+	public GamaNavigatorImportMenu(final IStructuredSelection selection) {
 		this.selection = selection;
 	}
 
@@ -57,7 +59,7 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu { // NO_UCD (unus
 		}
 
 	};
-	
+
 	/** The project. */
 	private final SelectionListener project = new SelectionAdapter() {
 
@@ -70,12 +72,11 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu { // NO_UCD (unus
 
 	@Override
 	protected void fillMenu() {
-		action("Import project...", project, GamaIcons.create("navigator/navigator.import.project2").image());
+		action("Import project...", project, GamaIcon.named(IGamaIcons.IMPORT_PROJECT).image());
 		sep();
-		action("Import resources into projects from disk...", fromDisk,
-				GamaIcons.create("navigator/navigator.import.disk2").image());
+		action("Import resources into projects from disk...", fromDisk, GamaIcon.named(IGamaIcons.IMPORT_DISK).image());
 		action("Import resources into projects from archive...", fromArchive,
-				GamaIcons.create("navigator/navigator.import.archive2").image());
+				GamaIcon.named(IGamaIcons.IMPORT_ARCHIVE).image());
 	}
 
 }

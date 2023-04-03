@@ -4,7 +4,7 @@
  * SWTAccessor.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -50,8 +50,8 @@ import jogamp.nativewindow.x11.X11Lib;
 public class SWTAccessor {
 
 	static {
-		ummisco.gama.dev.utils.DEBUG.ON();
-		ummisco.gama.dev.utils.DEBUG.LOG("Loading redefined SWTAccessor");
+		// ummisco.gama.dev.utils.DEBUG.ON();
+		// ummisco.gama.dev.utils.DEBUG.LOG("Loading redefined SWTAccessor");
 	}
 
 	/** The Constant DEBUG. */
@@ -381,10 +381,12 @@ public class SWTAccessor {
 					m8 = cGTK.getDeclaredMethod(str_gdk_x11_drawable_get_xid, handleType);
 				}
 
-				// Fix SWT above 4.21 (2022-03) - https://forum.jogamp.org/JOGL-incompatible-with-SWT-4-21-tp4041643p4041973.html
+				// Fix SWT above 4.21 (2022-03) -
+				// https://forum.jogamp.org/JOGL-incompatible-with-SWT-4-21-tp4041643p4041973.html
 				if (_gtk_version.compareTo(GTK_VERSION_2_90_0) >= 0) {
-					if (_gtk_version.compareTo(GTK_VERSION_2_21_0) <= 0)
+					if (_gtk_version.compareTo(GTK_VERSION_2_21_0) <= 0) {
 						mb = cGDK.getDeclaredMethod(str_gdk_window_set_background_pattern, handleType, handleType);
+					}
 				} else {
 					ma = cGTK.getDeclaredMethod(str_gdk_window_set_back_pixmap, handleType, handleType, boolean.class);
 				}

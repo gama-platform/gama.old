@@ -42,7 +42,7 @@ public abstract class HeadLessErrors {
 	/** The Constant ERRORS. */
 	private final static String[] ERRORS =
 		{
-			"Usage:\n\tjava -jar eclipse/plugins/org.eclipse.equinox.launcher_1.2.0.v20110502.jar -console -application msi.gama.headless.id4 XMLInputFile XMLOutputFile\n",
+			"Usage:\n\tjava -jar eclipse/plugins/org.eclipse.equinox.launcher_1.2.0.v20110502.jar -console -application gama.headless.product XMLInputFile XMLOutputFile\n",
 			"Launching error... try again",
 			"Unable to create directory at #. Check your file permission!",
 			"Unable to create directory at #. Directory already exist!",

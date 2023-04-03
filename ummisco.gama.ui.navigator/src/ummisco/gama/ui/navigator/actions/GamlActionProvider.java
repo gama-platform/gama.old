@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GamlActionProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.actions;
 
@@ -21,10 +21,8 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
-import msi.gaml.types.IType;
 import ummisco.gama.ui.navigator.contents.WrappedExperimentContent;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 
@@ -35,7 +33,7 @@ public class GamlActionProvider extends CommonActionProvider {
 
 	/** The selection. */
 	WrappedSyntacticContent selection;
-	
+
 	/** The reveal action. */
 	SelectionListenerAction runAction, revealAction, setStartupAction;
 
@@ -71,14 +69,15 @@ public class GamlActionProvider extends CommonActionProvider {
 		};
 		revealAction.setId("reveal.item");
 		revealAction.setEnabled(true);
-		
+
 		setStartupAction = new SelectionListenerAction("Set as startup...") {
-			
+
 			@Override
-			protected boolean updateSelection(IStructuredSelection selection) {
+			protected boolean updateSelection(final IStructuredSelection selection) {
 				if (!super.updateSelection(selection)) return false;
 				setText("Set as startup...");
-				if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue() && selection.getFirstElement() instanceof WrappedSyntacticContent) {
+				if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue()
+						&& selection.getFirstElement() instanceof WrappedSyntacticContent) {
 					String path = FileUtils.constructAbsoluteFilePath(null,
 							((WrappedSyntacticContent) selection.getFirstElement()).getFile().getResource()
 									.getLocation().toOSString(),
@@ -86,7 +85,7 @@ public class GamlActionProvider extends CommonActionProvider {
 					if (path != null) {
 						IGamaFile file_old = GamaPreferences.Interface.CORE_DEFAULT_MODEL.getValue();
 						if (file_old != null && file_old.exists(null) && file_old.getOriginalPath().equals(path)) {
-							setText("UnSet as startup...");
+							setText("Unset as startup...");
 						}
 					}
 				}
@@ -100,10 +99,11 @@ public class GamlActionProvider extends CommonActionProvider {
 				if (path != null) {
 
 					IGamaFile file_old = GamaPreferences.Interface.CORE_DEFAULT_MODEL.getValue();
-					if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue() && file_old != null && file_old.exists(null) && file_old.getOriginalPath().equals(path)) { 
-							GamaPreferences.Interface.CORE_STARTUP_MODEL.set(false).save(); 
-					}else {
-						GamaPreferences.Interface.CORE_STARTUP_MODEL.set(true).save();						
+					if (GamaPreferences.Interface.CORE_STARTUP_MODEL.getValue() && file_old != null
+							&& file_old.exists(null) && file_old.getOriginalPath().equals(path)) {
+						GamaPreferences.Interface.CORE_STARTUP_MODEL.set(false).save();
+					} else {
+						GamaPreferences.Interface.CORE_STARTUP_MODEL.set(true).save();
 						IGamaFile file = Files.from(null, path);
 						GamaPreferences.Interface.CORE_DEFAULT_MODEL.setValue(null, file);
 						GamaPreferences.Interface.CORE_DEFAULT_MODEL.save();
@@ -120,8 +120,7 @@ public class GamlActionProvider extends CommonActionProvider {
 	@Override
 	public void fillContextMenu(final IMenuManager menu) {
 		super.fillContextMenu(menu);
-		if (selection == null)
-			return;
+		if (selection == null) return;
 		menu.add(new Separator());
 		if (selection instanceof WrappedExperimentContent) {
 			menu.appendToGroup("group.copy", runAction);

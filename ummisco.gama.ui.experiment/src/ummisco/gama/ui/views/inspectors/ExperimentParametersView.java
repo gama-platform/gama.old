@@ -11,7 +11,8 @@
 package ummisco.gama.ui.views.inspectors;
 
 import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
-import static msi.gama.common.preferences.GamaPreferences.Displays.LAYOUTS;
+import static ummisco.gama.ui.resources.IGamaIcons.ACTION_REVERT;
+import static ummisco.gama.ui.resources.IGamaIcons.MENU_ADD_MONITOR;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,8 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gaml.operators.IUnits;
+import msi.gaml.constants.GamlCoreConstants;
+import ummisco.gama.dev.utils.COUNTER;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
@@ -47,7 +49,6 @@ import ummisco.gama.ui.parameters.EditorsGroup;
 import ummisco.gama.ui.parameters.MonitorDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -59,9 +60,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	/** The Constant MONITOR_CATEGORY. */
 	private static final String MONITOR_SECTION_NAME = "Monitors";
-
-	/** The count. */
-	private static int count = 0;
 
 	/** The Constant ID. */
 	public static final String ID = IGui.PARAMETER_VIEW_ID;
@@ -143,7 +141,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	private void createNewMonitor() {
 		createMonitorSectionIfNeeded(true);
 		IScope scope = GAMA.getRuntimeScope();
-		MonitorOutput m = new MonitorOutput(scope, "Monitor " + count++, null);
+		MonitorOutput m = new MonitorOutput(scope, "Monitor " + COUNTER.COUNT(), null);
 		MonitorDisplayer md = getEditorsList().addMonitor(m);
 		md.createControls((EditorsGroup) monitorSection.getControl());
 		monitorSection.setHeight(monitorSection.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
@@ -211,27 +209,26 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
-				"Revert parameters to their initial values", e -> {
-					final EditorsList<?> eds = editors;
-					if (eds != null) { eds.revertToDefaultValue(); }
-				}, SWT.RIGHT);
+		tb.button(ACTION_REVERT, "Revert parameter values", "Revert parameters to their initial values", e -> {
+			final EditorsList<?> eds = editors;
+			if (eds != null) { eds.revertToDefaultValue(); }
+		}, SWT.RIGHT);
 		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) {
-			tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(),
-					SWT.RIGHT);
+			tb.button(MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(), SWT.RIGHT);
 			tb.sep(SWT.RIGHT);
 		}
 
-		tb.button("menu.add2", "Add simulation",
+		tb.button(IGamaIcons.ADD_SIMULATION, "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", e -> {
 					final SimulationAgent sim =
 							GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
 					if (sim == null) return;
 					WorkbenchHelper.runInUI("", 0, m -> {
 						if ("None".equals(CORE_DISPLAY_LAYOUT.getValue())) {
-							ArrangeDisplayViews.execute(IUnits.split);
+							ArrangeDisplayViews.execute(GamlCoreConstants.split);
 						} else {
-							ArrangeDisplayViews.execute(LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
+							ArrangeDisplayViews
+									.execute(GamaPreferences.Displays.LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
 						}
 					});
 				}, SWT.RIGHT);

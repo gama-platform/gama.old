@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CleanupHelper.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * CleanupHelper.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.utils;
 
@@ -49,7 +49,8 @@ import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.GamaPreferencesView;
 
 /**
@@ -320,25 +321,25 @@ public class CleanupHelper {
 		/** The Constant MENU_IMAGES. */
 		public final static Map<String, String> MENU_IMAGES = new HashMap<>() {
 			{
-				put("print", "menu.print2");
-				put("save", "menu.save2");
-				put("saveAs", "menu.saveas2");
-				put("saveAll", "menu.saveall2");
-				put("revert", "menu.revert2");
-				put("refresh", "navigator/navigator.refresh2");
+				put("print", "generic/menu.print");
+				put("save", "generic/menu.save");
+				put("saveAs", "generic/menu.saveas");
+				put("saveAll", "generic/menu.saveall");
+				put("revert", "generic/menu.revert");
+				put("refresh", IGamaIcons.FILE_REFRESH);
 				put("new", "navigator/navigator.new2");
-				put("import", "menu.import2");
-				put("export", "menu.export2");
-				put("undo", "menu.undo2");
-				put("redo", "menu.redo2");
-				put("cut", "menu.cut2");
-				put("copy", "menu.copy2");
-				put("paste", "menu.paste2");
-				put("delete", "menu.delete2");
-				put("helpContents", "menu.help2");
-				put("org.eclipse.search.OpenSearchDialog", "menu.search2");
+				put("import", "navigator/menu.import");
+				put("export", "navigator/menu.export");
+				put("undo", "generic/menu.undo");
+				put("redo", "generic/menu.redo");
+				put("cut", "generic/menu.cut");
+				put("copy", "generic/menu.copy");
+				put("paste", "generic/menu.paste");
+				put("delete", "generic/menu.delete");
+				put("helpContents", "generic/menu.help");
+				put("org.eclipse.search.OpenSearchDialog", "generic/menu.search");
 				put("org.eclipse.ui.openLocalFile", "navigator/navigator.open2");
-				put("converstLineDelimitersTo", "menu.delimiter2");
+				put("converstLineDelimitersTo", "editor/menu.delimiter");
 			}
 		};
 
@@ -385,7 +386,7 @@ public class CleanupHelper {
 				}
 				if (item.isGroupMarker() || item.isSeparator() || !item.isVisible()) { continue; }
 				if (MENU_IMAGES.containsKey(name)) {
-					changeIcon(menu, item, GamaIcons.create(MENU_IMAGES.get(name)).descriptor());
+					changeIcon(menu, item, GamaIcon.named(MENU_IMAGES.get(name)).descriptor());
 				}
 				// sb.append(Strings.LN).append(Strings.TAB);
 				// sb.append(name).append('[').append(item.getClass().getSimpleName()).append("]:: ");

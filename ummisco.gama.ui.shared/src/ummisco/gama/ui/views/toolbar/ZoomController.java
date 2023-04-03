@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.toolbar;
 
+import static ummisco.gama.ui.resources.IGamaIcons.DISPLAY_TOOLBAR_CAMERA;
+
 import java.util.Collection;
 
 import org.eclipse.swt.SWT;
@@ -26,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
 
 import ummisco.gama.ui.menus.GamaMenu;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -100,7 +102,7 @@ public class ZoomController {
 						// toolbar
 					}
 				}
-				if (view.getCameraHelper() != null) {
+				if (view.getCameraHelper() != null && cameraLocked != null) {
 					tb.setSelection(cameraLocked, view.getCameraHelper().isCameraLocked());
 				}
 				tb.removeControlListener(this);
@@ -112,7 +114,7 @@ public class ZoomController {
 		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT, "Zoom out", "Zoom out", e -> view.zoomOut(), SWT.RIGHT);
 		tb.sep(SWT.RIGHT);
 		if (view.hasCameras()) {
-			tb.menu(IGamaIcons.DISPLAY_TOOLBAR_CAMERA, "", "Choose a camera...", trigger -> {
+			tb.menu(DISPLAY_TOOLBAR_CAMERA, "", "Choose a camera...", trigger -> {
 				final GamaMenu menu = new GamaMenu() {
 
 					@Override
@@ -129,8 +131,8 @@ public class ZoomController {
 								}
 
 							}, p.equals(view.getCameraHelper().getCameraName())
-									? GamaIcons.create("display.camera2").image()
-									: GamaIcons.create("display.color3").image());
+									? GamaIcon.named(DISPLAY_TOOLBAR_CAMERA).image()
+									: GamaIcon.named(IGamaIcons.CAMERA_EMPTY).image());
 						}
 						sep();
 						action("Copy current camera", new SelectionAdapter() {
@@ -141,13 +143,13 @@ public class ZoomController {
 								WorkbenchHelper.copy(text);
 							}
 
-						}, GamaIcons.create("menu.paste2").image());
+						}, GamaIcon.named(IGamaIcons.PASTE).image());
 					}
 				};
 				menu.open(tb.getToolbar(SWT.RIGHT), trigger, tb.height, 96);
 			}, SWT.RIGHT);
 		}
-		cameraLocked = tb.check("display.lock", "Lock/unlock", "Lock/unlock camera", e -> {
+		cameraLocked = tb.check(IGamaIcons.CAMERA_LOCK, "Lock/unlock", "Lock/unlock camera", e -> {
 			view.toggleLock();
 		}, SWT.RIGHT);
 	}

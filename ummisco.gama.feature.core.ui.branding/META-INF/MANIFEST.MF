@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Common UI components for GAMA
-Bundle-SymbolicName: ummisco.gama.feature.core.ui.branding
-Bundle-Version: 1.9.0.qualifier
-Bundle-Vendor: Core UI — UMMISCO
-Automatic-Module-Name: ummisco.gama.feature.core.ui.branding

@@ -3,7 +3,7 @@
  * OperatorProto.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -44,6 +44,7 @@ import msi.gaml.expressions.operators.BinaryOperator;
 import msi.gaml.expressions.operators.NAryOperator;
 import msi.gaml.expressions.operators.TypeFieldExpression;
 import msi.gaml.expressions.operators.UnaryOperator;
+import msi.gaml.expressions.types.TypeExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
@@ -129,8 +130,18 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 					if (isVarOrField) return new TypeFieldExpression(this, context, exprs[0]);
 					return UnaryOperator.create(this, context, exprs[0]);
 				case 2:
-					if (isVarOrField)
+					if (isVarOrField) {
+						if (exprs[1] instanceof BinaryOperator bo && IKeyword.AS.equals(bo.getName())) {
+							// Case of experiment.simulation and experiment.simulations (see #3621)
+							TypeExpression typeExpr = (TypeExpression) bo.arg(1);
+							IVarExpression var = (IVarExpression) bo.arg(0);
+							return BinaryOperator.create(AS, context,
+									new BinaryOperator.BinaryVarOperator(this, context, exprs[0], var), typeExpr);
+
+						}
 						return new BinaryOperator.BinaryVarOperator(this, context, exprs[0], (IVarExpression) exprs[1]);
+					}
+
 					return BinaryOperator.create(this, context, exprs);
 				default:
 					return NAryOperator.create(this, exprs);

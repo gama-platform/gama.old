@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
@@ -228,9 +229,11 @@ public interface IGamaView {
 		void setIndex(int i);
 
 		/**
-		 * Take snapshot.
+		 * Take snapshot. Returns a capture of the display contents in the form of a BufferedImage
+		 *
+		 * @return
 		 */
-		void takeSnapshot();
+		void takeSnapshot(GamaPoint customDimensions);
 
 		/**
 		 * Hide canvas.
@@ -260,6 +263,13 @@ public interface IGamaView {
 		 * @return true, if is 2d
 		 */
 		boolean is2D();
+
+		/**
+		 * Checks if is esc redefined.
+		 *
+		 * @return true, if is esc redefined
+		 */
+		boolean isEscRedefined();
 	}
 
 	/**

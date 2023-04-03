@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TopLevelFolder.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * TopLevelFolder.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -45,31 +45,31 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	 * The Enum Location.
 	 */
 	public enum Location {
-		
+
 		/** The Core models. */
-		CoreModels, 
- /** The Plugins. */
- Plugins, 
- /** The Other. */
- Other, 
- /** The Unknown. */
- Unknown, 
- /** The Tests. */
- Tests
+		CoreModels,
+		/** The Plugins. */
+		Plugins,
+		/** The Other. */
+		Other,
+		/** The Unknown. */
+		Unknown,
+		/** The Tests. */
+		Tests
 	}
 
 	/** The children. */
 	WrappedProject[] children;
-	
+
 	/** The status icon. */
-	final Image icon, statusIcon;
-	
+	final ImageDescriptor icon;
+
 	/** The nature. */
 	final String statusMessage, nature;
-	
+
 	/** The status color. */
 	final GamaUIColor statusColor;
-	
+
 	/** The location. */
 	final Location location;
 
@@ -78,15 +78,13 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	 * @param name
 	 */
 	public TopLevelFolder(final NavigatorRoot root, final String name, final String iconName,
-			final String statusIconName, final String statusMessage, final GamaUIColor statusColor, final String nature,
-			final Location location) {
+			final String statusMessage, final GamaUIColor statusColor, final String nature, final Location location) {
 		super(root, name);
 		this.statusColor = statusColor;
 		this.statusMessage = statusMessage;
 		this.nature = nature;
 		this.location = location;
-		icon = GamaIcons.create(iconName).image();
-		statusIcon = GamaIcons.create(statusIconName).image();
+		icon = GamaIcon.named(iconName).descriptor();
 		initializeChildren();
 	}
 
@@ -141,7 +139,8 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	/**
 	 * Estimate location.
 	 *
-	 * @param location the location
+	 * @param location
+	 *            the location
 	 * @return the location
 	 */
 	protected Location estimateLocation(final IPath location) {
@@ -169,7 +168,8 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	/**
 	 * Accepts.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 * @return true, if successful
 	 */
 	public final boolean accepts(final IProjectDescription desc) {
@@ -178,16 +178,10 @@ public class TopLevelFolder extends VirtualContent<NavigatorRoot> implements IGa
 	}
 
 	@Override
-	public final Image getImage() { return icon; }
-
-	@Override
-	public Image getStatusImage() { return statusIcon; }
+	public final ImageDescriptor getImageDescriptor() { return icon; }
 
 	@Override
 	public String getStatusMessage() { return statusMessage; }
-
-	@Override
-	public GamaUIColor getStatusColor() { return statusColor; }
 
 	// @Override
 	// public Color getColor() {

@@ -2,7 +2,8 @@
 <feature
       id="ummisco.gama.feature.stats"
       label="Stats"
-      version="1.9.0.qualifier">
+      version="1.9.0.qualifier"
+      plugin="ummisco.gaml.extensions.stats">
 
    <description url="http://www.example.com/description">
       This plug-in contains additional statistical operators.
@@ -23,7 +24,7 @@ Aditional library:
    </license>
 
    <url>
-      <update label="GAMA 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.x Update Site" url="https://updates.gama-platform.org"/>
    </url>
 
    <requires>
@@ -38,11 +39,5 @@ Aditional library:
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.feature.stats.branding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
 </feature>

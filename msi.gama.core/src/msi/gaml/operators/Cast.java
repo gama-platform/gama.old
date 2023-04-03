@@ -173,29 +173,31 @@ public class Cast {
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	@operator (
-			value = IKeyword.TOPOLOGY,
-			content_type = IType.GEOMETRY,
-			category = { IOperatorCategory.CASTING },
-			concept = { IConcept.CAST, IConcept.TOPOLOGY })
-	@doc (
-			value = "casting of the operand to a topology.",
-			usages = { @usage ("if the operand is a topology, returns the topology itself;"),
-					@usage ("if the operand is a spatial graph, returns the graph topology associated;"),
-					@usage ("if the operand is a population, returns the topology of the population;"),
-					@usage ("if the operand is a shape or a geometry, returns the continuous topology bounded by the geometry;"),
-					@usage ("if the operand is a matrix, returns the grid topology associated"),
-					@usage ("if the operand is another kind of container, returns the multiple topology associated to the container"),
-					@usage ("otherwise, casts the operand to a geometry and build a topology from it.") },
-			examples = { @example (
-					value = "topology(0)",
-					equals = "nil",
-					isExecutable = true),
-					@example (
-							value = "topology(a_graph)	--: Multiple topology in POLYGON ((24.712119771887785 7.867357373616512, 24.712119771887785 61.283226839310565, 82.4013676510046  7.867357373616512)) "
-									+ "at location[53.556743711446195;34.57529210646354]",
-							isExecutable = false) },
-			see = { "geometry" })
+	// @operator (
+	// value = IKeyword.TOPOLOGY,
+	// content_type = IType.GEOMETRY,
+	// category = { IOperatorCategory.CASTING },
+	// concept = { IConcept.CAST, IConcept.TOPOLOGY })
+	// @doc (
+	// value = "casting of the operand to a topology.",
+	// usages = { @usage ("if the operand is a topology, returns the topology itself;"),
+	// @usage ("if the operand is a spatial graph, returns the graph topology associated;"),
+	// @usage ("if the operand is a population, returns the topology of the population;"),
+	// @usage ("if the operand is a shape or a geometry, returns the continuous topology bounded by the geometry;"),
+	// @usage ("if the operand is a matrix, returns the grid topology associated"),
+	// @usage ("if the operand is another kind of container, returns the multiple topology associated to the
+	// container"),
+	// @usage ("otherwise, casts the operand to a geometry and build a topology from it.") },
+	// examples = { @example (
+	// value = "topology(0)",
+	// equals = "nil",
+	// isExecutable = true),
+	// @example (
+	// value = "topology(a_graph) --: Multiple topology in POLYGON ((24.712119771887785 7.867357373616512,
+	// 24.712119771887785 61.283226839310565, 82.4013676510046 7.867357373616512)) "
+	// + "at location[53.556743711446195;34.57529210646354]",
+	// isExecutable = false) },
+	// see = { "geometry" })
 	public static ITopology asTopology(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaTopologyType.staticCast(scope, val, false);
 	}
@@ -233,12 +235,13 @@ public class Cast {
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST })
 	@doc (
-			value = "casting of the first argument into a given type",
+			value = "Casting of the first argument into a given type",
 			comment = "It is equivalent to the application of the type operator on the left operand.",
 			examples = @example (
 					value = "3.5 as int",
 					returnType = "int",
 					equals = "int(3.5)"))
+	@test ("int(4.2) = (4.2 as int)")
 	public static Object as(final IScope scope, final Object val, final IType type) {
 		// WARNING copy is set explicity to false
 		return type.cast(scope, val, null, false);
@@ -601,7 +604,7 @@ public class Cast {
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST, IConcept.CONTAINER })
 	@doc (
-			value = "creates a matrix with a size provided by the first operand, and filled with the second operand",
+			value = "creates a matrix with a size provided by the first operand, and filled with the second operand. The given expression, unless constant, is evaluated for each cell ",
 			comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
 			see = { IKeyword.MATRIX, "as_matrix" })
 	@test ("{2,2} matrix_with (1) = matrix([1,1],[1,1])")
@@ -656,7 +659,7 @@ public class Cast {
 	 *             the gama runtime exception
 	 */
 	@operator (
-			value = { IKeyword.SPECIES, "species_of" },
+			value = { "species_of" },
 			content_type = ITypeProvider.TYPE_AT_INDEX + 1,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.CAST, IConcept.SPECIES })

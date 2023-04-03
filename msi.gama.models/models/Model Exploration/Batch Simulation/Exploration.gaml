@@ -2,7 +2,7 @@
 * Name: Exploration
 * Based on the internal empty template. 
 * Author: kevinchapuis
-* Tags: 
+* Tags: batch
 */
 
 
@@ -47,7 +47,7 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 		//in this example, we ask all the simulation agents of the run to save (at the end of the simulation) the people population in a shapefile with their is_infected and is_immune attributes 
 		ask simulations
 		{
-			save [nb_preys,nb_predators] type: csv to: "Results/preypredator.csv";
+			save [nb_preys,nb_predators] to: "Results/preypredator.csv" format:csv;
 		}
 	}
 }
@@ -58,7 +58,7 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 // 3. coefficient of variation 
 experiment replication_analysis parent: batch_abstract type: batch until: world.stop_sim() or ( time > end_cycle ) 
 	repeat:40 keep_simulations:false {
-	method stochanalyse outputs:["nb_preys", "nb_predators"] results:"Results/stochanalysis.txt" sample:3;
+	method stochanalyse outputs:["nb_preys", "nb_predators"] report:"Results/stochanalysis.txt" sample:3;
 } 
 
 // This experiment explores two parameters with an exhaustive strategy (default sampling method for exploration),
@@ -69,7 +69,7 @@ experiment exhaustive_exploration parent: batch_abstract type: batch repeat: 3 k
 	
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
-		display Comparison {
+		display Comparison  type: 2d {
 			chart "Number of people infected" type: series {
 				//we can access to all the simulations of a run (here composed of 5 simulation -> repeat: 5) by the variable "simulations" of the experiment.
 				//here we display for the 5 simulations, the mean, min and max values of the nb_infected variable.
@@ -98,7 +98,7 @@ experiment exploration_with_sampling  parent: batch_abstract repeat:3 type: batc
 	method exploration sampling:"latinhypercube" sample:100;
 	//the permanent section allows to define a output section that will be kept during all the batch experiment
 	permanent {
-		display Comparison {
+		display Comparison  type: 2d {
 			chart "Number of people infected" type: series {
 				//we can access to all the simulations of a run (here composed of 5 simulation -> repeat: 5) by the variable "simulations" of the experiment.
 				//here we display for the 5 simulations, the mean, min and max values of the nb_infected variable.

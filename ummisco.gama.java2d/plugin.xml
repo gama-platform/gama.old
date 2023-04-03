@@ -22,10 +22,10 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.java2d.AWTDisplayView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.display2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/tabs/view.display.png"
             id="msi.gama.application.view.LayeredDisplayView"
             name="Display"
-            restorable="false">
+            restorable="false"> 
       </view>
    </extension>
    <extension

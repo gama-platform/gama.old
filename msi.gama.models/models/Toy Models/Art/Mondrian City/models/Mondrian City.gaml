@@ -461,9 +461,9 @@ experiment MondrianCity type: gui autorun: true{
 			species road ;
 			species people;
 			species building;
-			event["a"] {show_agent<-!show_agent;}
-			event["r"] {show_road<-!show_road;}
-			event["b"] {show_building<-!show_building;}		  	
+			event "a" {show_agent<-!show_agent;}
+			event "r" {show_road<-!show_road;}
+			event "b"  {show_building<-!show_building;}		  	
 		}		
 	}
 }

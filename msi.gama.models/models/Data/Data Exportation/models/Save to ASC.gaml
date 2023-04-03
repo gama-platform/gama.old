@@ -10,7 +10,7 @@ model SavetoAsc
 global {
 	init {	
 		//save grid "grid_value" attribute into the asc file.
-		save cell to:"../results/grid.asc" type:"asc";
+		save cell to:"../results/grid.asc";
 	}
 }
 

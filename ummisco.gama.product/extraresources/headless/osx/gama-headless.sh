@@ -8,7 +8,7 @@ if [[ ${javaVersion:2} == 17 ]]; then
   exit 1
 fi
 
-memory=4096m
+memory=0
 
 for arg do
   shift
@@ -23,6 +23,12 @@ for arg do
   esac
 done
 
+if [ $memory -eq 0 ]; then
+  memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )"/../Gama.ini || echo "-Xmx4096m")
+else
+  memory=-Xmx$memory
+fi
+
 workspaceCreate=0
 case "$@" in 
   *-help*|*-version*|*-validate*|*-test*|*-xml*|*-batch*|*-write-xmi*|*-socket*)
@@ -34,7 +40,7 @@ esac
 echo "******************************************************************"
 echo "* GAMA version 1.9.0                                             *"
 echo "* http://gama-platform.org                                       *"
-echo "* (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners                *"
+echo "* (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
 passWork=.workspace
 # w/ output folder
@@ -54,7 +60,7 @@ else
   passWork=${@: -1}/.workspace$(find ${@: -1} -name ".workspace*" | expr $(wc -l))
 fi
 
-if ! java -cp "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m -Xmx$memory -Djava.awt.headless=true org.eclipse.core.launcher.Main -application msi.gama.headless.id4 -data $passWork "$@"; then
+if ! java -cp "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration "$( dirname "${BASH_SOURCE[0]}" )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
     echo "Error in you command, here's the log :"
     cat $passWork/.metadata/.log
     exit 1

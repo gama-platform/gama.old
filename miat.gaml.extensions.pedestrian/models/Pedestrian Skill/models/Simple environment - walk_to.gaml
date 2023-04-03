@@ -12,7 +12,7 @@ global {
 	float margin <- 2.0;
 	int nb_obstacles <- 0 parameter: true;
 	int nb_people <- 100;
-	string scenario <- "frontal crossing" among: ["big crowd", "frontal crossing", "perpandicular crossing"] ;
+	string scenario <- "frontal crossing" among: ["big crowd", "frontal crossing", "perpendicular crossing"] ;
 		
 	bool display_free_space <- false parameter: true;
 	bool display_force <- false parameter: true;
@@ -102,7 +102,7 @@ global {
 					int id <- int(self);
 					location <- any_location_in(even(id) ? left_space : right_space);
 					current_target <- closest_points_with(location, even(id) ? right_space : left_space)[1];
-				} match "perpandicular crossing" {
+				} match "perpendicular crossing" {
 					int id <- int(self);
 					location <- any_location_in(even(id) ? left_space : bottom_space);
 					current_target <- closest_points_with(location, (even(id) ? right_space : top_space))[1];
@@ -194,10 +194,10 @@ experiment frontal_crossing type: gui {
 		}
 	}
 }
-experiment perpandicular_crossing type: gui {
+experiment perpendicular_crossing type: gui {
 	float minimum_cycle_duration <- 0.02;
 	action _init_ {
-		create simulation with: [scenario :: "perpandicular crossing", nb_people::100];
+		create simulation with: [scenario :: "perpendicular crossing", nb_people::100];
 	}
 	
 	output {

@@ -10,7 +10,7 @@ model Fields
 
 global  {
 	field field_display <-  field(grid_file("includes/Lesponne.tif"));
-	field var_field <- field(field_display - mean(field_display));
+	field var_field <- copy(field_display) - mean(field_display);
 }
 
 species declaring_field {
@@ -53,14 +53,18 @@ species declaring_field {
 
 species manipulating_field {
 	init {
+		write "";
+		write "== MANIPULATING FIELD ==";
+		write "";
 		// max-minimum value of the field
-		float max_in_field <- max(field_display);
-		float min_in_field <- min(field_display);
-		float mean_in_field <- mean(field_display);
+		write sample(max(field_display));
+		write sample(min(field_display));
+		write sample(mean(field_display));
 		// accessing bands of the field 
-		field b1 <- field_display.bands[1];
-		field b2 <- field_display.bands[2];
-		field b3 <- field_display.bands[3];
+		write sample(field_display.bands[1]);
+		write sample(field_display.bands[2]);
+		write sample(field_display.bands[3]);
+		write "";	
 	}
 }
 

@@ -20,7 +20,9 @@ import org.locationtech.jts.geom.Geometry;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 
+import msi.gama.common.interfaces.IAsset;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -29,12 +31,10 @@ import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.IField;
+import msi.gaml.statements.draw.AssetDrawingAttributes;
 import msi.gaml.statements.draw.DrawingAttributes;
-import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
@@ -231,7 +231,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int w, final int h) {
-		int width = DPIHelper.autoScaleDown(w), height = DPIHelper.autoScaleDown(h);
+		int width = DPIHelper.autoScaleDown(getCanvas().getMonitor(), w),
+				height = DPIHelper.autoScaleDown(getCanvas().getMonitor(), h);
 		// int width = w, height = h;
 		// See #2628 and https://github.com/sgothel/jogl/commit/ca7f0fb61b0a608b6e684a5bbde71f6ecb6e3fe0
 		// width = scaleDownIfMac(width);
@@ -268,7 +269,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 	}
 
 	@Override
-	public Rectangle2D drawFile(final GamaFile file, final DrawingAttributes attributes) {
+	public Rectangle2D drawAsset(final IAsset file, final DrawingAttributes attributes) {
 		if (file == null) return null;
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) return null;
@@ -276,8 +277,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		if (file instanceof GamaGeometryFile) {
 			scene.addGeometryFile((GamaGeometryFile) file, attributes);
 			openGL.cacheGeometry((GamaGeometryFile) file);
-		} else if (file instanceof GamaImageFile) {
-			if (attributes.useCache()) { openGL.cacheTexture(file.getFile(getSurface().getScope())); }
+		} else if (file instanceof IImageProvider iip) {
+			if (attributes.useCache()) { openGL.cacheTexture(iip); }
 			scene.addImage(file, attributes);
 		}
 
@@ -290,11 +291,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		if (scene == null) return null;
 		final List<?> textures = attributes.getTextures();
 		if (textures != null && !textures.isEmpty()) {
-			for (final Object img : textures) {
-				if (img instanceof GamaImageFile) {
-					openGL.cacheTexture(((GamaImageFile) img).getFile(getSurface().getScope()));
-				}
-			}
+			for (final Object img : textures) { if (img instanceof IImageProvider im) { openGL.cacheTexture(im); } }
 		}
 		scene.addField(fieldValues, attributes);
 		/*
@@ -322,6 +319,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		if (img == null) return null;
 		final ModelScene scene = sceneHelper.getSceneToUpdate();
 		if (scene == null) return null;
+		// if (attributes.useCache()) { openGL.cacheTexture(img); }
 		scene.addImage(img, attributes);
 		tryToHighlight(attributes);
 		if (attributes.getBorder() != null) {
@@ -340,7 +338,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		y = x = (int) (Math.min(x, y) * GamaPreferences.Displays.CHART_QUALITY.getValue());
 		// TODO See if it not possible to generate directly a texture renderer instead
 		final BufferedImage im = chart.getImage(x, y, getSurface().getData().isAntialias());
-		scene.addImage(im, new FileDrawingAttributes(null, true));
+		scene.addImage(im, new AssetDrawingAttributes(null, true));
 		return rect;
 	}
 
@@ -422,18 +420,19 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		return DPIHelper.autoScaleDown(openGL.getRatios().x);
+		return DPIHelper.autoScaleDown(getCanvas().getMonitor(), openGL.getRatios().x);
 	}
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		return DPIHelper.autoScaleDown(openGL.getRatios().y);
+		return DPIHelper.autoScaleDown(getCanvas().getMonitor(), openGL.getRatios().y);
 	}
 
 	@Override
 	public double getAbsoluteRatioBetweenPixelsAndModelsUnits() {
-		return Math.min(DPIHelper.autoScaleDown(canvas.getSurfaceHeight() / data.getEnvHeight()),
-				DPIHelper.autoScaleDown(canvas.getSurfaceWidth() / data.getEnvWidth()));
+		return Math.min(
+				DPIHelper.autoScaleDown(getCanvas().getMonitor(), canvas.getSurfaceHeight() / data.getEnvHeight()),
+				DPIHelper.autoScaleDown(getCanvas().getMonitor(), canvas.getSurfaceWidth() / data.getEnvWidth()));
 	}
 
 	/*

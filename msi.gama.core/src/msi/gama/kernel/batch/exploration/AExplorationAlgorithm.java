@@ -16,6 +16,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParameterAdapter;
@@ -102,16 +103,17 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 	public abstract void explore(IScope scope);
 	
 	/**
+	 * Return the specific report for this exploration
+	 * TODO : has been specified for calibration - to be removed or used consistently across experiment; see {@link ExperimentAgent}
+	 */
+	public String getReport() {return "";}
+	
+	/**
 	 * Gives the list of variables the exploration method is targeting
 	 * 
 	 * @return {@link IExpression}
 	 */
 	public IExpression getOutputs() {return outputsExpression;}
-	
-	/**
-	 * 
-	 */
-	public String getReport() { return "";}
 	
 	/**
 	 * Main method to build the set of points to visit during the exploration of the model

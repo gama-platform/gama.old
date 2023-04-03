@@ -3,7 +3,7 @@
  * GridLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -50,7 +50,7 @@ import msi.gaml.types.Types;
  *
  */
 @symbol (
-		name = IKeyword.GRID_POPULATION,
+		name = IKeyword.GRID_LAYER,
 		kind = ISymbolKind.LAYER,
 		with_sequence = true, // Necessary to declare the elevation facet as remote itself
 		remote_context = true,
@@ -173,7 +173,7 @@ import msi.gaml.types.Types;
 						doc = @doc ("(openGL only) specify whether the display of the species is refreshed. (true by default, usefull in case of agents that do not move)")) },
 		omissible = IKeyword.SPECIES)
 @doc (
-		value = "`" + IKeyword.GRID_POPULATION + "` is used using the `" + IKeyword.GRID
+		value = "`" + IKeyword.GRID_LAYER + "` is used using the `" + IKeyword.GRID
 				+ "` keyword. It allows the modeler to display in an optimized way all cell agents of a grid (i.e. all agents of a species having a grid topology).",
 		usages = { @usage (
 				value = "The general syntax is:",
@@ -198,7 +198,7 @@ import msi.gaml.types.Types;
 										value = "}",
 										isExecutable = false) }) },
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.IMAGE,
-				IKeyword.OVERLAY, IKeyword.POPULATION })
+				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 @serializer (GridLayerSerializer.class)
 @validator (GridLayerValidator.class)
 public class GridLayerStatement extends AbstractLayerStatement {
@@ -243,21 +243,18 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			if (lines != null) { d.setFacet(BORDER, lines); }
 			final IExpression tx = d.getFacetExpr(TEXTURE);
 			final IExpression el = d.getFacetExpr(ELEVATION);
-			if (el == null || FALSE.equals(el.serialize(true))) {
-				if (tx == null) {
-					d.setFacet("flat", TRUE_EXPR);
-				} else {
-					// if texture is defined and elevation no, we need to set a fake elevation otherwise texture will
-					// not be drawn
-					d.setFacet(ELEVATION, GAML.getExpressionFactory().createConst(0.0, Types.FLOAT));
-				}
+			if ((el == null || FALSE.equals(el.serialize(true))) && tx != null) {
+				// if texture is defined and elevation no, we need to set a fake elevation otherwise texture will
+				// not be drawn
+				d.setFacet(ELEVATION, GAML.getExpressionFactory().createConst(0.0, Types.FLOAT));
 			}
 		}
 
 	}
 
 	/** The is flat grid. */
-	final boolean isHexagonal, isFlatGrid;
+	final boolean isHexagonal;
+	// isFlatGrid;
 
 	/**
 	 * Instantiates a new grid layer statement.
@@ -271,7 +268,8 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
 		isHexagonal = desc.hasFacet("hexagonal");
-		isFlatGrid = desc.hasFacet("flat");
+		// IExpression exp = desc.getFacetExpr(IKeyword.ELEVATION);
+		// isFlatGrid = exp == null || exp.isConst() && !Cast.asBool(null, exp.getConstValue());
 	}
 
 	@Override
@@ -279,21 +277,13 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		return true;
 	}
 
-	/**
-	 * Checks if is open GL flat grid.
-	 *
-	 * @param out
-	 *            the out
-	 * @return true, if is open GL flat grid
-	 */
-	boolean isOpenGLFlatGrid(final LayeredDisplayOutput out) {
-		final boolean isOpenGL = out.getData().is3D();
-		return isOpenGL && isFlatGrid;
-	}
-
 	@Override
 	public LayerType getType(final LayeredDisplayOutput out) {
-		return isHexagonal || isOpenGLFlatGrid(out) ? LayerType.GRID_AGENTS : LayerType.GRID;
+
+		// if (isHexagonal)
+
+		// if (out.getData().is3D()) return isFlatGrid ? LayerType.GRID : LayerType.GRID_AGENTS;
+		return isHexagonal ? LayerType.GRID_AGENTS : LayerType.GRID;
 	}
 
 	@Override

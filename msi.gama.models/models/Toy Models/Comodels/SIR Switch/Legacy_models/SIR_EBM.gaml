@@ -36,7 +36,7 @@ species agent_with_SIR_dynamic {
 
 experiment SIR_EBM_exp type: gui {
 	output { 
-		display display_charts {
+		display display_charts  type: 2d  {
 			chart "SIR_agent" type: series background: #white {
 				data 'S' value: first(agent_with_SIR_dynamic).S color: #green ;				
 				data 'I' value: first(agent_with_SIR_dynamic).I color: #red ;

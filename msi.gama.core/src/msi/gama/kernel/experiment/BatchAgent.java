@@ -2,7 +2,7 @@
  *
  * BatchAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -31,6 +31,7 @@ import msi.gama.kernel.batch.optimization.AOptimizationAlgorithm;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
+import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.FileOutput;
@@ -48,6 +49,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * Written by drogoul Modified on 28 mai 2011
@@ -160,6 +162,7 @@ public class BatchAgent extends ExperimentAgent {
 		final boolean hasSimulations = pop != null && !pop.isEmpty();
 		try {
 			if (hasSimulations) {
+				// TODO : verify why the flag simDispose is not used here (instead of a plain true).
 				for (final IAgent sim : pop.toArray()) { manageOutputAndCloseSimulation(sim, null, true, true); }
 				pop.clear();
 			}
@@ -224,7 +227,7 @@ public class BatchAgent extends ExperimentAgent {
 			}
 		}
 
-		if (dispose) { sim.dispose(); }
+		if (dispose && sim instanceof AbstractAgent agent) { agent.primDie(sim.getScope()); }
 		return out;
 	}
 
@@ -297,9 +300,7 @@ public class BatchAgent extends ExperimentAgent {
 			throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		final SimulationPopulation pop = getSimulationPopulation();
-		
 
-		
 		/*
 		 * Results gives for each "parameter set" (a point in the parameter space) a mapping between the key outputs of
 		 * interest (as stated in facet 'outputs' or fitness if calibration process) and any results per repetition
@@ -363,13 +364,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 			}
 			// We then verify that the front scheduler has not been paused
-			while (getSpecies().getController().isPaused() && !dead) {
-				try {
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			while (getSpecies().getController().isPaused() && !dead) { THREADS.WAIT(100); }
 		}
 
 		// When the simulations are finished, we give a chance to the outputs of
@@ -457,7 +452,7 @@ public class BatchAgent extends ExperimentAgent {
 				repeatIndex++;
 				if (repeatIndex == getSeeds().length || dead) { break; }
 			}
-			int i = 0;
+			String suffix = "";
 			while (pop.hasScheduledSimulations() && !dead) {
 				// We step all the simulations
 				pop.step(getScope());
@@ -483,20 +478,14 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 				if (!dead) {
-					getScope().getGui().getStatus().setStatus(
-							getScope(), "Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
-									+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
-							"small.batch" + i / 5);
+					getScope().getGui().getStatus().setStatus(getScope(),
+							"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length + " simulations (using "
+									+ pop.getNumberOfActiveThreads() + " threads)",
+							"overlays/small.exp.batch.white" + suffix);
 				}
-				if (++i == 20) { i = 0; }
+				suffix = suffix == "" ? "2" : "";
 				// We then verify that the front scheduler has not been paused
-				while (getSpecies().getController().isPaused() && !dead) {
-					try {
-						Thread.sleep(100);
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+				while (getSpecies().getController().isPaused() && !dead) { THREADS.WAIT(100); }
 			}
 
 		}

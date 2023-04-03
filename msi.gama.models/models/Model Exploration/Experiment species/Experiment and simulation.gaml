@@ -25,6 +25,10 @@ global {
 	reflex t {
 		write sample(cycle) + " - reflex t of " + self.name;
 	}	
+	
+	abort {
+		write "====== Death of " + self;
+	}
 }
 
 species people {}
@@ -135,7 +139,7 @@ experiment basic_exp_init_step {
 // - init is executed as the initialization of the experiment design and thus before the creation of any simulation 
 // - reflex is executed after each replications (i.e. after the execution of the N simulations corresponding to a replication,
 // N is specified in the repeat: statement.
-experiment batch_4_simu type: batch autorun: true repeat: 4 until: (cycle > 2) parallel: true {
+experiment batch_4_simu type: batch autorun: true repeat: 4 until: (cycle > 2) parallel: true keep_simulations: true {
 
 	parameter "nb_people" var: nb_people among: [0,5,10];
 
@@ -159,6 +163,10 @@ experiment batch_4_simu type: batch autorun: true repeat: 4 until: (cycle > 2) p
 		
 		loop s over: simulations {
 			write sample(length(s.people)) + " ("+s.name+")" color: #red;
+		}
+		// We get rid of the simulations manually as we memorize them with 'keep_simulations' (necessary for accessing their attributes)
+		ask simulations {
+			do die;
 		}
 	}
 }

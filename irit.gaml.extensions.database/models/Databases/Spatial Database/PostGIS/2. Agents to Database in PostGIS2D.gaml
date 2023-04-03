@@ -26,6 +26,7 @@ global {
 		write "The model \"Create Spatial Table in PostGIS.gaml\" can be run previously to create the database and tables. The model should be modified to create the database spatial_db2d.";
 		
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
+		write "Click on <<Step>> button to save data of agents to DB";
 		
 		create DB_Accessor
 		{ 			

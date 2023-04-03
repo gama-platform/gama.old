@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LinkedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * LinkedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -31,7 +31,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 
 	/** The file. */
 	final WrappedFile file;
-	
+
 	/** The suffix. */
 	final String suffix;
 
@@ -55,11 +55,6 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 		return false;
 	}
 
-	// @Override
-	// public Font getFont() {
-	// return GamaFonts.getNavigLinkFont(); // by default
-	// }
-
 	/**
 	 * Method getNavigatorChildren()
 	 *
@@ -74,27 +69,7 @@ public class LinkedFile extends VirtualContent<Category> implements IAdaptable {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return DEFAULT_LABEL_PROVIDER.getImage(file.getResource()); }
-
-	/**
-	 * Method getColor()
-	 *
-	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getColor()
-	 */
-	// @Override
-	// public Color getColor() {
-	// return ThemeHelper.isDark() ? GamaColors.system(SWT.COLOR_WHITE) : GamaColors.system(SWT.COLOR_BLACK);
-	// }
-
-	/**
-	 * Method isParentOf()
-	 *
-	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#isParentOf(java.lang.Object)
-	 */
-	// @Override
-	// public boolean isParentOf(final Object element) {
-	// return false;
-	// }
+	public ImageDescriptor getImageDescriptor() { return  ImageDescriptor.createFromImage(DEFAULT_LABEL_PROVIDER.getImage(file.getResource())); }
 
 	@Override
 	public boolean handleDoubleClick() {

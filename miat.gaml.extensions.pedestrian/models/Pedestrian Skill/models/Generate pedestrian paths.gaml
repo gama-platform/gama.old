@@ -40,9 +40,9 @@ global {
 		create pedestrian_path from: generated_lines  {
 			do initialize bounds:[open_area] distance: min(10.0,(wall closest_to self) distance_to self) masked_by: [wall] distance_extremity: 1.0;
 		}
-		save pedestrian_path type: shp to: "../includes/pedestrian paths.shp";
-		save open_area type: shp to: "../includes/open area.shp";
-		save pedestrian_path collect each.free_space type: shp to: "../includes/free spaces.shp";
+		save pedestrian_path to: "../includes/pedestrian paths.shp" format:"shp";
+		save open_area to: "../includes/open area.shp" format:"shp";
+		save pedestrian_path collect each.free_space to: "../includes/free spaces.shp" format:"shp";
 	}
 }
 

@@ -3,7 +3,7 @@
  * GamlExpressionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -93,14 +93,18 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		};
 	}
 
-	@Override
-	public IExpressionCompiler getParser() { return parser.get(); }
+	/**
+	 * Gets the parser.
+	 *
+	 * @return the parser
+	 */
+	// @Override
+	private IExpressionCompiler getParser() { return parser.get(); }
 
 	@Override
 	public void resetParser() {
 		parser.get().dispose();
 		parser.remove();
-		// getParser().reset();
 	}
 
 	/**
@@ -216,13 +220,39 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		for (final IExpression exp : args) { if (exp == null) return false; }
 		// If the operator is not known, we have no match
 		if (!GAML.OPERATORS.containsKey(op)) return false;
+		return hasOperator(op, new Signature(args));
+	}
+
+	@Override
+	public boolean hasExactOperator(final String op, final IExpression arg) {
+		// If arguments are invalid, we have no match
+		// If the operator is not known, we have no match
+		if (arg == null || !GAML.OPERATORS.containsKey(op)) return false;
+		Signature sig = new Signature(arg).simplified();
+		return any(GAML.OPERATORS.get(op).keySet(), si -> sig.equals(si));
+	}
+
+	/**
+	 * Checks for operator.
+	 *
+	 * @param op
+	 *            the op
+	 * @param sig
+	 *            the sig
+	 * @return true, if successful
+	 */
+	@Override
+	public boolean hasOperator(final String op, final Signature s) {
+		// If arguments are invalid, we have no match
+		// If the operator is not known, we have no match
+		if (s == null || s.size() == 0 || !GAML.OPERATORS.containsKey(op)) return false;
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
-		final Signature sig = new Signature(args).simplified();
+		Signature sig = s.simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
-		boolean matches = any(ops.keySet(), s -> sig.matchesDesiredSignature(s));
+		boolean matches = any(ops.keySet(), si -> sig.matchesDesiredSignature(si));
 		if (!matches) {
 			// Check if a varArg is not a possibility
-			matches = any(ops.keySet(), s -> Signature.varArgFrom(sig).matchesDesiredSignature(s));
+			matches = any(ops.keySet(), si -> Signature.varArgFrom(sig).matchesDesiredSignature(si));
 		}
 		return matches;
 	}

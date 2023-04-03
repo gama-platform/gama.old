@@ -44,6 +44,7 @@ import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.runtime.Application;
 import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.dev.utils.DEBUG;
@@ -93,20 +94,20 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @param ssl
 	 *            the ssl
 	 */
-	public GamaWebSocketServer(final int port, final Application a, final GamaListener l, final boolean ssl) {
+	public GamaWebSocketServer(final int port, final Application a, final GamaListener l, final boolean ssl, final String jksPath, final String spwd, final String kpwd) {
 		super(new InetSocketAddress(port));
 		if (a.verbose) { DEBUG.ON(); }
 		cmdHelper = new CommandExecutor();
 		if (ssl) {
 			// load up the key store
 			String STORETYPE = "JKS";
-			File currentJavaJarFile =
-					new File(GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-			String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
-
-			String KEYSTORE = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/../keystore.jks";
-			String STOREPASSWORD = "storepassword";
-			String KEYPASSWORD = "storepassword";
+//			File currentJavaJarFile =
+//					new File(GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+//			String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
+//			String KEYSTORE = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/../keystore.jks";
+			String KEYSTORE = jksPath;//"/Users/hqn88/git/gama.client/server/.cert/cert.jks";
+			String STOREPASSWORD = spwd;//"abcdef";
+			String KEYPASSWORD = kpwd;//"abcdef";
 
 			KeyStore ks;
 			try (FileInputStream fis = new FileInputStream(new File(KEYSTORE))) {
@@ -211,7 +212,19 @@ public class GamaWebSocketServer extends WebSocketServer {
 			IMap<String, Object> map = extractParam(socket, message);
 			map.put("server", this);
 			DEBUG.OUT(map.get("type"));
-			cmdHelper.process(socket, map);
+			DEBUG.OUT(map.get("expr"));
+			final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
+			final String socket_id = map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
+			if(get_listener().getExperiment(socket_id, exp_id)!=null  && !get_listener().getExperiment(socket_id, exp_id).controller.isPaused() ) {
+				get_listener().getExperiment(socket_id, exp_id).controller.getScope().getSimulation().postOneShotAction(scope1 -> {
+					cmdHelper.process(socket, map);
+//				System.out.println(map.get("type"));
+					return null;
+				});
+			}else {
+
+				cmdHelper.process(socket, map);
+			}
 
 		} catch (Exception e1) {
 			DEBUG.OUT(e1);

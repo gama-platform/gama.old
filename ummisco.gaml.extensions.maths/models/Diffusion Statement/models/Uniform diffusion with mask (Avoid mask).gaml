@@ -65,6 +65,7 @@ grid cells_diffuse_on_mask height: grid_size width: grid_size {
 
 experiment diffusion type: gui {
 	output {
+		layout #split;
 		display diffusion_avoiding_mask type: 3d {
 			// Display the grid with elevation
 			grid cells_avoid_mask elevation: true triangulation: true;

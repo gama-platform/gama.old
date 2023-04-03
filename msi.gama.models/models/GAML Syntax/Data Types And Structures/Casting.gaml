@@ -13,7 +13,7 @@ species cast_to_int {
 		write sample(int(1.0));
 		write sample(int("1"));
 		write sample(int("1.0"));
-		write sample(int(°pink));
+		write sample(int(#pink));
 		write sample(int(true));
 		write sample(int(false));
 		write sample(int(self));
@@ -22,7 +22,7 @@ species cast_to_int {
 		write sample(int({1,2,3}));
 		write sample(int(1::2));
 		write sample(int([1::2]));
-		write sample(int(°meter));				
+		write sample(int(#meter));				
 	}
 }
 
@@ -33,7 +33,7 @@ species cast_to_float{
 		write sample(float(1.0));
 		write sample(float("1"));
 		write sample(float("1.0"));
-		write sample(float(°pink));
+		write sample(float(#pink));
 		write sample(float(true));
 		write sample(float(false));
 		write sample(float(self));
@@ -42,7 +42,7 @@ species cast_to_float{
 		write sample(float(1::2));
 		write sample(float([1::2]));
 		write sample(float({1,2,3}));
-		write sample(float(°meter));				
+		write sample(float(#meter));				
 	}
 }
 
@@ -53,14 +53,14 @@ species cast_to_string{
 		write sample(string(1.0));
 		write sample(string("1"));
 		write sample(string("1.0"));
-		write sample(string(°pink));
+		write sample(string(#pink));
 		write sample(string(true));
 		write sample(string(false));
 		write sample(string(self));
 		write sample(string([]));
 		write sample(string([0]));
 		write sample(string({0,0,0}));
-		write sample(string(°meter));				
+		write sample(string(#meter));				
 	}
 }
 
@@ -70,7 +70,7 @@ species cast_to_point{
 		write sample(point(1.0));
 		write sample(point("1"));
 		write sample(point("1.0"));
-		write sample(point(°pink));
+		write sample(point(#pink));
 		write sample(point(true));
 		write sample(point(false));
 		write sample(point(self));
@@ -79,7 +79,7 @@ species cast_to_point{
 		write sample(point(1::2));
 		write sample(point([1::2]));
 		write sample(point({1,2,3}));
-		write sample(point(°meter));				
+		write sample(point(#meter));				
 	}
 }
 species cast_to_list{
@@ -88,7 +88,7 @@ species cast_to_list{
 		write sample(list(1.0));
 		write sample(list("1"));
 		write sample(list("1.0"));
-		write sample(list(°pink));
+		write sample(list(#pink));
 		write sample(list(true));
 		write sample(list(false));
 		write sample(list(self));
@@ -97,7 +97,7 @@ species cast_to_list{
 		write sample(list(1::2));
 		write sample(list([1::2]));	
 		write sample(list({1,2,3}));
-		write sample(list(°meter));				
+		write sample(list(#meter));				
 	}
 }
 species cast_to_pair{
@@ -106,7 +106,7 @@ species cast_to_pair{
 		write sample(pair(1.0));
 		write sample(pair("1"));
 		write sample(pair("1.0"));
-		write sample(pair(°pink));
+		write sample(pair(#pink));
 		write sample(pair(true));
 		write sample(pair(false));
 		write sample(pair(self));
@@ -115,17 +115,17 @@ species cast_to_pair{
 		write sample(pair(1::2));
 		write sample(pair([1::2]));
 		write sample(pair({1,2,3}));
-		write sample(pair(°meter));				
+		write sample(pair(#meter));				
 	}
 }
 species cast_to_map{
 	init {
-		write sample(map<float, int>(1.5°meter));
+		write sample(map<float, int>(1.5#meter));
 		write sample(map(1));
 		write sample(map(1.5));
 		write sample(map("1"));
 		write sample(map("1.0"));
-		write sample(map(°pink));
+		write sample(map(#pink));
 		write sample(map(true));
 		write sample(map(false));
 		write sample(map(self));

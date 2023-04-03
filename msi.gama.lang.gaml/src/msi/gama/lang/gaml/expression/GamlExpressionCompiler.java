@@ -81,6 +81,8 @@ import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.outputs.layers.KeyboardEventLayerDelegate;
+import msi.gama.outputs.layers.MouseEventLayerDelegate;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -538,15 +540,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 */
 	private IExpression binaryAs(final IExpression left, final Expression e2) {
 		final String type = EGaml.getInstance().getKeyOf(e2);
-		// if ( isSpeciesName(type) ) { return factory.createOperator(op,
-		// context, e2, left, species(type)); }
-		// if ( isSkillName(type) ) { return
-		// factory.createOperator(AS_SKILL, context, e2, left, skill(type));
-		// }
 		if (isTypeName(type)) return casting(type, left, e2);
 		getContext().error("'as' must be followed by a type, species or skill name. " + type + " is neither of these.",
 				IGamlIssue.NOT_A_TYPE, e2, type);
-		// if (isTypeName(type)) { return casting(type, left, e2); }
 		return null;
 	}
 
@@ -712,6 +708,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (fieldExpr instanceof VariableRef) {
 			final String var = EGaml.getInstance().getKeyOf(fieldExpr);
 			IExpression expr = species.getVarExpr(var, true);
+
 			if (expr == null) {
 				if (species instanceof ModelDescription && ((ModelDescription) species).hasExperiment(var)) {
 					final IType t = Types.get(IKeyword.SPECIES);
@@ -724,7 +721,18 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 							IGamlIssue.UNKNOWN_VAR, fieldExpr.eContainer(), var, species.getName());
 					return null;
 				}
+				// special case for #3621. We cast the "simulation" and "simulations" variables of "experiment"
+				// A more correct fix would have been to make `experiment` a parametric type that explicitly refers to
+				// the species of the model as its contents type though...
+			} else if (IKeyword.SIMULATION.equals(var) && expr.getGamlType().equals(Types.get(IKeyword.MODEL))) {
+				ModelDescription md = getContext().getModelDescription();
+				if (md != null) { expr = getFactory().createAs(currentContext, expr, md.getGamlType()); }
+			} else if (IKeyword.SIMULATIONS.equals(var)
+					&& expr.getGamlType().getContentType().equals(Types.get(IKeyword.MODEL))) {
+				ModelDescription md = getContext().getModelDescription();
+				if (md != null) { expr = getFactory().createAs(currentContext, expr, Types.LIST.of(md.getGamlType())); }
 			}
+
 			getContext().document(fieldExpr, expr);
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
 		}
@@ -923,15 +931,27 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseUnitName(final UnitName object) {
 		final String s = EGaml.getInstance().getKeyOf(object);
-		if (GAML.UNITS.containsKey(s)) {
-			final UnitConstantExpression exp = getFactory().getUnitExpr(s);
-			if (exp.isDeprecated()) {
-				getContext().warning(s + " is deprecated.", IGamlIssue.DEPRECATED, object, (String[]) null);
-			}
-			// Make sure we can return "special" expression like #month or #year -- see #3590
-			return exp.getExpression();
+		UnitConstantExpression exp = caseUnitName(s);
+		if (exp == null) {
+			getContext().error(s + " is not a unit or constant name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+			return null;
 		}
-		getContext().error(s + " is not a unit or constant name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+		if (exp.isDeprecated()) {
+			getContext().warning(s + " is deprecated.", IGamlIssue.DEPRECATED, object, (String[]) null);
+		}
+		return exp;
+	}
+
+	/**
+	 * Case unit name.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the i expression
+	 */
+	public UnitConstantExpression caseUnitName(final String name) {
+		if (GAML.UNITS.containsKey(name)) // Make sure we return "special" expressions like #month or #year -- see #3590
+			return getFactory().getUnitExpr(name);
 		return null;
 	}
 
@@ -1196,7 +1216,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// If there is none, it can't be a casting
 		if (size == 0) return false;
 		// If there is one, we match
-		if (size == 1) return true;
+		if (size == 1) {// If a unary function has been redefined with the type name as name and this specific argument,
+						// it takes precedence over the regular casting
+			IExpression expr = compile(args.get(0));
+			return !getFactory().hasExactOperator(op, expr);
+		}
+		// return true;
+
 		// If more than one, we need to check if there are operators that match. If yes, we return false
 		return !getFactory().hasOperator(op, toArray(transform(args, this::compile), IExpression.class));
 	}
@@ -1356,6 +1382,22 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (sd.hasBehavior(varName)) return new DenotedActionExpression(sd.getBehavior(varName));
 			if (sd.hasAspect(varName)) return new DenotedActionExpression(sd.getAspect(varName));
 
+			// A last possibility is to offer some transition guidance to users who used to write event layer names as
+			// labels (neither as string or constant). For instance : mouse_move instead of "mouse_move" or #mouse_move.
+			// For that, we emit simply a warning (not an error) and we return the corresponding constant.
+
+			if (MouseEventLayerDelegate.EVENTS.contains(varName)
+					|| KeyboardEventLayerDelegate.EVENTS.contains(varName)) {
+				UnitConstantExpression exp = this.caseUnitName(varName);
+				if (exp != null) {
+					getContext().warning(
+							"The direct usage of the event name (" + varName
+									+ ") is now deprecated and should be replaced either by a string ('" + varName
+									+ "') or a constant if it has been defined (#" + varName + ")",
+							IGamlIssue.UNKNOWN_VAR, object, varName);
+					return exp;
+				}
+			}
 			getContext().error(
 					"The variable " + varName
 							+ " is not defined or accessible in this context. Check its name or declare it",

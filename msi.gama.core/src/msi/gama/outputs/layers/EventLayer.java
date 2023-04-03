@@ -2,7 +2,7 @@
  *
  * EventLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -27,34 +27,6 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 
 public class EventLayer extends AbstractLayer implements IEventLayerListener {
-
-	/** The Constant MOUSE_PRESS. */
-	private final static int MOUSE_PRESS = 0;
-
-	/** The Constant MOUSE_RELEASED. */
-	private final static int MOUSE_RELEASED = 1;
-
-	/** The Constant MOUSE_CLICKED. */
-	private final static int MOUSE_CLICKED = 2;
-
-	/** The Constant MOUSE_MOVED. */
-	private final static int MOUSE_MOVED = 4;
-
-	/** The Constant MOUSE_ENTERED. */
-	private final static int MOUSE_ENTERED = 5;
-
-	/** The Constant MOUSE_EXITED. */
-	private final static int MOUSE_EXITED = 6;
-
-	/** The Constant MOUSE_MENU. */
-	private final static int MOUSE_MENU = 7;
-
-	/** The Constant MOUSE_DRAGGED. */
-	private final static int MOUSE_DRAGGED = 8;
-
-
-	/** The Constant KEY_PRESSED. */
-	private final static int KEY_PRESSED = 3;
 
 	static {
 		DEBUG.OFF();
@@ -101,15 +73,28 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	 * @return the listening event
 	 */
 	private int getListeningEvent(final String eventTypeName) {
-		if (IKeyword.MOUSE_DOWN.equals(eventTypeName)) return MOUSE_PRESS;
-		if (IKeyword.MOUSE_UP.equals(eventTypeName)) return MOUSE_RELEASED;
-		if (IKeyword.MOUSE_CLICKED.equals(eventTypeName)) return MOUSE_CLICKED;
-		if (IKeyword.MOUSE_MOVED.equals(eventTypeName)) return MOUSE_MOVED;
-		if (IKeyword.MOUSE_ENTERED.equals(eventTypeName)) return MOUSE_ENTERED;
-		if (IKeyword.MOUSE_EXITED.equals(eventTypeName)) return MOUSE_EXITED;
-		if (IKeyword.MOUSE_MENU.equals(eventTypeName)) return MOUSE_MENU;
-		if (IKeyword.MOUSE_DRAGGED.equals(eventTypeName)) return MOUSE_DRAGGED;
-		return KEY_PRESSED;
+		return switch (eventTypeName) {
+			case MouseEventLayerDelegate.MOUSE_DOWN -> MOUSE_PRESS;
+			case MouseEventLayerDelegate.MOUSE_UP -> MOUSE_RELEASED;
+			case MouseEventLayerDelegate.MOUSE_CLICKED -> MOUSE_CLICKED;
+			case MouseEventLayerDelegate.MOUSE_MOVED -> MOUSE_MOVED;
+			case MouseEventLayerDelegate.MOUSE_ENTERED -> MOUSE_ENTERED;
+			case MouseEventLayerDelegate.MOUSE_EXITED -> MOUSE_EXITED;
+			case MouseEventLayerDelegate.MOUSE_MENU -> MOUSE_MENU;
+			case MouseEventLayerDelegate.MOUSE_DRAGGED -> MOUSE_DRAGGED;
+			case KeyboardEventLayerDelegate.ARROW_DOWN -> ARROW_DOWN;
+			case KeyboardEventLayerDelegate.ARROW_UP -> ARROW_UP;
+			case KeyboardEventLayerDelegate.ARROW_LEFT -> ARROW_LEFT;
+			case KeyboardEventLayerDelegate.ARROW_RIGHT -> ARROW_RIGHT;
+			case KeyboardEventLayerDelegate.KEY_ESC -> KEY_ESC;
+			case KeyboardEventLayerDelegate.KEY_PAGE_DOWN -> KEY_PAGE_DOWN;
+			case KeyboardEventLayerDelegate.KEY_PAGE_UP -> KEY_PAGE_UP;
+			case KeyboardEventLayerDelegate.KEY_ENTER -> KEY_RETURN;
+			case KeyboardEventLayerDelegate.KEY_TAB -> KEY_TAB;
+
+			default -> KEY_PRESSED;
+		};
+
 	}
 
 	@Override
@@ -233,4 +218,9 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	 * @return the event
 	 */
 	public String getEvent() { return event; }
+
+	@Override
+	public void specialKeyPressed(final int keyCode) {
+		if (keyCode == listenedEvent) { executeEvent(-1, -1); }
+	}
 }

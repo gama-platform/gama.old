@@ -156,12 +156,12 @@ experiment "Corridor" type: gui autorun: true {
 				draw circle(40) color: !capture_pedestrians ? (button_hover ? #yellow : #red) : (button_hover ? #lightgreen : #darkgreen) at:  button_location;
 			}
 
-			event mouse_down {
+			event #mouse_down {
 				if (button_location distance_to #user_location <= 50) {
 					capture_pedestrians <- !capture_pedestrians;
 				}
 			}
-			event mouse_move {
+			event #mouse_move {
 				button_hover <- (button_location distance_to #user_location <= 50);
 			}
 		}

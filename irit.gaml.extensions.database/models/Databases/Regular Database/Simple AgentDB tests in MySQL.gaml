@@ -84,14 +84,14 @@ global {
 
 species DB_Accessor parent: AgentDB {
 	reflex select {
-		list<list> t <- list<list> (select("SELECT * FROM registration"));
+		list<list> t <- select("SELECT * FROM registration");
 		write "Select before updated " + t;
 	}
 
 	reflex update {
 		do executeUpdate updateComm: "UPDATE registration SET age = 30 WHERE id IN (100, 101)";
 		do executeUpdate updateComm: "DELETE FROM registration where id=103 ";
-		list<list> t <- list<list> (select("SELECT * FROM registration"));
+		list<list> t <- select("SELECT * FROM registration");
 		write "Select after updated " + t;
 	}
 

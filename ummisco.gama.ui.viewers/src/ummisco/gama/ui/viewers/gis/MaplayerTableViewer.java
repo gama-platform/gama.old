@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MaplayerTableViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * MaplayerTableViewer.java, in ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 
 package ummisco.gama.ui.viewers.gis;
@@ -34,7 +34,7 @@ import org.geotools.map.Layer;
 import org.geotools.map.StyleLayer;
 import org.geotools.styling.Style;
 
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.styling.SimpleConfigurator;
 
@@ -47,16 +47,16 @@ import ummisco.gama.ui.viewers.gis.geotools.styling.SimpleConfigurator;
  * @source $URL$
  */
 public class MaplayerTableViewer extends TableViewer implements ISelectionChangedListener {
-	
+
 	/** The layers list. */
 	private final List<Layer> layersList = new ArrayList<>();
-	
+
 	/** The selected map layer. */
 	private Layer selectedMapLayer;
 
 	/** The titles. */
 	private final String[] titles = { "Layer name", "Visible", "Style" };
-	
+
 	/** The pane. */
 	private SwtMapPane pane;
 
@@ -89,32 +89,28 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	 * @param pane
 	 *            the map pane to use.
 	 */
-	public void setPane(final SwtMapPane pane) {
-		this.pane = pane;
-	}
+	public void setPane(final SwtMapPane pane) { this.pane = pane; }
 
 	/**
 	 * Getter for the loaded list.
 	 *
 	 * @return the list of map layers.
 	 */
-	public List<Layer> getLayersList() {
-		return layersList;
-	}
+	public List<Layer> getLayersList() { return layersList; }
 
 	/**
 	 *
 	 * @return the selected layer or <code>null</code>.
 	 */
-	public Layer getSelectedMapLayer() {
-		return selectedMapLayer;
-	}
+	public Layer getSelectedMapLayer() { return selectedMapLayer; }
 
 	/**
 	 * Creates the columns.
 	 *
-	 * @param parent the parent
-	 * @param viewer the viewer
+	 * @param parent
+	 *            the parent
+	 * @param viewer
+	 *            the viewer
 	 */
 	private void createColumns(final Composite parent, final TableViewer viewer) {
 
@@ -124,20 +120,17 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(final Object element) {
-				if (element instanceof Layer) { return GamaIcons.create(IGamaIcons.FEATURE).image(); }
+				// if (element instanceof Layer) { return GamaIcon.named(IGamaIcons.FEATURE).image(); }
 				return null;
 			}
 
 			@Override
 			public String getText(final Object element) {
-				if (element instanceof Layer) {
-					final Layer p = (Layer) element;
+				if (element instanceof Layer p) {
 					String title = p.getTitle();
 					if (title == null || title.length() == 0) {
 						@SuppressWarnings ("rawtypes") final FeatureSource featureSource = p.getFeatureSource();
-						if (featureSource != null) {
-							title = featureSource.getName().getLocalPart().toString();
-						}
+						if (featureSource != null) { title = featureSource.getName().getLocalPart().toString(); }
 					}
 					return title;
 				}
@@ -149,10 +142,9 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(final Object element) {
-				if (element instanceof Layer) {
-					final Layer p = (Layer) element;
-					if (p.isVisible()) { return GamaIcons.create(IGamaIcons.CHECKED).image(); }
-					return GamaIcons.create(IGamaIcons.UNCHECKED).image();
+				if (element instanceof Layer p) {
+					if (p.isVisible()) return GamaIcon.named(IGamaIcons.SMALL_INSPECT).image();
+					return GamaIcon.named(IGamaIcons.SMALL_HIDDEN).image();
 				}
 				return null;
 			}
@@ -167,7 +159,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 		col.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public Image getImage(final Object element) {
-				return GamaIcons.create(IGamaIcons.STYLE).image();
+				return GamaIcon.named(IGamaIcons.SMALL_SELECTABLE).image();
 			}
 
 			@Override
@@ -181,9 +173,12 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	/**
 	 * Creates the table viewer column.
 	 *
-	 * @param title the title
-	 * @param bound the bound
-	 * @param colNumber the col number
+	 * @param title
+	 *            the title
+	 * @param bound
+	 *            the bound
+	 * @param colNumber
+	 *            the col number
 	 * @return the table viewer column
 	 */
 	private TableViewerColumn createTableViewerColumn(final String title, final int bound, final int colNumber) {
@@ -204,9 +199,7 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 		}
 		final IStructuredSelection selection = (IStructuredSelection) arg0.getSelection();
 		final Object firstElement = selection.getFirstElement();
-		if (firstElement instanceof Layer) {
-			selectedMapLayer = (Layer) firstElement;
-		}
+		if (firstElement instanceof Layer) { selectedMapLayer = (Layer) firstElement; }
 	}
 
 	@Override
@@ -238,12 +231,9 @@ public class MaplayerTableViewer extends TableViewer implements ISelectionChange
 	 * @throws IOException
 	 */
 	private void doSetStyle(final Layer layer) throws IOException {
-		if (layer instanceof StyleLayer) {
-			final StyleLayer styleLayer = (StyleLayer) layer;
+		if (layer instanceof StyleLayer styleLayer) {
 			final Style style = SimpleConfigurator.showDialog(this.getTable().getShell(), layer);
-			if (style != null) {
-				styleLayer.setStyle(style);
-			}
+			if (style != null) { styleLayer.setStyle(style); }
 		}
 	}
 

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * EventLayerStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * EventLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -57,24 +57,15 @@ import msi.gaml.types.IType;
 		symbols = { IKeyword.DISPLAY })
 @facets (
 		value = { @facet (
-				name = "unused",
-				type = IType.ID,
-				values = { IKeyword.MOUSE_UP, IKeyword.MOUSE_DOWN, IKeyword.MOUSE_MOVED, IKeyword.MOUSE_DRAGGED, IKeyword.MOUSE_ENTERED,
-						IKeyword.MOUSE_EXITED, IKeyword.MOUSE_MENU },
-				optional = true,
-				doc = @doc (
-						value = "an unused facet that serves only for the purpose of declaring the string values"),
-				internal = true),
-				@facet (
-						name = IKeyword.NAME,
-						type = IType.ID,
-						optional = false,
-						doc = @doc ("the type of event captured: can be  \"mouse_up\", \"mouse_down\", \"mouse_move\", \"mouse_drag\", \"mouse_exit\", \"mouse_enter\", \"mouse_menu\" or a character")),
+				name = IKeyword.NAME,
+				type = { IType.STRING },
+				optional = false,
+				doc = @doc ("the type of event captured: basic events include #mouse_up, #mouse_down, #mouse_move, #mouse_exit, #mouse_enter, #mouse_menu, #mouse_drag, #arrow_down, #arrow_up, #arrow_left, #arrow_right, #escape, #tab, #enter, #page_up, #page_down or a character")),
 				@facet (
 						name = IKeyword.TYPE,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("Type of peripheric used to generate events. Defaults to 'default', which encompasses keyboard and mouse")),
+						doc = @doc ("Type of device used to generate events. Defaults to 'default', which encompasses keyboard and mouse")),
 				@facet (
 						name = IKeyword.ACTION,
 						type = IType.ACTION,
@@ -130,7 +121,7 @@ import msi.gaml.types.IType;
 										value = "   display my_display {",
 										isExecutable = false),
 								@example (
-										value = "      event mouse_up action: myAction;",
+										value = "      event #mouse_up action: myAction;",
 										isExecutable = false),
 								@example (
 										value = "   }",
@@ -138,8 +129,8 @@ import msi.gaml.types.IType;
 								@example (
 										value = "}",
 										isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
-				IKeyword.OVERLAY, IKeyword.POPULATION, })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.IMAGE_LAYER, IKeyword.OVERLAY, IKeyword.SPECIES_LAYER, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
 	/**
@@ -149,8 +140,8 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 		@Override
 		public void validate(final StatementDescription description) {
-			final String name = description.getLitteral(NAME);
-			if (name.length() > 1) {
+			final String name = description.getFacet(NAME).getExpression().literalValue();
+			if (name.length() > 1) { // If it is not a char
 				StringBuilder error = new StringBuilder();
 				boolean foundEventName = false;
 				for (final IEventLayerDelegate delegate : delegates) {
@@ -192,16 +183,16 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	/** The executes in simulation. */
 	private boolean executesInSimulation;
-	
+
 	/** The type. */
 	private final IExpression type;
-	
+
 	/** The delegates. */
 	public static List<IEventLayerDelegate> delegates = new ArrayList<>();
-	
+
 	/** The action name. */
 	private String actionName;
-	
+
 	/** The action. */
 	private ActionStatement action;
 
@@ -215,8 +206,10 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	/**
 	 * Instantiates a new event layer statement.
 	 *
-	 * @param desc the desc
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param desc
+	 *            the desc
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
@@ -233,7 +226,8 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	/**
 	 * Gets the executer.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the executer
 	 */
 	public IAgent getExecuter(final IScope scope) {
@@ -252,7 +246,8 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	/**
 	 * Gets the executable.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the executable
 	 */
 	public IExecutable getExecutable(final IScope scope) {
@@ -295,7 +290,8 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	/**
 	 * Gets the source.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the source
 	 */
 	private Object getSource(final IScope scope) {
@@ -305,9 +301,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<IStatement> statements = new ArrayList<>();
-		for (final ISymbol c : commands) {
-			if (c instanceof IStatement) { statements.add((IStatement) c); }
-		}
+		for (final ISymbol c : commands) { if (c instanceof IStatement) { statements.add((IStatement) c); } }
 		if (!statements.isEmpty()) {
 			actionName = "inline";
 			final IDescription d =

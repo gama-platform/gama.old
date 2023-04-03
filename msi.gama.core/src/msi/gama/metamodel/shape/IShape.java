@@ -2,7 +2,7 @@
  *
  * IShape.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,6 +18,7 @@ import org.locationtech.jts.io.WKTWriter;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IAttributed;
+import msi.gama.common.interfaces.IEnvelopeProvider;
 import msi.gama.common.interfaces.ILocated;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
@@ -103,7 +104,7 @@ import msi.gaml.types.IType;
 				name = "contour",
 				type = IType.GEOMETRY,
 				doc = { @doc ("Returns the polyline representing the contour of this geometry") }) })
-public interface IShape extends ILocated, IValue, IAttributed {
+public interface IShape extends ILocated, IValue, IAttributed, IEnvelopeProvider {
 
 	/** The jts types. */
 	Map<String, Type> JTS_TYPES = GamaMapFactory.createUnordered();
@@ -511,5 +512,17 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	 *            the new geometrical type
 	 */
 	void setGeometricalType(Type t);
+
+	/**
+	 * Compute envelope.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the envelope 3 D
+	 */
+	@Override
+	default Envelope3D computeEnvelope(final IScope scope) {
+		return getEnvelope();
+	}
 
 }

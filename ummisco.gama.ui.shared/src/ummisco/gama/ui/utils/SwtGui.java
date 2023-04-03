@@ -3,7 +3,7 @@
  * SwtGui.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,6 +11,7 @@
 package ummisco.gama.ui.utils;
 
 import static ummisco.gama.ui.utils.ViewsHelper.hideView;
+import static ummisco.gama.ui.utils.WorkbenchHelper.getClipboard;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
@@ -28,6 +28,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.services.ISourceProviderService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
@@ -77,7 +78,6 @@ import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
 import ummisco.gama.ui.interfaces.IModelRunner;
-import ummisco.gama.ui.interfaces.IOpenGLInitializer;
 import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.interfaces.IUserDialogFactory;
@@ -114,7 +114,7 @@ public class SwtGui implements IGui {
 	static {
 		PreferencesHelper.initialize();
 		ImageUtils.getCachedGC();
-		initializeOpenGL();
+		// initializeOpenGL();
 	}
 
 	/**
@@ -231,17 +231,20 @@ public class SwtGui implements IGui {
 		return result[0];
 	}
 
+	/** The transfers. */
+	static Transfer[] transfers = { TextTransfer.getInstance() };
+
 	@Override
 	public boolean copyToClipboard(final String text) {
-		WorkbenchHelper.asyncRun(() -> {
-			final Clipboard clipboard = new Clipboard(WorkbenchHelper.getDisplay());
-			final TextTransfer textTransfer = TextTransfer.getInstance();
-			final Transfer[] transfers = { textTransfer };
-			final Object[] data = { text };
-			clipboard.setContents(data, transfers);
-			clipboard.dispose();
-		});
+		if (getClipboard() == null || text == null) return false;
+		WorkbenchHelper.asyncRun(() -> { getClipboard().setContents(new String[] { text }, transfers); });
 		return true;
+	}
+
+	@Override
+	public String copyTextFromClipboard() {
+		if (getClipboard() == null) return null;
+		return (String) WorkbenchHelper.run(() -> getClipboard().getContents(TextTransfer.getInstance()));
 	}
 
 	@Override
@@ -450,6 +453,12 @@ public class SwtGui implements IGui {
 
 		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
+			WorkbenchHelper.getWindow().updateActionBars();
+
+			// To solve issue #3697
+			ICommandService hs = WorkbenchHelper.getService(ICommandService.class);
+			hs.refreshElements("msi.gama.application.commands.SynchronizeExperiment", null);
+
 			WorkbenchHelper.getPage().setEditorAreaVisible(showEditors);
 			getConsole().toggleConsoleViews(exp.getAgent(), showConsoles == null || showConsoles);
 			if (showNavigator != null && !showNavigator) { hideView(IGui.NAVIGATOR_VIEW_ID); }
@@ -474,10 +483,10 @@ public class SwtGui implements IGui {
 	/**
 	 * Initialize open GL.
 	 */
-	private static void initializeOpenGL() {
-		final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
-		if (initializer != null && !initializer.isDone()) { new Thread(initializer).start(); }
-	}
+	// private static void initializeOpenGL() {
+	// final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
+	// if (initializer != null && !initializer.isDone()) { new Thread(initializer).start(); }
+	// }
 
 	/**
 	 * Method cleanAfterExperiment()
@@ -554,10 +563,7 @@ public class SwtGui implements IGui {
 
 			for (final IViewReference view : views) {
 				final IViewPart part = view.getView(false);
-				if (part instanceof IGamaView) {
-
-					((IGamaView) part).close(scope);
-				}
+				if (part instanceof IGamaView) { ((IGamaView) part).close(scope); }
 			}
 			if (openModelingPerspective) {
 				DEBUG.OUT("Deleting simulation perspective and opening immediately the modeling perspective = "
@@ -575,7 +581,8 @@ public class SwtGui implements IGui {
 	public String getExperimentState() {
 		final IExperimentController controller = GAMA.getFrontmostController();
 		if (controller != null) {
-			if (controller.isPaused()) return PAUSED; else return RUNNING;
+			if (controller.isPaused()) return PAUSED;
+			return RUNNING;
 		}
 		return NONE;
 	}
@@ -604,11 +611,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IStatusDisplayer getStatus() {
-
-		return WorkbenchHelper.getService(IStatusDisplayer.class);
-
-	}
+	public IStatusDisplayer getStatus() { return WorkbenchHelper.getService(IStatusDisplayer.class); }
 
 	@Override
 	public IConsoleDisplayer getConsole() { return WorkbenchHelper.getService(IConsoleDisplayer.class); }

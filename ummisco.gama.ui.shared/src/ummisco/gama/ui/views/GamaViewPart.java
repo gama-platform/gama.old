@@ -3,7 +3,7 @@
  * GamaViewPart.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,8 +18,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
@@ -53,7 +51,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * @author drogoul
  */
 public abstract class GamaViewPart extends ViewPart
-		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer, ControlListener {
+		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
 	static {
 		DEBUG.ON();
@@ -302,7 +300,16 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void update(final IDisplayOutput output) {
 		final Job job = getUpdateJob();
-		if (job != null) { job.schedule(); }
+		if (job != null) {
+			job.schedule();
+			if (GAMA.isSynchronized()) {
+				try {
+					job.join();
+				} catch (InterruptedException e) {
+					DEBUG.OUT("Update of " + getTitle() + " interrupted.");
+				}
+			}
+		}
 	}
 
 	@Override
@@ -363,6 +370,8 @@ public abstract class GamaViewPart extends ViewPart
 		WorkbenchHelper.asyncRun(() -> {
 			try {
 				ViewsHelper.hideView(GamaViewPart.this);
+				Job job = getUpdateJob();
+				if (job != null && job.getThread() != null) { job.getThread().interrupt(); }
 			} catch (final Exception e) {}
 		});
 
@@ -444,15 +453,5 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public boolean isVisible() { return true; }
-
-	@Override
-	public void controlMoved(final ControlEvent e) {
-		DEBUG.OUT("View " + this.getTitle() + " moved to " + rootComposite.getParent().toDisplay(0, 0));
-	}
-
-	@Override
-	public void controlResized(final ControlEvent e) {
-		DEBUG.OUT("View " + this.getTitle() + " resized to " + rootComposite.getSize());
-	}
 
 }

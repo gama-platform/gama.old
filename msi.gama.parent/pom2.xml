@@ -218,19 +218,6 @@
 
 		<module>../msi.gama.application</module>
 		
-		<module>../ummisco.gama.feature.audio.branding</module>
-		<module>../ummisco.gama.feature.models.branding</module>
-		<module>../ummisco.gama.feature.dependencies.branding</module>
-		<module>../ummisco.gama.feature.dependencies.ui.branding</module>
-		<module>../ummisco.gama.feature.core.branding</module>
-		<module>../ummisco.gama.feature.core.extensions.branding</module>
-		<module>../ummisco.gama.feature.core.ui.branding</module>
-		<module>../ummisco.gama.feature.experiment.ui.branding</module>
-		<module>../ummisco.gama.feature.modeling.ui.branding</module>
-		<module>../ummisco.gama.feature.serialize.branding</module>
-		<module>../ummisco.gama.feature.network.branding</module>
-		<module>../ummisco.gama.feature.stats.branding</module>
-		
 		
 
 		<module>../ummisco.gama.feature.models</module>
@@ -243,6 +230,7 @@
 		<module>../ummisco.gama.feature.modeling.ui</module>
 		<module>../ummisco.gama.feature.serialize</module>
 		<module>../ummisco.gama.feature.network</module>
+		<module>../ummisco.gama.feature.image</module>
 
 		<module>../msi.gaml.extensions.fipa</module>
 		<module>../msi.gama.headless</module>
@@ -271,6 +259,7 @@
 
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
+		<module>../ummisco.gaml.extensions.image</module>
 
 		<module>../ummisco.gama.product</module>
 

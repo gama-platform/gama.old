@@ -3,14 +3,12 @@
  * LayeredDisplayView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
-
-import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_BORDER;
 
 import java.awt.Color;
 
@@ -37,15 +35,16 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.SnapshotMaker;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
@@ -151,7 +150,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 			if (scope != null && scope.getSimulation() != null) {
 				final ITopLevelAgent root = scope.getRoot();
 				final Color color = root.getColor();
-				this.setTitleImage(GamaIcons.createTempColorIcon(GamaColors.get(color)));
+				this.setTitleImage(GamaIcon.ofColor(GamaColors.get(color), true).image());
 			}
 		}
 
@@ -193,7 +192,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		 *            the style
 		 */
 		public CentralPanel(final Composite c) {
-			super(c, CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
+			super(c, GamaPreferences.Displays.CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
 			setLayout(emptyLayout());
 			setLayoutData(fullData());
 			setParentComposite(this);
@@ -314,11 +313,6 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public void synchronizeChanged() {
-		decorator.updateOverlay();
-	}
-
-	@Override
 	public void zoomIn() {
 		if (getDisplaySurface() != null) { getDisplaySurface().zoomIn(); }
 	}
@@ -347,22 +341,10 @@ public abstract class LayeredDisplayView extends GamaViewPart
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
-				// DEBUG.OUT("UPDATE THREAD: Entering");
 				final IDisplaySurface surface = getDisplaySurface();
-				// synchronizer.waitForSurfaceToBeRealized();
-				// DEBUG.OUT("UPDATE THREAD: Surface has been realized");
-
 				if (surface != null && !disposed && !surface.isDisposed()) {
 					try {
-						// synchronizer.waitForViewUpdateAuthorisation();
-
-						// DEBUG.OUT("UPDATE THREAD: Calling updateDisplay on surface");
 						surface.updateDisplay(false);
-						if (surface.getScope().getClock().getCycle() > 0 && surface.getData().isAutosave()) {
-							WorkbenchHelper.run(() -> takeSnapshot());
-						}
-						// inInitPhase = false;
-
 					} catch (Exception e) {
 						DEBUG.OUT("Error when updating " + getTitle() + ": " + e.getMessage());
 					}
@@ -372,13 +354,23 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		};
 	}
 
+	@Override
+	public void update(final IDisplayOutput output) {
+		super.update(output);
+		updateSnapshot();
+	}
+
 	/**
-	 * Can be synchronized. Returns true if this can be synchronized: for instance, on macOS, hiding an OpenGL view will
-	 * prevent it from rendering, and the simulation should not wait for this invisible visualisation.
-	 *
-	 * @return true, if successful
+	 * Update snapshot.
 	 */
-	protected abstract boolean canBeSynchronized();
+	private void updateSnapshot() {
+		if (disposed) return;
+		final IDisplaySurface surface = getDisplaySurface();
+		if (surface == null || surface.isDisposed()) return;
+		if (surface.getScope().getClock().getCycle() > 0 && surface.getData().isAutosave()) {
+			WorkbenchHelper.run(() -> takeSnapshot(surface.getData().getImageDimension()));
+		}
+	}
 
 	@Override
 	public boolean zoomWhenScrolling() {
@@ -391,10 +383,7 @@ public abstract class LayeredDisplayView extends GamaViewPart
 		if (output == getOutput() && isFullScreen()) { WorkbenchHelper.run(decorator::toggleFullScreen); }
 		output.dispose();
 		outputs.remove(output);
-		if (outputs.isEmpty()) {
-			// synchronizer.authorizeViewUpdate();
-			close(GAMA.getRuntimeScope());
-		}
+		if (outputs.isEmpty()) { close(GAMA.getRuntimeScope()); }
 	}
 
 	@Override
@@ -422,10 +411,8 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	}
 
 	@Override
-	public void takeSnapshot() {
-		Rectangle dim = WorkbenchHelper.displaySizeOf(surfaceComposite);
-		java.awt.Rectangle r = new java.awt.Rectangle(dim.x, dim.y, dim.width, dim.height);
-		SnapshotMaker.getInstance().doSnapshot(getDisplaySurface(), r);
+	public void takeSnapshot(final GamaPoint customDimensions) {
+		GAMA.getSnapshotMaker().takeAndSaveSnapshot(getDisplaySurface(), customDimensions);
 	}
 
 	/**
@@ -462,6 +449,17 @@ public abstract class LayeredDisplayView extends GamaViewPart
 	public boolean isVisible() {
 		IDisplaySurface surface = getDisplaySurface();
 		return surface != null && surface.isVisible() || isFullScreen();
+	}
+
+	/**
+	 * Checks if is esc refefined.
+	 *
+	 * @return true, if is esc refefined
+	 */
+	@Override
+	public boolean isEscRedefined() {
+		IDisplaySurface surface = getDisplaySurface();
+		return surface != null && surface.isEscRedefined();
 	}
 
 	/**

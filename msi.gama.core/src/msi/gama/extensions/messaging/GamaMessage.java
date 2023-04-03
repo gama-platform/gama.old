@@ -221,7 +221,7 @@ public class GamaMessage implements IValue {
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return "message[sender: " + getSender() + "; content: " + getContents(scope) + "; content" + "]";
+		return "message[sender: " + getSender() + "; content: " + getContents(scope) + "]";
 	}
 
 	@Override

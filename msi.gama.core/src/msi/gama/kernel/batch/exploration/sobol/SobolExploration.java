@@ -3,7 +3,7 @@
  * SobolExploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -40,6 +40,7 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 
 /**
@@ -81,7 +82,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.BATCH_REPORT,
 						type = IType.STRING,
-						optional = true,
+						optional = false,
 						doc = @doc ("The path to the file where the Sobol report will be written")),
 				@facet (
 						name = IKeyword.PATH,
@@ -145,8 +146,9 @@ public class SobolExploration extends AExplorationAlgorithm {
 
 		/* Disable repetitions / repeat argument */
 		currentExperiment.setSeeds(new Double[1]);
+		// TODO : why doesnt it take into account the value of 'keep_simulations:' ?
 		currentExperiment.setKeepSimulations(false);
-		if (GamaExecutorService.CONCURRENCY_SIMULATIONS_ALL.getValue()) {
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			res_outputs = currentExperiment.launchSimulationsWithSolution(solutions);
 		} else {
 			res_outputs = GamaMapFactory.create();
@@ -171,14 +173,12 @@ public class SobolExploration extends AExplorationAlgorithm {
 		}
 
 		/* Save the Sobol analysis report in a .txt file */
-		if (hasFacet(IKeyword.BATCH_REPORT)) {
-			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
-			final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
-			final File parent = f.getParentFile();
-			if (!parent.exists()) { parent.mkdirs(); }
-			if (f.exists()) { f.delete(); }
-			sobol_analysis.saveResult(f);
-		}
+		String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
+		final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+		final File parent = f.getParentFile();
+		if (!parent.exists()) { parent.mkdirs(); }
+		if (f.exists()) { f.delete(); }
+		sobol_analysis.saveResult(f);
 	}
 
 	@SuppressWarnings ("unchecked")
@@ -202,18 +202,27 @@ public class SobolExploration extends AExplorationAlgorithm {
 					var_info.add(parameters.get(j).getMinValue(scope));
 					var_info.add(parameters.get(j).getMaxValue(scope));
 					break;
-
 				case IType.FLOAT:
 					var_info.add(parameters.get(j).getMinValue(scope));
 					var_info.add(parameters.get(j).getMaxValue(scope));
 					break;
-
 				case IType.BOOL:
 					var_info.add(false);
 					var_info.add(true);
 					break;
-
-				// TODO Handle other types of variables (points, dates, discrete variables ...)
+				case IType.DATE:
+					var_info.add(GamaDateType.staticCast(scope, parameters.get(j).getMinValue(scope), null, false));
+					var_info.add(GamaDateType.staticCast(scope, parameters.get(j).getMaxValue(scope), null, false));
+					break;
+				case IType.POINT:
+					var_info.add(Cast.asPoint(scope, parameters.get(j).getMinValue(scope)));
+					var_info.add(Cast.asPoint(scope, parameters.get(j).getMaxValue(scope)));
+					break;
+				case IType.STRING:
+					if (parameters.get(j).getAmongValue(scope).isEmpty()) throw GamaRuntimeException
+							.error("Trying to force a string variable in sampling without among facets", scope);
+					var_info.addAll(parameters.get(j).getAmongValue(scope));
+					break;
 				default:
 					throw GamaRuntimeException.error("Trying to add a variable of unknown type "
 							+ parameters.get(j).getType().id() + " to a parameter set", scope);

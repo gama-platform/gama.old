@@ -65,7 +65,7 @@ experiment Display type: gui {
 			graphics World refresh: false{
 				 draw shape color: #white;
 			}
-			event "mouse_down" {
+			event #mouse_down {
 				ball target <- ball with_min_of(each distance_to #user_location);
 				ask target {
 					do apply impulse: {rnd(10)-5,rnd(10)-5,50}; // vertical, with some random side moves

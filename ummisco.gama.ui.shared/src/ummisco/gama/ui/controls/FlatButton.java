@@ -3,7 +3,7 @@
  * FlatButton.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -30,7 +30,8 @@ import org.eclipse.swt.widgets.TypedListener;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class FlatButton.
@@ -151,7 +152,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 */
 	public static FlatButton menu(final Composite comp, final GamaUIColor color, final String text) {
 		return button(comp, color, text).setImageStyle(IMAGE_RIGHT)
-				.setImage(GamaIcons.create("small.dropdown").image());
+				.setImage(GamaIcon.named(IGamaIcons.SMALL_DROPDOWN).image());
 	}
 
 	/** The image. */
@@ -412,6 +413,11 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		return this;
 	}
 
+	/**
+	 * Compute width of text.
+	 *
+	 * @return the int
+	 */
 	private int computeWidthOfText() {
 		if (text != null) {
 			final GC gc = new GC(this);

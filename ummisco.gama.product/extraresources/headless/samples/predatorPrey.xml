@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Experiment_plan>
+	<Simulation experiment="prey_predator" finalStep="1000" id="0" seed="1.0" sourcePath="./predatorPrey/predatorPrey.gaml">
+		<Parameters>
+			<Parameter name="Initial number of preys: " type="INT" value="200" var="nb_preys_init"/>
+			<Parameter name="Prey max energy: " type="FLOAT" value="1.0" var="prey_max_energy"/>
+			<Parameter name="Prey max transfer: " type="FLOAT" value="0.1" var="prey_max_transfert"/>
+			<Parameter name="Prey energy consumption: " type="FLOAT" value="0.05" var="prey_energy_consum"/>
+			<Parameter name="Initial number of predators: " type="INT" value="20" var="nb_predators_init"/>
+			<Parameter name="Predator max energy: " type="FLOAT" value="1.0" var="predator_max_energy"/>
+			<Parameter name="Predator energy transfer: " type="FLOAT" value="0.5" var="predator_energy_transfert"/>
+			<Parameter name="Predator energy consumption: " type="FLOAT" value="0.02" var="predator_energy_consum"/>
+		</Parameters>
+		<Outputs>
+			<Output framerate="1" id="0" name="Number of preys"/>
+			<Output framerate="1" id="1" name="Number of predators"/>
+			<Output framerate="1" id="2" name="main_display"/>
+		</Outputs>
+	</Simulation>
+</Experiment_plan>

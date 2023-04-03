@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * LegacyTextDrawer.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * LegacyTextDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.scene.text;
 
@@ -123,7 +123,7 @@ public class LegacyTextDrawer extends ObjectDrawer<StringObject> implements ITes
 			drawBitmap(s.getObject(), attributes);
 		} else {
 			Font font = attributes.getFont();
-			final int fontSize = DPIHelper.autoScaleUp(font.getSize());
+			final int fontSize = DPIHelper.autoScaleUp(gl.getRenderer().getCanvas().getMonitor(), font.getSize());
 			if (fontSize != font.getSize()) { font = font.deriveFont((float) fontSize); }
 			Shape shape = font.createGlyphVector(context, s.getObject()).getOutline();
 			final Rectangle2D bounds = shape.getBounds2D();

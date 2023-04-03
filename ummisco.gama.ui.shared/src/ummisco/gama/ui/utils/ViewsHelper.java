@@ -3,7 +3,7 @@
  * ViewsHelper.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -248,7 +248,7 @@ public class ViewsHelper {
 	public static boolean toggleFullScreenMode() {
 		// DEBUG.OUT("Trying to toggle full screen mode");
 		final IGamaView.Display part = WorkbenchHelper.run(ViewsHelper::findFrontmostGamaViewUnderMouse);
-		if (part != null) return toggleFullScreenMode(part);
+		if (part != null && !part.isEscRedefined()) return toggleFullScreenMode(part);
 		return false;
 	}
 

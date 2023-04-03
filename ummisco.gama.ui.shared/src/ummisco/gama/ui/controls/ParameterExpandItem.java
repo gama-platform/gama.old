@@ -3,7 +3,7 @@
  * ParameterExpandItem.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -24,7 +24,7 @@ import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.common.interfaces.ItemList;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -168,26 +168,26 @@ public class ParameterExpandItem extends Item {
 		if (parent.hasClosableToggle) {
 			endX -= 2 * TEXT_INSET + imageWidth;
 			closePosition = endX;
-			gc.drawImage(GamaIcons.create(IGamaIcons.SMALL_CLOSE).image(), endX, imageY);
+			gc.drawImage(GamaIcon.named(IGamaIcons.SMALL_CLOSE).image(), endX, imageY);
 		}
 		if (parent.hasPausableToggle) {
-			final var image = isPaused ? GamaIcons.create(IGamaIcons.SMALL_RESUME).image()
-					: GamaIcons.create(IGamaIcons.SMALL_PAUSE).image();
+			final var image = isPaused ? GamaIcon.named(IGamaIcons.SMALL_RESUME).image()
+					: GamaIcon.named(IGamaIcons.SMALL_PAUSE).image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			pausePosition = endX;
 			gc.drawImage(image, endX, imageY);
 		}
 
 		if (parent.hasVisibleToggle) {
-			final var image = parent.isVisible(this) ? GamaIcons.create("small.inspect").image()
-					: GamaIcons.create("small.hidden").image();
+			final var image = parent.isVisible(this) ? GamaIcon.named(IGamaIcons.SMALL_INSPECT).image()
+					: GamaIcon.named(IGamaIcons.SMALL_HIDDEN).image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			visiblePosition = endX;
 			gc.drawImage(image, endX, imageY);
 		}
 		if (parent.hasSelectableToggle) {
-			final var image = isSelectable ? GamaIcons.create("small.selectable").image()
-					: GamaIcons.create("small.unselectable").image();
+			final var image = isSelectable ? GamaIcon.named(IGamaIcons.SMALL_SELECTABLE).image()
+					: GamaIcon.named(IGamaIcons.SMALL_UNSELECTABLE).image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			selectablePosition = endX;
 			gc.drawImage(image, endX, imageY);

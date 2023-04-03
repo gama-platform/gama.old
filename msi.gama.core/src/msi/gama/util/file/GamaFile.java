@@ -2,7 +2,7 @@
  *
  * GamaFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -90,7 +90,10 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	protected GamaFile(final IScope scope, final String pn, final boolean forReading) throws GamaRuntimeException {
+	protected GamaFile(final IScope scope, final String pn, boolean forReading) throws GamaRuntimeException {
+		// See #3684 -- we temporarily consider files as output files if we are invoked by 'save'
+
+		if (forReading) { forReading = scope != null && scope.getData(IGamaFile.KEY_TEMPORARY_OUTPUT) == null; }
 		originalPath = pn;
 		String tempPath = originalPath;
 		if (originalPath == null)
@@ -253,6 +256,27 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	/**
+	 * The Class FlushBufferException.
+	 */
+	public static class FlushBufferException extends GamaRuntimeException {
+
+		/**
+		 * Instantiates a new flush buffer exception.
+		 *
+		 * @param scope
+		 *            the scope
+		 * @param s
+		 *            the s
+		 * @param warning
+		 *            the warning
+		 */
+		protected FlushBufferException(final IScope scope, final String s, final boolean warning) {
+			super(scope, s, warning);
+		}
+
+	}
+
+	/**
 	 * Flush buffer.
 	 *
 	 * @param scope
@@ -263,9 +287,11 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	 *             the gama runtime exception
 	 */
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		throw GamaRuntimeException.error("Saving is not yet impletemented for files of type " + this.getExtension(scope)
-				+ ". Please post a request for enhancement to implement " + getClass().getSimpleName()
-				+ ".flushBuffer(IScope, Facets)", scope);
+		throw new FlushBufferException(scope,
+				"Saving is not yet impletemented for files of type " + this.getExtension(scope)
+						+ ". Please post a request for enhancement to implement " + getClass().getSimpleName()
+						+ ".flushBuffer(IScope, Facets)",
+				false);
 	}
 
 	@Override

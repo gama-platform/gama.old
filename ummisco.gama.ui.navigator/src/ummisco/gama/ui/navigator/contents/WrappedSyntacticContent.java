@@ -3,7 +3,7 @@
  * WrappedSyntacticContent.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -21,8 +21,6 @@ import org.eclipse.swt.graphics.Image;
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -88,14 +86,9 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	}
 
 	@Override
-	public Image getImage() { return (Image) WorkbenchHelper.getService(IGamlLabelProvider.class).getImage(element); }
+	public ImageDescriptor getImageDescriptor() { return  (ImageDescriptor) WorkbenchHelper.getService(IGamlLabelProvider.class).getImageDescriptor(element); }
 
-	// @Override
-	// public Color getColor() {
-	// return ThemeHelper.isDark() ? IGamaColors.VERY_LIGHT_GRAY.color() : IGamaColors.BLACK.inactive();
-	// }
-
-	@Override
+	@Override 
 	public boolean handleDoubleClick() {
 		GAMA.getGui().editModel(null, element.getElement());
 		return true;
@@ -120,7 +113,6 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 		final var e = o.element;
 		if (element.isSpecies()) {
 			if (e.isSpecies()) return getName().compareTo(o.getName());
-			// if (IKeyword.GRID.equals(element.getKeyword())) {}
 			return 1;
 		}
 		if (e.isSpecies()) return -1;
@@ -159,11 +151,5 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public String getStatusMessage() { return getName(); }
-
-	@Override
-	public GamaUIColor getStatusColor() { return IGamaColors.BLACK; }
-
-	@Override
-	public Image getStatusImage() { return getImage(); }
 
 }

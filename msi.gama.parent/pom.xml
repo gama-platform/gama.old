@@ -26,7 +26,7 @@
 
 	<pluginRepositories>
 		<pluginRepository>
-			<id>buchen-maven-repo</id>
+			<id>portfolio-non-maven-dependencies</id>
 			<url>https://buchen.github.io/maven-repo</url>
 			<layout>default</layout>
 		</pluginRepository>
@@ -117,7 +117,7 @@
 	<repositories>
 		<repository>
 			<id>eclipse-swt</id>
-			<url>http://download.eclipse.org/releases/2022-12</url>
+			<url>https://download.eclipse.org/releases/2022-12</url>
 			<layout>p2</layout>
 			<releases>
 				<enabled>true</enabled>
@@ -170,20 +170,8 @@
 
 		<module>../ummisco.gaml.extensions.sound</module>
 		<module>../ummisco.gaml.extensions.stats</module>
+		<module>../ummisco.gaml.extensions.image</module>
 		
-		
-		<module>../ummisco.gama.feature.audio.branding</module>
-		<module>../ummisco.gama.feature.models.branding</module>
-		<module>../ummisco.gama.feature.dependencies.branding</module>
-		<module>../ummisco.gama.feature.dependencies.ui.branding</module>
-		<module>../ummisco.gama.feature.core.branding</module>
-		<module>../ummisco.gama.feature.core.extensions.branding</module>
-		<module>../ummisco.gama.feature.core.ui.branding</module>
-		<module>../ummisco.gama.feature.experiment.ui.branding</module>
-		<module>../ummisco.gama.feature.modeling.ui.branding</module>
-		<module>../ummisco.gama.feature.serialize.branding</module>
-		<module>../ummisco.gama.feature.network.branding</module>
-		<module>../ummisco.gama.feature.stats.branding</module>
 		
 		
 		<module>../ummisco.gama.feature.audio</module>
@@ -195,9 +183,8 @@
 		<module>../ummisco.gama.feature.core.ui</module>
 		<module>../ummisco.gama.feature.experiment.ui</module>
 		<module>../ummisco.gama.feature.modeling.ui</module>
-		<module>../ummisco.gama.feature.serialize</module>
-		<module>../ummisco.gama.feature.network</module>
 		<module>../ummisco.gama.feature.stats</module>
+		<module>../ummisco.gama.feature.image</module>
 
 
 		<module>../ummisco.gama.product</module>
@@ -210,7 +197,7 @@
 	<properties>
 		<project.version>1.9.0-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.1</tycho.version>
+		<tycho.version>3.0.3</tycho.version>
 		<jdk.version>17</jdk.version>
 		<codehaus.wagon.version>2.0.2</codehaus.wagon.version>
 		<wagon.version>3.5.3</wagon.version>
@@ -291,6 +278,8 @@
 					<generatedSourcesDirectory>${project.build.directory}</generatedSourcesDirectory>
 					<optimize>true</optimize>
 					<executionEnvironment>${jdk.version}</executionEnvironment>
+					
+					<showWarnings>true</showWarnings>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -460,41 +449,27 @@
 					<resolver>p2</resolver>
 					<pomDependencies>consider</pomDependencies>
 					<environments>
-						<!--  obsolete on 1812 
 						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86</arch>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
 						</environment>
-					-->
-						<!--  obsolete on 1812 
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>aarch64</arch>
+						</environment>
 						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
-							<arch>x86</arch>
+							<arch>x86_64</arch>
 						</environment>
-					-->
-					<environment>
-						<os>macosx</os>
-						<ws>cocoa</ws>
-						<arch>x86_64</arch>
-					</environment>
-					<environment>
-						<os>macosx</os>
-						<ws>cocoa</ws>
-						<arch>aarch64</arch>
-					</environment>
-					<environment>
-						<os>win32</os>
-						<ws>win32</ws>
-						<arch>x86_64</arch>
-					</environment>
-					<environment>
-						<os>linux</os>
-						<ws>gtk</ws>
-						<arch>x86_64</arch>
-					</environment>
-				</environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
 				<executionEnvironment>JavaSE-${jdk.version}</executionEnvironment>
 			</configuration>
 		</plugin>
@@ -506,9 +481,9 @@
 		</plugin>
 
 		<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-clean-plugin</artifactId>
-    <version>3.2.0</version>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-clean-plugin</artifactId>
+		    <version>3.2.0</version>
 			<configuration>
 				<filesets>
 					<fileset>

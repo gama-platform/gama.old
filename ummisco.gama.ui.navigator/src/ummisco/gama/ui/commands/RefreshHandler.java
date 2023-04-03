@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RefreshHandler.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * RefreshHandler.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
@@ -17,7 +17,6 @@ import static ummisco.gama.ui.navigator.contents.ResourceManager.getInstance;
 import static ummisco.gama.ui.utils.WorkbenchHelper.runInUI;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.filesystem.IFileInfo;
@@ -42,6 +41,7 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IFileMetaDataProvider;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.dialogs.Messages;
 import ummisco.gama.ui.interfaces.IRefreshHandler;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
@@ -118,11 +118,9 @@ public class RefreshHandler implements IRefreshHandler {
 		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			@Override
 			public void execute(final IProgressMonitor monitor) {
-				final Iterator<? extends IResource> resourcesEnum = resources.iterator();
 				try {
-					while (resourcesEnum.hasNext()) {
+					for (IResource resource : resources) {
 						try {
-							final IResource resource = resourcesEnum.next();
 							if (resource.getType() == IResource.PROJECT) {
 								checkLocationDeleted((IProject) resource);
 							} else if (resource.getType() == IResource.ROOT) {
@@ -147,8 +145,10 @@ public class RefreshHandler implements IRefreshHandler {
 				try {
 					ResourceManager.block();
 					monitor.beginTask("Refreshing GAMA Workspace: updating the library of models", 100);
+					DEBUG.LOG("Refreshing GAMA Workspace: updating the library of models");
 					WorkspaceModelsManager.instance.loadModelsLibrary();
 					monitor.beginTask("Refreshing GAMA Workspace: recreating files metadata", 1000);
+					DEBUG.LOG("Refreshing GAMA Workspace: recreating files metadata");
 					for (final IResource r : resources) {
 						r.accept(proxy -> {
 							final IFileMetaDataProvider provider = GAMA.getGui().getMetaDataProvider();
@@ -161,20 +161,18 @@ public class RefreshHandler implements IRefreshHandler {
 
 					}
 					monitor.beginTask("Refreshing GAMA Workspace: refreshing resources", resources.size());
+					DEBUG.LOG("Refreshing GAMA Workspace: refreshing resources");
 					op.run(monitor);
 					monitor.beginTask("Refreshing GAMA Workspace: deleting virtual folders caches", 1);
+					DEBUG.LOG("Refreshing GAMA Workspace: deleting virtual folders caches");
 					NavigatorRoot.getInstance().resetVirtualFolders(NavigatorRoot.getInstance().getManager());
 					monitor.beginTask("Refreshing GAMA Workspace: refreshing the navigator", 1);
+					DEBUG.LOG("Refreshing GAMA Workspace: deleting virtual folders caches");
 					final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 					monitor.beginTask("Refreshing GAMA Workspace: rebuilding models", 100);
 					try {
 
 						workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new ProgressMonitorWrapper(monitor) {
-
-							@Override
-							public void done() {
-								super.done();
-							}
 
 						});
 

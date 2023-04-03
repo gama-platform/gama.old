@@ -50,7 +50,7 @@ experiment Model4_not_keep_seed type: memorize keep_seed: false {
 			species toto aspect: default;
 		}	
 		
-		display c {
+		display c  type: 2d {
 			chart "t" {
 				data "location" value: first(people).location.x;
 			}
@@ -66,7 +66,7 @@ experiment Model4_keep_seed type: memorize keep_seed: true {
 			species toto aspect: default;
 		}	
 		
-		display c {
+		display c  type: 2d {
 			chart "t" {
 				data "location" value: first(people).location.x;
 			}

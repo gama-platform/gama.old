@@ -2,7 +2,7 @@
  *
  * Jsoner.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -40,7 +40,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaPair;
 import msi.gama.util.serialize.IStreamConverter;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.statements.SaveStatement;
+import msi.gaml.statements.save.AbstractShapeSaver;
 
 /**
  * Jsoner provides JSON utilities for escaping strings to be JSON compatible, thread safe parsing (RFC 4627) JSON
@@ -422,6 +422,7 @@ public class Jsoner {
 	 *         [u2000..u20FF] with a backslash (\) which itself must be escaped by the backslash in a java string.
 	 */
 	public static String escape(final String escapable) {
+		if (escapable == null) return "";
 		final StringBuilder builder = new StringBuilder();
 		final int characters = escapable.length();
 		for (int i = 0; i < characters; i++) {
@@ -747,14 +748,13 @@ public class Jsoner {
 			writableDestination.write(']');
 
 		} else if (jsonSerializable instanceof GamaPair p) {
-			//Considers gamapairs as json
+			// Considers gamapairs as json
 			writableDestination.write('{');
 			Jsoner.serialize(p.key, writableDestination, flags);
 			writableDestination.write(':');
 			Jsoner.serialize(p.value, writableDestination, flags);
 			writableDestination.write('}');
-			
-			
+
 		} else if (jsonSerializable instanceof byte[] bw) {
 			final int numberOfElements = bw.length;
 			writableDestination.write('[');
@@ -895,7 +895,7 @@ public class Jsoner {
 				final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
 				final SimpleFeature ff = builder.buildFeature("");
 
-				SaveStatement.buildFeature(null, ff, agentOrIShape, null, Collections.emptyList());
+				AbstractShapeSaver.buildFeature(null, ff, agentOrIShape, null, Collections.emptyList());
 
 				final FeatureJSON io = new FeatureJSON(new GeometryJSON(20));
 				writableDestination.write(io.toString(ff));

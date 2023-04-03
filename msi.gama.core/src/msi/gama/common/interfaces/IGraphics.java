@@ -21,7 +21,6 @@ import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
-import msi.gama.util.file.GamaFile;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
@@ -119,7 +118,7 @@ public interface IGraphics {
 	 *            the attributes
 	 * @return the rectangle 2 D
 	 */
-	Rectangle2D drawFile(GamaFile<?, ?> file, DrawingAttributes attributes);
+	Rectangle2D drawAsset(IAsset asset, DrawingAttributes attributes);
 
 	/**
 	 * Draw field.

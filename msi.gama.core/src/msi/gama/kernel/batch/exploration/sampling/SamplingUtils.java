@@ -58,38 +58,45 @@ public abstract class SamplingUtils {
 	 */
 	private static ParametersSet ScaleSampling(IScope scope, ParametersSet set, Batch var, double ValFromSampling) {
 		switch (var.getType().id()) {
-		case IType.INT:
-			int intValue = Cast.asInt(scope, var.getMinValue(scope));
-			int maxIntValue = Cast.asInt(scope, var.getMaxValue(scope));
-			int sampleIValue = Math.round(Math.round(intValue + ValFromSampling * (maxIntValue - intValue)));
-			set.put(var.getName(), sampleIValue);
-			return set;
-		case IType.FLOAT:
-			double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
-			double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
-			double sampleFValue = floatValue + ValFromSampling * (maxFloatValue - floatValue);
-			set.put(var.getName(), sampleFValue);
-			return set;
-		case IType.DATE:
-			GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
-			GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
-			GamaDate sampleDValue = dateValue.plus( dateValue.getTemporal().until(maxDateValue, ChronoUnit.SECONDS) 
-					* ValFromSampling, ChronoUnit.SECONDS );
-			set.put(var.getName(), sampleDValue);
-			return set;
-		case IType.POINT:
-			GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
-			GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
-			double samplePXValue = pointValue.getX() + ValFromSampling * (maxPointValue.getX() - pointValue.getX());
-			double samplePYValue = pointValue.getY() + ValFromSampling * (maxPointValue.getY() - pointValue.getY());
-			double samplePZValue = pointValue.getZ() + ValFromSampling * (maxPointValue.getZ() - pointValue.getZ());
-			set.put(var.getName(), new GamaPoint(samplePXValue,samplePYValue,samplePZValue));
-			return set;
-		case IType.BOOL:
-			set.put(var.getName(), ValFromSampling>0.5?true:false);
-			return set;
-		default:
-			throw GamaRuntimeException.error("Trying to add a variable of unknown type "+var.getType().id()+" to a parameter set", scope);
+			case IType.INT:
+				int intValue = Cast.asInt(scope, var.getMinValue(scope));
+				int maxIntValue = Cast.asInt(scope, var.getMaxValue(scope));
+				int sampleIValue = Math.round(Math.round(intValue + ValFromSampling * (maxIntValue - intValue)));
+				set.put(var.getName(), sampleIValue);
+				return set;
+			case IType.FLOAT:
+				double floatValue = Cast.asFloat(scope, var.getMinValue(scope));
+				double maxFloatValue = Cast.asFloat(scope, var.getMaxValue(scope));
+				double sampleFValue = floatValue + ValFromSampling * (maxFloatValue - floatValue);
+				set.put(var.getName(), sampleFValue);
+				return set;
+			case IType.DATE:
+				GamaDate dateValue = GamaDateType.staticCast(scope, var.getMinValue(scope), null, false);
+				GamaDate maxDateValue = GamaDateType.staticCast(scope, var.getMaxValue(scope), null, false);
+				GamaDate sampleDValue = dateValue.plus( dateValue.getTemporal().until(maxDateValue, ChronoUnit.SECONDS) 
+						* ValFromSampling, ChronoUnit.SECONDS );
+				set.put(var.getName(), sampleDValue);
+				return set;
+			case IType.POINT:
+				GamaPoint pointValue = Cast.asPoint(scope, var.getMinValue(scope));
+				GamaPoint maxPointValue = Cast.asPoint(scope, var.getMaxValue(scope));
+				double samplePXValue = pointValue.getX() + ValFromSampling * (maxPointValue.getX() - pointValue.getX());
+				double samplePYValue = pointValue.getY() + ValFromSampling * (maxPointValue.getY() - pointValue.getY());
+				double samplePZValue = pointValue.getZ() + ValFromSampling * (maxPointValue.getZ() - pointValue.getZ());
+				set.put(var.getName(), new GamaPoint(samplePXValue,samplePYValue,samplePZValue));
+				return set;
+			case IType.BOOL:
+				set.put(var.getName(), ValFromSampling>0.5?true:false);
+				return set;
+			case IType.STRING:
+				if (var.getAmongValue(scope).isEmpty()) { throw GamaRuntimeException.error("Trying to force a string variable in sampling without among facets", scope); }
+				int ms = var.getAmongValue(scope).size();
+				int sv = Math.round(Math.round(0 + ValFromSampling * (ms - 0)));
+				//System.out.println("La variable "+var.getAmongValue(scope).get(sv)+" a été tirée");
+				set.put(var.getName(), var.getAmongValue(scope).get(sv));
+				return set;
+			default:
+				throw GamaRuntimeException.error("Trying to add a variable of unknown type "+var.getType().asPattern()+" to a parameter set", scope);
 		}
 	}
 	

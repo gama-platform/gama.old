@@ -163,8 +163,8 @@ import msi.gaml.variables.IVariable;
 				@facet (
 						name = IKeyword.TYPE,
 						type = IType.LABEL,
-						values = { IKeyword.BATCH, IKeyword.MEMORIZE, /* IKeyword.REMOTE, */IKeyword.GUI_,
-								IKeyword.TEST, IKeyword.HEADLESS_UI },
+						// values = { IKeyword.BATCH, IKeyword.MEMORIZE, /* IKeyword.REMOTE, */IKeyword.GUI_,
+						// IKeyword.TEST, IKeyword.HEADLESS_UI },
 						optional = false,
 						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")),
 				@facet (
@@ -197,6 +197,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		@Override
 		public void validate(final IDescription desc) {
 			final String type = desc.getLitteral(TYPE);
+
+			if (!GamaMetaModel.INSTANCE.getExperimentTypes().contains(type)) {
+				desc.error("The type of the experiment must belong to " + GamaMetaModel.INSTANCE.getExperimentTypes());
+				return;
+			}
 			// if (type.equals(MEMORIZE)) {
 			// desc.warning("The memorize experiment is still in development. It should not be used.",
 			// IGamlIssue.DEPRECATED);
@@ -357,7 +362,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private final boolean benchmarkable;
 
 	/** The sync. */
-	private volatile boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
 
 	/** The displayables. */
 	private final List<IExperimentDisplayable> displayables = new ArrayList();
@@ -451,7 +455,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// final String type = description.getFacets().getLabel(IKeyword.TYPE);
 		if (IKeyword.BATCH.equals(experimentType) || IKeyword.TEST.equals(experimentType)) {
 			exploration = new Exploration(null);
-		} else if (IKeyword.HEADLESS_UI.equals(experimentType)) { setHeadless(true); }
+		}
+
+		// else if (IKeyword.HEADLESS_UI.equals(experimentType)) { setHeadless(true); }
 		final IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if (expr != null && expr.isConst()) {
 			keepSeed = Cast.asBool(myScope, expr.value(myScope));
@@ -597,7 +603,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			if (s instanceof ICategory c) {
 				displayables.add(c);
 			} else if (s instanceof TextStatement t) {
-				// texts.add(t);
 				displayables.add(t);
 			} else if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;
@@ -606,7 +611,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			} else if (s instanceof BatchOutput) {
 				fileOutputDescription = (BatchOutput) s;
 			} else if (s instanceof SimulationOutputManager som) {
-				if (som.isSync()) { synchronizeAllOutputs(); }
 				if (originalSimulationOutputs != null) {
 					originalSimulationOutputs.setChildren(som);
 				} else {
@@ -626,7 +630,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					parameters.put(parameterName, pb);
 				}
 			} else if (s instanceof ExperimentOutputManager eom) {
-				if (eom.isSync()) { synchronizeAllOutputs(); }
 				if (experimentOutputs != null) {
 					experimentOutputs.setChildren(eom);
 				} else {
@@ -1029,16 +1032,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	@Override
-	public void synchronizeAllOutputs() {
-		sync = true;
-	}
-
-	@Override
-	public void desynchronizeAllOutputs() {
-		sync = false;
-	}
-
-	@Override
 	public void closeAllOutputs() {
 		for (final IOutputManager manager : getActiveOutputManagers()) { manager.close(); }
 	}
@@ -1082,9 +1075,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean shouldBeBenchmarked() {
 		return benchmarkable;
 	}
-
-	@Override
-	public boolean isSynchronized() { return sync; }
 
 	@Override
 	public List<IExperimentDisplayable> getDisplayables() { return displayables; }

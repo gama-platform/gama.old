@@ -3,15 +3,13 @@
  * BuiltinGlobalScopeProvider.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 // (c) Vincent Simonet, 2011
 package msi.gama.lang.gaml.scoping;
-
-import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.allImportsOf;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,13 +39,14 @@ import com.google.inject.Singleton;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.expressions.IExpressionFactory;
-import msi.gaml.operators.IUnits;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -69,7 +68,7 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 @Singleton
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider implements IUnits {
+public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	/**
 	 * The Class EClassBasedScope.
@@ -169,7 +168,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
-		DEBUG.TIMER(DEBUG.PAD("> GAMA: GAML artefacts", 45, ' ') + DEBUG.PAD(" built in", 15, '_'), () -> {
+		DEBUG.TIMER("GAMA: GAML artefacts", "built in", () -> {
 			scopes.put(eType, new EClassBasedScope("types.xmi"));
 			scopes.put(eVar, new EClassBasedScope("vars.xmi"));
 			scopes.put(eSkill, new EClassBasedScope("skills.xmi"));
@@ -178,13 +177,56 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			scopes.put(eEquation, new EClassBasedScope("equations.xmi"));
 			add(IExpressionFactory.TEMPORARY_ACTION_NAME, eAction);
 			Types.getTypeNames().forEach(t -> add(t, eType, eVar, eAction));
-			GAML.CONSTANTS.forEach(t -> add(t, eType, eVar));
-			GAML.UNITS.forEach((t, u) -> add(t, eUnit));
-			GAML.getAllFields().forEach(t -> add(t.getName(), eVar));
-			GAML.getAllVars().forEach(t -> add(t.getName(), eVar));
-			GamaSkillRegistry.INSTANCE.getAllSkillNames().forEach(t -> add(t, eSkill, eVar));
-			GAML.getAllActions().forEach(t -> add(t.getName(), eAction, eVar));
-			GAML.OPERATORS.forEach((a, b) -> { add(a, eAction); });
+
+			GAML.CONSTANTS.forEach(t -> {
+				try {
+					add(t, eType, eVar);
+				} catch (Exception ex) {
+					GamaBundleLoader.ERROR("Error when bulding constant artefact " + t, ex);
+				}
+			});
+			GAML.UNITS.forEach((t, u) -> {
+				try {
+					add(t, eUnit);
+				} catch (Exception ex) {
+					GamaBundleLoader.ERROR("Error when bulding unit artefact " + t, ex);
+				}
+			});
+			GAML.getAllFields().forEach(t -> {
+				try {
+					add(t.getName(), eVar);
+				} catch (Exception ex) {
+					GamaBundleLoader.ERROR("Error when bulding field artefact " + t, ex);
+				}
+			});
+			GAML.getAllVars().forEach(t -> {
+				try {
+					add(t.getName(), eVar);
+				} catch (Exception ex) {
+					GamaBundleLoader.ERROR("Error when bulding var artefact " + t.getName(), ex);
+				}
+			});
+			GamaSkillRegistry.INSTANCE.getAllSkillNames().forEach(t -> {
+				try {
+					add(t, eSkill, eVar);
+				} catch (Exception ex) {
+					GamaBundleLoader.ERROR("Error when bulding skill artefact " + t, ex);
+				}
+			});
+			GAML.getAllActions().forEach(t -> {
+				try {
+					add(t.getName(), eAction, eVar);
+				} catch (Exception ex) {
+					GamaBundleLoader.ERROR("Error when bulding action artefact " + t.getName(), ex);
+				}
+			});
+			GAML.OPERATORS.forEach((a, b) -> {
+				try {
+					add(a, eAction);
+				} catch (Exception ex) {
+					GamaBundleLoader.ERROR("Error when bulding action artefact " + a, ex);
+				}
+			});
 		});
 	}
 
@@ -220,7 +262,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 	protected IScope getScope(final Resource resource, final boolean ignoreCase, final EClass type,
 			final Predicate<IEObjectDescription> filter) {
 		IScope scope = scopes.get(type);
-		Collection<URI> imports = allImportsOf((GamlResource) resource).keySet();
+		Collection<URI> imports = GamlResourceIndexer.allImportsOf((GamlResource) resource).keySet();
 		int size = imports.size();
 		if (size == 0) return scope;
 		if (size > 1) {

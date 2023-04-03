@@ -3,7 +3,7 @@
  * OperatorsReferenceMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -29,7 +29,8 @@ import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.types.Signature;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class EditToolbarTemplateMenu.
@@ -166,7 +167,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
 	 */
 	@Override
-	protected Image getImage() { return GamaIcons.create("reference.operators").image(); }
+	protected Image getImage() { return GamaIcon.named(IGamaIcons.REFERENCE_OPERATORS).image(); }
 
 	/**
 	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()

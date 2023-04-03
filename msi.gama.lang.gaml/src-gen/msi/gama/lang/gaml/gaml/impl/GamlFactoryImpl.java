@@ -94,6 +94,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SSOLVE: return createS_Solve();
       case GamlPackage.SDISPLAY: return createS_Display();
       case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT: return createspeciesOrGridDisplayStatement();
+      case GamlPackage.IMAGE_DISPLAY_STATEMENT: return createimageDisplayStatement();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
       case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
       case GamlPackage.FACET: return createFacet();
@@ -486,6 +487,18 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     speciesOrGridDisplayStatementImpl speciesOrGridDisplayStatement = new speciesOrGridDisplayStatementImpl();
     return speciesOrGridDisplayStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public imageDisplayStatement createimageDisplayStatement()
+  {
+    imageDisplayStatementImpl imageDisplayStatement = new imageDisplayStatementImpl();
+    return imageDisplayStatement;
   }
 
   /**

@@ -86,12 +86,12 @@ import ummisco.gama.dev.utils.DEBUG;
 				doc = @doc (
 						value = "Contains a reference to the current simulation being run by this experiment",
 						comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
-		@variable (
-				name = GAMA._WARNINGS,
-				type = IType.BOOL,
-				doc = @doc (
-						deprecated = "use gama.pref_errors_warnings_errors instead",
-						value = "The value of the preference 'Consider warnings as errors'")),
+		// @variable (
+		// name = GAMA._WARNINGS,
+		// type = IType.BOOL,
+		// doc = @doc (
+		// deprecated = "use gama.pref_errors_warnings_errors instead",
+		// value = "The value of the preference 'Consider warnings as errors'")),
 		@variable (
 				name = ExperimentAgent.MODEL_PATH,
 				type = IType.STRING,
@@ -179,7 +179,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	final protected ExperimentClock ownClock;
 
 	/** The warnings as errors. */
-	protected boolean warningsAsErrors = GamaPreferences.Runtime.CORE_WARNINGS.getValue();
+	// Removed while working on #3641 : is redundant with gama.prefs_errors_warnings_errors
+	// protected boolean warningsAsErrors = GamaPreferences.Runtime.CORE_WARNINGS.getValue();
 
 	/** The own model path. */
 	protected String ownModelPath;
@@ -192,7 +193,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private volatile boolean isOnUserHold = false;
 
 	/** The default population factory for this kind of experiment. */
-	private final IPopulationFactory populationFactory;
+	private IPopulationFactory populationFactory;
 
 	/**
 	 * Instantiates a new experiment agent.
@@ -246,6 +247,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected IPopulationFactory initializePopulationFactory() {
 		return new DefaultPopulationFactory();
 	}
+
+	/**
+	 * Sets the default population factory for this kind of experiment.
+	 *
+	 * @param factory
+	 *            the new default population factory for this kind of experiment
+	 */
+	public final void setPopulationFactory(final IPopulationFactory factory) { populationFactory = factory; }
 
 	@Override
 	public SimulationClock getClock() { return ownClock; }
@@ -601,21 +610,21 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return this;
 
 	}
-
-	@Override
-	@getter (
-			value = GAMA._WARNINGS,
-			initializer = true)
-	public Boolean getWarningsAsErrors() { return warningsAsErrors; }
-
-	/**
-	 * Sets the warnings as errors.
-	 *
-	 * @param t
-	 *            the new warnings as errors
-	 */
-	@setter (GAMA._WARNINGS)
-	public void setWarningsAsErrors(final boolean t) { warningsAsErrors = t; }
+	//
+	// @Override
+	// @getter (
+	// value = GAMA._WARNINGS,
+	// initializer = true)
+	// public Boolean getWarningsAsErrors() { return warningsAsErrors; }
+	//
+	// /**
+	// * Sets the warnings as errors.
+	// *
+	// * @param t
+	// * the new warnings as errors
+	// */
+	// @setter (GAMA._WARNINGS)
+	// public void setWarningsAsErrors(final boolean t) { warningsAsErrors = t; }
 
 	/**
 	 * Gets the seed.
@@ -778,7 +787,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void informStatus() {
 		// TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
 		if (isHeadless() || isBatch() || getSimulation() == null) return;
-		ownScope.getGui().getStatus().informStatus(ownScope, null, "status.clock");
+		ownScope.getGui().getStatus().informStatus(ownScope, null, "overlays/status.clock");
 	}
 
 	/**

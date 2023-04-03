@@ -163,7 +163,7 @@ import msi.gaml.types.IType;
 								value = "}",
 								isExecutable = false) }), },
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.GRID, IKeyword.EVENT, "graphics", IKeyword.IMAGE,
-				IKeyword.OVERLAY, IKeyword.POPULATION })
+				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 @validator (OpenGLSpecificLayerValidator.class)
 public class MeshLayerStatement extends AbstractLayerStatement {
 

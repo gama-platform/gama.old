@@ -3,7 +3,7 @@
  * IExpressionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -23,6 +23,7 @@ import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
+import msi.gaml.types.Signature;
 
 /**
  * Written by drogoul Modified on 27 d�c. 2010
@@ -146,7 +147,7 @@ public interface IExpressionFactory {
 	 *
 	 * @return the parser
 	 */
-	IExpressionCompiler getParser();
+	// IExpressionCompiler getParser();
 
 	/**
 	 * Creates a new IExpression object.
@@ -256,6 +257,17 @@ public interface IExpressionFactory {
 	boolean hasOperator(String op, IExpression... compiledArgs);
 
 	/**
+	 * Checks for exact operator. The type must exactly correspond.
+	 *
+	 * @param op
+	 *            the op
+	 * @param compiledArgs
+	 *            the compiled args
+	 * @return true, if successful
+	 */
+	boolean hasExactOperator(String op, IExpression compiledArg);
+
+	/**
 	 * Creates a new IExpression object.
 	 *
 	 * @param context
@@ -267,5 +279,31 @@ public interface IExpressionFactory {
 	 * @return the i expression
 	 */
 	IExpression createAs(IDescription context, IExpression toCast, IExpression createTypeExpression);
+
+	/**
+	 * Creates a new IExpression object.
+	 *
+	 * @param context
+	 *            the context
+	 * @param toCast
+	 *            the to cast
+	 * @param type
+	 *            the type
+	 * @return the i expression
+	 */
+	default IExpression createAs(final IDescription context, final IExpression toCast, final IType<?> type) {
+		return createAs(context, toCast, createTypeExpression(type));
+	}
+
+	/**
+	 * Checks for operator.
+	 *
+	 * @param op
+	 *            the op
+	 * @param sig
+	 *            the sig
+	 * @return true, if successful
+	 */
+	boolean hasOperator(String op, Signature sig);
 
 }

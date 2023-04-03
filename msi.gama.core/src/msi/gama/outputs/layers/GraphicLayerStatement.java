@@ -3,7 +3,7 @@
  * GraphicLayerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -120,8 +120,8 @@ import ummisco.gama.dev.utils.COUNTER;
 						@example (
 								value = "}",
 								isExecutable = false) }) },
-		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-				IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
+				IKeyword.IMAGE_LAYER, IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
 public class GraphicLayerStatement extends AbstractLayerStatement {
 
 	/** The aspect. */
@@ -138,7 +138,7 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 	public GraphicLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		final IDescription d =
-				DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + COUNTER.GET());
+				DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + COUNTER.COUNT());
 		aspect = new AspectStatement(d);
 	}
 

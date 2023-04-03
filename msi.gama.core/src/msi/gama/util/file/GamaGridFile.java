@@ -3,7 +3,7 @@
  * GamaGridFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -64,6 +64,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaField;
+import msi.gama.util.matrix.IField;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
@@ -120,7 +121,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	IShape geom;
 
 	/** The no data. */
-	Number noData = -9999;
+	Number noData = IField.NO_NO_DATA;
 
 	/** The genv. */
 	GeneralEnvelope genv;

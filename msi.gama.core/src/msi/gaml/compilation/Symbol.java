@@ -64,7 +64,7 @@ public abstract class Symbol implements ISymbol {
 		if (desc != null) {
 			order = desc.getOrder();
 		} else {
-			order = COUNTER.GET();
+			order = COUNTER.GET_UNIQUE();
 			// DEBUG.LOG("Order of " + desc.getName() + " = " + order);
 		}
 	}

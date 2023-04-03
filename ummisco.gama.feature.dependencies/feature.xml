@@ -4,7 +4,7 @@
       label="Dependencies of GAMA"
       version="1.9.0.qualifier"
       provider-name="UMMISCO"
-      plugin="ummisco.gama.feature.dependencies.branding">
+      plugin="msi.gama.ext">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
@@ -921,12 +921,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.feature.dependencies.branding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="org.slf4j.api"

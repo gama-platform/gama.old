@@ -3,14 +3,12 @@
  * WrappedGamaFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
-
-import static msi.gama.common.GamlFileExtension.isExperiment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,8 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IExpressionDescription;
 import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The Class WrappedGamaFile.
@@ -104,9 +103,9 @@ public class WrappedGamaFile extends WrappedFile {
 	protected void computeFileImage() {
 		// final IFile f = getResource();
 		if (isExperiment) {
-			image = GamaIcons.create("navigator/file.experiment2").image();
+			image = GamaIcon.named(IGamaIcons.FILE_EXPERIMENT).descriptor();
 		} else {
-			image = GamaIcons.create("navigator/file.icon2").image();
+			image = GamaIcon.named(IGamaIcons.FILE_MODEL).descriptor();
 		}
 
 	}
@@ -114,7 +113,7 @@ public class WrappedGamaFile extends WrappedFile {
 	@Override
 	protected void computeFileType() {
 		final IFile f = getResource();
-		isExperiment = isExperiment(f.getName());
+		isExperiment = GamlFileExtension.isExperiment(f.getName());
 	}
 
 	/**

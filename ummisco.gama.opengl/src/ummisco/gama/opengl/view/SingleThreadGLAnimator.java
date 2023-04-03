@@ -3,7 +3,7 @@
  * SingleThreadGLAnimator.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -21,6 +21,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
+import ummisco.gama.dev.utils.THREADS;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -225,9 +226,7 @@ public class SingleThreadGLAnimator implements Runnable, GLAnimatorControl, GLAn
 			if (capFPS) {
 				final long frameDuration = 1000 / targetFPS;
 				final long timeSleep = frameDuration - fpsLastPeriod;
-				try {
-					if (timeSleep >= 0) { Thread.sleep(timeSleep); }
-				} catch (final InterruptedException e) {}
+				if (timeSleep >= 0) { THREADS.WAIT(timeSleep); }
 			}
 			tickFPS();
 		}

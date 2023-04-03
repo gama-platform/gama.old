@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Category.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * Category.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -19,9 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.util.FileUtils;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaIcon;
 
 /**
  * Class ImportFolder.
@@ -92,7 +90,7 @@ public class Category extends VirtualContent<WrappedFile> {
 	 * @see ummisco.gama.ui.navigator.contents.VirtualContent#getImage()
 	 */
 	@Override
-	public Image getImage() { return GamaIcons.create("gaml/_" + getName().toLowerCase()).image(); }
+	public ImageDescriptor getImageDescriptor() { return GamaIcon.named("gaml/_" + getName().toLowerCase()).descriptor(); }
 
 	/**
 	 * Method getColor()
@@ -120,11 +118,5 @@ public class Category extends VirtualContent<WrappedFile> {
 
 	@Override
 	public String getStatusMessage() { return "Virtual Folder"; }
-
-	@Override
-	public GamaUIColor getStatusColor() { return IGamaColors.GRAY_LABEL; }
-
-	@Override
-	public Image getStatusImage() { return getImage(); }
 
 }

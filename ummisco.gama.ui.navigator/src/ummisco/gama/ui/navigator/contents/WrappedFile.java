@@ -3,18 +3,12 @@
  * WrappedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
-
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_CT_ID;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.getContentTypeId;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.isSupport;
-import static ummisco.gama.ui.metadata.FileMetaDataProvider.shapeFileSupportedBy;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,6 +19,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -34,9 +29,11 @@ import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PreferencesHelper;
 
 /**
@@ -54,8 +51,9 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	boolean isShapeFileSupport;
 
 	/** The image. */
-	Image image;
+	ImageDescriptor image;
 
+	/** The color. */
 	Color color;
 
 	/**
@@ -79,12 +77,12 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		final IFile f = getResource();
 		if (GamaBundleLoader.HANDLED_FILE_EXTENSIONS.contains(f.getFileExtension())) {
 			if (isShapeFileSupport) {
-				image = GamaIcons.create("navigator/file.shapesupport2").image();
+				image = GamaIcon.named(IGamaIcons.FILE_SHAPESUPPORT).descriptor();
 			} else {
-				image = DEFAULT_LABEL_PROVIDER.getImage(f);
+				image =  ImageDescriptor.createFromImage(DEFAULT_LABEL_PROVIDER.getImage(f));
 			}
 		} else {
-			image = GamaIcons.create("navigator/file.text2").image();
+			image = GamaIcon.named(IGamaIcons.FILE_TEXT).descriptor();
 		}
 
 	}
@@ -94,8 +92,9 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	 */
 	protected void computeFileType() {
 		final IFile f = getResource();
-		isShapeFile = SHAPEFILE_CT_ID.equals(getContentTypeId(f));
-		isShapeFileSupport = SHAPEFILE_SUPPORT_CT_ID.equals(getContentTypeId(f));
+		isShapeFile = FileMetaDataProvider.SHAPEFILE_CT_ID.equals(FileMetaDataProvider.getContentTypeId(f));
+		isShapeFileSupport =
+				FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID.equals(FileMetaDataProvider.getContentTypeId(f));
 	}
 
 	/**
@@ -103,7 +102,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 	 */
 	private void computeFileParent() {
 		if (isShapeFileSupport) {
-			final IResource shape = shapeFileSupportedBy(getResource());
+			final IResource shape = FileMetaDataProvider.shapeFileSupportedBy(getResource());
 			if (shape != null) { fileParent = (WrappedFile) getManager().findWrappedInstanceOf(shape); }
 		}
 	}
@@ -141,7 +140,9 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 			final IContainer folder = p.getParent();
 			final List<VirtualContent> sub = new ArrayList<>();
 			for (final IResource r : folder.members()) {
-				if (r instanceof IFile && isSupport(p, (IFile) r)) { sub.add(getManager().findWrappedInstanceOf(r)); }
+				if (r instanceof IFile && FileMetaDataProvider.isSupport(p, (IFile) r)) {
+					sub.add(getManager().findWrappedInstanceOf(r));
+				}
 			}
 			final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, false);
 			Map<String, String> attributes;
@@ -162,14 +163,9 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 		}
 		return VirtualContent.EMPTY;
 	}
-	//
-	// @Override
-	// public Font getFont() {
-	// return GamaFonts.getNavigFileFont();
-	// }
 
 	@Override
-	public Image getImage() {
+	public ImageDescriptor getImageDescriptor() {
 		if (image == null) { computeFileImage(); }
 		return image;
 	}

@@ -4,5 +4,11 @@
    <extension
          point="gaml.extension">
    </extension>
+   <extension
+         point="gama.constants">
+      <implementation
+            class="ummisco.gaml.extensions.maths.ode.MathConstantSupplier">
+      </implementation>
+   </extension>
 
 </plugin>

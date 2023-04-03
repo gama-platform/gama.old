@@ -35,9 +35,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.service.datalocation.Location;
-import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
@@ -167,15 +167,26 @@ public class Application implements IApplication {
 	 */
 	private Display configureDisplay() {
 		// Important to do it *before* creating the display
-		System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
+		// System.setProperty("swt.autoScale", FLAGS.USE_PRECISE_SCALING ? "quarter" : "integer"); // cf DPIUtil
 		final Display display = PlatformUI.createDisplay();
 		Display.setAppName("Gama Platform");
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
 
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Monitor resolution ", 45, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
-				+ display.getPrimaryMonitor().getBounds().width + "x" + display.getPrimaryMonitor().getBounds().height);
-		DEBUG.LOG(DEBUG.PAD("> GAMA: Display zoom ", 45, ' ') + DEBUG.PAD(" defined as", 15, '_') + " "
-				+ DPIUtil.getDeviceZoom() + "%");
+		Monitor primary = display.getPrimaryMonitor();
+		DEBUG.BANNER("GAMA: Primary monitor resolution", "defined as",
+				"" + primary.getBounds().width + "x" + primary.getBounds().height);
+		DEBUG.BANNER("GAMA: Primary monitor zoom ", "defined as", "" + primary.getZoom() + "%");
+		Monitor[] monitors = display.getMonitors();
+		if (monitors.length > 1) {
+			int i = 0;
+			for (Monitor m : monitors) {
+				if (m == primary) { continue; }
+				i++;
+				DEBUG.BANNER("GAMA: Monitor #" + i + " resolution ", "defined as",
+						"" + m.getBounds().width + "x" + m.getBounds().height);
+				DEBUG.BANNER("GAMA: Monitor #" + i + " zoom", "defined as", "" + m.getZoom() + "%");
+			}
+		}
 
 		// Not used right now
 		// System.setProperty("sun.java2d.uiScale.enabled", String.valueOf(!hasHiDPI && hasCustomZoom));

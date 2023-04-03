@@ -3,7 +3,7 @@
  * GamlLabelProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,6 +16,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
@@ -41,6 +42,8 @@ import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.operators.Strings;
+import msi.gaml.types.Types;
 
 /**
  * Provides labels for a EObjects.
@@ -65,10 +68,6 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		super(delegate);
 	}
 
-	@Override
-	public Image convertToImage(final Object imageDescription) {
-		return super.convertToImage(imageDescription);
-	}
 
 	/**
 	 * Image.
@@ -177,7 +176,10 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 			}
 
 		}
-		return "Attribute " + (name == null ? "" : name)
+		String first = "Attribute ";
+		if (Types.get(type) == Types.NO_TYPE) { first = Strings.capitalize(type) + " "; }
+
+		return first + (name == null ? "" : name)
 				+ (type == null ? "" : " (" + type + ") " + (key == null ? "" : "(" + key + ") "));
 
 	}
@@ -225,9 +227,6 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 				}
 			}
 		}
-		// if ( type == null ) {
-		// type = "parameter";
-		// }
 		String name = null;
 		f = map.get(IKeyword.NAME);
 		if (f == null) {
@@ -358,8 +357,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getImage(msi.gaml.compilation.ast.ISyntacticElement)
 	 */
 	@Override
-	public Object getImage(final ISyntacticElement element) {
-		return this.getImage(element.getElement());
+	public ImageDescriptor getImageDescriptor(final ISyntacticElement element) {
+		return this.getImageDescriptor(element.getElement());
+	}
+	
+	public ImageDescriptor convertToImageDescriptor(final Object obj) {
+		return super.convertToImageDescriptor(obj);
 	}
 
 }

@@ -3,7 +3,7 @@
  * IKeyword.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -84,7 +84,8 @@ public interface IKeyword {
 
 	/** The at. */
 	String AT = "at";
-	
+
+	/** The as json string. */
 	String AS_JSON_STRING = "as_json_string";
 
 	/** The attributes. */
@@ -383,7 +384,7 @@ public interface IKeyword {
 
 	/** The extensions. */
 	String EXTENSIONS = "extensions";
-	
+
 	/** Factorial sampling */
 	String FACTORIAL = "factorial";
 
@@ -425,6 +426,9 @@ public interface IKeyword {
 
 	/** The footer. */
 	String FOOTER = "footer";
+
+	/** The format. */
+	String FORMAT = "format";
 
 	/** The fragment. */
 	String FRAGMENT = "fragment";
@@ -490,7 +494,7 @@ public interface IKeyword {
 	String GRID = "grid";
 
 	/** The grid population. */
-	String GRID_POPULATION = "display_grid";
+	String GRID_LAYER = "display_grid";
 
 	/** The grid value. */
 	String GRID_VALUE = "grid_value";
@@ -514,7 +518,7 @@ public interface IKeyword {
 	String HEADING = "heading";
 
 	/** The headless ui. */
-	String HEADLESS_UI = "headless";
+	// String HEADLESS_UI = "headless";
 
 	/** The heatmap. */
 	String HEATMAP = "heatmap";
@@ -551,6 +555,9 @@ public interface IKeyword {
 
 	/** The image. */
 	String IMAGE = "image";
+
+	/** The display image. */
+	String IMAGE_LAYER = "image_layer";
 
 	/** The in. */
 	String IN = "in";
@@ -685,9 +692,6 @@ public interface IKeyword {
 
 	/** The match regex. */
 	String MATCH_REGEX = "match_regex";
-
-	/** The material. */
-	String MATERIAL = "material";
 
 	/** The matrix. */
 	String MATRIX = "matrix";
@@ -936,7 +940,7 @@ public interface IKeyword {
 	String POINT = "point";
 
 	/** The population. */
-	String POPULATION = "display_population";
+	String SPECIES_LAYER = "species_layer";
 
 	/** The position. */
 	String POSITION = "position";
@@ -958,6 +962,9 @@ public interface IKeyword {
 
 	/** The pso. */
 	String PSO = "pso";
+
+	/** The proxy. */
+	String PROXY = "proxy";
 
 	/** The put. */
 	String PUT = "put";
@@ -1264,10 +1271,10 @@ public interface IKeyword {
 
 	/** The type. */
 	String TYPE = "type";
-	
+
 	/** Uniform sampling */
 	String UNIFORM = "uniform";
-	
+
 	/** The unit. */
 	String UNIT = "unit";
 
@@ -1414,9 +1421,6 @@ public interface IKeyword {
 
 	/** The zero. */
 	String ZERO = "internal_zero_order_equation";
-
-	/** The event type. */
-	String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 
 	/** The methods. */
 	String[] METHODS =

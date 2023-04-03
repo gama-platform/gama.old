@@ -40,14 +40,18 @@ public class BandsBasedMeshColorProvider implements IMeshColorProvider {
 	public BandsBasedMeshColorProvider(final List<IField> bands) {
 		if (bands.size() < 4)
 			throw GamaRuntimeException.error("Number of bands should be at least 3 ", GAMA.getRuntimeScope());
+		boolean hasAlpha = bands.size() > 4;
 		IField primary = bands.get(0);
 		this.size = primary.getMatrix().length;
 		components = new double[size * 4];
+		double[] mR = bands.get(1).getMatrix();
+		double[] mG = bands.get(2).getMatrix();
+		double[] mB = bands.get(3).getMatrix();
 		for (int i = 0; i < size; ++i) {
-			components[i * 3] = bands.get(1).getMatrix()[i] / 255d;
-			components[i * 3 + 1] = bands.get(2).getMatrix()[i] / 255d;
-			components[i * 3 + 2] = bands.get(3).getMatrix()[i] / 255d;
-			components[i * 3 + 3] = 1d;
+			components[i * 3] = mR[i] / 255d;
+			components[i * 3 + 1] = mG[i] / 255d;
+			components[i * 3 + 2] = mB[i] / 255d;
+			components[i * 3 + 3] = hasAlpha ? bands.get(4).getMatrix()[i] / 255d : 1d;
 		}
 	}
 

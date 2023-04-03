@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * GeoJSonSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
 import java.io.IOException;
@@ -6,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.DefaultFeatureCollection;
@@ -21,8 +32,10 @@ import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.SaveStatement;
 
+/**
+ * The Class GeoJSonSaver.
+ */
 public class GeoJSonSaver extends AbstractShapeSaver {
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
@@ -46,7 +59,7 @@ public class GeoJSonSaver extends AbstractShapeSaver {
 		for (final IShape ag : agents) {
 			final SimpleFeature ff = builder.buildFeature(i + "");
 			i++;
-			final boolean ok = SaveStatement.buildFeature(scope, ff, ag, gis, attributeValues);
+			final boolean ok = buildFeature(scope, ff, ag, gis, attributeValues);
 			if (!ok) { continue; }
 			featureCollection.add(ff);
 		}
@@ -56,11 +69,9 @@ public class GeoJSonSaver extends AbstractShapeSaver {
 
 	}
 
-	public Map<String, IExpression> getAttributes(){
-		return attributes;
+	@Override
+	public Set<String> computeFileTypes() {
+		return Set.of("geojson", "json");
 	}
-	
-	public void addAttibutes(final String var,final IExpression exp) {
-		attributes.put(var, exp);
-	}
+
 }

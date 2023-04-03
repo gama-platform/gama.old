@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -33,7 +34,9 @@ import msi.gaml.types.IType;
 /**
  * The Class CSVSaver.
  */
-public class CSVSaver {
+public class CSVSaver extends AbstractSaver {
+
+	// TODO Attributes not used for the moment ?
 
 	/**
 	 * Save.
@@ -71,10 +74,11 @@ public class CSVSaver {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void save(final IScope scope, final IExpression item, final File f, final boolean header)
+	@Override
+	public void save(final IScope scope, final IExpression item, final File file, final String code,
+			final boolean addHeader, final String type, final Object attributesToSave)
 			throws GamaRuntimeException, IOException {
-		if (f == null) return;
-		save(scope, new FileWriter(f, true), header, item);
+		save(scope, new FileWriter(file, true), addHeader, item);
 	}
 
 	/**
@@ -179,6 +183,11 @@ public class CSVSaver {
 
 		}
 		return val;
+	}
+
+	@Override
+	protected Set<String> computeFileTypes() {
+		return Set.of("csv");
 	}
 
 }

@@ -3,7 +3,7 @@
  * GamlRuntimeModule.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -35,11 +35,8 @@ import msi.gama.lang.gaml.resource.GamlEncodingProvider;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionManager;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
-import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
 import msi.gama.lang.gaml.validation.ErrorToDiagnoticTranslator;
 import msi.gama.lang.gaml.validation.GamlResourceValidator;
-import msi.gaml.compilation.GAML;
-import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpressionCompiler;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -53,7 +50,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	}
 
 	/** The initialized. */
-	private static boolean initialized;
+	// private static boolean initialized;
 
 	// Disabled for the moment
 	// public static Pref<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
@@ -64,23 +61,23 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	/**
 	 * Static initialize.
 	 */
-	public static void staticInitialize() {
+	// public static void staticInitialize() {
 
-		if (!initialized) {
-			GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
-			GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
-			GAML.registerGamlEcoreUtils(EGaml.getInstance());
-			initialized = true;
+	// if (!initialized) {
+	// GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
+	// GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
+	// GAML.registerGamlEcoreUtils(EGaml.getInstance());
+	// initialized = true;
+	//
+	// }
 
-		}
-
-	}
+	// }
 
 	@Override
 	public void configure(final Binder binder) {
 		DEBUG.OUT("Initialization of GAML XText runtime module begins");
 		super.configure(binder);
-		staticInitialize();
+		// staticInitialize();
 		// binder.bind(ExpressionDescriptionBuilder.class);
 		// binder.bind(IDocManager.class).to(GamlResourceDocumenter.class);
 		// binder.bind(GamlSyntacticConverter.class);

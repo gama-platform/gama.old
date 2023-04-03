@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="gama.display">
+      <implementation
+            class="ummisco.gaml.extensions.image.ImageDisplaySurface"
+            keyword="image">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.save">
+      <implementation
+            class="ummisco.gaml.extensions.image.ImageSaver">
+      </implementation>
+   </extension>
+   <extension
+         point="gaml.extension">
+   </extension>
+   <extension
+         point="gama.draw">
+      <implementation
+            class="ummisco.gaml.extensions.image.ImageDrawer">
+      </implementation>
+   </extension>
+
+</plugin> 

@@ -24,12 +24,12 @@ Issues regarding the website (http://gama-platform.org) and the documentation sh
 
 https://github.com/gama-platform/gama-platform.github.io/issues
 
-**See CHANGELOG.MD for a list of changes since version 1.8** 
+**See CHANGELOG.MD for a list of changes since version 1.8**  
 
  
 
  
-
+ 
 
   
   

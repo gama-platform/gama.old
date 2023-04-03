@@ -28,6 +28,8 @@ global {
 	image_file ant_shape const: true <- file('../images/ant.png');
 	svg_file ant_shape_svg const: true <- svg_file("../images/ant.svg");
 	obj_file ant3D_shape const: true <- obj_file('../images/fire-ant.obj', '../images/fire-ant.mtl', -90::{1, 0, 0});
+	font regular <- font("Helvetica", 14, #bold);
+	font bigger <- font("Helvetica", 18, #bold);
 
 	//The center of the grid that will be considered as the nest location
 	point center const: true <- {round(gridsize / 2), round(gridsize / 2)};
@@ -155,13 +157,9 @@ species ant skills: [moving] control: fsm {
 			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1.2;
 		}
 
-		if (state != "wandering") {
-		//draw circle(4) wireframe: true color: #white;
-			if (display_state) {
-				draw string(self as int) color: #white font: font("Helvetica", 14, #bold) at: my location - {1, 1, -0.5};
-				draw state color: #yellow font: font("Helvetica", 18, #bold) at: my location + {1, 1, 0.5};
-			}
-
+		if (display_state) {
+			draw string(self as int) color: #white font: regular at: my location + {0, -1, 0.5} anchor: #center;
+			draw state color: #yellow font: bigger at: my location + {0, 0, 0.5} anchor: #center;
 		}
 
 	}
@@ -189,11 +187,11 @@ experiment "With Inspector" type: gui {
 			image terrain position: {0.05, 0.05} size: {0.9, 0.9} refresh: false;
 			agents "agents" transparency: 0.7 position: {0.05, 0.05} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: {0.05, 0.05, 0.05} size: {0.9, 0.9} aspect: icon_svg;
-			overlay transparency: 0.3 background: rgb(99, 85, 66, 255) position: {50 °px, 50 °px} size: {250 °px, 150 °px} border: rgb(99, 85, 66, 255) rounded: true {
-				draw ant_shape at: {60 °px, 70 °px} size: {140 °px, 100 °px} rotate: -60;
-				draw ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') at: {40 °px, 70 °px} font: font("Arial", 18, #bold) color:
+			overlay transparency: 0.3 background: rgb(99, 85, 66, 255) position: {50 #px, 50 #px} size: {250 #px, 150 #px} border: rgb(99, 85, 66, 255) rounded: true {
+				draw ant_shape at: {60 #px, 70 #px} size: {140 #px, 100 #px} rotate: -60;
+				draw ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') at: {40 #px, 70 #px} font: font("Arial", 18, #bold) color:
 				#white;
-				draw ('Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%') at: {40 °px, 100 °px} font:
+				draw ('Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%') at: {40 #px, 100 #px} font:
 				font("Arial", 18, #bold) color: #white;
 			}
 
@@ -217,7 +215,7 @@ experiment "Classic" type: gui {
 		display Ants antialias: false type: 3d {
 			light #ambient intensity: 127;
 			light #default intensity: 127;
-			image terrain refresh: true;
+			image terrain refresh: false;
 			agents "Grid" transparency: 0.4 value: ant_grid where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant aspect: info;
 		}

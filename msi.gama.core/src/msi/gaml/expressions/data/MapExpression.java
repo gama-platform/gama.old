@@ -3,7 +3,7 @@
  * MapExpression.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -237,6 +237,13 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	public boolean isContextIndependant() {
 		for (final IExpression e : keys) { if (e != null && !e.isContextIndependant()) return false; }
 		for (final IExpression e : vals) { if (e != null && !e.isContextIndependant()) return false; }
+		return true;
+	}
+
+	@Override
+	public boolean isAllowedInParameters() {
+		for (final IExpression e : keys) { if (e != null && !e.isAllowedInParameters()) return false; }
+		for (final IExpression e : vals) { if (e != null && !e.isAllowedInParameters()) return false; }
 		return true;
 	}
 

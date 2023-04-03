@@ -3,7 +3,7 @@
  * AbstractOutputManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -34,6 +34,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.dev.utils.THREADS;
 
 /**
  * Class AbstractOutputManager.
@@ -45,7 +46,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public abstract class AbstractOutputManager extends Symbol implements IOutputManager {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The autosave. */
@@ -62,7 +63,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	LayoutStatement layout;
 
 	/** The outputs. */
-	protected final IMap<String, IOutput> outputs = GamaMapFactory.create();
+	protected final Map<String, IOutput> outputs = GamaMapFactory.synchronizedOrderedMap();
 
 	// protected final IList<MonitorOutput> monitors = GamaListFactory.create();
 
@@ -72,19 +73,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	/** The display index. */
 	protected int displayIndex;
 
-	/** The sync. */
-	protected boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue();
-
 	/** The has monitors. */
 	protected boolean hasMonitors;
-
-	/**
-	 * Checks if is sync.
-	 *
-	 * @return the sync
-	 */
-	@Override
-	public boolean isSync() { return sync; }
 
 	/**
 	 * Instantiates a new abstract output manager.
@@ -95,8 +85,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 		autosave = desc.getFacetExpr(IKeyword.AUTOSAVE);
-		sync = "true".equals(desc.getLitteral("synchronized"))
+		boolean sync = GamaPreferences.Runtime.CORE_SYNC.getValue() || "true".equals(desc.getLitteral("synchronized"))
 				|| desc.hasFacet(IKeyword.AUTOSAVE) && !"false".equals(desc.getLitteral(IKeyword.AUTOSAVE));
+		if (sync) { GAMA.synchronizeFrontmostExperiment(); }
 	}
 
 	@Override
@@ -133,7 +124,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 		// monitors.add(monitor);
 		// }
 		else {
-			outputs.put(output.getId(), output);
+			synchronized (outputs) {
+				outputs.put(output.getId(), output);
+			}
 		}
 	}
 
@@ -144,7 +137,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			// AD: explicit addition of an ArrayList to prevent dispose errors
 			// (when outputs remove themselves from the list)
 			GAMA.desynchronizeFrontmostExperiment();
-			for (final IOutput output : new ArrayList<>(outputs.values())) { output.dispose(); }
+			synchronized (outputs) {
+				for (final IOutput output : new ArrayList<>(outputs.values())) { output.dispose(); }
+			}
 			// for (final IOutput output : new ArrayList<>(monitors)) { output.dispose(); }
 			clear();
 		} catch (final Exception e) {
@@ -157,7 +152,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	// for instant, multi-simulation cannot have their owns outputs display at
 	// same time.
 	public void clear() {
-		outputs.clear();
+		synchronized (outputs) {
+			outputs.clear();
+		}
 	}
 
 	@Override
@@ -177,7 +174,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			if (s instanceof LayoutStatement) {
 				layout = (LayoutStatement) s;
 			} else if (s instanceof IOutput o) {
-				if (o instanceof IDisplayOutput && ((IDisplayOutput) o).isAutoSave()) { sync = true; }
+				if (o instanceof IDisplayOutput && ((IDisplayOutput) o).isAutoSave()) {
+					GAMA.synchronizeFrontmostExperiment();
+				}
 				add(o);
 				o.setUserCreated(false);
 				if (o instanceof LayeredDisplayOutput ldo) { ldo.setIndex(displayIndex++); }
@@ -189,9 +188,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public void forceUpdateOutputs() {
 		for (final IDisplayOutput o : getDisplayOutputs()) { o.update(); }
-		// if (GamaPreferences.Interface.CORE_MONITOR_PARAMETERS.getValue() && !monitors.isEmpty()) {
-		// GAMA.getGui().updateParameterView(monitors.get(0).getScope());
-		// }
 	}
 
 	@Override
@@ -229,25 +225,8 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	@Override
 	public boolean init(final IScope scope) {
 		name = scope.getRoot().getName();
-		// if (this.hasFacet("synchronized")) {
-		// boolean sync = this.getFacetValue(scope, "synchronized", false);
-		// if (sync) {
-		// scope.getExperiment().getSpecies().synchronizeAllOutputs();
-		// } else {
-		// scope.getExperiment().getSpecies().desynchronizeAllOutputs();
-		// }
-		// }
-		// boolean atLeastOneOutputAutosaving = false;<>
-		for (final IOutput output : ImmutableList.copyOf(this)) {
-			if (!open(scope, output)) return false;
-			// if (output instanceof IDisplayOutput && ((IDisplayOutput) output).isAutoSave()) {
-			// atLeastOneOutputAutosaving = true;
-			// }
-		}
-		// atLeastOneOutputAutosaving |=
+		for (final IOutput output : ImmutableList.copyOf(this)) { if (!open(scope, output)) return false; }
 		evaluateAutoSave(scope);
-		// if (atLeastOneOutputAutosaving) { GAMA.synchronizeFrontmostExperiment(); }
-
 		return true;
 	}
 
@@ -270,7 +249,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			} else {
 				isAutosaving = Cast.asBool(scope, autosave.value(scope));
 			}
-			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, path); }
+			if (isAutosaving) { scope.getGui().getSnapshotMaker().takeAndSaveScreenshot(scope, path); }
 		}
 		return isAutosaving;
 	}
@@ -337,27 +316,12 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			if (each instanceof LayeredDisplayOutput ldo) { ldo.linkScopeWithGraphics(); }
 			if (each.isRefreshable() && each.getScope().step(each).passed()) { each.update(); }
 		});
-		if (scope.getExperiment().isSynchronized() && !inInitPhase) {
+		if (GAMA.isSynchronized() && !inInitPhase) {
 			while (!allOutputsRendered()) {
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					// e.printStackTrace();
-				}
+				THREADS.WAIT(20, "The outputs are not rendered yet", "AbstractOutputManager.step() interrupted");
 			}
 		}
-		if (autosave != null) {
-			boolean isAutosaving = false;
-			String autosavingPath = null;
-			if (autosave.getGamlType().equals(Types.STRING)) {
-				isAutosaving = true;
-				autosavingPath = Cast.asString(scope, autosave.value(scope));
-			} else {
-				isAutosaving = Cast.asBool(scope, autosave.value(scope));
-			}
-			if (isAutosaving) { SnapshotMaker.getInstance().doSnapshot(scope, autosavingPath); }
-		}
-
+		evaluateAutoSave(scope);
 		return true;
 	}
 

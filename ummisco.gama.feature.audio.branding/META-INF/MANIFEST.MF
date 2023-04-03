@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Audio playback complements to GAMA
-Bundle-SymbolicName: ummisco.gama.feature.audio.branding
-Bundle-Version: 1.9.0.qualifier
-Automatic-Module-Name: ummisco.gama.feature.audio.branding
-Bundle-Vendor: Audio — UMMISCO

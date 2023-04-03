@@ -57,6 +57,7 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getS_SolveAccess().getAlternatives_4(), "rule__S_Solve__Alternatives_4");
 			builder.put(grammarAccess.getS_DisplayAccess().getNameAlternatives_2_0(), "rule__S_Display__NameAlternatives_2_0");
 			builder.put(grammarAccess.getDisplayStatementAccess().getAlternatives(), "rule__DisplayStatement__Alternatives");
+			builder.put(grammarAccess.getDisplayStatementAccess().getAlternatives_1(), "rule__DisplayStatement__Alternatives_1");
 			builder.put(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getAlternatives_3(), "rule__SpeciesOrGridDisplayStatement__Alternatives_3");
 			builder.put(grammarAccess.get_SpeciesKeyAccess().getAlternatives(), "rule___SpeciesKey__Alternatives");
 			builder.put(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getAlternatives(), "rule___1Expr_Facets_BlockOrEnd_Key__Alternatives");
@@ -147,6 +148,7 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getS_DisplayAccess().getGroup(), "rule__S_Display__Group__0");
 			builder.put(grammarAccess.getDisplayBlockAccess().getGroup(), "rule__DisplayBlock__Group__0");
 			builder.put(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getGroup(), "rule__SpeciesOrGridDisplayStatement__Group__0");
+			builder.put(grammarAccess.getImageDisplayStatementAccess().getGroup(), "rule__ImageDisplayStatement__Group__0");
 			builder.put(grammarAccess.get_AssignmentKeyAccess().getGroup_2(), "rule___AssignmentKey__Group_2__0");
 			builder.put(grammarAccess.get_AssignmentKeyAccess().getGroup_4(), "rule___AssignmentKey__Group_4__0");
 			builder.put(grammarAccess.getActionArgumentsAccess().getGroup(), "rule__ActionArguments__Group__0");
@@ -225,6 +227,7 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getTypeRefAccess().getGroup_0_1(), "rule__TypeRef__Group_0_1__0");
 			builder.put(grammarAccess.getTypeRefAccess().getGroup_1(), "rule__TypeRef__Group_1__0");
 			builder.put(grammarAccess.getTypeRefAccess().getGroup_1_1(), "rule__TypeRef__Group_1_1__0");
+			builder.put(grammarAccess.getTypeRefAccess().getGroup_2(), "rule__TypeRef__Group_2__0");
 			builder.put(grammarAccess.getTypeInfoAccess().getGroup(), "rule__TypeInfo__Group__0");
 			builder.put(grammarAccess.getTypeInfoAccess().getGroup_2(), "rule__TypeInfo__Group_2__0");
 			builder.put(grammarAccess.getSkillRefAccess().getGroup(), "rule__SkillRef__Group__0");
@@ -350,6 +353,9 @@ public class GamlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprAssignment_1(), "rule__SpeciesOrGridDisplayStatement__ExprAssignment_1");
 			builder.put(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getFacetsAssignment_2(), "rule__SpeciesOrGridDisplayStatement__FacetsAssignment_2");
 			builder.put(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getBlockAssignment_3_0(), "rule__SpeciesOrGridDisplayStatement__BlockAssignment_3_0");
+			builder.put(grammarAccess.getImageDisplayStatementAccess().getKeyAssignment_0(), "rule__ImageDisplayStatement__KeyAssignment_0");
+			builder.put(grammarAccess.getImageDisplayStatementAccess().getExprAssignment_1(), "rule__ImageDisplayStatement__ExprAssignment_1");
+			builder.put(grammarAccess.getImageDisplayStatementAccess().getFacetsAssignment_2(), "rule__ImageDisplayStatement__FacetsAssignment_2");
 			builder.put(grammarAccess.getActionArgumentsAccess().getArgsAssignment_0(), "rule__ActionArguments__ArgsAssignment_0");
 			builder.put(grammarAccess.getActionArgumentsAccess().getArgsAssignment_1_1(), "rule__ActionArguments__ArgsAssignment_1_1");
 			builder.put(grammarAccess.getArgumentDefinitionAccess().getTypeAssignment_0(), "rule__ArgumentDefinition__TypeAssignment_0");

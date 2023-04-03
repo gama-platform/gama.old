@@ -2,14 +2,18 @@
 * Name: HTTPGET
 * Based on the internal empty template. 
 * Author: benoitgaudou
-* Tags: 
+* Tags: network, web service, HTTP
 */
 
+/*
+ * The code below can be tested with a Flask server (Python Web server).
+ * A simple script (with small instructions to launch it) is available on the scripts / HTTP folder.
+ */
 
-model HTTPGET
+model HTTPPOST
 
 global {
-	int port <- 5000;     // for HTPP : 80 http, for HTTPS : 443 
+	int port <- 5000;     // for HTTP : 80 http, for HTTPS : 443 , for Flask server : 5000
 	string url <- "127.0.0.1";	
 	
 	init {
@@ -38,6 +42,7 @@ species NetworkingAgent skills:[network] {
 		{
 			//read a message
 			message mess <- fetch_message();
+			
 			//display the message 
 			write name + " fecth this message: " + mess.contents;	
 			write sample(map(mess.contents)["CODE"]);

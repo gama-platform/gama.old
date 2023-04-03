@@ -14,8 +14,10 @@ Require-Bundle: msi.gama.ext,
  com.google.guava,
  ummisco.gama.annotations
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: ummisco.gama.OpenGLActivator
 Import-Package: org.jfree.chart,
- org.locationtech.jts.geom
+ org.locationtech.jts.geom,
+ ummisco.gaml.extensions.image
 Export-Package: 
  com.jogamp.common,
  com.jogamp.common.jvm,

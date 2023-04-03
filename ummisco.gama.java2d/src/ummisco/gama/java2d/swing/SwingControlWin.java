@@ -55,6 +55,7 @@ public class SwingControlWin extends SwingControl {
 				surface.setVisibility(() -> visible);
 				applet.getContentPane().add(surface);
 				frame.add(applet);
+				addListener(SWT.Resize, event -> { surface.setMonitor(this.getMonitor()); });
 				addListener(SWT.Dispose, event -> EventQueue.invokeLater(() -> {
 					try {
 						applet.getContentPane().remove(surface);

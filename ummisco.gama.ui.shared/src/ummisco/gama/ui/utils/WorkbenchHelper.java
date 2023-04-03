@@ -3,7 +3,7 @@
  * WorkbenchHelper.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -117,7 +117,7 @@ public class WorkbenchHelper {
 	 * @return the clipboard
 	 */
 	public static Clipboard getClipboard() {
-		if (CLIPBOARD == null) { CLIPBOARD = new Clipboard(getDisplay()); }
+		if (CLIPBOARD == null) { CLIPBOARD = run(() -> new Clipboard(getDisplay())); }
 		return CLIPBOARD;
 	}
 
@@ -480,6 +480,23 @@ public class WorkbenchHelper {
 			if (clientArea.intersects(toFind)) return i;
 		}
 		return result;
+	}
+
+	/**
+	 * Gets the number of monitors.
+	 *
+	 * @return the number of monitors
+	 */
+	public static int getNumberOfMonitors() { return getMonitors().length; }
+
+	/**
+	 * Gets the monitors.
+	 *
+	 * @return the monitors
+	 */
+	public static Monitor[] getMonitors() {
+		Display d = getDisplay();
+		return d == null ? new Monitor[0] : d.getMonitors();
 	}
 
 }

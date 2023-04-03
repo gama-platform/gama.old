@@ -3,7 +3,7 @@
  * GamlResourceIndexer.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -82,9 +82,13 @@ public class GamlResourceIndexer {
 				final String u = e.getImportURI();
 				if (u != null) {
 					URI uri = URI.createURI(u, true);
-					uri = GamlResourceServices.properlyEncodedURI(uri.resolve(baseURI));
-					final String label = e.getName();
-					result.put(uri, label);
+					try {
+						uri = uri.resolve(baseURI);
+					} catch (Exception e1) {
+						DEBUG.LOG("Error in resolving " + uri + " against base " + baseURI);
+					}
+					uri = GamlResourceServices.properlyEncodedURI(uri);
+					result.put(uri, e.getName());
 				}
 			}
 		} else if (isExpe) {
@@ -266,7 +270,8 @@ public class GamlResourceIndexer {
 	/**
 	 * Direct imports of.
 	 *
-	 * @param uri the uri
+	 * @param uri
+	 *            the uri
 	 * @return the sets the
 	 */
 	public static Set<URI> directImportsOf(final URI uri) {

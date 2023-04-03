@@ -1,53 +1,40 @@
+/*******************************************************************************************************
+ *
+ * AbstractSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.0).
+ *
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gaml.statements.save;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
+import java.util.Set;
 
-import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.common.interfaces.ISaveDelegate;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
-public class AbstractSaver {
+/**
+ * The Class AbstractSaver.
+ */
+public abstract class AbstractSaver implements ISaveDelegate {
+
+	/** The file types. */
+	Set<String> fileTypes = computeFileTypes();
+
+	@Override
+	public Set<String> getFileTypes() { return fileTypes; }
 
 	/**
-	 * Geometry collection management.
+	 * Compute file types.
 	 *
-	 * @param gg
-	 *            the gg
-	 * @return the geometry
+	 * @return the string[]
 	 */
-	protected Geometry cleanGeometryCollection(final Geometry gg) {
-		if (gg instanceof GeometryCollection gc) {
-			boolean isMultiPolygon = true;
-			boolean isMultiPoint = true;
-			boolean isMultiLine = true;
-			final int nb = gc.getNumGeometries();
+	protected abstract Set<String> computeFileTypes();
 
-			for (int i = 0; i < nb; i++) {
-				final Geometry g = gc.getGeometryN(i);
-				if (!(g instanceof Polygon)) { isMultiPolygon = false; }
-				if (!(g instanceof LineString)) { isMultiLine = false; }
-				if (!(g instanceof Point)) { isMultiPoint = false; }
-			}
-
-			if (isMultiPolygon) {
-				final Polygon[] polygons = new Polygon[nb];
-				for (int i = 0; i < nb; i++) { polygons[i] = (Polygon) gc.getGeometryN(i); }
-				return GeometryUtils.GEOMETRY_FACTORY.createMultiPolygon(polygons);
-			}
-			if (isMultiLine) {
-				final LineString[] lines = new LineString[nb];
-				for (int i = 0; i < nb; i++) { lines[i] = (LineString) gc.getGeometryN(i); }
-				return GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
-			}
-			if (isMultiPoint) {
-				final Point[] points = new Point[nb];
-				for (int i = 0; i < nb; i++) { points[i] = (Point) gc.getGeometryN(i); }
-				return GeometryUtils.GEOMETRY_FACTORY.createMultiPoint(points);
-			}
-		}
-		return gg;
-	}
+	@Override
+	public IType getDataType() { return Types.NO_TYPE; }
 
 }
