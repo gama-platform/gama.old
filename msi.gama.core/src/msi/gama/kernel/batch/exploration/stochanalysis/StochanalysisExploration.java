@@ -106,7 +106,7 @@ import msi.gaml.types.IType;
 public class StochanalysisExploration extends AExplorationAlgorithm {
 
 	/** The method. */
-	public String method;
+	public String method = "";
 
 	/** The sample size. */
 	public int sample_size = 10;
