@@ -3,7 +3,7 @@
  * ParametricFileType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,9 +11,13 @@
 package msi.gaml.types;
 
 import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.Map;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.GamlAnnotations.variable;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
@@ -23,6 +27,7 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.GamaGetter;
+import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -51,6 +56,9 @@ public class ParametricFileType extends ParametricType {
 
 	/** The plugin. */
 	String plugin;
+
+	/** The getters. */
+	private Map<String, OperatorProto> getters;
 
 	/** The generic instance. */
 	static volatile ParametricFileType genericInstance;
@@ -262,8 +270,57 @@ public class ParametricFileType extends ParametricType {
 
 	@Override
 	public IContainerType<?> typeIfCasting(final IExpression exp) {
-
 		return this;
 	}
+
+	// ====== COPIED FROM GAMATYPE FOR NOW ON
+	@Override
+	public void setFieldGetters(final Map<String, OperatorProto> map) {
+		map.replaceAll((final String key, final OperatorProto each) -> each.copyWithSignature(this));
+		getters = map;
+	}
+
+	@Override
+	public Map<String, OperatorProto> getFieldGetters() { return getters == null ? Collections.EMPTY_MAP : getters; }
+
+	@Override
+	public OperatorProto getGetter(final String field) {
+		if (getters == null) return null;
+		return getters.get(field);
+	}
+
+	@Override
+	public void documentFields(final Doc result) {
+		if (getters != null) {
+			// sb.append("<b><br/>Fields :</b><ul>");
+			for (final OperatorProto f : getters.values()) { getFieldDocumentation(result, f); }
+
+			result.append("</ul>");
+		}
+	}
+
+	/**
+	 * Gets the field documentation.
+	 *
+	 * @param prototype
+	 *            the prototype
+	 * @return the field documentation
+	 */
+	void getFieldDocumentation(final Doc sb, final OperatorProto prototype) {
+
+		final vars annot = prototype.getSupport().getAnnotation(vars.class);
+		if (annot != null) {
+			final variable[] allVars = annot.value();
+			for (final variable v : allVars) {
+				if (v.name().equals(prototype.getName())) {
+					if (v.doc().length > 0) {
+						sb.set("Accessible fields: ", v.name(), new ConstantDoc(v.doc()[0].value()));
+					}
+					break;
+				}
+			}
+		}
+	}
+	// ===============
 
 }

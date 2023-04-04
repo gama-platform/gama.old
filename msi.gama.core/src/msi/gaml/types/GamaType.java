@@ -189,8 +189,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 		map.replaceAll((final String key, final OperatorProto each) -> each.copyWithSignature(this));
 
 		getters = map;
-		// AD 20/09/13 Added the initialization of the type containing the
-		// fields
+		// AD 20/09/13 Added the initialization of the type containing the fields
 
 	}
 
