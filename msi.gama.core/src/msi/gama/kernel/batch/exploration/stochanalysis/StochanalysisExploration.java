@@ -202,7 +202,7 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 		}
 		
 		// Build report
-		String path = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+		String path = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
 		final File f = new File(FileUtils.constructAbsoluteFilePath(scope, path, false));
 		final File parent = f.getParentFile();
 		if (!parent.exists()) { parent.mkdirs(); }
