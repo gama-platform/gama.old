@@ -87,7 +87,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GeometryUtils {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The envelope computers. */
