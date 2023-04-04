@@ -23,5 +23,11 @@
             class="ummisco.gaml.extensions.image.ImageDrawer">
       </implementation>
    </extension>
+   <extension
+         point="gama.constants">
+      <implementation
+            class="ummisco.gaml.extensions.image.ImageConstantSupplier">
+      </implementation>
+   </extension>
 
 </plugin> 

@@ -428,7 +428,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		}
 		gl.endDrawing();
 		ogl.glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
-		ogl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+		ogl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	/**
@@ -479,7 +479,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			gl.disable(GLPointerFunc.GL_VERTEX_ARRAY);
 			// Putting back alpha to normal
 			ogl.glBlendColor(0.0f, 0.0f, 0.0f, 0.0f);
-			ogl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
+			ogl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
 		}
 

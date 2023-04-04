@@ -12,7 +12,7 @@ model CastingImages
 
 
 global {
-	image im <- image("../includes/Kandinsky.jpeg");
+	image im <- #gama_logo;
 	matrix<int> mat <- matrix(im);
 	field f <- field(im);
 }
@@ -21,7 +21,7 @@ experiment Show {
 	
 	output {
 		layout #split;
-		display im {
+		display im type: 3d {
 			image im;
 		}
 		
