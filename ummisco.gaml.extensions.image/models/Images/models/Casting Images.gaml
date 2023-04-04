@@ -1,3 +1,5 @@
+
+
 /**
 * Name: CastingImages
 * Shows how to cast Images from and to popular formats 

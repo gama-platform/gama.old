@@ -29,7 +29,7 @@ public class ImageConstantSupplier implements IConstantsSupplier {
 		GamaImage im;
 		try {
 			im = GamaImage.from(ImageIO.read(is), true);
-			acceptor.accept("gama_logo", im, "The official logo of GAMA in a 100x100 image", null, false);
+			acceptor.accept("gama_logo", im, "The official logo of GAMA in a 500x500 image", null, false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
