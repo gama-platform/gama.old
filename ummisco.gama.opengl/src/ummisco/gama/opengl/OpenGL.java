@@ -1619,7 +1619,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		// Blending & alpha control
 		gl.glEnable(GL.GL_BLEND);
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glTexEnvi(GL2ES1.GL_TEXTURE_ENV, GL2ES1.GL_TEXTURE_ENV_MODE, GL2ES1.GL_MODULATE);
 		gl.glEnable(GL2ES1.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL.GL_GREATER, 0.01f);
