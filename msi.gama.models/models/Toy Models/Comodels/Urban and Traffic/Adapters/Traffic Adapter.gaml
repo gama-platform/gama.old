@@ -6,7 +6,7 @@
 */
 model traffic_adapter
 
-import "../../../../Toy Models/Traffic/models/Simple Traffic Model.gaml"
+import "../../../../Toy Models/Traffic/models/Traffic and Pollution.gaml"
 experiment "Adapter of Traffice" type: gui
 {
 	point centroid <- { 15200, 1580 };
