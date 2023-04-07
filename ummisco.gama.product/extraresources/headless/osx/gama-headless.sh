@@ -8,7 +8,7 @@ if [[ ${javaVersion:2} == 17 ]]; then
   exit 1
 fi
 
-memory=0
+memory="0"
 
 for arg do
   shift
@@ -23,7 +23,7 @@ for arg do
   esac
 done
 
-if [ $memory -eq 0 ]; then
+if [[ $memory == "0" ]]; then
   memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )"/../Gama.ini || echo "-Xmx4096m")
 else
   memory=-Xmx$memory
