@@ -6,7 +6,7 @@ name: Complete Build
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ GAMA_1.9.0 ]
+    branches: [ GAMA_1.9.1 ]
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:  # For manual trigger
