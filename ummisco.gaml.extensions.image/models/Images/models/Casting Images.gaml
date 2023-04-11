@@ -31,7 +31,7 @@ experiment Show {
 			image mat;
 		}
 		
-		display field {
+		display field type: 3d {
 			mesh f scale: 0.05 triangulation: true;
 		}
 	}
