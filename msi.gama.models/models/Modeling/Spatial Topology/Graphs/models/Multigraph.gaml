@@ -43,10 +43,16 @@ global {
 }
 
 species people skills: [moving]{
-	point location <- any_location_in(one_of(road));
-	people target_people <- one_of(people);
-	point target <- target_people.location;
 	float size <- 3.0;
+	people target_people;
+	point target;
+	
+	init {
+		location <- any_location_in(one_of(road));
+		target_people <- one_of(people - self);
+		target <- target_people.location;
+	
+	}
 	
 	//action that make recompute the size of the agents as the distance between it and its target people in the friendship graph (the farthest, the biggest)
 	action updateSize {
@@ -59,7 +65,7 @@ species people skills: [moving]{
 	//the agent moves toward its target, when reaching it, it chooses another target as the location of one of the people agent
 	reflex movement {
 		if (location distance_to target < 5.0) {
-			target_people <- one_of(people);
+			target_people <- one_of(people - self);
 			target <- target_people.location;
 			do updateSize;
 		}
