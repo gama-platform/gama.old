@@ -164,8 +164,7 @@ experiment clustering2D type: gui
 		
 		display map_kmeans 
 		{
-			species datapoints aspect: kmeans_aspect2D transparency:0.4;
-			species centroids aspect: kmeans_aspect2D;
+
 			graphics "Full target"
 			{
 				draw rectangle(120, 4) color: # yellow  at: { 50, 2 };
@@ -190,6 +189,8 @@ experiment clustering2D type: gui
 				}
 
 			}
+			species datapoints aspect: kmeans_aspect2D transparency:0.4;
+			species centroids aspect: kmeans_aspect2D;
 
 		}
 
