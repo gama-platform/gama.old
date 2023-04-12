@@ -145,7 +145,7 @@ global skills: [moving] control: fsm {
 		write string(map(agent0));
 
 		//This access can be used everywhere, easing the use of shape files (and data files in general)
-		list<geometry> shapes <- list<geometry>(file("something.shp"));
+		list<geometry> shapes <- list<geometry>(file("includes/something.shp"));
 
 		// If we suppose val1, val2, etc. are defined in the shape file
 		float max <- min(shapes collect float(each["val1"]));
@@ -334,7 +334,7 @@ species species1 mirrors: species0 skills: [moving] {
 grid my_grid width: 100 height: 100 {
 }
 
-experiment exp1 type: gui {
+experiment "Run this experiment" type: gui {
 	output {
 		display Display type: 3d {
 		// Layers include a new keyword, "graphics", that allows to draw arbitrary shapes using the syntax found in the aspects of species
