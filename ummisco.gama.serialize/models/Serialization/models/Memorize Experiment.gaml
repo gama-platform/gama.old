@@ -52,6 +52,10 @@ global {
 			size <- 1.0;
 			roads_knowledge <- road as_map (each:: each.shape.perimeter);
 		}
+		
+		people(0).other <- people(1);
+		people(1).other <- people(0);
+		
 	}
 }
 
@@ -68,6 +72,7 @@ species people skills: [moving] {
 	rgb color;
 	float size;
 	path path_to_follow;
+	people other;
 	
 	init {
 		the_target <- {90,50};
@@ -86,6 +91,7 @@ species people skills: [moving] {
 		
 	aspect base {
 		draw circle(size) color: color;
+		draw line(self,other) color: #black;
 	}
 }
 
