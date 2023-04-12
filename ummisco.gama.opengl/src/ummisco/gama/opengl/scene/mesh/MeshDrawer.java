@@ -116,7 +116,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 */
 	public MeshDrawer(final OpenGL gl) {
 		super(gl);
-		DEBUG.LOG("Creation of a MeshDrawer");
 	}
 
 	/**
@@ -143,7 +142,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		var attributes = object.getAttributes();
 		cols = (int) attributes.getXYDimension().x;
 		rows = (int) attributes.getXYDimension().y;
-		this.triangles = attributes.isTriangulated();
 		boolean grayscale = attributes.isGrayscaled();
 		Color line = attributes.getBorder();
 		useFillForLines = line == null && gl.isWireframe() && colorProvider != null;
@@ -162,6 +160,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		this.cx = this.gl.getWorldWidth() / (cols - 1d);
 
 		boolean withText = attributes.isWithText();
+		this.triangles = attributes.isTriangulated();
 
 		double[] data = attributes.getSmoothProvider().smooth(cols, rows, object.getObject().getMatrix(), noData,
 				attributes.getSmooth());
@@ -280,7 +279,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	/**
-	 * Fill buffers with triangles.
+	 * Fill buffers with triangles 2. Recopied from the version of the 10th of March, 2023 because of issue #3705.
+	 *
+	 * @param data
+	 *            the data
+	 * @param noData
+	 *            the no data
 	 */
 	private void fillBuffersWithTriangles(final double[] data, final double noData) {
 		var realIndex = 0;
@@ -289,28 +293,23 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 			for (var i = 0; i < cols; i++) {
 				var x = i * cx;
 				var index = j * cols + i;
-				var z = get(data, i, j);
+				var z = data[index];
 				realIndexes[index] = z == noData ? -1 : realIndex++;
 				if (z == noData) { continue; }
 				vertexBuffer.put(x).put(-y).put(z);
 				setColor(z, i, j);
-				setNormal(data, cols, rows, i, j);
+				setNormal(data, i, j);
+				if (j > 0 && i > 0) {
+					var current = realIndexes[index];
+					var minus1 = realIndexes[index - 1];
+					var minusCols = realIndexes[index - cols];
+					var minusColsAnd1 = realIndexes[index - cols - 1];
+					if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
+					indexBuffer.put(current).put(minus1).put(minusCols);
+					indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
+				}
 			}
 		}
-		for (var j = 1; j < rows; j++) {
-			for (var i = 1; i < cols; i++) {
-				var index = j * cols + i;
-				var current = realIndexes[index];
-				var minus1 = realIndexes[index - 1];
-				var minusCols = realIndexes[index - cols];
-				var minusColsAnd1 = realIndexes[index - cols - 1];
-				if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
-				indexBuffer.put(current).put(minus1).put(minusCols);
-				indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
-
-			}
-		}
-
 	}
 
 	/**
@@ -322,7 +321,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				var z = get(data, i, j);
 				vertexBuffer.put(i * cx).put(-j * cy).put(z);
 				setColor(z, i, j);
-				setNormal(data, cols, rows, i, j);
+				setNormal(data, i, j);
 			}
 		}
 		// Different loop for building the indexes
@@ -352,7 +351,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 * @param y
 	 *            the y
 	 */
-	private void setNormal(final double[] data, final int cols, final int rows, final int i, final int j) {
+	private void setNormal(final double[] data, final int i, final int j) {
 		final double x = i * cx;
 		final double y = j * cy;
 		surface.setTo(x - cx, y - cy, get(data, i - 1, j - 1), x, y - cy, get(data, i, j - 1), x + cx, y - cy,
