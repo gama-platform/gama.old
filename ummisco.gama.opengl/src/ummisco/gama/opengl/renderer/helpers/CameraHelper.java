@@ -542,7 +542,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
 
-		if (!buttonPressed) return;
+		if (!buttonPressed || button != 1) return;
 		final GamaPoint newPoint = new GamaPoint(x, y);
 		if (!data.isCameraLocked() && isCtrl) {
 			final int horizMovement = (int) (newPoint.x - lastMousePressedPosition.x);
