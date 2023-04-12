@@ -53,7 +53,9 @@ grid cell file: dem neighbors: neighborhood_type optimizer: algorithm;
 	
 
 experiment goto_grid type: gui {
-	output {
+	
+	float minimum_cycle_duration <- 300 #msec;
+	output synchronized: true { // synchronized to make sure that we do not run into issue #3737
 		display objects_display type: 3d{
 			grid cell border: #black;
 			graphics "elements" {
