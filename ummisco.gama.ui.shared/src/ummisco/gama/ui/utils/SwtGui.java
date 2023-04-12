@@ -126,8 +126,8 @@ public class SwtGui implements IGui {
 	public boolean confirmClose(final IExperimentPlan exp) {
 		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) return true;
 		PerspectiveHelper.switchToSimulationPerspective();
-		return Messages.question("Close simulation confirmation", "Do you want to close experiment '" + exp.getName()
-				+ "' of model '" + exp.getModel().getName() + "' ?");
+		return Messages.modalQuestion("Close simulation confirmation", "Do you want to close experiment '"
+				+ exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
 	}
 
 	@Override
