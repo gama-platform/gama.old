@@ -8,11 +8,11 @@
 model SavetoGeotiff
 
 global {
-	shape_file parcels <- shape_file("../includes/parcels.shp");
-	geometry shape <- envelope(parcels);
+	shape_file buildings <- shape_file("../includes/building.shp");
+	geometry shape <- envelope(buildings);
 	init {	 
 		ask cell {
-			if not empty(parcels overlapping self) {
+			if not empty(buildings overlapping self) {
 				color <- #blue;
 			}
 		}
