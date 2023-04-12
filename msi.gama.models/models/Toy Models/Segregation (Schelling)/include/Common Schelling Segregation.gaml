@@ -20,7 +20,7 @@ global {
 	//Percentage of similar wanted for segregation
 	float percent_similar_wanted <- 0.5 min: float (0) max: float (1) parameter: "Desired percentage of similarity:" category: "Population";
 	//Dimension of the grid
-	int dimensions <- 40 max: 400 min: 10 parameter: "Width and height of the environment:" category: "Environment";
+	int dimensions <- 40 max: 200 min: 10 parameter: "Width and height of the environment:" category: "Environment";
 	//Neighbours distance for the perception of the agents
 	int neighbours_distance <- 2 max: 10 min: 1 parameter: "Distance of perception:" category: "Population";
 	//Number of people agents
