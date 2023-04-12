@@ -544,20 +544,14 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 		if (!buttonPressed || button != 1) return;
 		final GamaPoint newPoint = new GamaPoint(x, y);
+
 		if (!data.isCameraLocked() && isCtrl) {
 			final int horizMovement = (int) (newPoint.x - lastMousePressedPosition.x);
 			final int vertMovement = (int) (newPoint.y - lastMousePressedPosition.y);
-			// if (flipped) {
-			// horizMovement = -horizMovement;
-			// vertMovement = -vertMovement;
-			// }
-
 			final double horizMovement_real = horizMovement;
 			final double vertMovement_real = vertMovement;
-
 			lastMousePressedPosition.setLocation(newPoint);
 			theta = theta - horizMovement_real * getSensivity();
-
 			if (flipped) {
 				if (vertMovement_real > 0) {
 					// down drag : phi increase
@@ -593,8 +587,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 				flipped = !flipped;
 				theta += 180;
 			}
-
-			// phi = phi - vertMovement_real * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
 		} else if (shiftPressed && isViewInXYPlan()) {
 			getMousePosition().x = x;
@@ -662,6 +654,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	@Override
 	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
+		DEBUG.OUT("Mouse pressed from SWT");
 		invokeOnGLThread(drawable -> {
 			final int x = autoScaleUp(e.x);
 			final int y = autoScaleUp(e.y);
@@ -673,6 +666,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mousePressed(final com.jogamp.newt.event.MouseEvent e) {
+		DEBUG.OUT("Mouse pressed from NEWT");
 		invokeOnGLThread(drawable -> {
 			final int x = autoScaleUp(e.getX());
 			final int y = autoScaleUp(e.getY());

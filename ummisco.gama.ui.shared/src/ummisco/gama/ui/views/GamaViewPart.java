@@ -302,7 +302,7 @@ public abstract class GamaViewPart extends ViewPart
 		final Job job = getUpdateJob();
 		if (job != null) {
 			job.schedule();
-			if (GAMA.isSynchronized()) {
+			if (GAMA.isSynchronized() && !WorkbenchHelper.isDisplayThread()) {
 				try {
 					job.join();
 				} catch (InterruptedException e) {
