@@ -100,7 +100,7 @@ import ummisco.gama.dev.utils.DEBUG;
 						type = IType.GEOMETRY,
 						optional = true,
 						doc = @doc (
-								deprecated = "Use 'camera default target: the_agent' to achieve the same effect. And please note that this possibility does not exist on Java2D anymore",
+								deprecated = "Insert a statement 'camera default target: the_agent;' alongside the definition of the layers to achieve the same effect. And please note that this possibility does not exist on Java2D anymore",
 								value = "the geometry (or agent) on which the display will (dynamically) focus")),
 				// WARNING VALIDER EN VERIFIANT LE TYPE DU DISPLAY
 				@facet (
