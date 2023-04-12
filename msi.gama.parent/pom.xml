@@ -158,7 +158,6 @@
 
 		<module>../msi.gama.models</module>
 		<module>../msi.gaml.architecture.simplebdi</module>
-		<module>../espacedev.gaml.extensions.genstar</module>
 
 
 		<module>../ummisco.gama.opengl</module>
