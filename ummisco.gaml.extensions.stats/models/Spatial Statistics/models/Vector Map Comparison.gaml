@@ -102,17 +102,17 @@ species areaclc {
 
 experiment "Compare" type: gui {
 	output {
-		layout #split consoles: false editors: false navigator: false parameters: false tabs: false toolbars: false tray: false ;
-		display map_sim type: 3d{
+		layout #split consoles: false editors: false navigator: false parameters: false tabs: true toolbars: false tray: false ;
+		display "Simulated Map" type: 3d{
 			species areaclc aspect: simulation;
 		}
-		display map_observed type: 3d{
+		display "Observed Map" type: 3d{
 			species areaclc aspect: observed refresh: false;
 		}
-		display map_init type: 3d{
+		display "Initial Map" type: 3d{
 			species areaclc aspect: init refresh: false;
 		}
-		display map_fuzzy type: 3d background: #black{
+		display "Fuzzy Comparison Map" type: 3d background: #black{
 			species areaclc aspect: fuzzy_sim ;
 		}
 	}
