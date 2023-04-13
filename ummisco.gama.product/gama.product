@@ -107,7 +107,7 @@
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="org.eclipse.update.reconcile" value="false" />
-      <property name="version" value="1.9.0" />
+      <property name="version" value="1.9.1" />
       <property name="eclipse.buildId" value="${build.id}" />
    </configurations>
 
