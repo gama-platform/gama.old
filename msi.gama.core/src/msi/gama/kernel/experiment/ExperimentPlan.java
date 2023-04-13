@@ -280,6 +280,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 											+ " doesn't exist yet, do you perhaps mean 'saltelli' ?",
 									IGamlIssue.MISSING_FACET);
 							break;
+						case IKeyword.UNIFORM:
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
+								tmpDesc.warning("Sample size not defined, will be 132 by default",
+										IGamlIssue.MISSING_FACET);
+							}
 						case IKeyword.FACTORIAL:
 							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
 								tmpDesc.warning("Sample size not defined, will be 132 by default",

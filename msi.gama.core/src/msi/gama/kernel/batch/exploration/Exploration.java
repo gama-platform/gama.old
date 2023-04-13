@@ -54,6 +54,7 @@ import msi.gaml.types.GamaDateType;
 import msi.gaml.types.GamaFloatType;
 import msi.gaml.types.GamaPointType;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * The Class ExhaustiveSearch.
@@ -76,7 +77,7 @@ import msi.gaml.types.IType;
 						name = Exploration.METHODS,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("The name of the method (among saltelli/morris/latinhypercube/orthogonal/uniform/factorial)")),
+						doc = @doc ("The name of the sampling method (among saltelli/morris/latinhypercube/orthogonal/uniform/factorial)")),
 				@facet (
 						name = IKeyword.FROM,
 						type = IType.STRING,
@@ -284,6 +285,9 @@ public class Exploration extends AExplorationAlgorithm {
 	private List<ParametersSet> buildParameterFromMap(final IScope scope, final List<ParametersSet> sets,
 			final int index) {
 		IExpression psexp = getFacet(IKeyword.WITH);
+		if (psexp.getDenotedType() != Types.LIST) { 
+			GamaRuntimeException.error("You cannot use "+IKeyword.WITH+" facet without input a list of maps as parameters inputs", scope); 
+		}
 		List<Map<String, Object>> parameterSets = Cast.asList(scope, psexp.value(scope));
 
 		for (Map<String, Object> parameterSet : parameterSets) {
