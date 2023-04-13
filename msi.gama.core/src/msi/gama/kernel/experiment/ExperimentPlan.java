@@ -285,6 +285,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 								tmpDesc.warning("Sample size not defined, will be 132 by default",
 										IGamlIssue.MISSING_FACET);
 							}
+							break;
 						case IKeyword.FACTORIAL:
 							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
 								tmpDesc.warning("Sample size not defined, will be 132 by default",
