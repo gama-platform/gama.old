@@ -92,7 +92,8 @@ public abstract class GamaExecutorService {
 
 	/** The Constant CONCURRENCY_SIMULATIONS_ALL. */
 	public static final Pref<Boolean> CONCURRENCY_SIMULATIONS_ALL = create("pref_parallel_simulations_all",
-			"In batch mode, allow to run simulations with different parameter sets in parallel", false, IType.BOOL,
+			"In batch mode, allows to run as many simulations as possible with available threads/core "
+			+ "\n[WARNING: if true, disabled reflexes and permanent displays of batch experiments]", false, IType.BOOL,
 			true).in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.CONCURRENCY);
 
 	/** The Constant CONCURRENCY_GRID. */
