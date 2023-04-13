@@ -11,7 +11,9 @@
 package ummisco.gama.network.serial;
  
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.socket.SocketService;
@@ -56,8 +58,13 @@ public class ArduinoConnector extends Connector {
 		if("".equals(PORT)) {
 			PORT=this.getConfigurationParameter(SERVER_URL);
 		}
+		try {
 		arduino = new MyArduino(PORT,BAUD);
-		
+		}catch(Exception ex) {}
+		if(arduino==null) {
+			GAMA.reportError(agent.getScope(), GamaRuntimeException.warning("Cannot connect Arduino to Port: " + PORT, agent.getScope()), false);
+			return;
+		}else
 		if(arduino.openConnection()){
 			System.out.println("CONNECTION OPENED");
 		}
@@ -84,9 +91,11 @@ public class ArduinoConnector extends Connector {
 		if (ssThread != null) {
 			ssThread.interrupt();
 		}
-		
-		arduino.closeConnection();
-		System.out.println("CONNECTION CLOSED");		
+		if(arduino!=null) {
+			arduino.closeConnection();
+			System.out.println("CONNECTION CLOSED");
+		}
+				
 	}
 
 	@Override
