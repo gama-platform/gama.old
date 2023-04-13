@@ -40,6 +40,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ImageDisplaySurface.
@@ -53,15 +54,14 @@ import msi.gama.util.IList;
 @doc ("A display used to save the graphical representations of agents into image files")
 public class ImageDisplaySurface implements IDisplaySurface {
 
+	/** The null point. */
+	static GamaPoint NULL_POINT = new GamaPoint.Immutable();
+
 	/** The output. */
 	private final LayeredDisplayOutput output;
 
 	/** The buff image. */
-	// private final boolean needsUpdate = true;
-	private GamaImage buffImage = null;
-
-	/** The g 2. */
-	private Graphics2D g2 = null;
+	private GamaImage bufferImage = null;
 
 	/** The height. */
 	private int width = 500, height = 500;
@@ -71,9 +71,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	/** The manager. */
 	ILayerManager manager;
-
-	/** The snapshot folder. */
-	public static String snapshotFolder = "/tmp/";
 
 	/** The scope. */
 	protected IGraphicsScope scope;
@@ -89,6 +86,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	public ImageDisplaySurface(final Object... args) {
 		output = (LayeredDisplayOutput) args[0];
+		DEBUG.LOG("Image Display Surface created for simulation " + output.getScope().getSimulation());
 		data = output.getData();
 		resizeImage(width, height, true);
 
@@ -130,8 +128,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		if (!force && width == newWidth && height == newHeight) return false;
 		this.width = newWidth;
 		this.height = newHeight;
-		final Image copy = buffImage;
-		createBuffImage();
+		final Image copy = bufferImage;
+		bufferImage = GamaImage.ofDimensions(width, height);
+		Graphics2D g2 = bufferImage.createGraphics();
+		if (displayGraphics != null) { displayGraphics.dispose(); }
+		displayGraphics = new AWTDisplayGraphics(g2);
+		((AWTDisplayGraphics) displayGraphics).setUntranslatedGraphics2D(bufferImage.createGraphics());
+		displayGraphics.setDisplaySurface(this);
 		if (getScope() != null && getScope().isPaused()) {
 			updateDisplay(true);
 		} else if (copy != null) { g2.drawImage(copy, 0, 0, newWidth, newHeight, null); }
@@ -153,40 +156,21 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		manager.drawLayersOn(displayGraphics);
 	}
 
-	/**
-	 * Creates the buff image.
-	 */
-	private void createBuffImage() {
-		buffImage = GamaImage.ofDimensions(width, height);
-		g2 = (Graphics2D) buffImage.getGraphics();
-		displayGraphics = new AWTDisplayGraphics((Graphics2D) buffImage.getGraphics());
-		((AWTDisplayGraphics) displayGraphics).setGraphics2D((Graphics2D) buffImage.getGraphics());
-		((AWTDisplayGraphics) displayGraphics).setUntranslatedGraphics2D((Graphics2D) buffImage.getGraphics());
-		displayGraphics.setDisplaySurface(this);
-	}
-
-	/**
-	 * Paint.
-	 */
-	private void paint() {
-		if (buffImage == null) { createBuffImage(); }
-		drawAllDisplays();
-
-	}
-
 	@Override
 	public void dispose() {
-		if (g2 != null) { g2.dispose(); }
+		if (displayGraphics != null) { displayGraphics.dispose(); }
+		if (bufferImage != null) { bufferImage.flush(); }
 		if (manager != null) { manager.dispose(); }
 		GAMA.releaseScope(scope);
 	}
 
 	@Override
 	public GamaImage getImage(final int w, final int h) {
+		DEBUG.LOG("Asking to snapshot step " + scope.getClock().getCycle() + "  from " + Thread.currentThread()
+				+ " in simulation " + scope.getSimulation().getIndex());
 		setSize(w, h);
-		paint();
-		return buffImage;
-		// return ImageHelper.resize(buffImage, ummisco.gaml.extensions.image.ImageHelper.Mode.FIT_EXACT, w, h);
+		drawAllDisplays();
+		return bufferImage;
 	}
 
 	/*
@@ -222,29 +206,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.gui.graphics.IDisplaySurface#fireSelectionChanged(java.lang. Object)
-	 */
-	// @Override
-	// public void fireSelectionChanged(final Object a) {
-	//
-	//
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 *
 	 * @see msi.gama.gui.graphics.IDisplaySurface#focusOn(msi.gama.util.GamaGeometry, msi.gama.gui.displays.IDisplay)
 	 */
 	@Override
 	public void focusOn(final IShape geometry) {
 
 	}
-
-	//
-	// @Override
-	// public void canBeUpdated(final boolean ok) {
-	// needsUpdate = ok;
-	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getWidth()
@@ -268,14 +235,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public double getEnvHeight() { return data.getEnvHeight(); }
 
 	@Override
-	public double getDisplayWidth() { return width; }
+	public double getDisplayWidth() { return this.getWidth(); }
 
 	@Override
 	public double getDisplayHeight() { return this.getHeight(); }
 
-	// @Override
-	// public void setZoomListener(final IZoomListener listener) {}
-	//
 	/**
 	 * Method getModelCoordinates()
 	 *
@@ -316,13 +280,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
 			final Point positionInPixels) {
-		final double xScale = sizeInPixels.x / getEnvWidth();
-		final double yScale = sizeInPixels.y / getEnvHeight();
-		final int xInDisplay = xOnScreen - positionInPixels.x;
-		final int yInDisplay = yOnScreen - positionInPixels.y;
-		final double xInModel = xInDisplay / xScale;
-		final double yInModel = yInDisplay / yScale;
-		return new GamaPoint(xInModel, yInModel);
+		return NULL_POINT;
 	}
 
 	@Override
@@ -431,9 +389,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public IGraphics getIGraphics() { return displayGraphics; }
 
 	@Override
-	public Rectangle getBoundsForRobotSnapshot() {
-		return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight());
-	}
+	public Rectangle getBoundsForRobotSnapshot() { return new Rectangle(0, 0, width, height); }
 
 	@Override
 	public boolean shouldWaitToBecomeRendered() {
