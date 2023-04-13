@@ -471,7 +471,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			keepSeed = false;
 		}
 		final IExpression ksExpr = getFacet(IKeyword.KEEP_SIMULATIONS);
-		if (ksExpr != null && ksExpr.isConst()) {
+		if (ksExpr != null && ksExpr.isConst() && IKeyword.BATCH.equals(experimentType)) {
 			keepSimulations = Cast.asBool(myScope, ksExpr.value(myScope));
 		} else {
 			keepSimulations = true;
