@@ -30,7 +30,7 @@ esac
 
 
 echo "******************************************************************"
-echo "* GAMA version 1.9.0                                             *"
+echo "* GAMA version 1.9.1                                             *"
 echo "* http://gama-platform.org                                       *"
 echo "* (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"
