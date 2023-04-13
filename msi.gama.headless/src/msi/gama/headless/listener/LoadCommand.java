@@ -2,8 +2,10 @@ package msi.gama.headless.listener;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.java_websocket.WebSocket;
@@ -12,11 +14,16 @@ import msi.gama.common.GamlFileExtension;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.GamaServerMessageType;
+import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.IExperimentJob;
+import msi.gama.headless.job.JobListFactory.JobPlanExperimentID;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.script.ExperimentationPlanFactory;
-import msi.gama.util.GamaMapFactory;
+import msi.gama.kernel.model.IModel;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
+import msi.gaml.descriptions.ExperimentDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
 public class LoadCommand implements ISocketCommand {
@@ -73,7 +80,8 @@ public class LoadCommand implements ISocketCommand {
 		final String argExperimentName = map.get("experiment").toString(); 
 		
 		//we check if the experiment is present in the file
-		if ( ! ExperimentationPlanFactory.buildExperiment(ff.getAbsolutePath().toString()).stream()
+		var listExperimentsInFile = getExperimentsInFile(ff.getAbsolutePath().toString());
+		if ( ! listExperimentsInFile.stream()
 				.anyMatch((jb) -> jb.getExperimentName().equals(argExperimentName))) {
 			return new CommandResponse(	GamaServerMessageType.UnableToExecuteRequest, 
 										"'" + argExperimentName + "' is not an experiment present in '" + ff.getAbsolutePath() + "'",
@@ -111,4 +119,29 @@ public class LoadCommand implements ISocketCommand {
 		gamaWebSocketServer.getDefaultApp().processorQueue.execute(selectedJob.controller.executionThread);
 		return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, selectedJob.getExperimentID(), map, false);
 	}
+	
+	List<IExperimentJob> getExperimentsInFile(String modelPath) throws IOException, GamaHeadlessException {
+		IModel model = HeadlessSimulationLoader.loadModel(new File(modelPath), null);
+		Map<JobPlanExperimentID, IExperimentJob> originalJobs = new LinkedHashMap<>();
+		for (final ExperimentDescription expD : model.getDescription().getExperiments()) {
+			final IExperimentJob tj = ExperimentJob.loadAndBuildJob(expD, model.getFilePath(), model);
+			// TODO AD Why 12 ??
+			tj.setSeed(12);
+			originalJobs.put(new JobPlanExperimentID(tj.getModelName(), tj.getExperimentName()), tj);
+		}
+		final List<IExperimentJob> jobs = new ArrayList<>();
+		final long[] seeds = { ExperimentationPlanFactory.DEFAULT_SEED };
+		for (final IExperimentJob locJob : originalJobs.values()) {
+			final List<IExperimentJob> res = new ArrayList<>();
+			for (final long sd : seeds) {
+				final IExperimentJob job = new ExperimentJob((ExperimentJob) locJob);
+				job.setSeed(sd);
+				job.setFinalStep(ExperimentationPlanFactory.DEFAULT_FINAL_STEP);
+				res.add(job);
+			}
+			jobs.addAll(res);
+		}
+		return jobs;
+	}
+	
 }
