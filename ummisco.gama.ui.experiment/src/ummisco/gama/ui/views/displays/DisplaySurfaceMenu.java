@@ -182,7 +182,7 @@ public class DisplaySurfaceMenu {
 				all.addAll(agents);
 			}
 		}
-		buildMenu(true, mousex, mousey, all, null);
+		buildMenu(false, mousex, mousey, all, null);
 	}
 
 	/**
