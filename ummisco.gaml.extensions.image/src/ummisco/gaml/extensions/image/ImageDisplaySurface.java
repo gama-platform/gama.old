@@ -14,13 +14,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.RenderedImage;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.Collections;
-
-import javax.imageio.ImageIO;
 
 import org.locationtech.jts.geom.Envelope;
 
@@ -43,10 +38,8 @@ import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope.IGraphicsScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gaml.operators.Files;
 
 /**
  * The Class ImageDisplaySurface.
@@ -97,6 +90,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public ImageDisplaySurface(final Object... args) {
 		output = (LayeredDisplayOutput) args[0];
 		data = output.getData();
+		resizeImage(width, height, true);
 
 	}
 
@@ -117,33 +111,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public IGraphicsScope getScope() { return scope; }
-
-	/**
-	 * Save this surface into an image passed as a parameter
-	 *
-	 * @param actionScope
-	 * @param image
-	 */
-	public void save(final RenderedImage image) {
-		try {
-			Files.newFolder(scope, snapshotFolder);
-		} catch (final GamaRuntimeException e1) {
-			e1.addContext("Impossible to create folder " + snapshotFolder);
-			GAMA.reportError(scope, e1, false);
-			e1.printStackTrace();
-			return;
-		}
-		final String file =
-				snapshotFolder + "/" + GAMA.getModel().getName() + "_display_" + scope.getClock().getCycle() + ".png";
-		// DataOutputStream os = null;
-		try (DataOutputStream os = new DataOutputStream(new FileOutputStream(file))) {
-			ImageIO.write(image, "png", os);
-		} catch (final java.io.IOException ex) {
-			final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
-			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(getScope(), e, false);
-		}
-	}
 
 	@Override
 	public ILayerManager getManager() { return manager; }
@@ -167,18 +134,14 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		createBuffImage();
 		if (getScope() != null && getScope().isPaused()) {
 			updateDisplay(true);
-		} else {
-			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);
-		}
+		} else if (copy != null) { g2.drawImage(copy, 0, 0, newWidth, newHeight, null); }
 		if (copy != null) { copy.flush(); }
 		return true;
 	}
 
 	@Override
 	public void updateDisplay(final boolean force) {
-		// if ( needsUpdate || force ) {
 		drawAllDisplays();
-		// }
 	}
 
 	/**
@@ -220,8 +183,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public GamaImage getImage(final int w, final int h) {
+		setSize(w, h);
 		paint();
-		return ImageHelper.resize(buffImage, ummisco.gaml.extensions.image.ImageHelper.Mode.FIT_EXACT, w, h);
+		return buffImage;
+		// return ImageHelper.resize(buffImage, ummisco.gaml.extensions.image.ImageHelper.Mode.FIT_EXACT, w, h);
 	}
 
 	/*
@@ -363,18 +328,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public IList<IAgent> selectAgent(final int xc, final int yc) {
 		return GamaListFactory.EMPTY_LIST;
-		// final IList<IAgent> result = GamaListFactory.create(Types.AGENT);
-		// final List<ILayer> layers = getManager().getLayersIntersecting(xc,
-		// yc);
-		// for (final ILayer layer : layers) {
-		// if (layer.isSelectable()) {
-		// final Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
-		// if (!agents.isEmpty()) {
-		// result.addAll(agents);
-		// }
-		// }
-		// }
-		// return result;
 	}
 
 	/**
@@ -402,15 +355,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public LayeredDisplayData getData() { return data; }
-
-	/**
-	 * Method setSWTMenuManager()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(java.lang.Object)
-	 */
-	// @Override
-	// public void setSWTMenuManager(final Object displaySurfaceMenu) {
-	// }
 
 	/**
 	 * Method layersChanged()
@@ -487,7 +431,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public IGraphics getIGraphics() { return displayGraphics; }
 
 	@Override
-	public Rectangle getBoundsForRobotSnapshot() { return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight()); }
+	public Rectangle getBoundsForRobotSnapshot() {
+		return new Rectangle(0, 0, buffImage.getWidth(), buffImage.getHeight());
+	}
 
 	@Override
 	public boolean shouldWaitToBecomeRendered() {

@@ -850,6 +850,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public IGraphicsScope getScope() { return (IGraphicsScope) super.getScope(); }
 
+	@Override
+	protected boolean shouldOpenView() {
+		return !IKeyword.IMAGE.equals(getData().getDisplayType());
+	}
+
 	/**
 	 * Link scope with graphics.
 	 */

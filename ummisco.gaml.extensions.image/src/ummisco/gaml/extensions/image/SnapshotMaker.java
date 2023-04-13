@@ -29,7 +29,6 @@ import msi.gama.common.interfaces.ISnapshotMaker;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.runtime.GAMA;
@@ -48,15 +47,20 @@ public class SnapshotMaker implements ISnapshotMaker {
 	}
 
 	/** The robot. */
-	final Robot robot;
+	Robot robot;
 
 	/**
 	 * Instantiates a new snapshot maker.
 	 *
 	 * @throws AWTException
 	 */
-	SnapshotMaker() throws AWTException {
-		robot = new Robot();
+	SnapshotMaker() {
+
+		try {
+			robot = new Robot();
+		} catch (AWTException e) {
+			robot = null;
+		}
 	}
 
 	/**
@@ -68,12 +72,12 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 *            the composite
 	 */
 	@Override
-	public void takeAndSaveSnapshot(final IDisplaySurface surface, GamaPoint customDimensions) {
+	public void takeAndSaveSnapshot(final IDisplaySurface surface, final GamaPoint customDimensions) {
 
 		if (surface == null) return;
 		final IScope scope = surface.getScope();
 		if (scope.interrupted()) return;
-		GamaImage image = captureImage(surface,customDimensions);
+		GamaImage image = captureImage(surface, customDimensions);
 		if (image == null) return;
 		String fileName = buildPath(scope, surface);
 		try {
@@ -122,7 +126,6 @@ public class SnapshotMaker implements ISnapshotMaker {
 		return fileName;
 	}
 
-
 	/**
 	 * Capture image.
 	 *
@@ -131,16 +134,18 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 * @return the buffered image
 	 */
 	@Override
-	public GamaImage captureImage(final IDisplaySurface surface, GamaPoint customDimensions) {
+	public GamaImage captureImage(final IDisplaySurface surface, final GamaPoint customDimensions) {
 		DEBUG.OUT("Entring image capture at cycle " + surface.getScope().getClock().getCycle());
-//		final LayeredDisplayData data = surface.getData();
+		// final LayeredDisplayData data = surface.getData();
 		GamaImage image = null;
-//		GamaPoint p = data.getImageDimension();
+		// GamaPoint p = data.getImageDimension();
 		Rectangle composite = surface.getBoundsForRobotSnapshot();
-		final int width = customDimensions == null || customDimensions.x <= 0 ? composite.width : (int) customDimensions.x;
-		final int height = customDimensions == null || customDimensions.y <= 0 ? composite.height : (int) customDimensions.y;
+		final int width =
+				customDimensions == null || customDimensions.x <= 0 ? composite.width : (int) customDimensions.x;
+		final int height =
+				customDimensions == null || customDimensions.y <= 0 ? composite.height : (int) customDimensions.y;
 
-		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue()) {
+		if (GamaPreferences.Displays.DISPLAY_FAST_SNAPSHOT.getValue() && robot != null) {
 			try {
 				DEBUG.OUT("Fast snapshot with dimensions " + composite);
 				Image im = robot.createScreenCapture(composite);
@@ -160,7 +165,18 @@ public class SnapshotMaker implements ISnapshotMaker {
 		return image;
 	}
 
-	private GamaImage takeSnapshotOfChart(ChartLayer chart, final int width, final int height) {
+	/**
+	 * Take snapshot of chart.
+	 *
+	 * @param chart
+	 *            the chart
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @return the gama image
+	 */
+	private GamaImage takeSnapshotOfChart(final ChartLayer chart, final int width, final int height) {
 		if (chart == null) return null;
 		ChartOutput co = chart.getChart();
 		if (co == null) return null;
@@ -183,8 +199,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 */
 	@Override
 	public void takeAndSaveScreenshot(final IScope scope, final String autosavePath) {
-		if (scope == null) return;
-
+		if (scope == null || robot == null) return;
 		String fileName;
 		if (autosavePath == null || autosavePath.isBlank()) {
 			final String snapshotFile = FileUtils.constructAbsoluteFilePath(scope,
@@ -236,13 +251,7 @@ public class SnapshotMaker implements ISnapshotMaker {
 	 * @return single instance of SnapshotMaker
 	 */
 	public static SnapshotMaker getInstance() {
-		if (instance == null) {
-			try {
-				instance = new SnapshotMaker();
-			} catch (AWTException e) {
-				e.printStackTrace();
-			}
-		}
+		if (instance == null) { instance = new SnapshotMaker(); }
 
 		return instance;
 	}
