@@ -17,12 +17,13 @@ import static msi.gama.runtime.exceptions.GamaRuntimeException.error;
 import static msi.gama.runtime.exceptions.GamaRuntimeException.warning;
 import static org.geotools.util.factory.Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -260,7 +261,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
 				reportError(scope, warning("Format of " + name + " seems incorrect. Trying to read it anyway.", scope),
 						false);
-				fis = fixFileHeader(scope);
+				try {
+					fis = fixFileHeader(scope);
+				} catch (UnsupportedEncodingException e2) {
+					e2.printStackTrace();
+				}
 				try {
 					privateCreateCoverage(scope, fis);
 				} catch (IOException e1) {
@@ -383,18 +388,18 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	 * @param scope
 	 *            the scope
 	 * @return the input stream
+	 * @throws UnsupportedEncodingException 
 	 */
-	private InputStream fixFileHeader(final IScope scope) {
+	private InputStream fixFileHeader(final IScope scope) throws UnsupportedEncodingException {
 		final StringBuilder text = new StringBuilder();
 		final String NL = System.lineSeparator();
-
 		try (Scanner scanner = new Scanner(getFile(scope))) {
-			// final int cpt = 0;
 			while (scanner.hasNextLine()) {
 				final String line = scanner.nextLine();
 				if (line.contains("dx")) {
 					text.append(line.replace("dx", "cellsize") + NL);
-				} else {
+				} 
+				else if (!line.contains("dy")) {
 					text.append(line + NL);
 				}
 			}
@@ -403,8 +408,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		}
 
 		text.append(NL);
-		// fis = new StringBufferInputStream(text.toString());
-		return new StringBufferInputStream(text.toString());
+		return new ByteArrayInputStream(text.toString().getBytes("UTF-8"));
 	}
 
 	/**
