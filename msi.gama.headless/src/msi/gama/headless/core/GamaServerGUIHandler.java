@@ -102,7 +102,8 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 	@Override
 	public void runtimeError(final IScope scope, final GamaRuntimeException g) {
 		DEBUG.OUT(g);
-		if (!canSendDialogMessages(scope)) return;
+		// removed to fix #3758
+		//if (!canSendDialogMessages(scope)) return;
 		sendMessage(scope.getExperiment(), g, GamaServerMessageType.SimulationError);
 	}
 
