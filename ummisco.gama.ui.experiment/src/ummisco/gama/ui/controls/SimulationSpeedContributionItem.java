@@ -49,6 +49,9 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	/** The max. */
 	static double max = 1000;
+	
+	/** slop factor for the logarithmic slider. */
+	static double lambda = 0.3;
 
 	/** The Constant popupColor. */
 	protected final static GamaUIColor popupColor = IGamaColors.BLUE;
@@ -77,7 +80,8 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	public static double positionFromValue(final double v) {
 		// returns a percentage between 0 and 1 (0 -> max milliseconds; 1 -> 0
 		// milliseconds).
-		return 1 - v / max;
+		return 1 - lambda*Math.log(v/max*(Math.exp(1/lambda)-1)+1);
+		//return 1 - v / max; Value for a linear slider (see issue #3761)
 	}
 
 	@Override
@@ -86,13 +90,14 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	}
 
 	/**
-	 * v between 0 and 1. Retuns a value in milliseconds
+	 * p between 0 and 1. Returns a value in milliseconds
 	 *
-	 * @param v
+	 * @param p
 	 * @return
 	 */
-	public static double valueFromPosition(final double v) {
-		return max - v * max;
+	public static double valueFromPosition(final double p) {
+		return (Math.exp((1-p)/lambda) -1)/(Math.exp(1/lambda)-1)*max;
+		//return max - p * max; Value for a linear slider (see issue #3761)
 	}
 
 	/**
