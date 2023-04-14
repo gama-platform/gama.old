@@ -20,7 +20,9 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
+import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -244,12 +246,12 @@ public class SobolExploration extends AExplorationAlgorithm {
 
 			// Use the saltelli sequence provided...
 			if (f.exists()) {
-				System.out.println("Sample used : " + path);
+				// DEBUG.OUT("Sample used : " + path);
 				sobol_analysis.setSaltelliSamplingFromCsv(f);
 			}
 			// ... or build the saltelli sequence automatically and save it into a file
 			else {
-				System.out.println("Automatic sampling used");
+				// DEBUG.OUT("Automatic sampling used");
 				sobol_analysis.setRandomSaltelliSampling();
 				sobol_analysis.saveSaltelliSample(f);
 			}
@@ -273,6 +275,16 @@ public class SobolExploration extends AExplorationAlgorithm {
 
 		return sets;
 	}
+	
+	@Override
+	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
+		super.addParametersTo(exp, agent);
+
+		exp.add(new ParameterAdapter("Saltelli sample", IKeyword.SOBOL, IType.STRING) {
+				@Override public Object value() { return _sample; }
+		});
+		
+	}
 
 	/**
 	 * Convert the output of Gaml so it can be read by the Sobol class
@@ -288,9 +300,14 @@ public class SobolExploration extends AExplorationAlgorithm {
 		for (String output : outputs) { rebuilt_output.put(output, new ArrayList<>()); }
 
 		for (ParametersSet sol : solutions) {
-			for (String output : outputs) { rebuilt_output.get(output).add(res_outputs.get(sol).get(output).get(0)); }
+			for (String output : outputs) {
+				try {
+					rebuilt_output.get(output).add(res_outputs.get(sol).get(output).get(0));
+				} catch (NullPointerException e) {
+					return rebuilt_output;
+				}
+			}
 		}
-
 		return rebuilt_output;
 	}
 }

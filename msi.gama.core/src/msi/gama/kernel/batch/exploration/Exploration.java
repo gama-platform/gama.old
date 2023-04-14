@@ -27,7 +27,9 @@ import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
 import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
+import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -241,6 +243,7 @@ public class Exploration extends AExplorationAlgorithm {
 			default -> buildParameterSets(scope, new ArrayList<>(), 0);
 		};
 		if (sets.isEmpty()) { sets.add(new ParametersSet()); }
+		else if(sample_size == 132) {sample_size = sets.size();}
 
 		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			currentExperiment.launchSimulationsWithSolution(sets);
@@ -270,6 +273,25 @@ public class Exploration extends AExplorationAlgorithm {
 		}
 		if (index == variables.size() - 1) return sets2;
 		return buildParameterSets(scope, sets2, index + 1);
+	}
+	
+	@Override
+	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
+		super.addParametersTo(exp, agent);
+
+		exp.add(new ParameterAdapter("Sampled points", BatchAgent.EXPLORATION_EXPERIMENT, IType.STRING) {
+				@Override public Object value() { return sample_size; }
+		});
+
+		exp.add(new ParameterAdapter("Sampling method", BatchAgent.EXPLORATION_EXPERIMENT, IType.STRING) {
+			@Override public Object value() {
+				if (hasFacet(IKeyword.FROM)) { return FROM_FILE;}
+				if (hasFacet(IKeyword.WITH)) { return FROM_LIST;}
+				return hasFacet(Exploration.METHODS) ? 
+						Cast.asString(agent.getScope(), getFacet(METHODS).value(agent.getScope())) : "exhaustive";
+			}
+		});
+		
 	}
 
 	/**
