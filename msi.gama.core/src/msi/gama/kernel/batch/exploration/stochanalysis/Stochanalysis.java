@@ -77,7 +77,7 @@ public class Stochanalysis {
 	 */
 	private static int findMedian(final List<Integer> list, final IScope scope) {
 		List<Integer> list_t = new ArrayList<>();
-		for (int o : list) { if (o != -1) { list_t.add(o); } }
+		for (int o : list) { if (o > 0) { list_t.add(o); } }
 		Arrays.sort(list_t.toArray());
 		double median;
 		if (list_t.size() % 2 == 0) {
@@ -98,7 +98,7 @@ public class Stochanalysis {
 
 	private static int findMax(final List<Integer> list, final IScope scope) {
 		int max = 0;
-		for (Integer element : list) { if (element != -1 && max < element) { max = element; } }
+		for (Integer element : list) { if (element > 0 && max < element) { max = element; } }
 		return max;
 	}
 
@@ -121,13 +121,15 @@ public class Stochanalysis {
 		List<Integer> all_vals = new ArrayList<>();
 		for (String i : Out.keySet()) {
 			for (List<Object> l : Out.get(i).values()) {
-				all_vals.addAll(Cast.asList(scope, l.get(2)).stream().mapToInt(o -> Integer.parseInt(o.toString()))
-						.filter(d -> d > 0).boxed().toList());
+				all_vals.addAll(Cast.asList(scope, l.get(2)).stream()
+						.mapToInt(o -> Integer.parseInt(o.toString()))
+						.map(d -> d < 0 ? nbreplicates : d)
+						.boxed().toList());
 			}
 		}
 		sb.append("\tOn average requires: " + all_vals.stream().mapToDouble(i -> i * 1d).average().orElse(0.0));
-		sb.append("\n\tHighest requirements: " + Collections.max(all_vals));
-		sb.append("\n\tLowest requirements: " + Collections.min(all_vals));
+		sb.append("\n\tHighest overall: " + Collections.max(all_vals));
+		sb.append("\n\tLowest overall: " + Collections.min(all_vals));
 		sb.append("\n--- End of summary ---\n\n");
 		for (String outputs : Out.keySet()) {
 			Map<Double, List<Object>> tmp_map = Out.get(outputs);
@@ -157,10 +159,9 @@ public class Stochanalysis {
 				
 				// Result
 				if (nb_failed == nbsample) {
-					sb.append("Max number of replication is tow low to satisfy current criteria");
-				} else if (nb_failed > 0) {
-					sb.append("Failed for "+nb_failed+" sampled point"+(nb_failed==1?"":"s"));
+					sb.append("Max number of replication is too low to satisfy current criteria");
 				} else {
+					if (nb_failed > 0) { sb.append("Failed for "+nb_failed+" sampled point"+(nb_failed==1?"":"s\n")); }
 					sb.append("Replications number found: \n");
 					sb.append("Advised "+n_mean+" | Median "+findMedian(nb_val, scope)+" | Max "+findMax(nb_val, scope));
 				}
@@ -357,7 +358,7 @@ public class Stochanalysis {
 				double tmp_val = Math.abs(CV.get(i) - CV.get(y));
 				if (tmp_val <= threshold && !thresh_ok) {
 					thresh_ok = true;
-					id_sample = i + 1;
+					id_sample = (1 + i + y) / 2;
 				}
 			}
 		}
