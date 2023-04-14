@@ -536,10 +536,14 @@ public class SwtGui implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */
 	@Override
-	public void updateSpeedDisplay(final IScope scope, final Double d, final boolean notify) {
+	public void updateSpeedDisplay(final IScope scope, final Double minimumCycleDuration,
+			final Double maximumCycleDuration, final boolean notify) {
 		final ISpeedDisplayer speedStatus = WorkbenchHelper.getService(ISpeedDisplayer.class);
 		if (speedStatus != null) {
-			WorkbenchHelper.asyncRun(() -> speedStatus.setInit(d, notify));
+			WorkbenchHelper.asyncRun(() -> {
+				speedStatus.setMaximum(maximumCycleDuration);
+				speedStatus.setInit(minimumCycleDuration, notify);
+			});
 
 		}
 	}

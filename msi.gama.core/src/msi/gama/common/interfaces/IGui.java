@@ -479,7 +479,8 @@ public interface IGui {
 	 * @param notify
 	 *            the notify
 	 */
-	default void updateSpeedDisplay(final IScope scope, final Double d, final boolean notify) {}
+	default void updateSpeedDisplay(final IScope scope, final Double minimumCycleDuration,
+			final Double maximumCycleDuration, final boolean notify) {}
 
 	/**
 	 * Gets the meta data provider.

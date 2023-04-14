@@ -113,10 +113,16 @@ import ummisco.gama.dev.utils.DEBUG;
 				type = IType.INT,
 				doc = @doc ("Returns the number of times the random number generator of the experiment has been drawn")),
 		@variable (
+				name = ExperimentAgent.MAXIMUM_CYCLE_DURATION,
+				type = IType.FLOAT,
+				doc = @doc (
+						value = "The maximum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 #msec')",
+						comment = "Useful to set the range, from 0 to this value, in which the user can choose a value for the delay")),
+		@variable (
 				name = ExperimentAgent.MINIMUM_CYCLE_DURATION,
 				type = IType.FLOAT,
 				doc = @doc (
-						value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')",
+						value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 #msec')",
 						comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
 		@variable (
 				name = PlatformAgent.WORKSPACE_PATH,
@@ -157,6 +163,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	/** The Constant MINIMUM_CYCLE_DURATION. */
 	public static final String MINIMUM_CYCLE_DURATION = "minimum_cycle_duration";
 
+	/** The Constant MAXIMUM_CYCLE_DURATION. */
+	private static final String MAXIMUM_CYCLE_DURATION = "maximum_cycle_duration";
+
 	/** The own scope. */
 	private final IScope ownScope;
 
@@ -169,11 +178,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	/** The random. */
 	protected RandomUtils random;
 
-	/** The initial minimum duration. */
-	protected Double initialMinimumDuration = null;
-
 	/** The current minimum duration. */
 	protected Double currentMinimumDuration = 0d;
+
+	/** The current maximum duration. */
+	protected Double currentMaximumDuration = 1d;
 
 	/** The own clock. */
 	final protected ExperimentClock ownClock;
@@ -486,14 +495,44 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			initializer = true)
 	public Double getMinimumDuration() { return currentMinimumDuration; }
 
+	/**
+	 * Gets the maximum duration.
+	 *
+	 * @return the maximum duration
+	 */
+	@Override
+	@getter (
+			value = ExperimentAgent.MAXIMUM_CYCLE_DURATION,
+			initializer = true)
+	public Double getMaximumDuration() { return currentMaximumDuration; }
+
 	@Override
 	@setter (ExperimentAgent.MINIMUM_CYCLE_DURATION)
 	public void setMinimumDuration(final Double d) {
 		// d is in seconds, but the slider expects milleseconds
 		// DEBUG.LOG("Minimum duration set to " + d);
+		if (d > currentMaximumDuration) { currentMaximumDuration = d; }
 		setMinimumDurationExternal(d);
-		if (initialMinimumDuration == null) { initialMinimumDuration = d; }
-		ownScope.getGui().updateSpeedDisplay(ownScope, currentMinimumDuration * 1000, false);
+		ownScope.getGui().updateSpeedDisplay(ownScope, currentMinimumDuration * 1000, currentMaximumDuration * 1000,
+				false);
+	}
+
+	/**
+	 * Sets the maximum duration.
+	 *
+	 * @param d
+	 *            the new maximum duration
+	 */
+	@Override
+	@setter (ExperimentAgent.MAXIMUM_CYCLE_DURATION)
+	public void setMaximumDuration(Double d) {
+		// d is in seconds, but the slider expects milleseconds
+		// DEBUG.LOG("Maximum duration set to " + d);
+		if (d <= 0) { d = 1d; }
+		if (d < currentMinimumDuration) { d = currentMinimumDuration; }
+		currentMaximumDuration = d;
+		ownScope.getGui().updateSpeedDisplay(ownScope, currentMinimumDuration * 1000, currentMaximumDuration * 1000,
+				false);
 	}
 
 	/**
@@ -502,13 +541,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @param d
 	 */
 	public void setMinimumDurationExternal(final Double d) { currentMinimumDuration = d; }
-
-	/**
-	 * Gets the initial minimum duration.
-	 *
-	 * @return the initial minimum duration
-	 */
-	public Double getInitialMinimumDuration() { return initialMinimumDuration; }
 
 	@Override
 	@getter (

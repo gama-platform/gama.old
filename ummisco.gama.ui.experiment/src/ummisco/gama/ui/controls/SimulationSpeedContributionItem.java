@@ -3,7 +3,7 @@
  * SimulationSpeedContributionItem.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
  * and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -169,9 +169,10 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		double maximum = 1000d;
 		if (a != null) {
 			value = a.getMinimumDuration() * 1000;
-			maximum = a.getInitialMinimumDuration() * 1000;
+			maximum = a.getMaximumDuration() * 1000;
 		}
-		if (maximum > max) { max = maximum; }
+		max = maximum;
+		// if (maximum > max) { max = maximum; }
 		return positionFromValue(value);
 	}
 
@@ -184,6 +185,16 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		for (final SimpleSlider slider : sliders) {
 			if (slider == null || slider.isDisposed()) { continue; }
 			slider.updateSlider(i, notify);
+		}
+	}
+
+	@Override
+	public void setMaximum(Double i) {
+		if (i <= 0) { i = 1d; }
+		max = i;
+		for (final SimpleSlider slider : sliders) {
+			if (slider == null || slider.isDisposed()) { continue; }
+			slider.updateSlider(i, false);
 		}
 	}
 
