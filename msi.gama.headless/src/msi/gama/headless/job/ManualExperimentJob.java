@@ -84,14 +84,14 @@ public class ManualExperimentJob extends ExperimentJob {
 	 */
 	public ManualExperimentJob(final String sourcePath, final String exp, final GamaWebSocketServer gamaWebSocketServer,
 			final WebSocket sk, final GamaJsonList p, final boolean console, final boolean status,
-			final boolean dialog) {
+			final boolean dialog, final boolean runtime) {
 		// (final String sourcePath, final String exp, final long max, final String untilCond,
 		// final double s)
 		super(sourcePath, exp, 0, "", 0);
 		server = gamaWebSocketServer;
 		socket = sk;
 		params = p;
-		controller = new ServerExperimentController(this, socket, console, status, dialog);
+		controller = new ServerExperimentController(this, socket, console, status, dialog, runtime);
 	}
 
 	@Override

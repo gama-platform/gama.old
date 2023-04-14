@@ -95,6 +95,7 @@ public class LoadCommand implements ISocketCommand {
 		var console = map.get("console")!= null ? Boolean.parseBoolean("" + map.get("console")) : true;
 		var status 	= map.get("status") != null	? Boolean.parseBoolean("" + map.get("status")) : false;
 		var dialog 	= map.get("dialog") != null	? Boolean.parseBoolean("" + map.get("dialog")) : false;
+		var runtime	= map.get("runtime")!= null	? Boolean.parseBoolean("" + map.get("runtime")) : true;
 		
 		selectedJob = new ManualExperimentJob(	ff.getAbsoluteFile().toString(), 
 												argExperimentName, 
@@ -103,7 +104,8 @@ public class LoadCommand implements ISocketCommand {
 												params,
 												console,
 												status,
-												dialog);
+												dialog,
+												runtime);
 
 		Globals.OUTPUT_PATH = ".";//TODO: why ?
 
