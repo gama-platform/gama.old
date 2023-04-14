@@ -101,7 +101,7 @@ import msi.gaml.types.IType;
 		usages = { @usage (
 				value = "For example: ",
 				examples = { @example (
-						value = "method stochanalyse sampling:'latinhypercube' outputs:['my_var'] replicat:10 results:'../path/to/report/file.txt'; ",
+						value = "method stochanalyse sampling:'latinhypercube' outputs:['my_var'] replicat:10 report:'../path/to/report/file.txt'; ",
 						isExecutable = false) }) })
 public class StochanalysisExploration extends AExplorationAlgorithm {
 
@@ -207,7 +207,7 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 		final File parent = f.getParentFile();
 		if (!parent.exists()) { parent.mkdirs(); }
 		if (f.exists()) { f.delete(); }
-		Stochanalysis.WriteAndTellReport(f, MapOutput, scope);
+		Stochanalysis.WriteAndTellReport(f, MapOutput, sample_size, currentExperiment.getSeeds().length, scope);
 		
 		/* Save the simulation values in the provided .csv file (input and corresponding output) */
 		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
