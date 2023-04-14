@@ -12,7 +12,6 @@ package msi.gama.outputs.layers;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.layers.AbstractLayerStatement.OpenGLSpecificLayerValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -24,7 +23,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -164,7 +162,7 @@ import msi.gaml.types.IType;
 								isExecutable = false) }), },
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.GRID, IKeyword.EVENT, "graphics", IKeyword.IMAGE,
 				IKeyword.OVERLAY, IKeyword.SPECIES_LAYER })
-@validator (OpenGLSpecificLayerValidator.class)
+// @validator (OpenGLSpecificLayerValidator.class)
 public class MeshLayerStatement extends AbstractLayerStatement {
 
 	/**

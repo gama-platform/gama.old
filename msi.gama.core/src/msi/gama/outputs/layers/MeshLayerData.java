@@ -220,10 +220,7 @@ public class MeshLayerData extends LayerData {
 	 *
 	 * @return the color
 	 */
-	public Object getColor() {
-		// Should be a bit more complex in the future when color scales / palettes are introduced
-		return color.get();
-	}
+	public Object getColor() { return color.get(); }
 
 	/**
 	 * Gets the smooth.

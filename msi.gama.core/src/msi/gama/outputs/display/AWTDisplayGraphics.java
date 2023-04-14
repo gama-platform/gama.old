@@ -71,6 +71,7 @@ import msi.gama.outputs.layers.charts.ChartOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.IField;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
@@ -197,11 +198,21 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 	@Override
 	public Rectangle2D drawField(final IField fieldValues, final MeshDrawingAttributes attributes) {
 		final List<?> textures = attributes.getTextures();
-		if (textures == null) return null;
-		final Object image = textures.get(0);
-		if (image instanceof IImageProvider im) return drawAsset(im, attributes);
-		if (image instanceof BufferedImage) return drawImage((BufferedImage) image, attributes);
-		return null;
+		// if (textures == null) return null;
+		if (textures != null) {
+			final Object image = textures.get(0);
+			if (image instanceof IImageProvider im) return drawAsset(im, attributes);
+			if (image instanceof BufferedImage bi) return drawImage(bi, attributes);
+		}
+		if (!(fieldValues instanceof GamaField gf)) return null;
+		GamaField flatten = gf.flatten(null, attributes.getColorProvider());
+		// AD Attempt to provide smoothing but it doesnt work as expected
+		// double[] data = attributes.getSmoothProvider().smooth(flatten.numCols, flatten.numRows, flatten.getMatrix(),
+		// flatten.getNoData(null), attributes.getSmooth());
+		// System.arraycopy(data, 0, flatten.getMatrix(), 0, data.length);
+		attributes.setSize(null);
+		return drawImage(flatten.getImage(null), attributes);
+
 	}
 
 	@Override

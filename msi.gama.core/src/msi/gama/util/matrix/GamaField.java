@@ -2,7 +2,7 @@
  *
  * GamaField.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -34,6 +34,10 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Colors;
+import msi.gaml.statements.draw.IMeshColorProvider;
+import msi.gaml.statements.draw.MeshDrawingAttributes;
+import msi.gaml.types.GamaFieldType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -603,6 +607,64 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
 		for (int i = 0; i < matrix.length; i++) { matrix[i] -= val; }
 		return this;
+	}
+
+	/**
+	 * Flatten.
+	 *
+	 * @return the gama field
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	@operator (
+			value = "flatten",
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Does not modify the field but can return the same one. Use an explicit copy operation to prevent this",
+					value = "Flattens this field into a grayscale 1-band field. The bands if they exist are supposed to represent RGB components"))
+	public GamaField flatten(final IScope scope) throws GamaRuntimeException {
+		return flatten(scope, null);
+	}
+
+	/**
+	 * Flatten.
+	 *
+	 * @param provider
+	 *            the provider
+	 * @return the gama field
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	@operator (
+			value = "flatten",
+			can_be_const = true,
+			content_type = IType.FLOAT,
+			category = { IOperatorCategory.MATRIX },
+			concept = {},
+			doc = @doc (
+					side_effects = "Does not modify the field",
+					value = "Flattens this field into a 1-band field using the color computer passed in parameter (the same argument as the one used in mesh layers): a palette, a scale, a color. If this computer cannot be interpreted, defaults to flattening interpreting the bands as RGB components"))
+	public GamaField flatten(final IScope scope, final Object computer) throws GamaRuntimeException {
+		// if (bands.size() == 1) return this;
+		IMeshColorProvider provider =
+				computer instanceof IMeshColorProvider msp ? msp : MeshDrawingAttributes.computeColors(computer, true);
+		GamaField result = (GamaField) GamaFieldType.buildField(scope, this.numCols, this.numRows);
+		int index;
+		double[] minMax = this.getMinMax(matrix);
+		double[] rgb = new double[4];
+		for (int i = 0; i < this.numCols; i++) {
+			for (int j = 0; j < this.numRows; j++) {
+				index = j * this.numCols + i;
+				double[] color = provider.getColor(index, matrix[index], minMax[0], minMax[1], rgb);
+				result.matrix[index] = Colors
+						.rgb((int) (color[0] * 255), (int) (color[1] * 255), (int) (color[2] * 255), color[3] * 255)
+						.getRGB();
+			}
+		}
+		return result;
 	}
 
 	@SuppressWarnings ("unchecked")

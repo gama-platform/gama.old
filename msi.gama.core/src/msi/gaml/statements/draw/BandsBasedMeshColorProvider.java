@@ -14,6 +14,7 @@ import java.util.List;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.IField;
 
 /**
@@ -37,7 +38,7 @@ public class BandsBasedMeshColorProvider implements IMeshColorProvider {
 	 * @param bands
 	 *            the bands
 	 */
-	public BandsBasedMeshColorProvider(final List<IField> bands) {
+	public BandsBasedMeshColorProvider(final List<GamaField> bands) {
 		if (bands.size() < 4)
 			throw GamaRuntimeException.error("Number of bands should be at least 3 ", GAMA.getRuntimeScope());
 		boolean hasAlpha = bands.size() > 4;
