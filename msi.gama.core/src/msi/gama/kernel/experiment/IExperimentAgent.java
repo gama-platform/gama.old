@@ -118,4 +118,19 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 */
 	IPopulationFactory getPopulationFactory();
 
+	/**
+	 * Sets the maximum duration.
+	 *
+	 * @param d
+	 *            the new maximum duration
+	 */
+	void setMaximumDuration(Double d);
+
+	/**
+	 * Gets the maximum duration.
+	 *
+	 * @return the maximum duration
+	 */
+	Double getMaximumDuration();
+
 }
