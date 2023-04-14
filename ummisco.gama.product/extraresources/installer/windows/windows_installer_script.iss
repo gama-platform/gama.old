@@ -33,7 +33,7 @@ DefaultDirName={autopf64}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
 LicenseFile={#LicensePath}
-ArchitecturesAllowed=x64
+ArchitecturesAllowed=x64 arm64
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
