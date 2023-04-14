@@ -112,7 +112,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 		DEBUG.OUT(g);
 		// removed to fix #3758
 		//if (!canSendDialogMessages(scope)) return;
-		if (!canSendDialogMessages(scope)) return;
+		if (!canSendRuntimeErrors(scope)) return;
 		sendMessage(scope.getExperiment(), g, GamaServerMessageType.SimulationError);
 	}
 
