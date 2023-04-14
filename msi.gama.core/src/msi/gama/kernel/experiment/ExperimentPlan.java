@@ -569,7 +569,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					final ExperimentParameter p = new ExperimentParameter(myScope, v);
 					final String parameterName = "(Experiment) " + p.getName();
 					final boolean already = parameters.containsKey(parameterName);
-					if (!already) { parameters.put(parameterName, p); }
+					if (!already) {
+						parameters.put(parameterName, p);
+						displayables.add(p);
+					}
 				}
 			}
 
@@ -863,6 +866,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final IParameter already = parameters.get(parameterName);
 		if (already != null) { p.setValue(myScope, already.getInitialValue(myScope)); }
 		parameters.put(parameterName, p);
+		displayables.add(p);
 	}
 
 	/**
