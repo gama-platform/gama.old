@@ -61,9 +61,11 @@ experiment replication_analysis parent: batch_abstract type: batch until: world.
 	method stochanalyse outputs:["nb_preys", "nb_predators"] report:"Results/stochanalysis.txt" results:"Results/stochanalysis_raw.csv" sample:3;
 } 
 
-// This experiment explores two parameters with an exhaustive strategy (default sampling method for exploration),
-// repeating each simulation three times (the aggregated fitness correspond to the mean fitness), 
-// in order to find the best combination of parameters to minimize the number of infected people
+// This experiment explores the four parameters with an exhaustive strategy (default sampling method for exploration),
+// repeating each simulation three times. The overall combination of parameter values is 14000 (times 3 replications).
+// This is what we call 'brut force' exploration - because obviously it is not smart, nor gentle in the exploration approach. 
+// In order to diminish number of explored points, one can use 'factorial' facet (how many value per parameter) or diminish the step
+// facet of parameters each at a time. Another way is to rely on smarter strategy to sample from the parameter space using sampling methods.  
 experiment exhaustive_exploration parent: batch_abstract type: batch repeat: 3 keep_seed: true until: world.stop_sim() or ( time > end_cycle ) {
 	method exploration;
 	
