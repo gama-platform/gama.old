@@ -497,7 +497,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
 		@Override
 		public void run() {
-			window.getService(IWebHelper.class).showPage("http://doc.gama-platform.org");
+			window.getService(IWebHelper.class).showPage("https://doc.gama-platform.org");
 		}
 
 		@Override
