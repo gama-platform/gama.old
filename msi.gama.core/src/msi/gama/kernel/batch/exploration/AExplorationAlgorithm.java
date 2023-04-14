@@ -17,7 +17,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -37,7 +36,7 @@ import msi.gaml.types.IType;
 @inside (
 		kinds = { ISymbolKind.EXPERIMENT })
 public abstract class AExplorationAlgorithm extends Symbol implements IExploration {
-
+	
 	/** The current experiment. */
 	protected BatchAgent currentExperiment;
 	
@@ -68,17 +67,20 @@ public abstract class AExplorationAlgorithm extends Symbol implements IExplorati
 
 	@Override
 	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
-		exp.add(new ParameterAdapter("Exploration method", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
-
+		exp.add(new ParameterAdapter("Exploration method", BatchAgent.EXPLORATION_EXPERIMENT, IType.STRING) {
 			@Override
 			public Object value() {
 				@SuppressWarnings ("rawtypes") final List<Class> classes = Arrays.asList(CLASSES);
 				final String methodName = IKeyword.METHODS[classes.indexOf(AExplorationAlgorithm.this.getClass())];
-				return "Method " + methodName + " | " + (getOutputs()==null ? "No specified outputs" : (" outputs " + getOutputs().literalValue())) ;
+				return methodName;
 			}
 
 		});
-
+		if (getOutputs()!=null) {
+			exp.add(new ParameterAdapter("Outputs of interest", BatchAgent.EXPLORATION_EXPERIMENT, IType.STRING) {
+				@Override public Object value() { return getOutputs().literalValue(); }
+			});
+		}
 	}
 	
 	@Override
