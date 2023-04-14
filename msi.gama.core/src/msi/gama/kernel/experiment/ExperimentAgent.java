@@ -116,7 +116,7 @@ import ummisco.gama.dev.utils.DEBUG;
 				name = ExperimentAgent.MAXIMUM_CYCLE_DURATION,
 				type = IType.FLOAT,
 				doc = @doc (
-						value = "The maximum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 #msec')",
+						value = "The maximum duration (in seconds) a simulation cycle should last. Default is 1. Units can be used to pass values greater than a second (for instance '10 #sec')",
 						comment = "Useful to set the range, from 0 to this value, in which the user can choose a value for the delay")),
 		@variable (
 				name = ExperimentAgent.MINIMUM_CYCLE_DURATION,
