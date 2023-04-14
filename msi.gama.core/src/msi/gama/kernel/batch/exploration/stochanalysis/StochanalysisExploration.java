@@ -25,7 +25,9 @@ import msi.gama.kernel.batch.exploration.Exploration;
 import msi.gama.kernel.batch.exploration.sampling.LatinhypercubeSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
 import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
+import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -184,7 +186,6 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 		IExpression outputFacet = getFacet(IKeyword.BATCH_VAR_OUTPUTS);
 		outputs = Cast.asList(scope, scope.evaluate(outputFacet, currentExperiment).getValue());
-		int res = 0;
 		Map<String, Map<Double, List<Object>>> MapOutput = new LinkedHashMap<>();
 		for (Object out : outputs) {
 			Map<Double, List<Object>> res_val = new HashMap<>(Map.of(0.05, Collections.emptyList(), 0.01,
@@ -225,4 +226,20 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 		return null;
 	}
+	
+	@Override
+	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
+		super.addParametersTo(exp, agent);
+
+		exp.add(new ParameterAdapter("Sampling method", IKeyword.STO, IType.STRING) {
+				@Override public Object value() { return hasFacet(Exploration.METHODS) ? 
+						Cast.asString(agent.getScope(), getFacet(Exploration.METHODS).value(agent.getScope())) : "exhaustive"; }
+		});
+		
+		exp.add(new ParameterAdapter("Sample size", IKeyword.STO, IType.STRING) {
+			@Override public Object value() { return sample_size; }
+		});
+		
+	}
+	
 }

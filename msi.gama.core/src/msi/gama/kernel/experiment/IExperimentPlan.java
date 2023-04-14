@@ -31,9 +31,6 @@ import msi.gaml.species.ISpecies;
  */
 public interface IExperimentPlan extends ISpecies {
 
-	/** The batch category name. */
-	String BATCH_CATEGORY_NAME = "Exploration method";
-
 	/** The test category name. */
 	String TEST_CATEGORY_NAME = "Configuration of tests";
 

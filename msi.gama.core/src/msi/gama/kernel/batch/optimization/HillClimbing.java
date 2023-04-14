@@ -19,7 +19,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.StoppingCriterion;
 import msi.gama.kernel.batch.StoppingCriterionMaxIt;
 import msi.gama.kernel.experiment.BatchAgent;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -201,7 +200,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
 		params.add(
-				new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
+				new ParameterAdapter("Maximum number of iterations", BatchAgent.CALIBRATION_EXPERIMENT, IType.INT) {
 
 					@Override
 					public Object value() {

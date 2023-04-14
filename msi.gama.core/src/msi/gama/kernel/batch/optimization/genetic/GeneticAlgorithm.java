@@ -22,7 +22,6 @@ import msi.gama.kernel.batch.Neighborhood;
 import msi.gama.kernel.batch.Neighborhood1Var;
 import msi.gama.kernel.batch.optimization.AOptimizationAlgorithm;
 import msi.gama.kernel.experiment.BatchAgent;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -366,7 +365,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(new ParameterAdapter("Mutation probability", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Mutation probability", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -374,7 +373,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Crossover probability", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Crossover probability", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -382,7 +381,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Population dimension", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Population dimension", BatchAgent.CALIBRATION_EXPERIMENT, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -390,7 +389,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Preliminary number of generations", IExperimentPlan.BATCH_CATEGORY_NAME,
+		params.add(new ParameterAdapter("Preliminary number of generations", BatchAgent.CALIBRATION_EXPERIMENT,
 				IType.FLOAT) {
 
 			@Override
@@ -400,7 +399,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
 		});
 		params.add(
-				new ParameterAdapter("Max. number of generations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+				new ParameterAdapter("Max. number of generations", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
 					@Override
 					public Object value() {
