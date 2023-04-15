@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="msi.gama.headless" uid="gama.headless" id="msi.gama.headless.product" application="msi.gama.headless.product" version="1.9.0.qualifier" useFeatures="true" includeLaunchers="false" autoIncludeRequirements="true">
+<product name="msi.gama.headless" uid="gama.headless" id="msi.gama.headless.product" application="msi.gama.headless.product" version="1.9.1.qualifier" useFeatures="true" includeLaunchers="false" autoIncludeRequirements="true">
 
    <configIni use="default">
    </configIni>
@@ -24,11 +24,11 @@
    </plugins>
 
    <features>
-      <feature id="ummisco.gama.feature.dependencies" version="1.9.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core" version="1.9.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.extensions" version="1.9.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.models" version="1.9.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.image" version="1.9.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies" version="1.9.1.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core" version="1.9.1.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.extensions" version="1.9.1.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.models" version="1.9.1.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.image" version="1.9.1.qualifier" installMode="root"/>
    </features>
 
    <configurations>

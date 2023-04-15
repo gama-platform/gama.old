@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core.extensions"
       label="Standard Extensions to the Core of GAMA"
-      version="1.9.0.qualifier"
+      version="1.9.1.qualifier"
       provider-name="UMMISCO, ESPACE-DEV, IRIT &amp; MIAT"
       plugin="ummisco.gaml.extensions.maths">
 
@@ -23,7 +23,7 @@
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core" version="1.9.0.qualifier"/>
+      <import feature="ummisco.gama.feature.core" version="1.9.1.qualifier"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="ummisco.gama.serialize" version="1.9.0" match="greaterOrEqual"/>
       <import plugin="msi.gama.core" version="1.9.0" match="greaterOrEqual"/>

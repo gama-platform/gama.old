@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Annotations shared by all GAMA plugins
 Bundle-SymbolicName: ummisco.gama.annotations
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.9.1.qualifier
 Bundle-Vendor: UMMISCO
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: msi.gama.common.interfaces;uses:="msi.gama.precompiler",

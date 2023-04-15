@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GAML Image Extension
 Bundle-SymbolicName: ummisco.gaml.extensions.image;singleton:=true
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.9.1.qualifier
 Export-Package: ummisco.gaml.extensions.image
 Bundle-Activator: ummisco.gaml.extensions.image.Activator
 Bundle-Vendor: UMMISCO

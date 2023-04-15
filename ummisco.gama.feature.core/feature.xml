@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core"
       label="Core plugins of GAMA"
-      version="1.9.0.qualifier"
+      version="1.9.1.qualifier"
       provider-name="UMMISCO"
       plugin="msi.gama.core">
 

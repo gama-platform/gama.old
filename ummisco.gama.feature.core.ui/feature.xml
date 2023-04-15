@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core.ui"
       label="Common UI Components of GAMA"
-      version="1.9.0.qualifier"
+      version="1.9.1.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.ui.shared">
 

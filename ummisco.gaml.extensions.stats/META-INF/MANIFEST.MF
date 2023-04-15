@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Stats
 Bundle-SymbolicName: ummisco.gaml.extensions.stats;singleton:=true
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.9.1.qualifier
 Require-Bundle: msi.gama.core,
  ummisco.gaml.extensions.maths,
  msi.gama.ext

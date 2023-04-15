@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: FIPA-compliant Gama Extension
 Bundle-SymbolicName: msi.gaml.extensions.fipa;singleton:=true
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.9.1.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
 Export-Package: 

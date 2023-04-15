@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.models"
       label="Models"
-      version="1.9.0.qualifier"
+      version="1.9.1.qualifier"
       provider-name="UMMISCO"
       plugin="msi.gama.models"
       colocation-affinity="ummisco.gama.feature.core">
