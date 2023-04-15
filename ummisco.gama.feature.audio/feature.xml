@@ -19,12 +19,12 @@
    </license>
 
    <url>
-      <update label="GAMA 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.1 Update Site" url="https://updates.gama-platform.org/1.9.1"/>
    </url>
 
    <requires>
-      <import plugin="msi.gama.core" version="1.6.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.core"/>
+      <import plugin="msi.gama.ext"/>
    </requires>
 
    <plugin
