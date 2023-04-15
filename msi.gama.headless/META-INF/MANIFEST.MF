@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Headless version of GAMA
 Bundle-SymbolicName: msi.gama.headless;singleton:=true
-Bundle-Version: 1.9.1.qualifier
+Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.lang.gaml,
  org.eclipse.core.runtime,

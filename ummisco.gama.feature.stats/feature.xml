@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.stats"
       label="Stats"
-      version="1.9.1.qualifier"
+      version="1.9.2.qualifier"
       plugin="ummisco.gaml.extensions.stats">
 
    <description url="http://www.example.com/description">

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>msi.gama</groupId>
 	<artifactId>msi.gama.parent</artifactId>
-	<version>1.9.1-SNAPSHOT</version>
+	<version>1.9.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<distributionManagement>
@@ -245,7 +245,7 @@
 		<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
 		<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
 		<tycho.version>0.25.0</tycho.version>
-		<project.version>1.9.1-SNAPSHOT</project.version>
+		<project.version>1.9.2-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<geotools.version>14.5</geotools.version>
 		<math3.version>3.1.1</math3.version>
@@ -369,7 +369,7 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<!-- <target> <artifact> <groupId>msi.gama</groupId> <artifactId>gama.target.platform</artifactId> 
-						<version>1.9.1-SNAPSHOT</version> </artifact> </target> -->
+						<version>1.9.2-SNAPSHOT</version> </artifact> </target> -->
 
 					<dependency-resolution>
 						<optionalDependencies>ignore</optionalDependencies>

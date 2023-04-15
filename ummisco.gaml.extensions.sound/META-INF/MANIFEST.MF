@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Sound plug-in
 Bundle-SymbolicName: ummisco.gaml.extensions.sound;singleton:=true
-Bundle-Version: 1.9.1.qualifier
+Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
 Export-Package: ummisco.gaml.extensions.sound

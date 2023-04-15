@@ -5,7 +5,7 @@
 #
 
 # check if 2 param
-oldVersion="1.9.2"
+oldVersion="1.9.1"
 newVersion="1.9.2"
 
 # Set path

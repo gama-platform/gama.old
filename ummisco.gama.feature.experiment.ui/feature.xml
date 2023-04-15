@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.experiment.ui"
       label="UI Components for running experiments in  GAMA"
-      version="1.9.1.qualifier"
+      version="1.9.2.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.ui.experiment">
 
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.9.1 Update Site" url="https://updates.gama-platform.org/1.9.1"/>
+      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
    </url>
 
    <requires>

@@ -8,8 +8,8 @@
 	<parent>
 		<groupId>msi.gama</groupId>
 		<artifactId>msi.gama.parent</artifactId>
-		<version>1.9.1-SNAPSHOT</version>
+		<version>1.9.2-SNAPSHOT</version>
 		<relativePath>../msi.gama.parent/</relativePath>
 	</parent>
-	<version>1.9.1-SNAPSHOT</version>
+	<version>1.9.2-SNAPSHOT</version>
 </project>
