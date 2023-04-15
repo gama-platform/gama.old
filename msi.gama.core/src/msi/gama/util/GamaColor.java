@@ -98,7 +98,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 			colors.put((String) array[i], color);
 			int_colors.put(color.getRGB(), color);
 		}
-		// A.G add the GAMA Color corresponding to the GAMA1.7 Logo
+		// A.G add the GAMA Color corresponding to the GAMA 1.9 Logo
 		final GamaColor orange = new NamedGamaColor("gamaorange", new int[] { 244, 165, 40, 1 });
 		colors.put("gamaorange", orange);
 		int_colors.put(orange.getRGB(), orange);

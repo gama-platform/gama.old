@@ -19,11 +19,11 @@
    </license>
 
    <url>
-      <update label="Gama 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.1 Update Site" url="https://updates.gama-platform.org/1.9.1"/>
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core.ui" version="1.9.1.qualifier"/>
+      <import feature="ummisco.gama.feature.core.ui"/>
       <import plugin="msi.gama.lang.gaml"/>
       <import plugin="org.eclipse.xtext.ui"/>
       <import plugin="org.eclipse.xtext.ui.shared"/>

@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.Webb.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Webb.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.9.1).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -36,38 +35,87 @@ import org.json.simple.JSONObject;
  * @author hgoebl
  */
 public class Webb {
+
+	/** The Constant DEFAULT_USER_AGENT. */
 	static final String DEFAULT_USER_AGENT = "gama-platform.org/1.0";
+
+	/** The Constant APP_FORM. */
 	static final String APP_FORM = "application/x-www-form-urlencoded";
+
+	/** The Constant APP_JSON. */
 	static final String APP_JSON = "application/json";
+
+	/** The Constant APP_BINARY. */
 	static final String APP_BINARY = "application/octet-stream";
+
+	/** The Constant TEXT_PLAIN. */
 	static final String TEXT_PLAIN = "text/plain";
+
+	/** The Constant HDR_CONTENT_TYPE. */
 	public static final String HDR_CONTENT_TYPE = "Content-Type";
+
+	/** The Constant HDR_CONTENT_ENCODING. */
 	static final String HDR_CONTENT_ENCODING = "Content-Encoding";
+
+	/** The Constant HDR_ACCEPT_ENCODING. */
 	static final String HDR_ACCEPT_ENCODING = "Accept-Encoding";
+
+	/** The Constant HDR_ACCEPT. */
 	static final String HDR_ACCEPT = "Accept";
+
+	/** The Constant HDR_USER_AGENT. */
 	static final String HDR_USER_AGENT = "User-Agent";
+
+	/** The Constant UTF8. */
 	static final String UTF8 = "utf-8";
 
-	static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+	/** The Constant EMPTY_BYTE_ARRAY. */
+	static final byte[] EMPTY_BYTE_ARRAY = {};
+
+	/** The Constant BYTE_ARRAY_CLASS. */
 	@SuppressWarnings ("rawtypes") static final Class BYTE_ARRAY_CLASS = EMPTY_BYTE_ARRAY.getClass();
 	/** Minimal number of bytes the compressed content must be smaller than uncompressed */
 	static final int MIN_COMPRESSED_ADVANTAGE = 80;
 
+	/** The Constant globalHeaders. */
 	static final Map<String, Object> globalHeaders = new LinkedHashMap<>();
+
+	/** The global base uri. */
 	static String globalBaseUri;
 
+	/** The connect timeout. */
 	static Integer connectTimeout = 10000; // 10 seconds
+
+	/** The read timeout. */
 	static Integer readTimeout = 3 * 60000; // 5 minutes
+
+	/** The json indent factor. */
 	static int jsonIndentFactor = -1;
 
+	/** The follow redirects. */
 	Boolean followRedirects = true;
+
+	/** The base uri. */
 	String baseUri;
+
+	/** The default headers. */
 	Map<String, Object> defaultHeaders;
+
+	/** The ssl socket factory. */
 	SSLSocketFactory sslSocketFactory;
+
+	/** The hostname verifier. */
 	HostnameVerifier hostnameVerifier;
+
+	/** The retry manager. */
 	RetryManager retryManager;
+
+	/** The proxy. */
 	Proxy proxy;
 
+	/**
+	 * Instantiates a new webb.
+	 */
 	protected Webb() {}
 
 	/**
@@ -90,9 +138,7 @@ public class Webb {
 	 *            <code>true</code> to automatically follow redirects (HTTP status code 3xx). Default value comes from
 	 *            HttpURLConnection and should be <code>true</code>.
 	 */
-	public void setFollowRedirects(final boolean auto) {
-		this.followRedirects = auto;
-	}
+	public void setFollowRedirects(final boolean auto) { this.followRedirects = auto; }
 
 	/**
 	 * Set a custom {@link javax.net.ssl.SSLSocketFactory}, most likely to relax Certification checking.
@@ -120,9 +166,7 @@ public class Webb {
 	 * @param proxy
 	 *            the proxy to be used or <tt>null</tt> for no proxy.
 	 */
-	public void setProxy(final Proxy proxy) {
-		this.proxy = proxy;
-	}
+	public void setProxy(final Proxy proxy) { this.proxy = proxy; }
 
 	/**
 	 * Set the base URI for all requests created from this instance. <br>
@@ -133,18 +177,14 @@ public class Webb {
 	 *            the prefix for all URIs of new Requests.
 	 * @see #setGlobalBaseUri(String)
 	 */
-	public void setBaseUri(final String baseUri) {
-		this.baseUri = baseUri;
-	}
+	public void setBaseUri(final String baseUri) { this.baseUri = baseUri; }
 
 	/**
 	 * Returns the base URI of this instance.
 	 *
 	 * @return base URI
 	 */
-	public String getBaseUri() {
-		return baseUri;
-	}
+	public String getBaseUri() { return baseUri; }
 
 	/**
 	 * Registers an alternative {@link com.goebl.david.RetryManager}.
@@ -152,9 +192,7 @@ public class Webb {
 	 * @param retryManager
 	 *            the new manager for deciding whether it makes sense to retry a request.
 	 */
-	public void setRetryManager(final RetryManager retryManager) {
-		this.retryManager = retryManager;
-	}
+	public void setRetryManager(final RetryManager retryManager) { this.retryManager = retryManager; }
 
 	/**
 	 * Creates a <b>GET HTTP</b> request with the specified absolute or relative URI.
@@ -192,13 +230,31 @@ public class Webb {
 		return new Request(this, Request.Method.DELETE, buildPath(pathOrUri));
 	}
 
+	/**
+	 * Builds the path.
+	 *
+	 * @param pathOrUri
+	 *            the path or uri
+	 * @return the string
+	 */
 	private String buildPath(final String pathOrUri) {
-		if (pathOrUri == null) { throw new IllegalArgumentException("pathOrUri must not be null"); }
-		if (pathOrUri.startsWith("http://") || pathOrUri.startsWith("https://")) { return pathOrUri; }
+		if (pathOrUri == null) throw new IllegalArgumentException("pathOrUri must not be null");
+		if (pathOrUri.startsWith("http://") || pathOrUri.startsWith("https://")) return pathOrUri;
 		final String myBaseUri = baseUri != null ? baseUri : globalBaseUri;
 		return myBaseUri == null ? pathOrUri : myBaseUri + pathOrUri;
 	}
 
+	/**
+	 * Execute.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param request
+	 *            the request
+	 * @param clazz
+	 *            the clazz
+	 * @return the response
+	 */
 	<T> Response<T> execute(final Request request, final Class<T> clazz) {
 		Response<T> response = null;
 
@@ -206,34 +262,35 @@ public class Webb {
 			// no retry -> just delegate to inner method
 			response = _execute(request, clazz);
 		} else {
-			if (retryManager == null) {
-				retryManager = RetryManager.DEFAULT;
-			}
+			if (retryManager == null) { retryManager = RetryManager.DEFAULT; }
 			for (int tries = 0; tries <= request.retryCount; ++tries) {
 				try {
 					response = _execute(request, clazz);
-					if (tries >= request.retryCount || !retryManager.isRetryUseful(response)) {
-						break;
-					}
+					if (tries >= request.retryCount || !retryManager.isRetryUseful(response)) { break; }
 				} catch (final WebbException we) {
 					// analyze: is exception recoverable?
-					if (tries >= request.retryCount || !retryManager.isRecoverable(we)) { throw we; }
+					if (tries >= request.retryCount || !retryManager.isRecoverable(we)) throw we;
 				}
-				if (request.waitExponential) {
-					retryManager.wait(tries);
-				}
+				if (request.waitExponential) { retryManager.wait(tries); }
 			}
 		}
-		if (response == null) {
-			throw new IllegalStateException(); // should never reach this line
-		}
-		if (request.ensureSuccess) {
-			response.ensureSuccess();
-		}
+		if (response == null) throw new IllegalStateException(); // should never reach this line
+		if (request.ensureSuccess) { response.ensureSuccess(); }
 
 		return response;
 	}
 
+	/**
+	 * Execute.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param request
+	 *            the request
+	 * @param clazz
+	 *            the clazz
+	 * @return the response
+	 */
 	private <T> Response<T> _execute(final Request request, final Class<T> clazz) {
 		final Response<T> response = new Response<>(request);
 
@@ -256,14 +313,10 @@ public class Webb {
 
 			prepareSslConnection(connection);
 			connection.setRequestMethod(request.method.name());
-			if (request.followRedirects != null) {
-				connection.setInstanceFollowRedirects(request.followRedirects);
-			}
+			if (request.followRedirects != null) { connection.setInstanceFollowRedirects(request.followRedirects); }
 			connection.setUseCaches(request.useCaches);
 			setTimeouts(request, connection);
-			if (request.ifModifiedSince != null) {
-				connection.setIfModifiedSince(request.ifModifiedSince);
-			}
+			if (request.ifModifiedSince != null) { connection.setIfModifiedSince(request.ifModifiedSince); }
 
 			WebbUtils.addRequestProperties(connection, mergeHeaders(request.headers));
 			if (clazz == JSONObject.class || clazz == JSONArray.class) {
@@ -296,17 +349,13 @@ public class Webb {
 			is = response.isSuccess() ? connection.getInputStream() : connection.getErrorStream();
 			is = WebbUtils.wrapStream(connection.getContentEncoding(), is);
 
-			if (clazz == InputStream.class) {
-				is = new AutoDisconnectInputStream(connection, is);
-			}
+			if (clazz == InputStream.class) { is = new AutoDisconnectInputStream(connection, is); }
 			if (response.isSuccess()) {
 				WebbUtils.parseResponseBody(clazz, response, is);
 			} else {
 				WebbUtils.parseErrorResponse(clazz, response, is);
 			}
-			if (clazz == InputStream.class) {
-				closeStream = false;
-			}
+			if (clazz == InputStream.class) { closeStream = false; }
 
 			return response;
 
@@ -334,6 +383,14 @@ public class Webb {
 		}
 	}
 
+	/**
+	 * Sets the timeouts.
+	 *
+	 * @param request
+	 *            the request
+	 * @param connection
+	 *            the connection
+	 */
 	private void setTimeouts(final Request request, final HttpURLConnection connection) {
 		if (request.connectTimeout != null || connectTimeout != null) {
 			connection.setConnectTimeout(request.connectTimeout != null ? request.connectTimeout : connectTimeout);
@@ -343,6 +400,16 @@ public class Webb {
 		}
 	}
 
+	/**
+	 * Write body.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param body
+	 *            the body
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void writeBody(final HttpURLConnection connection, final byte[] body) throws IOException {
 		// Android StrictMode might complain about not closing the connection:
 		// "E/StrictMode﹕ A resource was acquired at attached stack trace but never released"
@@ -356,6 +423,18 @@ public class Webb {
 		}
 	}
 
+	/**
+	 * Stream body.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param body
+	 *            the body
+	 * @param compress
+	 *            the compress
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	private void streamBody(final HttpURLConnection connection, final Object body, final boolean compress)
 			throws IOException {
 		InputStream is;
@@ -384,18 +463,26 @@ public class Webb {
 		}
 	}
 
+	/**
+	 * Prepare ssl connection.
+	 *
+	 * @param connection
+	 *            the connection
+	 */
 	private void prepareSslConnection(final HttpURLConnection connection) {
-		if ((hostnameVerifier != null || sslSocketFactory != null) && connection instanceof HttpsURLConnection) {
-			final HttpsURLConnection sslConnection = (HttpsURLConnection) connection;
-			if (hostnameVerifier != null) {
-				sslConnection.setHostnameVerifier(hostnameVerifier);
-			}
-			if (sslSocketFactory != null) {
-				sslConnection.setSSLSocketFactory(sslSocketFactory);
-			}
+		if ((hostnameVerifier != null || sslSocketFactory != null) && connection instanceof HttpsURLConnection sslConnection) {
+			if (hostnameVerifier != null) { sslConnection.setHostnameVerifier(hostnameVerifier); }
+			if (sslSocketFactory != null) { sslConnection.setSSLSocketFactory(sslSocketFactory); }
 		}
 	}
 
+	/**
+	 * Merge headers.
+	 *
+	 * @param requestHeaders
+	 *            the request headers
+	 * @return the map
+	 */
 	Map<String, Object> mergeHeaders(final Map<String, Object> requestHeaders) {
 		Map<String, Object> headers = null;
 		if (!globalHeaders.isEmpty()) {
@@ -403,9 +490,7 @@ public class Webb {
 			headers.putAll(globalHeaders);
 		}
 		if (defaultHeaders != null) {
-			if (headers == null) {
-				headers = new LinkedHashMap<>();
-			}
+			if (headers == null) { headers = new LinkedHashMap<>(); }
 			headers.putAll(defaultHeaders);
 		}
 		if (requestHeaders != null) {

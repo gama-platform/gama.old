@@ -52,7 +52,7 @@ public class GAMA {
 	}
 
 	/** The Constant VERSION_NUMBER. */
-	public static final String VERSION_NUMBER = "1.9.0";
+	public static final String VERSION_NUMBER = "1.9.1";
 
 	/** The Constant VERSION. */
 	public static final String VERSION = "GAMA " + VERSION_NUMBER;

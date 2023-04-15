@@ -18,7 +18,7 @@ import java.io.File;
 public class Constants {
 
 	/** The Constant GAMA_VERSION. */
-	public final static String GAMA_VERSION = "1.9.0";
+	public final static String GAMA_VERSION = "1.9.1";
 
 	/** The Constant CMD_PANDOC. */
 	// Commandes

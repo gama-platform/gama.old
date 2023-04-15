@@ -19,11 +19,11 @@
    </license>
 
    <url>
-      <update label="GAMA 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.1 Update Site" url="https://updates.gama-platform.org/1.9.1"/>
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.dependencies" version="1.9.1.qualifier"/>
+      <import feature="ummisco.gama.feature.dependencies"/>
    </requires>
 
    <plugin

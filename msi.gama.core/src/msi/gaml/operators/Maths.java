@@ -153,7 +153,7 @@ public class Maths {
 					examples = { @example (
 							value = "abs (200 * -1 + 0.5)",
 							equals = "199.5") }) })
-	@test ("abs(1.7) = 1.7")
+	@test ("abs(1.9) = 1.9")
 	@test ("abs(-2.0) = 2.0")
 	@test ("abs(0.0) = 0.0")
 	@test ("abs(-0.0) = 0.0")
