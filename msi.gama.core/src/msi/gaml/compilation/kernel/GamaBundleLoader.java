@@ -202,6 +202,17 @@ public class GamaBundleLoader {
 			}
 			// We remove the core plugin, in order to build it first (important)
 			GAMA_PLUGINS.remove(CORE_PLUGIN);
+
+			/**
+			 * AD : Bug fix regarding the fact that SimpleConfigurator can provide ui components in headless mode
+			 */
+			if (GAMA.isInHeadLessMode()) {
+				GAMA_PLUGINS.removeIf(b -> GAMA_CORE_DISPLAY_PLUGINS.contains(b.getSymbolicName()));
+			}
+			/**
+			 * End bug fix
+			 */
+
 			try {
 				preBuild(CORE_PLUGIN);
 			} catch (final Exception e2) {
