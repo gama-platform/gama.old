@@ -5,8 +5,8 @@
 #
 
 # check if 2 param
-oldVersion="1.9.0"
-newVersion="1.9.1"
+oldVersion="1.9.2"
+newVersion="1.9.2"
 
 # Set path
 path="$( dirname $( realpath "${BASH_SOURCE[0]}" ) )/.."

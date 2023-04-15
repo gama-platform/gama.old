@@ -16,7 +16,7 @@ for arg do
 done
 
 if [ $memory == "0" ]; then
-  memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )"/../Gama.ini || echo "-Xmx4096m")
+  memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/Gama.ini || echo "-Xmx4096m")
 else
   memory=-Xmx$memory
 fi
