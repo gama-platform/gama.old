@@ -1,6 +1,6 @@
 #!/bin/bash
 
-memory=0
+memory="0"
 
 for arg do
   shift
@@ -15,7 +15,7 @@ for arg do
   esac
 done
 
-if [ $memory -eq 0 ]; then
+if [ $memory == "0" ]; then
   memory=$(grep Xmx "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini || echo "-Xmx4096m")
 else
   memory=-Xmx$memory
