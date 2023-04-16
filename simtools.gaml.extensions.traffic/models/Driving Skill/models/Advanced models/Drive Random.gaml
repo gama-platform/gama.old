@@ -24,13 +24,13 @@ global {
 	int num_motorbikes;
 
 	graph road_network;
-	list<intersection> non_deadend_nodes;
+	list<my_intersection> non_deadend_nodes;
 
 	init {
-		create road from: shp_roads {
+		create my_road from: shp_roads {
 			num_lanes <- rnd(4, 6);
 			// Create another road in the opposite direction
-			create road {
+			create my_road {
 				num_lanes <- myself.num_lanes;
 				shape <- polyline(reverse(myself.shape.points));
 				maxspeed <- myself.maxspeed;
@@ -39,18 +39,18 @@ global {
 			}
 		}
 		
-		create intersection from: shp_nodes
+		create my_intersection from: shp_nodes
 				with: [is_traffic_signal::(read("type") = "traffic_signals")] {
 			time_to_change <- traffic_light_interval;
 		}
 		
 		// Create a graph representing the road network, with road lengths as weights
-		map edge_weights <- road as_map (each::each.shape.perimeter);
-		road_network <- as_driving_graph(road, intersection) with_weights edge_weights;
+		map edge_weights <- my_road as_map (each::each.shape.perimeter);
+		road_network <- as_driving_graph(my_road, my_intersection) with_weights edge_weights;
 		
-		non_deadend_nodes <- intersection where !empty(each.roads_out);
+		non_deadend_nodes <- my_intersection where !empty(each.roads_out);
 		// Initialize the traffic lights
-		ask intersection {
+		ask my_intersection {
 			do initialize;
 		}
 		
@@ -120,10 +120,10 @@ experiment ring type: gui {
 
 	output synchronized: true {
 		display map type: 3d background: #gray {
-			species road aspect: base;
+			species my_road aspect: base;
 			species car_random aspect: base;
 			species motorbike_random aspect: base;
-			species intersection aspect: base;
+			species my_intersection aspect: base;
 		}
 	}
 }
@@ -140,10 +140,10 @@ experiment city type: gui {
 
 	output synchronized: true {
 		display map type: 3d background: #gray {
-			species road aspect: base;
+			species my_road aspect: base;
 			species car_random aspect: base;
 			species motorbike_random aspect: base;
-			species intersection aspect: base;
+			species my_intersection aspect: base;
 		}
 	}
 }

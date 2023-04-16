@@ -10,6 +10,9 @@
 model tutorial_gis_city_traffic
 
 global {
+	
+	 reflex stop { if (cycle =100){do pause;}}
+	
 //Load of the different shapefiles used by the model
 	file shape_file_buildings <- shape_file('../includes/building.shp', 0);
 	file shape_file_roads <- shape_file('../includes/road.shp', 0);
@@ -135,6 +138,7 @@ experiment "Road Traffic" type: gui {
 		display city_display type: 3d {
 			light #ambient intensity: 180;
 			light #default intensity: 180 direction: {0.5, 0.5, -1};
+			event #mouse_down {ask simulation {do resume;}}
 			species building aspect: base refresh: false;
 			species road aspect: base refresh: false;
 			species people refresh: true;

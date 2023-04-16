@@ -13,7 +13,7 @@ global {
 	float lane_width <- 0.7;  
 }
 
-species road skills: [skill_road] {
+species my_road skills: [road] {
 	rgb color <- #white;
 	string oneway;
 
@@ -22,13 +22,13 @@ species road skills: [skill_road] {
 	}
 }
 
-species intersection skills: [skill_road_node] {
+species my_intersection skills: [intersection] {
 	rgb color;
 	bool is_traffic_signal;
 	float time_to_change <- 30#s;
 	float counter <- rnd(time_to_change);
-	list<road> ways1;
-	list<road> ways2;
+	list<my_road> ways1;
+	list<my_road> ways2;
 	bool is_green;
 	rgb color_fire;
 
@@ -46,22 +46,22 @@ species intersection skills: [skill_road_node] {
 
 	action compute_crossing {
 		if (length(roads_in) >= 2) {
-			road rd0 <- road(roads_in[0]);
+			my_road rd0 <- my_road(roads_in[0]);
 			list<point> pts <- rd0.shape.points;
 			float ref_angle <- last(pts) direction_to rd0.location;
 			loop rd over: roads_in {
-				list<point> pts2 <- road(rd).shape.points;
+				list<point> pts2 <- my_road(rd).shape.points;
 				float angle_dest <- last(pts2) direction_to rd.location;
 				float ang <- abs(angle_dest - ref_angle);
 				if (ang > 45 and ang < 135) or (ang > 225 and ang < 315) {
-					ways2 << road(rd);
+					ways2 << my_road(rd);
 				}
 			}
 		}
 
 		loop rd over: roads_in {
 			if not (rd in ways2) {
-				ways1 << road(rd);
+				ways1 << my_road(rd);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ species intersection skills: [skill_road_node] {
 	}
 }
 
-species base_vehicle skills: [advanced_driving] {
+species base_vehicle skills: [driving] {
 	rgb color <- rnd_color(255);
 	graph road_graph;
 	
@@ -107,7 +107,7 @@ species base_vehicle skills: [advanced_driving] {
 		// Shifts the position of the vehicle perpendicularly to the road,
 		// in order to visualize different lanes
 		if (current_road != nil) {
-			float dist <- (road(current_road).num_lanes - current_lane -
+			float dist <- (my_road(current_road).num_lanes - current_lane -
 				mean(range(num_lanes_occupied - 1)) - 0.5) * lane_width;
 			if violating_oneway {
 				dist <- -dist;

@@ -23,9 +23,9 @@ global {
 	graph road_network;
 	
 	init {
-		create road from: shp_roads with: [num_lanes::int(read("lanes"))] {
+		create my_road from: shp_roads with: [num_lanes::int(read("lanes"))] {
 			// Create another road in the opposite direction
-			create road {
+			create my_road {
 				num_lanes <- myself.num_lanes;
 				shape <- polyline(reverse(myself.shape.points));
 				maxspeed <- myself.maxspeed;
@@ -34,17 +34,17 @@ global {
 			}
 		}
 		
-		create intersection from: shp_nodes
+		create my_intersection from: shp_nodes
 				with: [is_traffic_signal::(read("type") = "traffic_signals")] {
 			time_to_change <- 30#s;
 		}
 		
 		// Create a graph representing the road network, with road lengths as weights
-		map edge_weights <- road as_map (each::each.shape.perimeter);
-		road_network <- as_driving_graph(road, intersection) with_weights edge_weights;
+		map edge_weights <- my_road as_map (each::each.shape.perimeter);
+		road_network <- as_driving_graph(my_road, my_intersection) with_weights edge_weights;
 		
 		// Initialize the traffic lights
-		ask intersection {
+		ask my_intersection {
 			do initialize;
 		}
 		create vehicle_following_path number: 100;
@@ -60,7 +60,7 @@ species vehicle_following_path parent: base_vehicle {
 
 	reflex select_next_path when: current_path = nil {
 		// A path that forms a cycle
-		list<intersection> dst_nodes <- [intersection[98], intersection[100], intersection[137], intersection[98]];
+		list<my_intersection> dst_nodes <- [my_intersection[98], my_intersection[100], my_intersection[137], my_intersection[98]];
 		do compute_path graph: road_network nodes: dst_nodes;
 	}
 	
@@ -72,9 +72,9 @@ species vehicle_following_path parent: base_vehicle {
 experiment city type: gui {
 	output synchronized: true {
 		display map type: 3d background: #gray {
-			species road aspect: base;
+			species my_road aspect: base;
 			species vehicle_following_path aspect: base;
-			species intersection aspect: base;
+			species my_intersection aspect: base;
 		}
 	}
 }
