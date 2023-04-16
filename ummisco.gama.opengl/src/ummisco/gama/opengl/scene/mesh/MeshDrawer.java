@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * MeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.1.9.1).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -193,12 +193,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 */
 	public double[] getMinMax(final double[] data, final double noData, final double[] result) {
 		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
+		double max = -Double.MAX_VALUE;
 		for (double f : data) {
 			if (f == noData || f < above) { continue; }
-			if (f > max) {
-				max = f;
-			} else if (f < min) { min = f; }
+			if (f > max) { max = f; }
+			if (f < min) { min = f; }
 		}
 		if (result == null) return new double[] { min, max };
 		result[0] = min;
