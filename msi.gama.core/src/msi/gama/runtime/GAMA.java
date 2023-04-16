@@ -82,7 +82,7 @@ public class GAMA {
 	private static IGui regularGui;
 
 	/** The headless gui. */
-	private static IGui headlessGui = new NullGuiHandler();
+	private static IGui headlessGui;
 
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
@@ -534,7 +534,7 @@ public class GAMA {
 	 */
 	public static IGui getGui() {
 		// either a headless listener or a fully configured gui
-		if (isInHeadlessMode || regularGui == null) return headlessGui;
+		if (isInHeadlessMode || regularGui == null) return getHeadlessGui();
 		return regularGui;
 	}
 
@@ -543,7 +543,10 @@ public class GAMA {
 	 *
 	 * @return the headless gui
 	 */
-	public static IGui getHeadlessGui() { return headlessGui; }
+	public static IGui getHeadlessGui() {
+		if (headlessGui == null) { headlessGui = new NullGuiHandler(); }
+		return headlessGui;
+	}
 
 	/**
 	 * Gets the regular gui.
