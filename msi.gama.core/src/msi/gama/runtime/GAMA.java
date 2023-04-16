@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
+ * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.1).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -64,7 +64,7 @@ public class GAMA {
 	private static volatile PlatformAgent agent;
 
 	/** The snapshot agent. */
-	private static ISnapshotMaker snapshotAgent = IGui.NULL_SNAPSHOT_MAKER;
+	private static ISnapshotMaker snapshotAgent;
 
 	/** The benchmark agent. */
 	private static Benchmark benchmarkAgent;
@@ -676,5 +676,8 @@ public class GAMA {
 	 *
 	 * @return the snapshot maker
 	 */
-	public static ISnapshotMaker getSnapshotMaker() { return snapshotAgent; }
+	public static ISnapshotMaker getSnapshotMaker() {
+		if (snapshotAgent == null) return IGui.NULL_SNAPSHOT_MAKER;
+		return snapshotAgent;
+	}
 }
