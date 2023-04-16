@@ -572,7 +572,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	 */
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
-		DEBUG.LOG("Create a layeredDisplayOutput");
 		if (hasFacet(IKeyword.TYPE)) { getData().setDisplayType(getLiteral(IKeyword.TYPE)); }
 		layers = new ArrayList<>();
 		cameras = new ArrayList<>();
