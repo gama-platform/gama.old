@@ -1039,9 +1039,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			// be caught by the NEWT key listener. Those dedicated to modelling are left over for the moment
 			// (like CTRL+SHIFT+H)
 			// First the global keystrokes
-			case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
+			case com.jogamp.newt.event.KeyEvent.VK_ESCAPE: {
 				if (!getRenderer().getSurface().isEscRedefined()) { ViewsHelper.toggleFullScreenMode(); }
 				return;
+			}
 			case 'p':
 			case 'P':
 				if (isControlDown(e)) {
@@ -1050,8 +1051,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					} else {
 						GAMA.startPauseFrontmostExperiment();
 					}
+					return;
 				}
-				return;
+				break;
 			case 'R':
 			case 'r':
 				if (isControlDown(e)) {
@@ -1060,11 +1062,16 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					} else {
 						GAMA.reloadFrontmostExperiment();
 					}
+					return;
 				}
-				return;
+				break;
 			case 'X':
-			case 'x':
-				if (isControlDown(e) && e.isShiftDown()) { GAMA.closeAllExperiments(true, false); }
+			case 'x': {
+				if (isControlDown(e) && e.isShiftDown()) {
+					GAMA.closeAllExperiments(true, false);
+					return;
+				}
+			}
 		}
 
 		invokeOnGLThread(drawable -> {
@@ -1288,8 +1295,8 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		invokeOnGLThread(drawable -> {
 			if (!keystoneMode) {
 				if (e.getKeyChar() == 0) {
-					setCtrlPressed(!isControlDown(e));
-					setShiftPressed(!e.isShiftDown());
+					if (ctrlPressed) { setCtrlPressed(!isControlDown(e)); }
+					if (shiftPressed) { setShiftPressed(!e.isShiftDown()); }
 					return true;
 				}
 				boolean cameraInteraction = !data.isCameraLocked();
