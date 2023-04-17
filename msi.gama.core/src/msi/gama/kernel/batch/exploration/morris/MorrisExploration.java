@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * MorrisExploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -25,6 +25,8 @@ import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
 import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -187,28 +189,34 @@ public class MorrisExploration extends AExplorationAlgorithm {
 		
 		// The output of simulations
 		Map<String, List<Double>> rebuilt_output = rebuildOutput(scope, res_outputs);
-		List<String> output_names = rebuilt_output.keySet().stream().toList();
 		
-		String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
-		final File fm = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
-		final File parentm = fm.getParentFile();
-		if (!parentm.exists()) { parentm.mkdirs(); }
-		if (fm.exists()) { fm.delete(); }
+		// Prevent OutOfBounds when experiment ends before morris exploration is completed
+		if (res_outputs.size() == MySamples.size()) {
 		
-		for (int i = 0; i < rebuilt_output.size(); i++) {
-			String tmp_name = output_names.get(i);
-			List<Map<String, Double>> morris_coefficient =
-					Morris.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name), MySamples);
-			Morris.WriteAndTellResult(tmp_name, fm.getAbsolutePath(), scope, morris_coefficient);
-		}
-		/* Save the simulation values in the provided .csv file (input and corresponding output) */
-		if (hasFacet(IKeyword.BATCH_OUTPUT)) {
-			path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
-			final File fo = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
-			final File parento = fo.getParentFile();
-			if (!parento.exists()) { parento.mkdirs(); }
-			if (fo.exists()) { fo.delete(); }
-			saveSimulation(rebuilt_output, fo, scope);
+			List<String> output_names = rebuilt_output.keySet().stream().toList();
+			
+			String path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_REPORT).value(scope));
+			final File fm = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+			final File parentm = fm.getParentFile();
+			if (!parentm.exists()) { parentm.mkdirs(); }
+			if (fm.exists()) { fm.delete(); }
+			
+			for (int i = 0; i < rebuilt_output.size(); i++) {
+				String tmp_name = output_names.get(i);
+				List<Map<String, Double>> morris_coefficient =
+						Morris.MorrisAggregation(nb_levels, rebuilt_output.get(tmp_name), MySamples);
+				Morris.WriteAndTellResult(tmp_name, fm.getAbsolutePath(), scope, morris_coefficient);
+			}
+			/* Save the simulation values in the provided .csv file (input and corresponding output) */
+			if (hasFacet(IKeyword.BATCH_OUTPUT)) {
+				path_to = Cast.asString(scope, getFacet(IKeyword.BATCH_OUTPUT).value(scope));
+				final File fo = new File(FileUtils.constructAbsoluteFilePath(scope, path_to, false));
+				final File parento = fo.getParentFile();
+				if (!parento.exists()) { parento.mkdirs(); }
+				if (fo.exists()) { fo.delete(); }
+				saveSimulation(rebuilt_output, fo, scope);
+			}
+			
 		}
 	}
 
@@ -229,6 +237,23 @@ public class MorrisExploration extends AExplorationAlgorithm {
 		return Cast.asList(scope, morris_samplings.get(1));
 	}
 	
+	@Override
+	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
+		super.addParametersTo(exp, agent);
+
+		int s = Cast.asInt(agent.getScope(), getFacet(SAMPLE_SIZE).value(agent.getScope()));
+		int l = Cast.asInt(agent.getScope(), getFacet(NB_LEVELS).value(agent.getScope()));
+		
+		exp.add(new ParameterAdapter("Morris level", IKeyword.MORRIS, IType.STRING) {
+				@Override public Object value() { return l; }
+		});
+		
+		exp.add(new ParameterAdapter("Morris sample", IKeyword.MORRIS, IType.STRING) {
+			@Override public Object value() { return solutions==null?s*l:(solutions.size()==0?sample:solutions.size()); }
+		});
+		
+	}
+	
 	// ************************* END OF SUPER CLASS CONTRACT ************************* //
 
 	/**
@@ -246,7 +271,11 @@ public class MorrisExploration extends AExplorationAlgorithm {
 		for (String output : outputs) { rebuilt_output.put(output, new ArrayList<>()); }
 		for (ParametersSet sol : solutions) {
 			for (String output : outputs) {
-				rebuilt_output.get(output).add(Cast.asFloat(scope, res_outputs.get(sol).get(output).get(0)));
+				try {
+					rebuilt_output.get(output).add(Cast.asFloat(scope, res_outputs.get(sol).get(output).get(0)));
+				} catch (NullPointerException e) {
+					return rebuilt_output;
+				}
 			}
 		}
 		return rebuilt_output;

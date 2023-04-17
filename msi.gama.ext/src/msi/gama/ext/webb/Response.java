@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.Response.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Response.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,40 +17,57 @@ import java.net.HttpURLConnection;
  * @author hgoebl
  */
 public class Response<T> {
+
+	/** The request. */
 	final Request request;
 
+	/** The status code. */
 	int statusCode;
+
+	/** The response message. */
 	String responseMessage;
+
+	/** The body. */
 	T body;
+
+	/** The error body. */
 	Object errorBody;
+
+	/** The connection. */
 	HttpURLConnection connection;
 
+	/**
+	 * Instantiates a new response.
+	 *
+	 * @param request
+	 *            the request
+	 */
 	Response(final Request request) {
 		this.request = request;
 	}
 
+	/**
+	 * Sets the body.
+	 *
+	 * @param body
+	 *            the new body
+	 */
 	@SuppressWarnings ("unchecked")
-	void setBody(final Object body) {
-		this.body = (T) body;
-	}
+	void setBody(final Object body) { this.body = (T) body; }
 
 	/**
 	 * Access to the <code>Request</code> object (which will not be very useful in most cases).
 	 *
 	 * @return the request object which was responsible for creating this response.
 	 */
-	public Request getRequest() {
-		return request;
-	}
+	public Request getRequest() { return request; }
 
 	/**
 	 * Returns the payload of the response converted to the given type.
 	 *
 	 * @return the converted payload (can be null).
 	 */
-	public T getBody() {
-		return body;
-	}
+	public T getBody() { return body; }
 
 	/**
 	 * Get the body which was returned in case of error (HTTP-Code &gt;= 400). <br>
@@ -67,9 +83,7 @@ public class Response<T> {
 	 *
 	 * @return the error body converted to an object (see above) or <code>null</code> if there is no body or no error.
 	 */
-	public Object getErrorBody() {
-		return errorBody;
-	}
+	public Object getErrorBody() { return errorBody; }
 
 	/**
 	 * See <a href="http://docs.oracle.com/javase/7/docs/api/java/net/HttpURLConnection.html#responseCode">
@@ -77,18 +91,14 @@ public class Response<T> {
 	 *
 	 * @return An int representing the three digit HTTP Status-Code.
 	 */
-	public int getStatusCode() {
-		return statusCode;
-	}
+	public int getStatusCode() { return statusCode; }
 
 	/**
 	 * The first line returned by the web-server, like "HTTP/1.1 200 OK".
 	 *
 	 * @return first header
 	 */
-	public String getStatusLine() {
-		return connection.getHeaderField(null);
-	}
+	public String getStatusLine() { return connection.getHeaderField(null); }
 
 	/**
 	 * Was the request successful (returning a 2xx status code)?
@@ -104,9 +114,7 @@ public class Response<T> {
 	 *
 	 * @return e.g. "Moved Permanently", "Created", ...
 	 */
-	public String getResponseMessage() {
-		return responseMessage;
-	}
+	public String getResponseMessage() { return responseMessage; }
 
 	/**
 	 * Returns the MIME-type of the response body. <br>
@@ -115,9 +123,7 @@ public class Response<T> {
 	 *
 	 * @return e.g. "application/json", "text/plain", ...
 	 */
-	public String getContentType() {
-		return connection.getContentType();
-	}
+	public String getContentType() { return connection.getContentType(); }
 
 	/**
 	 * Returns the date when the request was created (server-time). <br>
@@ -126,9 +132,7 @@ public class Response<T> {
 	 *
 	 * @return the parsed "Date" header as millis or <code>0</code> if this header was not set.
 	 */
-	public long getDate() {
-		return connection.getDate();
-	}
+	public long getDate() { return connection.getDate(); }
 
 	/**
 	 * Returns the value of the expires header field. <br>
@@ -137,9 +141,7 @@ public class Response<T> {
 	 *
 	 * @return the expiration date of the resource, or 0 if not known.
 	 */
-	public long getExpiration() {
-		return connection.getExpiration();
-	}
+	public long getExpiration() { return connection.getExpiration(); }
 
 	/**
 	 * Returns the value of the last-modified header field. <br>
@@ -148,18 +150,14 @@ public class Response<T> {
 	 *
 	 * @return the date the resource was last modified, or 0 if not known.
 	 */
-	public long getLastModified() {
-		return connection.getLastModified();
-	}
+	public long getLastModified() { return connection.getLastModified(); }
 
 	/**
 	 * Get the "real" connection, typically to call some getters which are not provided by this Response object.
 	 *
 	 * @return the connection object (many methods throw IllegalStateException depending on the internal state).
 	 */
-	public HttpURLConnection getConnection() {
-		return connection;
-	}
+	public HttpURLConnection getConnection() { return connection; }
 
 	/**
 	 * A shortcut to check for successful status codes and throw exception in case of non-2xx status codes. <br>
@@ -168,6 +166,6 @@ public class Response<T> {
 	 * exit where the response-code is not suitable for further normal processing.
 	 */
 	public void ensureSuccess() {
-		if (!isSuccess()) { throw new WebbException("Request failed: " + statusCode + " " + responseMessage, this); }
+		if (!isSuccess()) throw new WebbException("Request failed: " + statusCode + " " + responseMessage, this);
 	}
 }

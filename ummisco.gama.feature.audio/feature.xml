@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.audio"
       label="Audio"
-      version="1.9.0.qualifier"
+      version="1.9.2.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gaml.extensions.sound">
 
@@ -19,12 +19,12 @@
    </license>
 
    <url>
-      <update label="GAMA 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
    </url>
 
    <requires>
-      <import plugin="msi.gama.core" version="1.6.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.ext" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="msi.gama.core"/>
+      <import plugin="msi.gama.ext"/>
    </requires>
 
    <plugin

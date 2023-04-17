@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * BetaExploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -24,6 +24,8 @@ import msi.gama.kernel.batch.exploration.Exploration;
 import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
 import msi.gama.kernel.experiment.IParameter.Batch;
+import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -93,7 +95,7 @@ import msi.gaml.types.IType;
 						type = IType.LIST,
 						of = IType.INT,
 						optional = true,
-						doc = @doc ("The number of sample required.")),
+						doc = @doc ("The number of automated steps to swip over, when step facet is missing in parameter definition. Default is 9")),
 				@facet (
 						name = IKeyword.BATCH_OUTPUT,
 						type = IType.STRING,
@@ -219,6 +221,24 @@ public class BetaExploration extends AExplorationAlgorithm {
 	@Override
 	public List<ParametersSet> buildParameterSets(final IScope scope, final List<ParametersSet> sets, final int index) { return null; }
 
+	@Override
+	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
+		super.addParametersTo(exp, agent);
+
+		exp.add(new ParameterAdapter("Sampled points", IKeyword.BETAD, IType.STRING) {
+				@Override public Object value() { return Cast.asInt(agent.getScope(), 
+						getFacet(Exploration.SAMPLE_SIZE).value(agent.getScope())); }
+		});
+
+		exp.add(new ParameterAdapter("Sampling method", IKeyword.BETAD, IType.STRING) {
+			@Override public Object value() {
+				return hasFacet(Exploration.METHODS) ? 
+						Cast.asString(agent.getScope(), getFacet(Exploration.METHODS).value(agent.getScope())) : "exhaustive";
+			}
+		});
+		
+	}
+	
 	/**
 	 * Builds the report string.
 	 *

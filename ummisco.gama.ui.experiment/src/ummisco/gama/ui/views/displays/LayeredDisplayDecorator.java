@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * LayeredDisplayDecorator.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.0).
+ * simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -18,6 +18,7 @@ import static ummisco.gama.ui.resources.IGamaIcons.EXPERIMENT_RUN;
 import static ummisco.gama.ui.resources.IGamaIcons.TOGGLE_ANTIALIAS;
 import static ummisco.gama.ui.resources.IGamaIcons.TOGGLE_OVERLAY;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import org.eclipse.swt.SWT;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 
@@ -53,6 +55,7 @@ import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.SwtGui;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
@@ -63,10 +66,10 @@ import ummisco.gama.ui.views.toolbar.Selector;
 /**
  * The Class LayeredDisplayDecorator.
  */
-public class LayeredDisplayDecorator implements DisplayDataListener {
+public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProviderListener {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The key and mouse listener. */
@@ -116,6 +119,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		this.view = view;
 		createCommands();
 		WorkbenchHelper.getPage().addPartListener(overlayListener);
+		SwtGui.listenToExperimentState(this);
 	}
 
 	/**
@@ -128,13 +132,14 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		int pad = 25;
 		toggleOverlay = new GamaCommand(TOGGLE_OVERLAY, STRINGS.PAD("Toggle overlay", pad) + format(COMMAND, 'O'),
 				e -> toggleOverlay());
-		takeSnapshot =
-				new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, STRINGS.PAD("Take a snapshot", pad), e -> view.takeSnapshot(null));
+		takeSnapshot = new GamaCommand(DISPLAY_TOOLBAR_SNAPSHOT, STRINGS.PAD("Take a snapshot", pad),
+				e -> view.takeSnapshot(null));
 		antiAlias = new GamaCommand(TOGGLE_ANTIALIAS, STRINGS.PAD("Turn antialias on/off", pad),
 				e -> view.getOutput().getData().setAntialias(!view.getOutput().getData().isAntialias()));
-		toggleFullScreen = new GamaCommand(DISPLAY_FULLSCREEN_ENTER, STRINGS.PAD("Toggle fullscreen", pad) + "ESC", e -> {
-			toggleFullScreen();
-		});
+		toggleFullScreen =
+				new GamaCommand(DISPLAY_FULLSCREEN_ENTER, STRINGS.PAD("Toggle fullscreen", pad) + "ESC", e -> {
+					toggleFullScreen();
+				});
 		runExperiment = new GamaCommand(EXPERIMENT_RUN,
 				STRINGS.PAD("Run or pause experiment", pad) + GamaKeyBindings.PLAY_STRING, e -> {
 
@@ -241,6 +246,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				toolbar.setParent(normalParentOfToolbar);
 				normalParentOfToolbar.requestLayout();
 			}
+			runExperimentItem = null;
 			view.getCentralPanel().setParent(normalParentOfFullScreenControl);
 			createOverlay();
 			normalParentOfFullScreenControl.requestLayout();
@@ -298,17 +304,20 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 		toolbar.getParent().requestLayout();
 	}
 
+	/** The run experiment item. */
+	ToolItem runExperimentItem = null;
+
 	/**
 	 * Adds the fullscreen toolbar commands.
 	 */
 	public void addFullscreenToolbarCommands() {
 		toolbar.button(toggleOverlay, SWT.LEFT);
 		toolbar.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
-		final ToolItem item = toolbar.button(runExperiment, SWT.LEFT);
+		runExperimentItem = toolbar.button(runExperiment, SWT.LEFT);
 		if (GAMA.isPaused()) {
-			item.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+			runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
 		} else {
-			item.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+			runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
 		}
 		toolbar.button(stepExperiment, SWT.LEFT);
 		toolbar.control(SimulationSpeedContributionItem.create(toolbar.getToolbar(SWT.LEFT)),
@@ -582,6 +591,8 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 	 * Dispose.
 	 */
 	public void dispose() {
+
+		SwtGui.stopListeningToExperimentState(this);
 		// FIXME Remove the listeners
 		try {
 			WorkbenchHelper.getWindow().removePerspectiveListener(perspectiveListener);
@@ -626,6 +637,32 @@ public class LayeredDisplayDecorator implements DisplayDataListener {
 				break;
 		}
 
+	}
+
+	@Override
+	public void sourceChanged(final int sourcePriority, final String sourceName, final Object sourceValue) {
+		// DEBUG.OUT("Source changed " + sourceName + " " + sourceValue);
+		if ("STOPPED".equals(sourceValue) && isFullScreen() && toolbar != null && toolbar.isVisible()) {
+			runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+			toolbar.update();
+		}
+		if ("RUNNING".equals(sourceValue) && isFullScreen() && toolbar != null && toolbar.isVisible()) {
+			runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+			toolbar.update();
+		}
+	}
+
+	@Override
+	public void sourceChanged(final int sourcePriority, final Map sourceValuesByName) {
+		// DEBUG.OUT("Source changed " + sourceValuesByName);
+		if (isFullScreen() && toolbar != null && toolbar.isVisible()) {
+			if (GAMA.isPaused()) {
+				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+			} else {
+				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+			}
+			toolbar.update();
+		}
 	}
 
 }

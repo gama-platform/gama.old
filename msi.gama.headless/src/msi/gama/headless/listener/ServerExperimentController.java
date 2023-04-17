@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * ServerExperimentController.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.0).
+ * platform (v.1.9.2).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,6 +15,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import org.java_websocket.WebSocket;
+import org.locationtech.jts.util.Debug;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
@@ -84,19 +85,25 @@ public class ServerExperimentController implements IExperimentController {
 		 */
 		@Override
 		public void run() {
-			while (experimentAlive) {
-				if (mexp.simulator.isInterrupted()) { break; }
-				final SimulationAgent sim = mexp.simulator.getSimulation();
-
-				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
-				if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
-					if (!"".equals(mexp.endCond)) {
-						mexp.socket.send(Jsoner.serialize(new CommandResponse(GamaServerMessageType.SimulationEnded, "",
-								_job.playCommand, false)));
+			try {
+				
+				while (experimentAlive) {
+					if (mexp.simulator.isInterrupted()) { break; }
+					final SimulationAgent sim = mexp.simulator.getSimulation();
+					
+					final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
+					if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
+						if (!"".equals(mexp.endCond)) {
+							mexp.socket.send(Jsoner.serialize(new CommandResponse(GamaServerMessageType.SimulationEnded, "",
+									_job.playCommand, false)));
+						}
+						break;
 					}
-					break;
+					step();
 				}
-				step();
+			}
+			catch(Exception e) {
+				DEBUG.OUT(e);
 			}
 		}
 	}
@@ -123,6 +130,8 @@ public class ServerExperimentController implements IExperimentController {
 	
 	/** The redirect dialog. */
 	public final boolean redirectDialog;
+	
+	public final boolean redirectRuntime;
 
 	/** The commands. */
 	protected volatile ArrayBlockingQueue<Integer> commands;
@@ -145,13 +154,14 @@ public class ServerExperimentController implements IExperimentController {
 	 *            the experiment
 	 */
 	public ServerExperimentController(final ManualExperimentJob j, final WebSocket sock, final boolean console,
-			final boolean status, final boolean dialog) {
+			final boolean status, final boolean dialog, final boolean runtime) {
 
 		_job = j;
 		socket = sock;
 		redirectConsole = console;
 		redirectStatus = status;
 		redirectDialog = dialog;
+		redirectRuntime = runtime;
 		commands = new ArrayBlockingQueue<>(10);
 		executionThread = new MyRunnable(j);
 
@@ -394,6 +404,7 @@ public class ServerExperimentController implements IExperimentController {
 		scope.setData("console", redirectConsole);
 		scope.setData("status", redirectStatus);
 		scope.setData("dialog", redirectDialog);
+		scope.setData("runtime", redirectRuntime);
 		try {
 			if (!scope.init(agent).passed()) {
 				scope.setDisposeStatus();

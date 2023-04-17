@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.1).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -52,7 +52,7 @@ public class GAMA {
 	}
 
 	/** The Constant VERSION_NUMBER. */
-	public static final String VERSION_NUMBER = "1.9.0";
+	public static final String VERSION_NUMBER = "1.9.2";
 
 	/** The Constant VERSION. */
 	public static final String VERSION = "GAMA " + VERSION_NUMBER;
@@ -64,7 +64,7 @@ public class GAMA {
 	private static volatile PlatformAgent agent;
 
 	/** The snapshot agent. */
-	private static ISnapshotMaker snapshotAgent = IGui.NULL_SNAPSHOT_MAKER;
+	private static ISnapshotMaker snapshotAgent;
 
 	/** The benchmark agent. */
 	private static Benchmark benchmarkAgent;
@@ -82,7 +82,7 @@ public class GAMA {
 	private static IGui regularGui;
 
 	/** The headless gui. */
-	private static IGui headlessGui = new NullGuiHandler();
+	private static IGui headlessGui;
 
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
@@ -534,7 +534,7 @@ public class GAMA {
 	 */
 	public static IGui getGui() {
 		// either a headless listener or a fully configured gui
-		if (isInHeadlessMode || regularGui == null) return headlessGui;
+		if (isInHeadlessMode || regularGui == null) return getHeadlessGui();
 		return regularGui;
 	}
 
@@ -543,7 +543,10 @@ public class GAMA {
 	 *
 	 * @return the headless gui
 	 */
-	public static IGui getHeadlessGui() { return headlessGui; }
+	public static IGui getHeadlessGui() {
+		if (headlessGui == null) { headlessGui = new NullGuiHandler(); }
+		return headlessGui;
+	}
 
 	/**
 	 * Gets the regular gui.
@@ -676,5 +679,8 @@ public class GAMA {
 	 *
 	 * @return the snapshot maker
 	 */
-	public static ISnapshotMaker getSnapshotMaker() { return snapshotAgent; }
+	public static ISnapshotMaker getSnapshotMaker() {
+		if (snapshotAgent == null) return IGui.NULL_SNAPSHOT_MAKER;
+		return snapshotAgent;
+	}
 }

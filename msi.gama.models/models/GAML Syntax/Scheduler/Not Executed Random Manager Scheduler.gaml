@@ -37,7 +37,7 @@ global
 	}
 }
 
-species manager schedules:manager+(B+A)
+species manager schedules:(B+A)
 {
 	reflex write_new_step
 	{

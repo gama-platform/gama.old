@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * ManualExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.0).
+ * platform (v.1.9.2).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -84,14 +84,14 @@ public class ManualExperimentJob extends ExperimentJob {
 	 */
 	public ManualExperimentJob(final String sourcePath, final String exp, final GamaWebSocketServer gamaWebSocketServer,
 			final WebSocket sk, final GamaJsonList p, final boolean console, final boolean status,
-			final boolean dialog) {
+			final boolean dialog, final boolean runtime) {
 		// (final String sourcePath, final String exp, final long max, final String untilCond,
 		// final double s)
 		super(sourcePath, exp, 0, "", 0);
 		server = gamaWebSocketServer;
 		socket = sk;
 		params = p;
-		controller = new ServerExperimentController(this, socket, console, status, dialog);
+		controller = new ServerExperimentController(this, socket, console, status, dialog, runtime);
 	}
 
 	@Override

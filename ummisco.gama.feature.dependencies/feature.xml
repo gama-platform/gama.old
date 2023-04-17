@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.dependencies"
       label="Dependencies of GAMA"
-      version="1.9.0.qualifier"
+      version="1.9.2.qualifier"
       provider-name="UMMISCO"
       plugin="msi.gama.ext">
 
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
    </url>
 
    <plugin

@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * BatchAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ * BatchAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -8,8 +8,6 @@
  *
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
-
-import static msi.gaml.operators.Cast.asFloat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +60,14 @@ import ummisco.gama.dev.utils.THREADS;
 @doc ("Experiments supporting the execution of several simulations in order to explore parameters or reach a specific state")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class BatchAgent extends ExperimentAgent {
+	
+	/**
+	 * Name of the different types of batch experiment : exploration, analysis and calibration
+	 * See wiki https://gama-platform.org/wiki/ExplorationMethods for more information
+	 */
+	public final static String BATCH_EXPERIMENT = "Batch exeriment";
+	public final static String EXPLORATION_EXPERIMENT = "Exploration experiment";
+	public final static String CALIBRATION_EXPERIMENT = "Calibration experiment";
 
 	/** The stop condition. */
 	final IExpression stopCondition;
@@ -347,7 +353,10 @@ public class BatchAgent extends ExperimentAgent {
 				// test the condition first in case it is paused
 				final boolean stopConditionMet = dead
 						|| Cast.asBool(agent.getScope(), agent.getScope().evaluate(stopCondition, agent).getValue());
-				final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
+				final boolean mustStop = stopConditionMet || agent.dead();
+				// AD -- removed because it would prevent simulations from running if 'do pause' was called in the
+				// experiment
+				// || agent.getScope().isPaused();
 				if (mustStop) {
 					pop.unscheduleSimulation(agent);
 					// pop.remove(agent);
@@ -465,7 +474,10 @@ public class BatchAgent extends ExperimentAgent {
 					// test the condition first in case it is paused
 					final boolean stopConditionMet =
 							dead || Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim).getValue());
-					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
+					final boolean mustStop = stopConditionMet || agent.dead();
+					// AD -- removed because it would prevent simulations from running if 'do pause' was called in the
+					// experiment
+					// || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
 						Map<String, Object> out =
@@ -560,8 +572,7 @@ public class BatchAgent extends ExperimentAgent {
 	 *            the params
 	 */
 	public void addSpecificParameters(final List<IParameter.Batch> params) {
-
-		params.add(new ParameterAdapter("Stop condition", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
+		params.add(new ParameterAdapter("Stop condition", BATCH_EXPERIMENT, IType.STRING) {
 
 			@Override
 			public Object value() {
@@ -569,49 +580,7 @@ public class BatchAgent extends ExperimentAgent {
 			}
 
 		});
-
-		params.add(new ParameterAdapter("Parameter space", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
-
-			@Override
-			public String value() {
-				final Map<String, IParameter.Batch> explorable = getSpecies().getExplorableParameters();
-				if (explorable.isEmpty()) return "1";
-				String result = "";
-				int dim = 1;
-				for (final Map.Entry<String, IParameter.Batch> entry : explorable.entrySet()) {
-					result += entry.getKey() + " (";
-					final int entryDim = getExplorationDimension(entry.getValue());
-					dim = dim * entryDim;
-					result += String.valueOf(entryDim) + ") * ";
-				}
-				result = result.substring(0, result.length() - 2);
-				result += " = " + dim;
-				return result;
-			}
-
-			int getExplorationDimension(final IParameter.Batch p) {
-				IScope scope = getScope();
-
-				// AD TODO Issue a warning in the compilation if a batch experiment tries to explore non-int or
-				// non-float values
-				if (p.getAmongValue(scope) != null) return p.getAmongValue(scope).size();
-				return (int) ((asFloat(scope, p.getMaxValue(scope)) - asFloat(scope, p.getMinValue(scope)))
-						/ asFloat(scope, p.getStepValue(scope))) + 1;
-			}
-
-		});
-
-		params.add(new ParameterAdapter("Last parameter set tested", IExperimentPlan.BATCH_CATEGORY_NAME, "",
-				IType.STRING) {
-
-			@Override
-			public String value() {
-				if (lastSolution == null) return "-";
-				return lastSolution.toString();
-			}
-
-		});
-
+		
 		getSpecies().getExplorationAlgorithm().addParametersTo(params, this);
 	}
 
@@ -629,6 +598,14 @@ public class BatchAgent extends ExperimentAgent {
 	 *            the new seeds
 	 */
 	public void setSeeds(final Double[] seeds) { this.seeds = seeds; }
+	
+	/**
+	 * 
+	 * Returns the last explored points explored in the parameter set
+	 * 
+	 * @return ParametersSet
+	 */
+	public ParametersSet getLatestSolution() { return this.lastSolution; }
 
 	/**
 	 * Sets the keep simulations.

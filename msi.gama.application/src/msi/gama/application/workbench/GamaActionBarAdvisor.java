@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * GamaActionBarAdvisor.java, in msi.gama.application, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.0).
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -497,7 +497,7 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
 		@Override
 		public void run() {
-			window.getService(IWebHelper.class).showPage("http://doc.gama-platform.org");
+			window.getService(IWebHelper.class).showPage("https://doc.gama-platform.org");
 		}
 
 		@Override

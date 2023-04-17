@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * IGui.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ * IGui.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -479,7 +479,8 @@ public interface IGui {
 	 * @param notify
 	 *            the notify
 	 */
-	default void updateSpeedDisplay(final IScope scope, final Double d, final boolean notify) {}
+	default void updateSpeedDisplay(final IScope scope, final Double minimumCycleDuration,
+			final Double maximumCycleDuration, final boolean notify) {}
 
 	/**
 	 * Gets the meta data provider.

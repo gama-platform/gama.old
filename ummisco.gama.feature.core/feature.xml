@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core"
       label="Core plugins of GAMA"
-      version="1.9.0.qualifier"
+      version="1.9.2.qualifier"
       provider-name="UMMISCO"
       plugin="msi.gama.core">
 
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="Gama 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
    </url>
 
    <requires>
@@ -40,8 +40,8 @@
       <import plugin="org.eclipse.xtext.util"/>
       <import plugin="org.eclipse.emf.common"/>
       <import plugin="org.eclipse.xtext.xbase.lib"/>
-      <import plugin="ummisco.gaml.extensions.maths" version="1.9.0" match="greaterOrEqual"/>
-      <import plugin="msi.gama.ext" version="1.9.0" match="greaterOrEqual"/>
+      <import plugin="ummisco.gaml.extensions.maths"/>
+      <import plugin="msi.gama.ext"/>
    </requires>
 
    <plugin

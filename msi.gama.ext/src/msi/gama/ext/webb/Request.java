@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.Request.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * Request.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -23,29 +22,83 @@ import java.util.Map;
  * @author hgoebl
  */
 public class Request {
+
+	/**
+	 * The Enum Method.
+	 */
 	public enum Method {
-		GET, POST, PUT, DELETE
+
+		/** The get. */
+		GET,
+		/** The post. */
+		POST,
+		/** The put. */
+		PUT,
+		/** The delete. */
+		DELETE
 	}
 
+	/** The webb. */
 	private final Webb webb;
+
+	/** The method. */
 	final Method method;
+
+	/** The uri. */
 	final String uri;
 
+	/** The params. */
 	Map<String, Object> params;
+
+	/** The multiple values. */
 	boolean multipleValues;
+
+	/** The headers. */
 	Map<String, Object> headers;
+
+	/** The payload. */
 	Object payload;
+
+	/** The stream payload. */
 	boolean streamPayload;
+
+	/** The use caches. */
 	boolean useCaches;
+
+	/** The connect timeout. */
 	Integer connectTimeout;
+
+	/** The read timeout. */
 	Integer readTimeout;
+
+	/** The if modified since. */
 	Long ifModifiedSince;
+
+	/** The follow redirects. */
 	Boolean followRedirects;
+
+	/** The ensure success. */
 	boolean ensureSuccess;
+
+	/** The compress. */
 	boolean compress;
+
+	/** The retry count. */
 	int retryCount;
+
+	/** The wait exponential. */
 	boolean waitExponential;
 
+	/**
+	 * Instantiates a new request.
+	 *
+	 * @param webb
+	 *            the webb
+	 * @param method
+	 *            the method
+	 * @param uri
+	 *            the uri
+	 */
 	Request(final Webb webb, final Method method, final String uri) {
 		this.webb = webb;
 		this.method = method;
@@ -58,9 +111,7 @@ public class Request {
 	 *
 	 * @return URI
 	 */
-	public String getUri() {
-		return uri;
-	}
+	public String getUri() { return uri; }
 
 	/**
 	 * Set (or overwrite) a HTTP header value. <br>
@@ -83,9 +134,7 @@ public class Request {
 	 * @return <code>this</code> for method chaining (fluent API)
 	 */
 	public Request header(final String name, final Object value) {
-		if (headers == null) {
-			headers = new LinkedHashMap<>();
-		}
+		if (headers == null) { headers = new LinkedHashMap<>(); }
 		headers.put(name, value);
 		return this;
 	}
@@ -119,9 +168,8 @@ public class Request {
 	 * @return <code>this</code> for method chaining (fluent API)
 	 */
 	public Request body(final Object body) {
-		if (method == Method.GET || method == Method.DELETE) {
+		if (method == Method.GET || method == Method.DELETE)
 			throw new IllegalStateException("body not allowed for request method " + method);
-		}
 		this.payload = body;
 		this.streamPayload = body instanceof File || body instanceof InputStream;
 		return this;
@@ -183,15 +231,9 @@ public class Request {
 	 */
 	public Request retry(final int rc, final boolean waitExponential) {
 		int retryCount = rc;
-		if (retryCount < 0) {
-			retryCount = 0;
-		}
-		if (retryCount > 10) {
-			retryCount = 10;
-		}
-		if (retryCount > 3 && !waitExponential) {
-			throw new IllegalArgumentException("retries > 3 only valid with wait");
-		}
+		if (retryCount < 0) { retryCount = 0; }
+		if (retryCount > 10) { retryCount = 10; }
+		if (retryCount > 3 && !waitExponential) throw new IllegalArgumentException("retries > 3 only valid with wait");
 		this.retryCount = retryCount;
 		this.waitExponential = waitExponential;
 		return this;

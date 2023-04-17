@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * GamaBundleLoader.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -202,6 +202,17 @@ public class GamaBundleLoader {
 			}
 			// We remove the core plugin, in order to build it first (important)
 			GAMA_PLUGINS.remove(CORE_PLUGIN);
+
+			/**
+			 * AD : Bug fix regarding the fact that SimpleConfigurator can provide ui components in headless mode
+			 */
+			if (GAMA.isInHeadLessMode()) {
+				GAMA_PLUGINS.removeIf(b -> GAMA_CORE_DISPLAY_PLUGINS.contains(b.getSymbolicName()));
+			}
+			/**
+			 * End bug fix
+			 */
+
 			try {
 				preBuild(CORE_PLUGIN);
 			} catch (final Exception e2) {

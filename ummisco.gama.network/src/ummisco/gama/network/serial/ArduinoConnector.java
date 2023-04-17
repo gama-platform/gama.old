@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * ArduinoConnector.java, in ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GAMA modeling and simulation platform (v.1.9.2).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -11,7 +11,9 @@
 package ummisco.gama.network.serial;
  
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.socket.SocketService;
@@ -56,8 +58,13 @@ public class ArduinoConnector extends Connector {
 		if("".equals(PORT)) {
 			PORT=this.getConfigurationParameter(SERVER_URL);
 		}
+		try {
 		arduino = new MyArduino(PORT,BAUD);
-		
+		}catch(Exception ex) {}
+		if(arduino==null) {
+			GAMA.reportError(agent.getScope(), GamaRuntimeException.warning("Cannot connect Arduino to Port: " + PORT, agent.getScope()), false);
+			return;
+		}else
 		if(arduino.openConnection()){
 			System.out.println("CONNECTION OPENED");
 		}
@@ -84,9 +91,11 @@ public class ArduinoConnector extends Connector {
 		if (ssThread != null) {
 			ssThread.interrupt();
 		}
-		
-		arduino.closeConnection();
-		System.out.println("CONNECTION CLOSED");		
+		if(arduino!=null) {
+			arduino.closeConnection();
+			System.out.println("CONNECTION CLOSED");
+		}
+				
 	}
 
 	@Override

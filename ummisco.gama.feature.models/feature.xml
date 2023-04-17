@@ -2,13 +2,13 @@
 <feature
       id="ummisco.gama.feature.models"
       label="Models"
-      version="1.9.0.qualifier"
+      version="1.9.2.qualifier"
       provider-name="UMMISCO"
       plugin="msi.gama.models"
       colocation-affinity="ummisco.gama.feature.core">
 
    <description url="http://www.gama-platform.org">
-      The library of models of GAMA 1.7.x
+      The library of models of GAMA 1.9.1
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -20,7 +20,7 @@
    </license>
 
    <url>
-      <update label="Gama 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
    </url>
 
    <plugin

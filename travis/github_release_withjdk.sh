@@ -28,7 +28,7 @@ echo "github_release_withjdk"
 COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="1.9.0"
+RELEASE="1.9.2"
 
 
 
@@ -64,11 +64,11 @@ n=0
 suff=($SUFFIX $SUFFIX_DEB) 
 for s in ${suff[@]}; 
 do
-    RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform_1.9.0-1_amd64."$(echo $s | rev | cut -d "." -f 1 | rev)
-		NEWFILES[$n]='GAMA_1.9.0_Linux'$s 
+    RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform_1.9.2-1_amd64."$(echo $s | rev | cut -d "." -f 1 | rev)
+		NEWFILES[$n]='GAMA_1.9.2_Linux'$s 
 		n=$n+1
-		RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform-jdk_1.9.0-1_amd64."$(echo $s | rev | cut -d "." -f 1 | rev)
-		NEWFILES[$n]='GAMA_1.9.0_Linux_with_JDK'$s
+		RELEASEFILES[$n]=$GITHUB_WORKSPACE"/gama-platform-jdk_1.9.2-1_amd64."$(echo $s | rev | cut -d "." -f 1 | rev)
+		NEWFILES[$n]='GAMA_1.9.2_Linux_with_JDK'$s
 		n=$n+1
 done
 
@@ -84,25 +84,25 @@ do
 		fi
 
 		RELEASEFILES[$n]=$thePATH"-macosx.cocoa."$zipArchi".dmg"
-		NEWFILES[$n]='GAMA_1.9.0_Mac'$a''$SUFFIX_MAC
+		NEWFILES[$n]='GAMA_1.9.2_Mac'$a''$SUFFIX_MAC
 		n=$n+1
 		RELEASEFILES[$n]=$thePATH"-macosx.cocoa."$zipArchi"_withJDK.dmg"
-		NEWFILES[$n]='GAMA_1.9.0_Mac'$a'_with_JDK'$SUFFIX_MAC
+		NEWFILES[$n]='GAMA_1.9.2_Mac'$a'_with_JDK'$SUFFIX_MAC
 		n=$n+1
 done
 
 # Windows
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA_1.9.0_Windows'$SUFFIX
+NEWFILES[$n]='GAMA_1.9.2_Windows'$SUFFIX
 n=$n+1
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64_withJDK.zip" 
-NEWFILES[$n]='GAMA_1.9.0_Windows_with_JDK'$SUFFIX
+NEWFILES[$n]='GAMA_1.9.2_Windows_with_JDK'$SUFFIX
 n=$n+1
 RELEASEFILES[$n]=$GITHUB_WORKSPACE"/Gama_installer_x86_64.exe" 
-NEWFILES[$n]='GAMA_1.9.0_Windows'$SUFFIX_EXE
+NEWFILES[$n]='GAMA_1.9.2_Windows'$SUFFIX_EXE
 n=$n+1
 RELEASEFILES[$n]=$GITHUB_WORKSPACE"/Gama_installer_x86_64_withJDK.exe" 
-NEWFILES[$n]='GAMA_1.9.0_Windows_with_JDK'$SUFFIX_EXE
+NEWFILES[$n]='GAMA_1.9.2_Windows_with_JDK'$SUFFIX_EXE
 n=$n+1
  
 
@@ -158,7 +158,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases"
   -H "X-Parse-REST-API-Key: sensitive" \
   -H "Authorization: token $BOT_TOKEN"   \
   -H "Content-Type: application/json" \
-  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.9.0 ('$COMMIT')","body":"Alpha release for GAMA 1.9.0, which adds compatibility with JDK 17 . Please test and report issues","draft": false,"prerelease": true}' \
+  -d '{"tag_name": "'$RELEASE'", "name":"Alpha Version 1.9.2 ('$COMMIT')","body":"Alpha release for GAMA 1.9.2, which adds compatibility with JDK 17 . Please test and report issues","draft": false,"prerelease": true}' \
     "$LK"`
 echo $RESULT	
 

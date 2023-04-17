@@ -8,7 +8,7 @@
 model segregation
 
 //Import the model Common Schelling Segregation
-import "../include/Common Schelling Segregation.gaml" 
+import "../includes/Common Schelling Segregation.gaml" 
 global {
 	//List of all the free places
 	list<space> free_places  ;  

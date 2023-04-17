@@ -17,7 +17,7 @@ experiment saveSimu type: gui {
 	
 	reflex store when: cycle = 5 {		
 		write "================ START SAVE + self " + " - " + cycle ;		
-		save saved_simulation_file('saveSimu.gsim', [simulation]);
+		save saved_simulation_file('../includes/saveSimu.gsim', [simulation]);
 		write "================ END SAVE + self " + " - " + cycle ;			
 	}	
 	
@@ -32,7 +32,7 @@ experiment saveSimu type: gui {
 experiment reloadSimu type: gui {
 	
 	action _init_ {
-		create simulation from: saved_simulation_file("saveSimu.gsim");	
+		create simulation from: saved_simulation_file("../includes/saveSimu.gsim");	
 		write "init simulation at step " + simulation.cycle;
 	}
 	

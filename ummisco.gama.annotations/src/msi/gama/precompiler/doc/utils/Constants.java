@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * Constants.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -18,7 +18,7 @@ import java.io.File;
 public class Constants {
 
 	/** The Constant GAMA_VERSION. */
-	public final static String GAMA_VERSION = "1.9.0";
+	public final static String GAMA_VERSION = "1.9.2";
 
 	/** The Constant CMD_PANDOC. */
 	// Commandes

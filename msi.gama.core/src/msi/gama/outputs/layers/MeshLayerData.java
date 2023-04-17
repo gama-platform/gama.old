@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * MeshLayerData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -220,10 +220,7 @@ public class MeshLayerData extends LayerData {
 	 *
 	 * @return the color
 	 */
-	public Object getColor() {
-		// Should be a bit more complex in the future when color scales / palettes are introduced
-		return color.get();
-	}
+	public Object getColor() { return color.get(); }
 
 	/**
 	 * Gets the smooth.

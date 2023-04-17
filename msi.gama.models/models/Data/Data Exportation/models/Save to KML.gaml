@@ -8,7 +8,7 @@
 model exportkml
 
 global {
-	file shapefile <- file("../includes/parcels.shp");
+	file shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(shapefile);
 	date starting_date <- #now;
 	
@@ -19,14 +19,13 @@ global {
 	
 	
 	init {
-		create parcel from: shapefile ;
-		bounds <- union(parcel);
+		create building from: shapefile ;
+		bounds <- union(building);
 		create bug number: 5 with: [location:: any_location_in(bounds)];
-		create car number: 1 with: [location:: any_location_in(bounds)];
 	}
 	reflex add_objects_to_kml {
 		
-		ask parcel {
+		ask building {
 			//add a geometry to the kml : add_geometry(kml, geometry, line width, border color, color)
 			kml_export <- kml_export add_geometry (shape,2.0,#black,color);	
 			
@@ -37,11 +36,6 @@ global {
 			//add an icon to the kml: add_icon(kml,location,scale,orientation,file) ... like for add_geometry, it is also possible to specify the begin/end date
 			kml_export <- kml_export add_icon (location,1.0,heading,"../includes/full_ant.png");
 		}
-		ask car {
-			//add an 3D model (collada) to the kml: add_3Dmodel(kml,locatio,scale,orientation,file).
-			kml_export <- kml_export add_3Dmodel (location,20.0,heading,"../includes/car.dae");
-		}
-		
 	}
 	
 	reflex end_sim when: cycle = 5 {
@@ -56,21 +50,12 @@ species bug skills: [moving]{
 		do wander speed: 10.0 bounds: bounds;
 	}
 	aspect default {
-		draw file("../includes/full_ant.png") size: 100 ;
+		draw file("../includes/full_ant.png") size: 10 ;
 	}
 }
 
 
-
-species car skills: [moving]{
-	reflex move {
-		do wander speed: 50.0 bounds: bounds;
-	}
-	aspect default {
-		draw circle(10) color: #blue border: #black;
-	}
-}
-species parcel {
+species building {
 	rgb color <-rnd_color(155,255);
 	reflex new_color {
 		color <- rnd_color(155,255);
@@ -83,9 +68,8 @@ species parcel {
 experiment exportkml type: gui {
 	output {
 		display map {
-			species parcel;
+			species building;
 			species bug;
-			species car;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-memory=0
+memory="0"
 
 for arg do
   shift
@@ -15,8 +15,8 @@ for arg do
   esac
 done
 
-if [ $memory -eq 0 ]; then
-  memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )"/../Gama.ini || echo "-Xmx4096m")
+if [ $memory == "0" ]; then
+  memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/Gama.ini || echo "-Xmx4096m")
 else
   memory=-Xmx$memory
 fi
@@ -30,7 +30,7 @@ esac
 
 
 echo "******************************************************************"
-echo "* GAMA version 1.9.0                                             *"
+echo "* GAMA version 1.9.2                                             *"
 echo "* http://gama-platform.org                                       *"
 echo "* (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners                *"
 echo "******************************************************************"

@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * SimulationSpeedContributionItem.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
- * and simulation platform (v.1.9.0).
+ * and simulation platform (v.1.9.2).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
@@ -49,6 +50,9 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	/** The max. */
 	static double max = 1000;
+	
+	/** slop factor for the logarithmic slider. */
+	static double lambda = 0.3;
 
 	/** The Constant popupColor. */
 	protected final static GamaUIColor popupColor = IGamaColors.BLUE;
@@ -77,7 +81,11 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	public static double positionFromValue(final double v) {
 		// returns a percentage between 0 and 1 (0 -> max milliseconds; 1 -> 0
 		// milliseconds).
-		return 1 - v / max;
+		if(GamaPreferences.Runtime.CORE_SLIDER_TYPE.getValue()) {
+		  return 1 - v / max;
+		}else {
+		  return 1 - lambda*Math.log(v/max*(Math.exp(1/lambda)-1)+1);
+		}
 	}
 
 	@Override
@@ -86,13 +94,17 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	}
 
 	/**
-	 * v between 0 and 1. Retuns a value in milliseconds
+	 * p between 0 and 1. Returns a value in milliseconds
 	 *
-	 * @param v
+	 * @param p
 	 * @return
 	 */
-	public static double valueFromPosition(final double v) {
-		return max - v * max;
+	public static double valueFromPosition(final double p) {
+		if(GamaPreferences.Runtime.CORE_SLIDER_TYPE.getValue()) {
+			return max - p * max;
+		}else {
+			return (Math.exp((1-p)/lambda) -1)/(Math.exp(1/lambda)-1)*max;
+		}
 	}
 
 	/**
@@ -169,9 +181,10 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		double maximum = 1000d;
 		if (a != null) {
 			value = a.getMinimumDuration() * 1000;
-			maximum = a.getInitialMinimumDuration() * 1000;
+			maximum = a.getMaximumDuration() * 1000;
 		}
-		if (maximum > max) { max = maximum; }
+		max = maximum;
+		// if (maximum > max) { max = maximum; }
 		return positionFromValue(value);
 	}
 
@@ -184,6 +197,16 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		for (final SimpleSlider slider : sliders) {
 			if (slider == null || slider.isDisposed()) { continue; }
 			slider.updateSlider(i, notify);
+		}
+	}
+
+	@Override
+	public void setMaximum(Double i) {
+		if (i <= 0) { i = 1d; }
+		max = i;
+		for (final SimpleSlider slider : sliders) {
+			if (slider == null || slider.isDisposed()) { continue; }
+			slider.updateSlider(i, false);
 		}
 	}
 

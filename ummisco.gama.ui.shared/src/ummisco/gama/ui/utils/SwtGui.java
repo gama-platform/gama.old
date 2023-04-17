@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * SwtGui.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -23,6 +23,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.AbstractSourceProvider;
+import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -126,8 +128,8 @@ public class SwtGui implements IGui {
 	public boolean confirmClose(final IExperimentPlan exp) {
 		if (exp == null || !GamaPreferences.Runtime.CORE_ASK_CLOSING.getValue()) return true;
 		PerspectiveHelper.switchToSimulationPerspective();
-		return Messages.question("Close simulation confirmation", "Do you want to close experiment '" + exp.getName()
-				+ "' of model '" + exp.getModel().getName() + "' ?");
+		return Messages.modalQuestion("Close simulation confirmation", "Do you want to close experiment '"
+				+ exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
 	}
 
 	@Override
@@ -536,10 +538,14 @@ public class SwtGui implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */
 	@Override
-	public void updateSpeedDisplay(final IScope scope, final Double d, final boolean notify) {
+	public void updateSpeedDisplay(final IScope scope, final Double minimumCycleDuration,
+			final Double maximumCycleDuration, final boolean notify) {
 		final ISpeedDisplayer speedStatus = WorkbenchHelper.getService(ISpeedDisplayer.class);
 		if (speedStatus != null) {
-			WorkbenchHelper.asyncRun(() -> speedStatus.setInit(d, notify));
+			WorkbenchHelper.asyncRun(() -> {
+				speedStatus.setMaximum(maximumCycleDuration);
+				speedStatus.setInit(minimumCycleDuration, notify);
+			});
 
 		}
 	}
@@ -594,6 +600,29 @@ public class SwtGui implements IGui {
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
 		if (stateProvider != null) { WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState)); }
+	}
+
+	/**
+	 * Listen to experiment state.
+	 */
+	public static void listenToExperimentState(final ISourceProviderListener listener) {
+		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
+		final AbstractSourceProvider stateProvider =
+				(AbstractSourceProvider) service.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
+		stateProvider.addSourceProviderListener(listener);
+	}
+
+	/**
+	 * Stop listening to experiment state.
+	 *
+	 * @param listener
+	 *            the listener
+	 */
+	public static void stopListeningToExperimentState(final ISourceProviderListener listener) {
+		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
+		final AbstractSourceProvider stateProvider =
+				(AbstractSourceProvider) service.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
+		stateProvider.removeSourceProviderListener(listener);
 	}
 
 	@Override

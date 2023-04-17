@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * OpenGL.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -66,6 +66,7 @@ import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.geometry.GeometryDrawer;
 import ummisco.gama.opengl.scene.mesh.MeshDrawer;
+import ummisco.gama.opengl.scene.mesh.MeshObject;
 import ummisco.gama.opengl.scene.resources.ResourceDrawer;
 import ummisco.gama.opengl.scene.text.TextDrawer;
 import ummisco.gama.ui.utils.DPIHelper;
@@ -97,6 +98,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 
 	/** The drawers. */
 	final Map<DrawerType, ObjectDrawer<?>> drawers = new HashMap<>();
+
+	/** The mesh drawers. */
+	final Map<MeshDrawer.Signature, MeshDrawer> meshDrawers = new HashMap<>();
 
 	/** The viewport. */
 	// Matrices of the display
@@ -229,12 +233,14 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, this);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, this);
 		GLU.gluTessProperty(tobj, GLU.GLU_TESS_TOLERANCE, 0.1);
-		drawers.put(DrawerType.STRING,
-				/* FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : */ new TextDrawer(this));
-		drawers.put(DrawerType.GEOMETRY, new GeometryDrawer(this));
-		drawers.put(DrawerType.MESH,
-				/* FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : */ new MeshDrawer(this));
-		drawers.put(DrawerType.RESOURCE, new ResourceDrawer(this));
+		TextDrawer td = new TextDrawer(this);
+		var gd = new GeometryDrawer(this);
+		var rd = new ResourceDrawer(this);
+		drawers.put(DrawerType.STRING, /* FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : */ td);
+		drawers.put(DrawerType.GEOMETRY, gd);
+		// drawers.put(DrawerType.MESH,
+		// /* FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : */ new MeshDrawer(this));
+		drawers.put(DrawerType.RESOURCE, rd);
 	}
 
 	/**
@@ -244,8 +250,20 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the type
 	 * @return the drawer for
 	 */
-	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final DrawerType type) {
-		return drawers.get(type);
+	public ObjectDrawer<? extends AbstractObject<?, ?>> getDrawerFor(final AbstractObject<?, ?> object) {
+		if (object instanceof MeshObject mo) {
+			int cols = (int) mo.getAttributes().getXYDimension().x;
+			int rows = (int) mo.getAttributes().getXYDimension().y;
+			boolean triangles = mo.getAttributes().isTriangulated();
+			MeshDrawer.Signature sig = new MeshDrawer.Signature(cols, rows, triangles);
+			MeshDrawer md = meshDrawers.get(sig);
+			if (md == null) {
+				md = new MeshDrawer(this);
+				meshDrawers.put(sig, md);
+			}
+			return md;
+		}
+		return drawers.get(object.type);
 	}
 
 	/**
@@ -260,6 +278,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	public void dispose() {
 		for (ObjectDrawer<?> o : drawers.values()) { o.dispose(); }
+		for (MeshDrawer md : meshDrawers.values()) { md.dispose(); }
 		geometryCache.dispose();
 		textureCache.dispose();
 		gl = null;

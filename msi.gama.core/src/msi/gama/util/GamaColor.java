@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GamaColor.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ * GamaColor.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -98,7 +98,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 			colors.put((String) array[i], color);
 			int_colors.put(color.getRGB(), color);
 		}
-		// A.G add the GAMA Color corresponding to the GAMA1.7 Logo
+		// A.G add the GAMA Color corresponding to the GAMA 1.9 Logo
 		final GamaColor orange = new NamedGamaColor("gamaorange", new int[] { 244, 165, 40, 1 });
 		colors.put("gamaorange", orange);
 		int_colors.put(orange.getRGB(), orange);

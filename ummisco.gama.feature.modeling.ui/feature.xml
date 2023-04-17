@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.modeling.ui"
       label="UI Components for designing models in  GAMA"
-      version="1.9.0.qualifier"
+      version="1.9.2.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.ui.modeling">
 
@@ -19,11 +19,11 @@
    </license>
 
    <url>
-      <update label="Gama 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core.ui" version="1.9.0.qualifier"/>
+      <import feature="ummisco.gama.feature.core.ui"/>
       <import plugin="msi.gama.lang.gaml"/>
       <import plugin="org.eclipse.xtext.ui"/>
       <import plugin="org.eclipse.xtext.ui.shared"/>

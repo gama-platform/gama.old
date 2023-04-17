@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -280,6 +280,12 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 											+ " doesn't exist yet, do you perhaps mean 'saltelli' ?",
 									IGamlIssue.MISSING_FACET);
 							break;
+						case IKeyword.UNIFORM:
+							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
+								tmpDesc.warning("Sample size not defined, will be 132 by default",
+										IGamlIssue.MISSING_FACET);
+							}
+							break;
 						case IKeyword.FACTORIAL:
 							if (!tmpDesc.hasFacet(Exploration.SAMPLE_SIZE)) {
 								tmpDesc.warning("Sample size not defined, will be 132 by default",
@@ -465,7 +471,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			keepSeed = false;
 		}
 		final IExpression ksExpr = getFacet(IKeyword.KEEP_SIMULATIONS);
-		if (ksExpr != null && ksExpr.isConst()) {
+		if (ksExpr != null && ksExpr.isConst() && IKeyword.BATCH.equals(experimentType)) {
 			keepSimulations = Cast.asBool(myScope, ksExpr.value(myScope));
 		} else {
 			keepSimulations = true;
@@ -563,7 +569,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 					final ExperimentParameter p = new ExperimentParameter(myScope, v);
 					final String parameterName = "(Experiment) " + p.getName();
 					final boolean already = parameters.containsKey(parameterName);
-					if (!already) { parameters.put(parameterName, p); }
+					if (!already) {
+						parameters.put(parameterName, p);
+						displayables.add(p);
+					}
 				}
 			}
 
@@ -857,6 +866,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final IParameter already = parameters.get(parameterName);
 		if (already != null) { p.setValue(myScope, already.getInitialValue(myScope)); }
 		parameters.put(parameterName, p);
+		displayables.add(p);
 	}
 
 	/**

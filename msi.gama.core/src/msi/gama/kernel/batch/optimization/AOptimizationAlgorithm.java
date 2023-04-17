@@ -1,23 +1,25 @@
 /*******************************************************************************************************
  *
  * AOptimizationAlgorithm.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GAMA modeling and simulation platform (v.1.9.2).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
 package msi.gama.kernel.batch.optimization;
 
+import static msi.gaml.operators.Cast.asFloat;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.BatchAgent;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -154,8 +156,50 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
+
+		params.add(new ParameterAdapter("Parameter space", BatchAgent.CALIBRATION_EXPERIMENT, "", IType.STRING) {
+
+			@Override
+			public String value() {
+				final Map<String, IParameter.Batch> explorable = currentExperiment.getSpecies().getExplorableParameters();
+				if (explorable.isEmpty()) return "1";
+				String result = "";
+				int dim = 1;
+				for (final Map.Entry<String, IParameter.Batch> entry : explorable.entrySet()) {
+					result += entry.getKey() + " (";
+					final int entryDim = getExplorationDimension(entry.getValue());
+					dim = dim * entryDim;
+					result += String.valueOf(entryDim) + ") * ";
+				}
+				result = result.substring(0, result.length() - 2);
+				result += " = " + dim;
+				return result;
+			}
+
+			int getExplorationDimension(final IParameter.Batch p) {
+				IScope scope = currentExperiment.getScope();
+
+				// AD TODO Issue a warning in the compilation if a batch experiment tries to explore non-int or
+				// non-float values
+				if (p.getAmongValue(scope) != null) return p.getAmongValue(scope).size();
+				return (int) ((asFloat(scope, p.getMaxValue(scope)) - asFloat(scope, p.getMinValue(scope)))
+						/ asFloat(scope, p.getStepValue(scope))) + 1;
+			}
+
+		});
+
+		params.add(new ParameterAdapter("Last parameter set tested", BatchAgent.CALIBRATION_EXPERIMENT, "",
+				IType.STRING) {
+
+			@Override
+			public String value() {
+				if (currentExperiment.getLatestSolution() == null) return "-";
+				return currentExperiment.getLatestSolution().toString();
+			}
+
+		});
 		
-		params.add(new ParameterAdapter("Calibration method", IExperimentPlan.BATCH_CATEGORY_NAME, IType.STRING) {
+		params.add(new ParameterAdapter("Calibration method", BatchAgent.CALIBRATION_EXPERIMENT, IType.STRING) {
 
 			@Override
 			public Object value() {
@@ -171,7 +215,7 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 		});
 		
-		params.add(new ParameterAdapter("Best parameter set found", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+		params.add(new ParameterAdapter("Best parameter set found", BatchAgent.CALIBRATION_EXPERIMENT, "", IType.STRING) {
 			
 			
 			@Override
@@ -183,7 +227,7 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 		});
 		
-		params.add(new ParameterAdapter("Best fitness", IExperimentPlan.BATCH_CATEGORY_NAME, "", IType.STRING) {
+		params.add(new ParameterAdapter("Best fitness", BatchAgent.CALIBRATION_EXPERIMENT, "", IType.STRING) {
 
 			@Override
 			public String value() {

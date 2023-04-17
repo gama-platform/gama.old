@@ -1,9 +1,8 @@
 /*******************************************************************************************************
  *
- * msi.gama.util.file.http.WebbUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
- * simulation platform (v. 1.8.1)
+ * WebbUtils.java, in msi.gama.ext, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
- * (c) 2007-2020 UMI 209 UMMISCO IRD/SU & Partners
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -37,6 +36,9 @@ import java.util.zip.InflaterInputStream;
  */
 public class WebbUtils {
 
+	/**
+	 * Instantiates a new webb utils.
+	 */
 	protected WebbUtils() {}
 
 	/**
@@ -72,6 +74,18 @@ public class WebbUtils {
 		return sbuf.toString();
 	}
 
+	/**
+	 * Append param.
+	 *
+	 * @param sbuf
+	 *            the sbuf
+	 * @param separator
+	 *            the separator
+	 * @param entryKey
+	 *            the entry key
+	 * @param value
+	 *            the value
+	 */
 	private static void appendParam(final StringBuilder sbuf, final String separator, final String entryKey,
 			final Object value) {
 		final String sValue = value == null ? "" : String.valueOf(value);
@@ -135,7 +149,7 @@ public class WebbUtils {
 	 *             when read or write operation fails
 	 */
 	public static byte[] readBytes(final InputStream is) throws IOException {
-		if (is == null) { return null; }
+		if (is == null) return null;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		copyStream(is, baos);
 		return baos.toByteArray();
@@ -155,9 +169,7 @@ public class WebbUtils {
 	public static void copyStream(final InputStream input, final OutputStream output) throws IOException {
 		final byte[] buffer = new byte[1024];
 		int count;
-		while ((count = input.read(buffer)) != -1) {
-			output.write(buffer, 0, count);
-		}
+		while ((count = input.read(buffer)) != -1) { output.write(buffer, 0, count); }
 	}
 
 	/**
@@ -175,6 +187,13 @@ public class WebbUtils {
 		return format;
 	}
 
+	/**
+	 * Url encode.
+	 *
+	 * @param value
+	 *            the value
+	 * @return the string
+	 */
 	static String urlEncode(final String value) {
 		try {
 			return URLEncoder.encode(value, "UTF-8");
@@ -183,17 +202,34 @@ public class WebbUtils {
 		}
 	}
 
+	/**
+	 * Adds the request properties.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param map
+	 *            the map
+	 */
 	static void addRequestProperties(final HttpURLConnection connection, final Map<String, Object> map) {
-		if (map == null || map.isEmpty()) { return; }
+		if (map == null || map.isEmpty()) return;
 		for (final Map.Entry<String, Object> entry : map.entrySet()) {
 			addRequestProperty(connection, entry.getKey(), entry.getValue());
 		}
 	}
 
+	/**
+	 * Adds the request property.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
 	static void addRequestProperty(final HttpURLConnection connection, final String name, final Object value) {
-		if (name == null || name.length() == 0 || value == null) {
+		if (name == null || name.length() == 0 || value == null)
 			throw new IllegalArgumentException("name and value must not be empty");
-		}
 
 		String valueAsString;
 		if (value instanceof Date) {
@@ -207,12 +243,35 @@ public class WebbUtils {
 		connection.addRequestProperty(name, valueAsString);
 	}
 
+	/**
+	 * Ensure request property.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
 	static void ensureRequestProperty(final HttpURLConnection connection, final String name, final Object value) {
-		if (!connection.getRequestProperties().containsKey(name)) {
-			addRequestProperty(connection, name, value);
-		}
+		if (!connection.getRequestProperties().containsKey(name)) { addRequestProperty(connection, name, value); }
 	}
 
+	/**
+	 * Gets the payload as bytes and set content type.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param request
+	 *            the request
+	 * @param compress
+	 *            the compress
+	 * @param jsonIndentFactor
+	 *            the json indent factor
+	 * @return the payload as bytes and set content type
+	 * @throws UnsupportedEncodingException
+	 *             the unsupported encoding exception
+	 */
 	static byte[] getPayloadAsBytesAndSetContentType(final HttpURLConnection connection, final Request request,
 			final boolean compress, final int jsonIndentFactor) throws UnsupportedEncodingException {
 
@@ -222,20 +281,18 @@ public class WebbUtils {
 		if (request.params != null) {
 			WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.APP_FORM);
 			bodyStr = WebbUtils.queryString(request.params);
-		} else if (request.payload == null) {
+		} else if (request.payload == null)
 			return null;
-		} else if (request.payload instanceof byte[]) {
+		else if (request.payload instanceof byte[]) {
 			WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.APP_BINARY);
 			requestBody = (byte[]) request.payload;
 		} else {
 			WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.TEXT_PLAIN);
 			bodyStr = request.payload.toString();
 		}
-		if (bodyStr != null) {
-			requestBody = bodyStr.getBytes(Webb.UTF8);
-		}
+		if (bodyStr != null) { requestBody = bodyStr.getBytes(Webb.UTF8); }
 
-		if (requestBody == null) { throw new IllegalStateException(); }
+		if (requestBody == null) throw new IllegalStateException();
 
 		// only compress if the new body is smaller than uncompressed body
 		if (compress && requestBody.length > Webb.MIN_COMPRESSED_ADVANTAGE) {
@@ -251,6 +308,16 @@ public class WebbUtils {
 		return requestBody;
 	}
 
+	/**
+	 * Sets the content type and length for streaming.
+	 *
+	 * @param connection
+	 *            the connection
+	 * @param request
+	 *            the request
+	 * @param compress
+	 *            the compress
+	 */
 	static void setContentTypeAndLengthForStreaming(final HttpURLConnection connection, final Request request,
 			final boolean compress) {
 
@@ -260,9 +327,8 @@ public class WebbUtils {
 			length = compress ? -1L : ((File) request.payload).length();
 		} else if (request.payload instanceof InputStream) {
 			length = -1L;
-		} else {
+		} else
 			throw new IllegalStateException();
-		}
 
 		if (length > Integer.MAX_VALUE) {
 			length = -1L; // use chunked streaming mode
@@ -271,14 +337,19 @@ public class WebbUtils {
 		WebbUtils.ensureRequestProperty(connection, Webb.HDR_CONTENT_TYPE, Webb.APP_BINARY);
 		if (length < 0) {
 			connection.setChunkedStreamingMode(-1); // use default chunk size
-			if (compress) {
-				connection.setRequestProperty(Webb.HDR_CONTENT_ENCODING, "gzip");
-			}
+			if (compress) { connection.setRequestProperty(Webb.HDR_CONTENT_ENCODING, "gzip"); }
 		} else {
 			connection.setFixedLengthStreamingMode((int) length);
 		}
 	}
 
+	/**
+	 * Gzip.
+	 *
+	 * @param input
+	 *            the input
+	 * @return the byte[]
+	 */
 	static byte[] gzip(final byte[] input) {
 		try (final ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
 				GZIPOutputStream gzipOS = new GZIPOutputStream(byteArrayOS);) {
@@ -290,21 +361,46 @@ public class WebbUtils {
 		}
 	}
 
+	/**
+	 * Wrap stream.
+	 *
+	 * @param contentEncoding
+	 *            the content encoding
+	 * @param inputStream
+	 *            the input stream
+	 * @return the input stream
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	static InputStream wrapStream(final String contentEncoding, final InputStream inputStream) throws IOException {
-		if (contentEncoding == null || "identity".equalsIgnoreCase(contentEncoding)) { return inputStream; }
-		if ("gzip".equalsIgnoreCase(contentEncoding)) { return new GZIPInputStream(inputStream); }
-		if ("deflate".equalsIgnoreCase(contentEncoding)) {
+		if (contentEncoding == null || "identity".equalsIgnoreCase(contentEncoding)) return inputStream;
+		if ("gzip".equalsIgnoreCase(contentEncoding)) return new GZIPInputStream(inputStream);
+		if ("deflate".equalsIgnoreCase(contentEncoding))
 			return new InflaterInputStream(inputStream, new Inflater(false), 512);
-		}
 		throw new WebbException("unsupported content-encoding: " + contentEncoding);
 	}
 
+	/**
+	 * Parses the response body.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param clazz
+	 *            the clazz
+	 * @param response
+	 *            the response
+	 * @param responseBodyStream
+	 *            the response body stream
+	 * @throws UnsupportedEncodingException
+	 *             the unsupported encoding exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	static <T> void parseResponseBody(final Class<T> clazz, final Response<T> response,
 			final InputStream responseBodyStream) throws UnsupportedEncodingException, IOException {
 
-		if (responseBodyStream == null || clazz == Void.class) {
-			return;
-		} else if (clazz == InputStream.class) {
+		if (responseBodyStream == null || clazz == Void.class) return;
+		if (clazz == InputStream.class) {
 			response.setBody(responseBodyStream);
 			return;
 		}
@@ -314,9 +410,7 @@ public class WebbUtils {
 		// try to force the content based on the type the client is expecting it (clazz)
 		if (clazz == String.class) {
 			response.setBody(new String(responseBody, Webb.UTF8));
-		} else if (clazz == Webb.BYTE_ARRAY_CLASS) {
-			response.setBody(responseBody);
-		}
+		} else if (clazz == Webb.BYTE_ARRAY_CLASS) { response.setBody(responseBody); }
 		// else if (clazz == JSONObject.class) {
 		// response.setBody(WebbUtils.toJsonObject(responseBody));
 		// } else if (clazz == JSONArray.class) {
@@ -325,12 +419,27 @@ public class WebbUtils {
 
 	}
 
+	/**
+	 * Parses the error response.
+	 *
+	 * @param <T>
+	 *            the generic type
+	 * @param clazz
+	 *            the clazz
+	 * @param response
+	 *            the response
+	 * @param responseBodyStream
+	 *            the response body stream
+	 * @throws UnsupportedEncodingException
+	 *             the unsupported encoding exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	static <T> void parseErrorResponse(final Class<T> clazz, final Response<T> response,
 			final InputStream responseBodyStream) throws UnsupportedEncodingException, IOException {
 
-		if (responseBodyStream == null) {
-			return;
-		} else if (clazz == InputStream.class) {
+		if (responseBodyStream == null) return;
+		if (clazz == InputStream.class) {
 			response.errorBody = responseBodyStream;
 			return;
 		}

@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * AgentsMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.0).
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -348,8 +348,8 @@ public class AgentsMenu extends ContributionItem {
 		if (!topLevel) {
 			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcon.named(IGamaIcons.MENU_FOCUS).image(),
 					"Focus on all displays");
-			actionAgentMenuItem(menu, agent, highlighter, GamaIcon.named(IGamaIcons.MENU_HIGHLIGHT).image(),
-					agent.getScope().getGui().getHighlightedAgent() == agent ? "Remove highlight" : "Highlight");
+			// actionAgentMenuItem(menu, agent, highlighter, GamaIcon.named(IGamaIcons.MENU_HIGHLIGHT).image(),
+			// agent.getScope().getGui().getHighlightedAgent() == agent ? "Remove highlight" : "Highlight");
 		}
 		if (actions != null && !topLevel) {
 			for (final MenuAction ma : actions) {

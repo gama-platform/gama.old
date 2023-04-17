@@ -8,7 +8,7 @@
 model segregation
 
 //Importation of the Common Schelling Segregation model
-import "../include/Common Schelling Segregation.gaml"
+import "../includes/Common Schelling Segregation.gaml"
 
 //Define the environment as torus
 global torus: true{

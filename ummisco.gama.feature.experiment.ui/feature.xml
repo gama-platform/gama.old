@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.experiment.ui"
       label="UI Components for running experiments in  GAMA"
-      version="1.9.0.qualifier"
+      version="1.9.2.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.ui.experiment">
 
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="Gama 1.8.x Update Site" url="https://updates.gama-platform.org"/>
+      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
    </url>
 
    <requires>
@@ -41,7 +41,7 @@
       <import plugin="org.eclipse.core.commands"/>
       <import plugin="com.google.guava"/>
       <import plugin="ummisco.gama.annotations"/>
-      <import feature="ummisco.gama.feature.core.ui" version="1.9.0.qualifier"/>
+      <import feature="ummisco.gama.feature.core.ui"/>
    </requires>
 
    <plugin

@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * CameraHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -546,22 +546,16 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
 
-		if (!buttonPressed) return;
+		if (!buttonPressed || button != 1) return;
 		final GamaPoint newPoint = new GamaPoint(x, y);
+
 		if (!data.isCameraLocked() && isCtrl) {
 			final int horizMovement = (int) (newPoint.x - lastMousePressedPosition.x);
 			final int vertMovement = (int) (newPoint.y - lastMousePressedPosition.y);
-			// if (flipped) {
-			// horizMovement = -horizMovement;
-			// vertMovement = -vertMovement;
-			// }
-
 			final double horizMovement_real = horizMovement;
 			final double vertMovement_real = vertMovement;
-
 			lastMousePressedPosition.setLocation(newPoint);
 			theta = theta - horizMovement_real * getSensivity();
-
 			if (flipped) {
 				if (vertMovement_real > 0) {
 					// down drag : phi increase
@@ -597,8 +591,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 				flipped = !flipped;
 				theta += 180;
 			}
-
-			// phi = phi - vertMovement_real * get_sensivity();
 			updateCartesianCoordinatesFromAngles();
 		} else if (shiftPressed && isViewInXYPlan()) {
 			mousePosition.x = x;
@@ -666,6 +658,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	@Override
 	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
+		DEBUG.OUT("Mouse pressed from SWT");
 		invokeOnGLThread(drawable -> {
 			final int x = autoScaleUp(e.x);
 			final int y = autoScaleUp(e.y);
@@ -677,6 +670,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	@Override
 	public final void mousePressed(final com.jogamp.newt.event.MouseEvent e) {
+		DEBUG.OUT("Mouse pressed from NEWT");
 		invokeOnGLThread(drawable -> {
 			final int x = autoScaleUp(e.getX());
 			final int y = autoScaleUp(e.getY());
@@ -1044,9 +1038,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			// be caught by the NEWT key listener. Those dedicated to modelling are left over for the moment
 			// (like CTRL+SHIFT+H)
 			// First the global keystrokes
-			case com.jogamp.newt.event.KeyEvent.VK_ESCAPE:
+			case com.jogamp.newt.event.KeyEvent.VK_ESCAPE: {
 				if (!getRenderer().getSurface().isEscRedefined()) { ViewsHelper.toggleFullScreenMode(); }
 				return;
+			}
 			case 'p':
 			case 'P':
 				if (isControlDown(e)) {
@@ -1055,8 +1050,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					} else {
 						GAMA.startPauseFrontmostExperiment();
 					}
+					return;
 				}
-				return;
+				break;
 			case 'R':
 			case 'r':
 				if (isControlDown(e)) {
@@ -1065,11 +1061,16 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					} else {
 						GAMA.reloadFrontmostExperiment();
 					}
+					return;
 				}
-				return;
+				break;
 			case 'X':
-			case 'x':
-				if (isControlDown(e) && e.isShiftDown()) { GAMA.closeAllExperiments(true, false); }
+			case 'x': {
+				if (isControlDown(e) && e.isShiftDown()) {
+					GAMA.closeAllExperiments(true, false);
+					return;
+				}
+			}
 		}
 
 		invokeOnGLThread(drawable -> {
@@ -1293,8 +1294,8 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		invokeOnGLThread(drawable -> {
 			if (!keystoneMode) {
 				if (e.getKeyChar() == 0) {
-					setCtrlPressed(!isControlDown(e));
-					setShiftPressed(!e.isShiftDown());
+					if (ctrlPressed) { setCtrlPressed(!isControlDown(e)); }
+					if (shiftPressed) { setShiftPressed(!e.isShiftDown()); }
 					return true;
 				}
 				boolean cameraInteraction = !data.isCameraLocked();

@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * TabuSearch.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.0).
+ * TabuSearch.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -235,7 +235,7 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(new ParameterAdapter("Tabu list size", IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
+		params.add(new ParameterAdapter("Tabu list size", BatchAgent.CALIBRATION_EXPERIMENT, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -244,7 +244,7 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 
 		});
 		params.add(
-				new ParameterAdapter("Maximum number of iterations", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+				new ParameterAdapter("Maximum number of iterations", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
 					@Override
 					public Object value() {

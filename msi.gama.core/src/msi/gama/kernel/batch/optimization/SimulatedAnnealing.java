@@ -1,9 +1,9 @@
 /*******************************************************************************************************
  *
  * SimulatedAnnealing.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.0).
+ * GAMA modeling and simulation platform (v.1.9.2).
  *
- * (c) 2007-2022 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
@@ -15,7 +15,6 @@ import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -222,7 +221,7 @@ public class SimulatedAnnealing extends ALocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(new ParameterAdapter("Final temperature", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Final temperature", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -230,7 +229,7 @@ public class SimulatedAnnealing extends ALocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Initial temperature", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Initial temperature", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -238,7 +237,7 @@ public class SimulatedAnnealing extends ALocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Coefficient of diminution", IExperimentPlan.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Coefficient of diminution", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -247,7 +246,7 @@ public class SimulatedAnnealing extends ALocalSearchAlgorithm {
 
 		});
 		params.add(new ParameterAdapter("Number of iterations at constant temperature",
-				IExperimentPlan.BATCH_CATEGORY_NAME, IType.INT) {
+				BatchAgent.CALIBRATION_EXPERIMENT, IType.INT) {
 
 			@Override
 			public Object value() {

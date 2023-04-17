@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * GaussianBlurMeshSmoothProvider.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.0).
+ * platform (v.1.9.1).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -30,14 +30,23 @@ public class GaussianBlurMeshSmoothProvider implements IMeshSmoothProvider {
 		for (var i = 0; i < nbBoxes; i++) { sizes[i] = i < m ? wl : wu; } // number of "boxes"
 		var boxes = sizes;
 		int r = (int) Math.round((boxes[0] - 1) / 2);
-		boxBlurHorizontal(cols, rows, result, r);
-		boxBlurVertical(cols, rows, result, r);
+		if (r <= cols / 2 && r <= rows / 2) {
+			// DEBUG.LOG("r =" + r + " w = " + cols + " h = " + rows);
+			boxBlurHorizontal(cols, rows, result, r);
+			boxBlurVertical(cols, rows, result, r);
+		}
 		r = (int) Math.round((boxes[1] - 1) / 2);
-		boxBlurHorizontal(cols, rows, result, r);
-		boxBlurVertical(cols, rows, result, r);
+		if (r <= cols / 2 && r <= rows / 2) {
+			// DEBUG.LOG("r =" + r + " w = " + cols + " h = " + rows);
+			boxBlurHorizontal(cols, rows, result, r);
+			boxBlurVertical(cols, rows, result, r);
+		}
 		r = (int) Math.round((boxes[2] - 1) / 2);
-		boxBlurHorizontal(cols, rows, result, r);
-		boxBlurVertical(cols, rows, result, r);
+		if (r <= cols / 2 && r <= rows / 2) {
+			// DEBUG.LOG("r =" + r + " w = " + cols + " h = " + rows);
+			boxBlurHorizontal(cols, rows, result, r);
+			boxBlurVertical(cols, rows, result, r);
+		}
 		return result;
 	}
 

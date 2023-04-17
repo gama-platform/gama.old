@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GAML Image Extension
 Bundle-SymbolicName: ummisco.gaml.extensions.image;singleton:=true
-Bundle-Version: 1.9.0.qualifier
+Bundle-Version: 1.9.2.qualifier
 Export-Package: ummisco.gaml.extensions.image
 Bundle-Activator: ummisco.gaml.extensions.image.Activator
 Bundle-Vendor: UMMISCO
 Require-Bundle: org.eclipse.core.runtime,
- msi.gama.core;bundle-version="1.9.0",
- msi.gama.ext;bundle-version="1.9.0"
+ msi.gama.core,
+ msi.gama.ext
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gaml.extensions.image

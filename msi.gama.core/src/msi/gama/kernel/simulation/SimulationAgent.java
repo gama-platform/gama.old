@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * SimulationAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -798,34 +798,35 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	 */
 	public void setOutputs(final IOutputManager iOutputManager) {
 		if (iOutputManager == null) return;
+		// AD : condition removed for Issue #3748
 		// hqnghi push outputManager down to Simulation level
 		// create a copy of outputs from description
-		if ( /* !scheduled && */ !getExperiment().getSpecies().isBatch()) {
-			final IDescription des = ((ISymbol) iOutputManager).getDescription();
-			if (des == null) return;
-			outputs = (SimulationOutputManager) des.compile();
-			final Map<String, IOutput> mm = GamaMapFactory.create();
-			for (final Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet()) {
-				final IOutput output = entry.getValue();
-				String keyName, newOutputName;
-				if (!scheduled) {
-					keyName = output.getName() + "#"
-							+ this.getSpecies().getDescription().getModelDescription().getAlias() + "#"
-							+ this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
-					newOutputName = keyName;
-				} else {
-					final String postfix = buildPostfix();
-					keyName = entry.getKey() + postfix;
-					newOutputName = output.getName() + postfix;
-				}
-				mm.put(keyName, output);
-				output.setName(newOutputName);
+		// if ( /* !scheduled && */ !getExperiment().getSpecies().isBatch()) {
+		final IDescription des = ((ISymbol) iOutputManager).getDescription();
+		if (des == null) return;
+		outputs = (SimulationOutputManager) des.compile();
+		final Map<String, IOutput> mm = GamaMapFactory.create();
+		for (final Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet()) {
+			final IOutput output = entry.getValue();
+			String keyName, newOutputName;
+			if (!scheduled) {
+				keyName = output.getName() + "#" + this.getSpecies().getDescription().getModelDescription().getAlias()
+						+ "#" + this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
+				newOutputName = keyName;
+			} else {
+				final String postfix = buildPostfix();
+				keyName = entry.getKey() + postfix;
+				newOutputName = output.getName() + postfix;
 			}
-			outputs.clear();
-			outputs.putAll(mm);
-		} else {
-			outputs = (SimulationOutputManager) iOutputManager;
+			mm.put(keyName, output);
+			output.setName(newOutputName);
 		}
+		outputs.clear();
+		outputs.putAll(mm);
+		// AD : reverted for Issue #3748
+		// } else {
+		// outputs = (SimulationOutputManager) iOutputManager;
+		// }
 		// end-hqnghi
 	}
 

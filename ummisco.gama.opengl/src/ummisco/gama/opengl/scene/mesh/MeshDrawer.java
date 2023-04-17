@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * MeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.1).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -41,6 +41,11 @@ import ummisco.gama.opengl.scene.ObjectDrawer;
  */
 public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
+	/**
+	 * The Signature.
+	 */
+	public static record Signature(int x, int y, boolean triangle) {}
+
 	static {
 		DEBUG.ON();
 	}
@@ -67,6 +72,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 
 	/** The widht and height of each cell in world coordinates; the minimal and maximal values found in the data **/
 	private double cx, cy;
+
+	/** The rows. */
+	private int cols, rows;
 
 	/** above: value representing the minimal value to draw **/
 	private double above;
@@ -110,6 +118,9 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		super(gl);
 	}
 
+	/**
+	 * Dispose.
+	 */
 	@Override
 	public void dispose() {
 		surface.setTo(0);
@@ -120,11 +131,17 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		indexBuffer = null;
 	}
 
+	/**
+	 * Draw.
+	 *
+	 * @param object
+	 *            the object
+	 */
 	@Override
 	protected void _draw(final MeshObject object) {
 		var attributes = object.getAttributes();
-		int cols = (int) attributes.getXYDimension().x;
-		int rows = (int) attributes.getXYDimension().y;
+		cols = (int) attributes.getXYDimension().x;
+		rows = (int) attributes.getXYDimension().y;
 		boolean grayscale = attributes.isGrayscaled();
 		Color line = attributes.getBorder();
 		useFillForLines = line == null && gl.isWireframe() && colorProvider != null;
@@ -148,8 +165,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		double[] data = attributes.getSmoothProvider().smooth(cols, rows, object.getObject().getMatrix(), noData,
 				attributes.getSmooth());
 		getMinMax(data, noData, minMax);
-		initializeBuffers(cols, rows);
-		fillBuffers(data, cols, rows, noData);
+		initializeBuffers();
+		fillBuffers(data, noData);
 		finalizeBuffers();
 		gl.pushMatrix();
 		try {
@@ -158,8 +175,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				double zScale = object.getAttributes().getScale();
 				gl.scaleBy(1, 1, zScale);
 			}
-			drawField(cols, rows);
-			if (withText) { drawLabels(data, cols, rows); }
+			drawField();
+			if (withText) { drawLabels(data); }
 		} finally {
 			gl.popMatrix();
 		}
@@ -176,12 +193,11 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 */
 	public double[] getMinMax(final double[] data, final double noData, final double[] result) {
 		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
+		double max = -Double.MAX_VALUE;
 		for (double f : data) {
 			if (f == noData || f < above) { continue; }
-			if (f > max) {
-				max = f;
-			} else if (f < min) { min = f; }
+			if (f > max) { max = f; }
+			if (f < min) { min = f; }
 		}
 		if (result == null) return new double[] { min, max };
 		result[0] = min;
@@ -192,7 +208,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Initialize buffers.
 	 */
-	private void initializeBuffers(final int cols, final int rows) {
+	private void initializeBuffers() {
 		final var length = cols * rows;
 		int previous = realIndexes == null ? 0 : realIndexes.length;
 		if (length > previous) {
@@ -223,22 +239,22 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Fill buffers.
 	 */
-	public void fillBuffers(final double[] data, final int cols, final int rows, final double noData) {
+	public void fillBuffers(final double[] data, final double noData) {
 		if (triangles) {
 			if (noData == IField.NO_NO_DATA) {
-				fillBuffersWithTrianglesSimplified(data, cols, rows);
+				fillBuffersWithTrianglesSimplified(data);
 			} else {
-				fillBuffersWithTriangles(data, cols, rows, noData);
+				fillBuffersWithTriangles(data, noData);
 			}
 		} else {
-			fillBuffersWithRectangles(data, cols, rows, noData);
+			fillBuffersWithRectangles(data, noData);
 		}
 	}
 
 	/**
 	 * Fill buffers with rectangles.
 	 */
-	private void fillBuffersWithRectangles(final double[] data, final int cols, final int rows, final double noData) {
+	private void fillBuffersWithRectangles(final double[] data, final double noData) {
 		int index = 0;
 		for (var i = 0; i < cols - 1; ++i) {
 			double x1 = i * cx;
@@ -249,10 +265,10 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				double z = data[j * cols + i];
 				if (z == noData) { continue; }
 				vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
-				setColor(cols, rows, z, i, j);
-				setColor(cols, rows, z, i + 1, j);
-				setColor(cols, rows, z, i + 1, j + 1);
-				setColor(cols, rows, z, i, j + 1);
+				setColor(z, i, j);
+				setColor(z, i + 1, j);
+				setColor(z, i + 1, j + 1);
+				setColor(z, i, j + 1);
 				normalBuffer.put(quadNormals);
 				indexBuffer.put(index).put(index + 1).put(index + 3);
 				indexBuffer.put(index + 1).put(index + 2).put(index + 3);
@@ -262,49 +278,49 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	/**
-	 * Fill buffers with triangles.
+	 * Fill buffers with triangles 2. Recopied from the version of the 10th of March, 2023 because of issue #3705.
+	 *
+	 * @param data
+	 *            the data
+	 * @param noData
+	 *            the no data
 	 */
-	private void fillBuffersWithTriangles(final double[] data, final int cols, final int rows, final double noData) {
+	private void fillBuffersWithTriangles(final double[] data, final double noData) {
 		var realIndex = 0;
 		for (var j = 0; j < rows; j++) {
 			var y = j * cy;
 			for (var i = 0; i < cols; i++) {
 				var x = i * cx;
 				var index = j * cols + i;
-				var z = get(cols, rows, data, i, j);
+				var z = data[index];
 				realIndexes[index] = z == noData ? -1 : realIndex++;
 				if (z == noData) { continue; }
 				vertexBuffer.put(x).put(-y).put(z);
-				setColor(cols, rows, z, i, j);
-				setNormal(data, cols, rows, i, j);
+				setColor(z, i, j);
+				setNormal(data, i, j);
+				if (j > 0 && i > 0) {
+					var current = realIndexes[index];
+					var minus1 = realIndexes[index - 1];
+					var minusCols = realIndexes[index - cols];
+					var minusColsAnd1 = realIndexes[index - cols - 1];
+					if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
+					indexBuffer.put(current).put(minus1).put(minusCols);
+					indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
+				}
 			}
 		}
-		for (var j = 1; j < rows; j++) {
-			for (var i = 1; i < cols; i++) {
-				var index = j * cols + i;
-				var current = realIndexes[index];
-				var minus1 = realIndexes[index - 1];
-				var minusCols = realIndexes[index - cols];
-				var minusColsAnd1 = realIndexes[index - cols - 1];
-				if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
-				indexBuffer.put(current).put(minus1).put(minusCols);
-				indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
-
-			}
-		}
-
 	}
 
 	/**
 	 * Fill buffers with triangles.
 	 */
-	private void fillBuffersWithTrianglesSimplified(final double[] data, final int cols, final int rows) {
+	private void fillBuffersWithTrianglesSimplified(final double[] data) {
 		for (var j = 0; j < rows; j++) {
 			for (var i = 0; i < cols; i++) {
-				var z = get(cols, rows, data, i, j);
+				var z = get(data, i, j);
 				vertexBuffer.put(i * cx).put(-j * cy).put(z);
-				setColor(cols, rows, z, i, j);
-				setNormal(data, cols, rows, i, j);
+				setColor(z, i, j);
+				setNormal(data, i, j);
 			}
 		}
 		// Different loop for building the indexes
@@ -334,14 +350,13 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 * @param y
 	 *            the y
 	 */
-	private void setNormal(final double[] data, final int cols, final int rows, final int i, final int j) {
+	private void setNormal(final double[] data, final int i, final int j) {
 		final double x = i * cx;
 		final double y = j * cy;
-		surface.setTo(x - cx, y - cy, get(cols, rows, data, i - 1, j - 1), x, y - cy, get(cols, rows, data, i, j - 1),
-				x + cx, y - cy, get(cols, rows, data, i + 1, j - 1), x + cx, y, get(cols, rows, data, i + 1, j), x + cx,
-				y + cy, get(cols, rows, data, i + 1, j + 1), x, y + cy, get(cols, rows, data, i, j + 1), x - cx, y + cy,
-				get(cols, rows, data, i - 1, j + 1), x - cx, y, get(cols, rows, data, i - 1, j), x - cx, y - cy,
-				get(cols, rows, data, i - 1, j - 1)).getNormal(true, 1, normal);
+		surface.setTo(x - cx, y - cy, get(data, i - 1, j - 1), x, y - cy, get(data, i, j - 1), x + cx, y - cy,
+				get(data, i + 1, j - 1), x + cx, y, get(data, i + 1, j), x + cx, y + cy, get(data, i + 1, j + 1), x,
+				y + cy, get(data, i, j + 1), x - cx, y + cy, get(data, i - 1, j + 1), x - cx, y, get(data, i - 1, j),
+				x - cx, y - cy, get(data, i - 1, j - 1)).getNormal(true, 1, normal);
 		normalBuffer.put(normal.x).put(normal.y).put(normal.z);
 	}
 
@@ -355,7 +370,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 * @param y
 	 *            the y
 	 */
-	private void setColor(final int cols, final int rows, final double z, final int x0, final int y0) {
+	private void setColor(final double z, final int x0, final int y0) {
 		var x = x0 < 0 ? 0 : x0 > cols - 1 ? cols - 1 : x0;
 		var y = y0 < 0 ? 0 : y0 > rows - 1 ? rows - 1 : y0;
 		// Outputs either a texture coordinate or the color of the vertex or both
@@ -434,7 +449,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	/**
 	 * Draw field.
 	 */
-	public void drawField(final int cols, final int rows) {
+	public void drawField() {
 		// AD - See issue #3125
 		if (gl.isRenderingKeystone()) {
 			drawFieldFallback(cols, rows);
@@ -491,7 +506,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 * @param gl
 	 *            the gl
 	 */
-	public void drawLabels(final double[] data, final int cols, final int rows) {
+	public void drawLabels(final double[] data) {
 		// Draw gridvalue as text inside each cell
 		gl.setCurrentColor(Color.black);
 		final var strings = new String[data.length];
@@ -529,7 +544,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 *            the y 0
 	 * @return the double
 	 */
-	double get(final int cols, final int rows, final double[] data, final int x0, final int y0) {
+	double get(final double[] data, final int x0, final int y0) {
 		var x = x0 < 0 ? 0 : x0 > cols - 1 ? cols - 1 : x0;
 		var y = y0 < 0 ? 0 : y0 > rows - 1 ? rows - 1 : y0;
 		return data[y * cols + x];

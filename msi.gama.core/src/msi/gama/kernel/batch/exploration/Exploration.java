@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * Exploration.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -27,7 +27,9 @@ import msi.gama.kernel.batch.exploration.sampling.MorrisSampling;
 import msi.gama.kernel.batch.exploration.sampling.OrthogonalSampling;
 import msi.gama.kernel.batch.exploration.sampling.RandomSampling;
 import msi.gama.kernel.batch.exploration.sampling.SaltelliSampling;
+import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -54,6 +56,7 @@ import msi.gaml.types.GamaDateType;
 import msi.gaml.types.GamaFloatType;
 import msi.gaml.types.GamaPointType;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * The Class ExhaustiveSearch.
@@ -76,7 +79,7 @@ import msi.gaml.types.IType;
 						name = Exploration.METHODS,
 						type = IType.STRING,
 						optional = true,
-						doc = @doc ("The name of the method (among saltelli/morris/latinhypercube/orthogonal/uniform/factorial)")),
+						doc = @doc ("The name of the sampling method (among saltelli/morris/latinhypercube/orthogonal/uniform/factorial)")),
 				@facet (
 						name = IKeyword.FROM,
 						type = IType.STRING,
@@ -240,6 +243,7 @@ public class Exploration extends AExplorationAlgorithm {
 			default -> buildParameterSets(scope, new ArrayList<>(), 0);
 		};
 		if (sets.isEmpty()) { sets.add(new ParametersSet()); }
+		else if(sample_size == 132) {sample_size = sets.size();}
 
 		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
 			currentExperiment.launchSimulationsWithSolution(sets);
@@ -270,6 +274,25 @@ public class Exploration extends AExplorationAlgorithm {
 		if (index == variables.size() - 1) return sets2;
 		return buildParameterSets(scope, sets2, index + 1);
 	}
+	
+	@Override
+	public void addParametersTo(List<Batch> exp, BatchAgent agent) {
+		super.addParametersTo(exp, agent);
+
+		exp.add(new ParameterAdapter("Sampled points", BatchAgent.EXPLORATION_EXPERIMENT, IType.STRING) {
+				@Override public Object value() { return sample_size; }
+		});
+
+		exp.add(new ParameterAdapter("Sampling method", BatchAgent.EXPLORATION_EXPERIMENT, IType.STRING) {
+			@Override public Object value() {
+				if (hasFacet(IKeyword.FROM)) { return FROM_FILE;}
+				if (hasFacet(IKeyword.WITH)) { return FROM_LIST;}
+				return hasFacet(Exploration.METHODS) ? 
+						Cast.asString(agent.getScope(), getFacet(METHODS).value(agent.getScope())) : "exhaustive";
+			}
+		});
+		
+	}
 
 	/**
 	 * Build a parameter set (a sample of the parameter space) based on explicit point given either with a gaml map or
@@ -284,6 +307,9 @@ public class Exploration extends AExplorationAlgorithm {
 	private List<ParametersSet> buildParameterFromMap(final IScope scope, final List<ParametersSet> sets,
 			final int index) {
 		IExpression psexp = getFacet(IKeyword.WITH);
+		if (psexp.getDenotedType() != Types.LIST) { 
+			GamaRuntimeException.error("You cannot use "+IKeyword.WITH+" facet without input a list of maps as parameters inputs", scope); 
+		}
 		List<Map<String, Object>> parameterSets = Cast.asList(scope, psexp.value(scope));
 
 		for (Map<String, Object> parameterSet : parameterSets) {
