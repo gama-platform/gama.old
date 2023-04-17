@@ -8,8 +8,11 @@
 @no_warning
 model ants
 
-global {
+global torus: true {
 //Utilities
+
+
+
 	bool use_icons <- true;
 	bool display_state <- false;
 	//Evaporation value per cycle
@@ -154,7 +157,7 @@ species ant skills: [moving] control: fsm {
 		}
 
 		if (destination != nil) {
-			draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false end_arrow: 1.2;
+	draw line([location + {0, 0, 0.5}, {location.x + 5 * cos(heading), location.y + 5 * sin(heading)} + {0, 0, 0.5}]) + 0.1 color: #white border: false ;
 		}
 
 		if (display_state) {
@@ -203,19 +206,22 @@ experiment "With Inspector" type: gui {
 }
 
 experiment "Classic" type: gui {
+	action do_nothing{ 
+	}
+	
 	parameter 'Number of ants:' var: ants_number category: 'Model';
-	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model';
+	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model'  on_change: do_nothing;
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model';
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display';
 	parameter 'Display state of agents:' var: display_state category: 'Display';
 	
-	
+
 	
 	output {
 		display Ants antialias: false type: 3d {
 			light #ambient intensity: 127;
 			light #default intensity: 127;
-			image terrain refresh: false;
+		image terrain refresh: false;
 			agents "Grid" transparency: 0.4 value: ant_grid where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant aspect: info;
 		}

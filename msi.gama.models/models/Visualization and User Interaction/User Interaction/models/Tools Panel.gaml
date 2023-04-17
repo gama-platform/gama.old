@@ -85,13 +85,13 @@ experiment ToolsPanel type: gui {
 		display map {
 			grid cell border: #white;
 			species cell;
-			event #mouse_down action:cell_management;
+			event #mouse_down {ask simulation {do cell_management;}}
 			
 		}
 		//display the action buttons
-		display action_buton background:#black name:"Tools panel"  	{
+		display action_button background:#black name:"Tools panel"  	{
 			species button aspect:normal ;
-			event #mouse_down action:activate_act;    
+			event #mouse_down {ask simulation {do activate_act;}}  
 		}
 	}
 }

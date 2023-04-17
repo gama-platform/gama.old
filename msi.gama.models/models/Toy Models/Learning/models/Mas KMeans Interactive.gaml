@@ -124,7 +124,7 @@ experiment SelectPoints2Cluster2D type: gui autorun: true{
 		layout horizontal([0.0::8000,1::2000]) tabs:true;
 		
 		display map  {
-			event #mouse_down action:register_click;
+			event #mouse_down {ask simulation {do register_click;}}
 			species datapoints aspect: kmeans_aspect2D transparency:0.5;
 			species centroids aspect: kmeans_aspect2D;
 			graphics "Full target"
@@ -139,7 +139,7 @@ experiment SelectPoints2Cluster2D type: gui autorun: true{
 		//display the action buttons
 		display action_buton background:#white name:"Tools panel"  	{
 			species button aspect:normal ;
-			event #mouse_down action:activate_act;    
+			event #mouse_down {ask simulation {do activate_act;}}   
 		}
 
 	}

@@ -229,11 +229,11 @@ experiment snake_game type: gui autorun: true{
 			species snake;
 			species food;
 			species HUD;
-			event "e" action: move_up;
-			event "d" action: move_down;
-			event "f" action: move_right;
-			event "s" action: move_left;
-			event " " action:start_count_down;
+			event "e" {ask simulation {do move_up;}} 
+			event "d" {ask simulation {do move_down;}} 
+			event "f" {ask simulation {do move_right;}} 
+			event "s" {ask simulation {do move_left;}} 
+			event " " {ask simulation {do start_count_down;}} 
 			
 		}
 	}

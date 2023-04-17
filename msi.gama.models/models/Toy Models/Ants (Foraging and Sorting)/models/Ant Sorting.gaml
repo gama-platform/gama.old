@@ -56,7 +56,7 @@ species ant skills: [ moving ] control: fsm {
 }
 //Grid that will use the density to determine the color
 grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbors: 8 use_regular_agents: false frequency: 0{
-	rgb color <- (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) : #black ;
+	rgb color <- #white ;
 }
 
 
@@ -71,10 +71,10 @@ experiment "Color sort" type: gui{
 	
 	output {
 		display OpenGL type: 3d axes:false {
-			grid ant_grid ;
-			species ant transparency: 0.2 {
-				draw circle(5) wireframe: true color: color;
-			}
+			grid ant_grid border: #black;
+//		species ant transparency: 0.2 {
+//			draw circle(5) wireframe: true color: color;
+//		}
 		}
 	}
 }

@@ -44,7 +44,7 @@ global
 
 experiment Display
 {
-	user_command "Change destination" category: "Bing service" action: load_map;
+	user_command "Change destination" category: "Bing service" {ask simulation {do load_map;}}
 
 	 
 	output
