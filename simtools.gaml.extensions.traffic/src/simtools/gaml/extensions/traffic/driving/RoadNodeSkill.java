@@ -68,12 +68,10 @@ public class RoadNodeSkill extends Skill {
 	 * The Class NewRoadNodeSkill.
 	 */
 	@skill (
-			name = "intersection",
+			name = "intersection_skill",
 			concept = { IConcept.TRANSPORT, IConcept.SKILL },
 			doc = @doc ("A skill for agents representing intersections on roads"))
-	public static class NewRoadNodeSkill extends RoadNodeSkill {
-
-	}
+	public static class NewRoadNodeSkill extends RoadNodeSkill {}
 
 	/** The Constant SKILL_ROAD_NODE. */
 	public static final String SKILL_ROAD_NODE = "skill_road_node";

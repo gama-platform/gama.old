@@ -360,9 +360,7 @@ public class DrivingSkill extends MovingSkill {
 			name = "driving",
 			concept = { IConcept.TRANSPORT, IConcept.SKILL },
 			doc = @doc ("A skill that provides driving primitives and operators"))
-	public static class NewDrivingSkill extends DrivingSkill {
-
-	}
+	public static class NewDrivingSkill extends DrivingSkill {}
 
 	static {
 		DEBUG.OFF();

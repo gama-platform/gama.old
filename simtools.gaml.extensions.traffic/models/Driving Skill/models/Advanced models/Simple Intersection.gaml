@@ -61,7 +61,7 @@ global {
 
 
 //road species
-species road skills: [road]{
+species road skills: [road_skill]{
 	string type;
 	string oneway;
 	
@@ -72,7 +72,7 @@ species road skills: [road]{
 } 
 
 //intersection species
-species intersection skills: [intersection] {
+species intersection skills: [intersection_skill] {
 	bool is_traffic_signal;
 	float time_to_change <- 60#s ;
 	float counter <- rnd(time_to_change);

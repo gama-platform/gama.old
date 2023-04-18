@@ -35,7 +35,7 @@ global {
 
 }
 
-species road skills: [road] {
+species road skills: [road_skill] {
 	rgb color <- #white;
 	
 	aspect base {
@@ -43,7 +43,7 @@ species road skills: [road] {
 	}
 }
 
-species intersection skills: [intersection] ;
+species intersection skills: [intersection_skill] ;
 
 species vehicle skills: [driving] {
 	rgb color <- rnd_color(255);
