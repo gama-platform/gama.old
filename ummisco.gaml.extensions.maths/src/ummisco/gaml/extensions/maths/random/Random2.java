@@ -13,6 +13,7 @@ package ummisco.gaml.extensions.maths.random;
 import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.WeibullDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -91,6 +92,37 @@ public class Random2 {
 
 		return dist.sample();
 	}
+	
+	/**
+	 * Op exponential dist.
+	 *
+	 * @param scope the scope
+	 * @param rate the shape
+	 * @return a double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
+	@operator (
+			value = "exp_rnd",
+			can_be_const = false,
+			category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
+	@doc (
+			value = "returns a random value from a exponential distribution with specified values of the rate (lambda) parameters. See https://mathworld.wolfram.com/ExponentialDistribution.html for more details ). ",
+			examples = { @example (
+					value = "exp_rnd(5) ",
+					equals = "0.731",
+					test = false) },
+			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss",
+					"truncated_gauss", "weibull_trunc_rnd" })
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)
+	public static Double OpExpDist(final IScope scope, final Double rate)
+			throws GamaRuntimeException {
+		final ExponentialDistribution dist =
+				new ExponentialDistribution(new ForwardingGenerator(scope.getRandom().getGenerator()), rate);
+
+		return dist.sample();
+	}	
+	
 
 	/**
 	 * Op log normal dist.
@@ -391,6 +423,40 @@ public class Random2 {
 
 		return dist.density(x);
 	}
+	
+	
+	
+	/**
+	 * Op exponential dist density.
+	 *
+	 * @param scope the scope
+	 * @param x the x
+	 * @param rate the rate
+	 * @return the double
+	 * @throws GamaRuntimeException the gama runtime exception
+	 */
+	@operator (
+			value = "exp_density",
+			can_be_const = false,
+			category = { IOperatorCategory.RANDOM },
+			concept = { IConcept.RANDOM })
+	@doc (
+			value = "returns the probability density function (PDF) at the specified point x "
+					+ "of the exponential distribution with the given rate.",
+			examples = { @example (
+					value = "exp_density(5,3) ",
+					equals = "0.731",
+					test = false) },
+			see = { "binomial", "gamma_rnd", "gauss_rnd", "lognormal_rnd", "poisson", "rnd", "skew_gauss",
+					"lognormal_density", "gamma_density" })
+	@no_test (Reason.IMPOSSIBLE_TO_TEST)	
+	public static Double OpExpDistDensity(final IScope scope, final Double x, final Double rate)
+			throws GamaRuntimeException {
+		final ExponentialDistribution dist =
+				new ExponentialDistribution(new ForwardingGenerator(scope.getRandom().getGenerator()), rate);
+
+		return dist.density(x);
+	}	
 
 	/**
 	 * Op log normal dist.
