@@ -879,11 +879,24 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression caseActionRef(final ActionRef object) {
 		final String s = EGaml.getInstance().getKeyOf(object);
 		final SpeciesDescription sd = getContext().getSpeciesContext();
+		// Look in the species and its ancestors
 		ActionDescription ad = sd.getAction(s);
+		// If it is not found, maybe it is in the host ?
 		if (ad == null) {
-			ad = sd.getModelDescription().getAction(s);
+			boolean isExp = sd instanceof ExperimentDescription ed;
+			// If we are in an experiment, we cannot call an action defined in the model (see #
+			if (!isExp) {
+				IDescription host = sd.getEnclosingDescription();
+				if (host != null) { ad = host.getAction(s); }
+			}
+
 			if (ad == null) {
-				getContext().error("Unknown action", IGamlIssue.UNKNOWN_ACTION, object);
+				if (isExp) {
+					getContext().error("The action " + s + " must be defined in the experiment",
+							IGamlIssue.UNKNOWN_ACTION, object);
+				} else {
+					getContext().error("The action " + s + " is unknown", IGamlIssue.UNKNOWN_ACTION, object);
+				}
 				return null;
 			}
 		}

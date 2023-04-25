@@ -34,6 +34,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -140,7 +141,12 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 		@Override
 		public void validate(final StatementDescription description) {
-			final String name = description.getFacet(NAME).getExpression().literalValue();
+			IExpressionDescription nameDesc = description.getFacet(NAME);
+			final String name = nameDesc != null ? nameDesc.getExpression().literalValue() : null;
+			if (name == null) {
+				description.error("Impossible to find this action", IGamlIssue.UNKNOWN_ACTION, ACTION);
+				return;
+			}
 			if (name.length() > 1) { // If it is not a char
 				StringBuilder error = new StringBuilder();
 				boolean foundEventName = false;

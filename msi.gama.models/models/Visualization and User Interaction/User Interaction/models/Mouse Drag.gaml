@@ -59,9 +59,9 @@ experiment "Mouse Drag" type: gui {
 	output {
 		display "Mouse Drag [OPENGL]" type:opengl {
 			camera #from_above locked:true;
-			event #mouse_down action: mouse_down;
-			event #mouse_up action: mouse_up;
-			event #mouse_drag action: mouse_drag;
+			event #mouse_down {ask simulation {do mouse_down;}}
+			event #mouse_up {ask simulation {do mouse_up;}}
+			event #mouse_drag {ask simulation {do mouse_drag;}}
 			
 			graphics "world" {
 				draw world color: #white border:#black;
@@ -71,9 +71,9 @@ experiment "Mouse Drag" type: gui {
 		}
 
 		display "Mouse Drag [JAVA2D]" type:java2D {
-			event #mouse_down action: mouse_down;
-			event #mouse_up action: mouse_up;
-			event #mouse_drag action: mouse_drag;
+			event #mouse_down {ask simulation {do mouse_down;}}
+			event #mouse_up {ask simulation {do mouse_up;}}
+			event #mouse_drag {ask simulation {do mouse_drag;}}
 			
 			graphics "world" {
 				draw world color: #white border:#black;

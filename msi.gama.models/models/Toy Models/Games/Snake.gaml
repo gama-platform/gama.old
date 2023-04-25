@@ -22,7 +22,7 @@ global {
 
 		do init_game;		
 		write "***** TO PLAY *****";
-		write "Up: 'e'\nDown: 'd'\nRight: 'f'\nLeft: ''s";
+		write "Up: 'e'/arrow up\nDown: 'd'/arrow down\nRight: 'f'/right arrow\nLeft: 's'/left arrow";
 		create HUD;
 
 	}
@@ -52,28 +52,28 @@ global {
 	action move_up {
 		
 		if ( ! empty(the_snake.headings) and last(the_snake.headings) != 90
-			or empty(the_snake.headings) and the_snake.headings != 90
+			or empty(the_snake.headings) and the_snake.current_heading != 90
 		) {
 			the_snake.headings <+ -90.0;
 		}
 	}
 	action move_down {
 		if ( ! empty(the_snake.headings) and last(the_snake.headings) != -90
-			or empty(the_snake.headings) and the_snake.headings != -90
+			or empty(the_snake.headings) and the_snake.current_heading != -90
 		) {
 			the_snake.headings <+ 90.0;
 		}
 	}
 	action move_left {
 		if ( ! empty(the_snake.headings) and length(the_snake.headings) > 0 and last(the_snake.headings) != 0
-			or empty(the_snake.headings) and the_snake.headings != 0
+			or empty(the_snake.headings) and the_snake.current_heading != 0
 		) {
 			the_snake.headings <+ 180.0;
 		}
 	}
 	action move_right {
 		if ( ! empty(the_snake.headings) and last(the_snake.headings)!= 180
-			or empty(the_snake.headings) and the_snake.headings != 180
+			or empty(the_snake.headings) and the_snake.current_heading != 180
 		) {
 			the_snake.headings <+ 0.0;
 		}
@@ -229,11 +229,15 @@ experiment snake_game type: gui autorun: true{
 			species snake;
 			species food;
 			species HUD;
-			event "e" action: move_up;
-			event "d" action: move_down;
-			event "f" action: move_right;
-			event "s" action: move_left;
-			event " " action:start_count_down;
+			event "e" {ask simulation { do move_up;}}
+			event #arrow_up {ask simulation { do move_up;}}
+			event "d" {ask simulation { do move_down;}}
+			event #arrow_down {ask simulation { do move_down;}}
+			event "f" {ask simulation { do move_right;}}
+			event #arrow_right {ask simulation { do move_right;}}
+			event "s" {ask simulation { do move_left;}}
+			event #arrow_left {ask simulation { do move_left;}}
+			event " " { ask simulation { do start_count_down;}}
 			
 		}
 	}

@@ -66,7 +66,7 @@ public class CsvReader implements Closeable {
 	// private String rawRecord = "";
 
 	/** The headers holder. */
-	final HeadersHolder headersHolder = new HeadersHolder();
+	HeadersHolder headersHolder;
 
 	// these are all more or less global loop variables
 	// to keep from needing to pass them all into various
@@ -399,7 +399,7 @@ public class CsvReader implements Closeable {
 	 * @return The count of headers read in by a previous call to
 	 *         {@link msi.gama.util.file.csv.csvreader.CsvReader#readHeaders readHeaders()}.
 	 */
-	public int getHeaderCount() { return headersHolder.Length; }
+	public int getHeaderCount() { return headersHolder == null ? 0 : headersHolder.Length(); }
 
 	/**
 	 * Returns the header values as a string array.
@@ -411,33 +411,13 @@ public class CsvReader implements Closeable {
 	public String[] getHeaders() throws IOException {
 		checkClosed();
 
-		if (headersHolder.Headers == null) return null;
+		if (headersHolder == null || headersHolder.Headers() == null) return null;
 		// use clone here to prevent the outside code from
 		// setting values on the array directly, which would
 		// throw off the index lookup based on header name
-		final String[] clone = new String[headersHolder.Length];
-		System.arraycopy(headersHolder.Headers, 0, clone, 0, headersHolder.Length);
+		final String[] clone = new String[headersHolder.Length()];
+		System.arraycopy(headersHolder.Headers, 0, clone, 0, headersHolder.Length());
 		return clone;
-	}
-
-	/**
-	 * Sets the headers.
-	 *
-	 * @param headers
-	 *            the new headers
-	 */
-	public void setHeaders(final String[] headers) {
-		headersHolder.Headers = headers;
-
-		headersHolder.IndexByName.clear();
-
-		if (headers != null) {
-			headersHolder.Length = headers.length;
-			for (int i = 0; i < headersHolder.Length; i++) { headersHolder.IndexByName.put(headers[i], i); }
-		} else {
-			headersHolder.Length = 0;
-		}
-
 	}
 
 	/**
@@ -514,12 +494,14 @@ public class CsvReader implements Closeable {
 		 *            the CS vsep
 		 */
 		Stats(final CsvReader reader, final String CSVsep) {
+			// By default now (see #3786)
+			reader.setTextQualifier('"');
 			boolean firstLineHasNumber = false;
-			String[] possibleHeaders = null;
+			// String[] possibleHeaders = null;
 			try {
 				// firstLine
 				final String s = reader.skipLine();
-				possibleHeaders = processFirstLine(s, CSVsep);
+				headers = processFirstLine(s, CSVsep);
 				firstLineHasNumber = atLeastOneNumber;
 				atLeastOneNumber = false;
 				reader.setDelimiter(delimiter);
@@ -535,9 +517,12 @@ public class CsvReader implements Closeable {
 				}
 				while (reader.readRecord()) { if (reader.columnsCount > cols) { cols = reader.columnsCount; } }
 			} catch (final IOException e) {}
-			if (!type.equals(firstLineType) || !firstLineHasNumber && atLeastOneNumber) { header = true; }
+			if (!type.equals(firstLineType) || !firstLineHasNumber && atLeastOneNumber) {
+				header = true;
+				cols = headers.length;
+			}
 			// if ( header ) {
-			headers = possibleHeaders;
+			// headers = possibleHeaders;
 			// }
 			rows = (int) reader.currentRecord + 1;
 			reader.close();
@@ -1281,19 +1266,18 @@ public class CsvReader implements Closeable {
 		// copy the header data from the column array
 		// to the header string array
 
-		headersHolder.Length = columnsCount;
+		String[] headers = new String[columnsCount];
+		HashMap indexByName = new HashMap();
 
-		headersHolder.Headers = new String[columnsCount];
-
-		for (int i = 0; i < headersHolder.Length; i++) {
+		for (int i = 0; i < columnsCount; i++) {
 			final String columnValue = get(i);
 
-			headersHolder.Headers[i] = columnValue;
+			headers[i] = columnValue;
 
 			// if there are duplicate header names, we will save the last one
-			headersHolder.IndexByName.put(columnValue, i);
+			indexByName.put(columnValue, i);
 		}
-
+		headersHolder = new HeadersHolder(headers, columnsCount, indexByName);
 		if (result) { currentRecord--; }
 
 		columnsCount = 0;
@@ -1453,7 +1437,7 @@ public class CsvReader implements Closeable {
 	 */
 	public int getIndex(final String headerName) throws IOException {
 		checkClosed();
-
+		if (headersHolder == null) return -1;
 		final Object indexValue = headersHolder.IndexByName.get(headerName);
 
 		if (indexValue != null) return (Integer) indexValue;
@@ -1519,6 +1503,7 @@ public class CsvReader implements Closeable {
 	/**
 	 * Closes and releases all related resources.
 	 */
+	@Override
 	public void close() {
 		if (!closed) {
 			close(true);
@@ -1534,8 +1519,6 @@ public class CsvReader implements Closeable {
 		if (!closed) {
 			if (closing) {
 				charset = null;
-				headersHolder.Headers = null;
-				headersHolder.IndexByName = null;
 				dataBuffer.Buffer = null;
 				columnBuffer.Buffer = null;
 				// rawBuffer.Buffer = null;
@@ -1782,26 +1765,7 @@ public class CsvReader implements Closeable {
 	/**
 	 * The Class HeadersHolder.
 	 */
-	private static class HeadersHolder {
-
-		/** The Headers. */
-		public String[] Headers;
-
-		/** The Length. */
-		public int Length;
-
-		/** The Index by name. */
-		public HashMap IndexByName;
-
-		/**
-		 * Instantiates a new headers holder.
-		 */
-		public HeadersHolder() {
-			Headers = null;
-			Length = 0;
-			IndexByName = new HashMap();
-		}
-	}
+	private static record HeadersHolder(String[] Headers, int Length, HashMap IndexByName) {}
 
 	/**
 	 * The Class StaticSettings.

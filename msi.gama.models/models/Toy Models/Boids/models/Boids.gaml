@@ -278,7 +278,7 @@ experiment "Interactive" type: gui autorun: true{
 			species boids_goal;
 			species obstacle;
 			//Event to call the action move_goal in global if the mouse move within the experiment
-			event #mouse_move action: move_goal;
+			event #mouse_move {ask simulation {do move_goal;}}
 		}
 
 	}

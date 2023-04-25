@@ -233,7 +233,7 @@ grid button width:max_species+1 height:max_species+1
 
 
 
-experiment simulation type: gui autorun: true  {
+experiment Simulation type: gui autorun: true  {
 	float minimum_cycle_duration <- 0.1;
 	parameter "Language for animal names" var: language category: "language";
  	text "Click on '?'s to add animal species, then click on grey squares to change among 3 types of interactions:
@@ -246,7 +246,7 @@ grey is neutral."
 		layout value: horizontal([0::50,vertical([1::50,2::50])::50]) tabs:true;
 		display action_button name:"Interaction matrix" toolbar: false{
 			species button aspect:modern ;
-			event #mouse_down action:activate_act;    
+			event #mouse_down {ask simulation {do activate_act;}} 
 		}
 		display LV name: "Time series" refresh: every(1#cycle) type: 2d toolbar: false{
 			chart "Population size" type: series background: rgb('white') x_range: 200 x_tick_line_visible: false{

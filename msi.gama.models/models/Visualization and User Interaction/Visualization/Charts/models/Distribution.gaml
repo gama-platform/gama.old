@@ -16,7 +16,7 @@ global {
 	map<string, list> lognormal_trunc_distrib;
 	map<string, list> gamma_trunc_distrib;
 	map<string, list> gauss_trunc_distrib;	
-	
+	map<string, list> exp_distrib;
 	
 	list<float> gauss_test;
 	list<float> gamma_test;
@@ -26,6 +26,7 @@ global {
 	list<float> lognormal_trunc_test;
 	list<float> gamma_trunc_test;
 	list<float> gauss_trunc_test;
+	list<float> exp_test;
 	
 	init {
 		gauss_test <- [1, 2, 4, 1, 2, 5, 10.0];
@@ -50,7 +51,11 @@ global {
 		lognormal_trunc_distrib <- distribution_of(lognormal_trunc_test, 5);
 		
 		weibull_trunc_test <- [1, 2, 4, 1, 2, 5, 10.0];		
-		weibull_trunc_distrib <- distribution_of(weibull_trunc_test, 5);		
+		weibull_trunc_distrib <- distribution_of(weibull_trunc_test, 5);	
+		
+		exp_test <- [1, 2, 4, 1, 2, 5, 10.0];
+		exp_distrib <- distribution_of(exp_test, 5);
+			
 	}
 
 	reflex update_distrib {
@@ -77,7 +82,11 @@ global {
 		lognormal_trunc_distrib <- distribution_of(lognormal_trunc_test, 15);
 		
 		add weibull_trunc_rnd(10,10,7,12) to: weibull_trunc_test; 
-		weibull_trunc_distrib <- distribution_of(weibull_trunc_test, 15);							
+		weibull_trunc_distrib <- distribution_of(weibull_trunc_test, 15);		
+		
+		add exp_rnd(10) to: exp_test; 
+		exp_distrib <- distribution_of(exp_test, 15);
+							
 	}
 }
 
@@ -125,7 +134,14 @@ experiment "Example of Distribution" type: gui {
 			chart "Truncated Weibull Distribution weibull_trunc_rnd(10,10,7,12)" type: histogram {
 				datalist (weibull_trunc_distrib at "legend") value: (weibull_trunc_distrib at "values");
 			}
+		}	
+		display "Exponential Distribution"  type: 2d {
+			chart "Exponential Distribution exp_rnd(10)" type: histogram {
+				datalist (exp_distrib at "legend") value: (exp_distrib at "values");
+			}
 		}								
+		
+									
 	}
 }
 	

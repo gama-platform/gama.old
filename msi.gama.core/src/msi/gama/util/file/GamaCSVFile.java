@@ -129,7 +129,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		public String getDocumentation() {
 			final StringBuilder sb = new StringBuilder();
 			sb.append("CSV File ").append(header ? "with header" : "no header").append(Strings.LN);
-			sb.append("Dimensions: ").append(cols + " columns x " + rows + " rows").append(Strings.LN);
+			sb.append("Dimensions: ").append(cols + " columns x " + (header ? rows - 1 : rows) + " rows")
+					.append(Strings.LN);
 			sb.append("Delimiter: ").append(delimiter).append(Strings.LN);
 			sb.append("Contents type: ").append(type).append(Strings.LN);
 			if (header && headers != null) {
@@ -142,8 +143,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 
 		@Override
 		public String getSuffix() {
-			return "" + cols + "x" + rows + " | " + (header ? "with header" : "no header") + " | " + "delimiter: '"
-					+ delimiter + "' | " + type;
+			return "" + cols + "x" + (header ? rows - 1 : rows) + " | " + (header ? "with header" : "no header") + " | "
+					+ "delimiter: '" + delimiter + "' | " + type;
 		}
 
 		@Override
@@ -176,7 +177,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	String csvSeparator = null;
 
 	/** The text qualifier. */
-	Character textQualifier = null;
+	Character textQualifier = '"';
 
 	/** The contents type. */
 	IType contentsType;
@@ -498,6 +499,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 				// we remove one row so as to not read the headers as well
 				// Cause for issue #3036
 				userSize.y = userSize.y - 1;
+				// Make sure that we do not read more columns than the number of headers
+				userSize.x = headers.size();
 			}
 			// long t = System.currentTimeMillis();
 			setBuffer(createMatrixFrom(scope, reader));

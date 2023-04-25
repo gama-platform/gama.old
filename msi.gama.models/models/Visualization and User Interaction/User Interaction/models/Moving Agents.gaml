@@ -135,10 +135,10 @@ experiment "Click and Move" type: gui
 			}
 
 			species being;
-			event #mouse_move action: move;
-			event #mouse_up action: click;
-			event 'r' action: kill;
-			event 'c' action: duplicate;
+			event #mouse_move {ask simulation {do move;}} 
+			event #mouse_up {ask simulation {do click;}} 
+			event 'r' {ask simulation {do kill;}} 
+			event 'c'{ask simulation {do duplicate;}} 
 
 
 		}

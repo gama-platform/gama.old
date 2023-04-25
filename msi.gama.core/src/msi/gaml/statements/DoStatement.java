@@ -59,7 +59,7 @@ import msi.gaml.types.IType;
 		concept = { IConcept.ACTION },
 		with_args = true)
 @inside (
-		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT },
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER },
 		symbols = IKeyword.CHART)
 @facets (
 		value = { @facet (
