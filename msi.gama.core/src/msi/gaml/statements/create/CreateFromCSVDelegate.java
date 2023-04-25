@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CreateFromCSVDelegate.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * CreateFromCSVDelegate.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.create;
 
@@ -74,14 +74,13 @@ public class CreateFromCSVDelegate implements ICreateDelegate {
 			headers = source.getAttributes(scope);
 		} else {
 			headers = new ArrayList<>();
-			for (int j = 0; j < cols; j++) {
-				headers.add(String.valueOf(j));
-			}
+			for (int j = 0; j < cols; j++) { headers.add(String.valueOf(j)); }
 		}
 		for (int i = 0; i < rows; i++) {
 			final Map<String, Object> map = GamaMapFactory.create(hasHeader ? Types.STRING : Types.INT, Types.NO_TYPE);
 			final IList vals = mat.getRow(i);
 			for (int j = 0; j < cols; j++) {
+				// see issue #3786
 				map.put(headers.get(j), vals.get(j));
 			}
 			// CSV attributes are mixed with the attributes of agents
