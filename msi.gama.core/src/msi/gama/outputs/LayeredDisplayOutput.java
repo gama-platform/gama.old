@@ -452,8 +452,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 			// Addressing problems with charts in OpenGL
-			if (IKeyword._3D.equals(type.getExpression().literalValue()) && d.visitOwnChildren(
-					c -> (IKeyword.CHART.equals(c.getKeyword()) || IKeyword.EVENT.equals(c.getKeyword())))) {
+			if (IKeyword._3D.equals(type.getExpression().literalValue()) && !Iterables.isEmpty(d.getOwnChildren())
+					&& d.visitOwnChildren(c -> (CHART.equals(c.getKeyword()) || EVENT.equals(c.getKeyword())))) {
 				d.warning("Consider switching to a 2d display if you only display charts", CONFLICTING_FACETS, TYPE);
 			}
 
