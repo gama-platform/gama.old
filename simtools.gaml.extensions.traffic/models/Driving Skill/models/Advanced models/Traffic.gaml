@@ -13,7 +13,7 @@ global {
 	float lane_width <- 0.7;  
 }
 
-species road skills: [skill_road] {
+species road skills: [road_skill] {
 	rgb color <- #white;
 	string oneway;
 
@@ -22,7 +22,7 @@ species road skills: [skill_road] {
 	}
 }
 
-species intersection skills: [skill_road_node] {
+species intersection skills: [intersection_skill] {
 	rgb color;
 	bool is_traffic_signal;
 	float time_to_change <- 30#s;
@@ -99,7 +99,7 @@ species intersection skills: [skill_road_node] {
 	}
 }
 
-species base_vehicle skills: [advanced_driving] {
+species base_vehicle skills: [driving] {
 	rgb color <- rnd_color(255);
 	graph road_graph;
 	

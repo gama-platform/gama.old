@@ -347,9 +347,21 @@ import ummisco.gama.dev.utils.DEBUG;
 @skill (
 		name = DrivingSkill.ADVANCED_DRIVING,
 		concept = { IConcept.TRANSPORT, IConcept.SKILL },
-		doc = @doc ("A skill that provides driving primitives and operators"))
+		doc = @doc (
+				value = "A skill that provides driving primitives and operators",
+				deprecated = "please use the name `driving` instead"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DrivingSkill extends MovingSkill {
+
+	/**
+	 * The Class NewDrivingSkill.
+	 */
+	@skill (
+			name = "driving",
+			concept = { IConcept.TRANSPORT, IConcept.SKILL },
+			doc = @doc ("A skill that provides driving primitives and operators"))
+	public static class NewDrivingSkill extends DrivingSkill {}
+
 	static {
 		DEBUG.OFF();
 	}
@@ -2638,8 +2650,16 @@ public class DrivingSkill extends MovingSkill {
 		setCurrentRoad(driver, null);
 		return true;
 	}
-	
-	
+
+	/**
+	 * Prim goto drive.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the i path
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
 	@action (
 			name = "goto_drive",
 			args = { @arg (
@@ -2675,50 +2695,47 @@ public class DrivingSkill extends MovingSkill {
 			doc = @doc (
 					value = "moves the agent towards the target passed in the arguments.",
 					returns = "optional: the path followed by the agent.",
-					examples = {
-							@example ("do goto_drive target: one_of road on: road_network;") }))
+					examples = { @example ("do goto_drive target: one_of road on: road_network;") }))
 	public IPath primGotoDrive(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		final IAgent target = (IAgent)scope.getArg("target", IType.GEOMETRY);
+		final IAgent target = (IAgent) scope.getArg("target", IType.GEOMETRY);
 		IPath current_path = getCurrentPath(agent);
 		final IAgent finalTarget = getFinalTarget(agent);
-	
-		if (target == null) {
-			throw GamaRuntimeException.create(new IllegalArgumentException("target parameter in goto_drive can not be null"), scope);
-		}
-		
-		
-		if(finalTarget != null && !finalTarget.equals(target.getLocation())) { 
+
+		if (target == null) throw GamaRuntimeException
+				.create(new IllegalArgumentException("target parameter in goto_drive can not be null"), scope);
+
+		if (finalTarget != null && !finalTarget.equals(target.getLocation())) {
 			// agent changed course, we have to recompute path
-			
+
 			// check if there is a given path to follow
-			final IPath path = (IPath)scope.getArg("follow", IType.PATH);
-			
+			final IPath path = (IPath) scope.getArg("follow", IType.PATH);
+
 			if (path != null && !current_path.equals(path)) {
-				//we changed path, let's update it
+				// we changed path, let's update it
 				setCurrentPath(agent, path);
 				setFinalTarget(agent, target);
 				current_path = path;
-			}else {
+			} else {
 				// else we recompute path
 				current_path = null;
 			}
-		}else if(finalTarget == null) {
+		} else if (finalTarget == null) {
 			// clear current path
 			current_path = null;
 		}
-		
-		if (current_path != null) {	
+
+		if (current_path != null) {
 			// follow your path
 			primDrive(scope);
-		}else {
+		} else {
 			// compute your path
 			Object o = scope.getArg("on", IType.NONE);
 			scope.getExecutionContext().putLocalVar("graph", o);
 			primComputePath(scope);
-					
+
 		}
 		return getCurrentPath(agent);
 	}
-	
+
 }

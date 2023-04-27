@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MOBIL.java, in simtools.gaml.extensions.traffic, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * MOBIL.java, in simtools.gaml.extensions.traffic, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package simtools.gaml.extensions.traffic.driving.carfollowing;
 
@@ -34,7 +34,6 @@ import static simtools.gaml.extensions.traffic.driving.carfollowing.Utils.findLe
 import static simtools.gaml.extensions.traffic.driving.carfollowing.Utils.rescaleProba;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -43,7 +42,6 @@ import org.apache.commons.lang3.tuple.Triple;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import simtools.gaml.extensions.traffic.driving.RoadNodeSkill;
 import simtools.gaml.extensions.traffic.driving.RoadSkill;
 
 /**
@@ -51,20 +49,19 @@ import simtools.gaml.extensions.traffic.driving.RoadSkill;
  */
 public class MOBIL {
 	/**
-	 * Choose a new lane according to the lane change model MOBIL
-	 * (https://traffic-simulation.de/info/info_MOBIL.html).
+	 * Choose a new lane according to the lane change model MOBIL (https://traffic-simulation.de/info/info_MOBIL.html).
 	 *
 	 * @param scope
-	 * @param road             the road which the vehicle is moving on
-	 * @param segment          the index of the current road segment
-	 * @param distToSegmentEnd the distance to the endpoint of the segment
-	 * @return a pair composed of the optimal lowest lane index and
-	 *         the resulting acceleration of the vehicle
+	 * @param road
+	 *            the road which the vehicle is moving on
+	 * @param segment
+	 *            the index of the current road segment
+	 * @param distToSegmentEnd
+	 *            the distance to the endpoint of the segment
+	 * @return a pair composed of the optimal lowest lane index and the resulting acceleration of the vehicle
 	 */
-	public static ImmutablePair<Integer, Double> chooseLane(final IScope scope,
-			final IAgent vehicle,
-			final IAgent road,
-			int currentLowestLane) {
+	public static ImmutablePair<Integer, Double> chooseLane(final IScope scope, final IAgent vehicle, final IAgent road,
+			final int currentLowestLane) {
 		double VL = getVehicleLength(vehicle);
 		int numLanesOccupied = getNumLanesOccupied(vehicle);
 
@@ -78,7 +75,8 @@ public class MOBIL {
 
 		int numValidRoadLanes = numCurrentLanes + linkedLaneLimit;
 		if (numLanesOccupied > numValidRoadLanes) {
-			String msg = String.format("%s occupies %d lanes, and it is unable to enter %s where there are only %d lane(s) available",
+			String msg = String.format(
+					"%s occupies %d lanes, and it is unable to enter %s where there are only %d lane(s) available",
 					vehicle.getName(), numLanesOccupied, road.getName(), numValidRoadLanes);
 			throw GamaRuntimeException.error(msg, scope);
 		}
@@ -91,14 +89,11 @@ public class MOBIL {
 			lower = Math.max(lower, currentLowestLane - laneChangeLimit);
 			upper = Math.min(upper, currentLowestLane + laneChangeLimit);
 		}
-		List<Integer> limitedLaneRange = IntStream.rangeClosed(lower, upper).
-			boxed().toList();
+		List<Integer> limitedLaneRange = IntStream.rangeClosed(lower, upper).boxed().toList();
 
 		// Compute acceleration if the vehicle stays on the same lane
-		Triple<IAgent, Double, Boolean> leaderTriple = findLeader(
-				scope, vehicle, currentLowestLane);
-		Triple<IAgent, Double, Boolean> followerTriple = findFollower(
-				scope, vehicle, currentLowestLane);
+		Triple<IAgent, Double, Boolean> leaderTriple = findLeader(scope, vehicle, currentLowestLane);
+		Triple<IAgent, Double, Boolean> followerTriple = findFollower(scope, vehicle, currentLowestLane);
 		IAgent currentBackVehicle = followerTriple != null ? followerTriple.getLeft() : null;
 		double stayAccelM;
 		if (leaderTriple.getMiddle() < 0) { // || followerTriple == null) {
@@ -119,9 +114,8 @@ public class MOBIL {
 			// Do not allow changing lane when approaching intersections
 			// Reason: in some cases the vehicle is forced to slow down (e.g. approaching final target in path),
 			// but it can gain acceleration by switching lanes to follow another moving vehicle.
-			if ((leadingVehicle != null &&
-					leadingVehicle.getSpecies().implementsSkill(RoadNodeSkill.SKILL_ROAD_NODE)) ||
-					getTimeSinceLC(vehicle) < getLCCooldown(vehicle)) {
+			if (leadingVehicle != null && leadingVehicle.getSpecies().implementsSkill("intersection")
+					|| getTimeSinceLC(vehicle) < getLCCooldown(vehicle)) {
 				double t = getTimeSinceLC(vehicle);
 				setTimeSinceLC(vehicle, t + timeStep);
 				return ImmutablePair.of(currentLowestLane, stayAccelM);
@@ -133,25 +127,21 @@ public class MOBIL {
 
 		// Examine all lanes within range
 		for (int tmpLowestLane : limitedLaneRange) {
-			if (tmpLowestLane == currentLowestLane ||
-					(!allowedLanes.isEmpty() && !allowedLanes.contains(tmpLowestLane))) {
+			if (tmpLowestLane == currentLowestLane
+					|| !allowedLanes.isEmpty() && !allowedLanes.contains(tmpLowestLane)) {
 				continue;
 			}
 
-			if (currentLowestLane <= numCurrentLanes - numLanesOccupied &&
-					tmpLowestLane > numCurrentLanes - numLanesOccupied) {
-				if (scope.getRandom().next() > probaUseLinkedRoad) {
-					continue;
-				}
+			if ((currentLowestLane <= numCurrentLanes - numLanesOccupied
+					&& tmpLowestLane > numCurrentLanes - numLanesOccupied)
+					&& (scope.getRandom().next() > probaUseLinkedRoad)) {
+				continue;
 			}
 
-			Triple<IAgent, Double, Boolean> newLeaderTriple = 
-					findLeader(scope, vehicle, tmpLowestLane);
-			Triple<IAgent, Double, Boolean> newFollowerTriple =
-					findFollower(scope, vehicle, tmpLowestLane);
+			Triple<IAgent, Double, Boolean> newLeaderTriple = findLeader(scope, vehicle, tmpLowestLane);
+			Triple<IAgent, Double, Boolean> newFollowerTriple = findFollower(scope, vehicle, tmpLowestLane);
 
-			if (newLeaderTriple.getMiddle() < 0 || 
-					newFollowerTriple.getMiddle() < 0) {
+			if (newLeaderTriple.getMiddle() < 0 || newFollowerTriple.getMiddle() < 0) {
 				// Will crash into another vehicle if switch to this lane
 				continue;
 			}
@@ -173,9 +163,8 @@ public class MOBIL {
 			// 1. No follower was found
 			// 2. New follower if switch lanes is still the old one
 			// 3. The follower is actually following another vehicle
-			if (newFollowerTriple.getLeft() == null || 
-					newFollowerTriple.getLeft() == currentBackVehicle ||
-					getLeadingDistance(newFollowerTriple.getLeft()) < newFollowerTriple.getMiddle()) {
+			if (newFollowerTriple.getLeft() == null || newFollowerTriple.getLeft() == currentBackVehicle
+					|| getLeadingDistance(newFollowerTriple.getLeft()) < newFollowerTriple.getMiddle()) {
 				stayAccelB = 0;
 				changeAccelB = 0;
 			} else {
@@ -183,7 +172,8 @@ public class MOBIL {
 				double backDist = newFollowerTriple.getMiddle();
 				// Calculate acc(B') - acceleration of B' if M does not change to this lane
 				// NOTE: in this case, the leading vehicle is the one we have found above for M
-				stayAccelB = IDM.computeAcceleration(scope, backVehicle, road, backDist + VL + leadingDist, leadingSpeed);
+				stayAccelB =
+						IDM.computeAcceleration(scope, backVehicle, road, backDist + VL + leadingDist, leadingSpeed);
 				// Calculate acc'(B') - acceleration of B' if M changes to this lane
 				// NOTE: in this case, M is the new leading vehicle of B'
 				changeAccelB = IDM.computeAcceleration(scope, backVehicle, road, backDist, getSpeed(vehicle));
@@ -196,13 +186,11 @@ public class MOBIL {
 			double aBias = getAccBias(vehicle);
 
 			// Safety criterion
-			if (changeAccelB <= -bSave) {
-				continue;
-			}
+			if (changeAccelB <= -bSave) { continue; }
 
 			// Incentive criterion
-			boolean biasCond = getRightSideDriving(vehicle) ?
-				tmpLowestLane < currentLowestLane : tmpLowestLane > currentLowestLane;
+			boolean biasCond = getRightSideDriving(vehicle) ? tmpLowestLane < currentLowestLane
+					: tmpLowestLane > currentLowestLane;
 			int biasSign = biasCond ? 1 : -1;
 			double incentive = changeAccelM - stayAccelM + p * (changeAccelB - stayAccelB) + aBias * biasSign;
 			if (incentive > aThr && incentive > bestIncentive) {

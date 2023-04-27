@@ -94,9 +94,20 @@ import simtools.gaml.extensions.traffic.driving.carfollowing.CustomDualTreeBidiM
 @skill (
 		name = RoadSkill.SKILL_ROAD,
 		concept = { IConcept.TRANSPORT, IConcept.SKILL },
-		doc = @doc ("A skill for agents representing roads in traffic simulations"))
+		doc = @doc (
+				value = "A skill for agents representing roads in traffic simulations",
+				deprecated = "please use the name `road` instead"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class RoadSkill extends Skill {
+
+	/**
+	 * The Class NewRoadSkill.
+	 */
+	@skill (
+			name = "road_skill",
+			concept = { IConcept.TRANSPORT, IConcept.SKILL },
+			doc = @doc ("A skill for agents representing roads in traffic simulations"))
+	public static class NewRoadSkill extends RoadSkill {}
 
 	/** The Constant SKILL_ROAD. */
 	public static final String SKILL_ROAD = "skill_road";

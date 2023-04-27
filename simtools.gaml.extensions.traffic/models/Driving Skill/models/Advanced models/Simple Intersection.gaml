@@ -61,7 +61,7 @@ global {
 
 
 //road species
-species road skills: [skill_road]{
+species road skills: [road_skill]{
 	string type;
 	string oneway;
 	
@@ -72,7 +72,7 @@ species road skills: [skill_road]{
 } 
 
 //intersection species
-species intersection skills: [skill_road_node] {
+species intersection skills: [intersection_skill] {
 	bool is_traffic_signal;
 	float time_to_change <- 60#s ;
 	float counter <- rnd(time_to_change);
@@ -151,7 +151,7 @@ species intersection skills: [skill_road_node] {
 }
 
 
-species car skills: [advanced_driving] {
+species car skills: [driving] {
 	rgb color <- rnd_color(255);
 	intersection target;
 	
@@ -205,7 +205,7 @@ species car skills: [advanced_driving] {
 	aspect default {
 		if (current_road != nil) {
 			point pos <- compute_position();
-				draw rectangle(vehicle_length, lane_width * num_lanes_occupied) 
+				draw rectangle(vehicle_length*4, lane_width * num_lanes_occupied*4) 
 				at: pos color: color rotate: heading border: #black;
 			draw triangle(lane_width * num_lanes_occupied) 
 				at: pos color: #white rotate: heading + 90 ;
