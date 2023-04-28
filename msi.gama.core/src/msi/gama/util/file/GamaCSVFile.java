@@ -10,10 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import static org.apache.commons.lang3.StringUtils.splitByWholeSeparatorPreserveAllTokens;
-
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+
+import org.apache.commons.lang3.StringUtils;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -26,6 +27,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.csv.AbstractCSVManipulator.Letters;
 import msi.gama.util.file.csv.CsvReader;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
@@ -56,6 +58,50 @@ import msi.gaml.types.Types;
 public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IFieldMatrixProvider {
 
 	/**
+	 * The Class StringAnalysis.
+	 */
+	private static class StringAnalysis {
+
+		/** The is float. */
+		boolean isFloat = true;
+
+		/** The is int. */
+		boolean isInt = true;
+
+		/** The is number sequence. */
+		boolean isNumberSequence = true;
+
+		/**
+		 * Instantiates a new string analysis.
+		 *
+		 * @param s
+		 *            the s
+		 */
+		StringAnalysis(final String s) {
+
+			for (final char c : s.toCharArray()) {
+				final boolean isDigit = Character.isDigit(c);
+				if (!isDigit) {
+					if (c == '.') {
+						isInt = false;
+					} else if (Character.isLetter(c)) {
+						isInt = false;
+						isFloat = false;
+						isNumberSequence = false;
+						break;
+					} else if (c == Letters.COMMA || c == Letters.SEMICOLUMN || c == Letters.PIPE || c == Letters.COLUMN
+							|| c == Letters.SLASH || Character.isWhitespace(c) || c == Letters.QUOTE) {
+						isInt = false;
+						isFloat = false;
+					}
+				}
+			}
+			if (isInt && isFloat) { isFloat = false; }
+		}
+
+	}
+
+	/**
 	 * The Class CSVInfo.
 	 */
 	public static class CSVInfo extends GamaFileMetaData {
@@ -67,16 +113,13 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		public int rows;
 
 		/** The header. */
-		public boolean header;
+		public boolean header, atLeastOneNumber;
 
 		/** The delimiter. */
 		public Character delimiter;
-		//
-		// /** The qualifier. */
-		// public Character qualifier;
 
 		/** The type. */
-		public final IType type;
+		public IType type, firstLineType;
 
 		/** The headers. */
 		public String[] headers;
@@ -93,13 +136,119 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		 */
 		public CSVInfo(final String fileName, final long modificationStamp, final String CSVsep) {
 			super(modificationStamp);
-			final CsvReader.Stats s = CsvReader.getStats(fileName, CSVsep);
-			cols = s.cols;
-			rows = s.rows;
-			header = s.header;
-			delimiter = s.delimiter;
-			type = s.type;
-			headers = s.headers;
+			try (CsvReader reader = new CsvReader(fileName)) {
+				process(reader, CSVsep);
+			} catch (FileNotFoundException e) {}
+		}
+
+		/**
+		 * Process.
+		 *
+		 * @param reader
+		 *            the reader
+		 * @param CSVsep
+		 *            the CS vsep
+		 */
+		public void process(final CsvReader reader, final String CSVsep) {
+			// By default now (see #3786)
+			// reader.setTextQualifier(AbstractCSVManipulator.getDefaultQualifier());
+			boolean firstLineHasNumber = false;
+			try {
+				// firstLine
+				final String s = reader.skipLine();
+				headers = processFirstLine(s, CSVsep);
+				firstLineHasNumber = atLeastOneNumber;
+				atLeastOneNumber = false;
+				reader.setDelimiter(delimiter);
+				// secondLine
+
+				if (!reader.readRecord()) {
+					// We only have one line
+					type = firstLineType;
+					rows = 1;
+				} else {
+					// We process the second line
+					type = processRecord(reader.getValues());
+				}
+				while (reader.readRecord()) { if (reader.columnsCount > cols) { cols = reader.columnsCount; } }
+			} catch (final IOException e) {}
+			if (!type.equals(firstLineType) || !firstLineHasNumber && atLeastOneNumber) {
+				header = true;
+				cols = headers.length;
+			}
+			rows = (int) reader.currentRecord + 1;
+			reader.close();
+		}
+
+		/**
+		 * Process first line.
+		 *
+		 * @param line
+		 *            the line
+		 * @param CSVsep
+		 *            the CS vsep
+		 * @return the string[]
+		 */
+		private String[] processFirstLine(final String line, final String CSVsep) {
+			if (CSVsep != null && !CSVsep.isEmpty()) {
+				delimiter = CSVsep.charAt(0);
+			} else {
+				String[] s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ",");
+				if (s.length != 1
+						|| s[0].indexOf(' ') == -1 && s[0].indexOf(';') == -1 && s[0].indexOf(Letters.TAB) == -1) {
+					// We are likely dealing with a unicolum file
+					delimiter = Letters.COMMA;
+				} else {
+					// there should be another delimiter
+					s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, ";");
+					if (s.length == 1) {
+						// Try with tab
+						s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "" + Letters.TAB);
+						if (s.length == 1) {
+							s = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "" + Letters.SPACE);
+							if (s.length == 1) {
+								delimiter = Letters.PIPE;
+							} else {
+								delimiter = Letters.SPACE;
+							}
+						} else {
+							delimiter = Letters.TAB;
+						}
+					} else {
+						delimiter = ';';
+					}
+				}
+			}
+			final String[] s2 = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, delimiter.toString());
+			firstLineType = processRecord(s2);
+			return s2;
+		}
+
+		/**
+		 * Process record.
+		 *
+		 * @param values
+		 *            the values
+		 * @return the i type
+		 */
+		private IType processRecord(final String[] values) {
+			// Fix for #3294
+			if (values.length > cols) { cols = values.length; }
+			IType temp = null;
+			for (final String s : values) {
+				final StringAnalysis sa = new StringAnalysis(s);
+				atLeastOneNumber = sa.isFloat || sa.isInt || sa.isNumberSequence;
+				if (sa.isInt) {
+					if (temp == null) { temp = Types.INT; }
+				} else if (sa.isFloat) {
+					if (temp == null || temp == Types.INT) { temp = Types.FLOAT; }
+				} else {
+					temp = Types.NO_TYPE;
+				}
+			}
+			// in case nothing has been read (i.e. empty file)
+			if (temp == null) { temp = Types.NO_TYPE; }
+			return temp;
 		}
 
 		/**
@@ -117,7 +266,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 			delimiter = segments[4].charAt(0);
 			type = Types.get(segments[5]);
 			if (header) {
-				headers = splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
+				headers = StringUtils.splitByWholeSeparatorPreserveAllTokens(segments[6], SUB_DELIMITER);
 			} else {
 
 				headers = new String[cols];
@@ -161,14 +310,6 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 		public String toPropertyString() {
 			return super.toPropertyString() + DELIMITER + cols + DELIMITER + rows + DELIMITER + header + DELIMITER
 					+ delimiter + DELIMITER + type + (header ? DELIMITER + String.join(SUB_DELIMITER, headers) : "");
-		}
-
-		/**
-		 * @param header2
-		 */
-		public void setHeaders(final String[] newHeaders) {
-			header = newHeaders != null;
-			headers = newHeaders;
 		}
 
 	}
@@ -627,7 +768,8 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	 *
 	 * @return the boolean
 	 */
-	public Boolean hasHeader() {
+	public Boolean hasHeader(final IScope scope) {
+		fillBuffer(scope);
 		return hasHeader == null ? false : hasHeader;
 	}
 

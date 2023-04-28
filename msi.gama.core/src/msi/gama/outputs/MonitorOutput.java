@@ -148,7 +148,8 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 	/**
 	 * Sets the color.
 	 *
-	 * @param gamaColor the new color
+	 * @param gamaColor
+	 *            the new color
 	 */
 	public void setColor(final GamaColor gamaColor) {
 		color = gamaColor;
@@ -272,7 +273,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 				monitorFolder + "/" + "monitor_" + getName() + "_cycle_" + getScope().getClock().getCycle() + ".csv";
 		file = FileUtils.constructAbsoluteFilePath(getScope(), file, false);
 		try (final BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-				final CsvWriter w = new CsvWriter(bw, CsvWriter.Letters.COMMA)) {
+				final CsvWriter w = new CsvWriter(bw)) {
 			for (final Object o : history) {
 				String[] strings = null;
 				if (o instanceof Number) {

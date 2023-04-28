@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CSVRow.java, in ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * CSVRow.java, in ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.viewers.csv.model;
 
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a row made of String elements
@@ -28,9 +29,6 @@ public class CSVRow {
 
 	/** Row changes listener */
 	private final IRowChangesListener listener;
-
-	/** track of commented line */
-	private boolean isCommentLine;
 
 	/** The is header. */
 	private boolean isHeader;
@@ -66,25 +64,19 @@ public class CSVRow {
 	 */
 	public static CSVRow createEmptyLine(final int nbOfColumns, final IRowChangesListener listener) {
 		final List<String> line = new LinkedList<>();
-		for (int i = 0; i < nbOfColumns; i++) {
-			line.add("");
-		}
+		for (int i = 0; i < nbOfColumns; i++) { line.add(""); }
 		return new CSVRow(line, listener);
 	}
 
 	/**
 	 * @return
 	 */
-	public ArrayList<String> getEntries() {
-		return entries;
-	}
+	public ArrayList<String> getEntries() { return entries; }
 
 	/**
 	 * @return
 	 */
-	public String[] getEntriesAsArray() {
-		return entries.toArray(new String[entries.size()]);
-	}
+	public String[] getEntriesAsArray() { return entries.toArray(new String[entries.size()]); }
 
 	/**
 	 * @param elementIndex
@@ -105,7 +97,7 @@ public class CSVRow {
 	 * @return the element at a given index
 	 */
 	public String getElementAt(final int index) {
-		if (index >= entries.size()) { return ""; }
+		if (index >= entries.size()) return "";
 		return entries.get(index);
 	}
 
@@ -114,9 +106,7 @@ public class CSVRow {
 	 *
 	 * @return number of elements in this row
 	 */
-	public int getNumberOfElements() {
-		return entries.size();
-	}
+	public int getNumberOfElements() { return entries.size(); }
 
 	/**
 	 * @param element
@@ -135,49 +125,26 @@ public class CSVRow {
 	}
 
 	/**
-	 * Sets the comment line.
-	 *
-	 * @param comment the new comment line
-	 */
-	public void setCommentLine(final boolean comment) {
-		isCommentLine = comment;
-	}
-
-	/**
-	 * Checks if is comment line.
-	 *
-	 * @return true, if is comment line
-	 */
-	public boolean isCommentLine() {
-		return isCommentLine;
-	}
-
-	/**
 	 * Sets the header.
 	 *
-	 * @param header the new header
+	 * @param header
+	 *            the new header
 	 */
-	public void setHeader(final boolean header) {
-		isHeader = header;
-	}
+	public void setHeader(final boolean header) { isHeader = header; }
 
 	/**
 	 * Checks if is header.
 	 *
 	 * @return true, if is header
 	 */
-	public boolean isHeader() {
-		return isHeader;
-	}
+	public boolean isHeader() { return isHeader; }
 
 	/**
 	 * Gets the comment.
 	 *
 	 * @return the comment
 	 */
-	public String getComment() {
-		return entries.get(0).substring(1);
-	}
+	public String getComment() { return entries.get(0).substring(1); }
 
 	/**
 	 * Give the String representation of a CSVRow object.
@@ -199,10 +166,7 @@ public class CSVRow {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (entries == null ? 0 : entries.hashCode());
-		return result;
+		return Objects.hash(entries);
 	}
 
 	/**
@@ -224,7 +188,7 @@ public class CSVRow {
 		 * (!(getElementAt(i).equals(thisRow.getElementAt(i)))) { return false; } } return true;
 		 */
 
-		if (this == anObject) { return true; }
+		if (this == anObject) return true;
 		return false;
 	}
 

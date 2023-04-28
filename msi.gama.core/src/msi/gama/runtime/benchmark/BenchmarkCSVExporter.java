@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * BenchmarkCSVExporter.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * BenchmarkCSVExporter.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.benchmark;
 
@@ -32,15 +32,17 @@ import msi.gaml.types.Types;
  * The Class BenchmarkCSVExporter.
  */
 public class BenchmarkCSVExporter {
-	
+
 	/** The Constant exportFolder. */
 	private static final String exportFolder = "benchmarks";
 
 	/**
 	 * Save.
 	 *
-	 * @param experiment the experiment
-	 * @param records the records
+	 * @param experiment
+	 *            the experiment
+	 * @param records
+	 *            the records
 	 */
 	public void save(final IExperimentPlan experiment, final Benchmark records) {
 		final IScope scope = experiment.getExperimentScope();
@@ -53,8 +55,9 @@ public class BenchmarkCSVExporter {
 			return;
 		}
 		final IMap<IScope, Benchmark.ScopeRecord> scopes = GamaMapFactory.wrap(Types.NO_TYPE, Types.NO_TYPE, records);
-		final String exportFileName = FileUtils.constructAbsoluteFilePath(scope, exportFolder + "/"
-				+ experiment.getModel().getName() + "_benchmark_" + Instant.now().toString().replace(':', '_') + ".csv", false);
+		final String exportFileName =
+				FileUtils.constructAbsoluteFilePath(scope, exportFolder + "/" + experiment.getModel().getName()
+						+ "_benchmark_" + Instant.now().toString().replace(':', '_') + ".csv", false);
 
 		final List<String> headers = new ArrayList<>();
 		final List<List<String>> contents = new ArrayList<>();
@@ -64,7 +67,7 @@ public class BenchmarkCSVExporter {
 			headers.add("Invocations in " + scopeRecord);
 		});
 		contents.add(headers);
-		records.tree.visit(Order.PRE_ORDER, (n) -> {
+		records.tree.visit(Order.PRE_ORDER, n -> {
 			final IBenchmarkable r = n.getData();
 			final List<String> line = new ArrayList<>();
 			contents.add(line);
@@ -78,10 +81,7 @@ public class BenchmarkCSVExporter {
 
 		try (final CsvWriter writer = new CsvWriter(exportFileName)) {
 			writer.setDelimiter(';');
-			writer.setUseTextQualifier(false);
-			for (final List<String> ss : contents) {
-				writer.writeRecord(ss.toArray(new String[ss.size()]));
-			}
+			for (final List<String> ss : contents) { writer.writeRecord(ss.toArray(new String[ss.size()])); }
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}

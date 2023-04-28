@@ -62,7 +62,7 @@ public class CreateFromCSVDelegate implements ICreateDelegate {
 		final GamaCSVFile source = (GamaCSVFile) input;
 		final IExpression header = statement.getHeader();
 		if (header != null) { source.forceHeader(Cast.asBool(scope, header.value(scope))); }
-		final boolean hasHeader = source.hasHeader();
+		final boolean hasHeader = source.hasHeader(scope);
 		final IMatrix<?> mat = source.getContents(scope);
 		if (mat == null || mat.isEmpty(scope)) return false;
 		int rows = mat.getRows(scope);
@@ -81,13 +81,33 @@ public class CreateFromCSVDelegate implements ICreateDelegate {
 			final IList vals = mat.getRow(i);
 			for (int j = 0; j < cols; j++) {
 				// see issue #3786
-				map.put(headers.get(j), vals.get(j));
+				String s = clean(headers.get(j));
+				Object v = vals.get(j);
+				map.put(s, v);
 			}
 			// CSV attributes are mixed with the attributes of agents
 			statement.fillWithUserInit(scope, map);
 			inits.add(map);
 		}
 		return true;
+	}
+
+	/**
+	 * Clean.
+	 *
+	 * @param text
+	 *            the text
+	 * @return the string
+	 */
+	private static String clean(String text) {
+		// // strips off all non-ASCII characters
+		// text = text.replaceAll("[^\\x00-\\x7F]", "");
+		// erases all the ASCII control characters
+		text = text.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+		// removes non-printable characters from Unicode
+		text = text.replaceAll("\\p{C}", "");
+
+		return text.trim();
 	}
 
 	/**

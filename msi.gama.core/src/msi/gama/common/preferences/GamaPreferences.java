@@ -40,6 +40,7 @@ import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
+import msi.gama.util.file.csv.AbstractCSVManipulator;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.operators.Cast;
@@ -53,6 +54,10 @@ import one.util.streamex.StreamEx;
  * @author drogoul
  * @since 26 août 2013
  *
+ */
+
+/**
+ * The Class GamaPreferences.
  */
 
 /**
@@ -352,10 +357,12 @@ public class GamaPreferences {
 		// public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
 		/** The Constant CORE_SYNC. */
 		// "Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
-		
+
 		public static final Pref<Boolean> CORE_SLIDER_TYPE = create("pref_experiment_type_slider",
-		"Set the step duration slider incrementation to linear. If false set to logarithmic", true, IType.BOOL, true).in(NAME, EXECUTION);
-		
+				"Set the step duration slider incrementation to linear. If false set to logarithmic", true, IType.BOOL,
+				true).in(NAME, EXECUTION);
+
+		/** The Constant CORE_SYNC. */
 		public static final Pref<Boolean> CORE_SYNC =
 				create("pref_display_synchronized", "Synchronize outputs with the simulation", false, IType.BOOL, true)
 						.in(NAME, EXECUTION);
@@ -815,6 +822,16 @@ public class GamaPreferences {
 							if (codes.isEmpty()) return false;
 							return true;
 						});
+
+		/** The Constant CSV_STRING_QUALIFIER. */
+		public static final Pref<String> CSV_STRING_QUALIFIER = GamaPreferences
+				.create("pref_csv_string_qualifier", "Default separator for strings", String.valueOf(AbstractCSVManipulator.Letters.QUOTE), IType.STRING, true)
+				.in(NAME, "CSV Files");
+
+		/** The Constant CSV_SEPARATOR. */
+		public static final Pref<String> CSV_SEPARATOR =
+				GamaPreferences.create("pref_csv_separator", "Default separator for fields", String.valueOf(AbstractCSVManipulator.Letters.COMMA), IType.STRING, true)
+						.in(GamaPreferences.External.NAME, "CSV Files");
 	}
 
 	/**

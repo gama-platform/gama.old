@@ -861,7 +861,6 @@ public class PopulationInspectView extends GamaViewPart
 			// AD 2/1/16 Replaces the comma by ';' to properly output points and
 			// lists
 			writer.setDelimiter(';');
-			writer.setUseTextQualifier(false);
 
 			final List<String[]> contents = new ArrayList<>();
 			final String[] headers = new String[columns.length];
@@ -949,7 +948,5 @@ public class PopulationInspectView extends GamaViewPart
 	 */
 	@Override
 	public void pauseChanged() {}
-
-
 
 }
