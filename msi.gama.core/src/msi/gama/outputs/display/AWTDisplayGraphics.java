@@ -205,13 +205,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 			if (image instanceof BufferedImage bi) return drawImage(bi, attributes);
 		}
 		if (!(fieldValues instanceof GamaField gf)) return null;
-		GamaField flatten = gf.flatten(null, attributes.getColorProvider());
+		GamaField flatten = gf.flatten(surface.getScope(), attributes.getColorProvider());
 		// AD Attempt to provide smoothing but it doesnt work as expected
 		// double[] data = attributes.getSmoothProvider().smooth(flatten.numCols, flatten.numRows, flatten.getMatrix(),
 		// flatten.getNoData(null), attributes.getSmooth());
 		// System.arraycopy(data, 0, flatten.getMatrix(), 0, data.length);
 		attributes.setSize(null);
-		return drawImage(flatten.getImage(null), attributes);
+		return drawImage(flatten.getImage(surface.getScope()), attributes);
 
 	}
 
