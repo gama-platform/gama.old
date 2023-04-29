@@ -48,17 +48,11 @@ species  clock {
 		float nb_minutes<-0.0 update: ((timeElapsed mod 3600#s))/60#s; //Mod with 60 minutes or 1 hour, then divided by one minute value to get the number of minutes
 		float nb_hours<-0.0 update:((timeElapsed mod 86400#s))/3600#s;
 		float nb_days <- 0.0 update:((timeElapsed mod 31536000#s))/86400#s;
-		reflex update {
-			write string(nb_hours)+" : "+nb_minutes;
-			if (cycle = alarmCycle) 
-			{
-				 write "Time to leave" ; 
-
-				 // Uncomment the following statement to play the Alarm.mp3
-				 // But firstly, you need to go to "Help -> Install New Software..." to install the "audio" feature. 
-				 // start_sound source: "../includes/Alarm.mp3" ;
-			}
+		
+		reflex update when: cycle=alarmCycle {
+			 write "" + int(nb_hours) + ":" + int(nb_minutes) + ": Time to leave !" ; 
 		}
+		
 		aspect default {
 			draw clock_normal size: 10*zoom;
 			draw string(" " + cycle + " cycles")  size:zoom/2 font:"times" color:#black at:{clock_x-5,clock_y+5};
