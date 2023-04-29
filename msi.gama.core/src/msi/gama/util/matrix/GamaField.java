@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GamaField.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.1).
+ * GamaField.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -131,39 +131,6 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		epsilon = cellDimensions.x / 1000;
 	}
 
-	/**
-	 * Gets the grid X.
-	 *
-	 * @param x
-	 *            the x
-	 * @return the grid X
-	 */
-	int getGridX(final double x) {
-		return (int) ((x == worldDimensions.x ? x - epsilon : x) / cellDimensions.x);
-	}
-
-	/**
-	 * Gets the grid Y.
-	 *
-	 * @param y
-	 *            the y
-	 * @return the grid Y
-	 */
-	int getGridY(final double y) {
-		return (int) ((y == worldDimensions.y ? y - epsilon : y) / cellDimensions.y);
-	}
-
-	/**
-	 * Gets the index.
-	 *
-	 * @param p
-	 *            the p
-	 * @return the index
-	 */
-	int getIndex(final GamaPoint p) {
-		return getGridY(p.y) * numCols + getGridX(p.x);
-	}
-
 	@Override
 	public Double getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		if (indices == null || indices.isEmpty()) return null;
@@ -184,15 +151,11 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@Nullable
 	public Double get(final IScope scope, final GamaPoint p) {
 		computeDimensions(scope);
-		GamaPoint gp = p;
+		GamaPoint gp = new GamaPoint(p);
 		// May happen in case of torus environment (see #3132)
-		if (gp.x < 0) {
-			gp.x = 0;
-		} else if (gp.x > worldDimensions.x) { gp.x = worldDimensions.x; }
-		if (gp.y < 0) {
-			gp.y = 0;
-		} else if (gp.y > worldDimensions.y) { gp.y = worldDimensions.y; }
-		return matrix[getIndex(gp)];
+		int x = gp.x < 0 ? 0 : gp.x >= worldDimensions.x ? this.numCols - 1 : (int) (gp.x / cellDimensions.x);
+		int y = gp.y < 0 ? 0 : gp.y >= worldDimensions.y ? this.numRows - 1 : (int) (gp.y / cellDimensions.y);
+		return matrix[y * numCols + x];
 	}
 
 	/**
@@ -207,7 +170,11 @@ public class GamaField extends GamaFloatMatrix implements IField {
 			index = (Integer) at;
 		} else if (at instanceof IList list) {
 			index = (Integer) list.get(1) * numCols + (Integer) list.get(0);
-		} else if (at instanceof GamaPoint) { index = getIndex((GamaPoint) at); }
+		} else if (at instanceof GamaPoint gp) {
+			int x = gp.x < 0 ? 0 : gp.x >= worldDimensions.x ? this.numCols - 1 : (int) (gp.x / cellDimensions.x);
+			int y = gp.y < 0 ? 0 : gp.y >= worldDimensions.y ? this.numRows - 1 : (int) (gp.y / cellDimensions.y);
+			index = y * numCols + x;
+		}
 		if (index > -1 && index < matrix.length) { matrix[index] = value; }
 	}
 
@@ -237,7 +204,8 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	public double[] getMinMax(final double[] result) {
 		double min = Double.MAX_VALUE;
 		double max = -Double.MAX_VALUE;
-		for (double f : getMatrix()) {
+		double[] matrix = getMatrix();
+		for (double f : matrix) {
 			if (f == noDataValue) { continue; }
 			if (f > max) { max = f; }
 			if (f < min) { min = f; }
@@ -296,10 +264,11 @@ public class GamaField extends GamaFloatMatrix implements IField {
 
 	@Nullable
 	@Override
-	public IShape getCellShapeAt(final IScope scope, final GamaPoint at) {
+	public IShape getCellShapeAt(final IScope scope, final GamaPoint gp) {
 		computeDimensions(scope);
-		final GamaPoint p = at;
-		return getCellShapeAt(scope, getGridX(p.x), getGridY(p.y));
+		int x = gp.x < 0 ? 0 : gp.x >= worldDimensions.x ? this.numCols - 1 : (int) (gp.x / cellDimensions.x);
+		int y = gp.y < 0 ? 0 : gp.y >= worldDimensions.y ? this.numRows - 1 : (int) (gp.y / cellDimensions.y);
+		return getCellShapeAt(scope, x, y);
 
 	}
 
@@ -653,7 +622,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 				computer instanceof IMeshColorProvider msp ? msp : MeshDrawingAttributes.computeColors(computer, true);
 		GamaField result = (GamaField) GamaFieldType.buildField(scope, this.numCols, this.numRows);
 		int index;
-		double[] minMax = this.getMinMax(matrix);
+		double[] minMax = this.getMinMax();
 		double[] rgb = new double[4];
 		for (int i = 0; i < this.numCols; i++) {
 			for (int j = 0; j < this.numRows; j++) {

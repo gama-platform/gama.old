@@ -100,6 +100,13 @@ public interface IField extends IMatrix<Double>, IDiffusionTarget {
 	double[] getMinMax(double[] result);
 
 	/**
+	 * Gets the min max.
+	 *
+	 * @return the min max
+	 */
+	default double[] getMinMax() { return getMinMax(null); }
+
+	/**
 	 * Returns the bands registered for this field.
 	 *
 	 * @return a list of fields, never null as the first band is this field itself.
