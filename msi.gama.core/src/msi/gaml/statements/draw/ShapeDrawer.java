@@ -171,14 +171,14 @@ public class ShapeDrawer implements IDrawDelegate {
 	 */
 	private Geometry addToroidalParts(final IScope scope, final Geometry shape) {
 		Geometry result = shape;
-		final ITopology t = scope.getTopology();
-		if (t != null && t.isTorus()) {
-			final List<Geometry> geoms = t.listToroidalGeometries(shape);
-			final Geometry all = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
-			final Geometry world = scope.getSimulation().getInnerGeometry();
-			result = all.intersection(world);
-			// WARNING Does not correctly handle rotations or translations
-		}
+//		final ITopology t = scope.getTopology();
+//		if (t != null && t.isTorus()) {
+//			final List<Geometry> geoms = t.listToroidalGeometries(shape);
+//			final Geometry all = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
+//			final Geometry world = scope.getSimulation().getInnerGeometry();
+//			result = all.intersection(world);
+//			// WARNING Does not correctly handle rotations or translations
+//		}
 		return result;
 	}
 
