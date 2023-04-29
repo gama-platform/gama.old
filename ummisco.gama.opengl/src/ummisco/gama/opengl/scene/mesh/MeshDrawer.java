@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * MeshDrawer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.1).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -156,8 +156,8 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		if (noData == IField.NO_NO_DATA) { noData = object.getObject().getNoData(null); }
 		above = attributes.getAbove();
 
-		this.cy = this.gl.getWorldHeight() / (rows - 1d);
-		this.cx = this.gl.getWorldWidth() / (cols - 1d);
+		this.cy = this.gl.getWorldHeight() / rows;
+		this.cx = this.gl.getWorldWidth() / cols;
 
 		boolean withText = attributes.isWithText();
 		this.triangles = attributes.isTriangulated();
@@ -209,17 +209,17 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 * Initialize buffers.
 	 */
 	private void initializeBuffers() {
-		final var length = cols * rows;
+		final var length = (cols + 1) * (rows + 1);
 		int previous = realIndexes == null ? 0 : realIndexes.length;
 		if (length > previous) {
 			realIndexes = new int[length];
-			final var lengthM1 = (cols - 1) * (rows - 1);
+			final var lengthM1 = cols * rows;
 			int colors = triangles ? length * 4 : lengthM1 * 16;
 			int points = triangles ? length * 3 : lengthM1 * 12;
 			int textures = triangles ? length * 2 : lengthM1 * 8;
 			vertexBuffer = Buffers.newDirectDoubleBuffer(points);
 			normalBuffer = Buffers.newDirectDoubleBuffer(points);
-			indexBuffer = Buffers.newDirectIntBuffer(lengthM1 * 6);
+			indexBuffer = Buffers.newDirectIntBuffer(length * 6);
 			// AD : fix for #3299. outputsLines and outputsColors can change overtime and it is necessary to maintain
 			// the buffers if the size doesnt change
 			lineColorBuffer = Buffers.newDirectDoubleBuffer(colors);
@@ -256,13 +256,13 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 */
 	private void fillBuffersWithRectangles(final double[] data, final double noData) {
 		int index = 0;
-		for (var i = 0; i < cols - 1; ++i) {
+		for (var i = 0; i < cols; ++i) {
 			double x1 = i * cx;
 			double x2 = (i + 1) * cx;
-			for (var j = 0; j < rows - 1; ++j) {
+			for (var j = 0; j < rows; ++j) {
 				double y1 = -j * cy;
 				double y2 = -(j + 1) * cy;
-				double z = data[j * cols + i];
+				var z = get(data, i, j);
 				if (z == noData) { continue; }
 				vertexBuffer.put(new double[] { x1, y1, z, x2, y1, z, x2, y2, z, x1, y2, z });
 				setColor(z, i, j);
@@ -278,6 +278,32 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	}
 
 	/**
+	 * Fill buffers with triangles.
+	 */
+	/**
+	 * Fill buffers with triangles.
+	 */
+	private void fillBuffersWithTrianglesSimplified(final double[] data) {
+		for (var j = 0; j < rows + 1; j++) {
+			for (var i = 0; i < cols + 1; i++) {
+				var z = get(data, i, j);
+				vertexBuffer.put(i * cx).put(-j * cy).put(z);
+				setColor(z, i, j);
+				setNormal(data, i, j);
+			}
+		}
+		// Different loop for building the indexes
+		for (var j = 0; j < rows; j++) {
+			for (var i = 0; i < cols; i++) {
+				var index = j * (cols + 1) + i;
+				indexBuffer.put(index).put(index + 1).put(index + cols + 1);
+				indexBuffer.put(index + 1).put(index + cols + 2).put(index + cols + 1);
+			}
+		}
+
+	}
+
+	/**
 	 * Fill buffers with triangles 2. Recopied from the version of the 10th of March, 2023 because of issue #3705.
 	 *
 	 * @param data
@@ -287,12 +313,12 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	 */
 	private void fillBuffersWithTriangles(final double[] data, final double noData) {
 		var realIndex = 0;
-		for (var j = 0; j < rows; j++) {
+		for (var j = 0; j < rows + 1; j++) {
 			var y = j * cy;
-			for (var i = 0; i < cols; i++) {
+			for (var i = 0; i < cols + 1; i++) {
 				var x = i * cx;
-				var index = j * cols + i;
-				var z = data[index];
+				var index = j * (cols + 1) + i;
+				var z = get(data, i, j);
 				realIndexes[index] = z == noData ? -1 : realIndex++;
 				if (z == noData) { continue; }
 				vertexBuffer.put(x).put(-y).put(z);
@@ -301,37 +327,14 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				if (j > 0 && i > 0) {
 					var current = realIndexes[index];
 					var minus1 = realIndexes[index - 1];
-					var minusCols = realIndexes[index - cols];
-					var minusColsAnd1 = realIndexes[index - cols - 1];
+					var minusCols = realIndexes[index - cols - 1];
+					var minusColsAnd1 = realIndexes[index - cols - 2];
 					if (minus1 == -1 || minusCols == -1 || minusColsAnd1 == -1) { continue; }
 					indexBuffer.put(current).put(minus1).put(minusCols);
 					indexBuffer.put(minusColsAnd1).put(minusCols).put(minus1);
 				}
 			}
 		}
-	}
-
-	/**
-	 * Fill buffers with triangles.
-	 */
-	private void fillBuffersWithTrianglesSimplified(final double[] data) {
-		for (var j = 0; j < rows; j++) {
-			for (var i = 0; i < cols; i++) {
-				var z = get(data, i, j);
-				vertexBuffer.put(i * cx).put(-j * cy).put(z);
-				setColor(z, i, j);
-				setNormal(data, i, j);
-			}
-		}
-		// Different loop for building the indexes
-		for (var j = 0; j < rows - 1; j++) {
-			for (var i = 0; i < cols - 1; i++) {
-				var index = j * cols + i;
-				indexBuffer.put(index).put(index + 1).put(index + cols);
-				indexBuffer.put(index + 1).put(index + cols + 1).put(index + cols);
-			}
-		}
-
 	}
 
 	/**
