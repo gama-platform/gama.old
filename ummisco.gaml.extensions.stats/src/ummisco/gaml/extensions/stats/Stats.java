@@ -1609,7 +1609,7 @@ public class Stats {
 							+ "transformed into float") },
 			see = { "min" })
 	public static Object opMax(final IScope scope, final IContainer l) {
-		if (l instanceof GamaField) return ((GamaField) l).getMinMax(null)[1];
+		if (l instanceof GamaField) return ((GamaField) l).getMinMax()[1];
 		Number maxNum = null;
 		GamaPoint maxPoint = null;
 		for (final Object o : l.iterable(scope)) {
@@ -1775,7 +1775,7 @@ public class Stats {
 									+ " transformed into float") },
 			see = { "max" })
 	public static Object opMin(final IScope scope, final IContainer l) {
-		if (l instanceof GamaField) return ((GamaField) l).getMinMax(null)[0];
+		if (l instanceof GamaField) return ((GamaField) l).getMinMax()[0];
 		Number minNum = null;
 		GamaPoint minPoint = null;
 		for (final Object o : l.iterable(scope)) {

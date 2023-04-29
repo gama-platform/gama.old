@@ -189,7 +189,7 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 				}
 			}
 		} else {
-			double[] minmax = field.getMinMax(null);
+			double[] minmax = field.getMinMax();
 			double range = minmax[1] - minmax[0];
 			for (int row = 0; row < rows; row++) {
 				for (int col = 0; col < cols; col++) {

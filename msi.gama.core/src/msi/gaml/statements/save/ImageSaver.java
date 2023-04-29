@@ -173,7 +173,7 @@ public class ImageSaver extends AbstractSaver {
 			fw.write(cw + "\n0.0\n0.0\n" + ch + "\n" + x + "\n" + y);
 		}
 		final BufferedImage image = new BufferedImage(cols, rows, BufferedImage.TYPE_INT_RGB);
-		double[] minmaxVal = field.getMinMax(null);
+		double[] minmaxVal = field.getMinMax();
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 				double v = field.get(scope, col, row);

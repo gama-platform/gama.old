@@ -122,7 +122,7 @@ public class LegacyMeshDrawer extends ObjectDrawer<MeshObject> {
 
 		var attributes = object.getAttributes();
 
-		var minMax = object.getObject().getMinMax(null);
+		var minMax = object.getObject().getMinMax();
 		max = minMax[1];
 		min = minMax[0];
 		data = smooth(object.getObject().getMatrix(), attributes.getSmooth());

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * NativeBulletShapeConverter.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * NativeBulletShapeConverter.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.native_version;
 
@@ -125,8 +125,7 @@ public class NativeBulletShapeConverter
 							vertices[i++] = (float) p.y;
 							vertices[i++] = (float) p.z;
 						}
-						HullCollisionShape result = new HullCollisionShape(vertices);
-						return result;
+						return new HullCollisionShape(vertices);
 				}
 
 		}
@@ -136,22 +135,19 @@ public class NativeBulletShapeConverter
 	@Override
 	public CollisionShape convertTerrain(final IScope scope, final IField field, final Double width,
 			final Double height, final float depth) {
-		double[] minMax = field.getMinMax(null);
+		double[] minMax = field.getMinMax();
 		float max = (float) minMax[1], min = (float) minMax[0];
 		GamaPoint dim = field.getDimensions();
 		float[] data = toFloats(field.getMatrix());
 		// We apply some "translation" here as the center is automatically computed and there is no way to translate the
 		// shape. The data is a copy anyway
-		for (int i = 0; i < data.length; i++) {
-			data[i] = data[i] - (max - min) / 2;
-		}
+		for (int i = 0; i < data.length; i++) { data[i] = data[i] - (max - min) / 2; }
 
 		// AD TODO: verify if it is necessary to compute min and max two times
 		float scale = max == min ? 1f : depth / (max - min);
-		HeightfieldCollisionShape shape = new HeightfieldCollisionShape((int) dim.y, (int) dim.x, data,
+		return new HeightfieldCollisionShape((int) dim.y, (int) dim.x, data,
 				new Vector3f(width.floatValue() / (float) dim.x, height.floatValue() / (float) dim.y, scale),
 				PhysicsSpace.AXIS_Z, false, false, false, false);
-		return shape;
 	}
 
 }

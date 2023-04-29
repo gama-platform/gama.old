@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * BulletShapeConverter.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * BulletShapeConverter.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.java_version;
 
@@ -49,7 +49,7 @@ public class BulletShapeConverter implements IShapeConverter<CollisionShape, Vec
 
 	/** The shapes. */
 	static Map<IShape.Type, ConvexShape> shapes = new HashMap<>();
-	
+
 	/** The translations. */
 	static Map<IShape.Type, Vector3f> translations = new HashMap<>();
 
@@ -148,7 +148,7 @@ public class BulletShapeConverter implements IShapeConverter<CollisionShape, Vec
 	@Override
 	public CollisionShape convertTerrain(final IScope scope, final IField field, final Double width,
 			final Double height, final float depth) {
-		double[] minMax = field.getMinMax(null);
+		double[] minMax = field.getMinMax();
 		float max = (float) minMax[1], min = (float) minMax[0];
 		GamaPoint dim = field.getDimensions();
 		float[] data = toFloats(field.getMatrix());
