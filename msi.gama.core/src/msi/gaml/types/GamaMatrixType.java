@@ -30,7 +30,6 @@ import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IField;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.data.ListExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 
@@ -294,13 +293,14 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		final IType itemType = exp.getGamlType();
 		final IType cType = itemType.getContentType();
 		if (itemType.id() == IType.LIST && cType.id() == IType.LIST) {
-			if (exp instanceof ListExpression) {
-				final IExpression[] array = ((ListExpression) exp).getElements();
-				if (array.length == 0) return Types.NO_TYPE;
-				return array[0].getGamlType().getContentType();
-			}
-			if (!(exp instanceof MapExpression)) return cType.getContentType();
-			final IExpression[] array = ((MapExpression) exp).valuesArray();
+			// cf. issue #3792 -- the computation of type is now taken in charge by ListExpression itself
+			// if (exp instanceof ListExpression) {
+			// final IExpression[] array = ((ListExpression) exp).getElements();
+			// if (array.length == 0) return Types.NO_TYPE;
+			// return array[0].getGamlType().getContentType();
+			// }
+			if (!(exp instanceof MapExpression me)) return cType.getContentType();
+			final IExpression[] array = me.valuesArray();
 			if (array.length == 0) return Types.NO_TYPE;
 			return array[0].getGamlType().getContentType();
 		}
