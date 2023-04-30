@@ -1089,4 +1089,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public List<IExperimentDisplayable> getDisplayables() { return displayables; }
 
+	@Override
+	public void setConcurrency(final IExpression exp) { concurrency = exp; }
+
 }

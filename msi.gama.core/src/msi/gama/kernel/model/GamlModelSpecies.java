@@ -184,6 +184,9 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	@Override
+	public Iterable<IExperimentPlan> getExperiments() { return experiments.values(); }
+
+	@Override
 	public void dispose() {
 		super.dispose();
 		for (final IExperimentPlan exp : experiments.values()) { exp.dispose(); }

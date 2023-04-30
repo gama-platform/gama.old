@@ -287,6 +287,13 @@ public class GamlSpecies extends AbstractSpecies {
 
 		}
 
+		/**
+		 * Process neighbors.
+		 *
+		 * @param sd
+		 *            the sd
+		 * @return the i expression
+		 */
 		private IExpression processNeighbors(final SpeciesDescription sd) {
 			if (sd.hasFacet(IKeyword.NEIGHBORS) && sd.hasFacet(IKeyword.NEIGHBOURS)) {
 				sd.error("'neighbours' and 'neighbors' cannot be defined at the same time",
@@ -377,7 +384,7 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	/** The concurrency. */
-	private final IExpression concurrency;
+	protected IExpression concurrency;
 
 	/** The schedule. */
 	private final IExpression schedule;

@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * JobPlan.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
+ * JobListFactory.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -20,14 +20,20 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
+import msi.gaml.types.Types;
 
 /**
  * The Class JobPlan.
  */
 public class JobListFactory {
 
+	/**
+	 * The JobPlanExperimentID.
+	 */
 	public record JobPlanExperimentID(String modelName, String experimentName) {}
 
 	/**
@@ -42,9 +48,14 @@ public class JobListFactory {
 	 * @throws IOException
 	 */
 	public static List<IExperimentJob> constructAllJobs(final String modelPath, final long[] seeds,
-			final long finalStep) throws IOException, GamaHeadlessException {
+			final long finalStep, final Integer numberOfCores) throws IOException, GamaHeadlessException {
 		IModel model = HeadlessSimulationLoader.loadModel(new File(modelPath), null);
 		Map<JobPlanExperimentID, IExperimentJob> originalJobs = new LinkedHashMap<>();
+		if (numberOfCores != null && numberOfCores > 0) {
+			for (IExperimentPlan exp : model.getExperiments()) {
+				exp.setConcurrency(GAML.getExpressionFactory().createConst(numberOfCores, Types.INT));
+			}
+		}
 		for (final ExperimentDescription expD : model.getDescription().getExperiments()) {
 			if (!IKeyword.BATCH.equals(expD.getLitteral(IKeyword.TYPE))) {
 				final IExperimentJob tj = ExperimentJob.loadAndBuildJob(expD, model.getFilePath(), model);

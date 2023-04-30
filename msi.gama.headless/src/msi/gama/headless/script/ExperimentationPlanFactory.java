@@ -11,20 +11,13 @@
 package msi.gama.headless.script;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,70 +46,68 @@ public class ExperimentationPlanFactory {
 	/** The default final step. */
 	public static long DEFAULT_FINAL_STEP = 1000;
 
-	/**
-	 * Analyse workspace.
-	 *
-	 * @param directoryPath
-	 *            the directory path
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws ParserConfigurationException
-	 *             the parser configuration exception
-	 * @throws TransformerException
-	 *             the transformer exception
-	 */
-	public static void analyseWorkspace(final String directoryPath)
-			throws IOException, ParserConfigurationException, TransformerException {
-		final ArrayList<String> modelFileNames =
-				readDirectory(directoryPath + "./" + DEFAULT_MODEL_DIRECTORY_IN_WORKSPACE);
-		for (final String nm : modelFileNames) { analyseModelInWorkspace(new File(nm)); }
-
-	}
-
-	/**
-	 * Analyse model in workspace.
-	 *
-	 * @param modelFile
-	 *            the model file
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws ParserConfigurationException
-	 *             the parser configuration exception
-	 * @throws TransformerException
-	 *             the transformer exception
-	 */
-	public static void analyseModelInWorkspace(final File modelFile)
-			throws IOException, ParserConfigurationException, TransformerException {
-		final String headlessDirectory = modelFile.getParentFile().getParentFile().getAbsolutePath() + "/"
-				+ DEFAULT_HEADLESS_DIRECTORY_IN_WORKSPACE;
-		final String outFileName = modelFile.getName().substring(0, modelFile.getName().lastIndexOf('.'));
-		final File storeDirectory = new File(headlessDirectory);
-		if (!storeDirectory.exists()) { storeDirectory.mkdirs(); }
-		final File outFile = new File(headlessDirectory + "/" + outFileName + ".xml");
-		final File outerrFile = new File(headlessDirectory + "/err_" + outFileName + ".log");
-
-		try (final OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outFile));
-				final OutputStreamWriter outErr = new OutputStreamWriter(new FileOutputStream(outerrFile));) {
-			analyseModel(modelFile.getAbsolutePath(), out, outErr);
-
-			/*
-			 * JobPlan jb = new JobPlan(); List<IExperimentJob> generatedExperiment; try {
-			 * jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); long[] seed = {DEFAULT_FINAL_STEP};
-			 * generatedExperiment = jb.constructAllJobs(seed,DEFAULT_FINAL_STEP);
-			 *
-			 *
-			 * Document dd =ExperimentationPlanFactory.buildXmlDocument(generatedExperiment); TransformerFactory
-			 * transformerFactory = TransformerFactory.newInstance(); Transformer transformer =
-			 * transformerFactory.newTransformer(); DOMSource source = new DOMSource(dd); StreamResult result = new
-			 * StreamResult(new File("/tmp/file.xml")); transformer.transform(source, result);
-			 *
-			 * //generatedExperiment = jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); }catch(Exception e) {
-			 * outErr.write("Error in file : " + modelFile.getAbsolutePath()); }
-			 */
-
-		}
-
-	}
+	// /**
+	// * Analyse workspace.
+	// *
+	// * @param directoryPath
+	// * the directory path
+	// * @throws IOException
+	// * Signals that an I/O exception has occurred.
+	// * @throws ParserConfigurationException
+	// * the parser configuration exception
+	// * @throws TransformerException
+	// * the transformer exception
+	// */
+	// public static void analyseWorkspace(final String directoryPath) throws IOException, TransformerException {
+	// final ArrayList<String> modelFileNames =
+	// readDirectory(directoryPath + "./" + DEFAULT_MODEL_DIRECTORY_IN_WORKSPACE);
+	// for (final String nm : modelFileNames) { analyseModelInWorkspace(new File(nm)); }
+	//
+	// }
+	//
+	// /**
+	// * Analyse model in workspace.
+	// *
+	// * @param modelFile
+	// * the model file
+	// * @throws IOException
+	// * Signals that an I/O exception has occurred.
+	// * @throws ParserConfigurationException
+	// * the parser configuration exception
+	// * @throws TransformerException
+	// * the transformer exception
+	// */
+	// public static void analyseModelInWorkspace(final File modelFile) throws IOException, TransformerException {
+	// final String headlessDirectory = modelFile.getParentFile().getParentFile().getAbsolutePath() + "/"
+	// + DEFAULT_HEADLESS_DIRECTORY_IN_WORKSPACE;
+	// final String outFileName = modelFile.getName().substring(0, modelFile.getName().lastIndexOf('.'));
+	// final File storeDirectory = new File(headlessDirectory);
+	// if (!storeDirectory.exists()) { storeDirectory.mkdirs(); }
+	// final File outFile = new File(headlessDirectory + "/" + outFileName + ".xml");
+	// final File outerrFile = new File(headlessDirectory + "/err_" + outFileName + ".log");
+	//
+	// try (final OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outFile));
+	// final OutputStreamWriter outErr = new OutputStreamWriter(new FileOutputStream(outerrFile));) {
+	// analyseModel(modelFile.getAbsolutePath(), out, outErr);
+	//
+	// /*
+	// * JobPlan jb = new JobPlan(); List<IExperimentJob> generatedExperiment; try {
+	// * jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); long[] seed = {DEFAULT_FINAL_STEP};
+	// * generatedExperiment = jb.constructAllJobs(seed,DEFAULT_FINAL_STEP);
+	// *
+	// *
+	// * Document dd =ExperimentationPlanFactory.buildXmlDocument(generatedExperiment); TransformerFactory
+	// * transformerFactory = TransformerFactory.newInstance(); Transformer transformer =
+	// * transformerFactory.newTransformer(); DOMSource source = new DOMSource(dd); StreamResult result = new
+	// * StreamResult(new File("/tmp/file.xml")); transformer.transform(source, result);
+	// *
+	// * //generatedExperiment = jb.loadModelAndCompileJob(modelFile.getAbsolutePath()); }catch(Exception e) {
+	// * outErr.write("Error in file : " + modelFile.getAbsolutePath()); }
+	// */
+	//
+	// }
+	//
+	// }
 	//
 	// public static void analyseModelsDirectoryForValidation(final String modelFileName, final OutputStreamWriter
 	// output,
@@ -128,42 +119,61 @@ public class ExperimentationPlanFactory {
 	//
 	// }
 
+	// /**
+	// * Analyse model.
+	// *
+	// * @param modelFileName
+	// * the model file name
+	// * @param output
+	// * the output
+	// * @param err
+	// * the err
+	// * @throws IOException
+	// * Signals that an I/O exception has occurred.
+	// * @throws TransformerException
+	// * the transformer exception
+	// */
+	// public static void analyseModel(final String modelFileName, final OutputStreamWriter output,
+	// final OutputStreamWriter err) throws IOException, TransformerException {
+	// try {
+	// final long[] seeds = { DEFAULT_SEED };
+	// final List<IExperimentJob> jobs = JobListFactory.constructAllJobs(modelFileName, seeds, DEFAULT_FINAL_STEP);
+	// Document dd;
+	// try {
+	// dd = buildXmlDocument(jobs);
+	// } catch (final ParserConfigurationException e) {
+	// err.write("Error building xml: " + modelFileName);
+	// return;
+	// }
+	// final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	// Transformer transformer;
+	// transformer = transformerFactory.newTransformer();
+	// final DOMSource source = new DOMSource(dd);
+	// final StreamResult result = new StreamResult(output);
+	// transformer.transform(source, result);
+	// } catch (final Exception e) {
+	// err.write("Error building plan: " + modelFileName);
+	// }
+	//
+	// }
+
 	/**
-	 * Analyse model.
+	 * Builds the experiment.
 	 *
 	 * @param modelFileName
 	 *            the model file name
-	 * @param output
-	 *            the output
-	 * @param err
-	 *            the err
+	 * @param numberOfCores
+	 *            the number of cores passed throuhg the '-hpc' parameter. If null, means that '-hpc' is not set
+	 * @return the list
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
-	 * @throws TransformerException
-	 *             the transformer exception
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
-	public static void analyseModel(final String modelFileName, final OutputStreamWriter output,
-			final OutputStreamWriter err) throws IOException, TransformerException {
-		try {
-			final long[] seeds = { DEFAULT_SEED };
-			final List<IExperimentJob> jobs = JobListFactory.constructAllJobs(modelFileName, seeds, DEFAULT_FINAL_STEP);
-			Document dd;
-			try {
-				dd = buildXmlDocument(jobs);
-			} catch (final ParserConfigurationException e) {
-				err.write("Error building xml: " + modelFileName);
-				return;
-			}
-			final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer;
-			transformer = transformerFactory.newTransformer();
-			final DOMSource source = new DOMSource(dd);
-			final StreamResult result = new StreamResult(output);
-			transformer.transform(source, result);
-		} catch (final Exception e) {
-			err.write("Error building plan: " + modelFileName);
-		}
-
+	public static List<IExperimentJob> buildExperiment(final String modelFileName, final Integer numberOfCores)
+			throws IOException, GamaHeadlessException {
+		final long[] seeds = { DEFAULT_SEED };
+		return JobListFactory.constructAllJobs(modelFileName, seeds, DEFAULT_FINAL_STEP, numberOfCores);
 	}
 
 	/**
@@ -179,8 +189,7 @@ public class ExperimentationPlanFactory {
 	 */
 	public static List<IExperimentJob> buildExperiment(final String modelFileName)
 			throws IOException, GamaHeadlessException {
-		final long[] seeds = { DEFAULT_SEED };
-		return JobListFactory.constructAllJobs(modelFileName, seeds, DEFAULT_FINAL_STEP);
+		return buildExperiment(modelFileName, null);
 	}
 
 	/**

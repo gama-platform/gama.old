@@ -21,6 +21,7 @@ import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.ExperimentDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -273,5 +274,13 @@ public interface IExperimentPlan extends ISpecies {
 	 * @return the displayables
 	 */
 	List<IExperimentDisplayable> getDisplayables();
+
+	/**
+	 * Sets the concurrency.
+	 *
+	 * @param exp
+	 *            the new concurrency, expected to be an expression returning an integer.
+	 */
+	void setConcurrency(IExpression exp);
 
 }

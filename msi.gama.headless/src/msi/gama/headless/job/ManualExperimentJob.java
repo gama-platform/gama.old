@@ -60,8 +60,9 @@ public class ManualExperimentJob extends ExperimentJob {
 	/** The controller. */
 	public ServerExperimentController controller;
 
-	public  IMap<String, Object> playCommand;
-	
+	/** The play command. */
+	public IMap<String, Object> playCommand;
+
 	/**
 	 * Instantiates a new manual experiment job.
 	 *
@@ -83,8 +84,8 @@ public class ManualExperimentJob extends ExperimentJob {
 	 *            the dialog
 	 */
 	public ManualExperimentJob(final String sourcePath, final String exp, final GamaWebSocketServer gamaWebSocketServer,
-			final WebSocket sk, final GamaJsonList p, final boolean console, final boolean status,
-			final boolean dialog, final boolean runtime) {
+			final WebSocket sk, final GamaJsonList p, final boolean console, final boolean status, final boolean dialog,
+			final boolean runtime) {
 		// (final String sourcePath, final String exp, final long max, final String untilCond,
 		// final double s)
 		super(sourcePath, exp, 0, "", 0);
@@ -103,11 +104,9 @@ public class ManualExperimentJob extends ExperimentJob {
 	public void doBackStep() {
 		this.step = simulator.backStep();
 	}
-	
-	
+
 	@Override
-	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
-			GamaHeadlessException {
+	public void load() throws IOException, GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		final IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath), errors);

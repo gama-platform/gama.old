@@ -46,6 +46,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.COUNTER;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -56,9 +57,6 @@ public class ExperimentJob implements IExperimentJob {
 	static {
 		DEBUG.ON();
 	}
-
-	/** The global id generator. */
-	private static long GLOBAL_ID_GENERATOR = 0;
 
 	/**
 	 * The Enum OutputType.
@@ -165,7 +163,7 @@ public class ExperimentJob implements IExperimentJob {
 	 * @return the long
 	 */
 	private static long generateID() {
-		return ExperimentJob.GLOBAL_ID_GENERATOR++;
+		return COUNTER.GET_UNIQUE();
 	}
 
 	/**
@@ -284,8 +282,7 @@ public class ExperimentJob implements IExperimentJob {
 	 * @throws GamaHeadlessException
 	 *             the gama headless exception
 	 */
-	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException,
-			GamaHeadlessException {
+	public void load() throws IOException, GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
 		final List<GamlCompilationError> errors = new ArrayList<>();
 		final IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath), errors);

@@ -61,6 +61,13 @@ public interface IModel extends ISpecies {
 	IExperimentPlan getExperiment(final String s);
 
 	/**
+	 * Gets the experiments.
+	 *
+	 * @return the experiments
+	 */
+	Iterable<IExperimentPlan> getExperiments();
+
+	/**
 	 * Gets the working path.
 	 *
 	 * @return the working path
@@ -102,6 +109,11 @@ public interface IModel extends ISpecies {
 	 */
 	List<TestStatement> getAllTests();
 
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
 	@Override
 	ModelDescription getDescription();
 
