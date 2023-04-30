@@ -69,6 +69,9 @@ public abstract class GISFileViewer extends EditorPart
 	/** The path str. */
 	String pathStr;
 
+	/** Variable used to specify if the zoom/drag of the view is locked. */
+	boolean locked = false;
+
 	@Override
 	public void doSave(final IProgressMonitor monitor) {}
 
@@ -115,21 +118,31 @@ public abstract class GISFileViewer extends EditorPart
 
 	@Override
 	public void zoomIn() {
-		final ReferencedEnvelope env = pane.getDisplayArea();
-		env.expandBy(-env.getWidth() / 10, -env.getHeight() / 10);
-		pane.setDisplayArea(env);
+		if(!locked) {
+			final ReferencedEnvelope env = pane.getDisplayArea();
+			env.expandBy(-env.getWidth() / 10, -env.getHeight() / 10);
+			pane.setDisplayArea(env);
+		}
 	}
 
 	@Override
 	public void zoomOut() {
-		final ReferencedEnvelope env = pane.getDisplayArea();
-		env.expandBy(env.getWidth() / 10, env.getHeight() / 10);
-		pane.setDisplayArea(env);
+		if(!locked) {
+			final ReferencedEnvelope env = pane.getDisplayArea();
+			env.expandBy(env.getWidth() / 10, env.getHeight() / 10);
+			pane.setDisplayArea(env);
+		}
 	}
 
 	@Override
 	public void zoomFit() {
 		pane.reset();
+	}
+
+	@Override
+	public void toggleLock() {
+		locked = !locked;
+		pane.toggleLock();
 	}
 
 	/**

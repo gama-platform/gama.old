@@ -76,9 +76,16 @@ public class MouseEventLayerDelegate implements IEventLayerDelegate {
 			doc = @doc ("Represents an event emitted when the user invokes the contextual menu")) final static public String MOUSE_MENU =
 					"mouse_menu";
 
+	/** The Constant MOUSE_DRAGGED. */
+	@constant (
+			value = "mouse_drag",
+			category = IOperatorCategory.USER_CONTROL,
+			doc = @doc ("Represents an event emitted when the user drags the mouse, i.e. when he moves it with a button pressed.")) final static public String MOUSE_DRAGGED =
+					"mouse_drag";
+
 	/** The Constant EVENTS. */
 	public static final Set<String> EVENTS =
-			new HashSet<>(Arrays.asList(MOUSE_UP, MOUSE_DOWN, MOUSE_MOVED, MOUSE_ENTERED, MOUSE_EXITED, MOUSE_MENU));
+			new HashSet<>(Arrays.asList(MOUSE_UP, MOUSE_DOWN, MOUSE_MOVED, MOUSE_ENTERED, MOUSE_EXITED, MOUSE_MENU, MOUSE_DRAGGED));
 
 	@Override
 	public boolean acceptSource(final IScope scope, final Object source) {

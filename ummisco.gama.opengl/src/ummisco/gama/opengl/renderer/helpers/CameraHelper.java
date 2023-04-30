@@ -47,7 +47,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.ICameraHelper;
 public class CameraHelper extends AbstractRendererHelper implements IMultiListener, ICameraHelper {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The glu. */
@@ -60,7 +60,11 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	// Mouse
 	private final GamaPoint mousePosition = new GamaPoint(0, 0);
 
-	/** The position in the world. */
+	/** Internal world position.
+	 *
+	 * See SWTOpenGLDisplaySUrface::getModelCoordinates() to access the world
+	 * position is an OpenGL display.
+	 */
 	private final GamaPoint positionInTheWorld = new GamaPoint();
 
 	/** The last mouse pressed position. */
@@ -519,7 +523,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		if (keystoneMode) {
 			final int selectedCorner = getRenderer().getKeystoneHelper().getCornerSelected();
 			if (selectedCorner != -1) {
-				final GamaPoint origin = getNormalizedCoordinates(getMousePosition().x, getMousePosition().y);
+				final GamaPoint origin = getNormalizedCoordinates(mousePosition.x, mousePosition.y);
 				GamaPoint p = getNormalizedCoordinates(x, y);
 				final GamaPoint translation = origin.minus(p).yNegated();
 				p = getRenderer().getKeystoneHelper().getKeystoneCoordinates(selectedCorner).plus(-translation.x,
@@ -531,14 +535,14 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			}
 			mousePosition.x = x;
 			mousePosition.y = y;
-			computeMouseLocationInTheWorld();
+			computeMouseLocationInTheWorld(x, y);
 			setCtrlPressed(isCtrl);
 			setShiftPressed(isShift);
 			return;
 		}
 		mousePosition.x = x;
 		mousePosition.y = y;
-		computeMouseLocationInTheWorld();
+		computeMouseLocationInTheWorld(x, y);
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
 
@@ -589,11 +593,11 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			}
 			updateCartesianCoordinatesFromAngles();
 		} else if (shiftPressed && isViewInXYPlan()) {
-			getMousePosition().x = x;
-			getMousePosition().y = y;
+			mousePosition.x = x;
+			mousePosition.y = y;
 			defineROI(new GamaPoint(firstMousePressedPosition.x, firstMousePressedPosition.y));
-		} else if (mouseInROI(new GamaPoint(getMousePosition().x, getMousePosition().y))) {
-			GamaPoint p = getWorldPositionOfMouse();
+		} else if (mouseInROI(new GamaPoint(mousePosition.x, mousePosition.y))) {
+			GamaPoint p = positionInTheWorld;
 			p = p.minus(roiEnvelope.centre());
 			roiEnvelope.translate(p.x, p.y);
 		} else if (!data.isCameraLocked()) {
@@ -726,6 +730,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	final void internalMouseDown(final int x, final int y, final int button, final boolean isCtrl,
 			final boolean isShift) {
+		//DEBUG.OUT("Camera mouse down on " + x + ", " + y);
 
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition.setLocation(x, y, 0);
@@ -754,13 +759,13 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		// else {
 		// renderer.getPickingState().setPicking(false);
 		// }
-		getMousePosition().x = x;
-		getMousePosition().y = y;
+		mousePosition.x = x;
+		mousePosition.y = y;
+		computeMouseLocationInTheWorld(x, y);
 
 		setMouseLeftPressed(button == 1);
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
-
 	}
 
 	/**
@@ -797,6 +802,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the e
 	 */
 	protected void internalMouseUp(final int button, final boolean isShift) {
+		//DEBUG.OUT("Camera mouse up.");
 		firsttimeMouseDown = true;
 		if (isViewInXYPlan() && isShift) { finishROISelection(); }
 		if (button == 1) { setMouseLeftPressed(false); }
@@ -824,13 +830,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		}
 	}
 
-	/**
-	 * Gets the world position of mouse.
-	 *
-	 * @return the world position of mouse
-	 */
-	public GamaPoint getWorldPositionOfMouse() { return positionInTheWorld; }
-
 	/** The pixel depth. */
 	FloatBuffer pixelDepth = Buffers.newDirectFloatBuffer(1);
 
@@ -842,7 +841,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the mouse
 	 * @return the world position from
 	 */
-	public void computeMouseLocationInTheWorld() {
+	public void computeMouseLocationInTheWorld(final int mouse_x, final int mouse_y) {
 
 		// getWorldPositionFrom(mousePosition, positionInTheWorld);
 		// double distance = data.getCameraDistance();
@@ -853,7 +852,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		final int[] viewport = gl.viewport;
 		final double mvmatrix[] = gl.mvmatrix;
 		final double projmatrix[] = gl.projmatrix;
-		final int x = (int) Math.round(mousePosition.x), y = (int) Math.round(viewport[3] - mousePosition.y);
+		final int x = (int) Math.round(mouse_x), y = (int) Math.round(viewport[3] - mouse_y);
 		pixelDepth.rewind();
 		gl.getGL().glReadPixels(x, y, 1, 1, GL2ES2.GL_DEPTH_COMPONENT, GL.GL_FLOAT, pixelDepth);
 		double z = pixelDepth.get(0);
@@ -866,7 +865,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		// DEBUG.OUT("Value retrieved for Z : " + z + " with camera distance " + data.getCameraDistance());
 
 		if (z == 1d || z == 0d) {
-			getWorldPositionFrom(mousePosition, positionInTheWorld);
+			getWorldPositionFrom(new GamaPoint(mouse_x, mouse_y), positionInTheWorld);
 		} else {
 			glu.gluUnProject(x, y, z, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
 			positionInTheWorld.setLocation(wcoord[0], wcoord[1], 0);

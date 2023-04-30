@@ -203,6 +203,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	}
 
+	@Override
+	public void toggleLock() {
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

@@ -40,6 +40,9 @@ public interface IEventLayerListener {
 	/** The Constant MOUSE_MENU. */
 	int MOUSE_MENU = 7;
 
+	/** The Constant MOUSE_DRAGGED. */
+	int MOUSE_DRAGGED = 8;
+
 	/** The Constant KEY_PRESSED. */
 	int KEY_PRESSED = 3;
 
@@ -117,6 +120,15 @@ public interface IEventLayerListener {
 	 *            the y
 	 */
 	void mouseMove(int x, int y);
+
+	/**
+	 * Mouse drag.
+	 *
+	 * @param x the x
+	 * @param y the y
+	 */
+	void mouseDrag(int x, int y, int button);
+
 
 	/**
 	 * Mouse enter.

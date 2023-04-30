@@ -134,6 +134,11 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	void zoomFit();
 
 	/**
+	 * Toggles surface view lock.
+	 */
+	void toggleLock();
+
+	/**
 	 * Gets the manager.
 	 *
 	 * @return the manager

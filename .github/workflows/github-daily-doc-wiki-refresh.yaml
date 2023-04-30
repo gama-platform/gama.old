@@ -4,8 +4,6 @@
 name: Documentation Auto Refresh
 
 on:
-  schedule:
-    - cron: "0 0 * * 6"
   workflow_dispatch:  # For manual trigger
 
 jobs:

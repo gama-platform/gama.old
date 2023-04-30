@@ -81,6 +81,7 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 			case MouseEventLayerDelegate.MOUSE_ENTERED -> MOUSE_ENTERED;
 			case MouseEventLayerDelegate.MOUSE_EXITED -> MOUSE_EXITED;
 			case MouseEventLayerDelegate.MOUSE_MENU -> MOUSE_MENU;
+			case MouseEventLayerDelegate.MOUSE_DRAGGED -> MOUSE_DRAGGED;
 			case KeyboardEventLayerDelegate.ARROW_DOWN -> ARROW_DOWN;
 			case KeyboardEventLayerDelegate.ARROW_UP -> ARROW_UP;
 			case KeyboardEventLayerDelegate.ARROW_LEFT -> ARROW_LEFT;
@@ -150,6 +151,11 @@ public class EventLayer extends AbstractLayer implements IEventLayerListener {
 	@Override
 	public void mouseMove(final int x, final int y) {
 		if (MOUSE_MOVED == listenedEvent) { executeEvent(x, y); }
+	}
+
+	@Override
+	public void mouseDrag(final int x, final int y, final int button) {
+		if (MOUSE_DRAGGED == listenedEvent && button == 1) { executeEvent(x, y); }
 	}
 
 	@Override

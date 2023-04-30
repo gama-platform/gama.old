@@ -154,6 +154,9 @@ public class SwtMapPane extends Canvas
 	/** The yellow. */
 	private final Color yellow;
 
+	/** Variable used to lock panning */
+	private boolean locked = false;
+
 	/**
 	 * Constructor - creates an instance of JMapPane with the given renderer and map context.
 	 *
@@ -191,6 +194,10 @@ public class SwtMapPane extends Canvas
 
 	}
 
+	public void toggleLock() {
+		locked = !locked;
+	}
+
 	@Override
 	public void mouseMove(final MouseEvent e) {
 		if (panning) {
@@ -200,10 +207,12 @@ public class SwtMapPane extends Canvas
 		}
 
 		if (mouseDown) {
-			endX = e.x;
-			endY = e.y;
-			isDragging = true;
-			if (!isDisposed()) { redraw(); }
+			if(!locked) {
+				endX = e.x;
+				endY = e.y;
+				isDragging = true;
+				if (!isDisposed()) { redraw(); }
+			}
 		}
 
 	}
@@ -213,9 +222,11 @@ public class SwtMapPane extends Canvas
 
 	@Override
 	public void mouseDown(final MouseEvent e) {
-		panePos.x = e.x;
-		panePos.y = e.y;
-		panning = true;
+		if(!locked) {
+			panePos.x = e.x;
+			panePos.y = e.y;
+			panning = true;
+		}
 	}
 
 	@Override

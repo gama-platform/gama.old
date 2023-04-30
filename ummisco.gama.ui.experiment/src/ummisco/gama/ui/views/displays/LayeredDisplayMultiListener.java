@@ -20,6 +20,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.WorkaroundForIssue1353;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The listener interface for receiving layeredDisplayMulti events. The class that is interested in processing a
@@ -30,6 +31,10 @@ import ummisco.gama.ui.views.WorkaroundForIssue1353;
  * @see LayeredDisplayMultiEvent
  */
 public class LayeredDisplayMultiListener {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The view. */
 	private final LayeredDisplayDecorator view;
@@ -199,10 +204,22 @@ public class LayeredDisplayMultiListener {
 	public void mouseMove(final int x, final int y, final boolean modifier) {
 		WorkbenchHelper.asyncRun(view.displayOverlay);
 		if (modifier) return;
-		// DEBUG.LOG("Mouse moving on " + view.getPartName());
-
+		//DEBUG.LOG("Mouse moving on " + view.view.getPartName() + " at (" + x + "," + y + ")");
 		if (mouseIsDown) {
+			// Depending on the plateform or display, this case is never called,
+			// because DragDetect events are emitted instead. But on Windows
+			// Java2D displays, it seems that MouseMove events are emitted even
+			// when the mouse button is down.
+			
+			// Eventually moves the surface view
 			surface.draggedTo(x, y);
+			// Updates the mouse position. If the surface view is locked, the
+			// mouse actually moves in the environment. Is the surface is
+			// dragged, the environment follows the mouse so the #user_location
+			// technically does not change, but approximations are not likely to
+			// break anything.
+			setMousePosition(x, y);
+
 			surface.dispatchMouseEvent(SWT.DragDetect, x, y);
 		} else {
 			setMousePosition(x, y);
@@ -224,6 +241,7 @@ public class LayeredDisplayMultiListener {
 	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseDown(final int x, final int y, final int button, final boolean modifier) {
+		//DEBUG.LOG("Mouse down at " + x + ", " + y);
 		setMousePosition(x, y);
 		if (inMenu) {
 			inMenu = false;
@@ -235,7 +253,6 @@ public class LayeredDisplayMultiListener {
 			// No need to patch mouseUp(...) right now
 			return;
 		mouseIsDown = true;
-		// DEBUG.LOG("Mouse down on " + view.getPartName());
 		surface.dispatchMouseEvent(SWT.MouseDown, x, y);
 	}
 
@@ -252,12 +269,12 @@ public class LayeredDisplayMultiListener {
 	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseUp(final int x, final int y, final int button, final boolean modifier) {
+		//DEBUG.LOG("Mouse up at " + x + ", " + y + " on " + view.getPartName());
 		// In case the mouse has moved (for example on a menu)
 		if (!mouseIsDown) return;
 		setMousePosition(x, y);
 		if (modifier) return;
 		mouseIsDown = false;
-		// DEBUG.LOG("Mouse up on " + view.getPartName());
 		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) { WorkaroundForIssue1353.showShell(); }
 		surface.dispatchMouseEvent(SWT.MouseUp, x, y);
 	}
@@ -283,8 +300,9 @@ public class LayeredDisplayMultiListener {
 	 * Drag detected.
 	 */
 	public void dragDetected(final int x, final int y) {
-		// DEBUG.LOG("Mouse drag detected on " + view.getPartName());
-		// surface.draggedTo(e.x, e.y);
+		//DEBUG.LOG("Mouse drag detected on " + view.view.getPartName() + " at (" + x + "," + y + ")");
+		surface.draggedTo(x, y);
+		setMousePosition(x, y);
 		surface.dispatchMouseEvent(SWT.DragDetect, x, y);
 	}
 
