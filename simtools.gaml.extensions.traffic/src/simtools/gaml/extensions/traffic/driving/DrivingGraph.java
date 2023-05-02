@@ -58,7 +58,7 @@ public class DrivingGraph extends GamaSpatialGraph {
 		final IShape v2 = nodes.get(ptT);
 		if (v2 == null) return false;
 
-		if (e instanceof IAgent && ((IAgent) e).getSpecies().implementsSkill("road")) {
+		if (e instanceof IAgent && ((IAgent) e).getSpecies().implementsSkill("road_skill")) {
 			final IAgent roadAgent = e.getAgent();
 			final IAgent source = v1.getAgent();
 			final IAgent target = v2.getAgent();
