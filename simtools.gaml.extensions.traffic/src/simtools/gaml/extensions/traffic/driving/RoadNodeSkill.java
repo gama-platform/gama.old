@@ -60,7 +60,7 @@ import msi.gaml.types.IType;
 		concept = { IConcept.TRANSPORT, IConcept.SKILL },
 		doc = @doc (
 				value = "A skill for agents representing intersections on roads",
-				deprecated = "please use the name `intersection` instead"))
+				deprecated = "please use the name `intersection_skill` instead"))
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class RoadNodeSkill extends Skill {
 
