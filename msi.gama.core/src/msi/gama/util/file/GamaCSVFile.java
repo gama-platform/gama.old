@@ -587,9 +587,9 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object> implements IF
 	 *            the scope
 	 * @param CSVSep
 	 *            the CSV sep
-	 * @return the info
+	 * @return the info 
 	 */
-	private CSVInfo getInfo(final IScope scope, final String CSVSep) {
+	public CSVInfo getInfo(final IScope scope, final String CSVSep) {
 		if (info != null) return info;
 		final IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
 		if (p != null) {
