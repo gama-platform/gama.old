@@ -921,7 +921,7 @@ public class Random {
 	@doc (
 			value = "returns a key from the map with a probability following the (normalized) distribution described in map values (a form of lottery)",
 			examples = { @example (
-					value = "rnd_choice([\"toto\"::0.2,\\\"tata\\\"::0.5,\\\"tonton\\\"::0.3])",
+					value = "rnd_choice([\"toto\"::0.2,\"tata\"::0.5,\"tonton\"::0.3])",
 					equals = "2/10 chances to return \"toto\", 5/10 chances to return \"tata\", 3/10 chances to return \"tonton\"",
 					test = false) },
 			see = { "rnd" })
