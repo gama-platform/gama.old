@@ -1879,11 +1879,36 @@ public class Maths {
 			concept = { IConcept.MATH, IConcept.ARITHMETIC })
 	@doc (
 			value = "the atan2 value of the two operands.",
-			comment = "The function atan2 is the arctangent function with two arguments. The purpose of using two arguments instead of one is to gather information on the signs of the inputs in order to return the appropriate quadrant of the computed angle, which is not possible for the single-argument arctangent function.",
+			comment = "The function atan2 is the arctangent function with two arguments. The purpose of using two arguments instead of one is to gather information on the signs of the inputs in order to return the appropriate quadrant of the computed angle, which is not possible for the single-argument arctangent function. Beware: the first argument is y and the second is x",
 			masterDoc = true,
-			examples = @example (
+			examples = {@example (
 					value = "atan2 (0,0)",
 					equals = "0.0"),
+					@example (
+							value = "atan2 (0,1)",
+							equals = "0.0"),
+					@example (
+							value = "atan2 (0,-1)",
+							equals = "180.0"),
+					@example (
+							value = "atan2 (1,0)",
+							equals = "90.0"),
+					@example (
+							value = "atan2 (1,1)",
+							equals = "45.0"),
+					@example (
+							value = "atan2 (1,-1)",
+							equals = "135.0"),
+					@example (
+							value = "atan2 (-1,0)",
+							equals = "-90.0"),
+					@example (
+							value = "atan2 (-1,1)",
+							equals = "-45.0"),
+					@example (
+							value = "atan2 (-1,-1)",
+							equals = "-135.0"),
+			},
 			see = { "atan", "acos", "asin" })
 	public static double atan2(final double y, final double x) {
 		return Math.atan2(y, x) * toDeg;
