@@ -503,18 +503,7 @@ public abstract class AbstractAgent implements IAgent {
 		return s;
 	}
 
-	/**
-	 * Prim die.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @return the object
-	 * @throws GamaRuntimeException
-	 *             the gama runtime exception
-	 */
-	@action (
-			name = "die",
-			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
+	@Override
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
 		if (!dying) {
 			dying = true;
@@ -570,5 +559,4 @@ public abstract class AbstractAgent implements IAgent {
 		}
 
 	}
-
 }

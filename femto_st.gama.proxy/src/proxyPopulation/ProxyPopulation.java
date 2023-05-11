@@ -2,21 +2,17 @@ package proxyPopulation;
 
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.EMPTY_MAP;
-import static msi.gama.common.interfaces.IKeyword.LOCATION;
-import static msi.gama.common.interfaces.IKeyword.SHAPE;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import proxy.ProxyAgent;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
@@ -30,10 +26,23 @@ import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.variables.IVariable;
+import proxy.ProxyAgent;
+import ummisco.gama.dev.utils.DEBUG;
 
+/**
+ * Population of Proxy Agent
+ * 
+ * @author Lucas Grosjean
+ *
+ */
+@SuppressWarnings("serial")
 public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 {
-	private static final long serialVersionUID = 1L;
+	
+	static
+	{
+		DEBUG.OFF();
+	}
 	
 	Map<Integer, ProxyAgent> hashMapProxyID;
 	
@@ -43,14 +52,14 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 		hashMapProxyID = new HashMap<Integer, ProxyAgent>();
 	}
 	
+	@Override
 	public IList<ProxyAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 			final boolean toBeScheduled, final RemoteSequence sequence) throws GamaRuntimeException 
 	{
 		if (number == 0) return GamaListFactory.EMPTY_LIST;
-	
-		final IList<IAgent> agentList = GamaListFactory.create(getGamlType().getContentType(), number);
 		
+		final IList<MinimalAgent> agentList = GamaListFactory.create(getGamlType().getContentType(), number);
 		final IAgentConstructor<IAgent> constr = species.getDescription().getAgentConstructor();
 		
 		for (int i = 0; i < number; i++) 
@@ -59,9 +68,16 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 			if (initialValues != null && !initialValues.isEmpty()) 
 			{
 				final Map<String, Object> init = initialValues.get(i);
-				if (init.containsKey(SHAPE)) 
+				
+				if (init.containsKey(IKeyword.HASHCODE)) 
 				{
-					final Object val = init.get(SHAPE);
+					int hashcode = (Integer) init.get(IKeyword.HASHCODE);
+					((MinimalAgent)agent).setHashCode(hashcode);
+				}
+				
+				if (init.containsKey(IKeyword.SHAPE)) 
+				{
+					final Object val = init.get(IKeyword.SHAPE);
 					if (val instanceof GamaPoint) 
 					{
 						agent.setGeometry(new GamaShape((GamaPoint) val));
@@ -69,25 +85,24 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 					{
 						agent.setGeometry((IShape) val);
 					}
-					init.remove(SHAPE);
-				} else if (init.containsKey(LOCATION)) 
+					init.remove(IKeyword.SHAPE);
+				} else if (init.containsKey(IKeyword.LOCATION)) 
 				{
-					agent.setLocation(scope, (GamaPoint) init.get(LOCATION));
-					init.remove(LOCATION);
+					agent.setLocation(scope, (GamaPoint) init.get(IKeyword.LOCATION));
+					init.remove(IKeyword.LOCATION);
 				}
 			}
-			agentList.add(agent);
+			agentList.add((MinimalAgent)agent);
 		}
 		createVariablesForProxiedAgent(scope, agentList, initialValues, sequence);
 		
 		return createProxys(agentList, scope, sequence);
 	}
 	
-	
 	@Override
 	public ProxyAgent createAgentAt(final IScope scope, final int index, final Map<String, Object> initialValues,
 			final boolean isRestored, final boolean toBeScheduled) throws GamaRuntimeException 
-	{
+	{			
 		final List<Map<String, Object>> mapInitialValues = new ArrayList<>();
 		mapInitialValues.add(initialValues);
 
@@ -106,14 +121,14 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 		
 		if (number == 0) return GamaListFactory.EMPTY_LIST;
 	
-		final IList<IAgent> agentList = GamaListFactory.create(getGamlType().getContentType(), number);
+		final IList<MinimalAgent> agentList = GamaListFactory.create(getGamlType().getContentType(), number);
 		final IAgentConstructor<IAgent> constr = species.getDescription().getAgentConstructor();
 		
 		for (final IShape geom : geometries.iterable(scope)) 
 		{
 			final IAgent agent = constr.createOneAgent(this, currentAgentIndex++);
 			agent.setGeometry(geom);
-			agentList.add(agent);
+			agentList.add((MinimalAgent)agent);
 		}
 		
 		createVariablesForProxiedAgent(scope, agentList, EMPTY_LIST, null);
@@ -130,14 +145,14 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	 * @param sequence
 	 * @return
 	 */
-	private IList<ProxyAgent> createProxys(IList<IAgent> agentList, IScope scope, RemoteSequence sequence)
+	private IList<ProxyAgent> createProxys(IList<MinimalAgent> agentList, IScope scope, RemoteSequence sequence)
 	{
 		final IList<ProxyAgent> proxyList = GamaListFactory.create(getGamlType().getContentType(), agentList.size());
-		for (final IAgent agent : agentList) {
-			ProxyAgent proxy = new ProxyAgent(agent, agent.hashCode());
+		for (final MinimalAgent agent : agentList) {
+			ProxyAgent proxy = new ProxyAgent(agent);
 			proxyList.add(proxy);
-			
-			hashMapProxyID.put(agent.hashCode(), proxy);		
+			DEBUG.OUT("New agent(" + agent.getName() + ") hashcode : " + agent.hashCode);
+			hashMapProxyID.put(agent.hashCode, proxy);		
 		}
 		
 		scheduleProxy(proxyList, scope, sequence);
@@ -149,7 +164,7 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	
 	/**
 	 * 
-	 * Schedule the Proxy AGENT
+	 * Schedule the Proxy Agent
 	 * 
 	 * @param proxyList : list of Proxy to schedule
 	 * @param scope
@@ -164,7 +179,6 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 		
 		if (sequence != null && !sequence.isEmpty()) {
 			for (final IAgent proxy : proxyList) {
-
 				if (!scope.execute(sequence, proxy, null).passed()
 						|| scope.getAndClearBreakStatus() == FlowStatus.BREAK) {
 					break;
@@ -187,11 +201,12 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	 */
 	@SuppressWarnings ("null")
 	// TODO duplicate from createVariablesFor from GamaPopulation
-	public void createVariablesForProxiedAgent(final IScope scope, final List<IAgent> agents,
+	public void createVariablesForProxiedAgent(final IScope scope, final List<MinimalAgent> agents,
 			final List<? extends Map<String, Object>> initialValues, RemoteSequence remote) throws GamaRuntimeException 
 	{
 		if (agents == null || agents.isEmpty()) return;
 		final boolean empty = initialValues == null || initialValues.isEmpty();
+		
 		Map<String, Object> inits;
 		for (int i = 0, n = agents.size(); i < n; i++) {
 			final IAgent a = agents.get(i);
@@ -211,31 +226,31 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	@Override
 	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
 		try {
-			ProxyAgent proxy = getProxyFromID(agent.hashCode());
+			ProxyAgent proxy = getProxyFromHashCode(((MinimalAgent)agent).hashCode);
 			this.remove(proxy);
-			
-			// TODO if not dead but just removed (in case of migration of agent)
-			// do something with the proxy (change the ref to a distant agent for example)
-			
 		} catch (final RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Get proxy linked to the agent with the ID uniqueID 
+	 * Get proxy linked to the agent with the given hashcode
 	 * 
-	 * @param uniqueID
+	 * @param hashcode
 	 * @return
 	 */
-	protected ProxyAgent getProxyFromID(int uniqueID)
+	public ProxyAgent getProxyFromHashCode(int hashcode)
 	{	
-		ProxyAgent proxy = this.hashMapProxyID.get(uniqueID);
-		if(proxy != null)
+		ProxyAgent proxy = this.hashMapProxyID.get(hashcode);
+		
+		DEBUG.OUT("Proxy hashcode in the population :: ");
+		for(var auto : this.hashMapProxyID.entrySet())
 		{
-			return proxy;
+			DEBUG.OUT(auto.getKey() + " :: " + auto.getKey());
 		}
-		return null;
+		DEBUG.OUT("proxy from hashcode(" + hashcode + ") : " + proxy);
+		
+		return proxy != null ? proxy : null;
 	}
 
 }

@@ -26,6 +26,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -65,7 +66,6 @@ import msi.gaml.variables.IVariable;
 				type = IType.POINT,
 				depends_on = IKeyword.SHAPE,
 				doc = { @doc ("Returns the location of the agent") }),
-
 		@variable (
 				name = IKeyword.SHAPE,
 				type = IType.GEOMETRY,
@@ -120,7 +120,7 @@ public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, I
 	@Override
 	@setter (IKeyword.NAME)
 	void setName(String name);
-
+	
 	/**
 	 * Gets the location.
 	 *
@@ -633,5 +633,18 @@ public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, I
 	default void setGeometricalType(final Type t) {
 		getGeometry().setGeometricalType(t);
 	}
-
+	
+	/**
+	 * Prim die.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the object
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 */
+	@action (
+		name = "die",
+		doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
+	public Object primDie(final IScope scope);
 }

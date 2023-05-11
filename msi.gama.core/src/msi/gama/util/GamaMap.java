@@ -43,7 +43,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IMap<K, V> {
 	 * @param key the key
 	 * @param content the content
 	 */
-	protected GamaMap(final int capacity, final IType key, final IType content) {
+	public GamaMap(final int capacity, final IType key, final IType content) {
 		super(capacity);
 		type = Types.MAP.of(key, content);
 	}

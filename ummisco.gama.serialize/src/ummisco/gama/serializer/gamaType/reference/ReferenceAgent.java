@@ -491,4 +491,10 @@ public class ReferenceAgent implements IReference, IAgent {
 
 	@Override
 	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {}
+
+	@Override
+	public Object primDie(IScope scope) throws GamaRuntimeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

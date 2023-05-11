@@ -1,6 +1,5 @@
 package proxy;
 
-
 import java.util.List;
 
 import msi.gama.common.interfaces.BiConsumerWithPruning;
@@ -17,41 +16,66 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
+import synchronizationMode.DistantSynchronizationMode;
+import synchronizationMode.SynchronizationMode;
+import ummisco.gama.dev.utils.DEBUG;
 
-
+/**
+ * ProxyAgent class, it is used to control access to an agent's attributes
+ * 
+ * @author Lucas Grosjean
+ *
+ */
 public class ProxyAgent implements IAgent
 {
-
+	static
+	{
+		DEBUG.OFF();
+	}
+	
+	public ProxyAgent(final IPopulation<? extends IAgent> s, final int index) 
+	{
+	}
+	
 	public SynchronizationMode synchroMode;
-	public int uniqueID;
     
-	public ProxyAgent(IAgent proxiedAgent, int uniqueID)
+	public ProxyAgent(IAgent proxiedAgent)
     {
     	this.synchroMode = new SynchronizationMode(proxiedAgent);
-    	this.uniqueID = uniqueID;
     }
 	
-    public ProxyAgent(IAgent proxiedAgent)
-    {
-    	this.synchroMode = new SynchronizationMode(proxiedAgent);
-    }
-    
-    public int getUniqueID() {
-		return this.uniqueID;
+	public void setSynchronizationMode(SynchronizationMode synchroMode)
+	{
+		DEBUG.OUT("set synchroMode " + synchroMode.getClass());
+		this.synchroMode = synchroMode;
+
+		DEBUG.OUT("Set Synchromode test update ");
+		this.synchroMode.updateProxiedAgent();
 	}
-    
+	
+	public void setSynchronizationMode(DistantSynchronizationMode synchroMode)
+	{
+		DEBUG.OUT("set setDistantSynchronizationMode " + synchroMode.getClass());
+		this.synchroMode = synchroMode;
+	}	
+	
 	@Override
 	public IAgent getAgent() {
 		return synchroMode.getAgent();
 	}
-	
-	@Override
-	public void setAgent(IAgent agent) {
-		this.synchroMode = new SynchronizationMode(agent);
-	}
 
 	@Override
+	public void setAgent(IAgent agent) {
+		this.synchroMode.proxiedAgent = agent;
+	}
+	
+	public IPopulation<?> getProxyPopulation() {
+		return this.getPopulation();
+	}
+	
+	@Override
 	public IMap<String, Object> getOrCreateAttributes() {
+		//DEBUG.OUT("getOrCreateAttributes " + this.synchroMode.getOrCreateAttributes());
 		return this.synchroMode.getOrCreateAttributes();
 	}
 
@@ -62,6 +86,7 @@ public class ProxyAgent implements IAgent
 
 	@Override
 	public Object getAttribute(String key) {
+		//DEBUG.OUT("getAttribute mother " + key);
 		return this.synchroMode.getAttribute(key);
 	}
 
@@ -104,22 +129,7 @@ public class ProxyAgent implements IAgent
 	public void dispose() {
 		this.synchroMode.dispose();
 	}
-
-	@Override
-	public Type getGeometricalType() {
-		return this.synchroMode.getGeometricalType();
-	}
-
-	@Override
-	public void forEachAttribute(BiConsumerWithPruning<String, Object> visitor) {
-		this.synchroMode.forEachAttribute(visitor);
-	}
-
-	@Override
-	public int compareTo(IAgent o) {
-		return this.synchroMode.compareTo(o);
-	}
-
+	
 	@Override
 	public boolean init(IScope scope) throws GamaRuntimeException {
 		return this.synchroMode.init(scope);
@@ -136,28 +146,8 @@ public class ProxyAgent implements IAgent
 	}
 
 	@Override
-	public Object getFromIndicesList(IScope scope, IList<String> indices) throws GamaRuntimeException {
-		return this.synchroMode.getFromIndicesList(scope, indices);
-	}
-
-	@Override
 	public IScope getScope() {
 		return this.synchroMode.getScope();
-	}
-
-	@Override
-	public ITopology getTopology() {
-		return this.synchroMode.getTopology();
-	}
-
-	@Override
-	public void setPeers(IList<IAgent> peers) {
-		this.synchroMode.setPeers(peers);
-	}
-
-	@Override
-	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		return this.synchroMode.getPeers();
 	}
 
 	@Override
@@ -188,16 +178,6 @@ public class ProxyAgent implements IAgent
 	@Override
 	public void setGeometry(IScope scope, IShape newGeometry) {
 		this.synchroMode.setGeometry(scope, newGeometry);
-	}
-
-	@Override
-	public IMacroAgent getHost() {
-		return this.synchroMode.getHost();
-	}
-
-	@Override
-	public void setHost(IMacroAgent macroAgent) {
-		this.synchroMode.setHost(macroAgent);
 	}
 
 	@Override
@@ -243,27 +223,96 @@ public class ProxyAgent implements IAgent
 	}
 
 	@Override
-	public List<IAgent> getMacroAgents() {
-		return this.synchroMode.getMacroAgents();
-	}
-
-	@Override
 	public IModel getModel() {
 		return this.synchroMode.getModel();
 	}
 
 	@Override
+	public Object primDie(IScope scope) throws GamaRuntimeException {
+		DEBUG.OUT("do primDie");
+		return this.synchroMode.primDie(scope);
+	}
+
+	@Override
+	public Type getGeometricalType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void forEachAttribute(BiConsumerWithPruning<String, Object> visitor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int compareTo(IAgent o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Object getFromIndicesList(IScope scope, IList<String> indices) throws GamaRuntimeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ITopology getTopology() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPeers(IList<IAgent> peers) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IList<IAgent> getPeers() throws GamaRuntimeException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IMacroAgent getHost() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setHost(IMacroAgent macroAgent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<IAgent> getMacroAgents() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public boolean isInstanceOf(String skill, boolean direct) {
-		return this.synchroMode.isInstanceOf(skill, direct);
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(ISpecies microSpecies) {
-		return this.synchroMode.getPopulationFor(microSpecies);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(String speciesName) {
-		return this.synchroMode.getPopulationFor(speciesName);
-	}	
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	public int getHashCode() {
+		return this.synchroMode.getHashcode();
+	}
 }

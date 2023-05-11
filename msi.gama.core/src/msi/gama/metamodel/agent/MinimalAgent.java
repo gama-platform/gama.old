@@ -56,7 +56,7 @@ public class MinimalAgent extends AbstractAgent {
 	protected final IShape geometry;
 
 	/** The hash code. */
-	private final int hashCode;
+	public int hashCode;
 
 	/**
 	 * @param s
@@ -276,5 +276,9 @@ public class MinimalAgent extends AbstractAgent {
 	@Override
 	public final int hashCode() {
 		return hashCode;
+	}
+	
+	public void setHashCode(int hashcode) {
+		this.hashCode = hashcode;
 	}
 }

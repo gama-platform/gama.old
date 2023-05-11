@@ -6,7 +6,8 @@ Bundle-Version: 1.9.2.qualifier
 Automatic-Module-Name: femto.st.gama.proxy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: msi.gama.precompiler,
- msi.gaml.types
+ msi.gaml.types,
+ org.osgi.framework;version="1.10.0"
 Require-Bundle:  ummisco.gama.serialize,
  ummisco.gama.network,
  ummisco.gama.annotations,
@@ -15,3 +16,6 @@ Require-Bundle:  ummisco.gama.serialize,
 Export-Package: proxy,
  proxyExperiment,
  proxyPopulation
+Bundle-ClassPath: .
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: pluginActivator.ActivatorPluginProxy

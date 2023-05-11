@@ -510,6 +510,9 @@ public interface IKeyword {
 
 	/** The gui. */
 	String GUI_ = "gui";
+	
+	/** The hashcode. */
+	String HASHCODE = "hashcode";
 
 	/** The header. */
 	String HEADER = "header";

@@ -151,7 +151,7 @@
 		<module>../simtools.gaml.extensions.traffic</module>
 		<module>../simtools.gaml.extensions.physics</module>
 
-
+		<module>../femto_st.gama.proxy</module>
 		<module>../irit.gaml.extensions.database</module>
 
 
