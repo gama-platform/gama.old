@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * CameraDefinition.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.outputs.layers.properties;
@@ -13,6 +13,7 @@ package msi.gama.outputs.layers.properties;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.GraphicsScope;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
@@ -80,6 +81,7 @@ public class CameraDefinition extends AbstractDefinition implements ICameraDefin
 
 	@Override
 	public void update(final IScope scope) {
+
 		// First we determine the target.
 		GamaPoint target = targetAttribute.get();
 		if (target == null) { target = scope.getSimulation().getCentroid(); }
@@ -92,11 +94,13 @@ public class CameraDefinition extends AbstractDefinition implements ICameraDefin
 		target = target.yNegated();
 		if (temp instanceof String pos) {
 			// If it is a symbolic position
+			double coeff = 1.4;
+			if (scope instanceof GraphicsScope gs) {
+				coeff = gs.getGraphics().getSurface().getData().getCameraDistanceCoefficient();
+			}
 			double w = scope.getSimulation().getWidth();
 			double h = scope.getSimulation().getHeight();
-			double max = Math.max(w, h);
-			// * 1.2; // ??
-
+			double max = Math.max(w, h) * coeff;
 			location = computeLocation(pos, target, w, h, max);
 		} else {
 			location = Cast.asPoint(scope, temp);

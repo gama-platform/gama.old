@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * LayeredDisplayData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.outputs;
@@ -363,9 +363,10 @@ public class LayeredDisplayData {
 	 * @param imageDimension
 	 *            the imageDimension to set
 	 */
-	public void setImageDimension(final GamaPoint imageDimension) { 
-		//DEBUG.OUT("Setting image dimension to : " + imageDimension);
-		this.imageDimension = imageDimension; }
+	public void setImageDimension(final GamaPoint imageDimension) {
+		// DEBUG.OUT("Setting image dimension to : " + imageDimension);
+		this.imageDimension = imageDimension;
+	}
 
 	/**
 	 * @return the envWidth
@@ -758,7 +759,7 @@ public class LayeredDisplayData {
 	 *
 	 * @return the distance coefficient
 	 */
-	public double getCameraDistanceCoefficient() { return isDrawEnv() ? 1.60 : 1.46; }
+	public double getCameraDistanceCoefficient() { return isDrawEnv() ? 1.4 : 1.2; }
 
 	/**
 	 * Reset camera.
