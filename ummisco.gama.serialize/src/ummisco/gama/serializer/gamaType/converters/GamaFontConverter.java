@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GamaPointConverter.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * GamaFontConverter.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -15,46 +15,61 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaFont;
 import msi.gaml.operators.Cast;
 
 /**
- * The Class GamaPointConverter.
+ * The Class GamaColorConverter.
  */
-public class GamaPointConverter extends AbstractGamaConverter<GamaPoint, GamaPoint> {
+@SuppressWarnings ("rawtypes")
+public class GamaFontConverter extends AbstractGamaConverter<GamaFont, GamaFont> {
 
 	/** The Constant TAG. */
-	private final static String TAG = "GamaPoint";
+	private final static String TAG = "GamaFont";
 
 	/** The Constant SEPARATOR. */
 	private final static String SEPARATOR = ":";
 
 	/**
-	 * Instantiates a new gama point converter.
+	 * Instantiates a new gama color converter.
 	 *
+	 * @param scope
+	 *            the scope
 	 * @param target
 	 *            the target
 	 */
-	public GamaPointConverter(final Class<GamaPoint> target) {
+	public GamaFontConverter(final Class<GamaFont> target) {
 		super(target);
 	}
 
+	/**
+	 * Write.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param color
+	 *            the color
+	 * @param writer
+	 *            the writer
+	 * @param context
+	 *            the context
+	 */
 	@Override
-	public void write(final IScope scope, final GamaPoint pt, final HierarchicalStreamWriter writer,
+	public void write(final IScope scope, final GamaFont font, final HierarchicalStreamWriter writer,
 			final MarshallingContext context) {
 		writer.startNode(TAG);
-		writer.setValue(pt.x + SEPARATOR + pt.y + SEPARATOR + pt.z);
+		writer.setValue(font.getName() + SEPARATOR + font.getStyle() + SEPARATOR + font.getSize());
 		writer.endNode();
 	}
 
 	@Override
-	public GamaPoint read(final IScope scope, final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+	public GamaFont read(final IScope scope, final HierarchicalStreamReader reader,
+			final UnmarshallingContext context) {
 		try {
 			reader.moveDown();
 			String[] lines = reader.getValue().split(SEPARATOR);
-			return new GamaPoint(Cast.asFloat(scope, lines[0]), Cast.asFloat(scope, lines[1]),
-					Cast.asFloat(scope, lines[2]));
+			return new GamaFont(lines[0], Cast.asInt(scope, lines[1]), Cast.asInt(scope, lines[2]));
 		} finally {
 			reader.moveUp();
 		}

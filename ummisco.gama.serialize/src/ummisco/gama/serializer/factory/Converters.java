@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * Converters.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.serializer.factory;
@@ -20,6 +20,7 @@ import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaFont;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
@@ -36,6 +37,7 @@ import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterNetwork;
 import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaColorConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaFileConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaFontConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaGraphConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaListConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaListConverterNetwork;
@@ -77,23 +79,25 @@ public abstract class Converters {
 			}
 		});
 		DISCOVERED = converters.toArray(new IGamaConverter[converters.size()]);
-		REGULAR = concat(new IGamaConverter[] { new GamaBasicTypeConverter(IType.class),
-				new GamaAgentConverter(IAgent.class), new GamaListConverter(IList.class),
-				new GamaMapConverter(IMap.class), new GamaPairConverter(GamaPair.class),
-				new GamaMatrixConverter(IMatrix.class), new GamaGraphConverter(IGraph.class),
-				new GamaFileConverter(IGamaFile.class), new GamaColorConverter(GamaColor.class),
-				new LogConverter(Object.class), new SavedAgentConverter(SavedAgent.class),
-				new GamaPopulationConverter(IPopulation.class), new GamaSpeciesConverter(ISpecies.class),
-				new ReferenceAgentConverter(ReferenceAgent.class), new GamaPathConverter(GamaPath.class) }, DISCOVERED);
+		REGULAR = concat(
+				new IGamaConverter[] { new GamaBasicTypeConverter(IType.class), new GamaFontConverter(GamaFont.class),
+						new GamaAgentConverter(IAgent.class), new GamaListConverter(IList.class),
+						new GamaMapConverter(IMap.class), new GamaPairConverter(GamaPair.class),
+						new GamaMatrixConverter(IMatrix.class), new GamaGraphConverter(IGraph.class),
+						new GamaFileConverter(IGamaFile.class), new GamaColorConverter(GamaColor.class),
+						new LogConverter(Object.class), new SavedAgentConverter(SavedAgent.class),
+						new GamaPopulationConverter(IPopulation.class), new GamaSpeciesConverter(ISpecies.class),
+						new ReferenceAgentConverter(ReferenceAgent.class), new GamaPathConverter(GamaPath.class) },
+				DISCOVERED);
 
 		NETWORK = concat(new IGamaConverter[] { new GamaBasicTypeConverter(IType.class),
-				new GamaAgentConverterNetwork(IAgent.class), new GamaListConverterNetwork(IList.class),
-				new GamaMapConverter(IMap.class), new GamaPairConverter(GamaPair.class),
-				new GamaMatrixConverter(IMatrix.class), new GamaGraphConverter(IGraph.class),
-				new GamaFileConverter(IGamaFile.class), new GamaColorConverter(GamaColor.class),
-				new LogConverter(Object.class), new SavedAgentConverter(SavedAgent.class),
-				new GamaPopulationConverter(IPopulation.class), new GamaSpeciesConverter(ISpecies.class),
-				new GamaPathConverter(GamaPath.class) }, DISCOVERED);
+				new GamaFontConverter(GamaFont.class), new GamaAgentConverterNetwork(IAgent.class),
+				new GamaListConverterNetwork(IList.class), new GamaMapConverter(IMap.class),
+				new GamaPairConverter(GamaPair.class), new GamaMatrixConverter(IMatrix.class),
+				new GamaGraphConverter(IGraph.class), new GamaFileConverter(IGamaFile.class),
+				new GamaColorConverter(GamaColor.class), new LogConverter(Object.class),
+				new SavedAgentConverter(SavedAgent.class), new GamaPopulationConverter(IPopulation.class),
+				new GamaSpeciesConverter(ISpecies.class), new GamaPathConverter(GamaPath.class) }, DISCOVERED);
 	}
 
 	/**
