@@ -27,7 +27,7 @@ public class GamaColorConverter extends AbstractGamaConverter<GamaColor, GamaCol
 	/**
 	 * The GamaColorRecord.
 	 */
-	record GamaColorRecord(float r, float g, float b, float a) {
+	public static record GamaColorRecord(float r, float g, float b, float a) {
 		/**
 		 * Instantiates a new gama color reducer.
 		 *
