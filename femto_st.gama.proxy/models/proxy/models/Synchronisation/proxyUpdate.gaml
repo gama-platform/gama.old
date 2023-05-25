@@ -1,11 +1,11 @@
 /**
-* Name: migration
-* Set an agent as a distantAgent + update his attributes from time to time
+* Name: proxyUpdate
+* move an agent across different simulation + updates all his distant agent
 * Author: Lucas Grosjean
 * Tags: Proxy, HPC, multi simulation
 */
 
-model proxyMigration
+model proxyUpdate
 
 global
 {
@@ -13,16 +13,24 @@ global
 	movingAgent globalMoving;
 	bool possess_agent <- false;
 	int neighbor_id <- 1;
-	int number_of_other_simulation <- 3;
+	int number_of_other_simulation <- 10;
+	
+	bool display_true <- false;
 	 
 	init
 	{
-		seed <- 10.0;
-		create commAgent;
+		list var0 <- range(number_of_other_simulation);
+		write(var0 - simulation_id);
+		
+		write("before " + var0);
+		var0 <- reverse(var0);
+		write("after " + var0);
+		
+		create commAgent with: [all_neighbors :: var0 - simulation_id];
+		
 		
 		if(simulation_id = 0)
 		{	
-			commAgent[0].col <- #blue;
 			create movingAgent with: [ location :: any_location_in(world), target :: any_location_in(world)] returns: globalAgent;
 			globalMoving <- globalAgent[0];
 
@@ -30,9 +38,10 @@ global
 
 			possess_agent <- true;
 			neighbor_id <- 1;
+			display_true <- true;
 			
-		}else{
-			commAgent[0].col <- #red;
+		}else
+		{
 			neighbor_id <- simulation_id + 1;
 			if(neighbor_id > number_of_other_simulation)
 			{
@@ -54,8 +63,14 @@ species movingAgent skills:[moving]
 	
 	aspect classic
 	{		
-		draw circle(2) color: col;
 		draw line(location, target) color: col;
+		if(display_true)
+		{
+			draw circle(5) color: col;
+		}else
+		{
+			draw circle(2) color: col;
+		}
 	}
 	
 	reflex move when: target != location
@@ -66,7 +81,6 @@ species movingAgent skills:[moving]
 	reflex target when: target = location
 	{
 		target <- any_location_in(world);
-		location <- any_location_in(world);
 	}
 }
 
@@ -80,6 +94,11 @@ species followingAgent parent: movingAgent
 		speed <- targetAgent.speed - (targetAgent.speed / 20);
 	}
 	
+	aspect classic
+	{		
+		draw line(location, target) color: col;
+		draw circle(2) color: col;
+	}
 	reflex move when: target != location
 	{
 		target <- targetAgent.location;
@@ -95,11 +114,16 @@ species followingAgent parent: movingAgent
 species commAgent skills: [network, ProxySkill]
 {
 	rgb col;
+	list all_neighbors;
 	
 	init
 	{
-		do connect protocol: "tcp_server" port: 3001 with_name: "comm" + simulation_id;
-		do join_group with_name: "bufferProxy";
+		do connect protocol: "tcp_server" port: 3001 with_name: "comm"+simulation_id;
+	}
+	
+	reflex when: simulation_id = 0
+	{
+		write("----------------cycle : " + cycle);
 	}
 	
 	reflex receiveMovingAgent when: has_more_message()
@@ -107,58 +131,57 @@ species commAgent skills: [network, ProxySkill]
 		loop while: has_more_message()
 		{
 			message msg <- fetch_message();
-			//write("" + simulation_id + " received " + msg) color: col;
 			map<string, unknown> content <- map(msg.contents);
 			
 			string request <- content["type"];
-			//write("received request : " + request) color: col;
-		
+			
 			if(request = "update" and globalMoving != nil)
-			{
-				//write("" + simulation_id + " update agent ") color: col;
-				do updateProxy(globalMoving, content["agent"]);
+			{			
+				do updateProxy(content["agent"]);
 				
 			}else if(request = "migrate")
 			{		
-				//write("" + simulation_id + " migrate agent " + content["agent"]) color: col;
-				do migrateAgent(content["agent"], content["typeAgent"]);
+				do migrateAgent(content["agent"]);
 				globalMoving <- movingAgent[0];
 				possess_agent <- true;
-				
 				do send to: "comm" + content["sender"] contents: ["type" :: "received"];
+				display_true <- true;
 				
 			}else if(request = "received")
 			{
 				do setAgentAsDistant(globalMoving);
-				possess_agent <- false;
+				display_true <- false;
 			}
 		}	
 	}
 	
 	reflex when: (cycle mod 10 = 0 and cycle != 0) and possess_agent
 	{
-		//write("migrate") color: col;
-		do send to: "comm" + neighbor_id contents: ["agent" :: globalMoving, "typeAgent" :: "movingAgent", "type" :: "migrate", "sender" :: simulation_id];
+		do send to: "comm" + one_of(all_neighbors) contents: ["agent" :: globalMoving, "type" :: "migrate", "sender" :: simulation_id];
+		possess_agent <- false;
 	}
 	
 	reflex when: possess_agent
 	{
-		//write("simulation(" + simulation_id + ") : update agent") color: col;
-		do send to:"comm" + neighbor_id  contents:["type" :: "update", "agent" :: globalMoving];	
+		loop i over: all_neighbors
+		{
+			write("globalMoving for " + i + " : " + globalMoving);
+			do send to: "comm" + i contents:["type" :: "update", "agent" :: globalMoving];	
+		}
 	}
 }
-experiment proxyMigration type: proxy 
+experiment proxyUpdate type: proxy 
 {
-	
 	init
 	{
-		loop simulation_id_index from: 1 to: 3 {    
+		loop simulation_id_index from: 1 to: number_of_other_simulation {    
 			create simulation with: [simulation_id :: simulation_id_index]; // new simulation
 		}
 	}
-	output
+	
+	output synchronized: true
 	{
-		display "proxyMigration"
+		display "proxyUpdate" toolbar: false type: 2d 
 		{
 			species movingAgent aspect: classic;
 			species followingAgent aspect: classic;

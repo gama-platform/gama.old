@@ -102,7 +102,8 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	@Override
 	public ProxyAgent createAgentAt(final IScope scope, final int index, final Map<String, Object> initialValues,
 			final boolean isRestored, final boolean toBeScheduled) throws GamaRuntimeException 
-	{			
+	{		
+		DEBUG.OUT("createAgentAt");
 		final List<Map<String, Object>> mapInitialValues = new ArrayList<>();
 		mapInitialValues.add(initialValues);
 
@@ -149,7 +150,7 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	{
 		final IList<ProxyAgent> proxyList = GamaListFactory.create(getGamlType().getContentType(), agentList.size());
 		for (final MinimalAgent agent : agentList) {
-			ProxyAgent proxy = new ProxyAgent(agent);
+			ProxyAgent proxy = new ProxyAgent(agent, this);
 			proxyList.add(proxy);
 			DEBUG.OUT("New agent(" + agent.getName() + ") hashcode : " + agent.hashCode);
 			hashMapProxyID.put(agent.hashCode, proxy);		
@@ -226,8 +227,16 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	@Override
 	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
 		try {
-			ProxyAgent proxy = getProxyFromHashCode(((MinimalAgent)agent).hashCode);
-			this.remove(proxy);
+			if(agent instanceof ProxyAgent)
+			{
+				ProxyAgent proxy = (ProxyAgent) agent;
+				this.remove(proxy);
+			}else
+			{
+				ProxyAgent proxy = getProxyFromHashCode(((MinimalAgent)agent).hashCode);
+				this.remove(proxy);
+
+			}
 		} catch (final RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -252,5 +261,9 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 		
 		return proxy != null ? proxy : null;
 	}
-
+	
+	public Map<Integer, ProxyAgent> getMapProxyID()
+	{
+		return this.hashMapProxyID;
+	}
 }

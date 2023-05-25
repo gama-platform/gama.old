@@ -58,13 +58,9 @@ public class SynchronizationMode
 		return this.proxiedAgent;
 	}
 	
-	public void updateProxiedAgent()
+	public void updateProxiedAgent(IAgent agentUpdated)
 	{
-		if(hasDistantCopy)
-		{
-			DEBUG.OUT("--------hasDistantCopy--------------");
-			// TODO update distant agent
-		}
+		setAgent(agentUpdated);
 	}
 	
 	public IMap<String, Object> getOrCreateAttributes()
@@ -257,6 +253,7 @@ public class SynchronizationMode
 	
 	public void updateAttributes(IAgent agent)
 	{
+		DEBUG.OUT("updateAttributes SynchronizationMode : " + agent);
 	}
 
 	public int getHashcode() {

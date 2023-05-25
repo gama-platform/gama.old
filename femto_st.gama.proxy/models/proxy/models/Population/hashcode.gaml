@@ -86,7 +86,7 @@ species commAgent skills: [network, ProxySkill]
 			if(request = "migrate")
 			{
 				write("simulation(" + simulation_id + ") migrate agent ") color: col;
-				do migrateAgent(content["agent"], content["typeAgent"]);
+				do migrateAgent(content["agent"]);
 				possess_agent <- true;
 				
 				do send to: "comm" + neighbor_id contents: ["type" :: "received"];

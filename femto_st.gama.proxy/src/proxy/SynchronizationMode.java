@@ -23,7 +23,7 @@ public class SynchronizationMode
 	
 	IAgent proxiedAgent;
 	
-	SynchronizationMode(IAgent proxiedAgent)
+	public SynchronizationMode(IAgent proxiedAgent)
 	{
 		this.proxiedAgent = proxiedAgent;
 	}

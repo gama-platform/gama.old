@@ -6,6 +6,7 @@ import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -33,24 +34,27 @@ public class ProxyAgent implements IAgent
 		DEBUG.OFF();
 	}
 	
+
+	protected final IPopulation<? extends IAgent> population;
+	
 	public ProxyAgent(final IPopulation<? extends IAgent> s, final int index) 
 	{
+		this.population = s;
 	}
 	
 	public SynchronizationMode synchroMode;
     
-	public ProxyAgent(IAgent proxiedAgent)
+	public ProxyAgent(IAgent proxiedAgent, final IPopulation<? extends IAgent> s)
     {
+		DEBUG.OUT("hello new proxy : " + proxiedAgent.getName());
     	this.synchroMode = new SynchronizationMode(proxiedAgent);
+    	this.population = s;
     }
 	
 	public void setSynchronizationMode(SynchronizationMode synchroMode)
 	{
 		DEBUG.OUT("set synchroMode " + synchroMode.getClass());
 		this.synchroMode = synchroMode;
-
-		DEBUG.OUT("Set Synchromode test update ");
-		this.synchroMode.updateProxiedAgent();
 	}
 	
 	public void setSynchronizationMode(DistantSynchronizationMode synchroMode)
@@ -61,21 +65,24 @@ public class ProxyAgent implements IAgent
 	
 	@Override
 	public IAgent getAgent() {
+		DEBUG.OUT("getAgent() " + synchroMode.getAgent());
 		return synchroMode.getAgent();
 	}
 
 	@Override
 	public void setAgent(IAgent agent) {
+		DEBUG.OUT("setAgent() " + agent);
 		this.synchroMode.proxiedAgent = agent;
 	}
 	
 	public IPopulation<?> getProxyPopulation() {
-		return this.getPopulation();
+		DEBUG.OUT("getProxyPopulation() " + this.population);
+		return this.population;
 	}
 	
 	@Override
 	public IMap<String, Object> getOrCreateAttributes() {
-		//DEBUG.OUT("getOrCreateAttributes " + this.synchroMode.getOrCreateAttributes());
+		DEBUG.OUT("getOrCreateAttributes " + this.synchroMode.getOrCreateAttributes());
 		return this.synchroMode.getOrCreateAttributes();
 	}
 
@@ -86,22 +93,25 @@ public class ProxyAgent implements IAgent
 
 	@Override
 	public Object getAttribute(String key) {
-		//DEBUG.OUT("getAttribute mother " + key);
+		DEBUG.OUT("getAttribute ProxyAgent " + key);
 		return this.synchroMode.getAttribute(key);
 	}
 
 	@Override
 	public void setAttribute(String key, Object value) {
+		DEBUG.OUT("setAttribute ProxyAgent " + key + " :: " + value);
 		this.synchroMode.setAttribute(key, value);
 	}
 
 	@Override
 	public boolean hasAttribute(String key) {
+		DEBUG.OUT("hasAttribute " + this.synchroMode.hasAttribute(key));
 		return this.synchroMode.hasAttribute(key);
 	}
 
 	@Override
 	public GamaPoint getLocation() {
+		DEBUG.OUT("getLocation " + this.synchroMode.getLocation());
 		return this.synchroMode.getLocation();
 	}
 
@@ -143,11 +153,6 @@ public class ProxyAgent implements IAgent
 	@Override
 	public Object get(IScope scope, String index) throws GamaRuntimeException {
 		return this.synchroMode.get(scope, index);
-	}
-
-	@Override
-	public IScope getScope() {
-		return this.synchroMode.getScope();
 	}
 
 	@Override
@@ -247,8 +252,7 @@ public class ProxyAgent implements IAgent
 
 	@Override
 	public int compareTo(IAgent o) {
-		// TODO Auto-generated method stub
-		return 0;
+		return (this.getHashCode() == ((MinimalAgent) o).hashCode) ? 1 : 0;
 	}
 
 	@Override
@@ -295,24 +299,42 @@ public class ProxyAgent implements IAgent
 
 	@Override
 	public boolean isInstanceOf(String skill, boolean direct) {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getSpecies().implementsSkill(skill);
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(ISpecies microSpecies) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getScope().getSimulation().getMicroPopulation(microSpecies);
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(String speciesName) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getScope().getSimulation().getMicroPopulation(speciesName);
 	}
 	
 
 	public int getHashCode() {
 		return this.synchroMode.getHashcode();
+	}
+	
+	public void proxyDispose()
+	{
+		DEBUG.OUT("this.getProxyPopulation() b4 " + this.getProxyPopulation());
+		for(var auto : this.getProxyPopulation())
+		{
+			DEBUG.OUT("pop b4 : " + auto);
+		}
+		this.getProxyPopulation().remove(this);
+		DEBUG.OUT("this.getProxyPopulation() after " + this.getProxyPopulation());
+		DEBUG.OUT("pop size : " + this.getProxyPopulation().size());
+		for(var auto : this.getProxyPopulation())
+		{
+			DEBUG.OUT("pop after : " + auto);
+		}
+	}
+
+	@Override
+	public IScope getScope() {
+		return null;
 	}
 }

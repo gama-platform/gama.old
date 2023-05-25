@@ -33,6 +33,7 @@ public class DistantSynchronizationMode extends SynchronizationMode
 	
 	public DistantSynchronizationMode(IAgent agentToDistantProxy)
 	{
+		DEBUG.OUT("agentToDistantProxy : " + agentToDistantProxy);
 		updateAttributes(agentToDistantProxy);
 	}
 	
@@ -52,15 +53,21 @@ public class DistantSynchronizationMode extends SynchronizationMode
 		return null;
 	}
 	
-	@Override
-	public void updateProxiedAgent()
+	public void stepProxy()
 	{
 		// TODO
+	}
+	
+	@Override
+	public void updateProxiedAgent(IAgent agentUpdated)
+	{
+		updateAttributes(agentUpdated);
 	}
 
 	@Override
 	public void updateAttributes(IAgent agentWithData)
 	{
+		DEBUG.OUT("agentWithData : " + agentWithData);
 		var attributesFromAgentData = agentWithData.getOrCreateAttributes();
 		
 		var mapAttributes = new GamaMap<String, Object>(attributesFromAgentData.size(), attributesFromAgentData.getKeys().getGamlType(), attributesFromAgentData.getValues().getGamlType());
@@ -83,7 +90,7 @@ public class DistantSynchronizationMode extends SynchronizationMode
 	
 	@Override
 	public boolean step(IScope scope) throws GamaRuntimeException {
-		updateProxiedAgent();
+		stepProxy();
 		return true;
 	}
 	
@@ -138,6 +145,10 @@ public class DistantSynchronizationMode extends SynchronizationMode
 	@Override
 	public Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException {
 
+		if(attributes == null)
+		{
+			return null;
+		}
 		return this.attributes.get(s);
 	}
 
@@ -171,12 +182,6 @@ public class DistantSynchronizationMode extends SynchronizationMode
 	public Object get(IScope scope, String index) throws GamaRuntimeException {
 		return null;
 	}
-	
-	@Override
-	public IScope getScope() {
-		return getScope();
-	}
-
 	
 	@Override
 	public String getName() {
@@ -256,6 +261,11 @@ public class DistantSynchronizationMode extends SynchronizationMode
 	@Override
 	public Object primDie(IScope scope) throws GamaRuntimeException
 	{
-		 return null;
+		return null;
+	}
+
+	@Override
+	public int getHashcode() {
+		return (int) this.attributes.get(IKeyword.HASHCODE);
 	}
 }
