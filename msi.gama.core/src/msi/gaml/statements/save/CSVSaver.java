@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * CSVSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
+ * CSVSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.statements.save;
@@ -23,6 +23,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.csv.AbstractCSVManipulator;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
@@ -144,12 +145,12 @@ public class CSVSaver extends AbstractSaver {
 				}
 				if (itemType.id() == IType.MATRIX) {
 					GamaMatrix<?> matrix = (GamaMatrix) value;
-					matrix.rowByRow(scope, v -> fw.write(toCleanString(v)), () -> fw.write(","),
-							() -> fw.write(Strings.LN));
+					matrix.rowByRow(scope, v -> fw.write(toCleanString(v)),
+							() -> fw.write(AbstractCSVManipulator.getDefaultDelimiter()), () -> fw.write(Strings.LN));
 				} else {
 					final int size = values.size();
 					for (int i = 0; i < size; i++) {
-						if (i > 0) { fw.write(','); }
+						if (i > 0) { fw.write(AbstractCSVManipulator.getDefaultDelimiter()); }
 						fw.write(toCleanString(values.get(i)));
 					}
 				}
@@ -172,6 +173,7 @@ public class CSVSaver extends AbstractSaver {
 	 * @return the string
 	 */
 	private String toCleanString(final Object o) {
+		// Verify this (shouldn't we use AbstractCSVManipulator.getDefaultDelimiter() ?)
 		String val = Cast.toGaml(o).replace(';', ',');
 		if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\"")) {
 			val = val.substring(1, val.length() - 1);
