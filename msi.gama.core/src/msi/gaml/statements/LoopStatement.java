@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * LoopStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.statements;
@@ -69,6 +69,10 @@ import msi.gaml.types.Types;
 /**
  * The Class LoopStatement.
  */
+
+/**
+ * The Class LoopStatement.
+ */
 @symbol (
 		name = IKeyword.LOOP,
 		kind = ISymbolKind.SEQUENCE_STATEMENT,
@@ -79,19 +83,19 @@ import msi.gaml.types.Types;
 @facets (
 		value = { @facet (
 				name = IKeyword.FROM,
-				type = IType.INT,
+				type = { IType.INT, IType.FLOAT },
 				optional = true,
-				doc = @doc ("an int expression")),
+				doc = @doc ("an int or float expression that represents the lower bound of the loop")),
 				@facet (
 						name = IKeyword.TO,
-						type = IType.INT,
+						type = { IType.INT, IType.FLOAT },
 						optional = true,
-						doc = @doc ("an int expression")),
+						doc = @doc ("an int or float expression that represents the higher bound of the loop")),
 				@facet (
 						name = IKeyword.STEP,
-						type = IType.INT,
+						type = { IType.INT, IType.FLOAT },
 						optional = true,
-						doc = @doc ("an int expression")),
+						doc = @doc ("an int or float expression that represents the incrementation of the loop")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.NEW_TEMP_ID,
@@ -116,7 +120,7 @@ import msi.gaml.types.Types;
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @doc (
-		value = "Allows the agent to perform the same set of statements either a fixed number of times, or while a condition is true, or by progressing in a collection of elements or along an interval of integers. Be aware that there are no prevention of infinite loops. As a consequence, open loops should be used with caution, as one agent may block the execution of the whole model.",
+		value = "Allows the agent to perform the same set of statements either a fixed number of times, or while a condition is true, or by progressing in a collection of elements or along an interval of numbers. Be aware that there are no prevention of infinite loops. As a consequence, open loops should be used with caution, as one agent may block the execution of the whole model.",
 		usages = { @usage (
 				value = "The basic syntax for repeating a fixed number of times a set of statements is:",
 				examples = { @example (
@@ -217,7 +221,7 @@ import msi.gaml.types.Types;
 										equals = "60",
 										isTestOnly = true) }),
 				@usage (
-						value = "The second (quite common) case of the loop syntax allows one to use an interval of integers. The from and to facets take an integer expression as arguments, with the first (resp. the last) specifying the beginning (resp. end) of the inclusive interval (i.e. [to, from]). If the step is not defined, it is assumed to be equal to 1 or -1, depending on the direction of the range. If it is defined, its sign will be respected, so that a positive step will never allow the loop to enter a loop from i to j where i is greater than j",
+						value = "The second (quite common) case of the loop syntax allows one to use an interval of integers or floats. The from and to facets take an int or float expression as arguments, with the first (resp. the last) specifying the beginning (resp. end) of the inclusive interval (i.e. [to, from]). If the step is not defined, it is assumed to be equal to 1 or -1, depending on the direction of the range. If it is defined, its sign will be respected, so that a positive step will never allow the loop to enter a loop from i to j where i is greater than j",
 						examples = { @example (
 								value = "list the_list <-list (species_of (self));"),
 								@example (
@@ -490,16 +494,19 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		private final IExpression step = getFacet(IKeyword.STEP);
 
 		/** The constant step. */
-		private Integer constantFrom;
+		private Number constantFrom;
 
 		/** The constant to. */
-		private Integer constantTo;
+		private Number constantTo;
 
 		/** The constant step. */
-		private Integer constantStep;
+		private Number constantStep;
 
 		/** The step defined. */
 		private final boolean stepDefined;
+
+		/** The is int. */
+		private final boolean isInt;
 
 		/**
 		 * Instantiates a new bounded.
@@ -510,35 +517,80 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		Bounded() throws GamaRuntimeException {
 			final IScope scope = null;
 			// final IScope scope = GAMA.obtainNewScope();
-			if (from.isConst()) { constantFrom = Cast.asInt(scope, from.value(scope)); }
-			if (to.isConst()) { constantTo = Cast.asInt(scope, to.value(scope)); }
+			isInt = from.getGamlType() == Types.INT && to.getGamlType() == Types.INT
+					&& (step == null || step.getGamlType() == Types.INT);
+			if (from.isConst()) { constantFrom = getFromExp(scope, from); }
+			if (to.isConst()) { constantTo = getFromExp(scope, to); }
 			if (step == null) {
 				stepDefined = false;
 				constantStep = 1;
 			} else if (step.isConst()) {
 				stepDefined = true;
-				constantStep = Cast.asInt(scope, step.value(scope));
+				constantStep = getFromExp(scope, step);
 			} else {
 				stepDefined = true;
 			}
 		}
 
+		/**
+		 * Gets the from exp.
+		 *
+		 * @param scope
+		 *            the scope
+		 * @param exp
+		 *            the exp
+		 * @return the from exp
+		 */
+		Number getFromExp(final IScope scope, final IExpression exp) {
+			return isInt ? Cast.asInt(scope, exp.value(scope)) : Cast.asFloat(scope, exp.value(scope));
+		}
+
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object[] result = new Object[1];
-			final int f = constantFrom == null ? Cast.asInt(scope, from.value(scope)) : constantFrom;
-			final int t = constantTo == null ? Cast.asInt(scope, to.value(scope)) : constantTo;
-			int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
-			// if ( f == t ) { return null; }
+			final Number f = constantFrom == null ? getFromExp(scope, from) : constantFrom;
+			final Number t = constantTo == null ? getFromExp(scope, to) : constantTo;
+			Number s = constantStep == null ? getFromExp(scope, step) : constantStep;
 			boolean shouldBreak = false;
-			if (f == t) {
+			if (f.equals(t)) {
 				loopBody(scope, f, result);
-			} else if (f - t > 0) {
-				if (s > 0) {
+			} else if (f.doubleValue() - t.doubleValue() > 0) {
+				if (s.doubleValue() > 0) {
 					if (stepDefined) return null;
-					s = -s;
+					if (s instanceof Integer) {
+						s = -s.intValue();
+					} else {
+						s = -s.doubleValue();
+					}
 				}
-				for (int i = f, n = t - 1; i > n && !shouldBreak; i += s) {
+				if (isInt) {
+					for (int i = f.intValue(), n = t.intValue(); i >= n && !shouldBreak; i += s.intValue()) {
+						FlowStatus status = loopBody(scope, i, result);
+						switch (status) {
+							case CONTINUE:
+								continue;
+							case BREAK, RETURN, DIE, DISPOSE:
+								shouldBreak = true;
+								break;
+							default:
+						}
+					}
+				} else {
+					for (double i = f.doubleValue(), n = t.doubleValue(); i >= n && !shouldBreak; i +=
+							s.doubleValue()) {
+						FlowStatus status = loopBody(scope, i, result);
+						switch (status) {
+							case CONTINUE:
+								continue;
+							case BREAK, RETURN, DIE, DISPOSE:
+								shouldBreak = true;
+								break;
+							default:
+						}
+					}
+				}
+			} else if (isInt) {
+				for (int i = f.intValue(), n = t.intValue(); i <= n && !shouldBreak; i += s.intValue()) {
 					FlowStatus status = loopBody(scope, i, result);
 					switch (status) {
 						case CONTINUE:
@@ -550,7 +602,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 					}
 				}
 			} else {
-				for (int i = f, n = t + 1; i < n && !shouldBreak; i += s) {
+				for (double i = f.doubleValue(), n = t.doubleValue(); i <= n && !shouldBreak; i += s.doubleValue()) {
 					FlowStatus status = loopBody(scope, i, result);
 					switch (status) {
 						case CONTINUE:
