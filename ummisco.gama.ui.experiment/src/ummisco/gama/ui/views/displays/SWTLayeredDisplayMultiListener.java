@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * SWTLayeredDisplayMultiListener.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
- * and simulation platform (v.1.9.2).
+ * and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
@@ -160,6 +160,36 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 	@Override
 	public void keyReleased(final KeyEvent e) {
 		if (!ok.get()) return;
+		switch (e.keyCode) {
+			case SWT.ARROW_DOWN:
+				delegate.specialKeyReleased(IEventLayerListener.ARROW_DOWN);
+				return;
+			case SWT.ARROW_UP:
+				delegate.specialKeyReleased(IEventLayerListener.ARROW_UP);
+				return;
+			case SWT.ARROW_LEFT:
+				delegate.specialKeyReleased(IEventLayerListener.ARROW_LEFT);
+				return;
+			case SWT.ARROW_RIGHT:
+				delegate.specialKeyReleased(IEventLayerListener.ARROW_RIGHT);
+				return;
+			case SWT.ESC:
+				delegate.specialKeyReleased(IEventLayerListener.KEY_ESC);
+				return;
+			case SWT.TAB:
+				delegate.specialKeyReleased(IEventLayerListener.KEY_TAB);
+				return;
+			case SWT.PAGE_DOWN:
+				delegate.specialKeyReleased(IEventLayerListener.KEY_PAGE_DOWN);
+				return;
+			case SWT.PAGE_UP:
+				delegate.specialKeyReleased(IEventLayerListener.KEY_PAGE_UP);
+				return;
+			case SWT.CR, SWT.KEYPAD_CR:
+				delegate.specialKeyReleased(IEventLayerListener.KEY_RETURN);
+				return;
+
+		}
 		// DEBUG.OUT("Key released " + e);
 		delegate.keyReleased(e.character, GamaKeyBindings.ctrl(e));
 	}
@@ -272,6 +302,11 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 
 			@Override
 			public void keyTyped(final java.awt.event.KeyEvent e) {
+
+			}
+
+			@Override
+			public void keyPressed(final java.awt.event.KeyEvent e) {
 				// Necessary to filter by the time to avoid repetitions
 				if (e.getWhen() == previous) return;
 				previous = e.getWhen();
@@ -295,10 +330,25 @@ public class SWTLayeredDisplayMultiListener implements MenuDetectListener, Mouse
 			}
 
 			@Override
-			public void keyPressed(final java.awt.event.KeyEvent e) {}
-
-			@Override
-			public void keyReleased(final java.awt.event.KeyEvent e) {}
+			public void keyReleased(final java.awt.event.KeyEvent e) {
+				DEBUG.LOG("Key released by the AWT listener. Code " + e.getKeyCode() + " Action ? " + e.isActionKey());
+				if (!e.isActionKey()) {
+					delegate.keyReleased(e.getKeyChar(), e.isControlDown());
+				} else if (e.getModifiersEx() == 0) {
+					delegate.specialKeyReleased(switch (e.getKeyCode()) {
+						case java.awt.event.KeyEvent.VK_UP, java.awt.event.KeyEvent.VK_KP_UP -> IEventLayerListener.ARROW_UP;
+						case java.awt.event.KeyEvent.VK_DOWN, java.awt.event.KeyEvent.VK_KP_DOWN -> IEventLayerListener.ARROW_DOWN;
+						case java.awt.event.KeyEvent.VK_LEFT, java.awt.event.KeyEvent.VK_KP_LEFT -> IEventLayerListener.ARROW_LEFT;
+						case java.awt.event.KeyEvent.VK_RIGHT, java.awt.event.KeyEvent.VK_KP_RIGHT -> IEventLayerListener.ARROW_RIGHT;
+						case java.awt.event.KeyEvent.VK_PAGE_UP -> IEventLayerListener.KEY_PAGE_UP;
+						case java.awt.event.KeyEvent.VK_PAGE_DOWN -> IEventLayerListener.KEY_PAGE_DOWN;
+						case java.awt.event.KeyEvent.VK_ESCAPE -> IEventLayerListener.KEY_ESC;
+						case java.awt.event.KeyEvent.VK_ENTER -> IEventLayerListener.KEY_RETURN;
+						case java.awt.event.KeyEvent.VK_TAB -> IEventLayerListener.KEY_TAB;
+						default -> 0;
+					});
+				}
+			}
 		};
 	}
 

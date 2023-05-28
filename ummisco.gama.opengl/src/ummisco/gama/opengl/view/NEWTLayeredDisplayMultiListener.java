@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * NEWTLayeredDisplayMultiListener.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
@@ -117,10 +117,26 @@ public class NEWTLayeredDisplayMultiListener implements MouseListener, KeyListen
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
-		// DEBUG.OUT("Key released: " + e);
-		// if (!ok.get()) return;
-		// delegate.keyReleased(e.getKeyChar(),
-		// PlatformHelper.isMac() ? e.isMetaDown() : e.isControlDown() /* ?? GamaKeyBindings.ctrl(e) */);
+		DEBUG.OUT("Key released in Newt listener: " + e);
+		if (!ok.get()) return;
+		if (e.isPrintableKey()) {
+			delegate.keyReleased(e.getKeyChar(),
+					PlatformHelper.isMac() ? e.isMetaDown() : e.isControlDown() /* ?? GamaKeyBindings.ctrl(e) */);
+		} else if (e.getModifiers() == 0
+				|| e.isAutoRepeat() && !e.isAltDown() && !e.isControlDown() && !e.isShiftDown() && !e.isMetaDown()) {
+			delegate.specialKeyReleased(switch (e.getKeyCode()) {
+				case KeyEvent.VK_UP -> IEventLayerListener.ARROW_UP;
+				case KeyEvent.VK_DOWN -> IEventLayerListener.ARROW_DOWN;
+				case KeyEvent.VK_LEFT -> IEventLayerListener.ARROW_LEFT;
+				case KeyEvent.VK_RIGHT -> IEventLayerListener.ARROW_RIGHT;
+				case KeyEvent.VK_PAGE_UP -> IEventLayerListener.KEY_PAGE_UP;
+				case KeyEvent.VK_PAGE_DOWN -> IEventLayerListener.KEY_PAGE_DOWN;
+				case KeyEvent.VK_ESCAPE -> IEventLayerListener.KEY_ESC;
+				case KeyEvent.VK_ENTER -> IEventLayerListener.KEY_RETURN;
+				case KeyEvent.VK_TAB -> IEventLayerListener.KEY_TAB;
+				default -> 0;
+			});
+		}
 	}
 
 	/**

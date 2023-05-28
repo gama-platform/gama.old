@@ -1,15 +1,17 @@
 /*******************************************************************************************************
  *
  * LayeredDisplayMultiListener.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.ui.views.displays;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
@@ -18,9 +20,9 @@ import org.eclipse.swt.graphics.Point;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.WorkaroundForIssue1353;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The listener interface for receiving layeredDisplayMulti events. The class that is interested in processing a
@@ -33,7 +35,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class LayeredDisplayMultiListener {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The view. */
@@ -59,6 +61,12 @@ public class LayeredDisplayMultiListener {
 
 	/** The key listener. */
 	final Consumer<Character> keyListener;
+
+	/** The pressed characters. */
+	final Set<Character> pressedCharacters = new HashSet<>();
+
+	/** The pressed special characters. */
+	final Set<Integer> pressedSpecialCharacters = new HashSet<>();
 
 	/**
 	 * Instantiates a new layered display multi listener.
@@ -93,11 +101,13 @@ public class LayeredDisplayMultiListener {
 	 * @param isCommand
 	 */
 	public void keyPressed(final char e, final boolean isCommand) {
+		DEBUG.OUT("Key pressed: " + e);
 		if (isCommand) {
 			keyListener.accept(e);
 			return;
 		}
-		surface.dispatchKeyEvent(e);
+		pressedCharacters.add(e);
+		for (Character c : pressedCharacters) { surface.dispatchKeyEvent(c); }
 		WorkbenchHelper.asyncRun(view.displayOverlay);
 	}
 
@@ -108,7 +118,8 @@ public class LayeredDisplayMultiListener {
 	 *            the key code
 	 */
 	public void specialKeyPressed(final int keyCode) {
-		surface.dispatchSpecialKeyEvent(keyCode);
+		pressedSpecialCharacters.add(keyCode);
+		for (Integer code : pressedSpecialCharacters) { surface.dispatchSpecialKeyEvent(code); }
 		WorkbenchHelper.asyncRun(view.displayOverlay); // ??
 	}
 
@@ -120,7 +131,22 @@ public class LayeredDisplayMultiListener {
 	 * @param command
 	 *            the command
 	 */
-	public void keyReleased(final char e, final boolean command) {}
+	public void keyReleased(final char e, final boolean command) {
+		DEBUG.OUT("Key released: " + e);
+		if (!command) { pressedCharacters.remove(e); }
+	}
+
+	/**
+	 * Special key released.
+	 *
+	 * @param keyCode
+	 *            the key code
+	 */
+	public void specialKeyReleased(final int keyCode) {
+		pressedSpecialCharacters.remove(keyCode);
+		// for (Integer code : pressedSpecialCharacters) { surface.dispatchSpecialKeyEvent(code); }
+		// WorkbenchHelper.asyncRun(view.displayOverlay); // ??
+	}
 
 	/**
 	 * Mouse enter.
@@ -170,6 +196,7 @@ public class LayeredDisplayMultiListener {
 		setMousePosition(-1, -1);
 		if (button > 0) return;
 		// DEBUG.LOG("Mouse exiting " + e);
+
 		surface.dispatchMouseEvent(SWT.MouseExit, x, y);
 		if (!view.isFullScreen() && WorkaroundForIssue1353.isInstalled()) {
 			// suppressNextEnter = true;
@@ -204,13 +231,13 @@ public class LayeredDisplayMultiListener {
 	public void mouseMove(final int x, final int y, final boolean modifier) {
 		WorkbenchHelper.asyncRun(view.displayOverlay);
 		if (modifier) return;
-		//DEBUG.LOG("Mouse moving on " + view.view.getPartName() + " at (" + x + "," + y + ")");
+		// DEBUG.LOG("Mouse moving on " + view.view.getPartName() + " at (" + x + "," + y + ")");
 		if (mouseIsDown) {
 			// Depending on the plateform or display, this case is never called,
 			// because DragDetect events are emitted instead. But on Windows
 			// Java2D displays, it seems that MouseMove events are emitted even
 			// when the mouse button is down.
-			
+
 			// Eventually moves the surface view
 			surface.draggedTo(x, y);
 			// Updates the mouse position. If the surface view is locked, the
@@ -241,7 +268,7 @@ public class LayeredDisplayMultiListener {
 	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseDown(final int x, final int y, final int button, final boolean modifier) {
-		//DEBUG.LOG("Mouse down at " + x + ", " + y);
+		// DEBUG.LOG("Mouse down at " + x + ", " + y);
 		setMousePosition(x, y);
 		if (inMenu) {
 			inMenu = false;
@@ -269,7 +296,7 @@ public class LayeredDisplayMultiListener {
 	 *            whetehr ALT, CTRL, CMD, META or other modifiers are used
 	 */
 	public void mouseUp(final int x, final int y, final int button, final boolean modifier) {
-		//DEBUG.LOG("Mouse up at " + x + ", " + y + " on " + view.getPartName());
+		// DEBUG.LOG("Mouse up at " + x + ", " + y + " on " + view.getPartName());
 		// In case the mouse has moved (for example on a menu)
 		if (!mouseIsDown) return;
 		setMousePosition(x, y);
@@ -300,7 +327,7 @@ public class LayeredDisplayMultiListener {
 	 * Drag detected.
 	 */
 	public void dragDetected(final int x, final int y) {
-		//DEBUG.LOG("Mouse drag detected on " + view.view.getPartName() + " at (" + x + "," + y + ")");
+		// DEBUG.LOG("Mouse drag detected on " + view.view.getPartName() + " at (" + x + "," + y + ")");
 		surface.draggedTo(x, y);
 		setMousePosition(x, y);
 		surface.dispatchMouseEvent(SWT.DragDetect, x, y);
@@ -314,7 +341,10 @@ public class LayeredDisplayMultiListener {
 	/**
 	 * Focus lost.
 	 */
-	public void focusLost() {}
+	public void focusLost() {
+		pressedCharacters.clear();
+		pressedSpecialCharacters.clear();
+	}
 
 	/**
 	 * Sets the mouse position.
