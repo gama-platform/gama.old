@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * GamaFont.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
+ * GamaFont.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.util;
@@ -235,6 +235,11 @@ public class GamaFont extends Font implements IValue {
 	@no_test
 	public static GamaFont font(final String name, final Integer size) {
 		return new GamaFont(name, Font.PLAIN, size);
+	}
+
+	@Override
+	public int intValue(final IScope scope) {
+		return getSize();
 	}
 
 }

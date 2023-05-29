@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * GamaColor.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
+ * GamaColor.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.util;
@@ -470,5 +470,15 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 * @return true, if is zero
 	 */
 	public boolean isZero() { return getRed() == 0 && getGreen() == 0 && getBlue() == 0; }
+
+	@Override
+	public int intValue(final IScope scope) {
+		return super.getRGB();
+	}
+
+	@Override
+	public double floatValue(final IScope scope) {
+		return intValue(scope);
+	}
 
 }

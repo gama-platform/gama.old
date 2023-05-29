@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaPointType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.types;
@@ -23,6 +23,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaPair;
 import msi.gaml.operators.Cast;
 
@@ -63,18 +64,20 @@ public class GamaPointType extends GamaType<GamaPoint> {
 	 * @return the gama point
 	 */
 	public static GamaPoint staticCast(final IScope scope, final Object obj, final boolean copy) {
-		if (obj instanceof GamaPoint) return (GamaPoint) obj;
+		if (obj instanceof GamaPoint gp) if (copy)
+			return new GamaPoint(gp);
+		else
+			return gp;
 		if (obj instanceof IShape) return ((IShape) obj).getLocation();
-		if (obj instanceof List) {
-			final List l = (List) obj;
+		if (obj instanceof List l) {
 			if (l.size() > 2) return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)),
 					Cast.asFloat(scope, l.get(2)));
 			if (l.size() > 1) return new GamaPoint(Cast.asFloat(scope, l.get(0)), Cast.asFloat(scope, l.get(1)));
 			if (l.size() > 0) return staticCast(scope, l.get(0), copy);
 			return new GamaPoint(0, 0, 0);
 		}
-		if (obj instanceof Map) {
-			final Map m = (Map) obj;
+		if (obj instanceof GamaColor c) return new GamaPoint(c.getRed(), c.getGreen(), c.getBlue());
+		if (obj instanceof Map m) {
 			final double x = Cast.asFloat(scope, m.get("x"));
 			final double y = Cast.asFloat(scope, m.get("y"));
 			final double z = Cast.asFloat(scope, m.get("z"));

@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * IAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
+ * IAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
@@ -120,7 +120,7 @@ public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, I
 	@Override
 	@setter (IKeyword.NAME)
 	void setName(String name);
-	
+
 	/**
 	 * Gets the location.
 	 *
@@ -633,7 +633,7 @@ public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, I
 	default void setGeometricalType(final Type t) {
 		getGeometry().setGeometricalType(t);
 	}
-	
+
 	/**
 	 * Prim die.
 	 *
@@ -644,7 +644,19 @@ public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, I
 	 *             the gama runtime exception
 	 */
 	@action (
-		name = "die",
-		doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
-	public Object primDie(final IScope scope);
+			name = "die",
+			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
+	Object primDie(final IScope scope);
+
+	/**
+	 * Int value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the int
+	 */
+	@Override
+	default int intValue(final IScope scope) {
+		return getIndex();
+	}
 }

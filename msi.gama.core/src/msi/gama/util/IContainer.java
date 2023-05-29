@@ -1,17 +1,15 @@
 /*******************************************************************************************************
  *
- * IContainer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
+ * IContainer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.util;
 
 import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
@@ -129,8 +127,8 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	@SuppressWarnings ("unchecked")
 	default StreamEx<ValueType> stream(final IScope scope) {
 		// #creates an explicit copy (see #3626) -- maybe too expensive though...
-		//if (this instanceof Collection)
-			//return StreamEx.of(ImmutableList.<ValueType> builder().addAll(this.iterable(scope)).build());
+		// if (this instanceof Collection)
+		// return StreamEx.of(ImmutableList.<ValueType> builder().addAll(this.iterable(scope)).build());
 		if (this instanceof Collection) return StreamEx.of(((Collection<ValueType>) this).stream());
 		return StreamEx.of(listValue(scope, Types.NO_TYPE, false));
 	}
@@ -519,6 +517,18 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 									value = "length(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))",
 									equals = "6") }) })
 	int length(IScope scope);
+
+	/**
+	 * Int value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the int
+	 */
+	@Override
+	default int intValue(final IScope scope) {
+		return length(scope);
+	}
 
 	/**
 	 * Checks if is empty.

@@ -1,27 +1,23 @@
 /*******************************************************************************************************
  *
  * GamaIntegerType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.types;
 
-import java.awt.Color;
-
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaDate;
-import msi.gama.util.GamaFont;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -64,8 +60,8 @@ public class GamaIntegerType extends GamaType<Integer> {
 	public static Integer staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		if (obj instanceof Integer) return (Integer) obj;
 		if (obj instanceof Number) return ((Number) obj).intValue();
-		if (obj instanceof Color) return ((Color) obj).getRGB();
-		if (obj instanceof IAgent) return ((IAgent) obj).getIndex();
+		// if (obj instanceof Color) return ((Color) obj).getRGB();
+		// if (obj instanceof IAgent) return ((IAgent) obj).getIndex();
 		if (obj instanceof String) {
 			String n = obj.toString();
 			// removing whitespaces
@@ -98,8 +94,9 @@ public class GamaIntegerType extends GamaType<Integer> {
 			}
 		}
 		if (obj instanceof Boolean) return (Boolean) obj ? 1 : 0;
-		if (obj instanceof GamaFont) return ((GamaFont) obj).getSize();
-		if (obj instanceof GamaDate) return ((GamaDate) obj).intValue(scope);
+		// if (obj instanceof GamaFont) return ((GamaFont) obj).getSize();
+		// if (obj instanceof GamaDate) return ((GamaDate) obj).intValue(scope);
+		if (obj instanceof IValue v) return v.intValue(scope);
 		return 0;
 	}
 

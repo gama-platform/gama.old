@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IPath.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * IPath.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ *
  ********************************************************************************************************/
 package msi.gama.util.path;
 
@@ -81,11 +80,11 @@ import msi.gaml.types.IType;
 public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends IShape {
 
 	/**
- * Gets the start vertex.
- *
- * @return the start vertex
- */
-@getter (IKeyword.SOURCE)
+	 * Gets the start vertex.
+	 *
+	 * @return the start vertex
+	 */
+	@getter (IKeyword.SOURCE)
 	V getStartVertex();
 
 	/**
@@ -150,30 +149,35 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Gets the weight.
 	 *
-	 * @param line the line
+	 * @param line
+	 *            the line
 	 * @return the weight
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	double getWeight(final IShape line) throws GamaRuntimeException;
 
 	/**
 	 * Accept visitor.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 */
 	void acceptVisitor(final IAgent agent);
 
 	/**
 	 * Forget visitor.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 */
 	void forgetVisitor(final IAgent agent);
 
 	/**
 	 * Index of.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the int
 	 */
 	int indexOf(final IAgent a);
@@ -181,7 +185,8 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Index segment of.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the int
 	 */
 	int indexSegmentOf(final IAgent a);
@@ -189,7 +194,8 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Checks if is visitor.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return true, if is visitor
 	 */
 	boolean isVisitor(final IAgent a);
@@ -197,16 +203,20 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Sets the index of.
 	 *
-	 * @param a the a
-	 * @param index the index
+	 * @param a
+	 *            the a
+	 * @param index
+	 *            the index
 	 */
 	void setIndexOf(final IAgent a, final int index);
 
 	/**
 	 * Sets the index segement of.
 	 *
-	 * @param a the a
-	 * @param indexSegement the index segement
+	 * @param a
+	 *            the a
+	 * @param indexSegement
+	 *            the index segement
 	 */
 	void setIndexSegementOf(final IAgent a, final int indexSegement);
 
@@ -220,7 +230,8 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Gets the distance.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the distance
 	 */
 	@getter ("distance")
@@ -229,7 +240,8 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Gets the topology.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the topology
 	 */
 	ITopology getTopology(IScope scope);
@@ -237,14 +249,16 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Sets the real objects.
 	 *
-	 * @param realObjects the real objects
+	 * @param realObjects
+	 *            the real objects
 	 */
 	void setRealObjects(final IMap<IShape, IShape> realObjects);
 
 	/**
 	 * Gets the real object.
 	 *
-	 * @param obj the obj
+	 * @param obj
+	 *            the obj
 	 * @return the real object
 	 */
 	IShape getRealObject(final Object obj);
@@ -252,14 +266,16 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Sets the source.
 	 *
-	 * @param source the new source
+	 * @param source
+	 *            the new source
 	 */
 	void setSource(V source);
 
 	/**
 	 * Sets the target.
 	 *
-	 * @param target the new target
+	 * @param target
+	 *            the new target
 	 */
 	void setTarget(V target);
 
@@ -273,8 +289,21 @@ public interface IPath<V, E, G extends IGraph<V, E>> extends IValue {// extends 
 	/**
 	 * Sets the graph.
 	 *
-	 * @param graph the new graph
+	 * @param graph
+	 *            the new graph
 	 */
 	void setGraph(G graph);
+
+	/**
+	 * Int value.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the int
+	 */
+	@Override
+	default int intValue(final IScope scope) {
+		return this.getLength();
+	}
 
 }

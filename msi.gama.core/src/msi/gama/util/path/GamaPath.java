@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaPath.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * GamaPath.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ *
  ********************************************************************************************************/
 package msi.gama.util.path;
 
@@ -31,9 +30,12 @@ import msi.gaml.types.Types;
 /**
  * The Class GamaPath.
  *
- * @param <V> the value type
- * @param <E> the element type
- * @param <G> the generic type
+ * @param <V>
+ *            the value type
+ * @param <E>
+ *            the element type
+ * @param <G>
+ *            the generic type
  */
 // Si
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -41,7 +43,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	/** The target. */
 	V source, target;
-	
+
 	/** The edges. */
 	IList<E> edges;
 
@@ -51,7 +53,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	/** The graph. */
 	// The graph attribute is override in GamaSpatialPath by a GamaSpatialGraph
 	G graph;
-	
+
 	/** The graph version. */
 	int graphVersion;
 
@@ -62,17 +64,19 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	public GamaPath() {}
 
 	@Override
-	public IType getGamlType() {
-		return Types.PATH;
-	}
+	public IType getGamlType() { return Types.PATH; }
 
 	/**
 	 * Instantiates a new gama path.
 	 *
-	 * @param g the g
-	 * @param start the start
-	 * @param target the target
-	 * @param _edges the edges
+	 * @param g
+	 *            the g
+	 * @param start
+	 *            the start
+	 * @param target
+	 *            the target
+	 * @param _edges
+	 *            the edges
 	 */
 	public GamaPath(final G g, final V start, final V target, final IList<? extends E> _edges) {
 		init(g, start, target, _edges, true);
@@ -82,11 +86,16 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	/**
 	 * Instantiates a new gama path.
 	 *
-	 * @param g the g
-	 * @param start the start
-	 * @param target the target
-	 * @param _edges the edges
-	 * @param modify_edges the modify edges
+	 * @param g
+	 *            the g
+	 * @param start
+	 *            the start
+	 * @param target
+	 *            the target
+	 * @param _edges
+	 *            the edges
+	 * @param modify_edges
+	 *            the modify edges
 	 */
 	public GamaPath(final G g, final V start, final V target, final IList<? extends E> _edges,
 			final boolean modify_edges) {
@@ -97,15 +106,14 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	/**
 	 * Instantiates a new gama path.
 	 *
-	 * @param nodes the nodes
+	 * @param nodes
+	 *            the nodes
 	 */
 	public GamaPath(final IList<? extends V> nodes) {
 		final IList<E> _edges = GamaListFactory.create();
 		for (int i = 0; i < nodes.size() - 1; i++) {
 			final E edge = createEdge(nodes.get(i), nodes.get(i + 1));
-			if (edge != null) {
-				_edges.add(edge);
-			}
+			if (edge != null) { _edges.add(edge); }
 		}
 		init(null, nodes.get(0), nodes.get(nodes.size() - 1), _edges, false);
 		this.graph = null;
@@ -114,8 +122,10 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	/**
 	 * Creates the edge.
 	 *
-	 * @param v the v
-	 * @param v2 the v 2
+	 * @param v
+	 *            the v
+	 * @param v2
+	 *            the v 2
 	 * @return the e
 	 */
 	protected E createEdge(final V v, final V v2) {
@@ -126,11 +136,16 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	/**
 	 * Inits the.
 	 *
-	 * @param g the g
-	 * @param start the start
-	 * @param target the target
-	 * @param _edges the edges
-	 * @param modify_edges the modify edges
+	 * @param g
+	 *            the g
+	 * @param start
+	 *            the start
+	 * @param target
+	 *            the target
+	 * @param _edges
+	 *            the edges
+	 * @param modify_edges
+	 *            the modify edges
 	 */
 	public void init(final G g, final V start, final V target, final IList<? extends E> _edges,
 			final boolean modify_edges) {
@@ -139,23 +154,21 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		this.edges = GamaListFactory.create();
 		graphVersion = 0;
 
-		if (_edges != null && _edges.size() > 0) {
-			for (final E edge : _edges) {
-				edges.add(edge);
-			}
-		}
+		if (_edges != null && _edges.size() > 0) { edges.addAll(_edges); }
 	}
 
 	/**
 	 * Instantiates a new gama path.
 	 *
-	 * @param g the g
-	 * @param nodes the nodes
+	 * @param g
+	 *            the g
+	 * @param nodes
+	 *            the nodes
 	 */
 	public GamaPath(final G g, final IList<? extends V> nodes) {
-		if (!(g instanceof GamaSpatialGraph) && nodes.isEmpty()) {
+		if (!(g instanceof GamaSpatialGraph) && nodes.isEmpty())
 			throw new ClassCastException("We cannot create an empty path in a non-spatial graph");
-		} else if (nodes.isEmpty()) {
+		if (nodes.isEmpty()) {
 			source = null;
 			target = null;
 		} else {
@@ -164,9 +177,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		}
 		edges = GamaListFactory.create();
 
-		for (int i = 0, n = nodes.size(); i < n - 1; i++) {
-			edges.add(g.getEdge(nodes.get(i), nodes.get(i + 1)));
-		}
+		for (int i = 0, n = nodes.size(); i < n - 1; i++) { edges.add(g.getEdge(nodes.get(i), nodes.get(i + 1))); }
 		graph = g;
 	}
 
@@ -174,38 +185,29 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	// Implements methods from GraphPath
 
 	@Override
-	public G getGraph() {
-		return graph;
-	}
+	public G getGraph() { return graph; }
 
 	@Override
-	public V getStartVertex() {
-		return source;
-	}
+	public V getStartVertex() { return source; }
 
 	@Override
-	public V getEndVertex() {
-		return target;
-	}
+	public V getEndVertex() { return target; }
 
 	@Override
-	public IList<E> getEdgeList() {
-		return edges;
-	}
+	public IList<E> getEdgeList() { return edges; }
 
 	/**
 	 * Sets the weight.
 	 *
-	 * @param weight the new weight
+	 * @param weight
+	 *            the new weight
 	 */
-	public void setWeight(final double weight) {
-		this.weight = weight;
-	}
+	public void setWeight(final double weight) { this.weight = weight; }
 
 	@Override
 	public double getWeight() {
 		final G graph = getGraph();
-		if (graph == null) { return weight; }
+		if (graph == null) return weight;
 		return graph.computeWeight(this);
 	}
 
@@ -234,7 +236,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public IList<V> getVertexList() {
-		if (graph == null) { return GamaListFactory.EMPTY_LIST; }
+		if (graph == null) return GamaListFactory.EMPTY_LIST;
 		return GamaListFactory.<V> wrap(getGamlType().getKeyType(), GraphPath.super.getVertexList());
 	}
 
@@ -316,13 +318,11 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	@Override
-	public int getLength() {
-		return edges.size();
-	}
+	public int getLength() { return edges.size(); }
 
 	@Override
 	public double getDistance(final IScope scope) {
-		if (getEdgeList() == null || getEdgeList().isEmpty()) { return 0; }
+		if (getEdgeList() == null || getEdgeList().isEmpty()) return 0;
 		return getWeight();
 	}
 
@@ -333,7 +333,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public void setRealObjects(final IMap<IShape, IShape> realObjects) {
-		;
+
 	}
 
 	@Override
@@ -342,29 +342,19 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	@Override
-	public void setSource(final V source) {
-		this.source = source;
-	}
+	public void setSource(final V source) { this.source = source; }
 
 	@Override
-	public void setTarget(final V target) {
-		this.target = target;
-	}
+	public void setTarget(final V target) { this.target = target; }
 
 	@Override
-	public int getGraphVersion() {
-		return graphVersion;
-	}
+	public int getGraphVersion() { return graphVersion; }
 
 	@Override
-	public IList<IShape> getEdgeGeometry() {
-		return null;
-	}
+	public IList<IShape> getEdgeGeometry() { return null; }
 
 	@Override
-	public IShape getGeometry() {
-		return null;
-	}
+	public IShape getGeometry() { return null; }
 
 	@Override
 	public void setGraph(final G graph) {
@@ -377,4 +367,5 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	public int compareTo(final Object o) {
 		return (int) (this.getWeight() - ((GamaPath) o).getWeight());
 	}
+
 }
