@@ -223,26 +223,23 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IExpression to = desc.getFacetExpr(TO);
 
 			boolean isAFile = Types.FILE.isAssignableFrom(dataType);
-			boolean hasTo = to != null;
 			String ext = null;
-			if (hasTo && to.isConst()) { ext = com.google.common.io.Files.getFileExtension(to.literalValue()); }
-			boolean hasFormat = format != null;
-
-			if (isAFile && hasTo) {
+			if (to != null && to.isConst()) { ext = com.google.common.io.Files.getFileExtension(to.literalValue()); }
+			if (isAFile && to != null) {
 				desc.warning("The destination will not be taking into account when saving an already existing file",
 						IGamlIssue.UNMATCHED_OPERANDS);
 			}
-			if (isAFile && hasFormat) {
+			if (isAFile && format != null) {
 				desc.warning("The file format will not be taken into account when saving an already existing file ",
 						IGamlIssue.CONFLICTING_FACETS, FORMAT);
 			}
 
-			if (!isAFile && !hasTo) {
+			if (!isAFile && !(to != null)) {
 				desc.error("No file specified", IGamlIssue.MISSING_FACET);
 				return;
 			}
 
-			if (!isAFile && !hasFormat && hasTo && ext != null && !DELEGATES.containsKey(ext)) {
+			if (!isAFile && !(format != null) && to != null && ext != null && !DELEGATES.containsKey(ext)) {
 				if (dataType != Types.STRING && dataType != Types.INT && dataType != Types.FLOAT) {
 					desc.error("Unknown file extension. Accepted formats are: "
 							+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
@@ -252,13 +249,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
 			}
 
-			if (!isAFile && !hasFormat && hasTo) {
+			if (!isAFile && !(format != null) && to != null) {
 				desc.info(
 						"'save' will use the extension of the file to determine its format. If you are unsure about this, please specify the format of the file using the 'format:' facet",
 						IGamlIssue.UNKNOWN_ARGUMENT);
 			}
 
-			if (!isAFile && hasFormat && hasTo) {
+			if (!isAFile && format != null && to != null) {
 				String id = format.literalValue();
 				if (!DELEGATES.containsKey(id)) {
 					desc.error(

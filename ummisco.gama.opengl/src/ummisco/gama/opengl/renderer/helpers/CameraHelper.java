@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * CameraHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
@@ -60,10 +60,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	// Mouse
 	private final GamaPoint mousePosition = new GamaPoint(0, 0);
 
-	/** Internal world position.
+	/**
+	 * Internal world position.
 	 *
-	 * See SWTOpenGLDisplaySUrface::getModelCoordinates() to access the world
-	 * position is an OpenGL display.
+	 * See SWTOpenGLDisplaySUrface::getModelCoordinates() to access the world position is an OpenGL display.
 	 */
 	private final GamaPoint positionInTheWorld = new GamaPoint();
 
@@ -730,7 +730,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 */
 	final void internalMouseDown(final int x, final int y, final int button, final boolean isCtrl,
 			final boolean isShift) {
-		//DEBUG.OUT("Camera mouse down on " + x + ", " + y);
+		// DEBUG.OUT("Camera mouse down on " + x + ", " + y);
 
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition.setLocation(x, y, 0);
@@ -802,7 +802,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the e
 	 */
 	protected void internalMouseUp(final int button, final boolean isShift) {
-		//DEBUG.OUT("Camera mouse up.");
+		// DEBUG.OUT("Camera mouse up.");
 		firsttimeMouseDown = true;
 		if (isViewInXYPlan() && isShift) { finishROISelection(); }
 		if (button == 1) { setMouseLeftPressed(false); }
@@ -852,7 +852,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		final int[] viewport = gl.viewport;
 		final double mvmatrix[] = gl.mvmatrix;
 		final double projmatrix[] = gl.projmatrix;
-		final int x = (int) Math.round(mouse_x), y = (int) Math.round(viewport[3] - mouse_y);
+		final int x = Math.round(mouse_x), y = Math.round(viewport[3] - mouse_y);
 		pixelDepth.rewind();
 		gl.getGL().glReadPixels(x, y, 1, 1, GL2ES2.GL_DEPTH_COMPONENT, GL.GL_FLOAT, pixelDepth);
 		double z = pixelDepth.get(0);
