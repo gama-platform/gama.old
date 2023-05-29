@@ -6,7 +6,7 @@
    <aboutInfo>
       <image path="/msi.gama.application/icons/window/icon128.png"/>
       <text>
-         GAMA Platform - V1.9.0 http://gama-platform.org
+         GAMA Platform - V1.9.2 http://gama-platform.org
 
 (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
 (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
@@ -76,6 +76,7 @@
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
