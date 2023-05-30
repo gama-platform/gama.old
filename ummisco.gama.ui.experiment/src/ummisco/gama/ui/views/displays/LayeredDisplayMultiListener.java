@@ -144,8 +144,6 @@ public class LayeredDisplayMultiListener {
 	 */
 	public void specialKeyReleased(final int keyCode) {
 		pressedSpecialCharacters.remove(keyCode);
-		// for (Integer code : pressedSpecialCharacters) { surface.dispatchSpecialKeyEvent(code); }
-		// WorkbenchHelper.asyncRun(view.displayOverlay); // ??
 	}
 
 	/**

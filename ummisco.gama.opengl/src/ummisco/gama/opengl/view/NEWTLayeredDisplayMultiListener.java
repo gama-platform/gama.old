@@ -93,11 +93,10 @@ public class NEWTLayeredDisplayMultiListener implements MouseListener, KeyListen
 
 	@Override
 	public void keyPressed(final KeyEvent e) {
-		// DEBUG.OUT("Key pressed: " + e);
+		DEBUG.OUT("Key pressed in Newt listener: " + e);
 		if (!ok.get()) return;
 		if (e.isPrintableKey()) {
-			delegate.keyPressed(e.getKeyChar(),
-					PlatformHelper.isMac() ? e.isMetaDown() : e.isControlDown() /* ?? GamaKeyBindings.ctrl(e) */);
+			delegate.keyPressed(e.getKeyChar(), PlatformHelper.isMac() ? e.isMetaDown() : e.isControlDown());
 		} else if (e.getModifiers() == 0
 				|| e.isAutoRepeat() && !e.isAltDown() && !e.isControlDown() && !e.isShiftDown() && !e.isMetaDown()) {
 			delegate.specialKeyPressed(switch (e.getKeyCode()) {
@@ -117,6 +116,7 @@ public class NEWTLayeredDisplayMultiListener implements MouseListener, KeyListen
 
 	@Override
 	public void keyReleased(final KeyEvent e) {
+		if (e.isAutoRepeat()) return;
 		DEBUG.OUT("Key released in Newt listener: " + e);
 		if (!ok.get()) return;
 		if (e.isPrintableKey()) {

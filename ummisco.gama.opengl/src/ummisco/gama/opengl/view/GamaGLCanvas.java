@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaGLCanvas.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
@@ -39,11 +39,9 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLRunnable;
-import com.jogamp.opengl.swt.GLCanvas;
 
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.IDelegateEventsToParent;
@@ -65,10 +63,10 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	SWTOpenGLDisplaySurface surface;
 
 	/** The drawable. */
-	final GLAutoDrawable drawable;
+	final GLWindow drawable;
 
 	/** The fps delegate. */
-	final FPSCounter fpsDelegate;
+	final GamaGLAnimator animator;
 
 	/** The detached. */
 	protected boolean detached = false;
@@ -112,41 +110,33 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		parent.setLayout(new FillLayout());
 		this.setLayout(new FillLayout());
 		final var cap = defineCapabilities();
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) {
-			GLWindow window = GLWindow.create(cap);
-			drawable = window;
-			canvas = new NewtCanvasSWT(this, SWT.NONE, window);
-			addControlListener(new ControlAdapter() {
-				@Override
-				public void controlResized(final ControlEvent e) {
-					/* Detached views have no title! */
-					if (PlatformHelper.isMac()) {
-						final var isDetached = parent.getShell().getText().length() == 0;
-						if (isDetached) {
-							if (!detached) {
-								// DEBUG.OUT("Reparenting because of detached");
-								reparentWindow();
-								detached = true;
-							}
 
-						} else if (detached) {
-							// DEBUG.OUT("Reparenting because of attached");
+		drawable = GLWindow.create(cap);
+		drawable.setAutoSwapBufferMode(true);
+		canvas = new NewtCanvasSWT(this, SWT.NONE, drawable);
+		animator = new GamaGLAnimator(drawable);
+		renderer.setCanvas(this);
+		addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(final ControlEvent e) {
+				/* Detached views have no title! */
+				if (PlatformHelper.isMac()) {
+					final var isDetached = parent.getShell().getText().length() == 0;
+					if (isDetached) {
+						if (!detached) {
+							// DEBUG.OUT("Reparenting because of detached");
 							reparentWindow();
-							detached = false;
+							detached = true;
 						}
+
+					} else if (detached) {
+						// DEBUG.OUT("Reparenting because of attached");
+						reparentWindow();
+						detached = false;
 					}
 				}
-			});
-		} else {
-			canvas = new GLCanvas(this, SWT.NONE, cap, null);
-			drawable = (GLAutoDrawable) canvas;
-		}
-		drawable.setAutoSwapBufferMode(true);
-		drawable.addGLEventListener(renderer);
-		final var animator =
-				FLAGS.USE_NATIVE_OPENGL_WINDOW ? new GamaGLAnimator(drawable) : new SingleThreadGLAnimator(drawable);
-		fpsDelegate = animator;
-		renderer.setCanvas(this);
+			}
+		});
 		addDisposeListener(e -> new Thread(() -> { animator.stop(); }).start());
 	}
 
@@ -361,23 +351,14 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *
 	 * @return the NEWT window
 	 */
-	public Window getNEWTWindow() {
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) return (Window) drawable;
-		return null;
-	}
+	public Window getNEWTWindow() { return drawable; }
 
 	/**
 	 * Reparent window.
 	 */
 	public void reparentWindow() {
 		DEBUG.OUT("Entering making GLWindow " + name + " reparent ");
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return;
-		final Window w = (Window) drawable;
-		// if (setWindowVisible(false)) {
-		// w.setFullscreen(true);
-		// w.setFullscreen(false);
-		// setWindowVisible(true);
-		// }
+		final Window w = drawable;
 		setWindowVisible(false);
 		w.setFullscreen(true);
 		w.setFullscreen(false);
@@ -392,12 +373,11 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 */
 	public boolean setWindowVisible(final boolean b) {
 		// DEBUG.OUT("Entering making GLWindow " + name + " visible " + b);
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) return false;
-		final Window w = (Window) drawable;
+		final Window w = drawable;
 		if (!w.isNativeValid()) return false;
 		// DEBUG.OUT("Make GLWindow " + name + " visible: " + b);
 		w.setVisible(b);
-		DEBUG.OUT("Make GLWindow " + name + " visible " + b + " succeeded");
+		// DEBUG.OUT("Make GLWindow " + name + " visible " + b + " succeeded");
 		// surface.synchronizer.signalSurfaceIsRealized();
 		return true;
 	}
@@ -414,23 +394,10 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *            the camera
 	 */
 	public void addCameraListeners(final IMultiListener camera) {
-
 		WorkbenchHelper.asyncRun(() -> {
 			if (isDisposed() || canvas.isDisposed()) return;
-			canvas.addKeyListener(camera);
-			canvas.addMouseListener(camera);
-			canvas.addMouseMoveListener(camera);
-			canvas.addMouseWheelListener(camera);
-			canvas.addMouseTrackListener(camera);
-			addKeyListener(camera);
-			addMouseListener(camera);
-			addMouseMoveListener(camera);
-			addMouseWheelListener(camera);
-			addMouseTrackListener(camera);
-			if (drawable instanceof Window w) {
-				w.addKeyListener(camera);
-				w.addMouseListener(camera);
-			}
+			drawable.addKeyListener(camera);
+			drawable.addMouseListener(camera);
 		});
 	}
 
@@ -443,62 +410,50 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	public void removeCameraListeners(final IMultiListener camera) {
 		WorkbenchHelper.asyncRun(() -> {
 			if (isDisposed() || canvas.isDisposed()) return;
-			canvas.removeKeyListener(camera);
-			canvas.removeMouseListener(camera);
-			canvas.removeMouseMoveListener(camera);
-			canvas.removeMouseWheelListener(camera);
-			canvas.removeMouseTrackListener(camera);
-			removeKeyListener(camera);
-			removeMouseListener(camera);
-			removeMouseMoveListener(camera);
-			removeMouseWheelListener(camera);
-			removeMouseTrackListener(camera);
-			if (drawable instanceof Window w) {
-				w.removeKeyListener(camera);
-				w.removeMouseListener(camera);
-			}
+			drawable.removeKeyListener(camera);
+			drawable.removeMouseListener(camera);
 		});
 	}
 
 	@Override
 	public void setUpdateFPSFrames(final int frames, final PrintStream out) {
-		fpsDelegate.setUpdateFPSFrames(frames, out);
+		animator.setUpdateFPSFrames(frames, out);
 	}
 
 	@Override
 	public void resetFPSCounter() {
-		fpsDelegate.resetFPSCounter();
+		animator.resetFPSCounter();
 	}
 
 	@Override
 	public int getUpdateFPSFrames() {
-		return fpsDelegate.getUpdateFPSFrames();
+		return animator.getUpdateFPSFrames();
 
 	}
 
 	@Override
-	public long getFPSStartTime() { return fpsDelegate.getFPSStartTime(); }
+	public long getFPSStartTime() { return animator.getFPSStartTime(); }
 
 	@Override
 	public long getLastFPSUpdateTime() {
-		return fpsDelegate.getLastFPSUpdateTime();
+		return animator.getLastFPSUpdateTime();
 
 	}
 
 	@Override
-	public long getLastFPSPeriod() { return fpsDelegate.getLastFPSPeriod(); }
+	public long getLastFPSPeriod() { return animator.getLastFPSPeriod(); }
 
 	@Override
-	public float getLastFPS() { return fpsDelegate.getLastFPS(); }
+	public float getLastFPS() { return animator.getLastFPS(); }
 
 	@Override
-	public int getTotalFPSFrames() { return fpsDelegate.getTotalFPSFrames(); }
+	public int getTotalFPSFrames() { return animator.getTotalFPSFrames(); }
 
 	@Override
-	public long getTotalFPSDuration() { return fpsDelegate.getTotalFPSDuration(); }
+	public long getTotalFPSDuration() { return animator.getTotalFPSDuration(); }
 
 	@Override
-	public float getTotalFPS() { return fpsDelegate.getTotalFPS(); }
+	public float getTotalFPS() { return animator.getTotalFPS(); }
 
 	@Override
 	public void setVisible(final boolean v) {

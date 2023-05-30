@@ -49,7 +49,6 @@
 -Duse_old_tabs=true 
 -Duse_legacy_drawers=false 
 -Duse_delayed_resize=false 
--Duse_native_opengl_window=true 
 --add-opens=java.base/java.lang=ALL-UNNAMED
 --add-exports=java.base/java.lang=ALL-UNNAMED
 --add-exports=java.desktop/sun.awt=ALL-UNNAMED

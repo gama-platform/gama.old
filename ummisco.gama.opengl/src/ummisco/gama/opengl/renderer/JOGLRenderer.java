@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * JOGLRenderer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer;
@@ -40,7 +40,6 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.renderer.helpers.AbstractRendererHelper.Pass;
 import ummisco.gama.opengl.renderer.helpers.CameraHelper;
@@ -131,7 +130,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		if (!FLAGS.USE_NATIVE_OPENGL_WINDOW) { WorkbenchHelper.asyncRun(() -> canvas.setVisible(true)); }
 		openGL.setGL2(drawable.getGL().getGL2());
 		cameraHelper.initialize();
 		openGL.initializeGLStates(data.getBackgroundColor());
@@ -243,7 +241,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		openGL.reshape(gl, width, height);
 		// sceneHelper.reshape(width, height);
 		surface.updateDisplay(true);
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW) { getCanvas().updateVisibleStatus(getCanvas().isVisible()); }
+		getCanvas().updateVisibleStatus(getCanvas().isVisible());
 	}
 
 	@Override

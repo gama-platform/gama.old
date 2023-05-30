@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * OpenGLDisplayView.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.2).
+ * platform (v.2.0.0).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama for license information and contacts.
+ * Visit https://github.com/gama-platform/gama2 for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
@@ -13,13 +13,10 @@ package ummisco.gama.opengl.view;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import com.jogamp.newt.Window;
-
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.dev.utils.FLAGS;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
 /**
@@ -86,9 +83,7 @@ public class OpenGLDisplayView extends LayeredDisplayView {
 	// */
 	@Override
 	public IDisposable getMultiListener() {
-		if (FLAGS.USE_NATIVE_OPENGL_WINDOW)
-			return new NEWTLayeredDisplayMultiListener(decorator, getDisplaySurface(), getGLCanvas().getNEWTWindow());
-		return super.getMultiListener();
+		return new NEWTLayeredDisplayMultiListener(decorator, getDisplaySurface(), getGLCanvas().getNEWTWindow());
 	}
 
 	/**

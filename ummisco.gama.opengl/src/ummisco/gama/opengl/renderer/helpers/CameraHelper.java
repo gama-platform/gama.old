@@ -10,13 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
 
-import static msi.gama.util.GamaListFactory.createWithoutCasting;
-
 import java.nio.FloatBuffer;
 import java.util.Collection;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
 
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
@@ -30,13 +25,13 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
-import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.ICameraHelper;
@@ -406,20 +401,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		renderer.getCanvas().invoke(false, runnable);
 	}
 
-	/**
-	 * Method mouseScrolled()
-	 *
-	 * @see org.eclipse.swt.events.MouseWheelListener#mouseScrolled(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public final void mouseScrolled(final MouseEvent e) {
-		invokeOnGLThread(drawable -> {
-			if (!data.isCameraLocked()) { internalMouseScrolled(e.count); }
-			return false;
-		});
-
-	}
-
 	@Override
 	public final void mouseWheelMoved(final com.jogamp.newt.event.MouseEvent e) {
 		invokeOnGLThread(drawable -> {
@@ -438,39 +419,10 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		zoom(count > 0);
 	}
 
-	/**
-	 * Method mouseMove()
-	 *
-	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public final void mouseMove(final org.eclipse.swt.events.MouseEvent e) {
-
-		invokeOnGLThread(drawable -> {
-			internalMouseMove(autoScaleUp(e.x), autoScaleUp(e.y), e.button, (e.stateMask & SWT.BUTTON_MASK) != 0,
-					GamaKeyBindings.ctrl(e), GamaKeyBindings.shift(e));
-			return false;
-		});
-
-	}
-
-	/**
-	 * Auto scale up.
-	 *
-	 * @param nb
-	 *            the nb
-	 * @return the int
-	 */
-	private int autoScaleUp(final int nb) {
-		return nb;
-		// return DPIHelper.autoScaleUp(nb);
-	}
-
 	@Override
 	public final void mouseMoved(final com.jogamp.newt.event.MouseEvent e) {
 		invokeOnGLThread(drawable -> {
-			internalMouseMove(autoScaleUp(e.getX()), autoScaleUp(e.getY()), e.getButton(), e.getButton() > 0,
-					isControlDown(e), e.isShiftDown());
+			internalMouseMove(e.getX(), e.getY(), e.getButton(), e.getButton() > 0, isControlDown(e), e.isShiftDown());
 			return false;
 		});
 	}
@@ -618,28 +570,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 
 	}
 
-	/**
-	 * Method mouseDoubleClick()
-	 *
-	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public final void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
-		// Already taken in charge by the ZoomListener in the view
-		if (keystoneMode) {
-			final int x = autoScaleUp(e.x);
-			final int y = autoScaleUp(e.y);
-			final int corner = clickOnKeystone(x, y);
-			if (corner != -1) { getRenderer().getKeystoneHelper().resetCorner(corner); }
-		}
-	}
-
 	@Override
 	public final void mouseClicked(final com.jogamp.newt.event.MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (keystoneMode) {
-				final int x = autoScaleUp(e.getX());
-				final int y = autoScaleUp(e.getY());
+				final int x = e.getX();
+				final int y = e.getY();
 				final int corner = clickOnKeystone(x, y);
 				if (corner != -1) { getRenderer().getKeystoneHelper().resetCorner(corner); }
 			} else {
@@ -651,29 +587,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		}
 	}
 
-	/**
-	 * Method mouseDown()
-	 *
-	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public final void mouseDown(final org.eclipse.swt.events.MouseEvent e) {
-		DEBUG.OUT("Mouse pressed from SWT");
-		invokeOnGLThread(drawable -> {
-			final int x = autoScaleUp(e.x);
-			final int y = autoScaleUp(e.y);
-			internalMouseDown(x, y, e.button, GamaKeyBindings.ctrl(e), GamaKeyBindings.shift(e));
-			return false;
-		});
-
-	}
-
 	@Override
 	public final void mousePressed(final com.jogamp.newt.event.MouseEvent e) {
 		DEBUG.OUT("Mouse pressed from NEWT");
 		invokeOnGLThread(drawable -> {
-			final int x = autoScaleUp(e.getX());
-			final int y = autoScaleUp(e.getY());
+			final int x = e.getX();
+			final int y = e.getY();
 			internalMouseDown(x, y, e.getButton(), isControlDown(e), e.isShiftDown());
 			return false;
 		});
@@ -766,23 +685,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 		setMouseLeftPressed(button == 1);
 		setCtrlPressed(isCtrl);
 		setShiftPressed(isShift);
-	}
-
-	/**
-	 * Method mouseUp()
-	 *
-	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-	 */
-	@Override
-	public final void mouseUp(final org.eclipse.swt.events.MouseEvent e) {
-
-		invokeOnGLThread(drawable -> {
-			// if (cameraInteraction) {
-			internalMouseUp(e.button, GamaKeyBindings.shift(e));
-			// }
-			return false;
-		});
-
 	}
 
 	@Override
@@ -947,92 +849,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	@Override
 	public IOpenGLRenderer getRenderer() { return renderer; }
 
-	/**
-	 * Method keyPressed()
-	 *
-	 * @see org.eclipse.swt.events.KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
-	 */
-	@Override
-	public final void keyPressed(final org.eclipse.swt.events.KeyEvent e) {
-
-		invokeOnGLThread(drawable -> {
-			if (!keystoneMode) {
-				boolean cameraInteraction = !data.isCameraLocked();
-				// setShiftPressed(GamaKeyBindings.shift(e));
-
-				switch (e.keyCode) {
-					case SWT.ARROW_LEFT:
-						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction
-								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
-							CameraHelper.this.strafeLeft = true;
-						}
-						break;
-					case SWT.ARROW_RIGHT:
-						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction
-								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
-							CameraHelper.this.strafeRight = true;
-						}
-						break;
-					case SWT.ARROW_UP:
-						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction
-								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
-							CameraHelper.this.goesForward = true;
-						}
-						break;
-					case SWT.ARROW_DOWN:
-						setCtrlPressed(GamaKeyBindings.ctrl(e));
-						if (cameraInteraction
-								&& (!areArrowKeysRedefined || GamaKeyBindings.ctrl(e) || GamaKeyBindings.shift(e))) {
-							CameraHelper.this.goesBackward = true;
-						}
-						break;
-					case SWT.SPACE:
-						if (cameraInteraction) { resetPivot(); }
-						break;
-					case SWT.CTRL:
-						setCtrlPressed(!firsttimeMouseDown);
-						break;
-					case SWT.COMMAND:
-						setCtrlPressed(!firsttimeMouseDown);
-						break;
-				}
-				switch (e.character) {
-					case '+':
-						if (cameraInteraction) { zoom(true); }
-						break;
-					case '-':
-						if (cameraInteraction) { zoom(false); }
-						break;
-					case '4':
-						if (cameraInteraction && useNumKeys) { quickLeftTurn(); }
-						break;
-					case '6':
-						if (cameraInteraction && useNumKeys) { quickRightTurn(); }
-						break;
-					case '8':
-						if (cameraInteraction && useNumKeys) { quickUpTurn(); }
-						break;
-					case '2':
-						if (cameraInteraction && useNumKeys) { quickDownTurn(); }
-						break;
-					case 'k':
-						if (!GamaKeyBindings.ctrl(e)) { activateKeystoneMode(); }
-						break;
-					default:
-						return true;
-				}
-			} else if (e.character == 'k' && !GamaKeyBindings.ctrl(e)) { activateKeystoneMode(); }
-			return true;
-		});
-	}
-
 	@Override
 	public final void keyPressed(final com.jogamp.newt.event.KeyEvent e) {
 
-		// MOVED OUTSIDE OF THE GL THREAD (needs to be run in the SWT thread)
 		switch (e.getKeySymbol()) {
 			// We need to register here all the keystrokes used in the Workbench and on the view, as they might
 			// be caught by the NEWT key listener. Those dedicated to modelling are left over for the moment
@@ -1238,54 +1057,12 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			getRenderer().getSurface().zoomFit();
 			getRenderer().getKeystoneHelper().startDrawHelper();
 		} else {
-			String def = IKeyword.KEYSTONE + ": "
-					+ createWithoutCasting(Types.POINT, data.getKeystone().toCoordinateArray()).serialize(false);
+			String def = IKeyword.KEYSTONE + ": " + GamaListFactory
+					.createWithoutCasting(Types.POINT, data.getKeystone().toCoordinateArray()).serialize(false);
 			getRenderer().getKeystoneHelper().stopDrawHelper();
 			WorkbenchHelper.copy(def);
 		}
 		keystoneMode = !keystoneMode;
-	}
-
-	/**
-	 * Method keyReleased()
-	 *
-	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-	 */
-	@Override
-	public final void keyReleased(final org.eclipse.swt.events.KeyEvent e) {
-
-		invokeOnGLThread(drawable -> {
-			if (!keystoneMode) {
-				boolean cameraInteraction = !data.isCameraLocked();
-				switch (e.keyCode) {
-					case SWT.ARROW_LEFT: // turns left (scene rotates right)
-						if (cameraInteraction) { strafeLeft = false; }
-						break;
-					case SWT.ARROW_RIGHT: // turns right (scene rotates left)
-						if (cameraInteraction) { strafeRight = false; }
-						break;
-					case SWT.ARROW_UP:
-						if (cameraInteraction) { goesForward = false; }
-						break;
-					case SWT.ARROW_DOWN:
-						if (cameraInteraction) { goesBackward = false; }
-						break;
-					case SWT.CTRL:
-						setCtrlPressed(false);
-						break;
-					case SWT.COMMAND:
-						setCtrlPressed(false);
-						break;
-					case SWT.SHIFT:
-						setShiftPressed(false);
-						finishROISelection();
-						break;
-					default:
-						return true;
-				}
-			}
-			return false;
-		});
 	}
 
 	@Override
@@ -1380,7 +1157,6 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	 *            the env
 	 */
 	public void zoomFocus(final Envelope3D env) {
-
 		// REDO it entirely
 		final double extent = env.maxExtent();
 		if (extent == 0) {
