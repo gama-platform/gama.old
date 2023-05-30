@@ -12,10 +12,7 @@ package msi.gama.common.util;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -52,26 +49,9 @@ public class StringUtils {
 		SYMBOLS.setNaN("#nan");
 		DEFAULT_DECIMAL_FORMAT = new DecimalFormat("##0.0################", SYMBOLS);
 	}
-	/** The Constant strings. */
-	final static String strings = "'(?:[^\\\\']+|\\\\.)*'";
-
-	/** The Constant operators. */
-	final static String operators = "::|<>|!=|>=|<=|//";
-
-	/** The Constant ponctuation. */
-	public final static String ponctuation = "\\p{Punct}";
-
-	/** The Constant literals. */
-	public final static String literals = "\\w+\\$\\w+|\\#\\w+|\\d+\\.\\d+|\\w+\\.\\w+|\\w+";
-
-	/** The Constant regex. */
-	final static String regex = strings + "|" + literals + "|" + operators + "|" + ponctuation;
 
 	/** The gama string pattern. */
 	static Predicate<String> GAMA_STRING_PATTERN = Pattern.compile("^'.*'$").asMatchPredicate();
-
-	/** The tokenizer pattern. */
-	static Pattern TOKENIZER_PATTERN = Pattern.compile(strings + "|" + literals + "|" + operators + "|" + ponctuation);
 
 	/**
 	 * To gaml string.
@@ -116,17 +96,6 @@ public class StringUtils {
 		if (!isGamaString(t)) return s;
 		if (t.length() >= 2) return t.substring(1, t.length() - 1);
 		return s;
-	}
-
-	/**
-	 * Tokenize.
-	 *
-	 * @param expression
-	 *            the expression
-	 * @return the list
-	 */
-	public static List<String> tokenize(final String expression) {
-		return expression == null ? Collections.EMPTY_LIST : Arrays.asList(TOKENIZER_PATTERN.split(expression));
 	}
 
 	/*

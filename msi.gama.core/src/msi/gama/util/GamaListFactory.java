@@ -312,7 +312,7 @@ public class GamaListFactory {
 	}
 
 	/**
-	 * Creates the.
+	 * Creates a list with arbitraty objects inside
 	 *
 	 * @param <T>
 	 *            the generic type
@@ -326,6 +326,27 @@ public class GamaListFactory {
 	 */
 	@SafeVarargs
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final T... objects) {
+		final IList<T> list = create(contentType, objects == null ? 0 : objects.length);
+		if (objects != null) { for (final Object o : objects) { castAndAdd(scope, list, o); } }
+		return list;
+	}
+
+	/**
+	 * Creates a list with characters inside
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param contentType
+	 *            the content type
+	 * @param objects
+	 *            the objects
+	 * @return the i list
+	 * @date 30 mai 2023
+	 */
+	public static <T> IList<T> create(final IScope scope, final IType contentType, final char[] objects) {
 		final IList<T> list = create(contentType, objects == null ? 0 : objects.length);
 		if (objects != null) { for (final Object o : objects) { castAndAdd(scope, list, o); } }
 		return list;

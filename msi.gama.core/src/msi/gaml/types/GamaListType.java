@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaListType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.types;
@@ -14,7 +14,6 @@ import java.awt.Color;
 import java.util.Collection;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -78,15 +77,12 @@ public class GamaListType extends GamaContainerType<IList> {
 		}
 		// Dont copy twice the collection
 		if (obj instanceof Collection) return GamaListFactory.create(scope, contentsType, (Collection) obj);
-		if (obj instanceof Color c) {
-			return GamaListFactory.create(scope, contentsType,
-					new int[] { c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() });
-		}
-		if (obj instanceof GamaPoint point) {
+		if (obj instanceof Color c) return GamaListFactory.create(scope, contentsType,
+				new int[] { c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha() });
+		if (obj instanceof GamaPoint point)
 			return GamaListFactory.create(scope, contentsType, new double[] { point.x, point.y, point.z });
-		}
-		if (obj instanceof String)
-			return GamaListFactory.create(scope, contentsType, StringUtils.tokenize((String) obj));
+		if (obj instanceof String s) // ss
+			return GamaListFactory.create(scope, contentsType, s.toCharArray());
 		return GamaListFactory.create(scope, contentsType, obj);
 	}
 
