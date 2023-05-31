@@ -59,6 +59,7 @@
 -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
       <vmArgsWin>-Dfile.encoding=UTF-8
+-Dorg.eclipse.swt.browser.DefaultType=edge
       </vmArgsWin>
    </launcherArgs>
 
