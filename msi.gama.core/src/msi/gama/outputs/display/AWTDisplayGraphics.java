@@ -41,11 +41,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.locationtech.jts.awt.PointTransformation;
 import org.locationtech.jts.awt.ShapeWriter;
@@ -54,10 +50,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.Lineal;
 import org.locationtech.jts.geom.Puntal;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.GeometryUtils;
@@ -246,37 +238,22 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 			curY = yFromModelUnitsToPixels(attributes.getLocation().getY());
 		}
 		imageTransform.translate(curX, curY);
-		double curWidth, curHeight;
+		int curWidth, curHeight;
 		if (attributes.getSize() == null) {
 			curWidth = getLayerWidth();
 			curHeight = getLayerHeight();
 		} else {
-			curWidth = wFromModelUnitsToPixels(attributes.getSize().getX());
-			curHeight = hFromModelUnitsToPixels(attributes.getSize().getY());
+			curWidth = (int) wFromModelUnitsToPixels(attributes.getSize().getX());
+			curHeight = (int) hFromModelUnitsToPixels(attributes.getSize().getY());
 		}
-
 		if (attributes.getAngle() != null) {
 			imageTransform.rotate(Maths.toRad * attributes.getAngle(), curWidth / 2d, curHeight / 2d);
-			// currentRenderer.rotate(Maths.toRad * attributes.getAngle(), curX + curWidth / 2d, curY + curHeight / 2d);
 		}
-
-		BufferedImage after = img;
-		Point2D.Double point = new Point2D.Double(curWidth, curHeight);
-		try {
-			Map<Point2D, BufferedImage> sizes = cache.get(img);
-			if (sizes.containsKey(point)) {
-				after = sizes.get(point);
-			} else {
-				after = resize(img, (int) Math.round(curWidth), (int) Math.round(curHeight));
-			}
-		} catch (ExecutionException e) {}
-
-		// imageTransform.scale(curWidth / img.getWidth(), curHeight / img.getHeight());
-		currentRenderer.drawImage(after, imageTransform, null);
-		// currentRenderer.drawImage(img, (int) FastMath.round(curX), (int) FastMath.round(curY), (int) curWidth,
-		// (int) curHeight, null);
+		if (curWidth != img.getWidth() || curHeight != img.getHeight()) {
+			imageTransform.scale((double) curWidth / img.getWidth(), (double) curHeight / img.getHeight());
+		}
+		currentRenderer.drawImage(img, imageTransform, null);
 		if (attributes.getBorder() != null) { drawGridLine(img, attributes.getBorder()); }
-		// currentRenderer.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
 		if (highlight) { highlightRectangleInPixels(rect); }
 		return rect.getBounds2D();
@@ -302,21 +279,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 
 		return dimg;
 	}
-
-	/** The cache. */
-	@SuppressWarnings ({ "unchecked",
-			"unused" }) static LoadingCache<BufferedImage, Map<Point2D, BufferedImage>> cache =
-					CacheBuilder.<BufferedImage, Map<Point2D, BufferedImage>> newBuilder()
-							.expireAfterAccess(30, TimeUnit.SECONDS).removalListener(notif -> {
-								Map<Point2D, BufferedImage> map = (Map<Point2D, BufferedImage>) notif.getValue();
-								map.forEach((a, b) -> { b.flush(); });
-							}).build(new CacheLoader<>() {
-
-								@Override
-								public Map<Point2D, BufferedImage> load(final BufferedImage arg0) throws Exception {
-									return new HashMap<>();
-								}
-							});
 
 	/**
 	 * Method drawString.

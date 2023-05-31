@@ -15,6 +15,7 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.color.ColorSpace;
 import java.awt.datatransfer.Clipboard;
+import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
@@ -72,5 +73,9 @@ public interface ImageConstants {
 	 * A {@link ColorConvertOp} used to convert any image to a grayscale color palette.
 	 */
 	ColorConvertOp OP_GRAYSCALE = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+
+	/** The descriptions. */
+	Map<BufferedImageOp, String> DESCRIPTIONS = Map.of(OP_DARKER, "darker", OP_ANTIALIAS, "antialiased", OP_BRIGHTER,
+			"brighter", OP_SHARPEN, "sharpened", OP_BLUR, "blurred", OP_GRAYSCALE, "grayscaled");
 
 }

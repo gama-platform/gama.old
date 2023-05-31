@@ -50,6 +50,7 @@ public class ImageHelper implements ImageConstants {
 		GamaImage result =
 				GamaImage.bestFor(src, (int) Math.round(bounds.getWidth()), (int) Math.round(bounds.getHeight()));
 		op.filter(src, result);
+		result.setId(src.getId() + DESCRIPTIONS.get(op));
 		return result;
 	}
 
@@ -71,6 +72,7 @@ public class ImageHelper implements ImageConstants {
 		GamaImage result = GamaImage.ofDimensions(src.getWidth(null), src.getHeight(null), type);
 		Graphics g = result.getGraphics();
 		g.drawImage(src, 0, 0, null);
+		result.setId((src instanceof GamaImage gi ? gi.getId() : "image") + "optimized");
 		g.dispose();
 		return result;
 	}
@@ -123,6 +125,7 @@ public class ImageHelper implements ImageConstants {
 		g2d.setRenderingHints(HINTS);
 		g2d.drawImage(src, tx, null);
 		g2d.dispose();
+		result.setId(src.getId() + "rotated" + typeOfRotation);
 		return result;
 	}
 
@@ -185,6 +188,7 @@ public class ImageHelper implements ImageConstants {
 		} else {
 			result = ImageHelper.scaleImageIncrementally(src, targetWidth, targetHeight);
 		}
+		result.setId(src.getId() + "resized" + targetWidth + "|" + targetHeight);
 		return result;
 	}
 
@@ -226,7 +230,7 @@ public class ImageHelper implements ImageConstants {
 			src = incrementalImage;
 			hasReassignedSrc = true;
 		} while (currentWidth != targetWidth || currentHeight != targetHeight);
-
+		src.setId(src.getId() + "resized" + targetWidth + "|" + targetHeight);
 		return src;
 	}
 
@@ -247,7 +251,7 @@ public class ImageHelper implements ImageConstants {
 	public static GamaImage scaleImage(final Image bufferedImage, final int targetWidth, final int targetHeight) {
 		GamaImage result = GamaImage.bestFor(bufferedImage, targetWidth, targetHeight);
 		Graphics2D resultGraphics = result.createGraphics();
-		resultGraphics.setRenderingHints(ImageHelper.HINTS);
+		resultGraphics.setRenderingHints(ImageConstants.HINTS);
 		resultGraphics.drawImage(bufferedImage, 0, 0, targetWidth, targetHeight, null);
 		resultGraphics.dispose();
 		return result;

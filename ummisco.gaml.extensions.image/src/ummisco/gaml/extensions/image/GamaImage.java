@@ -21,12 +21,14 @@ import java.awt.image.WritableRaster;
 import msi.gama.common.interfaces.IAsset;
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.file.IFieldMatrixProvider;
 import msi.gama.util.matrix.GamaField;
@@ -53,10 +55,10 @@ import msi.gaml.types.IType;
 				name = IKeyword.WIDTH,
 				type = IType.INT,
 				doc = { @doc ("Returns the width (in pixels) of this image") }) })
-public class GamaImage extends BufferedImage implements IImageProvider, IAsset, IFieldMatrixProvider {
+public class GamaImage extends BufferedImage implements IImageProvider, IAsset, IFieldMatrixProvider, IValue {
 
 	/** The id. */
-	final String id;
+	String id;
 
 	/**
 	 * Gets the id.
@@ -349,6 +351,24 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	 */
 	public static GamaImage from(final ColorModel cm, final WritableRaster raster, final boolean b) {
 		return new GamaImage(cm, raster, b, "raster" + System.currentTimeMillis());
+	}
+
+	/**
+	 * Sets the id.
+	 *
+	 * @param string
+	 *            the new id
+	 */
+	public void setId(final String string) { id = string; }
+
+	@Override
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
+		return id;
+	}
+
+	@Override
+	public GamaImage copy(final IScope scope) throws GamaRuntimeException {
+		return from(this, this.getAlpha(scope));
 	}
 
 }

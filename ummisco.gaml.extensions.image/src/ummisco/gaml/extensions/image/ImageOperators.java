@@ -401,6 +401,7 @@ public class ImageOperators implements ImageConstants {
 		g2.rotate(rads, w / 2, h / 2);
 		g2.drawImage(image, 0, 0, null);
 		g2.dispose();
+		rotated.setId(image.getId() + "rotated" + angleInDegrees);
 		return rotated;
 	}
 
@@ -419,18 +420,18 @@ public class ImageOperators implements ImageConstants {
 	@doc ("Returns the image tinted using the color passed in parameter. This effectively multiplies the colors of the image by it. The original image is left untouched")
 	@no_test
 	public static GamaImage tint(final IScope scope, final GamaImage image, final GamaColor color) {
-		GamaImage tintedSprite = GamaImage.ofDimensions(image.getWidth(), image.getHeight(), Transparency.TRANSLUCENT);
-		Graphics2D graphics = tintedSprite.createGraphics();
+		GamaImage result = GamaImage.ofDimensions(image.getWidth(), image.getHeight(), Transparency.TRANSLUCENT);
+		Graphics2D graphics = result.createGraphics();
 		graphics.drawImage(image, 0, 0, null);
 		graphics.dispose();
-		ColorModel cm = tintedSprite.getColorModel();
-		WritableRaster raster = tintedSprite.getRaster();
+		ColorModel cm = result.getColorModel();
+		WritableRaster raster = result.getRaster();
 		float r = color.getRed() / 255f;
 		float g = color.getGreen() / 255f;
 		float b = color.getBlue() / 255f;
 		float a = color.getAlpha() / 255f;
-		for (int i = 0; i < tintedSprite.getWidth(); i++) {
-			for (int j = 0; j < tintedSprite.getHeight(); j++) {
+		for (int i = 0; i < result.getWidth(); i++) {
+			for (int j = 0; j < result.getHeight(); j++) {
 				int ax = cm.getAlpha(raster.getDataElements(i, j, null));
 				int rx = cm.getRed(raster.getDataElements(i, j, null));
 				int gx = cm.getGreen(raster.getDataElements(i, j, null));
@@ -439,10 +440,11 @@ public class ImageOperators implements ImageConstants {
 				gx *= g;
 				bx *= b;
 				ax *= a;
-				tintedSprite.setRGB(i, j, ax << 24 | rx << 16 | gx << 8 | bx);
+				result.setRGB(i, j, ax << 24 | rx << 16 | gx << 8 | bx);
 			}
 		}
-		return tintedSprite;
+		result.setId(image.getId() + "tinted" + color.getRGB());
+		return result;
 	}
 
 	/**
@@ -476,29 +478,16 @@ public class ImageOperators implements ImageConstants {
 	public static GamaImage tint(final IScope scope, final GamaImage image, final GamaColor color, final double ratio) {
 		int w = image.getWidth();
 		int h = image.getHeight();
-		GamaImage dyed = GamaImage.ofDimensions(w, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = dyed.createGraphics();
+		GamaImage result = GamaImage.ofDimensions(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = result.createGraphics();
 		g.drawImage(image, 0, 0, null);
 		g.setComposite(AlphaComposite.SrcAtop.derive(Math.min(1f, Math.max((float) ratio, 0f))));
 		g.setColor(color);
 		g.fillRect(0, 0, w, h);
 		g.dispose();
-		return dyed;
+		result.setId(image.getId() + "tinted" + color + "|" + ratio);
+		return result;
 	}
-
-	/**
-	 * Blend.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param image
-	 *            the image
-	 * @param overlay
-	 *            the overlay
-	 * @param ratio
-	 *            the ratio
-	 * @return the gama image
-	 */
 
 	/**
 	 * Blend.
@@ -526,14 +515,15 @@ public class ImageOperators implements ImageConstants {
 	@no_test
 	public static GamaImage blend(final IScope scope, final GamaImage image, final GamaImage overlay,
 			final double ratio) {
-		GamaImage composed = ImageHelper.copyToOptimalImage(image);
-		Graphics2D g2d = composed.createGraphics();
+		GamaImage result = ImageHelper.copyToOptimalImage(image);
+		Graphics2D g2d = result.createGraphics();
 		g2d.setComposite(AlphaComposite.SrcOver.derive(Math.min(1f, Math.max((float) ratio, 0f))));
-		int x = (composed.getWidth() - overlay.getWidth()) / 2;
-		int y = (composed.getHeight() - overlay.getHeight()) / 2;
+		int x = (result.getWidth() - overlay.getWidth()) / 2;
+		int y = (result.getHeight() - overlay.getHeight()) / 2;
 		g2d.drawImage(overlay, x, y, null);
 		g2d.dispose();
-		return composed;
+		result.setId(image.getId() + "|" + overlay.getId());
+		return result;
 	}
 
 	/**
@@ -605,6 +595,7 @@ public class ImageOperators implements ImageConstants {
 		Graphics g = result.getGraphics();
 		g.drawImage(image, 0, 0, width, height, x, y, x + width, y + height, null);
 		g.dispose();
+		result.setId(image.getId() + "crop" + ox + "|" + oy + "|" + ow + "|" + oh);
 		return result;
 	}
 

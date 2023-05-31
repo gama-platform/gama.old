@@ -60,6 +60,7 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.statements.draw.DrawStatement.DrawValidator;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 // A command that is used to draw shapes, figures, text on the display
 
@@ -404,7 +405,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {
-			java.lang.System.err.println("Error when drawing in a display : " + e.getMessage());
+			DEBUG.ERR("Error when drawing in a display : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
