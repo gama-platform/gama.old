@@ -38,15 +38,25 @@ public class Utils {
 
 		try {
 			responseMap = GamaMapFactory.create();
-
 			responseMap.put("CODE", response.statusCode());
-
-			Object jsonBody = "".equals(response.body()) ? "" : Jsoner.deserialize(response.body());
-			responseMap.put("BODY", jsonBody);
 
 			IMap<String, List<String>> mapHeaders =
 					GamaMapFactory.wrap(Types.STRING, Types.STRING, false, response.headers().map());
 			responseMap.put("HEADERS", mapHeaders);
+			
+			Object jsonBody = "";
+			if( ! ("".equals(response.body()))) {
+				List<String> contentType = mapHeaders.get("content-type");
+				if(contentType != null) {				
+					if(contentType.stream().anyMatch(e -> e.contains("json"))) {				
+						jsonBody = Jsoner.deserialize(response.body());
+					} else {
+						jsonBody = response.body();
+					}
+				}
+			}			
+			responseMap.put("BODY", jsonBody);
+
 		} catch (DeserializationException e) {
 			e.printStackTrace();
 		}
