@@ -146,8 +146,7 @@ species accessing_matrix_elements {
 		write sample(eigenvalues(m_square));
 		write sample(inverse(m_square));
 		write sample(trace(m_square)); 
-		write sample(transpose(m_square));
-		
+		write sample(transpose(m_square));		
 	}
 }
 
@@ -179,6 +178,10 @@ species combining_matrices {
 		write sample(m1 * m1);
 		write sample(m1 / m1);
 		
+		// Multiplication between matrices : * is the product element by element, whereas . is the matrices multiplication
+		write sample(m1 . m1);
+		write sample(m2 . transpose(m2));
+				
 		write sample(m1 append_horizontally m1);			
 		// Notice that when the 2 matrices do not have the same number of rows, m2 is considered as being 3x3.
 		// The matrix is completed by 0 and thus becomes matrix<int>([[1,9,0],[7,5,0],[3,11,0]])
@@ -194,8 +197,13 @@ species combining_matrices {
 		try {
 			write sample(m1 + m2);			
 		} catch { 
-			write "m1 + m2 : " + m1 + " -- " + m2 + " are not compatibble to sum.";
+			write "m1 + m2 : " + m1 + " + " + m2 + " are not compatibble to sum.";
 		}
+		try {
+			write sample(m2 . m2);			
+		} catch { 
+			write "m2 . m2 : " + m2 + " . " + m2 + " are not compatibble to multiply (in the sense of the matrices multiplication).";
+		}		
 	}
 }
 
