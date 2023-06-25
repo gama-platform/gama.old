@@ -614,11 +614,9 @@ Export-Package: com.conversantmedia.util.collection,
  tech.units.indriya.unit,
  tech.uom.lib.common.function,
  tech.uom.lib.common.util
-Require-Bundle: com.google.guava;visibility:=reexport,
- org.eclipse.osgi,
+Require-Bundle: org.eclipse.osgi,
  org.apache.commons.compress,
  org.apache.commons.jxpath,
- org.apache.commons.io,
  org.eclipse.xsd,
  ummisco.gama.annotations
 Bundle-ClassPath: .,

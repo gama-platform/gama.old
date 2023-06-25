@@ -518,13 +518,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.io"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.commons.jxpath"
          download-size="0"
          install-size="0"
@@ -938,6 +931,13 @@
 
    <plugin
          id="slf4j.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
          download-size="0"
          install-size="0"
          version="0.0.0"

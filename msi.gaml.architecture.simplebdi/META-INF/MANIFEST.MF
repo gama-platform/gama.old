@@ -5,7 +5,8 @@ Bundle-SymbolicName: msi.gaml.architecture.simplebdi;singleton:=true
 Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext,
- ummisco.gama.serialize
+ ummisco.gama.serialize,
+ com.google.guava
 Export-Package: msi.gaml.architecture.simplebdi
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

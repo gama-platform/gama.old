@@ -5,7 +5,8 @@ Bundle-SymbolicName: ummisco.gaml.extensions.maths;singleton:=true
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
- msi.gama.ext
+ msi.gama.ext,
+ com.google.guava
 Bundle-ActivationPolicy: lazy
 Export-Package: ummisco.gaml.extensions.maths.ode.statements
 Bundle-RequiredExecutionEnvironment: JavaSE-17

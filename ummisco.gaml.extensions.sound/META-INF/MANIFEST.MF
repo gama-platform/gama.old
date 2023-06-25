@@ -4,7 +4,8 @@ Bundle-Name: Sound plug-in
 Bundle-SymbolicName: ummisco.gaml.extensions.sound;singleton:=true
 Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
- msi.gama.ext
+ msi.gama.ext,
+ com.google.guava
 Export-Package: ummisco.gaml.extensions.sound
 Bundle-ClassPath: .,
  lib/tritonus-share-0.3.7.4.jar,

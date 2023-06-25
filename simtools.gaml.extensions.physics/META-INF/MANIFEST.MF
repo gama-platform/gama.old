@@ -5,7 +5,8 @@ Bundle-SymbolicName: simtools.gaml.extensions.physics;singleton:=true
 Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext,
- org.eclipse.osgi
+ org.eclipse.osgi,
+ com.google.guava
 Bundle-ClassPath: .,
  lib/Libbulletjme-14.1.0.jar
 Bundle-ActivationPolicy: lazy
