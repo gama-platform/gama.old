@@ -315,6 +315,7 @@ public class CleanupHelper {
 		public final static Set<String> MENU_ITEMS_TO_REMOVE = new HashSet<>(Arrays.asList("openWorkspace",
 				"helpSearch", "org.eclipse.search.OpenFileSearchPage", "textSearchSubMenu", "reopenEditors",
 				"converstLineDelimitersTo", "org.eclipse.equinox.p2.ui.sdk.update",
+				"org.eclipse.ui.edit.text.toggleBlockSelectionMode", "org.eclipse.ui.edit.text.toMultiSelection",
 				"org.eclipse.equinox.p2.ui.sdk.install", "org.eclipse.equinox.p2.ui.sdk.installationDetails",
 				"org.eclipse.e4.ui.importer.openDirectory.menu"));
 

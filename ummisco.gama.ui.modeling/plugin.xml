@@ -224,12 +224,20 @@
               commandId="ummisco.command.clean.build"
               disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/build/build.all_disabled.png"
               icon="platform:/plugin/ummisco.gama.ui.shared/icons/build/build.all.png"
-              label="Clean and validate all"
+              label="Clean and Validate All"
               style="push">
            <visibleWhen
                  checkEnabled="true">
            </visibleWhen>
         </command>
+     </menuContribution>
+     <menuContribution
+           allPopups="false"
+           locationURI="menu:editorsMenu?after=org.eclipse.ui.edit.text.zoomOut">
+        <dynamic
+              class="ummisco.gama.ui.modeling.EditorPresentationMenu"
+              id="ummisco.gama.ui.modeling.dynamic2">
+        </dynamic>
      </menuContribution>
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
@@ -351,7 +359,7 @@
   <command
         defaultHandler="ummisco.gama.ui.modeling.CleanBuildCommand"
         id="ummisco.command.clean.build"
-        name="Clean and build all models">
+        name="Clean and Build All">
   </command>
 	</extension>
 	<extension point="org.eclipse.ui.menus">
@@ -772,6 +780,8 @@
     <extension 
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
+             editorOnboardingImage="onboarding.icon.png"
+             editorOnboardingText="Select a model file in the navigator or create a new model file"
              targetID="msi.gama.application.perspectives.ModelingPerspective">
           <view
                 closeable="false"
@@ -826,6 +836,15 @@
           <viewShortcut
                 id="msi.gama.application.view.InteractiveConsoleView">
           </viewShortcut>
+         <editorOnboardingCommand
+               id="org.eclipse.ui.window.showKeyAssist">
+         </editorOnboardingCommand>
+         <editorOnboardingCommand
+               id="org.eclipse.ui.newWizard">
+         </editorOnboardingCommand>
+         <viewShortcut
+               id="org.eclipse.ui.views.minimap.MinimapView">
+         </viewShortcut>
        </perspectiveExtension>
     </extension>
     <extension

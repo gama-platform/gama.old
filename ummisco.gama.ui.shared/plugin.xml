@@ -83,7 +83,7 @@
             categoryId="msi.gama.category"
             defaultHandler="ummisco.gama.ui.commands.OpenGamaWebsiteHandler"
             id="msi.gama.application.command.web"
-            name="Welcome page">
+            name="Documentation">
       </command>
       <category
             id="msi.gama.category"
@@ -150,6 +150,7 @@
       </image>
       <image
             commandId="org.eclipse.ui.window.preferences"
+            disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.open.preferences_disabled.png"
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.open.preferences.png">
       </image>
    </extension>
@@ -239,7 +240,7 @@
          <command
                commandId="ummisco.gama.ui.switchWorkspace"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.switch.png"
-               label="Switch workspace..."
+               label="Switch Workspace..."
                style="push">
          </command>
          <command
@@ -251,7 +252,15 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="menu:help?after=group.about.ext">
+            locationURI="menu:support?after=group.about.ext">
+         <command
+               commandId="msi.gama.application.command.web"
+               disabledIcon="icons/generic/menu.help_disabled.png"
+               icon="icons/generic/menu.help.png"
+               label="Documentation..."
+               style="push"
+               tooltip="Open GAMA documentation in a browser">
+         </command>
          <separator
                name="ummisco.gama.ui.shared.help.separator2"
                visible="true">
@@ -259,29 +268,65 @@
          <command
                commandId="ummisco.gama.ui.update"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.update.png"
-               label="Check for updates"
+               label="Check for Updates"
                style="push">
          </command>
          <command
                commandId="ummisco.gama.ui.install"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.install.png"
-               label="Install new plugins..."
+               label="Install new Plugins..."
                style="push">
          </command>
          <command 
                commandId="ummisco.gama.ui.details"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.details.png"
-               label="Installation details"
+               label="Installation Details"
                style="push">
          </command>
          <separator
-               name="ummisco.gama.ui.shared.help.separator"
+               name="ummisco.gama.ui.shared.separator1"
                visible="true">
          </separator>
          <command
-               commandId="msi.gama.application.command.web"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.web.png"
-               label="Welcome page"
+               commandId="org.eclipse.ui.window.preferences"
+               disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.open.preferences_disabled.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.open.preferences.png"
+               label="Preferences"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <not>
+                  <systemTest
+                        property="osgi.os"
+                        value="macosx">
+                  </systemTest>
+               </not>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.ui.help.aboutAction"
+               disabledIcon="icons/generic/menu.about_disabled.png"
+               icon="icons/generic/menu.about.png"
+               label="About GAMA..."
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <not>
+                  <systemTest
+                        property="osgi.os"
+                        value="macosx">
+                  </systemTest>
+               </not>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.ui.toggleShowKeys"
+               label="Toggle Command Descriptions"
+               style="toggle">
+         </command>
+         <command
+               commandId="org.eclipse.ui.window.showKeyAssist"
+               label="Show Command Shortcuts..."
                style="push">
          </command>
       </menuContribution>
@@ -361,5 +406,16 @@
          </service>
       </serviceFactory>
    </extension>
+    <extension
+          point="org.eclipse.ui.bindings">
+       <key
+             commandId="msi.gama.application.command.web"
+             contextId="org.eclipse.ui.contexts.window"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M2+D">
+       </key>
+    </extension>
+
+
 
 </plugin>

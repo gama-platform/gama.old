@@ -373,7 +373,7 @@
          <command
                commandId="org.eclipse.ui.newWizard"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
-               label="GAMA Project..."
+               label="Project..."
                style="push">
             <parameter
                   name="newWizardId"

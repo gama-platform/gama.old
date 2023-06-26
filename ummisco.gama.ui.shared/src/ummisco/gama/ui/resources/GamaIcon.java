@@ -51,7 +51,7 @@ public class GamaIcon {
 	public static Cache<String, GamaIcon> ICON_CACHE = CacheBuilder.newBuilder().build();
 
 	/** The Constant MISSING. */
-	static final String MISSING = "gaml" + File.pathSeparator + "_unknown";
+	static final String MISSING = "gaml" + File.separator + "_unknown";
 
 	/** The Constant DISABLED_SUFFIX. */
 	public static final String DISABLED_SUFFIX = "_disabled";

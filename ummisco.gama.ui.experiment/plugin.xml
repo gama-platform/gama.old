@@ -189,19 +189,19 @@
             <command
                   commandId="msi.gama.application.commands.PauseAndEdit"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/errors.stop.png"
-                  label="Stop at first error"
+                  label="Stop at First Error"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.commands.WarningsAsErrors"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/errors.warnings.png"
-                  label="Treat warnings like errors"
+                  label="Treat Warnings Like Errors"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.ShowErrors"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/errors.show.png"
-                  label="Display errors and warnings"
+                  label="Display Errors and Warnings"
                   style="toggle"> 
             </command>
             <separator
@@ -244,21 +244,110 @@
          <menu
                id="viewMenu"
                label="Views">
-            <command
-                  commandId="msi.gama.application.command.interactive"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.interactive.console.png"
-                  label="Interactive Console"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.window.hideShowEditors"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.save.png"
-                  label="Hide/Show Editors"
-                  style="push"
-                  tooltip="Hide or show the editors">
-            </command>
-            <separator 
-                  name="msi.gama.application.separator3"
+            <menu
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/prefs/prefs.ui2.png"
+                  id="windowMenu"
+                  label="Window">
+               <command
+                     commandId="org.eclipse.ui.cocoa.minimizeWindow"
+                     label="Minimize Window"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.eclipse.ui.cocoa.zoomWindow"
+                     label="Zoom Window"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.eclipse.ui.window.fullscreenmode"
+                     label="Toggle Full Screen"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.eclipse.ui.cocoa.arrangeWindowsInFront"
+                     label="Bring All to Front"
+                     style="push">
+               </command>
+               <visibleWhen
+                     checkEnabled="false">
+                  <systemTest
+                        property="osgi.os"
+                        value="macosx">
+                  </systemTest>
+               </visibleWhen>
+            </menu>
+            <menu
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/prefs/prefs.editor2.png"
+                  id="editorsMenu"
+                  label="Editor">
+               <command
+                     commandId="org.eclipse.ui.window.splitEditor"
+                     disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.vertical_disabled.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.vertical.png"
+                     label="Split Vertically"
+                     style="push">
+                  <parameter
+                        name="Splitter.isHorizontal"
+                        value="true">
+                  </parameter>
+               </command>
+               <command
+                     commandId="org.eclipse.ui.window.splitEditor"
+                     disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.horizontal_disabled.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.horizontal.png"
+                     label="Split Horizontally"
+                     style="push">
+                  <parameter
+                        name="Splitter.isHorizontal"
+                        value="false">
+                  </parameter>
+               </command>
+               <command
+                     commandId="org.eclipse.ui.window.newEditor"
+                     disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.stack_disabled.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.stack.png"
+                     label="Clone"
+                     style="push">
+               </command>
+               <separator
+                     name="ummisco.gama.ui.experiment.separator1"
+                     visible="true">
+               </separator>
+               <command
+                     commandId="org.eclipse.ui.edit.text.zoomIn"
+                     disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/display/zoom.in_disabled.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/display/zoom.in.png"
+                     label="Zoom In"
+                     mnemonic="%command.zoomIn.mnemonic"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <command
+                     commandId="org.eclipse.ui.edit.text.zoomOut"
+                     disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/display/zoom.out_disabled.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/display/zoom.out.png"
+                     label="Zoom Out"
+                     mnemonic="%command.zoomOut.mnemonic"
+                     style="push">
+                  <visibleWhen
+                        checkEnabled="true">
+                  </visibleWhen>
+               </command>
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isGamlEditorOpened">
+                  </reference>
+               </visibleWhen>
+               <separator
+                     name="ummisco.gama.ui.experiment.separator2"
+                     visible="true">
+               </separator>
+            </menu>
+            <separator
+                  name="msi.gama.application.separator6"
                   visible="true">
             </separator>
             <command
@@ -303,7 +392,7 @@
             </separator>
             <menu
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/layout.stack.png"
-                  label="Manage outputs...">
+                  label="Manage Outputs...">
                <visibleWhen
                      checkEnabled="false">
                   <reference
@@ -384,77 +473,98 @@
                      style="push">
                </command>
             </menu>
-            <menu
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/view.other.png"
-                  label="Other...">
-               <menu
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.open.png"
-                     label="Switch to Perspective...">
-                  <command
-                        commandId="msi.gama.application.goto.modeling"
-                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling.png"
-                         disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling_disabled.png"
-                        label="Modeling"
-                        style="push"
-                        tooltip="Open modeling perspective">
-                     <visibleWhen
-                           checkEnabled="false">
-                        <not>
-                           <reference
-                                 definitionId="isInModelingPerspective">
-                           </reference>
-                        </not>
-                     </visibleWhen>
-                  </command>
-                  <command
-                        commandId="msi.gama.application.goto.simulation"
-                        icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
-                        disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation_disabled.png"
-                        label="Simulation"
-                        style="push"
-                        tooltip="Open simulation perspective">
-                     <visibleWhen
-                           checkEnabled="false">
-                        <not>
-                           <reference
-                                 definitionId="isInSimulationPerspective">
-                           </reference>
-                        </not>
-                     </visibleWhen>
-                  </command>
-               </menu>
-               <command
-                     commandId="ummisco.gama.ui.resetPerspective"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.reset.png"
-                     label="Reset Perspective (restart required)..."
-                     style="push">
-                  <visibleWhen
-                        checkEnabled="false">
+            <separator
+                  name="msi.gama.application.window.perspectives"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="msi.gama.application.goto.simulation"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.simulation.png"
+                  label="Switch to Simulation Perspective"
+                  style="push"
+                  tooltip="Open simulation perspective">
+               <visibleWhen
+                     checkEnabled="false">
+                  <not>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                  </not>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="msi.gama.application.goto.modeling"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.modeling.png"
+                  label="Switch to Modeling Perspective"
+                  style="push"
+                  tooltip="Open modeling perspective">
+               <visibleWhen
+                     checkEnabled="false">
+                  <not>
                      <reference
                            definitionId="isInModelingPerspective">
                      </reference>
-                  </visibleWhen>
-               </command>
-               <separator
-                     name="msi.gama.application.window.perspectives"
-                     visible="true">
-               </separator>
-               <menu
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.view.png"
-                     label="Show View">
-                  <dynamic
-                        class="ummisco.gama.ui.commands.ShowViewContributionItem"
-                        id="msi.gama.application.showView">
-                  </dynamic>
-               </menu>
-               <command
-                     commandId="org.eclipse.ui.ToggleCoolbarAction"
-                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/toggle.toolbar.png"
-                     label="Toggle Toolbar"
-                     style="push"
-                     tooltip="Toggle the main toolbar on and off">
-               </command>
+                  </not>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="ummisco.gama.ui.resetPerspective"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.reset.png"
+                  label="Reset Perspective (restart required)..."
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isInModelingPerspective">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="msi.gama.application.separator4"
+                  visible="true">
+            </separator>
+            <menu
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/open.view.png"
+                  label="Show View...">
+               <dynamic
+                     class="ummisco.gama.ui.commands.ShowViewContributionItem"
+                     id="msi.gama.application.showView">
+               </dynamic>
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isInModelingPerspective">
+                  </reference>
+               </visibleWhen>
             </menu>
+            <separator
+                  name="msi.gama.application.separator5"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.ToggleCoolbarAction"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/display/toolbar.regular_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/display/toolbar.regular.png"
+                  label="Hide/Show Toolbar"
+                  style="push"
+                  tooltip="Toggle the main toolbar on and off">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.window.togglestatusbar"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/display/toolbar.fullscreen_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/display/toolbar.fullscreen.png"
+                  label="Hide/Show Status Bar"
+                  style="push">
+            </command>
+            <command
+                  commandId="gama.ui.hideShowEditors"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/views/perspective.save.png"
+                  label="Hide/Show Editor Area"
+                  style="push"
+                  tooltip="Hide or show the editors">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -1120,6 +1230,12 @@
                class="ummisco.gama.ui.commands.SyncExperimentState"
                id="org.eclipse.ui.commands.toggleState">
          </state>
+      </command>
+      <command
+            categoryId="msi.gama.category"
+            defaultHandler="ummisco.gama.ui.commands.HideShowEditors"
+            id="gama.ui.hideShowEditors"
+            name="Hide/Show Editors">
       </command>
    </extension>
    <extension

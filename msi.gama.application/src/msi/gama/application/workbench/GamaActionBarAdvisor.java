@@ -12,8 +12,6 @@ package msi.gama.application.workbench;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
@@ -22,10 +20,8 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineContributionItem;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Util;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
@@ -34,11 +30,12 @@ import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
@@ -53,10 +50,13 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	// generic actions
 
 	/** The hide show editor action. */
-	private IWorkbenchAction hideShowEditorAction;
+	// private IWorkbenchAction hideShowEditorAction;
 
 	/** The close action. */
 	private IWorkbenchAction closeAction;
+
+	/** The new window action. */
+	// private IWorkbenchAction newWindowAction;
 
 	/** The close all action. */
 	private IWorkbenchAction closeAllAction;
@@ -66,15 +66,6 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 
 	/** The save all action. */
 	private IWorkbenchAction saveAllAction;
-
-	/** The help contents action. */
-	private IWorkbenchAction helpContentsAction;
-
-	/** The about action. */
-	private IWorkbenchAction aboutAction;
-
-	/** The open preferences action. */
-	private IWorkbenchAction openPreferencesAction;
 
 	/** The save as action. */
 	private IWorkbenchAction saveAsAction;
@@ -143,6 +134,38 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 		menuBar.add(createEditMenu());
 		menuBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menuBar.add(createHelpMenu());
+	}
+
+	/**
+	 * Creates and returns the Show View menu
+	 */
+	private MenuManager addShowView() {
+		// 'Show View' menu entry
+		MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.Workbench_showView, "showView"); //$NON-NLS-1$
+		IContributionItem showViewMenu = ContributionItemFactory.VIEWS_SHORTLIST.create(getWindow());
+		showViewMenuMgr.add(showViewMenu);
+		return showViewMenuMgr;
+	}
+
+	/**
+	 * Adds the perspective actions to the specified menu.
+	 */
+	private MenuManager addPerspectiveActions() {
+		MenuManager menu =
+				new MenuManager(IDEWorkbenchMessages.Workbench_perspective, IWorkbenchActionConstants.M_PERSPECTIVE);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.PERSPECTIVE_START));
+
+		// 'Open Perspective' menu entry
+		String openText = IDEWorkbenchMessages.Workbench_openPerspective;
+		MenuManager changePerspMenuMgr = new MenuManager(openText,
+				WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE), "openPerspective"); //$NON-NLS-1$
+		IContributionItem changePerspMenuItem = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(getWindow());
+		changePerspMenuMgr.add(changePerspMenuItem);
+		menu.add(changePerspMenuMgr);
+
+		menu.add(new Separator());
+
+		return menu;
 	}
 
 	/**
@@ -247,48 +270,10 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	 * Creates and returns the Help menu.
 	 */
 	private MenuManager createHelpMenu() {
-		final MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_help, IWorkbenchActionConstants.M_HELP);
-		addSeparatorOrGroupMarker(menu, "group.intro"); //$NON-NLS-1$
-		menu.add(new GroupMarker("group.intro.ext")); //$NON-NLS-1$
-		addSeparatorOrGroupMarker(menu, "group.main"); //$NON-NLS-1$
-		menu.add(helpContentsAction);
-		addSeparatorOrGroupMarker(menu, "group.assist"); //$NON-NLS-1$
-		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
-		menu.add(new GroupMarker("group.main.ext")); //$NON-NLS-1$
-		addSeparatorOrGroupMarker(menu, "group.tutorials"); //$NON-NLS-1$
-		addSeparatorOrGroupMarker(menu, "group.tools"); //$NON-NLS-1$
-		addSeparatorOrGroupMarker(menu, "group.updates"); //$NON-NLS-1$
-		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
-		addSeparatorOrGroupMarker(menu, IWorkbenchActionConstants.MB_ADDITIONS);
-		// about should always be at the bottom
-		menu.add(new Separator("group.about")); //$NON-NLS-1$
-
-		final ActionContributionItem aboutItem = new ActionContributionItem(aboutAction);
-		aboutItem.setVisible(!Util.isMac());
-		menu.add(aboutItem);
+		final MenuManager menu = new MenuManager("Support", "support");
 		menu.add(new GroupMarker("group.about.ext")); //$NON-NLS-1$
-		menu.add(openPreferencesAction);
+		// menu.add(openPreferencesAction);
 		return menu;
-	}
-
-	/**
-	 * Adds a <code>GroupMarker</code> or <code>Separator</code> to a menu. The test for whether a separator should be
-	 * added is done by checking for the existence of a preference matching the string useSeparator.MENUID.GROUPID that
-	 * is set to <code>true</code>.
-	 *
-	 * @param menu
-	 *            the menu to add to
-	 * @param groupId
-	 *            the group id for the added separator or group marker
-	 */
-	private void addSeparatorOrGroupMarker(final MenuManager menu, final String groupId) {
-		final String prefId = "useSeparator." + menu.getId() + "." + groupId; //$NON-NLS-1$ //$NON-NLS-2$
-		final boolean addExtraSeparators = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(prefId);
-		if (addExtraSeparators) {
-			menu.add(new Separator(groupId));
-		} else {
-			menu.add(new GroupMarker(groupId));
-		}
 	}
 
 	/**
@@ -306,9 +291,8 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 		closeAllAction = null;
 		saveAction = null;
 		saveAllAction = null;
-		helpContentsAction = null;
-		aboutAction = null;
-		openPreferencesAction = null;
+		// helpContentsAction = null;
+		// openPreferencesAction = null;
 		saveAsAction = null;
 		backwardHistoryAction = null;
 		forwardHistoryAction = null;
@@ -357,17 +341,14 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 		createRedoAction(aWindow);
 		createCloseAction(aWindow);
 		createCloseAllAction(aWindow);
-		createHelpContentsAction(aWindow);
-		createAboutAction(aWindow);
-		createOpenPreferencesAction(aWindow);
-		makeFeatureDependentActions(aWindow);
+		// createOpenPreferencesAction(aWindow);
 		createForwardHistoryAction(aWindow);
 		createBackwardHistoryAction(aWindow);
 		createQuitAction(aWindow);
 		createOpenWorkspaceAction(aWindow);
 		createPropertyDialogAction(aWindow);
-		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(aWindow);
-		register(hideShowEditorAction);
+		// hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(aWindow);
+		// register(hideShowEditorAction);
 	}
 
 	/**
@@ -428,93 +409,41 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	/**
 	 * The Class OpenPreferencesAction.
 	 */
-	private class OpenPreferencesAction extends Action implements IWorkbenchAction {
+	// private class OpenPreferencesAction extends Action implements IWorkbenchAction {
+	//
+	// /**
+	// * Instantiates a new open preferences action.
+	// */
+	// OpenPreferencesAction() {
+	// super(WorkbenchMessages.OpenPreferences_text);
+	// setId("preferences");
+	// setText("Preferences");
+	// setToolTipText("Open GAMA preferences");
+	// setImageDescriptor(icons.desc("generic/menu.open.preferences"));
+	// setDisabledImageDescriptor(icons.disabled("generic/menu.open.preferences"));
+	// window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
+	// }
+	//
+	// @Override
+	// public void run() {
+	// window.getService(IPreferenceHelper.class).openPreferences();
+	// }
+	//
+	// @Override
+	// public void dispose() {}
+	//
+	// }
 
-		/**
-		 * Instantiates a new open preferences action.
-		 */
-		OpenPreferencesAction() {
-			super(WorkbenchMessages.OpenPreferences_text);
-			setId("preferences");
-			setText("Preferences");
-			setToolTipText("Open GAMA preferences");
-			setImageDescriptor(icons.desc("generic/menu.open.preferences"));
-			setDisabledImageDescriptor(icons.disabled("generic/menu.open.preferences"));
-			window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
-		}
-
-		@Override
-		public void run() {
-			window.getService(IPreferenceHelper.class).openPreferences();
-		}
-
-		@Override
-		public void dispose() {}
-
-	}
-
-	/**
-	 * Creates the open preferences action.
-	 *
-	 * @param aWindow
-	 *            the a window
-	 */
-	public void createOpenPreferencesAction(final IWorkbenchWindow aWindow) {
-		openPreferencesAction = new OpenPreferencesAction();
-		register(openPreferencesAction);
-	}
-
-	/**
-	 * Creates the about action.
-	 *
-	 * @param aWindow
-	 *            the a window
-	 */
-	public void createAboutAction(final IWorkbenchWindow aWindow) {
-		aboutAction = ActionFactory.ABOUT.create(aWindow);
-		aboutAction.setImageDescriptor(icons.desc("generic/menu.about"));
-		aboutAction.setDisabledImageDescriptor(icons.disabled("generic/menu.about"));
-		register(aboutAction);
-	}
-
-	/**
-	 * The Class HelpContentsAction.
-	 */
-	private class HelpContentsAction extends Action implements IWorkbenchAction {
-
-		/**
-		 * Instantiates a new help contents action.
-		 */
-		HelpContentsAction() {
-			setActionDefinitionId(IWorkbenchCommandConstants.HELP_HELP_CONTENTS);
-			setId("helpContents");
-			setText("GAMA documentation");
-			setToolTipText("GAMA online documentation");
-			setImageDescriptor(icons.desc("generic/menu.help"));
-			setDisabledImageDescriptor(icons.disabled("generic/menu.help"));
-			window.getWorkbench().getHelpSystem().setHelp(this, IWorkbenchHelpContextIds.HELP_CONTENTS_ACTION);
-		}
-
-		@Override
-		public void run() {
-			window.getService(IWebHelper.class).showPage("https://doc.gama-platform.org");
-		}
-
-		@Override
-		public void dispose() {}
-
-	}
-
-	/**
-	 * Creates the help contents action.
-	 *
-	 * @param aWindow
-	 *            the a window
-	 */
-	public void createHelpContentsAction(final IWorkbenchWindow aWindow) {
-		helpContentsAction = new HelpContentsAction();
-		register(helpContentsAction);
-	}
+	// /**
+	// * Creates the open preferences action.
+	// *
+	// * @param aWindow
+	// * the a window
+	// */
+	// public void createOpenPreferencesAction(final IWorkbenchWindow aWindow) {
+	// openPreferencesAction = new OpenPreferencesAction();
+	// register(openPreferencesAction);
+	// }
 
 	/**
 	 * Creates the close all action.
@@ -591,23 +520,6 @@ public class GamaActionBarAdvisor extends ActionBarAdvisor {
 	public void createUndoAction(final IWorkbenchWindow aWindow) {
 		undoAction = ActionFactory.UNDO.create(aWindow);
 		register(undoAction);
-	}
-
-	/**
-	 * Creates the feature-dependent actions for the menu bar.
-	 */
-	private void makeFeatureDependentActions(final IWorkbenchWindow aWindow) {
-		// final AboutInfo[] infos = null;
-
-		final IPreferenceStore prefs = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-
-		// Optimization: avoid obtaining the about infos if the platform state is
-		// unchanged from last time. See bug 75130 for details.
-		final String stateKey = "platformState"; //$NON-NLS-1$
-		final String prevState = prefs.getString(stateKey);
-		final String currentState = String.valueOf(Platform.getStateStamp());
-		final boolean sameState = currentState.equals(prevState);
-		if (!sameState) { prefs.putValue(stateKey, currentState); }
 	}
 
 	/**
