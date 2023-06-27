@@ -288,6 +288,20 @@
                visible="true">
          </separator>
          <command
+               commandId="org.eclipse.ui.toggleShowKeys"
+               label="Toggle Command Descriptions"
+               style="toggle">
+         </command>
+         <command
+               commandId="org.eclipse.ui.window.showKeyAssist"
+               label="Show Command Shortcuts..."
+               style="push">
+         </command>
+         <separator
+               name="ummisco.gama.ui.shared.separator3"
+               visible="true">
+         </separator>
+         <command
                commandId="org.eclipse.ui.window.preferences"
                disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.open.preferences_disabled.png"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/generic/menu.open.preferences.png"
@@ -318,16 +332,6 @@
                   </systemTest>
                </not>
             </visibleWhen>
-         </command>
-         <command
-               commandId="org.eclipse.ui.toggleShowKeys"
-               label="Toggle Command Descriptions"
-               style="toggle">
-         </command>
-         <command
-               commandId="org.eclipse.ui.window.showKeyAssist"
-               label="Show Command Shortcuts..."
-               style="push">
          </command>
       </menuContribution>
    </extension>
