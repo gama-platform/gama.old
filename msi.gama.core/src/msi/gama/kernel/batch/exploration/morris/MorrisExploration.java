@@ -190,8 +190,14 @@ public class MorrisExploration extends AExplorationAlgorithm {
 		// The output of simulations
 		Map<String, List<Double>> rebuilt_output = rebuildOutput(scope, res_outputs);
 		
+		// TODO : verify if Morris sampling can lead to several identical points in the parameter space
+		int outsize = 0;
+		for (Map<String, List<Object>> m : res_outputs.values()) {
+			outsize += m.values().stream().findFirst().get().size();
+		}
+		
 		// Prevent OutOfBounds when experiment ends before morris exploration is completed
-		if (res_outputs.size() == MySamples.size()) {
+		if (outsize == MySamples.size() && rebuilt_output.values().stream().findAny().get().size() == MySamples.size()) {
 		
 			List<String> output_names = rebuilt_output.keySet().stream().toList();
 			
