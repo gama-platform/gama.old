@@ -11,9 +11,9 @@
 package msi.gama.kernel.experiment;
 
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import msi.gama.runtime.IScope;
-import msi.gama.util.Collector;
 import msi.gaml.statements.IExecutable;
 
 /**
@@ -35,7 +35,8 @@ public class ActionExecuter {
 
 	/** The actions. */
 	@SuppressWarnings ("unchecked") final Collection<IExecutable>[] actions =
-			new Collection[] { Collector.getList(), Collector.getList(), Collector.getList(), Collector.getList() };
+			new Collection[] { new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>(), new CopyOnWriteArrayList<>(),
+					new CopyOnWriteArrayList<>() };
 
 	/** The scope. */
 	protected final IScope scope;
