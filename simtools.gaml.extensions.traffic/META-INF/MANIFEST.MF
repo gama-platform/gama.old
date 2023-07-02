@@ -4,8 +4,7 @@ Bundle-Name: Traffic
 Bundle-SymbolicName: simtools.gaml.extensions.traffic;singleton:=true
 Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
- msi.gama.ext,
- com.google.guava
+ msi.gama.ext
 Import-Package: org.locationtech.jts.geom
 Export-Package: simtools.gaml.extensions.traffic.driving
 Bundle-ClassPath: .

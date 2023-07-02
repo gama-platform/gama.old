@@ -5,8 +5,7 @@ Bundle-SymbolicName: ummisco.gaml.extensions.stats;singleton:=true
 Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
  ummisco.gaml.extensions.maths,
- msi.gama.ext,
- com.google.guava
+ msi.gama.ext
 Bundle-ActivationPolicy: lazy
 Export-Package: ummisco.gaml.extensions.stats
 Bundle-ClassPath: .,

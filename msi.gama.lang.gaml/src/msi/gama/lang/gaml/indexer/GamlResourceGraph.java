@@ -48,7 +48,7 @@ public class GamlResourceGraph {
 			super(null, null,
 					new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
 							.weighted(false).allowCycles(true).build(),
-					new DefaultGraphSpecificsStrategy<URI, LabeledEdge>());
+					new DefaultGraphSpecificsStrategy<>());
 		}
 
 	}
@@ -207,7 +207,8 @@ public class GamlResourceGraph {
 		if (!result.containsKey(uri)) {
 			result.put(uri, currentLabel);
 			if (imports.containsVertex(uri)) {
-				for (LabeledEdge edge : imports.outgoingEdgesOf(uri)) {
+				Set<LabeledEdge> ee = new HashSet<>(imports.outgoingEdgesOf(uri));
+				for (LabeledEdge edge : ee) {
 					searchImports(edge.target, edge.label == null ? currentLabel : edge.label, result);
 				}
 			}

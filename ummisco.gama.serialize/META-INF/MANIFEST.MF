@@ -4,8 +4,7 @@ Bundle-Name: Serialize
 Bundle-SymbolicName: ummisco.gama.serialize;singleton:=true
 Bundle-Version: 1.9.2.qualifier
 Require-Bundle: msi.gama.core,
- msi.gama.ext,
- com.google.guava
+ msi.gama.ext
 Bundle-ClassPath: .,
  ext/mxparser-1.2.2.jar,
  ext/xstream-1.4.18.jar,
