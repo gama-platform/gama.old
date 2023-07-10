@@ -7,15 +7,20 @@ Automatic-Module-Name: femto.st.gama.proxy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: msi.gama.precompiler,
  msi.gaml.types,
+ com.google.inject,
  org.osgi.framework;version="1.10.0"
 Require-Bundle:  ummisco.gama.serialize,
  ummisco.gama.network,
  ummisco.gama.annotations,
  msi.gama.core,
- msi.gama.ext;bundle-version="1.9.0"
+ msi.gama.ext;bundle-version="1.9.0",
+ com.google.guava
 Export-Package: proxy,
  proxyExperiment,
- proxyPopulation
-Bundle-ClassPath: .
+ proxyPopulation,
+ MPISkill,
+ mpi
+Bundle-ClassPath: .,
+ ext/mpi.jar
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: pluginActivator.ActivatorPluginProxy
