@@ -112,8 +112,8 @@
    </configurations>
 
    <repositories>
-      <repository location="https://updates.gama-platform.org/1.9.0" enabled="true" />
-      <repository location="https://updates.gama-platform.org/experimental/1.9.0" enabled="true" />
+      <repository location="https://updates.gama-platform.org/1.9.2" enabled="true" />
+      <repository location="https://updates.gama-platform.org/experimental/1.9.2" enabled="true" />
       <repository location="https://anb0s.github.io/EasyShell/release/" enabled="true" />
       <repository location="https://download.eclipse.org/egit/updates/" enabled="true" />
    </repositories>
