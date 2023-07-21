@@ -31,7 +31,7 @@ import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.data.general.Dataset;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -169,8 +169,8 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 		}
 		if ((int) area.getWidth() != sizeX || (int) area.getHeight() != sizeY) {
 			area.setRect(0, 0, sizeX, sizeY);
-			frontImage = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
-			backImage = ImageUtils.createCompatibleImage(sizeX, sizeY, false);
+			frontImage = AbstractDisplayGraphics.createCompatibleImage(sizeX, sizeY);
+			backImage = AbstractDisplayGraphics.createCompatibleImage(sizeX, sizeY);
 		}
 	}
 

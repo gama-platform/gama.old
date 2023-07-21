@@ -234,12 +234,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						IGamlIssue.CONFLICTING_FACETS, FORMAT);
 			}
 
-			if (!isAFile && !(to != null)) {
+			if (!isAFile && (to == null)) {
 				desc.error("No file specified", IGamlIssue.MISSING_FACET);
 				return;
 			}
 
-			if (!isAFile && !(format != null) && to != null && ext != null && !DELEGATES.containsKey(ext)) {
+			if (!isAFile && (format == null) && to != null && ext != null && !DELEGATES.containsKey(ext)) {
 				if (dataType != Types.STRING && dataType != Types.INT && dataType != Types.FLOAT) {
 					desc.error("Unknown file extension. Accepted formats are: "
 							+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
@@ -249,7 +249,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
 			}
 
-			if (!isAFile && !(format != null) && to != null) {
+			if (!isAFile && (format == null) && to != null) {
 				desc.info(
 						"'save' will use the extension of the file to determine its format. If you are unsure about this, please specify the format of the file using the 'format:' facet",
 						IGamlIssue.UNKNOWN_ARGUMENT);
@@ -402,7 +402,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					// the file is created "for saving" (and not reading). Otherwise it might create an exception if the
 					// file does not exist already (see #3684)
 					scope.setData(IGamaFile.KEY_TEMPORARY_OUTPUT, true);
-					final IGamaFile f = GamaFileType.createFile(scope, fileName, mc);
+					final IGamaFile f = GamaFileType.createFile(scope, fileName, false, mc);
 					f.save(scope, description.getFacets());
 					return f;
 				} catch (FlushBufferException e) {

@@ -12,7 +12,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="moeaframework-2.13.jar" sourcepath="moeaframework-2.13.jar"/>
-	<classpathentry exported="true" kind="lib" path="svgsalamander1.1.1/svgSalamander-v1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/antlr4-runtime-4.8-1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jheaps-0.13.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.1/jgrapht-guava-1.5.1.jar"/>
@@ -81,7 +80,6 @@
 	<classpathentry exported="true" kind="lib" path="geotools/gt-referencing-25.0.jar" sourcepath="geotools/geotools-25.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools/gt-render-25.0.jar" sourcepath="geotools/geotools-25.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools/gt-shapefile-25.0.jar" sourcepath="geotools/geotools-25.0-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="geotools/gt-svg-25.0.jar" sourcepath="geotools/geotools-25.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools/gt-transform-25.0.jar" sourcepath="geotools/geotools-25.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools/gt-xsd-gml2-25.0.jar" sourcepath="geotools/geotools-25.0-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="geotools/gt-xsd-gml3-25.0.jar" sourcepath="geotools/geotools-25.0-src.zip"/>

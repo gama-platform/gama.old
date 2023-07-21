@@ -28,10 +28,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.GamaFileType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
@@ -124,9 +124,10 @@ public class GamaImageType extends GamaType<GamaImage> {
 		if (obj instanceof GamaIntMatrix mat) return GamaImage.from(scope, mat);
 		if (obj instanceof BufferedImage im) return GamaImage.from(im, true);
 		if (obj instanceof Image im) return ImageHelper.copyToOptimalImage(im);
+		if (obj instanceof GamaSVGFile g) return GamaImage.from(g.getImage(scope, true), true, g.getOriginalPath());
 		if (obj instanceof GamaImageFile f) return GamaImage.from(f.getImage(scope, true), true, f.getOriginalPath());
 		if (obj instanceof GamaPoint p) return ImageOperators.image((int) p.getX(), (int) p.getY());
-		if (obj instanceof String s) return staticCast(scope, new GamaImageFile(scope, s), false);
+		if (obj instanceof String s) return staticCast(scope, GamaFileType.createFile(scope, s, false, null), false);
 		if (obj instanceof GamaField f) return GamaImage.from(scope, f);
 		if (obj instanceof ISpecies s && s.isGrid())
 			return GamaImage.from((GamaSpatialMatrix) s.getPopulation(scope).getTopology().getPlaces());

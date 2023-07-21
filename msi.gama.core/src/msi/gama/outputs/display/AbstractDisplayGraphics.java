@@ -10,7 +10,12 @@
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import org.locationtech.jts.geom.Envelope;
 
@@ -21,11 +26,79 @@ import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.runtime.GAMA;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class AbstractDisplayGraphics.
  */
 public abstract class AbstractDisplayGraphics implements IGraphics {
+
+	/** The cached GC. */
+	private static GraphicsConfiguration cachedGC;
+
+	/**
+	 * Gets the cached GC.
+	 *
+	 * @return the cached GC
+	 */
+	public static GraphicsConfiguration getCachedGC() {
+		if (cachedGC == null) {
+			DEBUG.OUT("Creating cached Graphics Configuration");
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			DEBUG.OUT("Local Graphics Environment selected");
+			GraphicsDevice gd = ge.getDefaultScreenDevice();
+			DEBUG.OUT("Default Graphics Device selected");
+			cachedGC = gd.getDefaultConfiguration();
+			DEBUG.OUT("Default Graphics Configuration selected");
+		}
+		return cachedGC;
+	}
+
+	/**
+	 * Creates the compatible image.
+	 *
+	 * @param width
+	 *            the width
+	 * @param height
+	 *            the height
+	 * @param forOpenGL
+	 *            the for open GL
+	 * @return the buffered image
+	 */
+	public static BufferedImage createCompatibleImage(final int width, final int height) {
+		BufferedImage newImage = null;
+		if (GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()) {
+			newImage = new BufferedImage(width > 0 ? width : 1024, height > 0 ? height : 1024,
+					BufferedImage.TYPE_INT_ARGB);
+		} else {
+			newImage = getCachedGC().createCompatibleImage(width, height);
+		}
+		return newImage;
+	}
+
+	/**
+	 * To compatible image.
+	 *
+	 * @param image
+	 *            the image
+	 * @return the buffered image
+	 */
+	public static BufferedImage toCompatibleImage(final BufferedImage image) {
+		// if image is already compatible and optimized for current system settings, simply return it
+		if (GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()
+				|| image.getColorModel().equals(getCachedGC().getColorModel()))
+			return image;
+		// image is not optimized, so create a new image that is
+		final BufferedImage newImage =
+				getCachedGC().createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
+		final Graphics2D g2d = (Graphics2D) newImage.getGraphics();
+		// actually draw the image and dispose of context no longer needed
+		g2d.drawImage(image, 0, 0, null);
+		g2d.dispose();
+		// return the new optimized image
+		return newImage;
+	}
 
 	/** The rect. */
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);

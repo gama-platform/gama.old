@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGeometryFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * GamaGeometryFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -28,7 +28,7 @@ import msi.gaml.types.Types;
  * @since 30 déc. 2013
  *
  */
-public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
+public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> implements IGamaFile.Drawable {
 
 	/** The geometry. */
 	protected IShape geometry;
@@ -36,9 +36,12 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 	/**
 	 * Instantiates a new gama geometry file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public GamaGeometryFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
@@ -47,18 +50,19 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 	/**
 	 * Instantiates a new gama geometry file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param b the b
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param b
+	 *            the b
 	 */
 	public GamaGeometryFile(final IScope scope, final String pathName, final boolean b) {
 		super(scope, pathName, b);
 	}
 
 	@Override
-	public IContainerType<?> getGamlType() {
-		return Types.FILE.of(Types.INT, Types.GEOMETRY);
-	}
+	public IContainerType<?> getGamlType() { return Types.FILE.of(Types.INT, Types.GEOMETRY); }
 
 	/**
 	 * Method computeEnvelope()
@@ -73,7 +77,8 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 	/**
 	 * Gets the geometry.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the geometry
 	 */
 	public IShape getGeometry(final IScope scope) {
@@ -85,7 +90,8 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 	/**
 	 * Builds the geometry.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i shape
 	 */
 	protected abstract IShape buildGeometry(IScope scope);
@@ -101,9 +107,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape> {
 	 *
 	 * @return the inits the rotation
 	 */
-	public AxisAngle getInitRotation() {
-		return null;
-	}
+	public AxisAngle getInitRotation() { return null; }
 
 	/**
 	 * Checks if is 2d.

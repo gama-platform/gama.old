@@ -22,8 +22,6 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import msi.gama.util.IModifiableContainer;
-import msi.gama.util.file.GamaGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.file.GenericFile;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.compilation.GamaGetter;
@@ -92,9 +90,7 @@ public class ParametricFileType extends ParametricType {
 	public int getNumberOfParameters() { return bufferType.getNumberOfParameters(); }
 
 	@Override
-	public boolean isDrawable() {
-		return GamaGeometryFile.class.isAssignableFrom(support) || GamaImageFile.class.isAssignableFrom(support);
-	}
+	public boolean isDrawable() { return support != null && IGamaFile.Drawable.class.isAssignableFrom(support); }
 
 	/**
 	 * Gets the builder.

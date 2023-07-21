@@ -46,7 +46,6 @@ import msi.gama.common.GamlFileExtension;
 import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.GamaFileMetaData;
-import msi.gama.util.file.GamaImageFile.ImageInfo;
 import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
 import msi.gama.util.file.GamaShapeFile;

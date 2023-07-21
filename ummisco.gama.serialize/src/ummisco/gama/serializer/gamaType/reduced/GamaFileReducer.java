@@ -43,6 +43,6 @@ public class GamaFileReducer {
 	 * @return the i gama file
 	 */
 	public IGamaFile constructObject(final IScope scope) {
-		return GamaFileType.createFile(scope, path, null);// , attributes) ;
+		return GamaFileType.createFile(scope, path, true, null);// , attributes) ;
 	}
 }

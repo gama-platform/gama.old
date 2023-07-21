@@ -12,7 +12,7 @@ package ummisco.gama.ui.metadata;
 
 import static javax.imageio.ImageIO.createImageInputStream;
 import static javax.imageio.ImageIO.read;
-import static msi.gama.common.util.ImageUtils.toCompatibleImage;
+import static msi.gama.outputs.display.AbstractDisplayGraphics.toCompatibleImage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -49,7 +49,6 @@ import org.geotools.styling.StyleFactory;
 import org.opengis.filter.FilterFactory2;
 
 import it.geosolutions.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-import msi.gama.common.util.ImageUtils;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -437,7 +436,7 @@ public class ImageDataLoader {
 			final java.awt.image.ComponentColorModel colorModel =
 					(java.awt.image.ComponentColorModel) image.getColorModel();
 			if (colorModel.getPixelSize() > 32) {
-				final BufferedImage newImage = ImageUtils.toCompatibleImage(image);
+				final BufferedImage newImage = toCompatibleImage(image);
 				return convertToSWT(newImage);
 			}
 			// ASSUMES: 3 BYTE BGR IMAGE TYPE

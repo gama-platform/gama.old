@@ -17,12 +17,12 @@ import java.util.Collection;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -267,7 +267,7 @@ public class GridLayerData extends LayerData {
 		if (image == null) {
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) grid;
 			final GamaPoint p = m.getDimensions();
-			image = ImageUtils.createCompatibleImage((int) p.getX(), (int) p.getY(), !g.is2D());
+			image = AbstractDisplayGraphics.createCompatibleImage((int) p.getX(), (int) p.getY());
 		}
 	}
 

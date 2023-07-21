@@ -1,14 +1,15 @@
 /*******************************************************************************************************
  *
- * Envelope3D.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * Envelope3D.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
+
+import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -55,7 +56,8 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Of.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D of(final Geometry g) {
@@ -67,23 +69,40 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Of.
 	 *
-	 * @param g the g
+	 * @param g
+	 *            the g
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D of(final GeometryCollection g) {
 		final int i = g.getNumGeometries();
 		if (i == 0) return EMPTY;
 		final Envelope3D result = of(g.getGeometryN(0));
-		for (int j = 1; j < i; j++) {
-			result.expandToInclude(of(g.getGeometryN(j)));
-		}
+		for (int j = 1; j < i; j++) { result.expandToInclude(of(g.getGeometryN(j))); }
 		return result;
 	}
 
 	/**
 	 * Of.
 	 *
-	 * @param s the s
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param list
+	 *            the list
+	 * @return the envelope 3 D
+	 * @date 18 juil. 2023
+	 */
+	public static Envelope3D of(final List<IShape> list) {
+		final int i = list.size();
+		if (i == 0) return EMPTY;
+		final Envelope3D result = of(list.get(0));
+		for (int j = 1; j < i; j++) { result.expandToInclude(Envelope3D.of(list.get(j))); }
+		return result;
+	}
+
+	/**
+	 * Of.
+	 *
+	 * @param s
+	 *            the s
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D of(final IShape s) {
@@ -93,7 +112,8 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Of.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D of(final GamaPoint s) {
@@ -103,7 +123,8 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Of.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D of(final Envelope e) {
@@ -115,7 +136,8 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * With Y negated.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D withYNegated(final Envelope e) {
@@ -128,7 +150,8 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Of.
 	 *
-	 * @param p the p
+	 * @param p
+	 *            the p
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D of(final Coordinate p) {
@@ -140,12 +163,18 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Of.
 	 *
-	 * @param x1 the x 1
-	 * @param x2 the x 2
-	 * @param y1 the y 1
-	 * @param y2 the y 2
-	 * @param z1 the z 1
-	 * @param z2 the z 2
+	 * @param x1
+	 *            the x 1
+	 * @param x2
+	 *            the x 2
+	 * @param y1
+	 *            the y 1
+	 * @param y2
+	 *            the y 2
+	 * @param z1
+	 *            the z 1
+	 * @param z2
+	 *            the z 2
 	 * @return the envelope 3 D
 	 */
 	public static Envelope3D of(final double x1, final double x2, final double y1, final double y2, final double z1,
@@ -252,7 +281,8 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Sets the.
 	 *
-	 * @param env the env
+	 * @param env
+	 *            the env
 	 * @return the envelope 3 D
 	 */
 	private Envelope3D set(final Envelope3D env) {
@@ -295,9 +325,7 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	 *
 	 * @return the minimum z-coordinate
 	 */
-	public double getMinZ() {
-		return minz;
-	}
+	public double getMinZ() { return minz; }
 
 	/**
 	 * Returns the <code>Envelope</code>s maximum z-value. min z > max z indicates that this is a null
@@ -305,9 +333,7 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	 *
 	 * @return the maximum z-coordinate
 	 */
-	public double getMaxZ() {
-		return maxz;
-	}
+	public double getMaxZ() { return maxz; }
 
 	/**
 	 * Gets the volume of this envelope.
@@ -635,8 +661,7 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	 */
 	@Override
 	public boolean equals(final Object other) {
-		if (!(other instanceof Envelope3D)) return false;
-		final Envelope3D otherEnvelope = (Envelope3D) other;
+		if (!(other instanceof final Envelope3D otherEnvelope)) return false;
 		if (isNull()) return otherEnvelope.isNull();
 		return super.equals(other) && Comparison.equal(minz, otherEnvelope.getMinZ())
 				&& Comparison.equal(maxz, otherEnvelope.getMaxZ());
@@ -647,18 +672,14 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	 *
 	 * @return true, if is flat
 	 */
-	public boolean isFlat() {
-		return minz == maxz;
-	}
+	public boolean isFlat() { return minz == maxz; }
 
 	/**
 	 * Checks if is horizontal.
 	 *
 	 * @return true, if is horizontal
 	 */
-	public boolean isHorizontal() {
-		return minz == maxz;
-	}
+	public boolean isHorizontal() { return minz == maxz; }
 
 	/**
 	 * To geometry.
@@ -689,7 +710,8 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	/**
 	 * Rotate.
 	 *
-	 * @param rotation the rotation
+	 * @param rotation
+	 *            the rotation
 	 * @return the envelope 3 D
 	 */
 	public Envelope3D rotate(final AxisAngle rotation) {

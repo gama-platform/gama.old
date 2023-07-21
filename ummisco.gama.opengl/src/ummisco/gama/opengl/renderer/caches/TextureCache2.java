@@ -176,7 +176,7 @@ public class TextureCache2 implements ITextureCache {
 			String path = file.getId();
 			texture = volatileTextures.get(path);
 			if (texture == null) {
-				final BufferedImage image = file.getImage(null, useCache, true);
+				final BufferedImage image = file.getImage(null, useCache);
 				// DEBUG.LOG("Building a new volatile texture... " + file.getId());
 				texture = this.buildTexture(gl.getGL(), image);
 				volatileTextures.put(path, texture);
@@ -202,7 +202,7 @@ public class TextureCache2 implements ITextureCache {
 	 * @return the texture
 	 */
 	private Texture buildTexture(final GL gl, final IImageProvider file) {
-		return buildTexture(gl, file.getImage(null, GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue(), true));
+		return buildTexture(gl, file.getImage(null, GamaPreferences.Displays.OPENGL_USE_IMAGE_CACHE.getValue()));
 	}
 
 	/**

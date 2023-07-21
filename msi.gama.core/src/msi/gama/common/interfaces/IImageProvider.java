@@ -54,19 +54,6 @@ public interface IImageProvider extends IEnvelopeProvider, IAsset {
 	}
 
 	/**
-	 * Gets the image.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param useCache
-	 *            specifies whether to use a cache or not
-	 * @param forOpenGL
-	 *            specifies whether the image should be pre-treated for openGL
-	 * @return the image
-	 */
-	BufferedImage getImage(IScope scope, boolean useCache, boolean forOpenGL);
-
-	/**
 	 * Returns the image provided by this provider, specifying whether to compute or load it again or to use a cache. It
 	 * is assumed (by default) that the image produced is not for OpenGL
 	 *
@@ -74,9 +61,7 @@ public interface IImageProvider extends IEnvelopeProvider, IAsset {
 	 *            the scope
 	 * @return the image
 	 */
-	default BufferedImage getImage(final IScope scope, final boolean useCache) {
-		return getImage(scope, useCache, false);
-	}
+	BufferedImage getImage(final IScope scope, final boolean useCache);
 
 	/**
 	 * Gets the image. Default is to use whatever cache is provided

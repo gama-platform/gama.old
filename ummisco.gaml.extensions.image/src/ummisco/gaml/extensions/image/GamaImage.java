@@ -78,7 +78,7 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	 * @param imageType
 	 *            the image type
 	 */
-	private GamaImage(final int width, final int height, final int type, final String uniqueID) {
+	GamaImage(final int width, final int height, final int type, final String uniqueID) {
 		super(width, height, type);
 		id = uniqueID;
 	}
@@ -314,7 +314,7 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	}
 
 	@Override
-	public BufferedImage getImage(final IScope scope, final boolean useCache, final boolean forOpenGL) {
+	public BufferedImage getImage(final IScope scope, final boolean useCache) {
 		return this;
 	}
 

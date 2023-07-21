@@ -79,6 +79,13 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 		extends IAddressableContainer, IModifiableContainer, IEnvelopeProvider, IAsset {
 
 	/**
+	 * A tagging interface for drawable files
+	 */
+	interface Drawable {
+
+	}
+
+	/**
 	 * The "temporary output" key. Used to indicate in the scope (see {@link IScope#setData(String, Object)} that the
 	 * current file is created for serving as an output file, for saving data
 	 */
@@ -281,5 +288,16 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 	 * @return the URI relative to workspace
 	 */
 	URI getURIRelativeToWorkspace();
+
+	/**
+	 * Checks for geo data available.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 15 juil. 2023
+	 */
+	default boolean hasGeoDataAvailable(final IScope scope) {
+		return false;
+	}
 
 }

@@ -210,8 +210,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 	@Override
 	public Rectangle2D drawAsset(final IAsset file, final DrawingAttributes attributes) {
 		final IScope scope = surface.getScope();
-		if (file instanceof IImageProvider im)
-			return drawImage(im.getImage(scope, attributes.useCache(), false), attributes);
+		if (file instanceof IImageProvider im) return drawImage(im.getImage(scope, attributes.useCache()), attributes);
 		if (!(file instanceof GamaGeometryFile)) return null;
 		IShape shape = Cast.asGeometry(scope, file);
 		if (shape == null) return null;

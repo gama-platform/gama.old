@@ -22,7 +22,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
-import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.IGamaFile;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
@@ -145,7 +145,7 @@ public class ImageLayer extends AbstractLayer {
 	 * @return the gama image file
 	 */
 	private IImageProvider createFileFromString(final IScope scope, final String imageFileName) {
-		final GamaImageFile result = GamaFileType.createImageFile(scope, imageFileName, null);
+		final IGamaFile result = GamaFileType.createFile(scope, imageFileName, false, null);
 		return verifyFile(scope, result);
 	}
 
@@ -184,7 +184,7 @@ public class ImageLayer extends AbstractLayer {
 	 * @return the envelope 3 D
 	 */
 	private Envelope3D computeEnvelope(final IScope scope, final IImageProvider file) {
-		if (file instanceof GamaImageFile gif && gif.getGeoDataFile(scope) != null) return file.computeEnvelope(scope);
+		if (file instanceof IGamaFile gf && gf.hasGeoDataAvailable(scope)) return file.computeEnvelope(scope);
 		return scope.getSimulation().getEnvelope();
 	}
 

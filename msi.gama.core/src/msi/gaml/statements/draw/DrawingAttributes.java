@@ -17,12 +17,12 @@ import java.util.List;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Scaling3D;
+import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.GamaGifFile;
 import msi.gaml.constants.GamlCoreConstants;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -481,8 +481,8 @@ public class DrawingAttributes {
 		if (!useCache()) return true;
 		if (textures == null) return false;
 		final Object o = textures.get(0);
-		if (!(o instanceof GamaGifFile)) return false;
-		return true;
+		if (!(o instanceof IImageProvider iip)) return false;
+		return iip.isAnimated();
 	}
 
 	// /**

@@ -64,7 +64,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	static CoordinateFilter ZERO_Z = coord -> coord.setZ(0);
 
 	/** The gis. */
-	protected IProjection gis;
+	public IProjection gis;
 
 	/** The initial CRS code. */
 	protected Integer initialCRSCode = null;

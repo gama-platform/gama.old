@@ -19,9 +19,9 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.file.GamaObjFile;
 import ummisco.gama.opengl.OpenGL;
+import ummisco.gaml.extensions.image.GamaImageFile;
 
 /**
  * The Class ObjFileDrawer.

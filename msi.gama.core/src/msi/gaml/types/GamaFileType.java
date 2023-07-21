@@ -28,10 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.GamaFolderFile;
-import msi.gama.util.file.GamaGifFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gama.util.file.IGamaFile;
-import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.GamaGetter;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -151,33 +148,14 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 *            the contents
 	 * @return the i gama file
 	 */
-	public static IGamaFile createFile(final IScope scope, final String path, final IModifiableContainer contents) {
-		if (new File(path).isDirectory()) return new GamaFolderFile(scope, path);
+	public static IGamaFile createFile(final IScope scope, final String path, final boolean includingFolders,
+			final IModifiableContainer contents) {
+		if (new File(path).isDirectory()) {
+			if (includingFolders) return new GamaFolderFile(scope, path);
+			return null;
+		}
 		final ParametricFileType ft = getTypeFromFileName(path);
 		return ft.createFile(scope, path, contents);
-	}
-
-	/**
-	 * Creates the image file.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param path
-	 *            the path
-	 * @param contents
-	 *            the contents
-	 * @return the gama image file
-	 */
-	public static GamaImageFile createImageFile(final IScope scope, final String path,
-			final IModifiableContainer contents) {
-		if (new File(path).isDirectory()) return null;
-		if (path.endsWith(".gif") || path.endsWith(".GIF")) {
-			if (contents == null) return new GamaGifFile(scope, path);
-			if (contents instanceof IMatrix) return new GamaGifFile(scope, path, (IMatrix<Integer>) contents);
-		} else if (contents == null)
-			return new GamaImageFile(scope, path);
-		else if (contents instanceof IMatrix) return new GamaImageFile(scope, path, (IMatrix<Integer>) contents);
-		return null;
 	}
 
 	@Override
@@ -188,9 +166,9 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		// No copy of the file is done.
 		if (obj instanceof IGamaFile) return (IGamaFile) obj;
 		if (obj instanceof String) {
-			if (param == null) return createFile(scope, (String) obj, null);
+			if (param == null) return createFile(scope, (String) obj, true, null);
 			if (param instanceof IModifiableContainer)
-				return createFile(scope, (String) obj, (IModifiableContainer) param);
+				return createFile(scope, (String) obj, true, (IModifiableContainer) param);
 		}
 		return getDefault();
 	}

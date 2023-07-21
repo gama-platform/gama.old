@@ -48,7 +48,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -61,6 +60,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.ISimulationStateProvider;
@@ -115,7 +115,7 @@ public class SwtGui implements IGui {
 
 	static {
 		PreferencesHelper.initialize();
-		ImageUtils.getCachedGC();
+		AbstractDisplayGraphics.getCachedGC();
 		// initializeOpenGL();
 	}
 

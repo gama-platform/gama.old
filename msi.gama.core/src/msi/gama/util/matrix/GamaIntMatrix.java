@@ -601,7 +601,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> implements IImageProvider
 	public String getId() { return "matrix" + hashCode(); }
 
 	@Override
-	public BufferedImage getImage(final IScope scope, final boolean useCache, final boolean forOpenGL) {
+	public BufferedImage getImage(final IScope scope, final boolean useCache) {
 		int w = getCols(scope);
 		int h = getRows(scope);
 		BufferedImage ret = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);

@@ -11,7 +11,6 @@
 package msi.gaml.statements.draw;
 
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -27,12 +26,11 @@ import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
-import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.IGamaFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaFileType;
@@ -153,10 +151,10 @@ public class ShapeDrawer implements IDrawDelegate {
 			if (s instanceof IImageProvider) {
 				image = (IImageProvider) s;
 			} else if (s instanceof String) {
-				GamaImageFile file = (GamaImageFile) GamaFileType.createFile(scope, (String) s, null);
-				if (file == null || !file.exists(scope))
+				IGamaFile file = GamaFileType.createFile(scope, (String) s, false, null);
+				if (!(file instanceof IImageProvider iip) || !file.exists(scope))
 					throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
-				image = file;
+				image = iip;
 			}
 
 			return image;
@@ -170,16 +168,16 @@ public class ShapeDrawer implements IDrawDelegate {
 	 * @return
 	 */
 	private Geometry addToroidalParts(final IScope scope, final Geometry shape) {
-		Geometry result = shape;
-//		final ITopology t = scope.getTopology();
-//		if (t != null && t.isTorus()) {
-//			final List<Geometry> geoms = t.listToroidalGeometries(shape);
-//			final Geometry all = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
-//			final Geometry world = scope.getSimulation().getInnerGeometry();
-//			result = all.intersection(world);
-//			// WARNING Does not correctly handle rotations or translations
-//		}
-		return result;
+
+		// final ITopology t = scope.getTopology();
+		// if (t != null && t.isTorus()) {
+		// final List<Geometry> geoms = t.listToroidalGeometries(shape);
+		// final Geometry all = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
+		// final Geometry world = scope.getSimulation().getInnerGeometry();
+		// result = all.intersection(world);
+		// // WARNING Does not correctly handle rotations or translations
+		// }
+		return shape;
 	}
 
 	/** The temp arrow list. */
