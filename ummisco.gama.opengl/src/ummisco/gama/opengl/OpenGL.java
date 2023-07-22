@@ -1083,6 +1083,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the new line width
 	 */
 	public void setLineWidth(final double width) {
+
 		gl.glLineWidth((float) width);
 	}
 
@@ -1483,6 +1484,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	/** The previous object lighting. */
 	boolean previousObjectWireframe, previousObjectLighting;
 
+	/** The previous object line width. */
+	double previousObjectLineWidth = GamaPreferences.Displays.CORE_LINE_WIDTH.getValue();
+
 	/**
 	 * Begin object.
 	 *
@@ -1521,6 +1525,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		}
 		setObjectLighting(previousObjectLighting);
 		setObjectWireframe(previousObjectWireframe);
+		setLineWidth(previousObjectLineWidth);
 		if (isPicking) { renderer.getPickingHelper().tryPick(object.getAttributes()); }
 	}
 
