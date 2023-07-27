@@ -68,6 +68,7 @@ public class DrivingGraph extends GamaSpatialGraph {
 			if (!v2ri.contains(roadAgent)) { v2ri.add(roadAgent); }
 			RoadSkill.setSourceNode(roadAgent, source);
 			RoadSkill.setTargetNode(roadAgent, target);
+			RoadSkill.getVehicleOrdering(roadAgent).clear();
 		}
 
 		addVertex(v1);
