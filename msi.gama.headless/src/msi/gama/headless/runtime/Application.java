@@ -83,6 +83,8 @@ public class Application implements IApplication {
 
 	/** The Constant THREAD_PARAMETER. */
 	final public static String THREAD_PARAMETER = "-hpc";
+	
+	final public static String PING_INTERVAL = "-ping_interval";
 
 	/** The Constant SOCKET_PARAMETER. */
 	final public static String SOCKET_PARAMETER = "-socket";
@@ -133,6 +135,9 @@ public class Application implements IApplication {
 	/** The socket. */
 	public int socket = -1;
 
+	// the interval between each ping sent by the server, -1 to deactivate this behaviour
+	public int ping_interval = 10000;
+	
 	/** The console mode. */
 	public boolean consoleMode = false;
 
@@ -168,9 +173,13 @@ public class Application implements IApplication {
 				+ "                           -- start the console to write xml parameter file" + "\n\t\t"
 				+ VERBOSE_PARAMETER + "                           -- verbose mode" + "\n\t\t" + THREAD_PARAMETER
 				+ " [core]                  -- set the number of core available for experimentation" + "\n\t\t"
-				+ SOCKET_PARAMETER + " [socketPort]         -- start socket pipeline to interact with another framework"
+				+ SOCKET_PARAMETER + " [socketPort]         -- starts socket pipeline to interact with another framework"
 				+ "\n\t\t" + TUNNELING_PARAMETER
 				+ "                           -- start pipeline to interact with another framework"
+				+ "\n\t\t" + PING_INTERVAL + " [pingInterval] \t\t "
+						+ "-- when in server mode (socket parameter set), defines in milliseconds the time "
+						+ "between each ping packet sent to clients to keep alive the connection. "
+						+ "The default value is 10000, set to -1 to deactivate this behaviour."
 				+ "\n\t=== Infos ===" + "\n\t\t" + HELP_PARAMETER
 				+ "                        -- get the help of the command line" + "\n\t\t" + GAMA_VERSION
 				+ "                     -- get the the version of gama" + "\n\t=== Library Runner ===" + "\n\t\t"
@@ -233,6 +242,10 @@ public class Application implements IApplication {
 			size = size - 2;
 			mustContainOutFolder = mustContainInFile = false;
 			this.socket = Integer.parseInt(after(args, SSOCKET_PARAMETER));
+		}
+		if (args.contains(PING_INTERVAL)) {
+			size = size - 2;
+			this.ping_interval = Integer.parseInt(after(args, PING_INTERVAL));
 		}
 		if (args.contains(THREAD_PARAMETER)) {
 			size = size - 2;
@@ -363,13 +376,13 @@ public class Application implements IApplication {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
 			// GamaListener.newInstance(this.socket, this);
-			new GamaListener(this.socket, this, false, "", "", "");
+			new GamaListener(this.socket, this, false, "", "", "", this.ping_interval);
 		} else if (args.contains(SSOCKET_PARAMETER)) {
 			final String jks = args.contains(SSOCKET_PARAMETER_JKSPATH) ? after(args, SSOCKET_PARAMETER_JKSPATH) : "";
 			final String spwd = args.contains(SSOCKET_PARAMETER_SPWD) ? after(args, SSOCKET_PARAMETER_SPWD) : "";
 			final String kpwd = args.contains(SSOCKET_PARAMETER_KPWD) ? after(args, SSOCKET_PARAMETER_KPWD) : "";
 			// System.out.println(jks+" "+spwd+" "+kpwd);
-			new GamaListener(this.socket, this, true, jks, spwd, kpwd);
+			new GamaListener(this.socket, this, true, jks, spwd, kpwd, ping_interval);
 		} else {
 			runSimulation(args);
 		}

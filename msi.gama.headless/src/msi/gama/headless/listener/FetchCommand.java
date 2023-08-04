@@ -29,8 +29,6 @@ public class FetchCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
 		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final String socket_id =
-				map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
 
 		final Object filepath = map.get("file");
 		final Object access = map.get("access");

@@ -169,7 +169,7 @@ public class ManualExperimentJob extends ExperimentJob {
 	}
 
 	/**
-	 * Inits the end contion.
+	 * Inits the end condition.
 	 *
 	 * @param cond
 	 *            the cond

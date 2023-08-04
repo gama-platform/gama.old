@@ -15,11 +15,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import org.java_websocket.WebSocket;
-import org.locationtech.jts.util.Debug;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.GamaServerMessage;
 import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.kernel.experiment.ExperimentAgent;

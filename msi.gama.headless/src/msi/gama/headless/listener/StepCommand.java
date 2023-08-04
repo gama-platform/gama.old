@@ -29,7 +29,7 @@ public class StepCommand implements ISocketCommand {
 			for (int i = 0 ; i < nb_step ; i++) {
 				try {
 					if (sync) {
-						gama_exp.controller._job.doStep();
+						gama_exp.doStep();
 					} else {
 						gama_exp.controller.userStep();				
 					}

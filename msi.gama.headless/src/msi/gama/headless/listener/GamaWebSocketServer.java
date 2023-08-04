@@ -21,7 +21,11 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.security.KeyStore;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -29,6 +33,7 @@ import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.java_websocket.WebSocket;
+import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.SSLParametersWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
@@ -44,7 +49,6 @@ import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.headless.runtime.Application;
 import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.util.GamaMapFactory;
-import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.dev.utils.DEBUG;
@@ -82,6 +86,11 @@ public class GamaWebSocketServer extends WebSocketServer {
 	/** The cmd helper. */
 	CommandExecutor cmdHelper;
 
+	// variables for the keepalive pings
+	public final boolean canPing; // false if pingInterval is negative
+	public final int pingInterval; // the time interval between two ping requests in ms
+	protected Map<WebSocket, Timer> pingTimers; // map of all connected clients and their associated timers running ping requests
+	
 	/**
 	 * Instantiates a new gama web socket server.
 	 *
@@ -94,8 +103,14 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @param ssl
 	 *            the ssl
 	 */
-	public GamaWebSocketServer(final int port, final Application a, final GamaListener l, final boolean ssl, final String jksPath, final String spwd, final String kpwd) {
+	public GamaWebSocketServer(final int port, final Application a, final GamaListener l, final boolean ssl, final String jksPath, final String spwd, final String kpwd, final int ping_interval) {
 		super(new InetSocketAddress(port));
+		
+		canPing = ping_interval >= 0;
+		pingInterval = ping_interval;
+		pingTimers = new HashMap<WebSocket, Timer>();			
+		
+		
 		if (a.verbose) { DEBUG.ON(); }
 		cmdHelper = new CommandExecutor();
 		if (ssl) {
@@ -148,7 +163,17 @@ public class GamaWebSocketServer extends WebSocketServer {
 		DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
 		conn.send(Jsoner
 				.serialize(new GamaServerMessage(GamaServerMessageType.ConnectionSuccessful, "" + conn.hashCode())));
-
+		
+		if (canPing) {
+			var timer = new Timer();
+			timer.scheduleAtFixedRate(new TimerTask() {
+				@Override
+				public void run() {
+					conn.sendPing();
+				}
+			}, 0, pingInterval);
+			pingTimers.put(conn, timer);			
+		}
 		// String path = URI.create(handshake.getResourceDescriptor()).getPath();
 	}
 
@@ -160,7 +185,25 @@ public class GamaWebSocketServer extends WebSocketServer {
 	public Application getDefaultApp() { return app; }
 
 	@Override
+	public void onWebsocketPing(WebSocket conn, Framedata f) {
+		// TODO Auto-generated method stub
+		super.onWebsocketPing(conn, f);
+	}
+	
+	@Override
+	public void onWebsocketPong(WebSocket conn, Framedata f) {
+		// TODO Auto-generated method stub
+		super.onWebsocketPong(conn, f);
+	}
+	
+	@Override
 	public void onClose(final WebSocket conn, final int code, final String reason, final boolean remote) {
+		
+		var timer = pingTimers.remove(conn);
+		if (timer != null) {
+			timer.cancel();
+		}
+
 		if (_listener.getLaunched_experiments().get("" + conn.hashCode()) != null) {
 			for (ManualExperimentJob e : _listener.getLaunched_experiments().get("" + conn.hashCode()).values()) {
 				e.controller.directPause();
@@ -217,13 +260,13 @@ public class GamaWebSocketServer extends WebSocketServer {
 			final String socket_id = map.get("socket_id") != null ? map.get("socket_id").toString() : ("" + socket.hashCode());
 			if(get_listener().getExperiment(socket_id, exp_id)!=null  && !get_listener().getExperiment(socket_id, exp_id).controller.isPaused() ) {
 				get_listener().getExperiment(socket_id, exp_id).controller.getScope().getSimulation().postOneShotAction(scope1 -> {
-					cmdHelper.process(socket, map);
+					 cmdHelper.pushCommand(socket, map);
 //				System.out.println(map.get("type"));
 					return null;
 				});
 			}else {
 
-				cmdHelper.process(socket, map);
+				 cmdHelper.pushCommand(socket, map);
 			}
 
 		} catch (Exception e1) {
