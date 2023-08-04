@@ -45,7 +45,8 @@ public class CommandExecutor {
 		cmds.put("reload", new ReloadCommand());
 		cmds.put("expression", new ExpressionCommand());
 		cmds.put("exit", new ExitCommand());
-		cmds.put("fetch", new FetchCommand());
+		cmds.put("download", new DownloadCommand());
+		cmds.put("upload", new UploadCommand());
 
 		COMMANDS = Collections.unmodifiableMap(cmds);
 		
