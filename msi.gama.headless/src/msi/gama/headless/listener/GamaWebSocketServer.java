@@ -159,8 +159,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 		// conn.getRemoteSocketAddress().getAddress().getHostAddress() + " to the
 		// server!");
 		// broadcast("new connection: " + handshake.getResourceDescriptor()); // This
-		// method sends a message to all clients connected
-		DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+		// method sends a message to all clients connected		DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
 		conn.send(Jsoner
 				.serialize(new GamaServerMessage(GamaServerMessageType.ConnectionSuccessful, "" + conn.hashCode())));
 		
@@ -169,7 +168,9 @@ public class GamaWebSocketServer extends WebSocketServer {
 			timer.scheduleAtFixedRate(new TimerTask() {
 				@Override
 				public void run() {
-					conn.sendPing();
+					if (conn.isOpen()) {
+						conn.sendPing();						
+					}
 				}
 			}, 0, pingInterval);
 			pingTimers.put(conn, timer);			

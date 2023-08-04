@@ -22,7 +22,7 @@ public class UploadCommand implements ISocketCommand {
 		}
 		
 		try (FileWriter myWriter = new FileWriter(filepath)) {
-			myWriter.write("" + content);
+			myWriter.write(content);
 			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
 		} catch (Exception ex) {
 			ex.printStackTrace();
