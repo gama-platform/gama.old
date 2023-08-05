@@ -54,6 +54,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
+import msi.gama.runtime.concurrent.SimulationLocal;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
@@ -224,6 +225,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	/** The topology. */
 	private RootTopology topology;
+
+	/** The Simulation local map. */
+	private Map simulationLocalMap;
 
 	/**
 	 * Instantiates a new simulation agent.
@@ -975,6 +979,18 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
+	/**
+	 * Update with.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param sa
+	 *            the sa
+	 * @date 4 août 2023
+	 */
+	public void updateWith(final IScope scope, final Object sa) {}
+
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
 
@@ -1123,5 +1139,20 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		setTopology(rt);
 		for (final IPopulation<?> p : getMicroPopulations()) { p.getTopology().setRoot(root.getScope(), rt); }
 	}
+
+	/**
+	 * Gets the Simulation local map.
+	 *
+	 * @return the Simulation local map
+	 */
+	public <T> Map<SimulationLocal<T>, T> getSimulationLocalMap() { return simulationLocalMap; }
+
+	/**
+	 * Sets the Simulation local map.
+	 *
+	 * @param map
+	 *            the new Simulation local map
+	 */
+	public <T> void setSimulationLocalMap(final Map<SimulationLocal<T>, T> map) { simulationLocalMap = map; }
 
 }

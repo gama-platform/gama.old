@@ -376,6 +376,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				scope.setAgentVarValue(a, v.getName(), v.getUpdatedValue(scope));
 			}
 		}
+		scope.setCurrentSymbol(null);
 	}
 
 	@Override

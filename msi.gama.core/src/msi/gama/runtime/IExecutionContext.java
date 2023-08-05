@@ -1,18 +1,19 @@
 /*******************************************************************************************************
  *
- * IExecutionContext.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * IExecutionContext.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime;
 
 import java.util.Map;
 
 import msi.gama.common.interfaces.IDisposable;
+import msi.gaml.compilation.ISymbol;
 
 /**
  * The Interface IExecutionContext.
@@ -32,7 +33,7 @@ public interface IExecutionContext extends IDisposable {
 	 * @return the int
 	 */
 	default int depth() {
-		if (getOuterContext() == null) { return 0; }
+		if (getOuterContext() == null) return 0;
 		return 1 + getOuterContext().depth();
 	}
 
@@ -45,7 +46,8 @@ public interface IExecutionContext extends IDisposable {
 	/**
 	 * Gets the temp var.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return the temp var
 	 */
 	Object getTempVar(String name);
@@ -64,15 +66,18 @@ public interface IExecutionContext extends IDisposable {
 	/**
 	 * Put local var.
 	 *
-	 * @param varName the var name
-	 * @param val the val
+	 * @param varName
+	 *            the var name
+	 * @param val
+	 *            the val
 	 */
 	void putLocalVar(String varName, Object val);
 
 	/**
 	 * Gets the local var.
 	 *
-	 * @param string the string
+	 * @param string
+	 *            the string
 	 * @return the local var
 	 */
 	Object getLocalVar(String string);
@@ -80,7 +85,8 @@ public interface IExecutionContext extends IDisposable {
 	/**
 	 * Checks for local var.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 * @return true, if successful
 	 */
 	boolean hasLocalVar(String name);
@@ -88,7 +94,8 @@ public interface IExecutionContext extends IDisposable {
 	/**
 	 * Removes the local var.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 */
 	void removeLocalVar(String name);
 
@@ -103,13 +110,32 @@ public interface IExecutionContext extends IDisposable {
 	 *
 	 * @return the i execution context
 	 */
-	IExecutionContext createCopy();
+	IExecutionContext createCopy(ISymbol command);
 
 	/**
 	 * Creates the child context.
 	 *
 	 * @return the i execution context
 	 */
-	IExecutionContext createChildContext();
+	IExecutionContext createChildContext(ISymbol command);
+
+	/**
+	 * Gets the current symbol.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the current symbol
+	 * @date 3 août 2023
+	 */
+	ISymbol getCurrentSymbol();
+
+	/**
+	 * Sets the symbol.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param statement
+	 *            the new symbol
+	 * @date 3 août 2023
+	 */
+	void setCurrentSymbol(ISymbol statement);
 
 }

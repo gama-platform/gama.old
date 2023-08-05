@@ -13,8 +13,8 @@ package msi.gama.runtime;
 import java.util.Collections;
 import java.util.Map;
 
-import msi.gama.common.util.PoolUtils;
 import msi.gama.util.GamaMapFactory;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.types.Types;
 
 /**
@@ -22,15 +22,6 @@ import msi.gaml.types.Types;
  */
 public class ExecutionContext implements IExecutionContext {
 
-	/** The Constant POOL. */
-	// Disactivated for the moment as it doesnt seem to make a significant difference and might actually create problems
-	// in concurrent setups
-	private static final PoolUtils.ObjectPool<ExecutionContext> POOL =
-			PoolUtils.create("Execution Context", true, ExecutionContext::new, null, null);
-
-	/** The Constant POOL_ACTIVE. */
-	private static final boolean POOL_ACTIVE = false;
-
 	/**
 	 * Creates the.
 	 *
@@ -38,8 +29,8 @@ public class ExecutionContext implements IExecutionContext {
 	 *            the outer
 	 * @return the execution context
 	 */
-	public static ExecutionContext create(final IExecutionContext outer) {
-		return create(outer.getScope(), outer);
+	public static ExecutionContext create(final IExecutionContext outer, final ISymbol command) {
+		return create(outer.getScope(), outer, command);
 	}
 
 	/**
@@ -49,8 +40,8 @@ public class ExecutionContext implements IExecutionContext {
 	 *            the scope
 	 * @return the execution context
 	 */
-	public static ExecutionContext create(final IScope scope) {
-		return create(scope, null);
+	public static ExecutionContext create(final IScope scope, final ISymbol command) {
+		return create(scope, null, command);
 	}
 
 	/**
@@ -62,13 +53,9 @@ public class ExecutionContext implements IExecutionContext {
 	 *            the outer
 	 * @return the execution context
 	 */
-	public static ExecutionContext create(final IScope scope, final IExecutionContext outer) {
+	public static ExecutionContext create(final IScope scope, final IExecutionContext outer, final ISymbol command) {
 		final ExecutionContext result;
-		if (POOL_ACTIVE) {
-			result = POOL.get();
-		} else {
-			result = new ExecutionContext();
-		}
+		result = new ExecutionContext(command);
 		result.scope = scope;
 		result.outer = outer;
 		return result;
@@ -83,12 +70,14 @@ public class ExecutionContext implements IExecutionContext {
 	/** The scope. */
 	IScope scope;
 
+	/** The command. */
+	ISymbol command;
+
 	@Override
 	public void dispose() {
 		local = null;
 		outer = null;
 		scope = null;
-		if (POOL_ACTIVE) { POOL.release(this); }
 	}
 
 	@Override
@@ -97,7 +86,9 @@ public class ExecutionContext implements IExecutionContext {
 	/**
 	 * Instantiates a new execution context.
 	 */
-	ExecutionContext() {}
+	ExecutionContext(final ISymbol command) {
+		this.command = command;
+	}
 
 	@Override
 	public final IExecutionContext getOuterContext() { return outer; }
@@ -117,10 +108,19 @@ public class ExecutionContext implements IExecutionContext {
 		return local.get(name);
 	}
 
+	/**
+	 * Creates the copy.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param command
+	 *            the command
+	 * @return the execution context
+	 * @date 3 août 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
-	public ExecutionContext createCopy() {
-		final ExecutionContext r = create(scope, outer);
+	public ExecutionContext createCopy(final ISymbol command) {
+		final ExecutionContext r = create(scope, outer, command);
 		if (local != null) {
 			synchronized (local) {
 				r.local = Collections.synchronizedMap(
@@ -130,9 +130,18 @@ public class ExecutionContext implements IExecutionContext {
 		return r;
 	}
 
+	/**
+	 * Creates the child context.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param command
+	 *            the command
+	 * @return the execution context
+	 * @date 3 août 2023
+	 */
 	@Override
-	public ExecutionContext createChildContext() {
-		return create(this);
+	public ExecutionContext createChildContext(final ISymbol command) {
+		return create(this, command);
 	}
 
 	@Override
@@ -177,5 +186,11 @@ public class ExecutionContext implements IExecutionContext {
 	public String toString() {
 		return "execution context " + local;
 	}
+
+	@Override
+	public ISymbol getCurrentSymbol() { return command; }
+
+	@Override
+	public void setCurrentSymbol(final ISymbol statement) { command = statement; }
 
 }

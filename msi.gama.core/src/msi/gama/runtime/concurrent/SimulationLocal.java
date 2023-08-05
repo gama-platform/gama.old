@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SimulationLocal.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * SimulationLocal.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 
@@ -30,7 +30,8 @@ public class SimulationLocal<T> {
 	/**
 	 * The Class SuppliedSimulationLocal.
 	 *
-	 * @param <T> the generic type
+	 * @param <T>
+	 *            the generic type
 	 */
 	static final class SuppliedSimulationLocal<T> extends SimulationLocal<T> {
 
@@ -40,7 +41,8 @@ public class SimulationLocal<T> {
 		/**
 		 * Instantiates a new supplied simulation local.
 		 *
-		 * @param supplier the supplier
+		 * @param supplier
+		 *            the supplier
 		 */
 		SuppliedSimulationLocal(final GAMA.InScope<? extends T> supplier) {
 			this.supplier = Objects.requireNonNull(supplier);
@@ -53,7 +55,7 @@ public class SimulationLocal<T> {
 	}
 
 	/** The Constant SIMULATION_LOCAL_MAP. */
-	private static final String SIMULATION_LOCAL_MAP = "**simulation_local_map**";
+	// private static final String SIMULATION_LOCAL_MAP = "**simulation_local_map**";
 
 	/**
 	 * Returns the current simulation/experiment "initial value" for this variable. This method will be invoked the
@@ -76,12 +78,13 @@ public class SimulationLocal<T> {
 	/**
 	 * Gets the root of.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the root of
 	 */
-	private ITopLevelAgent getRootOf(final IScope scope) {
+	private SimulationAgent getRootOf(final IScope scope) {
 		if (scope == null) return null;
-		return scope.getRoot();
+		return scope.getSimulation();
 	}
 
 	/**
@@ -108,7 +111,7 @@ public class SimulationLocal<T> {
 	 * @return the current simulation/experiment value of this thread-local
 	 */
 	public T get(final IScope scope) {
-		ITopLevelAgent sim = getRootOf(scope);
+		SimulationAgent sim = getRootOf(scope);
 		if (sim == null) return null;
 		Map<SimulationLocal<T>, T> map = getMap(sim);
 		if (map != null && map.containsKey(this)) return map.get(this);
@@ -118,12 +121,13 @@ public class SimulationLocal<T> {
 	/**
 	 * Gets the map.
 	 *
-	 * @param sim the sim
+	 * @param sim
+	 *            the sim
 	 * @return the map
 	 */
 	@SuppressWarnings ("unchecked")
-	private Map<SimulationLocal<T>, T> getMap(final ITopLevelAgent sim) {
-		return (Map<SimulationLocal<T>, T>) sim.getAttribute(SIMULATION_LOCAL_MAP);
+	private Map<SimulationLocal<T>, T> getMap(final SimulationAgent sim) {
+		return sim.<T> getSimulationLocalMap();
 	}
 
 	/**
@@ -133,7 +137,7 @@ public class SimulationLocal<T> {
 	 */
 	private T setInitialValue(final IScope scope) {
 		T value = initialValue(scope);
-		ITopLevelAgent sim = getRootOf(scope);
+		SimulationAgent sim = getRootOf(scope);
 		if (sim == null) return null;
 		Map<SimulationLocal<T>, T> map = getMap(sim);
 		if (map != null) {
@@ -153,7 +157,7 @@ public class SimulationLocal<T> {
 	 *            the value to be stored in the current thread's copy of this thread-local.
 	 */
 	public void set(final IScope scope, final T value) {
-		ITopLevelAgent sim = getRootOf(scope);
+		SimulationAgent sim = getRootOf(scope);
 		if (sim == null) return;
 		Map<SimulationLocal<T>, T> map = getMap(sim);
 		if (map != null) {
@@ -166,14 +170,15 @@ public class SimulationLocal<T> {
 	/**
 	 * Creates the map.
 	 *
-	 * @param sim the sim
-	 * @param value the value
+	 * @param sim
+	 *            the sim
+	 * @param value
+	 *            the value
 	 */
-	private void createMap(final ITopLevelAgent sim, final T value) {
+	private void createMap(final SimulationAgent sim, final T value) {
 		Map<SimulationLocal<T>, T> map = new HashMap<>();
-		sim.setAttribute(SIMULATION_LOCAL_MAP, map);
 		map.put(this, value);
-
+		sim.setSimulationLocalMap(map);
 	}
 
 	/**
@@ -183,7 +188,7 @@ public class SimulationLocal<T> {
 	 *         if not
 	 */
 	public boolean isPresent(final IScope scope) {
-		ITopLevelAgent sim = getRootOf(scope);
+		SimulationAgent sim = getRootOf(scope);
 		if (sim == null) return false;
 		Map<SimulationLocal<T>, T> map = getMap(sim);
 		return map != null && map.containsKey(this);
@@ -197,7 +202,7 @@ public class SimulationLocal<T> {
 	 *
 	 */
 	public void remove(final IScope scope) {
-		ITopLevelAgent sim = getRootOf(scope);
+		SimulationAgent sim = getRootOf(scope);
 		if (sim == null) return;
 		Map<SimulationLocal<T>, T> map = getMap(sim);
 		if (map != null) { map.remove(this); }

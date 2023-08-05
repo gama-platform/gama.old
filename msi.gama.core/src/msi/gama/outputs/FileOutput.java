@@ -407,8 +407,12 @@ public class FileOutput extends AbstractOutput {
 	@Override
 	public boolean step(final IScope scope) {
 		if (getScope().interrupted()) return false;
-		getScope().setCurrentSymbol(this);
-		setLastValue(data.value(getScope()));
+		try {
+			getScope().setCurrentSymbol(this);
+			setLastValue(data.value(getScope()));
+		} finally {
+			scope.setCurrentSymbol(null);
+		}
 		return true;
 	}
 

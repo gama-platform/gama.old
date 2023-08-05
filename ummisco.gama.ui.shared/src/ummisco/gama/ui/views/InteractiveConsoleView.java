@@ -46,6 +46,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IVarDescriptionProvider;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
@@ -463,12 +464,12 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	public IExecutionContext getOuterContext() { return this; }
 
 	@Override
-	public IExecutionContext createCopy() {
+	public IExecutionContext createCopy(final ISymbol command) {
 		return this;
 	}
 
 	@Override
-	public IExecutionContext createChildContext() {
+	public IExecutionContext createChildContext(final ISymbol command) {
 		return this;
 	}
 
@@ -489,5 +490,11 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	@Override
 	public String getContents() { return viewer.getDocument().get(); }
+
+	@Override
+	public ISymbol getCurrentSymbol() { return null; }
+
+	@Override
+	public void setCurrentSymbol(final ISymbol statement) {}
 
 }

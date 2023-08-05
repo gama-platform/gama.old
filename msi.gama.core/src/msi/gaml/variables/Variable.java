@@ -668,6 +668,8 @@ public class Variable extends Symbol implements IVariable {
 		} catch (final GamaRuntimeException e) {
 			e.addContext("in initializing attribute " + getName());
 			throw e;
+		} finally {
+			scope.setCurrentSymbol(null);
 		}
 	}
 

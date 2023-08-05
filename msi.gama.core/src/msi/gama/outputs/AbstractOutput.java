@@ -94,14 +94,15 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		setScope(buildScopeFrom(scope));
 		final IExpression refreshExpr = getFacet(IKeyword.REFRESH_EVERY);
 		if (refreshExpr != null) { setRefreshRate(Cast.asInt(getScope(), refreshExpr.value(getScope()))); }
-		getScope().setCurrentSymbol(this);
+		// getScope().setCurrentSymbol(this);
 		return true;
 	}
 
 	/**
 	 * Builds the scope from.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i scope
 	 */
 	protected IScope buildScopeFrom(final IScope scope) {

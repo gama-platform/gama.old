@@ -301,8 +301,12 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 			if (rootAgent == null || rootAgent.dead()) return false;
 			if (getValue() == null) return true;
 			if (getScope().interrupted()) return false;
-			getScope().setCurrentSymbol(this);
-			lastValue = getScope().evaluate(getValue(), rootAgent).getValue();
+			try {
+				getScope().setCurrentSymbol(this);
+				lastValue = getScope().evaluate(getValue(), rootAgent).getValue();
+			} finally {
+				scope.setCurrentSymbol(null);
+			}
 		}
 		return true;
 	}

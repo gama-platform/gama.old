@@ -209,20 +209,24 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 
 	@Override
 	public boolean step(final IScope scope) {
-		getScope().setCurrentSymbol(this);
-		if (getScope().interrupted()) return false;
-		if (getValue() != null) {
-			try {
-				lastValue = getValue().value(getScope());
-				if (history != null) { history.add(lastValue); }
-			} catch (final GamaRuntimeException e) {
-				lastValue = ItemList.ERROR_CODE + e.getMessage();
+		try {
+			getScope().setCurrentSymbol(this);
+			if (getScope().interrupted()) return false;
+			if (getValue() != null) {
+				try {
+					lastValue = getValue().value(getScope());
+					if (history != null) { history.add(lastValue); }
+				} catch (final GamaRuntimeException e) {
+					lastValue = ItemList.ERROR_CODE + e.getMessage();
+				}
+			} else {
+				lastValue = null;
 			}
-		} else {
-			lastValue = null;
-		}
-		if (constantColor == null && colorExpression != null) {
-			color = Cast.asColor(scope, colorExpression.value(scope));
+			if (constantColor == null && colorExpression != null) {
+				color = Cast.asColor(scope, colorExpression.value(scope));
+			}
+		} finally {
+			scope.setCurrentSymbol(null);
 		}
 		return true;
 	}

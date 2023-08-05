@@ -80,7 +80,7 @@ public class ExecutionScope implements IScope {
 	private volatile FlowStatus flowStatus = FlowStatus.NORMAL;
 
 	/** The current symbol. */
-	private ISymbol currentSymbol;
+	// private ISymbol currentSymbol;
 
 	/**
 	 * The Class SpecialContext.
@@ -225,7 +225,7 @@ public class ExecutionScope implements IScope {
 		if (root != null) { name.append(" of ").append(root.stringValue(root.getScope())); }
 		name.append(otherName == null || otherName.isEmpty() ? "" : " (" + otherName + ")");
 		this.scopeName = name.toString();
-		this.executionContext = context == null ? ExecutionContext.create(this) : context.createCopy();
+		this.executionContext = context == null ? ExecutionContext.create(this, null) : context.createCopy(null);
 		this.agentContext = agentContext == null ? AgentExecutionContext.create(root, null) : agentContext;
 		this.additionalContext.copyFrom(specialContext);
 	}
@@ -253,7 +253,7 @@ public class ExecutionScope implements IScope {
 		if (agentContext != null) { agentContext.dispose(); }
 		agentContext = null;
 		additionalContext.clear();
-		currentSymbol = null;
+		// currentSymbol = null;
 		setFlowStatus(FlowStatus.DISPOSE);
 	}
 
@@ -423,15 +423,15 @@ public class ExecutionScope implements IScope {
 	public void push(final ISymbol statement) {
 		setCurrentSymbol(statement);
 		if (executionContext != null) {
-			executionContext = executionContext.createChildContext();
+			executionContext = executionContext.createChildContext(statement);
 		} else {
-			executionContext = ExecutionContext.create(this);
+			executionContext = ExecutionContext.create(this, statement);
 		}
 	}
 
 	@Override
 	public void setCurrentSymbol(final ISymbol statement) {
-		currentSymbol = statement;
+		executionContext.setCurrentSymbol(statement);
 		if (_trace) { writeTrace(); }
 	}
 
@@ -441,7 +441,7 @@ public class ExecutionScope implements IScope {
 	private void writeTrace() {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < executionContext.depth(); i++) { sb.append(Strings.TAB); }
-		sb.append(currentSymbol.getTrace(this));
+		sb.append(getCurrentSymbol().getTrace(this));
 		this.getGui().getConsole().informConsole(sb.toString(), getRoot());
 	}
 
@@ -473,7 +473,7 @@ public class ExecutionScope implements IScope {
 	}
 
 	@Override
-	public ISymbol getCurrentSymbol() { return currentSymbol; }
+	public ISymbol getCurrentSymbol() { return executionContext == null ? null : executionContext.getCurrentSymbol(); }
 
 	/**
 	 * Method execute(). Asks the scope to manage the execution of a statement on an agent, taking care of pushing the
@@ -1044,7 +1044,7 @@ public class ExecutionScope implements IScope {
 	@Override
 	public IScope copy(final String additionalName) {
 		final ExecutionScope scope = new ExecutionScope(getRoot(), additionalName);
-		scope.executionContext = executionContext == null ? null : executionContext.createCopy();
+		scope.executionContext = executionContext == null ? null : executionContext.createCopy(null);
 		scope.agentContext = agentContext == null ? null : agentContext.createCopy();
 		scope.additionalContext.copyFrom(additionalContext);
 		return scope;
@@ -1060,7 +1060,7 @@ public class ExecutionScope implements IScope {
 	@Override
 	public IGraphicsScope copyForGraphics(final String additionalName) {
 		final GraphicsScope scope = new GraphicsScope(this, additionalName);
-		scope.executionContext = executionContext == null ? null : executionContext.createCopy();
+		scope.executionContext = executionContext == null ? null : executionContext.createCopy(null);
 		scope.agentContext = agentContext == null ? null : agentContext.createCopy();
 		scope.additionalContext.copyFrom(additionalContext);
 		return scope;
