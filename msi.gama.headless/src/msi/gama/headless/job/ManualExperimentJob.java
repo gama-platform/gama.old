@@ -24,9 +24,11 @@ import javax.imageio.ImageIO;
 import org.java_websocket.WebSocket;
 
 import msi.gama.headless.core.GamaHeadlessException;
+import msi.gama.headless.core.GamaServerMessageType;
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.RichExperiment;
 import msi.gama.headless.core.RichOutput;
+import msi.gama.headless.listener.CommandResponse;
 import msi.gama.headless.listener.GamaWebSocketServer;
 import msi.gama.headless.listener.ServerExperimentController;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -35,6 +37,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
+import msi.gama.util.file.json.Jsoner;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpressionFactory;
@@ -136,6 +139,33 @@ public class ManualExperimentJob extends ExperimentJob {
 		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
 		initEndContion(endCond);
+	}
+	
+	/**
+	 * Checks that the parameters follow the proper format asked. 
+	 * @param parameters
+	 * @param commandMap
+	 * @return If the parameters are properly formatted or null, returns null. Else returns a CommandResponse with a more precise error message.
+	 */
+	public static CommandResponse checkLoadParameters(GamaJsonList parameters, IMap<String, Object> commandMap) {
+		if (parameters != null) {
+			int i = 1;
+			for (var param : parameters.listValue(null, Types.MAP, false)) {
+				@SuppressWarnings("unchecked")
+				IMap<String, Object> m = (IMap<String, Object>) param;
+				// field "type" is optional, "name" and "value" are mandatory
+				var name = m.get("name");
+				var value = m.get("value");
+				if (name == null) {
+					return new CommandResponse(GamaServerMessageType.MalformedRequest, "Parameter number " + i + " is missing its `name` field. Parameter received: " + Jsoner.serialize(m) , commandMap, false);
+				}
+				if (value == null) {
+					return new CommandResponse(GamaServerMessageType.MalformedRequest, "Parameter number " + i + " is missing its `value` field. Parameter received: " + Jsoner.serialize(m) , commandMap, false);
+				}
+				i++;
+			}			
+		}
+		return null;
 	}
 
 	/**

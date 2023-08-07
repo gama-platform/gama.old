@@ -29,7 +29,16 @@ public class ReloadCommand implements ISocketCommand {
 
 			gama_exp.params = (GamaJsonList) map.get("parameters");
 			gama_exp.endCond = map.get("until") != null ? map.get("until").toString() : "";
-			gama_exp.controller.userReload();			
+
+			//checking the parameters' format
+			var parametersError = ManualExperimentJob.checkLoadParameters(gama_exp.params, map);
+			if (parametersError != null) {
+				return parametersError;
+			}
+			
+			//actual reload
+			gama_exp.controller.userReload();		
+			
 			return new CommandResponse(GamaServerMessageType.CommandExecutedSuccessfully, "", map, false);
 		}
 		else {

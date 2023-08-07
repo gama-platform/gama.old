@@ -97,6 +97,12 @@ public class LoadCommand implements ISocketCommand {
 		var dialog 	= map.get("dialog") != null	? Boolean.parseBoolean("" + map.get("dialog")) : false;
 		var runtime	= map.get("runtime")!= null	? Boolean.parseBoolean("" + map.get("runtime")) : true;
 		
+		// we check that the parameters are properly formed
+		var parametersError = ManualExperimentJob.checkLoadParameters(params, map);
+		if (parametersError != null) {
+			return parametersError;
+		}
+		
 		selectedJob = new ManualExperimentJob(	ff.getAbsoluteFile().toString(), 
 												argExperimentName, 
 												gamaWebSocketServer,
