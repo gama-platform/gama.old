@@ -421,4 +421,18 @@ public interface IPopulation<T extends IAgent>
 	 */
 	boolean isStepOverriden();
 
+	/**
+	 * Gets the or create agent. If the agent cannot be found at this index, creates a "blank" agent (no initialisation
+	 * of any kind except the index). Used for serialisation
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param index
+	 *            the index
+	 * @return the or create agent
+	 * @date 6 août 2023
+	 */
+	T getOrCreateAgent(final IScope scope, final Integer index);
+
 }

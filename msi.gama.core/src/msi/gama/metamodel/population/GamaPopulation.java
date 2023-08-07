@@ -398,6 +398,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	}
 
 	@Override
+	public T getOrCreateAgent(final IScope scope, final Integer index) {
+		T agent = getAgent(index);
+		return agent == null ? createAgentAt(scope, index, null, false, true) : agent;
+	}
+
+	@Override
 	public int compareTo(final IPopulation<T> o) {
 		return getName().compareTo(o.getName());
 	}
