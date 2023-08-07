@@ -8,7 +8,11 @@ Require-Bundle: msi.gama.core,
 Bundle-ClassPath: .,
  ext/mxparser-1.2.2.jar,
  ext/xstream-1.4.18.jar,
- ext/jettison-1.4.1.jar
+ ext/jettison-1.4.1.jar,
+ ext/fst 2.57/fst-2.57.jar,
+ ext/fst 2.57/jackson-core-2.8.8.jar,
+ ext/fst 2.57/javassist-3.21.0-GA.jar,
+ ext/fst 2.57/objenesis-3.3.jar
 Export-Package: com.thoughtworks.xstream,
  com.thoughtworks.xstream.annotations,
  com.thoughtworks.xstream.converters,

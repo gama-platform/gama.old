@@ -10,39 +10,77 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.experiment;
 
-import com.thoughtworks.xstream.XStream;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.tree.GamaNode;
-import msi.gama.util.tree.GamaTree;
-import ummisco.gama.serializer.factory.StreamConverter;
-import ummisco.gama.serializer.gamaType.converters.ConverterScope;
-import ummisco.gama.serializer.gaml.ReverseOperators;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
+import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.serializer.implementations.FSTImplementation;
+import ummisco.gama.serializer.implementations.SerialisationImplementation;
+import ummisco.gama.serializer.implementations.XStreamImplementation;
 
 /**
  * The Class ExperimentBackwardAgent.
  */
-@experiment (IKeyword.MEMORIZE)
-@doc ("A type of experiment that authorises to step backward")
+@experiment (IKeyword.RECORD)
+@doc ("A type of gui experiment that records its previous states and allows the user to step backward")
 public class ExperimentBackwardAgent extends ExperimentAgent {
 
-	/** The history tree. */
-	GamaTree<String> historyTree;
+	/**
+	 * The Class ObsoleteExperimentBackwardAgent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 7 août 2023
+	 */
+	@experiment (IKeyword.MEMORIZE)
+	@doc ("A type of gui experiment that records its previous states and allows the user to step backward. This keyword is deprecated: 'record' should be used instead")
+	public static class ObsoleteExperimentBackwardAgent extends ExperimentBackwardAgent {
 
-	/** The current node. */
-	GamaNode<String> currentNode;
+		/**
+		 * Instantiates a new obsolete experiment backward agent.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param s
+		 *            the s
+		 * @param index
+		 *            the index
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
+		 * @date 7 août 2023
+		 */
+		public ObsoleteExperimentBackwardAgent(final IPopulation<? extends IAgent> s, final int index)
+				throws GamaRuntimeException {
+			super(s, index);
+		}
+
+	}
+
+	/** The conf. */
+	SerialisationImplementation conf;
+
+	/** The compressExpr. */
+	final IExpression formatExpr, compressExpr;
+
+	/** The compress. */
+	boolean compress;
+
+	/** The format. */
+	String format;
+
+	static {
+		DEBUG.ON();
+	}
 
 	/**
 	 * Instantiates a new experiment backward agent.
@@ -56,7 +94,9 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	 */
 	public ExperimentBackwardAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
-		historyTree = new GamaTree<>();
+		IExperimentPlan species = getSpecies();
+		formatExpr = species.getFacet("format");
+		compressExpr = species.getFacet("compress");
 	}
 
 	/**
@@ -67,12 +107,14 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		super._init_(scope);
-		// Save simulation state in the history
-		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
-
-		historyTree.setRoot(state);
-		currentNode = historyTree.getRoot();
-
+		compress = Cast.asBool(scope, compressExpr.value(scope));
+		format = formatExpr == null ? "binary" : formatExpr.literalValue();
+		if ("json".equals(format) || "binary".equals(format)) {
+			conf = new FSTImplementation("json".equals(format), compress);
+		} else {
+			conf = new XStreamImplementation();
+		}
+		conf.save(getSimulation());
 		return this;
 	}
 
@@ -80,80 +122,33 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	public boolean step(final IScope scope) {
 		// Do a normal step
 		final boolean result = super.step(scope);
-
 		// Save simulation state in the history
-		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
-
-		currentNode = currentNode.addChild(state);
-
-		// scope.getGui().getConsole(scope).informConsole("step RNG " + getSimulation().getRandomGenerator().getUsage(),
-		// scope.getRoot(), new GamaColor(0, 0, 0));
-
+		conf.save(getSimulation());
 		return result;
 	}
 
 	@Override
 	public boolean backward(final IScope scope) {
 		final boolean result = true;
-		GamaNode<String> previousNode;
-
+		final SimulationAgent sim = getSimulation();
 		try {
 			if (canStepBack()) {
-				previousNode = currentNode.getParent();
-				final String previousState = previousNode.getData();
-
-				if (previousState != null) {
-					final XStream xstream = StreamConverter.loadAndBuild(scope, ConverterScope.class);
-
-					// get the previous state
-					final SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
-
-					// Update of the simulation
-					final SimulationAgent currentSimAgt = getSimulation();
-					currentSimAgt.updateWith(scope, agt);
-
-					// useful to recreate the random generator
-					final int rngUsage = currentSimAgt.getRandomGenerator().getUsage();
-					final String rngName = currentSimAgt.getRandomGenerator().getRngName();
-					final Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
-
-					final IOutputManager outputs = getSimulation().getOutputManager();
-					if (outputs != null) { outputs.step(scope); }
-
-					// Recreate the random generator and set it to the same state as the saved one
-					if (((ExperimentPlan) this.getSpecies()).keepsSeed()) {
-						currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));
-						currentSimAgt.getRandomGenerator().setUsage(rngUsage);
-					} else {
-						currentSimAgt.setRandomGenerator(new RandomUtils(super.random.next(), rngName));
-					}
-
-					currentNode = currentNode.getParent();
+				GAMA.runAndUpdateAll(() -> conf.restore(getSimulation()));
+				if (!((ExperimentPlan) this.getSpecies()).keepsSeed()) {
+					sim.setRandomGenerator(new RandomUtils(super.random.next(), sim.getRandomGenerator().getRngName()));
 				}
+
 			}
 		} finally {
 			informStatus();
-
 			scope.getGui().updateExperimentState(scope);
-			// TODO a remettre
-			// final int nbThreads =
-			// this.getSimulationPopulation().getNumberOfActiveThreads();
-
-			// if (!getSpecies().isBatch() && getSimulation() != null) {
-			// scope.getGui().informStatus(
-			// getSimulation().getClock().getInfo() + (nbThreads > 1 ? " (" +
-			// nbThreads + " threads)" : ""));
-			// }
 		}
 		return result;
 	}
 
 	@Override
 	public boolean canStepBack() {
-		final int current_cycle = getSimulation().getCycle(this.getScope());
-		return current_cycle >= 0 ;
+		return true;
 	}
 
-	@Override
-	public boolean isMemorize() { return true; }
 }
