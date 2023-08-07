@@ -127,7 +127,7 @@ import msi.gaml.variables.IVariable;
 						type = IType.INT,
 						optional = true,
 						internal = true,
-						doc = @doc ("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
+						doc = @doc ("the frequency of execution of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
 				@facet (
 						name = IKeyword.SCHEDULES,
 						type = IType.CONTAINER,
@@ -163,15 +163,24 @@ import msi.gaml.variables.IVariable;
 				@facet (
 						name = IKeyword.TYPE,
 						type = IType.LABEL,
-						// values = { IKeyword.BATCH, IKeyword.MEMORIZE, /* IKeyword.REMOTE, */IKeyword.GUI_,
-						// IKeyword.TEST, IKeyword.HEADLESS_UI },
 						optional = false,
-						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")),
+						doc = @doc ("The type of the experiment: `gui`, `batch`, `test`, `record` etc.")),
 				@facet (
 						name = IKeyword.VIRTUAL,
 						type = IType.BOOL,
 						optional = true,
 						doc = @doc ("whether the experiment is virtual (cannot be instantiated, but only used as a parent, false by default)")),
+				@facet (
+						name = "compress",
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether the result of the serialization (experiments of type 'record'/'memorize' only) should be compressed in memory. Takes more time but uses less memory.")),
+				@facet (
+						name = "format",
+						type = IType.STRING,
+						values = { "binary", "xml", "json" },
+						optional = true,
+						doc = @doc ("Determines the format of the serialization (experiments of type 'record'/'memorize' only). Three formats are supported: `binary`, `xml` and `json`")),
 				@facet (
 						name = IKeyword.AUTORUN,
 						type = IType.BOOL,
@@ -769,7 +778,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean isTest() { return IKeyword.TEST.equals(getExperimentType()); }
 
 	@Override
-	public boolean isMemorize() { return IKeyword.MEMORIZE.equals(getExperimentType()); }
+	public boolean isMemorize() {
+		return IKeyword.MEMORIZE.equals(getExperimentType()) || IKeyword.RECORD.equals(getExperimentType());
+	}
 
 	@Override
 	public IScope getExperimentScope() { return myScope; }

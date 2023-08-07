@@ -86,13 +86,6 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	SimulationPopulation getSimulationPopulation();
 
 	/**
-	 * Checks if is memorize.
-	 *
-	 * @return true, if is memorize
-	 */
-	boolean isMemorize();
-
-	/**
 	 * Can step back.
 	 *
 	 * @return true, if successful

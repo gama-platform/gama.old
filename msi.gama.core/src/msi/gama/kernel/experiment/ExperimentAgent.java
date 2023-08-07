@@ -1015,9 +1015,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public boolean isMemorize() { return false; }
-
-	@Override
 	public boolean canStepBack() {
 		return false;
 	}
