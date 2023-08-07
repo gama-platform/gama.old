@@ -107,12 +107,12 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		super._init_(scope);
-		compress = Cast.asBool(scope, compressExpr.value(scope));
+		compress = compressExpr == null ? false : Cast.asBool(scope, compressExpr.value(scope));
 		format = formatExpr == null ? "binary" : formatExpr.literalValue();
 		if ("json".equals(format) || "binary".equals(format)) {
 			conf = new FSTImplementation("json".equals(format), compress);
 		} else {
-			conf = new XStreamImplementation();
+			conf = new XStreamImplementation(false, compress);
 		}
 		conf.save(getSimulation());
 		return this;

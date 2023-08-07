@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * FSTImplementation.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * FSTImplementation.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -64,29 +64,18 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import one.util.streamex.StreamEx;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
- * The Class FSTImplementation. Allows to provide common initializations to FST Configurations and do the dirty
- * work. Not thread / simulation safe.
+ * The Class FSTImplementation. Allows to provide common initializations to FST Configurations and do the dirty work.
+ * Not thread / simulation safe.
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 2 août 2023
  */
-public class FSTImplementation extends SerialisationImplementation {
-
-	/** The Constant zip. */
-	boolean zip = true;
+public class FSTImplementation extends SerialisationImplementation<SerialisedAgent> {
 
 	/** The Constant JSON. */
 	boolean json = false;
-
-	static {
-		DEBUG.ON();
-	}
-
-	/** The scope. */
-	IScope scope;
 
 	/** The json. */
 	public FSTConfiguration jsonConf = initJson(FSTConfiguration.createJsonConfiguration(false, false));
@@ -115,9 +104,8 @@ public class FSTImplementation extends SerialisationImplementation {
 	 * @date 5 août 2023
 	 */
 	public FSTImplementation(final boolean json, final boolean zip) {
-		super();
+		super(zip, false);
 		this.json = json;
-		this.zip = zip;
 		registerSerialisers();
 	}
 
@@ -590,6 +578,8 @@ public class FSTImplementation extends SerialisationImplementation {
 				String[].class, MinimalAgent.class, GamlAgent.class, SimulationAgent.Type.class, Envelope.class,
 				LinearRing.class, LinearRing[].class, Polygon.class, GamaCoordinateSequence.class, IShape.Type.class,
 				GamaShape.ShapeData.class, GamaList.class, GamaMap.class);
+		conf.registerCrossPlatformClassMapping("PrecisionModel.Type", PrecisionModel.Type.class.getName());
+		conf.registerCrossPlatformClassMapping("IShape.Type", IShape.Type.class.getName());
 		conf.setShareReferences(false); // by default
 		return conf;
 	}
@@ -609,6 +599,11 @@ public class FSTImplementation extends SerialisationImplementation {
 		return conf;
 	}
 
+	@Override
+	protected SerialisedAgent encodeToSerialisedForm(final SimulationAgent agent) {
+		return new SerialisedAgent(agent);
+	}
+
 	/**
 	 * Save.
 	 *
@@ -618,9 +613,8 @@ public class FSTImplementation extends SerialisationImplementation {
 	 * @date 6 août 2023
 	 */
 	@Override
-	public void save(final SimulationAgent sim) {
+	protected byte[] write(final SerialisedAgent sa) {
 		FSTConfiguration conf = json ? jsonConf : binaryConf;
-		SerialisedAgent sa = new SerialisedAgent(sim);
 		// Retrieving and putting apart the graphs
 		Set<Map.Entry<String, Object>> entries = sa.attributes().entrySet();
 		for (Map.Entry<String, Object> entry : entries) {
@@ -629,15 +623,7 @@ public class FSTImplementation extends SerialisationImplementation {
 				entries.remove(entry.getKey());
 			}
 		}
-		byte[] state = conf.asByteArray(sa);
-		if (zip) { state = zip(state); }
-		DEBUG.OUT("Size of serialised simulation = " + state.length);
-		// DEBUG.OUT(new String(state));
-		if (current == null) {
-			current = history.setRoot(state);
-		} else {
-			current = current.addChild(state);
-		}
+		return conf.asByteArray(sa);
 	}
 
 	/**
@@ -649,22 +635,35 @@ public class FSTImplementation extends SerialisationImplementation {
 	 * @date 6 août 2023
 	 */
 	@Override
-	public void restore(final SimulationAgent sim) {
-		scope = sim.getScope();
-		current = current.getParent();
-		try {
-			if (current != null) {
-				byte[] input = current.getData();
-				if (zip) { input = unzip(input); }
-				FSTConfiguration conf = json ? jsonConf : binaryConf;
-				SerialisedAgent previousSim = (SerialisedAgent) conf.asObject(input);
-				restoreSimulation(sim, previousSim);
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-		} finally {
-			scope = null;
-		}
+	public SerialisedAgent read(final byte[] input) {
+		FSTConfiguration conf = json ? jsonConf : binaryConf;
+		return (SerialisedAgent) conf.asObject(input);
+	}
+
+	/**
+	 * Restore.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param sim
+	 *            the sim
+	 * @param image
+	 *            the new sim
+	 * @date 6 août 2023
+	 */
+	@Override
+	public void restoreFromSerialisedForm(final SimulationAgent sim, final SerialisedAgent image) {
+		final Map<String, Object> attr = image.attributes();
+		Double seedValue = (Double) attr.remove(IKeyword.SEED);
+		String rngValue = (String) attr.remove(IKeyword.RNG);
+		Integer usageValue = (Integer) attr.remove(SimulationAgent.USAGE);
+		// Update Attributes and micropopulations
+		this.restoreAgent(sim, image);
+		// Update RNG
+		sim.setRandomGenerator(new RandomUtils(seedValue, rngValue));
+		sim.setUsage(usageValue);
+		// Update Clock
+		final Integer cycle = (Integer) sim.getAttribute(SimulationAgent.CYCLE);
+		sim.getClock().setCycle(cycle);
 	}
 
 	/**
@@ -714,31 +713,6 @@ public class FSTImplementation extends SerialisationImplementation {
 		}
 		// The remaining agents in the map are killed
 		agents.forEach((i, a) -> { a.primDie(scope); });
-	}
-
-	/**
-	 * Restore.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param sim
-	 *            the sim
-	 * @param image
-	 *            the new sim
-	 * @date 6 août 2023
-	 */
-	void restoreSimulation(final SimulationAgent sim, final SerialisedAgent image) {
-		final Map<String, Object> attr = image.attributes();
-		Double seedValue = (Double) attr.remove(IKeyword.SEED);
-		String rngValue = (String) attr.remove(IKeyword.RNG);
-		Integer usageValue = (Integer) attr.remove(SimulationAgent.USAGE);
-		// Update Attributes and micropopulations
-		this.restoreAgent(sim, image);
-		// Update RNG
-		sim.setRandomGenerator(new RandomUtils(seedValue, rngValue));
-		sim.setUsage(usageValue);
-		// Update Clock
-		final Integer cycle = (Integer) sim.getAttribute(SimulationAgent.CYCLE);
-		sim.getClock().setCycle(cycle);
 	}
 
 }
