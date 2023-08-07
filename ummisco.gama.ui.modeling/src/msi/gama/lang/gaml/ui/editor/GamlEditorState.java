@@ -19,6 +19,7 @@ import org.eclipse.emf.common.util.URI;
 
 import com.google.common.collect.Iterables;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
@@ -86,7 +87,8 @@ public class GamlEditorState {
 				final String name = ep.getName();
 				experiments.add(name);
 				abbreviations.add(name.replaceFirst("Experiment ", ""));
-				types.add(((ExperimentDescription) ep).getExperimentType());
+				ExperimentDescription r = ((ExperimentDescription) ep);
+				types.add(r.isBatch() ? IKeyword.BATCH : r.isMemorize() ? IKeyword.MEMORIZE : IKeyword.GUI_);
 			}
 		} else {
 			experiments = Collections.EMPTY_LIST;
