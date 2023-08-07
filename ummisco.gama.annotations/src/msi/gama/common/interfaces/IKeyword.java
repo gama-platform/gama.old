@@ -510,7 +510,7 @@ public interface IKeyword {
 
 	/** The gui. */
 	String GUI_ = "gui";
-	
+
 	/** The hashcode. */
 	String HASHCODE = "hashcode";
 
@@ -710,6 +710,9 @@ public interface IKeyword {
 
 	/** The memorize. */
 	String MEMORIZE = "memorize";
+
+	/** The record. */
+	String RECORD = "record";
 
 	/** The mersenne. */
 	String MERSENNE = "mersenne";
