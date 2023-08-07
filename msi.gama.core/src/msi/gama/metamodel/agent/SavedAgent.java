@@ -18,6 +18,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
@@ -156,7 +157,10 @@ public class SavedAgent extends GamaMap<String, Object> {
 	private void saveAttributes(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		final ISpecies species = agent.getSpecies();
 		for (final String specVar : species.getVarNames()) {
-			if (UNSAVABLE_VARIABLES.contains(specVar) || (species.getVar(specVar).value(scope, agent) instanceof IPopulation)) { continue; }
+			if (UNSAVABLE_VARIABLES.contains(specVar)
+					|| species.getVar(specVar).value(scope, agent) instanceof IPopulation) {
+				continue;
+			}
 
 			if (IKeyword.SHAPE.equals(specVar)) {
 				// variables.put(specVar, geometry.copy());
@@ -169,14 +173,12 @@ public class SavedAgent extends GamaMap<String, Object> {
 				// We cannot keep all the GamaShape, because it contains
 				// populations too.
 				final GamaShape shape =
-						new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
+						new GamaShape(((IShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
 
 				// if (agent.getAttributes() != null) {}
 
 				agent.forEachAttribute((attrName, val) -> {
-					if (UNSAVABLE_VARIABLES.contains(attrName)) return true;
-					if (species.getVarNames().contains(attrName)) return true;
-					if (val instanceof IPopulation) return true;
+					if (UNSAVABLE_VARIABLES.contains(attrName) || species.getVarNames().contains(attrName) || (val instanceof IPopulation)) return true;
 					shape.setAttribute(attrName, val);
 					return true;
 				});
