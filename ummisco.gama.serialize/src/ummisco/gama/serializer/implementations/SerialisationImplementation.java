@@ -110,8 +110,8 @@ public abstract class SerialisationImplementation<SerialisedForm> {
 			} else {
 				current = current.addChild(state);
 			}
-			DEBUG.OUT("Serialise in " + (timeToWrite + timeToEncode) + "ms [Encode in " + timeToEncode
-					+ "ms and write in " + timeToWrite + "ms]; Size: " + size / 1000000d + "Mb "
+			DEBUG.OUT("Serialise to " + getFormat() + " in " + (timeToWrite + timeToEncode) + "ms [Encode in "
+					+ timeToEncode + "ms and write in " + timeToWrite + "ms]; Size: " + size / 1000000d + "Mb "
 					+ (zip ? "[Compressed: " + compressedSize / 1000000d + "Mb]" : ""));
 			if (saveToFile) {
 				File file = new File(sim.getName() + "_" + sim.getCycle(sim.getScope()) + ".gsim");
@@ -152,8 +152,8 @@ public abstract class SerialisationImplementation<SerialisedForm> {
 				startTime = System.nanoTime();
 				restoreFromSerialisedForm(sim, previousSim);
 				timeToRestore = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-				DEBUG.OUT("Deserialise in: " + (timeToRead + timeToRestore) + "ms [Read in " + timeToRead
-						+ "ms and restore in " + timeToRestore + "ms]");
+				DEBUG.OUT("Deserialise from " + getFormat() + " in " + (timeToRead + timeToRestore) + "ms [Read in "
+						+ timeToRead + "ms and restore in " + timeToRestore + "ms]");
 			}
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -251,5 +251,14 @@ public abstract class SerialisationImplementation<SerialisedForm> {
 			return NULL;
 		}
 	}
+
+	/**
+	 * Gets the format.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the format
+	 * @date 7 août 2023
+	 */
+	abstract protected String getFormat();
 
 }

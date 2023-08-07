@@ -112,7 +112,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		if ("json".equals(format) || "binary".equals(format)) {
 			conf = new FSTImplementation("json".equals(format), compress);
 		} else {
-			conf = new XStreamImplementation(false, compress);
+			conf = new XStreamImplementation(compress, false);
 		}
 		conf.save(getSimulation());
 		return this;

@@ -95,7 +95,7 @@ species people skills: [moving] {
 	}
 }
 
-experiment weightperagents type: record  {
+experiment weightperagents type: record format: "binary" compress: true {
 	float minimum_cycle_duration <- 0.1;
 
 	output {

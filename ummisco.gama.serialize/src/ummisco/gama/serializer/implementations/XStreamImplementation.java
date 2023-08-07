@@ -92,4 +92,7 @@ public class XStreamImplementation extends SerialisationImplementation<SavedAgen
 		return (SavedAgent) xstream.fromXML(previousState);
 	}
 
+	@Override
+	protected String getFormat() { return "xml"; }
+
 }

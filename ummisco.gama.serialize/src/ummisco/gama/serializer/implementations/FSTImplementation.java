@@ -715,4 +715,7 @@ public class FSTImplementation extends SerialisationImplementation<SerialisedAge
 		agents.forEach((i, a) -> { a.primDie(scope); });
 	}
 
+	@Override
+	protected String getFormat() { return json ? "json" : "binary"; }
+
 }
