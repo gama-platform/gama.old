@@ -56,7 +56,7 @@ public class GamaShape implements IShape {
 	/**
 	 * The Class ShapeData.
 	 */
-	private static class ShapeData {
+	public static class ShapeData {
 
 		/** The depth. */
 		private Double depth;
@@ -359,21 +359,17 @@ public class GamaShape implements IShape {
 		if (d == 0) return 0d;
 		final Type shapeType = getGeometricalType();
 		// TODO : should put any specific shape volume calculation here !!!
-		switch (shapeType) {
-			case SPHERE:
-				return 4 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 3);
-			case CONE:
-				return 1 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 2) * d;
-			case PYRAMID:
-				return Maths.pow(getWidth(), 2) * d / 3;
-			case THREED_FILE:
-			case NULL:
+		return switch (shapeType) {
+			case SPHERE -> 4 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 3);
+			case CONE -> 1 / (double) 3 * Maths.PI * Maths.pow(getWidth() / 2.0, 2) * d;
+			case PYRAMID -> Maths.pow(getWidth(), 2) * d / 3;
+			case THREED_FILE, NULL -> {
 				final Envelope3D env3D = getEnvelope();
-				return env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume()
-						: env3D.getVolume();
-			default:
-				return getArea() * d;
-		}
+				yield env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume()
+										: env3D.getVolume();
+			}
+			default -> getArea() * d;
+		};
 	}
 
 	@Override

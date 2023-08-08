@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * ReferenceToAgent.java, in ummisco.gama.serialize, is part of the source code of the
+ * AgentReference.java, in ummisco.gama.serialize, is part of the source code of the
  * GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -18,7 +18,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 
 /**
- * The Class ReferenceToAgent.
+ * The Class AgentReference.
  */
 public class ReferenceToAgent {
 	

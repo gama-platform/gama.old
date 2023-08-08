@@ -90,6 +90,9 @@ public class SimulationClock {
 	/** The clock scope. */
 	private final IScope clockScope;
 
+	/** The can step back. */
+	private final boolean canStepBack;
+
 	/**
 	 * Instantiates a new simulation clock.
 	 *
@@ -100,6 +103,7 @@ public class SimulationClock {
 		final IModel model = scope.getModel();
 		outputAsDuration = model == null ? true : !model.getDescription().isStartingDateDefined();
 		this.clockScope = scope;
+		canStepBack = scope.getExperiment().canStepBack();
 	}
 
 	/**
@@ -114,10 +118,12 @@ public class SimulationClock {
 	// "cycle <- cycle + 1" in GAML and have the correct information computed.
 	public void setCycle(final int i) throws GamaRuntimeException {
 		if (i < 0) throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", clockScope);
-		// TODO check backward
 		final int previous = cycle.get();
-		if (i < previous && !clockScope.getExperiment().canStepBack())
-			throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards", clockScope);
+		if (i < previous) {
+			boolean possible = canStepBack && clockScope.getSimulation().getCycle(clockScope) >= 0;
+			if (!possible) throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards",
+					clockScope);
+		}
 		cycle.set(i);
 		setCurrentDate(getCurrentDate().plus(getStepInMillis(), i - previous, ChronoUnit.MILLIS));
 	}
@@ -269,7 +275,7 @@ public class SimulationClock {
 	 */
 	public void waitDelay() {
 		final double delay = getDelayInMilliseconds();
-		if ((delay == 0d) || (duration >= delay)) return;
+		if (delay == 0d || duration >= delay) return;
 		THREADS.WAIT((long) delay - duration);
 	}
 

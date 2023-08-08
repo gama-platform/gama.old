@@ -979,18 +979,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
-	/**
-	 * Update with.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param scope
-	 *            the scope
-	 * @param sa
-	 *            the sa
-	 * @date 4 août 2023
-	 */
-	public void updateWith(final IScope scope, final Object sa) {}
-
 	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
 

@@ -184,10 +184,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		store.setValue("spellingEnabled", false);
 		images.put(IKeyword.BATCH, GamaIcon.named(IGamaIcons.BUTTON_BATCH).image());
 		images.put(IKeyword.MEMORIZE, GamaIcon.named(IGamaIcons.BUTTON_BACK).image());
+		images.put(IKeyword.RECORD, GamaIcon.named(IGamaIcons.BUTTON_BACK).image());
 		images.put("regular", GamaIcon.named(IGamaIcons.BUTTON_GUI).image());
 		menu_images.put(IKeyword.BATCH,
 				GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_BATCH : IGamaIcons.MENU_BATCH).image());
 		menu_images.put(IKeyword.MEMORIZE,
+				GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_BACK : IGamaIcons.MENU_BACK).image());
+		menu_images.put(IKeyword.RECORD,
 				GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_BACK : IGamaIcons.MENU_BACK).image());
 		menu_images.put("regular",
 				GamaIcon.named(ThemeHelper.isDark() ? IGamaIcons.BUTTON_GUI : IGamaIcons.MENU_GUI).image());
@@ -648,8 +651,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		for (final String text : state.abbreviations) {
 			if (text == null) return;
 			final var expType = state.types.get(index++);
-			final var type = IKeyword.BATCH.equals(expType) ? "batch" : IKeyword.MEMORIZE.equals(expType) ? "memorize"
-					: "regular";
+			final var type = IKeyword.BATCH.equals(expType) ? "batch"
+					: IKeyword.RECORD.equals(expType) || IKeyword.MEMORIZE.equals(expType) ? "memorize" : "regular";
 			final var image = images.get(type);
 			final var t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
 			// t.setWidth(t.getWidth() + buttonPadding);
@@ -698,7 +701,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 					if (text == null) return;
 					final var expType = state.types.get(index++);
 					final String type = IKeyword.BATCH.equals(expType) ? "batch"
-							: IKeyword.MEMORIZE.equals(expType) ? "memorize" : "regular";
+							: IKeyword.MEMORIZE.equals(expType) || IKeyword.RECORD.equals(expType) ? "memorize"
+							: "regular";
 					final Image image = menu_images.get(type);
 					GamaMenu.action(menu, text, listener, image).setData("exp", text);
 				}

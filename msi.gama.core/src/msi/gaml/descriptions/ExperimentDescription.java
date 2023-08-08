@@ -65,8 +65,9 @@ public class ExperimentDescription extends SpeciesDescription {
 	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing,
 			final Iterable<IDescription> cp, final EObject source, final Facets facets) {
 		super(keyword, null, enclosing, null, cp, source, facets);
-		setIf(Flag.isBatch, IKeyword.BATCH.equals(getLitteral(IKeyword.TYPE)));
-		setIf(Flag.isMemorize, IKeyword.MEMORIZE.equals(getLitteral(IKeyword.TYPE)));
+		String type = getLitteral(IKeyword.TYPE);
+		setIf(Flag.isBatch, IKeyword.BATCH.equals(type));
+		setIf(Flag.isMemorize, IKeyword.MEMORIZE.equals(type) || IKeyword.RECORD.equals(type));
 	}
 
 	/**
@@ -278,17 +279,6 @@ public class ExperimentDescription extends SpeciesDescription {
 	 * @return
 	 */
 	public Boolean isMemorize() { return isSet(Flag.isMemorize); }
-
-	/**
-	 * Gets the experiment type.
-	 *
-	 * @return the experiment type
-	 */
-	public String getExperimentType() {
-		if (isBatch()) return IKeyword.BATCH;
-		if (isMemorize()) return IKeyword.MEMORIZE;
-		return IKeyword.GUI_;
-	}
 
 	@Override
 	public Class<? extends ExperimentAgent> getJavaBase() {
