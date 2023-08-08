@@ -57,7 +57,7 @@ if [ $workspaceCreate -eq 0 ]; then
 # w/o output folder
 else
   # create workspace in current folder
-  passWork=${@: -1}/.workspace$(find ${@: -1} -name ".workspace*" | expr $(wc -l))
+  passWork=.workspace$(find ./ -maxdepth 1 -name ".workspace*" | wc -l)
 fi
 
 if ! java -cp "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration "$( dirname "${BASH_SOURCE[0]}" )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then

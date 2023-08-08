@@ -42,7 +42,8 @@ if [ $workspaceCreate -eq 0 ]; then
       mkdir ${@: -1}
   fi
   # create workspace in output folder
-  passWork=${@: -1}/.workspace$(find ${@: -1} -name ".workspace*" | wc -l)
+  # `expr` use is to remove whitespace from MacOS's result
+  passWork=${@: -1}/.workspace$(find ${@: -1} -name ".workspace*" | expr $(wc -l))
   mkdir -p $passWork
 
 # w/o output folder
