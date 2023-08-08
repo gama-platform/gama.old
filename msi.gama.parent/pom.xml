@@ -151,7 +151,10 @@
 		<module>../simtools.gaml.extensions.traffic</module>
 		<module>../simtools.gaml.extensions.physics</module>
 
+		<!--
+		To be removed from repo 
 		<module>../femto_st.gama.proxy</module>
+		-->
 		<module>../irit.gaml.extensions.database</module>
 
 
