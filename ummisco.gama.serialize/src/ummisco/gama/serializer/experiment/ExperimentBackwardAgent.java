@@ -26,8 +26,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.serializer.implementations.FSTImplementation;
-import ummisco.gama.serializer.implementations.SerialisationImplementation;
+import ummisco.gama.serializer.implementations.AbstractSerialisationImplementation;
+import ummisco.gama.serializer.implementations.FSTBinaryImplementation;
+import ummisco.gama.serializer.implementations.FSTJsonImplementation;
 import ummisco.gama.serializer.implementations.XStreamImplementation;
 
 /**
@@ -67,7 +68,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	}
 
 	/** The conf. */
-	SerialisationImplementation conf;
+	AbstractSerialisationImplementation conf;
 
 	/** The compressExpr. */
 	final IExpression formatExpr, compressExpr;
@@ -109,11 +110,11 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		super._init_(scope);
 		compress = compressExpr == null ? false : Cast.asBool(scope, compressExpr.value(scope));
 		format = formatExpr == null ? "binary" : formatExpr.literalValue();
-		if ("json".equals(format) || "binary".equals(format)) {
-			conf = new FSTImplementation("json".equals(format), compress);
-		} else {
-			conf = new XStreamImplementation(compress, false);
-		}
+		conf = switch (format) {
+			case "xml" -> new XStreamImplementation(compress, false);
+			case "json" -> new FSTJsonImplementation(compress, false);
+			default -> new FSTBinaryImplementation(compress, false);
+		};
 		conf.save(getSimulation());
 		return this;
 	}

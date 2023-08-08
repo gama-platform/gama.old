@@ -26,7 +26,7 @@ import ummisco.gama.serializer.gamaType.converters.ConverterScope;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 7 août 2023
  */
-public class XStreamImplementation extends SerialisationImplementation<SavedAgent> {
+public class XStreamImplementation extends AbstractSerialisationImplementation<SavedAgent> {
 
 	/**
 	 * Instantiates a new x stream implementation.

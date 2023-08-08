@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * SerialisationImplementation.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * AbstractSerialisationImplementation.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -29,12 +29,12 @@ import msi.gama.util.tree.GamaTree;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
- * The Class SerialisationImplementation.
+ * The Class AbstractSerialisationImplementation.
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 7 août 2023
  */
-public abstract class SerialisationImplementation<SerialisedForm> {
+public abstract class AbstractSerialisationImplementation<SerialisedForm> {
 
 	static {
 		DEBUG.ON();
@@ -53,7 +53,7 @@ public abstract class SerialisationImplementation<SerialisedForm> {
 	static final byte[] NULL = {};
 
 	/** The size. */
-	protected long timeToWrite, timeToRead, timeToEncode, timeToRestore, size, compressedSize;
+	protected long timeToWrite, timeToRead, timeToEncode, timeToRestore, size;
 
 	/** The binary history tree. */
 	protected final GamaTree<byte[]> history = new GamaTree<>();
@@ -74,7 +74,7 @@ public abstract class SerialisationImplementation<SerialisedForm> {
 	 *            the save
 	 * @date 7 août 2023
 	 */
-	public SerialisationImplementation(final boolean zip, final boolean save) {
+	public AbstractSerialisationImplementation(final boolean zip, final boolean save) {
 		this.zip = zip;
 		this.saveToFile = save;
 	}
@@ -99,20 +99,18 @@ public abstract class SerialisationImplementation<SerialisedForm> {
 			timeToEncode = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
 			startTime = System.nanoTime();
 			state = write(objectToSerialise);
-			compressedSize = size = state.length;
-			if (zip) {
-				state = zip(state);
-				compressedSize = state.length;
-			}
-			timeToWrite = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+			size = state.length;
 			if (current == null) {
 				current = history.setRoot(state);
 			} else {
 				current = current.addChild(state);
 			}
+			if (zip) { asyncZip(current); }
+			timeToWrite = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
+
 			DEBUG.OUT("Serialise to " + getFormat() + " in " + (timeToWrite + timeToEncode) + "ms [Encode in "
 					+ timeToEncode + "ms and write in " + timeToWrite + "ms]; Size: " + size / 1000000d + "Mb "
-					+ (zip ? "[Compressed: " + compressedSize / 1000000d + "Mb]" : ""));
+					+ (zip ? "[Compressed in the background]" : ""));
 			if (saveToFile) {
 				File file = new File(sim.getName() + "_" + sim.getCycle(sim.getScope()) + ".gsim");
 				try (FileOutputStream fos = new FileOutputStream(file); FileChannel channel = fos.getChannel();) {
@@ -231,6 +229,18 @@ public abstract class SerialisationImplementation<SerialisedForm> {
 			e.printStackTrace();
 			return NULL;
 		}
+	}
+
+	/**
+	 * Async zip.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param node
+	 *            the node
+	 * @date 8 août 2023
+	 */
+	private void asyncZip(final GamaNode<byte[]> node) {
+		new Thread(() -> node.setData(zip(node.getData()))).start();
 	}
 
 	/**
