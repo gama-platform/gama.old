@@ -168,33 +168,34 @@ public class Application implements IApplication {
 	private static void showHelp() {
 		showVersion();
 		DEBUG.ON();
-		DEBUG.LOG("sh ./gama-headless.sh [Options]\n" + "\nList of available options:" + "\n\t=== Headless Options ==="
-				+ "\n\t\t-m [mem]                     -- allocate memory (ex 2048m)" + "\n\t\t" + CONSOLE_PARAMETER
-				+ "                           -- start the console to write xml parameter file" + "\n\t\t"
-				+ VERBOSE_PARAMETER + "                           -- verbose mode" + "\n\t\t" + THREAD_PARAMETER
-				+ " [core]                  -- set the number of core available for experimentation" + "\n\t\t"
-				+ SOCKET_PARAMETER + " [socketPort]         -- starts socket pipeline to interact with another framework"
-				+ "\n\t\t" + TUNNELING_PARAMETER
-				+ "                           -- start pipeline to interact with another framework"
-				+ "\n\t\t" + PING_INTERVAL + " [pingInterval] \t\t "
+		DEBUG.LOG("sh ./gama-headless.sh [Options]\n" 
+				+ "\nList of available options:" 
+				+ "\n\t=== Headless Options ==="
+				+ "\n\t\t-m [mem]                      -- allocate memory (ex 2048m)" 
+				+ "\n\t\t" + CONSOLE_PARAMETER + "                            -- start the console to write xml parameter file" 
+				+ "\n\t\t" + VERBOSE_PARAMETER + "                            -- verbose mode" 
+				+ "\n\t\t" + THREAD_PARAMETER + " [core]                   -- set the number of core available for experimentation"
+				+ "\n\t\t" + TUNNELING_PARAMETER + "                            -- start pipeline to interact with another framework"
+				+ "\n\t\t" + PING_INTERVAL + " [pingInterval] "
 						+ "-- when in server mode (socket parameter set), defines in milliseconds the time "
 						+ "between each ping packet sent to clients to keep alive the connection. "
 						+ "The default value is 10000, set to -1 to deactivate this behaviour."
-				+ "\n\t=== Infos ===" + "\n\t\t" + HELP_PARAMETER
-				+ "                        -- get the help of the command line" + "\n\t\t" + GAMA_VERSION
-				+ "                     -- get the the version of gama" + "\n\t=== Library Runner ===" + "\n\t\t"
-				+ VALIDATE_LIBRARY_PARAMETER
-				+ "                    -- invokes GAMA to validate models present in built-in library and plugins"
-				+ "\n\t\t" + TEST_LIBRARY_PARAMETER
-				+ "                        -- invokes GAMA to execute the tests present in built-in library and plugins and display their results"
-				+ "\n\t=== GAMA Headless Runner ===" + "\n\t\t" + BATCH_PARAMETER + " [experimentName] [modelFile.gaml]"
-				+ "\n\t\t                             -- Run batch experiment in headless mode"
+				+ "\n\t=== Infos ===" 
+				+ "\n\t\t" + HELP_PARAMETER + "                         -- get the help of the command line" 
+				+ "\n\t\t" + GAMA_VERSION + "                      -- get the the version of gama" 
+				+ "\n\t=== Library Runner ===" 
+				+ "\n\t\t" + VALIDATE_LIBRARY_PARAMETER + "                     -- invokes GAMA to validate models present in built-in library and plugins"
+				+ "\n\t\t" + TEST_LIBRARY_PARAMETER + "                         -- invokes GAMA to execute the tests present in built-in library and plugins and display their results"
+				+ "\n\t=== GAMA Headless Runner ===" 
+				+ "\n\t\t" + SOCKET_PARAMETER + " [socketPort]          -- starts socket pipeline to interact with another framework"
+				+ "\n\t\t" + BATCH_PARAMETER + " [experimentName] [modelFile.gaml]"
+				+ "\n\t\t                              -- Run batch experiment in headless mode"
 				// + "\n\t\t" + GAML_PARAMETER + " [experimentName] [modelFile.gaml]"
 				// + "\n\t\t -- Run single gaml experiment in headless mode"
 				+ "\n\t\t" + BUILD_XML_PARAMETER + " [experimentName] [modelFile.gaml] [xmlOutputFile.xml]"
-				+ "\n\t\t                             -- build an xml parameter file from a model"
+				+ "\n\t\t                              -- build an xml parameter file from a model"
 				+ "\n\t\t[xmlHeadlessFile.xml] [outputDirectory]"
-				+ "\n\t\t                             -- default usage of GAMA headless");
+				+ "\n\t\t                              -- default usage of GAMA headless");
 		// + "\n\t\t" + WRITE_XMI + " -- write scope provider resource files to disk");
 		DEBUG.OFF();
 	}
