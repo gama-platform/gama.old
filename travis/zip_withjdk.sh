@@ -16,10 +16,10 @@ echo "$(git log -1 HEAD --pretty=format:%s)"
 #	Download latest JDK
 #
 
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.6+10 | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux-17.tar.gz"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.6+10 | grep "/OpenJDK17U-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win32-17.zip"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.6+10 | grep "/OpenJDK17U-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx-17.tar.gz"
-wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.6+10 | grep "/OpenJDK17U-jdk_aarch64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx_aarch-17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.8+7 | grep "/OpenJDK17U-jdk_x64_linux.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_linux-17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.8+7 | grep "/OpenJDK17U-jdk_x64_window.*.zip\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_win32-17.zip"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.8+7 | grep "/OpenJDK17U-jdk_x64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx-17.tar.gz"
+wget -q $(curl https://api.github.com/repos/adoptium/temurin17-binaries/releases/tags/jdk-17.0.8+7 | grep "/OpenJDK17U-jdk_aarch64_mac.*.gz\"" | cut -d ':' -f 2,3 | tr -d \") -O "jdk_macosx_aarch-17.tar.gz"
 
 #
 #	Prepare downloaded JDK
