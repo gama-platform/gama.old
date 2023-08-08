@@ -22,7 +22,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>3.0.3</tycho.version>
+		<tycho.version>3.0.5</tycho.version>
 		<jdk.version>17</jdk.version>
 		<codehaus.wagon.version>2.0.2</codehaus.wagon.version>
 		<wagon.version>3.5.3</wagon.version>
