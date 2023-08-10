@@ -618,7 +618,7 @@ Require-Bundle: org.eclipse.osgi,
  org.apache.commons.jxpath,
  org.eclipse.xsd,
  ummisco.gama.annotations,
- com.google.guava;visibility:=reexport
+ com.google.guava;bundle-version="[30.1.0,31.0.0)";visibility:=reexport
 Bundle-ClassPath: .,
  protobuf-java-3.6.1.jar,
  jfreechart/jfreechart-1.5.3.jar,
