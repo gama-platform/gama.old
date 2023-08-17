@@ -112,19 +112,20 @@ public class CSVSaver extends AbstractSaver {
 			final IList values =
 					itemType.isContainer() ? Cast.asList(scope, value) : GamaListFactory.create(scope, itemType, value);
 			if (values.isEmpty()) return;
+			char del = AbstractCSVManipulator.getDefaultDelimiter();
 			if (sd != null) {
 				final Collection<String> attributeNames = sd.getAttributeNames();
 				attributeNames.removeAll(SaveStatement.NON_SAVEABLE_ATTRIBUTE_NAMES);
 				if (header) {
-					fw.write("cycle;name;location.x;location.y;location.z");
-					for (final String v : attributeNames) { fw.write(";" + v); }
+					fw.write("cycle" +del + "name;location.x" + del + "location.y" + del + "location.z");
+					for (final String v : attributeNames) { fw.write(del + v); }
 					fw.write(Strings.LN);
 				}
 				for (final Object obj : values) {
 					if (obj instanceof IAgent) {
 						final IAgent ag = Cast.asAgent(scope, obj);
-						fw.write(scope.getClock().getCycle() + ";" + ag.getName().replace(';', ',') + ";"
-								+ ag.getLocation().getX() + ";" + ag.getLocation().getY() + ";"
+						fw.write(scope.getClock().getCycle() + del + ag.getName().replace(';', ',') + del
+								+ ag.getLocation().getX() + del + ag.getLocation().getY() + del
 								+ ag.getLocation().getZ());
 						for (final String v : attributeNames) {
 							String val = Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ',');
@@ -132,7 +133,7 @@ public class CSVSaver extends AbstractSaver {
 									|| val.startsWith("\"") && val.endsWith("\"")) {
 								val = val.substring(1, val.length() - 1);
 							}
-							fw.write(";" + val);
+							fw.write(del + val);
 						}
 						fw.write(Strings.LN);
 					}
@@ -140,17 +141,17 @@ public class CSVSaver extends AbstractSaver {
 				}
 			} else {
 				if (header) {
-					fw.write(item.serialize(true).replace("]", "").replace("[", ""));
+					fw.write(item.serialize(true).replace("]", "").replace("[", "").replace(',', del));
 					fw.write(Strings.LN);
 				}
 				if (itemType.id() == IType.MATRIX) {
 					GamaMatrix<?> matrix = (GamaMatrix) value;
 					matrix.rowByRow(scope, v -> fw.write(toCleanString(v)),
-							() -> fw.write(AbstractCSVManipulator.getDefaultDelimiter()), () -> fw.write(Strings.LN));
+							() -> fw.write(del), () -> fw.write(Strings.LN));
 				} else {
 					final int size = values.size();
 					for (int i = 0; i < size; i++) {
-						if (i > 0) { fw.write(AbstractCSVManipulator.getDefaultDelimiter()); }
+						if (i > 0) { fw.write(del); }
 						fw.write(toCleanString(values.get(i)));
 					}
 				}
