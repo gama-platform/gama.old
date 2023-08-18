@@ -26,7 +26,7 @@ global {
 			}	
 		}
 		vals <- cell collect (each.color = #white ? 0.0 : 1.0);
-		weights <- 0.0 as_matrix {grid_size, grid_size};
+		weights <- 0.0 as_matrix {length(vals), length(vals)};
 		ask cell {
 			switch weight_type {
 				match "neighbors" {
