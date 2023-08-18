@@ -9,7 +9,7 @@ model moranIndex
 
 global {
 	string grid_spatial_init <- "random" among: ["random", "checkerboard", "blocks"];
-	string weight_type <- "overlapping" among: ["overlapping", "distance"];
+	string weight_type <- "neighbors" among: ["overlapping", "neighbors", "distance"];
 	int grid_size <- 20;
 	
 	list<float> vals;
@@ -27,30 +27,34 @@ global {
 		}
 		vals <- cell collect (each.color = #white ? 0.0 : 1.0);
 		weights <- 0.0 as_matrix {grid_size, grid_size};
-		loop i from: 0 to: grid_size -1 {
-			loop j from: 0 to:grid_size -1 {
-				if (i = j) {weights[i,j] <- 0.0;}
-				else {
-					switch weight_type {
-						match "overlapping" {
-							weights[i,j] <- (cell[i] overlaps cell[j]) ? 1.0 : 0.0;
-						}
-						match "distance" {
-							using topology(cell) {
-								weights[i,j] <- 1/(cell[i] distance_to cell[j]);
-							}
-						}
-							
+		ask cell {
+			switch weight_type {
+				match "neighbors" {
+					ask self.neighbors {
+						weights[int(self), int(myself)] <- 1.0;
 					}
-					
-				}	
+				}
+				match "overlapping" {
+					ask cell overlapping self {
+						if self != myself {
+							weights[int(self), int(myself)] <- 1.0;
+						}
+					}
+				}
+				match "distance" {
+					ask cell {
+						if self != myself {
+							weights[int(self), int(myself)] <- 1/(self distance_to myself);
+						}
+					}
+				}
 			}
 		}
 		I <- moran(vals, weights);
 		write "moran I: " + I;
 	}
 }
-grid cell width: grid_size height: grid_size neighbors: 8;
+grid cell width: grid_size height: grid_size neighbors: 4;
 
 experiment "Moran" type: gui {
 	parameter "grid size: " var: grid_size min: 2 max: 100;
