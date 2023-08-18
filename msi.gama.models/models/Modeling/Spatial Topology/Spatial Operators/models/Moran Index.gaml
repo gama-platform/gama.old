@@ -58,7 +58,7 @@ experiment "Moran" type: gui {
 	parameter "Weight type used for the computation: " var: weight_type ;
 	
 	output {
-		display map {
+		display map type:2d antialias:false {
 			grid cell border: #red;
 			graphics "moran" {
 				draw "I = " + (I with_precision 3) color: #green font:font("Helvetica", 60 * #zoom, #bold);
