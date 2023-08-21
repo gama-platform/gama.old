@@ -7261,7 +7261,7 @@ public abstract class Spatial {
 			if (weightMatrix == null || weightMatrix.numCols != weightMatrix.numRows) throw GamaRuntimeException
 					.error("A squared weight matrix should be given for the moran index computation", scope);
 			final int N = vals.size();
-			if (N != weightMatrix.numRows * weightMatrix.numCols) throw GamaRuntimeException
+			if (N != weightMatrix.numRows) throw GamaRuntimeException
 					.error("The lengths of the value list and of the weight matrix do not match", scope);
 			double I = 0.0;
 			double sumWeights = 0.0;
