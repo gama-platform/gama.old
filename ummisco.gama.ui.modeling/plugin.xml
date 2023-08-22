@@ -913,4 +913,14 @@
             type="text">
     </fileTypes>
   </extension>
+  <extension
+        point="org.eclipse.ui.bindings">
+     <key
+           commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+           contextId="org.eclipse.xtext.ui.XtextEditorScope"
+           platform="cocoa"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           sequence="M4+SHIFT+SPACE">
+     </key>
+  </extension>
 </plugin>
