@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ummisco.gama.product</artifactId>
+	<parent>
+		<groupId>msi.gama</groupId>
+		<artifactId>msi.gama.parent</artifactId>
+		<version>1.9.2-SNAPSHOT</version>
+		<relativePath>../msi.gama.parent</relativePath>
+	</parent>
+
+
+	<groupId>ummisco.gama</groupId>
+	<packaging>eclipse-repository</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+
+					<includeAllDependencies>true</includeAllDependencies>
+					<profileProperties>
+						<macosx-bundled>true</macosx-bundled>
+					</profileProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>create-zip-files</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<!-- aarch64 -->
+								<copy file="../ummisco.gama.product/extraresources/Model.icns"
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Resources/" />
+								<copy file="../ummisco.gama.product/extraresources/Experiment.icns"
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/Resources/" />
+								<copy file="../ummisco.gama.product/extraresources/Info.plist"
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/" overwrite="true"/>
+								<copy
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless">
+									<fileset dir="../ummisco.gama.product/extraresources/headless/osx" />
+								</copy>
+								<copy
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless/samples">
+									<fileset dir="../ummisco.gama.product/extraresources/headless/samples" />
+								</copy>
+								<copy 
+									todir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Gama.app/Contents/headless/configuration">
+									<fileset dir="./target/products/gama.headless/macosx/cocoa/aarch64/Eclipse.app/Contents/Eclipse/configuration" />
+								</copy>
+								<mkdir dir="./target/products/ummisco.gama.application.product/macosx/cocoa/aarch64/Eclipse.app/Contents/Eclipse/x86_64/dropins"/>
+								
+			                </target>
+						</configuration>
+
+					</execution>
+				</executions>
+			</plugin>
+			<!-- See here for resolution and usage of fix-info-plist-maven-plugin 
+				https://bugs.eclipse.org/bugs/show_bug.cgi?id=339526 http://stackoverflow.com/questions/24427985/edit-the-info-plist-after-eclipse-product-build 
+				, another solution could be to rewrite the PLIST file by a new PLIST using 
+				maven-antrun-plugin -->
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-director-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<executions>
+					<execution>
+						<id>materialize-products</id>
+						<goals>
+							<goal>materialize-products</goal>
+						</goals>
+					</execution>
+					<!-- materialize and archive products need to be distant in mavenlifecycle, 
+						the only way for our ant-maven run to inject and modify files before packaging 
+						by tycho -->
+					<execution>
+						<id>archive-products</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>archive-products</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- Selection of products to be installed and configuration per product, 
+						see http://www.eclipse.org/tycho/sitedocs/tycho-p2/tycho-p2-director-plugin/materialize-products-mojo.html -->
+					<!-- If the project contains more than one product file ... -->
+					<products>
+
+						<product>
+							<id>gama.headless</id>
+					        <attachId>gama.headless</attachId>
+							<archiveFileName>Gama-rsc-headless</archiveFileName>
+						</product>
+
+						<product>
+							<id>ummisco.gama.application.product</id>
+							<attachId>ummisco.gama.application.product</attachId>
+							<archiveFileName>Gama1.7</archiveFileName>
+							<rootFolders>
+								<macosx>Gama.app</macosx>
+							</rootFolders>
+						</product>
+					</products>
+				</configuration>
+			</plugin>
+
+			<!-- Workaround: Use an existing config.ini file (caused by the problem 
+				that tycho will always generate a default one) , copying /target/../ to /target/configuration/ 
+				... -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/../</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+							<outputDirectory>${project.build.directory}/configuration</outputDirectory>
+							<overwrite>true</overwrite>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+</project>
