@@ -191,7 +191,7 @@ experiment default_experiment type: gui autorun: true
 	float minimum_cycle_duration <- 10 #msec;
 	output 
 	{
-		display default_display background: #black toolbar: false fullscreen: true
+		display default_display background: #black toolbar: false fullscreen: true type:2d
 		{
 			species pedestrian {
 				draw circle(2) color: color;

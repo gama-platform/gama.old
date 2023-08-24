@@ -75,7 +75,7 @@ species people skills: [moving] {
 
 experiment goto_grid type: gui {
 	output {
-		display objects_display {
+		display objects_display type:2d antialias:false{
 			grid cell border: #black;
 			species goal aspect: default ;
 			species people aspect: default ;

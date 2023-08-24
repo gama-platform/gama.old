@@ -91,7 +91,7 @@ species people skills: [moving] {
 experiment weightperagents type: gui {
 	float minimum_cycle_duration <- 0.1;
 	output {
-		display map {
+		display map type:2d{
 			species road aspect: geom;
 			species people aspect: base;
 		}

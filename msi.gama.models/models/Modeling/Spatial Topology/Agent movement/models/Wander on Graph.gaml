@@ -62,7 +62,7 @@ species people skills: [moving]{
 experiment WanderonGraph type: gui {
 	float minimum_cycle_duration <- 0.05;
 	output {
-		display map {
+		display map type:2d{
 			species road;
 			species people;
 		}
