@@ -1,4 +1,4 @@
-# GAMA 1.9.1 - Maintainance of GAMA 1.9.0
+# GAMA 1.9.2 - Maintainance of GAMA 1.9
 
 Due to several bugfixes in the recent versions of SWT, the _highly recommended configuration_ for working on this branch is [Eclipse for Java and DSL 2022-12](https://www.eclipse.org/downloads/packages/release/2022-12/r/eclipse-ide-java-and-dsl-developers) and the [Temurin distribution of JDK17](https://adoptium.net).
 
