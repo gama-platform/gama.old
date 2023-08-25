@@ -60,6 +60,7 @@ experiment DisplayTextured  type: gui {
 	
 	output {
 	  display City type:3d background:#white axes:false{
+	  	camera 'default' location: {178.9256,868.4599,470.2417} target: {274.5961,228.3136,0.0};
 			species Building aspect:textured;							
 		}
 	}
@@ -67,6 +68,7 @@ experiment DisplayTextured  type: gui {
 experiment DisplayWithDynamicDiffuseLight  type: gui {
 	output {
 	  display City type:3d background:rgb(10,40,55) axes:false{
+	  		camera 'default' location: {178.9256,868.4599,470.2417} target: {274.5961,228.3136,0.0};
 	  		light #ambient intensity: 0;
 	  		light #default type:#point intensity:hsb((time mod 255) /255,1.0 ,0.5) location:{world.shape.width*0.5+ world.shape.width*1.5*sin(time*2),world.shape.width*0.5,world.shape.width*cos(time*2)} show:true dynamic:true;
 			species Building aspect:base;									

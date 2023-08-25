@@ -136,6 +136,7 @@ experiment "Road Traffic" type: gui {
 
 	output {
 		display city_display type: 3d {
+			camera 'default' location: {1318.6512,3.5713,945.6612} target: {431.7016,495.2155,0.0};
 			light #ambient intensity: 180;
 			light #default intensity: 180 direction: {0.5, 0.5, -1};
 			event #mouse_down {ask simulation {do resume;}}
@@ -176,6 +177,7 @@ experiment "Multiple Layers" type: gui {
 
 	output {
 		display city_display type: 3d {
+			camera 'default' location: {-714.7717,73.4541,1495.3716} target: {572.8473,542.1091,0.0};
 			species road aspect: base;
 			species building aspect: base position: {0, 0, 0.25};
 			species people position: {0, 0, 0.5};

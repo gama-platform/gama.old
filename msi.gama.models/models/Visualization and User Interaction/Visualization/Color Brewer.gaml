@@ -66,7 +66,7 @@ experiment BrewerPalette type: gui {
 	parameter "Diverging Palettes" var:divergingPalette category:"Brewer";
 	parameter "Qualitatives Palettes" var:qualitativePalette category:"Brewer";
 	output {
-		display View1 type:3d axes:false{
+		display View1 type:3d antialias:false axes:false{
 			graphics "brewer"{
 				//Sequential
 				draw "Sequential" at:{-world.shape.width*0.2,0} color:#black perspective:true;
@@ -92,7 +92,7 @@ experiment BrewerPalette type: gui {
 experiment BrewerColoredAgent type: gui {
 	parameter "Number of data classes" var:nb_classes category:"Brewer";
 	output {
-		display View1 {
+		display View1 antialias:false axes:false{
 			grid cell border: #black ;
 			graphics "Names" {
 				loop i from:0 to:length(palettes)-1 {

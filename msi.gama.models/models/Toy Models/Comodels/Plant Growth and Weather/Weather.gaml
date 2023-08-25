@@ -26,7 +26,7 @@ grid plotWeather height: grid_size width: grid_size {
 
 experiment "Weather" type: gui {
 	output {
-		display d {
+		display d type:2d antialias:false{
 			grid plotWeather border: #black;
 		}
 	}

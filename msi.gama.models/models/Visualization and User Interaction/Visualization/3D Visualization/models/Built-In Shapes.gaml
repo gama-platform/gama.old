@@ -111,7 +111,7 @@ experiment "3D Shapes"  type: gui {
 	}
 	
 
-	output {
+	output synchronized:true{
 		display View1 type:3d background:rgb(10,40,55)   {
 			species Geometry2D aspect:default;
 			species TexturedGeometry2D aspect:default;

@@ -88,7 +88,7 @@ experiment intelligentTeam_vs_stupidTeam type:gui {
 	}
 	parameter "show player info" var:show_info;
 	output {
-		display "soccer_field"  {
+		display "soccer_field" type:2d  {
 			// display the field.
 			image "../images/soccer_field2.png";
 			// display the species with their correct aspect
@@ -135,7 +135,7 @@ experiment intelligentTeam_vs_intelligentTeam type:gui {
 	}
 	parameter "show player info" var:show_info;
 	output {
-		display "soccer_field"  {
+		display "soccer_field"  type:2d{
 			// display the field.
 			image "../images/soccer_field2.png";
 			// display the species with their correct aspect

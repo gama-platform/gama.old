@@ -350,7 +350,7 @@ experiment mysimulation type: gui {
 	
 	output {
 		layout #split;
-		display 'sir display' axes: false {
+		display 'sir display'  type:2d antialias:false {
 			grid sir_grid border: #lightgray;
 			species Host aspect: basic;
 		}

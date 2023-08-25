@@ -140,7 +140,7 @@ experiment main type: gui
 {
 	output
 	{
-		display "Comodel Display"
+		display "Comodel Display" type:2d antialias:false
 		{
 			agents "cell" value: (Urbanization."Adapter"[0]).get_plot() transparency:0.75;
 

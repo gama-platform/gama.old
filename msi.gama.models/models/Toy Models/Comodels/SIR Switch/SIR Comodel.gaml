@@ -108,7 +108,7 @@ experiment Simple_exp type: gui
 				data 'R' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).R color: #blue ;
 			}
 		}
-		display "ABM Disp" {			
+		display "ABM Disp" type:2d{			
 			agents "Host" value:first(SIR_2."Adapter").simulation.Host aspect:base;
 		}
 

@@ -53,10 +53,10 @@ global {
 
 experiment "CoModel" type: gui {
 	output {
-		display w {
+		display w type:2d antialias:false{
 			agents "weather" value: weather_simu.plotWeather ;
 		}
-		display pG {
+		display pG type:2d antialias:false{
 			agents "plantGrowth" value: plantGrow_simu.plotGrow ;
 		}		
 		

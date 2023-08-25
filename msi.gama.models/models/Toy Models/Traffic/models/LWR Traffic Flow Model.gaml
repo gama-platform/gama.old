@@ -171,10 +171,11 @@ experiment TraficGroup type: gui {
 		// A monitor can give the number of cars on the road at every time step.
 		
 		//monitor "Sum Concentrations" value: sum(section collect each.current_concentration);
+		 layout vertical([0::3472,horizontal([1::5000,2::5000])::6528]) tabs:true editors: false;
 		
 		// A display shows the road. Section width depend on their concentration.
-		layout #split;
-		display TheRoad{
+		display TheRoad type:3d axes:false{
+			camera 'default' location: {5044.1782,104.4563,2208.909} target: {5044.1782,104.4178,0.0};			
 			species section aspect: shape_section ;
 		}
 		

@@ -77,7 +77,7 @@ species people parent: base  {
 
 experiment schelling type: gui {	
 	output {
-		display Segregation {
+		display Segregation type:2d{
 			image bitmap_file_name.path ;
 			species people transparency: 0.5 aspect: geom;
 		}	

@@ -148,7 +148,7 @@ species river {
 experiment hydro type: gui {
 	parameter "input water" var: input_water <- 1.0;
 	output {
-		display d {
+		display d type:2d antialias:false{
 			grid cell border: #black;
 			//species river;
 		}

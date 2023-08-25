@@ -150,23 +150,23 @@ species people {
 
 }
 
-experiment expe type: gui {
-	output {
-		display my_display {
-			graphics "layer1" position: {0, 0} size: {0.5, 0.8} {
-				draw shape color: #darkorange;
-			}
-
-			graphics "layer2" position: {0.3, 0.1} size: {0.6, 0.2} {
-				draw shape color: #cornflowerblue;
-			}
-
-			graphics "layer3" position: {0.4, 0.2} size: {0.3, 0.8} {
-				draw shape color: #gold;
-			}
-		}
-	}
-}
+//experiment expe type: gui {
+//	output {
+//		display my_display {
+//			graphics "layer1" position: {0, 0} size: {0.5, 0.8} {
+//				draw shape color: #darkorange;
+//			}
+//
+//			graphics "layer2" position: {0.3, 0.1} size: {0.6, 0.2} {
+//				draw shape color: #cornflowerblue;
+//			}
+//
+//			graphics "layer3" position: {0.4, 0.2} size: {0.3, 0.8} {
+//				draw shape color: #gold;
+//			}
+//		}
+//	}
+//}
 
 experiment Aspects type: gui {
 	float minimum_cycle_duration <- 0.01;

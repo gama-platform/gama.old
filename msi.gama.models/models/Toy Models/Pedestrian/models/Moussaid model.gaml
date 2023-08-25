@@ -327,11 +327,11 @@ experiment corridor_xp type: gui {
 			species pedestrian;
 		}
 		
-		display local_speed {
+		display local_speed type:2d antialias:false{
 			species local_indicator aspect: speed_val;
 		}
 		
-		display local_compression {
+		display local_compression type:2d antialias:false{
 			species local_indicator aspect: compression_val;			
 		}
 	}

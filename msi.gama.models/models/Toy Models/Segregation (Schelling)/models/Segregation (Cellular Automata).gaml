@@ -72,7 +72,7 @@ grid space parent: base width: dimensions height: dimensions neighbors: 8  {
 
 experiment schelling type: gui {
 	output {
-		display Segregation {
+		display Segregation type:2d antialias:false{
 			grid space;
 		}
 

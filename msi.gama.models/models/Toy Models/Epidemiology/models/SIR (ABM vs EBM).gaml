@@ -132,7 +132,7 @@ experiment Simulation_ABM_EBM type: gui {
 	parameter 'Size of the neighbours' type: int var: neighbours_size <- 1 min: 1 max: 5 category: "Infection";
 	output {
 		layout #split;
-		display sir_display axes: false { 
+		display sir_display type:2d antialias:false { 
 			grid sir_grid border: #lightgray;
 			species Host aspect: basic;	
 		}

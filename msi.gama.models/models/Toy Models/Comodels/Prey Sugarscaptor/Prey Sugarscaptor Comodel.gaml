@@ -92,7 +92,7 @@ experiment main type: gui
 {
 	output
 	{
-		display "Co-display"
+		display "Co-display" type:2d antialias:false
 		{
 
 				grid G border: # red transparency:0.2;				

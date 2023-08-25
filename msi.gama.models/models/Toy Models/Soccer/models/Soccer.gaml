@@ -521,7 +521,7 @@ experiment match type:gui {
 	// play with or without the "offside" rule.
 	
 	output {
-		display "soccer_field" {
+		display "soccer_field" type:2d{
 			// display the field.
 			image "../images/soccer_field.png";
 			species player aspect:base;
@@ -530,7 +530,7 @@ experiment match type:gui {
 			species area aspect:base;
 			graphics "score_display" {
 				draw "Blue side - "+string(blue_score) color:#blue at: {10,5} font: font("Helvetica", 18 * #zoom, #bold) perspective:true;
-				draw string(red_score)+" - Red side" color:#red at: {100,5} font: font("Helvetica", 18 * #zoom, #bold) perspective:true;
+				draw string(red_score)+" - Red side" color:#red at: {90,5} font: font("Helvetica", 18 * #zoom, #bold) perspective:true;
 				if (show_status) {
 					draw line([{red_offside_pos,0},{red_offside_pos,90}]) color:#red;
 					draw line([{blue_offside_pos,0},{blue_offside_pos,90}]) color:#blue;

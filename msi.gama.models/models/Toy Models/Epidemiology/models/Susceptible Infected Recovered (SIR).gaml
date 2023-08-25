@@ -147,7 +147,7 @@ experiment Simulation type: gui {
 	parameter "Size of the neighbours" var:neighbours_size ;
  	output { 
  		layout #split;
-	    display sir_display axes: false {
+	    display sir_display  type:2d antialias:false {
 	        grid sir_grid border: #lightgray;
 	        species Host aspect: basic;
 	    }

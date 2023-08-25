@@ -34,7 +34,7 @@ global {
 
 experiment "CoModel" type: gui {
 	output {
-		display d {
+		display d type:2d antialias:false{
 			agents "weather" value: weather_simu.plotWeather ;
 		}
 		

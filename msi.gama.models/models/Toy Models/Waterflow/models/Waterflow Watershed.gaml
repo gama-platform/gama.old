@@ -58,7 +58,7 @@ species watershed schedules: [] {
 
 experiment waterFlow type: gui {
 	output {
-	 	display "My display Abs" { 
+	 	display "My display Abs" type:2d{ 
 			species watershed aspect: blueFlow;
 		}
 	}

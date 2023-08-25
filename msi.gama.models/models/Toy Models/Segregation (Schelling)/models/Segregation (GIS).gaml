@@ -116,7 +116,7 @@ species space {
 
 experiment schelling type: gui {	
 	output {
-		display Town_display  {
+		display Town_display type:2d  {
 			species space aspect: gis;
 			species people  aspect: simple;
 		}

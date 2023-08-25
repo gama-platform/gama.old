@@ -40,7 +40,7 @@ grid plotGrow height: grid_size width: grid_size neighbors: 8 {
 
 experiment "Plant Growth" type: gui {
 	output {
-		display d {
+		display d type:2d antialias:false{
 			grid plotGrow border: #black;
 		}
 		display biomass  type: 2d {

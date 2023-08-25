@@ -39,6 +39,7 @@ species boat skills: [moving]{
 experiment Display  type: gui {
 	output synchronized: true {
 		display ComplexObject type: 3d background: #black axes:false{
+			camera 'default' location: {-34.826,115.0892,54.4789} target: {50.0,50.0,0.0};
 			light #ambient intensity: 100;
 			species boat aspect:obj;	
 			graphics world transparency: 0.4 { 

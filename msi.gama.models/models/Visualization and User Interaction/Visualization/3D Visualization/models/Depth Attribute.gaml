@@ -22,7 +22,7 @@ global {
 experiment DepthAttribute type: gui {
 	output {
 		display view type: opengl {
-			
+			camera 'default' location: {-21.6032,7.1358,17.3394} target: {47.9384,49.7931,0.0};
 			graphics "Lines" {
 				draw line2D color: #red;
 				draw line3D depth: 10 color: #red;

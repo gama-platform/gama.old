@@ -23,8 +23,18 @@ global {
 }
 
 experiment "Show heatmap" type: gui {
-	output {
+	output synchronized:true{
 		layout #split;
+		
+		display city_display type: 3d {
+			camera 'default' location: {1318.6512,3.5713,945.6612} target: {431.7016,495.2155,0.0};
+			light #ambient intensity: 180;
+			light #default intensity: 180 direction: {0.5, 0.5, -1};
+			event #mouse_down {ask simulation {do resume;}}
+			species building aspect: base refresh: false;
+			species road aspect: base refresh: false;
+			species people refresh: true;
+		}
 		display "Instant heatmap with palette" type: 3d axes: false background: #black  {
 			// The field is displayed  without 3D rendering, a palettre of warm colors and a smoothness of 2 (meaning two passes of box blur are being done to "spread" the values)
 			mesh instant_heatmap scale: 0 color: palette([ #black, #black, #orange, #orange, #red, #red, #red]) smooth: 2 ;

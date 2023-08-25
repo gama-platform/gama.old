@@ -224,7 +224,7 @@ experiment snake_game type: gui autorun: true{
 	parameter "Size of the environment" var: environment_size <- 30 min: 10 max: 100;
 	parameter "Game speed (0.0: fast; 1.0: slow)" var: minimum_cycle_duration <- 0.2 min: 0.0 max: 1.0;
 	output {
-		display map {
+		display map type:2d antialias:false {
 			species wall;
 			species snake;
 			species food;

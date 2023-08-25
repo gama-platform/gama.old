@@ -83,7 +83,7 @@ species people skills: [moving]{
 experiment evacuationgoto type: gui {
 	float minimum_cycle_duration <- 0.04; 
 	output {
-		display map type: 3d{
+		display map type: 3d axes:false{
 			image "../images/floor.jpg";
 			species wall refresh: false;
 			species exit refresh: false;

@@ -59,7 +59,7 @@ species water skills: [moving] {
 
 experiment flow type: gui {
 	output {
-	 	display "Water Unit" { 
+	 	display "Water Unit" type:2d{ 
 			species river ; 
 			species water;	
 			species poi;			

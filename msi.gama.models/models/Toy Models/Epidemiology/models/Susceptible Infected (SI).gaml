@@ -115,7 +115,7 @@ experiment Simulation type: gui {
 	
  	output {
  		layout #split; 
-	    display si_display axes: false {
+	    display si_display  type:2d antialias:false{
 	        grid si_grid border: #lightgray;
 	        species Host aspect: basic;
 	    }

@@ -131,7 +131,7 @@ experiment sugarscape type: gui{
 	parameter 'Number of agents:' var: numberOfAgents <- 400 category: 'Agents';
 	
 	output {
-		display grille {
+		display grille  type:2d antialias:false{
 			grid sugar_cell;
 			species animal;
 		}

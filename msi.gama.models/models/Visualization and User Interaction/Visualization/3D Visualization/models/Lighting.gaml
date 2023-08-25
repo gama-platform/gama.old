@@ -43,6 +43,7 @@ experiment Display type: gui autorun: true {
 		display SpotLights type: 3d background: rgb(10, 40, 55) {
 		// we define 3 lights : the blue and red turn around the scene, changing their orientation so that the scene is always lightened
 		// the green light does not change its position, but the angle of the spot changes
+			camera 'default' location: {-87.5648,126.2534,134.3343} target: {50.0,50.0,0.0};
 			light #ambient intensity: 0;
 			light #default intensity: 0;
 			light "1" type: #spot location: {world.shape.width * cos(cycle) + world.shape.width / 2, world.shape.height * sin(cycle) + world.shape.height / 2, 20} direction:
