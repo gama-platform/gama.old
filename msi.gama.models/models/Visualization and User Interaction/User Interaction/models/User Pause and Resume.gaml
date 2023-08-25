@@ -13,8 +13,15 @@ global {
 
 	action toggle {
 		if paused {
+			ask sign{
+				icon <- stop;
+			}
 			do resume;
 		} else {
+			
+			ask sign{
+				icon <- play;
+			}
 			do pause;
 		}
 
@@ -27,11 +34,12 @@ global {
 }
 
 species sign skills: [moving] {
-	image_file icon <- stop;
+
 	point location <- centroid(world);
+	image_file icon <- play;
 
 	aspect default {
-		draw (world.paused ? play : stop) size: {100, 100};
+		draw icon size: {100, 100};
 	}
 
 	reflex wander {
