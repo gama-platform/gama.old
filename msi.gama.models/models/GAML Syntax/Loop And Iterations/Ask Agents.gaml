@@ -34,7 +34,7 @@ global {
 		ask 2 among dummy_species {
 			ask one_of(dummy_species - self) {
 				// To display the name of the agent that kills it, the current agent (self) should use myself to refer to its killer.
-				write "I, " + self.name + ", has been killed by " + myself.name ;
+				write "I, " + self.name + ", have been killed by " + myself.name ;
 				do die;
 			}
 		}

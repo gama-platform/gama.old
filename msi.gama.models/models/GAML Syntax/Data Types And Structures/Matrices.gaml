@@ -237,11 +237,11 @@ species looping_on_matrices {
 species modifying_matrices {
 	init {
 		write "";
-		write "== MODIFYING LISTS ==";
+		write "== MODIFYING MATRICES ==";
 		write "";
 		trace {
 			// Besides assigning a new value to a matrix, matrices can be manipulated using
-			// the "put statements. 
+			// the "put" statements. 
 			// Notice that they have a fix size (number of elements). 
 			// As a consequence, add and remove cannot be used on a matrix.
 		    matrix<string> matrix_of_strings <- matrix([["A","matrix"],["of","strings"]]);

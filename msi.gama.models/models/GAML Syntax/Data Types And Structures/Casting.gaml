@@ -131,6 +131,7 @@ species cast_to_map{
 		write sample(map(self));
 		write sample(map([]));
 		write sample(map([1]));
+		write sample(map([1,2,3]));
 		write sample(map(1::2));
 		write sample(map([1::2]));
 		write sample(map({1,2,3}));

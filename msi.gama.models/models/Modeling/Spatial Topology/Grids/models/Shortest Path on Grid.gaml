@@ -64,7 +64,7 @@ grid cell width: grid_size height: grid_size neighbors: neighborhood_type optimi
 
 experiment goto_grid type: gui {
 	output {
-		display objects_display type: 2d{
+		display objects_display type: 2d antialias:false{
 			grid cell border: #black;
 			graphics "elements" {
 				draw circle(1) color: #green at: source border: #black;

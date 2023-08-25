@@ -93,12 +93,12 @@ species rps_bot {
 experiment "Rock Paper Scissors" type:gui {
 	parameter "My play" var:my_play among:["ROCK","PAPER","SCISSORS"] init:any(["ROCK","PAPER","SCISSORS"]);
 	output {
-		display my_display {
-			image my_image size:point(0.2) position:{10,40};
+		display my_display type:3d{
+			image my_image size:point(0.2) position:{10,40} refresh:true;
 			graphics res {
 				draw (win_sign = 0 ? "=" : (win_sign < 0 ? "<" : ">")) at:{47,52} font:font("Digit",50,#bold) color:#black;
 			}
-			image bot_image size:point(0.2) position:{70,40};
+			image bot_image size:point(0.2) position:{70,40} refresh:true;
 		}
 	}
 }

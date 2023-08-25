@@ -86,7 +86,7 @@ experiment "Different heatmaps" type: gui
 			}
 		}
 
-		display "list_heatmap" type: 2d
+		display "list_heatmap" type: 2d antialias:false
 		{
 			chart "list_heatmap" type: heatmap 
 			{
@@ -112,7 +112,7 @@ experiment Heatmap type: gui
 {
 	output synchronized: true
 	{
-		display "list_heatmap" type: 2d
+		display "list_heatmap" type: 2d antialias:false
 		{
 			chart "list_heatmap" type: heatmap
 			{

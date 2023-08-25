@@ -23,6 +23,9 @@ global {
 	point source;
 	point goal;
 	path the_path;
+	
+	float height_factor <- 0.05; // used to reduced the height displayed
+	
 	init {  
 		ask cell {grid_value <- grid_value * 5;}  
 		float max_val <- cell max_of (each.grid_value);
@@ -55,18 +58,21 @@ grid cell file: dem neighbors: neighborhood_type optimizer: algorithm;
 experiment goto_grid type: gui {
 	
 	float minimum_cycle_duration <- 300 #msec;
+	
 	output synchronized: true { // synchronized to make sure that we do not run into issue #3737
-		display objects_display type: 3d{
-			grid cell border: #black;
+		display objects_display type: 3d antialias:false background:#lightgrey axes:false{ 
+			camera 'default' location: {24.6963,59.7992,64.0919} target: {25.0,25.0,0.0};
+			grid cell border: #black elevation:grid_value*height_factor triangulation:true;
 			graphics "elements" {
-				draw circle(1) color: #green at: source border: #black;
-				draw circle(1) color: #red at: goal  border: #black;
-				loop v over: the_path.vertices {
-					draw triangle(0.5) color: #yellow border: #black at: point(v);
-				}
+	
 				loop s over: the_path.segments {
-					draw s color: #red ;
+					draw s color: #red at:{s.location.x, s.location.y, (cell overlapping s + cell(s.centroid).neighbors) max_of each.grid_value*height_factor + 0.05} ;
 				}
+				loop v over: the_path.vertices {
+					draw triangle(0.5) color: #yellow border: #black at: {point(v).x, point(v).y, (cell(point(v)).neighbors) max_of each.grid_value*height_factor + 0.05};
+				}
+				draw circle(1) color: #green at: {source.x, source.y, (cell(source).neighbors max_of (each.neighbors max_of each.grid_value))*height_factor} border: #black;
+				draw circle(1) color: #red at: {goal.x, goal.y, (cell(goal).neighbors max_of (each.neighbors max_of each.grid_value))*height_factor}  border: #black;
 			}
 		}
 	}

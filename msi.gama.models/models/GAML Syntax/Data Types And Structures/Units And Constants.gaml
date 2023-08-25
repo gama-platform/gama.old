@@ -147,7 +147,7 @@ global {
 	}
 
 	
-	action move {}	
+
 }
 
 
@@ -173,7 +173,7 @@ experiment exp {
 		// Each of them can be set using the one of the following constants:
 		// #horizontal, #vertical, #stack, #split (displays split in a grid-like structure) or #none (no split).	
 		layout #split;
-		display "Strings OpenGL" type: 3d {
+		display "Strings 2D" type: 2d {
 			graphics Strings {
 				draw world.shape wireframe: true color: #black;
 				int y <- 7;
@@ -192,7 +192,7 @@ experiment exp {
 
 		}
 
-		display "Strings Java2D" type: 3d {
+		display "Strings 3D" type: 3d {
 			// #pixels (or #px) corresponds to the value of one pixel, depending on the display, zoom...
 			// So pixel is used to define the dimension of an overlay in order to keep it size constant.
             overlay position: { 0, 0 } size: { 300 #pixels, 200 #px } background: #grey transparency: 0.2 border: #black rounded: true {
@@ -212,22 +212,24 @@ experiment exp {
 				// We can also access the #zoom level: we can thus display a visual element depending on the zoom level, to keep visible some 
 				// elements even when we zoom out.
 				// We display a sphere at the location of the mouse (with a size depending on the zoom).
-				draw sphere(1.0 /#zoom) color: #green at: #user_location;
-				draw "       " +string(#user_location with_precision 3)  at: #user_location color: #black ;
+				draw sphere(1.0/#zoom) color: #green at: #user_location;
+				draw "       " +string(#user_location with_precision 3)  at: #user_location color: #black font:font("Helveetica", max(1,14/#zoom), #plain);
+
 				// We can also visualize the target point of the camera.
-				// NOTE : the camera related constant use the Y convention of OpenGL and are thus the opposite of the GAMA Y coordinates.			
-				draw sphere(1.0) at: {(#camera_target).x,-(#camera_target).y,(#camera_target).z} color: #aliceblue ;
+				draw sphere(1.0/#zoom ) at: #camera_target color: #red ;
 				draw "       " +string(#camera_target with_precision 3)   
-					at:{(#camera_target).x,-(#camera_target).y,(#camera_target).z} color: #black ;//anchor: #bottom_center;
+					at:#camera_target color: #black font:font("Helveetica", max(1,14/#zoom), #plain);//anchor: #bottom_center;
 					
 				// A buffer extends a line as a geometry. This buffer can be set #square, #round or #flat
 				// Note that #flat and #square are both a buffer with a square shape, but the flat stop the rectangle at the limit of the line. 
-				draw line([#user_location + {1,0,0}, #user_location - {1,0,0}]) buffer(0.5,0.5,#flat) at:#user_location color: #black ;
-				draw line([#user_location + {0,1,0}, #user_location - {0,1,0}]) buffer(0.5,0.5,#square) at:#user_location color: #black ;					
-				draw line([#user_location + {1,0,0}, #user_location - {1,0,0}]) at:#user_location color: #red ;
-				draw line([#user_location + {0,1,0}, #user_location - {0,1,0}]) at:#user_location color: #red ;						
+				draw line([#user_location + {1.0/#zoom ,0,0}, #user_location - {1.0/#zoom ,0,0}]) buffer(0.5/#zoom ,0.5/#zoom ,#flat)  at:#user_location color: #black ;
+				draw line([#user_location + {0,1.0/#zoom ,0}, #user_location - {0,1.0/#zoom ,0}]) buffer(0.5/#zoom ,0.5/#zoom ,#square) at:#user_location color: #black ;					
+				draw line([#user_location + {1.0/#zoom ,0,0}, #user_location - {1.0/#zoom ,0,0}]) at:#user_location color: #red ;
+				draw line([#user_location + {0,1.0/#zoom ,0}, #user_location - {0,1.0/#zoom ,0}]) at:#user_location color: #red ;						
 			}
-			event #mouse_move {ask simulation {do move;}}
+			event #mouse_move {			
+				do update_outputs;		
+			}	
 		}
 	}
 }
