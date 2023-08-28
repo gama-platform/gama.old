@@ -146,7 +146,9 @@ species intersection skills: [intersection_skill] {
 	}
 
 	aspect base {
-		draw circle(1) color: color;
+		if color != #yellow {
+			draw circle(10) color: color at:{location.x, location.y+20};			
+		}
 	}
 }
 

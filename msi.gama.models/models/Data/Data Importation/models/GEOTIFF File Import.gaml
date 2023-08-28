@@ -34,8 +34,9 @@ grid cell file: grid_data;
 
 experiment show_example type: gui {
 	output {
-		display test {
-			grid cell border: #black;
+		display test axes:false{
+			camera 'default' location: {16384.6813,51385.7828,15210.911} target: {15510.9655,18019.9225,0.0};
+			grid cell border: #black elevation:grid_value*5 triangulation:true;
 		}
 	} 
 }

@@ -130,7 +130,7 @@ experiment clustering type: gui {
 			species people aspect: tree;
 			species group_people;
 		}
-		display map_forest_clusters {
+		display map_forest_clusters type:2d antialias:false{
 			grid vegetation_cell border: #black;
 			species forest;
 		}

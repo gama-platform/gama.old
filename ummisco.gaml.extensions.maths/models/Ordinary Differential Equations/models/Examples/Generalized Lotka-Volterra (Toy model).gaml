@@ -244,7 +244,7 @@ grey is neutral."
  			
 	output { 
 		layout value: horizontal([0::50,vertical([1::50,2::50])::50]) tabs:true;
-		display action_button name:"Interaction matrix" toolbar: false{
+		display action_button name:"Interaction matrix" toolbar: false type:3d{
 			species button aspect:modern ;
 			event #mouse_down {ask simulation {do activate_act;}} 
 		}

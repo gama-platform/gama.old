@@ -12,27 +12,24 @@ global {
 	geometry shape <- square(10000);
 
 	init { 
-		create object;
+		create object{
+			location <- world.location;
+		}
 	}  
 } 
 
-species object skills:[moving]{
+species object {
 	
 	geometry shape <- obj_file("../includes/teapot.obj") as geometry;
-	
-	reflex move{
-		do wander;
-	}
-	aspect obj {
-		draw shape border: #black;
-	}
+
+
 			
 }	
 
 experiment Display  type: gui {
 	output {
 		display complex  background:#gray type: 3d{
-		  species object aspect:obj;				
+		  species object;				
 		}
 	}
 }

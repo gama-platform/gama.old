@@ -92,7 +92,7 @@ grid cell width: 50 height: 50 {
 experiment mapcomparison type: gui {
 	output {
 		layout #split;
-		display map_sim type: 3d{
+		display map_sim type: 3d antialias:false{
 			grid cell;
 		}
 		display map_observed type: 3d{

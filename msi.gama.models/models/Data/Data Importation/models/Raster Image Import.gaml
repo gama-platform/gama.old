@@ -68,11 +68,11 @@ experiment main type: gui {
 	// 2. with the grid + izard agents 
 	output {
 		layout #split;
-		display Image {
+		display Image type:2d antialias:false{
 	       image mntImageRaster.path;
 	       species izard aspect: image; 
 	    }   
-		display Grid {
+		display Grid type:2d antialias:false{
 	       grid cell;
 	       species izard aspect: image; 
 	    }   	    

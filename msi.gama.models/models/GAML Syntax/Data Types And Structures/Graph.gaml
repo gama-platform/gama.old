@@ -181,6 +181,7 @@ global {
 	action access_and_modify_edge_and_node {
 		write "\n==================";
 		write "GRAPH MANIPULATION\n";
+		the_path <- nil;
 
 		/*
 		 * build a new age as a pair of point
@@ -249,7 +250,7 @@ global {
 		write "Compute main connected component and all connected components of the graph";
 		g_graph <- main_connected_component(g_graph);
 		list component <- connected_components_of(g_graph);
-		write "Calcul the maximum and biggest cliques: 'maximal_cliques_of' and 'biggest_cliques_of'";
+		write "Compute the maximum and biggest cliques: 'maximal_cliques_of' and 'biggest_cliques_of'";
 		list cliques_max <- maximal_cliques_of(g_graph);
 		list cliques_big <- biggest_cliques_of(g_graph);
 	}
@@ -298,6 +299,7 @@ global {
 
 	}
 
+	path the_path <- nil;
 	action path_finding_graph {
 		write "\n====================";
 		write "GRAPH PATH OPERATORS\n";
@@ -309,7 +311,7 @@ global {
 		geometry node2 <- any(g_graph.vertices);
 		map<int, geometry> mfb <- map<int, geometry>(g_graph max_flow_between (node1, node2));
 		write "Find a path between two nodes: 'graph path_between (node1, node2)'";
-		path tp <- g_graph path_between (node1, node2);
+		the_path <- g_graph path_between (node1, node2);
 	}
 
 }
@@ -383,6 +385,7 @@ experiment Graph type: gui {
 	}
 
 	user_command "Create graphs" {
+		the_path <- nil;
 		switch graph_generator {
 			match "Random" { ask world {do random();} }
 			match "Scall-free" { ask world { do scale_free(); } }
@@ -406,6 +409,14 @@ experiment Graph type: gui {
 					draw circle(0.5) at: geometry(v).location color: #red border: #black;
 				}
 
+			}
+			
+			graphics "path"{
+				if the_path != nil {
+					loop e over:the_path.edges{
+						draw geometry(e) color: #red;
+					}
+				}
 			}
 
 		}
