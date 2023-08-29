@@ -49,13 +49,23 @@ public interface ISaveDelegate {
 
 	/**
 	 * The type of the item. Returns the gaml type required for triggering this save delegate. If no type is declared
-	 * (by default), then only the type of the file to produce (see {@link #getFileTypes()} is used to determine which
-	 * save delegate to run. If a gaml type is declared, the type of the file needs also to match (this allows two
-	 * delegates to save the same objects, but with different file types).
+	 * (by default), then the type of the file to produce (see {@link #getFileTypes()} is used to determine which save
+	 * delegate to run and/or the method {@link #handlesDataType()}. If a gaml type is declared, the type of the file
+	 * needs also to match (this allows two delegates to save the same objects, but with different file types).
 	 *
 	 * @return the i type
 	 */
 	default IType getDataType() { return Types.NO_TYPE; }
+
+	/**
+	 * Return whether or not the specified data type is handled by the save delegate. True by default. Can be used to
+	 * restrict the usage of this delegate to specific types
+	 *
+	 * @return the i type
+	 */
+	default boolean handlesDataType(final IType request) {
+		return true;
+	}
 
 	/**
 	 * Returns the types of file this ISaveDelegate is able to produce (e.g. "image", "shp", etc.). This is used to
