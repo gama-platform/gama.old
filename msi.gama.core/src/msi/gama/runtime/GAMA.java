@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.1).
+ * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -17,14 +17,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ISnapshotMaker;
+import msi.gama.common.interfaces.ITopLevelAgentChangeListener;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.root.PlatformAgent;
@@ -83,6 +86,12 @@ public class GAMA {
 
 	/** The headless gui. */
 	private static IGui headlessGui;
+
+	/** The current top level agent. */
+	private static ITopLevelAgent currentTopLevelAgent;
+
+	/** The top level agent listeners. */
+	private static List<ITopLevelAgentChangeListener> topLevelAgentListeners = new CopyOnWriteArrayList<>();
 
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
@@ -202,6 +211,7 @@ public class GAMA {
 	public static void closeExperiment(final IExperimentPlan experiment) {
 		if (experiment == null) return;
 		closeController(experiment.getController());
+		changeCurrentTopLevelAgent(getPlatformAgent());
 	}
 
 	/**
@@ -216,7 +226,7 @@ public class GAMA {
 		for (final IExperimentController controller : new ArrayList<>(controllers)) { closeController(controller); }
 		getGui().closeSimulationViews(null, andOpenModelingPerspective, immediately);
 		PoolUtils.WriteStats();
-
+		changeCurrentTopLevelAgent(getPlatformAgent());
 	}
 
 	/**
@@ -601,6 +611,30 @@ public class GAMA {
 	}
 
 	/**
+	 * Register top level agent change listener.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param listener
+	 *            the listener
+	 * @date 14 août 2023
+	 */
+	public static void registerTopLevelAgentChangeListener(final ITopLevelAgentChangeListener listener) {
+		if (!topLevelAgentListeners.contains(listener)) { topLevelAgentListeners.add(listener); }
+	}
+
+	/**
+	 * Register top level agent change listener.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param listener
+	 *            the listener
+	 * @date 14 août 2023
+	 */
+	public static void removeTopLevelAgentChangeListener(final ITopLevelAgentChangeListener listener) {
+		topLevelAgentListeners.remove(listener);
+	}
+
+	/**
 	 * Access to the one and only 'gama' agent
 	 *
 	 * @return the platform agent, or creates it if it doesn't exist
@@ -608,6 +642,51 @@ public class GAMA {
 	public static PlatformAgent getPlatformAgent() {
 		if (agent == null) { agent = new PlatformAgent(); }
 		return agent;
+	}
+
+	/**
+	 * Gets the current top level agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the current top level agent
+	 * @date 14 août 2023
+	 */
+	public static ITopLevelAgent getCurrentTopLevelAgent() {
+		if (currentTopLevelAgent == null || currentTopLevelAgent.dead() || currentTopLevelAgent.getScope().isClosed()) {
+			currentTopLevelAgent = computeCurrentTopLevelAgent();
+		}
+		return currentTopLevelAgent;
+	}
+
+	/**
+	 * Change current top level agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param agent
+	 *            the agent
+	 * @date 14 août 2023
+	 */
+	public static void changeCurrentTopLevelAgent(final ITopLevelAgent current) {
+		if (currentTopLevelAgent == current) return;
+		currentTopLevelAgent = current;
+		for (ITopLevelAgentChangeListener listener : topLevelAgentListeners) { listener.topLevelAgentChanged(current); }
+	}
+
+	/**
+	 * Compute current top level agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the i top level agent
+	 * @date 14 août 2023
+	 */
+	private static ITopLevelAgent computeCurrentTopLevelAgent() {
+		IExperimentPlan plan = getExperiment();
+		if (plan == null) return getPlatformAgent();
+		IExperimentAgent exp = plan.getAgent();
+		if (exp == null || exp.dead()) return getPlatformAgent();
+		SimulationAgent sim = exp.getSimulation();
+		if (sim == null || sim.dead()) return exp;
+		return sim;
 	}
 
 	/**
