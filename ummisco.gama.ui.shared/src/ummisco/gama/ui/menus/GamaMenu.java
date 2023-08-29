@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
@@ -173,7 +174,7 @@ public abstract class GamaMenu {
 	 * @return the menu item
 	 */
 	public static final MenuItem action(final Menu m, final String s, final Selector listener) {
-		return action(m, s, listener, null);
+		return action(m, s, listener, (Image) null);
 	}
 
 	/**
@@ -216,6 +217,25 @@ public abstract class GamaMenu {
 		action.addSelectionListener(listener);
 		if (image != null) { action.setImage(image); }
 		return action;
+	}
+
+	/**
+	 * Action.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
+	 * @param listener
+	 *            the listener
+	 * @param image
+	 *            the image
+	 * @return the menu item
+	 * @date 18 août 2023
+	 */
+	public static MenuItem action(final Menu m, final String s, final Selector listener, final String image) {
+		return action(m, s, listener, GamaIcon.named(image).image());
 	}
 
 	/**
