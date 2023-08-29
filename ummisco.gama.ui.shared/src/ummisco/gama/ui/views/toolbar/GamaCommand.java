@@ -221,7 +221,8 @@ public class GamaCommand {
 	 */
 	public ToolItem toItem(final ToolBar t, final Selector sel) {
 		final var i = new ToolItem(t, SWT.FLAT | SWT.PUSH);
-		if (text != null) { i.setText(text); }
+		// By default without text
+		// if (text != null) { i.setText(text); }
 		i.setToolTipText(tooltip);
 		if (image != null) {
 			GamaIcon icon = GamaIcon.named(image);
