@@ -52,7 +52,7 @@ global {
 experiment name type: gui {
 
 	output {
-		display Images {
+		display Images type:2d{
 			image from_terrain;
 		}
 	}

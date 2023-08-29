@@ -61,11 +61,12 @@ global {
 	
 	action activate_act {
 		button selected_button <- first(button overlapping (circle(1) at_location #user_location));
-		
-		if ((selected_button.grid_x > 0) and (selected_button.grid_y = 0)){
-			selected_button <- button[selected_button.grid_y,selected_button.grid_x];
+		if selected_button != nil {
+			if ((selected_button.grid_x > 0) and (selected_button.grid_y = 0)){
+				selected_button <- button[selected_button.grid_y,selected_button.grid_x];
+			}
+			selected_button.button_pressed <- true;					
 		}
-		selected_button.button_pressed <- true;
 	}	
 }
 
@@ -195,7 +196,7 @@ grid button width:max_species+1 height:max_species+1
 	}
 	
 	
-		aspect modern {
+	aspect modern {
 		if (grid_x = 0 and grid_y > 0) {
 			draw rectangle(shape.width,shape.height * 0.8) at: location - {0.1*shape.width,0,0} color: active?color_list[grid_y - 1]:rgb(230,230,230) ;
 			if (species_list[grid_y - 1] != nil)  {
@@ -244,7 +245,7 @@ grey is neutral."
  			
 	output { 
 		layout value: horizontal([0::50,vertical([1::50,2::50])::50]) tabs:true;
-		display action_button name:"Interaction matrix" toolbar: false{
+		display action_button name:"Interaction matrix" toolbar: false type:2d{
 			species button aspect:modern ;
 			event #mouse_down {ask simulation {do activate_act;}} 
 		}

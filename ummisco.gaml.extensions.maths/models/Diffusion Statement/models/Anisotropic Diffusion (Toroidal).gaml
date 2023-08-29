@@ -40,7 +40,8 @@ grid cells height: size width: size  {
 
 experiment diffusion type: gui {
 	output {
-		display a type: 3d {
+		display a type: 3d antialias:false{
+			camera 'default' location: {277.7744,923.8543,660.6005} target: {320.0,320.0,0.0};
 			grid cells elevation: true triangulation: true;
 		}
 	}
