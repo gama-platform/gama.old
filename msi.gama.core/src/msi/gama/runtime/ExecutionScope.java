@@ -431,8 +431,8 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public void setCurrentSymbol(final ISymbol statement) {
-		executionContext.setCurrentSymbol(statement);
-		if (_trace) { writeTrace(); }
+		if (executionContext != null) { executionContext.setCurrentSymbol(statement); }
+		if (statement != null && _trace) { writeTrace(); }
 	}
 
 	/**
