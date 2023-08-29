@@ -45,10 +45,6 @@ public class GamaToolbarFactory {
 		DEBUG.OFF();
 	}
 
-	// public static final Pref<Boolean> REDUCED_VIEW_TOOLBAR_HEIGHT = GamaPreferences
-	// .create("pref_view_toolbar_height", "Reduce the height of views' toolbars", false, IType.BOOL, false)
-	// .in(GamaPreferences.Interface.NAME, GamaPreferences.Interface.APPEARANCE);
-
 	/**
 	 * The Class GamaComposite.
 	 */
