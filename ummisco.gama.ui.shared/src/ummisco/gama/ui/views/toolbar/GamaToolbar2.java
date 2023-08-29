@@ -98,8 +98,10 @@ public class GamaToolbar2 extends Composite {
 	public void setBackgroundColor(final Color c) {
 		// DEBUG.OUT("setBackgroundColor() called by = " + DEBUG.METHOD() + " of " + DEBUG.CALLER());
 		// Calls super explicitly
-		super.setBackground(c);
-		GamaColors.setBackground(c, this, left, right);
+		Color color = c;
+		if (color == null) { color = isDark() ? getShell().getBackground() : IGamaColors.WHITE.color(); }
+		super.setBackground(color);
+		GamaColors.setBackground(color, this, left, right);
 	}
 
 	@Override
@@ -136,7 +138,7 @@ public class GamaToolbar2 extends Composite {
 		data.horizontalAlignment = SWT.RIGHT;
 		data.minimumWidth = height * 2;
 		right.setLayoutData(data);
-		setBackgroundColor(isDark() ? getShell().getBackground() : IGamaColors.WHITE.color());
+		setBackgroundColor(null);
 	}
 
 	/**
@@ -177,7 +179,6 @@ public class GamaToolbar2 extends Composite {
 	public ToolItem sep(final int side /* SWT.LEFT or SWT.RIGHT */) {
 		return new ToolItem(side == SWT.LEFT ? left : right, SWT.SEPARATOR);
 	}
-
 
 	/**
 	 * Status.
@@ -534,17 +535,17 @@ public class GamaToolbar2 extends Composite {
 			final int style, final boolean forceText, final Control control,
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final var tb = getToolbar(side);
-//		DOES NOT SEEM TO BE NECESSARY ANYMORE (SEE #3677)		
-//		if ( tb.getItemCount() == 0 && PlatformHelper.isWindows()) {
-//			int h = height;
-//			if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
-//			final var icon = GamaIcon.ofSize(getBackground(), 2, h);
-//			final var button = new ToolItem(tb, SWT.NONE);
-//			final var im = icon.image();
-//			button.setImage(im);
-//			button.setDisabledImage(im);
-//			button.setEnabled(false);
-//		}
+		// DOES NOT SEEM TO BE NECESSARY ANYMORE (SEE #3677)
+		// if ( tb.getItemCount() == 0 && PlatformHelper.isWindows()) {
+		// int h = height;
+		// if (control != null) { h = Math.max(h, control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y) + 4; }
+		// final var icon = GamaIcon.ofSize(getBackground(), 2, h);
+		// final var button = new ToolItem(tb, SWT.NONE);
+		// final var im = icon.image();
+		// button.setImage(im);
+		// button.setDisabledImage(im);
+		// button.setEnabled(false);
+		// }
 		final var button = new ToolItem(tb, style);
 		if (text != null && forceText) { button.setText(text); }
 		if (tip != null) { button.setToolTipText(tip); }
