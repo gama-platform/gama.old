@@ -1901,30 +1901,31 @@ public class GamlGrammarAccess extends AbstractElementFinder.AbstractGrammarElem
 		private final Keyword cAssertKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
 		private final Keyword cInspectKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
 		private final Keyword cBrowseKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
-		private final Keyword cDrawKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
-		private final Keyword cUsingKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
-		private final Keyword cSwitchKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
-		private final Keyword cPutKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
-		private final Keyword cAddKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
-		private final Keyword cRemoveKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
-		private final Keyword cMatchKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
-		private final Keyword cMatch_betweenKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
-		private final Keyword cMatch_oneKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
-		private final Keyword cParameterKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
-		private final Keyword cStatusKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
-		private final Keyword cHighlightKeyword_24 = (Keyword)cAlternatives.eContents().get(24);
-		private final Keyword cFocus_onKeyword_25 = (Keyword)cAlternatives.eContents().get(25);
-		private final Keyword cLayoutKeyword_26 = (Keyword)cAlternatives.eContents().get(26);
+		private final Keyword cRestoreKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cDrawKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cUsingKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cSwitchKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
+		private final Keyword cPutKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cAddKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cRemoveKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
+		private final Keyword cMatchKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
+		private final Keyword cMatch_betweenKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
+		private final Keyword cMatch_oneKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
+		private final Keyword cParameterKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
+		private final Keyword cStatusKeyword_24 = (Keyword)cAlternatives.eContents().get(24);
+		private final Keyword cHighlightKeyword_25 = (Keyword)cAlternatives.eContents().get(25);
+		private final Keyword cFocus_onKeyword_26 = (Keyword)cAlternatives.eContents().get(26);
+		private final Keyword cLayoutKeyword_27 = (Keyword)cAlternatives.eContents().get(27);
 		
 		//_1Expr_Facets_BlockOrEnd_Key:
 		//    _LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert"
-		//    | "inspect" | "browse" |
+		//    | "inspect" | "browse" | "restore" |
 		//    "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" |
 		//    "status" | "highlight" | "focus_on" | "layout";
 		@Override public ParserRule getRule() { return rule; }
 		
 		//_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert"
-		//| "inspect" | "browse" |
+		//| "inspect" | "browse" | "restore" |
 		//"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" |
 		//"status" | "highlight" | "focus_on" | "layout"
 		public Alternatives getAlternatives() { return cAlternatives; }
@@ -1968,47 +1969,50 @@ public class GamlGrammarAccess extends AbstractElementFinder.AbstractGrammarElem
 		//"browse"
 		public Keyword getBrowseKeyword_12() { return cBrowseKeyword_12; }
 		
+		//"restore"
+		public Keyword getRestoreKeyword_13() { return cRestoreKeyword_13; }
+		
 		//"draw"
-		public Keyword getDrawKeyword_13() { return cDrawKeyword_13; }
+		public Keyword getDrawKeyword_14() { return cDrawKeyword_14; }
 		
 		//"using"
-		public Keyword getUsingKeyword_14() { return cUsingKeyword_14; }
+		public Keyword getUsingKeyword_15() { return cUsingKeyword_15; }
 		
 		//"switch"
-		public Keyword getSwitchKeyword_15() { return cSwitchKeyword_15; }
+		public Keyword getSwitchKeyword_16() { return cSwitchKeyword_16; }
 		
 		//"put"
-		public Keyword getPutKeyword_16() { return cPutKeyword_16; }
+		public Keyword getPutKeyword_17() { return cPutKeyword_17; }
 		
 		//"add"
-		public Keyword getAddKeyword_17() { return cAddKeyword_17; }
+		public Keyword getAddKeyword_18() { return cAddKeyword_18; }
 		
 		//"remove"
-		public Keyword getRemoveKeyword_18() { return cRemoveKeyword_18; }
+		public Keyword getRemoveKeyword_19() { return cRemoveKeyword_19; }
 		
 		//"match"
-		public Keyword getMatchKeyword_19() { return cMatchKeyword_19; }
+		public Keyword getMatchKeyword_20() { return cMatchKeyword_20; }
 		
 		//"match_between"
-		public Keyword getMatch_betweenKeyword_20() { return cMatch_betweenKeyword_20; }
+		public Keyword getMatch_betweenKeyword_21() { return cMatch_betweenKeyword_21; }
 		
 		//"match_one"
-		public Keyword getMatch_oneKeyword_21() { return cMatch_oneKeyword_21; }
+		public Keyword getMatch_oneKeyword_22() { return cMatch_oneKeyword_22; }
 		
 		//"parameter"
-		public Keyword getParameterKeyword_22() { return cParameterKeyword_22; }
+		public Keyword getParameterKeyword_23() { return cParameterKeyword_23; }
 		
 		//"status"
-		public Keyword getStatusKeyword_23() { return cStatusKeyword_23; }
+		public Keyword getStatusKeyword_24() { return cStatusKeyword_24; }
 		
 		//"highlight"
-		public Keyword getHighlightKeyword_24() { return cHighlightKeyword_24; }
+		public Keyword getHighlightKeyword_25() { return cHighlightKeyword_25; }
 		
 		//"focus_on"
-		public Keyword getFocus_onKeyword_25() { return cFocus_onKeyword_25; }
+		public Keyword getFocus_onKeyword_26() { return cFocus_onKeyword_26; }
 		
 		//"layout"
-		public Keyword getLayoutKeyword_26() { return cLayoutKeyword_26; }
+		public Keyword getLayoutKeyword_27() { return cLayoutKeyword_27; }
 	}
 	public class _LayerKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml._LayerKey");
@@ -5530,7 +5534,7 @@ public class GamlGrammarAccess extends AbstractElementFinder.AbstractGrammarElem
 	
 	//_1Expr_Facets_BlockOrEnd_Key:
 	//    _LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert"
-	//    | "inspect" | "browse" |
+	//    | "inspect" | "browse" | "restore" |
 	//    "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" |
 	//    "status" | "highlight" | "focus_on" | "layout";
 	public _1Expr_Facets_BlockOrEnd_KeyElements get_1Expr_Facets_BlockOrEnd_KeyAccess() {

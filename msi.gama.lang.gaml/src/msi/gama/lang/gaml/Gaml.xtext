@@ -156,7 +156,7 @@ _ExperimentKey:
 
 _1Expr_Facets_BlockOrEnd_Key:
 	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert"
-	| "inspect" | "browse" |
+	| "inspect" | "browse" | "restore" |
 	"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" |
 	"status" | "highlight" | "focus_on" | "layout";
 
