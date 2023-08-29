@@ -80,7 +80,7 @@ import msi.gaml.types.IType;
 						name = "navigator",
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("Whether the navigator view is visible or not (true by default)")),
+						doc = @doc ("Whether the navigator view is visible or not (false by default)")),
 				@facet (
 						name = "consoles",
 						type = IType.BOOL,
