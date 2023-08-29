@@ -40,6 +40,9 @@ public class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
 	/** The show consoles. */
 	Boolean showConsoles = true;
 
+	/** The show parameters. */
+	Boolean showParameters = true;
+
 	/** The background. */
 	Supplier<Color> background = () -> null;
 
@@ -124,6 +127,17 @@ public class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
 	 */
 	public Boolean showConsoles() {
 		return showConsoles;
+	}
+
+	/**
+	 * Show parameters.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the boolean
+	 * @date 14 août 2023
+	 */
+	public Boolean showParameters() {
+		return showParameters;
 	}
 
 	/**
@@ -216,6 +230,18 @@ public class SimulationPerspectiveDescriptor extends PerspectiveDescriptor {
 	 */
 	public void showConsoles(final Boolean b) {
 		showConsoles = b;
+	}
+
+	/**
+	 * Show parameters.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param b
+	 *            the b
+	 * @date 14 août 2023
+	 */
+	public void showParameters(final Boolean b) {
+		showParameters = b;
 	}
 
 	/**

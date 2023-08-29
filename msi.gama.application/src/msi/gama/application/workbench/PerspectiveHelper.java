@@ -493,6 +493,19 @@ public class PerspectiveHelper {
 	}
 
 	/**
+	 * Show parameters.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 14 août 2023
+	 */
+	public static boolean showParameters() {
+		final IPerspectiveDescriptor d = getActivePerspective();
+		if (d instanceof SimulationPerspectiveDescriptor) return ((SimulationPerspectiveDescriptor) d).showParameters();
+		return true;
+	}
+
+	/**
 	 * Gets the background.
 	 *
 	 * @return the background
