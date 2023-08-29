@@ -238,6 +238,9 @@ public interface IKeyword {
 	/** The create. */
 	String CREATE = "create";
 
+	/** The restore. */
+	String RESTORE = "restore";
+
 	/** The csv. */
 	String CSV = "csv";
 
