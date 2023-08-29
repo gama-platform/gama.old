@@ -366,7 +366,7 @@ public class GamaShape implements IShape {
 			case THREED_FILE, NULL -> {
 				final Envelope3D env3D = getEnvelope();
 				yield env3D == null ? Envelope3D.of(this.getGeometry().getInnerGeometry()).getVolume()
-										: env3D.getVolume();
+						: env3D.getVolume();
 			}
 			default -> getArea() * d;
 		};
@@ -554,7 +554,7 @@ public class GamaShape implements IShape {
 
 	@Override
 	public GamaShape copy(final IScope scope) {
-		return new GamaShape(this, geometry.copy());
+		return new GamaShape(geometry.copy());
 	}
 
 	/**
