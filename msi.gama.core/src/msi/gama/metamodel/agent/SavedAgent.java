@@ -31,7 +31,7 @@ import msi.gaml.types.Types;
  * A helper class to save agent and restore/recreate agent as a member of a population.
  */
 @SuppressWarnings ("unchecked")
-public class SavedAgent extends GamaMap<String, Object> {
+public class SavedAgent extends GamaMap<String, Object> implements ISerialisedAgent {
 
 	/** Variables which are not saved during the capture and release process. */
 	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST,
@@ -123,8 +123,14 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 *            the attr name
 	 * @return the attribute value
 	 */
+	@Override
 	public Object getAttributeValue(final String attrName) {
 		return get(attrName);
+	}
+
+	@Override
+	public void setAttributeValue(final String attrName, final Object val) {
+		put(attrName, val);
 	}
 
 	/**
@@ -146,6 +152,7 @@ public class SavedAgent extends GamaMap<String, Object> {
 	 *
 	 * @return the index
 	 */
+	@Override
 	public int getIndex() { return index; }
 
 	/**
@@ -178,7 +185,9 @@ public class SavedAgent extends GamaMap<String, Object> {
 				// if (agent.getAttributes() != null) {}
 
 				agent.forEachAttribute((attrName, val) -> {
-					if (UNSAVABLE_VARIABLES.contains(attrName) || species.getVarNames().contains(attrName) || (val instanceof IPopulation)) return true;
+					if (UNSAVABLE_VARIABLES.contains(attrName) || species.getVarNames().contains(attrName)
+							|| val instanceof IPopulation)
+						return true;
 					shape.setAttribute(attrName, val);
 					return true;
 				});
