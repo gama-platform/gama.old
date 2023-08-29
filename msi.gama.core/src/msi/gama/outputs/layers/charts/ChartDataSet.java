@@ -26,11 +26,16 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Files;
 import msi.gaml.operators.Strings;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ChartDataSet.
  */
 public class ChartDataSet {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The chart folder. */
 	private static String chartFolder = "charts";
@@ -445,19 +450,15 @@ public class ChartDataSet {
 	 * @return true, if successful
 	 */
 	public boolean didReload(final IScope scope, final int chartCycle) {
-
-		boolean didr = false;
-		final int mychartcycle = chartCycle;
-		// int mychartcycle=scope.getSimulationScope().getCycle(scope)+1;
-		// DEBUG.LOG("cycle "+mychartcycle+" last: "+lastchartcycle);
-		if (lastchartcycle >= mychartcycle) {
-			lastchartcycle = mychartcycle - 1;
-			didr = true;
-		} else {
-			lastchartcycle = mychartcycle;
-
+		DEBUG.OUT("Asked if did reload with cycle = " + chartCycle, false);
+		if (lastchartcycle >= chartCycle) {
+			DEBUG.OUT(" TRUE as lastChartCycle = " + lastchartcycle);
+			lastchartcycle = chartCycle - 1;
+			return true;
 		}
-		return didr;
+		DEBUG.OUT(" FALSE as lastChartCycle = " + lastchartcycle);
+		lastchartcycle = chartCycle;
+		return false;
 
 	}
 
@@ -469,7 +470,11 @@ public class ChartDataSet {
 	 * @param chartCycle
 	 *            the chart cycle
 	 */
-	public void BackwardSim(final IScope scope, final int chartCycle) {
+	public void BackwardSim(final IScope scope, final int cycle) {
+		int chartCycle = cycle + 1; // AD : why ? I have put this by pure chance and it works ...
+		// There is still a problem, though, as cycle 0 is never drawn. But at least the charts are
+		// synchronized...
+		// DEBUG.OUT("Backward sim with cycle = " + chartCycle);
 		this.setResetAllBefore(chartCycle);
 		final ArrayList<ChartDataSource> sourcestoremove = new ArrayList<>();
 		final ArrayList<ChartDataSource> sourcestoadd = new ArrayList<>();
@@ -521,7 +526,7 @@ public class ChartDataSet {
 
 		commonXindex++;
 		commonYindex++;
-		if (scope.getExperiment().canStepBack() && didReload(scope, chartCycle)) { BackwardSim(scope, chartCycle); }
+		if (scope.getExperiment().isRecord() && didReload(scope, chartCycle)) { BackwardSim(scope, chartCycle); }
 		updateXValues(scope, chartCycle);
 		updateYValues(scope, chartCycle);
 
