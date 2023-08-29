@@ -131,14 +131,7 @@ import msi.gaml.types.Types;
 						of = IType.NONE,
 						index = IType.STRING,
 						optional = true,
-						doc = @doc ("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value")),
-				@facet (
-						name = HEADER,
-						type = { IType.BOOL },
-						optional = true,
-						doc = @doc (
-								deprecated = "Use a file constructor that specifies the header instead, e.g. csv_file('...', true)",
-								value = "an expression that evaluates to a boolean, when creating agents from csv file, specify whether the file header is loaded")) },
+						doc = @doc ("an expression that evaluates to a map, for each pair the key is a species attribute and the value the assigned value")) },
 		omissible = IKeyword.SPECIES)
 @doc (
 		value = "Allows an agent to create `number` agents of species `species`, to create agents of species `species` from a shapefile or to create agents of species `species` from one or several localized entities (discretization of the localized entity geometries).",
@@ -463,15 +456,16 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
 		final List<Map<String, Object>> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
 		final Object source = getSource(scope);
+		IList<? extends IAgent> agents = null;
 		for (final ICreateDelegate delegate : DELEGATES) {
 			if (delegate.acceptSource(scope, source)) {
-
 				delegate.createFrom(scope, inits, max, source, init, this);
-
+				if (delegate.handlesCreation()) { agents = delegate.createAgents(scope, pop, inits, this, sequence); }
+				break;
 			}
 		}
 		// and we create and return the agent(s)
-		final IList<? extends IAgent> agents = createAgents(scope, pop, inits);
+		if (agents == null) { agents = createAgents(scope, pop, inits); }
 		if (returns != null) { scope.setVarValue(returns, agents); }
 		return agents;
 	}
@@ -518,7 +512,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 *            the inits
 	 * @return the i list<? extends I agent>
 	 */
-	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation<? extends IAgent> population,
+	public IList<? extends IAgent> createAgents(final IScope scope, final IPopulation<? extends IAgent> population,
 			final List<Map<String, Object>> inits) {
 		if (population == null) return GamaListFactory.EMPTY_LIST;
 		// final boolean hasSequence = sequence != null && !sequence.isEmpty();
@@ -532,10 +526,6 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// As we are in the create statement, the agents are not restored
 		final IList<? extends IAgent> list =
 				population.createAgents(scope, inits.size(), inits, false, shouldBeScheduled, sequence);
-		// AD Commented this out
-		// final IMacroAgent currentMacro = population.getHost();
-		// if (currentMacro != null)
-		// currentMacro.addSubAgents(list.size());
 
 		// hqnghi in case of creating experiment of micro-models, we must
 		// implicitely initialize it and its simulation output
@@ -546,23 +536,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				final SimulationAgent sim = ((ExperimentAgent) a).getSimulation();
 				sim.adoptTopologyOf(scope.getSimulation());
 
-				if (!sim.getScheduled()) {
-					// ((ExperimentAgent)
-					// a).getActionExecuter().init(sim.getScope());
-					// } else {
-					sim._init_(sim.getScope());
-				}
+				if (!sim.getScheduled()) { sim._init_(sim.getScope()); }
 				if (sim.getOutputManager() != null) { sim.getOutputManager().init(sim.getScope()); }
 			}
 		}
 		// end-hqnghi
-		// if (sequence != null && !sequence.isEmpty()) {
-		// for (final IAgent remoteAgent : list.iterable(scope)) {
-		// if (!scope.execute(sequence, remoteAgent, null).passed()) {
-		// break;
-		// }
-		// }
-		// }
 		return list;
 	}
 
