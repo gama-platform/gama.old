@@ -35,7 +35,7 @@ public interface IGamaIcons {
 	String ADD_ROW = "viewers/add.row";
 
 	/** The add simulation. */
-	String ADD_SIMULATION = "experiment/add.simulation";
+	String ADD_SIMULATION = "experiment/experiment.simulations.add";
 
 	/** The attributes. */
 	String ATTRIBUTES = "gaml/_attributes";
