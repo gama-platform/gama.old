@@ -42,6 +42,7 @@ import org.eclipse.xtext.ui.editor.contentassist.antlr.IContentAssistParser;
 import org.eclipse.xtext.ui.editor.contentassist.antlr.internal.Lexer;
 import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.hover.html.XtextElementLinks;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
 import org.eclipse.xtext.ui.editor.outline.actions.IOutlineContribution;
@@ -76,6 +77,7 @@ import msi.gama.lang.gaml.ui.highlight.GamlReconciler;
 import msi.gama.lang.gaml.ui.highlight.GamlSemanticHighlightingCalculator;
 import msi.gama.lang.gaml.ui.highlight.GamlTextAttributeProvider;
 import msi.gama.lang.gaml.ui.hover.GamlDocumentationProvider;
+import msi.gama.lang.gaml.ui.hover.GamlElementLinks;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
@@ -123,6 +125,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		// binder.bind(XtextDocumentProvider.class).to(XtextDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		binder.bind(IGamlLabelProvider.class).to(GamlLabelProvider.class);
+		binder.bind(XtextElementLinks.class).to(GamlElementLinks.class);
 		// binder.bind(IHighlightingConfiguration.class).to(GamlHighlightingConfiguration.class).asEagerSingleton();
 		DEBUG.OUT("Initialization of GAML XText UI module finished");
 	}
