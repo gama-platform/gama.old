@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AOptimizationAlgorithm.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * AOptimizationAlgorithm.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.kernel.batch.optimization;
 
@@ -45,61 +45,55 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 	/** The Constant C_MEAN. */
 	public final static short C_MAX = 0, C_MIN = 1, C_MEAN = 2;
-	
+
 	/** The Constant COMBINATIONS. */
-	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
-	static { AbstractGamlAdditions._constants(COMBINATIONS); }
-	
+	public final static String[] COMBINATIONS = { "maximum", "minimum", "average" };
+	static {
+		AbstractGamlAdditions._constants(COMBINATIONS);
+	}
+
 	/** The tested solutions. */
-	// private ContinuousUniformGenerator randUniform;
 	protected HashMap<ParametersSet, Double> testedSolutions;
-	
+
 	/** The fitness expression. */
 	protected IExpression fitnessExpression;
-	
+
 	/** The is maximize. */
 	protected boolean isMaximize;
-	
+
 	/** The current experiment. */
 	protected BatchAgent currentExperiment;
-	
+
 	/** The best solution. */
-	// protected IScope scope;
 	protected ParametersSet bestSolution = null;
-	
+
 	/** The best fitness. */
 	protected Double bestFitness = null;
-	
+
 	/** The combination. */
 	protected short combination;
 
 	/**
 	 * Find best solution.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the parameters set
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	protected abstract ParametersSet findBestSolution(IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
 		currentExperiment = agent;
-		// this.scope = scope;
 	}
-
-	// protected ContinuousUniformGenerator getRandUniform() {
-	// if ( randUniform == null ) {
-	// randUniform = scope.getRandom().createUniform(0., 1.);
-	// }
-	// return randUniform;
-	// }
 
 	/**
 	 * Initialize tested solutions.
 	 */
 	protected void initializeTestedSolutions() {
-		testedSolutions = new HashMap<ParametersSet, Double>();
+		testedSolutions = new HashMap<>();
 	}
 
 	/**
@@ -118,14 +112,16 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 	/**
 	 * Inits the params.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 */
 	protected void initParams(final IScope scope) {}
 
 	/**
 	 * Instantiates a new a optimization algorithm.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AOptimizationAlgorithm(final IDescription desc) {
 		super(desc);
@@ -146,11 +142,6 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 		}
 	}
 
-	// @Override
-	// public void start() {
-	// new Thread(this, getName() + " thread").start();
-	// }
-
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> commands) {}
 
@@ -161,7 +152,8 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 			@Override
 			public String value() {
-				final Map<String, IParameter.Batch> explorable = currentExperiment.getSpecies().getExplorableParameters();
+				final Map<String, IParameter.Batch> explorable =
+						currentExperiment.getSpecies().getExplorableParameters();
 				if (explorable.isEmpty()) return "1";
 				String result = "";
 				int dim = 1;
@@ -188,17 +180,17 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 		});
 
-		params.add(new ParameterAdapter("Last parameter set tested", BatchAgent.CALIBRATION_EXPERIMENT, "",
-				IType.STRING) {
+		params.add(
+				new ParameterAdapter("Last parameter set tested", BatchAgent.CALIBRATION_EXPERIMENT, "", IType.STRING) {
 
-			@Override
-			public String value() {
-				if (currentExperiment.getLatestSolution() == null) return "-";
-				return currentExperiment.getLatestSolution().toString();
-			}
+					@Override
+					public String value() {
+						if (currentExperiment.getLatestSolution() == null) return "-";
+						return currentExperiment.getLatestSolution().toString();
+					}
 
-		});
-		
+				});
+
 		params.add(new ParameterAdapter("Calibration method", BatchAgent.CALIBRATION_EXPERIMENT, IType.STRING) {
 
 			@Override
@@ -214,19 +206,19 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 			}
 
 		});
-		
-		params.add(new ParameterAdapter("Best parameter set found", BatchAgent.CALIBRATION_EXPERIMENT, "", IType.STRING) {
-			
-			
-			@Override
-			public String value() {
-				final ParametersSet solutions = bestSolution;
-				if (solutions == null) return "";
-				return solutions.toString();
-			}
 
-		});
-		
+		params.add(
+				new ParameterAdapter("Best parameter set found", BatchAgent.CALIBRATION_EXPERIMENT, "", IType.STRING) {
+
+					@Override
+					public String value() {
+						final ParametersSet solutions = bestSolution;
+						if (solutions == null) return "";
+						return solutions.toString();
+					}
+
+				});
+
 		params.add(new ParameterAdapter("Best fitness", BatchAgent.CALIBRATION_EXPERIMENT, "", IType.STRING) {
 
 			@Override
@@ -237,44 +229,49 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 			}
 
 		});
-		
+
 	}
-	
+
 	@Override
 	public boolean isFitnessBased() { return true; }
-	
+
 	@Override
 	public IExpression getOutputs() { return getFitnessExpression(); }
 
 	// ------------
 	// OPTIMIZATION
-	
+
 	/**
 	 * Return the best fitness of the experiment
+	 *
 	 * @return Double
 	 */
 	public Double getBestFitness() { return bestFitness; }
 
 	/**
 	 * Return the expression that characterizes the fitness computation
+	 *
 	 * @return IExpression
 	 */
 	public IExpression getFitnessExpression() { return fitnessExpression; }
 
 	/**
 	 * Return the set of parameter @ParametersSet attached to the best fitness
+	 *
 	 * @return ParametersSet
 	 */
 	public ParametersSet getBestSolution() { return bestSolution; }
 
 	/**
 	 * If the fitness should maximize (or minimize) the corresponding value
+	 *
 	 * @return boolean
 	 */
 	public boolean getIsMaximize() { return this.isMaximize; }
-	
+
 	/**
 	 * Returns the way to combine replication fitness (either min, max or mean)
+	 *
 	 * @return short
 	 */
 	public short getCombination() { return combination; }
@@ -285,45 +282,42 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 	 * @return true, if is maximize
 	 */
 	public boolean isMaximize() { return isMaximize; }
-	
+
 	/**
 	 * Gets the combination name.
 	 *
 	 * @return the combination name
 	 */
 	public String getCombinationName() { return COMBINATIONS[combination]; }
-	
+
 	/**
 	 * Sets the best solution.
 	 *
-	 * @param bestSolution the new best solution
+	 * @param bestSolution
+	 *            the new best solution
 	 */
 	protected void setBestSolution(final ParametersSet bestSolution) {
-		// scope.getGui().debug("ParamSpaceExploAlgorithm.setBestSolution : " +
-		// bestSolution);
 		this.bestSolution = new ParametersSet(bestSolution);
 	}
 
 	/**
 	 * Sets the best fitness.
 	 *
-	 * @param bestFitness the new best fitness
+	 * @param bestFitness
+	 *            the new best fitness
 	 */
-	protected void setBestFitness(final Double bestFitness) {
-		// scope.getGui().debug("ParamSpaceExploAlgorithm.setBestFitness : " +
-		// bestFitness);
-		this.bestFitness = bestFitness;
-	}
+	protected void setBestFitness(final Double bestFitness) { this.bestFitness = bestFitness; }
 
 	/**
 	 * Update best fitness.
 	 *
-	 * @param solution the solution
-	 * @param fitness the fitness
+	 * @param solution
+	 *            the solution
+	 * @param fitness
+	 *            the fitness
 	 */
 	public void updateBestFitness(final ParametersSet solution, final Double fitness) {
-		if (fitness == null)
-			return;
+		if (fitness == null) return;
 		Double best = getBestFitness();
 		if (bestSolution == null || (isMaximize() ? fitness > best : fitness < best)) {
 			setBestFitness(fitness);

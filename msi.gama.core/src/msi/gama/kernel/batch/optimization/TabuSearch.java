@@ -18,7 +18,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.StoppingCriterion;
 import msi.gama.kernel.batch.StoppingCriterionMaxIt;
 import msi.gama.kernel.experiment.BatchAgent;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -189,9 +188,10 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 				for (final ParametersSet neighborSol : neighbors) {
 					if (neighborSol == null) { continue; }
 					Double neighborFitness = testedSolutions.get(neighborSol);
-					if ((neighborFitness != null) && (neighborFitness != Double.MAX_VALUE)) { continue; }
-					neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
-							.get(IKeyword.FITNESS).get(0);
+					if (neighborFitness != null && neighborFitness != Double.MAX_VALUE) { continue; }
+					Map<String, List<Object>> results = currentExperiment.launchSimulationsWithSolution(neighborSol);
+					List objects = results.get(IKeyword.FITNESS);
+					neighborFitness = objects == null || objects.isEmpty() ? 0d : (Double) objects.get(0);
 					testedSolutions.put(neighborSol, neighborFitness);
 
 					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) { bestNeighbor = neighborSol; }
