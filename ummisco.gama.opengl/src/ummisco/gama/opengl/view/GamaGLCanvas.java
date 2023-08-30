@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaGLCanvas.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.view;
@@ -66,7 +66,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	final GLWindow drawable;
 
 	/** The fps delegate. */
-	final GamaGLAnimator animator;
+	GamaGLAnimator animator;
 
 	/** The detached. */
 	protected boolean detached = false;
@@ -137,7 +137,10 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 				}
 			}
 		});
-		addDisposeListener(e -> new Thread(() -> { animator.stop(); }).start());
+		addDisposeListener(e -> new Thread(() -> {
+			animator.stop();
+			animator = null;
+		}).start());
 	}
 
 	/**

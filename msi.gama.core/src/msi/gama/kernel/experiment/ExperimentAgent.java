@@ -170,7 +170,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private final IScope ownScope;
 
 	/** The executer. */
-	final ActionExecuter executer;
+	protected final ActionExecuter executer;
 
 	/** The extra parameters map. */
 	final IMap<String, Object> extraParametersMap = GamaMapFactory.createOrdered();
