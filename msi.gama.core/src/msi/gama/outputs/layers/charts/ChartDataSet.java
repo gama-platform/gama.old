@@ -526,7 +526,7 @@ public class ChartDataSet {
 
 		commonXindex++;
 		commonYindex++;
-		if (scope.getExperiment().isRecord() && didReload(scope, chartCycle)) { BackwardSim(scope, chartCycle); }
+		if (scope.getExperiment().canStepBack() && didReload(scope, chartCycle)) { BackwardSim(scope, chartCycle); }
 		updateXValues(scope, chartCycle);
 		updateYValues(scope, chartCycle);
 
