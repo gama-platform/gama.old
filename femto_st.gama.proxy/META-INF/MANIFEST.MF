@@ -5,9 +5,10 @@ Bundle-SymbolicName: femto_st.gama.proxy;singleton:=true
 Bundle-Version: 1.9.2.qualifier
 Automatic-Module-Name: femto.st.gama.proxy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: msi.gama.precompiler,
+Import-Package: com.google.inject,
+ msi.gama.headless.job,
+ msi.gama.precompiler,
  msi.gaml.types,
- com.google.inject,
  org.osgi.framework;version="1.10.0"
 Require-Bundle:  ummisco.gama.serialize,
  ummisco.gama.network,
@@ -22,5 +23,3 @@ Export-Package: proxy,
  mpi
 Bundle-ClassPath: .,
  ext/mpi.jar
-Bundle-ActivationPolicy: lazy
-Bundle-Activator: pluginActivator.ActivatorPluginProxy

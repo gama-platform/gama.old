@@ -2,6 +2,9 @@ package proxy;
 
 import java.util.List;
 
+import org.locationtech.jts.geom.Geometry;
+
+import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
@@ -10,15 +13,19 @@ import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.species.ISpecies;
+import proxyPopulation.ProxyPopulation;
 import synchronizationMode.DistantSynchronizationMode;
-import synchronizationMode.SynchronizationMode;
+import synchronizationMode.LocalSynchronizationMode;
+import synchronizationMode.SynchronizationModeAbstract;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -33,46 +40,64 @@ public class ProxyAgent implements IAgent
 	{
 		DEBUG.OFF();
 	}
-	
 
-	protected final IPopulation<? extends IAgent> population;
+	protected final ProxyPopulation population;
+	private IScope scope;
 	
-	public ProxyAgent(final IPopulation<? extends IAgent> s, final int index) 
+	public SynchronizationModeAbstract synchroMode;
+
+
+	public ProxyAgent(final ProxyPopulation s, final int index, IScope scope) 
 	{
+		DEBUG.OUT("create new proxy index : " + index);
 		this.population = s;
+		this.scope = scope;
+	}
+    
+	public ProxyAgent(IAgent proxiedAgent, final ProxyPopulation s, IScope scope)
+    {
+		DEBUG.OUT("create new proxy : " + proxiedAgent.getName());
+		
+    	this.synchroMode = new LocalSynchronizationMode(proxiedAgent);
+    	this.population = s;
+		this.scope = scope;
+    }
+
+	public SynchronizationModeAbstract getSynchroMode() {
+		return synchroMode;
+	}
+
+	public void setSynchroMode(SynchronizationModeAbstract synchroMode) {
+		this.synchroMode = synchroMode;
 	}
 	
-	public SynchronizationMode synchroMode;
-    
-	public ProxyAgent(IAgent proxiedAgent, final IPopulation<? extends IAgent> s)
-    {
-		DEBUG.OUT("hello new proxy : " + proxiedAgent.getName());
-    	this.synchroMode = new SynchronizationMode(proxiedAgent);
-    	this.population = s;
-    }
-	
-	public void setSynchronizationMode(SynchronizationMode synchroMode)
+	public void setSynchronizationMode(LocalSynchronizationMode synchroMode)
 	{
 		DEBUG.OUT("set synchroMode " + synchroMode.getClass());
 		this.synchroMode = synchroMode;
 	}
-	
 	public void setSynchronizationMode(DistantSynchronizationMode synchroMode)
 	{
 		DEBUG.OUT("set setDistantSynchronizationMode " + synchroMode.getClass());
 		this.synchroMode = synchroMode;
 	}	
 	
+	public void updateProxied(DistantSynchronizationMode synchroMode)
+	{
+		DEBUG.OUT("updateProxied with :" + synchroMode.getClass());
+		this.setSynchronizationMode(synchroMode);
+	}	
+	
 	@Override
 	public IAgent getAgent() {
 		DEBUG.OUT("getAgent() " + synchroMode.getAgent());
-		return synchroMode.getAgent();
+		return this.getSynchroMode().getAgent();
 	}
 
 	@Override
 	public void setAgent(IAgent agent) {
 		DEBUG.OUT("setAgent() " + agent);
-		this.synchroMode.proxiedAgent = agent;
+		this.getSynchroMode().setAgent(agent);
 	}
 	
 	public IPopulation<?> getProxyPopulation() {
@@ -82,107 +107,115 @@ public class ProxyAgent implements IAgent
 	
 	@Override
 	public IMap<String, Object> getOrCreateAttributes() {
-		DEBUG.OUT("getOrCreateAttributes " + this.synchroMode.getOrCreateAttributes());
-		return this.synchroMode.getOrCreateAttributes();
+		DEBUG.OUT("getOrCreateAttributes " + this.getSynchroMode().getOrCreateAttributes());
+		return this.getSynchroMode().getOrCreateAttributes();
 	}
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
-		return this.synchroMode.stringValue(scope);
+		return this.getSynchroMode().stringValue(scope);
 	}
 
 	@Override
 	public Object getAttribute(String key) {
 		DEBUG.OUT("getAttribute ProxyAgent " + key);
-		return this.synchroMode.getAttribute(key);
+		return this.getSynchroMode().getAttribute(key);
 	}
 
 	@Override
 	public void setAttribute(String key, Object value) {
 		DEBUG.OUT("setAttribute ProxyAgent " + key + " :: " + value);
-		this.synchroMode.setAttribute(key, value);
+		this.getSynchroMode().setAttribute(key, value);
 	}
 
 	@Override
 	public boolean hasAttribute(String key) {
-		DEBUG.OUT("hasAttribute " + this.synchroMode.hasAttribute(key));
-		return this.synchroMode.hasAttribute(key);
+		DEBUG.OUT("hasAttribute " + this.getSynchroMode().hasAttribute(key));
+		return this.getSynchroMode().hasAttribute(key);
 	}
 
 	@Override
 	public GamaPoint getLocation() {
-		DEBUG.OUT("getLocation " + this.synchroMode.getLocation());
-		return this.synchroMode.getLocation();
+		//DEBUG.OUT("getLocation " + this.getSynchroMode().getLocation());
+		return this.getSynchroMode().getLocation();
 	}
 
 	@Override
 	public GamaPoint setLocation(GamaPoint l) {
-		return this.synchroMode.setLocation(l);
+		return this.getSynchroMode().setLocation(l);
 	}
 
 	@Override
 	public boolean dead() {
-		return this.synchroMode.dead();
+		return this.getSynchroMode().dead();
 	}
 
 	@Override
 	public void updateWith(IScope s, SavedAgent sa) {
-		this.synchroMode.updateWith(s, sa);
+		this.getSynchroMode().updateWith(s, sa);
 	}
 
 	@Override
 	public IShape copy(IScope scope) {
-		return this.synchroMode.copy(scope);
+		return this.getSynchroMode().copy(scope);
 	}
 
 	@Override
 	public void dispose() {
-		this.synchroMode.dispose();
+		DEBUG.OUT("DISPOSING proxyAgent " + this.getSynchroMode());
+		this.getSynchroMode().dispose();
 	}
 	
 	@Override
 	public boolean init(IScope scope) throws GamaRuntimeException {
-		return this.synchroMode.init(scope);
+		return this.getSynchroMode().init(scope);
 	}
 
 	@Override
-	public boolean step(IScope scope) throws GamaRuntimeException {
-		return this.synchroMode.step(scope);
+	public boolean step(IScope scope) throws GamaRuntimeException 
+	{
+		DEBUG.OUT("proxy step : ");
+		return this.getSynchroMode().step(scope);
 	}
 
 	@Override
 	public Object get(IScope scope, String index) throws GamaRuntimeException {
-		return this.synchroMode.get(scope, index);
+		return this.getSynchroMode().get(scope, index);
 	}
 
 	@Override
 	public String getName() {
-		return this.synchroMode.getName();
+		return this.getSynchroMode().getName();
 	}
 
 	@Override
 	public void setName(String name) {
-		this.synchroMode.setName(name);
+		this.getSynchroMode().setName(name);
 	}
 
 	@Override
 	public GamaPoint getLocation(IScope scope) {
-		return this.synchroMode.getLocation(scope);
+		return this.getSynchroMode().getLocation(scope);
 	}
 
 	@Override
 	public GamaPoint setLocation(IScope scope, GamaPoint l) {
-		return this.synchroMode.setLocation(scope, l);
+		return this.getSynchroMode().setLocation(scope, l);
 	}
 
 	@Override
 	public IShape getGeometry(IScope scope) {
-		return this.synchroMode.getGeometry(scope);
+		return this.getSynchroMode().getGeometry(scope);
+	}
+	
+	@Override
+	public IShape getGeometry() {
+		return this.getSynchroMode().getGeometry();
 	}
 
 	@Override
 	public void setGeometry(IScope scope, IShape newGeometry) {
-		this.synchroMode.setGeometry(scope, newGeometry);
+		this.getSynchroMode().setGeometry(scope, newGeometry);
 	}
 
 	@Override
@@ -194,59 +227,59 @@ public class ProxyAgent implements IAgent
 
 	@Override
 	public int getIndex() {
-		return this.synchroMode.getIndex();
+		return this.getSynchroMode().getIndex();
 	}
 
 	@Override
 	public String getSpeciesName() {
-		return this.synchroMode.getSpeciesName();
+		return this.getSynchroMode().getSpeciesName();
 	}
 
 	@Override
 	public ISpecies getSpecies() {
-		return this.synchroMode.getSpecies();
+		return this.getSynchroMode().getSpecies();
 	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulation() {
-		return this.synchroMode.getPopulation();
+		return this.getSynchroMode().getPopulation();
 	}
 
 	@Override
 	public boolean isInstanceOf(ISpecies s, boolean direct) {
-		return this.synchroMode.isInstanceOf(s, direct);
+		return this.getSynchroMode().isInstanceOf(s, direct);
 	}
 
 	@Override
 	public Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException {
-		return this.synchroMode.getDirectVarValue(scope, s);
+		return this.getSynchroMode().getDirectVarValue(scope, s);
 	}
 
 	@Override
 	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException {
-		this.synchroMode.setDirectVarValue(scope, s, v);
+		this.getSynchroMode().setDirectVarValue(scope, s, v);
 	}
 
 	@Override
 	public IModel getModel() {
-		return this.synchroMode.getModel();
+		return this.getSynchroMode().getModel();
 	}
 
 	@Override
 	public Object primDie(IScope scope) throws GamaRuntimeException {
 		DEBUG.OUT("do primDie");
-		return this.synchroMode.primDie(scope);
+		population.fireAgentRemoved(scope, this.getSynchroMode().getAgent());
+		return this.getSynchroMode().primDie(scope);
 	}
 
 	@Override
 	public Type getGeometricalType() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSynchroMode().getGeometricalType();
 	}
 
 	@Override
 	public void forEachAttribute(BiConsumerWithPruning<String, Object> visitor) {
-		// TODO Auto-generated method stub
+		this.getSynchroMode().forEachAttribute(visitor);
 		
 	}
 
@@ -257,44 +290,37 @@ public class ProxyAgent implements IAgent
 
 	@Override
 	public Object getFromIndicesList(IScope scope, IList<String> indices) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSynchroMode().getFromIndicesList(scope, indices);
 	}
 
 	@Override
 	public ITopology getTopology() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSynchroMode().getTopology();
 	}
 
 	@Override
 	public void setPeers(IList<IAgent> peers) {
-		// TODO Auto-generated method stub
-		
+		this.getSynchroMode().setPeers(peers);
 	}
 
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSynchroMode().getPeers();
 	}
 
 	@Override
 	public IMacroAgent getHost() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSynchroMode().getHost();
 	}
 
 	@Override
 	public void setHost(IMacroAgent macroAgent) {
-		// TODO Auto-generated method stub
-		
+		this.getSynchroMode().setHost(macroAgent);
 	}
 
 	@Override
 	public List<IAgent> getMacroAgents() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getSynchroMode().getMacroAgents();
 	}
 
 	@Override
@@ -304,7 +330,8 @@ public class ProxyAgent implements IAgent
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(ISpecies microSpecies) {
-		return this.getScope().getSimulation().getMicroPopulation(microSpecies);
+		DEBUG.OUT("???");
+		return this.getScope().getSimulation().getPopulationFor(microSpecies);
 	}
 
 	@Override
@@ -314,27 +341,136 @@ public class ProxyAgent implements IAgent
 	
 
 	public int getHashCode() {
-		return this.synchroMode.getHashcode();
+		return this.getSynchroMode().getHashcode();
 	}
 	
 	public void proxyDispose()
 	{
-		DEBUG.OUT("this.getProxyPopulation() b4 " + this.getProxyPopulation());
-		for(var auto : this.getProxyPopulation())
-		{
-			DEBUG.OUT("pop b4 : " + auto);
-		}
 		this.getProxyPopulation().remove(this);
-		DEBUG.OUT("this.getProxyPopulation() after " + this.getProxyPopulation());
-		DEBUG.OUT("pop size : " + this.getProxyPopulation().size());
-		for(var auto : this.getProxyPopulation())
-		{
-			DEBUG.OUT("pop after : " + auto);
-		}
 	}
 
 	@Override
 	public IScope getScope() {
-		return null;
+		return this.scope;
+	}
+	
+	@Override
+	public boolean covers(IShape g)
+	{
+		return this.getSynchroMode().covers(g);
+	}
+	
+	@Override
+	public boolean intersects(IShape g)
+	{
+		return this.getSynchroMode().intersects(g);
+	}
+	
+	@Override
+	public boolean crosses(IShape g)
+	{
+		return this.getSynchroMode().crosses(g);
+	}
+	
+	@Override
+	public void setInnerGeometry(final Geometry geom) {
+		this.getGeometry().setInnerGeometry(geom);
+	}
+
+	@Override
+	public IList<GamaPoint> getPoints() {
+		if (this.getGeometry() == null) return GamaListFactory.EMPTY_LIST;
+		return this.getGeometry().getPoints();
+	}
+
+	@Override
+	public void setDepth(final double depth) 
+	{
+		if (this.getGeometry() == null) return;
+		this.getGeometry().setDepth(depth);
+	}
+	
+	@Override
+	public void setGeometricalType(final IShape.Type t) 
+	{
+		this.getSynchroMode().setGeometricalType(t);
+	}
+
+	
+	@Override
+	public int intValue(final IScope scope) 
+	{
+		return this.getIndex();
+	}
+	
+	@Override
+	public Double getArea() { return this.getGeometry().getArea(); }
+
+	@Override
+	public Double getVolume() { return this.getGeometry().getVolume(); }
+
+	@Override
+	public double getPerimeter() { return this.getGeometry().getPerimeter(); }
+
+	@Override
+	public IList<GamaShape> getHoles() { return this.getGeometry().getHoles(); }
+
+	@Override
+	public GamaPoint getCentroid() { return this.getGeometry().getCentroid(); }
+
+	@Override
+	public GamaShape getExteriorRing(final IScope scope) {
+		return this.getGeometry().getExteriorRing(scope);
+	}
+
+	@Override
+	public Double getWidth() { return this.getGeometry().getWidth(); }
+
+	@Override
+	public Double getHeight() { return this.getGeometry().getHeight(); }
+
+	@Override
+	public Double getDepth() { return this.getGeometry().getDepth(); }
+
+	@Override
+	public GamaShape getGeometricEnvelope() { return this.getGeometry().getGeometricEnvelope(); }
+
+	@Override
+	public IList<? extends IShape> getGeometries() { return this.getGeometry().getGeometries(); }
+
+	@Override
+	public boolean isMultiple() { return this.getGeometry().isMultiple(); }
+
+	@Override
+	public boolean isPoint() { return this.getGeometry().isPoint(); }
+
+	@Override
+	public boolean isLine() { return this.getGeometry().isLine(); }
+
+	@Override
+	public Geometry getInnerGeometry() { return this.getGeometry().getInnerGeometry(); }
+
+	@Override
+	public Envelope3D getEnvelope() {
+		final IShape g = this.getGeometry();
+		return g == null ? null : g.getEnvelope();
+	}
+	@Override
+	public double euclidianDistanceTo(final IShape g) {
+		return this.getGeometry().euclidianDistanceTo(g);
+	}
+	@Override
+	public double euclidianDistanceTo(final GamaPoint g) {
+		return this.getGeometry().euclidianDistanceTo(g);
+	}
+	
+	@Override
+	public boolean partiallyOverlaps(final IShape g) {
+		return this.getGeometry().partiallyOverlaps(g);
+	}
+	
+	@Override
+	public boolean touches(final IShape g) {
+		return this.getGeometry().touches(g);
 	}
 }

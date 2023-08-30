@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package proxyExperiment;
+package proxyPopulation;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -19,7 +19,6 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
-import proxyPopulation.ProxyPopulation;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**

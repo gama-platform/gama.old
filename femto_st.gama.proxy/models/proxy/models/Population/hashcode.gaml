@@ -1,6 +1,11 @@
 /**
 * Name: hashcode
-* model to test hashcode propagation
+* 
+* Model to test hashcode propagation : only one agent is executed in this model
+* The red agent is the one executed, the grey one is just a copy updated after each cycle
+* 
+* The hashcode is the same in both grey and red agent.
+* 
 * Author: Lucas Grosjean
 * Tags: Proxy, HPC, multi simulation
 */
@@ -20,7 +25,6 @@ global
 		
 		if(simulation_id != 1)
 		{	
-			commAgent[0].col <- #blue;
 			create regularAgent;
 			possess_agent <- true;
 			
@@ -86,7 +90,7 @@ species commAgent skills: [network, ProxySkill]
 			if(request = "migrate")
 			{
 				write("simulation(" + simulation_id + ") migrate agent ") color: col;
-				do migrateAgent(content["agent"]);
+				do createCopyAgent(content["agent"]);
 				possess_agent <- true;
 				
 				do send to: "comm" + neighbor_id contents: ["type" :: "received"];
@@ -112,7 +116,6 @@ species commAgent skills: [network, ProxySkill]
 }
 experiment hashcode type: proxy 
 {
-	
 	init
 	{
 		create simulation with: [simulation_id :: 1]; // 2nd simulation

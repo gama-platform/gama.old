@@ -20,4 +20,6 @@ public interface IMPISkill {
 	String RCVSIZE = "rcvsize";
 	String SOURCE = "source";
 	String RTAG = "rtag";
+
+	Integer REQUEST_TAG = 0;
 }

@@ -32,7 +32,7 @@ public interface IExperimentJob extends Runnable {
 	/**
 	 * The Class DebugStream.
 	 */
-	class DebugStream extends FileOutputStream {
+	public class DebugStream extends FileOutputStream {
 
 		/**
 		 * Instantiates a new debug stream.
@@ -42,6 +42,17 @@ public interface IExperimentJob extends Runnable {
 		 */
 		DebugStream(final IExperimentJob si) throws FileNotFoundException {
 			super(OUTPUT_PATH + "/" + CONSOLE_OUTPUT_FILENAME + "-" + si.getExperimentID() + ".txt");
+			DEBUG.REGISTER_LOG_WRITER(this);
+		}
+		
+		/**
+		 * Instantiates a new debug stream.
+		 *
+		 * @throws FileNotFoundException
+		 *             the file not found exception
+		 */
+		public DebugStream(int index) throws FileNotFoundException {
+			super(OUTPUT_PATH + "/" + CONSOLE_OUTPUT_FILENAME + "-" + index + ".txt");
 			DEBUG.REGISTER_LOG_WRITER(this);
 		}
 

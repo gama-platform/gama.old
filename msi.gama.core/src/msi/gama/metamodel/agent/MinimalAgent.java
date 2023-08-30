@@ -83,6 +83,26 @@ public class MinimalAgent extends AbstractAgent {
 		this.geometry = geometry;
 		geometry.setAgent(this);
 	}
+	
+	/**
+	 * Instantiates a new minimal agent with a given hashcode.
+	 *
+	 * @param population
+	 *            the population that this agent belongs to.
+	 * @param index
+	 *            the index
+	 * @param hashcode
+	 *            the hashcode
+	 * @param geometry
+	 *            the geometry
+	 */
+	public MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final int hashcode, final IShape geometry) {
+		super(index);
+		this.population = population;
+		this.hashCode = hashcode;
+		this.geometry = geometry;
+		geometry.setAgent(this);
+	}
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulation() { return population; }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
@@ -39,6 +40,8 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 {
 	
+	// TODO implements all methods 
+	
 	static
 	{
 		DEBUG.OFF();
@@ -55,7 +58,7 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	@Override
 	public IList<ProxyAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
-			final boolean toBeScheduled, final RemoteSequence sequence) throws GamaRuntimeException 
+			final boolean toBeScheduled, final RemoteSequence sequence) throws GamaRuntimeException
 	{
 		if (number == 0) return GamaListFactory.EMPTY_LIST;
 		
@@ -64,15 +67,15 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 		
 		for (int i = 0; i < number; i++) 
 		{
+			IShape shape;
 			@SuppressWarnings ("unchecked") final IAgent agent = constr.createOneAgent(this, currentAgentIndex++);
+			int hashcode = 0;
 			if (initialValues != null && !initialValues.isEmpty()) 
 			{
 				final Map<String, Object> init = initialValues.get(i);
-				
 				if (init.containsKey(IKeyword.HASHCODE)) 
 				{
-					int hashcode = (Integer) init.get(IKeyword.HASHCODE);
-					((MinimalAgent)agent).setHashCode(hashcode);
+					hashcode = (Integer) init.get(IKeyword.HASHCODE);
 				}
 				
 				if (init.containsKey(IKeyword.SHAPE)) 
@@ -92,11 +95,20 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 					init.remove(IKeyword.LOCATION);
 				}
 			}
-			agentList.add((MinimalAgent)agent);
+			MinimalAgent minimal;
+			if(hashcode != 0)
+			{
+				 minimal = new MinimalAgent(agent.getPopulation(), agent.getIndex(), hashcode, agent.getGeometry()); // have to create minimal agent here to change hashcode
+				 agentList.add(minimal);
+			}else
+			{
+				agentList.add((MinimalAgent)agent); // no hashcode in the attributes
+				DEBUG.OUT("NO HASHCODE DETECTED");
+			}
 		}
 		createVariablesForProxiedAgent(scope, agentList, initialValues, sequence);
 		
-		return createProxys(agentList, scope, sequence);
+		return createProxys(agentList, scope, sequence, isRestored, toBeScheduled);
 	}
 	
 	@Override
@@ -134,7 +146,7 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 		
 		createVariablesForProxiedAgent(scope, agentList, EMPTY_LIST, null);
 		
-		return createProxys(agentList, scope, null);
+		return createProxys(agentList, scope, null, false, false);
 	}
 	
 	/**
@@ -146,18 +158,18 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	 * @param sequence
 	 * @return
 	 */
-	private IList<ProxyAgent> createProxys(IList<MinimalAgent> agentList, IScope scope, RemoteSequence sequence)
+	private IList<ProxyAgent> createProxys(IList<MinimalAgent> agentList, IScope scope, RemoteSequence sequence, boolean isRestored, boolean isScheduled )
 	{
 		final IList<ProxyAgent> proxyList = GamaListFactory.create(getGamlType().getContentType(), agentList.size());
 		for (final MinimalAgent agent : agentList) {
-			ProxyAgent proxy = new ProxyAgent(agent, this);
+			ProxyAgent proxy = new ProxyAgent(agent, this, scope);
 			proxyList.add(proxy);
 			DEBUG.OUT("New agent(" + agent.getName() + ") hashcode : " + agent.hashCode);
 			hashMapProxyID.put(agent.hashCode, proxy);		
 		}
 		
-		scheduleProxy(proxyList, scope, sequence);
-		addAll(proxyList);
+		scheduleProxy(proxyList, scope, sequence, isRestored);
+		this.addAll(proxyList);
 		fireAgentsAdded(scope, proxyList);
 		
 		return proxyList;
@@ -171,21 +183,24 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	 * @param scope
 	 * @param sequence
 	 */
-	private void scheduleProxy(IList<ProxyAgent> proxyList, IScope scope, RemoteSequence sequence)
+	private void scheduleProxy(IList<ProxyAgent> proxyList, IScope scope, RemoteSequence sequence, boolean isRestored)
 	{
-		for (final ProxyAgent proxy : proxyList) 
-		{
-			proxy.schedule(scope);
-		}
-		
-		if (sequence != null && !sequence.isEmpty()) {
-			for (final IAgent proxy : proxyList) {
-				if (!scope.execute(sequence, proxy, null).passed()
-						|| scope.getAndClearBreakStatus() == FlowStatus.BREAK) {
-					break;
+		if (!isRestored) {
+			for(final ProxyAgent proxy : proxyList) 
+			{
+				proxy.schedule(scope);
+			}
+			
+			if (sequence != null && !sequence.isEmpty()) {
+				for (final IAgent proxy : proxyList) {
+					if (!scope.execute(sequence, proxy, null).passed()
+							|| scope.getAndClearBreakStatus() == FlowStatus.BREAK) {
+						break;
+					}
 				}
 			}
 		}
+		fireAgentsAdded(scope, proxyList);
 	}
 	
 	/**
@@ -225,7 +240,7 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 	}
 
 	@Override
-	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
+	public void fireAgentRemoved(final IScope scope, final IAgent agent) {
 		try {
 			if(agent instanceof ProxyAgent)
 			{
@@ -259,11 +274,33 @@ public class ProxyPopulation extends GamaPopulation<ProxyAgent>
 		}
 		DEBUG.OUT("proxy from hashcode(" + hashcode + ") : " + proxy);
 		
-		return proxy != null ? proxy : null;
+		return proxy;
 	}
 	
 	public Map<Integer, ProxyAgent> getMapProxyID()
 	{
 		return this.hashMapProxyID;
+	}
+	
+	@Override
+	public ProxyAgent anyValue(final IScope scope) 
+	{	
+		final RandomUtils r = scope.getRandom();
+		List<Integer> keysAsArray = new ArrayList<Integer>(hashMapProxyID.keySet());
+		DEBUG.OUT("keysAsArray" + " :: " + keysAsArray.size());
+		
+		for(var auto : this.hashMapProxyID.entrySet())
+		{
+			DEBUG.OUT("agents in map Proxy" + " :: " + auto.getKey() + " :: " + auto.getValue());
+		}
+		if(keysAsArray.size() > 0)
+		{
+			var auto = hashMapProxyID.get(keysAsArray.get(r.between(0, keysAsArray.size() - 1)));
+			DEBUG.OUT("returning  : " + auto);
+			
+			return auto;
+		}
+		
+		return null;
 	}
 }

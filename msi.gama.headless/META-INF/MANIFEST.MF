@@ -27,6 +27,7 @@ Export-Package:
    msi.gama.kernel.simulation,
    msi.gaml.expressions,
    msi.gama.runtime",
+ msi.gama.headless.job,
  msi.gama.headless.openmole;uses:="msi.gama.kernel.model,msi.gama.headless.core",
  msi.gama.headless.runtime;
   uses:="org.osgi.framework,
