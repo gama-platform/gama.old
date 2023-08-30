@@ -40,7 +40,7 @@ grid vegetation_cell width: 10 height: 10 neighbors: 4 {
 
 experiment prey_keep_seed type: memorize keep_seed: true {
 	output {
-		display main_display {
+		display main_display type:2d antialias:false{
 			grid vegetation_cell border: #black ;
 			species prey aspect: base;
 		}
@@ -55,8 +55,8 @@ experiment prey_keep_seed type: memorize keep_seed: true {
 
 experiment prey_not_keep_seed type: memorize keep_seed: false {
 	output {
-		display main_display {
-			grid vegetation_cell border: #black ;
+		display main_display type:2d antialias:false{
+			grid vegetation_cell border: #black;
 			species prey aspect: base;
 		}
 		display location_x type: 2d {
