@@ -28,16 +28,17 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 
 /**
  * The Class TextureCache2.
  */
-public class TextureCache2 implements ITextureCache {
+public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListener<Boolean> {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The volatile textures. */
@@ -77,10 +78,7 @@ public class TextureCache2 implements ITextureCache {
 		if (isNonPowerOf2TexturesAvailable == null) {
 			isNonPowerOf2TexturesAvailable =
 					!GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() && gl.getGL().isNPOTTextureAvailable();
-			GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.onChange(newValue -> {
-				isNonPowerOf2TexturesAvailable = !newValue && gl.getGL().isNPOTTextureAvailable();
-				TextureIO.setTexRectEnabled(newValue);
-			});
+			GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.onChange(this);
 			TextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
 			// DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
 		}
@@ -104,10 +102,12 @@ public class TextureCache2 implements ITextureCache {
 	 */
 	@Override
 	public void dispose() {
+		DEBUG.OUT("TextureCache disposed");
 		deleteVolatileTextures();
 		staticTextures.asMap().forEach((s, t) -> { t.destroy(gl.getGL()); });
 		staticTextures.invalidateAll();
 		staticTextures.cleanUp();
+		GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.removeChangeListener(this);
 	}
 
 	/**
@@ -224,6 +224,14 @@ public class TextureCache2 implements ITextureCache {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public void afterValueChange(final Boolean newValue) {
+
+		isNonPowerOf2TexturesAvailable = !newValue && gl.getGL().isNPOTTextureAvailable();
+		TextureIO.setTexRectEnabled(newValue);
+
 	}
 
 }

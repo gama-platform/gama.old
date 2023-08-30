@@ -18,6 +18,7 @@ import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.GLAutoDrawable;
 
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.THREADS;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -28,6 +29,9 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @author Alexis Drogoul, loosely adapted from (aqd@5star.com.tw)
  */
 public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorControl.UncaughtExceptionHandler {
+
+	/** The fps changed. */
+	IPreferenceAfterChangeListener<Integer> fpsChanged = newValue -> targetFPS = newValue;
 
 	/** The cap FPS. */
 	protected volatile boolean capFPS = GamaPreferences.Displays.OPENGL_CAP_FPS.getValue();
@@ -105,7 +109,7 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 		this.drawable = window;
 		window.setAnimator(this);
 		this.animatorThread = new Thread(this, "Animator thread");
-		GamaPreferences.Displays.OPENGL_FPS.onChange(newValue -> targetFPS = newValue);
+		GamaPreferences.Displays.OPENGL_FPS.onChange(fpsChanged);
 		setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 	}
 
@@ -131,6 +135,7 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 			this.animatorThread.join();
 		} catch (final InterruptedException e) {} finally {
 			this.stopRequested = false;
+			GamaPreferences.Displays.OPENGL_FPS.removeChangeListener(fpsChanged);
 		}
 		return true;
 	}
