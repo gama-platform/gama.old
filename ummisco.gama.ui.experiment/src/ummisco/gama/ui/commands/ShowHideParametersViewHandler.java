@@ -26,7 +26,7 @@ public class ShowHideParametersViewHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		if (ViewsHelper.findView(IGui.PARAMETER_VIEW_ID, null, false) == null) {
-			GAMA.getGui().showAndUpdateParameterView(null, GAMA.getExperiment());
+			GAMA.getGui().updateParameters();
 		} else {
 			GAMA.getGui().hideParameters();
 		}
