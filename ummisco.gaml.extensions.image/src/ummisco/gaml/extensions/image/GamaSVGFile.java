@@ -43,6 +43,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -195,10 +197,13 @@ public class GamaSVGFile extends GamaGeometryFile {
 	 */
 	private SVGOMDocument getDocument(final IScope scope) {
 		if (document == null) {
-			String path = getPath(scope);
+			File f = getFile(scope);
 			try {
-				document = (SVGOMDocument) SVG_FACTORY.createDocument(path);
-			} catch (IOException e) {}
+				FileInputStream is = new FileInputStream(f);
+				document = (SVGOMDocument) SVG_FACTORY.createSVGDocument(f.toURI().toString(), is);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return document;
 	}
