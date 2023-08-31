@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * WriteStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * TextStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -78,6 +78,14 @@ import msi.gaml.types.IType;
 		value = "The statement makes an experiment display text in the parameters view.")
 public class TextStatement extends AbstractStatement implements IExperimentDisplayable {
 
+	/**
+	 * Instantiates a new text statement.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param desc
+	 *            the desc
+	 * @date 31 août 2023
+	 */
 	public TextStatement(final IDescription desc) {
 		super(desc);
 		message = getFacet(IKeyword.MESSAGE);
@@ -98,10 +106,28 @@ public class TextStatement extends AbstractStatement implements IExperimentDispl
 		return null;
 	}
 
+	/**
+	 * Gets the text.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the text
+	 * @date 31 août 2023
+	 */
 	public String getText(final IScope scope) {
 		return Cast.asString(scope, message.value(scope));
 	}
 
+	/**
+	 * Gets the font.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the font
+	 * @date 31 août 2023
+	 */
 	public GamaFont getFont(final IScope scope) {
 		if (font == null) return null;
 		return GamaFontType.staticCast(scope, font.value(scope), false);
@@ -114,6 +140,15 @@ public class TextStatement extends AbstractStatement implements IExperimentDispl
 		return rgb;
 	}
 
+	/**
+	 * Gets the background.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the background
+	 * @date 31 août 2023
+	 */
 	public Color getBackground(final IScope scope) {
 		GamaColor rgb = null;
 		if (background != null) { rgb = Cast.asColor(scope, background.value(scope)); }
