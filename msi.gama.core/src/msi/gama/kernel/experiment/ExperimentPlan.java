@@ -781,9 +781,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean isTest() { return IKeyword.TEST.equals(getExperimentType()); }
 
 	@Override
-	public boolean isMemorize() {
-		return IKeyword.MEMORIZE.equals(getExperimentType()) || IKeyword.RECORD.equals(getExperimentType());
-	}
+	public boolean isMemorize() { return IKeyword.RECORDING.equals(getExperimentType()); }
 
 	@Override
 	public IScope getExperimentScope() { return myScope; }

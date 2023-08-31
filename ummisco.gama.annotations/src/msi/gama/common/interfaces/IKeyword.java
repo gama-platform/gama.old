@@ -201,7 +201,7 @@ public interface IKeyword {
 
 	/** The color. */
 	String COLOR = "color";
-	
+
 	/** The color attribute to access in agent attribute **/
 	String COLOR_ATTRIBUTE = "col";
 
@@ -718,7 +718,7 @@ public interface IKeyword {
 	String MEMORIZE = "memorize";
 
 	/** The record. */
-	String RECORD = "record";
+	String RECORDING = "recording";
 
 	/** The mersenne. */
 	String MERSENNE = "mersenne";
@@ -737,7 +737,7 @@ public interface IKeyword {
 
 	/** The micro layer. */
 	String MICRO_LAYER = "micro_layer";
-	
+
 	/** The micro population. */
 	String MICRO_POPULATION = "microPopulation";
 
@@ -953,7 +953,7 @@ public interface IKeyword {
 
 	/** The point. */
 	String POINT = "point";
-	
+
 	/** The population. */
 	String POPULATION = "population";
 

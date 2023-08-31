@@ -35,41 +35,12 @@ import ummisco.gama.serializer.implementations.SerialisedSimulationRecorder;
 /**
  * The Class ExperimentBackwardAgent.
  */
-@experiment (IKeyword.RECORD)
+@experiment (IKeyword.RECORDING)
 @doc ("A type of gui experiment that records its previous states and allows the user to step backward")
 public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	static {
-		DEBUG.ON();
-	}
-
-	/**
-	 * The Class ObsoleteExperimentBackwardAgent.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 7 août 2023
-	 */
-	@experiment (IKeyword.MEMORIZE)
-	@doc ("A type of gui experiment that records its previous states and allows the user to step backward. This keyword is deprecated: 'record' should be used instead")
-	public static class ObsoleteExperimentBackwardAgent extends ExperimentBackwardAgent {
-
-		/**
-		 * Instantiates a new obsolete experiment backward agent.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param s
-		 *            the s
-		 * @param index
-		 *            the index
-		 * @throws GamaRuntimeException
-		 *             the gama runtime exception
-		 * @date 7 août 2023
-		 */
-		public ObsoleteExperimentBackwardAgent(final IPopulation<? extends IAgent> s, final int index)
-				throws GamaRuntimeException {
-			super(s, index);
-		}
-
+		DEBUG.OFF();
 	}
 
 	/** The conf. */
