@@ -770,9 +770,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public boolean hasParametersOrUserCommands() {
-		return !parameters.isEmpty() || !explorableParameters.isEmpty() || !getUserCommands().isEmpty()
-				|| GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()
-						&& (experimentOutputs.hasMonitors() || originalSimulationOutputs.hasMonitors());
+		return !displayables.isEmpty() || GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()
+				&& (experimentOutputs.hasMonitors() || originalSimulationOutputs.hasMonitors());
 	}
 
 	// @Override
