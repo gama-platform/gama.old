@@ -31,6 +31,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
+import ummisco.gaml.extensions.image.GamaImage;
 
 /**
  * The Class TextureCache2.
@@ -215,15 +216,20 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 	 * @return the texture
 	 */
 	Texture buildTexture(final GL gl, final BufferedImage im) {
+		TextureData data = null;
 		try {
-			final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);
+			data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);
+		} catch (final GLException e) {
+			BufferedImage copy = GamaImage.from(im, true);
+			data = AWTTextureIO.newTextureData(gl.getGLProfile(), copy, true);
+		}
+		if (data != null) {
 			final Texture texture = new Texture(gl, data);
 			data.flush();
 			return texture;
-		} catch (final GLException e) {
-			e.printStackTrace();
-			return null;
 		}
+		return null;
+
 	}
 
 	@Override
