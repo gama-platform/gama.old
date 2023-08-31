@@ -371,10 +371,15 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 				null, SWT.LEFT);
 		toolbar.sep(4, SWT.LEFT);
 		findControl = new EditorToolbar(this).fill(toolbar.getToolbar(SWT.RIGHT));
+		fakeButton = FlatButton.button(toolbar.getToolbar(SWT.LEFT), IGamaColors.OK, "", images.get(IKeyword.BATCH));
+		fakeButton.setVisible(false);
 
 		// toolbar.sep(4, SWT.RIGHT);
 		toolbar.refresh(true);
 	}
+
+	/** The fake button. To compute text size */
+	FlatButton fakeButton;
 
 	@Override
 	public boolean isLineNumberRulerVisible() {
@@ -625,13 +630,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		FlatButton t;
 		for (final String text : newState.abbreviations) {
 			if (text == null) { continue; }
-			t = FlatButton.button(toolbar.getToolbar(SWT.LEFT), IGamaColors.OK, text, images.get(IKeyword.BATCH));
-			width += t.computeSize(SWT.DEFAULT, 12).x + 2 * buttonPadding;
-			t.dispose();
+			fakeButton.setText(text);
+			width += fakeButton.computeSize(SWT.DEFAULT, 12).x + 2 * buttonPadding;
 		}
-		t = FlatButton.button(toolbar.getToolbar(SWT.LEFT), IGamaColors.OK, "Add Experiment", images.get("new"));
-		width += t.computeSize(SWT.DEFAULT, 12).x + 2 * buttonPadding;
-		t.dispose();
+		fakeButton.setText("Add Experiment");
+		width += fakeButton.computeSize(SWT.DEFAULT, 12).x + 2 * buttonPadding;
 		return width;
 	}
 
