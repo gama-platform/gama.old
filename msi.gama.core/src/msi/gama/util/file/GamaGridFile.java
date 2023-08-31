@@ -310,7 +310,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 			Double yCenter = null;
 			Double dX = null;
 			Double dY = null;
-			Double noData = null;
+			Double noDataD = null;
 			ascInfo = new Double[4];
 			int j = 0;
 			while (scanner.hasNextLine()) {
@@ -327,8 +327,8 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 						nbCols = intVal(line);
 					} else if(nbRows == null && line.contains("nrows")) {
 						nbRows = intVal(line);
-					} else if(noData == null && line.contains("nodata")) {
-						noData = doubleVal(line);
+					} else if(noDataD == null && (line.contains("nodata") || line.contains("nodata_value")) ) {
+						noDataD = doubleVal(line);
 					} else if(xCorner == null&& xCenter == null && line.contains("xllcorner")) {
 						xCorner = doubleVal(line);
 						ascInfo[2] = xCorner;
@@ -356,9 +356,11 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 						ascInfo[3] = yCorner + nbRows * dY;
 						
 						ascData = new GamaFloatMatrix(nbCols, nbRows);
+						if (noData != null)
+							this.noData = noDataD;
 						
 						final Envelope3D env =
-								of(xCorner, yCorner, yCorner + nbCols * dX, ascInfo[3] , 0, 0);
+								of(xCorner, yCorner, xCorner + nbCols * dX, ascInfo[3] , 0, 0);
 						computeProjection(scope, env);
 						numRows =nbRows ;
 						numCols = nbCols;
