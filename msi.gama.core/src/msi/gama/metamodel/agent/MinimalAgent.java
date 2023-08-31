@@ -83,7 +83,7 @@ public class MinimalAgent extends AbstractAgent {
 		this.geometry = geometry;
 		geometry.setAgent(this);
 	}
-	
+
 	/**
 	 * Instantiates a new minimal agent with a given hashcode.
 	 *
@@ -96,7 +96,8 @@ public class MinimalAgent extends AbstractAgent {
 	 * @param geometry
 	 *            the geometry
 	 */
-	public MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final int hashcode, final IShape geometry) {
+	public MinimalAgent(final IPopulation<? extends IAgent> population, final int index, final int hashcode,
+			final IShape geometry) {
 		super(index);
 		this.population = population;
 		this.hashCode = hashcode;
@@ -135,7 +136,7 @@ public class MinimalAgent extends AbstractAgent {
 			newLocalGeom = new GamaShape(newGeometry.getInnerGeometry().copy());
 			newLocalGeom.copyShapeAttributesFrom(newGeometry);
 		}
-		topology.normalizeLocation(newGeomLocation, false);
+		// topology.normalizeLocation(newGeomLocation, false);
 
 		if (!newGeomLocation.equals(newLocalGeom.getLocation())) { newLocalGeom.setLocation(newGeomLocation); }
 

@@ -22,7 +22,7 @@ import msi.gama.metamodel.population.IPopulation;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 31 juil. 2023
  */
-public record SerialisedPopulation(String speciesName, List<SerialisedAgent> agents) {
+public record SerialisedPopulation(String speciesName, List<SerialisedAgent> agents) implements ISerialisedPopulation {
 
 	/**
 	 * Instantiates a new population proxy. This is where the serialised agents are created

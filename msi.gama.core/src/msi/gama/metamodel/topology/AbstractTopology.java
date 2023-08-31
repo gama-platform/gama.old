@@ -64,7 +64,6 @@ public abstract class AbstractTopology implements ITopology {
 
 	/** The places. */
 	protected IContainer<?, IShape> places;
-	// protected List<ISpecies> speciesInserted;
 
 	/** The adjusted XY vector. */
 	// VARIABLES USED IN TORUS ENVIRONMENT

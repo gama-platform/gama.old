@@ -10,10 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import static msi.gama.runtime.GAMA.getRuntimeScope;
-import static msi.gama.runtime.GAMA.reportError;
 import static msi.gama.runtime.exceptions.GamaRuntimeException.create;
-import static ummisco.gama.ui.utils.WorkbenchHelper.asyncRun;
 
 import java.util.Objects;
 
@@ -36,6 +33,7 @@ import com.google.common.primitives.Ints;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ExperimentParameter;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -67,10 +65,10 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	@Nullable private final EditorListener<T> listener;
 
 	/** The agent. */
-	@Nullable private final IAgent agent;
+	private IAgent agent;
 
 	/** The scope. */
-	private final IScope scope;
+	// private final IScope scope;
 
 	/** The name. */
 	protected String name;
@@ -127,11 +125,12 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 *            the l
 	 */
 	@SuppressWarnings ("unchecked")
-	public AbstractEditor(final IScope scope, @Nullable final IAgent a, @Nonnull final IParameter parameter,
+	public AbstractEditor(@Nonnull final IAgent a, @Nonnull final IParameter parameter,
 			@Nullable final EditorListener<T> l) {
-		this.scope = scope;
+		// this.scope = scope;
 		param = parameter;
 		agent = a;
+		if (agent == null) throw GamaRuntimeException.error("The parameters view cannot be opened.", a.getScope());
 		name = param.getTitle();
 		expectedType = param.getType();
 		computeMaxMinAndStepValues();
@@ -195,10 +194,13 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 	@Override
 	public IScope getScope() {
-		if (noScope) return null;
-		if (scope != null) return scope;
-		if (agent != null) return agent.getScope();
-		return GAMA.getRuntimeScope();
+		return agent.getScope();
+
+		//
+		// if (noScope) return null;
+		// if (scope != null) return scope;
+		// if (agent != null) return agent.getScope();
+		// return GAMA.getRuntimeScope();
 	}
 
 	@Override
@@ -219,20 +221,19 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	protected T retrieveValueOfParameter(final boolean retrieveVarValue) throws GamaRuntimeException {
 		try {
 			Object result;
-			if (scope != null && agent == null && retrieveVarValue) {
+			if (getScope() != null /* && agent == null */ && retrieveVarValue
+					|| agent.getSpecies().hasVar(param.getName())) {
 				// We are in a case where this is an experiment/simulation parameter and we want to retrieve the "deep"
 				// value of it
-				result = scope.getAgentVarValue(getAgent(), param.getName());
-			} else if (agent == null || !agent.getSpecies().hasVar(param.getName())) {
-				result = param.value(scope);
+				result = getScope().getAgentVarValue(getAgent(), param.getName());
 			} else {
-				result = scope.getAgentVarValue(getAgent(), param.getName());
+				result = param.value(getScope());
 			}
 			if (getExpectedType() == Types.STRING)
-				return (T) StringUtils.toJavaString(GamaStringType.staticCast(scope, result, false));
-			return (T) getExpectedType().cast(scope, result, null, false);
+				return (T) StringUtils.toJavaString(GamaStringType.staticCast(getScope(), result, false));
+			return (T) getExpectedType().cast(getScope(), result, null, false);
 		} catch (Exception e) {
-			throw create(e, scope);
+			throw create(e, getScope());
 		}
 
 	}
@@ -246,24 +247,13 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 *             the gama runtime exception
 	 */
 	private final void modifyValueOfParameterWith(final Object newValue) throws GamaRuntimeException {
-		var a = agent;
-		if (param instanceof ExperimentParameter) {
-			if (a == null) {
-				final var exp = GAMA.getExperiment();
-				if (exp != null) { a = exp.getAgent(); }
-			}
-			if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
-				GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
-			}
-			// Introduced to deal with #2306
-			if (agent == null) { param.setValue(a == null ? null : a.getScope(), newValue); }
-		} else if (a == null) {
-			param.setValue(null, newValue);
+		if (param instanceof ExperimentParameter && GAMA.getCurrentTopLevelAgent() instanceof SimulationAgent) {
+			agent.getScope().setAgentVarValue(agent, param.getName(), newValue);
 		} else if (param instanceof Variable) {
-			((Variable) param).setVal(scope, a, newValue);
-		} else {
-			param.setValue(a.getScope(), newValue);
+			((Variable) param).setVal(getScope(), agent, newValue);
+			return;
 		}
+		param.setValue(agent.getScope(), newValue);
 	}
 
 	/**
@@ -431,7 +421,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 *            the new parameter value
 	 */
 	protected void setParameterValue(final T val) {
-		asyncRun(() -> {
+		WorkbenchHelper.asyncRun(() -> {
 			try {
 				if (listener == null) {
 					modifyValueOfParameterWith(val);
@@ -439,9 +429,9 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 					listener.valueModified(val);
 				}
 			} catch (final Exception e) {
-				GamaRuntimeException ex = create(e, scope);
+				GamaRuntimeException ex = create(e, getScope());
 				ex.addContext("Value of " + name + " cannot be modified");
-				GAMA.reportError(scope, ex, false);
+				GAMA.reportError(getScope(), ex, false);
 				return;
 			}
 		});
@@ -526,7 +516,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 				if (!parent.isDisposed()) {
 					editorControl.updateAmongValues(param.getAmongValue(getScope()));
 					computeMaxMinAndStepValues();
-					editorLabel.signalChanged(isValueModified());
+					if (editorLabel != null) { editorLabel.signalChanged(isValueModified()); }
 					editorControl.displayParameterValue();
 					updateToolbar();
 					composite.update();
@@ -541,7 +531,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
-			reportError(getRuntimeScope(), e, false);
+			GAMA.reportError(GAMA.getRuntimeScope(), e, false);
 			return;
 		}
 	}
@@ -554,7 +544,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 */
 	protected final void modifyAndDisplayValue(final T val) {
 		modifyValue(val);
-		asyncRun(() -> {
+		WorkbenchHelper.asyncRun(() -> {
 			editorControl.displayParameterValue();
 			updateToolbar();
 		});
@@ -565,7 +555,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 * Update toolbar. Redefined in subclasses
 	 */
 	protected void updateToolbar() {
-		editorToolbar.update();
+		if (editorToolbar != null) { editorToolbar.update(); }
 	}
 
 	/**
@@ -574,11 +564,18 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 * @return the agent
 	 */
 	protected IAgent getAgent() {
-		if (agent != null) return agent;
-		if (scope == null) return null;
-		return scope.getSimulation();
-
+		/* if (agent != null) */return agent;
+		// if (scope == null) return null;
+		// return scope.getSimulation();
 	}
+
+	/**
+	 * Sets the agent.
+	 *
+	 * @param agent
+	 *            the new agent
+	 */
+	public void setAgent(final IAgent agent) { this.agent = agent; }
 
 	@Override
 	public void modifyText(final ModifyEvent e) {}

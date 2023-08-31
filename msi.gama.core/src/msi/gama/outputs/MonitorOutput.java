@@ -140,7 +140,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 			if (sim != null) {
 				constantColor = sim.getColor();
 			} else {
-				constantColor = new GamaColor(Color.gray);
+				constantColor = GamaColor.get(Color.gray);
 			}
 		}
 	}

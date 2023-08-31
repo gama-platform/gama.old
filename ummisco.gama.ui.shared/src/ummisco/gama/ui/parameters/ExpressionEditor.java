@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -42,9 +41,9 @@ public class ExpressionEditor extends ExpressionBasedEditor<IExpression> {
 	 * @param expectedType
 	 *            the expected type
 	 */
-	public ExpressionEditor(final IScope scope, final IAgent agent, final InputParameter param,
+	public ExpressionEditor(final IAgent agent, final InputParameter param,
 			final EditorListener<IExpression> whenModified, final IType expectedType) {
-		super(scope, agent, param, whenModified);
+		super(agent, param, whenModified);
 		this.expectedType = expectedType;
 	}
 

@@ -1,14 +1,12 @@
 /**
-* Name:  Memorize Experiment on the Follow Weighted Network model
-* Author:  Patrick Taillandier (modified by Benoit Gaudou)
-* Description: Model illustrating the memorize experiment and the possibility to step forward and backward.
-* 	The initial model represents how to make a weighted graph and the impacts of the weights on the time to follow the path for the agents. 
-* 	Two agents are represented to show this difference : one knowing the weights and following a fast path, an other following a path longer 
-* 	without knowing it's a longer path.
-* Tags: memorize, graph, agent_movement, skill
+* Name: BaseModel
+* Based on the internal empty template. 
+* Author: A. Drogoul
+* Tags: 
 */
 
-model weightperagents
+
+model BaseModel
 
 global {
 	map<road, float> roads_weight;
@@ -95,13 +93,15 @@ species people skills: [moving] {
 	}
 }
 
-experiment weightperagents type: record format: "binary" compress: true {
+experiment Base virtual: true {
 	float minimum_cycle_duration <- 0.1;
-
 	output {
+		layout #split;
 		display map {
 			species road aspect: geom;
 			species people aspect: base;
 		}
 	}
 }
+
+

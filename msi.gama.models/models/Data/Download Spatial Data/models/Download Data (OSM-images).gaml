@@ -321,10 +321,10 @@ global {
 		} else {
 			//at the end, save the building
 			if (not empty(building_google)) {
-				save building_google crs:"EPSG:3857" format: shp to:exporting_path +"google_map_building.shp";
+				save building_google crs:"EPSG:3857" format: "shp" to:exporting_path +"google_map_building.shp";
 			}
 			if (not empty(marker)) {
-				save marker format: shp   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
+				save marker format: "shp"   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
 			}
 			do pause;
 		}
@@ -363,14 +363,14 @@ global {
 	action save_data(list<OSM_agent> ags, string type, string geom_type) {
 		if (not empty(ags)) {
 	 		list<string> atts <-  remove_duplicates(ags accumulate each.shape.attributes.keys);
-	 		save (ags collect each.shape) format: shp to: exporting_path + type + "_" + geom_type+".shp" attributes: atts;
+	 		save (ags collect each.shape) format: "shp" to: exporting_path + type + "_" + geom_type+".shp" attributes: atts;
 	 	}
 	}
 	
 	action save_image (string rest_link) {
 		matrix mat <- (image_file(rest_link).contents);
 		write "Satellite image retrieved";
-		save mat to: exporting_path +"satellite.png" format: image; 
+		save mat to: exporting_path +"satellite.png"; 
 	}
 	
 	action save_meta_data (string rest_link) {
@@ -429,10 +429,10 @@ global {
 		building_google <- building_google + define_building_from_image(cell_google collect each.shape, cell_google collect each.color);
 					
 		if (not empty(building_google)) {
-			save building_google crs:"EPSG:3857" format: shp to:exporting_path +"google_map_building.shp";
+			save building_google crs:"EPSG:3857" format: "shp" to:exporting_path +"google_map_building.shp";
 		}
 		if (not empty(marker)) {
-			save marker format: shp   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
+			save marker format: "shp"   crs:"EPSG:3857" to: exporting_path + "google_map_markers.shp" attributes:["type"];
 		}
 			
 		write "google image vectorized";

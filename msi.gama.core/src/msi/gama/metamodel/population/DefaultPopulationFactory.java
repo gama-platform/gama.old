@@ -14,6 +14,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.metamodel.topology.grid.GridPopulation;
+import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
 
@@ -29,11 +31,11 @@ public class DefaultPopulationFactory implements IPopulationFactory {
 	}
 
 	@Override
-	public <E extends IAgent> IPopulation<E> createGridPopulation(final IScope scope, final IMacroAgent host,
+	public IPopulation<IGridAgent> createGridPopulation(final IScope scope, final IMacroAgent host,
 			final ISpecies species) {
-		final ITopology t = GamaPopulation.buildGridTopology(scope, species, host);
+		final ITopology t = GridPopulation.buildGridTopology(scope, species, host);
 		final GamaSpatialMatrix m = (GamaSpatialMatrix) t.getPlaces();
-		return m.new GridPopulation<>(t, host, species);
+		return new GridPopulation(m, t, host, species);
 	}
 
 }

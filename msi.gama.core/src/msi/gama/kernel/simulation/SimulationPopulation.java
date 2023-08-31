@@ -25,6 +25,7 @@ import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
@@ -72,15 +73,38 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 				Caller.SIMULATION);
 	}
 
+	@Override
+	public void removeValue(final IScope scope, final Object value) {
+		if (value instanceof SimulationAgent sim) {
+			int index = indexOf(sim);
+			if (index == -1) return;
+			setCurrentSimulation(nextSimulationAfter(index));
+			super.removeValue(scope, value);
+		}
+	}
+
+	/**
+	 * Next simulation after.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @return the simulation agent
+	 * @date 26 août 2023
+	 */
+	private SimulationAgent nextSimulationAfter(final int index) {
+		if (size() <= 1 || index == -1) return null;
+		return get((index + 1) % size());
+	}
+
 	/**
 	 * Method fireAgentRemoved()
 	 *
-	 * @see msi.gama.metamodel.population.GamaPopulation#fireAgentRemoved(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
-		super.fireAgentRemoved(scope, agent);
-		runner.remove((SimulationAgent) agent);
+	protected void fireAgentRemoved(final IScope scope, final IAgent old) {
+		super.fireAgentRemoved(scope, old);
+		runner.remove((SimulationAgent) old);
 	}
 
 	@Override
@@ -92,7 +116,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	@Override
 	public void dispose() {
 		runner.dispose();
-		currentSimulation = null;
+		// currentSimulation = null;
 		super.dispose();
 	}
 
@@ -108,19 +132,20 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final IList<SimulationAgent> result = GamaListFactory.create(SimulationAgent.class);
 
 		for (int i = 0; i < number; i++) {
-			scope.getGui().getStatus().waitStatus(scope, "Initializing simulation");
+			scope.getGui().getStatus().waitStatus("Initializing simulation");
 			// Model do not only rely on SimulationAgent
 			final IAgentConstructor<SimulationAgent> constr = species.getDescription().getAgentConstructor();
-
-			currentSimulation = constr.createOneAgent(this, currentAgentIndex++);
-			currentSimulation.setScheduled(toBeScheduled);
-			currentSimulation.setName("Simulation " + currentSimulation.getIndex());
-			add(currentSimulation);
-			currentSimulation.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
+			// currentSimulation = currentAgentIndex++;
+			SimulationAgent sim = constr.createOneAgent(this, currentAgentIndex++);
+			sim.setScheduled(toBeScheduled);
+			sim.setName("Simulation " + sim.getIndex());
+			add(sim);
+			sim.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
 			if (scope.interrupted()) return null;
-			initSimulation(scope, currentSimulation, initialValues, i, isRestored, toBeScheduled, sequence);
-			if (toBeScheduled) { runner.add(currentSimulation); }
-			result.add(currentSimulation);
+			initSimulation(scope, sim, initialValues, i, isRestored, toBeScheduled, sequence);
+			if (toBeScheduled) { runner.add(sim); }
+			result.add(sim);
+			setCurrentSimulation(sim);
 		}
 		// Linked to Issue #2430. Should not return this, but the newly created simulations
 		// return this;
@@ -148,7 +173,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	private void initSimulation(final IScope scope, final SimulationAgent sim,
 			final List<? extends Map<String, Object>> initialValues, final int index, final boolean isRestored,
 			final boolean toBeScheduled, final RemoteSequence sequence) {
-		scope.getGui().getStatus().waitStatus(scope, "Instantiating agents");
+		scope.getGui().getStatus().waitStatus("Instantiating agents");
 		// if (toBeScheduled) { sim.prepareGuiForSimulation(scope); }
 
 		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);
@@ -157,6 +182,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		if (firstValue instanceof SavedAgent sa) {
 			sim.updateWith(scope, sa);
 		} else {
+			sim.setExternalInits(firstInitValues);
 			createVariablesFor(sim.getScope(), Collections.singletonList(sim), Arrays.asList(firstInitValues));
 		}
 
@@ -241,20 +267,17 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	 *
 	 * @return the simulation agent
 	 */
-	public SimulationAgent lastSimulationCreated() {
-		return currentSimulation;
-	}
+	public SimulationAgent getCurrentSimulation() { return currentSimulation; }
 
 	/**
-	 * Gets the simulation at index.
+	 * Sets the current simulation.
 	 *
-	 * @param i
-	 *            the i
-	 * @return the simulation at index
+	 * @param current
+	 *            the new current simulation
 	 */
-	public SimulationAgent getSimulationAtIndex(final int i) {
-		if (i >= size()) return null;
-		return get(i);
+	public void setCurrentSimulation(final SimulationAgent current) {
+		currentSimulation = current;
+		GAMA.changeCurrentTopLevelAgent(current, false);
 
 	}
 

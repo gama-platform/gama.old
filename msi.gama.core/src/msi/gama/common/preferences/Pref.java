@@ -199,6 +199,15 @@ public class Pref<T> implements IParameter {
 		return this;
 	}
 
+	/**
+	 * Step.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param step
+	 *            the step
+	 * @return the pref
+	 * @date 13 août 2023
+	 */
 	public Pref<T> step(final Comparable step) {
 		this.step = step;
 		return this;
@@ -593,5 +602,8 @@ public class Pref<T> implements IParameter {
 		this.fileExtensions = fileExtensions;
 		return this;
 	}
+
+	@Override
+	public void setValueNoCheckNoNotification(final Object value) { this.value = (T) value; }
 
 }

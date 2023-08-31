@@ -10,10 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.views.inspectors;
 
-import static msi.gama.common.preferences.GamaPreferences.Displays.CORE_DISPLAY_LAYOUT;
-import static ummisco.gama.ui.resources.IGamaIcons.ACTION_REVERT;
-import static ummisco.gama.ui.resources.IGamaIcons.MENU_ADD_MONITOR;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,17 +26,16 @@ import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
-import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gaml.constants.GamlCoreConstants;
 import ummisco.gama.dev.utils.COUNTER;
-import ummisco.gama.ui.commands.ArrangeDisplayViews;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
@@ -58,6 +53,20 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
  */
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
 
+	static {
+		// DEBUG.ON();
+	}
+
+	/**
+	 * Instantiates a new experiment parameters view.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 14 août 2023
+	 */
+	public ExperimentParametersView() {
+		GAMA.registerTopLevelAgentChangeListener(this);
+	}
+
 	/** The Constant MONITOR_CATEGORY. */
 	private static final String MONITOR_SECTION_NAME = "Monitors";
 
@@ -67,8 +76,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	/** The Constant REVERT. */
 	public final static int REVERT = 0;
 
-	/** The experiment. */
-	private IExperimentPlan experiment;
+	/** 'agent' represents the "real" listening agent, which can be an experiment or a simulation */
+	ITopLevelAgent agent;
 
 	/** The monitor section. */
 	ParameterExpandItem monitorSection;
@@ -91,18 +100,57 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	 */
 	ExperimentsParametersList getEditorsList() { return (ExperimentsParametersList) editors; }
 
+	@Override
+	public List<String> getItems() {
+		if (!(editors instanceof ExperimentsParametersList eds)) return Collections.EMPTY_LIST;
+		return eds.getItems();
+	}
+
 	/**
 	 * Display items.
 	 */
 	@Override
 	public void displayItems() {
-		super.displayItems();
-		createMonitorSectionIfNeeded(false);
-		final Map<MonitorOutput, MonitorDisplayer> monitors = getEditorsList().getMonitors();
-		monitors.forEach((mo, md) -> {
-			md.createControls((EditorsGroup) monitorSection.getControl());
-			md.setCloser(() -> deleteMonitor(md));
+		WorkbenchHelper.run(() -> {
+			super.displayItems();
+			createMonitorSectionIfNeeded(false);
+			final Map<MonitorOutput, MonitorDisplayer> monitors = getEditorsList().getMonitors();
+			monitors.forEach((mo, md) -> {
+				md.createControls((EditorsGroup) monitorSection.getControl());
+				md.setCloser(() -> deleteMonitor(md));
+			});
 		});
+		updateToolbar();
+	}
+
+	/**
+	 * Update toolbar.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 août 2023
+	 */
+	private void updateToolbar() {
+		ITopLevelAgent a = GAMA.getCurrentTopLevelAgent();
+		if (a != null) {
+			WorkbenchHelper.asyncRun(() -> {
+				toolbar.wipe(SWT.RIGHT, true);
+				toolbar.status(null, "Parameters for " + a.getFamilyName() + " " + a.getName(),
+						GamaColors.get(a.getColor()), SWT.LEFT);
+				toolbar.setBackgroundColor(GamaColors.toSwtColor(a.getColor()));
+				createToolItems(toolbar);
+				toolbar.update();
+				toolbar.refresh(true);
+			});
+		} else {
+			WorkbenchHelper.asyncRun(() -> {
+				if (toolbar != null && !toolbar.isDisposed()) {
+					toolbar.wipe(SWT.LEFT, true);
+					toolbar.setBackgroundColor(null);
+					toolbar.update();
+					toolbar.refresh(true);
+				}
+			});
+		}
 	}
 
 	/**
@@ -142,7 +190,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		createMonitorSectionIfNeeded(true);
 		IScope scope = GAMA.getRuntimeScope();
 		MonitorOutput m = new MonitorOutput(scope, "Monitor " + COUNTER.COUNT(), null);
-		MonitorDisplayer md = getEditorsList().addMonitor(m);
+		MonitorDisplayer md = getEditorsList().addMonitor(GAMA.getCurrentTopLevelAgent().getScope(), m);
 		md.createControls((EditorsGroup) monitorSection.getControl());
 		monitorSection.setHeight(monitorSection.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		md.setCloser(() -> deleteMonitor(md));
@@ -180,82 +228,99 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		return compo;
 	}
 
+	/**
+	 * Sets the listening agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param experiment
+	 *            the experiment
+	 * @param previous
+	 *            the previous
+	 * @param current
+	 *            the current
+	 * @date 14 août 2023
+	 */
 	@Override
-	public void setExperiment(final IExperimentPlan exp) {
-		if (exp != null) {
-			experiment = exp;
+	public void topLevelAgentChanged(final ITopLevelAgent current) {
+		IExperimentAgent exp = current == null ? null : current.getExperiment();
+		if (exp == null) {
+			agent = null;
+		} else {
+			if (agent != null) { saveParameterValuesForCurrentAgent(); }
+			agent = current;
+			// updateToolbar();
 			if (!exp.hasParametersOrUserCommands()) return;
 			reset();
+
 			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getDisplayables());
 			// params.addAll(exp.getExplorableParameters().values());
 			params.addAll(exp.getUserCommands());
 			// params.addAll(exp.getTexts());
-			SimulationAgent sim = exp.getCurrentSimulation();
+			SimulationAgent sim = exp.getSimulation();
 			if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
 				SimulationOutputManager som = sim.getOutputManager();
 				if (som != null) { params.addAll(som.getMonitors()); }
 			}
 			Collections.sort(params);
-			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
-			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
-					+ StringUtils.capitalize(experiment.getDescription().getTitle());
+			editors = new ExperimentsParametersList(agent, params);
+			if (sim != null) { getEditorsList().setItemValues(sim.getExternalInits()); }
+
+			final String expInfo = "Model " + agent.getModel().getDescription().getTitle() + " / "
+					+ StringUtils.capitalize(agent.getExperiment().getSpecies().getDescription().getTitle());
 			this.setPartName(expInfo);
 			displayItems();
-		} else {
-			experiment = null;
+
 		}
+
+	}
+
+	/**
+	 * Save parameter values for current simulation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 12 août 2023
+	 */
+	private void saveParameterValuesForCurrentAgent() {
+		if (!(agent instanceof SimulationAgent sim)) return;
+		sim.setExternalInits(getEditorsList().getItemValues());
+		DEBUG.OUT("Saving " + sim.getName() + " " + sim.getExternalInits());
 	}
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		tb.button(ACTION_REVERT, "Revert parameter values", "Revert parameters to their initial values", e -> {
-			final EditorsList<?> eds = editors;
-			if (eds != null) { eds.revertToDefaultValue(); }
-		}, SWT.RIGHT);
+		tb.button(IGamaIcons.ACTION_REVERT, "Revert parameter values", "Revert parameters to their initial values",
+				e -> {
+					final EditorsList<?> eds = editors;
+					if (eds != null) { eds.revertToDefaultValue(); }
+				}, SWT.RIGHT);
 		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) {
-			tb.button(MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(), SWT.RIGHT);
+			tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", e -> createNewMonitor(),
+					SWT.RIGHT);
 			tb.sep(SWT.RIGHT);
 		}
-
-		tb.button(IGamaIcons.ADD_SIMULATION, "Add simulation",
-				"Add a new simulation (with the current parameters) to this experiment", e -> {
-					final SimulationAgent sim =
-							GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
-					if (sim == null) return;
-					WorkbenchHelper.runInUI("", 0, m -> {
-						if ("None".equals(CORE_DISPLAY_LAYOUT.getValue())) {
-							ArrangeDisplayViews.execute(GamlCoreConstants.split);
-						} else {
-							ArrangeDisplayViews
-									.execute(GamaPreferences.Displays.LAYOUTS.indexOf(CORE_DISPLAY_LAYOUT.getValue()));
-						}
-					});
-				}, SWT.RIGHT);
+		//
+		// SimulationsMenu.addNewSimulation.toItem(tb.getToolbar(SWT.RIGHT));
+		// SimulationsMenu.killCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
+		// if (GAMA.getCurrentTopLevelAgent() instanceof SimulationAgent sim) {
+		// tb.sep(SWT.RIGHT);
+		// SimulationsMenu.duplicateCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
+		// SimulationsMenu.saveCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
+		// SimulationsMenu.replaceCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
+		// }
 
 	}
 
 	@Override
 	public boolean addItem(final String object) {
-		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && MONITOR_SECTION_NAME.equals(object)) {
+		if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()
+				&& ExperimentParametersView.MONITOR_SECTION_NAME.equals(object)) {
 			createMonitorSectionIfNeeded(true);
 			return true;
 		}
 		createItem(getParentComposite(), object, editors.getItemExpanded(object),
 				GamaColors.get(editors.getItemDisplayColor(object)));
 		return true;
-	}
-
-	/**
-	 * Gets the experiment.
-	 *
-	 * @return the experiment
-	 */
-	public IExperimentPlan getExperiment() { return experiment; }
-
-	@Override
-	public void stopDisplayingTooltips() {
-		toolbar.wipe(SWT.LEFT, true);
 	}
 
 	@Override
@@ -288,14 +353,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		return false;
 	}
 
-	/**
-	 * Method handleMenu()
-	 *
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
-	 */
 	@Override
-	public Map<String, Runnable> handleMenu(final String data, final int x, final int y) {
-		return null;
+	public void dispose() {
+		GAMA.removeTopLevelAgentChangeListener(this);
+		super.dispose();
 	}
 
 }

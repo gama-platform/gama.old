@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.DateTime;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gama.util.GamaDate;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -56,8 +55,8 @@ public class DateEditor extends AbstractEditor<GamaDate> {
 	 * @param l
 	 *            the l
 	 */
-	DateEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaDate> l) {
-		super(scope, agent, param, l);
+	DateEditor(final IAgent agent, final IParameter param, final EditorListener<GamaDate> l) {
+		super(agent, param, l);
 	}
 
 	// /**

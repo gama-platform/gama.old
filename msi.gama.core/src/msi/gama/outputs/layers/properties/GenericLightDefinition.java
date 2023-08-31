@@ -35,7 +35,7 @@ public class GenericLightDefinition implements ILightDefinition {
 	 *            the id.
 	 */
 	public GenericLightDefinition(final String name, final int id, final int intensity) {
-		this(name, id, new GamaColor(intensity, intensity, intensity, 255));
+		this(name, id, GamaColor.get(intensity, intensity, intensity, 255));
 	}
 
 	/**

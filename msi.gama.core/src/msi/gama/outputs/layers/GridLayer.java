@@ -29,11 +29,16 @@ import msi.gama.util.IList;
 import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.IField;
 import msi.gaml.statements.draw.MeshDrawingAttributes;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class GridLayer.
  */
 public class GridLayer extends AbstractLayer implements IGridLayer {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/**
 	 * Instantiates a new grid layer.
@@ -81,6 +86,8 @@ public class GridLayer extends AbstractLayer implements IGridLayer {
 			attributes.setTextures(Arrays.asList(textureFile));
 		} else if (image != null) {
 			final int[] imageData = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+			// DEBUG.OUT("ImageData different from DisplayData ? "
+			// + !Arrays.equals(imageData, data.getGrid().getDisplayData()));
 			System.arraycopy(data.getGrid().getDisplayData(), 0, imageData, 0, imageData.length);
 			attributes.setTextures(Arrays.asList(image));
 		}

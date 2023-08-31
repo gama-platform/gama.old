@@ -211,7 +211,7 @@ public class GAMA {
 	public static void closeExperiment(final IExperimentPlan experiment) {
 		if (experiment == null) return;
 		closeController(experiment.getController());
-		changeCurrentTopLevelAgent(getPlatformAgent());
+		changeCurrentTopLevelAgent(getPlatformAgent(), false);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class GAMA {
 		for (final IExperimentController controller : new ArrayList<>(controllers)) { closeController(controller); }
 		getGui().closeSimulationViews(null, andOpenModelingPerspective, immediately);
 		PoolUtils.WriteStats();
-		changeCurrentTopLevelAgent(getPlatformAgent());
+		changeCurrentTopLevelAgent(getPlatformAgent(), false);
 	}
 
 	/**
@@ -666,8 +666,8 @@ public class GAMA {
 	 *            the agent
 	 * @date 14 août 2023
 	 */
-	public static void changeCurrentTopLevelAgent(final ITopLevelAgent current) {
-		if (currentTopLevelAgent == current) return;
+	public static void changeCurrentTopLevelAgent(final ITopLevelAgent current, final boolean force) {
+		if (currentTopLevelAgent == current && !force) return;
 		currentTopLevelAgent = current;
 		for (ITopLevelAgentChangeListener listener : topLevelAgentListeners) { listener.topLevelAgentChanged(current); }
 	}

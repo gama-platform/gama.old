@@ -809,8 +809,8 @@ public class Variable extends Symbol implements IVariable {
 		final List among = Cast.asList(scope, scope.evaluate(amongExpression, agent).getValue());
 		if (among == null || among.contains(val)) return val;
 		if (among.isEmpty()) return null;
-		throw GamaRuntimeException.error("Value " + val + " is not included in the possible values of variable " + name,
-				scope);
+		throw GamaRuntimeException.error(
+				"Value " + val + " is not included in the possible values [" + among + "] of variable " + name, scope);
 	}
 
 	@Override
@@ -935,5 +935,10 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public boolean isDefinedInExperiment() { return getDescription().isDefinedInExperiment(); }
+
+	@Override
+	public void setValueNoCheckNoNotification(final Object value) {
+		// Do nothing for the moment ? Vars are not supposed to be changed that way
+	}
 
 }

@@ -208,10 +208,23 @@
                   name="msi.gama.application.separator3"
                   visible="true">
             </separator>
+            <menu
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.simulations.menu.png"
+                  id="msi.gama.application.simulations.submenu"
+                  label="Simulations...">
+               <dynamic
+                     class="ummisco.gama.ui.menus.SimulationsMenu"
+                     id="msi.gama.application.simulations.menu">
+               </dynamic>
+            </menu>
+            <separator
+                  name="ummisco.gama.ui.experiment.separator12"
+                  visible="true">
+            </separator>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
                   disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the current experiment and dispose of it.">
@@ -602,6 +615,25 @@
                   tooltip="  "> 
             </command>
             <command
+                  commandId="msi.gama.application.commands.StepBackSimulation"
+                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back.png"
+                  label="Step Back"
+                  style="push"
+                  tooltip="Make One step back in the simulation">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isSimulationReady">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationMemorize">
+                     </reference>
+                  </and>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="msi.gama.application.commands.PlaySimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run.png"
                   disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.run_disabled.png"
@@ -641,25 +673,6 @@
                   <reference
                         definitionId="isSimulationReady">
                   </reference>
-               </visibleWhen>
-            </command>
-            <command
-                  commandId="msi.gama.application.commands.StepBackSimulation"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back.png"
-                  disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.step.back_disabled.png"
-                  label="Step Back"
-                  style="push"
-                  tooltip="Make One step back in the simulation">
-               <visibleWhen
-                     checkEnabled="false">
-                  <and>
-                     <reference
-                           definitionId="isSimulationReady">
-                     </reference>
-                     <reference
-                           definitionId="isSimulationMemorize">
-                     </reference>
-                  </and>
                </visibleWhen>
             </command>
             <control
@@ -709,8 +722,8 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
                   disabledIcon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop_disabled.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/experiment/experiment.stop.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the currently opened experiment and closes its perspective">
@@ -1236,6 +1249,10 @@
             defaultHandler="ummisco.gama.ui.commands.HideShowEditors"
             id="gama.ui.hideShowEditors"
             name="Hide/Show Editors">
+      </command>
+      <command
+            id="ummisco.gama.ui.experiment.toolbar.simulation.menu"
+            name="Simulations">
       </command>
    </extension>
    <extension

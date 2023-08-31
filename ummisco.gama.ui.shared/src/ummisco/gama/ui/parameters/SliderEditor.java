@@ -10,9 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
-import static msi.gama.application.workbench.ThemeHelper.isDark;
-import static ummisco.gama.ui.resources.GamaColors.get;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -23,9 +20,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
+import msi.gama.application.workbench.ThemeHelper;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
@@ -76,8 +73,8 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		 * @param l
 		 *            the l
 		 */
-		public Int(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Integer> l) {
-			super(scope, a, variable, l);
+		public Int(final IAgent a, final IParameter variable, final EditorListener<Integer> l) {
+			super(a, variable, l);
 		}
 
 		@Override
@@ -122,8 +119,8 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		 * @param l
 		 *            the l
 		 */
-		public Float(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Double> l) {
-			super(scope, a, variable, l);
+		public Float(final IAgent a, final IParameter variable, final EditorListener<Double> l) {
+			super(a, variable, l);
 		}
 
 		@Override
@@ -169,8 +166,8 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 	 * @param l
 	 *            the l
 	 */
-	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
-		super(scope, a, variable, l);
+	public SliderEditor(final IAgent a, final IParameter variable, final EditorListener<T> l) {
+		super(a, variable, l);
 		computeFormatterParameters();
 	}
 
@@ -191,7 +188,8 @@ public abstract class SliderEditor<T extends Comparable> extends AbstractEditor<
 		final List<GamaColor> colors = getParam().getColors(getScope());
 		Color left = IGamaColors.OK.color();
 		Color backgroundColor = comp.getBackground();
-		Color right = isDark() ? get(backgroundColor).lighter() : get(backgroundColor).darker();
+		Color right = ThemeHelper.isDark() ? GamaColors.get(backgroundColor).lighter()
+				: GamaColors.get(backgroundColor).darker();
 		Color thumb = left;
 		if (colors != null) {
 			if (colors.size() == 1) {

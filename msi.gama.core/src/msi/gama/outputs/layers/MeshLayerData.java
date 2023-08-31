@@ -30,7 +30,7 @@ import msi.gaml.types.Types;
 public class MeshLayerData extends LayerData {
 
 	/** The default line color. */
-	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
+	static GamaColor defaultLineColor = GamaColor.get(Color.black);
 
 	/** The should compute values. */
 	boolean shouldComputeValues = true;

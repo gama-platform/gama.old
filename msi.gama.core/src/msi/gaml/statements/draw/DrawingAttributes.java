@@ -77,10 +77,10 @@ public class DrawingAttributes {
 	private static int INDEX = 0;
 
 	/** The Constant TEXTURED_COLOR. */
-	public static final GamaColor TEXTURED_COLOR = new GamaColor(Color.white);
+	public static final GamaColor TEXTURED_COLOR = GamaColor.get(Color.white);
 
 	/** The Constant SELECTED_COLOR. */
-	public static final GamaColor SELECTED_COLOR = new GamaColor(Color.red);
+	public static final GamaColor SELECTED_COLOR = GamaColor.get(Color.red);
 
 	/** The flags. */
 	EnumSet<Flag> flags = EnumSet.of(Flag.Lighted);

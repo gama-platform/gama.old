@@ -1484,8 +1484,8 @@ public final class GamlAnnotations {
 
 		/**
 		 * The name of this type of files. This name will be used to generate two operators: name+"_file" and
-		 * "is_"+name. The first operator may have variants taking one or several arguments, depending on the @builder
-		 * annotations present on the class.
+		 * "is_"+name. The first operator may have variants taking one or several arguments, depending on the
+		 * constructors defined in the class.
 		 *
 		 * @return a (human-understandable) string describing this type of files, suitable for use in composed operator
 		 *         names (e.g. "shape", "image"...)

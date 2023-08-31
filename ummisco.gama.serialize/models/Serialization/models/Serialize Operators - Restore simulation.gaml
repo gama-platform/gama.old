@@ -5,7 +5,7 @@
 * Tags: serialization, load_file
 */
 
-model Model4
+model Serialization
 
 global {
 	int toot <- 0;
@@ -13,7 +13,7 @@ global {
 	
 	init {
 		create people number: 1;
-		create toto number: 2;
+		create other number: 2;
 		write "Run the model.";
 		write "Every 4 steps, the simulation is restored to its initial step.";
 		write "You will thus observe the red agent going to the right side of the display and, every 4 steps, moving back to its initial location.";
@@ -40,32 +40,32 @@ species people {
 	}
 }
 
-species toto {
+species other {
 	aspect default {
 		draw circle(1) color: #blue;
 	}
 }
 
-experiment RepeatedSimulations type: gui {
+experiment "Repeated Simulations" type: gui {
 
 	string saved_step <- "";
 
 	init {
-		saved_step <- serialize_agent(self.simulation);
+		saved_step <- serialize(self.simulation, 'json', true);
 	}
 	
 	reflex restore when: (cycle = 4) {
-		write "================ restore " + self + " - " + cycle;
-		write "Restore from: ";		
-		write saved_step;
-		int serial <- restore_simulation(saved_step);
-		write "================ END restore " + self + " - " + cycle;			
+		write "================ begin restore " + self + " - " + cycle;
+		//write saved_step;
+		restore simulation from: saved_step;
+		write "================ end restore " + self + " - " + cycle;			
 	}
 
 	output {
+		layout #split;
 		display d {
 			species people aspect: default;
-			species toto aspect: default;
+			species other aspect: default;
 		}	
 		
 		display c  type: 2d {

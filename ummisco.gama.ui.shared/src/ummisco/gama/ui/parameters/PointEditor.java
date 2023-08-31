@@ -37,7 +37,6 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -88,8 +87,8 @@ public class PointEditor extends AbstractEditor<GamaPoint> implements VerifyList
 	 * @param l
 	 *            the l
 	 */
-	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaPoint> l) {
-		super(scope, agent, param, l);
+	PointEditor(final IAgent agent, final IParameter param, final EditorListener<GamaPoint> l) {
+		super(agent, param, l);
 	}
 
 	// /**

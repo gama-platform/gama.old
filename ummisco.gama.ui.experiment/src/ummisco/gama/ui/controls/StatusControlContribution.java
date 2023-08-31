@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
-import java.awt.Color;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -32,23 +30,30 @@ import msi.gama.common.interfaces.IUpdaterTarget;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.kernel.simulation.SimulationPopulation;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
+import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.controls.IPopupProvider.PopupText;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class StatusControlContribution.
  */
 public class StatusControlContribution extends WorkbenchWindowControlContribution
-		implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
+		implements IUpdaterTarget<IStatusMessage> {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The is updating. */
 	volatile boolean isUpdating;
@@ -57,7 +62,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	FlatButton label;
 
 	/** The popup. */
-	private Popup2 popup;
+	private SimulationPopupMenu popup;
 
 	/** The state. */
 	int state;
@@ -83,14 +88,14 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	/** The color. */
 	private GamaUIColor color;
 
-	/** The agent index. */
-	int agentIndex; // 0 for experiments, > 0 for simulation(s)
-
 	/** The text. */
 	StringBuilder text = new StringBuilder(2000);
 
 	/** The instance. */
 	static StatusControlContribution INSTANCE;
+
+	/** The listening agent. Either gama, the experiment or the current simulation */
+	// ITopLevelAgent listeningAgent;
 
 	/**
 	 * Gets the single instance of StatusControlContribution.
@@ -135,24 +140,28 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = WIDTH;
 		data.heightHint = 24;
-		label = FlatButton.label(compo, IGamaColors.NEUTRAL, "No simulation running", WIDTH);
+		label = FlatButton.label(compo, IGamaColors.NEUTRAL, "No experiment running", WIDTH)
+				.setImage(GamaIcon.named(IGamaIcons.STATUS_CLOCK).image());
 		label.setLayoutData(data);
-
+		popup = new SimulationPopupMenu(this);
 		label.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseDown(final MouseEvent e) {
-				final ITopLevelAgent agent = getStatusAgent();
-				if (agent == null) return;
+				if (popup.isVisible()) {
+					popup.hide();
+				} else {
+					final ITopLevelAgent agent = GAMA.getCurrentTopLevelAgent();
+					if (state != IGui.ERROR && state != IGui.WAIT && agent != null && !agent.dead()
+							&& !agent.getScope().isClosed() && agent.getExperiment() != null
+							&& !(agent instanceof PlatformAgent)) {
+						WorkbenchHelper.asyncRun(popup::display);
+					}
+				}
 
-				final IExperimentAgent exp = agent.getExperiment();
-				final int all = exp.getSimulationPopulation().size() + 1;
-				agentIndex++;
-				if (agentIndex > all) { agentIndex = 0; }
-				exp.informStatus();
 			}
+
 		});
-		popup = new Popup2(this, label);
 		return compo;
 	}
 
@@ -160,54 +169,18 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	public boolean isDisposed() { return label.isDisposed(); }
 
 	/**
-	 * Gets the status agent.
+	 * Sets the selection.
 	 *
-	 * @return the status agent
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param agent
+	 *            the new selection
+	 * @date 26 août 2023
 	 */
-	ITopLevelAgent getStatusAgent() {
-		if (agentIndex < 0) { agentIndex = 0; }
-		final IExperimentPlan exp = GAMA.getExperiment();
-		if (exp == null) return null;
-		if (agentIndex == 0) return exp.getAgent();
-		if (exp.getAgent() == null) return null;
-		final SimulationPopulation pop = exp.getAgent().getSimulationPopulation();
-		ITopLevelAgent agent = pop.getSimulationAtIndex(agentIndex - 1);
-		if (agent == null) { agentIndex = 0; }
-		return agent;
 
-	}
-
-	/**
-	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
-	 */
-	@Override
-	public PopupText getPopupText() {
-		final PopupText result = new PopupText();
-
-		if (state == IGui.ERROR || state == IGui.WAIT) {
-			final GamaUIColor color = state == IGui.ERROR ? IGamaColors.ERROR : IGamaColors.WARNING;
-			result.add(color, label.getText());
-			return result;
-		}
-
-		final ITopLevelAgent agent = getStatusAgent();
-
-		if (agent == null || agent.dead() || agent.getScope().isClosed()) {
-			result.add(IGamaColors.NEUTRAL, "No experiment available");
-			return result;
-		}
-		appendPopupTextFor(agent.getExperiment(), result);
-
-		final IPopulation<? extends IAgent> pop = agent.getExperiment().getSimulationPopulation();
-		if (pop == null) {
-			result.add(IGamaColors.NEUTRAL, "No simulations available");
-			return result;
-		}
-		final IAgent[] simulations = pop.toArray();
-
-		for (final IAgent a : simulations) { appendPopupTextFor((SimulationAgent) a, result); }
-
-		return result;
+	public void setSelection(final ITopLevelAgent agent) {
+		if (agent instanceof IExperimentAgent exp) {
+			GAMA.changeCurrentTopLevelAgent(exp, false);
+		} else if (agent instanceof SimulationAgent sim) { GAMA.getExperiment().getAgent().setCurrentSimulation(sim); }
 	}
 
 	/**
@@ -219,19 +192,46 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 *            the result
 	 */
 	void appendPopupTextFor(final ITopLevelAgent exp, final PopupText result) {
+		if (exp == null) return;
 		text.setLength(0);
-		text.append(Strings.LN);
+		// text.append(Strings.LN);
 		final SimulationClock clock = exp.getClock();
 		clock.getInfo(text).append(Strings.LN);
 		text.append("Durations: cycle ").append(clock.getDuration()).append("ms; average ")
 				.append((int) clock.getAverageDuration()).append("ms; total ").append(clock.getTotalDuration())
 				.append("ms");
-		text.append(Strings.LN);
+		// text.append(Strings.LN);
 		result.add(GamaColors.get(exp.getColor()), text.toString());
 	}
 
 	/**
-	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupBackground()
+	 * Popup text for.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param exp
+	 *            the exp
+	 * @return the string
+	 * @date 26 août 2023
+	 */
+	String popupTextFor(final ITopLevelAgent exp) {
+		if (exp == null) return "";
+		text.setLength(0);
+		// text.append(Strings.LN);
+		final SimulationClock clock = exp.getClock();
+		clock.getInfo(text).append(Strings.LN);
+		text.append("Durations: cycle ").append(clock.getDuration()).append("ms; average ")
+				.append((int) clock.getAverageDuration()).append("ms; total ").append(clock.getTotalDuration())
+				.append("ms");
+		// text.append(Strings.LN);
+		return text.toString();
+	}
+
+	/**
+	 * Gets the popup background.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the popup background
+	 * @date 26 août 2023
 	 */
 	// @Override
 	public GamaUIColor getPopupBackground() {
@@ -240,14 +240,42 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				: state == IGui.NEUTRAL ? IGamaColors.NEUTRAL : IGamaColors.OK;
 	}
 
-	@Override
+	/**
+	 * Gets the controlling shell.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the controlling shell
+	 * @date 26 août 2023
+	 */
+	// @Override
 	public Shell getControllingShell() { return label.getShell(); }
 
-	@Override
-	public Point getAbsoluteOrigin() { return label.toDisplay(new Point(label.getLocation().x, label.getSize().y)); }
+	/**
+	 * Gets the absolute origin.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the absolute origin
+	 * @date 26 août 2023
+	 */
+	public Point getLocation() { return label.toDisplay(label.getLocation()); }
 
-	@Override
-	public int getPopupWidth() { return label.getSize().x; }
+	/**
+	 * Gets the popup width.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the popup width
+	 * @date 26 août 2023
+	 */
+	public int getWidth() { return label.getSize().x; }
+
+	/**
+	 * Gets the height.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the height
+	 * @date 26 août 2023
+	 */
+	public int getHeight() { return label.getSize().y; }
 
 	/**
 	 * Method updateWith()
@@ -257,6 +285,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public void updateWith(final IStatusMessage m) {
 		if (isUpdating) return;
+		if (GAMA.getExperiment() == null) {
+			label.removeMenuSign();
+			popup.wipe();
+			if (popup.isVisible()) { popup.hide(); }
+		} else {
+			label.addMenuSign();
+		}
 		isUpdating = true;
 		if (m instanceof SubTaskMessage) {
 			if (inUserStatus) return;
@@ -283,7 +318,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			} else {
 				inSubTask = false; // in case
 				inUserStatus = true;
-				final Color c = m.getColor();
+				final java.awt.Color c = m.getColor();
 				if (c == null) {
 					color = null;
 					state = IGui.NEUTRAL;
@@ -299,7 +334,6 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			state = m.getCode();
 		}
 
-		// updater.run();
 		if (m.getIcon() != null) {
 			label.setImage(GamaIcon.named(m.getIcon()).image());
 		} else {
@@ -307,18 +341,16 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 		label.setColor(getPopupBackground());
 		if (!inUserStatus && !inSubTask && mainTaskName == null) {
-			if (getStatusAgent() == null) {
-				label.setColor(IGamaColors.NEUTRAL);
-			} else {
-				label.setColor(GamaColors.get(getStatusAgent().getColor()));
-			}
+			label.setColor(GamaColors.get(GAMA.getCurrentTopLevelAgent().getColor()));
 		}
 
 		if (inSubTask) {
 			label.setText(
 					subTaskName + (subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
+		} else if (mainTaskName == null) {
+			label.setText(getClockMessage());
 		} else {
-			label.setText(mainTaskName == null ? getClockMessage(getStatusAgent()) : mainTaskName);
+			label.setText(mainTaskName);
 		}
 		if (popup.isVisible()) { popup.display(); }
 		isUpdating = false;
@@ -329,13 +361,23 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	/**
 	 * Gets the clock message.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param agent
 	 *            the agent
 	 * @return the clock message
+	 * @date 26 août 2023
 	 */
-	private String getClockMessage(final ITopLevelAgent agent) {
+	private String getClockMessage() {
+		ITopLevelAgent agent = GAMA.getCurrentTopLevelAgent();
 		if (agent == null) return "";
-		// final StringBuilder text = new StringBuilder(200);
+		if (agent instanceof PlatformAgent) {
+			WorkbenchHelper.run(() -> {
+				popup.wipe();
+				if (popup.isVisible()) { popup.hide(); }
+				label.removeMenuSign();
+			});
+			return "No experiment running";
+		}
 		text.setLength(0);
 		agent.getClock().getInfo(text);
 		final IExperimentAgent exp = agent.getExperiment();

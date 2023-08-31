@@ -110,12 +110,14 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	}
 
 	/** The coverage. */
-	GridCoverage2D coverage;
+	transient GridCoverage2D coverage;
 
+	/** The asc data. */
 	GamaFloatMatrix ascData;
-	
+
+	/** The asc info. */
 	Double[] ascInfo;
-	
+
 	/** The num cols. */
 	public int nbBands, numRows, numCols;
 
@@ -260,46 +262,61 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 				String name = getName(scope);
 				if (isTiff(scope)) throw error("The format of " + name + " seems incorrect: " + e.getMessage(), scope);
 				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
-				//reportError(scope, warning("Format of " + name + " seems incorrect. Trying to read it anyway.", scope),
-			//			false);
-				
+				// reportError(scope, warning("Format of " + name + " seems incorrect. Trying to read it anyway.",
+				// scope),
+				// false);
+
 				customAscReader(scope);
-				/*try {
-					fis = fixFileHeader(scope);
-				} catch (UnsupportedEncodingException e2) {
-					e2.printStackTrace();
-				}
-				try {
-					privateCreateCoverage(scope, fis);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}*/
+				/*
+				 * try { fis = fixFileHeader(scope); } catch (UnsupportedEncodingException e2) { e2.printStackTrace(); }
+				 * try { privateCreateCoverage(scope, fis); } catch (IOException e1) { e1.printStackTrace(); }
+				 */
 			}
 		}
 	}
-	
-	private Double doubleVal(String line) {
+
+	/**
+	 * Double val.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param line
+	 *            the line
+	 * @return the double
+	 * @date 31 août 2023
+	 */
+	private Double doubleVal(final String line) {
 		String[] l = line.split(" ");
-		if (l.length == 1) 
-			l = line.split("t");
-		if (l.length > 1) {
-			return Double.valueOf(l[l.length -1 ]);
-		}
+		if (l.length == 1) { l = line.split("t"); }
+		if (l.length > 1) return Double.valueOf(l[l.length - 1]);
 		return null;
 	}
-	
-	private Integer intVal(String line) {
-		
+
+	/**
+	 * Int val.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param line
+	 *            the line
+	 * @return the integer
+	 * @date 31 août 2023
+	 */
+	private Integer intVal(final String line) {
+
 		String[] l = line.split(" ");
-		if (l.length == 1) 
-			l = line.split("t");
-		if (l.length > 1) {
-			return Integer.valueOf(l[l.length -1 ]);
-		}
+		if (l.length == 1) { l = line.split("t"); }
+		if (l.length > 1) return Integer.valueOf(l[l.length - 1]);
 		return null;
 	}
-	
-	private void customAscReader(IScope scope){
+
+	/**
+	 * Custom asc reader.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @date 31 août 2023
+	 */
+	private void customAscReader(final IScope scope) {
 		try (Scanner scanner = new Scanner(getFile(scope))) {
 			boolean headingComplete = false;
 			Integer nbCols = null;
@@ -316,64 +333,57 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				line = line.toLowerCase();
-				if (! headingComplete) {
+				if (!headingComplete) {
 					if (dX == null && line.contains("dx")) {
 						dX = doubleVal(line);
 						ascInfo[0] = dX;
-					} else if(dY == null && line.contains("dy")) {
+					} else if (dY == null && line.contains("dy")) {
 						dY = doubleVal(line);
 						ascInfo[1] = dY;
-					} else if(nbCols == null && line.contains("ncols")) {
+					} else if (nbCols == null && line.contains("ncols")) {
 						nbCols = intVal(line);
-					} else if(nbRows == null && line.contains("nrows")) {
+					} else if (nbRows == null && line.contains("nrows")) {
 						nbRows = intVal(line);
-					} else if(noDataD == null && (line.contains("nodata") || line.contains("nodata_value")) ) {
+					} else if (noDataD == null && (line.contains("nodata") || line.contains("nodata_value"))) {
 						noDataD = doubleVal(line);
-					} else if(xCorner == null&& xCenter == null && line.contains("xllcorner")) {
+					} else if (xCorner == null && xCenter == null && line.contains("xllcorner")) {
 						xCorner = doubleVal(line);
 						ascInfo[2] = xCorner;
-					} else if(yCorner == null && yCenter == null &&line.contains("yllcorner")) {
-					 	yCorner = doubleVal(line);
-					 
-					} else if(xCenter == null&& xCenter == null  && line.contains("xllcorner")) {
+					} else if (yCorner == null && yCenter == null && line.contains("yllcorner")) {
+						yCorner = doubleVal(line);
+
+					} else if (xCenter == null && xCenter == null && line.contains("xllcorner")) {
 						xCenter = doubleVal(line);
-						//ascInfo[2] = xCorner;
-					} else if(yCorner == null && yCenter == null && line.contains("yllcorner")) {
-					 	yCenter = doubleVal(line);
-					}
-					else if (line.replace(" ", "").length() > 0) {
-						if (nbCols == null || nbCols == 0 || nbRows == null || nbRows == 0) {
-							throw error("The format of " + getName(scope) + " is not correct. Error: NCOLS and NROWS have to be defined", scope);
-						}
+						// ascInfo[2] = xCorner;
+					} else if (yCorner == null && yCenter == null && line.contains("yllcorner")) {
+						yCenter = doubleVal(line);
+					} else if (line.replace(" ", "").length() > 0) {
+						if (nbCols == null || nbCols == 0 || nbRows == null || nbRows == 0) throw error("The format of "
+								+ getName(scope) + " is not correct. Error: NCOLS and NROWS have to be defined", scope);
 						if (xCenter != null) {
-							xCorner = xCenter - (nbCols * dX/2.0);
+							xCorner = xCenter - nbCols * dX / 2.0;
 							ascInfo[2] = xCorner;
 						}
-						if (yCenter != null) {
-							yCorner = yCenter - (nbRows * dY/2.0);
-						}
-						
+						if (yCenter != null) { yCorner = yCenter - nbRows * dY / 2.0; }
+
 						ascInfo[3] = yCorner + nbRows * dY;
-						
+
 						ascData = new GamaFloatMatrix(nbCols, nbRows);
-						if (noData != null)
-							this.noData = noDataD;
-						
-						final Envelope3D env =
-								of(xCorner, yCorner, xCorner + nbCols * dX, ascInfo[3] , 0, 0);
+						if (noData != null) { this.noData = noDataD; }
+
+						final Envelope3D env = of(xCorner, yCorner, xCorner + nbCols * dX, ascInfo[3], 0, 0);
 						computeProjection(scope, env);
-						numRows =nbRows ;
+						numRows = nbRows;
 						numCols = nbCols;
-						
+
 						headingComplete = true;
 					}
 				}
 				if (headingComplete) {
-					String [] l = line.split(" ");
-					for (int i = 0; i < l.length; i++)
-					{	
+					String[] l = line.split(" ");
+					for (int i = 0; i < l.length; i++) {
 						ascData.set(scope, i, j, Double.valueOf(l[i]));
-						
+
 					}
 					j++;
 				}
@@ -487,22 +497,36 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 			coverage = store.read(null);
 		} finally {
 			if (store != null) { store.dispose(); }
-			scope.getGui().getStatus().endSubStatus(scope, "Opening file " + getName(scope));
+			scope.getGui().getStatus().endSubStatus("Opening file " + getName(scope));
 		}
 	}
 
-	
-	
-
-	private double[] getValue(final IScope scope, Double locX, Double locY , int i, int j) {
+	/**
+	 * Gets the value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param locX
+	 *            the loc X
+	 * @param locY
+	 *            the loc Y
+	 * @param i
+	 *            the i
+	 * @param j
+	 *            the j
+	 * @return the value
+	 * @date 31 août 2023
+	 */
+	private double[] getValue(final IScope scope, final Double locX, final Double locY, final int i, final int j) {
 		if (coverage != null)
-			return coverage.evaluate((DirectPosition) new DirectPosition2D(locX,
-				locY), (double[]) null);
+			return coverage.evaluate((DirectPosition) new DirectPosition2D(locX, locY), (double[]) null);
 		double[] v = new double[1];
 		v[0] = ascData.get(scope, i, j);
 		return v;
 	}
-	/** 
+
+	/**
 	 * Read.
 	 *
 	 * @param scope
@@ -515,7 +539,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 	void read(final IScope scope, final boolean readAll, final boolean createGeometries) {
 
 		try {
-			scope.getGui().getStatus().beginSubStatus(scope, "Reading file " + getName(scope));
+			scope.getGui().getStatus().beginSubStatus("Reading file " + getName(scope));
 
 			final Envelope envP = gis == null ? scope.getSimulation().getEnvelope() : gis.getProjectedEnvelope();
 			if (gis != null && !(gis.getInitialCRS(scope) instanceof ProjectedCRS)) {
@@ -540,16 +564,16 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
 			final double cmx = cellWidth / 2;
 			final double cmy = cellHeight / 2;
-			double cellHeightP ;
-			double cellWidthP ;
-			double originXP ;
-			double maxYP ;
+			double cellHeightP;
+			double cellWidthP;
+			double originXP;
+			double maxYP;
 			if (genv != null) {
 				cellHeightP = genv.getSpan(1) / numRows;
 				cellWidthP = genv.getSpan(0) / numCols;
 				originXP = genv.getMinimum(0);
 				maxYP = genv.getMaximum(1);
-				
+
 			} else {
 				cellHeightP = ascInfo[1];
 				cellWidthP = ascInfo[0];
@@ -558,14 +582,14 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 			}
 			final double cmxP = cellWidthP / 2;
 			final double cmyP = cellHeightP / 2;
-			
+
 			if (records == null) {
 				records = new Records();
 				records.x = new double[numRows * numCols]; // x
 				records.y = new double[numRows * numCols]; // y
 				records.bands.add(new double[numRows * numCols]); // data
 				for (int i = 0, n = numRows * numCols; i < n; i++) {
-					scope.getGui().getStatus().setSubStatusCompletion(scope, i / (double) n);
+					scope.getGui().getStatus().setSubStatusCompletion(i / (double) n);
 
 					final int yy = i / numCols;
 					final int xx = i - yy * numCols;
@@ -573,9 +597,8 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 					records.x[i] = originX + xx * cellWidth + cmx;
 					records.y[i] = maxY - (yy * cellHeight + cmy);
 
-					double[] vd =
-							getValue(scope, originXP + xx * cellWidthP + cmxP,
-									maxYP - (yy * cellHeightP + cmyP), xx, yy);
+					double[] vd = getValue(scope, originXP + xx * cellWidthP + cmxP, maxYP - (yy * cellHeightP + cmyP),
+							xx, yy);
 					nbBands = vd.length;
 					if (i == 0 && vd.length > 1) {
 						for (int j = 0; j < vd.length - 1; j++) { records.bands.add(new double[numRows * numCols]); }
@@ -599,7 +622,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 
 				}
 				if (createGeometries) {
-					//System.out.println("Building geometries !");
+					// System.out.println("Building geometries !");
 					for (int i = 0, n = numRows * numCols; i < n; i++) {
 
 						setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
@@ -621,7 +644,7 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 		} catch (final Exception e) {
 			throw error("The format of " + getName(scope) + " is not correct. Error: " + e.getMessage(), scope);
 		} finally {
-			scope.getGui().getStatus().endSubStatus(scope, "Reading file " + getName(scope));
+			scope.getGui().getStatus().endSubStatus("Reading file " + getName(scope));
 		}
 
 	}

@@ -118,6 +118,15 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	@Override
 	public void setValue(final IScope scope, final Object value) {}
 
+	/**
+	 * Sets the value no check no notification.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 août 2023
+	 */
+	@Override
+	public void setValueNoCheckNoNotification(final Object o) {}
+
 	@Override
 	public Object value(final IScope iScope) throws GamaRuntimeException {
 		return value();

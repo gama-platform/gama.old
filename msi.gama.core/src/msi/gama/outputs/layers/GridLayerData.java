@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.IScope;
@@ -37,10 +37,10 @@ import msi.gaml.types.Types;
 public class GridLayerData extends LayerData {
 
 	/** The default line color. */
-	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
+	static GamaColor defaultLineColor = GamaColor.get(Color.black);
 
 	/** The grid. */
-	IGrid grid;
+	GridPopulation grid;
 
 	/** The name. */
 	final String name;
@@ -107,9 +107,9 @@ public class GridLayerData extends LayerData {
 						return GamaFloatMatrix.from(scope, Cast.asMatrix(scope, exp.value(scope))).getMatrix();
 					case IType.FLOAT:
 					case IType.INT:
-						return grid.getGridValueOf(scope, exp);
+						return grid.getTopology().getPlaces().getGridValueOf(scope, exp);
 					case IType.BOOL:
-						if ((Boolean) exp.value(scope)) return grid.getGridValue();
+						if ((Boolean) exp.value(scope)) return grid.getTopology().getPlaces().getGridValue();
 						return null;
 				}
 			}
@@ -133,17 +133,8 @@ public class GridLayerData extends LayerData {
 			if (gridPop == null)
 				throw GamaRuntimeException.error("No grid species named " + name + " can be found", scope);
 			if (!gridPop.isGrid()) throw GamaRuntimeException.error("Species named " + name + " is not a grid", scope);
-			grid = (IGrid) gridPop.getTopology().getPlaces();
-			// final Envelope env = grid.getEnvironmentFrame().getEnvelope();
-			// final Envelope env2 = scope.getSimulation().getEnvelope();
-			// final double width = env2.getWidth();
-			// final double height = env2.getHeight();
-			// final double width2 = env2.getWidth();
-			// final double height2 = env2.getHeight();
-			// final double cols = grid.getCols(scope);
-			// final double rows = grid.getRows(scope);
-			// cellSize = new GamaPoint(width / (cols - 1), height / (rows - 1));
-			dim.setLocation(grid.getDimensions());
+			grid = (GridPopulation) gridPop;
+			dim.setLocation(grid.getTopology().getPlaces().getDimensions());
 		}
 		boolean result = super.compute(scope, g);
 		if (shouldComputeImage) { computeImage(scope, g); }
@@ -214,21 +205,14 @@ public class GridLayerData extends LayerData {
 	 *
 	 * @return the grid
 	 */
-	public IGrid getGrid() { return grid; }
+	public IGrid getGrid() { return grid.getTopology().getPlaces(); }
 
 	/**
 	 * Gets the agents to display.
 	 *
 	 * @return the agents to display
 	 */
-	public Collection<IAgent> getAgentsToDisplay() { return grid.getAgents(); }
-
-	/**
-	 * Gets the cell size.
-	 *
-	 * @return the cell size
-	 */
-	// public GamaPoint getCellSize() { return cellSize; }
+	public Collection<IAgent> getAgentsToDisplay() { return (Collection<IAgent>) grid.getAgents(null); }
 
 	/**
 	 * Gets the image.
@@ -265,9 +249,7 @@ public class GridLayerData extends LayerData {
 	 */
 	protected void computeImage(final IScope scope, final IGraphics g) {
 		if (image == null) {
-			final GamaSpatialMatrix m = (GamaSpatialMatrix) grid;
-			final GamaPoint p = m.getDimensions();
-			image = AbstractDisplayGraphics.createCompatibleImage((int) p.getX(), (int) p.getY());
+			image = AbstractDisplayGraphics.createCompatibleImage((int) dim.getX(), (int) dim.getY());
 		}
 	}
 

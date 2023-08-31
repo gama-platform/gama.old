@@ -22,7 +22,7 @@ import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
+import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;

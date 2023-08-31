@@ -53,7 +53,7 @@ import ummisco.gama.opengl.scene.ObjectDrawer;
 public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	/** The Constant DEFAULT_BORDER. */
-	private static final GamaColor DEFAULT_BORDER = new GamaColor(Color.black);
+	private static final GamaColor DEFAULT_BORDER = GamaColor.get(Color.black);
 
 	/** The normal. */
 	final GamaPoint _normal = new GamaPoint();

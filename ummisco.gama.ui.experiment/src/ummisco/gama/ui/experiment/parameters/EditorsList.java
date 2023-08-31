@@ -11,15 +11,12 @@
 package ummisco.gama.ui.experiment.parameters;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.kernel.experiment.IExperimentDisplayable;
-import msi.gama.metamodel.agent.IAgent;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 
 /**
@@ -48,7 +45,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 	 * @param agent
 	 *            the agent
 	 */
-	public abstract void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent);
+	// public abstract void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent);
 
 	/**
 	 * Gets the categories.

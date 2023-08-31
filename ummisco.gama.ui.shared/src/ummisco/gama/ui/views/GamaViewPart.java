@@ -344,7 +344,6 @@ public abstract class GamaViewPart extends ViewPart
 	public void dispose() {
 		toolbarUpdater = null;
 		WorkbenchHelper.run(super::dispose);
-
 	}
 
 	/**

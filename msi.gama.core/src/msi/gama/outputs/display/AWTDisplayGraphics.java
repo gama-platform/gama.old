@@ -362,7 +362,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 		GamaColor border = isLine ? attributes.getColor() : attributes.getBorder();
 		if (border == null && attributes.isEmpty()) { border = attributes.getColor(); }
 		if (highlight) {
-			attributes.setFill(GamaColor.getInt(data.getHighlightColor().getRGB()));
+			attributes.setFill(GamaColor.get(data.getHighlightColor().getRGB()));
 			if (border != null) { border = attributes.getColor(); }
 		}
 		final Shape s = sw.toShape(geometry);

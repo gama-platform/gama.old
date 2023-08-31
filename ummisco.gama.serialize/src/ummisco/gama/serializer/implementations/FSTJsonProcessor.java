@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * FSTJsonImplementation.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * FSTJsonProcessor.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -45,7 +45,7 @@ import msi.gama.util.graph.IGraph;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 2 août 2023
  */
-public class FSTJsonImplementation extends AbstractFSTImplementation {
+public class FSTJsonProcessor extends FSTAbstractProcessor {
 
 	/** The saved graphs. JSON has difficulties to maintain shared references */
 	BiMap<IGraph, String> savedGraphs = HashBiMap.create();
@@ -58,8 +58,8 @@ public class FSTJsonImplementation extends AbstractFSTImplementation {
 	 *            the scope.
 	 * @date 5 août 2023
 	 */
-	public FSTJsonImplementation(final boolean zip, final boolean save) {
-		super(FSTConfiguration.createJsonConfiguration(false, false), zip, save);
+	public FSTJsonProcessor() {
+		super(FSTConfiguration.createJsonConfiguration(false, false));
 	}
 
 	/**
@@ -69,10 +69,10 @@ public class FSTJsonImplementation extends AbstractFSTImplementation {
 	 * @date 5 août 2023
 	 */
 	@Override
-	public void registerSerialisers() {
-		super.registerSerialisers();
+	public void registerSerialisers(final FSTConfiguration conf) {
+		super.registerSerialisers(conf);
 
-		register(PrecisionModel.Type.class, new GamaFSTSerialiser<PrecisionModel.Type>() {
+		register(conf, PrecisionModel.Type.class, new GamaFSTSerialiser<PrecisionModel.Type>() {
 			// Necessary because of the JSON mode that requires it
 			@Override
 			public void serialise(final FSTObjectOutput out, final PrecisionModel.Type o) throws Exception {
@@ -95,7 +95,7 @@ public class FSTJsonImplementation extends AbstractFSTImplementation {
 			}
 		});
 
-		register(IGraph.class, new GamaFSTSerialiser<IGraph>() {
+		register(conf, IGraph.class, new GamaFSTSerialiser<IGraph>() {
 			// This serializer is a way of "cheating" by considering that graphs are immutable throughout the
 			// simulations -- To use only in JSON.
 			int i;
@@ -114,7 +114,7 @@ public class FSTJsonImplementation extends AbstractFSTImplementation {
 
 		});
 
-		register(File.class, new GamaFSTSerialiser<File>() {
+		register(conf, File.class, new GamaFSTSerialiser<File>() {
 			// Required by JSON, which cannot use the built-in writeObject / readObject methods
 			@Override
 			public void serialise(final FSTObjectOutput out, final File o) throws Exception {
@@ -141,9 +141,9 @@ public class FSTJsonImplementation extends AbstractFSTImplementation {
 	 * @date 5 août 2023
 	 */
 	@Override
-	public <T> void register(final Class<T> clazz, final GamaFSTSerialiser<T> ser) {
-		super.register(clazz, ser);
-		fst.registerCrossPlatformClassMapping(ser.shortName, clazz.getName());
+	public <T> void register(final FSTConfiguration conf, final Class<T> clazz, final GamaFSTSerialiser<T> ser) {
+		super.register(conf, clazz, ser);
+		conf.registerCrossPlatformClassMapping(ser.shortName, clazz.getName());
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class FSTJsonImplementation extends AbstractFSTImplementation {
 	 * @date 6 août 2023
 	 */
 	@Override
-	protected byte[] write(final SerialisedAgent sa) {
+	public byte[] write(final IScope scope, final SerialisedAgent sa) {
 		// Retrieving and putting apart the graphs
 		Set<Map.Entry<String, Object>> entries = sa.attributes().entrySet();
 		for (Map.Entry<String, Object> entry : entries) {
@@ -188,10 +188,18 @@ public class FSTJsonImplementation extends AbstractFSTImplementation {
 				entries.remove(entry.getKey());
 			}
 		}
-		return super.write(sa);
+		return super.write(scope, sa);
 	}
 
 	@Override
-	protected String getFormat() { return "json"; }
+	public String getFormat() { return JSON_FORMAT; }
+
+	@Override
+	public byte getFormatIdentifier() { return 1; }
+
+	@Override
+	public void prettyPrint() {
+		fst = initConfiguration(FSTConfiguration.createJsonConfiguration(true, false));
+	}
 
 }

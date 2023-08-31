@@ -18,12 +18,10 @@ import java.util.Map;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ICategory;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.experiment.TextStatement;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.MonitorOutput;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
@@ -35,12 +33,12 @@ import ummisco.gama.ui.parameters.MonitorDisplayer;
 
 /**
  * The Class ExperimentsParametersList.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 13 août 2023
  */
 @SuppressWarnings ({ "rawtypes" })
 public class ExperimentsParametersList extends EditorsList<String> {
-
-	/** The scope. */
-	final IScope scope;
 
 	/** The activations. */
 	final Map<String, Boolean> activations = new HashMap<>();
@@ -59,10 +57,9 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	 * @param paramsAndCommands
 	 *            the params and commands
 	 */
-	public ExperimentsParametersList(final IScope scope,
+	public ExperimentsParametersList(final ITopLevelAgent agent,
 			final Collection<? extends IExperimentDisplayable> paramsAndCommands) {
-		this.scope = scope;
-		add(paramsAndCommands, null);
+		add(agent, paramsAndCommands);
 	}
 
 	@Override
@@ -101,20 +98,56 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		return null;
 	}
 
-	@Override
-	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
+	/**
+	 * Adds the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param params
+	 *            the params
+	 * @param agent
+	 *            the agent
+	 * @date 11 août 2023
+	 */
+
+	/**
+	 * Adds the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param exp
+	 *            the exp
+	 * @param sim
+	 *            the sim
+	 * @param paramsAndCommands
+	 *            the params and commands
+	 * @date 13 août 2023
+	 */
+
+	/**
+	 * Adds the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param exp
+	 *            the exp
+	 * @param sim
+	 *            the sim
+	 * @param params
+	 *            the params
+	 * @date 13 août 2023
+	 */
+	public void add(final ITopLevelAgent exp, final Collection<? extends IExperimentDisplayable> params) {
+		IScope scope = exp.getScope();
 		for (final IExperimentDisplayable var : params) {
 			if (var instanceof ICategory cat) {
 				addCategory(cat.getName(), cat.getColor(scope), cat.isExpanded(scope));
 			} else if (var instanceof IParameter param) {
-				addEditor(var, EditorFactory.getInstance().create(scope, (IAgent) null, param, null));
+				addEditor(var, EditorFactory.getInstance().create(exp, param, null));
 				final String[] enablements = param.getEnablement();
 				final String[] disablements = param.getDisablement();
 				final String[] refreshments = param.getRefreshment();
 				if (enablements.length > 0) {
 					final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
 					for (final String other : enablements) { activations.put(other, value); }
-					param.addChangedListener((scope, val) -> {
+					param.addChangedListener((s, val) -> {
 						for (final String enabled : enablements) {
 							final IParameterEditor ed = getEditorForVar(enabled);
 							if (ed != null) { ed.setActive(Cast.asBool(scope, val)); }
@@ -124,7 +157,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 				if (disablements.length > 0) {
 					final boolean value = Cast.asBool(scope, param.getInitialValue(scope));
 					for (final String other : disablements) { activations.put(other, !value); }
-					param.addChangedListener((scope, val) -> {
+					param.addChangedListener((s, val) -> {
 						for (final String disabled : disablements) {
 							final IParameterEditor ed = getEditorForVar(disabled);
 							if (ed != null) { ed.setActive(!Cast.asBool(scope, val)); }
@@ -132,7 +165,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 					});
 				}
 				if (refreshments.length > 0) {
-					param.addChangedListener((scope, val) -> {
+					param.addChangedListener((s, val) -> {
 						for (final String other : refreshments) {
 							final IParameterEditor ed = getEditorForVar(other);
 							if (ed != null) { ed.updateWithValueOfParameter(false, true); }
@@ -142,14 +175,13 @@ public class ExperimentsParametersList extends EditorsList<String> {
 			} else if (var instanceof TextStatement text) {
 				addEditor(var, EditorFactory.getInstance().create(scope, text));
 			} else if (var instanceof MonitorOutput monitor) {
-				addMonitor(monitor);
+				addMonitor(scope, monitor);
 			} else if (var instanceof UserCommandStatement command) {
-				addEditor(var, EditorFactory.getInstance().create(scope, command,
-						(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {
+				addEditor(var,
+						EditorFactory.getInstance().create(scope, command, (Command) e -> exp.executeAction(s -> {
 							final Object result = scope.execute(command).getValue();
-							final IExperimentPlan exp = GAMA.getExperiment();
 							if (exp != null) { // in case the experiment is killed in the meantime
-								exp.refreshAllOutputs();
+								exp.getExperiment().getSpecies().refreshAllOutputs();
 							}
 							return result;
 						})));
@@ -165,7 +197,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	 *            the var
 	 * @return the monitor displayer
 	 */
-	public MonitorDisplayer addMonitor(final MonitorOutput var) {
+	public MonitorDisplayer addMonitor(final IScope scope, final MonitorOutput var) {
 		MonitorDisplayer result = EditorFactory.getInstance().create(scope, var);
 		monitors.put(var, result);
 		return result;
@@ -241,7 +273,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	public boolean addItem(final String cat) {
 		addCategory(cat);
 		if (!sections.containsKey(cat)) {
-			sections.put(cat, new HashMap<String, IParameterEditor<?>>());
+			sections.put(cat, new HashMap<>());
 			return true;
 		}
 		return false;
@@ -255,6 +287,41 @@ public class ExperimentsParametersList extends EditorsList<String> {
 			}
 		}
 		updateMonitors(synchronously);
+	}
+
+	/**
+	 * Gets the item values.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the item values
+	 * @date 12 août 2023
+	 */
+	public Map<String, Object> getItemValues() {
+		Map<String, Object> result = new HashMap<>();
+		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : sections.entrySet()) {
+			for (final IParameterEditor gp : entry.getValue().values()) {
+				result.put(gp.getParam().getName(), gp.getCurrentValue());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Sets the item values.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param values
+	 *            the values
+	 * @date 12 août 2023
+	 */
+	public void setItemValues(final Map<String, Object> values) {
+		for (String key : values.keySet()) {
+			IParameterEditor editor = getEditorForVar(key);
+			if (editor != null) {
+				editor.getParam().setValueNoCheckNoNotification(values.get(key));
+				editor.updateWithValueOfParameter(false, false);
+			}
+		}
 	}
 
 	/**

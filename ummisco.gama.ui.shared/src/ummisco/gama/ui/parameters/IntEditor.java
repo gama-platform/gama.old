@@ -12,7 +12,6 @@ package ummisco.gama.ui.parameters;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -38,9 +37,8 @@ public class IntEditor extends NumberEditor<Integer> {
 	 * @param l
 	 *            the l
 	 */
-	IntEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
-			final EditorListener<Integer> l) {
-		super(scope, agent, param, l, canBeNull);
+	IntEditor(final IAgent agent, final IParameter param, final boolean canBeNull, final EditorListener<Integer> l) {
+		super(agent, param, l, canBeNull);
 	}
 
 	@Override

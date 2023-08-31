@@ -237,7 +237,7 @@ public abstract class ChartOutput {
 				: IKeyword.RADAR.equals(t) ? RADAR_CHART : IKeyword.PIE.equals(t) ? PIE_CHART
 				: IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART : IKeyword.SCATTER.equals(t) ? SCATTER_CHART
 				: XY_CHART;
-		axesColor = new GamaColor(Color.black);
+		axesColor = GamaColor.get(Color.black);
 	}
 
 	/**

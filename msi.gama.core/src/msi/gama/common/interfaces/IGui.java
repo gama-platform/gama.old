@@ -265,14 +265,14 @@ public interface IGui {
 	void openErrorDialog(IScope scope, String error);
 
 	/**
-	 * Show parameter view.
+	 * Show parameter view. Updates it and optionally passes the previous and new simulation in case of switch
 	 *
 	 * @param scope
 	 *            the scope
 	 * @param exp
 	 *            the exp
 	 */
-	default void showAndUpdateParameterView(final IScope scope, final IExperimentPlan exp) {}
+	// default void updateParametersStatusAndConsoleFor(final ITopLevelAgent listeningAgent) {}
 
 	/**
 	 * Clear errors.
@@ -700,9 +700,9 @@ public interface IGui {
 	 *            the show editors
 	 */
 	default void arrangeExperimentViews(final IScope myScope, final IExperimentPlan experimentPlan,
-			final Boolean keepTabs, final Boolean keepToolbars, final Boolean showConsoles, final Boolean showNavigator,
-			final Boolean showControls, final Boolean keepTray, final Supplier<GamaColor> color,
-			final boolean showEditors) {}
+			final Boolean keepTabs, final Boolean keepToolbars, final Boolean showConsoles,
+			final Boolean showParameters, final Boolean showNavigator, final Boolean showControls,
+			final Boolean keepTray, final Supplier<GamaColor> color, final boolean showEditors) {}
 
 	/**
 	 * Display errors.
@@ -720,5 +720,13 @@ public interface IGui {
 	 * Hide parameters.
 	 */
 	default void hideParameters() {}
+
+	/**
+	 * Update parameters.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 17 août 2023
+	 */
+	default void updateParameters() {}
 
 }

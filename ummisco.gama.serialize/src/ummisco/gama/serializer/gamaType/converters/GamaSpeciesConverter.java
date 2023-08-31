@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.GamaPopulation;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 import msi.gaml.species.AbstractSpecies;
@@ -44,7 +44,7 @@ public class GamaSpeciesConverter extends AbstractGamaConverter<ISpecies, IList<
 			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
 		final AbstractSpecies spec = (AbstractSpecies) arg0;
-		final GamaPopulation<? extends IAgent> pop = (GamaPopulation<? extends IAgent>) spec.getPopulation(scope);
+		final IPopulation<? extends IAgent> pop = (IPopulation<? extends IAgent>) spec.getPopulation(scope);
 		writer.startNode("agentSetFromPopulation");
 		context.convertAnother(pop.getAgents(scope));
 		writer.endNode();

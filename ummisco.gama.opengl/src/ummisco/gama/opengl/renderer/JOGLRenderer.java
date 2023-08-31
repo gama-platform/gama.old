@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * JOGLRenderer.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer;
@@ -364,7 +364,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IOpenGLRend
 		double stepX, stepY;
 		final double cellWidth = getEnvWidth() / dimensions.x;
 		final double cellHeight = getEnvHeight() / dimensions.y;
-		final GamaColor color = GamaColor.getInt(lineColor.getRGB());
+		final GamaColor color = GamaColor.get(lineColor.getRGB());
 		final DrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
 		attributes.setEmpty(true);
 		for (double i = 0; i < dimensions.x; i++) {

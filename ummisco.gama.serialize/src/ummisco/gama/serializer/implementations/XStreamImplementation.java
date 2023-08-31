@@ -15,8 +15,10 @@ import com.thoughtworks.xstream.XStream;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.factory.StreamConverter;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 
@@ -26,73 +28,93 @@ import ummisco.gama.serializer.gamaType.converters.ConverterScope;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 7 août 2023
  */
-public class XStreamImplementation extends AbstractSerialisationImplementation<SavedAgent> {
-
-	/**
-	 * Instantiates a new x stream implementation.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param zip
-	 *            the zip
-	 * @param save
-	 *            the save
-	 * @date 7 août 2023
-	 */
-	public XStreamImplementation(final boolean zip, final boolean save) {
-		super(zip, save);
-	}
+public class XStreamImplementation extends AbstractSerialisationProcessor<SavedAgent> {
 
 	/**
 	 * Restore.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param currentSimAgt
+	 * @param sim
 	 *            the current sim agt
 	 * @param agt
 	 *            the agt
 	 * @date 7 août 2023
 	 */
 	@Override
-	public void restoreFromSerialisedForm(final SimulationAgent currentSimAgt, final SavedAgent agt) {
+	public void restoreFromSerialisedForm(final IAgent agent, final SavedAgent agt) {
+		IScope scope = agent.getScope();
 		// Update of the simulation
-		currentSimAgt.updateWith(scope, agt);
+		agent.updateWith(scope, agt);
 		// useful to recreate the random generator
-		final int rngUsage = currentSimAgt.getRandomGenerator().getUsage();
-		final String rngName = currentSimAgt.getRandomGenerator().getRngName();
-		final Double rngSeed = currentSimAgt.getRandomGenerator().getSeed();
+		if (agent instanceof SimulationAgent sim) {
+			final int rngUsage = sim.getRandomGenerator().getUsage();
+			final String rngName = sim.getRandomGenerator().getRngName();
+			final Double rngSeed = sim.getRandomGenerator().getSeed();
 
-		final IOutputManager outputs = currentSimAgt.getOutputManager();
-		if (outputs != null) { outputs.step(scope); }
+			final IOutputManager outputs = sim.getOutputManager();
+			if (outputs != null) { outputs.step(scope); }
 
-		// Recreate the random generator and set it to the same state as the saved one
-		if (((ExperimentPlan) scope.getExperiment().getSpecies()).keepsSeed()) {
-			currentSimAgt.setRandomGenerator(new RandomUtils(rngSeed, rngName));
-			currentSimAgt.getRandomGenerator().setUsage(rngUsage);
-		} else {
-			currentSimAgt
-					.setRandomGenerator(new RandomUtils(scope.getExperiment().getRandomGenerator().next(), rngName));
+			// Recreate the random generator and set it to the same state as the saved one
+			if (((ExperimentPlan) scope.getExperiment().getSpecies()).keepsSeed()) {
+				sim.setRandomGenerator(new RandomUtils(rngSeed, rngName));
+				sim.getRandomGenerator().setUsage(rngUsage);
+			} else {
+				sim.setRandomGenerator(new RandomUtils(scope.getExperiment().getRandomGenerator().next(), rngName));
+			}
 		}
 	}
 
 	@Override
-	protected SavedAgent encodeToSerialisedForm(final SimulationAgent sim) {
-		return new SavedAgent(scope, sim);
+	protected SavedAgent encodeToSerialisedForm(final IAgent agent) {
+		IScope scope = agent.getScope();
+		SavedAgent sa = new SavedAgent(scope, agent);
+		if (agent instanceof SimulationAgent sim) {
+			sa.put(HEADER_KEY, new SerialisedSimulationHeader(sim));
+			if (sim.serializeHistory()) { sa.put(HISTORY_KEY, sim.getHistory()); }
+		}
+		return sa;
 	}
 
+	/**
+	 * Write.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param objectToSerialise
+	 *            the object to serialise
+	 * @return the byte[]
+	 * @date 8 août 2023
+	 */
 	@Override
-	protected byte[] write(final SavedAgent objectToSerialise) {
+	public byte[] write(final IScope scope, final SavedAgent objectToSerialise) {
 		String s = StreamConverter.convertObjectToStream(scope, objectToSerialise);
 		return s.getBytes();
 	}
 
+	/**
+	 * Read.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param data
+	 *            the data
+	 * @return the saved agent
+	 * @date 8 août 2023
+	 */
 	@Override
-	protected SavedAgent read(final byte[] data) {
+	public SavedAgent read(final IScope scope, final byte[] data) {
 		final String previousState = new String(data);
 		final XStream xstream = StreamConverter.loadAndBuild(scope, ConverterScope.class);
 		return (SavedAgent) xstream.fromXML(previousState);
 	}
 
 	@Override
-	protected String getFormat() { return "xml"; }
+	public String getFormat() { return XML_FORMAT; }
+
+	@Override
+	public byte getFormatIdentifier() { return 3; }
+
+	@Override
+	public void prettyPrint() {
+
+	}
 
 }

@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import java.util.Collection;
 import java.util.List;
 
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -125,5 +126,54 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return the maximum duration
 	 */
 	Double getMaximumDuration();
+
+	/**
+	 * Checks if is record.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is record
+	 * @date 9 août 2023
+	 */
+	default boolean isRecord() { return false; }
+
+	/**
+	 * Sets the current simulation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param simulationAgent
+	 *            the new current simulation
+	 * @date 11 août 2023
+	 */
+	default void setCurrentSimulation(final SimulationAgent simulationAgent) {
+		SimulationPopulation pop = getSimulationPopulation();
+		if (pop != null) { pop.setCurrentSimulation(simulationAgent); }
+	}
+
+	/**
+	 * Checks for parameters or user commands.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 14 août 2023
+	 */
+	default boolean hasParametersOrUserCommands() {
+		return getSpecies().hasParametersOrUserCommands();
+	}
+
+	/**
+	 * Gets the displayables.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the displayables
+	 * @date 14 août 2023
+	 */
+	default List<IExperimentDisplayable> getDisplayables() { return getSpecies().getDisplayables(); }
+
+	/**
+	 * Gets the user commands.
+	 *
+	 * @return the user commands
+	 */
+	default Collection<? extends IExperimentDisplayable> getUserCommands() { return getSpecies().getUserCommands(); }
 
 }

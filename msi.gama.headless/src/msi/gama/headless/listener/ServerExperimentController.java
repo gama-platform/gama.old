@@ -84,23 +84,22 @@ public class ServerExperimentController implements IExperimentController {
 		@Override
 		public void run() {
 			try {
-				
+
 				while (experimentAlive) {
 					if (mexp.simulator.isInterrupted()) { break; }
 					final SimulationAgent sim = mexp.simulator.getSimulation();
-					
+
 					final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
 					if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
 						if (!"".equals(mexp.endCond)) {
-							mexp.socket.send(Jsoner.serialize(new CommandResponse(GamaServerMessageType.SimulationEnded, "",
-									_job.playCommand, false)));
+							mexp.socket.send(Jsoner.serialize(new CommandResponse(GamaServerMessageType.SimulationEnded,
+									"", _job.playCommand, false)));
 						}
 						break;
 					}
 					step();
 				}
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 				DEBUG.OUT(e);
 			}
 		}
@@ -122,13 +121,14 @@ public class ServerExperimentController implements IExperimentController {
 
 	/** The redirect console. */
 	public final boolean redirectConsole;
-	
+
 	/** The redirect status. */
 	public final boolean redirectStatus;
-	
+
 	/** The redirect dialog. */
 	public final boolean redirectDialog;
-	
+
+	/** The redirect runtime. */
 	public final boolean redirectRuntime;
 
 	/** The commands. */
@@ -211,7 +211,7 @@ public class ServerExperimentController implements IExperimentController {
 						| GamaHeadlessException e) {
 					DEBUG.OUT(e);
 					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
-//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					// socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 				}
 				break;
 			case _START:
@@ -220,7 +220,7 @@ public class ServerExperimentController implements IExperimentController {
 				} catch (final GamaRuntimeException e) {
 					DEBUG.OUT(e);
 					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
-//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					// socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 					closeExperiment(e);
 				} finally {
 					// scope.getGui().updateExperimentState(scope, IGui.RUNNING);
@@ -275,11 +275,11 @@ public class ServerExperimentController implements IExperimentController {
 					e.printStackTrace();
 					closeExperiment(e);
 					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
-//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					// socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 				} catch (final Throwable e) {
 					closeExperiment(GamaRuntimeException.create(e, scope));
 					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
-//					socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
+					// socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
 
 				} finally {
 					// scope.getGui().updateExperimentState(scope);
@@ -373,7 +373,7 @@ public class ServerExperimentController implements IExperimentController {
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		if (e != null) { getScope().getGui().getStatus().errorStatus(scope, e.getMessage()); }
+		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage()); }
 		experiment.dispose(); // will call own dispose() later
 	}
 
@@ -404,9 +404,8 @@ public class ServerExperimentController implements IExperimentController {
 		scope.setData("dialog", redirectDialog);
 		scope.setData("runtime", redirectRuntime);
 		try {
-			if (!scope.init(agent).passed()) {
-				scope.setDisposeStatus();
-			}// else if (agent.getSpecies().isAutorun()) { userStart(); }
+			if (!scope.init(agent).passed()) { scope.setDisposeStatus(); } // else if (agent.getSpecies().isAutorun()) {
+																			// userStart(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);

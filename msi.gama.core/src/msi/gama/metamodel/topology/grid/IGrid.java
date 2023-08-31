@@ -248,4 +248,14 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex, IDiffusionTarget 
 	 */
 	ISpecies getCellSpecies();
 
+	/**
+	 * Sets the grid values.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param gridValues
+	 *            the new grid values
+	 * @date 27 août 2023
+	 */
+	void setGridValues(double[] gridValues);
+
 }

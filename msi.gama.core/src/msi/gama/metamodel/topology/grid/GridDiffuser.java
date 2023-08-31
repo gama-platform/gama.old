@@ -1,26 +1,24 @@
 /*******************************************************************************************************
  *
- * GridDiffuser.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * GridDiffuser.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
@@ -36,33 +34,36 @@ public class GridDiffuser {
 	 */
 	// Structure of the Key for our map.
 	private static class PairVarGrid {
-		
+
 		/** The Var name. */
 		String Var_name;
-		
+
 		/** The Grid name. */
 		String Grid_name;
-		
+
 		/** The Nb rows. */
 		int NbRows;
-		
+
 		/** The Nb cols. */
 		int NbCols;
-		
+
 		/** The Is torus. */
 		boolean Is_torus;
-		
+
 		/** The Pop. */
 		IPopulation<? extends IAgent> Pop;
 
 		/**
 		 * Instantiates a new pair var grid.
 		 *
-		 * @param scope the scope
-		 * @param var_name the var name
-		 * @param pop the pop
+		 * @param scope
+		 *            the scope
+		 * @param var_name
+		 *            the var name
+		 * @param pop
+		 *            the pop
 		 */
-		public PairVarGrid(final IScope scope, final String var_name, final GridPopulation<? extends IAgent> pop) {
+		public PairVarGrid(final IScope scope, final String var_name, final GridPopulation pop) {
 			Var_name = var_name;
 			Grid_name = pop.getName();
 			NbRows = pop.getTopology().getPlaces().getRows(scope);
@@ -91,35 +92,42 @@ public class GridDiffuser {
 	 */
 	// Structure for the Value of our map
 	private static class GridDiffusion {
-		
+
 		/** The Use convolution. */
 		public boolean Use_convolution = true;
-		
+
 		/** The Is gradient. */
 		public boolean Is_gradient;
-		
+
 		/** The Mat diffu. */
 		public double[][] Mask, Mat_diffu;
-		
+
 		/** The Scope. */
 		public IScope Scope;
-		
+
 		/** The Min value. */
 		public double Min_value;
-		
+
 		/** The Avoid mask. */
 		public boolean Avoid_mask;
 
 		/**
 		 * Instantiates a new grid diffusion.
 		 *
-		 * @param scope the scope
-		 * @param use_convolution the use convolution
-		 * @param is_gradient the is gradient
-		 * @param mat_diffu the mat diffu
-		 * @param mask the mask
-		 * @param min_value the min value
-		 * @param avoid_mask the avoid mask
+		 * @param scope
+		 *            the scope
+		 * @param use_convolution
+		 *            the use convolution
+		 * @param is_gradient
+		 *            the is gradient
+		 * @param mat_diffu
+		 *            the mat diffu
+		 * @param mask
+		 *            the mask
+		 * @param min_value
+		 *            the min value
+		 * @param avoid_mask
+		 *            the avoid mask
 		 */
 		public GridDiffusion(final IScope scope, final boolean use_convolution, final boolean is_gradient,
 				final double[][] mat_diffu, final double[][] mask, final double min_value, final boolean avoid_mask) {
@@ -136,13 +144,15 @@ public class GridDiffuser {
 	/**
 	 * Compare arrays.
 	 *
-	 * @param array1 the array 1
-	 * @param array2 the array 2
+	 * @param array1
+	 *            the array 1
+	 * @param array2
+	 *            the array 2
 	 * @return true, if successful
 	 */
 	public boolean compareArrays(final double[][] array1, final double[][] array2) {
 		boolean b = true;
-		if (((array1 == null) || (array2 == null)) || (array1.length != array2.length)) {
+		if (array1 == null || array2 == null || array1.length != array2.length) {
 			b = false;
 		} else {
 			for (int i = 0; i < array2.length; i++) {
@@ -167,17 +177,26 @@ public class GridDiffuser {
 	/**
 	 * Adds the diffusion.
 	 *
-	 * @param scope the scope
-	 * @param varDiffu the var diffu
-	 * @param pop the pop
-	 * @param method_diffu the method diffu
-	 * @param isGradient the is gradient
-	 * @param matDiffu the mat diffu
-	 * @param theMask the the mask
-	 * @param minValue the min value
-	 * @param avoidMask the avoid mask
+	 * @param scope
+	 *            the scope
+	 * @param varDiffu
+	 *            the var diffu
+	 * @param pop
+	 *            the pop
+	 * @param method_diffu
+	 *            the method diffu
+	 * @param isGradient
+	 *            the is gradient
+	 * @param matDiffu
+	 *            the mat diffu
+	 * @param theMask
+	 *            the the mask
+	 * @param minValue
+	 *            the min value
+	 * @param avoidMask
+	 *            the avoid mask
 	 */
-	public void addDiffusion(final IScope scope, final String varDiffu, final GridPopulation<? extends IAgent> pop,
+	public void addDiffusion(final IScope scope, final String varDiffu, final GridPopulation pop,
 			final boolean method_diffu, final boolean isGradient, final double[][] matDiffu, final double[][] theMask,
 			final double minValue, final boolean avoidMask) {
 		final GridDiffusion newGridDiff =
@@ -256,40 +275,40 @@ public class GridDiffuser {
 
 	/** The is torus. */
 	private boolean is_torus;
-	
+
 	/** The is gradient. */
 	private boolean is_gradient;
-	
+
 	/** The var diffu. */
 	private String var_diffu;
-	
+
 	/** The use convolution. */
 	// true for convolution, false for dot_product
 	private boolean use_convolution = true;
-	
+
 	/** The mat diffu. */
 	// boolean m_initialized = false;
 	double[][] mask, mat_diffu;
-	
+
 	/** The avoid mask. */
 	private boolean avoid_mask;
-	
+
 	/** The proportion. */
 	private float proportion; // in case of "avoid_mask", compute the
-								
-								/** The diffuser scope. */
-								// proportion.
+
+	/** The diffuser scope. */
+	// proportion.
 	IScope diffuserScope;
 
 	/** The output. */
 	double[] input, output;
-	
+
 	/** The nb cols. */
 	int nbRows, nbCols;
-	
+
 	/** The min value. */
 	double min_value;
-	
+
 	/** The population. */
 	IPopulation<? extends IAgent> population;
 
@@ -301,7 +320,8 @@ public class GridDiffuser {
 	/**
 	 * Load grid properties.
 	 *
-	 * @param pairVarGrid the pair var grid
+	 * @param pairVarGrid
+	 *            the pair var grid
 	 */
 	public void loadGridProperties(final PairVarGrid pairVarGrid) {
 		nbRows = pairVarGrid.NbRows;
@@ -314,7 +334,8 @@ public class GridDiffuser {
 	/**
 	 * Load diff properties.
 	 *
-	 * @param gridDiff the grid diff
+	 * @param gridDiff
+	 *            the grid diff
 	 * @return true, if successful
 	 */
 	public boolean loadDiffProperties(final GridDiffusion gridDiff) {
@@ -506,8 +527,10 @@ public class GridDiffuser {
 	/**
 	 * Finish diffusion.
 	 *
-	 * @param scope the scope
-	 * @param pop the pop
+	 * @param scope
+	 *            the scope
+	 * @param pop
+	 *            the pop
 	 */
 	public void finishDiffusion(final IScope scope, final IPopulation<? extends IAgent> pop) {
 		final IVariable v = pop.getVar(var_diffu);
@@ -546,23 +569,19 @@ public class GridDiffuser {
 	 * Diffuse.
 	 *
 	 * @return the object
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public Object diffuse() throws GamaRuntimeException {
 
 		final Set<PairVarGrid> keySet = m_diffusions.keySet();
-		final Iterator<PairVarGrid> iterator = keySet.iterator();
-
-		while (iterator.hasNext()) {
-			final PairVarGrid pairVarGrid = iterator.next();
+		for (PairVarGrid pairVarGrid : keySet) {
 			final List<GridDiffusion> listGridDiffu = m_diffusions.get(pairVarGrid);
 			loadGridProperties(pairVarGrid);
-			final Iterator<GridDiffusion> gridDiffIterator = listGridDiffu.iterator();
 			input = new double[pairVarGrid.NbCols * pairVarGrid.NbRows];
 			output = new double[pairVarGrid.NbCols * pairVarGrid.NbRows];
 			Arrays.fill(output, -Double.MAX_VALUE);
-			while (gridDiffIterator.hasNext()) {
-				final GridDiffusion gridDiffusion = gridDiffIterator.next();
+			for (GridDiffusion gridDiffusion : listGridDiffu) {
 				final boolean success = loadDiffProperties(gridDiffusion);
 				if (success) {
 					if (!use_convolution) {

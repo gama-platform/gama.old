@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaPreferenceStore.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * GamaPreferenceStore.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.preferences;
 
@@ -530,13 +530,14 @@ public abstract class GamaPreferenceStore<T> {
 				putInt(key, value == null ? 0 : ((GamaColor) value).getRGB());
 				break;
 			case IType.POINT:
-				put(key, value==null ? "{0,0}" : ((GamaPoint) value).stringValue(null));
+				put(key, value == null ? "{0,0}" : ((GamaPoint) value).stringValue(null));
 				break;
 			case IType.FONT:
 				put(key, value == null ? DEFAULT_FONT : value.toString());
 				break;
 			case IType.DATE:
-				put(key, value== null ? toJavaString(GamaDateType.EPOCH.toISOString()): toJavaString(((GamaDate) value).toISOString()));
+				put(key, value == null ? toJavaString(GamaDateType.EPOCH.toISOString())
+						: toJavaString(((GamaDate) value).toISOString()));
 				break;
 			default:
 				put(key, (String) value);
@@ -576,7 +577,7 @@ public abstract class GamaPreferenceStore<T> {
 					gp.init((ValueProvider) () -> new GenericFile(get(key, (String) value), false));
 					break;
 				case IType.COLOR:
-					gp.init((ValueProvider) () -> GamaColor.getInt(getInt(key, asInt(scope, value))));
+					gp.init((ValueProvider) () -> GamaColor.get(getInt(key, asInt(scope, value))));
 					break;
 				case IType.FONT:
 					gp.init((ValueProvider) () -> {

@@ -29,7 +29,7 @@ import ummisco.gama.opengl.scene.geometry.GeometryObject;
 public class FrameLayerObject extends StaticLayerObject.World {
 
 	/** The Constant FRAME. */
-	private static final GamaColor FRAME = new GamaColor(150, 150, 150, 255);
+	private static final GamaColor FRAME = GamaColor.get(150, 150, 150, 255);
 
 	/**
 	 * Instantiates a new frame layer object.

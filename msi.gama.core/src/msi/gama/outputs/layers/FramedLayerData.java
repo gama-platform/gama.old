@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * OverlayLayerData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * FramedLayerData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -41,7 +41,7 @@ public class FramedLayerData extends LayerData {
 		super(def);
 		border = create(IKeyword.BORDER, Types.COLOR, null);
 		background = create(IKeyword.BACKGROUND, Types.COLOR,
-				def instanceof OverlayStatement ? new GamaColor(Color.black) : null);
+				def instanceof OverlayStatement ? GamaColor.get(Color.black) : null);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * AbstractFSTImplementation.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * FSTAbstractProcessor.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -11,6 +11,7 @@
 package ummisco.gama.serializer.implementations;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +28,11 @@ import msi.gama.common.geometry.GamaGeometryFactory;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
+import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
@@ -48,10 +51,106 @@ import msi.gaml.types.IType;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 2 août 2023
  */
-public abstract class AbstractFSTImplementation extends AbstractSerialisationImplementation<SerialisedAgent> {
+public abstract class FSTAbstractProcessor extends AbstractSerialisationProcessor<SerialisedAgent> {
+
+	/**
+	 * The Class AgentReference.
+	 */
+	public record AgentReference(String[] species, Integer[] index) {
+
+		/**
+		 * Instantiates a new reference to agent.
+		 *
+		 * @param agt
+		 *            the agt
+		 */
+		public AgentReference(final IAgent agt) {
+			this(buildSpeciesArray(agt), buildIndicesArray(agt));
+		}
+
+		@Override
+		public String toString() {
+			String res = "";
+			for (int i = 0; i < species.length; i++) { res = "/" + species[i] + index[i]; }
+			return res;
+		}
+
+		/**
+		 * Gets the referenced agent.
+		 *
+		 * @param sim
+		 *            the sim
+		 * @return the referenced agent
+		 */
+		public IAgent getReferencedAgent(final IScope scope) {
+			SimulationAgent sim = scope.getSimulation();
+			IPopulation<? extends IAgent> pop = sim.getPopulationFor(species[species.length - 1]);
+			if (pop == null) { pop = sim.getPopulation(); }
+			IAgent referencedAgt = pop.getOrCreateAgent(scope, index[index.length - 1]);
+
+			for (int i = index.length - 2; i >= 0; i--) {
+				pop = sim.getPopulationFor(species[i]);
+				referencedAgt = pop.getOrCreateAgent(scope, index[i]);
+			}
+			return referencedAgt;
+		}
+
+		/**
+		 * Gets the last index.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @return the last index
+		 * @date 6 août 2023
+		 */
+		public Integer getLastIndex() { return index[index.length - 1]; }
+
+		/**
+		 * Builds the species array.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param a
+		 *            the a
+		 * @return the string[]
+		 * @date 7 août 2023
+		 */
+		static String[] buildSpeciesArray(final IAgent a) {
+			List<String> species = new ArrayList<>();
+			species.add(a.getSpeciesName());
+			IAgent host = a.getHost();
+			while (host != null && !(host instanceof SimulationAgent)) {
+				species.add(host.getSpeciesName());
+				host = host.getHost();
+			}
+			return species.toArray(new String[0]);
+		}
+
+		/**
+		 * Builds the species array.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param a
+		 *            the a
+		 * @return the int[]
+		 * @date 7 août 2023
+		 */
+		static Integer[] buildIndicesArray(final IAgent a) {
+			List<Integer> species = new ArrayList<>();
+			species.add(a.getIndex());
+			IAgent host = a.getHost();
+			while (host != null && !(host instanceof SimulationAgent)) {
+				species.add(host.getIndex());
+				host = host.getHost();
+			}
+			return species.toArray(new Integer[0]);
+		}
+
+	}
 
 	/** The fst. */
-	final FSTConfiguration fst;
+	FSTConfiguration fst;
+
+	/** The current scope. */
+	IScope currentScope;
 
 	/**
 	 * Instantiates a new gama FST serialiser.
@@ -61,10 +160,8 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 	 *            the scope.
 	 * @date 5 août 2023
 	 */
-	public AbstractFSTImplementation(final FSTConfiguration conf, final boolean zip, final boolean save) {
-		super(zip, save);
+	public FSTAbstractProcessor(final FSTConfiguration conf) {
 		fst = initConfiguration(conf);
-		registerSerialisers();
 	}
 
 	/**
@@ -73,9 +170,9 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 5 août 2023
 	 */
-	protected void registerSerialisers() {
+	protected void registerSerialisers(final FSTConfiguration conf) {
 
-		register(GamaShape.class, new GamaFSTSerialiser<GamaShape>() {
+		register(conf, GamaShape.class, new GamaFSTSerialiser<GamaShape>() {
 
 			// TODO The inner attributes of the shape should be saved (ie the ones that do not belong to the var names
 			// of the species
@@ -102,7 +199,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 			}
 		});
 
-		register(IAgent.class, new GamaFSTSerialiser<IAgent>() {
+		register(conf, IAgent.class, new GamaFSTSerialiser<IAgent>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IAgent o) throws Exception {
@@ -117,7 +214,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 
 		});
 
-		register(IType.class, new GamaFSTSerialiser<IType>() {
+		register(conf, IType.class, new GamaFSTSerialiser<IType>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IType toWrite) throws Exception {
@@ -142,7 +239,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 
 		});
 
-		register(IScope.class, new GamaFSTSerialiser<IScope>() {
+		register(conf, IScope.class, new GamaFSTSerialiser<IScope>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IScope toWrite) throws Exception {
@@ -157,7 +254,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 
 		});
 
-		register(ISpecies.class, new GamaFSTSerialiser<ISpecies>() {
+		register(conf, ISpecies.class, new GamaFSTSerialiser<ISpecies>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final ISpecies o) throws Exception {
@@ -172,7 +269,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 
 		});
 
-		register(AgentReference.class, new GamaFSTSerialiser<AgentReference>() {
+		register(conf, AgentReference.class, new GamaFSTSerialiser<AgentReference>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final AgentReference o) throws Exception {
@@ -186,21 +283,38 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 			}
 		});
 
-		register(SerialisedAgent.class, new GamaFSTSerialiser<SerialisedAgent>() {
+		// register(conf,SerialisedSimulationHeader.class, new GamaFSTSerialiser<SerialisedSimulationHeader>() {
+		//
+		// @Override
+		// public void serialise(final FSTObjectOutput out, final SerialisedSimulationHeader o) throws Exception {
+		// out.writeStringUTF(o.pathToModel());
+		// out.writeStringUTF(o.nameOfExperiment());
+		// }
+		//
+		// @Override
+		// public SerialisedSimulationHeader deserialise(final IScope scope, final FSTObjectInput in)
+		// throws Exception {
+		// return new SerialisedSimulationHeader(in.readStringUTF(), in.readStringUTF());
+		// }
+		// });
+
+		register(conf, SerialisedAgent.class, new GamaFSTSerialiser<SerialisedAgent>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
+				// out.writeObject(o.ref());
 				out.writeInt(o.index());
 				out.writeObject(o.attributes());
 			}
 
 			@Override
 			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedAgent(in.readInt(), (Map<String, Object>) in.readObject());
+				return new SerialisedAgent(/* (AgentReference) in.readObject(), */in.readInt(),
+						(Map<String, Object>) in.readObject());
 			}
 		});
 
-		register(SerialisedPopulation.class, new GamaFSTSerialiser<SerialisedPopulation>() {
+		register(conf, SerialisedPopulation.class, new GamaFSTSerialiser<SerialisedPopulation>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final SerialisedPopulation o) throws Exception {
@@ -214,7 +328,23 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 			}
 		});
 
-		register(GamaGeometryFactory.class, new GamaFSTSerialiser<GamaGeometryFactory>() {
+		register(conf, SerialisedGrid.class, new GamaFSTSerialiser<SerialisedGrid>() {
+
+			@Override
+			public void serialise(final FSTObjectOutput out, final SerialisedGrid o) throws Exception {
+				out.writeStringUTF(o.speciesName());
+				out.writeObject(o.agents());
+				out.writeObject(o.matrix());
+			}
+
+			@Override
+			public SerialisedGrid deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
+				return new SerialisedGrid(in.readStringUTF(), (List<SerialisedAgent>) in.readObject(),
+						(IGrid) in.readObject());
+			}
+		});
+
+		register(conf, GamaGeometryFactory.class, new GamaFSTSerialiser<GamaGeometryFactory>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final GamaGeometryFactory o) throws Exception {
@@ -228,7 +358,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 			}
 		});
 
-		register(GamaFont.class, new GamaFSTSerialiser<GamaFont>() {
+		register(conf, GamaFont.class, new GamaFSTSerialiser<GamaFont>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final GamaFont o) throws Exception {
@@ -243,7 +373,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 			}
 		});
 
-		register(IMap.class, new GamaFSTSerialiser<IMap>() {
+		register(conf, IMap.class, new GamaFSTSerialiser<IMap>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IMap o) throws Exception {
@@ -274,7 +404,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 
 		});
 
-		register(IList.class, new GamaFSTSerialiser<IList>() {
+		register(conf, IList.class, new GamaFSTSerialiser<IList>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IList o) throws Exception {
@@ -300,7 +430,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 
 		});
 
-		register(GamaCoordinateSequenceFactory.class, new GamaFSTSerialiser<GamaCoordinateSequenceFactory>() {
+		register(conf, GamaCoordinateSequenceFactory.class, new GamaFSTSerialiser<GamaCoordinateSequenceFactory>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final GamaCoordinateSequenceFactory o) throws Exception {
@@ -326,9 +456,9 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 	 *            the clazz
 	 * @date 5 août 2023
 	 */
-	public <T> void register(final Class<T> clazz, final GamaFSTSerialiser<T> ser) {
+	public <T> void register(final FSTConfiguration conf, final Class<T> clazz, final GamaFSTSerialiser<T> ser) {
 		ser.setName(clazz.getSimpleName());
-		fst.registerSerializer(clazz, ser, true);
+		conf.registerSerializer(clazz, ser, true);
 	}
 
 	/**
@@ -341,9 +471,6 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 
 		/** The short name. */
 		String shortName;
-
-		/** The Constant CLASS_PREFIX. */
-		static final String CLASS_PREFIX = "";
 
 		/**
 		 * Instantiates a new gama FST serialiser.
@@ -378,7 +505,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 		public final T instantiate(final Class objectClass, final FSTObjectInput in,
 				final FSTClazzInfo serializationInfo, final FSTFieldInfo referencee, final int streamPosition)
 				throws Exception {
-			T result = deserialise(scope, in);
+			T result = deserialise(currentScope, in);
 			in.registerObject(result, streamPosition, serializationInfo, referencee);
 			return result;
 		}
@@ -449,12 +576,13 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 		conf.setClassLoader(GamaClassLoader.getInstance());
 		conf.setForceSerializable(true);
 		conf.setShareReferences(true);
+		registerSerialisers(conf);
 		return conf;
 	}
 
 	@Override
-	protected SerialisedAgent encodeToSerialisedForm(final SimulationAgent agent) {
-		return new SerialisedAgent(agent);
+	protected SerialisedAgent encodeToSerialisedForm(final IAgent agent) {
+		return SerialisedAgentFactory.createFor(agent);
 	}
 
 	/**
@@ -466,7 +594,7 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 	 * @date 6 août 2023
 	 */
 	@Override
-	protected byte[] write(final SerialisedAgent sa) {
+	public byte[] write(final IScope scope, final SerialisedAgent sa) {
 		return fst.asByteArray(sa);
 	}
 
@@ -479,8 +607,13 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 	 * @date 6 août 2023
 	 */
 	@Override
-	public SerialisedAgent read(final byte[] input) {
-		return (SerialisedAgent) fst.asObject(input);
+	public SerialisedAgent read(final IScope scope, final byte[] input) {
+		currentScope = scope;
+		try {
+			return (SerialisedAgent) fst.asObject(input);
+		} finally {
+			currentScope = null;
+		}
 	}
 
 	/**
@@ -494,8 +627,8 @@ public abstract class AbstractFSTImplementation extends AbstractSerialisationImp
 	 * @date 6 août 2023
 	 */
 	@Override
-	public void restoreFromSerialisedForm(final SimulationAgent sim, final SerialisedAgent image) {
-		SerialisedAgentFactory.restoreSimulation(scope, sim, image);
+	public void restoreFromSerialisedForm(final IAgent sim, final SerialisedAgent image) {
+		SerialisedAgentFactory.restoreAgent(sim.getScope(), sim, image);
 	}
 
 }

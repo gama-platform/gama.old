@@ -48,7 +48,7 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 	 */
 	public NumberEditor(final IScope scope, final InputParameter supportParameter, final EditorListener<T> whenModified,
 			final boolean canBeNull) {
-		this(scope, null, supportParameter, whenModified, canBeNull);
+		this(scope.getAgent(), supportParameter, whenModified, canBeNull);
 	}
 
 	/**
@@ -65,9 +65,8 @@ public abstract class NumberEditor<T extends Comparable> extends ExpressionBased
 	 * @param canBeNull
 	 *            the can be null
 	 */
-	public NumberEditor(final IScope scope, final IAgent a, final IParameter p, final EditorListener<T> l,
-			final boolean canBeNull) {
-		super(scope, a, p, l);
+	public NumberEditor(final IAgent a, final IParameter p, final EditorListener<T> l, final boolean canBeNull) {
+		super(a, p, l);
 		acceptNull = canBeNull;
 	}
 

@@ -154,7 +154,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 		if (editors == null) { editors = new AgentAttributesEditorsList(); }
 		updatePartName();
 		if (!editors.getSections().containsKey(agent)) {
-			editors.add(getParametersToInspect(agent), agent);
+			((AgentAttributesEditorsList) editors).add(getParametersToInspect(agent), agent);
 			final ParameterExpandItem item = createItem(getParentComposite(), agent, true, null);
 			if (item == null) return false;
 			return true;
@@ -265,7 +265,6 @@ public class AgentInspectView extends AttributesEditorsView<IAgent>
 	 */
 	@Override
 	public void pauseChanged() {}
-
 
 	/**
 	 * Method handleMenu()

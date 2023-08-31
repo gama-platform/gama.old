@@ -13,9 +13,9 @@ package gama.extensions.physics.common;
 import gama.extensions.physics.gaml.PhysicalSimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.matrix.IField;
-import msi.gaml.skills.GridSkill.IGridAgent;
 
 /**
  * The Interface IShapeConverter.

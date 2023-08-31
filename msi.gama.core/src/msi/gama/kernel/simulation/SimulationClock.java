@@ -10,8 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.kernel.simulation;
 
-import static msi.gaml.operators.Dates.asDuration;
-
 import java.time.DateTimeException;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -90,9 +88,6 @@ public class SimulationClock {
 	/** The clock scope. */
 	private final IScope clockScope;
 
-	/** The can step back. */
-	private final boolean canStepBack;
-
 	/**
 	 * Instantiates a new simulation clock.
 	 *
@@ -103,7 +98,6 @@ public class SimulationClock {
 		final IModel model = scope.getModel();
 		outputAsDuration = model == null ? true : !model.getDescription().isStartingDateDefined();
 		this.clockScope = scope;
-		canStepBack = scope.getExperiment().canStepBack();
 	}
 
 	/**
@@ -119,11 +113,25 @@ public class SimulationClock {
 	public void setCycle(final int i) throws GamaRuntimeException {
 		if (i < 0) throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", clockScope);
 		final int previous = cycle.get();
-		if (i < previous) {
-			boolean possible = canStepBack && clockScope.getSimulation().getCycle(clockScope) >= 0;
-			if (!possible) throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards",
-					clockScope);
-		}
+		if (i < previous)
+			throw GamaRuntimeException.error("The current cycle of a simulation cannot be set backwards", clockScope);
+		cycle.set(i);
+		setCurrentDate(getCurrentDate().plus(getStepInMillis(), i - previous, ChronoUnit.MILLIS));
+	}
+
+	/**
+	 * Sets the cycle without doing no check (except on negative cycles). Used by restoration of simulations
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param i
+	 *            the new cycle no check
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 9 août 2023
+	 */
+	public void setCycleNoCheck(final int i) throws GamaRuntimeException {
+		if (i < 0) throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative", clockScope);
+		final int previous = cycle.get();
 		cycle.set(i);
 		setCurrentDate(getCurrentDate().plus(getStepInMillis(), i - previous, ChronoUnit.MILLIS));
 	}
@@ -313,8 +321,8 @@ public class SimulationClock {
 
 			try {
 				GamaDate d = getCurrentDate();
-				final String date =
-						outputAsDuration ? asDuration(getStartingDate(), d) : d.toString("yyyy-MM-dd HH:mm:ss", "en");
+				final String date = outputAsDuration ? Dates.asDuration(getStartingDate(), d)
+						: d.toString("yyyy-MM-dd HH:mm:ss", "en");
 				sb.append("[").append(date).append("]");
 			} catch (final DateTimeException e) {}
 		}

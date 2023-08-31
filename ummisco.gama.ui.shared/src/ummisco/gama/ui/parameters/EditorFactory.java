@@ -15,7 +15,6 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.kernel.experiment.TextStatement;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
@@ -55,12 +54,12 @@ public class EditorFactory {
 	 *            the when modified
 	 * @return the boolean editor
 	 */
-	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
-			final Boolean value, final EditorListener<Boolean> whenModified) {
-		AbstractEditor ed = instance.create(scope, null, new InputParameter(title, value), whenModified);
-		ed.createControls(parent);
-		return ed;
-	}
+	// public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
+	// final Boolean value, final EditorListener<Boolean> whenModified) {
+	// AbstractEditor ed = instance.create(scope, null, new InputParameter(title, value), whenModified);
+	// ed.createControls(parent);
+	// return ed;
+	// }
 
 	/**
 	 * Creates the.
@@ -77,12 +76,12 @@ public class EditorFactory {
 	 *            the when modified
 	 * @return the color editor
 	 */
-	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
-			final java.awt.Color value, final EditorListener<java.awt.Color> whenModified) {
-		AbstractEditor ed = instance.create(scope, null, new InputParameter(title, value), whenModified);
-		ed.createControls(parent);
-		return ed;
-	}
+	// public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
+	// final java.awt.Color value, final EditorListener<java.awt.Color> whenModified) {
+	// AbstractEditor ed = instance.create(scope, null, new InputParameter(title, value), whenModified);
+	// ed.createControls(parent);
+	// return ed;
+	// }
 
 	/**
 	 * Creates a new Editor object.
@@ -104,7 +103,7 @@ public class EditorFactory {
 	public static ExpressionEditor createExpression(final IScope scope, final EditorsGroup parent, final String title,
 			final IExpression value, final EditorListener whenModified, final IType expectedType) {
 		ExpressionEditor ed =
-				new ExpressionEditor(scope, null, new InputParameter(title, value), whenModified, expectedType);
+				new ExpressionEditor(scope.getAgent(), new InputParameter(title, value), whenModified, expectedType);
 		ed.createControls(parent);
 		return ed;
 	}
@@ -134,15 +133,15 @@ public class EditorFactory {
 	 *            the when modified
 	 * @return the abstract editor
 	 */
-	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
-			final Double value, final Double min, final Double max, final Double step, final boolean canBeNull,
-			final boolean isSlider, final EditorListener<Double> whenModified) {
-		final InputParameter par = new InputParameter(title, value, min, max, step);
-		AbstractEditor ed = isSlider ? new SliderEditor.Float(scope, null, par, whenModified)
-				: new FloatEditor(scope, null, par, canBeNull, whenModified);
-		ed.createControls(parent);
-		return ed;
-	}
+	// public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
+	// final Double value, final Double min, final Double max, final Double step, final boolean canBeNull,
+	// final boolean isSlider, final EditorListener<Double> whenModified) {
+	// final InputParameter par = new InputParameter(title, value, min, max, step);
+	// AbstractEditor ed = isSlider ? new SliderEditor.Float(scope, null, par, whenModified)
+	// : new FloatEditor(scope, null, par, canBeNull, whenModified);
+	// ed.createControls(parent);
+	// return ed;
+	// }
 
 	/**
 	 * Creates the.
@@ -167,14 +166,15 @@ public class EditorFactory {
 	 *            the when modified
 	 * @return the int editor
 	 */
-	public static IntEditor create(final IScope scope, final EditorsGroup parent, final String title, final String unit,
-			final Integer value, final Integer min, final Integer max, final Integer step,
-			final EditorListener<Integer> whenModified) {
-		IntEditor ed =
-				new IntEditor(scope, null, new InputParameter(title, unit, value, min, max, step), false, whenModified);
-		ed.createControls(parent);
-		return ed;
-	}
+	// public static IntEditor create(final IScope scope, final EditorsGroup parent, final String title, final String
+	// unit,
+	// final Integer value, final Integer min, final Integer max, final Integer step,
+	// final EditorListener<Integer> whenModified) {
+	// IntEditor ed =
+	// new IntEditor(scope, null, new InputParameter(title, unit, value, min, max, step), false, whenModified);
+	// ed.createControls(parent);
+	// return ed;
+	// }
 
 	/**
 	 * Creates the.
@@ -191,12 +191,12 @@ public class EditorFactory {
 	 *            the when modified
 	 * @return the point editor
 	 */
-	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
-			final GamaPoint value, final EditorListener<GamaPoint> whenModified) {
-		AbstractEditor ed = instance.create(scope, null, new InputParameter(title, value), whenModified);
-		ed.createControls(parent);
-		return ed;
-	}
+	// public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
+	// final GamaPoint value, final EditorListener<GamaPoint> whenModified) {
+	// AbstractEditor ed = instance.create(scope, null, new InputParameter(title, value), whenModified);
+	// ed.createControls(parent);
+	// return ed;
+	// }
 
 	/**
 	 * Creates the.
@@ -218,8 +218,8 @@ public class EditorFactory {
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final String title,
 			final String value, final boolean asLabel, final EditorListener<String> whenModified) {
 		InputParameter p = new InputParameter(title, value);
-		AbstractEditor ed = asLabel ? new LabelEditor(scope, null, p, whenModified)
-				: new StringEditor(scope, null, p, whenModified);
+		AbstractEditor ed = asLabel ? new LabelEditor(scope.getAgent(), p, whenModified)
+				: new StringEditor(scope.getAgent(), p, whenModified);
 		ed.createControls(parent);
 		return ed;
 	}
@@ -263,7 +263,7 @@ public class EditorFactory {
 	 */
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final IParameter var,
 			final EditorListener l, final boolean isSubParameter, final boolean dontUseScope) {
-		final AbstractEditor ed = instance.create(scope, (IAgent) null, var, l);
+		final AbstractEditor ed = instance.create(scope.getAgent(), var, l);
 		ed.isSubParameter(isSubParameter);
 		ed.dontUseScope(dontUseScope);
 		ed.createControls(parent);
@@ -283,45 +283,47 @@ public class EditorFactory {
 	 *            the l
 	 * @return the abstract editor
 	 */
-	public AbstractEditor create(final IScope scope, final IAgent agent, final IParameter var, final EditorListener l) {
+	public AbstractEditor create(final IAgent agent, final IParameter var, final EditorListener l) {
 		final boolean canBeNull = var instanceof ExperimentParameter && ((ExperimentParameter) var).canBeNull();
+		IScope scope = agent.getScope();
 		final IType t = var.getType();
 		final int type = t.getGamlType().id();
-		if (t.isContainer() && t.getContentType().isAgentType()) return new PopulationEditor(scope, agent, var, l);
-		if (t.isAgentType() || type == IType.AGENT) return new AgentEditor(scope, agent, var, l);
+		if (t.isContainer() && t.getContentType().isAgentType()) return new PopulationEditor(agent, var, l);
+		if (t.isAgentType() || type == IType.AGENT) return new AgentEditor(agent, var, l);
 		switch (type) {
 			case IType.BOOL:
-				return new BooleanEditor(scope, agent, var, l);
+				return new BooleanEditor(agent, var, l);
 			case IType.DATE:
-				return new DateEditor(scope, agent, var, l);
+				return new DateEditor(agent, var, l);
 			case IType.COLOR:
-				return new ColorEditor(scope, agent, var, l);
+				return new ColorEditor(agent, var, l);
 			case IType.FLOAT:
-				if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
-					return new SliderEditor.Float(scope, agent, var, l);
-				return new FloatEditor(scope, agent, var, canBeNull, l);
+				if (var.getMaxValue(agent.getScope()) != null && var.getMinValue(scope) != null
+						&& var.acceptsSlider(scope))
+					return new SliderEditor.Float(agent, var, l);
+				return new FloatEditor(agent, var, canBeNull, l);
 			case IType.INT:
 				if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
-					return new SliderEditor.Int(scope, agent, var, l);
-				return new IntEditor(scope, agent, var, canBeNull, l);
+					return new SliderEditor.Int(agent, var, l);
+				return new IntEditor(agent, var, canBeNull, l);
 			case IType.LIST:
-				return new ListEditor(scope, agent, var, l);
+				return new ListEditor(agent, var, l);
 			case IType.POINT:
-				return new PointEditor(scope, agent, var, l);
+				return new PointEditor(agent, var, l);
 			case IType.MATRIX:
-				return new MatrixEditor(scope, agent, var, l);
+				return new MatrixEditor(agent, var, l);
 			case IType.FILE:
-				return new FileEditor(scope, agent, var, l, false);
+				return new FileEditor(agent, var, l, false);
 			case IType.DIRECTORY:
-				return new FileEditor(scope, agent, var, l, true);
+				return new FileEditor(agent, var, l, true);
 			case IType.FONT:
-				return new FontEditor(scope, agent, var, l);
+				return new FontEditor(agent, var, l);
 			case IType.STRING:
-				return new StringEditor(scope, agent, var, l);
+				return new StringEditor(agent, var, l);
 			// case IType.PAIR:
 			// return new PairEditor(scope, agent, var, l);
 			default:
-				return new ExpressionBasedEditor(scope, agent, var, l);
+				return new ExpressionBasedEditor(agent, var, l);
 		}
 	}
 

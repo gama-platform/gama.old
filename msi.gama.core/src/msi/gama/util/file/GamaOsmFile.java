@@ -406,6 +406,17 @@ public class GamaOsmFile extends GamaGisFile {
 
 	}
 
+	/**
+	 * Keep entity.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param toFilter
+	 *            the to filter
+	 * @param entity
+	 *            the entity
+	 * @return true, if successful
+	 * @date 17 août 2023
+	 */
 	boolean keepEntity(final boolean toFilter, final Entity entity) {
 		if (toFilter) {
 			boolean keepObject = false;
@@ -670,7 +681,7 @@ public class GamaOsmFile extends GamaGisFile {
 					}
 				} else if (entity instanceof Node) {
 					final GamaShape pt = nodesPt.get(((Node) entity).getId());
-					final GamaShape pt2 = pt.copy(null);
+					final GamaShape pt2 = pt.copy(scope);
 
 					final List objs = GamaListFactory.create(Types.GEOMETRY);
 					objs.add(pt2);

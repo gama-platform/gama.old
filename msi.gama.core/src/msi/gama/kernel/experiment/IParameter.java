@@ -64,6 +64,16 @@ public interface IParameter extends IExperimentDisplayable {
 	void setValue(IScope scope, Object value);
 
 	/**
+	 * Sets the value no check no notification.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param value
+	 *            the new value no check no notification
+	 * @date 13 août 2023
+	 */
+	void setValueNoCheckNoNotification(Object value);
+
+	/**
 	 * Value.
 	 *
 	 * @param scope

@@ -136,7 +136,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	 * Instantiates a new platform agent.
 	 */
 	public PlatformAgent() {
-		this(new GamaPopulation<PlatformAgent>(null,
+		this(new GamaPopulation<>(null,
 				GamaMetaModel.INSTANCE.getAbstractModelSpecies().getMicroSpecies(IKeyword.PLATFORM)), 0);
 	}
 
@@ -233,7 +233,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public IScope getScope() { return basicScope; }
 
 	@Override
-	public GamaColor getColor() { return GamaColor.colors.get("gamaorange"); }
+	public GamaColor getColor() { return GamaColor.get(102, 114, 126); }
 
 	@Override
 	public RandomUtils getRandomGenerator() { return new RandomUtils(); }
@@ -406,4 +406,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		});
 
 	}
+
+	@Override
+	public String getFamilyName() { return IKeyword.PLATFORM; }
 }

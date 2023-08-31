@@ -35,9 +35,14 @@ public class TextDisplayer extends AbstractEditor<TextStatement> {
 
 	/** The text. */
 	StyledText text;
+
+	/** The statement. */
 	TextStatement statement;
 
+	/** The front. */
 	final Color back, front;
+
+	/** The font. */
 	final Font font;
 
 	/**
@@ -51,7 +56,7 @@ public class TextDisplayer extends AbstractEditor<TextStatement> {
 	 *            the l
 	 */
 	public TextDisplayer(final IScope scope, final TextStatement command) {
-		super(scope, null, new InputParameter(command.getName(), null), null);
+		super(scope.getAgent(), new InputParameter(command.getName(), null), null);
 		statement = command;
 		java.awt.Color c = command.getColor(scope);
 		java.awt.Color b = command.getBackground(scope);

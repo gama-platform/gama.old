@@ -54,17 +54,12 @@ public enum TestState implements IColored {
 	 */
 	@Override
 	public GamaColor getColor(final IScope scope) {
-		switch (this) {
-			case FAILED:
-				return GamaColor.getNamed("gamared");
-			case NOT_RUN:
-				return GamaColor.getNamed("gamablue");
-			case WARNING:
-				return GamaColor.getNamed("gamaorange");
-			case PASSED:
-				return GamaColor.getNamed("gamagreen");
-			default:
-				return new GamaColor(83, 95, 107); // GamaColors.toGamaColor(IGamaColors.NEUTRAL.color());
-		}
+		return switch (this) {
+			case FAILED -> GamaColor.get("gamared");
+			case NOT_RUN -> GamaColor.get("gamablue");
+			case WARNING -> GamaColor.get("gamaorange");
+			case PASSED -> GamaColor.get("gamagreen");
+			default -> GamaColor.get(83, 95, 107); // GamaColors.toGamaColor(IGamaColors.NEUTRAL.color());
+		};
 	}
 }

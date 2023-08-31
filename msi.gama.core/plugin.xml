@@ -85,10 +85,6 @@
             description="Saves graphs in different formats (from JGraphT)">
       </implementation>
       <implementation
-            class="msi.gaml.statements.save.ImageSaver"
-            description="Saves images in different formats">
-      </implementation>
-      <implementation
             class="msi.gaml.statements.save.KmlSaver"
             description="Saves .kml or .kmz files">
       </implementation>

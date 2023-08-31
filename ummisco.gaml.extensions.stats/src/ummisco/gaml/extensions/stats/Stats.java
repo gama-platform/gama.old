@@ -1713,8 +1713,8 @@ public class Stats {
 					g.addValue(p.getGreen());
 					b.addValue(p.getBlue());
 				}
-				if (r.getSize() == 0) return new GamaColor(0, 0, 0, 0);
-				return new GamaColor((int) r.getMedian(), (int) g.getMedian(), (int) b.getMedian(), 0);
+				if (r.getSize() == 0) return GamaColor.get(0, 0, 0, 0);
+				return GamaColor.get((int) r.getMedian(), (int) g.getMedian(), (int) b.getMedian(), 0);
 			default:
 				final DataSet d = new DataSet();
 				for (final Object o : values.iterable(scope)) { d.addValue(Cast.asFloat(scope, o)); }

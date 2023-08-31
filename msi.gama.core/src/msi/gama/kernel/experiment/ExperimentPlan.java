@@ -528,7 +528,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		parameters.clear();
 		displayables.clear();
-		myScope.getGui().getStatus().neutralStatus(myScope, "No simulation running");
+		// myScope.getGui().getStatus().neutralStatus("No simulation running");
 		GAMA.releaseScope(myScope);
 		// FIXME Should be put somewhere around here, but probably not here
 		// exactly.
@@ -694,17 +694,19 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public synchronized void open(final Double seed) {
 
 		createAgent(seed);
+
 		// We add the agent as soon as possible so as to make it possible to evaluate variables in the opening of the
 		// experiment
 		myScope.push(agent);
 		prepareGui();
 		IScope scope = agent.getScope();
 		agent.schedule(scope);
+
 		showParameters();
 
 		if (isBatch()) {
-			myScope.getGui().getStatus().informStatus(scope,
-					isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
+			myScope.getGui().getStatus()
+					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
 			myScope.getGui().updateExperimentState(scope);
 		}
 
@@ -720,7 +722,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (showParameters != null && !showParameters) {
 			myScope.getGui().hideParameters();
 		} else {
-			myScope.getGui().showAndUpdateParameterView(myScope, this);
+			myScope.getGui().updateParameters();
 		}
 
 	}
@@ -734,14 +736,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final Boolean keepTabs = layout.getFacetValue(myScope, "tabs", true);
 		final Boolean keepToolbars = layout.getFacetValue(myScope, "toolbars", null);
 		final Boolean showConsoles = layout.getFacetValue(myScope, "consoles", null);
-		final Boolean showNavigator = layout.getFacetValue(myScope, "navigator", null);
+		final Boolean showNavigator = layout.getFacetValue(myScope, "navigator", false);
 		final Boolean showControls = layout.getFacetValue(myScope, "controls", null);
+		final Boolean showParameters = layout.getFacetValue(myScope, "parameters", null);
 		final Boolean keepTray = layout.getFacetValue(myScope, "tray", null);
 		final Boolean showEditors = layout.hasFacet("editors") ? layout.getFacetValue(myScope, "editors", false)
 				: !GamaPreferences.Modeling.EDITOR_PERSPECTIVE_HIDE.getValue();
 		Supplier<GamaColor> color = () -> layout.getFacetValue(myScope, "background", null);
-		myScope.getGui().arrangeExperimentViews(myScope, this, keepTabs, keepToolbars, showConsoles, showNavigator,
-				showControls, keepTray, color, showEditors);
+		myScope.getGui().arrangeExperimentViews(myScope, this, keepTabs, keepToolbars, showConsoles, showParameters,
+				showNavigator, showControls, keepTray, color, showEditors);
 	}
 
 	@Override
@@ -956,13 +959,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		 */
 		@Override
 		public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
-			if (hasParameter(name)) {
-				setParameterValue(this, name, v);
-				myScope.getGui().showAndUpdateParameterView(getCurrentSimulation().getScope(), ExperimentPlan.this);
-				return;
-			}
-			final SimulationAgent a = getCurrentSimulation();
-			if (a != null) { a.setDirectVarValue(this, name, v); }
+			if (hasParameter(name)) { setParameterValue(this, name, v); }
+			// final SimulationAgent a = getCurrentSimulation();
+			// if (a != null) { a.setDirectVarValue(this, name, v); }
 		}
 
 		/**
@@ -977,8 +976,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		@Override
 		public Object getGlobalVarValue(final String varName) throws GamaRuntimeException {
 			if (hasParameter(varName)) return getParameterValue(varName);
-			final SimulationAgent a = getCurrentSimulation();
-			if (a != null) return a.getDirectVarValue(this, varName);
+			// final SimulationAgent a = getCurrentSimulation();
+			// if (a != null) return a.getDirectVarValue(this, varName);
 			return null;
 		}
 

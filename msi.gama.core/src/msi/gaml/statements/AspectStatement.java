@@ -106,7 +106,7 @@ public class AspectStatement extends AbstractStatementSequence {
 	};
 
 	/** The border color. */
-	public static final GamaColor borderColor = GamaColor.getInt(Color.black.getRGB());
+	public static final GamaColor borderColor = GamaColor.get(Color.black.getRGB());
 
 	/** The default aspect. */
 	public static final IExecutable DEFAULT_ASPECT = sc -> {
@@ -124,7 +124,7 @@ public class AspectStatement extends AbstractStatementSequence {
 					final Object value = agent.getDirectVarValue(scope, IKeyword.COLOR);
 					color = Cast.asColor(scope, value);
 				} else {
-					color = GamaColor.getInt(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB());
+					color = GamaColor.get(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB());
 				}
 				final String defaultShape = GamaPreferences.Displays.CORE_SHAPE.getValue();
 				final Integer index = SHAPES.get(defaultShape);
@@ -134,29 +134,15 @@ public class AspectStatement extends AbstractStatementSequence {
 					final Double defaultSize = GamaPreferences.Displays.CORE_SIZE.getValue();
 					final GamaPoint point = agent.getLocation();
 
-
-					switch (SHAPES.get(defaultShape)) {
-						case 1:
-							ag = GamaGeometryType.buildCircle(defaultSize, point);
-							break;
-						case 2:
-							ag = GamaGeometryType.buildSquare(defaultSize, point);
-							break;
-						case 3:
-							ag = GamaGeometryType.buildTriangle(defaultSize, point);
-							break;
-						case 4:
-							ag = GamaGeometryType.buildSphere(defaultSize, point);
-							break;
-						case 5:
-							ag = GamaGeometryType.buildCube(defaultSize, point);
-							break;
-						case 6:
-							ag = GamaGeometryType.createPoint(point);
-							break;
-						default:
-							ag = agent.getGeometry();
-					}
+					ag = switch (SHAPES.get(defaultShape)) {
+						case 1 -> GamaGeometryType.buildCircle(defaultSize, point);
+						case 2 -> GamaGeometryType.buildSquare(defaultSize, point);
+						case 3 -> GamaGeometryType.buildTriangle(defaultSize, point);
+						case 4 -> GamaGeometryType.buildSphere(defaultSize, point);
+						case 5 -> GamaGeometryType.buildCube(defaultSize, point);
+						case 6 -> GamaGeometryType.createPoint(point);
+						default -> agent.getGeometry();
+					};
 				} else {
 					ag = agent.getGeometry();
 				}

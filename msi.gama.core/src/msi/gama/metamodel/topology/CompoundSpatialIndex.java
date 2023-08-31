@@ -11,10 +11,6 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
 
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.transform;
-import static java.util.Collections.singleton;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +19,7 @@ import java.util.WeakHashMap;
 
 import org.locationtech.jts.geom.Envelope;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 import msi.gama.common.geometry.Envelope3D;
@@ -32,7 +29,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
+import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
@@ -42,7 +39,7 @@ import msi.gaml.types.Types;
 /**
  * The Class CompoundSpatialIndex.
  */
-public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
+public class CompoundSpatialIndex implements ISpatialIndex.Compound {
 
 	/** The disposed. */
 	boolean disposed = false;
@@ -50,8 +47,6 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	/** The spatial indexes. */
 
 	private final WeakHashMap<ISpecies, ISpatialIndex> spatialIndexes = new WeakHashMap<>();
-	// private final Cache<IPopulation<? extends IAgent>, ISpatialIndex> spatialIndexes =
-	// newBuilder().weakKeys().weakValues().build();
 
 	/** The bounds. */
 	private Envelope bounds;
@@ -262,14 +257,16 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	 * @return the iterable
 	 */
 	private Iterable<ISpatialIndex> add(final IScope scope, final IAgentFilter filter) {
-		if (filter instanceof IPopulationSet) return transform(
+		if (filter instanceof IPopulationSet) return com.google.common.collect.Iterables.transform(
 				(Collection<IPopulation<? extends IAgent>>) ((IPopulationSet) filter).getPopulations(scope),
 				each -> add(each, true));
 		ISpecies species = filter.getSpecies();
 		if (species == null || species.getDescription() == Types.AGENT.getSpecies()) return spatialIndexes.values();
 		if (!cachedSpeciesIndices.containsKey(species)) {
 			cachedSpeciesIndices.put(species,
-					transform(concat(singleton(species), species.getSubSpecies(scope)), s -> add(scope, s, true)));
+					Lists.newArrayList(com.google.common.collect.Iterables.transform(com.google.common.collect.Iterables
+							.concat(java.util.Collections.singleton(species), species.getSubSpecies(scope)),
+							s -> add(scope, s, true))));
 		}
 		return cachedSpeciesIndices.get(species);
 	}
@@ -289,10 +286,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public void update(final IScope scope, final Envelope envelope, final boolean parallel) {
 		this.bounds = envelope;
 		this.parallel = parallel;
-
 		final WeakHashMap<ISpecies, ISpatialIndex> spatialIndexesTmp = new WeakHashMap<>();
 		spatialIndexesTmp.putAll(spatialIndexes);
-
 		for (ISpecies species : spatialIndexesTmp.keySet()) {
 			remove(species);
 			add(scope, species, true);

@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.SwitchButton;
@@ -61,8 +60,8 @@ public class BooleanEditor extends AbstractEditor<Boolean> {
 	 * @param l
 	 *            the l
 	 */
-	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Boolean> l) {
-		super(scope, agent, param, l);
+	BooleanEditor(final IAgent agent, final IParameter param, final EditorListener<Boolean> l) {
+		super(agent, param, l);
 		acceptNull = false;
 	}
 

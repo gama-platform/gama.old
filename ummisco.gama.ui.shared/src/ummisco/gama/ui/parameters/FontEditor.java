@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.FontDialog;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gama.util.GamaFont;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -45,8 +44,8 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	 * @param l
 	 *            the l
 	 */
-	FontEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaFont> l) {
-		super(scope, agent, param, l);
+	FontEditor(final IAgent agent, final IParameter param, final EditorListener<GamaFont> l) {
+		super(agent, param, l);
 	}
 
 	@Override

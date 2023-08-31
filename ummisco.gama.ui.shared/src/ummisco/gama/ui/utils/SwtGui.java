@@ -116,7 +116,6 @@ public class SwtGui implements IGui {
 	static {
 		PreferencesHelper.initialize();
 		AbstractDisplayGraphics.getCachedGC();
-		// initializeOpenGL();
 	}
 
 	/**
@@ -333,14 +332,6 @@ public class SwtGui implements IGui {
 		return result;
 	}
 
-	/*
-	 * @Override public Map<String, Object> openWizard(final IScope scope, final String title, final List<IParameter>
-	 * parameters, final GamaFont font) { final IMap<String, Object> result = GamaMapFactory.createUnordered(); for
-	 * (final IParameter p : parameters) { result.put(p.getName(), p.getInitialValue(scope)); } WorkbenchHelper.run(()
-	 * -> { final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), parameters, title, font);
-	 * if (dialog.open() == Window.OK) { result.putAll(dialog.getValues()); } }); return result; }
-	 */
-
 	@Override
 	public Boolean openUserInputDialogConfirm(final IScope scope, final String title, final String message) {
 		final List<Boolean> result = new ArrayList<>();
@@ -403,16 +394,63 @@ public class SwtGui implements IGui {
 		return modelRunner.runHeadlessTests(model);
 	}
 
+	/**
+	 * Show and update parameter view.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param exp
+	 *            the exp
+	 * @param previousAndNew
+	 *            the previous and new
+	 * @date 12 août 2023
+	 */
+	// @Override
+	// public void updateParametersStatusAndConsoleFor(final ITopLevelAgent listeningAgent) {
+	// IScope scope = listeningAgent == null ? GAMA.getRuntimeScope() : listeningAgent.getScope();
+	//
+	// WorkbenchHelper.run(() -> {
+	// GAMA.changeCurrentTopLevelAgent(current);
+	// getStatus().topLevelAgentChanged(listeningAgent);
+	// final Interactive icv = (Interactive) ViewsHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
+	// if (icv != null) { icv.topLevelAgentChanged(listeningAgent); }
+	// if (!GAMA.getExperiment().hasParametersOrUserCommands()) return;
+	// boolean showIt = !PerspectiveHelper.isModelingPerspective() && PerspectiveHelper.showParameters();
+	// if (showIt) {
+	// parametersView[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+	// } else {
+	// parametersView[0] = (Parameters) ViewsHelper.findView(PARAMETER_VIEW_ID, null, false);
+	// }
+	// if (parametersView[0] != null) {
+	// parametersView[0].topLevelAgentChanged(listeningAgent);
+	// parametersView[0].updateItemValues(false);
+	// }
+	// });
+	// }
+
+	/**
+	 * Update parameters.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 17 août 2023
+	 */
 	@Override
-	public void showAndUpdateParameterView(final IScope scope, final IExperimentPlan exp) {
+	public void updateParameters() {
+
 		WorkbenchHelper.run(() -> {
-			if (!exp.hasParametersOrUserCommands()) return;
-			parametersView[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+			boolean showIt = GAMA.getExperiment().hasParametersOrUserCommands()
+					&& !PerspectiveHelper.isModelingPerspective() && PerspectiveHelper.showParameters();
+			if (showIt) {
+				parametersView[0] = (Parameters) showView(GAMA.getRuntimeScope(), PARAMETER_VIEW_ID, null,
+						IWorkbenchPage.VIEW_ACTIVATE);
+			} else {
+				parametersView[0] = (Parameters) ViewsHelper.findView(PARAMETER_VIEW_ID, null, false);
+			}
 			if (parametersView[0] != null) {
-				parametersView[0].setExperiment(exp);
+				parametersView[0].topLevelAgentChanged(GAMA.getCurrentTopLevelAgent());
 				parametersView[0].updateItemValues(false);
 			}
-
 		});
 	}
 
@@ -447,11 +485,39 @@ public class SwtGui implements IGui {
 		});
 	}
 
+	/**
+	 * Arrange experiment views.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param exp
+	 *            the exp
+	 * @param keepTabs
+	 *            the keep tabs
+	 * @param keepToolbars
+	 *            the keep toolbars
+	 * @param showConsoles
+	 *            the show consoles
+	 * @param showParameters
+	 *            the show parameters
+	 * @param showNavigator
+	 *            the show navigator
+	 * @param showControls
+	 *            the show controls
+	 * @param keepTray
+	 *            the keep tray
+	 * @param color
+	 *            the color
+	 * @param showEditors
+	 *            the show editors
+	 * @date 14 août 2023
+	 */
 	@Override
 	public void arrangeExperimentViews(final IScope scope, final IExperimentPlan exp, final Boolean keepTabs,
-			final Boolean keepToolbars, final Boolean showConsoles, final Boolean showNavigator,
-			final Boolean showControls, final Boolean keepTray, final Supplier<GamaColor> color,
-			final boolean showEditors) {
+			final Boolean keepToolbars, final Boolean showConsoles, final Boolean showParameters,
+			final Boolean showNavigator, final Boolean showControls, final Boolean keepTray,
+			final Supplier<GamaColor> color, final boolean showEditors) {
 
 		WorkbenchHelper.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 		WorkbenchHelper.runInUI("Arranging views", 0, m -> {
@@ -469,6 +535,7 @@ public class SwtGui implements IGui {
 
 			final SimulationPerspectiveDescriptor sd = PerspectiveHelper.getActiveSimulationPerspective();
 			if (sd != null) {
+				sd.showParameters(showParameters == null || showParameters);
 				sd.showConsoles(showConsoles == null || showConsoles);
 				sd.keepTabs(keepTabs);
 				sd.keepToolbars(keepToolbars);
@@ -578,7 +645,7 @@ public class SwtGui implements IGui {
 				PerspectiveHelper.openModelingPerspective(immediately, false);
 			}
 
-			getStatus().neutralStatus(scope, "No simulation running");
+			// getStatus().neutralStatus("No simulation running");
 		});
 
 	}

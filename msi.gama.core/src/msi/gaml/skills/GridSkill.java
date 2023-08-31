@@ -1,18 +1,18 @@
 /*******************************************************************************************************
  *
- * GridSkill.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * GridSkill.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.skills;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -31,6 +31,13 @@ import msi.gaml.types.IType;
  *
  * @todo Description
  *
+ */
+
+/**
+ * The Class GridSkill.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 28 août 2023
  */
 @vars ({ @variable (
 		name = IKeyword.COLOR,
@@ -67,76 +74,14 @@ import msi.gaml.types.IType;
 		internal = true)
 public class GridSkill extends Skill {
 
-	/**
-	 * The Interface IGridAgent.
-	 */
-	public static interface IGridAgent extends IAgent {
-
-		/**
-		 * Gets the color.
-		 *
-		 * @return the color
-		 */
-		public GamaColor getColor();
-
-		/**
-		 * Sets the color.
-		 *
-		 * @param color the new color
-		 */
-		public void setColor(final GamaColor color);
-
-		/**
-		 * Gets the x.
-		 *
-		 * @return the x
-		 */
-		public int getX();
-
-		/**
-		 * Gets the y.
-		 *
-		 * @return the y
-		 */
-		public int getY();
-
-		/**
-		 * Gets the value.
-		 *
-		 * @return the value
-		 */
-		public double getValue();
-
-		/**
-		 * Gets the bands.
-		 *
-		 * @return the bands
-		 */
-		public IList<Double> getBands();
-
-		/**
-		 * Gets the neighbors.
-		 *
-		 * @param scope the scope
-		 * @return the neighbors
-		 */
-		public IList<IAgent> getNeighbors(IScope scope);
-
-		/**
-		 * Sets the value.
-		 *
-		 * @param d the new value
-		 */
-		public void setValue(final double d);
-	}
-
 	/** The Constant SKILL_NAME. */
 	public static final String SKILL_NAME = "grid";
 
 	/**
 	 * Gets the grid.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the grid
 	 */
 	protected final IGrid getGrid(final IAgent agent) {
@@ -146,7 +91,8 @@ public class GridSkill extends Skill {
 	/**
 	 * Gets the x.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the x
 	 */
 	@getter ("grid_x")
@@ -157,7 +103,8 @@ public class GridSkill extends Skill {
 	/**
 	 * Gets the value.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the value
 	 */
 	@getter (
@@ -170,7 +117,8 @@ public class GridSkill extends Skill {
 	/**
 	 * Gets the bands.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the bands
 	 */
 	@getter (
@@ -181,9 +129,23 @@ public class GridSkill extends Skill {
 	}
 
 	/**
+	 * Sets the bands.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param agent
+	 *            the agent
+	 * @return the i list
+	 * @date 28 août 2023
+	 */
+	@setter (
+			value = "bands")
+	public final void setBands(final IAgent agent, final IList<Double> bands) {}
+
+	/**
 	 * Gets the y.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the y
 	 */
 	@getter ("grid_y")
@@ -194,8 +156,10 @@ public class GridSkill extends Skill {
 	/**
 	 * Sets the X.
 	 *
-	 * @param agent the agent
-	 * @param i the i
+	 * @param agent
+	 *            the agent
+	 * @param i
+	 *            the i
 	 */
 	@setter ("grid_x")
 	public final void setX(final IAgent agent, final Integer i) {}
@@ -203,8 +167,10 @@ public class GridSkill extends Skill {
 	/**
 	 * Sets the value.
 	 *
-	 * @param agent the agent
-	 * @param d the d
+	 * @param agent
+	 *            the agent
+	 * @param d
+	 *            the d
 	 */
 	@setter ("grid_value")
 	public final void setValue(final IAgent agent, final Double d) {
@@ -214,8 +180,10 @@ public class GridSkill extends Skill {
 	/**
 	 * Sets the Y.
 	 *
-	 * @param agent the agent
-	 * @param i the i
+	 * @param agent
+	 *            the agent
+	 * @param i
+	 *            the i
 	 */
 	@setter ("grid_y")
 	public final void setY(final IAgent agent, final Integer i) {}
@@ -223,7 +191,8 @@ public class GridSkill extends Skill {
 	/**
 	 * Gets the color.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the color
 	 */
 	@getter (
@@ -236,8 +205,10 @@ public class GridSkill extends Skill {
 	/**
 	 * Sets the color.
 	 *
-	 * @param agent the agent
-	 * @param color the color
+	 * @param agent
+	 *            the agent
+	 * @param color
+	 *            the color
 	 */
 	@setter ("color")
 	public void setColor(final IAgent agent, final GamaColor color) {
@@ -247,8 +218,10 @@ public class GridSkill extends Skill {
 	/**
 	 * Gets the neighbors.
 	 *
-	 * @param scope the scope
-	 * @param agent the agent
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
 	 * @return the neighbors
 	 */
 	@getter (

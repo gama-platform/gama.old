@@ -38,13 +38,15 @@ grid vegetation_cell width: 10 height: 10 neighbors: 4 {
 	rgb color <- rnd_color(255) ;
 }
 
-experiment prey_keep_seed type: memorize keep_seed: true {
+experiment "Record and keep same seed" type: record keep_seed: true {
+	float seed <- 0.0;
+	
 	output {
-		display main_display type:2d antialias:false{
+		display main_display antialias:false{
 			grid vegetation_cell border: #black ;
 			species prey aspect: base;
 		}
-		display location_x type: 2d {
+		display location_x type: 2d antialias:false{
 			chart "grid_x of the prey" {
 				data "grid_x" value: first(prey).my_cell.grid_x;
 			}
@@ -53,13 +55,13 @@ experiment prey_keep_seed type: memorize keep_seed: true {
 	}
 }
 
-experiment prey_not_keep_seed type: memorize keep_seed: false {
+experiment "Record without keeping seed" type: record keep_seed: false {
 	output {
-		display main_display type:2d antialias:false{
-			grid vegetation_cell border: #black;
+		display main_display antialias:false{
+			grid vegetation_cell border: #black ;
 			species prey aspect: base;
 		}
-		display location_x type: 2d {
+		display location_x type: 2d antialias:false{
 			chart "grid_x of the prey" {
 				data "grid_x" value: first(prey).my_cell.grid_x;
 			}

@@ -67,8 +67,8 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	private boolean worldCorners = false;
 
 	/** The Constant FILL_COLORS. */
-	private static final Color[] FILL_COLORS = { NamedGamaColor.getNamed("gamared").withAlpha(0.3),
-			NamedGamaColor.getNamed("gamablue").withAlpha(0.3), NamedGamaColor.getNamed("black").withAlpha(0.3) };
+	private static final Color[] FILL_COLORS = { NamedGamaColor.get("gamared").withAlpha(0.3),
+			NamedGamaColor.get("gamablue").withAlpha(0.3), NamedGamaColor.get("black").withAlpha(0.3) };
 
 	/** The ib idx buff. */
 	final IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(new int[] { 0, 1, 2, 0, 2, 3 });

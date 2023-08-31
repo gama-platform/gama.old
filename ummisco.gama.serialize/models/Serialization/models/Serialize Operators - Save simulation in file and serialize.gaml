@@ -5,10 +5,9 @@
 * Tags: serialization, save_file
 */
 
-model ModelSaveAndSerialize
+model SavingSimulation
 
 global {
-	int toot <- 0;
 	string s <- "test";
 	
 	init {
@@ -25,14 +24,13 @@ experiment SaveSimulation type: gui {
 	
 	reflex save_simulation when: cycle mod 2 = 0 {
 		write "================ START SAVE + self " + " - " + cycle ;		
-		write "Save of simulation : " + save_simulation('../result/file.gsim');
-		// alternative to save_simulation : 		save saved_simulation_file('../result/file.gsim', [simulation]);
+		save simulation to: '../result/file.simulation' format: "json" ;
 		write "================ END SAVE + self " + " - " + cycle ;					
 	}
 	
 	reflex serialize_agent when: cycle mod 2 = 1 {
 		write "================ Serialize simulation " + self + " - " + cycle;
-		write serialize_agent(self.simulation);
+		write serialize(self.simulation, 'json', false);
 		write "================ END Serialize simulation " + self + " - " + cycle;				
 	}
 	

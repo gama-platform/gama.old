@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Control;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import ummisco.gama.ui.interfaces.EditorListener;
 
 /**
@@ -43,9 +42,8 @@ public class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	 * @param l
 	 *            the l
 	 */
-	public ExpressionBasedEditor(final IScope scope, final IAgent a, final IParameter variable,
-			final EditorListener<T> l) {
-		super(scope, a, variable, l);
+	public ExpressionBasedEditor(final IAgent a, final IParameter variable, final EditorListener<T> l) {
+		super(a, variable, l);
 	}
 
 	// In case the editor allows to edit the expression, should it be evaluated

@@ -44,7 +44,7 @@ import msi.gaml.types.Types;
 public class DrawingData extends AttributeHolder {
 
 	/** The Constant DEFAULT_BORDER_COLOR. */
-	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
+	static final GamaColor DEFAULT_BORDER_COLOR = GamaColor.get(Color.BLACK);
 
 	/** The size. */
 	public final Attribute<GamaPoint> size;

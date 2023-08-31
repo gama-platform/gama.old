@@ -262,20 +262,6 @@ init {
 	//In-memory shapefile mapping (optimizes access to shapefile data in exchange for increased memory usage)
 	write sample(gama.pref_shapefiles_in_memory);
 
-	//Color of Simulation 0 in the UI (console, view tabs) 
-	write sample(gama.pref_simulation_color_0);
-
-	//Color of Simulation 1 in the UI (console, view tabs) 
-	write sample(gama.pref_simulation_color_1);
-
-	//Color of Simulation 2 in the UI (console, view tabs) 
-	write sample(gama.pref_simulation_color_2);
-
-	//Color of Simulation 3 in the UI (console, view tabs) 
-	write sample(gama.pref_simulation_color_3);
-
-	//Color of Simulation 4 in the UI (console, view tabs) 
-	write sample(gama.pref_simulation_color_4);
 
 	//Forces the spatial index to synchronize its operations. Useful for interactive models where the users interfere or parallel models with concurrency errors. Note that it may slow down simulations with a lot of mobile agents
 	write sample(gama.pref_synchronize_quadtree);
@@ -549,21 +535,6 @@ init {
 
 	//In-memory shapefile mapping (optimizes access to shapefile data in exchange for increased memory usage)
 	gama.pref_shapefiles_in_memory <- true;
-
-	//Color of Simulation 0 in the UI (console, view tabs) 
-	gama.pref_simulation_color_0 <- rgb (74, 97, 144, 255);
-
-	//Color of Simulation 1 in the UI (console, view tabs) 
-	gama.pref_simulation_color_1 <- rgb (66, 119, 42, 255);
-
-	//Color of Simulation 2 in the UI (console, view tabs) 
-	gama.pref_simulation_color_2 <- rgb (83, 95, 107, 255);
-
-	//Color of Simulation 3 in the UI (console, view tabs) 
-	gama.pref_simulation_color_3 <- rgb (195, 98, 43, 255);
-
-	//Color of Simulation 4 in the UI (console, view tabs) 
-	gama.pref_simulation_color_4 <- rgb (150, 132, 106, 255);
 
 	//Forces the spatial index to synchronize its operations. Useful for interactive models where the users interfere or parallel models with concurrency errors. Note that it may slow down simulations with a lot of mobile agents
 	gama.pref_synchronize_quadtree <- true;

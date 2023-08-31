@@ -58,14 +58,22 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 		return null;
 	}
 
-	@Override
+	/**
+	 * Adds the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param params
+	 *            the params
+	 * @param agent
+	 *            the agent
+	 * @date 13 août 2023
+	 */
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		if (addItem(agent) && !agent.dead()) {
 			final IScope scope = agent.getScope().copy("for " + agent.getName());
 			for (final IExperimentDisplayable var : params) {
 				if (var instanceof IParameter && !HIDDEN.contains(var.getName())) {
-					final IParameterEditor<?> gp =
-							EditorFactory.getInstance().create(scope, agent, (IParameter) var, null);
+					final IParameterEditor<?> gp = EditorFactory.getInstance().create(agent, (IParameter) var, null);
 					sections.get(agent).put(gp.getParam().getName(), gp);
 				}
 			}
@@ -75,7 +83,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	@Override
 	public boolean addItem(final IAgent agent) {
 		if (!sections.containsKey(agent)) {
-			sections.put(agent, new HashMap<String, IParameterEditor<?>>());
+			sections.put(agent, new HashMap<>());
 			return true;
 		}
 		return false;

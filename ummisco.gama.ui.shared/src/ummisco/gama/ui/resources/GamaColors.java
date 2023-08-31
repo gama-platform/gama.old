@@ -127,8 +127,15 @@ public class GamaColors {
 		 */
 		public RGB getRGB() { return active.getRGB(); }
 
+		/**
+		 * Gama color.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @return the gama color
+		 * @date 20 août 2023
+		 */
 		public GamaColor gamaColor() {
-			return new GamaColor(active.getRed(), active.getGreen(), active.getBlue(), active.getAlpha());
+			return GamaColor.get(active.getRed(), active.getGreen(), active.getBlue(), active.getAlpha());
 		}
 	}
 
@@ -387,7 +394,7 @@ public class GamaColors {
 	 * @return the gama color
 	 */
 	public static GamaColor toGamaColor(final Color color) {
-		return new GamaColor(color.getRed(), color.getGreen(), color.getBlue());
+		return GamaColor.get(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
 	/**
@@ -398,8 +405,8 @@ public class GamaColors {
 	 * @return the gama color
 	 */
 	public static GamaColor toGamaColor(final RGB color) {
-		if (color == null) return GamaColor.getInt(0);
-		return new GamaColor(color.red, color.green, color.blue);
+		if (color == null) return GamaColor.get(0);
+		return GamaColor.get(color.red, color.green, color.blue);
 	}
 
 	/**

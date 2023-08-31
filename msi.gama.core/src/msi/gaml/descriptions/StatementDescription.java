@@ -248,7 +248,7 @@ public class StatementDescription extends SymbolDescription {
 		});
 		if (isInvocation()) {
 			verifyArgs(passedArgs);
-		} else if (CREATE.equals(keyword)) { verifyInits(passedArgs); }
+		} else if (CREATE.equals(keyword) || RESTORE.equals(keyword)) { verifyInits(passedArgs); }
 		return passedArgs;
 	}
 
@@ -285,7 +285,7 @@ public class StatementDescription extends SymbolDescription {
 				final IExpression expr = exp.getExpression();
 				if (expr != null) { initType = expr.getGamlType(); }
 				if (varType != NO_TYPE && !initType.isTranslatableInto(varType)) {
-					if (CREATE.equals(getKeyword())) {
+					if (CREATE.equals(getKeyword()) || RESTORE.equals(getKeyword())) {
 						final boolean isDB = getFacet(FROM) != null
 								&& getFacet(FROM).getExpression().getGamlType().isAssignableFrom(Types.LIST);
 						if (isDB && initType.equals(Types.STRING)) return true;
@@ -309,7 +309,7 @@ public class StatementDescription extends SymbolDescription {
 		IType t = super.getGamlType();
 		final String kw = getKeyword();
 		IType ct = t.getContentType();
-		if (CREATE.equals(kw) || CAPTURE.equals(kw) || RELEASE.equals(kw)) {
+		if (RESTORE.equals(kw) || CREATE.equals(kw) || CAPTURE.equals(kw) || RELEASE.equals(kw)) {
 			ct = t;
 			t = Types.LIST;
 

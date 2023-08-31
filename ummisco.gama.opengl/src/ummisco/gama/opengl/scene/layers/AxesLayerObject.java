@@ -13,7 +13,6 @@ package ummisco.gama.opengl.scene.layers;
 import static msi.gama.common.geometry.Rotation3D.MINUS_I;
 import static msi.gama.common.geometry.Rotation3D.PLUS_J;
 import static msi.gama.common.geometry.Scaling3D.of;
-import static msi.gama.util.GamaColor.getNamed;
 import static msi.gaml.constants.GamlCoreConstants.bottom_center;
 import static msi.gaml.constants.GamlCoreConstants.left_center;
 import static msi.gaml.constants.GamlCoreConstants.top_center;
@@ -54,7 +53,8 @@ public class AxesLayerObject extends StaticLayerObject.World {
 	public final static AxisAngle[] ROTATIONS = { new AxisAngle(PLUS_J, 90), new AxisAngle(MINUS_I, 90), null };
 
 	/** The Constant COLORS. */
-	public final static GamaColor[] COLORS = { getNamed("gamared"), getNamed("gamaorange"), getNamed("gamablue") };
+	public final static GamaColor[] COLORS =
+			{ GamaColor.get("gamared"), GamaColor.get("gamaorange"), GamaColor.get("gamablue") };
 
 	/** The Constant DEFAULT_SCALE. */
 	protected final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);

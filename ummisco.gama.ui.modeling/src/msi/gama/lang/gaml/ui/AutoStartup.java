@@ -47,7 +47,7 @@ public class AutoStartup implements IStartup {
 				.setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, false);
 		final RGB rgb = PreferenceConverter.getColor(EditorsPlugin.getDefault().getPreferenceStore(),
 				AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
-		return new GamaColor(rgb.red, rgb.green, rgb.blue);
+		return GamaColor.get(rgb.red, rgb.green, rgb.blue);
 	}
 
 	/**

@@ -63,7 +63,6 @@ import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
@@ -495,9 +494,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 */
 	private Object getSource(final IScope scope) {
 		Object source = from == null ? null : from.value(scope);
-		if (source instanceof String) {
-			source = Files.from(scope, (String) source);
-		} else if (source instanceof IShape) { source = GamaListFactory.wrap(Types.GEOMETRY, (IShape) source); }
+		// if (source instanceof String) {
+		// source = Files.from(scope, (String) source);
+		// } else
+		if (source instanceof IShape) { source = GamaListFactory.wrap(Types.GEOMETRY, (IShape) source); }
 		return source;
 	}
 

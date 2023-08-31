@@ -50,12 +50,9 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	/** The max. */
 	static double max = 1000;
-	
+
 	/** slop factor for the logarithmic slider. */
 	static double lambda = 0.3;
-
-	/** The Constant popupColor. */
-	protected final static GamaUIColor popupColor = IGamaColors.BLUE;
 
 	/** The Constant sliderColor. */
 	protected final static GamaUIColor sliderColor = IGamaColors.GRAY_LABEL;
@@ -81,11 +78,8 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	public static double positionFromValue(final double v) {
 		// returns a percentage between 0 and 1 (0 -> max milliseconds; 1 -> 0
 		// milliseconds).
-		if(GamaPreferences.Runtime.CORE_SLIDER_TYPE.getValue()) {
-		  return 1 - v / max;
-		}else {
-		  return 1 - lambda*Math.log(v/max*(Math.exp(1/lambda)-1)+1);
-		}
+		if (GamaPreferences.Runtime.CORE_SLIDER_TYPE.getValue()) return 1 - v / max;
+		return 1 - lambda * Math.log(v / max * (Math.exp(1 / lambda) - 1) + 1);
 	}
 
 	@Override
@@ -100,11 +94,8 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	 * @return
 	 */
 	public static double valueFromPosition(final double p) {
-		if(GamaPreferences.Runtime.CORE_SLIDER_TYPE.getValue()) {
-			return max - p * max;
-		}else {
-			return (Math.exp((1-p)/lambda) -1)/(Math.exp(1/lambda)-1)*max;
-		}
+		if (GamaPreferences.Runtime.CORE_SLIDER_TYPE.getValue()) return max - p * max;
+		return (Math.exp((1 - p) / lambda) - 1) / (Math.exp(1 / lambda) - 1) * max;
 	}
 
 	/**
@@ -151,20 +142,12 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		data.minimumWidth = widthSize;
 		final SimpleSlider slider =
 				new SimpleSlider(composite, sliderColor.color(), sliderColor.color(), IGamaColors.BLUE.color(), true);
-		slider.setTooltipInterperter(TOOLTIP_PROVIDER);
-		// data.heightHint = heightSize;
 		slider.setLayoutData(data);
 		slider.setSize(widthSize, heightSize);
-		slider.specifyHeight(heightSize); // fix the problem of wrong position
-		// for the tooltip. Certainly not the best way but it does the trick
 		slider.addPositionChangeListener(POSITION_LISTENER);
-		slider.setPopupBackground(popupColor);
 		slider.updateSlider(getInitialValue(), false);
 		slider.setBackground(parent.getBackground());
-		slider.addDisposeListener(e -> {
-			sliders.remove(slider);
-			// DEBUG.OUT("Slider " + slider + " is disposed");
-		});
+		slider.addDisposeListener(e -> { sliders.remove(slider); });
 		sliders.add(slider);
 		return composite;
 
@@ -210,15 +193,13 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		}
 	}
 
-	/** The tooltip provider. */
-	static IToolTipProvider TOOLTIP_PROVIDER =
-			position -> "Minimum duration of a cycle " + Maths.opTruncate(valueFromPosition(position) / 1000, 3) + " s";
-
 	/** The position listener. */
 	static IPositionChangeListener POSITION_LISTENER = (s, position) -> {
-		// DEBUG.OUT("Position changed to " + position + " affects sliders: " + sliders);
+
 		GAMA.getExperiment().getAgent().setMinimumDurationExternal(valueFromPosition(position) / 1000);
 		for (final SimpleSlider slider2 : sliders) {
+			slider2.setToolTipText(
+					"Minimum duration of a cycle " + Maths.opTruncate(valueFromPosition(position) / 1000, 3) + " s");
 			if (slider2 == s) { continue; }
 			slider2.updateSlider(position, false);
 		}

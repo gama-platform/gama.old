@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * FSTBinaryImplementation.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * FSTBinaryProcessor.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -19,7 +19,7 @@ import org.nustaq.serialization.FSTConfiguration;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 2 août 2023
  */
-public class FSTBinaryImplementation extends AbstractFSTImplementation {
+public class FSTBinaryProcessor extends FSTAbstractProcessor {
 
 	/** A flag to use sun.unsafe.xxx classes. A bit faster, but more subject to depreciation */
 	static final boolean USE_UNSAFE = true;
@@ -32,12 +32,15 @@ public class FSTBinaryImplementation extends AbstractFSTImplementation {
 	 *            the scope.
 	 * @date 5 août 2023
 	 */
-	public FSTBinaryImplementation(final boolean zip, final boolean save) {
+	public FSTBinaryProcessor() {
 		super(USE_UNSAFE ? FSTConfiguration.createUnsafeBinaryConfiguration()
-				: FSTConfiguration.createDefaultConfiguration(), zip, save);
+				: FSTConfiguration.createDefaultConfiguration());
 	}
 
 	@Override
-	protected String getFormat() { return "binary"; }
+	public String getFormat() { return BINARY_FORMAT; }
+
+	@Override
+	public byte getFormatIdentifier() { return 0; }
 
 }

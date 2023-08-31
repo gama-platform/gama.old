@@ -30,6 +30,20 @@ import msi.gaml.types.Types;
  *
  * @author drogoul
  */
+
+/**
+ * The Class GamaColor.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 20 août 2023
+ */
+
+/**
+ * The Class GamaColor.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 20 août 2023
+ */
 @vars ({ @variable (
 		name = IKeyword.COLOR_RED,
 		type = IType.INT,
@@ -66,13 +80,17 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	public final static Map<Integer, GamaColor> int_colors = Collections.synchronizedMap(new HashMap<>());
 
 	/**
-	 * Gets the int.
+	 * Gets the.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param rgb
 	 *            the rgb
-	 * @return the int
+	 * @return the gama color
+	 * @date 20 août 2023
 	 */
-	public static GamaColor getInt(final int rgb) {
+
+	public static GamaColor get(final int rgb) {
+		// rgba value expected
 		GamaColor result = int_colors.get(rgb);
 		if (result == null) {
 			result = new GamaColor(rgb);
@@ -82,36 +100,186 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	}
 
 	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param rgb
+	 *            the rgb
+	 * @param alpha
+	 *            the alpha
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor get(final int rgb, final int alpha) {
+		GamaColor c = get(rgb);
+		return get(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor get(final int r, final int g, final int b) {
+		return get(r, g, b, 255);
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
+	 * @param a
+	 *            the a
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor get(final int r, final int g, final int b, final int a) {
+		// rgb in 3 components + alpha
+		return get((normalize(a) & 0xFF) << 24 | (normalize(r) & 0xFF) << 16 | (normalize(g) & 0xFF) << 8
+				| (normalize(b) & 0xFF) << 0);
+
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
+	 * @param t
+	 *            the t
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor getWithDoubleAlpha(final int r, final int g, final int b, final double t) {
+		return get(r, g, b, normalize(t));
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param r
+	 *            the r
+	 * @param g
+	 *            the g
+	 * @param b
+	 *            the b
+	 * @param t
+	 *            the t
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor getWithDoubles(final double r, final double g, final double b, final double t) {
+		return get(normalize(r), normalize(g), normalize(b), normalize(t));
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @param t
+	 *            the t
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor get(final Color c, final double t) {
+		return get(c, normalize(t));
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @param t
+	 *            the t
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor get(final Color c, final int t) {
+		return get(c.getRed(), c.getGreen(), c.getBlue(), t);
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @date 20 août 2023
+	 */
+	public static GamaColor get(final Color c) {
+		return get(c.getRGB());
+	}
+
+	/**
 	 * Gets the named.
 	 *
 	 * @param rgb
 	 *            the rgb
 	 * @return the named
 	 */
-	public static GamaColor getNamed(final String rgb) {
+	public static GamaColor get(final String rgb) {
 		return colors.get(rgb);
+	}
+
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param name
+	 *            the rgb
+	 * @return the gama color
+	 * @date 20 août 2023
+	 */
+	public static GamaColor get(final String name, final int... t) {
+		GamaColor c = colors.get(name);
+		if (c == null) { colors.put(name, new NamedGamaColor(name, t[0], t[1], t[2], t[3])); }
+		return colors.get(name);
 	}
 
 	static {
 		for (int i = 0; i < array.length; i += 2) {
-			final GamaColor color = new NamedGamaColor((String) array[i], (int[]) array[i + 1]);
+			final GamaColor color = GamaColor.get((String) array[i], (int[]) array[i + 1]);
 			colors.put((String) array[i], color);
 			int_colors.put(color.getRGB(), color);
 		}
 		// A.G add the GAMA Color corresponding to the GAMA 1.9 Logo
-		final GamaColor orange = new NamedGamaColor("gamaorange", new int[] { 244, 165, 40, 1 });
+		final GamaColor orange = GamaColor.get("gamaorange", 244, 165, 40, 255);
 		colors.put("gamaorange", orange);
 		int_colors.put(orange.getRGB(), orange);
 
-		final GamaColor red = new NamedGamaColor("gamared", new int[] { 217, 72, 33, 1 });
+		final GamaColor red = GamaColor.get("gamared", 217, 72, 33, 255);
 		colors.put("gamared", red);
 		int_colors.put(red.getRGB(), red);
 
-		final GamaColor blue = new NamedGamaColor("gamablue", new int[] { 22, 94, 147, 1 });
+		final GamaColor blue = GamaColor.get("gamablue", 22, 94, 147, 255);
 		colors.put("gamablue", blue);
 		int_colors.put(blue.getRGB(), blue);
 
-		final GamaColor green = new NamedGamaColor("gamagreen", new int[] { 81, 135, 56, 1 });
+		final GamaColor green = GamaColor.get("gamagreen", 81, 135, 56, 255);
 		colors.put("gamagreen", green);
 		int_colors.put(green.getRGB(), green);
 	}
@@ -121,22 +289,23 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 */
 	public static class NamedGamaColor extends GamaColor {
 
-		/** The name. */
-		final String name;
-
 		/**
 		 * Instantiates a new named gama color.
 		 *
-		 * @param n
-		 *            the n
-		 * @param c
-		 *            the c
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param name
+		 *            the name.
+		 * @param rgba
+		 *            the rgba
+		 * @date 20 août 2023
 		 */
-		NamedGamaColor(final String n, final int[] c) {
-			// c must be of length 4.
-			super(c[0], c[1], c[2], (double) c[3]);
-			name = n;
+		NamedGamaColor(final String name, final int... rgba) {
+			super(rgba[0], rgba[1], rgba[2], rgba[3]);
+			this.name = name;
 		}
+
+		/** The name. */
+		final String name;
 
 		@Override
 		public String toString() {
@@ -158,58 +327,24 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	/**
 	 * Normalize.
 	 *
-	 * @param rgbComp
+	 * @param number
 	 *            the rgb comp
 	 * @return the int
 	 */
-	private static int normalize(final int rgbComp) {
-		return rgbComp < 0 ? 0 : rgbComp > 255 ? 255 : rgbComp;
+	private static int normalize(final int number) {
+		return number < 0 ? 0 : number > 255 ? 255 : number;
 	}
 
 	/**
 	 * Normalize.
 	 *
-	 * @param transp
+	 * @param number
 	 *            the transp
 	 * @return the int
 	 */
 	// returns a value between 0 and 255 from a double between 0 and 1
-	private static int normalize(final double transp) {
-		return (int) (transp < 0 ? 0 : transp > 1 ? 255 : 255 * transp);
-	}
-
-	/**
-	 * Instantiates a new gama color.
-	 *
-	 * @param c
-	 *            the c
-	 */
-	public GamaColor(final Color c) {
-		super(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
-	}
-
-	/**
-	 * Instantiates a new gama color.
-	 *
-	 * @param c
-	 *            the c
-	 * @param alpha
-	 *            the alpha
-	 */
-	public GamaColor(final Color c, final int alpha) {
-		this(c.getRed(), c.getGreen(), c.getBlue(), normalize(alpha));
-	}
-
-	/**
-	 * Instantiates a new gama color.
-	 *
-	 * @param c
-	 *            the c
-	 * @param alpha
-	 *            the alpha
-	 */
-	public GamaColor(final Color c, final double alpha) {
-		this(c.getRed(), c.getGreen(), c.getBlue(), normalize(alpha));
+	private static int normalize(final double number) {
+		return (int) (number < 0 ? 0 : number > 1 ? 255 : 255 * number);
 	}
 
 	/**
@@ -231,69 +366,13 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 *            the g
 	 * @param b
 	 *            the b
-	 */
-	public GamaColor(final int r, final int g, final int b) {
-		this(normalize(r), normalize(g), normalize(b), 255);
-
-	}
-
-	/**
-	 * Instantiates a new gama color.
-	 *
-	 * @param r
-	 *            the r
-	 * @param g
-	 *            the g
-	 * @param b
-	 *            the b
 	 * @param t
 	 *            the t
 	 */
-	public GamaColor(final int r, final int g, final int b, final int t) {
+	protected GamaColor(final int r, final int g, final int b, final int t) {
 		// t between 0 and 255
 		super(normalize(r), normalize(g), normalize(b), normalize(t));
 	}
-
-	/**
-	 * Instantiates a new gama color.
-	 *
-	 * @param r
-	 *            the r
-	 * @param g
-	 *            the g
-	 * @param b
-	 *            the b
-	 * @param t
-	 *            the t
-	 */
-	public GamaColor(final double r, final double g, final double b, final double t) {
-		// t between 0 and 1
-		super(normalize(r), normalize(g), normalize(b), normalize(t));
-	}
-
-	/**
-	 * Instantiates a new gama color.
-	 *
-	 * @param r
-	 *            the r
-	 * @param g
-	 *            the g
-	 * @param b
-	 *            the b
-	 * @param t
-	 *            the t
-	 */
-	public GamaColor(final int r, final int g, final int b, final double t) {
-		// t between 0 and 1
-		super(normalize(r), normalize(g), normalize(b), normalize(t));
-	}
-
-	/**
-	 * @param is
-	 */
-	// public GamaColor(final int[] c) {
-	// this(c[0], c[1], c[2], c[3]); // c[3] not considered yet
-	// }
 
 	@Override
 	public String toString() {
@@ -350,25 +429,52 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 		return super.getAlpha();
 	}
 
+	/** The brightness factor. */
+	static float BRIGHTNESS_FACTOR = 0.7f;
+
 	/**
 	 * Gets the brighter.
 	 *
 	 * @return the brighter
 	 */
+	@Override
 	@getter (IKeyword.BRIGHTER)
-	public GamaColor getBrighter() { return new GamaColor(super.brighter()); }
+	public GamaColor brighter() {
+		int r = getRed();
+		int g = getGreen();
+		int b = getBlue();
+		int alpha = getAlpha();
+
+		/*
+		 * From 2D group: 1. black.brighter() should return grey 2. applying brighter to blue will always return blue,
+		 * brighter 3. non pure color (non zero rgb) will eventually return white
+		 */
+		int i = (int) (1.0 / (1.0 - BRIGHTNESS_FACTOR));
+		if (r == 0 && g == 0 && b == 0) return GamaColor.get(i, i, i, alpha);
+		if (r > 0 && r < i) { r = i; }
+		if (g > 0 && g < i) { g = i; }
+		if (b > 0 && b < i) { b = i; }
+
+		return GamaColor.get(Math.min((int) (r / BRIGHTNESS_FACTOR), 255), Math.min((int) (g / BRIGHTNESS_FACTOR), 255),
+				Math.min((int) (b / BRIGHTNESS_FACTOR), 255), alpha);
+	}
 
 	/**
 	 * Gets the darker.
 	 *
 	 * @return the darker
 	 */
+	@Override
 	@getter (IKeyword.DARKER)
-	public GamaColor getDarker() { return new GamaColor(super.darker()); }
+	public GamaColor darker() {
+		return GamaColor.get(Math.max((int) (getRed() * BRIGHTNESS_FACTOR), 0),
+				Math.max((int) (getGreen() * BRIGHTNESS_FACTOR), 0), Math.max((int) (getBlue() * BRIGHTNESS_FACTOR), 0),
+				getAlpha());
+	}
 
 	@Override
 	public GamaColor copy(final IScope scope) {
-		return new GamaColor(this);
+		return GamaColor.get(this);
 	}
 
 	/**
@@ -381,7 +487,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 * @return the gama color
 	 */
 	public static GamaColor merge(final GamaColor c1, final GamaColor c2) {
-		return new GamaColor(c1.getRed() + c2.getRed(), c1.getGreen() + c2.getGreen(), c1.getBlue() + c2.getBlue(),
+		return GamaColor.get(c1.getRed() + c2.getRed(), c1.getGreen() + c2.getGreen(), c1.getBlue() + c2.getBlue(),
 				c1.getAlpha() + c2.getAlpha());
 	}
 
@@ -461,7 +567,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	 * @return the gama color
 	 */
 	public GamaColor withAlpha(final double d) {
-		return new GamaColor(getRed(), getGreen(), getBlue(), d);
+		return getWithDoubleAlpha(getRed(), getGreen(), getBlue(), d);
 	}
 
 	/**

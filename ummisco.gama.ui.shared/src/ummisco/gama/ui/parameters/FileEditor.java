@@ -54,7 +54,6 @@ import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaFolderFile;
 import msi.gama.util.file.IGamaFile;
@@ -98,9 +97,8 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 	 * @param isFolder
 	 *            the is folder
 	 */
-	FileEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l,
-			final boolean isFolder) {
-		super(scope, agent, param, l);
+	FileEditor(final IAgent agent, final IParameter param, final EditorListener l, final boolean isFolder) {
+		super(agent, param, l);
 		this.isFolder = isFolder;
 		this.isWorkspace = param != null && param.isWorkspace();
 		this.fileExtensions =

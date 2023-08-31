@@ -80,10 +80,10 @@ public class LightDefinition extends AbstractDefinition implements ILightDefinit
 		intensityAttribute = create("intensity", (scope, exp) -> {
 			if (exp.getGamlType() == Types.INT) {
 				int v = Cast.asInt(scope, exp.value(scope));
-				return new GamaColor(v, v, v, 255);
+				return GamaColor.get(v, v, v, 255);
 			}
 			return Cast.asColor(scope, exp.value(scope));
-		}, Types.COLOR, new GamaColor(i, i, i, 255));
+		}, Types.COLOR, GamaColor.get(i, i, i, 255));
 
 	}
 

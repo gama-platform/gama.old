@@ -286,7 +286,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if (onChange != null) {
 			listeners.add((scope, v) -> {
 				final IExecutable on_changer =
-						scope.getAgent().getSpecies().getAction(Cast.asString(scope, onChange.value(scope)));
+						scope.getExperiment().getSpecies().getAction(Cast.asString(scope, onChange.value(scope)));
 				scope.getExperiment().executeAction(on_changer);
 			});
 
@@ -536,6 +536,9 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		}
 		value = newValue;
 	}
+
+	@Override
+	public void setValueNoCheckNoNotification(final Object value) { this.value = value; }
 
 	/**
 	 * Filter with among.

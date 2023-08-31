@@ -10,17 +10,13 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.controls;
 
-import static org.eclipse.jface.layout.GridDataFactory.swtDefaults;
 import static org.eclipse.jface.layout.GridLayoutFactory.fillDefaults;
-import static org.eclipse.swt.SWT.BEGINNING;
-import static org.eclipse.swt.SWT.DOUBLE_BUFFERED;
-import static org.eclipse.swt.SWT.FILL;
-import static org.eclipse.swt.SWT.NO_BACKGROUND;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -37,17 +33,14 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The Class SimpleSlider.
  */
-public class SimpleSlider extends Composite implements IPopupProvider {
+public class SimpleSlider extends Composite /* implements IPopupProvider */ {
 
 	static {
 		DEBUG.OFF();
@@ -74,14 +67,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	/** The mouse down. */
 	boolean mouseDown = false;
 
-	/** The slider height. */
-	private int sliderHeight;
-
 	/** The step. */
 	private Double step = null;
-
-	/** The tool tip interperter. */
-	private IToolTipProvider toolTipInterperter;
 
 	/** The position changed listeners. */
 	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<>();
@@ -90,17 +77,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	 */
 	double previousPosition = 0;
 
-	/** The popup color. */
-	GamaUIColor popupColor = IGamaColors.GRAY_LABEL;
-
-	/** The popup. */
-	Popup2 popup = null;
-
 	/** The notify. */
 	private boolean notify = true;
-
-	/** The popup listener. */
-	private final IPositionChangeListener popupListener = (slider, position) -> popup.display();
 
 	/**
 	 * Instantiates a new simple slider.
@@ -192,15 +170,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		});
 
 		addTraverseListener(e -> e.doit = true);
-		if (withPopup) {
-			addPositionChangeListener(popupListener);
-			popup = new Popup2(this, leftRegion, thumb, rightRegion);
-		} else {
-			popup = null;
-		}
-		// if (DEBUG.IS_ON()) {
-		// addPositionChangeListener((slider, position) -> DEBUG.OUT("Position changed to : " + position));
-		// }
 	}
 
 	/**
@@ -274,14 +243,6 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		this.notify = true;
 	}
 
-	/**
-	 *
-	 * @param toolTipInterperter
-	 */
-	public void setTooltipInterperter(final IToolTipProvider toolTipInterperter) {
-		this.toolTipInterperter = toolTipInterperter;
-	}
-
 	@Override
 	public void setBackground(final Color color) {
 		if (color != null) { GamaColors.setBackground(color, thumb, rightRegion, leftRegion); }
@@ -308,49 +269,12 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		rightRegion.setBackground(color);
 	}
 
-	/**
-	 * Sets the popup background.
-	 *
-	 * @param color
-	 *            the new popup background
-	 */
-	public void setPopupBackground(final GamaUIColor color) { popupColor = color; }
-
 	@Override
 	public void setToolTipText(final String string) {
 		super.setToolTipText(string);
 		thumb.setToolTipText(string);
 		rightRegion.setToolTipText(string);
 		leftRegion.setToolTipText(string);
-	}
-
-	/**
-	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
-	 */
-	@Override
-	public PopupText getPopupText() {
-		final double value = getCurrentPosition();
-		final String text =
-				toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter.getToolTipText(value);
-		return PopupText.with(popupColor, text);
-	}
-
-	@Override
-	public Point getAbsoluteOrigin() {
-		return leftRegion.toDisplay(new Point(leftRegion.getLocation().x, -sliderHeight));
-	}
-
-	@Override
-	public Shell getControllingShell() { return leftRegion.getShell(); }
-
-	/**
-	 * Specify height.
-	 *
-	 * @param heightsize
-	 *            the heightsize
-	 */
-	public void specifyHeight(final int heightsize) {
-		sliderHeight = heightsize;
 	}
 
 	/**
@@ -380,11 +304,11 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		 *            the thumb color
 		 */
 		public Thumb(final Composite parent, final Color thumbColor) {
-			super(parent, NO_BACKGROUND);
+			super(parent, SWT.NO_BACKGROUND);
 			color = thumbColor;
 			addPaintListener(this);
-			swtDefaults().hint(THUMB_WIDTH, THUMB_HEIGHT).minSize(THUMB_WIDTH, THUMB_HEIGHT).align(BEGINNING, SWT.FILL)
-					.grab(false, true).applyTo(this);
+			GridDataFactory.swtDefaults().hint(THUMB_WIDTH, THUMB_HEIGHT).minSize(THUMB_WIDTH, THUMB_HEIGHT)
+					.align(SWT.BEGINNING, SWT.FILL).grab(false, true).applyTo(this);
 		}
 
 		@Override
@@ -444,9 +368,9 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		 *            the last
 		 */
 		public Panel(final Composite parent, final Color color, final boolean last) {
-			super(parent, DOUBLE_BUFFERED | NO_BACKGROUND);
-			gd = swtDefaults().minSize(0, PANEL_HEIGHT).align(last ? FILL : BEGINNING, BEGINNING).grab(last, false)
-					.create();
+			super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
+			gd = GridDataFactory.swtDefaults().minSize(0, PANEL_HEIGHT)
+					.align(last ? SWT.FILL : SWT.BEGINNING, SWT.BEGINNING).grab(last, false).create();
 			this.color = color;
 			setLayoutData(gd);
 			addPaintListener(this);

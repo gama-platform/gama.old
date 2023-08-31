@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IAgentMenuFactory;
@@ -50,8 +49,8 @@ public class AgentEditor extends ExpressionBasedEditor {
 	 * @param l
 	 *            the l
 	 */
-	AgentEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
-		super(scope, agent, param, l);
+	AgentEditor(final IAgent agent, final IParameter param, final EditorListener l) {
+		super(agent, param, l);
 		species = param.getType().toString();
 	}
 

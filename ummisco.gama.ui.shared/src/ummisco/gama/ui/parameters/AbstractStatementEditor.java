@@ -33,6 +33,7 @@ import ummisco.gama.ui.resources.GamaColors;
  */
 public abstract class AbstractStatementEditor<T extends INamed & IColored> extends AbstractEditor<Object> {
 
+	/** The text box. */
 	protected FlatButton textBox;
 
 	/** The statement. */
@@ -49,7 +50,7 @@ public abstract class AbstractStatementEditor<T extends INamed & IColored> exten
 	 *            the l
 	 */
 	public AbstractStatementEditor(final IScope scope, final T command, final EditorListener<Object> l) {
-		super(scope, null, new InputParameter(command.getName(), null), l);
+		super(scope.getAgent(), new InputParameter(command.getName(), null), l);
 		this.statement = command;
 	}
 

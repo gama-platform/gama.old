@@ -12,7 +12,6 @@ package ummisco.gama.ui.parameters;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -34,8 +33,8 @@ public class StringEditor extends ExpressionBasedEditor<String> {
 	 * @param l
 	 *            the l
 	 */
-	StringEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<String> l) {
-		super(scope, agent, param, l);
+	StringEditor(final IAgent agent, final IParameter param, final EditorListener<String> l) {
+		super(agent, param, l);
 	}
 
 	@Override

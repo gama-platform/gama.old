@@ -34,7 +34,7 @@ public class ChartDataSourceUnique extends ChartDataSource {
 
 		final boolean res = super.cloneMe(scope, chartCycle, source);
 		final GamaColor col =
-				new GamaColor(Random.opRnd(scope, 255), Random.opRnd(scope, 255), Random.opRnd(scope, 255), 255);
+				GamaColor.get(Random.opRnd(scope, 255), Random.opRnd(scope, 255), Random.opRnd(scope, 255), 255);
 		final IExpression ncol = GAML.getExpressionFactory().createConst(col, Types.COLOR);
 		this.colorexp = ncol;
 		final String previousname = ((ChartDataSourceUnique) source).myname;

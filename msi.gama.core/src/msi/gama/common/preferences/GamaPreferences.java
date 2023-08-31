@@ -67,13 +67,40 @@ import one.util.streamex.StreamEx;
 /**
  * The Class GamaPreferences.
  */
+
+/**
+ * The Class GamaPreferences.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 19 août 2023
+ */
+
+/**
+ * The Class GamaPreferences.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 19 août 2023
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferences {
 
 	/** The Constant BASIC_COLORS. */
 	public static final ValueProvider<GamaColor>[] BASIC_COLORS = new ValueProvider[] {
-			() -> new GamaColor(74, 97, 144), () -> new GamaColor(66, 119, 42), () -> new GamaColor(83, 95, 107),
-			() -> new GamaColor(195, 98, 43), () -> new GamaColor(150, 132, 106) };
+			() -> GamaColor.get(74, 97, 144), () -> GamaColor.get(66, 119, 42), () -> GamaColor.get(83, 95, 107),
+			() -> GamaColor.get(195, 98, 43), () -> GamaColor.get(150, 132, 106) };
+
+	/** The Constant DIVERGING_COLORS. */
+	public static final ValueProvider<GamaColor>[] QUALITATIVE_COLORS = new ValueProvider[] {
+			() -> GamaColor.get(166, 206, 227), () -> GamaColor.get(31, 120, 180), () -> GamaColor.get(178, 223, 138),
+			() -> GamaColor.get(51, 160, 44), () -> GamaColor.get(251, 154, 153), () -> GamaColor.get(227, 26, 28),
+			() -> GamaColor.get(253, 191, 111), () -> GamaColor.get(255, 127, 0), () -> GamaColor.get(202, 178, 214) };
+
+	/** The Constant DIVERGING_COLORS. */
+	public static final ValueProvider<GamaColor>[] DIVERGING_COLORS = new ValueProvider[] {
+			() -> GamaColor.get(84, 48, 5), () -> GamaColor.get(140, 81, 10), () -> GamaColor.get(191, 129, 45),
+			() -> GamaColor.get(223, 194, 125), () -> GamaColor.get(246, 232, 195), () -> GamaColor.get(245, 245, 245),
+			() -> GamaColor.get(199, 234, 229), () -> GamaColor.get(128, 205, 193), () -> GamaColor.get(53, 151, 143),
+			() -> GamaColor.get(1, 102, 94), () -> GamaColor.get(0, 60, 48) };
 
 	/**
 	 *
@@ -105,17 +132,17 @@ public class GamaPreferences {
 		/** The Constant CORE_ASK_REBUILD. */
 		public static final Pref<Boolean> CORE_ASK_REBUILD =
 				create("pref_ask_rebuild", "Ask before rebuilding a corrupted workspace", true, IType.BOOL, false)
-						.in(NAME, STARTUP);// .onChange(v -> GAMA.getGui().askBeforeRebuildingWorkspace(v));
+						.in(NAME, STARTUP);
 
 		/** The Constant CORE_ASK_OUTDATED. */
 		public static final Pref<Boolean> CORE_ASK_OUTDATED = create("pref_ask_outdated",
 				"Ask before using a workspace created by another version", true, IType.BOOL, false).in(NAME, STARTUP);
-		// .onChange(v -> GAMA.getGui().askBeforeUsingOutdatedWorkspace(v));
 
 		/** The Constant CORE_ASK_REBUILD. */
 		public static final Pref<Boolean> CORE_STARTUP_MODEL =
 				create("pref_startup_model", "Open a model or an experiment at startup", false, IType.BOOL, false)
 						.in(NAME, STARTUP).activates("pref_default_model", "pref_default_experiment");
+
 		/** The Constant CORE_DEFAULT_MODEL. */
 		public static final Pref<? extends IGamaFile> CORE_DEFAULT_MODEL = create("pref_default_model",
 				"Choose the model to open at startup", () -> new GenericFile("Enter path", false), IType.FILE, false)
@@ -176,20 +203,99 @@ public class GamaPreferences {
 				"Append the name of simulations to their outputs", false, IType.BOOL, true).in(NAME, SIMULATIONS);
 
 		/** The Constant SIMULATION_COLORS. */
-		public static final Pref<GamaColor>[] SIMULATION_COLORS = new Pref[5];
+		// public static final Pref<GamaColor>[] SIMULATION_COLORS = new Pref[5];
+
+		/** The Constant COLORS. */
+		private static GamaColor[] SIMULATION_COLORS = null;
+
+		/**
+		 * Sets the pivot.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param c
+		 *            the new pivot
+		 * @date 16 août 2023
+		 */
+		static void setPivot(final GamaColor c) {
+			if (!PIVOT.equals(CORE_SIMULATION_COLOR.getValue())) return;
+			SIMULATION_COLORS = new GamaColor[9];
+			SIMULATION_COLORS[0] = GamaColor.get(c.darker().darker().darker().darker());
+			SIMULATION_COLORS[1] = GamaColor.get(c.darker().darker().darker());
+			SIMULATION_COLORS[2] = GamaColor.get(c.darker().darker());
+			SIMULATION_COLORS[3] = GamaColor.get(c.darker());
+			SIMULATION_COLORS[4] = GamaColor.get(c);
+			SIMULATION_COLORS[5] = GamaColor.get(c.brighter());
+			SIMULATION_COLORS[6] = GamaColor.get(c.brighter().brighter());
+			SIMULATION_COLORS[7] = GamaColor.get(c.brighter().brighter().brighter());
+			SIMULATION_COLORS[8] = GamaColor.get(c.brighter().brighter().brighter().brighter());
+		}
+
+		/**
+		 * Gets the color for simulation.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param index
+		 *            the index
+		 * @return the color for simulation
+		 * @date 16 août 2023
+		 */
+		public static GamaColor getColorForSimulation(final int index) {
+			if (SIMULATION_COLORS == null) { setColorScheme(CORE_SIMULATION_COLOR.getValue()); }
+			return SIMULATION_COLORS[index % SIMULATION_COLORS.length];
+		}
+
+		/**
+		 * Sets the color scheme.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param scheme
+		 *            the new color scheme
+		 * @date 19 août 2023
+		 */
+		public static void setColorScheme(final String scheme) {
+			if (DIVERGING.equals(scheme)) {
+				SIMULATION_COLORS = new GamaColor[DIVERGING_COLORS.length];
+				for (int i = 0; i < DIVERGING_COLORS.length; i++) { SIMULATION_COLORS[i] = DIVERGING_COLORS[i].get(); }
+			} else if (BASIC.equals(scheme)) {
+				SIMULATION_COLORS = new GamaColor[BASIC_COLORS.length];
+				for (int i = 0; i < BASIC_COLORS.length; i++) { SIMULATION_COLORS[i] = BASIC_COLORS[i].get(); }
+			} else if (QUALITATIVE.equals(scheme)) {
+				SIMULATION_COLORS = new GamaColor[QUALITATIVE_COLORS.length];
+				for (int i = 0; i < QUALITATIVE_COLORS.length; i++) {
+					SIMULATION_COLORS[i] = QUALITATIVE_COLORS[i].get();
+				}
+			} else {
+				setPivot(CORE_PIVOT_COLOR.getValue());
+			}
+		}
+
+		/** The Constant DIVERGING. */
+		static final String DIVERGING = "Diverging (11 colors)";
+
+		/** The Constant BASIC. */
+		static final String BASIC = "Basic (5 colors)";
+
+		/** The Constant QUALITATIVE. */
+		static final String QUALITATIVE = "Qualitative (9 colors)";
+
+		/** The Constant PIVOT. */
+		static final String PIVOT = "Based on pivot color (9 colors)";
+
+		/** The Constant CORE_PIVOT_COLOR. */
+		public static final Pref<String> CORE_SIMULATION_COLOR =
+				create("pref_simulation_colors", "Default color scheme for simulations in UI", DIVERGING, IType.STRING,
+						true).among(BASIC, DIVERGING, QUALITATIVE, PIVOT).in(NAME, SIMULATIONS)
+								.onChange(Interface::setColorScheme);
+
+		/** The Constant CORE_PIVOT_COLOR. */
+		public static final Pref<GamaColor> CORE_PIVOT_COLOR =
+				create("pref_simulation_color", "Pivot color of simulations", GamaColor.get(64, 224, 208), IType.COLOR,
+						true).in(NAME, SIMULATIONS).onChange(Interface::setPivot);
 
 		/** The keep navigator state. */
 		public static Pref<Boolean> KEEP_NAVIGATOR_STATE =
 				create("pref_keep_navigator_state", "Maintain the state of the navigator across sessions", true,
 						IType.BOOL, false).in(NAME, STARTUP).hidden();
-
-		static {
-			for (var i = 0; i < 5; i++) {
-				SIMULATION_COLORS[i] = create("pref_simulation_color_" + i,
-						"Color of Simulation " + i + " in the UI (console, view tabs) ", BASIC_COLORS[i], IType.COLOR,
-						true).in(NAME, SIMULATIONS);
-			}
-		}
 
 	}
 
@@ -354,10 +460,8 @@ public class GamaPreferences {
 		public static final Pref<Boolean> CORE_ASK_FULLSCREEN =
 				create("pref_experiment_ask_fullscreen", "Ask before entering fullscreen mode", false, IType.BOOL, true)
 						.in(NAME, EXECUTION).hidden();
-		// public static final Pref<Double> CORE_DELAY_STEP = create("pref_experiment_default_step",
-		/** The Constant CORE_SYNC. */
-		// "Default step for the delay slider (in sec.)", 0.001, IType.FLOAT, true).in(NAME, EXECUTION).disabled();
 
+		/** The Constant CORE_SLIDER_TYPE. */
 		public static final Pref<Boolean> CORE_SLIDER_TYPE = create("pref_experiment_type_slider",
 				"Set the step duration slider incrementation to linear. If false set to logarithmic", true, IType.BOOL,
 				true).in(NAME, EXECUTION);
@@ -375,8 +479,9 @@ public class GamaPreferences {
 				"Automatically expand the parameters categories", false, IType.BOOL, true).in(NAME, PARAMETERS);
 
 		/** The Constant CORE_MONITOR_PARAMETERS. */
-		public static final Pref<Boolean> CORE_MONITOR_PARAMETERS = create("pref_monitors_in_parameters",
-				"Display monitors in the parameters view", false, IType.BOOL, true).in(NAME, PARAMETERS);
+		public static final Pref<Boolean> CORE_MONITOR_PARAMETERS =
+				create("pref_monitors_in_parameters", "Display monitors in the parameters view", true, IType.BOOL, true)
+						.in(NAME, PARAMETERS);
 
 		/** The Constant CORE_RND_EDITABLE. */
 		public static final Pref<Boolean> CORE_RND_EDITABLE =
@@ -560,11 +665,11 @@ public class GamaPreferences {
 		/** The Constant CORE_BACKGROUND. */
 		public static final Pref<GamaColor> CORE_BACKGROUND =
 				create("pref_display_background_color", "Default background color ('background' facet of 'display')",
-						() -> GamaColor.getNamed("white"), IType.COLOR, true).in(NAME, DRAWING);
+						() -> GamaColor.get("white"), IType.COLOR, true).in(NAME, DRAWING);
 
 		/** The Constant CORE_HIGHLIGHT. */
 		public static final Pref<GamaColor> CORE_HIGHLIGHT = create("pref_display_highlight_color",
-				"Default highlight color", () -> new GamaColor(0, 200, 200), IType.COLOR, true).in(NAME, DRAWING);
+				"Default highlight color", () -> GamaColor.get(0, 200, 200), IType.COLOR, true).in(NAME, DRAWING);
 
 		/** The Constant CORE_SHAPE. */
 		public static final Pref<String> CORE_SHAPE =
@@ -578,7 +683,7 @@ public class GamaPreferences {
 
 		/** The Constant CORE_COLOR. */
 		public static final Pref<GamaColor> CORE_COLOR = create("pref_display_default_color", "Default color of agents",
-				() -> GamaColor.getNamed("yellow"), IType.COLOR, true).in(NAME, DRAWING);
+				() -> GamaColor.get("yellow"), IType.COLOR, true).in(NAME, DRAWING);
 		/**
 		 * Options
 		 */
@@ -824,14 +929,17 @@ public class GamaPreferences {
 						});
 
 		/** The Constant CSV_STRING_QUALIFIER. */
-		public static final Pref<String> CSV_STRING_QUALIFIER = GamaPreferences
-				.create("pref_csv_string_qualifier", "Default separator for strings", String.valueOf(AbstractCSVManipulator.Letters.QUOTE), IType.STRING, true)
-				.in(NAME, "CSV Files");
+		public static final Pref<String> CSV_STRING_QUALIFIER =
+				GamaPreferences
+						.create("pref_csv_string_qualifier", "Default separator for strings",
+								String.valueOf(AbstractCSVManipulator.Letters.QUOTE), IType.STRING, true)
+						.in(NAME, "CSV Files");
 
 		/** The Constant CSV_SEPARATOR. */
-		public static final Pref<String> CSV_SEPARATOR =
-				GamaPreferences.create("pref_csv_separator", "Default separator for fields", String.valueOf(AbstractCSVManipulator.Letters.COMMA), IType.STRING, true)
-						.in(GamaPreferences.External.NAME, "CSV Files");
+		public static final Pref<String> CSV_SEPARATOR = GamaPreferences
+				.create("pref_csv_separator", "Default separator for fields",
+						String.valueOf(AbstractCSVManipulator.Letters.COMMA), IType.STRING, true)
+				.in(GamaPreferences.External.NAME, "CSV Files");
 	}
 
 	/**

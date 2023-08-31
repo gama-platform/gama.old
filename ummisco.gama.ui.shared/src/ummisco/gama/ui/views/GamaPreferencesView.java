@@ -261,7 +261,7 @@ public class GamaPreferencesView {
 			e.onChange(value -> {
 				if (e.acceptChange(value)) {
 					modelValues.put(e.getKey(), value);
-					Boolean b = Cast.asBool(null, value);
+					Boolean b = Cast.asBool(GAMA.getPlatformAgent().getScope(), value);
 					checkActivables(e, b);
 					checkRefreshables(e);
 					if (e.isRestartRequired()) { setRestartRequired(); }
@@ -271,8 +271,8 @@ public class GamaPreferencesView {
 
 			});
 			final var isSubParameter = activations.containsKey(e.getKey());
-			final var ed = EditorFactory.create(null, comps[(int) (i * ((double) NB_DIVISIONS / list.size()))], e,
-					isSubParameter, true);
+			final var ed = EditorFactory.create(GAMA.getPlatformAgent().getScope(),
+					comps[(int) (i * ((double) NB_DIVISIONS / list.size()))], e, isSubParameter, true);
 			if (e.isDisabled()) {
 				ed.setActive(false);
 			} else {

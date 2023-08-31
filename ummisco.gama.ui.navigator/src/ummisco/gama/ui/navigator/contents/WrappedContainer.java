@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * WrappedContainer.java, in ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * WrappedContainer.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.navigator.contents;
 
@@ -19,24 +19,27 @@ import one.util.streamex.StreamEx;
 /**
  * The Class WrappedContainer.
  *
- * @param <C> the generic type
+ * @param <C>
+ *            the generic type
  */
 public abstract class WrappedContainer<C extends IContainer> extends WrappedResource<VirtualContent<?>, C> {
 
 	/** The models count. */
 	int modelsCount = NOT_COMPUTED;
-	
+
 	/** The suffix. */
 	String suffix = null;
-	
+
 	/** The children. */
 	Object[] children;
 
 	/**
 	 * Instantiates a new wrapped container.
 	 *
-	 * @param root the root
-	 * @param wrapped the wrapped
+	 * @param root
+	 *            the root
+	 * @param wrapped
+	 *            the wrapped
 	 */
 	public WrappedContainer(final VirtualContent<?> root, final C wrapped) {
 		super(root, wrapped);
@@ -54,11 +57,10 @@ public abstract class WrappedContainer<C extends IContainer> extends WrappedReso
 		try {
 			final IResource[] cc = getResource().members();
 			final int size = cc.length;
-			if (size == 0)
+			if (size == 0) {
 				children = EMPTY;
-			else {
-				children = StreamEx.of(cc).filter(r -> r.getName().charAt(0) != '.').map(r -> getManager().wrap(this, r))
-						.toArray(WrappedResource.class);
+			} else {
+				children = StreamEx.of(cc).map(r -> getManager().wrap(this, r)).toArray(WrappedResource.class);
 			}
 		} catch (final CoreException e) {
 			e.printStackTrace();
@@ -72,9 +74,7 @@ public abstract class WrappedContainer<C extends IContainer> extends WrappedReso
 	}
 
 	@Override
-	public Object[] getNavigatorChildren() {
-		return children;
-	}
+	public Object[] getNavigatorChildren() { return children; }
 
 	@Override
 	public int countModels() {
@@ -82,12 +82,8 @@ public abstract class WrappedContainer<C extends IContainer> extends WrappedReso
 			modelsCount = 0;
 			suffix = null;
 			if (isOpen()) {
-				for (final Object c : children) {
-					modelsCount += ((WrappedResource<?, ?>) c).countModels();
-				}
-				if (modelsCount > 0) {
-					suffix = "" + modelsCount + " model" + (modelsCount > 1 ? "s" : "");
-				}
+				for (final Object c : children) { modelsCount += ((WrappedResource<?, ?>) c).countModels(); }
+				if (modelsCount > 0) { suffix = "" + modelsCount + " model" + (modelsCount > 1 ? "s" : ""); }
 			}
 		}
 		return modelsCount;
@@ -99,16 +95,13 @@ public abstract class WrappedContainer<C extends IContainer> extends WrappedReso
 	public void invalidateModelsCount() {
 		modelsCount = NOT_COMPUTED;
 		final Object p = getParent();
-		if (p instanceof WrappedContainer) {
-			((WrappedContainer<?>) p).invalidateModelsCount();
-		}
+		if (p instanceof WrappedContainer) { ((WrappedContainer<?>) p).invalidateModelsCount(); }
 	}
 
 	@Override
 	public void getSuffix(final StringBuilder sb) {
 		countModels();
-		if (suffix != null)
-			sb.append(suffix);
+		if (suffix != null) { sb.append(suffix); }
 	}
 
 }

@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Text;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gama.util.GamaPair;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -86,8 +85,8 @@ public class PairEditor extends AbstractEditor<GamaPair> implements VerifyListen
 	 * @param l
 	 *            the l
 	 */
-	PairEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaPair> l) {
-		super(scope, agent, param, l);
+	PairEditor(final IAgent agent, final IParameter param, final EditorListener<GamaPair> l) {
+		super(agent, param, l);
 	}
 
 	// /**

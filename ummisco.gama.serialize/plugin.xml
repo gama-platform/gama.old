@@ -21,8 +21,18 @@
    <extension
          point="gama.create">
       <implementation
-            class="ummisco.gama.serializer.gaml.CreateFromSavedSimulationDelegate"
+            class="ummisco.gama.serializer.gaml.CreateAgentsFromSerialisedFileDelegate"
             description="Create simulation from saved simulation">
+      </implementation>
+      <implementation
+            class="ummisco.gama.serializer.gaml.CreateAgentsFromSerialisedStringDelegate"
+            description="Creates agents ">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.save">
+      <implementation
+            class="ummisco.gama.serializer.gaml.SimulationSaveDelegate">
       </implementation>
    </extension>   
 </plugin>

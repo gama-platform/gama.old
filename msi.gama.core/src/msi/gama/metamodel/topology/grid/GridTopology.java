@@ -340,6 +340,16 @@ public class GridTopology extends AbstractTopology {
 		getPlaces().dispose();
 	}
 
+	/**
+	 * Sets the places.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param matrix
+	 *            the new places
+	 * @date 30 août 2023
+	 */
+	public void setPlaces(final IGrid matrix) { places = matrix; }
+
 	// @Override
 	// public IList<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
 	// final int k) {

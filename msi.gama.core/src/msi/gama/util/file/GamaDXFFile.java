@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaDXFFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * GamaDXFFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -68,25 +68,28 @@ public class GamaDXFFile extends GamaGeometryFile {
 
 	/** The size. */
 	GamaPoint size;
-	
+
 	/** The unit. */
 	Double unit;
-	
+
 	/** The x t. */
 	double x_t;
-	
+
 	/** The y t. */
 	double y_t;
-	
+
 	/** The Constant QUARTER_CIRCLE_ANGLE. */
 	protected static final double QUARTER_CIRCLE_ANGLE = Math.tan(0.39269908169872414D);
 
 	/**
 	 * Instantiates a new gama DXF file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@doc (
 			value = "This file constructor allows to read a dxf (.dxf) file",
@@ -100,10 +103,14 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Instantiates a new gama DXF file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param unit the unit
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param unit
+	 *            the unit
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@doc (
 			value = "This file constructor allows to read a dxf (.dxf) file and specify the unit (meter by default)",
@@ -130,8 +137,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Creates the polyline.
 	 *
-	 * @param scope the scope
-	 * @param pts the pts
+	 * @param scope
+	 *            the scope
+	 * @param pts
+	 *            the pts
 	 * @return the i shape
 	 */
 	public IShape createPolyline(final IScope scope, final IList pts) {
@@ -147,8 +156,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Creates the polygon.
 	 *
-	 * @param scope the scope
-	 * @param pts the pts
+	 * @param scope
+	 *            the scope
+	 * @param pts
+	 *            the pts
 	 * @return the i shape
 	 */
 	public IShape createPolygon(final IScope scope, final IList pts) {
@@ -164,9 +175,12 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Creates the circle.
 	 *
-	 * @param scope the scope
-	 * @param location the location
-	 * @param radius the radius
+	 * @param scope
+	 *            the scope
+	 * @param location
+	 *            the location
+	 * @param radius
+	 *            the radius
 	 * @return the i shape
 	 */
 	public IShape createCircle(final IScope scope, final GamaPoint location, final double radius) {
@@ -181,8 +195,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Manage obj.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the i shape
 	 */
 	public IShape manageObj(final IScope scope, final DXFSolid obj) {
@@ -207,8 +223,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Manage obj.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the i shape
 	 */
 	public IShape manageObj(final IScope scope, final DXFCircle obj) {
@@ -222,8 +240,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Manage obj.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the i shape
 	 */
 	public IShape manageObj(final IScope scope, final DXFLine obj) {
@@ -241,8 +261,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Manage obj.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the i shape
 	 */
 	public IShape manageObj(final IScope scope, final DXFArc obj) {
@@ -260,7 +282,8 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * To gama point.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the gama point
 	 */
 	public GamaPoint toGamaPoint(final DXFVertex v) {
@@ -270,11 +293,16 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Adds the to lists.
 	 *
-	 * @param scope the scope
-	 * @param pline the pline
-	 * @param start the start
-	 * @param end the end
-	 * @param list the list
+	 * @param scope
+	 *            the scope
+	 * @param pline
+	 *            the pline
+	 * @param start
+	 *            the start
+	 * @param end
+	 *            the end
+	 * @param list
+	 *            the list
 	 */
 	protected void addToLists(final IScope scope, final DXFPolyline pline, final DXFVertex start, final DXFVertex end,
 			final IList list) {
@@ -301,8 +329,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Gets the points.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the points
 	 */
 	public IList<GamaPoint> getPoints(final IScope scope, final DXFPolyline obj) {
@@ -348,8 +378,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Manage obj.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the i shape
 	 */
 	public IShape manageObj(final IScope scope, final DXFPolyline obj) {
@@ -374,8 +406,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Define geom.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
 	 * @return the i shape
 	 */
 	public IShape defineGeom(final IScope scope, final Object obj) {
@@ -395,8 +429,10 @@ public class GamaDXFFile extends GamaGeometryFile {
 	/**
 	 * Fill buffer.
 	 *
-	 * @param scope the scope
-	 * @param doc the doc
+	 * @param scope
+	 *            the scope
+	 * @param doc
+	 *            the doc
 	 */
 	protected void fillBuffer(final IScope scope, final DXFDocument doc) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
@@ -428,7 +464,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 						g.setAttribute("color_index", obj.getColor());
 
 						if (obj.getColorRGB() != null) {
-							g.setAttribute("color", new GamaColor(obj.getColorRGB()[0], obj.getColorRGB()[1],
+							g.setAttribute("color", GamaColor.get(obj.getColorRGB()[0], obj.getColorRGB()[1],
 									obj.getColorRGB()[2], 255));
 						}
 						if (obj.getLineType() != null) { g.setAttribute("line_type", obj.getLineType()); }
@@ -462,7 +498,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 
 					if (obj.getColorRGB() != null) {
 						g.setAttribute("color",
-								new GamaColor(obj.getColorRGB()[0], obj.getColorRGB()[1], obj.getColorRGB()[2], 255));
+								GamaColor.get(obj.getColorRGB()[0], obj.getColorRGB()[1], obj.getColorRGB()[2], 255));
 					}
 					if (obj.getLineType() != null) { g.setAttribute("line_type", obj.getLineType()); }
 

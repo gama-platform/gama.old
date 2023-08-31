@@ -712,12 +712,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		// ((BarRenderer) plot.getRenderer()).setItemMargin(gap);
 
-		GamaColor colorvalue = new GamaColor(Color.black);
+		GamaColor colorvalue = GamaColor.get(Color.black);
 		IExpression color = getFacet(IKeyword.AXES);
 		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartOutput.setAxesColorValue(scope, colorvalue);
 
-		colorvalue = new GamaColor(Color.black);
+		colorvalue = GamaColor.get(Color.black);
 		color = getFacet(ChartLayerStatement.TICKLINECOLOR);
 		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartOutput.setTickColorValue(scope, colorvalue);
@@ -736,7 +736,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		color = getFacet(IKeyword.COLOR);
 		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartOutput.setColorValue(scope, colorvalue);
-		colorvalue = new GamaColor(Color.white);
+		colorvalue = GamaColor.get(Color.white);
 		color = getFacet(IKeyword.BACKGROUND);
 		if (color != null) { colorvalue = Cast.asColor(scope, color.value(scope)); }
 		chartOutput.setBackgroundColorValue(scope, colorvalue);

@@ -142,7 +142,7 @@ experiment explore_model type: batch until: time > 2#h repeat: 2 {
 		
 		ask simulations {
 			write "proba_leave: " + proba_leave + " infected_rate: " + self.infected_rate;
-			save [proba_leave, self.infected_rate] format:csv to:"results.csv" rewrite: (int(self) = 0) ? true : false header: true ;
+			save [proba_leave, self.infected_rate] to:"results.csv" rewrite: (int(self) = 0) ? true : false header: true ;
 		}
 	}
 }

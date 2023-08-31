@@ -13,6 +13,8 @@ package msi.gama.kernel.simulation;
 import static msi.gama.runtime.concurrent.GamaExecutorService.getParallelism;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -60,6 +62,8 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IReference;
+import msi.gama.util.tree.GamaNode;
+import msi.gama.util.tree.GamaTree;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -229,6 +233,21 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	/** The Simulation local map. */
 	private Map simulationLocalMap;
 
+	/** The history. Used by backward experiments to store the serialized form of the experiment */
+	protected GamaTree<byte[]> history;
+
+	/** The current node in the history. Null when no history is recorded . */
+	protected GamaNode<byte[]> current;
+
+	/**
+	 * The external inits and parameters. Holds a memory of the values provided from outside, initially and during
+	 * simulation
+	 */
+	private Map<String, Object> externalInitsAndParameters;
+
+	/** The serialize history. */
+	private boolean serializeHistory;
+
 	/**
 	 * Instantiates a new simulation agent.
 	 *
@@ -239,6 +258,36 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	 */
 	public SimulationAgent(final IPopulation<? extends IAgent> pop, final int index) {
 		this((SimulationPopulation) pop, index);
+	}
+
+	/**
+	 * Sets the external inits.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param inits
+	 *            the inits
+	 * @date 13 août 2023
+	 */
+	public void setExternalInits(final Map<String, Object> inits) {
+		if (externalInitsAndParameters == null) {
+			if (inits == null) {
+				externalInitsAndParameters = new HashMap<>();
+			} else {
+				externalInitsAndParameters = new HashMap<>(inits);
+			}
+		} else if (inits != null) { externalInitsAndParameters.putAll(inits); }
+	}
+
+	/**
+	 * Gets the external inits.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the external inits
+	 * @date 13 août 2023
+	 */
+	public Map<String, Object> getExternalInits() {
+		if (externalInitsAndParameters == null) return Collections.EMPTY_MAP;
+		return externalInitsAndParameters;
 	}
 
 	/**
@@ -340,9 +389,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			value = IKeyword.COLOR,
 			initializer = true)
 	public GamaColor getColor() {
-		if (color == null) {
-			color = new GamaColor(GamaPreferences.Interface.SIMULATION_COLORS[getIndex() % 5].getValue());
-		}
+		if (color == null) { color = GamaPreferences.Interface.getColorForSimulation(getIndex()); }
 		return color;
 	}
 
@@ -425,7 +472,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				for (final IPopulation<? extends IAgent> pop : getMicroPopulations()) { topology.remove(pop); }
 			}
 		}
-
+		if (externalInitsAndParameters != null) { externalInitsAndParameters.clear(); }
 		GAMA.releaseScope(getScope());
 		// scope = null;
 		super.dispose();
@@ -1023,7 +1070,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 		// Update Clock
 		final Object cycle = sa.getAttributeValue(CYCLE);
-		ownClock.setCycle((Integer) cycle);
+		ownClock.setCycleNoCheck((Integer) cycle);
 
 		// TODO
 		// Update GUI of the Experiment
@@ -1142,5 +1189,98 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	 *            the new Simulation local map
 	 */
 	public <T> void setSimulationLocalMap(final Map<SimulationLocal<T>, T> map) { simulationLocalMap = map; }
+
+	@Override
+	public String getFamilyName() { return IKeyword.SIMULATION; }
+
+	/**
+	 * Gets the current history node.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the current history node
+	 * @date 24 août 2023
+	 */
+	public GamaNode<byte[]> getCurrentHistoryNode() { return current; }
+
+	/**
+	 * Gets the previous history node.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the previous history node
+	 * @date 24 août 2023
+	 */
+	public GamaNode<byte[]> getPreviousHistoryNode() {
+		current = current == null ? null : current.getParent();
+		return current;
+	}
+
+	/**
+	 * Creates the new history node.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param state
+	 * @return the gama node
+	 * @date 24 août 2023
+	 */
+	public GamaNode<byte[]> createNewHistoryNode(final byte[] state) {
+		if (current == null) {
+			if (history == null) { history = new GamaTree<>(); }
+			current = history.setRoot(state);
+		} else {
+			current = current.addChild(state);
+		}
+		return current;
+	}
+
+	/**
+	 * Serialize history.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 26 août 2023
+	 */
+	public boolean serializeHistory() {
+		return serializeHistory;
+	}
+
+	/**
+	 * Serialize history.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param withHistory
+	 *            the with history
+	 * @date 26 août 2023
+	 */
+	public void serializeHistory(final boolean withHistory) {
+		serializeHistory = withHistory;
+	}
+
+	/**
+	 * Gets the history.
+	 *
+	 * @return the history
+	 */
+	public GamaTree<byte[]> getHistory() { return history; }
+
+	/**
+	 * Sets the history.
+	 *
+	 * @param object
+	 *            the new history
+	 */
+	public void setHistory(final GamaTree<byte[]> object) { history = object; }
+
+	/**
+	 * Sets the current history node.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param object
+	 *            the new current history node
+	 * @date 26 août 2023
+	 */
+	public void setCurrentHistoryNode(final GamaNode<byte[]> object) {
+		current = object;
+
+	}
 
 }

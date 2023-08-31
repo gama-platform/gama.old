@@ -60,13 +60,17 @@ import ummisco.gama.dev.utils.THREADS;
 @doc ("Experiments supporting the execution of several simulations in order to explore parameters or reach a specific state")
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class BatchAgent extends ExperimentAgent {
-	
+
 	/**
-	 * Name of the different types of batch experiment : exploration, analysis and calibration
-	 * See wiki https://gama-platform.org/wiki/ExplorationMethods for more information
+	 * Name of the different types of batch experiment : exploration, analysis and calibration See wiki
+	 * https://gama-platform.org/wiki/ExplorationMethods for more information
 	 */
-	public final static String BATCH_EXPERIMENT = "Batch exeriment";
+	public final static String BATCH_EXPERIMENT = "Batch experiment";
+
+	/** The Constant EXPLORATION_EXPERIMENT. */
 	public final static String EXPLORATION_EXPERIMENT = "Exploration experiment";
+
+	/** The Constant CALIBRATION_EXPERIMENT. */
 	public final static String CALIBRATION_EXPERIMENT = "Calibration experiment";
 
 	/** The stop condition. */
@@ -251,11 +255,12 @@ public class BatchAgent extends ExperimentAgent {
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
-		scope.getGui().getStatus().informStatus(scope, endStatus());
+		scope.getGui().getStatus().informStatus(endStatus());
 		// Issue #2426: the agent is killed too soon
 		getScope().setDisposeStatus();
 		// dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
+		GAMA.changeCurrentTopLevelAgent(GAMA.getPlatformAgent(), false);
 		return true;
 	}
 
@@ -413,7 +418,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 
 		// At last, we update the parameters (last fitness and best fitness)
-		getScope().getGui().showAndUpdateParameterView(getScope(), getSpecies());
+		getScope().getGui().updateParameters();
 		return res;
 
 	}
@@ -445,7 +450,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 
 		// We update the parameters (parameter to explore)
-		getScope().getGui().showAndUpdateParameterView(getScope(), getSpecies());
+		getScope().getGui().updateParameters();
 
 		// We then create a number of simulations with the same solution
 
@@ -490,14 +495,14 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 				if (!dead) {
-					getScope().getGui().getStatus().setStatus(getScope(),
+					getScope().getGui().getStatus().setStatus(
 							"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length + " simulations (using "
 									+ pop.getNumberOfActiveThreads() + " threads)",
 							"overlays/small.exp.batch.white" + suffix);
 				}
 				suffix = suffix == "" ? "2" : "";
 				// We then verify that the front scheduler has not been paused
-				while (getSpecies().getController().isPaused() && !dead) { THREADS.WAIT(100); }
+				while (getSpecies().getController().isPaused() && !dead) { THREADS.WAIT(10); }
 			}
 
 		}
@@ -532,7 +537,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 
 		// At last, we update the parameters (last fitness and best fitness)
-		getScope().getGui().showAndUpdateParameterView(getScope(), getSpecies());
+		getScope().getGui().updateParameters();
 
 		return outputs;
 
@@ -580,7 +585,7 @@ public class BatchAgent extends ExperimentAgent {
 			}
 
 		});
-		
+
 		getSpecies().getExplorationAlgorithm().addParametersTo(params, this);
 	}
 
@@ -598,11 +603,11 @@ public class BatchAgent extends ExperimentAgent {
 	 *            the new seeds
 	 */
 	public void setSeeds(final Double[] seeds) { this.seeds = seeds; }
-	
+
 	/**
-	 * 
+	 *
 	 * Returns the last explored points explored in the parameter set
-	 * 
+	 *
 	 * @return ParametersSet
 	 */
 	public ParametersSet getLatestSolution() { return this.lastSolution; }

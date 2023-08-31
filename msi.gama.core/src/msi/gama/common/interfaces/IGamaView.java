@@ -9,7 +9,6 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -27,6 +26,14 @@ import msi.gaml.statements.test.CompoundSummary;
  * @author drogoul
  */
 public interface IGamaView {
+
+	/**
+	 * The Interface Interactive.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 août 2023
+	 */
+	public interface Interactive extends ITopLevelAgentChangeListener {}
 
 	/**
 	 * Update.
@@ -304,15 +311,7 @@ public interface IGamaView {
 	/**
 	 * The Interface Parameters.
 	 */
-	public interface Parameters {
-
-		/**
-		 * Adds the item.
-		 *
-		 * @param exp
-		 *            the exp
-		 */
-		void setExperiment(IExperimentPlan exp);
+	public interface Parameters extends ITopLevelAgentChangeListener {
 
 		/**
 		 * Update item values.

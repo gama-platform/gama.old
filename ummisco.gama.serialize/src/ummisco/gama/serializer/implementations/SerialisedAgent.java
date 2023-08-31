@@ -18,8 +18,10 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.ISerialisedAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gaml.skills.GridSkill.IGridAgent;
+import msi.gama.metamodel.topology.grid.GridPopulation;
+import msi.gama.metamodel.topology.grid.IGridAgent;
 
 /**
  * The Class SerialisedAgent.
@@ -27,7 +29,8 @@ import msi.gaml.skills.GridSkill.IGridAgent;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 31 juil. 2023
  */
-public record SerialisedAgent(int index, Map<String, Object> attributes) {
+public record SerialisedAgent(/* AgentReference ref */ int index, Map<String, Object> attributes)
+		implements ISerialisedAgent {
 
 	/** The non serialisable. */
 	static Set<String> NON_SERIALISABLE =
@@ -47,7 +50,8 @@ public record SerialisedAgent(int index, Map<String, Object> attributes) {
 	 * @date 31 juil. 2023
 	 */
 	public SerialisedAgent(final IAgent target) {
-		this(target.getIndex(), filterAttributes(target, target instanceof IGridAgent, target.getOrCreateAttributes()));
+		this(/* new AgentReference(target), */target.getIndex(),
+				filterAttributes(target, target instanceof IGridAgent, target.getOrCreateAttributes()));
 	}
 
 	/**
@@ -57,7 +61,8 @@ public record SerialisedAgent(int index, Map<String, Object> attributes) {
 	 * @return the index
 	 * @date 6 août 2023
 	 */
-	public Integer getIndex() { return index; }
+	@Override
+	public int getIndex() { return /* ref.getLastIndex(); */ index; }
 
 	/**
 	 * Filter map.
@@ -75,7 +80,8 @@ public record SerialisedAgent(int index, Map<String, Object> attributes) {
 			String k = entry.getKey();
 			if (NON_SERIALISABLE.contains(k) || isGrid && GRID_NON_SERIALISABLE.contains(k)) { continue; }
 			Object v = entry.getValue();
-			map.put(k, v instanceof IPopulation p ? new SerialisedPopulation(p) : v);
+			map.put(k, v instanceof IPopulation p
+					? p.isGrid() ? new SerialisedGrid((GridPopulation) p) : new SerialisedPopulation(p) : v);
 		}
 		boolean isSim = agent instanceof SimulationAgent;
 		if (isSim) {
@@ -86,7 +92,18 @@ public record SerialisedAgent(int index, Map<String, Object> attributes) {
 			map.put(SimulationAgent.CYCLE, sim.getClock().getCycle());
 		}
 		if (!isGrid) { map.put(IKeyword.SHAPE, agent.getGeometry()); }
+		map.put(IKeyword.NAME, agent.getName());
 		return map;
+	}
+
+	@Override
+	public Object getAttributeValue(final String var) {
+		return attributes.get(var);
+	}
+
+	@Override
+	public void setAttributeValue(final String var, final Object val) {
+		attributes.put(var, val);
 	}
 
 }

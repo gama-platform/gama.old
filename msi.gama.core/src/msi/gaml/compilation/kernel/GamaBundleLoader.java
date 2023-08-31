@@ -13,6 +13,7 @@ package msi.gaml.compilation.kernel;
 import static ummisco.gama.dev.utils.DEBUG.TIMER;
 import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
+import java.awt.Toolkit;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +62,7 @@ public class GamaBundleLoader {
 
 	static {
 		DEBUG.ON();
+		Toolkit.getDefaultToolkit();
 	}
 
 	/**

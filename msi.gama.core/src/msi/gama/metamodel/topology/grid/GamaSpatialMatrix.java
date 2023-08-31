@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -35,18 +34,12 @@ import org.locationtech.jts.operation.distance.DistanceOp;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.metamodel.agent.AbstractAgent;
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaProxyGeometry;
@@ -56,10 +49,8 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
-import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.ICollector;
@@ -75,14 +66,11 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Projections;
-import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import msi.gaml.variables.IVariable;
 import one.util.streamex.StreamEx;
 
 /**
@@ -823,7 +811,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public IMatrix _reverse(final IScope scope) throws GamaRuntimeException {
-		
+
 		return null;
 	}
 
@@ -1016,7 +1004,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		int cpt = 0;
 		cells.add(startAg.getIndex());
 		// final int max = this.numCols * this.numRows;
-		List<IAgent> neighb = getNeighborhoods(scope, startAg, cells, new ArrayList<IAgent>());
+		List<IAgent> neighb = getNeighborhoods(scope, startAg, cells, new ArrayList<>());
 		scope.getRandom().shuffleInPlace(neighb);
 		while (cpt < this.numCols * this.numRows) {
 			cpt++;
@@ -1751,15 +1739,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		int maxX = numCols - 1;
 		int maxY = numRows - 1;
 		if (this.isHexagon) {
-			
+
 			if (this.isHorizontalOrientation) {
-				minX = max(0, (int) (Math.max(0,(env.getMinX() - cellWidth/2.0))/ (cellWidth / 0.75)));
-				minY = max(0, (int) (Math.max(0,(env.getMinY() - cellHeight/2.0)) / cellHeight));
+				minX = max(0, (int) (Math.max(0, env.getMinX() - cellWidth / 2.0) / (cellWidth / 0.75)));
+				minY = max(0, (int) (Math.max(0, env.getMinY() - cellHeight / 2.0) / cellHeight));
 				maxX = min(numCols - 1, (int) (env.getMaxX() / (cellWidth * 0.75)));
 				maxY = min(numRows - 1, (int) (env.getMaxY() / cellHeight));
 			} else {
-				minX = max(0, (int) (Math.max(0,(env.getMinX() - cellWidth/2.0))/ (cellWidth )));
-				minY = max(0, (int) (Math.max(0,(env.getMinY() - cellHeight/2.0)) / (cellHeight/ 0.75)));
+				minX = max(0, (int) (Math.max(0, env.getMinX() - cellWidth / 2.0) / cellWidth));
+				minY = max(0, (int) (Math.max(0, env.getMinY() - cellHeight / 2.0) / (cellHeight / 0.75)));
 				maxX = min(numCols - 1, (int) (env.getMaxX() / cellWidth));
 				maxY = min(numRows - 1, (int) (env.getMaxY() / (cellHeight * 0.75)));
 			}
@@ -1797,7 +1785,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final Envelope3D e = each.getEnvelope();
 			return each.getAgent() == null || !(covered ? env.covers(e) : env.intersects(e));
 		});
-		
+
 		if (f != null) { f.filter(scope, source, shapes); }
 		return shapes;
 	}
@@ -1860,7 +1848,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public void setDepth(final double depth) {
-			
 
 		}
 
@@ -1890,554 +1877,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		 */
 		@Override
 		public boolean isMultiple() { return getReferenceGeometry().isMultiple(); }
-
-	}
-
-	/**
-	 * Class GridPopulation.
-	 *
-	 * @author drogoul
-	 * @since 14 mai 2013
-	 *
-	 */
-	public class GridPopulation<G extends IAgent> extends GamaPopulation<G> {
-
-		/**
-		 * Instantiates a new grid population.
-		 *
-		 * @param t
-		 *            the t
-		 * @param host
-		 *            the host
-		 * @param species
-		 *            the species
-		 */
-		public GridPopulation(final ITopology t, final IMacroAgent host, final ISpecies species) {
-			super(host, species);
-			topology = t;
-		}
-
-		@Override
-		public Stream<G> stream() {
-			return (Stream<G>) StreamEx.of(matrix);
-		}
-
-		@Override
-		public StreamEx<G> stream(final IScope scope) {
-			return (StreamEx<G>) StreamEx.of(matrix);
-		}
-
-		@Override
-		public IList<G> createAgents(final IScope scope, final int number,
-				final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
-				final boolean toBeScheduled, final RemoteSequence sequence) throws GamaRuntimeException {
-
-			createAgents(scope, null);
-			for (final Map attr : initialValues) {
-				final IAgent agt = getAgent((Integer) attr.get("grid_x"), (Integer) attr.get("grid_y"));
-				agt.getOrCreateAttributes().putAll(attr);
-			}
-			return (IList) getAgents(scope);
-		}
-
-		@Override
-		public IList<G> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries) {
-			for (int i = 0; i < actualNumberOfCells; i++) {
-				final IShape s = matrix[i];
-				final Class javaBase = species.getDescription().getJavaBase();
-
-				final boolean usesRegularAgents = GamlAgent.class.isAssignableFrom(javaBase);
-				if (s != null) {
-					final IAgent g = usesRegularAgents ? new GamlGridAgent(i) : new MinimalGridAgent(i);
-					matrix[i] = g;
-				}
-			}
-
-			for (final IVariable var : orderedVars) {
-
-				for (int i = 0; i < actualNumberOfCells; i++) {
-					final IAgent a = (IAgent) matrix[i];
-					if (a != null) { var.initializeWith(scope, a, null); }
-				}
-			}
-
-			for (int i = 0; i < actualNumberOfCells; i++) {
-				final IAgent a = (IAgent) matrix[i];
-				if (a != null) { a.schedule(scope); }
-			}
-			this.fireAgentsAdded(scope, (IList) getAgents(scope));
-			return null;
-
-		}
-
-		@Override
-		public String serialize(final boolean includingBuiltIn) {
-			return getName();
-		}
-
-		@Override
-		protected boolean stepAgents(final IScope scope) {
-			return GamaExecutorService.step(scope, matrix, getSpecies());
-		}
-
-		/**
-		 * Gets the nb cols.
-		 *
-		 * @return the nb cols
-		 */
-		public int getNbCols() { return GamaSpatialMatrix.this.numCols; }
-
-		/**
-		 * Gets the nb rows.
-		 *
-		 * @return the nb rows
-		 */
-		public int getNbRows() { return GamaSpatialMatrix.this.numRows; }
-
-		/**
-		 * Gets the agent.
-		 *
-		 * @param col
-		 *            the col
-		 * @param row
-		 *            the row
-		 * @return the agent
-		 */
-		public IAgent getAgent(final Integer col, final Integer row) {
-			if (col >= getNbCols() || col < 0 || row >= getNbRows() || row < 0) return null;
-			final IShape s = GamaSpatialMatrix.this.get(null, col, row);
-			return s == null ? null : s.getAgent();
-		}
-
-		/**
-		 * Gets the grid value.
-		 *
-		 * @param col
-		 *            the col
-		 * @param row
-		 *            the row
-		 * @return the grid value
-		 */
-		public Double getGridValue(final Integer col, final Integer row) {
-			if (col >= getNbCols() || col < 0 || row >= getNbRows() || row < 0) return 0.0;
-			return GamaSpatialMatrix.this.getGridValue(col, row);
-		}
-
-		@Override
-		public G getAgent(final Integer index) {
-			if (index >= size() || index < 0) return null;
-			final IShape s = GamaSpatialMatrix.this.matrix[index];
-			return (G) (s == null ? null : s.getAgent());
-		}
-
-		@Override
-		public boolean isGrid() { return true; }
-
-		@Override
-		public GridTopology getTopology() { return (GridTopology) super.getTopology(); }
-
-		@Override
-		public void initializeFor(final IScope scope) throws GamaRuntimeException {
-			topology.initialize(scope, this);
-			// scope.getGui().debug("GamaSpatialMatrix.GridPopulation.initializeFor
-			// : size " + size());
-		}
-
-		@Override
-		public G getAgent(final IScope scope, final GamaPoint coord) {
-			return (G) GamaSpatialMatrix.this.getAgentAt(coord);
-		}
-
-		@Override
-		protected void computeTopology(final IScope scope) throws GamaRuntimeException {
-			// Topology is already known. Nothing to do
-		}
-
-		@Override
-		public void killMembers() throws GamaRuntimeException {
-			for (final IShape a : GamaSpatialMatrix.this.matrix) { if (a != null) { a.dispose(); } }
-		}
-
-		@Override
-		public synchronized G[] toArray() {
-			return (G[]) Arrays.copyOf(matrix, matrix.length, IAgent[].class);
-		}
-
-		@Override
-		public int size() {
-			return actualNumberOfCells;
-		}
-
-		@Override
-		public G getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-			if (indices == null) return null;
-			final int n = indices.length(scope);
-			if (n == 0) return null;
-			final int x = Cast.asInt(scope, indices.get(scope, 0));
-			if (n == 1) return getAgent(Cast.asInt(scope, x));
-			final int y = Cast.asInt(scope, indices.get(scope, 1));
-			final IShape s = GamaSpatialMatrix.this.get(scope, x, y);
-			if (s == null) return null;
-			return (G) s.getAgent();
-		}
-
-		@Override
-		public G get(final IScope scope, final Integer index) throws GamaRuntimeException {
-			// WARNING False if the matrix is not dense
-			return (G) matrix[index];
-		}
-
-		// @Override
-		// public boolean contains(final IScope scope, final Object o) throws
-		// GamaRuntimeException {
-		// return _contains(scope, o);
-		// }
-
-		@Override
-		public G firstValue(final IScope scope) throws GamaRuntimeException {
-			return (G) _first(scope);
-		}
-
-		@Override
-		public G lastValue(final IScope scope) throws GamaRuntimeException {
-			return (G) _last(scope);
-		}
-
-		@Override
-		public int length(final IScope scope) {
-			return actualNumberOfCells;
-		}
-
-		@Override
-		public G anyValue(final IScope scope) {
-			return (G) GamaSpatialMatrix.this.anyValue(scope);
-		}
-
-		@Override
-		public Iterator<G> iterator() {
-			return (Iterator<G>) Iterators.forArray(matrix);
-		}
-
-		@Override
-		public boolean containsKey(final IScope scope, final Object o) {
-			if (o instanceof Integer) return super.containsKey(scope, o);
-			if (o instanceof GamaPoint) return GamaSpatialMatrix.this.containsKey(scope, o);
-			return false;
-		}
-
-		@Override
-		public java.lang.Iterable<G> iterable(final IScope scope) {
-			return listValue(scope, Types.NO_TYPE, false); // TODO Types.AGENT
-			// ??
-		}
-
-		@Override
-		public boolean isEmpty() { return _isEmpty(null); }
-
-		@Override
-		public boolean isEmpty(final IScope scope) {
-			return _isEmpty(scope);
-		}
-
-		@Override
-		public IList<G> listValue(final IScope scope, final IType contentsType, final boolean copy)
-				throws GamaRuntimeException {
-			return _listValue(scope, contentsType, false);
-		}
-
-		@Override
-		public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
-				throws GamaRuntimeException {
-			if (contentsType == null || contentsType.id() == IType.NONE
-					|| contentsType.getSpeciesName() != null
-							&& contentsType.getSpeciesName().equals(getSpecies().getName()))
-				return GamaSpatialMatrix.this;
-			return GamaSpatialMatrix.this.matrixValue(scope, contentsType, copy);
-		}
-
-		@Override
-		public IMatrix matrixValue(final IScope scope, final IType type, final GamaPoint size, final boolean copy)
-				throws GamaRuntimeException {
-
-			if (type == null || type.id() == IType.NONE
-					|| type.getSpeciesName() != null && type.getSpeciesName().equals(getSpecies().getName()))
-				return GamaSpatialMatrix.this;
-			return GamaSpatialMatrix.this.matrixValue(scope, type, copy);
-		}
-
-		/**
-		 * The Class GamlGridAgent.
-		 */
-		public class GamlGridAgent extends GamlAgent implements IGridAgent {
-
-			// WARNING HACK TO ACCELERATE SOME OF THE OPERATIONS OF GRIDS
-			// WARNING THE PROBLEM IS THAT THESE AGENTS ARE BREAKING THE
-			// HIERARCHY
-
-			/**
-			 * Instantiates a new gaml grid agent.
-			 *
-			 * @param index
-			 *            the index
-			 */
-			public GamlGridAgent(final int index) {
-				super(GridPopulation.this, index, matrix[index].getGeometry());
-				// setIndex(index);
-				// geometry = matrix[getIndex()].getGeometry(); // TODO Verify
-				// this
-			}
-
-			@Override
-			public GamaColor getColor() {
-				if (isHexagon) return (GamaColor) getAttribute(IKeyword.COLOR);
-				return GamaColor.getInt(supportImagePixels[getIndex()]);
-			}
-
-			@Override
-			public void setColor(final GamaColor color) {
-				if (isHexagon) {
-					setAttribute(IKeyword.COLOR, color);
-				} else {
-					supportImagePixels[getIndex()] = color.getRGB();
-				}
-			}
-
-			@Override
-			public final int getX() {
-				if (isHexagon()) return GamaSpatialMatrix.this.getX(getGeometry());
-				return (int) (getLocation().getX() / cellWidth);
-			}
-
-			@Override
-			public final int getY() {
-				if (isHexagon()) return GamaSpatialMatrix.this.getY(getGeometry());
-				return (int) (getLocation().getY() / cellHeight);
-			}
-
-			@Override
-			public double getValue() {
-				if (gridValue != null) return gridValue[getIndex()];
-				return 0d;
-			}
-
-			@Override
-			public IList<Double> getBands() {
-				if (nbBands == 1) {
-					final IList bd = GamaListFactory.create(null, Types.FLOAT);
-					bd.add(getValue());
-					return bd;
-				}
-				return bands.get(getIndex());
-			}
-
-			@Override
-			public void setValue(final double d) {
-				if (gridValue != null) { gridValue[getIndex()] = d; }
-			}
-
-			@Override
-			public IPopulation getPopulation() { return GridPopulation.this; }
-
-			@Override
-			public IList<IAgent> getNeighbors(final IScope scope) {
-				return Cast.asList(scope, getNeighborhood().getNeighborsIn(scope, getIndex(), 1));
-			}
-
-		}
-
-		/**
-		 * The Class MinimalGridAgent.
-		 */
-		public class MinimalGridAgent extends AbstractAgent implements IGridAgent {
-
-			/** The geometry. */
-			private final IShape geometry;
-
-			/**
-			 * Instantiates a new minimal grid agent.
-			 *
-			 * @param index
-			 *            the index
-			 */
-			public MinimalGridAgent(final int index) {
-				super(index);
-				geometry = matrix[index].getGeometry();
-			}
-
-			@Override
-			public GamaColor getColor() {
-				if (isHexagon) return (GamaColor) getAttribute(IKeyword.COLOR);
-				return GamaColor.getInt(supportImagePixels[getIndex()]);
-			}
-
-			@Override
-			public void setColor(final GamaColor color) {
-				if (isHexagon) {
-					setAttribute(IKeyword.COLOR, color);
-				} else {
-					// image.setRGB(getX(), getY(), color.getRGB());
-
-					supportImagePixels[getIndex()] = color.getRGB();
-				}
-			}
-
-			@Override
-			public void setGeometricalType(final Type t) {}
-
-			@Override
-			public final int getX() {
-				if (isHexagon()) return GamaSpatialMatrix.this.getX(getGeometry());
-				return (int) (getLocation().getX() / cellWidth);
-			}
-
-			@Override
-			public final int getY() {
-				if (isHexagon()) return GamaSpatialMatrix.this.getY(getGeometry());
-				return (int) (getLocation().getY() / cellHeight);
-			}
-
-			@Override
-			public double getValue() {
-				if (gridValue != null) return gridValue[getIndex()];
-				return 0d;
-			}
-
-			@Override
-			public void setValue(final double d) {
-				if (gridValue != null) { gridValue[getIndex()] = d; }
-			}
-
-			@Override
-			public IPopulation getPopulation() { return GridPopulation.this; }
-
-			@Override
-			public IShape getGeometry(final IScope scope) {
-				return geometry;
-			}
-
-			@Override
-			public IList<IAgent> getNeighbors(final IScope scope) {
-				return Cast.asList(scope, getNeighborhood().getNeighborsIn(scope, getIndex(), 1));
-			}
-
-			/**
-			 * Method getPoints()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getPoints()
-			 */
-			@Override
-			public IList<GamaPoint> getPoints() { return geometry.getPoints(); }
-
-			@Override
-			public void setDepth(final double depth) {
-				
-
-			}
-
-			/**
-			 * Method getArea()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getArea()
-			 */
-			@Override
-			public Double getArea() { return geometry.getArea(); }
-
-			/**
-			 * Method getVolume()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getVolume()
-			 */
-			@Override
-			public Double getVolume() { return geometry.getVolume(); }
-
-			/**
-			 * Method getPerimeter()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getPerimeter()
-			 */
-			@Override
-			public double getPerimeter() { return geometry.getPerimeter(); }
-
-			/**
-			 * Method getHoles()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getHoles()
-			 */
-			@Override
-			public IList<GamaShape> getHoles() { return geometry.getHoles(); }
-
-			/**
-			 * Method getCentroid()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getCentroid()
-			 */
-			@Override
-			public GamaPoint getCentroid() { return geometry.getCentroid(); }
-
-			/**
-			 * Method getExteriorRing()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getExteriorRing(msi.gama.runtime.IScope)
-			 */
-			@Override
-			public GamaShape getExteriorRing(final IScope scope) {
-				return geometry.getExteriorRing(scope);
-			}
-
-			/**
-			 * Method getWidth()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getWidth()
-			 */
-			@Override
-			public Double getWidth() { return geometry.getWidth(); }
-
-			/**
-			 * Method getHeight()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getHeight()
-			 */
-			@Override
-			public Double getHeight() { return geometry.getHeight(); }
-
-			/**
-			 * Method getDepth()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getDepth()
-			 */
-			@Override
-			public Double getDepth() { return geometry.getDepth(); }
-
-			/**
-			 * Method getGeometricEnvelope()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
-			 */
-			@Override
-			public GamaShape getGeometricEnvelope() { return geometry.getGeometricEnvelope(); }
-
-			@Override
-			public IList<? extends IShape> getGeometries() { return geometry.getGeometries(); }
-
-			/**
-			 * Method isMultiple()
-			 *
-			 * @see msi.gama.metamodel.shape.IShape#isMultiple()
-			 */
-			@Override
-			public boolean isMultiple() { return geometry.isMultiple(); }
-
-			@Override
-			public IList<Double> getBands() {
-				if (nbBands == 1) {
-					final IList bd = GamaListFactory.create(null, Types.FLOAT);
-					bd.add(getValue());
-					return bd;
-				}
-				return bands.get(getIndex());
-			}
-
-		}
 
 	}
 
@@ -2517,5 +1956,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			input[i] = val < minValue ? 0 : val;
 		}
 	}
+
+	@Override
+	public void setGridValues(final double[] gridValues) { this.gridValue = gridValues; }
 
 }

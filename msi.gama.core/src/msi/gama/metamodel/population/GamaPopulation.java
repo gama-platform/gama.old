@@ -13,19 +13,12 @@ package msi.gama.metamodel.population;
 import static com.google.common.collect.Iterators.transform;
 import static java.util.Collections.EMPTY_LIST;
 import static java.util.Collections.EMPTY_MAP;
-import static msi.gama.common.interfaces.IKeyword.CELL_HEIGHT;
-import static msi.gama.common.interfaces.IKeyword.CELL_WIDTH;
 import static msi.gama.common.interfaces.IKeyword.EDGE_SPECIES;
 import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
-import static msi.gama.common.interfaces.IKeyword.FILE;
-import static msi.gama.common.interfaces.IKeyword.FILES;
 import static msi.gama.common.interfaces.IKeyword.LOCATION;
 import static msi.gama.common.interfaces.IKeyword.MIRRORS;
-import static msi.gama.common.interfaces.IKeyword.NEIGHBORS;
-import static msi.gama.common.interfaces.IKeyword.NEIGHBOURS;
 import static msi.gama.common.interfaces.IKeyword.SHAPE;
 import static msi.gama.common.interfaces.IKeyword.TARGET;
-import static msi.gama.common.interfaces.IKeyword.WIDTH;
 import static msi.gaml.descriptions.VariableDescription.INIT_DEPENDENCIES_FACETS;
 import static msi.gaml.descriptions.VariableDescription.UPDATE_DEPENDENCIES_FACETS;
 
@@ -47,7 +40,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
-import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -60,7 +52,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GraphTopology;
-import msi.gama.metamodel.topology.grid.GridTopology;
+import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.runtime.FlowStatus;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -72,7 +64,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
-import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ActionDescription;
@@ -193,7 +184,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * @param existing
 	 *            the existing
 	 */
-	private void tryAdd(final DirectedAcyclicGraph<String, Object> graph, final String v, final String existing) {
+	private static void tryAdd(final DirectedAcyclicGraph<String, Object> graph, final String v,
+			final String existing) {
 		graph.addVertex(v);
 		try {
 			graph.addEdge(v, existing);
@@ -213,8 +205,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 *            the facets to consider
 	 * @return the i variable[]
 	 */
-	public IVariable[] orderAttributes(final TypeDescription ecd, final Predicate<VariableDescription> keep,
-			final Set<String> facetsToConsider) {
+	public static IVariable[] orderAttributes(final IPopulation pop, final TypeDescription ecd,
+			final Predicate<VariableDescription> keep, final Set<String> facetsToConsider) {
 		// AD Revised in Aug 2019 for Issue #2869: keep constraints between superspecies and subspecies
 		// AD Revised in Aug 2021 for Issue #3068: do not introduce cycles (which might exist in update blocks) in order
 		// to obtain a correct topological order
@@ -268,7 +260,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		// s -> ((VariableDescription) getVar(s).getDescription()).isSyntheticSpeciesContainer()),
 		// String.class)));
 		// }
-		return Iterators.toArray(transform(graph.iterator(), s -> getVar(s)), IVariable.class);
+		return Iterators.toArray(transform(graph.iterator(), s -> pop.getVar(s)), IVariable.class);
 
 	}
 
@@ -286,9 +278,9 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		this.host = host;
 		this.species = species;
 		final TypeDescription ecd = species.getDescription();
-		orderedVars = orderAttributes(ecd, Predicates.alwaysTrue(), INIT_DEPENDENCIES_FACETS);
+		orderedVars = orderAttributes(this, ecd, Predicates.alwaysTrue(), INIT_DEPENDENCIES_FACETS);
 		for (IVariable v : orderedVars) { orderedVarNames.add(v.getName()); }
-		updatableVars = orderAttributes(ecd, VariableDescription::isUpdatable, UPDATE_DEPENDENCIES_FACETS);
+		updatableVars = orderAttributes(this, ecd, VariableDescription::isUpdatable, UPDATE_DEPENDENCIES_FACETS);
 		if (species.isMirror() && host != null) {
 			mirrorManagement = new MirrorPopulationManagement(species.getFacet(MIRRORS));
 		} else {
@@ -400,7 +392,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	@Override
 	public T getOrCreateAgent(final IScope scope, final Integer index) {
 		T agent = getAgent(index);
-		return agent == null ? createAgentAt(scope, index, null, false, true) : agent;
+		return agent == null ? (T) createAgentAt(scope, index, Collections.EMPTY_MAP, false, true) : agent;
 	}
 
 	@Override
@@ -667,7 +659,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 					"Impossible to assign a topology to " + species.getName() + " as it already defines one.", scope);
 		}
 		if (species.isGrid()) {
-			topology = buildGridTopology(scope, species, getHost());
+			topology = GridPopulation.buildGridTopology(scope, species, getHost());
 		} else if (species.isGraph()) {
 			final IExpression spec = species.getFacet(EDGE_SPECIES);
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
@@ -686,86 +678,11 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	}
 
-	/**
-	 * Builds the grid topology.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param species
-	 *            the species
-	 * @param host
-	 *            the host
-	 * @return the i topology
-	 */
-	public static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
-		IExpression exp = species.getFacet(WIDTH);
-		final Envelope3D env = scope.getSimulation().getGeometry().getEnvelope();
-		final int rows = exp == null
-				? species.hasFacet(CELL_WIDTH)
-						? (int) (env.getWidth() / Cast.asFloat(scope, species.getFacet(CELL_WIDTH).value(scope))) : 100
-				: Cast.asInt(scope, exp.value(scope));
-		exp = species.getFacet(IKeyword.HEIGHT);
-		final int columns = exp == null ? species.hasFacet(CELL_HEIGHT)
-				? (int) (env.getHeight() / Cast.asFloat(scope, species.getFacet(CELL_HEIGHT).value(scope))) : 100
-				: Cast.asInt(scope, exp.value(scope));
-
-		final boolean isTorus = host.getTopology().isTorus();
-		exp = species.getFacet("use_individual_shapes");
-		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
-		exp = species.getFacet("use_neighbors_cache");
-		final boolean useNeighborsCache = exp == null || Cast.asBool(scope, exp.value(scope));
-		exp = species.getFacet("horizontal_orientation");
-		final boolean horizontalOrientation = exp == null || Cast.asBool(scope, exp.value(scope));
-
-		exp = species.getFacet("optimizer");
-		final String optimizer = exp == null ? "" : Cast.asString(scope, exp.value(scope));
-
-		exp = species.getFacet(NEIGHBORS);
-		if (exp == null) { exp = species.getFacet(NEIGHBOURS); }
-		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
-		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
-		exp = species.getFacet(FILES);
-		IList<GamaGridFile> files = null;
-		if (exp != null) { files = Cast.asList(scope, exp.value(scope)); }
-		GridTopology result;
-		if (files != null && !files.isEmpty()) {
-			result = new GridTopology(scope, host, files, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
-					optimizer);
-		} else {
-			exp = species.getFacet(FILE);
-			final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
-			if (file == null) {
-				result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, horizontalOrientation,
-						useIndividualShapes, useNeighborsCache, optimizer);
-			} else {
-				result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache,
-						optimizer);
-			}
-
-		}
-		// Reverts the modification of the world envelope (see #1953 and #1939)
-		//
-		// final Envelope3D env =
-		// result.getPlaces().getEnvironmentFrame().getEnvelope();
-		// final Envelope3D world = host.getEnvelope();
-		// final Envelope3D newEnvelope = new Envelope3D(0,
-		// Math.max(env.getWidth(), world.getWidth()), 0,
-		// Math.max(env.getHeight(), world.getHeight()), 0,
-		// Math.max(env.getDepth(), world.getDepth()));
-		// host.setGeometry(new GamaShape(newEnvelope));
-		return result;
-	}
-
 	@Override
 	public IMacroAgent getHost() { return host; }
 
 	@Override
 	public void setHost(final IMacroAgent agt) { host = agt; }
-	//
-	// @Override
-	// public Iterator<T> iterator() {
-	// return super.iterator();
-	// }
 
 	@Override
 	public final boolean equals(final Object o) {
@@ -938,7 +855,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 */
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
-		return GamaListFactory.create(scope, getGamlType().getContentType(), GamaPopulation.allLivingAgents(this));
+		return GamaListFactory.create(scope, getGamlType().getContentType(), allLivingAgents(this));
 	}
 
 	@Override

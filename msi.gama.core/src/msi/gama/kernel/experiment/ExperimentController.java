@@ -116,7 +116,6 @@ public class ExperimentController implements IExperimentController {
 		switch (command) {
 			case _CLOSE:
 				scope.getGui().updateExperimentState(scope, IGui.NONE);
-				// scope.getGui().getStatus().neutralStatus(scope, "No simulation running");
 				break;
 			case _OPEN:
 				scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
@@ -137,8 +136,8 @@ public class ExperimentController implements IExperimentController {
 				}
 				break;
 			case _PAUSE:
-				if (!disposing) { scope.getGui().updateExperimentState(scope, IGui.PAUSED); }
 				pause();
+				if (!disposing) { scope.getGui().updateExperimentState(scope, IGui.PAUSED); }
 				break;
 			case _STEP:
 				scope.getGui().updateExperimentState(scope, IGui.PAUSED);
@@ -153,12 +152,12 @@ public class ExperimentController implements IExperimentController {
 				try {
 					final boolean wasRunning = !isPaused() && !experiment.isAutorun();
 					pause();
-					scope.getGui().getStatus().waitStatus(scope, "Reloading...");
+					scope.getGui().getStatus().waitStatus("Reloading...");
 					experiment.reload();
 					if (wasRunning) {
 						processUserCommand(_START);
 					} else {
-						scope.getGui().getStatus().informStatus(scope, "Experiment reloaded");
+						scope.getGui().getStatus().informStatus("Experiment reloaded");
 					}
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
@@ -259,7 +258,7 @@ public class ExperimentController implements IExperimentController {
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		if (e != null) { getScope().getGui().getStatus().errorStatus(getScope(), e.getMessage()); }
+		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage()); }
 		experiment.dispose(); // will call own dispose() later
 	}
 

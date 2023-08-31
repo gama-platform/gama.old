@@ -66,7 +66,7 @@ public class GamaColorRecord {
 	 * @return the object
 	 */
 	public GamaColor constructObject() {
-		return new GamaColor(r / 255d, g / 255d, b / 255d, a / 255d);
+		return GamaColor.getWithDoubles(r / 255d, g / 255d, b / 255d, a / 255d);
 	}
 
 }

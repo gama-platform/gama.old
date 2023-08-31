@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GisLayer.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.2).
+ * GisLayer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -40,7 +39,8 @@ public class GisLayer extends AbstractLayer {
 	/**
 	 * Instantiates a new gis layer.
 	 *
-	 * @param layer the layer
+	 * @param layer
+	 *            the layer
 	 */
 	public GisLayer(final ILayerStatement layer) {
 		super(layer);
@@ -51,14 +51,14 @@ public class GisLayer extends AbstractLayer {
 	@Override
 	public void privateDraw(final IGraphicsScope scope, final IGraphics g) {
 		final GamaColor color =
-				colorExpression == null ? GamaColor.getInt(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB())
+				colorExpression == null ? GamaColor.get(GamaPreferences.Displays.CORE_COLOR.getValue().getRGB())
 						: Cast.asColor(scope, colorExpression.value(scope));
 		final List<IShape> shapes = buildGisLayer(scope);
 		if (shapes != null) {
 			for (final IShape geom : shapes) {
 				if (geom != null) {
 					final DrawingAttributes attributes =
-							new ShapeDrawingAttributes(geom, (IAgent) null, color, new GamaColor(Color.black));
+							new ShapeDrawingAttributes(geom, (IAgent) null, color, GamaColor.get(Color.black));
 					g.drawShape(geom.getInnerGeometry(), attributes);
 				}
 			}
@@ -68,9 +68,11 @@ public class GisLayer extends AbstractLayer {
 	/**
 	 * Builds the gis layer.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the list
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public List<IShape> buildGisLayer(final IScope scope) throws GamaRuntimeException {
 		final GamaShapeFile file = getShapeFile(scope);
@@ -81,7 +83,8 @@ public class GisLayer extends AbstractLayer {
 	/**
 	 * Gets the shape file.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the shape file
 	 */
 	private GamaShapeFile getShapeFile(final IScope scope) {

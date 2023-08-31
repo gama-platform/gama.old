@@ -17,7 +17,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Set;
 
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
+import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.util.matrix.GamaField;

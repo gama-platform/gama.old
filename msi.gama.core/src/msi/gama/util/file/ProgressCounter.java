@@ -54,16 +54,16 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 	 *
 	 * @return the displayer
 	 */
-	IStatusDisplayer getDisplayer() { return scope.getGui().getStatus(); }
+	IStatusDisplayer getDisplayer() { return GAMA.getGui().getStatus(); }
 
 	@Override
 	public void complete() {
-		getDisplayer().setSubStatusCompletion(scope, 1d);
+		getDisplayer().setSubStatusCompletion(1d);
 	}
 
 	@Override
 	public void dispose() {
-		getDisplayer().endSubStatus(scope, name.toString());
+		getDisplayer().endSubStatus(name.toString());
 	}
 
 	@Override
@@ -83,12 +83,12 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 	@Override
 	public void progress(final float p) {
 		progress = p;
-		getDisplayer().setSubStatusCompletion(scope, progress);
+		getDisplayer().setSubStatusCompletion(progress);
 	}
 
 	@Override
 	public void setCanceled(final boolean cancel) {
-		getDisplayer().endSubStatus(scope, name.toString());
+		getDisplayer().endSubStatus(name.toString());
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void started() {
-		getDisplayer().beginSubStatus(scope, name.toString());
+		getDisplayer().beginSubStatus(name.toString());
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void imageStarted(final ImageReader source, final int imageIndex) {
-		getDisplayer().beginSubStatus(scope, name.toString());
+		getDisplayer().beginSubStatus(name.toString());
 	}
 
 	@Override
@@ -122,8 +122,8 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void imageComplete(final ImageReader source) {
-		getDisplayer().setSubStatusCompletion(scope, 1d);
-		getDisplayer().endSubStatus(scope, name.toString());
+		getDisplayer().setSubStatusCompletion(1d);
+		getDisplayer().endSubStatus(name.toString());
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class ProgressCounter implements ProgressListener, IIOReadProgressListene
 
 	@Override
 	public void readAborted(final ImageReader source) {
-		getDisplayer().endSubStatus(scope, name.toString());
+		getDisplayer().endSubStatus(name.toString());
 	}
 
 }

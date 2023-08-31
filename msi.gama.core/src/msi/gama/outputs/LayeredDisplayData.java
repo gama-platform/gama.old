@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * LayeredDisplayData.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.outputs;
@@ -617,7 +617,7 @@ public class LayeredDisplayData {
 				intensity = Cast.asColor(scope, light.value(scope));
 			} else {
 				final int meanValue = Cast.asInt(scope, light.value(scope));
-				intensity = new GamaColor(meanValue, meanValue, meanValue, 255);
+				intensity = GamaColor.get(meanValue, meanValue, meanValue, 255);
 			}
 			lights.put(ILightDefinition.ambient, new GenericLightDefinition(ILightDefinition.ambient, -1, intensity));
 		}

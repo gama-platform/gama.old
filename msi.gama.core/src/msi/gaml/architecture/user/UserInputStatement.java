@@ -260,4 +260,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		return false;
 	}
 
+	@Override
+	public void setValueNoCheckNoNotification(final Object value) { currentValue = value; }
+
 }

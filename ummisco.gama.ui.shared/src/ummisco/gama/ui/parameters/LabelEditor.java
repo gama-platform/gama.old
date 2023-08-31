@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Text;
 
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import ummisco.gama.ui.interfaces.EditorListener;
 
 /**
@@ -36,8 +35,8 @@ public class LabelEditor extends AbstractEditor<String> {
 	 * Instantiates a new label editor.
 	 *
 	 */
-	LabelEditor(final IScope scope, final IAgent agent, final IParameter p, final EditorListener<String> whenModified) {
-		super(scope, agent, p, whenModified);
+	LabelEditor(final IAgent agent, final IParameter p, final EditorListener<String> whenModified) {
+		super(agent, p, whenModified);
 
 	}
 

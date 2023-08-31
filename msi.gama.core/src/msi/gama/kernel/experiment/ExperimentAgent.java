@@ -311,7 +311,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (!getSpecies().isBatch()) {
 			ownScope.getGui().setSelectedAgent(null);
 			ownScope.getGui().setHighlightedAgent(null);
-			ownScope.getGui().getStatus().resumeStatus(ownScope);
+			ownScope.getGui().getStatus().resumeStatus();
 			// AD: Fix for issue #1342 -- verify that it does not break
 			// something else in the dynamics of closing/opening
 			ownScope.getGui().closeDialogs(ownScope);
@@ -367,11 +367,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public boolean init(final IScope scope) {
+		GAMA.changeCurrentTopLevelAgent(this, true);
 		scope.getGui().clearErrors(scope);
 		super.init(scope);
 		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) { outputs.init(scope); }
-		scope.getGui().getStatus().informStatus(scope, "Experiment ready");
+
+		// scope.getGui().getStatus().informStatus(scope, "Experiment ready");
 		scope.getGui().updateExperimentState(scope);
 		return true;
 	}
@@ -766,7 +768,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	@getter (IKeyword.SIMULATION)
 	public SimulationAgent getSimulation() {
-		if (getSimulationPopulation() != null) return getSimulationPopulation().lastSimulationCreated();
+		if (getSimulationPopulation() != null) return getSimulationPopulation().getCurrentSimulation();
 		return null;
 	}
 
@@ -777,7 +779,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 *            the new simulation
 	 */
 	@setter (IKeyword.SIMULATION)
-	public void setSimulation(final IAgent sim) {}
+	public void setSimulation(final SimulationAgent sim) {
+		getSimulationPopulation().setCurrentSimulation(sim);
+	}
 
 	@Override
 	public boolean isOnUserHold() { return isOnUserHold; }
@@ -810,16 +814,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) { outputs.step(scope); }
 		ownClock.step();
 		informStatus();
-		// Removed as it causes the pause/run button to not update itself correctly
-		// scope.getGui().updateExperimentState(scope);
-
+		scope.getGui().updateExperimentState(scope);
 	}
 
 	@Override
 	public void informStatus() {
 		// TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
 		if (isHeadless() || isBatch() || getSimulation() == null) return;
-		ownScope.getGui().getStatus().informStatus(ownScope, null, "overlays/status.clock");
+		ownScope.getGui().getStatus().informStatus(null, "overlays/status.clock");
 	}
 
 	/**
@@ -855,7 +857,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		public RandomUtils getRandom() { return ExperimentAgent.this.random; }
 
 		/**
-		 * @param agent
+		 * Instantiates a new experiment agent scope.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @date 13 août 2023
 		 */
 		public ExperimentAgentScope() {
 			super(ExperimentAgent.this);
@@ -980,7 +985,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public GamaColor getColor() { return new GamaColor(0, 0, 0, 0); }
+	public GamaColor getColor() { return GamaColor.get(30, 30, 30, 255); }
 
 	/**
 	 * Method getOutputManager()
@@ -1028,5 +1033,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return true, if is batch
 	 */
 	public boolean isBatch() { return getSpecies().isBatch(); }
+
+	@Override
+	public String getFamilyName() { return IKeyword.EXPERIMENT; }
 
 }

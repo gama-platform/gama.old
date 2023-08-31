@@ -29,7 +29,7 @@ global {
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';
 	float grid_transparency <- 1.0;
 	image_file ant_shape const: true <- file('../images/ant.png');
-	svg_file ant_shape_svg const: true <- svg_file("../images/ant.svg");
+	geometry ant_shape_svg const: true <- geometry(svg_file("../images/ant.svg"));
 	obj_file ant3D_shape const: true <- obj_file('../images/fire-ant.obj', '../images/fire-ant.mtl', -90::{1, 0, 0});
 	font regular <- font("Helvetica", 14, #bold);
 	font bigger <- font("Helvetica", 18, #bold);
@@ -176,7 +176,7 @@ species ant skills: [moving] control: fsm {
 	}
 
 	aspect icon_svg {
-		draw ant_shape_svg size: {5, 7} rotate: my heading + 270 color: #black;
+		draw (ant_shape_svg) size: {5, 7} at: (location)rotate: my heading + 90 color: #black;
 	} }
 
 	//Complete experiment that will inspect all ants in a table
@@ -205,14 +205,15 @@ experiment "With Inspector" type: gui {
 
 }
 
-experiment "Classic" type: gui {
+experiment "Classic" type: record format: "binary" compress: true {
+	
 	parameter 'Number of ants:' var: ants_number category: 'Model';
 	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model';
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model';
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display';
 	parameter 'Display state of agents:' var: display_state category: 'Display';
 	
-
+	user_command "Save" {	save simulation to: '../result/file.simulation' format: "json" ;}
 	
 	output {
 		display Ants antialias: false type: 3d {
@@ -246,10 +247,13 @@ experiment "3D View" type: gui {
 }
 
 //Experiment to show how to make multi simulations
-experiment "3 Simulations" type: gui {
+experiment "3 Simulations" type: record {
+	
+	
 	parameter 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
 	parameter 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
 	parameter 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
+	
 
 	// We create 2 supplementary simulations using the species name 'ants_model' (automatically created from the name of the model + '_model')
 	init {
@@ -259,11 +263,13 @@ experiment "3 Simulations" type: gui {
 
 
 	permanent {
+		
 		display Comparison background: #white {
 			chart "Food Gathered" type: series {
 				loop s over: simulations {
+					if (!dead(s)) {
 					data "Food " + int(s) value: s.food_gathered color: s.color marker: false style: line thickness: 5;
-				}
+				}}
 
 			}
 
@@ -272,7 +278,7 @@ experiment "3 Simulations" type: gui {
 	}
 
 	output {
-		layout #split editors: false consoles: false toolbars: true tabs: false tray: false;
+		layout #split editors: false consoles: false toolbars: true tabs: false tray: false parameters: true;
 		display Ants background: color type: 3d toolbar: color axes: false {
 			image terrain position: {0.05, 0.05} size: {0.9, 0.9} refresh: false;
 			agents "agents" transparency: 0.5 position: {0.05, 0.05} size: {0.9, 0.9} value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));

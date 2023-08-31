@@ -39,9 +39,8 @@ public class FloatEditor extends NumberEditor<Double> {
 	 * @param l
 	 *            the l
 	 */
-	FloatEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
-			final EditorListener<Double> l) {
-		super(scope, agent, param, l, canBeNull);
+	FloatEditor(final IAgent agent, final IParameter param, final boolean canBeNull, final EditorListener<Double> l) {
+		super(agent, param, l, canBeNull);
 	}
 
 	/**
@@ -69,7 +68,7 @@ public class FloatEditor extends NumberEditor<Double> {
 	FloatEditor(final IScope scope, final EditorsGroup parent, final String title, final Double value, final Double min,
 			final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		// Convenience method
-		super(scope, null, new InputParameter(title, value, min, max, step), whenModified, canBeNull);
+		super(scope.getAgent(), new InputParameter(title, value, min, max, step), whenModified, canBeNull);
 		this.createControls(parent);
 	}
 

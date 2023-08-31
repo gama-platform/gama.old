@@ -7,39 +7,50 @@
 
 model CreateSimuGraph2
 
-import "Memorize Experiment.gaml"
+import "Base Model.gaml"
 
-experiment saveSimu type: gui {
+
+experiment "1. Save Simulation" type: gui parent: Base {
 	
-	init {
-		write "Run the simulation until cycle 5, when it will be saved in a file.";
-	}
+	
+	string format <- "binary";
+	string file_path <- "../includes/saved_simulation.simulation";
+	
+	text "Run the simulation until cycle 5, when it will be saved in a file and quit. You can choose the format in which to save it" font: font("Helvetica", 14, #bold);
+	parameter "Serialization format" var: format among: ["xml","json","binary"];
+	parameter "File path" var: file_path ;
 	
 	reflex store when: cycle = 5 {		
-		write "================ START SAVE + self " + " - " + cycle ;		
-		save saved_simulation_file('../includes/saveSimu.gsim', [simulation]);
-		write "================ END SAVE + self " + " - " + cycle ;			
+		save simulation to: file_path format: format;
+		do die;	
 	}	
-	
-	output {
-		display main_display {
-			species road aspect: geom;
-			species people aspect: base;						
-		}
-	}	
+
 }
 
-experiment reloadSimu type: gui {
+experiment "2. Reload Simulation" type: gui parent: Base{
 	
+	simulation_file input <- file("../includes/saved_simulation.simulation");
+	
+	text "This experiment has created its initial simulation from the serialized version of the previous simulation saved in the file" font: font("Helvetica", 14, #bold);
+	parameter "File to read" var: input <- file("../includes/saved_simulation.gsim");
+	
+	// We create the initial simulation from the file
 	action _init_ {
-		create simulation from: saved_simulation_file("../includes/saveSimu.gsim");	
-		write "init simulation at step " + simulation.cycle;
+		create simulation from: input;	
 	}
+
+}
+
+experiment "3. Restore Simulation" type: gui parent: Base{
 	
-	output {
-		display main_display {
-			species road aspect: geom;
-			species people aspect: base;						
-		}
-	}	
+	simulation_file input <- file("../includes/saved_simulation.simulation");
+	
+	text "This experiment has created its initial simulation normally, and uses `restore` at step 10 to initialise it from the serialized version of the previous simulation. This creates an endless loop !" font: font("Helvetica", 14, #bold);
+	parameter "File to read" var: input <- file("../includes/saved_simulation.gsim");
+	
+	// We "restore" the simulation from the file. As it happens each time the simulation reaches 10 cycles, it loops forever between 5 and 10 cycles. 
+	reflex when: cycle=10 {
+		restore simulation from: input;	
+	}
+
 }

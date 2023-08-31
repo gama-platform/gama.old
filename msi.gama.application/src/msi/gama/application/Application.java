@@ -238,8 +238,9 @@ public class Application implements IApplication {
 				// AD Added this check explicitly as the checkWorkspaceDirectory() was not supposed to return null at
 				// this stage
 				if (ret != null) {
-					remember = "models".equals(ret) && !openQuestion(null, "Different version of the models library",
-							"The workspace contains a different version of the models library. Do you want to use another workspace ?");
+					remember = "models".equals(ret) && WorkspacePreferences.askBeforeUsingOutdatedWorkspace()
+							&& !openQuestion(null, "Different version of the models library",
+									"The workspace contains a different version of the models library. Do you want to use another workspace ?");
 				}
 			}
 		}

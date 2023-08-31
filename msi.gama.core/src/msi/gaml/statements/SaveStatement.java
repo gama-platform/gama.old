@@ -46,7 +46,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.SaveStatement.SaveValidator;
-import msi.gaml.statements.save.ImageSaver;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -71,7 +70,7 @@ import ummisco.gama.dev.utils.DEBUG;
 @facets (
 		value = { @facet (
 				name = IKeyword.FORMAT,
-				type = IType.ID,
+				type = { IType.STRING },
 				optional = true,
 				doc = @doc (
 						value = "a string representing the format of the output file (e.g. \"shp\", \"asc\", \"geotiff\", \"png\", \"text\", \"csv\"). If the file extension is non ambiguous in facet 'to:', this format does not need to be specified. However, in many cases, it can be useful to do it (for instance, when saving a string to a .pgw file, it is always better to clearly indicate that the expected format is 'text'). ")),
@@ -234,12 +233,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						IGamlIssue.CONFLICTING_FACETS, FORMAT);
 			}
 
-			if (!isAFile && (to == null)) {
+			if (!isAFile && to == null) {
 				desc.error("No file specified", IGamlIssue.MISSING_FACET);
 				return;
 			}
 
-			if (!isAFile && (format == null) && to != null && ext != null && !DELEGATES.containsKey(ext)) {
+			if (!isAFile && format == null && to != null && ext != null && !DELEGATES.containsKey(ext)) {
 				if (dataType != Types.STRING && dataType != Types.INT && dataType != Types.FLOAT) {
 					desc.error("Unknown file extension. Accepted formats are: "
 							+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
@@ -249,7 +248,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						+ DELEGATES.keySet().stream().sorted().toList(), IGamlIssue.UNKNOWN_ARGUMENT, TO);
 			}
 
-			if (!isAFile && (format == null) && to != null) {
+			if (!isAFile && format == null && to != null) {
 				desc.info(
 						"'save' will use the extension of the file to determine its format. If you are unsure about this, please specify the format of the file using the 'format:' facet",
 						IGamlIssue.UNKNOWN_ARGUMENT);
@@ -257,14 +256,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			if (!isAFile && format != null && to != null) {
 				String id = format.literalValue();
-				if (!DELEGATES.containsKey(id)) {
+				// maybe it can represent a string ?
+				if (!DELEGATES.containsKey(id) && format.getGamlType() != Types.STRING) {
 					desc.error(
 							"Unknown file format. Accepted formats are: "
 									+ DELEGATES.keySet().stream().sorted().toList(),
 							IGamlIssue.UNKNOWN_ARGUMENT, FORMAT);
 					return;
 				}
-				if (ext != null && !id.equals(ext) && (!IMAGE.equals(id) || !ImageSaver.FILE_FORMATS.contains(ext))) {
+				if (ext != null && !id.equals(ext)) { // && (!IMAGE.equals(id) ||
+														// !ImageSaver.FILE_FORMATS.contains(ext))
 					desc.info("The extension of the file and the format differ. Make sure they are compatible",
 							IGamlIssue.CONFLICTING_FACETS);
 				}
@@ -344,6 +345,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/** The file. */
 	private final IExpression file;
 
+	/** The format. */
+	private final IExpression format;
+
 	/** The rewrite expr. */
 	private final IExpression rewriteExpr;
 
@@ -357,6 +361,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		super(desc);
 		item = desc.getFacetExpr(IKeyword.DATA);
 		file = getFacet(IKeyword.TO);
+		format = getFacet(IKeyword.FORMAT);
 		rewriteExpr = getFacet(IKeyword.REWRITE);
 		attributesFacet = getFacet(IKeyword.ATTRIBUTES);
 	}
@@ -418,6 +423,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		}
 
+		// We may have the case of a string (instead of a literal)
+		if (typeExp != null && !DELEGATES.containsKey(typeExp) && format != null
+				&& format.getGamlType() == Types.STRING) {
+			typeExp = Cast.asString(scope, format.value(scope));
+			if (!DELEGATES.containsKey(typeExp)) { typeExp = null; }
+		}
 		try {
 			Files.createDirectories(fileToSave.toPath().getParent());
 			boolean exists = fileToSave.exists();
@@ -468,7 +479,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		int distance = Integer.MAX_VALUE;
 		ISaveDelegate closest = null;
 		for (Entry<IType, ISaveDelegate> entry : map.entrySet()) {
-			if (entry.getKey().isAssignableFrom(dataType)) {
+			if (entry.getKey().isAssignableFrom(dataType) && entry.getValue().handlesDataType(dataType)) {
 				@SuppressWarnings ("unchecked") int d = dataType.distanceTo(entry.getKey());
 				if (d < distance) {
 					distance = d;

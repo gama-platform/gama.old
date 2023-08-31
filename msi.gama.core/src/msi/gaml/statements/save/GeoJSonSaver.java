@@ -71,7 +71,7 @@ public class GeoJSonSaver extends AbstractShapeSaver {
 
 	@Override
 	public Set<String> computeFileTypes() {
-		return Set.of("geojson", "json");
+		return Set.of("geojson");
 	}
 
 }

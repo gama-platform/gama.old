@@ -38,23 +38,21 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.root.PlatformAgent;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaColor;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlIdiomsProvider;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IVarDescriptionProvider;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.THREADS;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -68,7 +66,11 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * The Class InteractiveConsoleView.
  */
 public class InteractiveConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable,
-		IToolbarDecoratedView.LogExportable, IGamaView.Console, IExecutionContext, IVarDescriptionProvider {
+		IToolbarDecoratedView.LogExportable, IExecutionContext, IVarDescriptionProvider, IGamaView.Interactive {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The msg console. */
 	private IOConsole msgConsole;
@@ -82,8 +84,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	/** The reader. */
 	BufferedReader reader;
 
-	/** The scope. */
-	private IScope scope;
+	/** The agent. */
+	// private ITopLevelAgent agent;
 
 	/** The temps. */
 	private final Map<String, Object> temps = new LinkedHashMap<>();
@@ -99,6 +101,17 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	/** The parent of control to display full screen. */
 	private Composite parentOfControlToDisplayFullScreen;
+
+	/**
+	 * Instantiates a new interactive console view.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 14 août 2023
+	 */
+	public InteractiveConsoleView() {
+		DEBUG.OUT("InteractiveConsoleView created");
+		GAMA.registerTopLevelAgentChangeListener(this);
+	}
 
 	@Override
 	public void createPartControl(final Composite composite) {
@@ -123,7 +136,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	}
 
 	@Override
-	public IScope getScope() { return scope; }
+	public IScope getScope() { return GAMA.getCurrentTopLevelAgent().getScope(); }
 
 	@Override
 	public void ownCreatePartControl(final Composite p) {
@@ -131,7 +144,6 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		reader = new BufferedReader(new InputStreamReader(msgConsole.getInputStream()));
 		var stream = msgConsole.newOutputStream();
 		stream.setColor(ThemeHelper.isDark() ? IGamaColors.NEUTRAL.lighter() : IGamaColors.NEUTRAL.color());
-		// stream.setFontStyle(SWT.ITALIC);
 		resultWriter = new OutputStreamWriter(stream);
 		stream = msgConsole.newOutputStream();
 		stream.setColor(IGamaColors.ERROR.color());
@@ -270,6 +282,13 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	}
 
 	@Override
+	public void dispose() {
+		GAMA.removeTopLevelAgentChangeListener(this);
+		DEBUG.OUT("Console removed from GAMA listeners");
+		super.dispose();
+	}
+
+	@Override
 	public void close(final IScope scope) {
 		reset();
 		super.close(scope);
@@ -278,7 +297,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	@Override
 	public void reset() {
 		if (msgConsole != null) { msgConsole.clearConsole(); }
-		setExecutorAgent(null);
+		topLevelAgentChanged(null);
 		showPrompt();
 	}
 
@@ -296,7 +315,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			msgConsole.clearConsole();
 			showPrompt();
 		}, SWT.RIGHT);
-
+		this.topLevelAgentChanged(GAMA.getCurrentTopLevelAgent());
 	}
 
 	@Override
@@ -321,11 +340,11 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		return false;
 	}
 
-	@Override
-	public void append(final String text, final ITopLevelAgent agent, final GamaColor color) {
-		setExecutorAgent(agent);
-		if (text != null) { append(text, false, true); }
-	}
+	// @Override
+	// public void append(final String text, final ITopLevelAgent agent, final GamaColor color) {
+	// setExecutorAgent(agent);
+	// if (text != null) { append(text, false, true); }
+	// }
 
 	/**
 	 * Sets the executor agent.
@@ -333,22 +352,34 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	 * @param agent
 	 *            the new executor agent
 	 */
-	private void setExecutorAgent(final ITopLevelAgent agent) {
-		if (scope != null) {
-			scope.clear();
-			scope = null;
-		}
+	@Override
+	public void topLevelAgentChanged(final ITopLevelAgent agent) {
+
 		if (agent == null) {
-
-			WorkbenchHelper.asyncRun(
-					() -> { if (toolbar != null && !toolbar.isDisposed()) { toolbar.wipe(SWT.LEFT, true); } });
+			WorkbenchHelper.asyncRun(() -> {
+				if (toolbar != null && !toolbar.isDisposed()) {
+					toolbar.wipe(SWT.LEFT, true);
+					toolbar.setBackgroundColor(null);
+					toolbar.update();
+					toolbar.refresh(true);
+				}
+			});
 		} else {
-			scope = new ExecutionScope(agent, " in console", this);
-			agent.getSpecies().getDescription().attachAlternateVarDescriptionProvider(this);
-			WorkbenchHelper.asyncRun(() -> toolbar.status(GamaIcon.named(IGamaIcons.MENU_AGENT).image(),
-					"Listening agent: " + Cast.toGaml(agent), IGamaColors.NEUTRAL, SWT.LEFT));
+			DEBUG.OUT("Changing top level agent to " + agent.getName());
+			if (!(agent instanceof PlatformAgent)) {
+				agent.getSpecies().getDescription().attachAlternateVarDescriptionProvider(this);
+			}
+			WorkbenchHelper.asyncRun(() -> {
+				if (toolbar != null) {
+					toolbar.status(null, "Interacting with " + agent.getFamilyName() + " " + agent.getName(),
+							GamaColors.get(agent.getColor()), SWT.LEFT);
+					toolbar.setBackgroundColor(GamaColors.toSwtColor(agent.getColor()));
+					toolbar.update();
+					toolbar.refresh(true);
+				}
+			});
 		}
-
+		// this.agent = agent;
 	}
 
 	/**
@@ -358,9 +389,9 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	 *            the s
 	 */
 	protected void processInput(final String s) {
-		final var agent = getListeningAgent();
+		final var agent = GAMA.getCurrentTopLevelAgent();
 		if (agent == null || agent.dead()) {
-			setExecutorAgent(null);
+			topLevelAgentChanged(null);
 		} else {
 			final var entered = s.trim();
 			history.add(entered);
@@ -372,7 +403,9 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			} else {
 				try {
 					final var expr = GAML.compileExpression(s, agent, this, false);
-					if (expr != null) { result = StringUtils.toGaml(scope.evaluate(expr, agent).getValue(), true); }
+					if (expr != null) {
+						result = StringUtils.toGaml(agent.getScope().evaluate(expr, agent).getValue(), true);
+					}
 				} catch (final Exception e) {
 					error = true;
 					result = "> Error: " + e.getMessage();
@@ -402,21 +435,6 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	 */
 	public void setParentOfControlToDisplayFullScreen(final Composite parentOfControlToDisplayFullScreen) {
 		this.parentOfControlToDisplayFullScreen = parentOfControlToDisplayFullScreen;
-	}
-
-	/**
-	 * Gets the listening agent.
-	 *
-	 * @return the listening agent
-	 */
-	private IAgent getListeningAgent() {
-		if (scope == null) {
-			setExecutorAgent(GAMA.getPlatformAgent());
-			return GAMA.getPlatformAgent();
-		}
-		ITopLevelAgent agent = scope.getRoot();
-		if (agent instanceof PlatformAgent) return agent;
-		return agent.getSimulation();
 	}
 
 	@Override
