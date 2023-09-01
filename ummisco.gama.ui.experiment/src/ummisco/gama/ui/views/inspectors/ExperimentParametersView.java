@@ -183,24 +183,29 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void setExperiment(final IExperimentPlan exp) {
 		if (exp != null) {
+			boolean same = experiment == exp;
 			experiment = exp;
 			if (!exp.hasParametersOrUserCommands()) return;
-			reset();
-			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getDisplayables());
-			// params.addAll(exp.getExplorableParameters().values());
-			params.addAll(exp.getUserCommands());
-			// params.addAll(exp.getTexts());
-			SimulationAgent sim = exp.getCurrentSimulation();
-			if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
-				SimulationOutputManager som = sim.getOutputManager();
-				if (som != null) { params.addAll(som.getMonitors()); }
+			if (!same) {
+				reset();
+				final List<IExperimentDisplayable> params = new ArrayList<>(exp.getDisplayables());
+				// params.addAll(exp.getExplorableParameters().values());
+				params.addAll(exp.getUserCommands());
+				// params.addAll(exp.getTexts());
+				SimulationAgent sim = exp.getCurrentSimulation();
+				if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
+					SimulationOutputManager som = sim.getOutputManager();
+					if (som != null) { params.addAll(som.getMonitors()); }
+				}
+				Collections.sort(params);
+				editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
+				final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
+						+ StringUtils.capitalize(experiment.getDescription().getTitle());
+				this.setPartName(expInfo);
+				displayItems();
+			} else {
+				this.updateItemValues(false);
 			}
-			Collections.sort(params);
-			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
-			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
-					+ StringUtils.capitalize(experiment.getDescription().getTitle());
-			this.setPartName(expInfo);
-			displayItems();
 		} else {
 			experiment = null;
 		}
