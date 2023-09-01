@@ -44,10 +44,10 @@ public class GraphicLayer extends AbstractLayer {
 
 	@Override
 	public String getType() { return IKeyword.GRAPHICS; }
-
-	// Just a trial to make sure that graphics + chart produce not proportional results.
-	@Override
-	public boolean stayProportional() {
-		return false;
-	}
+	//
+	// // Just a trial to make sure that graphics + chart produce not proportional results.
+	// @Override
+	// public boolean stayProportional() {
+	// return true;
+	// }
 }
