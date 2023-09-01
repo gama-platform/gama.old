@@ -233,12 +233,14 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
-		final List<ParametersSet> tabuList = new ArrayList<>();
+
 		int tabuListSize = tabuListSizeInit;
 		ParametersSet bestSolutionAlgo = this.solutionInit;
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return solutionInit;
+		final List<ParametersSet> tabuList = new ArrayList<>();
 		tabuList.add(bestSolutionAlgo);
-		double currentFitness =
-				(Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo).get(IKeyword.FITNESS).get(0);
+		double currentFitness = getFirstFitness(batch.launchSimulationsWithSolution(bestSolutionAlgo));
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
@@ -266,8 +268,8 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 			}
 			ParametersSet bestNeighbor = null;
 
-			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
-					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(batch)
+					&& !batch.getParametersToExplore().isEmpty()) {
 				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				for (ParametersSet p : result.keySet()) {
 					if (keepSol(p, result.get(p), bestFitnessAlgo)) {
@@ -287,8 +289,7 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 					}
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null || neighborFitness == Double.MAX_VALUE) {
-						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
-								.get(IKeyword.FITNESS).get(0);
+						neighborFitness = getFirstFitness(batch.launchSimulationsWithSolution(neighborSol));
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
 					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) { bestNeighbor = neighborSol; }
@@ -318,8 +319,7 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 						if (tabuList.size() == tabuListSize) { tabuList.remove(0); }
 						tabuList.add(bestSolutionAlgo);
 					}
-					currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo)
-							.get(IKeyword.FITNESS).get(0);
+					currentFitness = getFirstFitness(batch.launchSimulationsWithSolution(bestSolutionAlgo));
 					testedSolutions.put(bestSolutionAlgo, currentFitness);
 					if (nbIt > iterMax) { break; }
 				}
@@ -366,8 +366,8 @@ public class TabuSearchReactive extends ALocalSearchAlgorithm {
 			}
 
 		});
-		params.add(new ParameterAdapter("Maximum number of tests without collision",
-				BatchAgent.CALIBRATION_EXPERIMENT, IType.INT) {
+		params.add(new ParameterAdapter("Maximum number of tests without collision", BatchAgent.CALIBRATION_EXPERIMENT,
+				IType.INT) {
 
 			@Override
 			public Object value() {

@@ -139,8 +139,9 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		setBestSolution(this.solutionInit);
-		double currentFitness = (Double) currentExperiment.launchSimulationsWithSolution(getBestSolution())
-				.get(IKeyword.FITNESS).get(0);
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return getBestSolution();
+		double currentFitness = getFirstFitness(batch.launchSimulationsWithSolution(getBestSolution()));
 		initializeTestedSolutions();
 		testedSolutions.put(getBestSolution(), currentFitness);
 		int nbIt = 0;
@@ -152,9 +153,8 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 			if (neighbors.isEmpty()) { break; }
 			setBestFitness(currentFitness);
 			ParametersSet bestNeighbor = null;
-
-			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
-					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(batch)
+					&& !batch.getParametersToExplore().isEmpty()) {
 				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				if (result.containsKey(bestSolution)) { bestNeighbor = bestSolution; }
 			} else {
@@ -162,8 +162,7 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 					if (neighborSol == null) { continue; }
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null) {
-						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
-								.get(IKeyword.FITNESS).get(0);
+						neighborFitness = getFirstFitness(batch.launchSimulationsWithSolution(neighborSol));
 					}
 					testedSolutions.put(neighborSol, neighborFitness);
 					if (neighborSol.equals(bestSolution)) { bestNeighbor = neighborSol; }
@@ -199,15 +198,14 @@ public class HillClimbing extends ALocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
-		params.add(
-				new ParameterAdapter("Maximum number of iterations", BatchAgent.CALIBRATION_EXPERIMENT, IType.INT) {
+		params.add(new ParameterAdapter("Maximum number of iterations", BatchAgent.CALIBRATION_EXPERIMENT, IType.INT) {
 
-					@Override
-					public Object value() {
-						return maxIt;
-					}
+			@Override
+			public Object value() {
+				return maxIt;
+			}
 
-				});
+		});
 	}
 
 }

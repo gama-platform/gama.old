@@ -235,7 +235,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
-		final List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
+		final List<IParameter.Batch> variables = getCurrentExperiment().getParametersToExplore();
 		setBestFitness(null);
 		initializeTestedSolutions();
 		List<Chromosome> population = initPop.initializePop(scope, variables, this);
@@ -259,7 +259,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				}
 				population.addAll(mutatePop.items());
 			}
-			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)) {
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(getCurrentExperiment())) {
 				computePopFitnessAll(scope, population);
 			} else {
 				computePopFitness(scope, population);
@@ -284,10 +284,13 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	 *             the gama runtime exception
 	 */
 	public void computePopFitness(final IScope scope, final List<Chromosome> population) throws GamaRuntimeException {
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return;
 		for (final Chromosome chromosome : population) { computeChroFitness(scope, chromosome); }
 		if (this.improveSolution != null && improveSolution) {
 			for (final Chromosome chromosome : population) {
-				ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+				ParametersSet sol =
+						chromosome.convertToSolution(scope, getCurrentExperiment().getParametersToExplore());
 				sol = improveSolution(scope, sol, chromosome.getFitness());
 				chromosome.update(scope, sol);
 				final double fitness = testedSolutions.get(sol);
@@ -308,16 +311,17 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	 */
 	public void computePopFitnessAll(final IScope scope, final List<Chromosome> population)
 			throws GamaRuntimeException {
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return;
 		List<ParametersSet> solTotest = new ArrayList<>();
 		Map<Chromosome, ParametersSet> paramToCh = GamaMapFactory.create();
 		for (final Chromosome chromosome : population) {
-			ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+			ParametersSet sol = chromosome.convertToSolution(scope, batch.getParametersToExplore());
 			paramToCh.put(chromosome, sol);
 			if (!testedSolutions.containsKey(sol)) { solTotest.add(sol); }
 		}
-		Map<ParametersSet, Double> fitnessRes =
-				currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream().collect(
-						Collectors.toMap(Entry::getKey, e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)));
+		Map<ParametersSet, Double> fitnessRes = batch.launchSimulationsWithSolution(solTotest).entrySet().stream()
+				.collect(Collectors.toMap(Entry::getKey, e -> getFirstFitness(e.getValue())));
 		testedSolutions.putAll(fitnessRes);
 		for (final Chromosome chromosome : population) {
 			ParametersSet ps = paramToCh.get(chromosome);
@@ -334,7 +338,7 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 
 		if (this.improveSolution != null && improveSolution) {
 			for (final Chromosome chromosome : population) {
-				ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+				ParametersSet sol = chromosome.convertToSolution(scope, batch.getParametersToExplore());
 				sol = improveSolution(scope, sol, chromosome.getFitness());
 				chromosome.update(scope, sol);
 				final double fitness = testedSolutions.get(sol);
@@ -353,11 +357,11 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	 *            the chromosome
 	 */
 	public void computeChroFitness(final IScope scope, final Chromosome chromosome) {
-		final ParametersSet sol = chromosome.convertToSolution(scope, currentExperiment.getParametersToExplore());
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return;
+		final ParametersSet sol = chromosome.convertToSolution(scope, batch.getParametersToExplore());
 		Double fitness = testedSolutions.get(sol);
-		if (fitness == null) {
-			fitness = (Double) currentExperiment.launchSimulationsWithSolution(sol).get(IKeyword.FITNESS).get(0);
-		}
+		if (fitness == null) { fitness = getFirstFitness(batch.launchSimulationsWithSolution(sol)); }
 		testedSolutions.put(sol, fitness);
 		chromosome.setFitness(fitness);
 	}
@@ -398,15 +402,14 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 			}
 
 		});
-		params.add(
-				new ParameterAdapter("Max. number of generations", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
+		params.add(new ParameterAdapter("Max. number of generations", BatchAgent.CALIBRATION_EXPERIMENT, IType.FLOAT) {
 
-					@Override
-					public Object value() {
-						return maxGenerations;
-					}
+			@Override
+			public Object value() {
+				return maxGenerations;
+			}
 
-				});
+		});
 	}
 
 	/**
@@ -427,8 +430,10 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 				solTotest.add(sol);
 			}
 		}
-		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream()
-				.collect(Collectors.toMap(Entry::getKey, e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)));
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return results;
+		Map<ParametersSet, Double> res = batch.launchSimulationsWithSolution(solTotest).entrySet().stream()
+				.collect(Collectors.toMap(Entry::getKey, e -> getFirstFitness(e.getValue())));
 		testedSolutions.putAll(res);
 		results.putAll(res);
 
@@ -448,22 +453,23 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 	 */
 	private ParametersSet improveSolution(final IScope scope, final ParametersSet solution,
 			final double currentFitness) {
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return solution;
 		ParametersSet bestSol = solution;
-		double bestFitness = currentFitness;
+		double bestFit = currentFitness;
 		while (true) {
 			final List<ParametersSet> neighbors = neighborhood.neighbor(scope, solution);
 			if (neighbors.isEmpty()) { break; }
 			ParametersSet bestNeighbor = null;
 
-			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
-					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(getCurrentExperiment())
+					&& !getCurrentExperiment().getParametersToExplore().isEmpty()) {
 				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				for (ParametersSet p : result.keySet()) {
 					Double neighborFitness = result.get(p);
-					if (isMaximize() && neighborFitness > bestFitness
-							|| !isMaximize() && neighborFitness < bestFitness) {
+					if (isMaximize() && neighborFitness > bestFit || !isMaximize() && neighborFitness < bestFit) {
 						bestNeighbor = p;
-						bestFitness = neighborFitness;
+						bestFit = neighborFitness;
 						bestSol = bestNeighbor;
 					}
 				}
@@ -472,15 +478,13 @@ public class GeneticAlgorithm extends AOptimizationAlgorithm {
 					if (neighborSol == null) { continue; }
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness == null) {
-						neighborFitness = (Double) currentExperiment.launchSimulationsWithSolution(neighborSol)
-								.get(IKeyword.FITNESS).get(0);
+						neighborFitness = getFirstFitness(batch.launchSimulationsWithSolution(neighborSol));
 						testedSolutions.put(neighborSol, neighborFitness);
 					}
 
-					if (isMaximize() && neighborFitness > bestFitness
-							|| !isMaximize() && neighborFitness < bestFitness) {
+					if (isMaximize() && neighborFitness > bestFit || !isMaximize() && neighborFitness < bestFit) {
 						bestNeighbor = neighborSol;
-						bestFitness = neighborFitness;
+						bestFit = neighborFitness;
 						bestSol = bestNeighbor;
 					}
 

@@ -20,6 +20,8 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.BatchAgent;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -62,7 +64,7 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 	protected boolean isMaximize;
 
 	/** The current experiment. */
-	protected BatchAgent currentExperiment;
+	// private BatchAgent currentExperiment;
 
 	/** The best solution. */
 	protected ParametersSet bestSolution = null;
@@ -86,7 +88,7 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 	@Override
 	public void initializeFor(final IScope scope, final BatchAgent agent) throws GamaRuntimeException {
-		currentExperiment = agent;
+		// setCurrentExperiment(agent);
 	}
 
 	/**
@@ -152,8 +154,9 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 			@Override
 			public String value() {
-				final Map<String, IParameter.Batch> explorable =
-						currentExperiment.getSpecies().getExplorableParameters();
+				BatchAgent batch = getCurrentExperiment();
+				if (batch == null) return "-";
+				final Map<String, IParameter.Batch> explorable = batch.getSpecies().getExplorableParameters();
 				if (explorable.isEmpty()) return "1";
 				String result = "";
 				int dim = 1;
@@ -169,7 +172,8 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 			}
 
 			int getExplorationDimension(final IParameter.Batch p) {
-				IScope scope = currentExperiment.getScope();
+				BatchAgent batch = getCurrentExperiment();
+				IScope scope = batch == null ? GAMA.getRuntimeScope() : batch.getScope();
 
 				// AD TODO Issue a warning in the compilation if a batch experiment tries to explore non-int or
 				// non-float values
@@ -185,8 +189,9 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 
 					@Override
 					public String value() {
-						if (currentExperiment.getLatestSolution() == null) return "-";
-						return currentExperiment.getLatestSolution().toString();
+						BatchAgent batch = getCurrentExperiment();
+						if (batch == null || batch.getLatestSolution() == null) return "-";
+						return batch.getLatestSolution().toString();
 					}
 
 				});
@@ -324,4 +329,39 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 			setBestSolution(solution);
 		}
 	}
+
+	/**
+	 * Gets the current experiment.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the current experiment
+	 * @date 1 sept. 2023
+	 */
+	protected BatchAgent getCurrentExperiment() {
+		IExperimentPlan plan = GAMA.getExperiment();
+		if (plan == null) return null; // can happen when closing
+		IExperimentAgent agent = plan.getAgent();
+		if (agent instanceof BatchAgent batch) return batch;
+		return null;
+	}
+
+	/**
+	 * Gets the first fitness.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param results
+	 *            the results
+	 * @return the first fitness
+	 * @date 1 sept. 2023
+	 */
+	protected Double getFirstFitness(final Map<String, List<Object>> results) {
+		List<Object> objects = results.get(IKeyword.FITNESS);
+		if (objects == null || objects.isEmpty()) return 0d;
+		Object o = objects.get(0);
+		return o instanceof Double d ? d : 0d;
+	}
+
+	// protected void setCurrentExperiment(BatchAgent currentExperiment) {
+	// this.currentExperiment = currentExperiment;
+	// }
 }
