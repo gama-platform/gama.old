@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.StoppingCriterion;
 import msi.gama.kernel.batch.StoppingCriterionMaxIt;
+import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -205,7 +206,8 @@ public class Swarm extends AOptimizationAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		Particle[] particles = initialize(scope);
-
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return getBestSolution();
 		int nbIt = 0;
 
 		final Map<String, Object> endingCritParams = new Hashtable<>();
@@ -213,8 +215,8 @@ public class Swarm extends AOptimizationAlgorithm {
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			Map<ParametersSet, List<Particle>> soltTotest = GamaMapFactory.create();
 
-			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
-					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(batch)
+					&& !batch.getParametersToExplore().isEmpty()) {
 				for (Particle particle : particles) {
 					List<Particle> ps = null;
 					if (soltTotest.containsKey(particle.getPosition())) {
@@ -248,6 +250,8 @@ public class Swarm extends AOptimizationAlgorithm {
 	 */
 	public Map<ParametersSet, Double> testSolutions(final Collection<ParametersSet> solutions) {
 		Map<ParametersSet, Double> results = GamaMapFactory.create();
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return results;
 		solutions.removeIf(a -> a == null);
 		List<ParametersSet> solTotest = new ArrayList<>();
 		for (ParametersSet sol : solutions) {
@@ -257,8 +261,8 @@ public class Swarm extends AOptimizationAlgorithm {
 				solTotest.add(sol);
 			}
 		}
-		Map<ParametersSet, Double> res = currentExperiment.launchSimulationsWithSolution(solTotest).entrySet().stream()
-				.collect(Collectors.toMap(Entry::getKey, e -> (Double) e.getValue().get(IKeyword.FITNESS).get(0)));
+		Map<ParametersSet, Double> res = batch.launchSimulationsWithSolution(solTotest).entrySet().stream()
+				.collect(Collectors.toMap(Entry::getKey, e -> getFirstFitness(e.getValue())));
 		testedSolutions.putAll(res);
 		results.putAll(res);
 
@@ -274,8 +278,9 @@ public class Swarm extends AOptimizationAlgorithm {
 	 *            the solt totest
 	 */
 	public void evaluation(final Particle[] particles, final Map<ParametersSet, List<Particle>> soltTotest) {
-		if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
-				&& !currentExperiment.getParametersToExplore().isEmpty()) {
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return;
+		if (GamaExecutorService.shouldRunAllSimulationsInParallel(batch) && !batch.getParametersToExplore().isEmpty()) {
 			Map<ParametersSet, Double> res = testSolutions(soltTotest.keySet());
 			for (ParametersSet ps : res.keySet()) {
 				for (Particle particle : soltTotest.get(ps)) {
@@ -303,12 +308,14 @@ public class Swarm extends AOptimizationAlgorithm {
 	 */
 	private Particle[] initialize(final IScope scope) {
 		Particle[] particles = new Particle[numParticles];
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return particles;
 		Map<ParametersSet, List<Particle>> soltTotest = GamaMapFactory.create();
 		for (int i = 0; i < numParticles; i++) {
-			Particle particle = new Particle(scope, currentExperiment, this, testedSolutions);
+			Particle particle = new Particle(scope, batch, this, testedSolutions);
 			particles[i] = particle;
-			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
-					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(batch)
+					&& !batch.getParametersToExplore().isEmpty()) {
 				List<Particle> ps = null;
 				if (soltTotest.containsKey(particle.getPosition())) {
 					ps = soltTotest.get(particle.getPosition());

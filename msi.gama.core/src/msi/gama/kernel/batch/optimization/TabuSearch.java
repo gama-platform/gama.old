@@ -147,11 +147,13 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 	@Override
 	public ParametersSet findBestSolution(final IScope scope) throws GamaRuntimeException {
 		initializeTestedSolutions();
-		final List<ParametersSet> tabuList = new ArrayList<>();
+
 		ParametersSet bestSolutionAlgo = this.solutionInit;
+		BatchAgent batch = getCurrentExperiment();
+		if (batch == null) return bestSolutionAlgo;
+		final List<ParametersSet> tabuList = new ArrayList<>();
 		tabuList.add(bestSolutionAlgo);
-		final double currentFitness =
-				(Double) currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo).get(IKeyword.FITNESS).get(0);
+		final double currentFitness = getFirstFitness(batch.launchSimulationsWithSolution(bestSolutionAlgo));
 		testedSolutions.put(bestSolutionAlgo, currentFitness);
 		setBestSolution(new ParametersSet(bestSolutionAlgo));
 		setBestFitness(currentFitness);
@@ -178,8 +180,8 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 
 			nbIt++;
 
-			if (GamaExecutorService.shouldRunAllSimulationsInParallel(currentExperiment)
-					&& !currentExperiment.getParametersToExplore().isEmpty()) {
+			if (GamaExecutorService.shouldRunAllSimulationsInParallel(batch)
+					&& !batch.getParametersToExplore().isEmpty()) {
 				Map<ParametersSet, Double> result = testSolutions(neighbors);
 				for (ParametersSet p : result.keySet()) {
 					if (keepSol(p, result.get(p), bestFitnessAlgo)) { bestNeighbor = p; }
@@ -189,13 +191,9 @@ public class TabuSearch extends ALocalSearchAlgorithm {
 					if (neighborSol == null) { continue; }
 					Double neighborFitness = testedSolutions.get(neighborSol);
 					if (neighborFitness != null && neighborFitness != Double.MAX_VALUE) { continue; }
-					Map<String, List<Object>> results = currentExperiment.launchSimulationsWithSolution(neighborSol);
-					List objects = results.get(IKeyword.FITNESS);
-					neighborFitness = objects == null || objects.isEmpty() ? 0d : (Double) objects.get(0);
+					neighborFitness = getFirstFitness(batch.launchSimulationsWithSolution(neighborSol));
 					testedSolutions.put(neighborSol, neighborFitness);
-
 					if (keepSol(neighborSol, neighborFitness, bestFitnessAlgo)) { bestNeighbor = neighborSol; }
-
 				}
 			}
 
