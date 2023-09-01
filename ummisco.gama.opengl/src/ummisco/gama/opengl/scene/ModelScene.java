@@ -87,8 +87,7 @@ public class ModelScene {
 	 */
 	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
-		// maxZ = 1/ renderer.getMaxEnvDim() ;
-		maxZ = renderer.getMaxEnvDim() / 2000d;
+		maxZ = renderer.getMaxEnvDim() * GamaPreferences.Displays.OPENGL_Z_FACTOR.getValue() / 10d;
 		if (withWorld) { initWorld(); }
 	}
 
@@ -131,6 +130,8 @@ public class ModelScene {
 		for (LayerObject layer : layers.values()) {
 			// AD Added
 			if (layer != null && layer.isVisible()) {
+				// See Issue #3857
+				if (GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) { gl.translateBy(0, 0, maxZ); }
 				// AD added to prevent overlays to rotate
 				if (layer.isOverlay()) { gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW); }
 				try {

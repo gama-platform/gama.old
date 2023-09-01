@@ -621,8 +621,13 @@ public class GamaPreferences {
 
 		/** The Constant DISPLAY_SLICE_NUMBER. */
 		public static final Pref<Boolean> OPENGL_Z_FIGHTING = create("pref_opengl_z_fighting",
-				"Add a small increment to the z ordinate of objects to fight visual artefacts", true, IType.BOOL, true)
-						.in(NAME, RENDERING);
+				"Add a small increment to the z ordinate of objects and layers to fight visual artefacts", true,
+				IType.BOOL, true).in(NAME, RENDERING).activates("pref_opengl_z_factor");
+
+		/** The Constant OPENGL_Z_FACTOR. */
+		public static final Pref<Double> OPENGL_Z_FACTOR =
+				create("pref_opengl_z_factor", "Factor to add (0 for none, 1 for max)", 0.05, IType.FLOAT, true)
+						.in(NAME, RENDERING).between(0d, 1d).step(0.001);
 
 		/** The Constant OPENGL_TEXTURE_ORIENTATION. */
 		public static final Pref<Boolean> OPENGL_TEXTURE_ORIENTATION = create("pref_texture_orientation",
@@ -824,14 +829,17 @@ public class GamaPreferences {
 						});
 
 		/** The Constant CSV_STRING_QUALIFIER. */
-		public static final Pref<String> CSV_STRING_QUALIFIER = GamaPreferences
-				.create("pref_csv_string_qualifier", "Default separator for strings", String.valueOf(AbstractCSVManipulator.Letters.QUOTE), IType.STRING, true)
-				.in(NAME, "CSV Files");
+		public static final Pref<String> CSV_STRING_QUALIFIER =
+				GamaPreferences
+						.create("pref_csv_string_qualifier", "Default separator for strings",
+								String.valueOf(AbstractCSVManipulator.Letters.QUOTE), IType.STRING, true)
+						.in(NAME, "CSV Files");
 
 		/** The Constant CSV_SEPARATOR. */
-		public static final Pref<String> CSV_SEPARATOR =
-				GamaPreferences.create("pref_csv_separator", "Default separator for fields", String.valueOf(AbstractCSVManipulator.Letters.COMMA), IType.STRING, true)
-						.in(GamaPreferences.External.NAME, "CSV Files");
+		public static final Pref<String> CSV_SEPARATOR = GamaPreferences
+				.create("pref_csv_separator", "Default separator for fields",
+						String.valueOf(AbstractCSVManipulator.Letters.COMMA), IType.STRING, true)
+				.in(GamaPreferences.External.NAME, "CSV Files");
 	}
 
 	/**
