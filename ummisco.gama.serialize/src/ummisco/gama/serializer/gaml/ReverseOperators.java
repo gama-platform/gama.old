@@ -24,7 +24,7 @@ import ummisco.gama.serializer.implementations.SerialisedAgentSaver;
 /**
  * The Class ReverseOperators.
  */
-public class SerialisationOperators {
+public class ReverseOperators {
 
 	static {
 		DEBUG.OFF();
