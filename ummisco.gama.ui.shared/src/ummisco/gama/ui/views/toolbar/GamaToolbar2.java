@@ -126,16 +126,13 @@ public class GamaToolbar2 extends Composite {
 	 * Creates the toolbars.
 	 */
 	public void createToolbars() {
-		left = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.NO_FOCUS | SWT.INHERIT_FORCE);
-		var data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		data.verticalIndent = 0;
-		data.horizontalAlignment = SWT.LEFT;
+		left = new GamaToolbarSimple(this,
+				SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.NO_FOCUS | SWT.INHERIT_FORCE | SWT.BORDER);
+		var data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
 		data.minimumWidth = height * 2;
 		left.setLayoutData(data);
-		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS);
-		data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		data.verticalIndent = 0;
-		data.horizontalAlignment = SWT.RIGHT;
+		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS | SWT.BORDER);
+		data = new GridData(SWT.RIGHT, SWT.FILL, true, false);
 		data.minimumWidth = height * 2;
 		right.setLayoutData(data);
 		setBackgroundColor(null);
@@ -144,7 +141,7 @@ public class GamaToolbar2 extends Composite {
 	/**
 	 * No right toolbar.
 	 */
-	public void noRightToolbar() {
+	public void noLeftToolbar() {
 		GridData data = (GridData) left.getLayoutData();
 		data.minimumWidth = 0;
 		data.grabExcessHorizontalSpace = false;
@@ -197,7 +194,7 @@ public class GamaToolbar2 extends Composite {
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		wipe(side, true);
 		final var item = button(color, s, image, side);
-		refresh(true);
+		requestLayout();
 		return item;
 	}
 
@@ -221,7 +218,7 @@ public class GamaToolbar2 extends Composite {
 		wipe(side, true);
 		final var item = button(color, s, image, side);
 		((FlatButton) item.getControl()).addSelectionListener(l);
-		refresh(true);
+		requestLayout();
 		return item;
 	}
 
@@ -269,7 +266,7 @@ public class GamaToolbar2 extends Composite {
 		// label.setFont(GamaFonts.getSmallFont());
 		label.setBackground(color/* .inactive() */);
 		final var t = control(label, /* c.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 10 */width, side);
-		refresh(true);
+		requestLayout();
 		return t;
 	}
 
@@ -461,10 +458,11 @@ public class GamaToolbar2 extends Composite {
 	 * @param layout
 	 *            the layout
 	 */
-	public void refresh(final boolean layout) {
+	@Override
+	public void requestLayout() {
 		left.requestLayout();
 		right.requestLayout();
-		requestLayout();
+		super.requestLayout();
 		getParent().requestLayout();
 	}
 
@@ -494,7 +492,7 @@ public class GamaToolbar2 extends Composite {
 			}
 		}
 		normalizeToolbars();
-		refresh(true);
+		requestLayout();
 
 	}
 

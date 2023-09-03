@@ -283,4 +283,13 @@ public interface IExperimentPlan extends ISpecies {
 	 */
 	void setConcurrency(IExpression exp);
 
+	/**
+	 * Should record.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the i expression
+	 * @date 2 sept. 2023
+	 */
+	IExpression shouldRecord();
+
 }

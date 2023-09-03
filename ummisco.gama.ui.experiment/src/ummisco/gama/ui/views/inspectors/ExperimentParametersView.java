@@ -20,8 +20,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
@@ -36,6 +38,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.COUNTER;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
@@ -47,6 +50,7 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.Selector;
 
 /**
  * The Class ExperimentParametersView.
@@ -81,6 +85,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 	/** The monitor section. */
 	ParameterExpandItem monitorSection;
+
+	/** The status. */
+	ToolItem status;
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
@@ -133,21 +140,29 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		ITopLevelAgent a = GAMA.getCurrentTopLevelAgent();
 		if (a != null) {
 			WorkbenchHelper.asyncRun(() -> {
-				toolbar.wipe(SWT.RIGHT, true);
-				toolbar.status(null, "Parameters for " + a.getFamilyName() + " " + a.getName(),
-						GamaColors.get(a.getColor()), SWT.LEFT);
-				toolbar.setBackgroundColor(GamaColors.toSwtColor(a.getColor()));
-				createToolItems(toolbar);
-				toolbar.update();
-				toolbar.refresh(true);
+				if (toolbar != null && !toolbar.isDisposed()) {
+					FlatButton button = (FlatButton) status.getControl();
+					button.setColor(GamaColors.get(a.getColor()));
+					button.setText("Parameters for " + a.getFamilyName() + " " + a.getName());
+					toolbar.setBackgroundColor(GamaColors.toSwtColor(a.getColor()));
+					// toolbar.getToolbar(SWT.LEFT).requestLayout();
+					// button.setWidth(400);
+					// button.pack(true);
+					// toolbar.requestLayout();
+					// toolbar.update();
+				}
 			});
 		} else {
 			WorkbenchHelper.asyncRun(() -> {
 				if (toolbar != null && !toolbar.isDisposed()) {
 					toolbar.wipe(SWT.LEFT, true);
 					toolbar.setBackgroundColor(null);
-					toolbar.update();
-					toolbar.refresh(true);
+					FlatButton button = (FlatButton) status.getControl();
+					button.setColor(GamaColors.get(toolbar.getBackground()));
+					// button.setWidth(400);
+					// button.pack(true);
+					// toolbar.refresh(true);
+					// toolbar.update();
 				}
 			});
 		}
@@ -289,6 +304,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
+		GridData data = (GridData) tb.getToolbar(SWT.LEFT).getLayoutData();
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalAlignment = SWT.FILL;
 		tb.button(IGamaIcons.ACTION_REVERT, "Revert parameter values", "Revert parameters to their initial values",
 				e -> {
 					final EditorsList<?> eds = editors;
@@ -299,15 +317,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					SWT.RIGHT);
 			tb.sep(SWT.RIGHT);
 		}
-		//
-		// SimulationsMenu.addNewSimulation.toItem(tb.getToolbar(SWT.RIGHT));
-		// SimulationsMenu.killCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
-		// if (GAMA.getCurrentTopLevelAgent() instanceof SimulationAgent sim) {
-		// tb.sep(SWT.RIGHT);
-		// SimulationsMenu.duplicateCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
-		// SimulationsMenu.saveCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
-		// SimulationsMenu.replaceCurrentSimulation.toItem(tb.getToolbar(SWT.RIGHT));
-		// }
+		status = toolbar.button(GamaColors.get(toolbar.getBackground()), "", (Selector) null, SWT.LEFT);
 
 	}
 

@@ -134,7 +134,7 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return true, if is record
 	 * @date 9 août 2023
 	 */
-	default boolean isRecord() { return false; }
+	default boolean isRecord() { return getSpecies().isMemorize(); }
 
 	/**
 	 * Sets the current simulation.

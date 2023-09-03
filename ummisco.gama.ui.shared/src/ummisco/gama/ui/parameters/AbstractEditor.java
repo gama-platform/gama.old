@@ -513,7 +513,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			currentValue = newVal;
 			Runnable run = () -> {
 				internalModification = true;
-				if (!parent.isDisposed()) {
+				if (parent != null && !parent.isDisposed()) {
 					editorControl.updateAmongValues(param.getAmongValue(getScope()));
 					computeMaxMinAndStepValues();
 					if (editorLabel != null) { editorLabel.signalChanged(isValueModified()); }

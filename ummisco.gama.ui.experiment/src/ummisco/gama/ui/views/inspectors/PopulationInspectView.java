@@ -417,7 +417,7 @@ public class PopulationInspectView extends GamaViewPart
 		editor.getControl().setLayoutData(data);
 		editor.getControl().setToolTipText("Enter a GAML expression returning one or several agents ");
 		toolbar.control(compo, 150, SWT.RIGHT);
-		toolbar.refresh(true);
+		toolbar.requestLayout();
 	}
 
 	/**

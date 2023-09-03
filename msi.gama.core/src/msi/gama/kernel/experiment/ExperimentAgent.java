@@ -55,6 +55,8 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
@@ -172,6 +174,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	/** The executer. */
 	protected final ActionExecuter executer;
 
+	/** The recorder. */
+	protected ISimulationRecorder recorder;
+
 	/** The extra parameters map. */
 	final IMap<String, Object> extraParametersMap = GamaMapFactory.createOrdered();
 
@@ -216,12 +221,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public ExperimentAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
-
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
 		ownScope = new ExperimentAgentScope();
 		ownClock = new ExperimentClock(ownScope);
 		executer = new ActionExecuter(ownScope);
 		populationFactory = initializePopulationFactory();
+		if (getSpecies().isMemorize()) { recorder = SimulationRecorderFactory.create(); }
 		// Should not perform a whole reset as it shuts down UI outputs in comodels (see #2813)
 		if (s.getSpecies().getDescription().belongsToAMicroModel()) {
 			initialize();
@@ -353,7 +358,50 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (automaticallyCreateFirstSimulation()) { createSimulation(getParameterValues(), scheduled); }
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
+		tryToRecordSimulations();
 		return this;
+	}
+
+	@Override
+	protected boolean preStep(final IScope scope) {
+		ownClock.beginCycle();
+		executer.executeBeginActions();
+		return super.preStep(scope);
+	}
+
+	@Override
+	protected void postStep(final IScope scope) {
+		// super.postStep(scope);
+		executer.executeEndActions();
+		executer.executeOneShotActions();
+		// Save simulation state in the history
+		tryToRecordSimulations();
+		final IOutputManager outputs = getOutputManager();
+		if (outputs != null) { outputs.step(scope); }
+		ownClock.step();
+
+		informStatus();
+		scope.getGui().updateExperimentState(scope);
+	}
+
+	/**
+	 * Try to record simulations.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 2 sept. 2023
+	 */
+	private void tryToRecordSimulations() {
+		if (isRecord()) {
+			SimulationPopulation sp = getSimulationPopulation();
+			IExpression shouldRecord = getSpecies().shouldRecord();
+			if (sp != null && shouldRecord != null) {
+				List<SimulationAgent> sims = new ArrayList<>(sp);
+				for (SimulationAgent sim : sims) {
+					IScope scope = sim.getScope();
+					if (!scope.interrupted() && Cast.asBool(scope, shouldRecord.value(scope))) { recorder.record(sim); }
+				}
+			}
+		}
 	}
 
 	/**
@@ -644,21 +692,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return this;
 
 	}
-	//
-	// @Override
-	// @getter (
-	// value = GAMA._WARNINGS,
-	// initializer = true)
-	// public Boolean getWarningsAsErrors() { return warningsAsErrors; }
-	//
-	// /**
-	// * Sets the warnings as errors.
-	// *
-	// * @param t
-	// * the new warnings as errors
-	// */
-	// @setter (GAMA._WARNINGS)
-	// public void setWarningsAsErrors(final boolean t) { warningsAsErrors = t; }
 
 	/**
 	 * Gets the seed.
@@ -799,25 +832,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	protected boolean preStep(final IScope scope) {
-		ownClock.beginCycle();
-		executer.executeBeginActions();
-		return super.preStep(scope);
-	}
-
-	@Override
-	protected void postStep(final IScope scope) {
-		// super.postStep(scope);
-		executer.executeEndActions();
-		executer.executeOneShotActions();
-		final IOutputManager outputs = getOutputManager();
-		if (outputs != null) { outputs.step(scope); }
-		ownClock.step();
-		informStatus();
-		scope.getGui().updateExperimentState(scope);
-	}
-
-	@Override
 	public void informStatus() {
 		// TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
 		if (isHeadless() || isBatch() || getSimulation() == null) return;
@@ -832,7 +846,25 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return true, if successful
 	 */
 	public boolean backward(final IScope scope) {
-		throw new NullPointerException();
+		final boolean result = true;
+		try {
+			GAMA.runAndUpdateAll(() -> {
+				for (SimulationAgent sim : getSimulationPopulation()) {
+					if (recorder.canStepBack(sim)) {
+						recorder.restore(sim);
+						if (!((ExperimentPlan) this.getSpecies()).keepsSeed()) {
+							sim.setRandomGenerator(
+									new RandomUtils(random.next(), sim.getRandomGenerator().getRngName()));
+						}
+					}
+
+				}
+			});
+		} finally {
+			informStatus();
+			scope.getGui().updateExperimentState(scope);
+		}
+		return result;
 	}
 
 	/**
@@ -1021,7 +1053,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public boolean canStepBack() {
-		return false;
+		if (!isRecord()) return false;
+		SimulationAgent sim = getSimulation();
+		if (sim == null) return false;
+		return sim.getClock().getCycle() > 0; // see if cycle needs to be taken into account
 	}
 
 	@Override
@@ -1033,6 +1068,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return true, if is batch
 	 */
 	public boolean isBatch() { return getSpecies().isBatch(); }
+
+	@Override
+	public boolean isRecord() { return recorder != null; }
 
 	@Override
 	public String getFamilyName() { return IKeyword.EXPERIMENT; }

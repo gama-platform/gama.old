@@ -67,7 +67,7 @@ public class ExperimentDescription extends SpeciesDescription {
 		super(keyword, null, enclosing, null, cp, source, facets);
 		String type = getLitteral(IKeyword.TYPE);
 		setIf(Flag.isBatch, IKeyword.BATCH.equals(type));
-		setIf(Flag.isMemorize, IKeyword.RECORDING.equals(type));
+		setIf(Flag.isMemorize, facets.containsKey(RECORD));
 	}
 
 	/**

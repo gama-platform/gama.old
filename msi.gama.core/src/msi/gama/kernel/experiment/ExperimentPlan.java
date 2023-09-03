@@ -114,27 +114,14 @@ import msi.gaml.variables.IVariable;
 						name = IKeyword.SKILLS,
 						type = IType.LIST,
 						optional = true,
-						doc = @doc (""),
+						doc = @doc ("the skills attached to the experiment"),
 						internal = true),
 				@facet (
 						name = IKeyword.CONTROL,
 						type = IType.ID,
 						optional = true,
-						doc = @doc (""),
+						doc = @doc ("the control architecture used for defining the behavior of the experiment"),
 						internal = true),
-				@facet (
-						name = IKeyword.FREQUENCY,
-						type = IType.INT,
-						optional = true,
-						internal = true,
-						doc = @doc ("the frequency of execution of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
-				@facet (
-						name = IKeyword.SCHEDULES,
-						type = IType.CONTAINER,
-						of = IType.AGENT,
-						optional = true,
-						internal = true,
-						doc = @doc ("A container of agents (a species, a dynamic list, or a combination of species and containers) , which represents which agents will be actually scheduled when the population is scheduled for execution. For instance, 'species a schedules: (10 among a)' will result in a population that schedules only 10 of its own agents every cycle. 'species b schedules: []' will prevent the agents of 'b' to be scheduled. Note that the scope of agents covered here can be larger than the population, which allows to build complex scheduling controls; for instance, defining 'global schedules: [] {...} species b schedules: []; species c schedules: b + world; ' allows to simulate a model where the agents of b are scheduled first, followed by the world, without even having to create an instance of c.")),
 				@facet (
 						name = IKeyword.KEEP_SEED,
 						type = IType.BOOL,
@@ -164,28 +151,22 @@ import msi.gaml.variables.IVariable;
 						name = IKeyword.TYPE,
 						type = IType.LABEL,
 						optional = false,
-						doc = @doc ("The type of the experiment: `gui`, `batch`, `test`, `record` etc.")),
+						doc = @doc ("The type of the experiment: `gui`, `batch`, `test`, etc.")),
 				@facet (
 						name = IKeyword.VIRTUAL,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("whether the experiment is virtual (cannot be instantiated, but only used as a parent, false by default)")),
+						doc = @doc ("Whether the experiment is virtual (cannot be instantiated, but only used as a parent, false by default)")),
 				@facet (
-						name = "compress",
-						type = IType.BOOL,
+						name = IKeyword.RECORD,
+						type = { IType.BOOL },
 						optional = true,
-						doc = @doc ("Whether the result of the serialization (experiments of type 'record'/'memorize' only) should be compressed in memory. Takes more time but uses less memory.")),
-				@facet (
-						name = "format",
-						type = IType.STRING,
-						values = { "binary", "xml", "json" },
-						optional = true,
-						doc = @doc ("Determines the format of the serialization (experiments of type 'record'/'memorize' only). Three formats are supported: `binary`, `xml` and `json`")),
+						doc = @doc ("Cannot be used in batch experiments. Whether the simulations run by this experiment are recorded so that they be run backward. Boolean expression expected, which will be evaluated by simulations at each cycle, so that the recording can occur based on specific conditions (for instance 'every(10#cycles)'). A value of 'true' will record each step.")),
 				@facet (
 						name = IKeyword.AUTORUN,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("whether this experiment should be run automatically when launched (false by default)")) },
+						doc = @doc ("Whether this experiment should be run automatically when launched (false by default)")) },
 		omissible = IKeyword.NAME)
 @inside (
 		kinds = { ISymbolKind.MODEL })
@@ -211,14 +192,17 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				desc.error("The type of the experiment must belong to " + GamaMetaModel.INSTANCE.getExperimentTypes());
 				return;
 			}
-			// if (type.equals(MEMORIZE)) {
-			// desc.warning("The memorize experiment is still in development. It should not be used.",
-			// IGamlIssue.DEPRECATED);
-			// }
 
 			if (!BATCH.equals(type) && desc.getChildWithKeyword(METHOD) != null) {
 				desc.error(type + " experiments cannot define exploration methods", IGamlIssue.CONFLICTING_FACETS,
 						METHOD);
+			}
+
+			if (BATCH.equals(type) && desc.hasFacet(RECORD)) {
+				desc.warning("Batch experiments cannot be recorded and played backwards. 'record' will be ignored",
+						IGamlIssue.CONFLICTING_FACETS, "ignored" + RECORD);
+				desc.setFacet("ignored" + RECORD, desc.getFacet(RECORD));
+				desc.removeFacets(RECORD);
 			}
 
 			if (desc.getChildWithKeyword(EXPLORATION) != null) {
@@ -376,6 +360,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	/** The benchmarkable. */
 	private final boolean benchmarkable;
 
+	/** The should record. */
+	private final IExpression shouldRecord;
+
 	/** The sync. */
 
 	/** The displayables. */
@@ -493,6 +480,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		final IExpression bm = getFacet(IKeyword.BENCHMARK);
 		benchmarkable = bm != null && Cast.asBool(myScope, bm.value(myScope));
+		shouldRecord = getFacet(IKeyword.RECORD);
 	}
 
 	@Override
@@ -782,7 +770,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public boolean isTest() { return IKeyword.TEST.equals(getExperimentType()); }
 
 	@Override
-	public boolean isMemorize() { return IKeyword.RECORDING.equals(getExperimentType()); }
+	public boolean isMemorize() { return getDescription().hasFacet(IKeyword.RECORD); }
 
 	@Override
 	public IScope getExperimentScope() { return myScope; }
@@ -1100,5 +1088,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public void setConcurrency(final IExpression exp) { concurrency = exp; }
+
+	/**
+	 * Should record.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the i expression
+	 * @date 2 sept. 2023
+	 */
+	public IExpression shouldRecord() {
+		return shouldRecord;
+	}
 
 }

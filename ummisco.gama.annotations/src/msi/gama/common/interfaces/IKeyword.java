@@ -718,7 +718,7 @@ public interface IKeyword {
 	String MEMORIZE = "memorize";
 
 	/** The record. */
-	String RECORDING = "recording";
+	String RECORD = "record";
 
 	/** The mersenne. */
 	String MERSENNE = "mersenne";

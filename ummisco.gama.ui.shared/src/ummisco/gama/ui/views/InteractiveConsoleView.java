@@ -361,7 +361,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 					toolbar.wipe(SWT.LEFT, true);
 					toolbar.setBackgroundColor(null);
 					toolbar.update();
-					toolbar.refresh(true);
+					toolbar.requestLayout();
 				}
 			});
 		} else {
@@ -375,7 +375,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 							GamaColors.get(agent.getColor()), SWT.LEFT);
 					toolbar.setBackgroundColor(GamaColors.toSwtColor(agent.getColor()));
 					toolbar.update();
-					toolbar.refresh(true);
+					toolbar.requestLayout();
 				}
 			});
 		}

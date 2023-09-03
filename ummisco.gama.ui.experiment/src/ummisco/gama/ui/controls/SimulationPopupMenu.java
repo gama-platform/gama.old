@@ -13,6 +13,9 @@ package ummisco.gama.ui.controls;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -66,7 +69,7 @@ public class SimulationPopupMenu extends PopupDialog {
 	ToolBar toolbar;
 
 	/** The labels. */
-	List<Composite> labels = new ArrayList<>();
+	List<Composite> labels = new CopyOnWriteArrayList<>();
 
 	/** The save. */
 	ToolItem add, kill, loadNew, loadAndReplace, duplicate, save, saveHistory;
@@ -151,16 +154,23 @@ public class SimulationPopupMenu extends PopupDialog {
 		int size = agents.size();
 		createLabels(size);
 		for (int i = 0; i < size; i++) {
-			ITopLevelAgent agent = agents.get(i);
-			Composite labelComposite = labels.get(i);
-			final Label b = (Label) labelComposite.getChildren()[0];
-			final Label label = (Label) labelComposite.getChildren()[1];
-			b.setImage(GamaIcon.ofColor(GamaColors.get(agent.getColor()), false).image());
-			labelComposite.setData(agent);
-			label.setText(GamlIdiomsProvider.toText(status.popupTextFor(agent)));
+			try {
+				ITopLevelAgent agent = agents.get(i);
+				Composite labelComposite = labels.get(i);
+				final Label b = (Label) labelComposite.getChildren()[0];
+				final Label label = (Label) labelComposite.getChildren()[1];
+				b.setImage(GamaIcon.ofColor(GamaColors.get(agent.getColor()), false).image());
+				labelComposite.setData(agent);
+				label.setText(GamlIdiomsProvider.toText(status.popupTextFor(agent)));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
+
+	/** The lock. */
+	Lock lock = new ReentrantLock();
 
 	/**
 	 * Creates the labels.
@@ -172,12 +182,26 @@ public class SimulationPopupMenu extends PopupDialog {
 	 * @date 25 août 2023
 	 */
 	private void createLabels(final int number) {
-		final int controlsSize = labels.size();
-		if (controlsSize == number) return;
-		if (controlsSize > number) {
-			for (int i = number; i < controlsSize; i++) { labels.remove(i).dispose(); }
-		} else {
-			for (int i = 0; i < number - controlsSize; i++) { labels.add(createLabel()); }
+		lock.lock();
+		try {
+			final int controlsSize = labels.size();
+			if (controlsSize == number) return;
+			if (controlsSize > number) {
+				for (int i = number; i < controlsSize; i++) {
+					try {
+						Composite l = labels.remove(i);
+						l.dispose();
+					} catch (Exception e) {}
+
+				}
+			} else {
+				for (int i = 0; i < number - controlsSize; i++) {
+					Composite c = createLabel();
+					if (c != null) { labels.add(c); }
+				}
+			}
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -244,19 +268,25 @@ public class SimulationPopupMenu extends PopupDialog {
 	 */
 	private void createToolbar() {
 		if (toolbarComposite == null || toolbarComposite.isDisposed()) {
-			toolbarComposite = new Composite(parent, SWT.BORDER);
-			RowLayoutFactory.swtDefaults().center(true).fill(true).applyTo(toolbarComposite);
-			GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).applyTo(toolbarComposite);
-			toolbar = new ToolBar(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL);
-			RowDataFactory.swtDefaults().exclude(false).applyTo(toolbar);
-			add = SimulationsMenu.addNewSimulation.toItem(toolbar);
-			kill = SimulationsMenu.killCurrentSimulation.toItem(toolbar);
-			duplicate = SimulationsMenu.duplicateCurrentSimulation.toItem(toolbar);
-			new ToolItem(toolbar, SWT.SEPARATOR);
-			save = SimulationsMenu.saveCurrentSimulation.toItem(toolbar);
-			saveHistory = SimulationsMenu.saveCurrentSimulationAndHistory.toItem(toolbar);
-			loadAndReplace = SimulationsMenu.replaceCurrentSimulation.toItem(toolbar);
-			loadNew = SimulationsMenu.loadNewSimulation.toItem(toolbar);
+			try {
+				toolbarComposite = new Composite(parent, SWT.BORDER);
+				RowLayoutFactory.swtDefaults().center(true).fill(true).applyTo(toolbarComposite);
+				GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).applyTo(toolbarComposite);
+				toolbar = new ToolBar(toolbarComposite, SWT.FLAT | SWT.HORIZONTAL);
+				RowDataFactory.swtDefaults().exclude(false).applyTo(toolbar);
+				add = SimulationsMenu.addNewSimulation.toItem(toolbar);
+				kill = SimulationsMenu.killCurrentSimulation.toItem(toolbar);
+				duplicate = SimulationsMenu.duplicateCurrentSimulation.toItem(toolbar);
+				new ToolItem(toolbar, SWT.SEPARATOR);
+				save = SimulationsMenu.saveCurrentSimulation.toItem(toolbar);
+				saveHistory = SimulationsMenu.saveCurrentSimulationAndHistory.toItem(toolbar);
+				loadAndReplace = SimulationsMenu.replaceCurrentSimulation.toItem(toolbar);
+				loadNew = SimulationsMenu.loadNewSimulation.toItem(toolbar);
+			} catch (Exception e) {
+				toolbarComposite = null;
+				toolbar = null;
+				return; // will be initialised next time
+			}
 		}
 		// GamaColors.setBackground(provider.getColor(), toolbar, toolbarComposite);
 		boolean isExperiment = GAMA.getCurrentTopLevelAgent() instanceof IExperimentAgent;

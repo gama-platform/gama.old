@@ -276,7 +276,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProv
 		if (!toolbar.isDisposed()) {
 			toolbar.wipe(SWT.RIGHT, true);
 			GamaToolbarFactory.buildToolbar(view, toolbar);
-			toolbar.refresh(true);
+			toolbar.requestLayout();
 		}
 		if (overlay.isVisible()) {
 			WorkbenchHelper.runInUI("Overlay", 50, m -> {

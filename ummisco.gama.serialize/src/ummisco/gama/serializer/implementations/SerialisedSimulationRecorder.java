@@ -12,6 +12,7 @@ package ummisco.gama.serializer.implementations;
 
 import java.util.concurrent.TimeUnit;
 
+import msi.gama.kernel.experiment.ISimulationRecorder;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.util.tree.GamaNode;
 import ummisco.gama.dev.utils.DEBUG;
@@ -22,7 +23,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedSimulationRecorder extends SerialisedAgentManipulator {
+public class SerialisedSimulationRecorder extends SerialisedAgentManipulator implements ISimulationRecorder {
 
 	static {
 		DEBUG.ON();
@@ -44,8 +45,9 @@ public class SerialisedSimulationRecorder extends SerialisedAgentManipulator {
 	 *            the zip
 	 * @date 8 août 2023
 	 */
-	public SerialisedSimulationRecorder(final String format, final boolean zip) {
-		super(format, zip);
+	public SerialisedSimulationRecorder() {
+		// Fixed to this for the moment
+		super(BINARY_FORMAT, true);
 	}
 
 	/**
@@ -56,6 +58,7 @@ public class SerialisedSimulationRecorder extends SerialisedAgentManipulator {
 	 *            the sim
 	 * @date 8 août 2023
 	 */
+	@Override
 	public void record(final SimulationAgent sim) {
 		try {
 			long startTime = System.nanoTime();
@@ -90,6 +93,7 @@ public class SerialisedSimulationRecorder extends SerialisedAgentManipulator {
 	 *            the sim
 	 * @date 8 août 2023
 	 */
+	@Override
 	public void restore(final SimulationAgent sim) {
 		try {
 			GamaNode<byte[]> current = sim.getPreviousHistoryNode();
@@ -114,6 +118,7 @@ public class SerialisedSimulationRecorder extends SerialisedAgentManipulator {
 	 * @return true, if successful
 	 * @date 9 août 2023
 	 */
+	@Override
 	public boolean canStepBack(final SimulationAgent sim) {
 		GamaNode<byte[]> current = sim.getCurrentHistoryNode();
 		return current != null && current.getParent() != null;

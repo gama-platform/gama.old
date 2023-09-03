@@ -92,7 +92,7 @@ public class GamlEditorState {
 				abbreviations.add(name);
 				// abbreviations.add(name.replaceFirst("Experiment ", ""));
 				ExperimentDescription r = (ExperimentDescription) ep;
-				types.add(r.isBatch() ? IKeyword.BATCH : r.isMemorize() ? IKeyword.RECORDING : IKeyword.GUI_);
+				types.add(r.isBatch() ? IKeyword.BATCH : r.isMemorize() ? IKeyword.RECORD : IKeyword.GUI_);
 			}
 		} else {
 			experiments = Collections.EMPTY_LIST;
@@ -131,9 +131,10 @@ public class GamlEditorState {
 		if (this == obj) return true;
 		if (obj == null || getClass() != obj.getClass()) return false;
 		final GamlEditorState other = (GamlEditorState) obj;
-		if (!Objects.equals(experiments, other.experiments) || (hasImportedErrors != other.hasImportedErrors) || (hasInternalErrors != other.hasInternalErrors) || (hasNullStatus != other.hasNullStatus)) return false;
-		if (showExperiments != other.showExperiments) return false;
-		if (!Objects.equals(types, other.types)) return false;
+		if (!Objects.equals(experiments, other.experiments) || hasImportedErrors != other.hasImportedErrors
+				|| hasInternalErrors != other.hasInternalErrors || hasNullStatus != other.hasNullStatus)
+			return false;
+		if ((showExperiments != other.showExperiments) || !Objects.equals(types, other.types)) return false;
 		return true;
 	}
 

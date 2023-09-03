@@ -408,7 +408,7 @@ public class GamaToolbarFactory {
 		}
 
 		view.createToolItems(tb);
-		tb.refresh(true);
+		tb.requestLayout();
 	}
 
 	/**
