@@ -183,11 +183,14 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void setExperiment(final IExperimentPlan exp) {
 		if (exp != null) {
-			boolean same = experiment == exp;
-			experiment = exp;
-			if (!exp.hasParametersOrUserCommands()) return;
-			if (!same) {
+			boolean sameExp = experiment == exp;
+			if (sameExp && !hasMonitors() && !hasUserCommands()) {
+				// Maybe a different simulation ?
+				this.updateItemValues(false);
+			} else {
+				experiment = exp;
 				reset();
+				if (!exp.hasParametersOrUserCommands()) return;
 				final List<IExperimentDisplayable> params = new ArrayList<>(exp.getDisplayables());
 				// params.addAll(exp.getExplorableParameters().values());
 				params.addAll(exp.getUserCommands());
@@ -203,12 +206,33 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 						+ StringUtils.capitalize(experiment.getDescription().getTitle());
 				this.setPartName(expInfo);
 				displayItems();
-			} else {
-				this.updateItemValues(false);
 			}
+
 		} else {
 			experiment = null;
 		}
+	}
+
+	/**
+	 * Checks for user commands.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 3 sept. 2023
+	 */
+	private boolean hasUserCommands() {
+		return ((ExperimentsParametersList) editors).hasUserCommands();
+	}
+
+	/**
+	 * Checks for monitors.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 3 sept. 2023
+	 */
+	private boolean hasMonitors() {
+		return ((ExperimentsParametersList) editors).hasMonitors();
 	}
 
 	@Override

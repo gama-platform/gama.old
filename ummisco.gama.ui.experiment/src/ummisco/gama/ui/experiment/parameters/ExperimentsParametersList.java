@@ -48,6 +48,9 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	/** The monitors. */
 	final Map<MonitorOutput, MonitorDisplayer> monitors = new HashMap<>();
 
+	/** The monitors. */
+	final Map<IExperimentDisplayable, IParameterEditor> userCommands = new HashMap<>();
+
 	/** The categories. */
 	final Map<String, EditorsCategory> categories = new LinkedHashMap<>();
 
@@ -143,19 +146,33 @@ public class ExperimentsParametersList extends EditorsList<String> {
 				addEditor(var, EditorFactory.getInstance().create(scope, text));
 			} else if (var instanceof MonitorOutput monitor) {
 				addMonitor(monitor);
-			} else if (var instanceof UserCommandStatement command) {
-				addEditor(var, EditorFactory.getInstance().create(scope, command,
-						(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {
-							final Object result = scope.execute(command).getValue();
-							final IExperimentPlan exp = GAMA.getExperiment();
-							if (exp != null) { // in case the experiment is killed in the meantime
-								exp.refreshAllOutputs();
-							}
-							return result;
-						})));
-			}
+			} else if (var instanceof UserCommandStatement command) { addUserCommand(var, command); }
 
 		}
+	}
+
+	/**
+	 * Adds the user command.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param var
+	 *            the var
+	 * @param command
+	 *            the command
+	 * @date 3 sept. 2023
+	 */
+	private void addUserCommand(final IExperimentDisplayable var, final UserCommandStatement command) {
+		IParameterEditor gp = EditorFactory.getInstance().create(scope, command,
+				(Command) e -> GAMA.getExperiment().getAgent().executeAction(scope -> {
+					final Object result = scope.execute(command).getValue();
+					final IExperimentPlan exp = GAMA.getExperiment();
+					if (exp != null) { // in case the experiment is killed in the meantime
+						exp.refreshAllOutputs();
+					}
+					return result;
+				}));
+		userCommands.put(var, gp);
+		addEditor(var, gp);
 	}
 
 	/**
@@ -241,7 +258,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	public boolean addItem(final String cat) {
 		addCategory(cat);
 		if (!sections.containsKey(cat)) {
-			sections.put(cat, new HashMap<String, IParameterEditor<?>>());
+			sections.put(cat, new HashMap<>());
 			return true;
 		}
 		return false;
@@ -292,5 +309,16 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	 * @return the monitors
 	 */
 	public Map<MonitorOutput, MonitorDisplayer> getMonitors() { return monitors; }
+
+	/**
+	 * Checks for user commands.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 3 sept. 2023
+	 */
+	public boolean hasUserCommands() {
+		return userCommands.size() > 0;
+	}
 
 }
