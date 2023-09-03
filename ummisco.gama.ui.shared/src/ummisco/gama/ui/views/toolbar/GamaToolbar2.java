@@ -126,12 +126,11 @@ public class GamaToolbar2 extends Composite {
 	 * Creates the toolbars.
 	 */
 	public void createToolbars() {
-		left = new GamaToolbarSimple(this,
-				SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.NO_FOCUS | SWT.INHERIT_FORCE | SWT.BORDER);
+		left = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP | SWT.NO_FOCUS | SWT.INHERIT_FORCE);
 		var data = new GridData(SWT.LEFT, SWT.CENTER, true, true);
 		data.minimumWidth = height * 2;
 		left.setLayoutData(data);
-		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS | SWT.BORDER);
+		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS);
 		data = new GridData(SWT.RIGHT, SWT.FILL, true, false);
 		data.minimumWidth = height * 2;
 		right.setLayoutData(data);

@@ -58,7 +58,7 @@ import ummisco.gama.ui.views.toolbar.Selector;
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
 
 	static {
-		// DEBUG.ON();
+		DEBUG.ON();
 	}
 
 	/**
@@ -141,10 +141,18 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		if (a != null) {
 			WorkbenchHelper.asyncRun(() -> {
 				if (toolbar != null && !toolbar.isDisposed()) {
-					FlatButton button = (FlatButton) status.getControl();
-					button.setColor(GamaColors.get(a.getColor()));
-					button.setText("Parameters for " + a.getFamilyName() + " " + a.getName());
+					toolbar.status(null, "Parameters for " + a.getFamilyName() + " " + a.getName(),
+							GamaColors.get(a.getColor()), SWT.LEFT);
+					// FlatButton button = (FlatButton) status.getControl();
+					// button.setColor(GamaColors.get(a.getColor()));
+					// button.setText("Parameters for " + a.getFamilyName() + " " + a.getName());
 					toolbar.setBackgroundColor(GamaColors.toSwtColor(a.getColor()));
+					// int width = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
+					// button.setWidth(width);
+					// status.setWidth(width + 20);
+					// DEBUG.OUT("Size computed by computeSize:" + width);
+					// button.setWidth(width);
+					// button.computeSize(-1, -1).x);
 					// toolbar.getToolbar(SWT.LEFT).requestLayout();
 					// button.setWidth(400);
 					// button.pack(true);

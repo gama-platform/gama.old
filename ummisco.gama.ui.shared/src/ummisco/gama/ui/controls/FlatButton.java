@@ -39,7 +39,7 @@ import ummisco.gama.ui.resources.IGamaIcons;
 public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The menu image. */
@@ -504,7 +504,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			preferredHeight = Math.max(preferredHeight, extent.y + innerMarginWidth);
 		}
 		preferredWidth += rightPadding;
-		DEBUG.OUT("PreferredWidth = " + preferredWidth + " / ForcedWidth = " + forcedWidth);
+		// DEBUG.OUT("PreferredWidth = " + preferredWidth + " / ForcedWidth = " + forcedWidth);
 		if (forcedWidth > 0) { preferredWidth = forcedWidth; }
 
 		// DEBUG.OUT("Computing min height for button " + text + " = " + preferredHeight);
