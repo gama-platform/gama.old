@@ -205,7 +205,7 @@ experiment "With Inspector" type: gui {
 
 }
 
-experiment "Classic" type: recording format: "binary" compress: true {
+experiment "Classic" type: gui record: every(10) {
 	
 	parameter 'Number of ants:' var: ants_number category: 'Model';
 	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model';
@@ -247,8 +247,7 @@ experiment "3D View" type: gui {
 }
 
 //Experiment to show how to make multi simulations
-experiment "3 Simulations" type: recording {
-	
+experiment "3 Simulations" type: gui record: every(10#cycle) {
 	
 	parameter 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population';
 	parameter 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population';
