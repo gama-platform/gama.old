@@ -6,7 +6,7 @@ name: Complete Build
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ GAMA_1.9.2 ]
+    branches: [ GAMA_1.9.3 ]
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:  # For manual trigger
@@ -110,8 +110,8 @@ jobs:
           mv ${{ github.workspace }}/travis/what2sign.sh ${{ github.workspace }}
           mv ${{ github.workspace }}/ummisco.gama.product/extraresources/installer/windows/* ${{ github.workspace }}
           # Debian Family
-          mv Gama1.7-linux.gtk.x86_64.zip gama-platform_1.9.2-1_amd64.zip
-          mv Gama1.7-linux.gtk.x86_64_withJDK.zip gama-platform-jdk_1.9.2-1_amd64.zip
+          mv Gama1.7-linux.gtk.x86_64.zip gama-platform_1.9.3-1_amd64.zip
+          mv Gama1.7-linux.gtk.x86_64_withJDK.zip gama-platform-jdk_1.9.3-1_amd64.zip
           cd ${{ github.workspace }}/ummisco.gama.product/extraresources/installer/unix && zip -r ${{ github.workspace }}/extraresources-unix.zip . && cd -
 
       - uses: actions/upload-artifact@v2
@@ -274,7 +274,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        zipName: [gama-platform_1.9.2-1_amd64, gama-platform-jdk_1.9.2-1_amd64]
+        zipName: [gama-platform_1.9.3-1_amd64, gama-platform-jdk_1.9.3-1_amd64]
     steps:
       - name: Prepare vm
         run: |
@@ -332,13 +332,13 @@ jobs:
       - name: Install, Run & Remove (w JDK)
         shell: bash
         run: |
-          sudo apt install ./gama-platform-jdk_1.9.2-1_amd64.deb
+          sudo apt install ./gama-platform-jdk_1.9.3-1_amd64.deb
           gama-headless -help
 
       - name: Install, Run & Remove (w/o JDK)
         shell: bash
         run: |
-          sudo apt install -y ./gama-platform_1.9.2-1_amd64.deb
+          sudo apt install -y ./gama-platform_1.9.3-1_amd64.deb
           # Switch to OpenJDK 17
           sudo update-java-alternatives -s $(update-java-alternatives -l | grep "\-openjdk" | cut -d " " -f 1)
           java -version
