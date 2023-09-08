@@ -21,7 +21,7 @@ Require-Bundle: msi.gama.application,
  org.eclipse.ui,
  org.eclipse.core.expressions,
  org.eclipse.core.commands,
- ummisco.gama.serialize;bundle-version="1.9.2"
+ ummisco.gama.serialize
 Export-Package: ummisco.gama.ui.activator,
  ummisco.gama.ui.commands,
  ummisco.gama.ui.controls,
