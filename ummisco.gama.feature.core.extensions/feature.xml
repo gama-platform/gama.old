@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core.extensions"
       label="Standard Extensions to the Core of GAMA"
-      version="1.9.2.qualifier"
+      version="1.9.3.qualifier"
       provider-name="UMMISCO, ESPACE-DEV, IRIT &amp; MIAT"
       plugin="ummisco.gaml.extensions.maths">
 
@@ -19,11 +19,11 @@
    </license>
 
    <url>
-      <update label="Gama 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
+      <update label="Gama 1.9.3 Update Site" url="https://updates.gama-platform.org/1.9.3"/>
    </url>
 
    <requires>
-      <import feature="ummisco.gama.feature.core" version="1.9.2.qualifier"/>
+      <import feature="ummisco.gama.feature.core" version="1.9.3.qualifier"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="ummisco.gama.serialize"/>
       <import plugin="msi.gama.core"/>

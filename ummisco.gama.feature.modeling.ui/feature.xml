@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.modeling.ui"
       label="UI Components for designing models in  GAMA"
-      version="1.9.2.qualifier"
+      version="1.9.3.qualifier"
       provider-name="UMMISCO"
       plugin="ummisco.gama.ui.modeling">
 
@@ -19,7 +19,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.9.2 Update Site" url="https://updates.gama-platform.org/1.9.2"/>
+      <update label="GAMA 1.9.3 Update Site" url="https://updates.gama-platform.org/1.9.3"/>
    </url>
 
    <requires>

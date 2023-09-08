@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.9.2.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.9.3.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/msi.gama.application/icons/window/icon128.png"/>
       <text>
-         GAMA Platform - V1.9.2 http://gama-platform.org
+         GAMA Platform - V1.9.3 http://gama-platform.org
 
 (c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)
 (c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)
@@ -105,15 +105,15 @@
    </plugins>
 
    <features>
-      <feature id="ummisco.gama.feature.dependencies" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.dependencies.ui" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.extensions" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.models" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.experiment.ui" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.modeling.ui" version="1.9.2.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.image" version="1.9.2.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies.ui" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.extensions" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.models" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.experiment.ui" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.modeling.ui" version="1.9.3.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.image" version="1.9.3.qualifier" installMode="root"/>
    </features>
 
    <configurations>
@@ -124,13 +124,13 @@
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="org.eclipse.update.reconcile" value="false" />
-      <property name="version" value="1.9.2" />
+      <property name="version" value="1.9.3" />
       <property name="eclipse.buildId" value="${build.id}" />
    </configurations>
 
    <repositories>
-      <repository location="https://updates.gama-platform.org/1.9.2" enabled="true" />
-      <repository location="https://updates.gama-platform.org/experimental/1.9.2" enabled="true" />
+      <repository location="https://updates.gama-platform.org/1.9.3" enabled="true" />
+      <repository location="https://updates.gama-platform.org/experimental/1.9.3" enabled="true" />
       <repository location="https://anb0s.github.io/EasyShell/release/" enabled="true" />
       <repository location="https://download.eclipse.org/egit/updates/" enabled="true" />
    </repositories>

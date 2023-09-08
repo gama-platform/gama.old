@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Serialize
 Bundle-SymbolicName: ummisco.gama.serialize;singleton:=true
-Bundle-Version: 1.9.2.qualifier
+Bundle-Version: 1.9.3.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
 Bundle-ClassPath: .,

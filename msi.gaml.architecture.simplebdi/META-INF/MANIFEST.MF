@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Simple bdi architecture
 Bundle-SymbolicName: msi.gaml.architecture.simplebdi;singleton:=true
-Bundle-Version: 1.9.2.qualifier
+Bundle-Version: 1.9.3.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext,
  ummisco.gama.serialize

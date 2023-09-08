@@ -27,7 +27,7 @@ GOTO TOP
 
 :NEXT_CODE
 echo ******************************************************************
-echo * GAMA version 1.9.2                                             *
+echo * GAMA version 1.9.3                                             *
 echo * http://gama-platform.org                                       *
 echo * (c) 2007-2023 UMI 209 UMMISCO IRD/SU and Partners              *
 echo ******************************************************************

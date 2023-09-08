@@ -2,7 +2,7 @@
 <feature
       id="femto_st.gama.feature.proxy"
       label="proxy"
-      version="1.9.2.qualifier">
+      version="1.9.3.qualifier">
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Navigator
 Bundle-SymbolicName: ummisco.gama.ui.navigator;singleton:=true
-Bundle-Version: 1.9.2.qualifier
+Bundle-Version: 1.9.3.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: ummisco.gama.ui.shared,
  org.eclipse.swt,

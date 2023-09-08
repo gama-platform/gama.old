@@ -5,8 +5,8 @@
 #
 
 # check if 2 param
-oldVersion="1.9.1"
-newVersion="1.9.2"
+oldVersion="1.9.2"
+newVersion="1.9.3"
 
 # Set path
 path="$( dirname $( realpath "${BASH_SOURCE[0]}" ) )/.."
@@ -44,7 +44,7 @@ find $path -name "pom.xml" -exec sed -i "s/$oldVersion<\/url>/$newVersion<\/url>
 echo "Update JAVA header version"
 find $path -name "*.java" -exec sed -i "s/(v.$oldVersion)/(v.$newVersion)/g" {} \;
 echo "Update JAVA header copyright"
-find $path -name "*.java" -exec sed -i "s/(c) 2007-2022 UMI 209/(c) 2007-$( date "+%Y" ) UMI 209/g" {} \;
+find $path -name "*.java" -exec sed -i "s/(c) 2007-2023 UMI 209/(c) 2007-$( date "+%Y" ) UMI 209/g" {} \;
 
 echo "Update everything in ummisco.gama.product/extraresources"
 find $path/ummisco.gama.product/extraresources -not -wholename "*/samples/*" -type f -exec sed -i "s/$oldVersion/$newVersion/g" {} \;

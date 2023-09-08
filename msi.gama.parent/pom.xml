@@ -6,19 +6,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>msi.gama</groupId>
 	<artifactId>msi.gama.parent</artifactId>
-	<version>1.9.2-SNAPSHOT</version>
+	<version>1.9.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<distributionManagement>
 		<repository>
 			<uniqueVersion>true</uniqueVersion>
 			<id>p2Repo</id>
-			<url>scp://51.255.46.42/./var/www/gama_updates/1.9.2</url>
+			<url>scp://51.255.46.42/./var/www/gama_updates/1.9.3</url>
 		</repository>
 		<snapshotRepository>
 			<uniqueVersion>true</uniqueVersion>
 			<id>p2Repo</id>
-			<url>scp://51.255.46.42/./var/www/gama_updates/1.9.2</url>
+			<url>scp://51.255.46.42/./var/www/gama_updates/1.9.3</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -197,7 +197,7 @@
 	</modules>
 
 	<properties>
-		<project.version>1.9.2-SNAPSHOT</project.version>
+		<project.version>1.9.3-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho.version>3.0.5</tycho.version>
 		<jdk.version>17</jdk.version>
@@ -314,7 +314,7 @@
 					<version>${tycho.version}</version>
 					<configuration>
 					<!-- <target> <artifact> <groupId>msi.gama</groupId> <artifactId>gama.target.platform</artifactId> 
-					<version>1.9.2-SNAPSHOT</version> </artifact> </target> -->
+					<version>1.9.3-SNAPSHOT</version> </artifact> </target> -->
 
 					<dependency-resolution>
 						<optionalDependencies>ignore</optionalDependencies>
