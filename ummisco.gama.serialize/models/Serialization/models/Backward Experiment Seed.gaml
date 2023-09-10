@@ -38,7 +38,7 @@ grid vegetation_cell width: 10 height: 10 neighbors: 4 {
 	rgb color <- rnd_color(255) ;
 }
 
-experiment "Record and keep same seed" type: record keep_seed: true {
+experiment "Record and keep same seed" record: true keep_seed: true {
 	float seed <- 0.0;
 	
 	output {
@@ -55,7 +55,7 @@ experiment "Record and keep same seed" type: record keep_seed: true {
 	}
 }
 
-experiment "Record without keeping seed" type: record keep_seed: false {
+experiment "Record without keeping seed" record: true keep_seed: false {
 	output {
 		display main_display antialias:false{
 			grid vegetation_cell border: #black ;
