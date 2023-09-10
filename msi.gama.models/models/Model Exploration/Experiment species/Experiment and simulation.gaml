@@ -172,9 +172,9 @@ experiment batch_4_simu type: batch autorun: true repeat: 4 until: (cycle > 2) p
 }
 
 ////////////////////////////////////////////////////////////
-// When the experiment is a memorize, the behavior is very similar to the gui experiment one's.
+// When the experiment is recorded, the behavior is very similar to the gui experiment one's.
 // Note that when 1 step back is made, no behavior is executed
-experiment mem_simu type: memorize {
+experiment mem_simu record: true {
 
 	init {
 		write "====== Init of " + self color: #green;
@@ -190,9 +190,8 @@ experiment mem_simu type: memorize {
 }
 
 ////////////////////////////////////////////////////////////
-// When the experiment is a memorize, if several simulations are created, only the last one (simulation)
-// is step back.
-experiment mem_2_simu type: memorize {
+// When the experiment is recorded, if several simulations are created, they are all stepped back.
+experiment mem_2_simu record: true {
 
 	init {
 		write "====== Init of " + self color: #green;
