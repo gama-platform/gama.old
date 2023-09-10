@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -34,6 +34,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.IPopulationFactory;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -55,6 +56,7 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -415,6 +417,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public boolean init(final IScope scope) {
+		showParameters(scope);
 		GAMA.changeCurrentTopLevelAgent(this, true);
 		scope.getGui().clearErrors(scope);
 		super.init(scope);
@@ -424,6 +427,25 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// scope.getGui().getStatus().informStatus(scope, "Experiment ready");
 		scope.getGui().updateExperimentState(scope);
 		return true;
+	}
+
+	/**
+	 * Show parameters.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @date 6 sept. 2023
+	 */
+	private void showParameters(final IScope scope) {
+		final ExperimentOutputManager manager = (ExperimentOutputManager) getOutputManager();
+		Symbol layout = manager.getLayout() == null ? manager : manager.getLayout();
+		final Boolean showParameters = layout.getFacetValue(scope, "parameters", null);
+		if (showParameters != null && !showParameters) {
+			scope.getGui().hideParameters();
+		} else {
+			scope.getGui().updateParameters();
+		}
 	}
 
 	/**
@@ -1074,5 +1096,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public String getFamilyName() { return IKeyword.EXPERIMENT; }
+
+	/**
+	 * Checks if is experiment.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is experiment
+	 * @date 10 sept. 2023
+	 */
+	@Override
+	public boolean isExperiment() { return true; }
 
 }

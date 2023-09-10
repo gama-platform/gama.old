@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentParametersView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.3).
+ * simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -29,11 +29,9 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentAgent;
-import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.MonitorOutput;
-import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.dev.utils.COUNTER;
@@ -143,21 +141,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 				if (toolbar != null && !toolbar.isDisposed()) {
 					toolbar.status(null, "Parameters for " + a.getFamilyName() + " " + a.getName(),
 							GamaColors.get(a.getColor()), SWT.LEFT);
-					// FlatButton button = (FlatButton) status.getControl();
-					// button.setColor(GamaColors.get(a.getColor()));
-					// button.setText("Parameters for " + a.getFamilyName() + " " + a.getName());
 					toolbar.setBackgroundColor(GamaColors.toSwtColor(a.getColor()));
-					// int width = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
-					// button.setWidth(width);
-					// status.setWidth(width + 20);
-					// DEBUG.OUT("Size computed by computeSize:" + width);
-					// button.setWidth(width);
-					// button.computeSize(-1, -1).x);
-					// toolbar.getToolbar(SWT.LEFT).requestLayout();
-					// button.setWidth(400);
-					// button.pack(true);
-					// toolbar.requestLayout();
-					// toolbar.update();
 				}
 			});
 		} else {
@@ -167,10 +151,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					toolbar.setBackgroundColor(null);
 					FlatButton button = (FlatButton) status.getControl();
 					button.setColor(GamaColors.get(toolbar.getBackground()));
-					// button.setWidth(400);
-					// button.pack(true);
-					// toolbar.refresh(true);
-					// toolbar.update();
 				}
 			});
 		}
@@ -264,35 +244,71 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void topLevelAgentChanged(final ITopLevelAgent current) {
-		IExperimentAgent exp = current == null ? null : current.getExperiment();
-		if (exp == null) {
+	public void topLevelAgentChanged(final ITopLevelAgent newTopLevelAgent) {
+
+		// DEBUG.OUT("Settin' topLevelAgent to : " + (newTopLevelAgent == null ? "null"
+		// : newTopLevelAgent.getFamilyName() + " " + newTopLevelAgent.getName()));
+
+		if (newTopLevelAgent == null || newTopLevelAgent.isPlatform()) {
 			agent = null;
-		} else {
-			if (agent != null) { saveParameterValuesForCurrentAgent(); }
-			agent = current;
-			// updateToolbar();
-			if (!exp.hasParametersOrUserCommands()) return;
 			reset();
+			updateToolbar();
+			return;
+		}
 
-			final List<IExperimentDisplayable> params = new ArrayList<>(exp.getDisplayables());
-			// params.addAll(exp.getExplorableParameters().values());
-			params.addAll(exp.getUserCommands());
-			// params.addAll(exp.getTexts());
-			SimulationAgent sim = exp.getSimulation();
-			if (GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue() && sim != null) {
-				SimulationOutputManager som = sim.getOutputManager();
-				if (som != null) { params.addAll(som.getMonitors()); }
+		if (newTopLevelAgent.isSimulation()) {
+			SimulationAgent newSimulation = (SimulationAgent) newTopLevelAgent;
+			if (agent == null || agent.isPlatform() || !agent.getExperiment().getSpecies().isBatch()) {
+				// Platform ==> Simulation
+				reset();
+				agent = newSimulation;
+				editors = new ExperimentsParametersList(newSimulation);
+				getEditorsList().setItemValues(newSimulation.getExternalInits());
+				displayItems();
+				return;
 			}
-			Collections.sort(params);
-			editors = new ExperimentsParametersList(agent, params);
-			if (sim != null) { getEditorsList().setItemValues(sim.getExternalInits()); }
+			if (agent.isSimulation()) {
+				// Simulation ==> Simulation
+				saveParameterValuesForCurrentAgent();
+				agent = newSimulation;
+				getEditorsList().setItemValues(newSimulation.getExternalInits());
+				getEditorsList().updateItemValues(false);
+				updateToolbar();
+				return;
+			}
+			if (agent.isExperiment()) {
+				// Experiment ==> Simulation
+				agent = newSimulation;
+				getEditorsList().updateItemValues(false);
+				if (getEditorsList().hasMonitors()) { createMonitorSectionIfNeeded(false); }
+				updateToolbar();
+				return;
+			}
+		}
 
-			final String expInfo = "Model " + agent.getModel().getDescription().getTitle() + " / "
-					+ StringUtils.capitalize(agent.getExperiment().getSpecies().getDescription().getTitle());
+		if (newTopLevelAgent.isExperiment()) {
+			IExperimentAgent newExperiment = (IExperimentAgent) newTopLevelAgent;
+			if (agent == newExperiment || !newExperiment.hasParametersOrUserCommands()) return;
+			if (monitorSection != null) {
+				WorkbenchHelper.run(() -> monitorSection.dispose());
+				monitorSection = null;
+			}
+			if (agent != null && agent.isSimulation()) {
+				// Simulation ==> Experiment
+				saveParameterValuesForCurrentAgent();
+				agent = newExperiment;
+				getEditorsList().updateItemValues(false);
+				updateToolbar();
+				return;
+			}
+			// Platform/Experiment ==> Experiment
+			agent = newExperiment;
+			reset();
+			editors = new ExperimentsParametersList(newExperiment);
+			final String expInfo = "Model " + newExperiment.getModel().getDescription().getTitle() + " / "
+					+ StringUtils.capitalize(newExperiment.getSpecies().getDescription().getTitle());
 			this.setPartName(expInfo);
 			displayItems();
-
 		}
 
 	}
@@ -315,6 +331,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		GridData data = (GridData) tb.getToolbar(SWT.LEFT).getLayoutData();
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalAlignment = SWT.FILL;
+		status = toolbar.button(GamaColors.get(toolbar.getBackground()), "", (Selector) null, SWT.LEFT);
+
+		if (GAMA.getExperiment() == null || GAMA.getExperiment().isBatch()) return;
 		tb.button(IGamaIcons.ACTION_REVERT, "Revert parameter values", "Revert parameters to their initial values",
 				e -> {
 					final EditorsList<?> eds = editors;
@@ -325,7 +344,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					SWT.RIGHT);
 			tb.sep(SWT.RIGHT);
 		}
-		status = toolbar.button(GamaColors.get(toolbar.getBackground()), "", (Selector) null, SWT.LEFT);
 
 	}
 

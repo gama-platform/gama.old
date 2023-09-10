@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * PlatformAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -57,6 +57,13 @@ import one.util.streamex.StreamEx;
 
 /**
  * The Class PlatformAgent.
+ */
+
+/**
+ * The Class PlatformAgent.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 10 sept. 2023
  */
 @species (
 		name = IKeyword.PLATFORM,
@@ -409,4 +416,8 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	@Override
 	public String getFamilyName() { return IKeyword.PLATFORM; }
+
+	@Override
+	public boolean isPlatform() { return true; }
+
 }

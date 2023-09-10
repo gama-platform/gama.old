@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * GamaToolbar2.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -193,7 +193,7 @@ public class GamaToolbar2 extends Composite {
 			final int side /* SWT.LEFT or SWT.RIGHT */) {
 		wipe(side, true);
 		final var item = button(color, s, image, side);
-		requestLayout();
+		getToolbar(side).requestLayout();
 		return item;
 	}
 

@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * SimulationPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -140,7 +140,10 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 			sim.setScheduled(toBeScheduled);
 			sim.setName("Simulation " + sim.getIndex());
 			add(sim);
-			sim.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
+			// Batch experiments now dont allow their simulations to have outputs
+			if (!getHost().getSpecies().isBatch()) {
+				sim.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
+			}
 			if (scope.interrupted()) return null;
 			initSimulation(scope, sim, initialValues, i, isRestored, toBeScheduled, sequence);
 			if (toBeScheduled) { runner.add(sim); }
@@ -277,8 +280,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	 */
 	public void setCurrentSimulation(final SimulationAgent current) {
 		currentSimulation = current;
-		GAMA.changeCurrentTopLevelAgent(current, false);
-
+		GAMA.changeCurrentTopLevelAgent(current == null ? getHost() : current, false);
 	}
 
 }

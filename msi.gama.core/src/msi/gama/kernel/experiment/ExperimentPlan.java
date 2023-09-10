@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -653,7 +653,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			}
 		}
 		if (fileOutputDescription != null) { createOutput(fileOutputDescription); }
-
+		displayables.addAll(getUserCommands());
 	}
 
 	/**
@@ -692,7 +692,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		IScope scope = agent.getScope();
 		agent.schedule(scope);
 
-		showParameters();
+		// showParameters();
 
 		if (isBatch()) {
 			myScope.getGui().getStatus()
@@ -1096,6 +1096,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 * @return the i expression
 	 * @date 2 sept. 2023
 	 */
+	@Override
 	public IExpression shouldRecord() {
 		return shouldRecord;
 	}

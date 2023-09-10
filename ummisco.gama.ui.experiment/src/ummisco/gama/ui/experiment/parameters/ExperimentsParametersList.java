@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentsParametersList.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.3).
+ * simulation platform (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -10,18 +10,24 @@
  ********************************************************************************************************/
 package ummisco.gama.ui.experiment.parameters;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.ICategory;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.experiment.TextStatement;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.MonitorOutput;
+import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Cast;
@@ -57,9 +63,16 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	 * @param paramsAndCommands
 	 *            the params and commands
 	 */
-	public ExperimentsParametersList(final ITopLevelAgent agent,
-			final Collection<? extends IExperimentDisplayable> paramsAndCommands) {
-		add(agent, paramsAndCommands);
+	public ExperimentsParametersList(final ITopLevelAgent agent) {
+		if (agent == null || agent.getExperiment() == null) return;
+		IExperimentAgent exp = agent.getExperiment();
+		final List<IExperimentDisplayable> paramsAndCommands = new ArrayList<>(exp.getDisplayables());
+		if (agent.isSimulation() && GamaPreferences.Runtime.CORE_MONITOR_PARAMETERS.getValue()) {
+			SimulationOutputManager som = ((SimulationAgent) agent).getOutputManager();
+			if (som != null) { paramsAndCommands.addAll(som.getMonitors()); }
+		}
+		Collections.sort(paramsAndCommands);
+		add(exp, paramsAndCommands);
 	}
 
 	@Override
@@ -97,30 +110,6 @@ public class ExperimentsParametersList extends EditorsList<String> {
 		}
 		return null;
 	}
-
-	/**
-	 * Adds the.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param params
-	 *            the params
-	 * @param agent
-	 *            the agent
-	 * @date 11 août 2023
-	 */
-
-	/**
-	 * Adds the.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param exp
-	 *            the exp
-	 * @param sim
-	 *            the sim
-	 * @param paramsAndCommands
-	 *            the params and commands
-	 * @date 13 août 2023
-	 */
 
 	/**
 	 * Adds the.

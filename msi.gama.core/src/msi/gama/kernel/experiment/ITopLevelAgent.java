@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ITopLevelAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * (v.1.9.2).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -125,5 +125,32 @@ public interface ITopLevelAgent extends IMacroAgent, IScopedStepable {
 	 * @date 13 août 2023
 	 */
 	String getFamilyName();
+
+	/**
+	 * Checks if is platform.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is platform
+	 * @date 3 sept. 2023
+	 */
+	default boolean isPlatform() { return false; }
+
+	/**
+	 * Checks if is experiment.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is experiment
+	 * @date 3 sept. 2023
+	 */
+	default boolean isExperiment() { return false; }
+
+	/**
+	 * Checks if is simulation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is simulation
+	 * @date 3 sept. 2023
+	 */
+	default boolean isSimulation() { return false; }
 
 }
