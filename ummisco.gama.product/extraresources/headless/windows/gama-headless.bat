@@ -3,7 +3,10 @@ cls
 setLocal EnableDelayedExpansion
 set inputFile=""
 set outputFile="" 
-set memory=2048m
+
+REM memory is defined in the ../Gama.ini file
+set "memory=-1m"
+
 set workDir=.work%RANDOM%
 SETLOCAL enabledelayedexpansion
 
@@ -41,34 +44,41 @@ FOR /F %%e in ('dir /b %FILENAME%') do (
 )
 :END
 @echo !result!
-@echo workDir = %workDir% 
-@echo memory = %memory% 
 
 set "result=..\plugins\%result%"
 
 echo %result%
 echo %JAVA_HOME%
 
+REM We don't want to use the options before the `-server` options in the GAMA.ini file
+REM because they are not compatible with the headless mode
+
 set "ini_arguments="
 set "skip_until_line=-server"
 set "skipping=true"
 
 for /f "usebackq delims=" %%a in (..\GAMA.ini) do (
+	set "line=%%a"
+
 	if !skipping!==true (
 		if !skip_until_line!==%%a (
 			set "skipping=false"
-			set "line=%%a"
 			set "ini_arguments=!ini_arguments!!line! "
 		)
 	) else (
-		echo !skipping!
-		set "line=%%a"
-		set "ini_arguments=!ini_arguments!!line! "
+		if "!line:~0,4!"=="-Xmx" ( 
+			if "!memory!"=="-1m" ( set "memory=!line:~4!" )
+		) else ( 
+			set "ini_arguments=!ini_arguments!!line! " 
+		)
 	)
 )
 
 @echo Will run with these options:
 @echo %ini_arguments%
+
+@echo workDir = %workDir% 
+@echo memory = %memory% 
 
 if exist ..\jdk\ (
 	echo "JDK"
