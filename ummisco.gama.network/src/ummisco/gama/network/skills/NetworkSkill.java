@@ -373,7 +373,7 @@ public class NetworkSkill extends MessagingSkill {
 							optional = false,
 							doc = @doc ("name of the group")) },
 			doc = @doc (
-					value = "Allow an agent to join a group of agents in order to broadcast messages to other members"
+					value = "Allow an agent to join a group of agents in order to broadcast messages to other members "
 							+ "or to receive messages sent by other members. Note that all members of the group called : \"ALL\".",
 					examples = { @example ("do join_group with_name:\"group name\";"),
 							@example ("do join_group with_name:\"group name\";\n"
