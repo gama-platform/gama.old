@@ -29,9 +29,8 @@ case "$@" in
 esac
 
 function read_from_ini {
-  start_line=$(grep -n -- '-server' "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini | cut -d ':' -f 1)
-  tail -n +12 "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini | tr '\n' ' '
-  #       👆 with the + you basically tell tail to start from the 12th line starting from the top of the file, not the end
+  start_line=$(grep -n -- '-server' "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/Gama.ini | cut -d ':' -f 1)
+  tail -n +$start_line "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/Gama.ini | tr '\n' ' '
 }
 
 echo "******************************************************************"
