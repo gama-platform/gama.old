@@ -3,7 +3,10 @@ cls
 setLocal EnableDelayedExpansion
 set inputFile=""
 set outputFile="" 
-set memory=2048m
+
+REM memory is defined in the ../Gama.ini file
+set "memory=-1m"
+
 set workDir=.work%RANDOM%
 SETLOCAL enabledelayedexpansion
 
@@ -27,7 +30,7 @@ GOTO TOP
 
 :NEXT_CODE
 echo ******************************************************************
-echo * GAMA version 1.9.0                                             *
+echo * GAMA version 1.9.3                                             *
 echo * http://gama-platform.org                                       *
 echo * (c) 2007-2023 UMI 209 UMMISCO IRD/SU and Partners              *
 echo ******************************************************************
@@ -41,18 +44,46 @@ FOR /F %%e in ('dir /b %FILENAME%') do (
 )
 :END
 @echo !result!
-@echo workDir = %workDir% 
-@echo memory = %memory% 
 
 set "result=..\plugins\%result%"
 
 echo %result%
 echo %JAVA_HOME%
 
+REM We don't want to use the options before the `-server` options in the GAMA.ini file
+REM because they are not compatible with the headless mode
+
+set "ini_arguments="
+set "skip_until_line=-server"
+set "skipping=true"
+
+for /f "usebackq delims=" %%a in (..\GAMA.ini) do (
+	set "line=%%a"
+
+	if !skipping!==true (
+		if !skip_until_line!==%%a (
+			set "skipping=false"
+			set "ini_arguments=!ini_arguments!!line! "
+		)
+	) else (
+		if "!line:~0,4!"=="-Xmx" ( 
+			if "!memory!"=="-1m" ( set "memory=!line:~4!" )
+		) else ( 
+			set "ini_arguments=!ini_arguments!!line! " 
+		)
+	)
+)
+
+@echo Will run with these options:
+@echo %ini_arguments%
+
+@echo workDir = %workDir% 
+@echo memory = %memory% 
+
 if exist ..\jdk\ (
 	echo "JDK"
-	call ..\jdk\bin\java -cp !result! -Xms512m -Xmx%memory% --add-exports=java.base/java.lang=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.desktop/sun.java2d=ALL-UNNAMED --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED --add-exports=java.base/java.math=ALL-UNNAMED --add-exports=java.base/java.lang=ALL-UNNAMED  --add-exports=java.base/sun.nio.ch=ALL-UNNAMED  --add-opens=java.base/java.lang=ALL-UNNAMED  --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED  --add-opens=java.base/java.math=ALL-UNNAMED   --add-opens=java.base/java.util=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED  --add-opens=java.base/java.net=ALL-UNNAMED  --add-opens=java.base/java.security=ALL-UNNAMED  --add-opens=java.desktop/java.awt=ALL-UNNAMED  --add-opens=java.base/java.io=ALL-UNNAMED  --add-opens=java.base/java.time=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED  --add-opens=java.base/java.lang.ref=ALL-UNNAMED  --add-opens=java.sql/java.sql=ALL-UNNAMED -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration ./configuration -application msi.gama.headless.product -data "%workDir%" !param! 
+	call ..\jdk\bin\java -cp !result! -Xms512m -Xmx%memory% !ini_arguments! -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration ./configuration -application msi.gama.headless.product -data "%workDir%" !param! 
 ) else (
 	echo "JAVA_HOME"
-  	call "%JAVA_HOME%\bin\java.exe" -cp !result! -Xms512m -Xmx%memory% --add-exports=java.base/java.lang=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.desktop/sun.java2d=ALL-UNNAMED --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED --add-exports=java.base/java.math=ALL-UNNAMED --add-exports=java.base/java.lang=ALL-UNNAMED  --add-exports=java.base/sun.nio.ch=ALL-UNNAMED  --add-opens=java.base/java.lang=ALL-UNNAMED  --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED  --add-opens=java.base/java.math=ALL-UNNAMED   --add-opens=java.base/java.util=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED  --add-opens=java.base/java.net=ALL-UNNAMED  --add-opens=java.base/java.security=ALL-UNNAMED  --add-opens=java.desktop/java.awt=ALL-UNNAMED  --add-opens=java.base/java.io=ALL-UNNAMED  --add-opens=java.base/java.time=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED  --add-opens=java.base/java.lang.ref=ALL-UNNAMED  --add-opens=java.sql/java.sql=ALL-UNNAMED -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration ./configuration -application msi.gama.headless.product -data "%workDir%" !param! 
+  	call "%JAVA_HOME%\bin\java.exe" -cp !result! -Xms512m -Xmx%memory% !ini_arguments! -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration ./configuration -application msi.gama.headless.product -data "%workDir%" !param! 
 )

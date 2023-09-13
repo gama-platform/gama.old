@@ -28,6 +28,10 @@ case "$@" in
     ;;
 esac
 
+function read_from_ini {
+  start_line=$(grep -n -- '-server' "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini | cut -d ':' -f 1)
+  tail -n +$start_line "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini | tr '\n' ' '
+}
 
 echo "******************************************************************"
 echo "* GAMA version 1.9.3                                             *"
@@ -51,7 +55,9 @@ else
   passWork=.workspace$(find ./ -maxdepth 1 -name ".workspace*" | wc -l)
 fi
 
-if ! "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../jdk/bin/java -cp "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
+ini_arguments=$(read_from_ini)
+
+if ! "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../jdk/bin/java -cp "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory ${ini_arguments[@]} -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
     echo "Error in you command, here's the log :"
     cat $passWork/.metadata/.log
     exit 1

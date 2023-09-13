@@ -36,6 +36,10 @@ case "$@" in
     ;;
 esac
 
+function read_from_ini {
+  start_line=$(grep -n -- '-server' "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/Gama.ini | cut -d ':' -f 1)
+  tail -n +$start_line "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/Gama.ini | tr '\n' ' '
+}
 
 echo "******************************************************************"
 echo "* GAMA version 1.9.3                                             *"
@@ -60,7 +64,9 @@ else
   passWork=.workspace$(find ./ -maxdepth 1 -name ".workspace*" | expr $(wc -l))
 fi
 
-if ! java -cp "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory --add-exports=java.base/java.lang=ALL-UNNAMED --add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.desktop/sun.java2d=ALL-UNNAMED --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED --add-exports=java.base/java.math=ALL-UNNAMED --add-exports=java.base/java.lang=ALL-UNNAMED  --add-exports=java.base/sun.nio.ch=ALL-UNNAMED  --add-opens=java.base/java.lang=ALL-UNNAMED  --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED  --add-opens=java.base/java.math=ALL-UNNAMED   --add-opens=java.base/java.util=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED  --add-opens=java.base/java.net=ALL-UNNAMED  --add-opens=java.base/java.security=ALL-UNNAMED  --add-opens=java.desktop/java.awt=ALL-UNNAMED  --add-opens=java.base/java.io=ALL-UNNAMED  --add-opens=java.base/java.time=ALL-UNNAMED  --add-opens=java.base/java.util.concurrent.locks=ALL-UNNAMED --add-opens=java.base/java.text=ALL-UNNAMED  --add-opens=java.base/java.lang.ref=ALL-UNNAMED  --add-opens=java.sql/java.sql=ALL-UNNAMED -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration "$( dirname "${BASH_SOURCE[0]}" )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
+ini_arguments=$(read_from_ini)
+
+if ! java -cp "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory ${ini_arguments[@]} -Djava.awt.headless=true org.eclipse.core.launcher.Main -configuration "$( dirname "${BASH_SOURCE[0]}" )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
     echo "Error in you command, here's the log :"
     cat $passWork/.metadata/.log
     exit 1
