@@ -73,6 +73,7 @@ public record SerialisedAgent(/* AgentReference ref */ int index, Map<String, Ob
 	 * @return the object
 	 * @date 31 juil. 2023
 	 */
+	@SuppressWarnings ("unchecked")
 	public static Map<String, Object> filterAttributes(final IAgent agent, final boolean isGrid,
 			final Map<String, Object> m) {
 		Map<String, Object> map = new HashMap<>();

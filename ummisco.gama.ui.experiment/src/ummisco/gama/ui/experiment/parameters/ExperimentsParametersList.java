@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentsParametersList.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -169,7 +169,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 				addEditor(var,
 						EditorFactory.getInstance().create(scope, command, (Command) e -> exp.executeAction(s -> {
 							final Object result = scope.execute(command).getValue();
-							if (exp != null) { // in case the experiment is killed in the meantime
+							if (exp.dead()) { // in case the experiment is killed in the meantime
 								exp.getExperiment().getSpecies().refreshAllOutputs();
 							}
 							return result;

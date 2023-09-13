@@ -307,6 +307,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 				out.writeObject(o.attributes());
 			}
 
+			@SuppressWarnings ("unchecked")
 			@Override
 			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
 				return new SerialisedAgent(/* (AgentReference) in.readObject(), */in.readInt(),
@@ -322,6 +323,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 				out.writeObject(o.agents());
 			}
 
+			@SuppressWarnings ("unchecked")
 			@Override
 			public SerialisedPopulation deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
 				return new SerialisedPopulation(in.readStringUTF(), (List<SerialisedAgent>) in.readObject());
@@ -337,6 +339,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 				out.writeObject(o.matrix());
 			}
 
+			@SuppressWarnings ("unchecked")
 			@Override
 			public SerialisedGrid deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
 				return new SerialisedGrid(in.readStringUTF(), (List<SerialisedAgent>) in.readObject(),
@@ -528,6 +531,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 		 *             Signals that an I/O exception has occurred.
 		 * @date 7 août 2023
 		 */
+		@SuppressWarnings ("unchecked")
 		@Override
 		public void writeObject(final FSTObjectOutput out, final Object toWrite, final FSTClazzInfo clzInfo,
 				final FSTFieldInfo referencedBy, final int streamPosition) throws IOException {

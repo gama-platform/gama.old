@@ -174,6 +174,7 @@ public class PairEditor extends AbstractEditor<GamaPair> implements VerifyListen
 		allowVerification = true;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void modifyText(final ModifyEvent me) {
 		if (internalModification || !allowVerification) return;

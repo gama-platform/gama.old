@@ -266,6 +266,7 @@ public class SimulationPopupMenu extends PopupDialog {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 25 août 2023
 	 */
+	@SuppressWarnings ("unused")
 	private void createToolbar() {
 		if (toolbarComposite == null || toolbarComposite.isDisposed()) {
 			try {

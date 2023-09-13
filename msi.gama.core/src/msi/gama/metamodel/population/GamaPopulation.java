@@ -389,6 +389,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return Iterables.find(this, each -> each.getIndex() == index, null);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public T getOrCreateAgent(final IScope scope, final Integer index) {
 		T agent = getAgent(index);

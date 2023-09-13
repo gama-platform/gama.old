@@ -603,6 +603,15 @@ public class Pref<T> implements IParameter {
 		return this;
 	}
 
+	/**
+	 * Sets the value no check no notification.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param value
+	 *            the new value no check no notification
+	 * @date 13 sept. 2023
+	 */
+	@SuppressWarnings ("unchecked")
 	@Override
 	public void setValueNoCheckNoNotification(final Object value) { this.value = (T) value; }
 

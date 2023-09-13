@@ -245,18 +245,21 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		topology = t;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public Stream<IGridAgent> stream() {
 		Stream s = StreamEx.of(grid.matrix);
 		return s;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public StreamEx<IGridAgent> stream(final IScope scope) {
 		StreamEx s = StreamEx.of(grid.matrix);
 		return s;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IList<IGridAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
@@ -454,6 +457,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return (IGridAgent) grid.anyValue(scope);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public Iterator<IGridAgent> iterator() {
 		Iterator i = Iterators.forArray(grid.getMatrix());
@@ -487,6 +491,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return grid._listValue(scope, contentsType, false);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
@@ -496,6 +501,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return grid.matrixValue(scope, contentsType, copy);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType type, final GamaPoint size, final boolean copy)
 			throws GamaRuntimeException {
@@ -540,6 +546,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return o instanceof IGridAgent ga && ga.getPopulation() == this;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		return (T[]) grid.matrix;
@@ -615,18 +622,21 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return indexOf(o);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public ListIterator<IGridAgent> listIterator() {
 		ListIterator it = Arrays.asList(grid.matrix).listIterator(0);
 		return it;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public ListIterator<IGridAgent> listIterator(final int index) {
 		ListIterator it = Arrays.asList(grid.matrix).listIterator(index);
 		return it;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public List<IGridAgent> subList(final int fromIndex, final int toIndex) {
 		List l = Arrays.asList(grid.matrix).subList(fromIndex, toIndex);
@@ -661,6 +671,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return true;
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		IContainer c = GamaListFactory.create(scope, getGamlType().getContentType(), grid.matrix);

@@ -14,6 +14,11 @@ import static java.nio.file.Files.walk;
 import static org.eclipse.core.runtime.FileLocator.toFileURL;
 import static ummisco.gama.dev.utils.DEBUG.TIMER_WITH_EXCEPTIONS;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,13 +29,17 @@ import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import javax.imageio.ImageIO;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
+import org.eclipse.swt.widgets.Display;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -111,6 +120,7 @@ public class GamaIcon {
 	 *            the square
 	 * @return the image
 	 */
+
 	public static GamaIcon ofColor(final GamaUIColor gcolor, final boolean square) {
 		String shape = square ? "square" : "circle";
 		final String name = COLORS + shape + ".color." + String.format("%X", gcolor.gamaColor().getRGB());
@@ -118,17 +128,20 @@ public class GamaIcon {
 		try {
 			return ICON_CACHE.get(name, () -> {
 				DEBUG.OUT(name + " not found. Building it");
-				Image image = ImageDescriptor.createFromURL(computeURL(TEMPLATES + shape + "_template")).createImage();
-				final GC gc = new GC(image);
-				gc.setBackground(gcolor.color());
-				int size = image.getBounds().width;
+				BufferedImage bi = ImageIO.read(computeURL(TEMPLATES + shape + "_template"));
+				Graphics2D gc = bi.createGraphics();
+				gc.setColor(gcolor.gamaColor());
+				gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				gc.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+						RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+				int size = bi.getWidth();
 				if (square) {
-					gc.fillRoundRectangle(size / 4, size / 4, size / 2 + 1, size / 2 + 1, 4, 4);
+					gc.fillRoundRect(size / 4, size / 4, size / 2 + 1, size / 2 + 1, 4, 4);
 				} else {
 					gc.fillOval(size / 4, size / 4, size / 2 + 1, size / 2 + 1);
 				}
 				gc.dispose();
-				return new GamaIcon(name, image);
+				return new GamaIcon(name, bi);
 			});
 		} catch (Exception e) {
 			return null;
@@ -179,6 +192,36 @@ public class GamaIcon {
 		disabledUrl = url;
 		descriptor = ImageDescriptor.createFromImage(im);
 		disabledDescriptor = descriptor;
+	}
+
+	/**
+	 * Instantiates a new gama icon.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param path
+	 *            the path
+	 * @param im
+	 *            the im
+	 * @date 13 sept. 2023
+	 */
+	private GamaIcon(final String path, final BufferedImage im) {
+		this(path, toSWTImage(im));
+	}
+
+	/**
+	 * Creates a SWT image from a Java BufferedImage.
+	 *
+	 * @param bufferedImage
+	 *            the image.
+	 * @return returns a SWT image.
+	 */
+	public static Image toSWTImage(final BufferedImage im) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(im, "png", out);
+		} catch (IOException e) {}
+		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		return new Image(Display.getCurrent(), new ImageData(in));
 	}
 
 	/**

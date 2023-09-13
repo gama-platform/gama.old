@@ -15,6 +15,15 @@ Require-Bundle: msi.gama.ext,
  ummisco.gama.annotations
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: ummisco.gama.OpenGLActivator
+Bundle-ClassPath: .,
+ lib/gluegen-rt-2.5.0.jar,
+ lib/gluegen-rt-2.5.0-natives-linux-amd64.jar,
+ lib/gluegen-rt-2.5.0-natives-macosx-universal.jar,
+ lib/gluegen-rt-2.5.0-natives-windows-amd64.jar,
+ lib/jogl-all-2.5.0.jar,
+ lib/jogl-all-2.5.0-natives-linux-amd64.jar,
+ lib/jogl-all-2.5.0-natives-macosx-universal.jar,
+ lib/jogl-all-2.5.0-natives-windows-amd64.jar
 Import-Package: org.jfree.chart,
  org.locationtech.jts.geom,
  ummisco.gaml.extensions.image
@@ -163,15 +172,6 @@ Export-Package:
  ummisco.gama.opengl.scene,
  ummisco.gama.opengl.scene.layers,
  ummisco.gama.opengl.view
-Bundle-ClassPath: .,
- lib/gluegen-rt.jar,
- lib/gluegen-rt-natives-linux-amd64.jar,
- lib/gluegen-rt-natives-macosx-universal.jar,
- lib/gluegen-rt-natives-windows-amd64.jar,
- lib/jogl-all.jar,
- lib/jogl-all-natives-macosx-universal.jar,
- lib/jogl-all-natives-windows-amd64.jar,
- lib/jogl-all-natives-linux-amd64.jar
 Bundle-Vendor: UMMISCO
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: ummisco.gama.opengl

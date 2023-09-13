@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentParametersView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.2).
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -214,6 +214,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		deleteMonitorSectionIfEmpty();
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	protected Composite createItemContentsFor(final String cat) {
 		final Map<String, IParameterEditor<?>> parameters = editors.getSections().get(cat);

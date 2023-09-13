@@ -136,6 +136,7 @@ public class SerialisedAgentFactory implements SerialisationConstants {
 	 *            the image
 	 * @date 8 août 2023
 	 */
+	@SuppressWarnings ("unchecked")
 	public static void restoreAgent(final IScope scope, final IAgent agent, final SerialisedAgent image) {
 
 		// Update attributes and micropopulations

@@ -30,6 +30,7 @@ public class DefaultPopulationFactory implements IPopulationFactory {
 		return new GamaPopulation<>(host, species);
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IPopulation<IGridAgent> createGridPopulation(final IScope scope, final IMacroAgent host,
 			final ISpecies species) {

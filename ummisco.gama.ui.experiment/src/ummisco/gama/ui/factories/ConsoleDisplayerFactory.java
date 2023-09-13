@@ -24,7 +24,6 @@ import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Console;
-import msi.gama.common.interfaces.IGamaView.Interactive;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
@@ -98,9 +97,7 @@ public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 				hideView(IGui.CONSOLE_VIEW_ID);
 				hideView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 			} else {
-				final IGamaView.Interactive icv = (Interactive) GAMA.getGui().showView(null,
-						IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-				// if (icv != null) { icv.topLevelAgentChanged(agent); }
+				GAMA.getGui().showView(null, IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 				final IGamaView.Console console =
 						(Console) GAMA.getGui().showView(null, IGui.CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 				consoleBuffers.forEach((c, sb) -> {

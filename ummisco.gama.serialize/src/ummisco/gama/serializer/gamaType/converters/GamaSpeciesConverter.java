@@ -44,7 +44,7 @@ public class GamaSpeciesConverter extends AbstractGamaConverter<ISpecies, IList<
 			final MarshallingContext context) {
 		DEBUG.OUT("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
 		final AbstractSpecies spec = (AbstractSpecies) arg0;
-		final IPopulation<? extends IAgent> pop = (IPopulation<? extends IAgent>) spec.getPopulation(scope);
+		final IPopulation<? extends IAgent> pop = spec.getPopulation(scope);
 		writer.startNode("agentSetFromPopulation");
 		context.convertAnother(pop.getAgents(scope));
 		writer.endNode();

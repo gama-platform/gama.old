@@ -22,7 +22,6 @@ import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.experiment.IExperimentDisplayable;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
@@ -70,7 +69,6 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	 */
 	public void add(final Collection<? extends IExperimentDisplayable> params, final IAgent agent) {
 		if (addItem(agent) && !agent.dead()) {
-			final IScope scope = agent.getScope().copy("for " + agent.getName());
 			for (final IExperimentDisplayable var : params) {
 				if (var instanceof IParameter && !HIDDEN.contains(var.getName())) {
 					final IParameterEditor<?> gp = EditorFactory.getInstance().create(agent, (IParameter) var, null);

@@ -212,6 +212,7 @@ public class GridLayerData extends LayerData {
 	 *
 	 * @return the agents to display
 	 */
+	@SuppressWarnings ("unchecked")
 	public Collection<IAgent> getAgentsToDisplay() { return (Collection<IAgent>) grid.getAgents(null); }
 
 	/**

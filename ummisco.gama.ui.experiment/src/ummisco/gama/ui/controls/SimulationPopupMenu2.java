@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * SimulationPopupMenu.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * SimulationPopupMenu2.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -246,6 +246,7 @@ public class SimulationPopupMenu2 extends PopupDialog {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 25 août 2023
 	 */
+	@SuppressWarnings ("unused")
 	private void createToolbar() {
 		if (toolbarComposite == null || toolbarComposite.isDisposed()) {
 			toolbarComposite = new Composite(getShell(), SWT.BORDER);

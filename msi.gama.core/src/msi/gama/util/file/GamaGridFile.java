@@ -352,26 +352,33 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 					} else if (yCorner == null && yCenter == null && line.contains("yllcorner")) {
 						yCorner = doubleVal(line);
 
-					} else if (xCenter == null && xCenter == null && line.contains("xllcorner")) {
+					} else if (xCorner == null && xCenter == null && line.contains("xllcorner")) { // AD To verify: the
+																									// conditions are
+																									// the same as two
+																									// lines above...
 						xCenter = doubleVal(line);
 						// ascInfo[2] = xCorner;
-					} else if (yCorner == null && yCenter == null && line.contains("yllcorner")) {
+					} else if (yCorner == null && yCenter == null && line.contains("yllcorner")) { // AD To verify: the
+																									// conditions are
+																									// the same as two
+																									// lines above...
 						yCenter = doubleVal(line);
 					} else if (line.replace(" ", "").length() > 0) {
 						if (nbCols == null || nbCols == 0 || nbRows == null || nbRows == 0) throw error("The format of "
 								+ getName(scope) + " is not correct. Error: NCOLS and NROWS have to be defined", scope);
-						if (xCenter != null) {
+						if (xCenter != null && dX != null) {
 							xCorner = xCenter - nbCols * dX / 2.0;
 							ascInfo[2] = xCorner;
 						}
-						if (yCenter != null) { yCorner = yCenter - nbRows * dY / 2.0; }
+						if (yCenter != null && dY != null) { yCorner = yCenter - nbRows * dY / 2.0; }
 
-						ascInfo[3] = yCorner + nbRows * dY;
+						if (yCorner != null && dY != null) { ascInfo[3] = yCorner + nbRows * dY; }
 
 						ascData = new GamaFloatMatrix(nbCols, nbRows);
 						if (noData != null) { this.noData = noDataD; }
-
-						final Envelope3D env = of(xCorner, yCorner, xCorner + nbCols * dX, ascInfo[3], 0, 0);
+						double xC = xCorner == null ? 0 : xCorner;
+						double yC = yCorner == null ? 0 : yCorner;
+						final Envelope3D env = of(xC, yC, xC + nbCols * (dX == null ? 0 : dX), ascInfo[3], 0, 0);
 						computeProjection(scope, env);
 						numRows = nbRows;
 						numCols = nbCols;
