@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -191,6 +192,32 @@ public class ImageOperators implements ImageConstants {
 	public static GamaImage darker(final IScope scope, final GamaImage image) {
 		try {
 			return apply(image, OP_DARKER);
+		} catch (Exception e) {
+			return image;
+		}
+	}
+
+	/**
+	 * Darker.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param image
+	 *            the image
+	 * @param percentage
+	 *            the percentage
+	 * @return the gama image
+	 * @date 15 sept. 2023
+	 */
+	@operator ("darker")
+	@doc ("Used to return an image darker by a percentage (between 0 - no change - and 1 - 100% darker). If the percentage is below zero or abovde 1, returns the image untouched")
+	@no_test
+	public static GamaImage darker(final IScope scope, final GamaImage image, final double percentage) {
+		try {
+			if (percentage < 0 || percentage > 1) return image;
+			float scale = (float) (1f - percentage);
+			return apply(image, new RescaleOp(scale, 0, HINTS));
 		} catch (Exception e) {
 			return image;
 		}
