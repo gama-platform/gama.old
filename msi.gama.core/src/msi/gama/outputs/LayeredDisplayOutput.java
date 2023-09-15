@@ -89,7 +89,7 @@ import ummisco.gama.dev.utils.DEBUG;
 						name = IKeyword.BACKGROUND,
 						type = IType.COLOR,
 						optional = true,
-						doc = @doc ("Allows to fill the background of the display with a specific color")),
+						doc = @doc ("Allows to fill the background of the display and its toolbar with a specific color. Beware that this color, used in the UI, will not be affected by the light used in the display.")),
 				@facet (
 						name = IKeyword.NAME,
 						type = IType.LABEL,
