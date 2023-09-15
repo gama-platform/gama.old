@@ -126,7 +126,7 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 	public void processs(final IImageProvider file) {
 
 		if (!texturesToProcess.containsKey(file.getId())) {
-			DEBUG.LOG("Adding image to process " + file.getId());
+			DEBUG.OUT("Adding image to process " + file.getId());
 			texturesToProcess.put(file.getId(), file);
 		}
 	}
