@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlTemplateStore.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamlTemplateStore.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
 
@@ -17,8 +17,8 @@ import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
-// import org.eclipse.text.templates.TemplatePersistenceData;
+// import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.ui.editor.templates.XtextTemplateStore;
@@ -106,7 +106,8 @@ public class GamlTemplateStore extends XtextTemplateStore {
 	/**
 	 * Gets the new id from id.
 	 *
-	 * @param id the id
+	 * @param id
+	 *            the id
 	 * @return the new id from id
 	 */
 	public String getNewIdFromId(final String id) {
@@ -154,8 +155,10 @@ public class GamlTemplateStore extends XtextTemplateStore {
 	/**
 	 * Direct add.
 	 *
-	 * @param data the data
-	 * @param isEdited the is edited
+	 * @param data
+	 *            the data
+	 * @param isEdited
+	 *            the is edited
 	 */
 	public void directAdd(final TemplatePersistenceData data, final boolean isEdited) {
 		if (isEdited) {
@@ -178,9 +181,8 @@ public class GamlTemplateStore extends XtextTemplateStore {
 	public org.eclipse.jface.text.templates.persistence.TemplatePersistenceData getTemplateData(final String id) {
 		if (id == null) return null;
 		for (final org.eclipse.text.templates.TemplatePersistenceData data : internalGetTemplates()) {
-			if (id.equals(data.getId())) {
+			if (id.equals(data.getId()))
 				return new org.eclipse.jface.text.templates.persistence.TemplatePersistenceData(data);
-			}
 
 		}
 		return null;

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlEditTemplateDialog.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamlEditTemplateDialog.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.templates;
 
@@ -25,7 +25,7 @@ import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+// import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-// import org.eclipse.text.templates.TemplatePersistenceData;
+import org.eclipse.text.templates.TemplatePersistenceData;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.ui.codetemplates.ui.internal.CodetemplatesActivator;
 import org.eclipse.xtext.ui.codetemplates.ui.preferences.IEditTemplateDialog;
@@ -72,17 +72,17 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 
 	/** The name text. */
 	private Text fNameText;
-	
+
 	/** The description text. */
 	private Text fDescriptionText;
-	
+
 	/** The pattern editor. */
 	// private Label category;
 	SourceViewer fPatternEditor;
-	
+
 	/** The partial model editor. */
 	private EmbeddedEditorModelAccess partialModelEditor;
-	
+
 	/** The insert variable button. */
 	private Button fInsertVariableButton;
 	// private Button fAutoInsertCheckbox;
@@ -102,13 +102,20 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	/**
 	 * Instantiates a new gaml edit template dialog.
 	 *
-	 * @param parent the parent
-	 * @param data the data
-	 * @param edit the edit
-	 * @param registry the registry
-	 * @param configuration the configuration
-	 * @param resourceProvider the resource provider
-	 * @param languageName the language name
+	 * @param parent
+	 *            the parent
+	 * @param data
+	 *            the data
+	 * @param edit
+	 *            the edit
+	 * @param registry
+	 *            the registry
+	 * @param configuration
+	 *            the configuration
+	 * @param resourceProvider
+	 *            the resource provider
+	 * @param languageName
+	 *            the language name
 	 */
 	public GamlEditTemplateDialog(final Shell parent, final TemplatePersistenceData data, final boolean edit,
 			final ContextTypeRegistry registry, final TemplatesLanguageConfiguration configuration,
@@ -138,9 +145,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	}
 
 	@Override
-	protected boolean isResizable() {
-		return true;
-	}
+	protected boolean isResizable() { return true; }
 
 	@Override
 	public void create() {
@@ -227,7 +232,8 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	/**
 	 * Fill menu path.
 	 *
-	 * @param category the category
+	 * @param category
+	 *            the category
 	 */
 	private void fillMenuPath(final Label category) {
 		String s = data.getId();
@@ -238,12 +244,11 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	/**
 	 * Do text widget changed.
 	 *
-	 * @param w the w
+	 * @param w
+	 *            the w
 	 */
 	protected void doTextWidgetChanged(final Widget w) {
-		if (w == fNameText) {
-			partialModelEditor.updatePrefix(getPrefix());
-		}
+		if (w == fNameText) { partialModelEditor.updatePrefix(getPrefix()); }
 	}
 
 	/**
@@ -251,24 +256,22 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	 *
 	 * @return the context name
 	 */
-	protected String getContextName() {
-		return "Model";
-	}
+	protected String getContextName() { return "Model"; }
 
 	/**
 	 * Gets the context id.
 	 *
 	 * @return the context id
 	 */
-	protected String getContextId() {
-		return "msi.gama.lang.gaml.Gaml.Model";
-	}
+	protected String getContextId() { return "msi.gama.lang.gaml.Gaml.Model"; }
 
 	/**
 	 * Creates the error status.
 	 *
-	 * @param message the message
-	 * @param e the e
+	 * @param message
+	 *            the message
+	 * @param e
+	 *            the e
 	 * @return the status
 	 */
 	protected Status createErrorStatus(final String message, final TemplateException e) {
@@ -289,8 +292,10 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	/**
 	 * Creates the label.
 	 *
-	 * @param parent the parent
-	 * @param name the name
+	 * @param parent
+	 *            the parent
+	 * @param name
+	 *            the name
 	 * @return the label
 	 */
 	private static Label createLabel(final Composite parent, final String name) {
@@ -303,7 +308,8 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	/**
 	 * Creates the text.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 * @return the text
 	 */
 	private static Text createText(final Composite parent) {
@@ -315,7 +321,8 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	/**
 	 * Creates the editor.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 * @return the source viewer
 	 */
 	private SourceViewer createEditor(final Composite parent) {
@@ -323,9 +330,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 		int numberOfLines = viewer.getDocument().getNumberOfLines();
 		if (numberOfLines < 7) {
 			numberOfLines = 7;
-		} else if (numberOfLines > 14) {
-			numberOfLines = 14;
-		}
+		} else if (numberOfLines > 14) { numberOfLines = 14; }
 
 		final Control control = viewer.getControl();
 		final GridData data = new GridData(GridData.FILL_BOTH);
@@ -338,7 +343,8 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	/**
 	 * Creates the viewer.
 	 *
-	 * @param parent the parent
+	 * @param parent
+	 *            the parent
 	 * @return the source viewer
 	 */
 	protected SourceViewer createViewer(final Composite parent) {
@@ -348,15 +354,11 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 			final StringBuilder messages = new StringBuilder();
 			for (final Issue issue : issues) {
 				if (issue.getSeverity() == Severity.ERROR) {
-					if (messages.length() != 0) {
-						messages.append('\n');
-					}
+					if (messages.length() != 0) { messages.append('\n'); }
 					messages.append(issue.getMessage());
 				}
 			}
-			if (messages.length() != 0) {
-				result = createErrorStatus(messages.toString(), null);
-			}
+			if (messages.length() != 0) { result = createErrorStatus(messages.toString(), null); }
 			final IStatus toBeUpdated = result;
 			getShell().getDisplay().asyncExec(() -> updateStatus(toBeUpdated));
 		});
@@ -373,9 +375,7 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	protected String getPrefix() {
 		final String contextName = getContextName();
 		String name = data.getTemplate().getName();
-		if (fNameText != null && !fNameText.isDisposed()) {
-			name = fNameText.getText();
-		}
+		if (fNameText != null && !fNameText.isDisposed()) { name = fNameText.getText(); }
 		final String prefix = "templates for " + languageName + " '" + name + "'" + " for " + contextName + " >>";
 		return prefix;
 	}
@@ -393,26 +393,20 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	 *
 	 * @return the data
 	 */
-	public TemplatePersistenceData getData() {
-		return data;
-	}
+	public TemplatePersistenceData getData() { return data; }
 
 	/**
 	 * Gets the pattern.
 	 *
 	 * @return the pattern
 	 */
-	protected String getPattern() {
-		return partialModelEditor.getEditablePart();
-	}
+	protected String getPattern() { return partialModelEditor.getEditablePart(); }
 
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		final String sectionName = getClass().getName() + "_dialogBounds"; //$NON-NLS-1$
 		IDialogSettings section = configuration.getDialogSettings().getSection(sectionName);
-		if (section == null) {
-			section = configuration.getDialogSettings().addNewSection(sectionName);
-		}
+		if (section == null) { section = configuration.getDialogSettings().addNewSection(sectionName); }
 		return section;
 	}
 
@@ -420,8 +414,6 @@ public class GamlEditTemplateDialog extends StatusDialog implements IEditTemplat
 	 * @see org.eclipse.xtext.ui.codetemplates.ui.preferences.IEditTemplateDialog#getTemplate()
 	 */
 	@Override
-	public Template getTemplate() {
-		return data.getTemplate();
-	}
+	public Template getTemplate() { return data.getTemplate(); }
 
 }
