@@ -145,10 +145,11 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 				sim.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
 			}
 			if (scope.interrupted()) return null;
+			// Necessary to set it early -- see Issue #3872
+			setCurrentSimulation(sim);
 			initSimulation(scope, sim, initialValues, i, isRestored, toBeScheduled, sequence);
 			if (toBeScheduled) { runner.add(sim); }
 			result.add(sim);
-			setCurrentSimulation(sim);
 		}
 		// Linked to Issue #2430. Should not return this, but the newly created simulations
 		// return this;
