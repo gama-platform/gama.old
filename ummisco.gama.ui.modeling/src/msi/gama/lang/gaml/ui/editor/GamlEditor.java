@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,9 +30,12 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.text.codemining.ICodeMining;
+import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -74,6 +78,8 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.internal.editors.text.codemining.annotation.AnnotationCodeMiningPreferenceConstants;
+import org.eclipse.ui.internal.editors.text.codemining.annotation.AnnotationCodeMiningProvider;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
@@ -162,7 +168,35 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		IToolbarDecoratedView /* IToolbarDecoratedView.Sizable, ITooltipDisplayer */ {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
+	}
+
+	/** The preference store. */
+	private static IPreferenceStore miningPreferencesStore;
+
+	/**
+	 * Gets the preferences.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the preferences
+	 * @date 16 sept. 2023
+	 */
+	protected static IPreferenceStore getPreferences() {
+		if (miningPreferencesStore == null) {
+			miningPreferencesStore = AnnotationCodeMiningPreferenceConstants.getPreferenceStore();
+		}
+		return miningPreferencesStore;
+	}
+
+	static {
+		IPreferenceStore node = getPreferences();
+		if (node != null) {
+			node.setDefault(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL,
+					AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING_INFO);
+			node.setValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL,
+					AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING_INFO);
+		}
+
 	}
 
 	/** The images. */
@@ -711,6 +745,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 	@Override
 	public void validationEnded(final ModelDescription model, final Iterable<? extends IDescription> newExperiments,
 			final ValidationContext status) {
+
+		getInternalSourceViewer().updateCodeMinings();
+
 		if (GamaPreferences.Experimental.REQUIRED_PLUGINS.getValue() && model != null && !status.hasErrors()) {
 			String requires = "@" + IKeyword.PRAGMA_REQUIRES;
 			GamlProperties meta = new GamlProperties();
@@ -756,6 +793,48 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 			return super.getTextHover(sourceViewer, contentType);
 		}
 
+	}
+
+	/**
+	 * The Class GamlCodeMiningProvider.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 16 sept. 2023
+	 */
+	public class GamlCodeMiningProvider extends AnnotationCodeMiningProvider implements ICodeMiningProvider {
+
+		/**
+		 * Instantiates a new gaml code mining provider.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @date 16 sept. 2023
+		 */
+		GamlCodeMiningProvider() {
+			this.setContext(GamlEditor.this);
+		}
+
+		/** The empty. */
+		static CompletableFuture<List<? extends ICodeMining>> EMPTY =
+				CompletableFuture.completedFuture(Collections.EMPTY_LIST);
+
+		@Override
+		public CompletableFuture<List<? extends ICodeMining>> provideCodeMinings(final ITextViewer viewer,
+				final IProgressMonitor monitor) {
+			if (!GamaPreferences.Modeling.EDITOR_MINING.getValue()) return EMPTY;
+			return super.provideCodeMinings(viewer, monitor);
+		}
+
+	}
+
+	/**
+	 * Do nothing (already installed normally)
+	 *
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#installCodeMiningProviders()
+	 */
+	@Override
+	protected void installCodeMiningProviders() {
+		ICodeMiningProvider[] providers = { new GamlCodeMiningProvider() };
+		((GamaSourceViewer) getSourceViewer()).setCodeMiningProviders(providers);
 	}
 
 	@Override

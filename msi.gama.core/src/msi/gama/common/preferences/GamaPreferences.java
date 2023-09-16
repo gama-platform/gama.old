@@ -415,6 +415,10 @@ public class GamaPreferences {
 				"Display experiments as a menu when the combined width of the buttons exceed the width of the toolbar",
 				PlatformHelper.isLinux(), IType.BOOL, false).in(NAME, TEXT);
 
+		/** The Constant EDITOR_MINING. */
+		public static final Pref<Boolean> EDITOR_MINING = create("pref_editor_mining",
+				"Inline errors, warnings and information messages", true, IType.BOOL, false).in(NAME, TEXT);
+
 	}
 
 	/**

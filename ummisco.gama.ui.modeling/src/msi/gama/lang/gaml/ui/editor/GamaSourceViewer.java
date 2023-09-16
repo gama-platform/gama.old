@@ -11,6 +11,7 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.swt.widgets.Composite;
@@ -64,5 +65,11 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 	@Override
 	public FindReplaceDocumentAdapter getFindReplaceDocumentAdapter() { return super.getFindReplaceDocumentAdapter(); }
+
+	@Override
+	public void setCodeMiningProviders(final ICodeMiningProvider[] codeMiningProviders) {
+		super.setCodeMiningProviders(codeMiningProviders);
+		for (ICodeMiningProvider p : codeMiningProviders) {}
+	}
 
 }

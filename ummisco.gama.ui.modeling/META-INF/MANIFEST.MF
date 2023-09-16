@@ -21,7 +21,8 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  msi.gama.ext,
  org.eclipse.ui,
  org.eclipse.ui.editors,
- org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)",
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.17.0"
 Export-Package: msi.gama.lang.gaml.ide,
  msi.gama.lang.gaml.ide.contentassist.antlr,
  msi.gama.lang.gaml.ide.contentassist.antlr.internal,
