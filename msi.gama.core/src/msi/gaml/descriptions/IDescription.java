@@ -12,8 +12,6 @@ package msi.gaml.descriptions;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
@@ -148,12 +146,12 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	/**
 	 * The Constant TO_NAME.
 	 */
-	Function<? super IDescription, ? extends String> TO_NAME = @Nullable IDescription::getName;
+	Function<? super IDescription, ? extends String> TO_NAME = IDescription::getName;
 
 	/**
 	 * The Constant TO_CLASS.
 	 */
-	Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = @Nullable TypeDescription::getJavaBase;
+	Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = TypeDescription::getJavaBase;
 
 	/**
 	 * The Interface DescriptionVisitor.
