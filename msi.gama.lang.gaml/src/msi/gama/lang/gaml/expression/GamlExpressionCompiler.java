@@ -717,7 +717,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					// Special case (see #2259 for headless validation of GUI preferences)
 					return ((PlatformSpeciesDescription) species).getFakePrefExpression(var);
 				else {
-					getContext().error("Unknown variable '" + var + "' for species " + species.getName(),
+					getContext().error(
+							"Unknown variable '" + var + "' in " + species.getKeyword() + " " + species.getName(),
 							IGamlIssue.UNKNOWN_VAR, fieldExpr.eContainer(), var, species.getName());
 					return null;
 				}
@@ -732,6 +733,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				ModelDescription md = getContext().getModelDescription();
 				if (md != null) { expr = getFactory().createAs(currentContext, expr, Types.LIST.of(md.getGamlType())); }
 			}
+			// else if (IKeyword.EXPERIMENT.equals(var) && GAMA.getExperiment() != null) {
+			// ExperimentDescription md = GAMA.getExperiment().getDescription();
+			// expr = getFactory().createAs(currentContext, expr, md.getGamlType());
+			// }
 
 			getContext().document(fieldExpr, expr);
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
@@ -1314,6 +1319,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return null;
 		}
 		switch (varName) {
+			case IKeyword.EXPERIMENT:
+				if (GAMA.getExperiment() != null) return getFactory().createConst(GAMA.getExperiment().getAgent(),
+						GAMA.getExperiment().getDescription().getGamlType());
+				break;
 			case IKeyword.GAMA:
 				return GAMA.getPlatformAgent();
 			case EACH:

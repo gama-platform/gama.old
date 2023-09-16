@@ -264,8 +264,10 @@ public class GAML {
 			try {
 				return getExpressionFactory().createTemporaryActionForAgent(agent, expression, tempContext);
 			} catch (final Throwable e2) {
-				throw GamaRuntimeException.create(e2, tempContext.getScope());
+				// Not a statement.
+				throw GamaRuntimeException.error(e.getMessage() + "\n" + e2.getMessage(), tempContext.getScope());
 			}
+
 		}
 	}
 

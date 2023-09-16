@@ -408,6 +408,8 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
 		if (spec.equals(getName()) || importedModelNames != null && importedModelNames.contains(spec)) return this;
+		if (EXPERIMENT.equals(spec) && msi.gama.runtime.GAMA.getExperiment() != null)
+			return msi.gama.runtime.GAMA.getExperiment().getDescription();
 		if (getTypesManager() != null) return getTypesManager().get(spec).getSpecies();
 		if (hasMicroSpecies()) return getMicroSpecies().get(spec);
 		return null;
