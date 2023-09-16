@@ -363,7 +363,9 @@ public class GamaIcon {
 				image = imageCreator.call();
 			} catch (Exception e) {}
 			if (image == null) { image = named(MISSING).image(); }
-			JFaceResources.getImageRegistry().put(key, image);
+			if (JFaceResources.getImageRegistry().get(key) == null) {
+				JFaceResources.getImageRegistry().put(key, image);
+			}
 		}
 		return image;
 	}

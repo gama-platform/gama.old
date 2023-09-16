@@ -10,8 +10,13 @@
  ********************************************************************************************************/
 package msi.gama.outputs;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.outputs.SimulationOutputManager.SimulationOutputValidator;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -19,9 +24,12 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gaml.compilation.IDescriptionValidator;
+import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.IType;
@@ -31,11 +39,18 @@ import msi.gaml.types.IType;
  *
  * @author Alexis Drogoul modified by Romain Lavaud 05.07.2010
  */
+
+/**
+ * The Class SimulationOutputManager.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 16 sept. 2023
+ */
 @symbol (
 		name = IKeyword.OUTPUT,
 		kind = ISymbolKind.OUTPUT,
 		with_sequence = true,
-		concept = {})
+		concept = { IConcept.DISPLAY, IConcept.OUTPUT })
 @facets ({ @facet (
 		name = "synchronized",
 		type = IType.BOOL,
@@ -47,7 +62,7 @@ import msi.gaml.types.IType;
 				type = { IType.BOOL, IType.STRING },
 				optional = true,
 				doc = @doc ("Allows to save the whole screen on disk. A value of true/false will save it with the resolution of the physical screen. Passing it a string allows to define the filename "
-						+ "Note that setting autosave to true (or to any other value than false) in a display will synchronize all the displays defined in the experiment")) })
+						+ "Note that setting autosave to true (or to any other value than false) will synchronize all the displays defined in the experiment")) })
 
 @inside (
 		kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
@@ -74,7 +89,41 @@ import msi.gaml.types.IType;
 								value = "}",
 								isExecutable = false) }) },
 		see = { IKeyword.DISPLAY, IKeyword.MONITOR, IKeyword.INSPECT, IKeyword.OUTPUT_FILE, IKeyword.LAYOUT })
+@validator (SimulationOutputValidator.class)
 public class SimulationOutputManager extends AbstractOutputManager {
+
+	/**
+	 * The Class SimulationOutputValidator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 16 sept. 2023
+	 */
+	public static class SimulationOutputValidator implements IDescriptionValidator<IDescription> {
+
+		@Override
+		public void validate(final IDescription description) {
+			Iterable<IDescription> displays = description.getChildrenWithKeyword(DISPLAY);
+			Map<String, IDescription> map = new HashMap<>();
+			for (IDescription display : displays) {
+				String s = display.getName();
+				if (s == null) { continue; }
+				IDescription existing = map.get(s);
+				if (existing == null) {
+					map.put(s, display);
+					continue;
+				}
+
+				display.info("'" + s
+						+ "' is defined twice in this experiment. Only this definition will be taken into account.",
+						IGamlIssue.DUPLICATE_DEFINITION);
+				existing.info("'" + s
+						+ "' is defined twice in this experiment. This definition will not be taken into account.",
+						IGamlIssue.DUPLICATE_DEFINITION);
+			}
+
+		}
+
+	}
 
 	/**
 	 * Creates the empty.
