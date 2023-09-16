@@ -6108,7 +6108,7 @@ public abstract class Spatial {
 				final IShape source, final ITopology.SpatialRelation relation) {
 			final IType contentType = list.getGamlType().getContentType();
 			if (contentType.isAgentType()) return _gather(scope, In.list(scope, list), source, relation);
-			if (contentType == Types.GEOMETRY) return geomsRelated(scope, list, source, relation);
+			if (Types.GEOMETRY.isAssignableFrom(contentType)) return geomsRelated(scope, list, source, relation);
 			return GamaListFactory.EMPTY_LIST;
 		}
 
@@ -6923,7 +6923,7 @@ public abstract class Spatial {
 
 		/**
 		 * KNN from Nguyen Dich Nhat Minh
-		 * 
+		 *
 		 */
 
 		@operator (
@@ -6962,10 +6962,8 @@ public abstract class Spatial {
 				@Override
 				public int compareTo(final DistanceCalc other) {
 					if (this.dist == other.dist) return 0;
-					if (this.dist > other.dist)
-						return 1;
-					else
-						return -1;
+					if (this.dist > other.dist) return 1;
+					return -1;
 				}
 			}
 			ArrayList<DistanceCalc> result = new ArrayList<>();
