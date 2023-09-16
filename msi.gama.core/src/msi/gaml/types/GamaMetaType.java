@@ -38,6 +38,7 @@ public class GamaMetaType extends GamaType<IType<?>> {
 	@Override
 	public IType<?> cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
+		if (obj instanceof IType t) return t;
 		return staticCast(obj);
 	}
 
