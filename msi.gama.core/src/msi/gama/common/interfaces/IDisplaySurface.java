@@ -53,6 +53,9 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	/** The selection size. */
 	double SELECTION_SIZE = 5; // pixels
 
+	/** The null point. */
+	GamaPoint NULL_POINT = new GamaPoint.Immutable();
+
 	/**
 	 * This sub-interface represents display surfaces relying on OpenGL
 	 *
@@ -210,7 +213,16 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 *
 	 * @return the model coordinates
 	 */
-	GamaPoint getModelCoordinates();
+	default GamaPoint getModelCoordinates() { return NULL_POINT; }
+
+	/**
+	 * Gets the window coordinates.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the window coordinates
+	 * @date 17 sept. 2023
+	 */
+	default GamaPoint getWindowCoordinates() { return NULL_POINT; }
 
 	/**
 	 * Gets the model coordinates from.
@@ -225,8 +237,10 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 *            the position in pixels
 	 * @return the model coordinates from
 	 */
-	GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
-			final Point positionInPixels);
+	default GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
+			final Point positionInPixels) {
+		return NULL_POINT;
+	}
 
 	/**
 	 * Select agent.
@@ -461,6 +475,8 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped, IDisposab
 	 *
 	 * @return true, if is renderable
 	 */
-	default boolean shouldWaitToBecomeRendered() { return true; }
+	default boolean shouldWaitToBecomeRendered() {
+		return true;
+	}
 
 }

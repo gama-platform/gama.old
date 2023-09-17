@@ -594,12 +594,27 @@ public interface IGui {
 	default GamaPoint getMouseLocationInModel() { return NULL_POINT; }
 
 	/**
+	 * Gets the mouse location in display.
+	 *
+	 * @return the mouse location in model
+	 */
+	default GamaPoint getMouseLocationInDisplay() { return NULL_POINT; }
+
+	/**
 	 * Sets the mouse location in model.
 	 *
 	 * @param modelCoordinates
 	 *            the new mouse location in model
 	 */
 	default void setMouseLocationInModel(final GamaPoint modelCoordinates) {}
+
+	/**
+	 * Sets the mouse location in model.
+	 *
+	 * @param modelCoordinates
+	 *            the new mouse location in model
+	 */
+	default void setMouseLocationInDisplay(final GamaPoint displayCoordinates) {}
 
 	/**
 	 * Exit.

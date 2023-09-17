@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.outputs.display;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
@@ -23,7 +22,6 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.Changes;
@@ -100,7 +98,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#toggleLock()
 	 */
 	@Override
-	public void toggleLock(){}
+	public void toggleLock() {}
 
 	/**
 	 * Method getManager()
@@ -191,33 +189,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public double getDisplayHeight() { return 0; }
 
 	/**
-	 * Method setZoomListener()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setZoomListener(msi.gama.common.interfaces.IDisplaySurface.IZoomListener)
-	 */
-	// @Override
-	// public void setZoomListener(final IZoomListener listener) {}
-
-	/**
-	 * Method getModelCoordinates()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
-	 */
-	@Override
-	public GamaPoint getModelCoordinates() { return new GamaPoint(); }
-
-	/**
-	 * Method getModelCoordinatesFrom()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinatesFrom(int, int, java.awt.Point, java.awt.Point)
-	 */
-	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final Point sizeInPixels,
-			final Point positionInPixels) {
-		return new GamaPoint();
-	}
-
-	/**
 	 * Method selectAgent()
 	 *
 	 * @see msi.gama.common.interfaces.IDisplaySurface#selectAgent(int, int)
@@ -226,15 +197,6 @@ public class NullDisplaySurface implements IDisplaySurface {
 	public IList<IAgent> selectAgent(final int x, final int y) {
 		return null;
 	}
-
-	// /**
-	// * Method isSynchronized()
-	// * @see msi.gama.common.interfaces.IDisplaySurface#isSynchronized()
-	// */
-	// @Override
-	// public boolean isSynchronized() {
-	// return false;
-	// }
 
 	/**
 	 * Method getZoomLevel()
@@ -381,8 +343,10 @@ public class NullDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public Rectangle getBoundsForRobotSnapshot() { return new Rectangle(); }
-	
+
 	@Override
-	public boolean shouldWaitToBecomeRendered() { return false; }
+	public boolean shouldWaitToBecomeRendered() {
+		return false;
+	}
 
 }

@@ -458,6 +458,17 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	}
 
 	@Override
+	public GamaPoint getWindowCoordinates() {
+		return renderer.getCameraHelper().getMousePosition();
+		// DEBUG.OUT("Coordinates in display " + mp);
+		// if (mp == null) return null;
+		// final GamaPoint p = renderer.getRealWorldPointFromWindowPoint(mp);
+		// DEBUG.OUT("Coordinates in env " + p);
+		// if (p == null) return null;
+		// return new GamaPoint(p.x, -p.y);
+	}
+
+	@Override
 	public void getModelCoordinatesInfo(final StringBuilder sb) {
 		boolean canObtainInfo = getManager().isProvidingCoordinates();
 		if (!canObtainInfo) {
@@ -791,9 +802,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void setMousePosition(final int x, final int y) {
 		// Callable from non OpenGL context
-		world_position = renderer.getCameraHelper().getWorldPositionFrom(
-				new GamaPoint(x, y), new GamaPoint()
-				).yNegated();
+		world_position =
+				renderer.getCameraHelper().getWorldPositionFrom(new GamaPoint(x, y), new GamaPoint()).yNegated();
 	}
 
 	@Override
@@ -823,16 +833,24 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public Rectangle getBoundsForRobotSnapshot() {
 		var rect = WorkbenchHelper.displaySizeOf(renderer.getCanvas());
 		// For some reason, macOS requires the native dimension for the robot to snapshot correctly
-		if (PlatformHelper.isMac() ) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
-				rect);
+		if (PlatformHelper.isMac()) { rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(), rect); }
 		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
 	}
-	
+
+	/**
+	 * Gets the bounds for regular snapshot.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the bounds for regular snapshot
+	 * @date 17 sept. 2023
+	 */
 	public Rectangle getBoundsForRegularSnapshot() {
 		var rect = WorkbenchHelper.displaySizeOf(renderer.getCanvas());
-		// For some reason, macOS and Windows require the native dimension for the internal process to snapshot correctly
-		if (PlatformHelper.isMac() || PlatformHelper.isWindows()) rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(),
-				rect);
+		// For some reason, macOS and Windows require the native dimension for the internal process to snapshot
+		// correctly
+		if (PlatformHelper.isMac() || PlatformHelper.isWindows()) {
+			rect = DPIHelper.autoScaleUp(renderer.getCanvas().getMonitor(), rect);
+		}
 		return new Rectangle(rect.x, rect.y, rect.width, rect.height);
 	}
 

@@ -85,6 +85,8 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 				return new CameraOrientationUnitExpression(doc);
 			case "user_location":
 				return new UserLocationUnitExpression(doc);
+			case "user_location_in_display":
+				return new UserLocationInDisplayUnitExpression(doc);
 			case "current_error":
 				return new CurrentErrorUnitExpression(doc);
 

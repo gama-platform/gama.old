@@ -383,9 +383,17 @@ public interface GamlCoreConstants {
 
 	@constant (
 			value = "user_location",
+			altNames = { "user_location_in_world" },
 			category = IConstantCategory.GRAPHIC,
 			concept = { IConcept.DISPLAY },
-			doc = @doc ("This unit contains in permanence the location of the mouse on the display in which it is situated. The latest location is provided when it is out of a display")) GamaPoint user_location =
+			doc = @doc ("This unit permanently holds the mouse's location in the world's coordinates. If it is outside a display window, its last position is used.")) GamaPoint user_location =
+					new GamaPoint();
+
+	@constant (
+			value = "user_location_in_display",
+			category = IConstantCategory.GRAPHIC,
+			concept = { IConcept.DISPLAY },
+			doc = @doc ("This unit permanently holds the mouse's location in the display's coordinates. If it is outside a display window, its last position is used.")) GamaPoint user_location_in_display =
 					new GamaPoint();
 
 	/** The camera location. */

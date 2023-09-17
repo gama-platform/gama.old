@@ -144,6 +144,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	/** The mouse position. */
 	Point mousePosition;
 
+	/** The is locked. */
 	private boolean is_locked = false;
 
 	/**
@@ -226,7 +227,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void draggedTo(final int x, final int y) {
-		if(!is_locked) {
+		if (!is_locked) {
 			final Point origin = getOrigin();
 			setOrigin(origin.x + x - getMousePosition().x, origin.y + y - getMousePosition().y);
 			updateDisplay(true);
@@ -428,14 +429,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void zoomIn() {
-		if(!is_locked)
-			zoom(true);
+		if (!is_locked) { zoom(true); }
 	}
 
 	@Override
 	public void zoomOut() {
-		if(!is_locked)
-			zoom(false);
+		if (!is_locked) { zoom(false); }
 	}
 
 	@Override
@@ -536,6 +535,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		// See Issue #2783: we dont return null but 0,0.
 		// return null;
 		return new GamaPoint();
+	}
+
+	@Override
+	public GamaPoint getWindowCoordinates() {
+		final Point mouse = getMousePosition();
+		return new GamaPoint(mouse.x, mouse.y);
 	}
 
 	@Override

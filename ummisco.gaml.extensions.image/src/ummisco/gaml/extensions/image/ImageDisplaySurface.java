@@ -54,9 +54,6 @@ import ummisco.gama.dev.utils.DEBUG;
 @doc ("A display used to save the graphical representations of agents into image files")
 public class ImageDisplaySurface implements IDisplaySurface {
 
-	/** The null point. */
-	static GamaPoint NULL_POINT = new GamaPoint.Immutable();
-
 	/** The output. */
 	private final LayeredDisplayOutput output;
 
@@ -204,8 +201,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void toggleLock() {
-	}
+	public void toggleLock() {}
 
 	/*
 	 * (non-Javadoc)
@@ -243,14 +239,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public double getDisplayHeight() { return this.getHeight(); }
-
-	/**
-	 * Method getModelCoordinates()
-	 *
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
-	 */
-	@Override
-	public GamaPoint getModelCoordinates() { return null; }
 
 	/**
 	 * Method getZoomLevel()

@@ -108,7 +108,7 @@ public class SwtGui implements IGui {
 	private IAgent highlightedAgent;
 
 	/** The mouse location in model. */
-	private GamaPoint mouseLocationInModel;
+	private GamaPoint mouseLocationInModel, mouseLocationInDisplay;
 
 	/** The parameters view. */
 	private final IGamaView.Parameters[] parametersView = new IGamaView.Parameters[1];
@@ -744,7 +744,13 @@ public class SwtGui implements IGui {
 	public GamaPoint getMouseLocationInModel() { return mouseLocationInModel; }
 
 	@Override
+	public GamaPoint getMouseLocationInDisplay() { return mouseLocationInDisplay; }
+
+	@Override
 	public void setMouseLocationInModel(final GamaPoint location) { mouseLocationInModel = location; }
+
+	@Override
+	public void setMouseLocationInDisplay(final GamaPoint location) { mouseLocationInDisplay = location; }
 
 	@Override
 	public void exit() {
