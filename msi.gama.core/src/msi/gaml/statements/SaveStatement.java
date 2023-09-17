@@ -123,7 +123,7 @@ import ummisco.gama.dev.utils.DEBUG;
 								value = "Allows to define the attributes of a shape file. Keys of the map are the attributes of agents to save, values are the names of attributes in the shape file")) },
 		omissible = IKeyword.DATA)
 @doc (
-		value = "Allows to save data in a file. The type of file can be \"shp\", \"asc\", \"geotiff\", \"text\" or \"csv\".",
+		value = "Allows to save data in a file.",
 		usages = { @usage (
 				value = "Its simple syntax is:",
 				examples = { @example (
@@ -479,7 +479,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		int distance = Integer.MAX_VALUE;
 		ISaveDelegate closest = null;
 		for (Entry<IType, ISaveDelegate> entry : map.entrySet()) {
-			if (entry.getKey().isAssignableFrom(dataType) && entry.getValue().handlesDataType(dataType)) {
+			if (/* entry.getKey().isAssignableFrom(dataType) && */entry.getValue().handlesDataType(dataType)) {
 				@SuppressWarnings ("unchecked") int d = dataType.distanceTo(entry.getKey());
 				if (d < distance) {
 					distance = d;
