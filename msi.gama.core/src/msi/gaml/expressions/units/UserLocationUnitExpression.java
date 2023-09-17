@@ -25,8 +25,8 @@ public class UserLocationUnitExpression extends UnitConstantExpression {
 	 * @param doc
 	 *            the doc
 	 */
-	public UserLocationUnitExpression(final String doc) {
-		super(new GamaPoint(), Types.POINT, "user_location", doc, null);
+	public UserLocationUnitExpression(final String name, final String doc) {
+		super(new GamaPoint(), Types.POINT, name, doc, null);
 	}
 
 	@Override
