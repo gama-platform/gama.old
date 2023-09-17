@@ -17,7 +17,7 @@ global {
 			}
 		}
 		//save grid "grid_value" attribute into the georefrenced png file.
-		save cell to:"../results/grid.png" format:image;
+		save cell to:"../results/grid.png";
 	}
 }
 
