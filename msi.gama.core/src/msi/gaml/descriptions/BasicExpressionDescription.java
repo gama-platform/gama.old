@@ -19,15 +19,19 @@ import msi.gama.common.util.StringUtils;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.types.TypeExpression;
-import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class BasicExpressionDescription.
  */
 public class BasicExpressionDescription implements IExpressionDescription {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The expression. */
 	protected IExpression expression;
@@ -158,15 +162,17 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		if (expression == null) return Types.NO_TYPE;
 		if (expression instanceof TypeExpression) return ((TypeExpression) expression).getDenotedType();
 		IType type = expression.getGamlType();
-		if (type == Types.STRING && expression.isConst())
-			return context.getTypeNamed(GamaStringType.staticCast(null, expression.getConstValue(), true));
-		final String s = expression.literalValue();
+		// if (type == Types.STRING && expression.isConst())
+		// return context.getTypeNamed(GamaStringType.staticCast(null, expression.getConstValue(), true));
+
 		ModelDescription md = context.getModelDescription();
 		if (md != null) {
 			final ITypesManager tm = md.getTypesManager();
-			if (tm.containsType(s)) return tm.get(s);
+			final String s = expression.literalValue();
+			if (tm.containsType(s))
+				return tm.get(s);
 		}
-		return expression.getGamlType();
+		return type;
 	}
 
 }

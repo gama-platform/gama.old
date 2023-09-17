@@ -318,6 +318,13 @@ public abstract class SymbolDescription implements IDescription {
 
 	}
 
+	protected void compileTypeProviderFacets(final String... names) {
+		for (String s : names) {
+			IExpressionDescription exp = getFacet(s);
+			if (exp != null) { exp.compile(this); }
+		}
+	}
+
 	@Override
 	public final SymbolProto getMeta() { return proto; }
 
@@ -592,25 +599,33 @@ public abstract class SymbolDescription implements IDescription {
 		return type;
 	}
 
+	// 13/02/20: Addition of VALUE (see #2932)
+	static final String[] staticTypeProviders = { DATA, TYPE, SPECIES, AS, TARGET /* , ON */ };
+	static final String[] dynamicTypeProviders = { INIT, VALUE, UPDATE, FUNCTION, DEFAULT };
+
 	/**
 	 * Compute type.
 	 *
 	 * @return the i type
 	 */
 	protected IType<?> computeType() {
-
 		// Adapter ca pour prendre en compte les ITypeProvider
-		// 13/02/20: Addition of VALUE (see #2932)
-		IType<?> tt = getTypeDenotedByFacet(DATA, TYPE, SPECIES, AS, TARGET, ON, VALUE);
+		IType<?> tt = getTypeDenotedByFacet(staticTypeProviders);
+		if (tt == Types.NO_TYPE) {
+			IExpressionDescription ed = getFacet(dynamicTypeProviders);
+			if (ed != null) {
+				IExpression expr = ed.compile(this);
+				if (expr != null) { tt = expr.getGamlType(); }
+			}
+		}
 		IType<?> kt = getTypeDenotedByFacet(INDEX, tt.getKeyType());
 		IType<?> ct = getTypeDenotedByFacet(OF, tt.getContentType());
 		final boolean isContainerWithNoContentsType = tt.isContainer() && ct == Types.NO_TYPE;
 		final boolean isContainerWithNoKeyType = tt.isContainer() && kt == Types.NO_TYPE;
-		// final boolean isSpeciesWithAgentType = tt.id() == IType.SPECIES && ct.id() == IType.AGENT;
-		if (isContainerWithNoContentsType || isContainerWithNoKeyType /* || isSpeciesWithAgentType */) {
-			compileTypeProviderFacets();
-			final IExpression expr = getFacetExpr(INIT, VALUE, UPDATE, FUNCTION, DEFAULT);
-			if (expr != null) {
+		if (isContainerWithNoContentsType || isContainerWithNoKeyType) {
+			IExpressionDescription ed = getFacet(dynamicTypeProviders);
+			if (ed != null) {
+				IExpression expr = ed.compile(this);
 				final IType<?> exprType = expr.getGamlType();
 				if (tt.isAssignableFrom(exprType)) {
 					tt = exprType;
@@ -794,23 +809,6 @@ public abstract class SymbolDescription implements IDescription {
 		});
 
 	}
-
-	/**
-	 * Verify facet expr enclosing context.
-	 *
-	 * @param facet
-	 *            the facet
-	 * @param fp
-	 *            the fp
-	 * @param exp
-	 *            the exp
-	 */
-	// private void verifyFacetExprEnclosingContext(final String facet, final FacetProto fp, final IExpression exp) {
-	// if (!exp.isValidInContext(enclosing)) {
-	// warning("Facet '" + facet + "' cannot be compiled in the context of " + enclosing, IGamlIssue.WRONG_CONTEXT,
-	// facet);
-	// }
-	// }
 
 	/**
 	 * Special case for point and date.
@@ -1096,8 +1094,6 @@ public abstract class SymbolDescription implements IDescription {
 	 * @param type
 	 *            the new type
 	 */
-	private void setType(final IType<?> type) {
-		this.type = type;
-	}
+	private void setType(final IType<?> type) { this.type = type; }
 
 }

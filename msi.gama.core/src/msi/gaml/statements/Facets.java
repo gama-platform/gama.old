@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Facets.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * Facets.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -25,7 +24,7 @@ import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 27 ao�t 2010
@@ -35,11 +34,11 @@ import msi.gaml.types.Types;
  */
 public class Facets implements IGamlable {
 	static {
-		// DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The clean copy. */
-	static Function<IExpressionDescription, IExpressionDescription> cleanCopy = value -> value.cleanCopy();
+	static Function<IExpressionDescription, IExpressionDescription> cleanCopy = IExpressionDescription::cleanCopy;
 
 	/**
 	 * The Class Facet.
@@ -48,15 +47,17 @@ public class Facets implements IGamlable {
 
 		/** The key. */
 		public String key;
-		
+
 		/** The value. */
 		public IExpressionDescription value;
 
 		/**
 		 * Instantiates a new facet.
 		 *
-		 * @param s the s
-		 * @param e the e
+		 * @param s
+		 *            the s
+		 * @param e
+		 *            the e
 		 */
 		Facet(final String s, final IExpressionDescription e) {
 			key = s;
@@ -104,7 +105,8 @@ public class Facets implements IGamlable {
 	/**
 	 * Instantiates a new facets.
 	 *
-	 * @param size the size
+	 * @param size
+	 *            the size
 	 */
 	protected Facets(final int size) {
 		facets = Collector.getList();
@@ -114,7 +116,8 @@ public class Facets implements IGamlable {
 	/**
 	 * Instantiates a new facets.
 	 *
-	 * @param strings the strings
+	 * @param strings
+	 *            the strings
 	 */
 	public Facets(final String... strings) {
 		this(strings == null ? 0 : strings.length % 2);
@@ -129,13 +132,12 @@ public class Facets implements IGamlable {
 	/**
 	 * Instantiates a new facets.
 	 *
-	 * @param other the other
+	 * @param other
+	 *            the other
 	 */
 	public Facets(final Facets other) {
 		this(other == null ? 0 : other.size());
-		if (other != null) {
-			this.facets.addAll(other.facets);
-		}
+		if (other != null) { this.facets.addAll(other.facets); }
 	}
 
 	@Override
@@ -146,7 +148,8 @@ public class Facets implements IGamlable {
 	/**
 	 * Contains key.
 	 *
-	 * @param key the key
+	 * @param key
+	 *            the key
 	 * @return true, if successful
 	 */
 	public boolean containsKey(final String key) {
@@ -159,29 +162,27 @@ public class Facets implements IGamlable {
 	 * @param newFacets
 	 */
 	public void putAll(final Facets newFacets) {
-		for (final Facet f : newFacets.facets) {
-			put(f.key, f.value);
-		}
+		for (final Facet f : newFacets.facets) { put(f.key, f.value); }
 	}
 
 	/**
 	 * Complement with.
 	 *
-	 * @param newFacets the new facets
+	 * @param newFacets
+	 *            the new facets
 	 */
 	/*
 	 * Same as putAll(), but without replacing the existing values
 	 */
 	public void complementWith(final Facets newFacets) {
-		for (final Facet f : newFacets.facets) {
-			putIfAbsent(f.key, f.value);
-		}
+		for (final Facet f : newFacets.facets) { putIfAbsent(f.key, f.value); }
 	}
 
 	/**
 	 * Removes the.
 	 *
-	 * @param key the key
+	 * @param key
+	 *            the key
 	 */
 	public void remove(final String key) {
 		facets.removeIf(f -> f.key.equals(key));
@@ -190,27 +191,27 @@ public class Facets implements IGamlable {
 	/**
 	 * Gets the.
 	 *
-	 * @param key the key
+	 * @param key
+	 *            the key
 	 * @return the i expression description
 	 */
 	public IExpressionDescription get(final String key) {
-		if (key == null) { return null; }
-		for (final Facet f : facets) {
-			if (f.key.equals(key)) { return f.value; }
-		}
+		if (key == null) return null;
+		for (final Facet f : facets) { if (f.key.equals(key)) return f.value; }
 		return null;
 	}
 
 	/**
 	 * Gets the descr.
 	 *
-	 * @param keys the keys
+	 * @param keys
+	 *            the keys
 	 * @return the descr
 	 */
 	public IExpressionDescription getDescr(final String... keys) {
 		for (final String key : keys) {
 			final IExpressionDescription result = get(key);
-			if (result != null) { return result; }
+			if (result != null) return result;
 		}
 		return null;
 
@@ -219,19 +220,21 @@ public class Facets implements IGamlable {
 	/**
 	 * Gets the label.
 	 *
-	 * @param key the key
+	 * @param key
+	 *            the key
 	 * @return the label
 	 */
 	public String getLabel(final String key) {
 		final IExpressionDescription f = get(key);
-		if (f == null) { return null; }
+		if (f == null) return null;
 		return StringUtils.toJavaString(f.toString());
 	}
 
 	/**
 	 * Gets the expr.
 	 *
-	 * @param key the key
+	 * @param key
+	 *            the key
 	 * @return the expr
 	 */
 	public IExpression getExpr(final String key) {
@@ -241,13 +244,14 @@ public class Facets implements IGamlable {
 	/**
 	 * Gets the expr.
 	 *
-	 * @param keys the keys
+	 * @param keys
+	 *            the keys
 	 * @return the expr
 	 */
 	public IExpression getExpr(final String... keys) {
 		for (final String s : keys) {
 			final IExpression expr = getExpr(s);
-			if (expr != null) { return expr; }
+			if (expr != null) return expr;
 		}
 		return null;
 	}
@@ -255,21 +259,25 @@ public class Facets implements IGamlable {
 	/**
 	 * Gets the expr.
 	 *
-	 * @param key the key
-	 * @param ifAbsent the if absent
+	 * @param key
+	 *            the key
+	 * @param ifAbsent
+	 *            the if absent
 	 * @return the expr
 	 */
 	public IExpression getExpr(final String key, final IExpression ifAbsent) {
 		final IExpressionDescription f = get(key);
-		if (f == null) { return ifAbsent; }
+		if (f == null) return ifAbsent;
 		return f.getExpression();
 	}
 
 	/**
 	 * Put as label.
 	 *
-	 * @param key the key
-	 * @param desc the desc
+	 * @param key
+	 *            the key
+	 * @param desc
+	 *            the desc
 	 */
 	public void putAsLabel(final String key, final String desc) {
 		put(key, LabelExpressionDescription.create(desc));
@@ -278,8 +286,10 @@ public class Facets implements IGamlable {
 	/**
 	 * Put.
 	 *
-	 * @param key the key
-	 * @param expr the expr
+	 * @param key
+	 *            the key
+	 * @param expr
+	 *            the expr
 	 */
 	public void put(final String key, final IExpression expr) {
 		final IExpressionDescription result = get(key);
@@ -306,8 +316,10 @@ public class Facets implements IGamlable {
 	/**
 	 * Put.
 	 *
-	 * @param key the key
-	 * @param expr the expr
+	 * @param key
+	 *            the key
+	 * @param expr
+	 *            the expr
 	 */
 	public void put(final String key, final IExpressionDescription expr) {
 		final Facet existing = getFacet(key);
@@ -322,8 +334,10 @@ public class Facets implements IGamlable {
 	/**
 	 * Equals.
 	 *
-	 * @param key the key
-	 * @param o the o
+	 * @param key
+	 *            the key
+	 * @param o
+	 *            the o
 	 * @return true, if successful
 	 */
 	public boolean equals(final String key, final String o) {
@@ -343,9 +357,7 @@ public class Facets implements IGamlable {
 	 */
 	public Facets cleanCopy() {
 		final Facets result = new Facets(size());
-		for (final Facet f : facets) {
-			result.facets.add(f.cleanCopy());
-		}
+		for (final Facet f : facets) { result.facets.add(f.cleanCopy()); }
 		return result;
 	}
 
@@ -353,11 +365,7 @@ public class Facets implements IGamlable {
 	 *
 	 */
 	public void dispose() {
-		for (final Facet facet : facets) {
-			if (facet.value != null) {
-				facet.value.dispose();
-			}
-		}
+		for (final Facet facet : facets) { if (facet.value != null) { facet.value.dispose(); } }
 		Collector.release(facets);
 		facets = null;
 	}
@@ -365,31 +373,28 @@ public class Facets implements IGamlable {
 	/**
 	 * For each facet.
 	 *
-	 * @param visitor the visitor
+	 * @param visitor
+	 *            the visitor
 	 * @return true, if successful
 	 */
 	public boolean forEachFacet(final BiConsumerWithPruning<String, IExpressionDescription> visitor) {
-		for (final Facet f : facets) {
-			if (!visitor.process(f.key, f.value)) { return false; }
-		}
+		for (final Facet f : facets) { if (!visitor.process(f.key, f.value)) return false; }
 		return true;
 	}
 
 	/**
 	 * For each facet in.
 	 *
-	 * @param names the names
-	 * @param visitor the visitor
+	 * @param names
+	 *            the names
+	 * @param visitor
+	 *            the visitor
 	 * @return true, if successful
 	 */
 	public boolean forEachFacetIn(final Set<String> names,
 			final BiConsumerWithPruning<String, IExpressionDescription> visitor) {
-		if (names == null) { return forEachFacet(visitor); }
-		for (final Facet f : facets) {
-			if (names.contains(f.key)) {
-				if (!visitor.process(f.key, f.value)) { return false; }
-			}
-		}
+		if (names == null) return forEachFacet(visitor);
+		for (final Facet f : facets) { if (names.contains(f.key) && !visitor.process(f.key, f.value)) return false; }
 		return true;
 	}
 
@@ -398,9 +403,7 @@ public class Facets implements IGamlable {
 	 *
 	 * @return true, if is empty
 	 */
-	public boolean isEmpty() {
-		return facets.isEmpty();
-	}
+	public boolean isEmpty() { return facets.isEmpty(); }
 
 	/**
 	 * Size.
@@ -414,7 +417,8 @@ public class Facets implements IGamlable {
 	/**
 	 * Transform values.
 	 *
-	 * @param function the function
+	 * @param function
+	 *            the function
 	 */
 	public void transformValues(final Function<IExpressionDescription, IExpressionDescription> function) {
 		facets.forEach(f -> f.value = function.apply(f.value));
@@ -423,61 +427,54 @@ public class Facets implements IGamlable {
 	/**
 	 * Put if absent.
 	 *
-	 * @param key the key
-	 * @param expr the expr
+	 * @param key
+	 *            the key
+	 * @param expr
+	 *            the expr
 	 */
 	public void putIfAbsent(final String key, final IExpressionDescription expr) {
-		if (!containsKey(key)) {
-			put(key, expr);
-		}
+		if (!containsKey(key)) { put(key, expr); }
 	}
 
 	/**
 	 * Gets the expr.
 	 *
-	 * @param index the index
+	 * @param index
+	 *            the index
 	 * @return the expr
 	 */
 	public IExpression getExpr(final int index) {
-		if (index > facets.size() || index < 0) { return null; }
+		if (index > facets.size() || index < 0) return null;
 		return facets.items().get(index).value.getExpression();
 	}
 
 	/**
 	 * Gets the first existing among.
 	 *
-	 * @param strings the strings
+	 * @param strings
+	 *            the strings
 	 * @return the first existing among
 	 */
 	public String getFirstExistingAmong(final String... strings) {
-		for (final String s : strings) {
-			if (containsKey(s)) { return s; }
-		}
+		for (final String s : strings) { if (containsKey(s)) return s; }
 		return null;
 	}
 
 	/**
 	 * Gets the type denoted by.
 	 *
-	 * @param key the key
-	 * @param context the context
-	 * @return the type denoted by
-	 */
-	public IType<?> getTypeDenotedBy(final String key, final IDescription context) {
-		return getTypeDenotedBy(key, context, Types.NO_TYPE);
-	}
-
-	/**
-	 * Gets the type denoted by.
-	 *
-	 * @param key the key
-	 * @param context the context
-	 * @param noType the no type
+	 * @param key
+	 *            the key
+	 * @param context
+	 *            the context
+	 * @param noType
+	 *            the no type
 	 * @return the type denoted by
 	 */
 	public IType<?> getTypeDenotedBy(final String key, final IDescription context, final IType<?> noType) {
 		final IExpressionDescription f = get(key);
-		if (f == null) { return noType; }
+		if (f == null) return noType;
+		// DEBUG.OUT("Looking for the type of facet " + key);
 		return f.getDenotedType(context);
 	}
 
@@ -486,20 +483,17 @@ public class Facets implements IGamlable {
 	 *
 	 * @return the facets
 	 */
-	public Collection<Facet> getFacets() {
-		return facets;
-	}
+	public Collection<Facet> getFacets() { return facets; }
 
 	/**
 	 * Gets the facet.
 	 *
-	 * @param key the key
+	 * @param key
+	 *            the key
 	 * @return the facet
 	 */
 	protected Facet getFacet(final String key) {
-		for (final Facet f : facets) {
-			if (f.key.equals(key)) { return f; }
-		}
+		for (final Facet f : facets) { if (f.key.equals(key)) return f; }
 		return null;
 	}
 
