@@ -18,7 +18,6 @@ import org.locationtech.jts.geom.Polygon;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -80,12 +79,6 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	@Override
 	public IType getGamlType() { return Types.GEOMETRY; }
 
-	@Override
-	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		if (attributes == null) return;
-		attributes.forEachPair(visitor);
-	}
-
 	/**
 	 * Method setLocation()
 	 *
@@ -144,16 +137,15 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	}
 
 	/**
-	 * Method getAttributes(). The attributes are shared by all the translated geometries. Another option would be to
-	 * maintain a map of attributes in each translated shape, but it is costly.
+	 * Method getAttributes(). Maintain a map of attributes in each translated shape, which is costly.
 	 *
 	 * @see msi.gama.common.interfaces.IAttributed#getAttributes()
 	 */
-	// @Override
-	// public GamaMap getAttributes() {
-	// return attributes;
-	// // return getReferenceGeometry().getAttributes();
-	// }
+	@Override
+	public IMap<String, Object> getAttributes() {
+		return attributes;
+		// return getReferenceGeometry().getAttributes();
+	}
 
 	/**
 	 * Method getOrCreateAttributes()
@@ -165,40 +157,6 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 		if (attributes == null) { attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
 		return attributes;
 		// return getReferenceGeometry().getOrCreateAttributes();
-	}
-
-	/**
-	 * Method getAttribute()
-	 *
-	 * @see msi.gama.common.interfaces.IAttributed#getAttribute(java.lang.Object)
-	 */
-	@Override
-	public Object getAttribute(final String key) {
-		if (attributes == null) return null;
-		return attributes.get(key);
-		// return getReferenceGeometry().getAttribute(key);
-	}
-
-	/**
-	 * Method setAttribute()
-	 *
-	 * @see msi.gama.common.interfaces.IAttributed#setAttribute(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public void setAttribute(final String key, final Object value) {
-		getOrCreateAttributes().put(key, value);
-		// getReferenceGeometry().setAttribute(key, value);
-	}
-
-	/**
-	 * Method hasAttribute()
-	 *
-	 * @see msi.gama.common.interfaces.IAttributed#hasAttribute(java.lang.Object)
-	 */
-	@Override
-	public boolean hasAttribute(final String key) {
-		return attributes != null && attributes.containsKey(key);
-		// return getReferenceGeometry().hasAttribute(key);
 	}
 
 	/**

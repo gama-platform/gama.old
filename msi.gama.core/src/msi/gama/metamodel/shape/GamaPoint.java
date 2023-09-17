@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * GamaPoint.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
+ * GamaPoint.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
@@ -20,8 +20,6 @@ import org.locationtech.jts.util.NumberUtil;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.IIntersectable;
-import msi.gama.common.interfaces.BiConsumerWithPruning;
-import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
@@ -31,7 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.types.GamaGeometryType;
@@ -577,26 +575,17 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	@Override
 	public void dispose() {}
 
-	// @Override
-	// public GamaMap getAttributes() {
-	// return null;
-	// }
+	@Override
+	public GamaMap getAttributes() { return null; }
 
 	@Override
-	public IMap<String, Object> getOrCreateAttributes() { return GamaMapFactory.create(); }
+	public IMap<String, Object> getOrCreateAttributes() { return null; }
 
-	@Override
-	public Object getAttribute(final String key) {
-		return null;
-	}
-
+	/**
+	 * Do nothing
+	 */
 	@Override
 	public void setAttribute(final String key, final Object value) {}
-
-	@Override
-	public boolean hasAttribute(final String key) {
-		return false;
-	}
 
 	/**
 	 * Method getGeometricalType()
@@ -948,12 +937,6 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	public GamaPoint clone() {
 		return new GamaPoint(x, y, z);
 	}
-
-	@Override
-	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {}
-
-	@Override
-	public void copyAttributesOf(final IAttributed source) {}
 
 	@Override
 	@Deprecated

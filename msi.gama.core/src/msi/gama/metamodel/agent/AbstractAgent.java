@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 
 import com.google.common.primitives.Ints;
 
-import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
@@ -86,12 +85,33 @@ public abstract class AbstractAgent implements IAgent {
 		this.index = index;
 	}
 
+	/**
+	 * Gets the agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the agent
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public IAgent getAgent() { return this; }
 
+	/**
+	 * Sets the agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param agent
+	 *            the new agent
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public void setAgent(final IAgent agent) {}
 
+	/**
+	 * Dispose.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public void dispose() {
 		if (dead) return;
@@ -103,16 +123,47 @@ public abstract class AbstractAgent implements IAgent {
 
 	}
 
+	/**
+	 * String value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the string
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		return serialize(true);
 	}
 
+	/**
+	 * Copy.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the i shape
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public IShape copy(final IScope scope) throws GamaRuntimeException {
 		return this;
 	}
 
+	/**
+	 * Serialize.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param includingBuiltIn
+	 *            the including built in
+	 * @return the string
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(30);
@@ -127,40 +178,51 @@ public abstract class AbstractAgent implements IAgent {
 		return getName();
 	}
 
-	//
-	// @Override
-	// public GamaMap<String, Object> getAttributes() {
-	// return (GamaMap<String, Object>) getGeometry().getAttributes();
-	// }
+	/**
+	 * Gets the attributes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the attributes
+	 * @date 17 sept. 2023
+	 */
+	@Override
+	public IMap<String, Object> getAttributes() { return (IMap<String, Object>) getGeometry().getAttributes(); }
 
+	/**
+	 * Gets the or create attributes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the or create attributes
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public IMap<String, Object> getOrCreateAttributes() { return getGeometry().getOrCreateAttributes(); }
 
-	@Override
-	public boolean hasAttribute(final String key) {
-		return getGeometry().hasAttribute(key);
-	}
-
-	@Override
-	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		getGeometry().forEachAttribute(visitor);
-	}
-
-	@Override
-	public Object getAttribute(final String key) {
-		return getGeometry().getAttribute(key);
-	}
-
-	@Override
-	public void setAttribute(final String name, final Object val) {
-		getOrCreateAttributes().put(name, val);
-	}
-
+	/**
+	 * Compare to.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @return the int
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public int compareTo(final IAgent o) {
 		return Ints.compare(getIndex(), o.getIndex());
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		return getSpecies().getArchitecture().init(scope) ? initSubPopulations(scope) : false;
@@ -368,6 +430,13 @@ public abstract class AbstractAgent implements IAgent {
 	// return getHost().getExperiment();
 	// }
 
+	/**
+	 * Gets the scope.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the scope
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public IScope getScope() {
 		final IMacroAgent a = getHost();
@@ -514,9 +583,23 @@ public abstract class AbstractAgent implements IAgent {
 		return null;
 	}
 
+	/**
+	 * Gets the geometrical type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the geometrical type
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public Type getGeometricalType() { return getGeometry().getGeometricalType(); }
 
+	/**
+	 * Gets the gaml type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the gaml type
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public IType<?> getGamlType() { return getScope().getType(getSpeciesName()); }
 

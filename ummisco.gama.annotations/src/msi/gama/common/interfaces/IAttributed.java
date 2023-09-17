@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IAttributed.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * IAttributed.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
@@ -20,14 +20,12 @@ import java.util.Map;
  */
 public interface IAttributed {
 
-	
-
 	/**
 	 * Allows to retrieve the attributes of the object as a Map
 	 *
 	 * @return a map containing the attributes or null if no attributes are defined
 	 */
-	// Map<String, Object> getAttributes();
+	Map<String, Object> getAttributes();
 
 	/**
 	 * Allows to retrieve the attributes of the object as a Map. If the object has no attributes, should return an empty
@@ -44,7 +42,11 @@ public interface IAttributed {
 	 *         valid value, which means that receiving null when calling this method does not necessarily mean that the
 	 *         key is absent. Use hasAttribute(Object key) to verify the presence of a key
 	 */
-	Object getAttribute(String key);
+	default Object getAttribute(final String key) {
+		Map<String, Object> attributes = getAttributes();
+		if (attributes == null) return null;
+		return attributes.get(key);
+	}
 
 	/**
 	 * Allows to set the value stored at key "key". A new entry is created when "key" is not already present, otherwise
@@ -52,20 +54,35 @@ public interface IAttributed {
 	 *
 	 */
 
-	void setAttribute(String key, Object value);
+	default void setAttribute(final String key, final Object value) {
+		Map<String, Object> attributes = getOrCreateAttributes();
+		if (attributes == null) return;
+		attributes.put(key, value);
+	}
 
 	/**
 	 * Answers whether or not this object has any value set at key "key".
 	 *
 	 * @return true if the object has such an attribute, false otherwise
 	 */
-	boolean hasAttribute(String key);
+	default boolean hasAttribute(final String key) {
+		Map<String, Object> attributes = getAttributes();
+		if (attributes == null) return false;
+		return attributes.containsKey(key);
+	}
 
 	/**
 	 * Allows to visit the attributes like a map. Returns true if all the attributes have been visited, false otherwise.
 	 */
 
-	void forEachAttribute(BiConsumerWithPruning<String, Object> visitor);
+	default void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
+		if (visitor == null) return;
+		Map<String, Object> attributes = getAttributes();
+		if (attributes == null) return;
+		for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+			if (!visitor.process(entry.getKey(), entry.getValue())) return;
+		}
+	}
 
 	/**
 	 * Copy all the attributes of the other instance of IAttributed

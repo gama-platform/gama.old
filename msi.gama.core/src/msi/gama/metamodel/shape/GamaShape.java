@@ -32,7 +32,6 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.IAttributed;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -691,39 +690,14 @@ public class GamaShape implements IShape {
 		}
 	}
 
-	/**
-	 * Used when the geometry is not affected to an agent and directly accessed by 'read' or 'get' operators. Can be
-	 * used in Java too, of course, to retrieve any value stored in the shape
-	 *
-	 * @param s
-	 * @return the corresponding value of the attribute named 's' in the feature, or null if it is not present
-	 */
-	@Override
-	public Object getAttribute(final String s) {
-		if (attributes == null) return null;
-		return attributes.get(s);
-	}
-
-	@Override
-	public void setAttribute(final String key, final Object value) {
-		getOrCreateAttributes().put(key, value);
-	}
-
 	@Override
 	public IMap<String, Object> getOrCreateAttributes() {
 		if (attributes == null) { attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
 		return attributes;
 	}
 
-	// @Override
-	// public GamaMap getAttributes() {
-	// return attributes;
-	// }
-
 	@Override
-	public boolean hasAttribute(final String key) {
-		return attributes != null && attributes.containsKey(key);
-	}
+	public IMap<String, Object> getAttributes() { return attributes; }
 
 	/**
 	 * Method getGeometricalType()
@@ -757,12 +731,6 @@ public class GamaShape implements IShape {
 	public void setGeometricalType(final Type t) {
 		final ShapeData data = getData(true);
 		if (data != null) { data.type = t; }
-	}
-
-	@Override
-	public void forEachAttribute(final BiConsumerWithPruning<String, Object> visitor) {
-		if (attributes == null) return;
-		attributes.forEachPair(visitor);
 	}
 
 }
