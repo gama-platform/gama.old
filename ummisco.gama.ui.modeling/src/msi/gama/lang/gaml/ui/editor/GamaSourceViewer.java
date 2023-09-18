@@ -69,7 +69,6 @@ public class GamaSourceViewer extends XtextSourceViewer {
 	@Override
 	public void setCodeMiningProviders(final ICodeMiningProvider[] codeMiningProviders) {
 		super.setCodeMiningProviders(codeMiningProviders);
-		for (ICodeMiningProvider p : codeMiningProviders) {}
 	}
 
 }
