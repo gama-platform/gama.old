@@ -384,25 +384,6 @@ jobs:
   # TODO
   #windows-wget-push:
   #
-  widows-winget:
-    needs: windows-msi
-    runs-on: ubuntu-latest # the tool is using java so cross platform :)
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: gama-windows-exe  
-
-      - name: Publish Gama to Winget 🚀
-        uses: vedantmgoyal2009/winget-releaser@v2
-        with:
-          identifier: GamaPlatform.Gama
-          version: 1.9.3
-          release-tag: 1.9.3
-          installers-regex: \.exe$
-          token: ${{ secrets.BOT_TOKEN }}
-          release-repository: GamaPlatform/Gama
 
   
   #
