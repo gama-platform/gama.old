@@ -13,13 +13,11 @@ package msi.gama.metamodel.agent;
 import java.util.Objects;
 import java.util.Set;
 
-import org.locationtech.jts.geom.Geometry;
-
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -63,7 +61,7 @@ public class MinimalAgent extends AbstractAgent {
 	 *            the population used to prototype the agent.
 	 */
 	public MinimalAgent(final IPopulation<? extends IAgent> s, final int index) {
-		this(s, index, new GamaShape((Geometry) null));
+		this(s, index, GamaShapeFactory.create());
 	}
 
 	/**
@@ -133,7 +131,7 @@ public class MinimalAgent extends AbstractAgent {
 		} else {
 			// If the agent is different, we do not copy the attributes present in the shape passed as argument (see
 			// Issue #2053).
-			newLocalGeom = new GamaShape(newGeometry.getInnerGeometry().copy());
+			newLocalGeom = GamaShapeFactory.createFrom(newGeometry.getInnerGeometry().copy());
 			newLocalGeom.copyShapeAttributesFrom(newGeometry);
 		}
 		// topology.normalizeLocation(newGeomLocation, false);

@@ -230,6 +230,7 @@ public class GamaFieldType extends GamaMatrixType {
 			value = "creates a field with a size provided by the first operand, and filled by the evaluation of the second operand for each cell",
 			comment = "Note that both components of the right operand point should be positive, otherwise an exception is raised.",
 			see = { IKeyword.MATRIX, "as_matrix" })
+	@no_test
 	public static IField buildFieldWith(final IScope scope, final GamaPoint size, final IExpression init) {
 		if (size == null) throw GamaRuntimeException.error("A nil size is not allowed for matrices", scope);
 		IField field = buildField(scope, (int) size.x, (int) size.y, 0d);

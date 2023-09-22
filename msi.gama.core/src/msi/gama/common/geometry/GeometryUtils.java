@@ -22,6 +22,7 @@ import org.geotools.geometry.jts.JTS;
 import org.locationtech.jts.algorithm.Distance;
 import org.locationtech.jts.algorithm.Orientation;
 import org.locationtech.jts.algorithm.PointLocation;
+import org.locationtech.jts.algorithm.PointLocator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.Envelope;
@@ -37,6 +38,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.geom.impl.CoordinateArraySequenceFactory;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
@@ -50,12 +52,14 @@ import org.locationtech.jts.triangulate.ConstraintEnforcementException;
 import org.locationtech.jts.triangulate.DelaunayTriangulationBuilder;
 import org.locationtech.jts.triangulate.VoronoiDiagramBuilder;
 import org.locationtech.jts.triangulate.quadedge.LocateFailureException;
+import org.locationtech.jts.util.AssertionFailedException;
 
 import msi.gama.common.interfaces.IEnvelopeComputer;
 import msi.gama.common.interfaces.IEnvelopeProvider;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.runtime.GAMA;
@@ -108,6 +112,9 @@ public class GeometryUtils {
 
 	/** The Constant PREPARED_GEOMETRY_FACTORY. */
 	public final static PreparedGeometryFactory PREPARED_GEOMETRY_FACTORY = new PreparedGeometryFactory();
+
+	/** The Constant pl. */
+	public final static PointLocator POINT_LOCATOR = new PointLocator();
 
 	/**
 	 * Distance on polyline.
@@ -584,14 +591,14 @@ public class GeometryUtils {
 					y += size_y;
 					if (!overlaps) {
 						if (square.coveredBy(geom)) {
-							final IShape sq = new GamaShape(square);
+							final IShape sq = GamaShapeFactory.createFrom(square);
 							geoms.add(sq);
 							if (firstX && borders != null) { borders.add(sq); }
 							firstX = false;
 
 						}
 					} else if (square.intersects(geom)) {
-						final IShape sq = new GamaShape(square);
+						final IShape sq = GamaShapeFactory.createFrom(square);
 						geoms.add(sq);
 						if (firstX && borders != null) { borders.add(sq); }
 						firstX = false;
@@ -621,7 +628,7 @@ public class GeometryUtils {
 		for (final IShape shape : rects) {
 			final IShape gg = Operators.inter(null, shape, geom);
 			if (gg != null && !gg.getInnerGeometry().isEmpty()) {
-				final GamaShape sp = new GamaShape(gg);
+				final GamaShape sp = GamaShapeFactory.createFrom(gg);
 				final GamaPoint[] pts = getPointsOf(sp);
 				for (int i = 0; i < pts.length; i++) {
 					final GamaPoint gp = pts[i];
@@ -651,7 +658,7 @@ public class GeometryUtils {
 		final int nb = g.getNumGeometries();
 		for (int i = 0; i < nb; i++) {
 			final Geometry gg = g.getGeometryN(i);
-			geoms.add(new GamaShape(gg.intersection(scope.getSimulation().getInnerGeometry())));
+			geoms.add(GamaShapeFactory.createFrom(gg.intersection(scope.getSimulation().getInnerGeometry())));
 		}
 		return geoms;
 	}
@@ -676,7 +683,7 @@ public class GeometryUtils {
 		final int nb = g.getNumGeometries();
 		for (int i = 0; i < nb; i++) {
 			final Geometry gg = g.getGeometryN(i);
-			geoms.add(new GamaShape(gg));
+			geoms.add(GamaShapeFactory.createFrom(gg));
 		}
 		return geoms;
 	}
@@ -701,7 +708,7 @@ public class GeometryUtils {
 		final int nb = tri.getNumGeometries();
 		for (int i = 0; i < nb; i++) {
 			final Geometry gg = tri.getGeometryN(i);
-			geoms.add(new GamaShape(gg));
+			geoms.add(GamaShapeFactory.createFrom(gg));
 		}
 		return geoms;
 	}
@@ -788,7 +795,7 @@ public class GeometryUtils {
 						cc.setAllZ(elevation);
 						gg.geometryChanged();
 					}
-					result.add(new GamaShape(gg));
+					result.add(GamaShapeFactory.createFrom(gg));
 				}
 			}
 		} finally {
@@ -865,7 +872,7 @@ public class GeometryUtils {
 				for (final Object o : cc) {
 					final GamaShape node = (GamaShape) o;
 					final Coordinate[] coordsArr = GeometryUtils.extractPoints(node,
-							new LinkedHashSet<IShape>(Graphs.neighborsOf(scope, graph, node)));
+							new LinkedHashSet<>(Graphs.neighborsOf(scope, graph, node)));
 					if (coordsArr != null) { network.add(GEOMETRY_FACTORY.createLineString(coordsArr)); }
 				}
 			} else if (cc.size() == 2) {
@@ -1204,11 +1211,11 @@ public class GeometryUtils {
 			final GamaPoint[] coords1 = new GamaPoint[indexTarget + 2];
 			for (int i = 0; i <= indexTarget; i++) { coords1[i] = coords[i]; }
 			coords1[indexTarget + 1] = pt;
-			lines.add(new GamaShape(GEOMETRY_FACTORY.createLineString(coords1, false)));
+			lines.add(GamaShapeFactory.createFrom(GEOMETRY_FACTORY.createLineString(coords1, false)));
 			final GamaPoint[] coords2 = new GamaPoint[coords.length - indexTarget];
 			coords2[0] = pt;
 			for (int i = indexTarget + 1, k = 1; i < coords.length; i++, k++) { coords2[k] = coords[i]; }
-			lines.add(new GamaShape(GEOMETRY_FACTORY.createLineString(coords2, false)));
+			lines.add(GamaShapeFactory.createFrom(GEOMETRY_FACTORY.createLineString(coords2, false)));
 		} else if (g instanceof MultiLineString) {
 			final Point point = GEOMETRY_FACTORY.createPoint(pt);
 			LineString geom2 = null;
@@ -1293,7 +1300,7 @@ public class GeometryUtils {
 	 * @return
 	 */
 	public static IShape smooth(final Geometry geom, final double fit) {
-		return new GamaShape(JTS.smooth(geom, fit, GEOMETRY_FACTORY));
+		return GamaShapeFactory.createFrom(JTS.smooth(geom, fit, GEOMETRY_FACTORY));
 	}
 
 	/**
@@ -1715,5 +1722,189 @@ public class GeometryUtils {
 			return g3;
 		}
 		return g2;
+	}
+
+	/**
+	 * Touches.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param g1
+	 *            the g 1
+	 * @param g2
+	 *            the g 2
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
+	public static boolean robustTouches(final IShape s1, final IShape s2) {
+		if (s1 == null || s2 == null) return false;
+		Geometry g1 = s1.getInnerGeometry();
+		Geometry g2 = s2.getInnerGeometry();
+		if (g1 == null || g2 == null) return false;
+		try {
+			return g1.touches(g2);
+		} catch (final TopologyException e) {
+			try {
+				return g1.buffer(0).touches(g2.buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return g1.buffer(0).touches(g2.buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Robust partially overlaps.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param g1
+	 *            the g 1
+	 * @param g2
+	 *            the g 2
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
+	public static boolean robustPartiallyOverlaps(final IShape s1, final IShape s2) {
+		if (s1 == null || s2 == null) return false;
+		Geometry g1 = s1.getInnerGeometry();
+		Geometry g2 = s2.getInnerGeometry();
+		if (g1 == null || g2 == null) return false;
+		try {
+			return g1.overlaps(g2);
+		} catch (final TopologyException e) {
+			try {
+				return g1.buffer(0).overlaps(g2.buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return g1.buffer(0).overlaps(g2.buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Robust crosses.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param s1
+	 *            the s 1
+	 * @param s1
+	 *            the s 1
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
+	public static boolean robustCrosses(final IShape s1, final IShape s2) {
+		if (s1 == null || s2 == null) return false;
+		Geometry g1 = s1.getInnerGeometry();
+		if (g1 == null) return false;
+		if (s2.isPoint()) return POINT_LOCATOR.intersects(s2.getLocation(), g1);
+		Geometry g2 = s2.getInnerGeometry();
+		if (g2 == null) return false;
+		// WARNING Only 2D now
+		try {
+			return g1.crosses(g2);
+		} catch (final TopologyException e) {
+			try {
+				return g1.buffer(0).crosses(g2.buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return g1.buffer(0).crosses(g2.buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Robust intersects.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param s1
+	 *            the s 1
+	 * @param s2
+	 *            the s 2
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
+	public static boolean robustIntersects(final IShape s1, final IShape s2) {
+		if (s1 == null || s2 == null) return false;
+		Geometry g1 = s1.getInnerGeometry();
+		if (g1 == null) return false;
+		if (s2.isPoint()) return POINT_LOCATOR.intersects(s2.getLocation(), g1);
+		Geometry g2 = s2.getInnerGeometry();
+		if (g2 == null) return false;
+		// WARNING Only 2D now
+		try {
+			return g1.intersects(g2);
+		} catch (final TopologyException e) {
+			try {
+				return g1.buffer(0).intersects(g2.buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return g1.buffer(0).intersects(g2.buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Robust covers.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param s1
+	 *            the s 1
+	 * @param s2
+	 *            the s 2
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
+	public static boolean robustCovers(final IShape s1, final IShape s2) {
+		if (s1 == null || s2 == null) return false;
+		Geometry g1 = s1.getInnerGeometry();
+		if (g1 == null) return false;
+		if (s2.isPoint()) return POINT_LOCATOR.intersects(s2.getLocation(), g1);
+		Geometry g2 = s2.getInnerGeometry();
+		if (g2 == null) return false;
+		// WARNING Only 2D now
+		try {
+			return g1.covers(g2);
+		} catch (final TopologyException e) {
+			try {
+				return g1.buffer(0).covers(g2.buffer(0));
+			} catch (final TopologyException e2) {
+				return false;
+			}
+		} catch (final AssertionFailedException e) {
+			try {
+				return g1.buffer(0).covers(g2.buffer(0));
+			} catch (final AssertionFailedException e2) {
+				return false;
+			}
+		} catch (final Exception e) {
+			return false;
+		}
 	}
 }

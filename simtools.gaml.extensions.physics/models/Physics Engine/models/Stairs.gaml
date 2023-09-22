@@ -2,7 +2,7 @@
 * Name: Stairs
 * This model demonstrates the use of the physics engine to build a simple model where particles are 
 * Author: Alexis Drogoul - 2021
-* Tags: 
+* Tags: physics
 */
 model Stairs
 

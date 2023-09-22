@@ -16,7 +16,6 @@ import static msi.gama.common.geometry.GeometryUtils.translate;
 import static msi.gama.util.GamaListFactory.create;
 import static msi.gaml.types.Types.POINT;
 
-import org.locationtech.jts.algorithm.PointLocator;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -24,15 +23,12 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.TopologyException;
-import org.locationtech.jts.util.AssertionFailedException;
 
 import msi.gama.common.geometry.AxisAngle;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.Scaling3D;
-import msi.gama.common.interfaces.IAttributed;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
@@ -48,6 +44,13 @@ import msi.gaml.types.Types;
  *
  *
  *
+ */
+
+/**
+ * The Class GamaShape.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 17 sept. 2023
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShape implements IShape {
@@ -78,20 +81,21 @@ public class GamaShape implements IShape {
 	 *
 	 * @param geom
 	 *            the geom
+	 * @deprecated use GamaShapeFactory instead
 	 */
+	@Deprecated
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
 	}
-
-	@Override
-	public IType getGamlType() { return Types.GEOMETRY; }
 
 	/**
 	 * Instantiates a new gama shape.
 	 *
 	 * @param env
 	 *            the env
+	 * @deprecated use GamaShapeFactory instead
 	 */
+	@Deprecated
 	public GamaShape(final Envelope3D env) {
 		this(env == null ? null : env.toGeometry());
 	}
@@ -101,7 +105,9 @@ public class GamaShape implements IShape {
 	 *
 	 * @param geom
 	 *            the geom
+	 * @deprecated use GamaShapeFactory instead
 	 */
+	@Deprecated
 	public GamaShape(final IShape geom) {
 		this(geom, null);
 
@@ -114,68 +120,31 @@ public class GamaShape implements IShape {
 	 * @param source
 	 * @param geom
 	 * @param copyAttributes
+	 * @deprecated use GamaShapeFactory instead
 	 */
 
+	@Deprecated
 	public GamaShape(final IShape source, final Geometry geom) {
 		this(geom == null ? source.getInnerGeometry().copy() : geom);
-		mixAttributes(source);
+		withAttributesOf(source);
 	}
 
 	/**
-	 * This is where the attributes of this shape and the attributes of an incoming shape are mixed. The default
-	 * strategy is to copy all the attributes to this
+	 * Instantiates a new gama shape.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param source
-	 */
-	private void mixAttributes(final IShape source) {
-		if (source == null) return;
-		// final GamaMap<String, Object> attr = (GamaMap<String, Object>) source.getAttributes();
-		copyShapeAttributesFrom(source);
-		if (source instanceof GamaShape shape) {
-			if (shape.attributes != null) {
-				getOrCreateAttributes();
-				shape.attributes.forEach((key, val) -> { if (val != source) { attributes.put(key, val); } });
-			}
-		} else {
-			// if (attr == null) { return; }
-			source.forEachAttribute((key, val) -> {
-				if (val != source) { setAttribute(key, val); }
-				return true;
-			});
-			// for (final Map.Entry<String, Object> entry : attr.entrySet()) {
-			// if (entry.getValue() != source) {
-			// setAttribute(entry.getKey(), entry.getValue());
-			// }
-			// }
-		}
-	}
-
-	@Override
-	public void copyAttributesOf(final IAttributed source) {
-		if (source instanceof GamaShape shape) {
-			if (shape.attributes != null) {
-				getOrCreateAttributes();
-				attributes.putAll(shape.attributes);
-			}
-		} else {
-			IShape.super.copyAttributesOf(source);
-		}
-
-	}
-
-	/**
-	 * Same as above, but applies a (optional) rotation around a given vector and (optional) translation to the geometry
-	 *
-	 * @param source
-	 *            cannot be null
+	 *            the source
 	 * @param geom
-	 *            can be null
+	 *            the geom
 	 * @param rotation
-	 *            can be null, expressed in degrees
+	 *            the rotation
 	 * @param newLocation
-	 *            can be null
+	 *            the new location
+	 * @date 18 sept. 2023
+	 * @deprecated use GamaShapeFactory instead
 	 */
-
+	@Deprecated
 	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final GamaPoint newLocation) {
 		this(source, geom);
 		if (!isPoint() && rotation != null) {
@@ -191,21 +160,25 @@ public class GamaShape implements IShape {
 	}
 
 	/**
-	 * Same as above, but applies a (optional) scaling to the geometry by specifying a bounding box or a set of
-	 * coefficients.
+	 * Instantiates a new gama shape.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param source
-	 *            cannot be null
+	 *            the source
 	 * @param geom
-	 *            can be null
+	 *            the geom
 	 * @param rotation
-	 *            can be null, expressed in degrees
+	 *            the rotation
 	 * @param newLocation
-	 *            can be null
+	 *            the new location
+	 * @param bounds
+	 *            the bounds
 	 * @param isBoundingBox
-	 *            indicates whether the previous parameter should be considered as an absolute bounding box (width,
-	 *            height, ) or as a set of coefficients.
+	 *            the is bounding box
+	 * @date 18 sept. 2023
+	 * @deprecated use GamaShapeFactory instead
 	 */
+	@Deprecated
 	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final GamaPoint newLocation,
 			final Scaling3D bounds, final boolean isBoundingBox) {
 		this(source, geom, rotation, newLocation);
@@ -224,17 +197,23 @@ public class GamaShape implements IShape {
 	}
 
 	/**
-	 * Same as above, but applies a (optional) scaling to the geometry by a given coefficient
+	 * Instantiates a new gama shape.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param source
-	 *            cannot be null
+	 *            the source
 	 * @param geom
-	 *            can be null
+	 *            the geom
 	 * @param rotation
-	 *            can be null, expressed in degrees
+	 *            the rotation
 	 * @param newLocation
-	 *            can be null
+	 *            the new location
+	 * @param scaling
+	 *            the scaling
+	 * @date 18 sept. 2023
+	 * @deprecated use GamaShapeFactory instead
 	 */
+	@Deprecated
 	public GamaShape(final IShape source, final Geometry geom, final AxisAngle rotation, final GamaPoint newLocation,
 			final Double scaling) {
 		this(source, geom, rotation, newLocation);
@@ -244,6 +223,103 @@ public class GamaShape implements IShape {
 			setLocation(previous);
 			if (is3D()) { setDepth(getDepth() * scaling); }
 		}
+	}
+
+	/**
+	 * This is where the attributes of this shape and the attributes of an incoming shape are mixed. The default
+	 * strategy is to copy all the attributes to this, except the attributes that represent the shape itself
+	 *
+	 * @param source
+	 */
+	public GamaShape withAttributesOf(final IShape source) {
+		if (source == null) return this;
+		copyShapeAttributesFrom(source);
+		source.forEachAttribute((key, val) -> {
+			if (val != source) { setAttribute(key, val); }
+			return true;
+		});
+		return this;
+	}
+
+	/**
+	 * With scaling. Applies a scaling to the geometry. Should only be used at construction time
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scaling
+	 *            the scaling
+	 * @return the gama shape
+	 * @date 17 sept. 2023
+	 */
+	public GamaShape withScaling(final Double scaling) {
+		if (scaling != null && !isPoint()) {
+			final GamaPoint previous = getLocation();
+			geometry.apply(Scaling3D.of(scaling));
+			setLocation(previous);
+			if (is3D()) { setDepth(getDepth() * scaling); }
+		}
+		return this;
+	}
+
+	/**
+	 * With scaling. Applies a scaling described by bounds, either as a bounding box or as factors along the axes
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param bounds
+	 *            the bounds
+	 * @param isBoundingBox
+	 *            the is bounding box
+	 * @return the gama shape
+	 * @date 17 sept. 2023
+	 */
+	public GamaShape withScaling(final Scaling3D bounds, final boolean isBoundingBox) {
+		if (bounds != null && !isPoint()) {
+			final Envelope3D env = getEnvelope();
+			final GamaPoint previous = getLocation();
+			if (isBoundingBox) {
+				geometry.apply(bounds.asBoundingBoxIn(env));
+			} else {
+				geometry.apply(bounds);
+			}
+			setLocation(previous);
+			if (is3D()) { setDepth(isBoundingBox ? bounds.getZ() : getDepth() * bounds.getZ()); }
+		}
+		return this;
+	}
+
+	/**
+	 * With location. Translates the geometry.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param newLocation
+	 *            the new location
+	 * @return the gama shape
+	 * @date 17 sept. 2023
+	 */
+	public GamaShape withLocation(final GamaPoint newLocation) {
+		if (newLocation != null) { setLocation(newLocation); }
+		return this;
+	}
+
+	/**
+	 * With rotation. Applies a (possibly null) rotation to the geometry.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param rotation
+	 *            the rotation
+	 * @return the gama shape
+	 * @date 17 sept. 2023
+	 */
+	public GamaShape withRotation(final AxisAngle rotation) {
+		if (!isPoint() && rotation != null) {
+			Double normalZ = null;
+			if (is3D()) { normalZ = getContourCoordinates(geometry).getNormal(true).z; }
+			rotate(geometry, getLocation(), rotation);
+			if (normalZ != null) {
+				final Double normalZ2 = getContourCoordinates(geometry).getNormal(true).z;
+				if (normalZ > 0 && normalZ2 < 0) { setDepth(-getDepth()); }
+			}
+		}
+		return this;
 	}
 
 	@Override
@@ -263,7 +339,7 @@ public class GamaShape implements IShape {
 		final IList<GamaShape> result = GamaListFactory.create(Types.GEOMETRY);
 		if (isMultiple()) {
 			for (int i = 0, n = getInnerGeometry().getNumGeometries(); i < n; i++) {
-				result.add(new GamaShape(getInnerGeometry().getGeometryN(i)));
+				result.add(GamaShapeFactory.createFrom(getInnerGeometry().getGeometryN(i)));
 			}
 		} else {
 			result.add(this);
@@ -340,9 +416,6 @@ public class GamaShape implements IShape {
 		return result;
 	}
 
-	/** The Constant pl. */
-	public final static PointLocator pl = new PointLocator();
-
 	@Override
 	public GamaShape getGeometry() { return this; }
 
@@ -390,7 +463,8 @@ public class GamaShape implements IShape {
 			final Polygon p = (Polygon) getInnerGeometry();
 			final int n = p.getNumInteriorRing();
 			for (int i = 0; i < n; i++) {
-				holes.add(new GamaShape(GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates())));
+				holes.add(GamaShapeFactory
+						.createFrom(GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates())));
 			}
 		}
 		return holes;
@@ -422,7 +496,7 @@ public class GamaShape implements IShape {
 			result = GEOMETRY_FACTORY.createMultiLineString(lines);
 
 		}
-		return new GamaShape(result);
+		return GamaShapeFactory.createFrom(result);
 	}
 
 	/**
@@ -445,12 +519,6 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public Double getWidth() { return getEnvelope().getWidth(); }
-
-	@Override
-	public Double getHeight() { return getEnvelope().getHeight(); }
-
-	@Override
 	public Double getDepth() {
 		final ShapeData data = getData(false);
 		return data == null ? null : data.depth;
@@ -461,9 +529,6 @@ public class GamaShape implements IShape {
 		final ShapeData data = getData(true);
 		if (data != null) { data.depth = depth; }
 	}
-
-	@Override
-	public GamaShape getGeometricEnvelope() { return new GamaShape(getEnvelope()); }
 
 	@Override
 	public IList<GamaPoint> getPoints() {
@@ -502,7 +567,7 @@ public class GamaShape implements IShape {
 	public void setGeometry(final IShape geom) {
 		if (geom == null || geom == this) return;
 		setInnerGeometry(geom.getInnerGeometry());
-		mixAttributes(geom);
+		withAttributesOf(geom);
 	}
 
 	/**
@@ -523,13 +588,16 @@ public class GamaShape implements IShape {
 	@Override
 	public void dispose() {
 		agent = null;
-		if (attributes != null) { attributes.clear(); }
+		if (attributes != null) {
+			attributes.clear();
+			attributes = null;
+		}
 	}
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof GamaShape) {
-			final Geometry shape = ((GamaShape) o).geometry;
+		if (o instanceof GamaShape gs) {
+			final Geometry shape = gs.geometry;
 			// Fix a possible NPE when calling equalsExact with a null shape
 			if (shape == null) return geometry == null;
 			if (geometry == null) return false;
@@ -542,10 +610,6 @@ public class GamaShape implements IShape {
 	public int hashCode() {
 		if (geometry == null) return 0;
 		return geometry.hashCode();
-		// return super.hashCode();
-		// if (geomtry == null) return s
-		// return GeometryUtils.getContourCoordinates(geometry)..
-		// return geometry == null ? super.hashCode() : geometry.hashCode();
 	}
 
 	@Override
@@ -553,7 +617,7 @@ public class GamaShape implements IShape {
 
 	@Override
 	public GamaShape copy(final IScope scope) {
-		return new GamaShape(geometry.copy());
+		return GamaShapeFactory.createFrom(geometry.copy());
 	}
 
 	/**
@@ -562,25 +626,7 @@ public class GamaShape implements IShape {
 	 */
 	@Override
 	public boolean covers(final IShape g) {
-		// WARNING Only 2D now
-		if (g.isPoint()) return pl.intersects(g.getLocation(), geometry);
-		try {
-			return geometry.covers(g.getInnerGeometry());
-		} catch (final TopologyException e) {
-			try {
-				return geometry.buffer(0).covers(g.getInnerGeometry().buffer(0));
-			} catch (final TopologyException e2) {
-				return false;
-			}
-		} catch (final AssertionFailedException e) {
-			try {
-				return geometry.buffer(0).covers(g.getInnerGeometry().buffer(0));
-			} catch (final AssertionFailedException e2) {
-				return false;
-			}
-		} catch (final Exception e) {
-			return false;
-		}
+		return GeometryUtils.robustCovers(this, g);
 	}
 
 	/**
@@ -605,99 +651,29 @@ public class GamaShape implements IShape {
 	 */
 	@Override
 	public boolean intersects(final IShape g) {
-		// WARNING Only 2D now
-		if (g.isPoint()) return pl.intersects(g.getLocation(), getInnerGeometry());
-		try {
-			return getInnerGeometry().intersects(g.getInnerGeometry());
-		} catch (final TopologyException e) {
-			try {
-				return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
-			} catch (final TopologyException e2) {
-				return false;
-			}
-		} catch (final AssertionFailedException e) {
-			try {
-				return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
-			} catch (final AssertionFailedException e2) {
-				return false;
-			}
-
-		}
+		return GeometryUtils.robustIntersects(this, g);
 	}
 
 	@Override
 	public boolean crosses(final IShape g) {
-		// WARNING Only 2D now
-		if (g.isPoint()) return pl.intersects(g.getLocation(), getInnerGeometry());
-		try {
-			return geometry.crosses(g.getInnerGeometry());
-		} catch (final TopologyException e) {
-			try {
-				return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
-			} catch (final TopologyException e2) {
-				return false;
-			}
-		} catch (final AssertionFailedException e) {
-			try {
-				return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
-			} catch (final AssertionFailedException e2) {
-				return false;
-			}
-		} catch (final Exception e) {
-			return false;
-		}
+		return GeometryUtils.robustCrosses(this, g);
 	}
 
 	@Override
 	public boolean partiallyOverlaps(final IShape g) {
-		try {
-			return geometry.overlaps(g.getInnerGeometry());
-		} catch (final TopologyException e) {
-			try {
-				return getInnerGeometry().buffer(0).overlaps(g.getInnerGeometry().buffer(0));
-			} catch (final TopologyException e2) {
-				return false;
-			}
-		} catch (final AssertionFailedException e) {
-			try {
-				return getInnerGeometry().buffer(0).overlaps(g.getInnerGeometry().buffer(0));
-			} catch (final AssertionFailedException e2) {
-				return false;
-			}
-		} catch (final Exception e) {
-			return false;
-		}
+		return GeometryUtils.robustPartiallyOverlaps(this, g);
 	}
 
 	@Override
 	public boolean touches(final IShape g) {
-		try {
-			return geometry.touches(g.getInnerGeometry());
-		} catch (final TopologyException e) {
-			try {
-				return getInnerGeometry().buffer(0).touches(g.getInnerGeometry().buffer(0));
-			} catch (final TopologyException e2) {
-				return false;
-			}
-		} catch (final AssertionFailedException e) {
-			try {
-				return getInnerGeometry().buffer(0).touches(g.getInnerGeometry().buffer(0));
-			} catch (final AssertionFailedException e2) {
-				return false;
-			}
-		} catch (final Exception e) {
-			return false;
-		}
+		return GeometryUtils.robustTouches(this, g);
 	}
 
 	@Override
-	public IMap<String, Object> getOrCreateAttributes() {
-		if (attributes == null) { attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
+	public IMap<String, Object> getAttributes(final boolean createIfNedeed) {
+		if (attributes == null && createIfNedeed) { attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
 		return attributes;
 	}
-
-	@Override
-	public IMap<String, Object> getAttributes() { return attributes; }
 
 	/**
 	 * Method getGeometricalType()
@@ -732,5 +708,8 @@ public class GamaShape implements IShape {
 		final ShapeData data = getData(true);
 		if (data != null) { data.type = t; }
 	}
+
+	@Override
+	public IType getGamlType() { return Types.GEOMETRY; }
 
 }

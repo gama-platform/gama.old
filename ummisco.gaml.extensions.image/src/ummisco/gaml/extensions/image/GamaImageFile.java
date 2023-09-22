@@ -36,7 +36,7 @@ import com.google.common.io.Files;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -475,8 +475,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer>
 					try {
 						pr = scope.getSimulation().getProjectionFactory().forSavingWith(scope,
 								file.gis.getTargetCRS(scope));
-						minCorner = new GamaShape(pr.transform(minCorner.getInnerGeometry())).getLocation();
-						maxCorner = new GamaShape(pr.transform(maxCorner.getInnerGeometry())).getLocation();
+						minCorner =
+								GamaShapeFactory.createFrom(pr.transform(minCorner.getInnerGeometry())).getLocation();
+						maxCorner =
+								GamaShapeFactory.createFrom(pr.transform(maxCorner.getInnerGeometry())).getLocation();
 					} catch (final FactoryException e1) {
 						e1.printStackTrace();
 					}
@@ -514,8 +516,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer>
 							IProjection gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope,
 									pfr.getCoordinateReferenceSystem());
 							if (gis != null) {
-								minCorner = new GamaShape(gis.transform(minCorner.getInnerGeometry())).getLocation();
-								maxCorner = new GamaShape(gis.transform(maxCorner.getInnerGeometry())).getLocation();
+								minCorner = GamaShapeFactory.createFrom(gis.transform(minCorner.getInnerGeometry()))
+										.getLocation();
+								maxCorner = GamaShapeFactory.createFrom(gis.transform(maxCorner.getInnerGeometry()))
+										.getLocation();
 								return Envelope3D.of(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 							}
 						}

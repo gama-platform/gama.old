@@ -56,7 +56,7 @@ import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IAsset;
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.outputs.layers.charts.ChartOutput;
@@ -215,7 +215,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 		IShape shape = Cast.asGeometry(scope, file);
 		if (shape == null) return null;
 		final AxisAngle rotation = attributes.getRotation();
-		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
+		shape = GamaShapeFactory.createFrom(shape).withRotation(rotation).withLocation(attributes.getLocation())
+				.withScaling(attributes.getSize(), true);
 		final GamaColor c = attributes.getColor();
 		return drawShape(shape.getInnerGeometry(),
 				new ShapeDrawingAttributes(shape.getLocation(), c, c, (IShape.Type) null));

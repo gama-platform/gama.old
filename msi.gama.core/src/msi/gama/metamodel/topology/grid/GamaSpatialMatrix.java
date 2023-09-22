@@ -44,6 +44,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaProxyGeometry;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -563,8 +564,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			if (useIndividualShapes) {
 				// Change in the function used in building cells in order to minimize computations and mutualize points.
 				// See #2896
-				rect = new GamaShape(GeometryUtils.GEOMETRY_FACTORY.buildRectangle(new GamaPoint[] { xs[xx][yy],
-						xs[xx + 1][yy], xs[xx + 1][yy + 1], xs[xx][yy + 1], xs[xx][yy] }));
+				rect = GamaShapeFactory.createFrom(GeometryUtils.GEOMETRY_FACTORY.buildRectangle(new GamaPoint[] {
+						xs[xx][yy], xs[xx + 1][yy], xs[xx + 1][yy + 1], xs[xx][yy + 1], xs[xx][yy] }));
 			} else {
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;
@@ -1862,7 +1863,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final IList<IShape> result = GamaListFactory.create(Types.GEOMETRY);
 			if (isMultiple()) {
 				final Geometry g = getInnerGeometry();
-				for (int i = 0, n = g.getNumGeometries(); i < n; i++) { result.add(new GamaShape(g.getGeometryN(i))); }
+				for (int i = 0, n = g.getNumGeometries(); i < n; i++) {
+					result.add(GamaShapeFactory.createFrom(g.getGeometryN(i)));
+				}
 			} else {
 				result.add(this);
 			}

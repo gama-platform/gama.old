@@ -30,6 +30,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.metamodel.topology.grid.IGrid;
@@ -190,7 +191,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			public GamaShape deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
 				double d = in.readDouble();
 				IShape.Type t = IShape.Type.values()[in.readInt()];
-				GamaShape result = new GamaShape((Geometry) in.readObject());
+				GamaShape result = GamaShapeFactory.createFrom((Geometry) in.readObject());
 				IAgent agent = (IAgent) in.readObject();
 				if (agent != null) { result.setAgent(agent); }
 				if (d > 0d) { result.setDepth(d); }

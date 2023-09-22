@@ -22,7 +22,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.types.IType;
@@ -64,7 +63,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	// cube, etc...). Can be reused by subclasses (for example to store GIS
 	/** The attributes. */
 	// information)
-	protected IMap<String, Object> attributes;
+	// protected IMap<String, Object> attributes;
 
 	/**
 	 * Instantiates a new gama proxy geometry.
@@ -122,7 +121,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public IShape copy(final IScope scope) throws GamaRuntimeException {
-		return new GamaShape(this);
+		return GamaShapeFactory.createFrom(this);
 	}
 
 	/**
@@ -142,21 +141,11 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.common.interfaces.IAttributed#getAttributes()
 	 */
 	@Override
-	public IMap<String, Object> getAttributes() {
-		return attributes;
-		// return getReferenceGeometry().getAttributes();
-	}
-
-	/**
-	 * Method getOrCreateAttributes()
-	 *
-	 * @see msi.gama.common.interfaces.IAttributed#getOrCreateAttributes()
-	 */
-	@Override
-	public IMap<String, Object> getOrCreateAttributes() {
-		if (attributes == null) { attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
-		return attributes;
-		// return getReferenceGeometry().getOrCreateAttributes();
+	public IMap<String, Object> getAttributes(final boolean createIfNeeded) {
+		return null;
+		// if (attributes == null && createIfNeeded) { attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		// }
+		// return attributes;
 	}
 
 	/**
@@ -331,8 +320,8 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public void dispose() {
-		if (attributes != null) { attributes.clear(); }
-		attributes = null;
+		// if (attributes != null) { attributes.clear(); }
+		// attributes = null;
 	}
 
 	@Override
@@ -389,7 +378,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 		if (g instanceof Polygon p) {
 			final int n = p.getNumInteriorRing();
 			for (int i = 0; i < n; i++) {
-				holes.add(new GamaShape(
+				holes.add(GamaShapeFactory.createFrom(
 						GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates())));
 			}
 		}
@@ -444,6 +433,6 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
 	 */
 	@Override
-	public GamaShape getGeometricEnvelope() { return new GamaShape(getEnvelope().toGeometry()); }
+	public GamaShape getGeometricEnvelope() { return GamaShapeFactory.createFrom(getEnvelope().toGeometry()); }
 
 }

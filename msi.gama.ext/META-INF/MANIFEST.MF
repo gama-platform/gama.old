@@ -615,12 +615,11 @@ Export-Package: com.conversantmedia.util.collection,
  tech.uom.lib.common.function,
  tech.uom.lib.common.util
 Require-Bundle: org.eclipse.osgi,
- org.apache.commons.compress,
  org.apache.commons.jxpath,
  org.eclipse.xsd,
  ummisco.gama.annotations,
  com.google.guava;bundle-version="[30.1.0,31.0.0)";visibility:=reexport,
- org.apache.commons.commons-io
+ org.apache.commons.commons-compress
 Bundle-ClassPath: .,
  protobuf-java-3.6.1.jar,
  jfreechart/jfreechart-1.5.3.jar,

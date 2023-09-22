@@ -44,7 +44,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -313,6 +313,15 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	}
 
+	/**
+	 * Step.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException the gama runtime exception
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		final IExpression frequencyExp = species.getFrequency();
@@ -371,6 +380,14 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		scope.setCurrentSymbol(null);
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope the scope
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public boolean init(final IScope scope) {
 		// See #2933
@@ -396,6 +413,14 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return agent == null ? (T) createAgentAt(scope, index, Collections.EMPTY_MAP, false, true) : agent;
 	}
 
+	/**
+	 * Compare to.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o the o
+	 * @return the int
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public int compareTo(final IPopulation<T> o) {
 		return getName().compareTo(o.getName());
@@ -419,6 +444,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return (Iterable<T>) getAgents(scope);
 	}
 
+	/**
+	 * Dispose.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public void dispose() {
 		killMembers();
@@ -511,7 +542,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				if (init.containsKey(SHAPE)) {
 					final Object val = init.get(SHAPE);
 					if (val instanceof GamaPoint) {
-						a.setGeometry(new GamaShape((GamaPoint) val));
+						a.setGeometry(GamaShapeFactory.createFrom((GamaPoint) val));
 					} else {
 						a.setGeometry((IShape) val);
 					}
@@ -859,6 +890,13 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return GamaListFactory.create(scope, getGamlType().getContentType(), allLivingAgents(this));
 	}
 
+	/**
+	 * Checks for agent list.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
 	@Override
 	public boolean hasAgentList() {
 		return true;
@@ -900,6 +938,12 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		results.removeIf(toRemove);
 	}
 
+	/**
+	 * Gets the populations.
+	 *
+	 * @param scope the scope
+	 * @return the populations
+	 */
 	@Override
 	public Collection<? extends IPopulation<? extends IAgent>> getPopulations(final IScope scope) {
 		return Collections.singleton(this);

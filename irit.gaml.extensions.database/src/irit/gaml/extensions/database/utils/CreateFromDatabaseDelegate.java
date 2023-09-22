@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CreateFromDatabaseDelegate.java, in irit.gaml.extensions.database, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * CreateFromDatabaseDelegate.java, in irit.gaml.extensions.database, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package irit.gaml.extensions.database.utils;
 
@@ -17,7 +17,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import irit.gaml.extensions.database.utils.sql.SqlConnection;
 import msi.gama.common.interfaces.ICreateDelegate;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
@@ -82,13 +82,20 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 	/**
 	 * Compute inits.
 	 *
-	 * @param scope the scope
-	 * @param values the values
-	 * @param rowList the row list
-	 * @param colTypes the col types
-	 * @param colNames the col names
-	 * @param init the init
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
+	 * @param rowList
+	 *            the row list
+	 * @param colTypes
+	 *            the col types
+	 * @param colNames
+	 *            the col names
+	 * @param init
+	 *            the init
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	/*
 	 * thai.truongminh@gmail.com Method: GamaList2ListMap Description: created date : 13-09-2012 25-Feb-2013: Add
@@ -97,7 +104,7 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 	private void computeInits(final IScope scope, final Map values, final IList<Object> rowList,
 			final IList<Object> colTypes, final IList<Object> colNames, final Arguments init)
 			throws GamaRuntimeException {
-		if (init == null) { return; }
+		if (init == null) return;
 		for (final Facet f : init.getFacets()) {
 			if (f != null) {
 				final IExpression valueExpr = f.value.getExpression();
@@ -105,14 +112,12 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 				final String columnName = valueExpr.value(scope).toString().toUpperCase();
 				// get column number of parameter
 				final int val = colNames.indexOf(columnName);
-				if (val == -1) {
-					throw GamaRuntimeException.error(
-							"Create from DB: " + columnName + " is not a correct column name in the DB query results",
-							scope);
-				}
-				if (((String) colTypes.get(val)).equalsIgnoreCase(SqlConnection.GEOMETRYTYPE)) {
+				if (val == -1) throw GamaRuntimeException.error(
+						"Create from DB: " + columnName + " is not a correct column name in the DB query results",
+						scope);
+				if (SqlConnection.GEOMETRYTYPE.equalsIgnoreCase((String) colTypes.get(val))) {
 					final Geometry geom = (Geometry) rowList.get(val);
-					values.put(f.key, new GamaShape(geom));
+					values.put(f.key, GamaShapeFactory.createFrom(geom));
 				} else {
 					values.put(f.key, rowList.get(val));
 				}

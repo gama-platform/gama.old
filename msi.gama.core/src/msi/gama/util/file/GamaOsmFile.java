@@ -62,6 +62,7 @@ import msi.gama.ext.osmosis.Way;
 import msi.gama.ext.osmosis.WayNode;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -371,7 +372,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 						// final Geometry g = new GamaPoint(node.getLongitude(), node.getLatitude()).getInnerGeometry();
 						// env.expandToInclude(g.getCoordinate());
-						nodesPt.put(node.getId(), new GamaShape(g));
+						nodesPt.put(node.getId(), GamaShapeFactory.createFrom(g));
 						nodesFromId.put(node.getId(), node);
 						boolean keepObject = keepEntity(toFilter, entity);
 						if (!keepObject) return;
@@ -502,7 +503,7 @@ public class GamaOsmFile extends GamaGisFile {
 			computeProjection(scope, Envelope3D.of(env));
 			if (gis != null) {
 				for (Long id : nodesPt.keySet()) {
-					GamaShape sp = new GamaShape(gis.transform(nodesPt.get(id).getInnerGeometry()));
+					GamaShape sp = GamaShapeFactory.createFrom(gis.transform(nodesPt.get(id).getInnerGeometry()));
 					nodesPt.put(id, sp);
 				}
 			}

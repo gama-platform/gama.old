@@ -10,11 +10,11 @@ Require-Bundle: org.eclipse.core.runtime,
  ummisco.gama.annotations;visibility:=reexport,
  msi.gama.processor;visibility:=reexport,
  org.eclipse.core.filesystem,
- org.apache.commons.compress,
  org.eclipse.equinox.p2.core,
  org.eclipse.equinox.p2.metadata,
  org.eclipse.equinox.p2.operations,
- org.eclipse.equinox.p2.engine
+ org.eclipse.equinox.p2.engine,
+ org.apache.commons.commons-compress
 Bundle-ActivationPolicy: lazy
 Export-Package: msi.gama.common,
  msi.gama.common.geometry,

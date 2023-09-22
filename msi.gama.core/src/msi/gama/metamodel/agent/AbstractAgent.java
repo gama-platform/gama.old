@@ -29,6 +29,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.descriptions.ModelDescription;
@@ -75,6 +76,9 @@ public abstract class AbstractAgent implements IAgent {
 	/** The dying. */
 	protected volatile boolean dying = false;
 
+	/** The attributes. */
+	protected IMap<String, Object> attributes;
+
 	/**
 	 * Instantiates a new abstract agent.
 	 *
@@ -120,7 +124,10 @@ public abstract class AbstractAgent implements IAgent {
 		if (p != null) { p.removeValue(null, this); }
 		final IShape s = getGeometry();
 		if (s != null) { s.dispose(); }
-
+		if (attributes != null) {
+			attributes.clear();
+			attributes = null;
+		}
 	}
 
 	/**
@@ -179,24 +186,17 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	/**
-	 * Gets the attributes.
+	 * Gets the attributes of the agents
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @return the attributes
 	 * @date 17 sept. 2023
 	 */
 	@Override
-	public IMap<String, Object> getAttributes() { return (IMap<String, Object>) getGeometry().getAttributes(); }
-
-	/**
-	 * Gets the or create attributes.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the or create attributes
-	 * @date 17 sept. 2023
-	 */
-	@Override
-	public IMap<String, Object> getOrCreateAttributes() { return getGeometry().getOrCreateAttributes(); }
+	public IMap<String, Object> getAttributes(final boolean createIfNeeded) {
+		if (attributes == null && createIfNeeded) { attributes = GamaMapFactory.create(Types.STRING, Types.NO_TYPE); }
+		return attributes;
+	}
 
 	/**
 	 * Compare to.
