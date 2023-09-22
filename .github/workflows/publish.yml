@@ -1,0 +1,33 @@
+name: Publish to external stores
+
+on:
+  release: 
+    # A release was published, or a pre-release was changed to a release.
+    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=released#release
+    types: 
+      - released
+
+run-name: Publishing ${{ github.event.release.tag_name }} to external stores
+
+jobs:
+  windows:
+    runs-on: ubuntu-latest
+    name: Publish to windows 🪟
+
+    steps:
+      - name: Publish Gama to Winget 🚀
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: GamaPlatform.Gama
+          version: ${{ github.event.release.tag_name }}
+          release-tag: ${{ github.event.release.tag_name }}
+          installers-regex: \.exe$ # All Exe's
+          token: ${{ secrets.BOT_TOKEN }}
+
+  # macos:
+  #   runs-on: ubuntu-latest
+  #   name: Publish to macos 🍎
+
+  # linux:
+  #   runs-on: ubuntu-latest
+  #   name: Publish to linux 🐧
