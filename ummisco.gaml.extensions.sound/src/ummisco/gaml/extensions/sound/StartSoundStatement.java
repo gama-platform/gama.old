@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * StartSoundStatement.java, in ummisco.gaml.extensions.sound, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * StartSoundStatement.java, in ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.sound;
 
@@ -55,12 +55,12 @@ import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 						type = IType.ID,
 						values = { IKeyword.OVERWRITE, IKeyword.IGNORE },
 						optional = true,
-						doc = @doc ("Mode of ")),
+						doc = @doc ("Mode of playing the sound")),
 				@facet (
 						name = IKeyword.REPEAT,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("")) })
+						doc = @doc ("Should the sound be repeated or not ?")) })
 @validator (StartSoundValidator.class)
 @SuppressWarnings ({ "rawtypes" })
 @doc ("Allows to start the sound output")
@@ -84,10 +84,10 @@ public class StartSoundStatement extends AbstractStatementSequence {
 
 	/** The source. */
 	private final IExpression source;
-	
+
 	/** The mode. */
 	private final IExpression mode;
-	
+
 	/** The repeat. */
 	private final IExpression repeat;
 
@@ -97,7 +97,8 @@ public class StartSoundStatement extends AbstractStatementSequence {
 	/**
 	 * Instantiates a new start sound statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public StartSoundStatement(final IDescription desc) {
 		super(desc);

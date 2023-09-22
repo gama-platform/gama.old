@@ -372,11 +372,12 @@ public interface IShape extends ILocated, IValue, IAttributed, IEnvelopeProvider
 	/**
 	 * Gets the or create attributes.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @return the or create attributes
+	 * @date 21 sept. 2023
 	 */
-	@Override
 	@getter ("attributes")
-	IMap<String, Object> getOrCreateAttributes();
+	default IMap<String, Object> getOrCreateAttributes() { return (IMap<String, Object>) getAttributes(true); }
 
 	/**
 	 * Checks if is multiple.
@@ -466,7 +467,7 @@ public interface IShape extends ILocated, IValue, IAttributed, IEnvelopeProvider
 	 * @return the width
 	 */
 	@getter ("width")
-	Double getWidth();
+	default Double getWidth() { return getEnvelope().getWidth(); }
 
 	/**
 	 * Gets the height.
@@ -474,7 +475,7 @@ public interface IShape extends ILocated, IValue, IAttributed, IEnvelopeProvider
 	 * @return the height
 	 */
 	@getter ("height")
-	Double getHeight();
+	default Double getHeight() { return getEnvelope().getHeight(); }
 
 	/**
 	 * Gets the depth.
@@ -499,7 +500,7 @@ public interface IShape extends ILocated, IValue, IAttributed, IEnvelopeProvider
 	 * @return the geometric envelope
 	 */
 	@getter ("envelope")
-	GamaShape getGeometricEnvelope();
+	default GamaShape getGeometricEnvelope() { return GamaShapeFactory.createFrom(getEnvelope()); }
 
 	/**
 	 * Gets the points.

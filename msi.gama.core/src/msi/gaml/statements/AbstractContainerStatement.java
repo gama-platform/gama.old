@@ -115,7 +115,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		/**
 		 * Find all.
 		 *
-		 * @param cd the cd
+		 * @param cd
+		 *            the cd
 		 * @return the i expression
 		 */
 		private IExpression findAll(final IDescription cd) {
@@ -134,7 +135,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		/**
 		 * Find index.
 		 *
-		 * @param cd the cd
+		 * @param cd
+		 *            the cd
 		 * @return the i expression
 		 */
 		private IExpression findIndex(final IDescription cd) {
@@ -150,7 +152,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		/**
 		 * Find list.
 		 *
-		 * @param cd the cd
+		 * @param cd
+		 *            the cd
 		 * @return the i expression
 		 */
 		private IExpression findList(final IDescription cd) {
@@ -166,7 +169,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		/**
 		 * Find item.
 		 *
-		 * @param cd the cd
+		 * @param cd
+		 *            the cd
 		 * @return the i expression
 		 */
 		private IExpression findItem(final IDescription cd) {
@@ -260,7 +264,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 							&& Types.PAIR.of(Types.INT, Types.INT).equals(index.getGamlType()))
 						return;
 					// These indices are accepted for matrices (int and list<int>)
-					if ((!Types.MATRIX.isAssignableFrom(list.getGamlType()) || ((index.getGamlType() != Types.INT) && !index.getGamlType().equals(Types.LIST.of(Types.INT))))) {
+					if (!Types.MATRIX.isAssignableFrom(list.getGamlType()) || index.getGamlType() != Types.INT
+							&& !index.getGamlType().equals(Types.LIST.of(Types.INT))) {
 						cd.warning(
 								"The type of the index of " + list.serialize(false) + " (" + keyType
 										+ ") does not match with the type of " + index.serialize(false) + " ("

@@ -82,6 +82,7 @@ import org.w3c.dom.NodeList;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -459,7 +460,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 		PathIterator it = shape.getPathIterator(current, 1.0);
 		Geometry g = ShapeReader.read(it, GeometryUtils.GEOMETRY_FACTORY);
 		g = GeometryUtils.cleanGeometry(g);
-		GamaShape gs = new GamaShape(g);
+		GamaShape gs = GamaShapeFactory.createFrom(g);
 		DEBUG.OUT("Adding shape with type " + gs.getInnerGeometry().getGeometryType() + " envelope "
 				+ gs.getEnvelope().getWidth() + " " + gs.getEnvelope().getHeight() + " at " + gs.getEnvelope().getMinX()
 				+ " " + gs.getEnvelope().getMinY());

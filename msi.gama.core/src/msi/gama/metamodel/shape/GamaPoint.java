@@ -31,7 +31,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
-import msi.gama.util.IMap;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -55,7 +54,7 @@ import msi.gaml.types.Types;
 				name = IKeyword.Z,
 				type = IType.FLOAT,
 				doc = { @doc ("Returns the z ordinate of this point") }) })
-public class GamaPoint extends Coordinate implements IShape, ILocation, IIntersectable {
+public class GamaPoint extends Coordinate implements IShape, IIntersectable {
 
 	/**
 	 * The Class Immutable.
@@ -176,9 +175,6 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 
 		@Override
 		public void setDepth(final double depth) {}
-
-		@Override
-		public void add(final ILocation p) {}
 
 	}
 
@@ -486,7 +482,17 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 		return super.equals(o);
 	}
 
-	@Override
+	/**
+	 * Equals with tolerance.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @param tolerance
+	 *            the tolerance
+	 * @return true, if successful
+	 * @date 17 sept. 2023
+	 */
 	public boolean equalsWithTolerance(final Coordinate c, final double tolerance) {
 		if (tolerance == 0.0) return equals3D(c);
 		if (!NumberUtil.equalsWithTolerance(this.x, c.x, tolerance)
@@ -576,10 +582,9 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	public void dispose() {}
 
 	@Override
-	public GamaMap getAttributes() { return null; }
-
-	@Override
-	public IMap<String, Object> getOrCreateAttributes() { return null; }
+	public GamaMap getAttributes(final boolean createIfNeeded) {
+		return null;
+	}
 
 	/**
 	 * Do nothing
@@ -832,7 +837,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 */
 	@Override
 	public GamaShape getExteriorRing(final IScope scope) {
-		return new GamaShape(this);
+		return GamaShapeFactory.createFrom(this);
 	}
 
 	/**
@@ -865,7 +870,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getGeometricEnvelope()
 	 */
 	@Override
-	public GamaShape getGeometricEnvelope() { return new GamaShape(this); }
+	public GamaShape getGeometricEnvelope() { return GamaShapeFactory.createFrom(this); }
 
 	/**
 	 * Method getGeometries()
@@ -873,7 +878,7 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	 * @see msi.gama.metamodel.shape.IShape#getGeometries()
 	 */
 	@Override
-	public IList<? extends IShape> getGeometries() { return GamaListFactory.wrap(Types.GEOMETRY, new GamaShape(this)); }
+	public IList<? extends IShape> getGeometries() { return GamaListFactory.wrap(Types.GEOMETRY, GamaShapeFactory.createFrom(this)); }
 
 	/**
 	 * Method isMultiple()
@@ -936,24 +941,6 @@ public class GamaPoint extends Coordinate implements IShape, ILocation, IInterse
 	@Override
 	public GamaPoint clone() {
 		return new GamaPoint(x, y, z);
-	}
-
-	@Override
-	@Deprecated
-	public void add(final ILocation p) {
-		add(p.toGamaPoint());
-	}
-
-	@Override
-	@Deprecated
-	public double euclidianDistanceTo(final ILocation targ) {
-		return euclidianDistanceTo(targ.toGamaPoint());
-	}
-
-	@Override
-	@Deprecated
-	public GamaPoint toGamaPoint() {
-		return this;
 	}
 
 	@Override

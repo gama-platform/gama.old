@@ -405,7 +405,9 @@ public class ReferenceAgent implements IReference, IAgent {
 	 * @date 17 sept. 2023
 	 */
 	@Override
-	public Map<String, Object> getAttributes() { return null; }
+	public Map<String, Object> getAttributes(final boolean createIfNeeded) {
+		return null;
+	}
 
 	/**
 	 * Compare to.

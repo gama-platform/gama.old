@@ -150,7 +150,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		// Math.max(env.getWidth(), world.getWidth()), 0,
 		// Math.max(env.getHeight(), world.getHeight()), 0,
 		// Math.max(env.getDepth(), world.getDepth()));
-		// host.setGeometry(new GamaShape(newEnvelope));
+		// host.setGeometry(GamaShapeFactory.createFrom(newEnvelope));
 		return result;
 	}
 
@@ -245,6 +245,13 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		topology = t;
 	}
 
+	/**
+	 * Stream.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the stream
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public Stream<IGridAgent> stream() {
@@ -252,6 +259,15 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return s;
 	}
 
+	/**
+	 * Stream.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the stream ex
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public StreamEx<IGridAgent> stream(final IScope scope) {
@@ -268,7 +284,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		createAgents(scope, null);
 		for (final Map attr : initialValues) {
 			final IAgent agt = getAgent((Integer) attr.get("grid_x"), (Integer) attr.get("grid_y"));
-			agt.getOrCreateAttributes().putAll(attr);
+			if (agt != null) { agt.setAttributes(attr); }
 		}
 		return (IList) getAgents(scope);
 	}
@@ -303,6 +319,15 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 
 	}
 
+	/**
+	 * Serialize.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param includingBuiltIn
+	 *            the including built in
+	 * @return the string
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return getName();
@@ -403,6 +428,12 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return Arrays.copyOf(grid.matrix, grid.matrix.length, IGridAgent[].class);
 	}
 
+	/**
+	 * Dispose.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void dispose() {
 		killMembers();
@@ -413,11 +444,31 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		}
 	}
 
+	/**
+	 * Size.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the int
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public int size() {
 		return grid.actualNumberOfCells;
 	}
 
+	/**
+	 * Gets the from indices list.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param indices
+	 *            the indices
+	 * @return the from indices list
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		if (indices == null) return null;
@@ -431,32 +482,92 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return (IGridAgent) s.getAgent();
 	}
 
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param index
+	 *            the index
+	 * @return the i grid agent
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
 		// WARNING False if the matrix is not dense
 		return (IGridAgent) grid.matrix[index];
 	}
 
+	/**
+	 * First value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the i grid agent
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent firstValue(final IScope scope) throws GamaRuntimeException {
 		return (IGridAgent) grid._first(scope);
 	}
 
+	/**
+	 * Last value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the i grid agent
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent lastValue(final IScope scope) throws GamaRuntimeException {
 		return (IGridAgent) grid._last(scope);
 	}
 
+	/**
+	 * Length.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the int
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public int length(final IScope scope) {
 		return grid.actualNumberOfCells;
 	}
 
+	/**
+	 * Any value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the i grid agent
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent anyValue(final IScope scope) {
 		return (IGridAgent) grid.anyValue(scope);
 	}
 
+	/**
+	 * Iterator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the iterator
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public Iterator<IGridAgent> iterator() {
@@ -464,6 +575,17 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return i;
 	}
 
+	/**
+	 * Contains key.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean containsKey(final IScope scope, final Object o) {
 		if (o instanceof Integer i) return IPopulation.super.containsKey(scope, i);
@@ -471,26 +593,81 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return false;
 	}
 
+	/**
+	 * Iterable.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the java.lang. iterable
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public java.lang.Iterable<IGridAgent> iterable(final IScope scope) {
 		return listValue(scope, Types.NO_TYPE, false); // TODO Types.AGENT
 		// ??
 	}
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is empty
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean isEmpty() { return grid._isEmpty(null); }
 
+	/**
+	 * Checks if is empty.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return true, if is empty
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean isEmpty(final IScope scope) {
 		return grid._isEmpty(scope);
 	}
 
+	/**
+	 * List value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param contentsType
+	 *            the contents type
+	 * @param copy
+	 *            the copy
+	 * @return the i list
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IList<IGridAgent> listValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		return grid._listValue(scope, contentsType, false);
 	}
 
+	/**
+	 * Matrix value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param contentsType
+	 *            the contents type
+	 * @param copy
+	 *            the copy
+	 * @return the i matrix
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
@@ -501,6 +678,23 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return grid.matrixValue(scope, contentsType, copy);
 	}
 
+	/**
+	 * Matrix value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param type
+	 *            the type
+	 * @param size
+	 *            the size
+	 * @param copy
+	 *            the copy
+	 * @return the i matrix
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType type, final GamaPoint size, final boolean copy)
@@ -531,37 +725,100 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 
 	}
 
+	/**
+	 * Compare to.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @return the int
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public int compareTo(final IPopulation<IGridAgent> o) {
 		return species == o.getSpecies() ? 0 : 1;
 	}
 
+	/**
+	 * Gets the gaml type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the gaml type
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IContainerType<?> getGamlType() { // TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * Contains.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean contains(final Object o) {
 		return o instanceof IGridAgent ga && ga.getPopulation() == this;
 	}
 
+	/**
+	 * To array.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param <T>
+	 *            the generic type
+	 * @param a
+	 *            the a
+	 * @return the t[]
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		return (T[]) grid.matrix;
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param e
+	 *            the e
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean add(final IGridAgent e) {
 		return false;
 	}
 
+	/**
+	 * Removes the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean remove(final Object o) {
 		return false;
 	}
 
+	/**
+	 * Contains all.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean containsAll(final Collection<?> c) {
 		for (Object o : c)
@@ -569,59 +826,167 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return true;
 	}
 
+	/**
+	 * Adds the all.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean addAll(final Collection<? extends IGridAgent> c) {
 		return false;
 	}
 
+	/**
+	 * Adds the all.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @param c
+	 *            the c
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean addAll(final int index, final Collection<? extends IGridAgent> c) {
 		return false;
 	}
 
+	/**
+	 * Removes the all.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean removeAll(final Collection<?> c) {
 		return false;
 	}
 
+	/**
+	 * Retain all.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean retainAll(final Collection<?> c) {
 		return false;
 	}
 
+	/**
+	 * Clear.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void clear() {}
 
+	/**
+	 * Gets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @return the i grid agent
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent get(final int index) {
 		return (IGridAgent) grid.matrix[index];
 	}
 
+	/**
+	 * Sets the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @param element
+	 *            the element
+	 * @return the i grid agent
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent set(final int index, final IGridAgent element) {
 		grid.matrix[index] = element;
 		return element;
 	}
 
+	/**
+	 * Adds the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @param element
+	 *            the element
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void add(final int index, final IGridAgent element) {}
 
+	/**
+	 * Removes the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @return the i grid agent
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public IGridAgent remove(final int index) {
 		return null;
 	}
 
+	/**
+	 * Index of.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @return the int
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public int indexOf(final Object o) {
 		for (int i = 0; i < grid.actualNumberOfCells; i++) { if (grid.matrix[i] == o) return i; }
 		return -1;
 	}
 
+	/**
+	 * Last index of.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @return the int
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public int lastIndexOf(final Object o) {
 		return indexOf(o);
 	}
 
+	/**
+	 * List iterator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the list iterator
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public ListIterator<IGridAgent> listIterator() {
@@ -629,6 +994,15 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return it;
 	}
 
+	/**
+	 * List iterator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @return the list iterator
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public ListIterator<IGridAgent> listIterator(final int index) {
@@ -636,6 +1010,17 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return it;
 	}
 
+	/**
+	 * Sub list.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param fromIndex
+	 *            the from index
+	 * @param toIndex
+	 *            the to index
+	 * @return the list
+	 * @date 21 sept. 2023
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public List<IGridAgent> subList(final int fromIndex, final int toIndex) {
@@ -643,11 +1028,33 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return l;
 	}
 
+	/**
+	 * Inits the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		return true;
 	}
 
+	/**
+	 * Step.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return true, if successful
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		final IExpression frequencyExp = species.getFrequency();
@@ -661,16 +1068,37 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 
 	}
 
+	/**
+	 * Gets the populations.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the populations
+	 */
 	@Override
 	public Collection<? extends IPopulation<? extends IAgent>> getPopulations(final IScope scope) {
 		return Collections.singleton(this);
 	}
 
+	/**
+	 * Checks for agent list.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean hasAgentList() {
 		return true;
 	}
 
+	/**
+	 * Gets the agents.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @return the agents
+	 */
 	@SuppressWarnings ("unchecked")
 	@Override
 	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
@@ -678,6 +1106,19 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return c;
 	}
 
+	/**
+	 * Accept.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param a
+	 *            the a
+	 * @return true, if successful
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
 		final IAgent agent = a.getAgent();
@@ -687,6 +1128,18 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return true;
 	}
 
+	/**
+	 * Filter.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param source
+	 *            the source
+	 * @param results
+	 *            the results
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IAgent sourceAgent = source == null ? null : source.getAgent();
@@ -805,21 +1258,83 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return o == this;
 	}
 
+	/**
+	 * Removes the all occurrences of value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {}
 
+	/**
+	 * Removes the values.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void removeValues(final IScope scope, final IContainer values) {}
 
+	/**
+	 * Removes the value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void removeValue(final IScope scope, final Object value) {}
 
+	/**
+	 * Adds the values.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param values
+	 *            the values
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void addValues(final IScope scope, final IContainer values) {}
 
+	/**
+	 * Adds the value at index.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param index
+	 *            the index
+	 * @param value
+	 *            the value
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void addValueAtIndex(final IScope scope, final Object index, final IGridAgent value) {}
 
+	/**
+	 * Adds the value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
+	 * @date 21 sept. 2023
+	 */
 	@Override
 	public void addValue(final IScope scope, final IGridAgent value) {}
 

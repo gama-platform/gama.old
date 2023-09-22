@@ -50,6 +50,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -636,9 +637,9 @@ public class GamaGridFile extends GamaGisFile implements IFieldMatrixProvider {
 						final GamaPoint p = new GamaPoint(records.x[i], records.y[i]);
 						GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
 						if (gis == null) {
-							rect = new GamaShape(rect.getInnerGeometry());
+							rect = GamaShapeFactory.createFrom(rect.getInnerGeometry());
 						} else {
-							rect = new GamaShape(gis.transform(rect.getInnerGeometry()));
+							rect = GamaShapeFactory.createFrom(gis.transform(rect.getInnerGeometry()));
 						}
 						IList<Double> bands = GamaListFactory.create(scope, Types.FLOAT);
 						records.fill(i, bands);

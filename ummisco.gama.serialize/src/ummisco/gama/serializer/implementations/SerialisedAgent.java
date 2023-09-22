@@ -51,7 +51,7 @@ public record SerialisedAgent(/* AgentReference ref */ int index, Map<String, Ob
 	 */
 	public SerialisedAgent(final IAgent target) {
 		this(/* new AgentReference(target), */target.getIndex(),
-				filterAttributes(target, target instanceof IGridAgent, target.getOrCreateAttributes()));
+				filterAttributes(target, target instanceof IGridAgent, target.getAttributes(true)));
 	}
 
 	/**

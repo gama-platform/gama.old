@@ -71,7 +71,7 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 		final int num = max == null ? container.length(scope) : Math.min(container.length(scope), max);
 		for (int i = 0; i < num; i++) {
 			final IShape g = container.get(scope, i);
-			final Map map = g.getOrCreateAttributes();
+			final Map map = g.getAttributes(true);
 			// The shape is added to the initial values
 			g.setAttribute(IKeyword.SHAPE, g);
 			// GIS attributes are pushed to the scope in order to be read by read/get statements

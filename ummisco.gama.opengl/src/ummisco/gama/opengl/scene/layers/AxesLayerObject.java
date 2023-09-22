@@ -26,6 +26,7 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
@@ -131,7 +132,8 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			text.setPerspective(false);
 			list.add(new StringObject(LABELS[i], text));
 			// build arrows
-			final GamaShape s = new GamaShape(arrow, null, ROTATIONS[i], p.times(0.98));
+			final GamaShape s =
+					GamaShapeFactory.createFrom(arrow).withRotation(ROTATIONS[i]).withLocation(p.times(0.98));
 			addSyntheticObject(list, s, COLORS[i], IShape.Type.CONE);
 		}
 	}

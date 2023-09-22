@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AmorphousTopology.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * AmorphousTopology.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology.continuous;
 
@@ -22,7 +22,7 @@ import msi.gama.common.geometry.Envelope3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ISpatialIndex;
 import msi.gama.metamodel.topology.ITopology;
@@ -69,9 +69,7 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	@Override
-	public IType<?> getGamlType() {
-		return Types.TOPOLOGY;
-	}
+	public IType<?> getGamlType() { return Types.TOPOLOGY; }
 
 	/**
 	 * @see msi.gama.interfaces.IValue#toGaml()
@@ -114,7 +112,7 @@ public class AmorphousTopology implements ITopology {
 	public void updateAgent(final Envelope3D previous, final IAgent agent) {
 		final IShape ng =
 				Spatial.Operators.union(agent.getScope(), expandableEnvironment.getGeometry(), agent.getGeometry());
-		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));
+		expandableEnvironment.setGeometry(GamaShapeFactory.createFrom(ng.getInnerGeometry().getEnvelope()));
 	}
 
 	/**
@@ -233,9 +231,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getEnvironment()
 	 */
 	@Override
-	public IShape getEnvironment() {
-		return expandableEnvironment;
-	}
+	public IShape getEnvironment() { return expandableEnvironment; }
 
 	/**
 	 * @see msi.gama.environment.ITopology#normalizeLocation(msi.gama.util.GamaPoint, boolean)
@@ -255,17 +251,13 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#getWidth()
 	 */
 	@Override
-	public double getWidth() {
-		return expandableEnvironment.getEnvelope().getWidth();
-	}
+	public double getWidth() { return expandableEnvironment.getEnvelope().getWidth(); }
 
 	/**
 	 * @see msi.gama.environment.ITopology#getHeight()
 	 */
 	@Override
-	public double getHeight() {
-		return expandableEnvironment.getEnvelope().getHeight();
-	}
+	public double getHeight() { return expandableEnvironment.getEnvelope().getHeight(); }
 
 	/**
 	 * @see msi.gama.environment.ITopology#dispose()
@@ -321,14 +313,10 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	@Override
-	public boolean isTorus() {
-		return false;
-	}
+	public boolean isTorus() { return false; }
 
 	@Override
-	public boolean isContinuous() {
-		return true;
-	}
+	public boolean isContinuous() { return true; }
 
 	@Override
 	public ISpatialIndex getSpatialIndex() {
@@ -388,7 +376,6 @@ public class AmorphousTopology implements ITopology {
 
 	@Override
 	public void setRoot(final IScope scope, final RootTopology rt) {
-		
 
 	}
 }

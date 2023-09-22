@@ -21,6 +21,7 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.util.PoolUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Comparison;
 import msi.gaml.types.GamaGeometryType;
@@ -716,9 +717,9 @@ public class Envelope3D extends Envelope implements IDisposable, IIntersectable 
 	 */
 	public Envelope3D rotate(final AxisAngle rotation) {
 		if (isNull()) return this;
-		GamaShape se = new GamaShape(this);
-		se = new GamaShape(se, null, rotation, se.getLocation());
-		init(se.getEnvelope());
+		GamaShape source = GamaShapeFactory.createFrom(this);
+		source = GamaShapeFactory.createFrom(source).withRotation(rotation).withLocation(source.getLocation());
+		init(source.getEnvelope());
 		return this;
 	}
 

@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * IAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
+ * IAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
@@ -14,6 +14,7 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.common.interfaces.IScoped;
@@ -73,8 +74,8 @@ import msi.gaml.variables.IVariable;
 @doc ("The species hierarchy derives from a single built-in species, which is 'agent'. All its components (attributes, actions) will then be inherited by all direct "
 		+ "or indirect children species (including 'model' and 'experiment' except species that explicitly set 'use_minimal_agents' facet to 'true', which inherit from"
 		+ " a stripped-down version of 'agent'. ")
-public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, IContainer.Addressable<String, Object>,
-		IVarAndActionSupport, IScoped {
+public interface IAgent extends IShape, INamed, IAttributed, Comparable<IAgent>, IStepable,
+		IContainer.Addressable<String, Object>, IVarAndActionSupport, IScoped {
 
 	/**
 	 * Returns the topology which manages this agent.
@@ -659,4 +660,5 @@ public interface IAgent extends IShape, INamed, Comparable<IAgent>, IStepable, I
 	default int intValue(final IScope scope) {
 		return getIndex();
 	}
+
 }

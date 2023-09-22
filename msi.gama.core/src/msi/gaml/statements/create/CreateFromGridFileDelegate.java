@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * CreateFromGridFileDelegate.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * CreateFromGridFileDelegate.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements.create;
 
@@ -58,7 +58,7 @@ public class CreateFromGridFileDelegate implements ICreateDelegate {
 		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for (int i = 0; i < num; i++) {
 			final IShape g = file.get(scope, i);
-			final Map map = g.getOrCreateAttributes();
+			final Map map = g.getAttributes(true);
 			// The shape is added to the initial values
 			g.setAttribute(IKeyword.SHAPE, g);
 			// GIS attributes are mixed with the attributes of agents

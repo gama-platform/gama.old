@@ -11,7 +11,6 @@ model tutorial_gis_city_traffic
 
 global {
 	
-	 reflex stop { if (cycle =100){do pause;}}
 	
 //Load of the different shapefiles used by the model
 	file shape_file_buildings <- shape_file('../includes/building.shp', 0);

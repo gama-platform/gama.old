@@ -19,9 +19,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.primitives.Doubles;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -204,8 +204,8 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	public double[] getMinMax(final double[] result) {
 		double min = Double.MAX_VALUE;
 		double max = -Double.MAX_VALUE;
-		double[] matrix = getMatrix();
-		for (double f : matrix) {
+		double[] theMatrix = getMatrix();
+		for (double f : theMatrix) {
 			if (f == noDataValue) { continue; }
 			if (f > max) { max = f; }
 			if (f < min) { min = f; }
@@ -290,7 +290,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		for (double i = env.getMinX(); i < env.getMaxX(); i += cellDimensions.x) {
 			for (double j = env.getMinY(); j < env.getMaxY(); j += cellDimensions.y) {
 				p.setLocation(i, j, 0);
-				if (GamaShape.pl.intersects(p, shape.getInnerGeometry())) {
+				if (GeometryUtils.POINT_LOCATOR.intersects(p, shape.getInnerGeometry())) {
 					Double d = get(scope, p);
 					if (d != null) { inEnv.add(d); }
 				}
@@ -308,7 +308,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		for (double i = env.getMinX(); i < env.getMaxX(); i += cellDimensions.x) {
 			for (double j = env.getMinY(); j < env.getMaxY(); j += cellDimensions.y) {
 				p.setLocation(i, j, 0);
-				if (GamaShape.pl.intersects(p, shape.getInnerGeometry())) {
+				if (GeometryUtils.POINT_LOCATOR.intersects(p, shape.getInnerGeometry())) {
 					IShape s = getCellShapeAt(scope, p);
 					if (s != null) { inEnv.add(s); }
 				}
@@ -342,7 +342,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 		for (double i = env.getMinX(); i < env.getMaxX(); i += cellDimensions.x) {
 			for (double j = env.getMinY(); j < env.getMaxY(); j += cellDimensions.y) {
 				p.setLocation(i, j, 0);
-				if (GamaShape.pl.intersects(p, shape.getInnerGeometry())) { inEnv.add(p.copy(scope)); }
+				if (GeometryUtils.POINT_LOCATOR.intersects(p, shape.getInnerGeometry())) { inEnv.add(p.copy(scope)); }
 			}
 		}
 		return inEnv;
@@ -594,6 +594,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 			doc = @doc (
 					side_effects = "Does not modify the field but can return the same one. Use an explicit copy operation to prevent this",
 					value = "Flattens this field into a grayscale 1-band field. The bands if they exist are supposed to represent RGB components"))
+	@no_test
 	public GamaField flatten(final IScope scope) throws GamaRuntimeException {
 		return flatten(scope, null);
 	}
@@ -616,6 +617,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 			doc = @doc (
 					side_effects = "Does not modify the field",
 					value = "Flattens this field into a 1-band field using the color computer passed in parameter (the same argument as the one used in mesh layers): a palette, a scale, a color. If this computer cannot be interpreted, defaults to flattening interpreting the bands as RGB components"))
+	@no_test
 	public GamaField flatten(final IScope scope, final Object computer) throws GamaRuntimeException {
 		// if (bands.size() == 1) return this;
 		IMeshColorProvider provider =

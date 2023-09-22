@@ -18,6 +18,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -173,14 +174,14 @@ public class SavedAgent extends GamaMap<String, Object> implements ISerialisedAg
 				// variables.put(specVar, geometry.copy());
 				// Changed 3/2/12: is it necessary to make the things below ?
 				// variables.put(specVar,
-				// new GamaShape(agent.getGeometry()));
+				// GamaShapeFactory.createFrom(agent.getGeometry()));
 				// Changed 26/5/16: additional variables exist in the shape. To
 				// keep them in the SavedAgent, we add them by hand in the
 				// geometry.
 				// We cannot keep all the GamaShape, because it contains
 				// populations too.
-				final GamaShape shape =
-						new GamaShape(((IShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
+				final GamaShape shape = GamaShapeFactory
+						.createFrom(((IShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
 
 				// if (agent.getAttributes() != null) {}
 

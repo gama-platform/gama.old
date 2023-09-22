@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Gama3DSFile.java, in ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * Gama3DSFile.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.opengl.files;
 
@@ -20,7 +20,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -58,10 +58,10 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 		/** The id. */
 		public int id = 0;
-		
+
 		/** The length. */
 		public int length = 0;
-		
+
 		/** The bytes read. */
 		public int bytesRead = 0;
 	}
@@ -73,7 +73,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 		/** The verts. */
 		public GamaPoint verts[] = null;
-		
+
 		/** The faces. */
 		public List<Geometry> faces;
 	}
@@ -84,24 +84,24 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/** The Constant PRIMARY. */
 	// Primary Chunk, at the beginning of each file
 	private static final int PRIMARY = 0x4D4D;
-	
+
 	/** The Constant VERSION. */
 	private static final int VERSION = 0x0002;
 
 	/** The Constant EDITOR. */
 	// Main Chunks
 	private static final int EDITOR = 0x3D3D;
-	
+
 	/** The Constant OBJECT. */
 	private static final int OBJECT = 0x4000;
-	
+
 	/** The Constant OBJECT_MESH. */
 	private static final int OBJECT_MESH = 0x4100;
 
 	/** The Constant OBJECT_VERTICES. */
 	// Sub defines of OBJECT_MESH
 	private static final int OBJECT_VERTICES = 0x4110;
-	
+
 	/** The Constant OBJECT_FACES. */
 	private static final int OBJECT_FACES = 0x4120;
 
@@ -116,8 +116,10 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Instantiates a new gama 3 DS file.
 	 *
-	 * @param scope the scope
-	 * @param fileName the file name
+	 * @param scope
+	 *            the scope
+	 * @param fileName
+	 *            the file name
 	 */
 	// Constructor
 	@doc (
@@ -139,9 +141,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 			final FileInputStream fileInputStream = new FileInputStream(getFile(scope));
 			dataInputStream = new DataInputStream(fileInputStream);
 			readChunkHeader(currentChunk);
-			if (currentChunk.id != PRIMARY) {
-				DEBUG.ERR("Unable to load PRIMARY chunk from file " + getPath(scope));
-			}
+			if (currentChunk.id != PRIMARY) { DEBUG.ERR("Unable to load PRIMARY chunk from file " + getPath(scope)); }
 			processNextChunk(currentChunk);
 			dataInputStream.close();
 			fileInputStream.close();
@@ -150,7 +150,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		}
 		for (final Obj obj : objects) {
 			final Geometry g = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(obj.faces);
-			getBuffer().add(new GamaShape(g));
+			getBuffer().add(GamaShapeFactory.createFrom(g));
 		}
 
 	}
@@ -164,7 +164,8 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Process next chunk.
 	 *
-	 * @param previousChunk the previous chunk
+	 * @param previousChunk
+	 *            the previous chunk
 	 */
 	// Verified
 	void processNextChunk(final Chunk previousChunk) {
@@ -212,7 +213,8 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Read chunk header.
 	 *
-	 * @param chunk the chunk
+	 * @param chunk
+	 *            the chunk
 	 */
 	// Verified
 	private void readChunkHeader(final Chunk chunk) {
@@ -234,8 +236,10 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Process next object chunk.
 	 *
-	 * @param object the object
-	 * @param previousChunk the previous chunk
+	 * @param object
+	 *            the object
+	 * @param previousChunk
+	 *            the previous chunk
 	 */
 	// Verified
 	private void processNextObjectChunk(final Obj object, final Chunk previousChunk) {
@@ -278,8 +282,10 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Read vertices.
 	 *
-	 * @param object the object
-	 * @param previousChunk the previous chunk
+	 * @param object
+	 *            the object
+	 * @param previousChunk
+	 *            the previous chunk
 	 */
 	// Verified
 	private void readVertices(final Obj object, final Chunk previousChunk) {
@@ -303,8 +309,10 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Read face list.
 	 *
-	 * @param object the object
-	 * @param previousChunk the previous chunk
+	 * @param object
+	 *            the object
+	 * @param previousChunk
+	 *            the previous chunk
 	 */
 	// Verified
 	private void readFaceList(final Obj object, final Chunk previousChunk) {
@@ -336,7 +344,8 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Swap.
 	 *
-	 * @param value the value
+	 * @param value
+	 *            the value
 	 * @return the short
 	 */
 	private static short swap(final short value) {
@@ -348,7 +357,8 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Swap.
 	 *
-	 * @param value the value
+	 * @param value
+	 *            the value
 	 * @return the int
 	 */
 	private static int swap(final int value) {
@@ -362,7 +372,8 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	/**
 	 * Swap.
 	 *
-	 * @param value the value
+	 * @param value
+	 *            the value
 	 * @return the float
 	 */
 	private static float swap(final float value) {
