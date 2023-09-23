@@ -321,7 +321,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 				var z = get(data, i, j);
 				realIndexes[index] = z == noData ? -1 : realIndex++;
 				if (z == noData) { continue; }
-				vertexBuffer.put(x).put(-y).put(z);
+				vertexBuffer.put(x).put(-y).put(z + gl.getCurrentZTranslation());
 				setColor(z, i, j);
 				setNormal(data, i, j);
 				if (j > 0 && i > 0) {

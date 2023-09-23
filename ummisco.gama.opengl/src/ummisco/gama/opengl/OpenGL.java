@@ -867,7 +867,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	}
 
 	/**
-	 * Outputs a single vertex to OpenGL, applying the z-translation to it and computing the maximum z outputted so far
+	 * Outputs a single vertex to OpenGL, applying the z-translation to it
 	 *
 	 * @param x
 	 * @param y

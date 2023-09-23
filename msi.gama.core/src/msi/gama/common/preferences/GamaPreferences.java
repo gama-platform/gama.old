@@ -731,12 +731,12 @@ public class GamaPreferences {
 		/** The Constant DISPLAY_SLICE_NUMBER. */
 		public static final Pref<Boolean> OPENGL_Z_FIGHTING = create("pref_opengl_z_fighting",
 				"Add a small increment to the z ordinate of objects and layers to fight visual artefacts", true,
-				IType.BOOL, true).in(NAME, RENDERING).activates("pref_opengl_z_factor");
+				IType.BOOL, true).in(NAME, RENDERING)/* .activates("pref_opengl_z_factor") */;
 
 		/** The Constant OPENGL_Z_FACTOR. */
-		public static final Pref<Double> OPENGL_Z_FACTOR =
-				create("pref_opengl_z_factor", "Factor to add (0 for none, 1 for max)", 0.005, IType.FLOAT, true)
-						.in(NAME, RENDERING).between(0d, 1d).step(0.001);
+		// public static final Pref<Double> OPENGL_Z_FACTOR =
+		// create("pref_opengl_z_factor", "Factor to add (0 for none, 1 for max)", 0.005, IType.FLOAT, true)
+		// .in(NAME, RENDERING).between(0d, 1d).step(0.001);
 
 		/** The Constant OPENGL_TEXTURE_ORIENTATION. */
 		public static final Pref<Boolean> OPENGL_TEXTURE_ORIENTATION = create("pref_texture_orientation",

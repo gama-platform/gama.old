@@ -68,14 +68,13 @@ public class ModelScene {
 	/** The object number. */
 	private volatile int objectNumber;
 
-	/** The z increment. */
-	private volatile double zIncrement;
-
 	/** The current layer trace. */
 	private volatile int currentLayerTraceNumber;
 
+	// private volatile double zIncrement;
+
 	/** The max Z. */
-	final double maxZ;
+	// final double maxZ;
 
 	/**
 	 * Instantiates a new model scene.
@@ -87,7 +86,7 @@ public class ModelScene {
 	 */
 	public ModelScene(final IOpenGLRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
-		maxZ = renderer.getMaxEnvDim() * GamaPreferences.Displays.OPENGL_Z_FACTOR.getValue() / 10d;
+		// maxZ = renderer.getMaxEnvDim() * GamaPreferences.Displays.OPENGL_Z_FACTOR.getValue() / 10d;
 		if (withWorld) { initWorld(); }
 	}
 
@@ -123,6 +122,9 @@ public class ModelScene {
 		// } else {
 		// DEBUG.OUT("Drawing scene " + index);
 		// }
+		final double zIncrement = objectNumber < 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue() ? 0d
+				: gl.getViewHeight() / gl.getWorldHeight() / (1000d * objectNumber);
+
 		gl.push(GLMatrixFunc.GL_MODELVIEW);
 		gl.setZIncrement(renderer.getData().isOrtho() ? 0D : zIncrement);
 		// AD called here so that it is inside the keystone drawing. See #3285
@@ -131,7 +133,7 @@ public class ModelScene {
 			// AD Added
 			if (layer != null && layer.isVisible()) {
 				// See Issue #3857
-				if (GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) { gl.translateBy(0, 0, maxZ); }
+				if (GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) { gl.translateBy(0, 0, zIncrement); }
 				// AD added to prevent overlays to rotate
 				if (layer.isOverlay()) { gl.pushIdentity(GLMatrixFunc.GL_MODELVIEW); }
 				try {
@@ -157,12 +159,14 @@ public class ModelScene {
 	 *
 	 * @return the double
 	 */
-	private double computeVisualZIncrement() {
+	private double computeVisualZIncrement(final OpenGL gl) {
 		if (objectNumber < 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) return 0d;
+		return gl.getViewHeight() / gl.getWorldHeight() / (1000d * objectNumber);
+
 		// The maximum visual z allowance between the object at the bottom and the one at the top
 
 		// The increment is simply
-		return maxZ / objectNumber;
+		// return maxZ / objectNumber;
 	}
 
 	/**
@@ -256,7 +260,7 @@ public class ModelScene {
 	 * End drawing layers.
 	 */
 	public void endDrawingLayers() {
-		zIncrement = computeVisualZIncrement();
+		// zIncrement = computeVisualZIncrement();
 	}
 
 	/**
