@@ -192,9 +192,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 		IPreferenceStore node = getPreferences();
 		if (node != null) {
 			node.setDefault(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL,
-					AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING_INFO);
+					AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__WARNING
+							| AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__INFO);
 			node.setValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL,
-					AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING_INFO);
+					AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__WARNING
+							| AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__INFO);
 		}
 
 	}
