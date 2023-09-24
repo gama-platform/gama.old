@@ -94,11 +94,6 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	boolean canStepBack();
 
 	/**
-	 * Inform status.
-	 */
-	void informStatus();
-
-	/**
 	 * Checks if is headless.
 	 *
 	 * @return true, if is headless

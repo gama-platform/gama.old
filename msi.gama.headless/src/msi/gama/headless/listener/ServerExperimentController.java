@@ -337,7 +337,7 @@ public class ServerExperimentController implements IExperimentController {
 		if (experiment != null) {
 			try {
 				pause();
-				getScope().getGui().updateExperimentState(getScope(), IGui.NOTREADY);
+				getScope().getGui().updateExperimentState(getScope(), IGui.STATE_NOTREADY);
 				getScope().getGui().closeDialogs(getScope());
 				// Dec 2015 This method is normally now called from
 				// ExperimentPlan.dispose()
@@ -345,7 +345,7 @@ public class ServerExperimentController implements IExperimentController {
 				acceptingCommands = false;
 				experimentAlive = false;
 				lock.release();
-				getScope().getGui().updateExperimentState(getScope(), IGui.NONE);
+				getScope().getGui().updateExperimentState(getScope(), IGui.STATE_NONE);
 				if (commandThread != null && commandThread.isAlive()) { commands.offer(-1); }
 			}
 		}

@@ -165,19 +165,31 @@ public interface IGui {
 	String USER_CONTROL_VIEW_ID = "msi.gama.views.userControlView";
 
 	/** The paused. */
-	String PAUSED = "STOPPED";
+	String STATE_PAUSED = "STOPPED";
 
 	/** The finished. */
-	String FINISHED = "FINISHED";
+	String STATE_FINISHED = "FINISHED";
 
 	/** The running. */
-	String RUNNING = "RUNNING";
+	String STATE_RUNNING = "RUNNING";
 
 	/** The notready. */
-	String NOTREADY = "NOTREADY";
+	String STATE_NOTREADY = "NOTREADY";
 
 	/** The none. */
-	String NONE = "NONE";
+	String STATE_NONE = "NONE";
+
+	/** The none. */
+	String TYPE_NONE = "NONE";
+
+	/** The batch. */
+	String TYPE_BATCH = "BATCH";
+
+	/** The memorize. */
+	String TYPE_MEMORIZE = "MEMORIZE";
+
+	/** The regular. */
+	String TYPE_REGULAR = "REGULAR";
 
 	/** The perspective modeling id. */
 	String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";

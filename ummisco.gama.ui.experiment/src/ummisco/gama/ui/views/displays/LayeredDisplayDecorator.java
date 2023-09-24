@@ -642,13 +642,18 @@ public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProv
 	@Override
 	public void sourceChanged(final int sourcePriority, final String sourceName, final Object sourceValue) {
 		// DEBUG.OUT("Source changed " + sourceName + " " + sourceValue);
-		if ("STOPPED".equals(sourceValue) && isFullScreen() && toolbar != null && toolbar.isVisible()) {
-			runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
-			toolbar.update();
-		}
-		if ("RUNNING".equals(sourceValue) && isFullScreen() && toolbar != null && toolbar.isVisible()) {
-			runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
-			toolbar.update();
+		if (!isFullScreen() || toolbar == null || !toolbar.isVisible()) return;
+
+		if ("STOPPED".equals(sourceValue)) {
+			WorkbenchHelper.asyncRun(() -> {
+				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+				toolbar.update();
+			});
+		} else if ("RUNNING".equals(sourceValue)) {
+			WorkbenchHelper.asyncRun(() -> {
+				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+				toolbar.update();
+			});
 		}
 	}
 
@@ -657,11 +662,16 @@ public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProv
 		// DEBUG.OUT("Source changed " + sourceValuesByName);
 		if (isFullScreen() && toolbar != null && toolbar.isVisible()) {
 			if (GAMA.isPaused()) {
-				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+				WorkbenchHelper.asyncRun(() -> {
+					runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+					toolbar.update();
+				});
 			} else {
-				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+				WorkbenchHelper.asyncRun(() -> {
+					runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+					toolbar.update();
+				});
 			}
-			toolbar.update();
 		}
 	}
 

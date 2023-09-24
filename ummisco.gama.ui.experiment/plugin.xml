@@ -1268,7 +1268,7 @@
                serviceClass="ummisco.gama.ui.interfaces.IUserDialogFactory"></service>
       </serviceFactory>
       <sourceProvider
-            provider="ummisco.gama.ui.commands.SimulationStateProvider">
+            provider="ummisco.gama.ui.commands.ExperimentStateProvider">
          <variable
                name="ummisco.gama.ui.experiment.SimulationRunningState"
                priorityLevel="workbench">

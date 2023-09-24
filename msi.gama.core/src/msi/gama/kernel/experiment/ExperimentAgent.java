@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -272,6 +272,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public final void setPopulationFactory(final IPopulationFactory factory) { populationFactory = factory; }
 
+	/**
+	 * Gets the clock.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the clock
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public SimulationClock getClock() { return ownClock; }
 
@@ -381,7 +388,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) { outputs.step(scope); }
 		ownClock.step();
-
 		informStatus();
 		scope.getGui().updateExperimentState(scope);
 	}
@@ -480,6 +486,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return ps;
 	}
 
+	/**
+	 * Gets the random generator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the random generator
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public RandomUtils getRandomGenerator() { return random; }
 
@@ -512,6 +525,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IModel getModel() { return getSpecies().getModel(); }
 
+	/**
+	 * Gets the experiment.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the experiment
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public IExperimentAgent getExperiment() { return this; }
 
@@ -820,6 +840,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// Forbidden
 	}
 
+	/**
+	 * Gets the simulation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the simulation
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	@getter (IKeyword.SIMULATION)
 	public SimulationAgent getSimulation() {
@@ -838,9 +865,24 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		getSimulationPopulation().setCurrentSimulation(sim);
 	}
 
+	/**
+	 * Checks if is on user hold.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is on user hold
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public boolean isOnUserHold() { return isOnUserHold; }
 
+	/**
+	 * Sets the on user hold.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param state
+	 *            the new on user hold
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public void setOnUserHold(final boolean state) { isOnUserHold = state; }
 
@@ -853,8 +895,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	}
 
-	@Override
-	public void informStatus() {
+	/**
+	 * Inform status.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 24 sept. 2023
+	 */
+	private void informStatus() {
 		// TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
 		if (isHeadless() || isBatch() || getSimulation() == null) return;
 		ownScope.getGui().getStatus().informStatus(null, "overlays/status.clock");
@@ -1038,6 +1085,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		simulationAgent.dispose();
 	}
 
+	/**
+	 * Gets the color.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the color
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public GamaColor getColor() { return GamaColor.get(30, 30, 30, 255); }
 
@@ -1049,24 +1103,56 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IOutputManager getOutputManager() { return getSpecies().getExperimentOutputs(); }
 
+	/**
+	 * Post end action.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param executable
+	 *            the executable
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public void postEndAction(final IExecutable executable) {
 		executer.insertEndAction(executable);
 
 	}
 
+	/**
+	 * Post dispose action.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param executable
+	 *            the executable
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public void postDisposeAction(final IExecutable executable) {
 		executer.insertDisposeAction(executable);
 
 	}
 
+	/**
+	 * Post one shot action.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param executable
+	 *            the executable
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public void postOneShotAction(final IExecutable executable) {
 		executer.insertOneShotAction(executable);
 
 	}
 
+	/**
+	 * Execute action.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param executable
+	 *            the executable
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public void executeAction(final IExecutable executable) {
 		executer.executeOneAction(executable);
@@ -1094,6 +1180,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public boolean isRecord() { return recorder != null; }
 
+	/**
+	 * Gets the family name.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the family name
+	 * @date 24 sept. 2023
+	 */
 	@Override
 	public String getFamilyName() { return IKeyword.EXPERIMENT; }
 

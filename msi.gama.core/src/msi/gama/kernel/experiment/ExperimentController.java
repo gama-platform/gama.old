@@ -115,10 +115,10 @@ public class ExperimentController implements IExperimentController {
 		final IScope scope = getScope();
 		switch (command) {
 			case _CLOSE:
-				scope.getGui().updateExperimentState(scope, IGui.NONE);
+				scope.getGui().updateExperimentState(scope, IGui.STATE_NONE);
 				break;
 			case _OPEN:
-				scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
+				scope.getGui().updateExperimentState(scope, IGui.STATE_NOTREADY);
 				try {
 					new Thread(() -> experiment.open()).start();
 				} catch (final Exception e) {
@@ -132,23 +132,23 @@ public class ExperimentController implements IExperimentController {
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
 				} finally {
-					scope.getGui().updateExperimentState(scope, IGui.RUNNING);
+					scope.getGui().updateExperimentState(scope, IGui.STATE_RUNNING);
 				}
 				break;
 			case _PAUSE:
 				pause();
-				if (!disposing) { scope.getGui().updateExperimentState(scope, IGui.PAUSED); }
+				if (!disposing) { scope.getGui().updateExperimentState(scope, IGui.STATE_PAUSED); }
 				break;
 			case _STEP:
-				scope.getGui().updateExperimentState(scope, IGui.PAUSED);
+				scope.getGui().updateExperimentState(scope, IGui.STATE_PAUSED);
 				stepByStep();
 				break;
 			case _BACK:
-				scope.getGui().updateExperimentState(scope, IGui.PAUSED);
+				scope.getGui().updateExperimentState(scope, IGui.STATE_PAUSED);
 				stepBack();
 				break;
 			case _RELOAD:
-				scope.getGui().updateExperimentState(scope, IGui.NOTREADY);
+				scope.getGui().updateExperimentState(scope, IGui.STATE_NOTREADY);
 				try {
 					final boolean wasRunning = !isPaused() && !experiment.isAutorun();
 					pause();
@@ -219,11 +219,11 @@ public class ExperimentController implements IExperimentController {
 		if (experiment != null) {
 			try {
 				pause();
-				getScope().getGui().updateExperimentState(getScope(), IGui.NOTREADY);
+				getScope().getGui().updateExperimentState(getScope(), IGui.STATE_NOTREADY);
 				getScope().getGui().closeDialogs(getScope());
 				// Dec 2015 This method is normally now called from
 				// ExperimentPlan.dispose()
-				getScope().getGui().updateExperimentState(getScope(), IGui.NONE);
+				getScope().getGui().updateExperimentState(getScope(), IGui.STATE_NONE);
 			} finally {
 				acceptingCommands = false;
 				experimentAlive = false;

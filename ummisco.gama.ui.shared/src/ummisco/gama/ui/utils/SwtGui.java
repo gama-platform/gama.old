@@ -63,7 +63,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.ISimulationStateProvider;
+import msi.gama.runtime.IExperimentStateProvider;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
@@ -98,7 +98,7 @@ import ummisco.gama.ui.resources.GamaColors;
 public class SwtGui implements IGui {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The all tests running. */
@@ -654,19 +654,19 @@ public class SwtGui implements IGui {
 	public String getExperimentState() {
 		final IExperimentController controller = GAMA.getFrontmostController();
 		if (controller != null) {
-			if (controller.isPaused()) return PAUSED;
-			return RUNNING;
+			if (controller.isPaused()) return STATE_PAUSED;
+			return STATE_RUNNING;
 		}
-		return NONE;
+		return STATE_NONE;
 	}
 
 	@Override
 	public void updateExperimentState(final IScope scope, final String forcedState) {
 		// DEBUG.OUT("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
-		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
-				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
-		if (stateProvider != null) { WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState)); }
+		final IExperimentStateProvider stateProvider =
+				(IExperimentStateProvider) service.getSourceProvider(IExperimentStateProvider.EXPERIMENT_RUNNING_STATE);
+		if (stateProvider != null) { stateProvider.updateStateTo(forcedState); }
 	}
 
 	/**
@@ -675,7 +675,7 @@ public class SwtGui implements IGui {
 	public static void listenToExperimentState(final ISourceProviderListener listener) {
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final AbstractSourceProvider stateProvider =
-				(AbstractSourceProvider) service.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
+				(AbstractSourceProvider) service.getSourceProvider(IExperimentStateProvider.EXPERIMENT_RUNNING_STATE);
 		stateProvider.addSourceProviderListener(listener);
 	}
 

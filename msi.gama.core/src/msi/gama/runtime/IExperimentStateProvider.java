@@ -17,7 +17,16 @@ package msi.gama.runtime;
  * @since 14 d�c. 2011
  *
  */
-public interface ISimulationStateProvider {
+public interface IExperimentStateProvider {
+
+	/** The Constant SIMULATION_RUNNING_STATE. */
+	String EXPERIMENT_RUNNING_STATE = "ummisco.gama.ui.experiment.SimulationRunningState";
+
+	/** The Constant SIMULATION_TYPE. */
+	String EXPERIMENT_TYPE = "ummisco.gama.ui.experiment.SimulationType";
+
+	/** The Constant SIMULATION_STEPBACK. */
+	String EXPERIMENT_STEPBACK = "ummisco.gama.ui.experiment.SimulationStepBack";
 
 	/**
 	 * Change the UI state based on the state of the simulation (none, stopped, running or notready)

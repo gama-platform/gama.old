@@ -259,8 +259,9 @@ public class BatchAgent extends ExperimentAgent {
 		// Issue #2426: the agent is killed too soon
 		getScope().setDisposeStatus();
 		// dispose();
-		GAMA.getGui().updateExperimentState(scope, IGui.FINISHED);
-		GAMA.changeCurrentTopLevelAgent(GAMA.getPlatformAgent(), false);
+		GAMA.getGui().updateExperimentState(scope, IGui.STATE_FINISHED);
+		// If we immediately replace the agent, the parameters view disappears
+		//GAMA.changeCurrentTopLevelAgent(GAMA.getPlatformAgent(), false);
 		return true;
 	}
 
