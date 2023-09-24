@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -123,7 +122,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Listeners, created in a lazy way
 	 */
-	private LinkedList<IPopulation.Listener> listeners = null;
+	private final PopulationNotifier notifier = new PopulationNotifier();
 
 	/** The ordered var names. */
 	public final LinkedHashSet<String> orderedVarNames = new LinkedHashSet<>();
@@ -317,9 +316,11 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * Step.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 * @date 17 sept. 2023
 	 */
 	@Override
@@ -384,7 +385,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * Inits the.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return true, if successful
 	 * @date 17 sept. 2023
 	 */
@@ -417,7 +419,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * Compare to.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param o the o
+	 * @param o
+	 *            the o
 	 * @return the int
 	 * @date 17 sept. 2023
 	 */
@@ -785,25 +788,14 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return ((IAgent) o).getPopulation() == this;
 	}
 
-	/**
-	 * Checks for listeners.
-	 *
-	 * @return true, if successful
-	 */
-	private boolean hasListeners() {
-		return listeners != null && !listeners.isEmpty();
-	}
-
 	@Override
 	public void addListener(final IPopulation.Listener listener) {
-		if (listeners == null) { listeners = new LinkedList<>(); }
-		if (!listeners.contains(listener)) { listeners.add(listener); }
+		notifier.addListener(listener);
 	}
 
 	@Override
 	public void removeListener(final IPopulation.Listener listener) {
-		if (listeners == null) return;
-		listeners.remove(listener);
+		notifier.removeListener(listener);
 	}
 
 	/**
@@ -815,12 +807,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 *            the agent
 	 */
 	protected void fireAgentAdded(final IScope scope, final IAgent agent) {
-		if (!hasListeners()) return;
-		try {
-			for (final IPopulation.Listener l : listeners) { l.notifyAgentAdded(scope, this, agent); }
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-		}
+		notifier.notifyAgentAdded(scope, this, agent);
 	}
 
 	/**
@@ -833,16 +820,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 * @param container
 	 *            the container
 	 */
-	protected <T extends IAgent> void fireAgentsAdded(final IScope scope, final IList<T> container) {
-		if (!hasListeners()) return;
-		// create list
-		final Collection<T> agents = new LinkedList<>(container);
-		// send event
-		try {
-			for (final IPopulation.Listener l : listeners) { l.notifyAgentsAdded(scope, this, agents); }
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-		}
+	protected <T extends IAgent> void fireAgentsAdded(final IScope scope, final IList<T> agents) {
+		notifier.notifyAgentsAdded(scope, this, agents);
 	}
 
 	/**
@@ -854,12 +833,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 *            the agent
 	 */
 	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
-		if (!hasListeners()) return;
-		try {
-			for (final IPopulation.Listener l : listeners) { l.notifyAgentRemoved(scope, this, agent); }
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-		}
+		notifier.notifyAgentRemoved(scope, this, agent);
 	}
 
 	/**
@@ -869,13 +843,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	 *            the scope
 	 */
 	protected void firePopulationCleared(final IScope scope) {
-		if (!hasListeners()) return;
-		// send event
-		try {
-			for (final IPopulation.Listener l : listeners) { l.notifyPopulationCleared(scope, this); }
-		} catch (final RuntimeException e) {
-			e.printStackTrace();
-		}
+		notifier.notifyPopulationCleared(scope, this);
 	}
 
 	// Filter methods
@@ -941,7 +909,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	/**
 	 * Gets the populations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the populations
 	 */
 	@Override

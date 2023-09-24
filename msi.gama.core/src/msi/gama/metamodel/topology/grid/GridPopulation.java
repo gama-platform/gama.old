@@ -43,6 +43,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.PopulationNotifier;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
@@ -154,6 +155,11 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		return result;
 	}
 
+	/**
+	 * Notifier
+	 */
+	private final PopulationNotifier notifier = new PopulationNotifier();
+
 	/** The grid. */
 	GamaSpatialMatrix grid;
 	/**
@@ -170,6 +176,9 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 
 	/** The updatable vars. */
 	protected final IVariable[] orderedVars, updatableVars;
+
+	/** The type. */
+	protected final IContainerType<?> type;
 
 	/** The hash code. */
 	private final int hashCode;
@@ -199,6 +208,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 		for (IVariable v : orderedVars) { orderedVarNames.add(v.getName()); }
 		updatableVars =
 				GamaPopulation.orderAttributes(this, ecd, VariableDescription::isUpdatable, UPDATE_DEPENDENCIES_FACETS);
+		this.type = Types.LIST.of(ecd.getModelDescription().getTypeNamed(species.getName()));
 
 		/*
 		 * PATRICK TAILLANDIER: the problem of having the host here is that depending on the simulation the hashcode
@@ -314,7 +324,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 			final IAgent a = (IAgent) grid.matrix[i];
 			if (a != null) { a.schedule(scope); }
 		}
-		// this.fireAgentsAdded(scope, (IList) getAgents(scope));
+		notifier.notifyAgentsAdded(scope, this, (IList) getAgents(scope));
 		return null;
 
 	}
@@ -747,9 +757,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 	 * @date 21 sept. 2023
 	 */
 	@Override
-	public IContainerType<?> getGamlType() { // TODO Auto-generated method stub
-		return null;
-	}
+	public IContainerType<?> getGamlType() { return type; }
 
 	/**
 	 * Contains.
@@ -1220,10 +1228,14 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 	public void setHost(final IMacroAgent agt) { host = agt; }
 
 	@Override
-	public void addListener(final Listener listener) {}
+	public void addListener(final Listener listener) {
+		notifier.addListener(listener);
+	}
 
 	@Override
-	public void removeListener(final Listener listener) {}
+	public void removeListener(final Listener listener) {
+		notifier.removeListener(listener);
+	}
 
 	@Override
 	public void updateVariables(final IScope scope, final IAgent a) {
