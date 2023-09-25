@@ -98,7 +98,7 @@ jobs:
           # Clear downloaded JDKs
           rm -fr ./jdk_*
           # Convert to zip archives
-          find . -name "Gama1.7-*.tar.gz" -print -exec bash -c 'tar xzf {} && zip -9 -q $(basename \{} .tar.gz).zip $(tar tf {}) && rm -fr $(tar tf {}) {} && echo "Compressed and convert {} to zip"' \;
+          find . -name "Gama1.7-*.tar.gz" -print -exec bash -c 'tar xzf {} && zip -9 -r -q $(basename \{} .tar.gz).zip $(tar --exclude="*/*" -tf {}) && rm -fr $(tar tf {}) {} && echo "Compressed and convert {} to zip"' \;
 
       # cf https://github.com/actions/upload-artifact/issues/246
       - name: Move artefacts to root tree
