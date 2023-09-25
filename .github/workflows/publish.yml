@@ -3,9 +3,11 @@ name: Publish to external stores
 on:
   release: 
     # A release was published, or a pre-release was changed to a release.
+    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=prereleased#release
     # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=released#release
     types: 
       - released
+      - prereleased
 
 run-name: Publishing ${{ github.event.release.tag_name }} to external stores
 
@@ -16,6 +18,7 @@ jobs:
 
     steps:
       - name: Publish Gama to Winget 🚀
+        if: github.event.release.prerelease == false
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: GamaPlatform.Gama
@@ -24,12 +27,25 @@ jobs:
           installers-regex: \.exe$ # All Exe's
           token: ${{ secrets.BOT_TOKEN }}
 
+      - name: Publish Pre release to Winget 👷
+        if: github.event.release.prerelease == true
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: GamaPlatform.Gama_Unstable
+          version: ${{ github.event.release.tag_name }}
+          release-tag: ${{ github.event.release.tag_name }}
+          installers-regex: \.exe$ # All Exe's
+          token: ${{ secrets.BOT_TOKEN }}
+          max-versions-to-keep: 1
+
+
   docker:
     runs-on: ubuntu-latest
     name: Publish as container 🐳
 
     steps:
       - name: Publish Gama to Github Packages 🚀
+        if: github.event.release.prerelease == false
         run: |
           curl --request POST \
             -H "Accept: application/vnd.github+json" \
@@ -44,6 +60,8 @@ jobs:
 
     steps:
       - name: Publish Gama to https://ppa.gama-platform.org 🚀
+        # Delete the following line when https://github.com/WoodenMaiden/gama.ppa/tree/pre-release will be merged
+        if: github.event.release.prerelease == false
         run: |
           curl -L \
             --request POST \
