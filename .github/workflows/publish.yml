@@ -24,10 +24,40 @@ jobs:
           installers-regex: \.exe$ # All Exe's
           token: ${{ secrets.BOT_TOKEN }}
 
+  docker:
+    runs-on: ubuntu-latest
+    name: Publish as container 🐳
+
+    steps:
+      - name: Publish Gama to Github Packages 🚀
+        run: |
+          curl --request POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.BOT_TOKEN }}" \
+            --data '{"event_type": "automated-generation"}' \
+            https://api.github.com/repos/gama-platform/gama.docker/dispatches 
+
+
+  linux-debian:
+    runs-on: ubuntu-latest
+    name: Publish to PPA/Debian repo 🐧 🟠🔴 
+
+    steps:
+      - name: Publish Gama to https://ppa.gama-platform.org 🚀
+        run: |
+          curl -L \
+            --request POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.BOT_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            --data '{"ref": "main", "inputs": {"tag": "${{ github.event.release.tag_name }}"}}' \
+            https://api.github.com/repos/gama-platform/gama.ppa/actions/workflows/publish/dispatches
+
+
+  # linux-arch:
+  #   runs-on: ubuntu-latest
+  #   name: Publish to AUR 🐧 🔷
+
   # macos:
   #   runs-on: ubuntu-latest
   #   name: Publish to macos 🍎
-
-  # linux:
-  #   runs-on: ubuntu-latest
-  #   name: Publish to linux 🐧
