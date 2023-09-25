@@ -11,14 +11,14 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/gluegen-rt-2.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/gluegen-rt-2.5.0-natives-linux-amd64.jar"/>
-	<classpathentry kind="lib" path="lib/gluegen-rt-2.5.0-natives-macosx-universal.jar"/>
-	<classpathentry kind="lib" path="lib/gluegen-rt-2.5.0-natives-windows-amd64.jar"/>
-	<classpathentry kind="lib" path="lib/jogl-all-2.5.0.jar" sourcepath="lib/jogl-java-src.zip"/>
-	<classpathentry kind="lib" path="lib/jogl-all-2.5.0-natives-macosx-universal.jar"/>
-	<classpathentry kind="lib" path="lib/jogl-all-2.5.0-natives-windows-amd64.jar"/>
-	<classpathentry kind="lib" path="lib/jogl-all-2.5.0-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt.jar" sourcepath="lib/jogamp-fat-java-src.zip"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-linux-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="lib/gluegen-rt-natives-windows-amd64.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all.jar" sourcepath="lib/jogl-java-src.zip"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-macosx-universal.jar"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-windows-amd64.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="lib" path="lib/jogl-all-natives-linux-amd64.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
