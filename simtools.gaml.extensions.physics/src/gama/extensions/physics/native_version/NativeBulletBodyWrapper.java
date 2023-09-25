@@ -1,20 +1,24 @@
 /*******************************************************************************************************
  *
- * NativeBulletBodyWrapper.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * NativeBulletBodyWrapper.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling
+ * and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.native_version;
 
 import static java.lang.Math.max;
 import static msi.gaml.types.GamaGeometryType.buildBox;
 
+import java.util.logging.Level;
+
 import com.jme3.bounding.BoundingBox;
+import com.jme3.bullet.NativePhysicsObject;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Quaternion;
@@ -43,16 +47,27 @@ public class NativeBulletBodyWrapper
 		extends AbstractBodyWrapper<PhysicsSpace, PhysicsRigidBody, CollisionShape, Vector3f>
 		implements INativeBulletPhysicalEntity {
 
-	// Between GAMA coordinates and JBullet coordinates. Some discrepancies
-	/** The quat transfer. */
-	// exist (esp. on spheres, for instance)
+	static {
+		CollisionShape.logger.setLevel(Level.OFF);
+		NativePhysicsObject.loggerN.setLevel(Level.OFF);
+		PhysicsSpace.logger.setLevel(Level.OFF);
+		PhysicsCollisionObject.logger.setLevel(Level.OFF);
+		PhysicsRigidBody.logger2.setLevel(Level.OFF);
+	}
+
+	/**
+	 * The quaternion used to transfer between GAMA coordinates and JBullet coordinates. Some discrepancies exist (esp.
+	 * on spheres, for instance)
+	 **/
 	Quaternion quatTransfer = new Quaternion();
 
 	/**
 	 * Instantiates a new native bullet body wrapper.
 	 *
-	 * @param agent the agent
-	 * @param gateway the gateway
+	 * @param agent
+	 *            the agent
+	 * @param gateway
+	 *            the gateway
 	 */
 	public NativeBulletBodyWrapper(final IAgent agent, final NativeBulletPhysicalWorld gateway) {
 		super(agent, gateway);
@@ -251,7 +266,8 @@ public class NativeBulletBodyWrapper
 	/**
 	 * Update shape.
 	 *
-	 * @param converter the converter
+	 * @param converter
+	 *            the converter
 	 */
 	public void updateShape(final IShapeConverter<CollisionShape, Vector3f> converter) {
 		CollisionShape shape = converter.convertAndTranslate(agent, aabbTranslation, visualTranslation);

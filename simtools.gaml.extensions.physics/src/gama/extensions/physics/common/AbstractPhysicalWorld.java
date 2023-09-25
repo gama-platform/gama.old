@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractPhysicalWorld.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * AbstractPhysicalWorld.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.common;
 
@@ -28,31 +28,34 @@ import msi.gaml.statements.IStatement;
 /**
  * The Class AbstractPhysicalWorld.
  *
- * @param <WorldType> the generic type
- * @param <ShapeType> the generic type
- * @param <VectorType> the generic type
+ * @param <WorldType>
+ *            the generic type
+ * @param <ShapeType>
+ *            the generic type
+ * @param <VectorType>
+ *            the generic type
  */
 public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		implements IPhysicalWorld<WorldType, ShapeType, VectorType> {
 
 	/** The simulation. */
 	protected final PhysicalSimulationAgent simulation;
-	
+
 	/** The world. */
 	protected WorldType world;
-	
+
 	/** The shape converter. */
 	private final IShapeConverter<ShapeType, VectorType> shapeConverter;
-	
+
 	/** The contact listener. */
 	protected final UniversalContactAddedListener contactListener;
-	
+
 	/** The updatable agents. */
 	protected final AsOrderedSet<IAgent> updatableAgents = Collector.getOrderedSet();
-	
+
 	/** The previous contacts. */
 	SetMultimap<IBody, IBody> previousContacts = MultimapBuilder.linkedHashKeys().hashSetValues().build();
-	
+
 	/** The new contacts. */
 	protected SetMultimap<IBody, IBody> newContacts = MultimapBuilder.linkedHashKeys().hashSetValues().build();
 
@@ -62,7 +65,8 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 	/**
 	 * Instantiates a new abstract physical world.
 	 *
-	 * @param physicalSimulationAgent the physical simulation agent
+	 * @param physicalSimulationAgent
+	 *            the physical simulation agent
 	 */
 	protected AbstractPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
 		simulation = physicalSimulationAgent;
@@ -108,7 +112,6 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		newContacts.forEach((b0, b1) -> {
 			if (!previousContacts.containsEntry(b0, b1)) {
 				// Tell the listener of a added contact (ContactInfo)
-				// System.out.println("Contact envoyé entre " + b0.getAgent() + " et " + b1.getAgent());
 				contactUpdate(b0, b1, true);
 			} else {
 				previousContacts.remove(b0, b1);
@@ -116,7 +119,6 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 		});
 		previousContacts.forEach((b0, b1) -> {
 			// Tell the listener of a removed contact (ContactInfo)
-			// System.out.println("Contact retiré entre " + b0.getAgent() + " et " + b1.getAgent());
 			contactUpdate(b0, b1, false);
 		});
 		previousContacts.clear();
@@ -140,15 +142,18 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 	/**
 	 * Update engine.
 	 *
-	 * @param timeStep the time step
-	 * @param maxSubSteps the max sub steps
+	 * @param timeStep
+	 *            the time step
+	 * @param maxSubSteps
+	 *            the max sub steps
 	 */
 	protected abstract void updateEngine(Double timeStep, int maxSubSteps);
 
 	/**
 	 * Emits notifications.
 	 *
-	 * @param simulation the simulation
+	 * @param simulation
+	 *            the simulation
 	 * @return true, if successful
 	 */
 	protected boolean emitsNotifications(final IAgent simulation) {
@@ -165,9 +170,12 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 	/**
 	 * Contact update.
 	 *
-	 * @param b0 the b 0
-	 * @param b1 the b 1
-	 * @param added the added
+	 * @param b0
+	 *            the b 0
+	 * @param b1
+	 *            the b 1
+	 * @param added
+	 *            the added
 	 */
 	protected void contactUpdate(final IBody b0, final IBody b1, final boolean added) {
 		String action = added ? CONTACT_ADDED : CONTACT_REMOVED;

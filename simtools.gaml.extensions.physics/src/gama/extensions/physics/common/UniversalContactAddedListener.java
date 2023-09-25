@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UniversalContactAddedListener.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * UniversalContactAddedListener.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA
+ * modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.common;
 
@@ -23,15 +23,14 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 
 /**
- * The listener interface for receiving universalContactAdded events.
- * The class that is interested in processing a universalContactAdded
- * event implements this interface, and the object created
- * with that class is registered with a component using the
- * component's <code>addUniversalContactAddedListener<code> method. When
- * the universalContactAdded event occurs, that object's appropriate
- * method is invoked.
+ * The listener interface for receiving universalContactAdded events. The class that is interested in processing a
+ * universalContactAdded event implements this interface, and the object created with that class is registered with a
+ * component using the component's <code>addUniversalContactAddedListener<code> method. When the universalContactAdded
+ * event occurs, that object's appropriate method is invoked.
  *
  * @see UniversalContactAddedEvent
  */
@@ -43,8 +42,10 @@ public class UniversalContactAddedListener implements ContactAddedCallback, Phys
 	/**
 	 * Adds the contact between.
 	 *
-	 * @param b0 the b 0
-	 * @param b1 the b 1
+	 * @param b0
+	 *            the b 0
+	 * @param b1
+	 *            the b 1
 	 */
 	private void addContactBetween(final IBody b0, final IBody b1) {
 		if (b0.isNoNotification() && b1.isNoNotification()) return;
@@ -54,6 +55,24 @@ public class UniversalContactAddedListener implements ContactAddedCallback, Phys
 	@Override
 	public void collision(final PhysicsCollisionEvent event) {
 		addContactBetween((IBody) event.getObjectA().getUserObject(), (IBody) event.getObjectB().getUserObject());
+	}
+
+	/**
+	 * On contact processed.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param pcoA
+	 *            the pco A
+	 * @param pcoB
+	 *            the pco B
+	 * @param pointId
+	 *            the point id
+	 * @date 25 sept. 2023
+	 */
+	public void onContactProcessed(final PhysicsCollisionObject pcoA, final PhysicsCollisionObject pcoB,
+			final long pointId) {
+		addContactBetween((IBody) ((PhysicsRigidBody) pcoA).getUserObject(),
+				(IBody) ((PhysicsRigidBody) pcoB).getUserObject());
 	}
 
 	@Override
@@ -86,9 +105,7 @@ public class UniversalContactAddedListener implements ContactAddedCallback, Phys
 	 *
 	 * @return the collected contacts
 	 */
-	public Multimap<? extends IBody, ? extends IBody> getCollectedContacts() {
-		return newContacts;
-	}
+	public Multimap<? extends IBody, ? extends IBody> getCollectedContacts() { return newContacts; }
 
 	/**
 	 * Clear.

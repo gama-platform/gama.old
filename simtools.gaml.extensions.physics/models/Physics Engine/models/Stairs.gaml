@@ -86,13 +86,14 @@ species ball skills: [dynamic_body] {
 experiment Stairs type: gui {
 	output {
 		display "Climb" type: 3d axes: false {
+	
 			camera 'default' location: {-47.816,165.8396,88.7059} target: {60.0,60.0,0.0};
-			graphics ground {
-				draw shape color: #blue;
+			graphics ground refresh:false{
+				draw shape color: rgb(132, 172, 136, 255);
 				//draw aabb wireframe: true color: #blue;
 			}
 
-			species steps;
+			species steps refresh: false;
 			species ball;
 			event #mouse_down {
 				ask ball {
