@@ -52,9 +52,9 @@ grid patches file: grid_file("../images/DEM/Volcano DEM.asc") skills: [static_bo
 	// and that of its neigbors by a small amount, as well as stop the lava agent quite brutally (clearing all the forces applied to it) to imitate "stickiness"
 	action contact_added_with (agent other) {
 		if (erosion) {
-			grid_value <- grid_value - 0.01;
+			grid_value <- max(0,grid_value - 0.01);
 			ask neighbors {
-				grid_value <- grid_value - 0.005;
+				grid_value <- max(0,grid_value - 0.005);
 				do update_body;
 			}
 			do update_body;
@@ -109,9 +109,9 @@ experiment "3D view" type: gui {
 				}
 			}
 			//The terrain is represented as a field (but could be equally represented as a grid		
-			mesh patches  texture: image_file("../images/DEM/Volcano Texture.jpg") triangulation: true smooth: true;
+			mesh patches  texture: image_file("../images/DEM/Volcano Texture.jpg") triangulation: true ;
 			//We add to the representation the individual 'aabb's (axis-aligned bounding boxes) of the patches if 'draw_inside' is true
-		 	species patches;
+		 	//species patches;
 		 	//Finally, each lava agent is represented (with its velocity if 'draw_inside' is true)
 			species lava;
 		}

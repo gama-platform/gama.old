@@ -57,7 +57,7 @@ species water skills: [dynamic_body] {
 
 } 
 
-experiment "3D view" type: gui {
+experiment "Four different scales" type: gui {
 	
 	string camera_loc <- #from_up_front;
 	int distance <- 200;
@@ -86,6 +86,28 @@ experiment "3D view" type: gui {
 				point p <- #user_location;
 				origins_of_flow << {p.x, p.y};
 			}
+		}
+
+	}
+	
+	
+	
+	}
+	
+experiment "Largest scale" type: gui {
+	
+	string camera_loc <- #from_up_front;
+	int distance <- 200;
+	
+	action _init_ {
+		create simulation with: [z_scale::3.0];
+	} 
+	
+	output {
+		layout #split;
+		display "Flow" type: 3d background: #white   antialias: false camera: #from_up_front{
+			mesh terrain grayscale: true triangulation: true refresh: false scale: z_scale;
+			species water;
 		}
 
 	}}
