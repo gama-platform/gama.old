@@ -299,8 +299,9 @@ jobs:
           sed -i "s/gama-platform-jdk$/gama-platform/g" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
           sed -i "s/Package: gama-platform$/Package: gama-platform-jdk/g" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
           sed -i "/^Depends:.*$/d" ${{ github.workspace }}/${{ matrix.zipName }}/DEBIAN/control
+
           # Pre-fix relative path for headless helper script (jdk path)
-          sed -i "s/\".*\.\/j/\/opt\/gama-platform\/j/g" ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/headless/gama-headless.sh
+          sed -i "s|headless_path=.*|headless_path=/opt/gama-platform|g" ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/headless/gama-headless.sh
 
       - name: Fix relative path for headless helper script (plugin path)
         run: sed -i "s/\".*\.\/p/\/opt\/gama-platform\/p/g" ${{ github.workspace }}/${{ matrix.zipName }}/opt/gama-platform/headless/gama-headless.sh

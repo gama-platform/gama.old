@@ -47,11 +47,11 @@ function read_from_ini {
   tail -n +$start_line "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/Gama.ini | tr '\n' ' '
 }
 
-echo '******************************************************************'
-echo '* GAMA version 1.9.3                                             *'
-echo '* http://gama-platform.org                                       *'
-echo '* (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners                *'
-echo '******************************************************************'
+echo "******************************************************************"
+echo "* GAMA version 1.9.3                                             *"
+echo "* http://gama-platform.org                                       *"
+echo "* (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners                *"
+echo "******************************************************************"
 passWork=.workspace
 # w/ output folder
 if [ $workspaceCreate -eq 0 ]; then
