@@ -49,8 +49,6 @@ release_continuous(){
 	echo "Upload continuous/on-demand release to github"
 	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
 
-	echo "Trigger Docker build"
-	curl -H "Accept: application/vnd.github+json" -H "Authorization: token $BOT_TOKEN" --request POST --data '{"event_type": "automated-generation"}' https://api.github.com/repos/gama-platform/gama.docker/dispatches 
 }
 
 

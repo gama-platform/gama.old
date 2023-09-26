@@ -1,0 +1,81 @@
+name: Publish release to external stores
+
+on:
+  release: 
+    # Triggers when a release was published, or a pre-release was changed to a release.
+    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=prereleased#release
+    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=released#release
+    types: 
+      - released
+      - prereleased
+
+run-name: Publishing ${{ github.event.release.tag_name }} to external stores
+
+jobs:
+  windows:
+    runs-on: ubuntu-latest
+    name: Publish to windows 🪟
+
+    steps:
+      - name: Publish Gama to Winget 🚀
+        if: github.event.release.prerelease == false
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: GamaPlatform.Gama
+          version: ${{ github.event.release.tag_name }}
+          release-tag: ${{ github.event.release.tag_name }}
+          installers-regex: \.exe$ # All Exe's
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Publish Pre release to Winget 👷
+        if: github.event.release.prerelease == true
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: GamaPlatform.Gama_Unstable
+          version: ${{ github.event.release.tag_name }}
+          release-tag: ${{ github.event.release.tag_name }}
+          installers-regex: \.exe$ # All Exe's
+          token: ${{ secrets.BOT_TOKEN }}
+          max-versions-to-keep: 1
+
+
+  docker:
+    runs-on: ubuntu-latest
+    name: Publish pre-release as container 🐳
+    if: github.event.release.prerelease == true
+
+    steps:
+      - name: Publish Gama to Github Packages 🚀
+        run: |
+          curl --request POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.BOT_TOKEN }}" \
+            --data '{"event_type": "automated-generation"}' \
+            https://api.github.com/repos/gama-platform/gama.docker/dispatches 
+
+
+  linux-debian:
+    runs-on: ubuntu-latest
+    name: Publish to PPA/Debian repo 🐧 🟠🔴 
+    # Delete the following line when https://github.com/WoodenMaiden/gama.ppa/tree/pre-release will be merged
+    if: github.event.release.prerelease == false
+
+    steps:
+      - name: Publish Gama to https://ppa.gama-platform.org 🚀
+        run: |
+          curl -L \
+            --request POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.BOT_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            --data '{"ref": "main", "inputs": {"tag": "${{ github.event.release.tag_name }}"}}' \
+            https://api.github.com/repos/gama-platform/gama.ppa/actions/workflows/publish/dispatches
+
+
+  # linux-arch:
+  #   runs-on: ubuntu-latest
+  #   name: Publish to AUR 🐧 🔷
+
+  # macos:
+  #   runs-on: ubuntu-latest
+  #   name: Publish to macos 🍎
