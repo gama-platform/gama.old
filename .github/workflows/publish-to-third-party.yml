@@ -1,8 +1,8 @@
-name: Publish to external stores
+name: Publish release to external stores
 
 on:
   release: 
-    # A release was published, or a pre-release was changed to a release.
+    # Triggers when a release was published, or a pre-release was changed to a release.
     # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=prereleased#release
     # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=released#release
     types: 
@@ -41,11 +41,11 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
-    name: Publish as container 🐳
+    name: Publish pre-release as container 🐳
+    if: github.event.release.prerelease == true
 
     steps:
       - name: Publish Gama to Github Packages 🚀
-        if: github.event.release.prerelease == false
         run: |
           curl --request POST \
             -H "Accept: application/vnd.github+json" \
@@ -57,11 +57,11 @@ jobs:
   linux-debian:
     runs-on: ubuntu-latest
     name: Publish to PPA/Debian repo 🐧 🟠🔴 
+    # Delete the following line when https://github.com/WoodenMaiden/gama.ppa/tree/pre-release will be merged
+    if: github.event.release.prerelease == false
 
     steps:
       - name: Publish Gama to https://ppa.gama-platform.org 🚀
-        # Delete the following line when https://github.com/WoodenMaiden/gama.ppa/tree/pre-release will be merged
-        if: github.event.release.prerelease == false
         run: |
           curl -L \
             --request POST \
