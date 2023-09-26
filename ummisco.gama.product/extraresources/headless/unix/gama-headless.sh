@@ -1,9 +1,10 @@
 #!/bin/bash
 
+headless_path=$( dirname $( realpath "${BASH_SOURCE[0]}" ) )
 java="java"
 
-if [ -d "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )/../jdk" ]; then
-  java="$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../jdk/bin/java
+if [ -d "${headless_path}/../jdk" ]; then
+  java="${headless_path}"/../jdk/bin/java
 else
   javaVersion=$(java -version 2>&1 | head -n 1 | cut -d "\"" -f 2)
   # Check if good Java version before everything
@@ -30,7 +31,7 @@ for arg do
 done
 
 if [[ $memory == "0" ]]; then
-  memory=$(grep Xmx "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini || echo "-Xmx4096m")
+  memory=$(grep Xmx "${headless_path}"/../Gama.ini || echo "-Xmx4096m")
 else
   memory=-Xmx$memory
 fi
@@ -44,15 +45,15 @@ esac
 
 
 function read_from_ini {
-  start_line=$(grep -n -- '-server' "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini | cut -d ':' -f 1)
-  tail -n +$start_line "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Gama.ini | tr '\n' ' '
+  start_line=$(grep -n -- '-server' "${headless_path}"/../Gama.ini | cut -d ':' -f 1)
+  tail -n +$start_line "${headless_path}"/../Gama.ini | tr '\n' ' '
 }
 
-echo '******************************************************************'
-echo '* GAMA version 1.9.3                                             *'
-echo '* http://gama-platform.org                                       *'
-echo '* (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners                *'
-echo '******************************************************************'
+echo "******************************************************************"
+echo "* GAMA version 1.9.3                                             *"
+echo "* http://gama-platform.org                                       *"
+echo "* (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners                *"
+echo "******************************************************************"
 passWork=.workspace
 # w/ output folder
 if [ $workspaceCreate -eq 0 ]; then
@@ -72,7 +73,7 @@ fi
 
 ini_arguments=$(read_from_ini)
 
-if ! $java -cp "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory ${ini_arguments[@]} org.eclipse.core.launcher.Main -configuration "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
+if ! $java -cp "${headless_path}"/../plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory ${ini_arguments[@]} org.eclipse.core.launcher.Main -configuration "${headless_path}"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
     echo "Error in you command, here's the log :"
     cat $passWork/.metadata/.log
     exit 1
