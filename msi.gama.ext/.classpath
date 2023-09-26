@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="compress 1.24/commons-compress-1.24.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts/jts-core-1.19.0.jar" sourcepath="jts/jts-core-1.19.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts/jts-io-common-1.19.0.jar"/>

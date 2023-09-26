@@ -28,7 +28,6 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="com.google.guava"/>
       <import plugin="org.eclipse.core.filesystem"/>
-      <import plugin="org.apache.commons.compress"/>
       <import plugin="org.eclipse.equinox.p2.core"/>
       <import plugin="org.eclipse.equinox.p2.metadata"/>
       <import plugin="org.eclipse.equinox.p2.operations"/>

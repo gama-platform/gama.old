@@ -581,13 +581,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.compress"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.e4.core.commands"
          download-size="0"
          install-size="0"
@@ -931,13 +924,6 @@
 
    <plugin
          id="slf4j.api"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.apache.commons.commons-io"
          download-size="0"
          install-size="0"
          version="0.0.0"
