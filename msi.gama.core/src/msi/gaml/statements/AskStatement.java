@@ -11,6 +11,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -28,6 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.IStatement.Breakable;
@@ -189,6 +191,9 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 	/** The parallel. */
 	private final IExpression parallel;
 
+	/** Tells whether the statement targets simulations (see #3891) */
+	private final boolean targetsSimulations;
+
 	/**
 	 * Instantiates a new ask statement.
 	 *
@@ -200,6 +205,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 		target = getFacet(IKeyword.TARGET);
 		parallel = getFacet("parallel");
 		if (target != null) { setName("ask " + target.serialize(false)); }
+		targetsSimulations = targetsSimulations();
 	}
 
 	@Override
@@ -212,24 +218,42 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 	@Override
 	public void leaveScope(final IScope scope) {
 		// scope.popLoop();
+		scope.leaveAskContextWithSimulations();
 		super.leaveScope(scope);
+	}
+
+	/**
+	 * Targets simulations.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ic
+	 *            the ic
+	 * @return true, if successful
+	 * @date 26 sept. 2023
+	 */
+	private boolean targetsSimulations() {
+		SpeciesDescription sd = getDescription().getGamlType().getDenotedSpecies();
+		return sd != null && sd.isModel();
 	}
 
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
-		if (t instanceof IContainer) {
+		if (t instanceof IContainer ic) {
+			if (targetsSimulations) { scope.enterAskContextWithSimulations(); }
 			GamaExecutorService.execute(scope, sequence,
-					((IContainer<?, IAgent>) t).listValue(scope, Types.AGENT, false), parallel);
+					((IContainer<?, IAgent>) ic).listValue(scope, Types.AGENT, false), parallel);
 			return this;
 		}
+		IAgent agent;
 		if (t instanceof IAgent) {
-			final ExecutionResult result = scope.execute(sequence, (IAgent) t, null);
-			return result.getValue();
+			if (t instanceof SimulationAgent) { scope.enterAskContextWithSimulations(); }
+			agent = (IAgent) t;
+		} else {
+			agent = Cast.asAgent(scope, t);
+			if (agent == null) throw GamaRuntimeException.error("Can not execute ask on a nil agent", scope);
 		}
-		final IAgent agent = Cast.asAgent(scope, t);
-		if (agent == null) throw GamaRuntimeException.error("Can not execute ask on a nil agent", scope);
 		final ExecutionResult result = scope.execute(sequence, agent, null);
 		return result.getValue();
 	}
