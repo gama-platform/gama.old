@@ -1,4 +1,4 @@
-name: Publish release to external stores
+name: Auto publish release to external stores
 
 on:
   release: 
@@ -9,7 +9,7 @@ on:
       - released
       - prereleased
 
-run-name: Publishing ${{ github.event.release.tag_name }} to external stores
+run-name: Auto publishing ${{ github.event.release.tag_name }} to external stores
 
 jobs:
   windows:
