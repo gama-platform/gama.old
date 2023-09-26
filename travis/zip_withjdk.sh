@@ -69,10 +69,11 @@ for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.
 	else
 		echo "./jdk/bin/java" >> Gama.ini
 	fi
+	
 	cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini >> Gama.ini
 	rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
 	mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
-	sudo cp "$GITHUB_WORKSPACE/travis/jdk/$(echo $os | cut -d '_' -f 1)/gama-headless.$(if [ "$os" == "win32" ]; then echo "bat"; else echo "sh"; fi)" $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/headless
+
 done
 
 

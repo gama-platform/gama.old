@@ -1,11 +1,17 @@
 #!/bin/bash
 
-javaVersion=$(java -version 2>&1 | head -n 1 | cut -d "\"" -f 2)
-# Check if good Java version before everything
-if [[ ${javaVersion:2} == 17 ]]; then
-  echo "You should use Java 17 to run GAMA"
-  echo "Found you using version : $javaVersion"
-  exit 1
+java="java"
+
+if [ -d "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )/../jdk" ]; then
+  java="$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../jdk/bin/java
+else
+  javaVersion=$(java -version 2>&1 | head -n 1 | cut -d "\"" -f 2)
+  # Check if good Java version before everything
+  if [[ ${javaVersion:2} == 17 ]]; then
+    echo "You should use Java 17 to run GAMA"
+    echo "Found you using version : $javaVersion"
+    exit 1
+  fi
 fi
 
 memory="0"
@@ -66,7 +72,7 @@ fi
 
 ini_arguments=$(read_from_ini)
 
-if ! java -cp "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory ${ini_arguments[@]} org.eclipse.core.launcher.Main -configuration "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
+if ! $java -cp "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../plugins/org.eclipse.equinox.launcher*.jar -Xms512m $memory ${ini_arguments[@]} org.eclipse.core.launcher.Main -configuration "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/configuration -application msi.gama.headless.product -data $passWork "$@"; then
     echo "Error in you command, here's the log :"
     cat $passWork/.metadata/.log
     exit 1
