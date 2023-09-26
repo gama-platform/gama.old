@@ -49,7 +49,6 @@ for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.
 	# Get OS (first attribute in the path)
 	# + Add suffix if build for ARM64 system
 	os="$(echo $folder | cut -d '/' -f 1)$(if [[ "$folder" == *'aarch64'* ]]; then echo '_aarch'; fi )"
-	headless_script_path="${GITHUB_WORKSPACE}/ummisco.gama.product/extraresources/headless"
 
 	echo "Add custom JDK for $os"
 
@@ -65,20 +64,15 @@ for folder in "linux/gtk/x86_64" "win32/win32/x86_64" "macosx/cocoa/x86_64/Gama.
 	echo "-vm" > Gama.ini
 	if [[ "$os" == "macosx"* ]]; then
 		echo "../jdk/Contents/Home/bin/java" >> Gama.ini
-		headless_script_path="${headless_script_path}/osx/gama-headless.sh"
 	elif [[ "$os" == "win32"* ]]; then
 		echo "./jdk/bin/javaw" >> Gama.ini
-		headless_script_path="${headless_script_path}/windows/gama-headless.bat"
 	else
 		echo "./jdk/bin/java" >> Gama.ini
-		headless_script_path="${headless_script_path}/linux/gama-headless.sh"
 	fi
 	
 	cat $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini >> Gama.ini
 	rm $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
 	mv Gama.ini $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folderEclipse/Gama.ini
-
-	sudo cp "$headless_script_path" $GITHUB_WORKSPACE/ummisco.gama.product/target/products/ummisco.gama.application.product/$folder/headless
 
 done
 
