@@ -28,10 +28,10 @@ global {
  
 experiment batch_abstract type:batch virtual:true until:(time > end_cycle) {
 	init {is_batch <- true;}
-	parameter "Prey max transfer:" var: prey_max_transfer min: 0.05 max: 0.5 step: 0.05;
-	parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
-	parameter "Predator energy transfer:" var: predator_energy_transfer min: 0.1 max: 1.0 step: 0.1;
-	parameter "Predator energy reproduce:" var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1;
+	parameter "Prey max transfer:" var: prey_max_transfer among:[0.05,0.2]; //min: 0.05 max: 0.5 step: 0.05;
+	//parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
+	//parameter "Predator energy transfer:" var: predator_energy_transfer min: 0.1 max: 1.0 step: 0.1;
+	//parameter "Predator energy reproduce:" var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1;
 }
 
 // This experiment runs the simulation 5 times.
@@ -47,7 +47,7 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 		//in this example, we ask all the simulation agents of the run to save (at the end of the simulation) the people population in a shapefile with their is_infected and is_immune attributes 
 		ask simulations
 		{
-			save [nb_preys,nb_predators] to: "Results/preypredator.csv" format:"csv";
+			save [nb_preys,nb_predators] to: "Results/preypredator.csv" format:"csv" rewrite:false;
 		}
 	}
 }
