@@ -192,6 +192,8 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
     "$LK"`
 echo $RESULT	
 RELEASEID=`echo "$RESULT" | sed -ne 's/^  "id": \(.*\),$/\1/p'`
+RELEASE_DESCRIPTION=`echo "$RESULT" |  sed -ne 's/^  "body": "\(.*\)"$/\1/p'`
+IS_PRE_RELEASE=`echo "$RESULT" |  sed -ne 's/^  "prerelease": \(.*\),$/\1/p'`
 echo $RELEASEID
 
 
@@ -218,3 +220,23 @@ do
 done 
  
 echo DONE
+
+echo "Updating the description of the release to trigger deployment"
+
+if [[ "$IS_PRE_RELEASE" == "true"]]; then # Here we are in a pre release
+	if [[ -n "$(echo $RELEASE_DESCRIPTION | grep 'Last updated on' )" ]]; then
+		RELEASE_DESCRIPTION=$(echo $RELEASE_DESCRIPTION | grep -v "Last updated on") # We get rid of the last update date
+	fi
+
+	RELEASE_DESCRIPTION="${RELEASE_DESCRIPTION}\nLast updated on $(date +'%D %T')"
+
+else # Here we are in a release 
+	RELEASE_DESCRIPTION=$(echo $RELEASE_DESCRIPTION | grep -v "Last updated on")
+fi
+
+curl -s -X PATCH \
+	-H "Authorization: token $BOT_TOKEN"                 \
+    -H "Accept: application/vnd.github.manifold-preview" \
+    -H "Content-Type: application/zip"                   \
+	-d "{\"body\": \"$RELEASE_DESCRIPTION\"}"            \
+	"https://api.github.com/repos/gama-platform/gama/releases/$RELEASEID"
