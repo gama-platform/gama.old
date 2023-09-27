@@ -8,6 +8,7 @@ on:
     types: 
       - released
       - prereleased
+      - edited
 
 run-name: Auto publishing ${{ github.event.release.tag_name }} to external stores
 
