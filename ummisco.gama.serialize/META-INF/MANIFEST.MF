@@ -7,7 +7,6 @@ Require-Bundle: msi.gama.core,
  msi.gama.ext
 Bundle-ClassPath: .,
  ext/jettison-1.4.1.jar,
- ext/fst 2.57/fst-2.57.jar,
  ext/fst 2.57/jackson-core-2.8.8.jar,
  ext/fst 2.57/javassist-3.21.0-GA.jar,
  ext/fst 2.57/objenesis-3.3.jar,
