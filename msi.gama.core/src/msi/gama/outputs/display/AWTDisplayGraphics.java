@@ -35,6 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -370,7 +371,20 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 		try {
 			final Rectangle2D r = s.getBounds2D();
 			currentRenderer.setColor(attributes.getColor());
-			if (!isLine && !attributes.isEmpty()) { currentRenderer.fill(s); }
+			if (!isLine && !attributes.isEmpty()) {
+				BufferedImage texture = null;
+				List obj = attributes.getTextures();
+				if (obj != null && obj.size() > 0) {
+					if (obj.get(obj.size() - 1) instanceof IImageProvider im) {
+						texture = im.getImage(getSurface().getScope(), attributes.useCache());
+					} else if (obj.get(obj.size() - 1) instanceof BufferedImage im) { texture = im; }
+				} else if (obj instanceof BufferedImage im) { texture = im; }
+				if (texture != null) {
+					TexturePaint tp = new TexturePaint(texture, r);
+					currentRenderer.setPaint(tp);
+				}
+				currentRenderer.fill(s);
+			}
 			if (isLine || border != null || attributes.isEmpty()) {
 				if (border != null) { currentRenderer.setColor(border); }
 				currentRenderer.draw(s);
