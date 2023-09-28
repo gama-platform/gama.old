@@ -5,6 +5,7 @@ on:
     # Triggers when a release was published, or a pre-release was changed to a release.
     # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=prereleased#release
     # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=released#release
+    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=edited#release
     types: 
       - released
       - prereleased
