@@ -58,6 +58,6 @@ echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 	commit_wiki_files
 fi	
-if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
-	release_continuous
-fi	
+# if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
+# 	release_continuous
+# fi	

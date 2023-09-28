@@ -464,3 +464,13 @@ jobs:
           prerelease: ${{ steps.release_data.outputs.prerelease }}
           release_name: Alpha Version 1.9.3 (${{ steps.setup_new_release_data.outputs.commit }})
           tag: ${{ steps.release_data.outputs.tag_name }}
+
+      - name: Publish updates to wiki
+        run: ./travis/publish.sh
+        env:  
+          MSG: ${{ env.TRAVIS_MSG }}
+          GITHUB_TOKEN: ${{ github.token }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          TRAVIS_COMMIT: ${ GITHUB_SHA }
+          TRAVIS_EVENT_TYPE: ${{ github.event_name }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
