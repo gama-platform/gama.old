@@ -434,16 +434,33 @@ jobs:
           ls -lah ${{ github.workspace }}
 
 
+      - name: git-get-release-action
+        uses: cardinalby/git-get-release-action@1.2.4
+        id: release_data
+        with:
+          tag: 1.9.3
+
+
+      - id: setup_new_release_data
+        run: |
+          mkdir ${{ runner.temp }}/files
+          mv *.zip *.deb *.dmg *.exe ${{ runner.temp }}/files
+
+          echo "date=$(date +'%D %T')" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+
+
       - name: Publish to Github
-        run: ./travis/publish.sh
-        env:  
-          SSH_USER_PWD: ${{ secrets.USER_PWD }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          MSG: ${{ env.TRAVIS_MSG }}
-          GITHUB_TOKEN: ${{ github.token }}
-          SSHPASS: ${{ secrets.USER_PWD }}
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TRAVIS_COMMIT: ${ GITHUB_SHA }
-          TRAVIS_EVENT_TYPE: ${{ github.event_name }}
-          thePATH: "${{ github.workspace }}/Gama1.7"
-          GITHUB_WORKSPACE: ${{ github.workspace }}
+        uses: svenstaro/upload-release-action@2.7.0
+        with:
+          body: |
+            Alpha release for GAMA 1.9.3, which adds compatibility with JDK 17. Please test and report issues
+            Last updated on ${{ steps.setup_new_release_data.outputs.date }}
+          file: ${{ runner.temp }}/files/*
+          file_glob: true
+          make_latest: false
+          overwrite: true
+          promote: false
+          prerelease: ${{ steps.release_data.outputs.prerelease }}
+          release_name: Alpha Version 1.9.3 (${{ steps.setup_new_release_data.outputs.commit }})
+          tag: ${{ steps.release_data.outputs.tag_name }}
