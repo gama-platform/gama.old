@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.compress.utils.FileNameUtils;
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.moeaframework.util.sequence.Saltelli;
 
@@ -304,7 +305,7 @@ public class Sobol {
 	 */
 	public void saveResult(final File file) {
 		try (FileWriter fw = new FileWriter(file, false)) {
-			fw.write(this.buildReportString());
+			fw.write(this.buildReportString(FileNameUtils.getExtension(file.getPath())));
 		} catch (Exception e) {
 			throw GamaRuntimeException.error("File " + file.toString() + " not found", scope);
 		}
@@ -313,26 +314,52 @@ public class Sobol {
 	/**
 	 * Build the string that contains the report of the Sobol analysis
 	 */
-	public String buildReportString() {
+	public String buildReportString(String extension) {
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append("SOBOL ANALYSIS:\n");
-		for (String output_name : sobol_analysis.keySet()) {
-			sb.append("##############################\n");
-			sb.append("output variable : " + output_name).append(Strings.LN);
-			sb.append("-------------------").append(Strings.LN);
-			for (String param : sobol_analysis.get(output_name).keySet()) {
-				sb.append(param + " : \n");
-				sb.append("first order : ");
-				sb.append(sobol_analysis.get(output_name).get(param).get(0)).append(Strings.LN);
-				sb.append("first order confidence : ");
-				sb.append(sobol_analysis.get(output_name).get(param).get(1)).append(Strings.LN);
-				sb.append("Total order : ");
-				sb.append(sobol_analysis.get(output_name).get(param).get(2)).append(Strings.LN);
-				sb.append("Total order confidence : ");
-				sb.append(sobol_analysis.get(output_name).get(param).get(3)).append(Strings.LN);
+		char sep = ',';
+		
+		if (extension.equalsIgnoreCase("csv")) {
+			// Build header
+			sb.append("output").append(sep);
+			sb.append("parameter").append(sep);
+			sb.append("first order").append(sep);
+			sb.append("first order confidence").append(sep);
+			sb.append("Total order").append(sep);
+			sb.append("Total order confidence").append(Strings.LN);
+			for (String output_name : sobol_analysis.keySet()) {
+				for (String param : sobol_analysis.get(output_name).keySet()) {
+					// The output & parameter
+					sb.append(output_name).append(sep);
+					sb.append(param).append(sep);
+					for (Double indices : sobol_analysis.get(output_name).get(param)) {
+						// The Sobol indices
+						sb.append(indices).append(sep);
+					}
+					sb.append(Strings.LN);
+				}
+			}	
+		} else {
+			sb.append("SOBOL ANALYSIS:\n");
+			for (String output_name : sobol_analysis.keySet()) {
+				sb.append("##############################\n");
+				sb.append("output variable : " + output_name).append(Strings.LN);
 				sb.append("-------------------").append(Strings.LN);
+				for (String param : sobol_analysis.get(output_name).keySet()) {
+					sb.append(param + " : \n");
+					sb.append("first order : ");
+					sb.append(sobol_analysis.get(output_name).get(param).get(0)).append(Strings.LN);
+					sb.append("first order confidence : ");
+					sb.append(sobol_analysis.get(output_name).get(param).get(1)).append(Strings.LN);
+					sb.append("Total order : ");
+					sb.append(sobol_analysis.get(output_name).get(param).get(2)).append(Strings.LN);
+					sb.append("Total order confidence : ");
+					sb.append(sobol_analysis.get(output_name).get(param).get(3)).append(Strings.LN);
+					sb.append("-------------------").append(Strings.LN);
+				}
 			}
 		}
+		
 		return sb.toString();
 	}
 

@@ -28,10 +28,10 @@ global {
  
 experiment batch_abstract type:batch virtual:true until:(time > end_cycle) {
 	init {is_batch <- true;}
-	parameter "Prey max transfer:" var: prey_max_transfer among:[0.05,0.2]; //min: 0.05 max: 0.5 step: 0.05;
-	//parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
-	//parameter "Predator energy transfer:" var: predator_energy_transfer min: 0.1 max: 1.0 step: 0.1;
-	//parameter "Predator energy reproduce:" var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1;
+	parameter "Prey max transfer:" var: prey_max_transfer min: 0.05 max: 0.5 step: 0.05;
+	parameter "Prey energy reproduce:" var: prey_energy_reproduce min: 0.05 max: 0.75 step: 0.05;
+	parameter "Predator energy transfer:" var: predator_energy_transfer min: 0.1 max: 1.0 step: 0.1;
+	parameter "Predator energy reproduce:" var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1;
 }
 
 // This experiment runs the simulation 5 times.
@@ -117,7 +117,7 @@ experiment exploration_with_sampling  parent: batch_abstract repeat:3 type: batc
 // observed variance for outcomes of interest, 
 // more on this see https://www.jasss.org/19/1/5.html and http://moeaframework.org for the API
 experiment Sobol parent: batch_abstract type: batch until:( time > end_cycle ) {
-	method sobol outputs:["nb_preys","nb_predators"] sample:100 report:"Results/sobol.txt" results:"Results/sobol_raw.csv";
+	method sobol outputs:["nb_preys","nb_predators"] sample:10 report:"Results/sobol.csv" results:"Results/sobol_raw.csv";
 }
 
 // This experiment perform a Morris analysis (see Morris 1991, doi:10.1080/00401706.1991.10484804)
