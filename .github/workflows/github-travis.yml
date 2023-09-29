@@ -441,28 +441,63 @@ jobs:
           tag: 1.9.3
 
 
-      - id: setup_new_release_data
+      - name: Setup new release data and rename files accordingly 
+        id: setup_new_release_data
         run: |
           mkdir ${{ runner.temp }}/files
           mv *.zip *.deb *.dmg *.exe ${{ runner.temp }}/files
+          cd ${{ runner.temp }}/files
 
           echo "date=$(date +'%D %T')" >> "$GITHUB_OUTPUT"
           echo "commit=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+          
+          timestamp="$(date +'%D' | sed 's|/|.|g')"
 
+          # Windows
+          for file in *.exe *win32*.zip; do
+            if [[ "$(echo $file | awk -F'_' '{pring $NF}'" == *"withJDK"* ]]; then
+              mv "$file" "GAMA_${{ steps.release_data.outputs.tag_name }}_Windows_with_JDK_${timestamp}_${commit}.exe"
+            else
+              mv "$file" "GAMA_${{ steps.release_data.outputs.tag_name }}_Windows_${timestamp}_${commit}.exe"
+            fi
+          done
+
+          # Mac
+          for file in *.dmg; do
+            prefix="${timestamp}_${commit}.dmg"
+            if [[ "$(echo $file | awk -F'_' '{print $NF}')" == *"withJDK"* ]]; then
+              prefix="with_JDK_${prefix}"
+            fi
+
+            if [[ "$file" == *"aarch64"* ]]; then
+              prefix="M1_${prefix}"
+            fi
+            
+            prefix="GAMA_1.9.3_MacOS_${prefix}"
+          done
+
+          # Linux
+          for file in *.deb gama-platform*.zip; do 
+            if [[ "$(echo $file | awk -F'_' '{print $1}')" == *"jdk"* ]]; then
+              mv "$file" "GAMA_${{ steps.release_data.outputs.tag_name }}_Linux_with_JDK_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+            else
+              mv "$file" "GAMA_${{ steps.release_data.outputs.tag_name }}_Linux_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+            fi
+          done
 
       - name: Publish to Github
         uses: svenstaro/upload-release-action@2.7.0
         with:
           body: |
-            Alpha release for GAMA 1.9.3, which adds compatibility with JDK 17. Please test and report issues
-            Last updated on ${{ steps.setup_new_release_data.outputs.date }}
+            Alpha release for GAMA ${{ steps.release_data.outputs.tag_name }}, which adds compatibility with JDK 17. Please test and report issues
+            Last updated on ${{ steps.setup_new_release_data.outputs.date }}.
           file: ${{ runner.temp }}/files/*
           file_glob: true
           make_latest: false
           overwrite: true
           promote: false
           prerelease: ${{ steps.release_data.outputs.prerelease }}
-          release_name: Alpha Version 1.9.3 (${{ steps.setup_new_release_data.outputs.commit }})
+          release_name: Alpha Version ${{ steps.release_data.outputs.tag_name }} (${{ steps.setup_new_release_data.outputs.commit }})
           tag: ${{ steps.release_data.outputs.tag_name }}
 
       - name: Publish updates to wiki
