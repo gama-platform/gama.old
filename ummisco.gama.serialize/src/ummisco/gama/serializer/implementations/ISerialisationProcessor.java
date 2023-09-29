@@ -36,6 +36,19 @@ public interface ISerialisationProcessor<SerialisedForm extends ISerialisedAgent
 	byte[] saveAgentToBytes(final IAgent sim);
 
 	/**
+	 * Save object to bytes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            TODO
+	 * @param obj
+	 *            the obj
+	 * @return the byte[]
+	 * @date 29 sept. 2023
+	 */
+	byte[] saveObjectToBytes(IScope scope, final Object obj);
+
+	/**
 	 * Restore simulation from bytes.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
@@ -46,6 +59,17 @@ public interface ISerialisationProcessor<SerialisedForm extends ISerialisedAgent
 	 * @date 8 août 2023
 	 */
 	void restoreAgentFromBytes(final IAgent sim, final byte[] input);
+
+	/**
+	 * Restore object from bytes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param input
+	 *            the input
+	 * @return the object
+	 * @date 29 sept. 2023
+	 */
+	Object restoreObjectFromBytes(final IScope scope, final byte[] input);
 
 	/**
 	 * Gets the format identifier.

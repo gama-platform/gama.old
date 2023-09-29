@@ -91,6 +91,13 @@ public class KryoBinaryProcessor extends AbstractSerialisationProcessor<Serialis
 		return output.toBytes();
 	}
 
+	@Override
+	public byte[] write(final IScope scope, final Object obj) {
+		Output output = useUnsafe ? new UnsafeByteBufferOutput(0, Integer.MAX_VALUE) : new Output(0, Integer.MAX_VALUE);
+		kryo.writeClassAndObject(output, obj);
+		return output.toBytes();
+	}
+
 	/**
 	 * Read.
 	 *
@@ -104,6 +111,13 @@ public class KryoBinaryProcessor extends AbstractSerialisationProcessor<Serialis
 	public SerialisedAgent read(final IScope scope, final byte[] bytes) {
 		Input input = useUnsafe ? new UnsafeByteBufferInput(bytes) : new Input(bytes);
 		return (SerialisedAgent) kryo.readClassAndObject(input);
+	}
+
+	@Override
+	public Object restoreObjectFromBytes(final IScope scope, final byte[] bytes) {
+		Input input = useUnsafe ? new UnsafeByteBufferInput(bytes) : new Input(bytes);
+		return kryo.readClassAndObject(input);
+
 	}
 
 	@Override

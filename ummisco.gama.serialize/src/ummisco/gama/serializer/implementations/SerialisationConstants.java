@@ -73,7 +73,10 @@ public interface SerialisationConstants {
 	byte UNCOMPRESSED = 0;
 
 	/** The Constant GAMA_IDENTIFIER. */
-	byte GAMA_IDENTIFIER = 42;
+	byte GAMA_AGENT_IDENTIFIER = 42;
+
+	/** The gama object identifier. */
+	byte GAMA_OBJECT_IDENTIFIER = 43;
 
 	/** The Constant STRING_BYTE_ARRAY_CHARSET. The Charset to use to save byte arrays in strings and reversely */
 	Charset STRING_BYTE_ARRAY_CHARSET = StandardCharsets.ISO_8859_1;

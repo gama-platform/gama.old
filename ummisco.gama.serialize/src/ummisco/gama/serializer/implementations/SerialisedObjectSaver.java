@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * SerialisedAgentSaver.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * SerialisedObjectSaver.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -15,8 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -27,12 +27,12 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedAgentSaver extends SerialisedObjectManipulator {
+public class SerialisedObjectSaver extends SerialisedObjectManipulator {
 	/** The instance. */
 
-	static Map<String, SerialisedAgentSaver> INSTANCES = Map.of(JSON_FORMAT,
-			new SerialisedAgentSaver(JSON_FORMAT, false), XML_FORMAT, new SerialisedAgentSaver(XML_FORMAT, false),
-			BINARY_FORMAT, new SerialisedAgentSaver(BINARY_FORMAT, true));
+	static Map<String, SerialisedObjectSaver> INSTANCES = Map.of(JSON_FORMAT,
+			new SerialisedObjectSaver(JSON_FORMAT, false), XML_FORMAT, new SerialisedObjectSaver(XML_FORMAT, false),
+			BINARY_FORMAT, new SerialisedObjectSaver(BINARY_FORMAT, true));
 
 	/**
 	 * Gets the single instance of SerialisedAgentReader.
@@ -41,7 +41,7 @@ public class SerialisedAgentSaver extends SerialisedObjectManipulator {
 	 * @return single instance of SerialisedAgentReader
 	 * @date 21 août 2023
 	 */
-	public static SerialisedAgentSaver getInstance(final String format) {
+	public static SerialisedObjectSaver getInstance(final String format) {
 		return INSTANCES.get(format);
 	}
 
@@ -56,7 +56,7 @@ public class SerialisedAgentSaver extends SerialisedObjectManipulator {
 	 * @return the serialised agent saver
 	 * @date 24 août 2023
 	 */
-	public SerialisedAgentSaver compress(final boolean doIt) {
+	public SerialisedObjectSaver compress(final boolean doIt) {
 		zip = doIt;
 		return this;
 	}
@@ -71,7 +71,7 @@ public class SerialisedAgentSaver extends SerialisedObjectManipulator {
 	 *            the zip
 	 * @date 8 août 2023
 	 */
-	private SerialisedAgentSaver(final String format, final boolean zip) {
+	private SerialisedObjectSaver(final String format, final boolean zip) {
 		super(format, zip);
 		if (!zip) { processor.prettyPrint(); }
 	}
@@ -82,27 +82,11 @@ public class SerialisedAgentSaver extends SerialisedObjectManipulator {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 8 août 2023
 	 */
-	public final void saveToFile(final IAgent sim, final String path) {
+	public final void saveToFile(final IScope scope, final Object sim, final String path) {
 		try (FileOutputStream fos = new FileOutputStream(path, true)) {
-			fos.write(saveToBytes(sim));
+			fos.write(saveToBytes(scope, sim));
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, sim.getScope());
-		}
-	}
-
-	/**
-	 * Save to file.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 8 août 2023
-	 */
-	public final void saveToFile(final SimulationAgent sim, final String path, final boolean withHistory) {
-		try (FileOutputStream fos = new FileOutputStream(path, true)) {
-			sim.serializeHistory(withHistory);
-			fos.write(saveToBytes(sim));
-			sim.serializeHistory(false);
-		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, sim.getScope());
+			throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 		}
 	}
 
@@ -113,8 +97,8 @@ public class SerialisedAgentSaver extends SerialisedObjectManipulator {
 	 * @return
 	 * @date 8 août 2023
 	 */
-	public final String saveToString(final IAgent sim) {
-		return new String(saveToBytes(sim), STRING_BYTE_ARRAY_CHARSET);
+	public final String saveToString(final IScope scope, final Object sim) {
+		return new String(saveToBytes(scope, sim), STRING_BYTE_ARRAY_CHARSET);
 	}
 
 	/**
@@ -126,17 +110,17 @@ public class SerialisedAgentSaver extends SerialisedObjectManipulator {
 	 * @return the string
 	 * @date 21 août 2023
 	 */
-	public final byte[] saveToBytes(final IAgent agent) {
-		byte[] toSave = processor.saveAgentToBytes(agent);
+	private final byte[] saveToBytes(final IScope scope, final Object agent) {
+		byte[] toSave = processor.saveObjectToBytes(scope, agent);
 		if (zip) { toSave = zip(toSave); }
 		try (ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
-			fos.write(GAMA_AGENT_IDENTIFIER);
+			fos.write(GAMA_OBJECT_IDENTIFIER);
 			fos.write(processor.getFormatIdentifier());
 			fos.write(zip ? COMPRESSED : UNCOMPRESSED);
 			fos.write(toSave);
 			return fos.toByteArray();
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, agent.getScope());
+			throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 		}
 	}
 

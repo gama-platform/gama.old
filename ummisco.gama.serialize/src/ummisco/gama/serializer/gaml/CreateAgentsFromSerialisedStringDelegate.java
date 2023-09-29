@@ -62,7 +62,7 @@ public class CreateAgentsFromSerialisedStringDelegate implements ICreateDelegate
 	 */
 	@Override
 	public boolean acceptSource(final IScope scope, final Object source) {
-		return source instanceof String s && !s.isBlank() && s.getBytes()[0] == GAMA_IDENTIFIER;
+		return source instanceof String s && !s.isBlank() && s.getBytes()[0] == GAMA_AGENT_IDENTIFIER;
 	}
 
 	/**

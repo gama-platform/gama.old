@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * SerialisedAgentReader.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.3).
+ * SerialisedObjectReader.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -15,7 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -26,10 +27,10 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedAgentReader implements SerialisationConstants {
+public class SerialisedObjectReader implements SerialisationConstants {
 
 	/** The instance. */
-	static SerialisedAgentReader INSTANCE = new SerialisedAgentReader();
+	static SerialisedObjectReader INSTANCE = new SerialisedObjectReader();
 
 	/**
 	 * Gets the single instance of SerialisedAgentReader.
@@ -38,7 +39,7 @@ public class SerialisedAgentReader implements SerialisationConstants {
 	 * @return single instance of SerialisedAgentReader
 	 * @date 21 août 2023
 	 */
-	public static SerialisedAgentReader getInstance() { return INSTANCE; }
+	public static SerialisedObjectReader getInstance() { return INSTANCE; }
 
 	static {
 		DEBUG.ON();
@@ -50,7 +51,7 @@ public class SerialisedAgentReader implements SerialisationConstants {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 21 août 2023
 	 */
-	private SerialisedAgentReader() {}
+	private SerialisedObjectReader() {}
 
 	/**
 	 * Restore from file.
@@ -60,12 +61,12 @@ public class SerialisedAgentReader implements SerialisationConstants {
 	 *            the sim
 	 * @date 8 août 2023
 	 */
-	public final void restoreFromFile(final IAgent agent, final String path) {
+	public final Object restoreFromFile(final IScope scope, final String path) {
 		try {
 			byte[] all = Files.readAllBytes(Path.of(path));
-			restoreFromBytes(agent, all);
+			return restoreFromBytes(scope, all);
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, agent.getScope());
+			throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 		}
 	}
 
@@ -79,17 +80,17 @@ public class SerialisedAgentReader implements SerialisationConstants {
 	 *            the string
 	 * @date 8 août 2023
 	 */
-	public void restoreFromString(final IAgent agent, final String string) {
+	public Object restoreFromString(final IScope scope, final String string) {
 		try {
 			byte[] all = string.getBytes(SerialisationConstants.STRING_BYTE_ARRAY_CHARSET);
-			restoreFromBytes(agent, all);
+			return restoreFromBytes(scope, all);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			// The string is maybe a path ?
 			try {
-				restoreFromFile(agent, string);
+				return restoreFromFile(scope, string);
 			} catch (Throwable ex) {
-				throw GamaRuntimeException.create(ex, agent.getScope());
+				throw GamaRuntimeException.create(ex, scope);
 			}
 		}
 	}
@@ -106,13 +107,14 @@ public class SerialisedAgentReader implements SerialisationConstants {
 	 *             Signals that an I/O exception has occurred.
 	 * @date 8 août 2023
 	 */
-	public void restoreFromBytes(final IAgent sim, final byte[] bytes) throws IOException {
-		if (bytes[0] != GAMA_AGENT_IDENTIFIER) throw new IOException("Not an agent serialisation record");
+	private Object restoreFromBytes(final IScope scope, final byte[] bytes) {
+		if (bytes[0] != GAMA_OBJECT_IDENTIFIER)
+			throw GamaRuntimeException.error("Not an object serialisation record", scope);
 		ISerialisationProcessor processor = SerialisationProcessorFactory.create(bytes[1]);
 		boolean zip = bytes[2] == COMPRESSED;
 		byte[] some = Arrays.copyOfRange(bytes, 3, bytes.length);
 		if (zip) { some = SerialisedObjectManipulator.unzip(some); }
-		processor.restoreAgentFromBytes(sim, some);
+		return processor.restoreObjectFromBytes(scope, some);
 	}
 
 }

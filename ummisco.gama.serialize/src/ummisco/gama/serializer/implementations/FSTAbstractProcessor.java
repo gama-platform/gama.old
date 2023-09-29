@@ -600,7 +600,44 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 */
 	@Override
 	public byte[] write(final IScope scope, final SerialisedAgent sa) {
-		return fst.asByteArray(sa);
+		currentScope = scope;
+		try {
+			return fst.asByteArray(sa);
+		} finally {
+			currentScope = null;
+		}
+	}
+
+	@Override
+	public byte[] write(final IScope scope, final Object obj) {
+		currentScope = scope;
+		try {
+			return fst.asByteArray(obj);
+		} finally {
+			currentScope = null;
+		}
+	}
+
+	/**
+	 * Restore object from bytes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param input
+	 *            the input
+	 * @return the object
+	 * @date 29 sept. 2023
+	 */
+	@Override
+	public Object restoreObjectFromBytes(final IScope scope, final byte[] input) {
+		currentScope = scope;
+		try {
+			return fst.asObject(input);
+		} finally {
+			currentScope = null;
+		}
+
 	}
 
 	/**

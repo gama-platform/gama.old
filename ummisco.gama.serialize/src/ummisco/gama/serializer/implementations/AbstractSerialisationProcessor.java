@@ -52,6 +52,11 @@ public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISer
 		return write(sim.getScope(), encodeToSerialisedForm(sim));
 	}
 
+	@Override
+	public byte[] saveObjectToBytes(final IScope scope, final Object obj) {
+		return write(null, obj);
+	}
+
 	/**
 	 * Convert to proxy.
 	 *
@@ -86,6 +91,19 @@ public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISer
 	 */
 	@Override
 	public abstract byte[] write(IScope scope, SerialisedForm objectToSerialise);
+
+	/**
+	 * Write.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            TODO
+	 * @param obj
+	 *            the obj
+	 * @return the byte[]
+	 * @date 29 sept. 2023
+	 */
+	public abstract byte[] write(IScope scope, Object obj);
 
 	/**
 	 * Read.

@@ -18,6 +18,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.factory.StreamConverter;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
@@ -90,6 +91,12 @@ public class XStreamImplementation extends AbstractSerialisationProcessor<SavedA
 		return s.getBytes();
 	}
 
+	@Override
+	public byte[] write(final IScope scope, final Object obj) {
+		String s = StreamConverter.convertObjectToStream(GAMA.getRuntimeScope(), obj);
+		return s.getBytes();
+	}
+
 	/**
 	 * Read.
 	 *
@@ -104,6 +111,13 @@ public class XStreamImplementation extends AbstractSerialisationProcessor<SavedA
 		final String previousState = new String(data);
 		final XStream xstream = StreamConverter.loadAndBuild(scope, ConverterScope.class);
 		return (SavedAgent) xstream.fromXML(previousState);
+	}
+
+	@Override
+	public Object restoreObjectFromBytes(final IScope scope, final byte[] input) {
+		final String previousState = new String(input);
+		final XStream xstream = StreamConverter.loadAndBuild(GAMA.getRuntimeScope(), ConverterScope.class);
+		return xstream.fromXML(previousState);
 	}
 
 	@Override
