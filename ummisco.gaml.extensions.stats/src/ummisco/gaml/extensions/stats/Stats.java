@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.commons.compress.utils.FileNameUtils;
 import org.apache.commons.math3.ml.clustering.CentroidCluster;
 import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
@@ -2316,7 +2317,7 @@ public class Stats {
 			concept = { IConcept.STATISTIC },
 			expected_content_type = { IType.STRING, IType.INT })
 	@doc (
-			value = "Return a string containing the Report of the sobol analysis for the corresponding .csv file and save this report in a txt file.")
+			value = "Return a string containing the Report of the sobol analysis for the corresponding .csv file and save this report in a txt/csv file.")
 	@no_test
 	public static String sobolAnalysis(final IScope scope, final String path, final String report_path,
 			final int nb_parameters) {
@@ -2325,7 +2326,7 @@ public class Stats {
 		Sobol sob = new Sobol(f, nb_parameters, scope);
 		sob.evaluate();
 		sob.saveResult(f_report);
-		return sob.buildReportString();
+		return sob.buildReportString(FileNameUtils.getExtension(f_report.getPath()));
 	}
 
 	/**
