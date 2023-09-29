@@ -42,15 +42,6 @@ deploy(){
 	bash ./travis/deploy.sh
 }
 
-release_continuous(){	
-	#echo "Update release tag"
-	#update_tag 1.9.3
-
-	echo "Upload continuous/on-demand release to github"
-	bash ./travis/github_release_withjdk.sh "$TRAVIS_COMMIT" 
-
-}
-
 
 MESSAGE=$(git log -1 HEAD --pretty=format:%s)
 echo $MESSAGE
@@ -58,6 +49,3 @@ echo $MESSAGE
 if  [[ ${MESSAGE} == *"ci docs"* ]] || [[ $MSG == *"ci docs"* ]]; then	
 	commit_wiki_files
 fi	
-# if  [[ ${MESSAGE} == *"ci release"* ]] || [[ $MSG == *"ci release"* ]]; then
-# 	release_continuous
-# fi	
