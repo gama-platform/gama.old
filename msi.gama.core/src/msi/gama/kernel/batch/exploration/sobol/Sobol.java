@@ -331,10 +331,10 @@ public class Sobol {
 				for (String param : sobol_analysis.get(output_name).keySet()) {
 					// The output & parameter
 					sb.append(output_name).append(sep);
-					sb.append(param).append(sep);
+					sb.append(param);
 					for (Double indices : sobol_analysis.get(output_name).get(param)) {
 						// The Sobol indices
-						sb.append(indices).append(sep);
+						sb.append(sep).append(indices);
 					}
 					sb.append(Strings.LN);
 				}
