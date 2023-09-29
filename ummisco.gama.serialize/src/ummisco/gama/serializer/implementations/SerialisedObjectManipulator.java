@@ -22,7 +22,7 @@ import java.util.zip.GZIPOutputStream;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public abstract class SerialisedAgentManipulator implements SerialisationConstants {
+public abstract class SerialisedObjectManipulator implements SerialisationConstants {
 
 	/** The Constant zip. */
 	protected boolean zip = true;
@@ -40,7 +40,7 @@ public abstract class SerialisedAgentManipulator implements SerialisationConstan
 	 *            the Constant zip.
 	 * @date 8 août 2023
 	 */
-	public SerialisedAgentManipulator(final String format, final boolean zip) {
+	public SerialisedObjectManipulator(final String format, final boolean zip) {
 		processor = SerialisationProcessorFactory.create(format);
 		this.zip = zip;
 	}

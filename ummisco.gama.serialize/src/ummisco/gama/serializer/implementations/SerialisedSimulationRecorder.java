@@ -23,7 +23,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedSimulationRecorder extends SerialisedAgentManipulator implements ISimulationRecorder {
+public class SerialisedSimulationRecorder extends SerialisedObjectManipulator implements ISimulationRecorder {
 
 	static {
 		DEBUG.ON();

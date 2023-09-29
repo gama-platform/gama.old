@@ -1,190 +1,264 @@
-/*
- * Copyright 2014 Ruediger Moeller.
+/*******************************************************************************************************
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * FSTInputStream.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package org.nustaq.serialization.util;
-
-import org.nustaq.logging.FSTLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import ummisco.gama.dev.utils.DEBUG;
+
 /**
- * Created with IntelliJ IDEA.
- * User: ruedi
- * Date: 27.11.12
- * Time: 00:35
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: ruedi Date: 27.11.12 Time: 00:35 To change this template use File | Settings | File
+ * Templates.
  */
 public final class FSTInputStream extends InputStream {
 
-    public static boolean REPORT_READ_FAILS = false;
+	/** The report read fails. */
+	public static boolean REPORT_READ_FAILS = false;
 
-    private static final FSTLogger LOGGER = FSTLogger.getLogger(FSTInputStream.class);
+	/** The chunk size. */
+	public int chunk_size = 8000;
 
-    public int chunk_size = 8000;
-    public static ThreadLocal<byte[]> cachedBuffer = new ThreadLocal<byte[]>();
-    public byte buf[];
-    public int pos;
-    public int count; // avaiable valid read bytes
-    InputStream in;
-    boolean fullyRead = false; // true if input source has been read til end
-    public boolean byteBacked = false;
+	/** The cached buffer. */
+	public static ThreadLocal<byte[]> cachedBuffer = new ThreadLocal<>();
 
-    public FSTInputStream(InputStream in) {
-        initFromStream(in);
-    }
+	/** The buf. */
+	public byte buf[];
 
-    public void resetForReuse( byte b[], int length ) {
-        reset();
-        count = length;
-        buf = b;
-        pos = 0;
-        byteBacked = true;
-        fullyRead = true;
-    }
+	/** The pos. */
+	public int pos;
 
-    public void initFromStream(InputStream in) {
-        fullyRead = false;
-        byteBacked = false;
-        pos = 0;
-        this.in = in;
-        if (buf == null) {
-            buf = cachedBuffer.get();
-            if (buf == null) {
-                buf = new byte[chunk_size];
-                cachedBuffer.set(buf);
-            }
-        }
-        readNextChunk(in);
-    }
+	/** The count. */
+	public int count; // avaiable valid read bytes
 
-    public boolean isFullyRead() {
-        return fullyRead && pos >= count;
-    }
+	/** The in. */
+	InputStream in;
 
-    public void readNextChunk(InputStream in) {
-        int read;
-        try {
-            if (buf.length < count + chunk_size) {
-                ensureCapacity(Math.max( Math.min(Integer.MAX_VALUE-1,buf.length * 2), count + chunk_size)); // at least grab 5kb
-            }
-            read = in.read(buf, count, chunk_size);
-            if (read > 0) {
-                count += read;
-            } else {
-                fullyRead = true;
-            }
-        } catch (IOException e) {
-            if ( REPORT_READ_FAILS ) { // flag bound to avoid breaking things ..
-                LOGGER.log(FSTLogger.Level.ERROR, "Failed to read next chunk from InputStream", e);
-                throw new RuntimeException("Failed to read next chunk from InputStream", e);
-            } else {
-                fullyRead = true;
-            }
-        }
-    }
+	/** The fully read. */
+	boolean fullyRead = false; // true if input source has been read til end
 
-    public void ensureCapacity(int siz) {
-        if (buf.length < siz && ! fullyRead) {
-            byte newBuf[] = new byte[siz];
-            System.arraycopy(buf, 0, newBuf, 0, buf.length);
-            buf = newBuf;
-            if (siz < 10 * 1024 * 1024) { // issue 19, don't go overboard with buffer caching
-                cachedBuffer.set(buf);
-            }
-        }
-    }
+	/** The byte backed. */
+	public boolean byteBacked = false;
 
-    public FSTInputStream(byte buf[]) {
-        this.buf = buf;
-        this.pos = 0;
-        this.count = buf.length;
-    }
+	/**
+	 * Instantiates a new FST input stream.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param in
+	 *            the in
+	 * @date 29 sept. 2023
+	 */
+	public FSTInputStream(final InputStream in) {
+		initFromStream(in);
+	}
 
-    public FSTInputStream(byte buf[], int offset, int length) {
-        this.buf = buf;
-        this.pos = offset;
-        this.count = Math.min(offset + length, buf.length);
-    }
+	/**
+	 * Reset for reuse.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param b
+	 *            the b
+	 * @param length
+	 *            the length
+	 * @date 29 sept. 2023
+	 */
+	public void resetForReuse(final byte b[], final int length) {
+		reset();
+		count = length;
+		buf = b;
+		pos = 0;
+		byteBacked = true;
+		fullyRead = true;
+	}
 
-    public int read() {
-        if (pos < count) {
-            return (buf[pos++] & 0xff);
-        }
-        readNextChunk(in);
-        if (fullyRead)
-            return -1;
-        return -1;
-    }
+	/**
+	 * Inits the from stream.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param in
+	 *            the in
+	 * @date 29 sept. 2023
+	 */
+	public void initFromStream(final InputStream in) {
+		fullyRead = false;
+		byteBacked = false;
+		pos = 0;
+		this.in = in;
+		if (buf == null) {
+			buf = cachedBuffer.get();
+			if (buf == null) {
+				buf = new byte[chunk_size];
+				cachedBuffer.set(buf);
+			}
+		}
+		readNextChunk(in);
+	}
 
-    public int read(byte b[], int off, int len) {
-        if (isFullyRead())
-            return -1;
-        while (! fullyRead && pos + len >= count) {
-            readNextChunk(in);
-        }
-        int avail = count - pos;
-        if (len > avail) {
-            len = avail;
-        }
-        if (len <= 0) {
-            return 0;
-        }
-        System.arraycopy(buf, pos, b, off, len);
-        pos += len;
-        return len;
-    }
+	/**
+	 * Checks if is fully read.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is fully read
+	 * @date 29 sept. 2023
+	 */
+	public boolean isFullyRead() { return fullyRead && pos >= count; }
 
-    public long skip(long n) {
-        long k = count - pos;
-        if (n < k) {
-            k = n < 0 ? 0 : n;
-        }
-        pos += k;
-        return k;
-    }
+	/**
+	 * Read next chunk.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param in
+	 *            the in
+	 * @date 29 sept. 2023
+	 */
+	public void readNextChunk(final InputStream in) {
+		int read;
+		try {
+			if (buf.length < count + chunk_size) {
+				ensureCapacity(Math.max(Math.min(Integer.MAX_VALUE - 1, buf.length * 2), count + chunk_size)); // at
+																												// least
+																												// grab
+																												// 5kb
+			}
+			read = in.read(buf, count, chunk_size);
+			if (read > 0) {
+				count += read;
+			} else {
+				fullyRead = true;
+			}
+		} catch (IOException e) {
+			if (REPORT_READ_FAILS) { // flag bound to avoid breaking things ..
+				DEBUG.ERR("Failed to read next chunk from InputStream", e);
+				throw new RuntimeException("Failed to read next chunk from InputStream", e);
+			}
+			fullyRead = true;
+		}
+	}
 
-    public int available() {
-        return count - pos;
-    }
+	/**
+	 * Ensure capacity.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param siz
+	 *            the siz
+	 * @date 29 sept. 2023
+	 */
+	public void ensureCapacity(final int siz) {
+		if (buf.length < siz && !fullyRead) {
+			byte newBuf[] = new byte[siz];
+			System.arraycopy(buf, 0, newBuf, 0, buf.length);
+			buf = newBuf;
+			if (siz < 10 * 1024 * 1024) { // issue 19, don't go overboard with buffer caching
+				cachedBuffer.set(buf);
+			}
+		}
+	}
 
-    public boolean markSupported() {
-        return false;
-    }
+	/**
+	 * Instantiates a new FST input stream.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param buf
+	 *            the buf
+	 * @date 29 sept. 2023
+	 */
+	public FSTInputStream(final byte buf[]) {
+		this.buf = buf;
+		this.pos = 0;
+		this.count = buf.length;
+	}
 
-    public void mark(int readAheadLimit) {
-    }
+	/**
+	 * Instantiates a new FST input stream.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param buf
+	 *            the buf
+	 * @param offset
+	 *            the offset
+	 * @param length
+	 *            the length
+	 * @date 29 sept. 2023
+	 */
+	public FSTInputStream(final byte buf[], final int offset, final int length) {
+		this.buf = buf;
+		this.pos = offset;
+		this.count = Math.min(offset + length, buf.length);
+	}
 
-    public void reset() {
-        count = 0;
-        pos = 0;
-        fullyRead = false;
-        byteBacked = false;
-    }
+	@Override
+	public int read() {
+		if (pos < count) return buf[pos++] & 0xff;
+		readNextChunk(in);
+		if (fullyRead) {}
+		return -1;
+	}
 
-    public void close() throws IOException {
-        if ( in != null )
-            in.close();
-    }
+	@Override
+	public int read(final byte b[], final int off, int len) {
+		if (isFullyRead()) return -1;
+		while (!fullyRead && pos + len >= count) { readNextChunk(in); }
+		int avail = count - pos;
+		if (len > avail) { len = avail; }
+		if (len <= 0) return 0;
+		System.arraycopy(buf, pos, b, off, len);
+		pos += len;
+		return len;
+	}
 
-    public void ensureReadAhead(int bytes) {
-        if ( byteBacked )
-            return;
-        int targetCount = pos + bytes;
-        while (!fullyRead && count < targetCount) {
-            readNextChunk(in);
-        }
-    }
+	@Override
+	public long skip(final long n) {
+		long k = count - pos;
+		if (n < k) { k = n < 0 ? 0 : n; }
+		pos += k;
+		return k;
+	}
+
+	@Override
+	public int available() {
+		return count - pos;
+	}
+
+	@Override
+	public boolean markSupported() {
+		return false;
+	}
+
+	@Override
+	public void mark(final int readAheadLimit) {}
+
+	@Override
+	public void reset() {
+		count = 0;
+		pos = 0;
+		fullyRead = false;
+		byteBacked = false;
+	}
+
+	@Override
+	public void close() throws IOException {
+		if (in != null) { in.close(); }
+	}
+
+	/**
+	 * Ensure read ahead.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param bytes
+	 *            the bytes
+	 * @date 29 sept. 2023
+	 */
+	public void ensureReadAhead(final int bytes) {
+		if (byteBacked) return;
+		int targetCount = pos + bytes;
+		while (!fullyRead && count < targetCount) { readNextChunk(in); }
+	}
 }

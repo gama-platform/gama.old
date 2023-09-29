@@ -27,7 +27,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedAgentSaver extends SerialisedAgentManipulator {
+public class SerialisedAgentSaver extends SerialisedObjectManipulator {
 	/** The instance. */
 
 	static Map<String, SerialisedAgentSaver> INSTANCES = Map.of(JSON_FORMAT,

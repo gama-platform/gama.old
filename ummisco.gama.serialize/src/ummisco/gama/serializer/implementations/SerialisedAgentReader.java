@@ -114,7 +114,7 @@ public class SerialisedAgentReader implements SerialisationConstants {
 		ISerialisationProcessor processor = SerialisationProcessorFactory.create(bytes[1]);
 		boolean zip = bytes[2] == COMPRESSED;
 		byte[] some = Arrays.copyOfRange(bytes, 3, bytes.length);
-		if (zip) { some = SerialisedAgentManipulator.unzip(some); }
+		if (zip) { some = SerialisedObjectManipulator.unzip(some); }
 		processor.restoreAgentFromBytes(sim, some);
 	}
 
