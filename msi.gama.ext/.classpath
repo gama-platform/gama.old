@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="jfreechart/jfreechart-1.5.4.jar" sourcepath="jfreechart/jfreechart-1.5.4.zip"/>
 	<classpathentry exported="true" kind="lib" path="compress 1.24/commons-compress-1.24.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="jts/jts-core-1.19.0.jar" sourcepath="jts/jts-core-1.19.0-sources.jar"/>
@@ -141,7 +142,6 @@
 	<classpathentry exported="true" kind="lib" path="geotools/mysql-connector-java-8.0.22.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/postgresql-42.2.19.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/sqlite-jdbc-3.34.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="jfreechart/jfreechart-1.5.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools/gt-http-commons-25.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="protobuf-java-3.6.1.jar"/>
