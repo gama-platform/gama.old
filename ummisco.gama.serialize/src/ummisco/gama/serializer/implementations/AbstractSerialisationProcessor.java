@@ -21,7 +21,7 @@ import msi.gama.runtime.IScope;
  * @date 7 août 2023
  */
 public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISerialisedAgent>
-		implements ISerialisationProcessor<SerialisedForm>, SerialisationConstants {
+		implements ISerialisationProcessor<SerialisedForm>, ISerialisationConstants {
 
 	/**
 	 * Restore simulation from.

@@ -27,7 +27,7 @@ import msi.gama.util.file.GamaFile;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.serializer.implementations.SerialisationConstants;
+import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * The Class GamaSavedSimulationFile.
@@ -42,7 +42,7 @@ import ummisco.gama.serializer.implementations.SerialisationConstants;
 		doc = @doc ("Represents a saved agent file. The internal contents is a string at index 0 that contains the textual (json, xml) or binary (bytes) representation of the agent"))
 // TODO : this type needs to be improved ....
 @SuppressWarnings ({ "unchecked" })
-public class GamaSavedAgentFile extends GamaFile<IList<String>, String> implements SerialisationConstants {
+public class GamaSavedAgentFile extends GamaFile<IList<String>, String> implements ISerialisationConstants {
 
 	/**
 	 * Instantiates a new gama saved simulation file.

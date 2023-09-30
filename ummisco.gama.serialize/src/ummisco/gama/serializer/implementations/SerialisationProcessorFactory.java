@@ -12,6 +12,7 @@ package ummisco.gama.serializer.implementations;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A factory for creating SerialisationImplementation objects.
@@ -19,7 +20,7 @@ import java.util.Map;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisationProcessorFactory implements SerialisationConstants {
+public class SerialisationProcessorFactory implements ISerialisationConstants {
 
 	/** The processors. */
 	static Map<Byte, ISerialisationProcessor> PROCESSORS_BY_BYTE = new HashMap<>();
@@ -69,5 +70,14 @@ public class SerialisationProcessorFactory implements SerialisationConstants {
 		if (result == null) { result = PROCESSORS_BY_FORMAT.get(BINARY_FORMAT); }
 		return result;
 	}
+
+	/**
+	 * Gets the available processors.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the available processors
+	 * @date 30 sept. 2023
+	 */
+	public static Set<String> getAvailableProcessors() { return PROCESSORS_BY_FORMAT.keySet(); }
 
 }

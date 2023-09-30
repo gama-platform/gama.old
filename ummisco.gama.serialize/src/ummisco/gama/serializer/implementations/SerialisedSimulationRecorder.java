@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.implementations;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import msi.gama.kernel.experiment.ISimulationRecorder;
@@ -23,17 +25,17 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedSimulationRecorder extends SerialisedObjectManipulator implements ISimulationRecorder {
+public class SerialisedSimulationRecorder implements ISimulationRecorder, ISerialisationConstants {
 
 	static {
 		DEBUG.ON();
 	}
 
-	/** The binary history tree. */
-	// protected final GamaTree<byte[]> history = new GamaTree<>();
+	/** The executor. */
+	ExecutorService executor = Executors.newCachedThreadPool();
 
-	/** The binary history node. */
-	// protected GamaNode<byte[]> current;
+	/** The processor. */
+	ISerialisationProcessor processor;
 
 	/**
 	 * Instantiates a new serialised simulation recorder.
@@ -46,8 +48,7 @@ public class SerialisedSimulationRecorder extends SerialisedObjectManipulator im
 	 * @date 8 août 2023
 	 */
 	public SerialisedSimulationRecorder() {
-		// Fixed to this for the moment
-		super(BINARY_FORMAT, true);
+		processor = SerialisationProcessorFactory.create(BINARY_FORMAT);
 	}
 
 	/**
@@ -64,10 +65,7 @@ public class SerialisedSimulationRecorder extends SerialisedObjectManipulator im
 			long startTime = System.nanoTime();
 			byte[] state = processor.saveAgentToBytes(sim);
 			GamaNode<byte[]> current = sim.createNewHistoryNode(state);
-			if (zip) { asyncZip(current); }
-			DEBUG.OUT("Serialise to " + processor.getFormat() + " in "
-					+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + "ms; Size: "
-					+ state.length / 1000000d + "Mb " + (zip ? "[Compressed in the background]" : ""));
+			asyncZip(current, startTime);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -81,8 +79,14 @@ public class SerialisedSimulationRecorder extends SerialisedObjectManipulator im
 	 *            the node
 	 * @date 8 août 2023
 	 */
-	protected void asyncZip(final GamaNode<byte[]> node) {
-		new Thread(() -> node.setData(zip(node.getData()))).start();
+	protected void asyncZip(final GamaNode<byte[]> node, final long startTime) {
+		executor.execute(() -> {
+			node.setData(ByteArrayZipper.zip(node.getData()));
+			DEBUG.OUT(
+					"Serialised in " + processor.getFormat() + " and compressed to " + node.getData().length / 1000000d
+							+ "Mb in " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + "ms");
+
+		});
 	}
 
 	/**
@@ -99,9 +103,7 @@ public class SerialisedSimulationRecorder extends SerialisedObjectManipulator im
 			GamaNode<byte[]> current = sim.getPreviousHistoryNode();
 			if (current != null) {
 				long startTime = System.nanoTime();
-				byte[] input = current.getData();
-				if (zip) { input = unzip(input); }
-				processor.restoreAgentFromBytes(sim, input);
+				processor.restoreAgentFromBytes(sim, ByteArrayZipper.unzip(current.getData()));
 				DEBUG.OUT("Deserialise from " + processor.getFormat() + " in "
 						+ TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime) + "ms");
 			}

@@ -17,7 +17,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
-import ummisco.gama.serializer.implementations.SerialisationConstants;
+import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * The Class GamaSavedSimulationFile.
@@ -32,7 +32,7 @@ import ummisco.gama.serializer.implementations.SerialisationConstants;
 		doc = @doc ("Represents a saved simulation file. The internal contents is a string at index 0 that contains the textual (json, xml) or binary (bytes) representation of the simulation"))
 // TODO : this type needs to be improved ....
 @SuppressWarnings ({ "unchecked" })
-public class GamaSavedSimulationFile extends GamaSavedAgentFile implements SerialisationConstants {
+public class GamaSavedSimulationFile extends GamaSavedAgentFile implements ISerialisationConstants {
 
 	/**
 	 * Instantiates a new gama saved simulation file.

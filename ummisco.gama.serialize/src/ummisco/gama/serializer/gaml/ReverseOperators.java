@@ -97,13 +97,11 @@ public class ReverseOperators {
 	@no_test ()
 	public static String serialize(final IScope scope, final Object obj, final String format, final boolean compress) {
 		if (obj instanceof IAgent agent) {
-			SerialisedAgentSaver sas = SerialisedAgentSaver.getInstance(format);
-			sas.compress(compress);
-			return sas.saveToString(agent);
+			SerialisedAgentSaver sas = SerialisedAgentSaver.getInstance();
+			return sas.saveToString(agent, format, compress);
 		}
-		SerialisedObjectSaver sas = SerialisedObjectSaver.getInstance(format);
-		sas.compress(compress);
-		return sas.saveToString(scope, obj);
+		SerialisedObjectSaver sas = SerialisedObjectSaver.getInstance();
+		return sas.saveToString(scope, obj, format, compress);
 	}
 
 	/**

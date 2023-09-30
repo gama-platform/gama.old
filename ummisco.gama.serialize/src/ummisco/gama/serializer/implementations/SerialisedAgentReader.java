@@ -26,7 +26,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedAgentReader implements SerialisationConstants {
+public class SerialisedAgentReader implements ISerialisationConstants {
 
 	/** The instance. */
 	static SerialisedAgentReader INSTANCE = new SerialisedAgentReader();
@@ -81,7 +81,7 @@ public class SerialisedAgentReader implements SerialisationConstants {
 	 */
 	public void restoreFromString(final IAgent agent, final String string) {
 		try {
-			byte[] all = string.getBytes(SerialisationConstants.STRING_BYTE_ARRAY_CHARSET);
+			byte[] all = string.getBytes(ISerialisationConstants.STRING_BYTE_ARRAY_CHARSET);
 			restoreFromBytes(agent, all);
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -111,7 +111,7 @@ public class SerialisedAgentReader implements SerialisationConstants {
 		ISerialisationProcessor processor = SerialisationProcessorFactory.create(bytes[1]);
 		boolean zip = bytes[2] == COMPRESSED;
 		byte[] some = Arrays.copyOfRange(bytes, 3, bytes.length);
-		if (zip) { some = SerialisedObjectManipulator.unzip(some); }
+		if (zip) { some = ByteArrayZipper.unzip(some); }
 		processor.restoreAgentFromBytes(sim, some);
 	}
 

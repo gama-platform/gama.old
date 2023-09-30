@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.IKeyword;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 21 août 2023
  */
-public interface SerialisationConstants {
+public interface ISerialisationConstants {
 
 	/** The Constant KEY. */
 	String HEADER_KEY = "gama_header";

@@ -24,7 +24,7 @@ import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.serializer.implementations.SerialisationConstants;
+import ummisco.gama.serializer.implementations.ISerialisationConstants;
 import ummisco.gama.serializer.implementations.SerialisedAgentReader;
 
 /**
@@ -36,7 +36,7 @@ import ummisco.gama.serializer.implementations.SerialisedAgentReader;
  */
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class CreateAgentsFromSerialisedStringDelegate implements ICreateDelegate, SerialisationConstants {
+public class CreateAgentsFromSerialisedStringDelegate implements ICreateDelegate, ISerialisationConstants {
 
 	@Override
 	public boolean handlesCreation() {

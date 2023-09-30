@@ -24,7 +24,7 @@ import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.constants.GamlCoreConstants;
-import ummisco.gama.serializer.implementations.SerialisationConstants;
+import ummisco.gama.serializer.implementations.ISerialisationConstants;
 import ummisco.gama.serializer.implementations.SerialisedAgentReader;
 import ummisco.gama.serializer.implementations.SerialisedAgentSaver;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
@@ -58,8 +58,8 @@ public class SimulationsMenu extends ContributionItem {
 	public static GamaCommand duplicateCurrentSimulation =
 			new GamaCommand("experiment/experiment.simulations.duplicate", "Duplicate Simulation",
 					"Duplicate the current simulation and add it to the experiment", e -> {
-						byte[] bytes = SerialisedAgentSaver.getInstance(SerialisationConstants.BINARY_FORMAT)
-								.saveToBytes(GAMA.getSimulation());
+						byte[] bytes = SerialisedAgentSaver.getInstance().saveToBytes(GAMA.getSimulation(),
+								ISerialisationConstants.BINARY_FORMAT, true);
 						final SimulationAgent sim =
 								GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
 						GAMA.runAndUpdateAll(() -> {
@@ -101,8 +101,8 @@ public class SimulationsMenu extends ContributionItem {
 				// default -> SerialisationConstants.BINARY_FORMAT;
 				// };
 
-				SerialisedAgentSaver.getInstance(SerialisationConstants.BINARY_FORMAT /* format */).saveToFile(sim,
-						open, false);
+				SerialisedAgentSaver.getInstance().saveToFile(sim, open, false, ISerialisationConstants.BINARY_FORMAT,
+						true);
 			});
 
 	/** The save current simulation and history. */
@@ -113,13 +113,13 @@ public class SimulationsMenu extends ContributionItem {
 						if (sim == null) return;
 						FileDialog fileSave = new FileDialog(e.display.getActiveShell(), SWT.SAVE);
 						// Only binary allowed when saving history
-						fileSave.setFilterNames(new String[] { SerialisationConstants.BINARY_FORMAT });
+						fileSave.setFilterNames(new String[] { ISerialisationConstants.BINARY_FORMAT });
 						fileSave.setFilterExtensions(new String[] { "*.simulation" });
 						fileSave.setFileName(sim.getModel().getName() + "_" + sim.getCycle(sim.getScope()) + "_cycles"
 								+ ".simulation");
 						String open = fileSave.open();
-						SerialisedAgentSaver.getInstance(SerialisationConstants.BINARY_FORMAT).saveToFile(sim, open,
-								true);
+						SerialisedAgentSaver.getInstance().saveToFile(sim, open, true,
+								ISerialisationConstants.BINARY_FORMAT, true);
 					});
 
 	/** The replace current simulation. */

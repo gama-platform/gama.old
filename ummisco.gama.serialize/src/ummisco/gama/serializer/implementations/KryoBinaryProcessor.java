@@ -131,5 +131,5 @@ public class KryoBinaryProcessor extends AbstractSerialisationProcessor<Serialis
 	 * @date 8 août 2023
 	 */
 	@Override
-	public String getFormat() { return BINARY_FORMAT + " Kryo"; }
+	public String getFormat() { return BINARY_FORMAT + "_kryo"; }
 }

@@ -31,7 +31,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public class SerialisedAgentFactory implements SerialisationConstants {
+public class SerialisedAgentFactory implements ISerialisationConstants {
 
 	static {
 		DEBUG.ON();

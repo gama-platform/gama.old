@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * SerialisedAgentManipulator.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
- * simulation platform (v.1.9.3).
+ * ByteArrayZipper.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -22,28 +22,10 @@ import java.util.zip.GZIPOutputStream;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public abstract class SerialisedObjectManipulator implements SerialisationConstants {
+public abstract class ByteArrayZipper {
 
-	/** The Constant zip. */
-	protected boolean zip = true;
-
-	/** The processor. */
-	protected final ISerialisationProcessor processor;
-
-	/**
-	 * Instantiates a new serialised simulation manipulator.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param format
-	 *            the format
-	 * @param zip
-	 *            the Constant zip.
-	 * @date 8 août 2023
-	 */
-	public SerialisedObjectManipulator(final String format, final boolean zip) {
-		processor = SerialisationProcessorFactory.create(format);
-		this.zip = zip;
-	}
+	/** The null. */
+	static byte[] NULL = {};
 
 	/**
 	 * Zip bytes.
