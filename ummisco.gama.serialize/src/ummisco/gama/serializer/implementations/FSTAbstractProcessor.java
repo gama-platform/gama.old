@@ -11,14 +11,10 @@
 package ummisco.gama.serializer.implementations;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.locationtech.jts.geom.Geometry;
-import org.nustaq.serialization.FSTBasicObjectSerializer;
-import org.nustaq.serialization.FSTClazzInfo;
-import org.nustaq.serialization.FSTClazzInfo.FSTFieldInfo;
 import org.nustaq.serialization.FSTConfiguration;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
@@ -26,9 +22,7 @@ import org.nustaq.serialization.FSTObjectOutput;
 import msi.gama.common.geometry.GamaCoordinateSequenceFactory;
 import msi.gama.common.geometry.GamaGeometryFactory;
 import msi.gama.common.geometry.GeometryUtils;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
@@ -54,104 +48,8 @@ import msi.gaml.types.IType;
  */
 public abstract class FSTAbstractProcessor extends AbstractSerialisationProcessor<SerialisedAgent> {
 
-	/**
-	 * The Class AgentReference.
-	 */
-	public record AgentReference(String[] species, Integer[] index) {
-
-		/**
-		 * Instantiates a new reference to agent.
-		 *
-		 * @param agt
-		 *            the agt
-		 */
-		public AgentReference(final IAgent agt) {
-			this(buildSpeciesArray(agt), buildIndicesArray(agt));
-		}
-
-		@Override
-		public String toString() {
-			String res = "";
-			for (int i = 0; i < species.length; i++) { res = "/" + species[i] + index[i]; }
-			return res;
-		}
-
-		/**
-		 * Gets the referenced agent.
-		 *
-		 * @param sim
-		 *            the sim
-		 * @return the referenced agent
-		 */
-		public IAgent getReferencedAgent(final IScope scope) {
-			SimulationAgent sim = scope.getSimulation();
-			IPopulation<? extends IAgent> pop = sim.getPopulationFor(species[species.length - 1]);
-			if (pop == null) { pop = sim.getPopulation(); }
-			IAgent referencedAgt = pop.getOrCreateAgent(scope, index[index.length - 1]);
-
-			for (int i = index.length - 2; i >= 0; i--) {
-				pop = sim.getPopulationFor(species[i]);
-				referencedAgt = pop.getOrCreateAgent(scope, index[i]);
-			}
-			return referencedAgt;
-		}
-
-		/**
-		 * Gets the last index.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @return the last index
-		 * @date 6 août 2023
-		 */
-		public Integer getLastIndex() { return index[index.length - 1]; }
-
-		/**
-		 * Builds the species array.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param a
-		 *            the a
-		 * @return the string[]
-		 * @date 7 août 2023
-		 */
-		static String[] buildSpeciesArray(final IAgent a) {
-			List<String> species = new ArrayList<>();
-			species.add(a.getSpeciesName());
-			IAgent host = a.getHost();
-			while (host != null && !(host instanceof SimulationAgent)) {
-				species.add(host.getSpeciesName());
-				host = host.getHost();
-			}
-			return species.toArray(new String[0]);
-		}
-
-		/**
-		 * Builds the species array.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param a
-		 *            the a
-		 * @return the int[]
-		 * @date 7 août 2023
-		 */
-		static Integer[] buildIndicesArray(final IAgent a) {
-			List<Integer> species = new ArrayList<>();
-			species.add(a.getIndex());
-			IAgent host = a.getHost();
-			while (host != null && !(host instanceof SimulationAgent)) {
-				species.add(host.getIndex());
-				host = host.getHost();
-			}
-			return species.toArray(new Integer[0]);
-		}
-
-	}
-
 	/** The fst. */
 	FSTConfiguration fst;
-
-	/** The current scope. */
-	IScope currentScope;
 
 	/**
 	 * Instantiates a new gama FST serialiser.
@@ -173,7 +71,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 */
 	protected void registerSerialisers(final FSTConfiguration conf) {
 
-		register(conf, GamaShape.class, new GamaFSTSerialiser<GamaShape>() {
+		register(conf, GamaShape.class, new FSTIndividualSerialiser<GamaShape>() {
 
 			// TODO The inner attributes of the shape should be saved (ie the ones that do not belong to the var names
 			// of the species
@@ -200,7 +98,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			}
 		});
 
-		register(conf, IAgent.class, new GamaFSTSerialiser<IAgent>() {
+		register(conf, IAgent.class, new FSTIndividualSerialiser<IAgent>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IAgent o) throws Exception {
@@ -215,7 +113,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 		});
 
-		register(conf, IType.class, new GamaFSTSerialiser<IType>() {
+		register(conf, IType.class, new FSTIndividualSerialiser<IType>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IType toWrite) throws Exception {
@@ -240,7 +138,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 		});
 
-		register(conf, IScope.class, new GamaFSTSerialiser<IScope>() {
+		register(conf, IScope.class, new FSTIndividualSerialiser<IScope>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IScope toWrite) throws Exception {
@@ -255,7 +153,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 		});
 
-		register(conf, ISpecies.class, new GamaFSTSerialiser<ISpecies>() {
+		register(conf, ISpecies.class, new FSTIndividualSerialiser<ISpecies>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final ISpecies o) throws Exception {
@@ -270,7 +168,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 		});
 
-		register(conf, AgentReference.class, new GamaFSTSerialiser<AgentReference>() {
+		register(conf, AgentReference.class, new FSTIndividualSerialiser<AgentReference>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final AgentReference o) throws Exception {
@@ -284,26 +182,10 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			}
 		});
 
-		// register(conf,SerialisedSimulationHeader.class, new GamaFSTSerialiser<SerialisedSimulationHeader>() {
-		//
-		// @Override
-		// public void serialise(final FSTObjectOutput out, final SerialisedSimulationHeader o) throws Exception {
-		// out.writeStringUTF(o.pathToModel());
-		// out.writeStringUTF(o.nameOfExperiment());
-		// }
-		//
-		// @Override
-		// public SerialisedSimulationHeader deserialise(final IScope scope, final FSTObjectInput in)
-		// throws Exception {
-		// return new SerialisedSimulationHeader(in.readStringUTF(), in.readStringUTF());
-		// }
-		// });
-
-		register(conf, SerialisedAgent.class, new GamaFSTSerialiser<SerialisedAgent>() {
+		register(conf, SerialisedAgent.class, new FSTIndividualSerialiser<SerialisedAgent>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
-				// out.writeObject(o.ref());
 				out.writeInt(o.index());
 				out.writeObject(o.attributes());
 			}
@@ -311,12 +193,11 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			@SuppressWarnings ("unchecked")
 			@Override
 			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedAgent(/* (AgentReference) in.readObject(), */in.readInt(),
-						(Map<String, Object>) in.readObject());
+				return new SerialisedAgent(in.readInt(), (Map<String, Object>) in.readObject());
 			}
 		});
 
-		register(conf, SerialisedPopulation.class, new GamaFSTSerialiser<SerialisedPopulation>() {
+		register(conf, SerialisedPopulation.class, new FSTIndividualSerialiser<SerialisedPopulation>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final SerialisedPopulation o) throws Exception {
@@ -331,7 +212,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			}
 		});
 
-		register(conf, SerialisedGrid.class, new GamaFSTSerialiser<SerialisedGrid>() {
+		register(conf, SerialisedGrid.class, new FSTIndividualSerialiser<SerialisedGrid>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final SerialisedGrid o) throws Exception {
@@ -348,7 +229,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			}
 		});
 
-		register(conf, GamaGeometryFactory.class, new GamaFSTSerialiser<GamaGeometryFactory>() {
+		register(conf, GamaGeometryFactory.class, new FSTIndividualSerialiser<GamaGeometryFactory>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final GamaGeometryFactory o) throws Exception {
@@ -362,7 +243,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			}
 		});
 
-		register(conf, GamaFont.class, new GamaFSTSerialiser<GamaFont>() {
+		register(conf, GamaFont.class, new FSTIndividualSerialiser<GamaFont>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final GamaFont o) throws Exception {
@@ -377,7 +258,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			}
 		});
 
-		register(conf, IMap.class, new GamaFSTSerialiser<IMap>() {
+		register(conf, IMap.class, new FSTIndividualSerialiser<IMap>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IMap o) throws Exception {
@@ -408,7 +289,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 		});
 
-		register(conf, IList.class, new GamaFSTSerialiser<IList>() {
+		register(conf, IList.class, new FSTIndividualSerialiser<IList>() {
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IList o) throws Exception {
@@ -434,20 +315,22 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 		});
 
-		register(conf, GamaCoordinateSequenceFactory.class, new GamaFSTSerialiser<GamaCoordinateSequenceFactory>() {
+		register(conf, GamaCoordinateSequenceFactory.class,
+				new FSTIndividualSerialiser<GamaCoordinateSequenceFactory>() {
 
-			@Override
-			public void serialise(final FSTObjectOutput out, final GamaCoordinateSequenceFactory o) throws Exception {
-				out.writeStringUTF("*GCSF*");
-			}
+					@Override
+					public void serialise(final FSTObjectOutput out, final GamaCoordinateSequenceFactory o)
+							throws Exception {
+						out.writeStringUTF("*GCSF*");
+					}
 
-			@Override
-			public GamaCoordinateSequenceFactory deserialise(final IScope scope, final FSTObjectInput in)
-					throws Exception {
-				in.readStringUTF();
-				return GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory();
-			}
-		});
+					@Override
+					public GamaCoordinateSequenceFactory deserialise(final IScope scope, final FSTObjectInput in)
+							throws Exception {
+						in.readStringUTF();
+						return GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory();
+					}
+				});
 	}
 
 	/**
@@ -460,112 +343,9 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 *            the clazz
 	 * @date 5 août 2023
 	 */
-	public <T> void register(final FSTConfiguration conf, final Class<T> clazz, final GamaFSTSerialiser<T> ser) {
+	public <T> void register(final FSTConfiguration conf, final Class<T> clazz, final FSTIndividualSerialiser<T> ser) {
 		ser.setName(clazz.getSimpleName());
 		conf.registerSerializer(clazz, ser, true);
-	}
-
-	/**
-	 * The Class GamaFSTSerialiser.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 5 août 2023
-	 */
-	abstract class GamaFSTSerialiser<T> extends FSTBasicObjectSerializer {
-
-		/** The short name. */
-		String shortName;
-
-		/**
-		 * Instantiates a new gama FST serialiser.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param name
-		 *            the name
-		 * @date 7 août 2023
-		 */
-		void setName(final String name) { shortName = CLASS_PREFIX + name; }
-
-		/**
-		 * Instantiate.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param objectClass
-		 *            the object class
-		 * @param in
-		 *            the in
-		 * @param serializationInfo
-		 *            the serialization info
-		 * @param referencee
-		 *            the referencee
-		 * @param streamPosition
-		 *            the stream position
-		 * @return the t
-		 * @throws Exception
-		 *             the exception
-		 * @date 7 août 2023
-		 */
-		@Override
-		public final T instantiate(final Class objectClass, final FSTObjectInput in,
-				final FSTClazzInfo serializationInfo, final FSTFieldInfo referencee, final int streamPosition)
-				throws Exception {
-			T result = deserialise(currentScope, in);
-			in.registerObject(result, streamPosition, serializationInfo, referencee);
-			return result;
-		}
-
-		/**
-		 * Write object.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param out
-		 *            the out
-		 * @param toWrite
-		 *            the to write
-		 * @param clzInfo
-		 *            the clz info
-		 * @param referencedBy
-		 *            the referenced by
-		 * @param streamPosition
-		 *            the stream position
-		 * @throws IOException
-		 *             Signals that an I/O exception has occurred.
-		 * @date 7 août 2023
-		 */
-		@SuppressWarnings ("unchecked")
-		@Override
-		public void writeObject(final FSTObjectOutput out, final Object toWrite, final FSTClazzInfo clzInfo,
-				final FSTFieldInfo referencedBy, final int streamPosition) throws IOException {
-			try {
-				serialise(out, (T) toWrite);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		/**
-		 * Write. The method to redefine to allow for
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param out
-		 *            the out
-		 * @param toWrite
-		 *            the to write
-		 * @date 5 août 2023
-		 */
-		public void serialise(final FSTObjectOutput out, final T toWrite) throws Exception {}
-
-		/**
-		 * Read.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param in
-		 *            the in
-		 * @return the t
-		 * @date 5 août 2023
-		 */
-		abstract public T deserialise(IScope scope, FSTObjectInput in) throws Exception;
-
 	}
 
 	/**
@@ -600,22 +380,12 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 */
 	@Override
 	public byte[] write(final IScope scope, final SerialisedAgent sa) {
-		currentScope = scope;
-		try {
-			return fst.asByteArray(sa);
-		} finally {
-			currentScope = null;
-		}
+		return fst.asByteArray(sa);
 	}
 
 	@Override
 	public byte[] write(final IScope scope, final Object obj) {
-		currentScope = scope;
-		try {
-			return fst.asByteArray(obj);
-		} finally {
-			currentScope = null;
-		}
+		return fst.asByteArray(obj);
 	}
 
 	/**
@@ -631,11 +401,11 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 */
 	@Override
 	public Object restoreObjectFromBytes(final IScope scope, final byte[] input) {
-		currentScope = scope;
 		try {
+			fst.setScope(scope);
 			return fst.asObject(input);
 		} finally {
-			currentScope = null;
+			fst.setScope(null);
 		}
 
 	}
@@ -650,11 +420,11 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 */
 	@Override
 	public SerialisedAgent read(final IScope scope, final byte[] input) {
-		currentScope = scope;
 		try {
+			fst.setScope(scope);
 			return (SerialisedAgent) fst.asObject(input);
 		} finally {
-			currentScope = null;
+			fst.setScope(null);
 		}
 	}
 

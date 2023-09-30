@@ -39,7 +39,7 @@ public class SimulationSaveDelegate implements ISaveDelegate, ISerialisationCons
 		Object toSave = item.value(scope);
 		if (toSave instanceof IAgent sa) {
 			boolean zip = !JSON_FORMAT.equals(type) && !XML_FORMAT.equals(type);
-			SerialisedAgentSaver.getInstance().saveToFile(sa, file.getPath(), type, zip);
+			SerialisedAgentSaver.getInstance().saveToFile(scope, sa, file.getPath(), type, zip);
 		}
 	}
 

@@ -48,8 +48,8 @@ public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISer
 	 * @date 8 août 2023
 	 */
 	@Override
-	public byte[] saveAgentToBytes(final IAgent sim) {
-		return write(sim.getScope(), encodeToSerialisedForm(sim));
+	public byte[] saveAgentToBytes(final IScope scope, final IAgent sim) {
+		return write(scope, encodeToSerialisedForm(sim));
 	}
 
 	@Override
@@ -79,18 +79,6 @@ public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISer
 	 * @date 7 août 2023
 	 */
 	protected abstract void restoreFromSerialisedForm(IAgent object, SerialisedForm proxy);
-
-	/**
-	 * Write.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param objectToSerialise
-	 *            the object to serialise
-	 * @return the byte[]
-	 * @date 7 août 2023
-	 */
-	@Override
-	public abstract byte[] write(IScope scope, SerialisedForm objectToSerialise);
 
 	/**
 	 * Write.

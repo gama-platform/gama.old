@@ -58,8 +58,8 @@ public class SimulationsMenu extends ContributionItem {
 	public static GamaCommand duplicateCurrentSimulation =
 			new GamaCommand("experiment/experiment.simulations.duplicate", "Duplicate Simulation",
 					"Duplicate the current simulation and add it to the experiment", e -> {
-						byte[] bytes = SerialisedAgentSaver.getInstance().saveToBytes(GAMA.getSimulation(),
-								ISerialisationConstants.BINARY_FORMAT, true);
+						byte[] bytes = SerialisedAgentSaver.getInstance().saveToBytes(GAMA.getRuntimeScope(),
+								GAMA.getSimulation(), ISerialisationConstants.BINARY_FORMAT, true);
 						final SimulationAgent sim =
 								GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
 						GAMA.runAndUpdateAll(() -> {
@@ -101,8 +101,8 @@ public class SimulationsMenu extends ContributionItem {
 				// default -> SerialisationConstants.BINARY_FORMAT;
 				// };
 
-				SerialisedAgentSaver.getInstance().saveToFile(sim, open, false, ISerialisationConstants.BINARY_FORMAT,
-						true);
+				SerialisedAgentSaver.getInstance().saveToFile(sim.getScope(), sim, open, false,
+						ISerialisationConstants.BINARY_FORMAT, true);
 			});
 
 	/** The save current simulation and history. */
@@ -118,7 +118,7 @@ public class SimulationsMenu extends ContributionItem {
 						fileSave.setFileName(sim.getModel().getName() + "_" + sim.getCycle(sim.getScope()) + "_cycles"
 								+ ".simulation");
 						String open = fileSave.open();
-						SerialisedAgentSaver.getInstance().saveToFile(sim, open, true,
+						SerialisedAgentSaver.getInstance().saveToFile(sim.getScope(), sim, open, true,
 								ISerialisationConstants.BINARY_FORMAT, true);
 					});
 

@@ -120,23 +120,15 @@ public class FSTObjectOutput implements ObjectOutput {
 	protected boolean isCrossPlatform;
 
 	/** The refs local. */
-	protected ThreadLocal<FSTClazzInfo.FSTFieldInfo[]> refsLocal = new ThreadLocal() {
+	protected ThreadLocal<FSTClazzInfo.FSTFieldInfo[]> refsLocal = new ThreadLocal<>() {
 		@Override
-		protected Object initialValue() {
+		protected FSTClazzInfo.FSTFieldInfo[] initialValue() {
 			return new FSTClazzInfo.FSTFieldInfo[20];
 		}
 	};
 
 	/** The refs. */
 	FSTClazzInfo.FSTFieldInfo[] refs;
-
-	/**
-	 * Creates a new FSTObjectOutput stream to write data to the specified underlying output stream. uses Default
-	 * Configuration singleton
-	 */
-	public FSTObjectOutput(final OutputStream out) {
-		this(out, FSTConfiguration.getDefaultConfiguration());
-	}
 
 	/**
 	 * Creates a new FSTObjectOutput stream to write data to the specified underlying output stream. The counter
@@ -175,20 +167,6 @@ public class FSTObjectOutput implements ObjectOutput {
 	 */
 	public FSTObjectOutput(final FSTConfiguration conf) {
 		this(null, conf);
-		getCodec().setOutstream(null);
-	}
-
-	/**
-	 * serialize without an underlying stream, the resulting byte array of writing to this FSTObjectOutput can be
-	 * accessed using getBuffer(), the size using getWritten(). Note once you call close or flush, the tmp byte array is
-	 * lost. (grab array before flushing/closing)
-	 *
-	 * uses default configuration singleton
-	 *
-	 * @throws IOException
-	 */
-	public FSTObjectOutput() {
-		this(null, FSTConfiguration.getDefaultConfiguration());
 		getCodec().setOutstream(null);
 	}
 
@@ -357,7 +335,7 @@ public class FSTObjectOutput implements ObjectOutput {
 	 */
 	public void writeObject(final Object obj, final Class... possibles) throws IOException {
 		if (isCrossPlatform) {
-			writeObjectInternal(obj, null); // not supported cross platform
+			writeObjectInternal(obj, null, (Class[]) null); // not supported cross platform
 			return;
 		}
 		if (possibles != null && possibles.length > 1) {
@@ -517,11 +495,13 @@ public class FSTObjectOutput implements ObjectOutput {
 				getCodec().writeTag(BIG_LONG, null, 0, toWrite, this);
 				getCodec().writeFLong(((Long) toWrite).longValue());
 				return null;
-			} else if (clazz == Boolean.class) {
+			}
+			if (clazz == Boolean.class) {
 				getCodec().writeTag(((Boolean) toWrite).booleanValue() ? BIG_BOOLEAN_TRUE : BIG_BOOLEAN_FALSE, null, 0,
 						toWrite, this);
 				return null;
-			} else if (referencee.getType() != null && referencee.getType().isEnum() || toWrite instanceof Enum)
+			}
+			if (referencee.getType() != null && referencee.getType().isEnum() || toWrite instanceof Enum)
 				return writeEnum(referencee, toWrite);
 
 			FSTClazzInfo serializationInfo = ci == null ? getFstClazzInfo(referencee, clazz) : ci;

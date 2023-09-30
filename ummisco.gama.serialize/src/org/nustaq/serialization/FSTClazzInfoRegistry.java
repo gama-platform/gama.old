@@ -1,166 +1,237 @@
-/*
- * Copyright 2014 Ruediger Moeller.
+/*******************************************************************************************************
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * FSTClazzInfoRegistry.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package org.nustaq.serialization;
-
-import org.nustaq.serialization.util.FSTMap;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.nustaq.serialization.util.FSTMap;
+
 /**
- * Created with IntelliJ IDEA.
- * User: Möller
- * Date: 03.11.12
- * Time: 13:11
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: Möller Date: 03.11.12 Time: 13:11 To change this template use File | Settings |
+ * File Templates.
  */
 public class FSTClazzInfoRegistry {
 
-    FSTMap mInfos = new FSTMap(97);
-    FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
-    boolean ignoreAnnotations = false;
-    final AtomicBoolean rwLock = new AtomicBoolean(false);
-    private boolean structMode = false;
+	/** The m infos. */
+	FSTMap mInfos = new FSTMap(97);
 
-    public static void addAllReferencedClasses(Class cl, ArrayList<String> names, String filter) {
-        HashSet<String> names1 = new HashSet<String>();
-        addAllReferencedClasses(cl, names1, new HashSet<String>(),filter);
-        names.addAll(names1);
-    }
+	/** The serializer registry. */
+	FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
 
-    static void addAllReferencedClasses(Class cl, HashSet<String> names, HashSet<String> topLevelDone, String filter) {
-        if ( cl == null || topLevelDone.contains(cl.getName()) || !cl.getName().startsWith(filter))
-            return;
-        topLevelDone.add(cl.getName());
-        Field[] declaredFields = cl.getDeclaredFields();
-        for (int i = 0; i < declaredFields.length; i++) {
-            Field declaredField = declaredFields[i];
-            Class<?> type = declaredField.getType();
-            if ( ! type.isPrimitive() && ! type.isArray() ) {
-                names.add(type.getName());
-                addAllReferencedClasses(type,names,topLevelDone,filter);
-            }
-        }
-        Class[] declaredClasses = cl.getDeclaredClasses();
-        for (int i = 0; i < declaredClasses.length; i++) {
-            Class declaredClass = declaredClasses[i];
-            if ( ! declaredClass.isPrimitive() && ! declaredClass.isArray() ) {
-                names.add(declaredClass.getName());
-                addAllReferencedClasses(declaredClass, names,topLevelDone,filter);
-            }
-        }
-        Method[] declaredMethods = cl.getDeclaredMethods();
-        for (int i = 0; i < declaredMethods.length; i++) {
-            Method declaredMethod = declaredMethods[i];
-            Class<?> returnType = declaredMethod.getReturnType();
-            if ( ! returnType.isPrimitive() && ! returnType.isArray() ) {
-                names.add(returnType.getName());
-                addAllReferencedClasses(returnType, names,topLevelDone,filter);
-            }
-            Class<?>[] parameterTypes = declaredMethod.getParameterTypes();
-            for (int j = 0; j < parameterTypes.length; j++) {
-                Class<?> parameterType = parameterTypes[j];
-                if ( ! parameterType.isPrimitive() && ! parameterType.isArray() ) {
-                    names.add(parameterType.getName());
-                    addAllReferencedClasses(parameterType, names,topLevelDone,filter);
-                }
-            }
-        }
+	/** The ignore annotations. */
+	boolean ignoreAnnotations = false;
 
-        Class[] classes = cl.getDeclaredClasses();
-        for (int i = 0; i < classes.length; i++) {
-            Class aClass = classes[i];
-            if ( ! aClass.isPrimitive() && ! aClass.isArray() ) {
-                names.add(aClass.getName());
-                addAllReferencedClasses(aClass, names,topLevelDone,filter);
-            }
-        }
+	/** The rw lock. */
+	final AtomicBoolean rwLock = new AtomicBoolean(false);
 
-        Class enclosingClass = cl.getEnclosingClass();
-        if ( enclosingClass != null ) {
-            names.add(enclosingClass.getName());
-            addAllReferencedClasses(enclosingClass,names,topLevelDone,filter);
-        }
+	/** The struct mode. */
+	private boolean structMode = false;
 
-        names.add(cl.getName());
-        addAllReferencedClasses(cl.getSuperclass(), names,topLevelDone,filter);
-        Class[] interfaces = cl.getInterfaces();
-        for (int i = 0; i < interfaces.length; i++) {
-            Class anInterface = interfaces[i];
-            if ( ! anInterface.isPrimitive() && ! anInterface.isArray() ) {
-                names.add(anInterface.getName());
-                addAllReferencedClasses(anInterface, names,topLevelDone,filter);
-            }
-        }
-    }
+	/**
+	 * Adds the all referenced classes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param cl
+	 *            the cl
+	 * @param names
+	 *            the names
+	 * @param filter
+	 *            the filter
+	 * @date 30 sept. 2023
+	 */
+	public static void addAllReferencedClasses(final Class cl, final ArrayList<String> names, final String filter) {
+		HashSet<String> names1 = new HashSet<>();
+		addAllReferencedClasses(cl, names1, new HashSet<>(), filter);
+		names.addAll(names1);
+	}
 
-    public FSTClazzInfoRegistry() {
-    }
+	/**
+	 * Adds the all referenced classes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param cl
+	 *            the cl
+	 * @param names
+	 *            the names
+	 * @param topLevelDone
+	 *            the top level done
+	 * @param filter
+	 *            the filter
+	 * @date 30 sept. 2023
+	 */
+	static void addAllReferencedClasses(final Class cl, final HashSet<String> names, final HashSet<String> topLevelDone,
+			final String filter) {
+		if (cl == null || topLevelDone.contains(cl.getName()) || !cl.getName().startsWith(filter)) return;
+		topLevelDone.add(cl.getName());
+		Field[] declaredFields = cl.getDeclaredFields();
+		for (Field declaredField : declaredFields) {
+			Class<?> type = declaredField.getType();
+			if (!type.isPrimitive() && !type.isArray()) {
+				names.add(type.getName());
+				addAllReferencedClasses(type, names, topLevelDone, filter);
+			}
+		}
+		Class[] declaredClasses = cl.getDeclaredClasses();
+		for (Class declaredClass : declaredClasses) {
+			if (!declaredClass.isPrimitive() && !declaredClass.isArray()) {
+				names.add(declaredClass.getName());
+				addAllReferencedClasses(declaredClass, names, topLevelDone, filter);
+			}
+		}
+		Method[] declaredMethods = cl.getDeclaredMethods();
+		for (Method declaredMethod : declaredMethods) {
+			Class<?> returnType = declaredMethod.getReturnType();
+			if (!returnType.isPrimitive() && !returnType.isArray()) {
+				names.add(returnType.getName());
+				addAllReferencedClasses(returnType, names, topLevelDone, filter);
+			}
+			Class<?>[] parameterTypes = declaredMethod.getParameterTypes();
+			for (Class<?> parameterType : parameterTypes) {
+				if (!parameterType.isPrimitive() && !parameterType.isArray()) {
+					names.add(parameterType.getName());
+					addAllReferencedClasses(parameterType, names, topLevelDone, filter);
+				}
+			}
+		}
 
-    public FSTClazzInfo getCLInfo(Class c, FSTConfiguration conf) {
-        while(!rwLock.compareAndSet(false,true));
-        try {
-            FSTClazzInfo res = (FSTClazzInfo) mInfos.get(c);
-            if (res == null) {
-                if (c == null) {
-                    throw new NullPointerException("Class is null");
-                }
-                if ( conf.getVerifier() != null ) {
-                    if ( ! conf.getVerifier().allowClassDeserialization(c) )
-                        throw new RuntimeException("tried to deserialize forbidden class "+c.getName() );
-                }
-                res = new FSTClazzInfo(conf, c, this, ignoreAnnotations);
-                mInfos.put(c, res);
-            }
-            return res;
-        } finally {
-            rwLock.set(false);
-        }
-    }
+		Class[] classes = cl.getDeclaredClasses();
+		for (Class aClass : classes) {
+			if (!aClass.isPrimitive() && !aClass.isArray()) {
+				names.add(aClass.getName());
+				addAllReferencedClasses(aClass, names, topLevelDone, filter);
+			}
+		}
 
-    public FSTSerializerRegistry getSerializerRegistry() {
-        return serializerRegistry;
-    }
+		Class enclosingClass = cl.getEnclosingClass();
+		if (enclosingClass != null) {
+			names.add(enclosingClass.getName());
+			addAllReferencedClasses(enclosingClass, names, topLevelDone, filter);
+		}
 
-    public final boolean isIgnoreAnnotations() {
-        return ignoreAnnotations;
-    }
+		names.add(cl.getName());
+		addAllReferencedClasses(cl.getSuperclass(), names, topLevelDone, filter);
+		Class[] interfaces = cl.getInterfaces();
+		for (Class anInterface : interfaces) {
+			if (!anInterface.isPrimitive() && !anInterface.isArray()) {
+				names.add(anInterface.getName());
+				addAllReferencedClasses(anInterface, names, topLevelDone, filter);
+			}
+		}
+	}
 
-    public void setIgnoreAnnotations(boolean ignoreAnnotations) {
-        this.ignoreAnnotations = ignoreAnnotations;
-    }
+	/**
+	 * Instantiates a new FST clazz info registry.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 30 sept. 2023
+	 */
+	public FSTClazzInfoRegistry() {}
 
+	/**
+	 * Gets the CL info.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param c
+	 *            the c
+	 * @param conf
+	 *            the conf
+	 * @return the CL info
+	 * @date 30 sept. 2023
+	 */
+	public FSTClazzInfo getCLInfo(final Class<?> c, final FSTConfiguration conf) {
+		while (!rwLock.compareAndSet(false, true)) { ; }
+		try {
+			FSTClazzInfo res = (FSTClazzInfo) mInfos.get(c);
+			if (res == null) {
+				if (c == null) throw new NullPointerException("Class is null");
+				if ((conf.getVerifier() != null) && !conf.getVerifier().allowClassDeserialization(c))
+					throw new RuntimeException("tried to deserialize forbidden class " + c.getName());
+				res = new FSTClazzInfo(conf, c, this, ignoreAnnotations);
+				mInfos.put(c, res);
+			}
+			return res;
+		} finally {
+			rwLock.set(false);
+		}
+	}
 
-    public void setSerializerRegistryDelegate(FSTSerializerRegistryDelegate delegate) {
-        serializerRegistry.setDelegate(delegate);
-    }
+	/**
+	 * Gets the serializer registry.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the serializer registry
+	 * @date 30 sept. 2023
+	 */
+	public FSTSerializerRegistry getSerializerRegistry() { return serializerRegistry; }
 
-    public FSTSerializerRegistryDelegate getSerializerRegistryDelegate() {
-        return serializerRegistry.getDelegate();
-    }
+	/**
+	 * Checks if is ignore annotations.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is ignore annotations
+	 * @date 30 sept. 2023
+	 */
+	public final boolean isIgnoreAnnotations() { return ignoreAnnotations; }
 
-    public void setStructMode(boolean structMode) {
-        this.structMode = structMode;
-    }
+	/**
+	 * Sets the ignore annotations.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ignoreAnnotations
+	 *            the new ignore annotations
+	 * @date 30 sept. 2023
+	 */
+	public void setIgnoreAnnotations(final boolean ignoreAnnotations) { this.ignoreAnnotations = ignoreAnnotations; }
 
-    public boolean isStructMode() {
-        return structMode;
-    }
+	/**
+	 * Sets the serializer registry delegate.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param delegate
+	 *            the new serializer registry delegate
+	 * @date 30 sept. 2023
+	 */
+	public void setSerializerRegistryDelegate(final FSTSerializerRegistryDelegate delegate) {
+		serializerRegistry.setDelegate(delegate);
+	}
+
+	/**
+	 * Gets the serializer registry delegate.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the serializer registry delegate
+	 * @date 30 sept. 2023
+	 */
+	public FSTSerializerRegistryDelegate getSerializerRegistryDelegate() { return serializerRegistry.getDelegate(); }
+
+	/**
+	 * Sets the struct mode.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param structMode
+	 *            the new struct mode
+	 * @date 30 sept. 2023
+	 */
+	public void setStructMode(final boolean structMode) { this.structMode = structMode; }
+
+	/**
+	 * Checks if is struct mode.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is struct mode
+	 * @date 30 sept. 2023
+	 */
+	public boolean isStructMode() { return structMode; }
 }

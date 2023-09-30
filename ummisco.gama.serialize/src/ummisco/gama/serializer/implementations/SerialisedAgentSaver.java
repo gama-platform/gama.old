@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -59,11 +60,12 @@ public class SerialisedAgentSaver implements ISerialisationConstants {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 8 août 2023
 	 */
-	public final void saveToFile(final IAgent sim, final String path, final String format, final boolean zip) {
+	public final void saveToFile(final IScope scope, final IAgent sim, final String path, final String format,
+			final boolean zip) {
 		try (FileOutputStream fos = new FileOutputStream(path, true)) {
-			fos.write(saveToBytes(sim, format, zip));
+			fos.write(saveToBytes(scope, sim, format, zip));
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, sim.getScope());
+			throw GamaRuntimeException.create(e, scope);
 		}
 	}
 
@@ -73,14 +75,14 @@ public class SerialisedAgentSaver implements ISerialisationConstants {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 8 août 2023
 	 */
-	public final void saveToFile(final SimulationAgent sim, final String path, final boolean withHistory,
-			final String format, final boolean zip) {
+	public final void saveToFile(final IScope scope, final SimulationAgent sim, final String path,
+			final boolean withHistory, final String format, final boolean zip) {
 		try (FileOutputStream fos = new FileOutputStream(path, true)) {
 			sim.serializeHistory(withHistory);
-			fos.write(saveToBytes(sim, format, zip));
+			fos.write(saveToBytes(scope, sim, format, zip));
 			sim.serializeHistory(false);
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, sim.getScope());
+			throw GamaRuntimeException.create(e, scope);
 		}
 	}
 
@@ -91,8 +93,8 @@ public class SerialisedAgentSaver implements ISerialisationConstants {
 	 * @return
 	 * @date 8 août 2023
 	 */
-	public final String saveToString(final IAgent sim, final String format, final boolean zip) {
-		return new String(saveToBytes(sim, format, zip), STRING_BYTE_ARRAY_CHARSET);
+	public final String saveToString(final IScope scope, final IAgent sim, final String format, final boolean zip) {
+		return new String(saveToBytes(scope, sim, format, zip), STRING_BYTE_ARRAY_CHARSET);
 	}
 
 	/**
@@ -104,13 +106,13 @@ public class SerialisedAgentSaver implements ISerialisationConstants {
 	 * @return the string
 	 * @date 21 août 2023
 	 */
-	public final byte[] saveToBytes(final IAgent agent, final String format, final boolean zip) {
+	public final byte[] saveToBytes(final IScope scope, final IAgent agent, final String format, final boolean zip) {
 		if (agent == null) return NULL;
 		ISerialisationProcessor processor = SerialisationProcessorFactory.create(format);
 		if (processor == null) throw GamaRuntimeException.error("No agent serializer called " + format
 				+ " found. Available serializers are " + SerialisationProcessorFactory.getAvailableProcessors(),
 				agent.getScope());
-		byte[] toSave = processor.saveAgentToBytes(agent);
+		byte[] toSave = processor.saveAgentToBytes(scope, agent);
 		if (zip) { toSave = ByteArrayZipper.zip(toSave); }
 		try (ByteArrayOutputStream fos = new ByteArrayOutputStream()) {
 			fos.write(GAMA_AGENT_IDENTIFIER);
@@ -119,7 +121,7 @@ public class SerialisedAgentSaver implements ISerialisationConstants {
 			fos.write(toSave);
 			return fos.toByteArray();
 		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, agent.getScope());
+			throw GamaRuntimeException.create(e, scope);
 		}
 	}
 

@@ -1,30 +1,29 @@
-/*
- * Copyright 2014 Ruediger Moeller.
+/*******************************************************************************************************
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * DefaultCoder.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package org.nustaq.serialization.simpleapi;
 
-import org.nustaq.serialization.*;
-import org.nustaq.serialization.util.FSTUtil;
-
 import java.io.IOException;
+
+import org.nustaq.serialization.FSTConfiguration;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectInputNoShared;
+import org.nustaq.serialization.FSTObjectOutput;
+import org.nustaq.serialization.FSTObjectOutputNoShared;
+import org.nustaq.serialization.util.FSTUtil;
 
 /**
  * Created by ruedi on 09.11.14.
  *
- * Encodes Objects to byte arrays and vice versa using slight value compression and a platform neutral data
- * layout (no diff regarding big/little endian). Implementation is conservative (no unsafe)
+ * Encodes Objects to byte arrays and vice versa using slight value compression and a platform neutral data layout (no
+ * diff regarding big/little endian). Implementation is conservative (no unsafe)
  *
  * As this makes use of the stream oriented API, operation is not zero copy. However this is not too significant
  * compared to cost of serialization.
@@ -33,89 +32,115 @@ import java.io.IOException;
  *
  * This class cannot be used concurrently.
  *
- * Works similar to the unsafe coders, but does not use Unsafe. Note that reading and writing
- * coder must match each other in type and configuration.
+ * Works similar to the unsafe coders, but does not use Unsafe. Note that reading and writing coder must match each
+ * other in type and configuration.
  *
  */
 public class DefaultCoder implements FSTCoder {
 
-    protected FSTConfiguration conf;
-    FSTObjectInput input;
-    FSTObjectOutput output;
+	/** The conf. */
+	protected FSTConfiguration conf;
 
-    public DefaultCoder(boolean shared, Class ... toPreRegister) {
-        conf = FSTConfiguration.createDefaultConfiguration();
-        conf.setShareReferences(shared);
-        if ( toPreRegister != null && toPreRegister.length > 0 ) {
-            conf.registerClass(toPreRegister);
-        }
-        if ( shared ) {
-            input = new FSTObjectInput(conf);
-            output = new FSTObjectOutput(conf);
-        } else {
-            input = new FSTObjectInputNoShared(conf);
-            output = new FSTObjectOutputNoShared(conf);
-        }
-    }
+	/** The input. */
+	FSTObjectInput input;
 
-    public DefaultCoder( Class ... preregister ) {
-        this(true, preregister);
-    }
+	/** The output. */
+	FSTObjectOutput output;
 
-    public DefaultCoder() {
-        this(true);
-    }
+	/**
+	 * Instantiates a new default coder.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param shared
+	 *            the shared
+	 * @param toPreRegister
+	 *            the to pre register
+	 * @date 30 sept. 2023
+	 */
+	public DefaultCoder(final boolean shared, final Class... toPreRegister) {
+		conf = FSTConfiguration.createDefaultConfiguration();
+		conf.setShareReferences(shared);
+		if (toPreRegister != null && toPreRegister.length > 0) { conf.registerClass(toPreRegister); }
+		if (shared) {
+			input = new FSTObjectInput(conf);
+			output = new FSTObjectOutput(conf);
+		} else {
+			input = new FSTObjectInputNoShared(conf);
+			output = new FSTObjectOutputNoShared(conf);
+		}
+	}
 
-    /**
-     * will throw an FSTBufferTooSmallException if buffer is too small.
-     */
-    public int toByteArray( Object obj, byte result[], int resultOffset, int avaiableSize ) {
-        output.resetForReUse();
-        try {
-            output.writeObject(obj);
-        } catch (IOException e) {
-            FSTUtil.<RuntimeException>rethrow(e);
-        }
-        int written = output.getWritten();
-        if ( written > avaiableSize ) {
-            throw FSTBufferTooSmallException.Instance;
-        }
-        System.arraycopy(output.getBuffer(),0,result,resultOffset, written);
-        return written;
-    }
+	/**
+	 * Instantiates a new default coder.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param preregister
+	 *            the preregister
+	 * @date 30 sept. 2023
+	 */
+	public DefaultCoder(final Class... preregister) {
+		this(true, preregister);
+	}
 
-    public byte[] toByteArray( Object o ) {
-        output.resetForReUse();
-        try {
-            output.writeObject(o);
-        } catch (IOException e) {
-            FSTUtil.<RuntimeException>rethrow(e);
-        }
-        return output.getCopyOfWrittenBuffer();
-    }
+	/**
+	 * Instantiates a new default coder.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 30 sept. 2023
+	 */
+	public DefaultCoder() {
+		this(true, (Class[]) null);
+	}
 
-    @Override
-    public FSTConfiguration getConf() {
-        return conf;
-    }
+	/**
+	 * will throw an FSTBufferTooSmallException if buffer is too small.
+	 */
+	@Override
+	public int toByteArray(final Object obj, final byte result[], final int resultOffset, final int avaiableSize) {
+		output.resetForReUse();
+		try {
+			output.writeObject(obj);
+		} catch (IOException e) {
+			FSTUtil.<RuntimeException> rethrow(e);
+		}
+		int written = output.getWritten();
+		if (written > avaiableSize) throw FSTBufferTooSmallException.Instance;
+		System.arraycopy(output.getBuffer(), 0, result, resultOffset, written);
+		return written;
+	}
 
+	@Override
+	public byte[] toByteArray(final Object o) {
+		output.resetForReUse();
+		try {
+			output.writeObject(o);
+		} catch (IOException e) {
+			FSTUtil.<RuntimeException> rethrow(e);
+		}
+		return output.getCopyOfWrittenBuffer();
+	}
 
-    public Object toObject( byte arr[], int off, int len ) {
-        try {
-            if ( off == 0 ) {
-                input.resetForReuseUseArray(arr);
-            } else {
-                input.resetForReuseCopyArray(arr, off, len);
-            }
-            return input.readObject();
-        } catch (Exception e) {
-            FSTUtil.<RuntimeException>rethrow(e);
-        }
-        return null;
-    }
+	@Override
+	public FSTConfiguration getConf() { return conf; }
 
-    public Object toObject( byte arr[] ) {
-        return toObject(arr,0,arr.length);
-    }
+	@Override
+	public Object toObject(final byte arr[], final int off, final int len) {
+		try {
+			if (off == 0) {
+				input.resetForReuseUseArray(arr);
+			} else {
+				input.resetForReuseCopyArray(arr, off, len);
+			}
+			return input.readObject();
+		} catch (Exception e) {
+			FSTUtil.<RuntimeException> rethrow(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Object toObject(final byte arr[]) {
+		return toObject(arr, 0, arr.length);
+	}
 
 }

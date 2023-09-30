@@ -36,7 +36,6 @@ import java.util.Stack;
 
 import org.nustaq.serialization.FSTClazzInfo.FSTFieldInfo;
 import org.nustaq.serialization.coders.Unknown;
-import org.nustaq.serialization.minbin.MBObject;
 import org.nustaq.serialization.util.FSTUtil;
 
 import ummisco.gama.dev.utils.DEBUG;
@@ -267,34 +266,12 @@ public class FSTObjectInput implements ObjectInput {
 	 * Instantiates a new FST object input.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @date 29 sept. 2023
-	 */
-	public FSTObjectInput() throws IOException {
-		this(emptyStream, FSTConfiguration.getDefaultConfiguration());
-	}
-
-	/**
-	 * Instantiates a new FST object input.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param conf
 	 *            the conf
 	 * @date 29 sept. 2023
 	 */
 	public FSTObjectInput(final FSTConfiguration conf) {
 		this(emptyStream, conf);
-	}
-
-	/**
-	 * Creates a FSTObjectInput that uses the specified underlying InputStream.
-	 *
-	 * @param in
-	 *            the specified input stream
-	 */
-	public FSTObjectInput(final InputStream in) throws IOException {
-		this(in, FSTConfiguration.getDefaultConfiguration());
 	}
 
 	/**
@@ -325,7 +302,7 @@ public class FSTObjectInput implements ObjectInput {
 	 *             the class not found exception
 	 * @date 29 sept. 2023
 	 */
-	public Class getClassForName(final String name) throws ClassNotFoundException {
+	public Class<?> getClassForName(final String name) throws ClassNotFoundException {
 		return getCodec().classForName(name);
 	}
 
@@ -459,12 +436,12 @@ public class FSTObjectInput implements ObjectInput {
 	 *             the exception
 	 * @date 29 sept. 2023
 	 */
-	public Object readObject(final Class... possibles) throws Exception {
+	public Object readObject(final Class<?>... possibles) throws Exception {
 		curDepth++;
-		if (isCrossPlatform) return readObjectInternal(null); // not supported cross platform
+		if (isCrossPlatform) return readObjectInternal(); // not supported cross platform
 		try {
 			if (possibles != null && possibles.length > 1) {
-				for (Class possible : possibles) { getCodec().registerClass(possible); }
+				for (Class<?> possible : possibles) { getCodec().registerClass(possible); }
 			}
 			Object res = readObjectInternal(possibles);
 			processValidation();
@@ -497,7 +474,7 @@ public class FSTObjectInput implements ObjectInput {
 	 *             the instantiation exception
 	 * @date 29 sept. 2023
 	 */
-	public Object readObjectInternal(final Class... expected)
+	public Object readObjectInternal(final Class<?>... expected)
 			throws ClassNotFoundException, IOException, IllegalAccessException, InstantiationException {
 		try {
 			FSTClazzInfo.FSTFieldInfo info = infoCache;
@@ -529,7 +506,7 @@ public class FSTObjectInput implements ObjectInput {
 	 */
 	public Object readObjectWithHeader(final FSTClazzInfo.FSTFieldInfo referencee) throws Exception {
 		FSTClazzInfo clzSerInfo;
-		Class c;
+		Class<?> c;
 		final int readPos = getCodec().getInputPos();
 		byte code = getCodec().readObjectHeaderTag(); // NOTICE: THIS ADVANCES THE INPUT STREAM...
 		if (code == FSTObjectOutput.OBJECT) {
@@ -658,7 +635,7 @@ public class FSTObjectInput implements ObjectInput {
 	 * @return the clazz info
 	 * @date 29 sept. 2023
 	 */
-	protected FSTClazzInfo getClazzInfo(final Class c, final FSTClazzInfo.FSTFieldInfo referencee) {
+	protected FSTClazzInfo getClazzInfo(final Class<?> c, final FSTClazzInfo.FSTFieldInfo referencee) {
 		FSTClazzInfo clzSerInfo;
 		FSTClazzInfo lastInfo = referencee.lastInfo;
 		if (lastInfo != null && lastInfo.clazz == c && lastInfo.conf == conf) {
@@ -733,9 +710,9 @@ public class FSTObjectInput implements ObjectInput {
 	protected Object instantiateEnum(final FSTClazzInfo.FSTFieldInfo referencee, final int readPos)
 			throws IOException, ClassNotFoundException {
 		FSTClazzInfo clzSerInfo;
-		Class c;
+		// Class c;
 		clzSerInfo = readClass();
-		c = clzSerInfo.getClazz();
+		// c = clzSerInfo.getClazz();
 		int ordinal = getCodec().readFInt();
 		Object[] enumConstants = clzSerInfo.getEnumConstants();
 		if (enumConstants == null) // pseudo enum of anonymous classes tom style ?
@@ -780,7 +757,7 @@ public class FSTObjectInput implements ObjectInput {
 	 *             the exception
 	 * @date 29 sept. 2023
 	 */
-	protected Object instantiateAndReadWithSer(Class c, final FSTObjectSerializer ser, FSTClazzInfo clzSerInfo,
+	protected Object instantiateAndReadWithSer(Class<?> c, final FSTObjectSerializer ser, FSTClazzInfo clzSerInfo,
 			final FSTClazzInfo.FSTFieldInfo referencee, final int readPos) throws Exception {
 		boolean serInstance = false;
 		Object newObj = ser.instantiate(c, this, clzSerInfo, referencee, readPos);
@@ -794,7 +771,7 @@ public class FSTObjectInput implements ObjectInput {
 		if (newObj == FSTObjectSerializer.REALLY_NULL) {
 			newObj = null;
 		} else {
-			if (newObj.getClass() != c && ser == null) {
+			if (newObj.getClass() != c) {
 				// for advanced trickery (e.g. returning non-serializable from FSTSerializer)
 				// this hurts. so in case of FSTSerializers incoming clzInfo will refer to the
 				// original class, not the one actually instantiated
@@ -827,7 +804,7 @@ public class FSTObjectInput implements ObjectInput {
 	 *             the exception
 	 * @date 29 sept. 2023
 	 */
-	protected Object instantiateAndReadNoSer(final Class c, final FSTClazzInfo clzSerInfo,
+	protected Object instantiateAndReadNoSer(final Class<?> c, final FSTClazzInfo clzSerInfo,
 			final FSTClazzInfo.FSTFieldInfo referencee, final int readPos) throws Exception {
 		Object newObj;
 		newObj = clzSerInfo.newInstance(getCodec().isMapBased());
@@ -880,7 +857,7 @@ public class FSTObjectInput implements ObjectInput {
 	 */
 	protected Object readObjectCompatible(final FSTClazzInfo.FSTFieldInfo referencee,
 			final FSTClazzInfo serializationInfo, Object newObj) throws Exception {
-		Class cl = serializationInfo.getClazz();
+		Class<?> cl = serializationInfo.getClazz();
 		readObjectCompatibleRecursive(referencee, newObj, serializationInfo, cl);
 		if (newObj != null && serializationInfo.getReadResolveMethod() != null) {
 			newObj = handleReadRessolve(serializationInfo, newObj);
@@ -930,7 +907,7 @@ public class FSTObjectInput implements ObjectInput {
 	 * @date 29 sept. 2023
 	 */
 	protected void readObjectCompatibleRecursive(final FSTClazzInfo.FSTFieldInfo referencee, final Object toRead,
-			final FSTClazzInfo serializationInfo, final Class cl) throws Exception {
+			final FSTClazzInfo serializationInfo, final Class<?> cl) throws Exception {
 		FSTClazzInfo.FSTCompatibilityInfo fstCompatibilityInfo = serializationInfo.getCompInfo().get(cl);
 		if (!Serializable.class.isAssignableFrom(cl)) return; // ok here, as compatible mode will never be triggered for
 																// "forceSerializable"
@@ -1102,7 +1079,8 @@ public class FSTObjectInput implements ObjectInput {
 				throw new IOException(ex);
 			}
 		}
-		int debug = getCodec().readVersionTag();// just consume '0'
+		// int debug =
+		getCodec().readVersionTag();// just consume '0'
 	}
 
 	/**
@@ -1176,9 +1154,6 @@ public class FSTObjectInput implements ObjectInput {
 				fakeField.fakeName = name;
 				Object toSet = readObjectWithHeader(fakeField);
 				((Unknown) newObj).set(name, toSet);
-			} else if (newObj.getClass() == MBObject.class) {
-				Object toSet = readObjectWithHeader(null);
-				((MBObject) newObj).put(name, toSet);
 			} else {
 				FSTClazzInfo.FSTFieldInfo fieldInfo = serializationInfo.getFieldInfo(name, null);
 				if (fieldInfo == null) {
@@ -1260,14 +1235,14 @@ public class FSTObjectInput implements ObjectInput {
 	 * @date 29 sept. 2023
 	 */
 	protected void readCompatibleObjectFields(final FSTClazzInfo.FSTFieldInfo referencee,
-			final FSTClazzInfo serializationInfo, final FSTClazzInfo.FSTFieldInfo[] fieldInfo, final Map res)
-			throws Exception {
+			final FSTClazzInfo serializationInfo, final FSTClazzInfo.FSTFieldInfo[] fieldInfo,
+			final Map<String, Object> res) throws Exception {
 		int booleanMask = 0;
 		int boolcount = 8;
 		for (FSTFieldInfo subInfo : fieldInfo) {
 			try {
 				if (subInfo.isIntegral() && !subInfo.isArray()) {
-					final Class subInfoType = subInfo.getType();
+					final Class<?> subInfoType = subInfo.getType();
 					if (subInfoType == boolean.class) {
 						if (boolcount == 8) {
 							booleanMask = getCodec().readFByte() + 256 & 0xff;
@@ -1342,8 +1317,7 @@ public class FSTObjectInput implements ObjectInput {
 		Object classOrArray = getCodec().readArrayHeader();
 		if (pos < 0) { pos = getCodec().getInputPos(); }
 		if (!(classOrArray instanceof Class)) return classOrArray;
-		if (classOrArray == null) return null;
-		Object o = readArrayNoHeader(referencee, pos, (Class) classOrArray);
+		Object o = readArrayNoHeader(referencee, pos, (Class<?>) classOrArray);
 		getCodec().readArrayEnd(null);
 		return o;
 	}
@@ -1363,11 +1337,11 @@ public class FSTObjectInput implements ObjectInput {
 	 *             the exception
 	 * @date 29 sept. 2023
 	 */
-	protected Object readArrayNoHeader(final FSTClazzInfo.FSTFieldInfo referencee, final int pos, final Class arrCl)
+	protected Object readArrayNoHeader(final FSTClazzInfo.FSTFieldInfo referencee, final int pos, final Class<?> arrCl)
 			throws Exception {
 		final int len = getCodec().readFInt();
 		if (len == -1) return null;
-		Class arrType = arrCl.getComponentType();
+		Class<?> arrType = arrCl.getComponentType();
 		if (arrType.isArray()) { // multidim array
 			Object array[] = (Object[]) Array.newInstance(arrType, len);
 			if (!referencee.isFlat()) { objects.registerObjectForRead(array, pos); }
@@ -1575,7 +1549,7 @@ public class FSTObjectInput implements ObjectInput {
 	 *             Signals that an I/O exception has occurred.
 	 * @date 29 sept. 2023
 	 */
-	protected ObjectInputStream getObjectInputStream(final Class cl, final FSTClazzInfo clInfo,
+	protected ObjectInputStream getObjectInputStream(final Class<?> cl, final FSTClazzInfo clInfo,
 			final FSTClazzInfo.FSTFieldInfo referencee, final Object toRead) throws IOException {
 		ObjectInputStream wrapped = new ObjectInputStream() {
 			@Override

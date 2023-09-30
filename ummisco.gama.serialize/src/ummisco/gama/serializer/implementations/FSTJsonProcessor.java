@@ -72,7 +72,7 @@ public class FSTJsonProcessor extends FSTAbstractProcessor {
 	public void registerSerialisers(final FSTConfiguration conf) {
 		super.registerSerialisers(conf);
 
-		register(conf, PrecisionModel.Type.class, new GamaFSTSerialiser<PrecisionModel.Type>() {
+		register(conf, PrecisionModel.Type.class, new FSTIndividualSerialiser<PrecisionModel.Type>() {
 			// Necessary because of the JSON mode that requires it
 			@Override
 			public void serialise(final FSTObjectOutput out, final PrecisionModel.Type o) throws Exception {
@@ -95,7 +95,7 @@ public class FSTJsonProcessor extends FSTAbstractProcessor {
 			}
 		});
 
-		register(conf, IGraph.class, new GamaFSTSerialiser<IGraph>() {
+		register(conf, IGraph.class, new FSTIndividualSerialiser<IGraph>() {
 			// This serializer is a way of "cheating" by considering that graphs are immutable throughout the
 			// simulations -- To use only in JSON.
 			int i;
@@ -114,7 +114,7 @@ public class FSTJsonProcessor extends FSTAbstractProcessor {
 
 		});
 
-		register(conf, File.class, new GamaFSTSerialiser<File>() {
+		register(conf, File.class, new FSTIndividualSerialiser<File>() {
 			// Required by JSON, which cannot use the built-in writeObject / readObject methods
 			@Override
 			public void serialise(final FSTObjectOutput out, final File o) throws Exception {
@@ -141,7 +141,7 @@ public class FSTJsonProcessor extends FSTAbstractProcessor {
 	 * @date 5 août 2023
 	 */
 	@Override
-	public <T> void register(final FSTConfiguration conf, final Class<T> clazz, final GamaFSTSerialiser<T> ser) {
+	public <T> void register(final FSTConfiguration conf, final Class<T> clazz, final FSTIndividualSerialiser<T> ser) {
 		super.register(conf, clazz, ser);
 		conf.registerCrossPlatformClassMapping(ser.shortName, clazz.getName());
 	}

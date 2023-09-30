@@ -33,7 +33,7 @@ public interface ISerialisationProcessor<SerialisedForm extends ISerialisedAgent
 	 * @return the byte[]
 	 * @date 8 août 2023
 	 */
-	byte[] saveAgentToBytes(final IAgent sim);
+	byte[] saveAgentToBytes(final IScope scope, final IAgent sim);
 
 	/**
 	 * Save object to bytes.

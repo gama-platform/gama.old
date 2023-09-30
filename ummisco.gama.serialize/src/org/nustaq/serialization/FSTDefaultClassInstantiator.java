@@ -51,6 +51,7 @@ public class FSTDefaultClassInstantiator implements FSTClassInstantiator {
 						"no suitable constructor found and no Unsafe instance avaiable. Can't instantiate "
 								+ clazz.getName());
 			}
+			if (cons == null) return null;
 			return cons.newInstance();
 		} catch (Throwable ignored) {
 			DEBUG.ERR("Failed to construct new instance", ignored);

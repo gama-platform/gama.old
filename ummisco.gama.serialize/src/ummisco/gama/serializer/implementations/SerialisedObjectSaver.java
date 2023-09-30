@@ -50,10 +50,10 @@ public class SerialisedObjectSaver implements ISerialisationConstants {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 8 août 2023
 	 */
-	public final void saveToFile(final IScope scope, final Object sim, final String path, final String format,
+	public final void saveToFile(final IScope scope, final Object obj, final String path, final String format,
 			final boolean zip) {
 		try (FileOutputStream fos = new FileOutputStream(path, true)) {
-			fos.write(saveToBytes(scope, sim, format, zip));
+			fos.write(saveToBytes(scope, obj, format, zip));
 		} catch (IOException e) {
 			throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
 		}

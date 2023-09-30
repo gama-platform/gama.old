@@ -63,7 +63,7 @@ public class SerialisedSimulationRecorder implements ISimulationRecorder, ISeria
 	public void record(final SimulationAgent sim) {
 		try {
 			long startTime = System.nanoTime();
-			byte[] state = processor.saveAgentToBytes(sim);
+			byte[] state = processor.saveAgentToBytes(sim.getScope(), sim);
 			GamaNode<byte[]> current = sim.createNewHistoryNode(state);
 			asyncZip(current, startTime);
 		} catch (Throwable e) {

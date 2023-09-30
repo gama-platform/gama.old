@@ -17,7 +17,6 @@ import msi.gama.kernel.experiment.SimulationRecorderFactory;
 import msi.gama.util.file.json.Jsoner;
 import ummisco.gama.serializer.implementations.FSTBinaryProcessor;
 import ummisco.gama.serializer.implementations.FSTJsonProcessor;
-import ummisco.gama.serializer.implementations.KryoBinaryProcessor;
 import ummisco.gama.serializer.implementations.SerialisationProcessorFactory;
 import ummisco.gama.serializer.implementations.SerialisedSimulationRecorder;
 import ummisco.gama.serializer.implementations.XStreamImplementation;
@@ -37,7 +36,6 @@ public class Activator implements BundleActivator {
 		SerialisationProcessorFactory.register(new XStreamImplementation());
 		SerialisationProcessorFactory.register(new FSTJsonProcessor());
 		SerialisationProcessorFactory.register(new FSTBinaryProcessor());
-		SerialisationProcessorFactory.register(new KryoBinaryProcessor());
 		Jsoner.streamConverter = new ConverterJSON();
 	}
 
