@@ -18,6 +18,7 @@ import com.google.common.primitives.Ints;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -642,4 +643,7 @@ public abstract class AbstractAgent implements IAgent {
 		}
 
 	}
+
+	@Override
+	public SimulationAgent getSimulation() { return getPopulation().getHost().getSimulation(); }
 }

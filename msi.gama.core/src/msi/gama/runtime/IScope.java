@@ -920,20 +920,4 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 */
 	IPopulationFactory getPopulationFactory();
 
-	/**
-	 * Leave ask context with simulations. See #3891
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 26 sept. 2023
-	 */
-	default void leaveAskContextWithSimulations() {}
-
-	/**
-	 * Enter ask context with simulations.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 26 sept. 2023
-	 */
-	default void enterAskContextWithSimulations() {}
-
 }

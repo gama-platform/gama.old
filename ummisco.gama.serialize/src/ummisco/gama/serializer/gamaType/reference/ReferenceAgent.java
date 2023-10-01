@@ -625,4 +625,9 @@ public class ReferenceAgent implements IReference, IAgent {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public SimulationAgent getSimulation() { // TODO Auto-generated method stub
+		return null;
+	}
 }

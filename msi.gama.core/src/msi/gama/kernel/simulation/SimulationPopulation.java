@@ -195,11 +195,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 				sim.initOutputs();
 			} else {
 				sim.schedule(scope);
-				if (sequence != null && !sequence.isEmpty()) {
-					scope.enterAskContextWithSimulations(); // see #3891
-					scope.execute(sequence, sim, null);
-					scope.leaveAskContextWithSimulations();
-				}
+				if (sequence != null && !sequence.isEmpty()) { scope.execute(sequence, sim, null); }
 			}
 		}
 	}

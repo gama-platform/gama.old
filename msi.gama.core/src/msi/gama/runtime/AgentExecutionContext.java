@@ -12,12 +12,13 @@ package msi.gama.runtime;
 
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.util.PoolUtils;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 
 /**
  * The Class AgentExecutionContext.
  */
-class AgentExecutionContext implements IDisposable {
+public class AgentExecutionContext implements IDisposable {
 
 	/** The Constant POOL. */
 	// Disactivated for the moment
@@ -93,6 +94,18 @@ class AgentExecutionContext implements IDisposable {
 	 */
 	public AgentExecutionContext createCopy() {
 		return create(agent, outer);
+	}
+
+	/**
+	 * Gets the simulation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the simulation
+	 * @date 1 oct. 2023
+	 */
+	public SimulationAgent getSimulation() {
+		if (agent == null) return null;
+		return agent.getSimulation();
 	}
 
 }

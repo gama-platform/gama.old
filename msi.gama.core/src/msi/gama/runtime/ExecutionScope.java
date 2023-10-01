@@ -905,6 +905,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public SimulationAgent getSimulation() {
+		if (agentContext != null) return agentContext.getSimulation();
 		final ITopLevelAgent root = getRoot();
 		if (root == null) return null;
 		return root.getSimulation();

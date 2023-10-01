@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.ICreateDelegate;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
@@ -51,9 +50,7 @@ public class CreateAgentsFromSerialisedFileDelegate implements ICreateDelegate {
 		String path = (String) inits.get(0).get("saved_file");
 		SerialisedAgentReader.getInstance().restoreFromFile(agent, path);
 		// The sequence is executed only after the restoration
-		if (agent instanceof SimulationAgent) { scope.enterAskContextWithSimulations(); } // see #3891
 		scope.execute(sequence, agent, null);
-		scope.leaveAskContextWithSimulations();
 		return agents;
 	}
 

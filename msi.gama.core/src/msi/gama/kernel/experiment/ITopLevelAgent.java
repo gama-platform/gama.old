@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ITopLevelAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -12,7 +12,6 @@ package msi.gama.kernel.experiment;
 
 import msi.gama.common.interfaces.IScopedStepable;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.outputs.IOutputManager;
@@ -102,13 +101,6 @@ public interface ITopLevelAgent extends IMacroAgent, IScopedStepable {
 	 *            the new on user hold
 	 */
 	void setOnUserHold(boolean state);
-
-	/**
-	 * Gets the simulation.
-	 *
-	 * @return the simulation
-	 */
-	SimulationAgent getSimulation();
 
 	/**
 	 * Gets the experiment.

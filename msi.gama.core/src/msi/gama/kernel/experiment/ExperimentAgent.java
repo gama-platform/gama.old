@@ -949,19 +949,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	public class ExperimentAgentScope extends ExecutionScope {
 
-		/** Whether we are in a remote context where the target agents are simulations */
-		volatile boolean inAskSimulations;
-
-		@Override
-		public void leaveAskContextWithSimulations() {
-			inAskSimulations = false;
-		}
-
-		@Override
-		public void enterAskContextWithSimulations() {
-			inAskSimulations = true;
-		}
-
 		/**
 		 * Method getRandom()
 		 *
@@ -996,9 +983,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
-		public SimulationAgent getSimulation() { return ExperimentAgent.this.getSimulation(); }
-
-		@Override
 		public IExperimentAgent getExperiment() { return ExperimentAgent.this; }
 
 		@Override
@@ -1008,7 +992,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			if (ExperimentAgent.this.hasAttribute(varName) || getSpecies().hasVar(varName))
 				return super.getGlobalVarValue(varName);
 			// Second case: the simulation is not null, so it should handle it
-			final SimulationAgent sim = inAskSimulations ? (SimulationAgent) getAgent() : getSimulation();
+			final SimulationAgent sim = getSimulation();
 			if (sim != null && !sim.dead()) return sim.getScope().getGlobalVarValue(varName);
 			// Third case, the simulation is null but the model defines this variable (see #2044). We then grab its
 			// initial value if possible

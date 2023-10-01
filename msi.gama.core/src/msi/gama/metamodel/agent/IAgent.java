@@ -22,6 +22,7 @@ import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
@@ -660,5 +661,12 @@ public interface IAgent extends IShape, INamed, IAttributed, Comparable<IAgent>,
 	default int intValue(final IScope scope) {
 		return getIndex();
 	}
+
+	/**
+	 * Gets the simulation.
+	 *
+	 * @return the simulation
+	 */
+	default SimulationAgent getSimulation() { return getPopulation().getHost().getSimulation(); }
 
 }
