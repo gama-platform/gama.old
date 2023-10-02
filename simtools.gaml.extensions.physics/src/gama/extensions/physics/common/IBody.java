@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IBody.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * IBody.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.common;
 
@@ -19,10 +19,14 @@ import msi.gaml.species.ISpecies;
 /**
  * The Interface IBody.
  *
- * @param <WorldType> the generic type
- * @param <BodyType> the generic type
- * @param <ShapeType> the generic type
- * @param <VectorType> the generic type
+ * @param <WorldType>
+ *            the generic type
+ * @param <BodyType>
+ *            the generic type
+ * @param <ShapeType>
+ *            the generic type
+ * @param <VectorType>
+ *            the generic type
  */
 /*
  * An abstraction of a physical "bullet" body for GAMA agents
@@ -34,7 +38,8 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	/**
 	 * Clamp.
 	 *
-	 * @param value the value
+	 * @param value
+	 *            the value
 	 * @return the float
 	 */
 	default float clamp(final Double value) {
@@ -52,8 +57,10 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	/**
 	 * Creates the and initialize body.
 	 *
-	 * @param shape the shape
-	 * @param world the world
+	 * @param shape
+	 *            the shape
+	 * @param world
+	 *            the world
 	 * @return the body type
 	 */
 	BodyType createAndInitializeBody(final ShapeType shape, WorldType world);
@@ -61,7 +68,8 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	/**
 	 * No contact notification wanted.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return true, if successful
 	 */
 	default boolean noContactNotificationWanted(final IAgent agent) {
@@ -121,7 +129,8 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	/**
 	 * Gets the angular velocity.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the angular velocity
 	 */
 	GamaPoint getAngularVelocity(GamaPoint v);
@@ -129,7 +138,8 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	/**
 	 * Gets the linear velocity.
 	 *
-	 * @param v the v
+	 * @param v
+	 *            the v
 	 * @return the linear velocity
 	 */
 	GamaPoint getLinearVelocity(GamaPoint v);
@@ -150,63 +160,72 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	/**
 	 * Sets the ccd.
 	 *
-	 * @param v the new ccd
+	 * @param v
+	 *            the new ccd
 	 */
 	void setCCD(boolean v);
 
 	/**
 	 * Sets the friction.
 	 *
-	 * @param friction the new friction
+	 * @param friction
+	 *            the new friction
 	 */
 	void setFriction(Double friction);
 
 	/**
 	 * Sets the restitution.
 	 *
-	 * @param restitution the new restitution
+	 * @param restitution
+	 *            the new restitution
 	 */
 	void setRestitution(Double restitution);
 
 	/**
 	 * Sets the damping.
 	 *
-	 * @param damping the new damping
+	 * @param damping
+	 *            the new damping
 	 */
 	void setDamping(Double damping);
 
 	/**
 	 * Sets the angular damping.
 	 *
-	 * @param damping the new angular damping
+	 * @param damping
+	 *            the new angular damping
 	 */
 	void setAngularDamping(Double damping);
 
 	/**
 	 * Sets the contact damping.
 	 *
-	 * @param damping the new contact damping
+	 * @param damping
+	 *            the new contact damping
 	 */
 	void setContactDamping(Double damping);
 
 	/**
 	 * Sets the angular velocity.
 	 *
-	 * @param angularVelocity the new angular velocity
+	 * @param angularVelocity
+	 *            the new angular velocity
 	 */
 	void setAngularVelocity(GamaPoint angularVelocity);
 
 	/**
 	 * Sets the linear velocity.
 	 *
-	 * @param linearVelocity the new linear velocity
+	 * @param linearVelocity
+	 *            the new linear velocity
 	 */
 	void setLinearVelocity(GamaPoint linearVelocity);
 
 	/**
 	 * Sets the location.
 	 *
-	 * @param loc the new location
+	 * @param loc
+	 *            the new location
 	 */
 	void setLocation(GamaPoint loc);
 
@@ -224,21 +243,24 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	/**
 	 * Apply impulse.
 	 *
-	 * @param impulse the impulse
+	 * @param impulse
+	 *            the impulse
 	 */
 	void applyImpulse(GamaPoint impulse);
 
 	/**
 	 * Apply torque.
 	 *
-	 * @param torque the torque
+	 * @param torque
+	 *            the torque
 	 */
 	void applyTorque(GamaPoint torque);
 
 	/**
 	 * Apply force.
 	 *
-	 * @param force the force
+	 * @param force
+	 *            the force
 	 */
 	void applyForce(GamaPoint force);
 
@@ -247,9 +269,7 @@ public interface IBody<WorldType, BodyType, ShapeType, VectorType> extends IPhys
 	 *
 	 * @return true, if is no notification
 	 */
-	default boolean isNoNotification() {
-		return true;
-	}
+	default boolean isNoNotification() { return true; }
 
 	/**
 	 * Gets the agent.

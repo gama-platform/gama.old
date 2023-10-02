@@ -27,14 +27,23 @@ import msi.gama.metamodel.shape.GamaPoint;
  */
 public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2> implements IBox2DPhysicalEntity {
 
+	/** The scale. */
+	float scale;
+
+	/** The target. */
+	static float TARGET = 10;
+
 	/**
 	 * Instantiates a new box 2 D physical world.
 	 *
-	 * @param physicalSimulationAgent
+	 * @param sim
 	 *            the physical simulation agent
 	 */
-	public Box2DPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
-		super(physicalSimulationAgent);
+	public Box2DPhysicalWorld(final PhysicalSimulationAgent sim) {
+		super(sim);
+		double w = sim.getWidth();
+		double h = sim.getHeight();
+		scale = (float) (TARGET / Math.max(w, h));
 	}
 
 	@SuppressWarnings ("unused")
@@ -45,7 +54,7 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 
 	@Override
 	public void unregisterAgent(final IAgent agent) {
-		Body body = (Body) agent.getAttribute(BODY);
+		Body body = ((Box2DBodyWrapper) agent.getAttribute(BODY)).body;
 		getWorld().destroyBody(body);
 
 	}
@@ -91,7 +100,7 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 
 	@Override
 	protected IShapeConverter<Shape, Vec2> createShapeConverter() {
-		return new Box2DShapeConverter();
+		return new Box2DShapeConverter(scale);
 	}
 
 	@Override
@@ -104,7 +113,11 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 
 	@Override
 	protected void updateEngine(final Double timeStep, final int maxSubSteps) {
-		getWorld().step(timeStep.floatValue(), maxSubSteps, maxSubSteps);
+		int steps = maxSubSteps == 0 ? 1 : maxSubSteps;
+		getWorld().step(timeStep.floatValue(), steps, steps);
 	}
+
+	@Override
+	public float getScale() { return scale; }
 
 }

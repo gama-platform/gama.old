@@ -26,6 +26,8 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 
+import ummisco.gama.dev.utils.DEBUG;
+
 /**
  * The listener interface for receiving universalContactAdded events. The class that is interested in processing a
  * universalContactAdded event implements this interface, and the object created with that class is registered with a
@@ -35,6 +37,10 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
  * @see UniversalContactAddedEvent
  */
 public class UniversalContactAddedListener implements ContactAddedCallback, PhysicsCollisionListener, ContactListener {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The new contacts. */
 	Multimap<IBody, IBody> newContacts = MultimapBuilder.hashKeys().hashSetValues().build();
@@ -98,7 +104,12 @@ public class UniversalContactAddedListener implements ContactAddedCallback, Phys
 	public void preSolve(final Contact contact, final Manifold oldManifold) {}
 
 	@Override
-	public void postSolve(final Contact contact, final ContactImpulse impulse) {}
+	public void postSolve(final Contact contact, final ContactImpulse impulse) {
+		// DEBUG.OUT("Collision between : " + ((Box2DBodyWrapper) contact.m_fixtureA.getBody().getUserData()).getAgent()
+		// + " and " + ((Box2DBodyWrapper) contact.m_fixtureB.getBody().getUserData()).getAgent()
+		// + " with impulse " + STRINGS.TO_STRING(impulse.normalImpulses) + " | "
+		// + STRINGS.TO_STRING(impulse.tangentImpulses));
+	}
 
 	/**
 	 * Gets the collected contacts.

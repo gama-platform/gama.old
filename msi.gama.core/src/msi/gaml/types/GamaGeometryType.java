@@ -52,6 +52,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -599,7 +600,9 @@ public class GamaGeometryType extends GamaType<IShape> {
 			final Coordinate[] coordinates = g.getCoordinates();
 			for (int i = 0; i < coordinates.length; i++) { coordinates[i].z = location.z; }
 		}
-		return GamaShapeFactory.createFrom(g);
+		IShape shape = GamaShapeFactory.createFrom(g);
+		shape.setGeometricalType(Type.CIRCLE);
+		return shape;
 	}
 
 	/**

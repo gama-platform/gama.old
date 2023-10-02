@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * DynamicBodySkill.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * DynamicBodySkill.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.gaml;
 
@@ -71,7 +71,8 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Gets the velocity.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the velocity
 	 */
 	@getter (VELOCITY)
@@ -84,8 +85,10 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Sets the velocity.
 	 *
-	 * @param a the a
-	 * @param velocity the velocity
+	 * @param a
+	 *            the a
+	 * @param velocity
+	 *            the velocity
 	 */
 	@setter (VELOCITY)
 	public void setVelocity(final IAgent a, final GamaPoint velocity) {
@@ -97,7 +100,8 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Gets the damping.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the damping
 	 */
 	@getter (DAMPING)
@@ -110,8 +114,10 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Sets the damping.
 	 *
-	 * @param a the a
-	 * @param damping the damping
+	 * @param a
+	 *            the a
+	 * @param damping
+	 *            the damping
 	 */
 	@setter (DAMPING)
 	public void setDamping(final IAgent a, final Double damping) {
@@ -123,7 +129,8 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Gets the contact damping.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the contact damping
 	 */
 	@getter (CONTACT_DAMPING)
@@ -136,8 +143,10 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Sets the contact damping.
 	 *
-	 * @param a the a
-	 * @param damping the damping
+	 * @param a
+	 *            the a
+	 * @param damping
+	 *            the damping
 	 */
 	@setter (CONTACT_DAMPING)
 	public void setContactDamping(final IAgent a, final Double damping) {
@@ -149,7 +158,8 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Gets the angular damping.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the angular damping
 	 */
 	@getter (ANGULAR_DAMPING)
@@ -178,8 +188,10 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Sets the angular damping.
 	 *
-	 * @param a the a
-	 * @param damping the damping
+	 * @param a
+	 *            the a
+	 * @param damping
+	 *            the damping
 	 */
 	@setter (ANGULAR_DAMPING)
 	public void setAngularDamping(final IAgent a, final Double damping) {
@@ -191,21 +203,24 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Gets the angular velocity.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the angular velocity
 	 */
 	@getter (ANGULAR_VELOCITY)
 	public GamaPoint getAngularVelocity(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return new GamaPoint();
-		return body.getAngularVelocity(null);
+		return body.getAngularVelocity(new GamaPoint());
 	}
 
 	/**
 	 * Sets the angular velocity.
 	 *
-	 * @param a the a
-	 * @param angularVelocity the angular velocity
+	 * @param a
+	 *            the a
+	 * @param angularVelocity
+	 *            the angular velocity
 	 */
 	@setter (ANGULAR_VELOCITY)
 	public void setAngularVelocity(final IAgent a, final GamaPoint angularVelocity) {
@@ -217,7 +232,8 @@ public class DynamicBodySkill extends StaticBodySkill {
 	/**
 	 * Prim apply.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
 	 */
 	@action (

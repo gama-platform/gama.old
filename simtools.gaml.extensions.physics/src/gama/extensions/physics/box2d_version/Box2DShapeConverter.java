@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Box2DShapeConverter.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * Box2DShapeConverter.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.box2d_version;
 
@@ -25,11 +25,31 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.runtime.IScope;
 import msi.gama.util.matrix.IField;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class Box2DShapeConverter.
  */
 public class Box2DShapeConverter implements IShapeConverter<Shape, Vec2>, IBox2DPhysicalEntity {
+
+	static {
+		DEBUG.ON();
+	}
+
+	/** The scale. */
+	final float scale;
+
+	/**
+	 * Instantiates a new box 2 D shape converter.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scale
+	 *            the scale
+	 * @date 1 oct. 2023
+	 */
+	Box2DShapeConverter(final float scale) {
+		this.scale = scale;
+	}
 
 	@Override
 	public void computeTranslation(final IAgent agent, final Type type, final float depth, final Vec2 aabbTranslation,
@@ -48,7 +68,7 @@ public class Box2DShapeConverter implements IShapeConverter<Shape, Vec2>, IBox2D
 			case CONE:
 			case PYRAMID:
 				PolygonShape p = new PolygonShape();
-				p.setAsBox(shape.getWidth().floatValue() / 2, shape.getHeight().floatValue() / 2);
+				p.setAsBox(toBox2D(shape.getWidth().floatValue() / 2), toBox2D(shape.getHeight().floatValue() / 2));
 				return p;
 			case LINECYLINDER:
 				// oriented on the Y or on the X (default) axis
@@ -61,7 +81,9 @@ public class Box2DShapeConverter implements IShapeConverter<Shape, Vec2>, IBox2D
 			case POINT:
 			case CYLINDER:
 				CircleShape cc = new CircleShape();
-				cc.setRadius(shape.getWidth().floatValue() / 2);
+				double radius = shape.getWidth().floatValue() / 2;
+				// DEBUG.OUT("Creating a circle with radius " + radius);
+				cc.setRadius(toBox2D(radius));
 				return cc;
 			default:
 				GamaPoint[] points = GeometryUtils.getPointsOf(shape);
@@ -77,9 +99,7 @@ public class Box2DShapeConverter implements IShapeConverter<Shape, Vec2>, IBox2D
 					default:
 						PolygonShape ps = new PolygonShape();
 						Vec2[] vertices = new Vec2[points.length];
-						for (int i = 0; i < points.length; i++) {
-							vertices[i] = toVector(points[i]);
-						}
+						for (int i = 0; i < points.length; i++) { vertices[i] = toVector(points[i]); }
 						ps.set(vertices, vertices.length);
 						return ps;
 				}
@@ -94,6 +114,15 @@ public class Box2DShapeConverter implements IShapeConverter<Shape, Vec2>, IBox2D
 		PolygonShape rectangle = new PolygonShape();
 		rectangle.setAsBox(width.floatValue(), height.floatValue());
 		return rectangle;
+	}
+
+	@Override
+	public float getScale() { return scale; }
+
+	@Override
+	public GamaPoint toGamaPoint(final Vec2 v) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

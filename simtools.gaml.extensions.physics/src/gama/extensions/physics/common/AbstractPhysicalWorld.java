@@ -45,7 +45,7 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 	protected WorldType world;
 
 	/** The shape converter. */
-	private final IShapeConverter<ShapeType, VectorType> shapeConverter;
+	private IShapeConverter<ShapeType, VectorType> shapeConverter;
 
 	/** The contact listener. */
 	protected final UniversalContactAddedListener contactListener;
@@ -71,7 +71,6 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 	protected AbstractPhysicalWorld(final PhysicalSimulationAgent physicalSimulationAgent) {
 		simulation = physicalSimulationAgent;
 		emitNotifications = emitsNotifications(simulation);
-		shapeConverter = createShapeConverter();
 		contactListener = new UniversalContactAddedListener();
 	}
 
@@ -193,7 +192,10 @@ public abstract class AbstractPhysicalWorld<WorldType, ShapeType, VectorType>
 	}
 
 	@Override
-	public IShapeConverter<ShapeType, VectorType> getShapeConverter() { return shapeConverter; }
+	public IShapeConverter<ShapeType, VectorType> getShapeConverter() {
+		if (shapeConverter == null) { shapeConverter = createShapeConverter(); }
+		return shapeConverter;
+	}
 
 	@Override
 	public PhysicalSimulationAgent getSimulation() { return simulation; }

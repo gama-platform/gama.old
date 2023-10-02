@@ -383,7 +383,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		_vertices.getNormal(true, 1, _normal);
 		_vertices.getCenter(_center);
 		_tangent.setLocation(_center).subtract(_vertices.at(0));
-		_scale.setTo(height);
+		_scale.setTo(p.getEnvelopeInternal().getWidth() / 2);
 		drawCachedGeometry(Type.CIRCLE, /* solid, */border);
 	}
 
