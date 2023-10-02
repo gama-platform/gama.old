@@ -193,6 +193,12 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		if (d != null) { children.add(child); }
 		return d;
 	}
+	
+	
+
+	public Collector.AsList<IDescription> getChildren() {
+		return children;
+	}
 
 	@Override
 	public StatementWithChildrenDescription copy(final IDescription into) {
