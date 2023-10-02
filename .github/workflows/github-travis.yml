@@ -563,6 +563,12 @@ jobs:
             fi
           done
 
+      - name: Delete old release
+        uses: cb80/delrel@v0.16.0
+        with:
+          tag: 1.9.3
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to Github
         uses: svenstaro/upload-release-action@2.7.0
         with:
@@ -572,7 +578,6 @@ jobs:
           file: ${{ runner.temp }}/files/*
           file_glob: true
           make_latest: false
-          overwrite: true
           promote: false
           prerelease: true
           release_name: Alpha Version 1.9.3 (${{ steps.setup_new_release_data.outputs.commit }})
