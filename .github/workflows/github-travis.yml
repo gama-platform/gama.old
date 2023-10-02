@@ -518,16 +518,16 @@ jobs:
       - name: Setup new release data and rename files accordingly 
         id: setup_new_release_data
         run: |
-          mkdir ${{ runner.temp }}/files
-          mv *.zip *.deb *.dmg *.exe ${{ runner.temp }}/files
-          cd ${{ runner.temp }}/files
-
           commit=$(git rev-parse --short=7 HEAD)
           echo "commit=$commit" >> "$GITHUB_OUTPUT"
 
           date=$(date +'%d/%m/%y %R')
           timestamp="$(echo $date | cut -d' ' -f1 | sed 's|/|.|g')"
           echo "date=$date" >> "$GITHUB_OUTPUT"
+          
+          mkdir ${{ runner.temp }}/files
+          mv *.zip *.deb *.dmg *.exe ${{ runner.temp }}/files
+          cd ${{ runner.temp }}/files
 
           # Windows
           for file in *.exe *win32*.zip; do
