@@ -11,6 +11,9 @@ on:
       BOT_TOKEN:
         required: true
         description: "The token used to authenticate to the Github API"
+      GITHUB_TOKEN:
+        required: true
+        description: "Auto-generated Github token"
   
   workflow_dispatch:
       inputs:
