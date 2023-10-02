@@ -13,7 +13,12 @@ on:
 
 jobs:
   # 
-  # GENERIC BUILD
+  # ██████╗ ██╗   ██╗██╗██╗     ██████╗ ██╗███╗   ██╗ ██████╗ 
+  # ██╔══██╗██║   ██║██║██║     ██╔══██╗██║████╗  ██║██╔════╝ 
+  # ██████╔╝██║   ██║██║██║     ██║  ██║██║██╔██╗ ██║██║  ███╗
+  # ██╔══██╗██║   ██║██║██║     ██║  ██║██║██║╚██╗██║██║   ██║
+  # ██████╔╝╚██████╔╝██║███████╗██████╔╝██║██║ ╚████║╚██████╔╝
+  # ╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚═╝╚═╝  ╚═══╝ ╚═════╝                                                       
   # 
   build:
     runs-on: ubuntu-latest
@@ -153,7 +158,21 @@ jobs:
       continue_pipeline: ${{ env.CONTINUE }}
   
   #
-  # MacOS signature Pipelines
+  # ██████╗  █████╗  ██████╗██╗  ██╗ █████╗  ██████╗ ██╗███╗   ██╗ ██████╗ 
+  # ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██╔════╝ ██║████╗  ██║██╔════╝ 
+  # ██████╔╝███████║██║     █████╔╝ ███████║██║  ███╗██║██╔██╗ ██║██║  ███╗
+  # ██╔═══╝ ██╔══██║██║     ██╔═██╗ ██╔══██║██║   ██║██║██║╚██╗██║██║   ██║
+  # ██║     ██║  ██║╚██████╗██║  ██╗██║  ██║╚██████╔╝██║██║ ╚████║╚██████╔╝
+  # ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+  #                                                                        
+
+  #
+  #   __  __          _____    ____   _____ 
+  # |  \/  |   /\   / ____|  / __ \ / ____|
+  # | \  / |  /  \ | |      | |  | | (___  
+  # | |\/| | / /\ \| |      | |  | |\___ \ 
+  # | |  | |/ ____ \ |____  | |__| |____) |
+  # |_|  |_/_/    \_\_____|  \____/|_____/ 
   #
   macOS-pre-signing:
     needs: build
@@ -265,7 +284,12 @@ jobs:
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn` 
 
   #
-  # Linux packaging Pipelines
+  #  _      _____ _   _ _    ___   __
+  # | |    |_   _| \ | | |  | \ \ / /
+  # | |      | | |  \| | |  | |\ V / 
+  # | |      | | | . ` | |  | | > <  
+  # | |____ _| |_| |\  | |__| |/ . \ 
+  # |______|_____|_| \_|\____//_/ \_\\
   #
   debian-archive:
     # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
@@ -316,38 +340,14 @@ jobs:
           name: gama-linux-deb
           path: |
             ${{ github.workspace }}/${{ matrix.zipName }}.deb
-  debian-test-installer:
-    # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
-    needs: debian-archive
-    runs-on: ubuntu-latest
-    steps:
-      # Get Linux deb archive
-      - uses: actions/download-artifact@v2
-        with:
-          name: gama-linux-deb
-
-      - name: Update apt databse
-        run: |
-          sudo apt update
-
-      - name: Install, Run & Remove (w JDK)
-        shell: bash
-        run: |
-          sudo apt install ./gama-platform-jdk_1.9.3-1_amd64.deb
-          gama-headless -help
-
-      - name: Install, Run & Remove (w/o JDK)
-        shell: bash
-        run: |
-          sudo apt install -y ./gama-platform_1.9.3-1_amd64.deb
-          # Switch to OpenJDK 17
-          sudo update-java-alternatives -s $(update-java-alternatives -l | grep "\-openjdk" | cut -d " " -f 1)
-          java -version
-          gama-headless -help
-          sudo apt remove -y gama-platform
   
   #
-  # Windows packaging Pipelines
+  # __          _______ _   _ _____   ______          _______ 
+  # \ \        / /_   _| \ | |  __ \ / __ \ \        / / ____|
+  #  \ \  /\  / /  | | |  \| | |  | | |  | \ \  /\  / / (___  
+  #   \ \/  \/ /   | | | . ` | |  | | |  | |\ \/  \/ / \___ \ 
+  #    \  /\  /   _| |_| |\  | |__| | |__| | \  /\  /  ____) |
+  #     \/  \/   |_____|_| \_|_____/ \____/   \/  \/  |_____/ 
   #
   windows-msi:
     needs: build
@@ -382,11 +382,54 @@ jobs:
           path: |
             gama_output
 
-  # TODO
-  #windows-wget-push:
-  #
+  # 
+  # ████████╗███████╗███████╗████████╗██╗███╗   ██╗ ██████╗ 
+  # ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██║████╗  ██║██╔════╝ 
+  #    ██║   █████╗  ███████╗   ██║   ██║██╔██╗ ██║██║  ███╗
+  #    ██║   ██╔══╝  ╚════██║   ██║   ██║██║╚██╗██║██║   ██║
+  #    ██║   ███████╗███████║   ██║   ██║██║ ╚████║╚██████╔╝
+  #    ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+  #                                                         
 
-  
+  debian-test-installer:
+    # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
+    needs: debian-archive
+    runs-on: ubuntu-latest
+    steps:
+      # Get Linux deb archive
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-linux-deb
+
+      - name: Update apt databse
+        run: |
+          sudo apt update
+
+      - name: Install, Run & Remove (w JDK)
+        shell: bash
+        run: |
+          sudo apt install ./gama-platform-jdk_1.9.3-1_amd64.deb
+          gama-headless -help
+
+      - name: Install, Run & Remove (w/o JDK)
+        shell: bash
+        run: |
+          sudo apt install -y ./gama-platform_1.9.3-1_amd64.deb
+          # Switch to OpenJDK 17
+          sudo update-java-alternatives -s $(update-java-alternatives -l | grep "\-openjdk" | cut -d " " -f 1)
+          java -version
+          gama-headless -help
+          sudo apt remove -y gama-platform
+
+  # 
+  # ██████╗ ██╗   ██╗██████╗ ██╗     ██╗███████╗██╗  ██╗██╗███╗   ██╗ ██████╗ 
+  # ██╔══██╗██║   ██║██╔══██╗██║     ██║██╔════╝██║  ██║██║████╗  ██║██╔════╝ 
+  # ██████╔╝██║   ██║██████╔╝██║     ██║███████╗███████║██║██╔██╗ ██║██║  ███╗
+  # ██╔═══╝ ██║   ██║██╔══██╗██║     ██║╚════██║██╔══██║██║██║╚██╗██║██║   ██║
+  # ██║     ╚██████╔╝██████╔╝███████╗██║███████║██║  ██║██║██║ ╚████║╚██████╔╝
+  # ╚═╝      ╚═════╝ ╚═════╝ ╚══════╝╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ 
+  #                                                                           
+
   #
   # Github releasing
   #
