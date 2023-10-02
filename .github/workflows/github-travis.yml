@@ -404,14 +404,23 @@ jobs:
       - name: Test Gama w/ JDK
         run: |
           hdiutil attach ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
-          bash /Volumes/Gama/Gama.app/Contents/headless/gama-headless.sh -help
+          cp -r /Volumes/Gama/Gama.app ~/
+          bash ~/Gama.app/Contents/headless/gama-headless.sh -help
+          rm -fr ~/Gama.app
           hdiutil detach /Volumes/Gama
+      
+      - name: Set up Adopt OpenJDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          java-package: jdk
 
       - name: Test Gama w/o JDK
         run: |
-          brew install openjdk@17
           hdiutil attach ./Gama1.7-macosx.cocoa.x86_64.dmg
-          bash /Volumes/Gama/Gama.app/Contents/headless/gama-headless.sh -help
+          cp -r /Volumes/Gama/Gama.app ~/
+          bash ~/Gama.app/Contents/headless/gama-headless.sh -help
           hdiutil detach /Volumes/Gama
 
   debian-test-installer:
