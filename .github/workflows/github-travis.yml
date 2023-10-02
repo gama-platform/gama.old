@@ -448,7 +448,7 @@ jobs:
 
           # Windows
           for file in *.exe *win32*.zip; do
-            if [[ "$(echo $file | awk -F'_' '{pring $NF}'" == *"withJDK"* ]]; then
+            if [[ "$(echo $file | awk -F'_' '{pring $NF}')" == *"withJDK"* ]]; then
               mv "$file" "GAMA_1.9.3_Windows_with_JDK_${timestamp}_${commit}.exe"
             else
               mv "$file" "GAMA_1.9.3_Windows_${timestamp}_${commit}.exe"
