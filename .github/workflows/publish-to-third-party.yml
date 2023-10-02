@@ -1,50 +1,76 @@
 name: Auto publish release to external stores
 
 on:
-  release: 
-    # Triggers when a release was published, or a pre-release was changed to a release.
-    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=prereleased#release
-    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=released#release
-    # https://docs.github.com/en/webhooks/webhook-events-and-payloads?actionType=edited#release
-    types: 
-      - released
-      - prereleased
-      - edited
+  workflow_call:
+    inputs:
+      tag:
+        description: "The tag of the release to publish"
+        type: string
+        required: true
+    secrets:
+      BOT_TOKEN:
+        required: true
+        description: "The token used to authenticate to the Github API"
+  
+  workflow_dispatch:
+      inputs:
+        tag:
+          description: "The tag of the release to publish"
+          type: string
+          required: true
 
-run-name: Auto publishing ${{ github.event.release.tag_name }} to external stores
+
+run-name: Auto publishing ${{ inputs.tag }} to external stores
 
 jobs:
+  get-tag-info: 
+    runs-on: ubuntu-latest
+    name: Get tag info 🏷️
+
+    outputs:
+      tag: ${{ steps.release_data.outputs.tag_name }}
+      prerelease: ${{ steps.release_data.outputs.prerelease }}
+
+    steps:
+      - name: git-get-release-action
+        uses: cardinalby/git-get-release-action@1.2.4
+        id: release_data
+        with:
+          tag: ${{ inputs.tag }}
+
   windows:
+    needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish to windows 🪟
 
     steps:
       - name: Publish Gama to Winget 🚀
-        if: github.event.release.prerelease == false
+        if: needs.get-tag-info.outputs.prerelease == false
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: GamaPlatform.Gama
-          version: ${{ github.event.release.tag_name }}
-          release-tag: ${{ github.event.release.tag_name }}
+          version: ${{ inputs.tag }}
+          release-tag: ${{ inputs.tag }}
           installers-regex: \.exe$ # All Exe's
           token: ${{ secrets.BOT_TOKEN }}
 
       - name: Publish Pre release to Winget 👷
-        if: github.event.release.prerelease == true
+        if: needs.get-tag-info.outputs.prerelease == true
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
-          identifier: GamaPlatform.Gama_Unstable
-          version: ${{ github.event.release.tag_name }}
-          release-tag: ${{ github.event.release.tag_name }}
+          identifier: GamaPlatform.GamaUnstable
+          version: ${{ inputs.tag }}
+          release-tag: ${{ inputs.tag }}
           installers-regex: \.exe$ # All Exe's
           token: ${{ secrets.BOT_TOKEN }}
           max-versions-to-keep: 1
 
 
   docker:
+    needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish pre-release as container 🐳
-    if: github.event.release.prerelease == true
+    if: needs.get-tag-info.outputs.prerelease == true
 
     steps:
       - name: Publish Gama to Github Packages 🚀
@@ -57,10 +83,9 @@ jobs:
 
 
   linux-debian:
+    needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish to PPA/Debian repo 🐧 🟠🔴 
-    # Delete the following line when https://github.com/WoodenMaiden/gama.ppa/tree/pre-release will be merged
-    if: github.event.release.prerelease == false
 
     steps:
       - name: Publish Gama to https://ppa.gama-platform.org 🚀
@@ -70,14 +95,16 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: token ${{ secrets.BOT_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            --data '{"ref": "main", "inputs": {"tag": "${{ github.event.release.tag_name }}"}}' \
+            --data '{"ref": "main", "inputs": {"tag": "${{ inputs.tag }}"}}' \
             https://api.github.com/repos/gama-platform/gama.ppa/actions/workflows/publish/dispatches
 
 
   # linux-arch:
+  #   needs: get-tag-info
   #   runs-on: ubuntu-latest
   #   name: Publish to AUR 🐧 🔷
 
   # macos:
+  #   needs: get-tag-info
   #   runs-on: ubuntu-latest
   #   name: Publish to macos 🍎

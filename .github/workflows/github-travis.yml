@@ -60,7 +60,7 @@ jobs:
         id: cleanGitMessage
         run: |
           export commitMessage=$( echo ${{ toJSON(github.event.head_commit.message)}} | sed -e "s/'/ /g" | sed -e 's/"/ /g')
-          echo "::set-output name=cleaned:: $commitMessage"
+          echo "cleaned=$commitMessage" >> "$GITHUB_OUTPUT"
           echo $commitMessage
 
       - name: Check if should release version
@@ -392,6 +392,7 @@ jobs:
   #
   publish-archives:
     needs: [macOS-signing, debian-test-installer, windows-msi]
+    name: Publish archives to Github Releases
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -433,17 +434,73 @@ jobs:
           # Debug
           ls -lah ${{ github.workspace }}
 
+      - name: Setup new release data and rename files accordingly 
+        id: setup_new_release_data
+        run: |
+          mkdir ${{ runner.temp }}/files
+          mv *.zip *.deb *.dmg *.exe ${{ runner.temp }}/files
+          cd ${{ runner.temp }}/files
+
+          echo "date=$(date +'%D %T')" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+          
+          timestamp="$(date +'%D' | sed 's|/|.|g')"
+
+          # Windows
+          for file in *.exe *win32*.zip; do
+            if [[ "$(echo $file | awk -F'_' '{pring $NF}'" == *"withJDK"* ]]; then
+              mv "$file" "GAMA_1.9.3_Windows_with_JDK_${timestamp}_${commit}.exe"
+            else
+              mv "$file" "GAMA_1.9.3_Windows_${timestamp}_${commit}.exe"
+            fi
+          done
+
+          # Mac
+          for file in *.dmg; do
+            prefix="${timestamp}_${commit}.dmg"
+            if [[ "$(echo $file | awk -F'_' '{print $NF}')" == *"withJDK"* ]]; then
+              prefix="with_JDK_${prefix}"
+            fi
+
+            if [[ "$file" == *"aarch64"* ]]; then
+              prefix="M1_${prefix}"
+            fi
+            
+            prefix="GAMA_1.9.3_MacOS_${prefix}"
+          done
+
+          # Linux
+          for file in *.deb gama-platform*.zip; do 
+            if [[ "$(echo $file | awk -F'_' '{print $1}')" == *"jdk"* ]]; then
+              mv "$file" "GAMA_1.9.3_Linux_with_JDK_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+            else
+              mv "$file" "GAMA_1.9.3_Linux_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+            fi
+          done
 
       - name: Publish to Github
-        run: ./travis/publish.sh
-        env:  
-          SSH_USER_PWD: ${{ secrets.USER_PWD }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          MSG: ${{ env.TRAVIS_MSG }}
-          GITHUB_TOKEN: ${{ github.token }}
-          SSHPASS: ${{ secrets.USER_PWD }}
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TRAVIS_COMMIT: ${ GITHUB_SHA }
-          TRAVIS_EVENT_TYPE: ${{ github.event_name }}
-          thePATH: "${{ github.workspace }}/Gama1.7"
-          GITHUB_WORKSPACE: ${{ github.workspace }}
+        uses: svenstaro/upload-release-action@2.7.0
+        with:
+          body: |
+            Alpha release for GAMA 1.9.3, which adds compatibility with JDK 17. Please test and report issues
+            Last updated on ${{ steps.setup_new_release_data.outputs.date }}.
+          file: ${{ runner.temp }}/files/*
+          file_glob: true
+          make_latest: false
+          overwrite: true
+          promote: false
+          prerelease: true
+          release_name: Alpha Version 1.9.3 (${{ steps.setup_new_release_data.outputs.commit }})
+          tag: 1.9.3
+
+  #
+  # Publishing to 3rd party
+  #
+  publishing-third-party:
+    needs: publish-archives
+    name: Publish archives to 3rd parties
+    uses: ./.github/workflows/publish-to-third-party.yml
+    with:
+      tag: 1.9.3
+    secrets: 
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
