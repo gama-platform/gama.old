@@ -391,6 +391,29 @@ jobs:
   #    ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ 
   #                                                         
 
+  macos-test-installer:
+    # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
+    needs: macOS-signing
+    runs-on: macos-latest
+    steps:
+      # Get Linux deb archive
+      - uses: actions/download-artifact@v2
+        with:
+          name: gama-mac-signed
+
+      - name: Test Gama w/ JDK
+        run: |
+          hdiutil attach ./Gama1.7-macosx.cocoa.x86_64_withJDK.dmg
+          bash /Volumes/Gama/Gama.app/Contents/headless/gama-headless.sh -help
+          hdiutil detach /Volumes/Gama
+
+      - name: Test Gama w/o JDK
+        run: |
+          brew install openjdk@17
+          hdiutil attach ./Gama1.7-macosx.cocoa.x86_64.dmg
+          bash /Volumes/Gama/Gama.app/Contents/headless/gama-headless.sh -help
+          hdiutil detach /Volumes/Gama
+
   debian-test-installer:
     # https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/#step-1-creating-a-deb-package
     needs: debian-archive
@@ -434,7 +457,7 @@ jobs:
   # Github releasing
   #
   publish-archives:
-    needs: [macOS-signing, debian-test-installer, windows-msi]
+    needs: [macos-test-installer, debian-test-installer, windows-msi]
     name: Publish archives to Github Releases
     runs-on: ubuntu-latest
     steps:
