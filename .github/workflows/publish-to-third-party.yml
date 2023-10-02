@@ -11,9 +11,6 @@ on:
       BOT_TOKEN:
         required: true
         description: "The token used to authenticate to the Github API"
-      GITHUB_TOKEN:
-        required: true
-        description: "Auto-generated Github token"
   
   workflow_dispatch:
       inputs:
@@ -38,6 +35,8 @@ jobs:
       - name: git-get-release-action
         uses: cardinalby/git-get-release-action@1.2.4
         id: release_data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           tag: ${{ inputs.tag }}
 
