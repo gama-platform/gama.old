@@ -579,5 +579,4 @@ jobs:
       tag: 1.9.3
     secrets: 
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-    env:
-     GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
