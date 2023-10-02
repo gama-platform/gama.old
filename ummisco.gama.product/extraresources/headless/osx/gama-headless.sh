@@ -30,7 +30,7 @@ for arg do
 done
 
 if [[ $memory == "0" ]]; then
-  memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )"/../Eclipse/Gama.ini || echo "-Xmx4096m")
+  memory=$(grep Xmx "$( dirname "${BASH_SOURCE[0]}" )/../Eclipse/Gama.ini" || echo "-Xmx4096m")
 else
   memory=-Xmx$memory
 fi
@@ -43,8 +43,8 @@ case "$@" in
 esac
 
 function read_from_ini {
-  start_line=$(grep -n -- '-server' "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/Gama.ini | cut -d ':' -f 1)
-  tail -n +$start_line "$( dirname $( realpath "${BASH_SOURCE[0]}" ) )"/../Eclipse/Gama.ini | tr '\n' ' '
+  start_line=$(grep -n -- '-server' "$( dirname "${BASH_SOURCE[0]}" )/../Eclipse/Gama.ini" | cut -d ':' -f 1)
+  tail -n +$start_line "$( dirname "${BASH_SOURCE[0]}" )/../Eclipse/Gama.ini" | tr '\n' ' '
 }
 
 echo "******************************************************************"
