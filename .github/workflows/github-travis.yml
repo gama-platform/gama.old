@@ -508,6 +508,12 @@ jobs:
           chmod +x ./travis/*
           # Debug
           ls -lah ${{ github.workspace }}
+      
+      - name: Create/Update tag
+        uses: rickstaa/action-create-tag@v1.6.3
+        with:
+          tag: 1.9.3
+          force_push_tag: true
 
       - name: Setup new release data and rename files accordingly 
         id: setup_new_release_data
@@ -516,17 +522,19 @@ jobs:
           mv *.zip *.deb *.dmg *.exe ${{ runner.temp }}/files
           cd ${{ runner.temp }}/files
 
-          echo "date=$(date +'%D %T')" >> "$GITHUB_OUTPUT"
-          echo "commit=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
-          
-          timestamp="$(date +'%D' | sed 's|/|.|g')"
+          commit=$(git rev-parse --short=7 HEAD)
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+
+          date=$(date +'%d/%m/%y %R')
+          timestamp="$(echo $date | cut -d' ' -f1 | sed 's|/|.|g')"
+          echo "date=$date" >> "$GITHUB_OUTPUT"
 
           # Windows
           for file in *.exe *win32*.zip; do
-            if [[ "$(echo $file | awk -F'_' '{pring $NF}')" == *"withJDK"* ]]; then
-              mv "$file" "GAMA_1.9.3_Windows_with_JDK_${timestamp}_${commit}.exe"
+            if [[ "$(echo $file | awk -F'_' '{print $NF}')" == *"withJDK"* ]]; then
+              mv -v "$file" "GAMA_1.9.3_Windows_with_JDK_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
             else
-              mv "$file" "GAMA_1.9.3_Windows_${timestamp}_${commit}.exe"
+              mv -v "$file" "GAMA_1.9.3_Windows_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
             fi
           done
 
@@ -542,14 +550,16 @@ jobs:
             fi
             
             prefix="GAMA_1.9.3_MacOS_${prefix}"
+
+            mv -v $file $prefix
           done
 
           # Linux
-          for file in *.deb gama-platform*.zip; do 
+          for file in *.deb gama-platform*.zip; do
             if [[ "$(echo $file | awk -F'_' '{print $1}')" == *"jdk"* ]]; then
-              mv "$file" "GAMA_1.9.3_Linux_with_JDK_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+              mv -v "$file" "GAMA_1.9.3_Linux_with_JDK_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
             else
-              mv "$file" "GAMA_1.9.3_Linux_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+              mv -v "$file" "GAMA_1.9.3_Linux_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
             fi
           done
 
