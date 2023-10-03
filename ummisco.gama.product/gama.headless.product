@@ -7,26 +7,11 @@
    </configIni>
 
    <launcherArgs>
-   </launcherArgs>
-
-   <windowImages/>
-
-   <launcher>
-      <win useIco="false">
-         <bmp/>
-      </win>
-   </launcher>
-
-   <vm>
-   </vm>
 
       <vmArgs>-server 
 -XX:+UseG1GC
 -XX:+UseStringDeduplication
--Xms4096m
--Xmx4096m
--Xss128m
--Xmn1024m
+-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=false
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat
 -Dosgi.locking=none
@@ -38,7 +23,11 @@
 -Denable_logging=true 
 -Denable_debug=true
 -Duse_global_preference_store=true 
+-Dswt.autoScale=exact
 -Dread_only=false 
+-Duse_old_tabs=true 
+-Duse_legacy_drawers=false 
+-Duse_delayed_resize=false 
 --add-exports=java.base/java.lang=ALL-UNNAMED
 --add-exports=java.desktop/sun.awt=ALL-UNNAMED
 --add-exports=java.desktop/sun.java2d=ALL-UNNAMED
@@ -62,6 +51,22 @@
 --add-opens=java.base/java.lang.ref=ALL-UNNAMED 
 --add-opens=java.sql/java.sql=ALL-UNNAMED
       </vmArgs>
+      <vmArgsMac>-XstartOnFirstThread 
+      </vmArgsMac>
+      <vmArgsWin>-Dfile.encoding=UTF-8
+      </vmArgsWin>
+   </launcherArgs>
+
+   <windowImages/>
+
+   <launcher>
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+   <vm>
+   </vm>
 
    <plugins>
    </plugins>
