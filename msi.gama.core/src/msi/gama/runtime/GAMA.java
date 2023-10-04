@@ -256,7 +256,7 @@ public class GAMA {
 	}
 
 	/**
-	 * Gets the experiment.
+	 * Gets the current experiment plan
 	 *
 	 * @return the experiment
 	 */
@@ -264,6 +264,19 @@ public class GAMA {
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null) return null;
 		return controller.getExperiment();
+	}
+
+	/**
+	 * Gets the current experiment agent. Safe to use even if the experiment plan is null
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the experiment agent
+	 * @date 4 oct. 2023
+	 */
+	public static IExperimentAgent getExperimentAgent() {
+		IExperimentPlan plan = getExperiment();
+		if (plan == null) return null;
+		return plan.getAgent();
 	}
 
 	/**
