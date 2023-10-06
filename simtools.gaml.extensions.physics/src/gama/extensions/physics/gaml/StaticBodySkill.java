@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * StaticBodySkill.java, in simtools.gaml.extensions.physics, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * StaticBodySkill.java, in simtools.gaml.extensions.physics, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package gama.extensions.physics.gaml;
 
@@ -19,7 +19,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
@@ -95,7 +94,8 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	/**
 	 * Gets the body.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 * @return the body
 	 */
 	protected IBody getBody(final IAgent agent) {
@@ -140,9 +140,62 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	}
 
 	/**
+	 * Change in heading.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param a
+	 *            the a
+	 * @param loc
+	 *            the loc
+	 * @date 4 oct. 2023
+	 */
+	@listener (IKeyword.HEADING)
+	public void changeInHeading(final IAgent a, final Double heading) {
+		IBody body = getBody(a);
+		if (body == null) return;
+		GamaPoint p = new GamaPoint();
+		body.getLinearVelocity(p);
+		double rad = Math.toRadians(heading);
+		double speed = p.norm();
+		p.setLocation(speed * Math.cos(rad), speed * Math.sin(rad), 0);
+		body.setLinearVelocity(p);
+	}
+
+	/**
+	 * Change in speed.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param a
+	 *            the a
+	 * @param loc
+	 *            the loc
+	 * @date 4 oct. 2023
+	 */
+	@listener (IKeyword.SPEED)
+	public void changeInSpeed(final IAgent a, final Double speed) {
+		IBody body = getBody(a);
+		if (body == null) return;
+		if (speed <= 0) {
+			body.setLinearVelocity(new GamaPoint());
+			return;
+		}
+		GamaPoint p = new GamaPoint();
+		body.getLinearVelocity(p);
+		double currentSpeed = Math.atan2(p.x, p.y);
+		if (currentSpeed <= 0) {
+			body.setLinearVelocity(new GamaPoint(0.7 * speed, 0.7 * speed)); // ???
+		} else {
+			double ratio = speed / currentSpeed;
+			p.setLocation(ratio * p.x, ratio * p.y, 0);
+			body.setLinearVelocity(p);
+		}
+	}
+
+	/**
 	 * Gets the aabb.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the aabb
 	 */
 	@getter (AABB)
@@ -155,21 +208,24 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	/**
 	 * Gets the friction.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the friction
 	 */
 	@getter (FRICTION)
 	public Double getFriction(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return 00d;
-		return Double.valueOf(body.getFriction());
+		return (double) body.getFriction();
 	}
 
 	/**
 	 * Sets the friction.
 	 *
-	 * @param a the a
-	 * @param friction the friction
+	 * @param a
+	 *            the a
+	 * @param friction
+	 *            the friction
 	 */
 	@setter (FRICTION)
 	public void setFriction(final IAgent a, final Double friction) {
@@ -181,21 +237,24 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	/**
 	 * Gets the restitution.
 	 *
-	 * @param a the a
+	 * @param a
+	 *            the a
 	 * @return the restitution
 	 */
 	@getter (RESTITUTION)
 	public Double getRestitution(final IAgent a) {
 		IBody body = getBody(a);
 		if (body == null) return 00d;
-		return Double.valueOf(body.getRestitution());
+		return (double) body.getRestitution();
 	}
 
 	/**
 	 * Sets the restitution.
 	 *
-	 * @param a the a
-	 * @param restitution the restitution
+	 * @param a
+	 *            the a
+	 * @param restitution
+	 *            the restitution
 	 */
 	@setter (RESTITUTION)
 	public void setRestitution(final IAgent a, final Double restitution) {
@@ -207,7 +266,8 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	/**
 	 * Prim update geometry.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
 	 */
 	@action (
@@ -228,7 +288,8 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	/**
 	 * Prim contact added.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
 	 */
 	@action (
@@ -248,7 +309,8 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	/**
 	 * Prim contact destroyed.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the object
 	 */
 	@action (
@@ -273,7 +335,7 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 	 *
 	 */
 	public class FakeBody implements IBody<Object, Object, Object, GamaPoint> {
-		
+
 		/** The values. */
 		public final Map<String, Object> values = new HashMap<>();
 
@@ -364,7 +426,6 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 
 		@Override
 		public void setLocation(final GamaPoint loc) {
-			
 
 		}
 
@@ -392,9 +453,7 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		}
 
 		@Override
-		public IShape getAABB() {
-			return null;
-		}
+		public IShape getAABB() { return null; }
 
 		@Override
 		public float getContactDamping() {
@@ -408,14 +467,10 @@ public class StaticBodySkill extends Skill implements IPhysicalConstants {
 		}
 
 		@Override
-		public Object getBody() {
-			return this;
-		}
+		public Object getBody() { return this; }
 
 		@Override
-		public IAgent getAgent() {
-			return null;
-		}
+		public IAgent getAgent() { return null; }
 
 		@Override
 		public GamaPoint toVector(final GamaPoint v) {

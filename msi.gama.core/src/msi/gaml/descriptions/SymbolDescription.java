@@ -318,6 +318,14 @@ public abstract class SymbolDescription implements IDescription {
 
 	}
 
+	/**
+	 * Compile type provider facets.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param names
+	 *            the names
+	 * @date 3 oct. 2023
+	 */
 	protected void compileTypeProviderFacets(final String... names) {
 		for (String s : names) {
 			IExpressionDescription exp = getFacet(s);
@@ -599,8 +607,11 @@ public abstract class SymbolDescription implements IDescription {
 		return type;
 	}
 
+	/** The Constant staticTypeProviders. */
 	// 13/02/20: Addition of VALUE (see #2932)
 	static final String[] staticTypeProviders = { DATA, TYPE, SPECIES, AS, TARGET /* , ON */ };
+
+	/** The Constant dynamicTypeProviders. */
 	static final String[] dynamicTypeProviders = { INIT, VALUE, UPDATE, FUNCTION, DEFAULT };
 
 	/**
@@ -626,7 +637,7 @@ public abstract class SymbolDescription implements IDescription {
 			IExpressionDescription ed = getFacet(dynamicTypeProviders);
 			if (ed != null) {
 				IExpression expr = ed.compile(this);
-				final IType<?> exprType = expr.getGamlType();
+				final IType<?> exprType = expr == null ? Types.NO_TYPE : expr.getGamlType();
 				if (tt.isAssignableFrom(exprType)) {
 					tt = exprType;
 				} else {

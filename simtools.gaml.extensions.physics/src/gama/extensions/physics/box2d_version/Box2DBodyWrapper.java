@@ -41,6 +41,9 @@ public class Box2DBodyWrapper extends AbstractBodyWrapper<World, Body, Shape, Ve
 		DEBUG.OFF();
 	}
 
+	/** The tolerance. */
+	static double TOLERANCE = 0.0000001;
+
 	/** The def. */
 	BodyDef def;
 
@@ -189,7 +192,9 @@ public class Box2DBodyWrapper extends AbstractBodyWrapper<World, Body, Shape, Ve
 
 	@Override
 	public void setLinearVelocity(final GamaPoint linearVelocity) {
-		body.setLinearVelocity(toVector(linearVelocity));
+		GamaPoint current = new GamaPoint();
+		getLinearVelocity(current);
+		if (!linearVelocity.equals2D(current, TOLERANCE)) { body.setLinearVelocity(toVector(linearVelocity)); }
 	}
 
 	@Override

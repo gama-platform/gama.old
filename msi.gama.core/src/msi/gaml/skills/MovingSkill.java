@@ -151,7 +151,11 @@ public class MovingSkill extends Skill {
 	public void setHeading(final IAgent agent, final double heading) {
 		if (agent == null) return;
 		final double headingValue = heading % 360;
-		agent.setAttribute(IKeyword.HEADING, headingValue);
+		final Double oldValue = (Double) agent.getAttribute(IKeyword.HEADING);
+		if (oldValue == null || oldValue.doubleValue() != headingValue) {
+			agent.setAttribute(IKeyword.HEADING, headingValue);
+			agent.notifyVarValueChange(IKeyword.HEADING, headingValue);
+		}
 	}
 
 	/**
@@ -220,7 +224,11 @@ public class MovingSkill extends Skill {
 	@setter (IKeyword.SPEED)
 	public static void setSpeed(final IAgent agent, final double s) {
 		if (agent == null) return;
-		agent.setAttribute(IKeyword.SPEED, s);
+		final Double oldValue = (Double) agent.getAttribute(IKeyword.SPEED);
+		if (oldValue == null || oldValue.doubleValue() != s) {
+			agent.setAttribute(IKeyword.SPEED, s);
+			agent.notifyVarValueChange(IKeyword.SPEED, s);
+		}
 	}
 
 	/**

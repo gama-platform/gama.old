@@ -13,8 +13,8 @@ global parent: physical_world {
 	// The definition of the step plays a crucial role in the dynamics. If the physics engine can kick in at a high frequency, then the simulation is more accurate (but also slower). 
 	// The outcome of a model can be completely changed by the step. 
 	float step <- 1.0 / 100;
-	float wall_restitution <- 0.9 min: 0.0 max: 2.0;
-	float ball_restitution <- 0.5 min: 0.0 max: 1.0;
+	float wall_restitution <- 1.0 min: 0.0 max: 2.0;
+	float ball_restitution <- 0.9 min: 0.0 max: 1.0;
 	geometry shape <- box(200, 200, 0.001);
 	float friction <- 0.0;
 	float restitution <- 0.0;
@@ -25,43 +25,37 @@ global parent: physical_world {
 	point wall_contact <- nil;
 	int wall_timer <- 0;
 	bool disturb <- true;
+	list<ball> movers;
 
 	init {
 		do register([self]);
 		geometry box <- box(203, 3, 10);
 		create wall from: [box at_location ({100, 0}), box rotated_by 90 at_location ({0, 100}), box at_location ({100, 200}), box rotated_by 90 at_location ({200, 100})];
+		list<point> starting_places <- [{5,5}, {5,195},{195,5}, {195,195}];
+		create ball from: starting_places collect (circle(4) at_location each) with: [mass::10, color::#cadetblue, speed::30] returns: balls;
+		movers <-balls;
 		loop x from: 5 to: 195 step: 10 {
 			loop y from: 5 to: 195 step: 10 {
-				create ball from: [circle(3) at_location {x, y}] {
+				point p <- {x,y};
+				if starting_places contains p {
+					continue;
+				}
+				float n <- rnd(1.0, 4.5);
+				create ball from: [circle(n) at_location p] with: [mass::n, color::brewer_colors("Set3")[int(n)], speed::n] {
 					initial_location <- location;
 				}
 			}
 
 		}
+		
 
 	}
-
-	reflex r1 when: ball_timer > 0 {
-		ball_timer <- ball_timer - 1;
-		if (ball_timer = 0) {
-			ball_contact <- nil;
+	
+	reflex when: every(1000#cycle){
+		ask movers{
+			float s <- speed * 3;
+			velocity <- velocity + {(rnd(s) * rnd(-1.0,1.0)), (rnd(s) * rnd(-1.0,1.0))};
 		}
-
-	}
-
-	reflex r2 when: wall_timer > 0 {
-		wall_timer <- wall_timer - 1;
-		if (wall_timer = 0) {
-			wall_contact <- nil;
-		}
-
-	}
-
-	reflex r3 when: every(500 #cycles) and disturb {
-		ask one_of(ball) {
-			do apply impulse: {(rnd(500) - 250), (rnd(500) - 250)};
-		}
-
 	}
 
 }
@@ -75,77 +69,32 @@ species ball skills: [dynamic_body, moving] {
 	point initial_location;
 	float contact_damping <- 0.1;
 	float damping <- 0.1;
-	float angular_damping <- 0.1;
-	float mass <- 5.0;
+	float angular_damping <- 0.0;
 	float restitution <- ball_restitution;
 	float friction <- 0.1;
-	rgb color <- rnd_color(255);
-		
-	//bool going_back <- false update: (velocity.x < 2) and (velocity.y < 2) and distance_to(location,initial_location) > 1 ;
+	rgb color ;//<- one_of(brewer_colors("Set3"));
 
-	action contact_added_with (agent other) {
-		if (other is ball) {
-			ball_contact <- location;
-			ball_timer <- 20;
-		} else if (other is wall) {
-			wall_contact <- location;
-			wall_timer <- 20;
-		}
 
-	}
-
-	
-	reflex go_back when:  (velocity.x < 2) and (velocity.y < 2) {
-		do apply impulse: (initial_location - location)  /2 ;
+	reflex go_back when: every(10#cycle) and (abs(velocity.x) between(0.0,1.0)) and (abs(velocity.y) between(0.0,1.0)) {
+		do goto target: initial_location;
 	}
 
 }
 
-experiment "Test Restitution !" type: gui {
+experiment "Disturbance" type: gui {
 	
 
 
 	image_file bang <- image_file("../images/bang.png");
 	image_file bam <- image_file("../images/bam.png");
-	text "This experiment uses the Box2D library to display particles that are disturbed randomly and try to get back to their original when this happens. Try stopping the disturbance or increasing or decreasing the restitution to see what happens";
-	parameter "Disturb" var: disturb labels: ["Yes","No"];
-
-	parameter "Restitution of the walls" var: wall_restitution {
-			ask wall {
-				restitution <- wall_restitution;
-			}
-
-	}
-
-	parameter "Restitution of the balls" var: ball_restitution {
-		ask simulations {
-			ask ball {
-				restitution <- ball_restitution;
-			}
-
-		}
-
-	}
+	text "This experiment uses the Box2D library to display particles that are disturbed randomly and try to get back to their original location when this happens. Try stopping the disturbance or increasing or decreasing the restitution to see what happens. Agents are provided also with the moving skill, and it is a good example of mixing a physics-based with a behavior-based dynamics";
 
 	output {
 		layout #split;
-		display "Restitution" type: 3d antialias: true {
-			graphics "Bang" {
-				if (ball_contact != nil) {
-					draw bang at: ball_contact size: {20, 20};
-				}
-				if (wall_contact != nil) {
-					draw bam at: wall_contact size: {20, 20};
-				}
-
-			}
-
-			species wall refresh: false {
-				draw aabb color: #cadetblue;
-			}
+		display "Restitution" type: 3d antialias: true axes: false {
 
 			species ball {
-				draw circle(3) color: color;
+				draw shape color: color;
 				draw line(location, location + velocity) color: #black end_arrow: 1 width: 1;
 			}
 

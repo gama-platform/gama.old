@@ -60,6 +60,7 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class Var.
@@ -175,6 +176,10 @@ import msi.gaml.types.Types;
 @validator (msi.gaml.variables.Variable.VarValidator.class)
 @SuppressWarnings ({ "rawtypes" })
 public class Variable extends Symbol implements IVariable {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/**
 	 * The Class VarValidator.
@@ -565,20 +570,32 @@ public class Variable extends Symbol implements IVariable {
 	 * // AD 2021: addition of the listeners
 	 */
 	private void addListeners(final AbstractSpecies species) {
-		VariableDescription var = (VariableDescription) description;
+		// if (IKeyword.LOCATION.equals(getName())) {
+
+		// DEBUG.OUT("Adding listeners to " + this.getName());
+
+		// }
+
+		// VariableDescription var = (VariableDescription) description;
 		SpeciesDescription sp = species.getDescription();
-		if (var.isBuiltIn()) return;
+		// if (var.isBuiltIn()) return;
 		Class base = sp.getJavaBase();
 		if (base == null) return;
 		List<GamaHelper> helpers = new ArrayList<>();
 		Iterable<Class<? extends ISkill>> skillClasses = transform(sp.getSkills(), IDescription.TO_CLASS);
 		if (GAML.LISTENERS_BY_NAME.containsKey(getName())) {
+			DEBUG.OUT("Listeners found for " + getName());
 			List<Class> classes =
 					JavaUtils.collectImplementationClasses(base, skillClasses, GAML.LISTENERS_BY_NAME.get(getName()));
 			if (!classes.isEmpty()) {
 				for (Class c : classes) {
 					Set<GamaHelper> set = GAML.LISTENERS_BY_CLASS.get(c);
-					for (GamaHelper h : set) { if (h.getName().equals(getName())) { helpers.add(h); } }
+					for (GamaHelper h : set) {
+						if (h.getName().equals(getName())) {
+							DEBUG.OUT("--> Adding listener found in " + c.getSimpleName());
+							helpers.add(h);
+						}
+					}
 				}
 			}
 

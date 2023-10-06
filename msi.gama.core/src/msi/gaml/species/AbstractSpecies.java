@@ -49,6 +49,7 @@ import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 29 d�c. 2010
@@ -56,8 +57,19 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
+
+/**
+ * The Class AbstractSpecies.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 3 oct. 2023
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The is graph. */
 	protected final boolean isGrid, isGraph;
@@ -337,9 +349,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 				oneMicroSpecies.setMacroSpecies(this);
 				microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
 			} else if (s instanceof IVariable) {
-				s.setEnclosing(this);
+				DEBUG.OUT("Adding " + s.getName() + " to " + this);
 				variables.put(s.getName(), (IVariable) s);
-
 			} else if (s instanceof AspectStatement) {
 				aspects.put(s.getName(), (AspectStatement) s);
 			} else if (s instanceof ActionStatement) {
@@ -353,6 +364,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		}
 		control.setChildren(behaviors);
 		behaviors.forEach(b -> b.setEnclosing(this));
+		variables.forEach((n, v) -> v.setEnclosing(this));
 		control.verifyBehaviors(this);
 	}
 
