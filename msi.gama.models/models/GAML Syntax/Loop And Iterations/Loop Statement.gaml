@@ -20,15 +20,15 @@ global {
 			write 	"======================================";
 		} 		
 		
-		// The facets from: and to: can be used to repeat a set of statements while an index iterates over a range of values with a fixed step of 1:
+		// The facets from: and to: can be used to repeat a set of statements while an id iterates over a range of values with a fixed step of 1:
 		// For example, to iterate over the list list_of_string
 		write "----------------------------------";
 		write "Loop  from: to: " ;
 		write "----------------------------------";
 
-		loop index from: 0 to: length(list_of_string) - 1 {
-			write "" + index +"th element of " + list_of_string;
-			write sample(list_of_string[index]);
+		loop id from: 0 to: length(list_of_string) - 1 {
+			write "" + id +"th element of " + list_of_string;
+			write sample(list_of_string[id]);
 		}
 		
 		// The three facets from:, to: and step: can be used to set the loop step (notice that step can be negative).
@@ -36,15 +36,15 @@ global {
 		write "Loop  from: to: step:" ;
 		write "----------------------------------";
 
-		loop index from: 0 to: length(list_of_string) - 1 step: 2 {
-			write "" + index +"th element of " + list_of_string;
-			write "  " + sample(list_of_string[index]); 
+		loop id from: 0 to: length(list_of_string) - 1 step: 2 {
+			write "" + id +"th element of " + list_of_string;
+			write "  " + sample(list_of_string[id]); 
 		}
 
 		// When step: is negative,we can iterate over a list in the reverse order
-		loop index from: length(list_of_string) - 1 to: 0 step: -1 {
-			write "" + index +"th element of " + list_of_string;
-			write "  " + sample(list_of_string[index]); 
+		loop id from: length(list_of_string) - 1 to: 0 step: -1 {
+			write "" + id +"th element of " + list_of_string;
+			write "  " + sample(list_of_string[id]); 
 		}		
 
 		// The facet over: can be used to repeat a set of statements while iterating over a full container:
@@ -66,15 +66,14 @@ global {
 
 		// For example, while can be used to iterate over a list while a given word is not found.
 		string word_to_find <- "of";
-		int index <- 0;
+		int id <- 0;
 		
-		loop while: ( (index < length(list_of_string)) and (list_of_string[index] != word_to_find )) {
-			write "" + index +"th element of " + list_of_string;
-			write "  " + sample(list_of_string[index]); 			
-			// index should be incremented ... otherwise the loop while never end.
-			index <- index + 1;
+		loop while: ( (id < length(list_of_string)) and (list_of_string[id] != word_to_find )) {
+			write "" + id +"th element of " + list_of_string;
+			write "  " + sample(list_of_string[id]); 			
+			// id should be incremented ... otherwise the loop while never end.
+			id <- id + 1;
 		}					
-		
 		do break_loop;
 	}
 	

@@ -33,10 +33,10 @@ public record SerialisedAgent(/* AgentReference ref */ int index, Map<String, Ob
 		implements ISerialisedAgent {
 
 	/** The non serialisable. */
-	static Set<String> NON_SERIALISABLE =
-			Set.of(IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.LOCATION, IKeyword.HOST, IKeyword.PEERS,
-					IKeyword.EXPERIMENT, IKeyword.WORLD_AGENT_NAME, SimulationAgent.TIME, PlatformAgent.MACHINE_TIME,
-					SimulationAgent.DURATION, SimulationAgent.AVERAGE_DURATION, SimulationAgent.TOTAL_DURATION);
+	static Set<String> NON_SERIALISABLE = Set.of(IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.LOCATION, IKeyword.HOST,
+			IKeyword.PEERS, IKeyword.EXPERIMENT, IKeyword.WORLD_AGENT_NAME, SimulationAgent.TIME,
+			PlatformAgent.MACHINE_TIME, SimulationAgent.DURATION, SimulationAgent.AVERAGE_DURATION,
+			SimulationAgent.TOTAL_DURATION, IKeyword.INDEX);
 
 	/** The grid non serialisable. */
 	static Set<String> GRID_NON_SERIALISABLE = Set.of(IKeyword.GRID_X, IKeyword.GRID_Y, IKeyword.NEIGHBORS);

@@ -36,7 +36,7 @@ public class SavedAgent extends GamaMap<String, Object> implements ISerialisedAg
 
 	/** Variables which are not saved during the capture and release process. */
 	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST,
-			IKeyword.TOPOLOGY, IKeyword.MEMBERS, "populations");
+			IKeyword.TOPOLOGY, IKeyword.MEMBERS, "populations", IKeyword.INDEX);
 
 	/** The index. */
 	int index;

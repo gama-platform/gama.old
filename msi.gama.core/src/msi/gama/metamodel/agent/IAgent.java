@@ -50,10 +50,22 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
+
+/**
+ * The Interface IAgent.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 7 oct. 2023
+ */
 @vars ({ @variable (
 		name = IKeyword.NAME,
 		type = IType.STRING,
 		doc = { @doc ("Returns the name of the agent (not necessarily unique in its population)") }),
+		@variable (
+				name = IKeyword.INDEX,
+				type = IType.INT,
+				constant = true,
+				doc = { @doc ("Returns the unique index of this agent in its population. Read-only attribute") }),
 		@variable (
 				name = IKeyword.PEERS,
 				type = IType.LIST,
@@ -252,6 +264,7 @@ public interface IAgent extends IShape, INamed, IAttributed, Comparable<IAgent>,
 	 *
 	 * @return the index
 	 */
+	@getter (IKeyword.INDEX)
 	int getIndex();
 
 	/**
