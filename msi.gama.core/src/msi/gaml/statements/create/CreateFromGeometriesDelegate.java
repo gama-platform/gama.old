@@ -15,6 +15,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IAddressableContainer;
@@ -65,7 +66,9 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 				(IAddressableContainer<Integer, IShape, Integer, IShape>) input;
 		final int num = max == null ? container.length(scope) : Math.min(container.length(scope), max);
 		for (int i = 0; i < num; i++) {
-			final IShape g = GamaGeometryType.staticCast(scope, container.get(scope, i), null, false);
+			IShape g = container.get(scope, i);
+			if (g instanceof GamaPoint) { g = GamaGeometryType.createPoint(g); }
+
 			final Map map = g.getAttributes(true);
 			// The shape is added to the initial values
 			g.setAttribute(IKeyword.SHAPE, g);
