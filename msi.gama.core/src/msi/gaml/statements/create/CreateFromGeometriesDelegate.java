@@ -15,7 +15,6 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IAddressableContainer;
@@ -23,6 +22,7 @@ import msi.gama.util.IList;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.CreateStatement;
+import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -45,13 +45,8 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 	public boolean acceptSource(final IScope scope, final Object source) {
 		// THIS CONDITION MUST BE CHECKED : bypass a condition that belong to
 		// the case createFromDatabase
-		if (source instanceof IList && !((IList) source).isEmpty() && ((IList) source).get(0) instanceof IList)
-			return false;
-		return source instanceof IList
-				&& ((IList) source).getGamlType().getContentType().isAssignableFrom(Types.GEOMETRY)
-
-				|| source instanceof GamaGeometryFile;
-
+		return source instanceof GamaGeometryFile
+				|| source instanceof IList il && Types.GEOMETRY.isAssignableFrom(il.getGamlType().getContentType());
 	}
 
 	/**
@@ -66,11 +61,11 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 	@Override
 	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
 			final Object input, final Arguments init, final CreateStatement statement) {
-		final IAddressableContainer<Integer, GamaShape, Integer, GamaShape> container =
-				(IAddressableContainer<Integer, GamaShape, Integer, GamaShape>) input;
+		final IAddressableContainer<Integer, IShape, Integer, IShape> container =
+				(IAddressableContainer<Integer, IShape, Integer, IShape>) input;
 		final int num = max == null ? container.length(scope) : Math.min(container.length(scope), max);
 		for (int i = 0; i < num; i++) {
-			final IShape g = container.get(scope, i);
+			final IShape g = GamaGeometryType.staticCast(scope, container.get(scope, i), null, false);
 			final Map map = g.getAttributes(true);
 			// The shape is added to the initial values
 			g.setAttribute(IKeyword.SHAPE, g);

@@ -119,13 +119,11 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static IShape staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 
+		if (obj instanceof GamaPoint gp) return createPoint(gp);
 		if (obj instanceof IShape is) if (copy)
 			return is.copy(scope);
 		else
 			return is;
-		// if ( obj instanceof GamaPoint ) { return createPoint((GamaPoint)
-		// obj); }
-		// if ( obj instanceof IShape ) { return ((IShape) obj).getGeometry(); }
 		if (obj instanceof ISpecies)
 			return geometriesToGeometry(scope, scope.getAgent().getPopulationFor((ISpecies) obj));
 		if (obj instanceof GamaPair) return pairToGeometry(scope, (GamaPair) obj);
