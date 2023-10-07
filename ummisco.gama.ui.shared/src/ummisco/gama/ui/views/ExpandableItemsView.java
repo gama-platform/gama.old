@@ -239,6 +239,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart
 	@Override
 	public void reset() {
 		WorkbenchHelper.run(() -> {
+			if (getParentComposite() == null) return;
 			getParentComposite().setLayoutDeferred(true);
 			disposeViewer();
 			getParentComposite().setLayoutDeferred(false);
