@@ -264,6 +264,28 @@ public class ImageOperators implements ImageConstants {
 	}
 
 	/**
+	 * Strong antialiased.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param image
+	 *            the image
+	 * @return the gama image
+	 * @date 6 oct. 2023
+	 */
+	@operator ("antialiased")
+	@doc ("Application of a very light blur kernel that acts like an anti-aliasing filter when applied to an image. If the last argument is > 0,  applies the filter the equivalent number of times. If it is equal or smaller than zero, the image is returned untouched")
+	@no_test
+	public static GamaImage antialiased(final IScope scope, final GamaImage image, final int count) {
+		try {
+			return apply(image, OP_ANTIALIAS, count);
+		} catch (Exception e) {
+			return image;
+		}
+	}
+
+	/**
 	 * Scaled by.
 	 *
 	 * @param scope
@@ -570,6 +592,22 @@ public class ImageOperators implements ImageConstants {
 	}
 
 	/**
+	 * Blur.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param image
+	 *            the image
+	 * @return the gama image
+	 */
+	@operator ("blurred")
+	@doc ("Application of a blurrying filter to the image passed in parameter. This operation is applied multiple times if the last argument is > 0. The original image is left untouched")
+	@no_test
+	public static GamaImage blur(final IScope scope, final GamaImage image, final int count) {
+		return apply(image, OP_BLUR, count);
+	}
+
+	/**
 	 * Sharpen.
 	 *
 	 * @param scope
@@ -583,6 +621,26 @@ public class ImageOperators implements ImageConstants {
 	@no_test
 	public static GamaImage sharpen(final IScope scope, final GamaImage image) {
 		return apply(image, OP_SHARPEN);
+	}
+
+	/**
+	 * Sharpen.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param image
+	 *            the image
+	 * @param count
+	 *            the count
+	 * @return the gama image
+	 * @date 7 oct. 2023
+	 */
+	@operator ("sharpened")
+	@doc ("Application of a sharpening filter to the image passed in parameter. This operation is applied multiple times if the last argument is > 0. The original image is left untouched")
+	@no_test
+	public static GamaImage sharpen(final IScope scope, final GamaImage image, final int count) {
+		return apply(image, OP_SHARPEN, count);
 	}
 
 	/**

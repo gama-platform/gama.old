@@ -33,9 +33,10 @@ global {
 		do create_agent(grayscale(im1), "Grayscale");
 		do create_agent(grayscale(im1 * rgb(100, 100, 100)), "Dark Grayscale");
 		do create_agent(brighter(brighter(brighter(grayscale(im1)))), "Bright Grayscale");
-		do create_agent((sharpened(im1)), "1 x Sharpened");
-		do create_agent(blurred(blurred(im1)), "2 x Blurred");
-		do create_agent(im1 with_width 200, "With width 200");
+		do create_agent((sharpened(im1, 5)), "5 x Sharpened");
+		do create_agent(blurred(im1,2), "2 x Blurred");
+		do create_agent(antialiased(im1, 10), "10 x Antialiased");
+		do create_agent(im1 with_width 200, "With width 200"); 
 		do create_agent(im1 with_height 400, "With height 400");
 		do create_agent(im1 with_size (im1.width, im1.height / 2), "Distorted height / 2");
 		do create_agent(im1 with_size (im1.width / 3, im1.height), "Distorted width / 3");

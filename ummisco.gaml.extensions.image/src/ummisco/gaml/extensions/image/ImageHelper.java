@@ -40,18 +40,39 @@ public class ImageHelper implements ImageConstants {
 	 * @return a new {@link GamaImage} that represents the <code>src</code> with the op applied to it.
 	 *
 	 */
-	static GamaImage apply(GamaImage src, final BufferedImageOp op) {
+	static GamaImage apply(final GamaImage src, final BufferedImageOp op) {
+		return apply(src, op, 1);
+	}
+
+	/**
+	 * Apply.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param src
+	 *            the src
+	 * @param op
+	 *            the op
+	 * @param count
+	 *            the count
+	 * @return the gama image
+	 * @date 7 oct. 2023
+	 */
+	static GamaImage apply(GamaImage src, final BufferedImageOp op, final int count) {
+		if (count == 0) return src;
 		int type = src.getType();
 		if (type != BufferedImage.TYPE_INT_RGB && type != BufferedImage.TYPE_INT_ARGB) {
 			src = copyToOptimalImage(src);
 		}
 		Rectangle2D bounds = op.getBounds2D(src);
 		if (bounds == null) return src;
-		GamaImage result =
-				GamaImage.bestFor(src, (int) Math.round(bounds.getWidth()), (int) Math.round(bounds.getHeight()));
-		op.filter(src, result);
-		result.setId(src.getId() + DESCRIPTIONS.get(op));
-		return result;
+		for (int i = 0; i < count; i++) {
+			GamaImage result =
+					GamaImage.bestFor(src, (int) Math.round(bounds.getWidth()), (int) Math.round(bounds.getHeight()));
+			op.filter(src, result);
+			src = result;
+		}
+		src.setId(src.getId() + DESCRIPTIONS.get(op) + "|" + count);
+		return src;
 	}
 
 	/**
