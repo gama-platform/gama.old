@@ -8,6 +8,8 @@ model Box2D
 
 global parent: physical_world {
 	
+	int size <- 250;
+	
 	float seed <- machine_time;
 	string library <- "box2D";
 	// The definition of the step plays a crucial role in the dynamics. If the physics engine can kick in at a high frequency, then the simulation is more accurate (but also slower). 
@@ -15,7 +17,7 @@ global parent: physical_world {
 	float step <- 1.0 / 100;
 	float wall_restitution <- 1.0 min: 0.0 max: 2.0;
 	float ball_restitution <- 0.9 min: 0.0 max: 1.0;
-	geometry shape <- box(200, 200, 0.001);
+	geometry shape <- box(size, size, 0.001);
 	float friction <- 0.0;
 	float restitution <- 0.0;
 	bool accurate_collision_detection <- true; // expensive but much better
@@ -29,19 +31,21 @@ global parent: physical_world {
 
 	init {
 		do register([self]);
-		geometry box <- box(203, 3, 10);
-		create wall from: [box at_location ({100, 0}), box rotated_by 90 at_location ({0, 100}), box at_location ({100, 200}), box rotated_by 90 at_location ({200, 100})];
-		list<point> starting_places <- [{5,5}, {5,195},{195,5}, {195,195}];
+
+		geometry box <- box(size+3, 3, 10);
+		create wall from: [box at_location ({size/2, 0}), box rotated_by 90 at_location ({0, size/2}), box at_location ({size/2, size}), box rotated_by 90 at_location ({size, size/2})];
+		list<point> starting_places <- [{5,5}, {5,size-5},{size-5,5}, {size-5,size-5}];
 		create ball from: starting_places collect (circle(4) at_location each) with: [mass::10, color::#cadetblue, speed::30] returns: balls;
 		movers <-balls;
-		loop x from: 5 to: 195 step: 10 {
-			loop y from: 5 to: 195 step: 10 {
-				point p <- {x,y};
-				if starting_places contains p {
-					continue;
-				}
+		loop x from: 5 to: size-5 step: 10 {
+			loop y from: 5 to: size-5 step: 10 {
+				if (x = 5) or (x = size-5) {
+					if (y = 5) or (y = size-5) {
+						continue;
+					}
+				} 
 				float n <- rnd(1.0, 4.5);
-				create ball from: [circle(n) at_location p] with: [mass::n, color::brewer_colors("Set3")[int(n)], speed::n] {
+				create ball with: [shape::circle(n) at_location {x,y},mass::n, color::brewer_colors("Set3")[int(n)], speed::n*2] {
 					initial_location <- location;
 				}
 			}
@@ -53,7 +57,7 @@ global parent: physical_world {
 	
 	reflex when: every(1000#cycle){
 		ask movers{
-			float s <- speed * 3;
+			float s <- speed * 2;
 			velocity <- velocity + {(rnd(s) * rnd(-1.0,1.0)), (rnd(s) * rnd(-1.0,1.0))};
 		}
 	}
