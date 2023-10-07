@@ -81,6 +81,7 @@ public class Box2DPhysicalWorld extends AbstractPhysicalWorld<World, Shape, Vec2
 
 	@Override
 	public void updatePositionsAndRotations() {
+		if (world == null) return;
 		Body b = world.getBodyList();
 		while (b != null) {
 			IBody body = (IBody) b.getUserData();
