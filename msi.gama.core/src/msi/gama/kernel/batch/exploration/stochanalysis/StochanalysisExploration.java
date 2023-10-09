@@ -12,11 +12,11 @@ package msi.gama.kernel.batch.exploration.stochanalysis;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -186,18 +186,25 @@ public class StochanalysisExploration extends AExplorationAlgorithm {
 
 		IExpression outputFacet = getFacet(IKeyword.BATCH_VAR_OUTPUTS);
 		outputs = Cast.asList(scope, scope.evaluate(outputFacet, currentExperiment).getValue());
-		Map<String, Map<Double, List<Object>>> MapOutput = new LinkedHashMap<>();
+		Map<String, Map<ParametersSet, Map<String, List<Double>>>> MapOutput = new LinkedHashMap<>();
 		for (Object out : outputs) {
-			Map<Double, List<Object>> res_val = new HashMap<>(Map.of(0.05, Collections.emptyList(), 0.01,
-					Collections.emptyList(), 0.001, Collections.emptyList(), 90.0, Collections.emptyList(), 95.0,
-					Collections.emptyList(), 99.0, Collections.emptyList(), -1.0, Collections.emptyList()));
+			
 			IMap<ParametersSet, List<Object>> sp = GamaMapFactory.create();
 			for (ParametersSet ps : res_outputs.keySet()) { sp.put(ps, res_outputs.get(ps).get(out.toString())); }
-			List<Double> keys = res_val.keySet().stream().toList();
-			for (Double thresh : keys) {
-				if (res_val.get(thresh).isEmpty()) {
-					res_val.replace(thresh, Stochanalysis.StochasticityAnalysis(sp, thresh, scope));
+			
+			Map<ParametersSet, Map<String, List<Double>>> res_val = GamaMapFactory.create();
+			for (String m : Stochanalysis.SA) {
+				Map<ParametersSet,List<Double>> stoch = Stochanalysis.StochasticityAnalysis(sp, m, scope); 
+				for (ParametersSet p : sp.keySet() ) {
+					if (!res_val.containsKey(p)) { 
+						res_val.put(p, 
+								Stochanalysis.SA.stream().collect(
+										Collectors.toMap(Function.identity(), i -> new ArrayList<Double>()))
+							); 
+					}
+					res_val.get(p).put(m, stoch.get(p)); 
 				}
+				
 			}
 			MapOutput.put(out.toString(), res_val);
 		}

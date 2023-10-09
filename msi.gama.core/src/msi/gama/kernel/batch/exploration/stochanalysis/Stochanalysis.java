@@ -25,10 +25,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.map.HashedMap;
+import org.apache.commons.compress.utils.FileNameUtils;
+
+//import com.google.common.math.Stats;
 
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 
@@ -62,10 +67,16 @@ public class Stochanalysis {
 			1.350, 1.345, 1.341, 1.337, 1.333, 1.330, 1.328, 1.325, 1.323, 1.321, 1.319, 1.318, 1.316, 1.315, 1.314,
 			1.313, 1.311, 1.310, 1.303, 1.299, 1.296, 1.292, 1.290, 1.289, 1.282 };
 
-	/** The Constant CI. */
-	// 90, 95 and 99% CI interval
-	final static double[] CI = { 1.645, 1.980, 2.576 };
-
+	// Statistical arbitrary indicators
+	final static public String CV = "Coefficient of variation";
+	final static public String SE = "Standard error";
+	final static double[] STOCHThresholds = {0.05,0.01,0.001};
+	// Critical size effect TODO : to be refined
+	final static public String ES = "Critical effect size";
+	final static double[] ESPower = {0.5,0.8,0.9};
+	// List of methods
+	final static protected List<String> SA = List.of(CV,SE,ES); 
+	
 	/**
 	 * Find the median value of a list (Skipping -1 values)
 	 *
@@ -110,68 +121,90 @@ public class Stochanalysis {
 	 * @return
 	 */
 	@SuppressWarnings ("unchecked")
-	private static String buildResultMap(final Map<String, Map<Double, List<Object>>> Out, 
+	private static String buildResultMap(final Map<String, Map<ParametersSet, Map<String, List<Double>>>> Out, 
 			final int nbsample, final int nbreplicates, final IScope scope) {
 		StringBuilder sb = new StringBuilder();
+		
 		sb.append("== STOCHASTICITY ANALYSIS ==\n\n");
 		sb.append(Out.size()+" outputs | "+nbsample+" samples | "+nbreplicates+" max replications");
-		sb.append("\n\n");
-		sb.append("--- Summary of required number of replications ---\n");
-		List<Integer> all_vals = new ArrayList<>();
-		for (String i : Out.keySet()) {
-			for (List<Object> l : Out.get(i).values()) {
-				all_vals.addAll(Cast.asList(scope, l.get(2)).stream()
-						.mapToInt(o -> Integer.parseInt(o.toString()))
-						.map(d -> d < 0 ? nbreplicates : d)
-						.boxed().toList());
-			}
-		}
-		sb.append("\tOn average requires: " + all_vals.stream().mapToDouble(i -> i * 1d).average().orElse(0.0));
-		sb.append("\n\tHighest overall: " + Collections.max(all_vals));
-		sb.append("\n\tLowest overall: " + Collections.min(all_vals));
-		sb.append("\n--- End of summary ---\n\n");
+		sb.append("\n");
+
 		for (String outputs : Out.keySet()) {
-			Map<Double, List<Object>> tmp_map = Out.get(outputs);
+			Map<ParametersSet, Map<String, List<Double>>> pso = Out.get(outputs);
 			sb.append("## Output : ");
 			sb.append(outputs);
 			sb.append("\n");
-			for (int i = 0; i < tmp_map.size(); i++) {
-
-				sb.append("\n");
-				// Method is based on thresh (Vive les stagiaires)
-				double val = tmp_map.keySet().stream().sorted().toList().get(i);
+			
+			for (String method : SA) {
+				if (pso.values().stream().noneMatch(m -> m.containsKey(method))) { continue; }
 				
-				// wieghted average (failed are considered full replications) size to print
-				int n_mean = Cast.asInt(scope, tmp_map.get(val).get(0));
-				// Number of point failed. (Nb_min > Nb repeat used)
-				int nb_failed = Cast.asInt(scope, tmp_map.get(val).get(1));
-				List<Integer> nb_val = Cast.asList(scope, tmp_map.get(val).get(2));
-				
-				// Method
-				if (0 < val && val < 1) {
-					sb.append(" CV method - Threshold : "+val+"\n");
-				} else if (val == -1) {
-					sb.append(" Student method:\n");
-				} else if (val >= 1) {
-					sb.append(" SE method - Percent : "+val+"% \n");
-				}
-				
-				// Result
-				if (nb_failed == nbsample) {
-					sb.append("Max number of replication is too low to satisfy current criteria");
+				if (method != ES) {
+					// Compute all given nb of replicate required to accept a threshold hypothesis
+					IMap<Double, List<Integer>> res = GamaMapFactory.create();
+					for (Double thresh : STOCHThresholds) {
+						List<Integer> lres = new ArrayList<>();
+						for(ParametersSet ps : pso.keySet()) { lres.add(FindWithRelativeThreshold(pso.get(ps).get(method), thresh)); }
+						res.put(thresh, lres);
+					}
+					sb.append(method).append("\n");
+					for (Double threshold : STOCHThresholds) {
+						sb.append(threshold).append(" : ");
+						sb.append("min = ").append(Collections.min(res.get(threshold))).append(" | ");
+						sb.append("max = ").append(Collections.max(res.get(threshold))).append(" | ");
+						sb.append("avr = ").append(Math.round(res.get(threshold).stream().mapToInt(i -> i).average().getAsDouble())).append("\n");
+					}
 				} else {
-					if (nb_failed > 0) { sb.append("Failed for "+nb_failed+" sampled point"+(nb_failed==1?"":"s\n")); }
-					sb.append("Replications number found: \n");
-					sb.append("Advised "+n_mean+" | Median "+findMedian(nb_val, scope)+" | Max "+findMax(nb_val, scope));
+					// TODO
 				}
-				sb.append("\n");
 			}
-			sb.append("\n");
+			sb.append("\n\n");
 		}
 		return sb.toString();
 
 	}
 
+	/**
+	 * 
+	 * @param Out
+	 * @param nbsample
+	 * @param nbreplicates
+	 * @param scope
+	 * @return
+	 */
+	private static String buildStochMap(final Map<String, Map<ParametersSet, Map<String, List<Double>>>> Out, 
+			final int nbsample, final int nbreplicates, final IScope scope) {
+		StringBuilder sb = new StringBuilder();
+		String sep = ",";
+		String rl = "\n";
+		// Header of the csv
+		sb.append("Outputs").append(sep);
+		
+		// Parameters
+		IList<String> ph = Out.get(Out.keySet().stream().findAny().get()).keySet().stream().findAny().get().getKeys();
+		sb.append(ph.stream().collect(Collectors.joining(","))).append(sep);
+		
+		sb.append("Indicator").append(sep);
+		sb.append(IntStream.range(1,nbreplicates).boxed().map(i -> String.valueOf(i)).collect(Collectors.joining(",")));
+		sb.append(rl);
+		
+		for (String o : Out.keySet()) {
+			Map<ParametersSet, Map<String, List<Double>>> om = Out.get(o);
+			for (ParametersSet p : om.keySet()) {
+				String lineP = ph.stream().map(head -> p.get(head).toString()).collect(Collectors.joining(","));
+				Map<String,List<Double>> cr = om.get(p);
+				for (String m : cr.keySet()) {
+					sb.append(o).append(sep);
+					sb.append(lineP).append(sep);
+					sb.append(m).append(sep);
+					sb.append(cr.get(m).stream().skip(1).map(d -> String.valueOf(d)).collect(Collectors.joining(",")));
+					sb.append(rl);
+				}
+			}
+		}
+		
+		return sb.toString();
+	}
+	
 	/**
 	 * Write and tell report.
 	 *
@@ -182,12 +215,15 @@ public class Stochanalysis {
 	 * @param scope
 	 *            the scope
 	 */
-	public static void WriteAndTellReport(final File f, final Map<String, Map<Double, List<Object>>> outputs,
+	public static void WriteAndTellReport(final File f, final Map<String, Map<ParametersSet, Map<String, List<Double>>>> outputs,
 			final int nbsample, final int nbreplicates, final IScope scope) {
 
 		try {
 			try (FileWriter fw = new FileWriter(f, false)) {
-				fw.write(buildResultMap(outputs, nbsample, nbreplicates, scope));
+				fw.write( FileNameUtils.getExtension(f.getPath()).equalsIgnoreCase("txt") ? 
+						buildResultMap(outputs, nbsample, nbreplicates, scope) : 
+							buildStochMap(outputs, nbsample, nbreplicates, scope));
+				
 			}
 		} catch (IOException e) {
 			throw GamaRuntimeException.error("File " + f.toString() + " not found", scope);
@@ -366,18 +402,20 @@ public class Stochanalysis {
 		if (!thresh_ok) return -1;
 		return id_sample;
 	}
-
+	
 	/**
-	 * Compute the Standard Error of a List
+	 * Find the minimum replicates size depending on a threshold, when CV[i] > min_arg(CV) * threshold, we keep "i" number of replicates.
 	 *
-	 * @param STD
-	 *            : the Standard deviation for each number of replicates
-	 * @return the standard error for each number of replicates
+	 * @param Stat
+	 *            : the statistic given to assess replicates effectiveness
+	 * @return the minimum replicates size to reach a given threshold of marginal benefit adding a new replicates
 	 */
-	private static List<Double> computeSE(final List<Double> STD, final double z) {
-		List<Double> SE = new ArrayList<>();
-		for (int i = 1; i < STD.size(); i++) { SE.add(z * STD.get(i) / Math.sqrt(i + 1)); }
-		return SE;
+	private static int FindWithRelativeThreshold(final List<Double> Stat, final double threshold) {
+		Double th = Collections.min(Stat) * threshold;
+		for (int i = 2; i < Stat.size(); i++) {
+			if (Stat.get(i) > th) { return i; }
+		}
+		return Stat.size();
 	}
 
 	/**
@@ -400,25 +438,6 @@ public class Stochanalysis {
 	}
 
 	/**
-	 * Compute the absolute difference in means of a list
-	 *
-	 * @param val
-	 *            : list of data
-	 * @param mean
-	 *            : the mean of the list
-	 * @param scope
-	 * @return return the absolute difference in means of the list
-	 */
-	private static double computeDelta(final List<Object> val, final double mean, final IScope scope) {
-		double tmp_delta = 0;
-		for (Object element : val) {
-			double tmp_val = Cast.asFloat(scope, element);
-			tmp_delta += Math.abs(tmp_val - mean);
-		}
-		return tmp_delta / val.size();
-	}
-
-	/**
 	 * Find the right Student t value depending of the sample size
 	 *
 	 * @param isAlpha
@@ -433,45 +452,21 @@ public class Stochanalysis {
 			if (30 < sample_size && sample_size <= 40) return Talpha[30];
 			if (40 < sample_size && sample_size <= 50) return Talpha[31];
 			if (50 < sample_size && sample_size <= 60) return Talpha[32];
-			if (60 < sample_size && sample_size <= 80)
-				return Talpha[33];
-			else if (80 < sample_size && sample_size <= 100)
-				return Talpha[34];
-			else if (100 < sample_size && sample_size <= 120)
-				return Talpha[35];
-			else
-				return Talpha[36];
+			if (60 < sample_size && sample_size <= 80) return Talpha[33];
+			if (80 < sample_size && sample_size <= 100) return Talpha[34];
+			if (100 < sample_size && sample_size <= 120) return Talpha[35];
+			return Talpha[36];
 		}
 		if (sample_size <= 30) return Tbeta[sample_size - 1];
 		if (30 < sample_size && sample_size <= 40) return Tbeta[30];
 		if (40 < sample_size && sample_size <= 50) return Tbeta[31];
 		if (50 < sample_size && sample_size <= 60) return Tbeta[32];
-		if (60 < sample_size && sample_size <= 80)
-			return Tbeta[33];
-		else if (80 < sample_size && sample_size <= 100)
-			return Tbeta[34];
-		else if (100 < sample_size && sample_size <= 120)
-			return Tbeta[35];
-		else
-			return Tbeta[36];
+		if (60 < sample_size && sample_size <= 80) return Tbeta[33];
+		if (80 < sample_size && sample_size <= 100) return Tbeta[34];
+		if (100 < sample_size && sample_size <= 120) return Tbeta[35];
+		return Tbeta[36];
 	}
 
-	/**
-	 * Compute the minimum number of replicate with the student method
-	 *
-	 * @param S
-	 *            : Standard deviation
-	 * @param delta
-	 *            : absolute difference in mean
-	 * @param Ta
-	 *            : Student t alpha t statistic
-	 * @param Tb
-	 *            : Student t beta t statistic
-	 * @return minimum number of replicate found
-	 */
-	private static int Student(final double S, final double delta, final double Ta, final double Tb) {
-		return (int) Math.ceil(2 * (Math.pow(S, 2) / Math.pow(delta, 2)) * Math.pow(Ta + Tb, 2));
-	}
 
 	/**
 	 * Main method for the Stochastic Analysis
@@ -483,87 +478,100 @@ public class Stochanalysis {
 	 * @param scope
 	 * @return return a List with 0: The n minimum found // 1: The number of failed (if n_minimum > repeat size) //2:
 	 *         the result for each point of the space
+	 *         
+	 * TODO : also export the raw result of stochasticity measures
+	 *         
 	 */
-	public static List<Object> StochasticityAnalysis(final IMap<ParametersSet, List<Object>> sample,
-			final double threshold, final IScope scope) {
-		int tmp_replicat = 0;
-		if (0 < threshold && threshold < 1) {
-			// Min nb replicat with CV method
-			int compteur_failed = 0;
-			List<Integer> n_min_list = new ArrayList<>();
+	public static IMap<ParametersSet, List<Double>> StochasticityAnalysis(final IMap<ParametersSet, List<Object>> sample,
+			final String method, final IScope scope) {
+		
+		IMap<ParametersSet,List<Double>> res = GamaMapFactory.create();
+		switch (method) {
+		case CV: {
 			for (ParametersSet ps : sample.keySet()) {
-				List<Object> currentXp = sample.get(ps);
+				List<Object> currentXp = new ArrayList<>(sample.get(ps));
 				Collections.shuffle(currentXp);
-				List<Double> mean = computeMeanCombination(currentXp, scope);
-				List<Double> std = computeSTD(mean, sample.get(ps), scope);
-				List<Double> cv = computeCV(std, mean);
-				int n_tmp = FindWithThreshold(cv, threshold);
-				if (n_tmp == -1) {
-					compteur_failed++;
-					tmp_replicat = tmp_replicat + mean.size();
-					n_min_list.add(-1);
-				} else {
-					n_min_list.add(n_tmp);
-					tmp_replicat = tmp_replicat + n_tmp;
-				}
+				res.put(ps, coefficientOfVariance(currentXp, scope));
 			}
-			int min_replicat = tmp_replicat / sample.size();
-			return Arrays.asList(min_replicat, compteur_failed, n_min_list);
+			break;
 		}
-		if (threshold == -1) {
-			// Min nb replicat with Student method
-			int compteur_failed = 0;
-			List<Integer> n_min_list = new ArrayList<>();
+		case SE: {
 			for (ParametersSet ps : sample.keySet()) {
-				List<Double> mean = computeMean(sample.get(ps), scope);
-				double val_mean = mean.get(mean.size() - 1);
-				double s = computeS(sample.get(ps), val_mean, scope);
-				double delta = computeDelta(sample.get(ps), val_mean, scope);
-				double t1 = computeT(true, mean.size());
-				double t2 = computeT(false, mean.size());
-				int nb_tmp = Student(s, delta, t1, t2);
-				if (nb_tmp==0) {nb_tmp = -1; compteur_failed++;}
-				n_min_list.add(nb_tmp);
-				tmp_replicat += nb_tmp<=0?mean.size():nb_tmp;
-			}
-			int min_replicat = tmp_replicat / sample.size();
-			return Arrays.asList(min_replicat, compteur_failed, n_min_list);
-
+				List<Object> currentXp = new ArrayList<>(sample.get(ps));
+				Collections.shuffle(currentXp);
+				res.put(ps, standardError(currentXp, scope));
+			}	
+			break;
 		}
-		if (threshold < 1) throw GamaRuntimeException.error("Wrong value for threshold", scope);
-		// Min nb replicat with SE method
-		// hypothesis of normally distributed samples around the mean
-		// ==> means that a SE have to fit into a given confident interval
-		int compteur_failed = 0;
-		List<Integer> n_min_list = new ArrayList<>();
-		for (ParametersSet ps : sample.keySet()) {
-			List<Object> currentXp = sample.get(ps);
-			Collections.shuffle(currentXp);
-			List<Double> mean = computeMeanCombination(currentXp, scope);
-			List<Double> std = computeSTD(mean, currentXp, scope);
-			double ci = threshold == 90 ? CI[0] : threshold == 95 ? CI[1] : CI[2];
-			double new_threshold = ci * std.get(std.size() - 1) / Math.sqrt(std.size());
-			List<Double> se = computeSE(std, ci);
-			boolean first = true;
-			int tmp = 0;
-			for (int i = 0; i < se.size(); i++) {
-				if (first && se.get(i) < new_threshold) {
-					tmp = i + 1;
-					first = false;
-				}
+		case ES: {
+			for (ParametersSet ps : sample.keySet()) {
+				List<Object> currentXp = new ArrayList<>(sample.get(ps));
+				Collections.shuffle(currentXp);
+				res.put(ps, List.of((double)criticalEffectSize(currentXp, scope)));
 			}
-			if (first) {
-				compteur_failed++;
-				tmp_replicat = tmp_replicat + mean.size();
-				n_min_list.add(-1);
-			} else {
-				tmp_replicat = tmp_replicat + tmp;
-				n_min_list.add(tmp);
-			}
+			break;
 		}
-		int min_replicat = tmp_replicat / sample.size();
-		return Arrays.asList(min_replicat, compteur_failed, n_min_list);
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + method);
+		}
+		return res;
+		
 	}
+	
+	// ################# ACTUAL METHODS ################# //
+	
+	/**
+	 * Return the coefficient of variance over a set of replicates
+	 * 
+	 * @param aSample
+	 * @return
+	 */
+	private static List<Double> coefficientOfVariance(List<Object> aSample, final IScope scope) {
+		List<Double> mean = computeMean(aSample, scope);
+		List<Double> std = computeSTD(mean, aSample, scope);
+		List<Double> cv = computeCV(std, mean);
+		return cv;
+	}
+	
+	/**
+	 * 
+	 * TODO review methods and adapt the indicator to be out ready
+	 * 
+	 * @see https://www.jasss.org/18/4/4.html
+	 * @see https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7745163/
+	 * 
+	 * @param aSample
+	 * @param scope
+	 * @return
+	 */
+	private static int criticalEffectSize(List<Object> aSample, final IScope scope) {
+		List<Double> mean = computeMean(aSample, scope);
+		double val_mean = mean.get(mean.size() - 1);
+		double s = computeS(aSample, val_mean, scope);
+		// 1.96 is the normal distribution hypothesis 95% CI
+		// std is the standard deviation of the sample
+		// sqrt(n) is the square root of the sample size
+		// std / sqrt(n) is the standard error btw
+		double delta = 1.96 * s / Math.sqrt(aSample.size());
+		double t1 = computeT(true, aSample.size());
+		double t2 = computeT(false, aSample.size());
+		return (int) Math.ceil(2 * (Math.pow(s, 2) / Math.pow(delta, 2)) * Math.pow(t1 + t2, 2));
+	}
+	
+	/**
+	 * 
+	 * @param aSample
+	 * @param scope
+	 * @return
+	 */
+	private static List<Double> standardError(List<Object> aSample, final IScope scope) {
+		List<Double> mean = computeMean(aSample, scope);
+		List<Double> std = computeSTD(mean, aSample, scope);
+		List<Double> SE = new ArrayList<>();
+		for (int i = 1; i < std.size(); i++) { SE.add(std.get(i) / Math.sqrt(i + 1)); }
+		return SE;
+	}
+	
 	/*
 	 * "#################################################################################################"
 	 * "#################################################################################################"
