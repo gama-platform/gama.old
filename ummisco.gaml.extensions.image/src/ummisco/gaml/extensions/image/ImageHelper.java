@@ -65,11 +65,11 @@ public class ImageHelper implements ImageConstants {
 		}
 		Rectangle2D bounds = op.getBounds2D(src);
 		if (bounds == null) return src;
+		GamaImage result = null;
 		for (int i = 0; i < count; i++) {
-			GamaImage result =
-					GamaImage.bestFor(src, (int) Math.round(bounds.getWidth()), (int) Math.round(bounds.getHeight()));
-			op.filter(src, result);
-			src = result;
+			if (result != null) { result.flush(); }
+			result = GamaImage.bestFor(src, (int) Math.round(bounds.getWidth()), (int) Math.round(bounds.getHeight()));
+			src = (GamaImage) op.filter(src, result);
 		}
 		src.setId(src.getId() + DESCRIPTIONS.get(op) + "|" + count);
 		return src;

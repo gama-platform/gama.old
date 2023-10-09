@@ -84,7 +84,7 @@ experiment ImageManipulation type: gui {
 		create simulation with: [im1::im];
 		
 	}
-
+ 
 	output {
 		display Agents type: 3d axes: false fullscreen: true background: #black {
 			camera 'default' location: {shape.width/2, shape.height/2, max(shape.width, shape.height)*1.5} target: {shape.width/2, shape.height/2, 0};
