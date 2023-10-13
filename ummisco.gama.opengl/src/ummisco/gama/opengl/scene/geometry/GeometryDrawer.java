@@ -147,13 +147,16 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case LINECYLINDER:
 				drawLineCylinder(geom, height, border);
 				break;
-			case CIRCLE:
-				drawCircle(geom, height, border);
-				break;
+
 			case CUBE:
 			case BOX:
 				drawCube(geom, height, border);
 				break;
+			case CIRCLE:
+				// if (!gl.isWireframe() || border == null) {
+				// drawCircle(geom, height, border);
+				// break;
+				// }
 			case POLYGON:
 			case SQUARE:
 			case POLYHEDRON:
@@ -368,24 +371,16 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		drawCachedGeometry(Type.SPHERE, border);
 	}
 
-	/**
-	 * Draw circle.
-	 *
-	 * @param p
-	 *            the p
-	 * @param height
-	 *            the height
-	 * @param border
-	 *            the border
-	 */
-	private void drawCircle(final Geometry p, /* final boolean solid, */final double height, final Color border) {
-		_vertices.setToYNegated(getContourCoordinates(p));
-		_vertices.getNormal(true, 1, _normal);
-		_vertices.getCenter(_center);
-		_tangent.setLocation(_center).subtract(_vertices.at(0));
-		_scale.setTo(p.getEnvelopeInternal().getWidth() / 2);
-		drawCachedGeometry(Type.CIRCLE, /* solid, */border);
-	}
+	// see Issue #3908
+	//
+	// private void drawCircle(final Geometry p, /* final boolean solid, */final double height, final Color border) {
+	// _vertices.setToYNegated(getContourCoordinates(p));
+	// _vertices.getNormal(true, 1, _normal);
+	// _vertices.getCenter(_center);
+	// _tangent.setLocation(_center).subtract(_vertices.at(0));
+	// _scale.setTo(p.getEnvelopeInternal().getWidth() / 2);
+	// drawCachedGeometry(Type.CIRCLE, /* solid, */border);
+	// }
 
 	// public void drawRoundedRectangle(final GamaPoint pos, /*final boolean solid,*/final double width, final double
 	// height,
