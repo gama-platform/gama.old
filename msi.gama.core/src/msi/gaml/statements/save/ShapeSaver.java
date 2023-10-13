@@ -36,6 +36,9 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.runtime.IScope;
@@ -120,5 +123,8 @@ public class ShapeSaver extends AbstractShapeSaver {
 	public Set<String> computeFileTypes() {
 		return Set.of("shp", "shape");
 	}
+
+	@Override
+	public BiMap<String, String> getSynonyms() { return ImmutableBiMap.of("shp", "shape"); }
 
 }

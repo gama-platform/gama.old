@@ -19,6 +19,8 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Sets;
 
 import msi.gama.common.interfaces.ISaveDelegate;
@@ -187,5 +189,8 @@ public class ImageSaver extends AbstractSaver implements ISaveDelegate {
 
 	@Override
 	public IType getDataType() { return Types.get(GamaImageType.ID); }
+
+	@Override
+	public BiMap<String, String> getSynonyms() { return ImmutableBiMap.of("jpg", "jpeg"); }
 
 }

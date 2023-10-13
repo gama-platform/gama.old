@@ -14,6 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -23,6 +26,9 @@ import msi.gaml.types.Types;
  * The Interface ISaveDelegate.
  */
 public interface ISaveDelegate {
+
+	/** The empty synonyms. */
+	BiMap<String, String> EMPTY_SYNONYMS = ImmutableBiMap.of();
 
 	/**
 	 * Save an item to disk.
@@ -75,5 +81,15 @@ public interface ISaveDelegate {
 	 * @return the type
 	 */
 	Set<String> getFileTypes();
+
+	/**
+	 * Gets the synonyms. Returns any pairs of synonyms between type names (for instance, "txt" and "text"), otherwise
+	 * an empty BiMap that can be obtained from this interface using ISaveDelegate.EMPTY_SYNONYMS;
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the synonyms
+	 * @date 13 oct. 2023
+	 */
+	default BiMap<String, String> getSynonyms() { return EMPTY_SYNONYMS; }
 
 }

@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.TreeMultimap;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISaveDelegate;
@@ -173,11 +176,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	/** The Constant DELEGATES_BY_GAML_TYPE. */
 	private static final Map<String, Map<IType, ISaveDelegate>> DELEGATES = new HashMap<>();
 
+	/** The Constant SYNONYMS. */
+	private static final SetMultimap<String, String> SYNONYMS = TreeMultimap.create();
+
 	/**
 	 * @param createExecutableExtension
 	 */
 	public static void addDelegate(final ISaveDelegate delegate) {
 		Set<String> files = delegate.getFileTypes();
+
+		delegate.getSynonyms().forEach((k, v) -> {
+			SYNONYMS.put(k, v);
+			SYNONYMS.put(v, k);
+		});
 		final IType t = delegate.getDataType();
 		for (String f : files) {
 			Map<IType, ISaveDelegate> map = DELEGATES.get(f);
@@ -264,8 +275,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 							IGamlIssue.UNKNOWN_ARGUMENT, FORMAT);
 					return;
 				}
-				if (ext != null && !id.equals(ext)) { // && (!IMAGE.equals(id) ||
-														// !ImageSaver.FILE_FORMATS.contains(ext))
+				if (ext != null && !id.equals(ext) && !areSynonyms(ext, id)) {
 					desc.info("The extension of the file and the format differ. Make sure they are compatible",
 							IGamlIssue.CONFLICTING_FACETS);
 				}
@@ -329,6 +339,21 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					return true;
 				});
 			}
+		}
+
+		/**
+		 * Are synonyms.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param ext
+		 *            the ext
+		 * @param id
+		 *            the id
+		 * @return true, if successful
+		 * @date 13 oct. 2023
+		 */
+		private boolean areSynonyms(final String ext, final String id) {
+			return SYNONYMS.containsKey(ext) ? SYNONYMS.get(ext).contains(id) : false;
 		}
 
 	}

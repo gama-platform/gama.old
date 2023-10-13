@@ -17,6 +17,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Set;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -107,5 +110,8 @@ public class TextSaver extends AbstractSaver {
 	protected Set<String> computeFileTypes() {
 		return Set.of("text", "txt");
 	}
+
+	@Override
+	public BiMap<String, String> getSynonyms() { return ImmutableBiMap.of("txt", "text"); }
 
 }
