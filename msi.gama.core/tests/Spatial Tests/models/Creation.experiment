@@ -22,7 +22,8 @@ global {
 	geometry squircle1 <- squircle(m_size,2);
 	
 	float arc_tolerance <- 0.001;
-	geometry arc1 <- arc(m_size, rnd(360), amplitude) update: arc(m_size, rnd(360), amplitude);
+	// Create an arc with a radius explicitly smaller (see #3907)
+	geometry arc1 <- arc(m_size - 1, rnd(360), amplitude) update: arc(m_size - 1, rnd(360), amplitude);
 	float amplitude <- rnd(360.0) update: rnd(360.0);
 		
 	int m_size <- 20 max:100;
@@ -43,11 +44,12 @@ experiment Visualisation type: gui {
 				draw s_ellipse color:#grey;
 			}
 		}
-		display "Squicle and Arc" {
+		display "Squircle and Arc" {
 			graphics other_geoms transparency:0.3 {
 				draw squircle1 color:#green;
 			} 
 			graphics arc {
+				draw circle1 color: #red;
 				draw arc1 color:#black;
 				draw curve({0,0},{0,10},{10,10}) color:#black;
 			}
