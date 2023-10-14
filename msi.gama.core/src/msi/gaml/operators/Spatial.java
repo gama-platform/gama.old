@@ -380,7 +380,7 @@ public abstract class Spatial {
 			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (xRadius <= 0) return GamaShapeFactory.createFrom(location);
-			return GamaGeometryType.buildArc(xRadius, heading, amplitude, filled, location);
+			return GamaGeometryType.buildArc(xRadius * 2, heading, amplitude, filled, location);
 		}
 
 		/**
@@ -2412,7 +2412,7 @@ public abstract class Spatial {
 			}
 			if (geom_Tmp != null) {
 				final GamaShape result = GamaShapeFactory.createFrom(geom_Tmp).withAttributesOf(g);
-				 result.losePredefinedProperty();
+				result.losePredefinedProperty();
 				return result;
 			}
 			return g;
