@@ -564,8 +564,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			if (useIndividualShapes) {
 				// Change in the function used in building cells in order to minimize computations and mutualize points.
 				// See #2896
-				rect = GamaShapeFactory.createFrom(GeometryUtils.GEOMETRY_FACTORY.buildRectangle(new GamaPoint[] {
-						xs[xx][yy], xs[xx + 1][yy], xs[xx + 1][yy + 1], xs[xx][yy + 1], xs[xx][yy] }));
+				rect = GamaShapeFactory.createFrom(GeometryUtils.GEOMETRY_FACTORY.createRectangle(xs[xx][yy],
+						xs[xx + 1][yy], xs[xx + 1][yy + 1], xs[xx][yy + 1], xs[xx][yy]));
 			} else {
 				final double cmx = cellWidth / 2;
 				final double cmy = cellHeight / 2;

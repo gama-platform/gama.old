@@ -352,15 +352,22 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Image
 	}
 
 	@Override
-	public Rectangle2D drawShape(final Geometry geometry, final DrawingAttributes attributes) {
-		if (geometry == null) return null;
+	public Rectangle2D drawShape(final Geometry gg, final DrawingAttributes attributes) {
+		if (gg == null) return null;
+		Geometry geometry = gg;
 		if (geometry instanceof GeometryCollection) {
 			final Rectangle2D result = new Rectangle2D.Double();
 			GeometryUtils.applyToInnerGeometries(geometry, g -> result.add(drawShape(g, attributes)));
 			return result;
 		}
-		final boolean isLine = geometry instanceof Lineal || geometry instanceof Puntal;
+		boolean isLine = geometry instanceof Lineal || geometry instanceof Puntal;
 
+		if (isLine && attributes.getDepth() != null) {
+			// Special case for line with a depth (see #3899)
+			geometry = GeometryUtils.GEOMETRY_FACTORY.createFatLine(geometry, attributes.getDepth());
+			isLine = false;
+			attributes.setFill(attributes.getBorder());
+		}
 		GamaColor border = isLine ? attributes.getColor() : attributes.getBorder();
 		if (border == null && attributes.isEmpty()) { border = attributes.getColor(); }
 		if (highlight) {

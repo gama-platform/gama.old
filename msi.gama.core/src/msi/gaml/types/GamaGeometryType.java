@@ -326,7 +326,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		points[2] = new GamaPoint(x + width / 2.0, y - height / 2.0, z);
 		points[1] = new GamaPoint(x - width / 2.0, y - height / 2.0, z);
 		points[0] = new GamaPoint(x - width / 2.0, y + height / 2.0, z);
-		return GamaShapeFactory.createFrom(GeometryUtils.GEOMETRY_FACTORY.buildRectangle(points));
+		return GamaShapeFactory.createFrom(GeometryUtils.GEOMETRY_FACTORY.createRectangle(points));
 	}
 
 	/**

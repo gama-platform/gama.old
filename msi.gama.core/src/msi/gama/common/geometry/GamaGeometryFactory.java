@@ -104,7 +104,7 @@ public class GamaGeometryFactory extends GeometryFactory {
 	 *            the points
 	 * @return the polygon
 	 */
-	public Polygon buildRectangle(final Coordinate[] points) {
+	public Polygon createRectangle(final Coordinate... points) {
 		final CoordinateSequenceFactory fact = GamaGeometryFactory.COORDINATES_FACTORY;
 		final CoordinateSequence cs = fact.create(points);
 		final LinearRing geom = GeometryUtils.GEOMETRY_FACTORY.createLinearRing(cs);
@@ -148,6 +148,41 @@ public class GamaGeometryFactory extends GeometryFactory {
 	 */
 	public LineString createLineString(final GamaPoint[] coordinates, final boolean copyPoints) {
 		return createLineString(COORDINATES_FACTORY.create(coordinates, copyPoints));
+	}
+
+	/**
+	 * Creates one or several rectangle(s) out of a (possibly poly) line (see
+	 * https://stackoverflow.com/questions/1936934/turn-a-line-into-a-rectangle)
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param geometry
+	 *            the geometry
+	 * @param depth
+	 *            the depth
+	 * @return the geometry
+	 * @date 14 oct. 2023
+	 */
+	public Geometry createFatLine(final Geometry geometry, final double thickness) {
+		ICoordinates c = GeometryUtils.getContourCoordinates(geometry);
+		Polygon[] rectangles = new Polygon[c.size() - 1];
+		int[] index = { 0 };
+		c.visit((p0, p1) -> {
+			double x1 = p1.x, x0 = p0.x, y1 = p1.y, y0 = p0.y;
+			double dx = x1 - x0; // delta x
+			double dy = y1 - y0; // delta y
+			double linelength = p1.distance(p0);
+			dx /= linelength;
+			dy /= linelength;
+			// Ok, (dx, dy) is now a unit vector pointing in the direction of the line
+			// A perpendicular vector is given by (-dy, dx)
+			double px = 0.5d * thickness * -dy; // perpendicular vector with lenght thickness * 0.5
+			double py = 0.5d * thickness * dx;
+			rectangles[index[0]] = createRectangle(new GamaPoint(x0 + px, y0 + py), new GamaPoint(x1 + px, y1 + py),
+					new GamaPoint(x1 - px, y1 - py), new GamaPoint(x0 - px, y0 - py), new GamaPoint(x0 + px, y0 + py));
+			index[0] += 1;
+		});
+		GeometryCollection result = createGeometryCollection(rectangles);
+		return result.union();
 	}
 
 }
