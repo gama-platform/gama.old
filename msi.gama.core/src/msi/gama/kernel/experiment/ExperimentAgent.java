@@ -58,6 +58,7 @@ import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
@@ -170,6 +171,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	/** The Constant MAXIMUM_CYCLE_DURATION. */
 	private static final String MAXIMUM_CYCLE_DURATION = "maximum_cycle_duration";
 
+	/** The stop condition. */
+	final IExpression stopCondition;
+
 	/** The own scope. */
 	private final IScope ownScope;
 
@@ -235,6 +239,17 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		} else {
 			reset();
 		}
+		stopCondition =
+				getSpecies().getStopCondition() == null ? defaultStopCondition() : getSpecies().getStopCondition();
+	}
+
+	/**
+	 * Default stop condition.
+	 *
+	 * @return the i expression
+	 */
+	protected IExpression defaultStopCondition() {
+		return IExpressionFactory.FALSE_EXPR;
 	}
 
 	/**
@@ -1196,5 +1211,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 	@Override
 	public boolean isExperiment() { return true; }
+
+	@Override
+	public IExpression getStopCondition() { return stopCondition; }
 
 }

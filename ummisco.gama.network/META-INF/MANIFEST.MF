@@ -8,19 +8,6 @@ Export-Package:
  com.fazecast.jSerialComm,
  org.eclipse.paho.client.mqttv3,
  org.eclipse.paho.client.mqttv3.persist,
- org.java_websocket,
- org.java_websocket.client,
- org.java_websocket.drafts,
- org.java_websocket.enums,
- org.java_websocket.exceptions,
- org.java_websocket.extensions,
- org.java_websocket.extensions.permessage_deflate,
- org.java_websocket.framing,
- org.java_websocket.handshake,
- org.java_websocket.interfaces,
- org.java_websocket.protocols,
- org.java_websocket.server,
- org.java_websocket.util,
  org.slf4j,
  ummisco.gama.network.common;
   uses:="msi.gama.extensions.messaging,
@@ -47,12 +34,13 @@ Export-Package:
    msi.gama.util,
    ummisco.gama.network.common",
  ummisco.gama.network.websocket
+Import-Package: org.java_websocket.handshake
 Require-Bundle: msi.gama.core,
- ummisco.gama.serialize
+ ummisco.gama.serialize,
+ msi.gama.ext
 Bundle-ClassPath: .,
  ext/arduino.jar,
  ext/jSerialComm-2.9.3.jar,
- ext/Java-WebSocket-1.5.3.jar,
  ext/org.eclipse.paho.client.mqttv3-1.2.5.jar,
  ext/slf4j-api-2.0.0-alpha1.jar
 Bundle-ActivationPolicy: lazy

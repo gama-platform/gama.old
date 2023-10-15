@@ -37,6 +37,7 @@ public interface IExperimentController {
 	/** The back. */
 	int _BACK = 8;
 
+	/** The close. */
 	int _CLOSE = -1;
 
 	/**
@@ -73,6 +74,14 @@ public interface IExperimentController {
 	 *
 	 */
 	default void directPause() {}
+
+	/**
+	 * Back.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 15 oct. 2023
+	 */
+	default void back() {}
 
 	/**
 	 *
@@ -122,5 +131,13 @@ public interface IExperimentController {
 	 *            the agent
 	 */
 	default void schedule(final ExperimentAgent agent) {}
+
+	/**
+	 * Direct step.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 15 oct. 2023
+	 */
+	default void directStep() {}
 
 }

@@ -1,14 +1,14 @@
 /*******************************************************************************************************
  *
- * ServerExperimentController.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.3).
+ * GamaServerExperimentController.java, in msi.gama.headless, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.headless.listener;
+package msi.gama.headless.server;
 
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -18,8 +18,6 @@ import org.java_websocket.WebSocket;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.GamaServerMessageType;
-import msi.gama.headless.job.ManualExperimentJob;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
@@ -29,6 +27,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.CommandResponse;
+import msi.gama.runtime.server.GamaServerMessage;
+import msi.gama.util.IMap;
+import msi.gama.util.file.json.GamaJsonList;
 import msi.gama.util.file.json.Jsoner;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
@@ -36,7 +38,7 @@ import ummisco.gama.dev.utils.DEBUG;
 /**
  * The Class ExperimentController.
  */
-public class ServerExperimentController implements IExperimentController {
+public class GamaServerExperimentController implements IExperimentController {
 
 	/** The scope. */
 	IScope scope;
@@ -45,6 +47,12 @@ public class ServerExperimentController implements IExperimentController {
 	 * Alive. Flag indicating that the scheduler is running (it should be alive unless the application is shutting down)
 	 */
 	protected volatile boolean experimentAlive = true;
+
+	/** The parameters. */
+	final GamaJsonList parameters;
+
+	/** The stop condition. */
+	final String stopCondition;
 
 	/**
 	 * Paused. Flag indicating that the experiment is set to pause (used in stepping the experiment)
@@ -66,7 +74,7 @@ public class ServerExperimentController implements IExperimentController {
 	public class MyRunnable implements Runnable {
 
 		/** The sim. */
-		final ManualExperimentJob mexp;
+		final GamaServerExperimentJob mexp;
 
 		/**
 		 * Instantiates a new own runnable.
@@ -74,7 +82,7 @@ public class ServerExperimentController implements IExperimentController {
 		 * @param s
 		 *            the s
 		 */
-		MyRunnable(final ManualExperimentJob s) {
+		MyRunnable(final GamaServerExperimentJob s) {
 			mexp = s;
 		}
 
@@ -88,16 +96,21 @@ public class ServerExperimentController implements IExperimentController {
 				while (experimentAlive) {
 					if (mexp.simulator.isInterrupted()) { break; }
 					final SimulationAgent sim = mexp.simulator.getSimulation();
-
+					final IExperimentAgent exp = sim == null ? null : sim.getExperiment();
 					final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
-					if (Cast.asBool(scope, mexp.endCondition.value(scope))) {
-						if (!"".equals(mexp.endCond)) {
-							mexp.socket.send(Jsoner.serialize(new CommandResponse(GamaServerMessageType.SimulationEnded,
-									"", _job.playCommand, false)));
+					if (Cast.asBool(scope, exp.getStopCondition().value(scope))) {
+						if (!"".equals(stopCondition)) {
+							mexp.socket
+									.send(Jsoner
+											.serialize(
+													new CommandResponse(GamaServerMessage.Type.SimulationEnded, "",
+															(IMap<String, Object>) mexp.simulator.getExperimentPlan()
+																	.getAgent().getAttribute("%%playCommand%%"),
+															false)));
 						}
 						break;
 					}
-					step();
+					directStep();
 				}
 			} catch (Exception e) {
 				DEBUG.OUT(e);
@@ -106,7 +119,7 @@ public class ServerExperimentController implements IExperimentController {
 	}
 
 	/** The job. */
-	public ManualExperimentJob _job;
+	public GamaServerExperimentJob _job;
 	/** The experiment. */
 	private IExperimentPlan experiment;
 
@@ -151,12 +164,15 @@ public class ServerExperimentController implements IExperimentController {
 	 * @param experiment
 	 *            the experiment
 	 */
-	public ServerExperimentController(final ManualExperimentJob j, final WebSocket sock, final boolean console,
-			final boolean status, final boolean dialog, final boolean runtime) {
+	public GamaServerExperimentController(final GamaServerExperimentJob j, final GamaJsonList parameters,
+			final String stopCondition, final WebSocket sock, final boolean console, final boolean status,
+			final boolean dialog, final boolean runtime) {
 
 		_job = j;
 		socket = sock;
 		redirectConsole = console;
+		this.parameters = parameters;
+		this.stopCondition = stopCondition;
 		redirectStatus = status;
 		redirectDialog = dialog;
 		redirectRuntime = runtime;
@@ -206,9 +222,8 @@ public class ServerExperimentController implements IExperimentController {
 		switch (command) {
 			case _OPEN:
 				try {
-					_job.loadAndBuildWithJson();
-				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException
-						| GamaHeadlessException e) {
+					_job.loadAndBuildWithJson(parameters, stopCondition);
+				} catch (IOException | GamaHeadlessException e) {
 					DEBUG.OUT(e);
 					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 					// socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessageType.SimulationError, e)));
@@ -249,7 +264,7 @@ public class ServerExperimentController implements IExperimentController {
 					experiment.dispose();
 					_job.simulator.dispose();
 
-					_job.loadAndBuildWithJson();
+					_job.loadAndBuildWithJson(parameters, stopCondition);
 					executionThread = null;
 					commandThread.interrupt();
 					commandThread = null;
@@ -269,7 +284,7 @@ public class ServerExperimentController implements IExperimentController {
 					acceptingCommands = true;
 					disposing = false;
 					commandThread.start();
-					_job.server.getDefaultApp().processorQueue.execute(executionThread);
+					_job.server.execute(executionThread);
 
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
@@ -432,7 +447,8 @@ public class ServerExperimentController implements IExperimentController {
 	/**
 	 * Step.
 	 */
-	protected void step() {
+	@Override
+	public void directStep() {
 		if (paused) {
 			try {
 				lock.acquire();

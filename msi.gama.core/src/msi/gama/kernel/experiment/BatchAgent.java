@@ -42,7 +42,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -72,9 +71,6 @@ public class BatchAgent extends ExperimentAgent {
 
 	/** The Constant CALIBRATION_EXPERIMENT. */
 	public final static String CALIBRATION_EXPERIMENT = "Calibration experiment";
-
-	/** The stop condition. */
-	final IExpression stopCondition;
 
 	/** The run number. */
 	private int runNumber;
@@ -119,21 +115,6 @@ public class BatchAgent extends ExperimentAgent {
 		if (expr != null && expr.isConst()) { innerLoopRepeat = Cast.asInt(scope, expr.value(scope)); }
 		setSeeds(new Double[innerLoopRepeat]);
 		setKeepSimulations(getSpecies().keepsSimulations());
-		if (getSpecies().hasFacet(IKeyword.UNTIL)) {
-			stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
-		} else {
-			stopCondition = defaultStopCondition();
-		}
-
-	}
-
-	/**
-	 * Default stop condition.
-	 *
-	 * @return the i expression
-	 */
-	protected IExpression defaultStopCondition() {
-		return IExpressionFactory.FALSE_EXPR;
 	}
 
 	@Override
@@ -261,7 +242,7 @@ public class BatchAgent extends ExperimentAgent {
 		// dispose();
 		GAMA.getGui().updateExperimentState(scope, IGui.STATE_FINISHED);
 		// If we immediately replace the agent, the parameters view disappears
-		//GAMA.changeCurrentTopLevelAgent(GAMA.getPlatformAgent(), false);
+		// GAMA.changeCurrentTopLevelAgent(GAMA.getPlatformAgent(), false);
 		return true;
 	}
 

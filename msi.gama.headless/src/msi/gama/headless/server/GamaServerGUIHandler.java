@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.headless.core;
+package msi.gama.headless.server;
 
 import org.java_websocket.WebSocket;
 
@@ -20,6 +20,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.json.DeserializationException;
 import msi.gama.util.file.json.Jsoner;
@@ -44,7 +45,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 	 * @param type
 	 *            the type
 	 */
-	private static void sendMessage(final IExperimentAgent exp, final Object m, final GamaServerMessageType type) {
+	private static void sendMessage(final IExperimentAgent exp, final Object m, final GamaServerMessage.Type type) {
 
 		try {
 
@@ -106,14 +107,14 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 	public void openMessageDialog(final IScope scope, final String message) {
 		DEBUG.OUT(message);
 		if (!canSendDialogMessages(scope)) return;
-		sendMessage(scope.getExperiment(), message, GamaServerMessageType.SimulationDialog);
+		sendMessage(scope.getExperiment(), message, GamaServerMessage.Type.SimulationDialog);
 	}
 
 	@Override
 	public void openErrorDialog(final IScope scope, final String error) {
 		DEBUG.OUT(error);
 		if (!canSendDialogMessages(scope)) return;
-		sendMessage(scope.getExperiment(), error, GamaServerMessageType.SimulationErrorDialog);
+		sendMessage(scope.getExperiment(), error, GamaServerMessage.Type.SimulationErrorDialog);
 	}
 
 	@Override
@@ -122,7 +123,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 		// removed to fix #3758
 		// if (!canSendDialogMessages(scope)) return;
 		if (!canSendRuntimeErrors(scope)) return;
-		sendMessage(scope.getExperiment(), g, GamaServerMessageType.SimulationError);
+		sendMessage(scope.getExperiment(), g, GamaServerMessage.Type.SimulationError);
 	}
 
 	@Override
@@ -145,12 +146,12 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					try {
 						sendMessage(GAMA.getExperiment().getAgent(),
 								Jsoner.deserialize("{" + "\"message\": \"" + string + "\"" + "}"),
-								GamaServerMessageType.SimulationStatusInform);
+								GamaServerMessage.Type.SimulationStatusInform);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(GAMA.getExperiment().getAgent(), "{" + "\"message\": \"" + string + "\"" + "}",
-								GamaServerMessageType.SimulationStatusInform);
+								GamaServerMessage.Type.SimulationStatusInform);
 					}
 
 				}
@@ -163,12 +164,12 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					try {
 						sendMessage(GAMA.getExperiment().getAgent(),
 								Jsoner.deserialize("{" + "\"message\": \"" + message + "\"" + "}"),
-								GamaServerMessageType.SimulationStatusError);
+								GamaServerMessage.Type.SimulationStatusError);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(GAMA.getExperiment().getAgent(), "{" + "\"message\": \"" + message + "\"" + "}",
-								GamaServerMessageType.SimulationStatusError);
+								GamaServerMessage.Type.SimulationStatusError);
 					}
 
 				}
@@ -182,13 +183,13 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 						sendMessage(
 								GAMA.getExperiment().getAgent(), Jsoner.deserialize("{" + "\"message\": \"" + msg
 										+ "\"," + "\"color\": " + Jsoner.serialize(color) + "" + "}"),
-								GamaServerMessageType.SimulationStatus);
+								GamaServerMessage.Type.SimulationStatus);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(GAMA.getExperiment().getAgent(),
 								"{" + "\"message\": \"" + msg + "\"," + "\"color\": " + Jsoner.serialize(color) + "}",
-								GamaServerMessageType.SimulationStatus);
+								GamaServerMessage.Type.SimulationStatus);
 					}
 				}
 
@@ -201,13 +202,13 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 						sendMessage(GAMA.getExperiment().getAgent(),
 								Jsoner.deserialize(
 										"{" + "\"message\": \"" + message + "\"," + "\"icon\": \"" + icon + "\"" + "}"),
-								GamaServerMessageType.SimulationStatusInform);
+								GamaServerMessage.Type.SimulationStatusInform);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(GAMA.getExperiment().getAgent(),
 								"{" + "\"message\": \"" + message + "\"," + "\"icon\": \"" + icon + "\"" + "}",
-								GamaServerMessageType.SimulationStatusInform);
+								GamaServerMessage.Type.SimulationStatusInform);
 					}
 
 				}
@@ -221,13 +222,13 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 						sendMessage(GAMA.getExperiment().getAgent(),
 								Jsoner.deserialize(
 										"{" + "\"message\": \"" + msg + "\"," + "\"icon\":\"" + icon + "\"" + "}"),
-								GamaServerMessageType.SimulationStatus);
+								GamaServerMessage.Type.SimulationStatus);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(GAMA.getExperiment().getAgent(),
 								"{" + "\"message\": \"" + msg + "\"," + "\"icon\": \"" + icon + "\"" + "}",
-								GamaServerMessageType.SimulationStatus);
+								GamaServerMessage.Type.SimulationStatus);
 					}
 				}
 
@@ -239,12 +240,12 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					try {
 						sendMessage(GAMA.getExperiment().getAgent(),
 								Jsoner.deserialize("{" + "\"message\": \"" + string + "\"" + "}"),
-								GamaServerMessageType.SimulationStatusNeutral);
+								GamaServerMessage.Type.SimulationStatusNeutral);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(GAMA.getExperiment().getAgent(), "{" + "\"message\": \"" + string + "\"" + "}",
-								GamaServerMessageType.SimulationStatusNeutral);
+								GamaServerMessage.Type.SimulationStatusNeutral);
 					}
 
 				}
@@ -275,13 +276,13 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 						sendMessage(
 								root.getExperiment(), Jsoner.deserialize("{" + "\"message\": \"" + s + "\","
 										+ "\"color\":" + Jsoner.serialize(color) + "}"),
-								GamaServerMessageType.SimulationOutput);
+								GamaServerMessage.Type.SimulationOutput);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(root.getExperiment(),
 								"{" + "\"message\": \"" + s + "\"," + "\"color\":" + Jsoner.serialize(color) + "}",
-								GamaServerMessageType.SimulationOutput);
+								GamaServerMessage.Type.SimulationOutput);
 					}
 				}
 
@@ -293,14 +294,14 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 						sendMessage(root.getExperiment(),
 								Jsoner.deserialize("{" + "\"cycle\":" + cycle + "," + "\"message\": \""
 										+ Jsoner.escape(s) + "\"," + "\"color\":" + Jsoner.serialize(color) + "}"),
-								GamaServerMessageType.SimulationDebug);
+								GamaServerMessage.Type.SimulationDebug);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(root.getExperiment(),
 								"{" + "\"cycle\":" + cycle + "," + "\"message\": \"" + Jsoner.escape(s) + "\","
 										+ "\"color\":" + Jsoner.serialize(color) + "}",
-								GamaServerMessageType.SimulationDebug);
+								GamaServerMessage.Type.SimulationDebug);
 					}
 				}
 			};

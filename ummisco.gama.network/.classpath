@@ -13,7 +13,6 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="ext/org.eclipse.paho.client.mqttv3-1.2.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry exported="true" kind="lib" path="ext/Java-WebSocket-1.5.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/slf4j-api-2.0.0-alpha1.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/jSerialComm-2.9.3.jar"/>
 	<classpathentry kind="output" path="bin"/>

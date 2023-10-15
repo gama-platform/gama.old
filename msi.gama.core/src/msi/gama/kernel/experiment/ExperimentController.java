@@ -181,6 +181,16 @@ public class ExperimentController implements IExperimentController {
 		processUserCommand(_PAUSE);
 	}
 
+	/**
+	 * Direct step.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 15 oct. 2023
+	 */
+	public void directStep() {
+		processUserCommand(_STEP);
+	}
+
 	@Override
 	public void userStep() {
 		offer(_STEP);

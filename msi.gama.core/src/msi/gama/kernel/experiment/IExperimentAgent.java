@@ -16,6 +16,7 @@ import java.util.List;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.population.IPopulationFactory;
+import msi.gaml.expressions.IExpression;
 
 /**
  * The Interface IExperimentAgent.
@@ -170,5 +171,14 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return the user commands
 	 */
 	default Collection<? extends IExperimentDisplayable> getUserCommands() { return getSpecies().getUserCommands(); }
+
+	/**
+	 * Gets the stop condition.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the stop condition
+	 * @date 15 oct. 2023
+	 */
+	IExpression getStopCondition();
 
 }

@@ -10,7 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.headless.core;
 
-import msi.gama.headless.job.ManualExperimentJob;
+import msi.gama.headless.server.GamaServerExperimentJob;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -63,7 +63,7 @@ public interface IExperiment {
 	 * @param manualExperimentJob
 	 */
 	void setup(final String experimentName, final double seed, final GamaJsonList params,
-			ManualExperimentJob manualExperimentJob);
+			GamaServerExperimentJob manualExperimentJob);
 
 	/**
 	 * Step.

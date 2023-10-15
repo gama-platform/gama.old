@@ -10,10 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.headless.core;
 
-import msi.gama.headless.job.ManualExperimentJob;
+import msi.gama.headless.server.GamaServerExperimentJob;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -23,11 +22,9 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.Types;
 
 /**
  * The Class Experiment.
@@ -87,7 +84,7 @@ public class Experiment implements IExperiment {
 	}
 
 	@Override
-	public void setup(final String expName, final double sd, final GamaJsonList params, final ManualExperimentJob ec) {
+	public void setup(final String expName, final double sd, final GamaJsonList params, final GamaServerExperimentJob ec) {
 		this.seed = sd;
 		this.loadCurrentExperiment(expName, params, ec);
 	}
@@ -99,32 +96,14 @@ public class Experiment implements IExperiment {
 	 *            the exp name
 	 */
 	private synchronized void loadCurrentExperiment(final String expName, final GamaJsonList p,
-			final ManualExperimentJob ec) {
+			final GamaServerExperimentJob ec) {
 		this.experimentName = expName;
 		this.currentStep = 0;
 
 		final ExperimentPlan curExperiment = (ExperimentPlan) model.getExperiment(expName);
 		curExperiment.setHeadless(true);
 		curExperiment.setController(ec.controller);
-
-		if (p != null) {
-			for (var param : p.listValue(null, Types.MAP, false)) {
-				@SuppressWarnings ("unchecked") IMap<String, Object> m = (IMap<String, Object>) param;
-				String type = m.get("type") != null ? m.get("type").toString() : "";
-				Object v = m.get("value");
-				if ("int".equals(type)) { v = Integer.valueOf("" + m.get("value")); }
-				if ("float".equals(type)) { v = Double.valueOf("" + m.get("value")); }
-
-				final IParameter.Batch b = curExperiment.getParameterByTitle(m.get("name").toString());
-				if (b != null) {
-					curExperiment.setParameterValueByTitle(curExperiment.getExperimentScope(), m.get("name").toString(),
-							v);
-				} else if (curExperiment.getParameter(m.get("name").toString()) != null) {
-					curExperiment.setParameterValue(curExperiment.getExperimentScope(), m.get("name").toString(), v);
-				}
-
-			}
-		}
+		curExperiment.setParameterValues(p);
 		curExperiment.open(seed);
 		if (!GAMA.getControllers().contains(curExperiment.getController())) {
 			GAMA.getControllers().add(curExperiment.getController());
@@ -159,7 +138,7 @@ public class Experiment implements IExperiment {
 		return currentStep--;
 
 	}
-	
+
 	@Override
 	public void setParameter(final String parameterName, final Object value) {
 		this.params.put(parameterName, value);

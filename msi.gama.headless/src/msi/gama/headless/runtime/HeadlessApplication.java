@@ -1,17 +1,14 @@
 /*******************************************************************************************************
  *
- * Application.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * HeadlessApplication.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.headless.runtime;
-
-import static java.lang.Integer.parseInt;
-import static msi.gama.headless.runtime.SimulationRuntime.DEFAULT_NB_THREADS;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,6 +18,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,13 +32,14 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
 
 import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.common.interfaces.IGamaApplication;
+import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.batch.ModelLibraryRunner;
 import msi.gama.headless.batch.ModelLibraryTester;
 import msi.gama.headless.batch.ModelLibraryValidator;
@@ -47,27 +47,77 @@ import msi.gama.headless.batch.documentation.ModelLibraryGenerator;
 import msi.gama.headless.common.Globals;
 import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
-import msi.gama.headless.listener.GamaListener;
-import msi.gama.headless.listener.GamaWebSocketServer;
+import msi.gama.headless.listener.DownloadCommand;
+import msi.gama.headless.listener.ExitCommand;
+import msi.gama.headless.listener.ExpressionCommand;
+import msi.gama.headless.listener.LoadCommand;
+import msi.gama.headless.listener.PauseCommand;
+import msi.gama.headless.listener.PlayCommand;
+import msi.gama.headless.listener.ReloadCommand;
+import msi.gama.headless.listener.StepBackCommand;
+import msi.gama.headless.listener.StepCommand;
+import msi.gama.headless.listener.StopCommand;
+import msi.gama.headless.listener.UploadCommand;
 import msi.gama.headless.script.ExperimentationPlanFactory;
+import msi.gama.headless.server.GamaServerGUIHandler;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.concurrent.GamaExecutorService;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.GamaWebSocketServer;
+import msi.gama.runtime.server.ISocketCommand;
 import msi.gaml.compilation.GamlCompilationError;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class Application.
  */
-public class Application implements IApplication {
+public class HeadlessApplication implements IGamaApplication {
+
+	/** The injector. */
+	static Injector INJECTOR;
+
+	/**
+	 * Gets the injector.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the injector
+	 * @date 15 oct. 2023
+	 */
+	public static Injector getInjector() { return configureInjector(); }
+
+	/**
+	 * Configure injector.
+	 *
+	 * @return the injector
+	 */
+	private static Injector configureInjector() {
+		if (INJECTOR != null) return INJECTOR;
+		DEBUG.LOG("GAMA configuring and loading...");
+		System.setProperty("java.awt.headless", "true");
+
+		GAMA.setHeadlessGui(isServer ? new GamaServerGUIHandler() : new NullGuiHandler());
+		try {
+			// We initialize XText and Gaml.
+			INJECTOR = GamlStandaloneSetup.doSetup();
+		} catch (final Exception e1) {
+			throw GamaRuntimeException.create(e1, GAMA.getRuntimeScope());
+		}
+		// SEED HACK // WARNING AD : Why ?
+		GamaPreferences.External.CORE_SEED_DEFINED.set(true);
+		GamaPreferences.External.CORE_SEED.set(1.0);
+		// SEED HACK
+		return INJECTOR;
+	}
 
 	/** The Constant HELP_PARAMETER. */
 	final public static String HELP_PARAMETER = "-help";
@@ -83,7 +133,8 @@ public class Application implements IApplication {
 
 	/** The Constant THREAD_PARAMETER. */
 	final public static String THREAD_PARAMETER = "-hpc";
-	
+
+	/** The Constant PING_INTERVAL. */
 	final public static String PING_INTERVAL = "-ping_interval";
 
 	/** The Constant SOCKET_PARAMETER. */
@@ -135,9 +186,10 @@ public class Application implements IApplication {
 	/** The socket. */
 	public int socket = -1;
 
+	/** The ping interval. */
 	// the interval between each ping sent by the server, -1 to deactivate this behaviour
 	public int ping_interval = 10000;
-	
+
 	/** The console mode. */
 	public boolean consoleMode = false;
 
@@ -152,6 +204,9 @@ public class Application implements IApplication {
 
 	/** The socket server. */
 	public GamaWebSocketServer socketServer;
+
+	/** The is server. */
+	static boolean isServer = false;
 
 	/**
 	 * Show version.
@@ -168,27 +223,26 @@ public class Application implements IApplication {
 	private static void showHelp() {
 		showVersion();
 		DEBUG.ON();
-		DEBUG.LOG("sh ./gama-headless.sh [Options]\n" 
-				+ "\nList of available options:" 
-				+ "\n\t=== Headless Options ==="
-				+ "\n\t\t-m [mem]                      -- allocate memory (ex 2048m)" 
-				+ "\n\t\t" + CONSOLE_PARAMETER + "                            -- start the console to write xml parameter file" 
-				+ "\n\t\t" + VERBOSE_PARAMETER + "                            -- verbose mode" 
-				+ "\n\t\t" + THREAD_PARAMETER + " [core]                   -- set the number of core available for experimentation"
-				+ "\n\t\t" + TUNNELING_PARAMETER + "                            -- start pipeline to interact with another framework"
-				+ "\n\t\t" + PING_INTERVAL + " [pingInterval] "
-						+ "-- when in server mode (socket parameter set), defines in milliseconds the time "
-						+ "between each ping packet sent to clients to keep alive the connection. "
-						+ "The default value is 10000, set to -1 to deactivate this behaviour."
-				+ "\n\t=== Infos ===" 
-				+ "\n\t\t" + HELP_PARAMETER + "                         -- get the help of the command line" 
-				+ "\n\t\t" + GAMA_VERSION + "                      -- get the the version of gama" 
-				+ "\n\t=== Library Runner ===" 
-				+ "\n\t\t" + VALIDATE_LIBRARY_PARAMETER + "                     -- invokes GAMA to validate models present in built-in library and plugins"
-				+ "\n\t\t" + TEST_LIBRARY_PARAMETER + "                         -- invokes GAMA to execute the tests present in built-in library and plugins and display their results"
-				+ "\n\t=== GAMA Headless Runner ===" 
-				+ "\n\t\t" + SOCKET_PARAMETER + " [socketPort]          -- starts socket pipeline to interact with another framework"
-				+ "\n\t\t" + BATCH_PARAMETER + " [experimentName] [modelFile.gaml]"
+		DEBUG.LOG("sh ./gama-headless.sh [Options]\n" + "\nList of available options:" + "\n\t=== Headless Options ==="
+				+ "\n\t\t-m [mem]                      -- allocate memory (ex 2048m)" + "\n\t\t" + CONSOLE_PARAMETER
+				+ "                            -- start the console to write xml parameter file" + "\n\t\t"
+				+ VERBOSE_PARAMETER + "                            -- verbose mode" + "\n\t\t" + THREAD_PARAMETER
+				+ " [core]                   -- set the number of core available for experimentation" + "\n\t\t"
+				+ TUNNELING_PARAMETER
+				+ "                            -- start pipeline to interact with another framework" + "\n\t\t"
+				+ PING_INTERVAL + " [pingInterval] "
+				+ "-- when in server mode (socket parameter set), defines in milliseconds the time "
+				+ "between each ping packet sent to clients to keep alive the connection. "
+				+ "The default value is 10000, set to -1 to deactivate this behaviour." + "\n\t=== Infos ===" + "\n\t\t"
+				+ HELP_PARAMETER + "                         -- get the help of the command line" + "\n\t\t"
+				+ GAMA_VERSION + "                      -- get the the version of gama" + "\n\t=== Library Runner ==="
+				+ "\n\t\t" + VALIDATE_LIBRARY_PARAMETER
+				+ "                     -- invokes GAMA to validate models present in built-in library and plugins"
+				+ "\n\t\t" + TEST_LIBRARY_PARAMETER
+				+ "                         -- invokes GAMA to execute the tests present in built-in library and plugins and display their results"
+				+ "\n\t=== GAMA Headless Runner ===" + "\n\t\t" + SOCKET_PARAMETER
+				+ " [socketPort]          -- starts socket pipeline to interact with another framework" + "\n\t\t"
+				+ BATCH_PARAMETER + " [experimentName] [modelFile.gaml]"
 				+ "\n\t\t                              -- Run batch experiment in headless mode"
 				// + "\n\t\t" + GAML_PARAMETER + " [experimentName] [modelFile.gaml]"
 				// + "\n\t\t -- Run single gaml experiment in headless mode"
@@ -238,11 +292,13 @@ public class Application implements IApplication {
 			size = size - 2;
 			mustContainOutFolder = mustContainInFile = false;
 			this.socket = Integer.parseInt(after(args, SOCKET_PARAMETER));
+			isServer = true;
 		}
 		if (args.contains(SSOCKET_PARAMETER)) {
 			size = size - 2;
 			mustContainOutFolder = mustContainInFile = false;
 			this.socket = Integer.parseInt(after(args, SSOCKET_PARAMETER));
+			isServer = true;
 		}
 		if (args.contains(PING_INTERVAL)) {
 			size = size - 2;
@@ -322,7 +378,7 @@ public class Application implements IApplication {
 
 		// Check and apply parameters
 		if (!checkParameters(args)) { System.exit(-1); }
-
+		register();
 		// ========================
 		// No GAMA run
 		// ========================
@@ -341,7 +397,7 @@ public class Application implements IApplication {
 		// ========================
 		// With GAMA run
 		// ========================
-		HeadlessSimulationLoader.preloadGAMA();
+		configureInjector();
 
 		DEBUG.OFF();
 
@@ -376,14 +432,13 @@ public class Application implements IApplication {
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
-			// GamaListener.newInstance(this.socket, this);
-			new GamaListener(this.socket, this, false, "", "", "", this.ping_interval);
+			new GamaWebSocketServer(this.socket, processorQueue, false, "", "", "", this.ping_interval).start();
 		} else if (args.contains(SSOCKET_PARAMETER)) {
 			final String jks = args.contains(SSOCKET_PARAMETER_JKSPATH) ? after(args, SSOCKET_PARAMETER_JKSPATH) : "";
 			final String spwd = args.contains(SSOCKET_PARAMETER_SPWD) ? after(args, SSOCKET_PARAMETER_SPWD) : "";
 			final String kpwd = args.contains(SSOCKET_PARAMETER_KPWD) ? after(args, SSOCKET_PARAMETER_KPWD) : "";
 			// System.out.println(jks+" "+spwd+" "+kpwd);
-			new GamaListener(this.socket, this, true, jks, spwd, kpwd, ping_interval);
+			new GamaWebSocketServer(this.socket, processorQueue, true, jks, spwd, kpwd, ping_interval).start();
 		} else {
 			runSimulation(args);
 		}
@@ -522,7 +577,7 @@ public class Application implements IApplication {
 	 *             the interrupted exception
 	 */
 	public void runSimulation(final List<String> args) throws FileNotFoundException, InterruptedException {
-		if (this.verbose && !this.tunnelingMode) { DEBUG.ON(); }
+		if (this.verbose && !this.tunnelingMode) { DEBUG.FORCE_ON(); }
 		runXML(consoleMode ? new Reader(ConsoleReader.readOnConsole()) : new Reader(args.get(args.size() - 2)));
 		System.exit(0);
 	}
@@ -583,7 +638,7 @@ public class Application implements IApplication {
 	 */
 	public void runBatchSimulation(final String experimentName, final String pathToModel) {
 		assertIsAModelFile(pathToModel);
-		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final Injector injector = getInjector();
 		final GamlModelBuilder builder = new GamlModelBuilder(injector);
 
 		final List<GamlCompilationError> errors = new ArrayList<>();
@@ -628,7 +683,8 @@ public class Application implements IApplication {
 		final String argExperimentName = args.get(args.size() - 2);
 		final String argGamlFile = args.get(args.size() - 1);
 
-		Integer numberOfCores = args.contains(THREAD_PARAMETER) ? parseInt(after(args, THREAD_PARAMETER)) : null;
+		Integer numberOfCores =
+				args.contains(THREAD_PARAMETER) ? Integer.parseInt(after(args, THREAD_PARAMETER)) : null;
 		final List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(argGamlFile, numberOfCores);
 		ExperimentJob selectedJob = null;
 		for (final IExperimentJob j : jb) {
@@ -641,7 +697,7 @@ public class Application implements IApplication {
 		Globals.OUTPUT_PATH = args.get(args.size() - 3);
 
 		selectedJob.setBufferedWriter(new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME + ".xml"));
-		processorQueue.setNumberOfThreads(numberOfCores != null ? numberOfCores : DEFAULT_NB_THREADS);
+		processorQueue.setNumberOfThreads(numberOfCores != null ? numberOfCores : SimulationRuntime.DEFAULT_NB_THREADS);
 		processorQueue.execute(selectedJob);
 		processorQueue.shutdown();
 		while (!processorQueue.awaitTermination(100, TimeUnit.MILLISECONDS)) {}
@@ -675,5 +731,29 @@ public class Application implements IApplication {
 			System.exit(-1);
 		}
 	}
+
+	@Override
+	public Map<String, ISocketCommand> getServerCommands() {
+		final Map<String, ISocketCommand> cmds = new HashMap<>();
+		cmds.put("load", new LoadCommand());
+		cmds.put("play", new PlayCommand());
+		cmds.put("step", new StepCommand());
+		cmds.put("stepBack", new StepBackCommand());
+		cmds.put("pause", new PauseCommand());
+		cmds.put("stop", new StopCommand());
+		cmds.put("reload", new ReloadCommand());
+		cmds.put("expression", new ExpressionCommand());
+		cmds.put("exit", new ExitCommand());
+		cmds.put("download", new DownloadCommand());
+		cmds.put("upload", new UploadCommand());
+
+		return Collections.unmodifiableMap(cmds);
+	}
+
+	@Override
+	public boolean isHeadless() { return true; }
+
+	@Override
+	public boolean isServer() { return isServer; }
 
 }

@@ -44,7 +44,7 @@ public class ListenedVariable {
 	public int height;
 
 	/** The frame rate. */
-	int frameRate;
+	private int frameRate;
 
 	/** The type. */
 	OutputType type;
@@ -92,7 +92,7 @@ public class ListenedVariable {
 		this.name = name;
 		this.width = width;
 		this.height = height;
-		this.frameRate = frameRate;
+		this.setFrameRate(frameRate);
 		this.type = type;
 		this.path = outputPath;
 		this.setNaValue();
@@ -160,4 +160,12 @@ public class ListenedVariable {
 	 * @return the path
 	 */
 	public String getPath() { return path; }
+
+	public int getFrameRate() {
+		return frameRate;
+	}
+
+	public void setFrameRate(int frameRate) {
+		this.frameRate = frameRate;
+	}
 }

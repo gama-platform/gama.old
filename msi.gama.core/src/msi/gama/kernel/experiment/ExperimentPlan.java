@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * ExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -51,6 +51,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
+import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
@@ -64,6 +66,7 @@ import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -375,6 +378,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	/** The displayables. */
 	private final List<IExperimentDisplayable> displayables = new ArrayList();
 
+	/** The stop condition. */
+	private IExpression stopCondition;
+
 	/**
 	 * The Class ExperimentPopulation.
 	 */
@@ -488,7 +494,20 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final IExpression bm = getFacet(IKeyword.BENCHMARK);
 		benchmarkable = bm != null && Cast.asBool(myScope, bm.value(myScope));
 		shouldRecord = getFacet(IKeyword.RECORD);
+		stopCondition = getFacet(IKeyword.UNTIL);
+
 	}
+
+	/**
+	 * Gets the stop condition.
+	 *
+	 * @return the stop condition
+	 */
+	@Override
+	public IExpression getStopCondition() { return stopCondition; }
+
+	@Override
+	public void setStopCondition(final IExpression expression) { stopCondition = expression; }
 
 	@Override
 	public boolean isAutorun() { return autorun; }
@@ -1106,6 +1125,34 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public IExpression shouldRecord() {
 		return shouldRecord;
+	}
+
+	/**
+	 * Sets the parameter values.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param p
+	 *            the new parameter values
+	 * @date 15 oct. 2023
+	 */
+	public void setParameterValues(final GamaJsonList p) {
+		if (p != null) {
+			for (var param : p.listValue(null, Types.MAP, false)) {
+				@SuppressWarnings ("unchecked") IMap<String, Object> m = (IMap<String, Object>) param;
+				String type = m.get("type") != null ? m.get("type").toString() : "";
+				Object v = m.get("value");
+				if ("int".equals(type)) { v = Integer.valueOf("" + m.get("value")); }
+				if ("float".equals(type)) { v = Double.valueOf("" + m.get("value")); }
+
+				final IParameter.Batch b = getParameterByTitle(m.get("name").toString());
+				if (b != null) {
+					setParameterValueByTitle(getExperimentScope(), m.get("name").toString(), v);
+				} else if (getParameter(m.get("name").toString()) != null) {
+					setParameterValue(getExperimentScope(), m.get("name").toString(), v);
+				}
+
+			}
+		}
 	}
 
 }

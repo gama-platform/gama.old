@@ -19,9 +19,9 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.types.Types;
@@ -49,7 +49,7 @@ public class JobListFactory {
 	 */
 	public static List<IExperimentJob> constructAllJobs(final String modelPath, final long[] seeds,
 			final long finalStep, final Integer numberOfCores) throws IOException, GamaHeadlessException {
-		IModel model = HeadlessSimulationLoader.loadModel(new File(modelPath), null);
+		IModel model = GamlModelBuilder.getDefaultInstance().compile(new File(modelPath), null, null);
 		Map<JobPlanExperimentID, IExperimentJob> originalJobs = new LinkedHashMap<>();
 		if (numberOfCores != null && numberOfCores > 0) {
 			for (IExperimentPlan exp : model.getExperiments()) {

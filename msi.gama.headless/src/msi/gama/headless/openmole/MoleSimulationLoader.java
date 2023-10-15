@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MoleSimulationLoader.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * MoleSimulationLoader.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.openmole;
 
@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.List;
 
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamlCompilationError;
 
@@ -41,11 +41,15 @@ public abstract class MoleSimulationLoader {
 	/**
 	 * Load model.
 	 *
-	 * @param modelPath the model path
-	 * @param errors the errors
+	 * @param modelPath
+	 *            the model path
+	 * @param errors
+	 *            the errors
 	 * @return the i model
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
 	public static IModel loadModel(final File modelPath, final List<GamlCompilationError> errors)
 			throws IOException, GamaHeadlessException {
@@ -55,22 +59,28 @@ public abstract class MoleSimulationLoader {
 	/**
 	 * Load model.
 	 *
-	 * @param modelPath the model path
-	 * @param errors the errors
-	 * @param metadata the metadata
+	 * @param modelPath
+	 *            the model path
+	 * @param errors
+	 *            the errors
+	 * @param metadata
+	 *            the metadata
 	 * @return the i model
-	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException the gama headless exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @throws GamaHeadlessException
+	 *             the gama headless exception
 	 */
 	public static IModel loadModel(final File modelPath, final List<GamlCompilationError> errors,
 			final GamlProperties metadata) throws IOException, GamaHeadlessException {
-		return HeadlessSimulationLoader.loadModel(modelPath, errors, metadata, true);
+		return GamlModelBuilder.getDefaultInstance().compile(modelPath, errors, metadata);
 	}
 
 	/**
 	 * New experiment.
 	 *
-	 * @param model the model
+	 * @param model
+	 *            the model
 	 * @return the i mole experiment
 	 */
 	public static IMoleExperiment newExperiment(final IModel model) {

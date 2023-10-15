@@ -29,6 +29,9 @@ import java.util.function.Supplier;
  */
 public class DEBUG {
 
+	/** The force on. */
+	public static boolean FORCE_ON;
+
 	/**
 	 * A custom security manager that exposes the getClassContext() information
 	 */
@@ -297,6 +300,7 @@ public class DEBUG {
 	static boolean IS_ON(final String className) {
 		// Necessary to loop on the names as the call can emanate from an inner class or an anonymous class of the
 		// "allowed" class
+		if (FORCE_ON) return true;
 		for (final String name : REGISTERED.keySet()) { if (className.startsWith(name)) return true; }
 		return false;
 	}
@@ -374,6 +378,16 @@ public class DEBUG {
 			return null;
 		});
 		DEBUG.LINE();
+	}
+
+	/**
+	 * Force on.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 15 oct. 2023
+	 */
+	public static void FORCE_ON() {
+		FORCE_ON = true;
 	}
 
 }

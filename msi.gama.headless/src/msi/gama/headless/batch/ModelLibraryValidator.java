@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ModelLibraryValidator.java, in msi.gama.headless, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * ModelLibraryValidator.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.headless.batch;
 
@@ -22,7 +22,7 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
-import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.runtime.HeadlessApplication;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
@@ -45,8 +45,8 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 
 	@Override
 	public int start() throws IOException {
-		
-		final Injector injector = HeadlessSimulationLoader.getInjector();
+
+		final Injector injector = HeadlessApplication.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 		final int[] count = { 0 };
 		final int[] code = { 0, 0 };
@@ -59,7 +59,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		code[1] = code[0];
 		code[0] = 0;
 		count[0] = 0;
-		
+
 		this.validatePluginsFromURLs(GamaBundleLoader.getPluginsWithTests(), builder, count, code);
 
 		DEBUG.OUT("" + count[0] + " GAMA tests compiled in built-in library and plugins. " + code[0]
@@ -67,17 +67,22 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		DEBUG.OUT(code[0] + code[1]);
 		return code[0] + code[1];
 	}
-	
+
 	/**
 	 * Validate plugins from UR ls.
 	 *
-	 * @param pluginsURLs the plugins UR ls
-	 * @param builder the builder
-	 * @param count the count
-	 * @param code the code
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @param pluginsURLs
+	 *            the plugins UR ls
+	 * @param builder
+	 *            the builder
+	 * @param count
+	 *            the count
+	 * @param code
+	 *            the code
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
-	private void validatePluginsFromURLs(final Multimap<Bundle, String> pluginsURLs, final GamlModelBuilder builder, 
+	private void validatePluginsFromURLs(final Multimap<Bundle, String> pluginsURLs, final GamlModelBuilder builder,
 			final int[] count, final int[] code) throws IOException {
 		List<URL> allURLs = new ArrayList<>();
 		for (final Bundle bundle : pluginsURLs.keySet()) {
@@ -101,10 +106,14 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 	/**
 	 * Validate.
 	 *
-	 * @param builder the builder
-	 * @param countOfModelsValidated the count of models validated
-	 * @param returnCode the return code
-	 * @param pathToModel the path to model
+	 * @param builder
+	 *            the builder
+	 * @param countOfModelsValidated
+	 *            the count of models validated
+	 * @param returnCode
+	 *            the return code
+	 * @param pathToModel
+	 *            the path to model
 	 */
 	private void validate(final GamlModelBuilder builder, final int[] countOfModelsValidated, final int[] returnCode,
 			final URL pathToModel) {
@@ -112,7 +121,7 @@ public class ModelLibraryValidator extends AbstractModelLibraryRunner {
 		// log("Compiling " + pathToModel.getFile());
 		builder.compile(pathToModel, errors);
 		countOfModelsValidated[0]++;
-		errors.stream().filter(e -> e.isError()).forEach(e -> {
+		errors.stream().filter(GamlCompilationError::isError).forEach(e -> {
 			// log("Error in " + e.getURI().lastSegment() + ": " + e);
 			DEBUG.OUT("Error in " + e.getURI() + ":\n " + e.toString() + " \n " + e.getStatement().toString() + "\n");
 			returnCode[0]++;

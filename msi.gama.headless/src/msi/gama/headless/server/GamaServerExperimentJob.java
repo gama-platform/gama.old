@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * ManualExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
+ * GamaServerExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.headless.job;
+package msi.gama.headless.server;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -24,29 +24,24 @@ import javax.imageio.ImageIO;
 import org.java_websocket.WebSocket;
 
 import msi.gama.headless.core.GamaHeadlessException;
-import msi.gama.headless.core.GamaServerMessageType;
-import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.core.RichExperiment;
 import msi.gama.headless.core.RichOutput;
-import msi.gama.headless.listener.CommandResponse;
-import msi.gama.headless.listener.GamaWebSocketServer;
-import msi.gama.headless.listener.ServerExperimentController;
+import msi.gama.headless.job.ExperimentJob;
+import msi.gama.headless.job.ListenedVariable;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.model.IModel;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
+import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.GamaJsonList;
-import msi.gama.util.file.json.Jsoner;
-import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.Types;
 
 /**
  * The Class ExperimentJob.
  */
-public class ManualExperimentJob extends ExperimentJob {
+public class GamaServerExperimentJob extends ExperimentJob {
 
 	/** The server. */
 	public GamaWebSocketServer server;
@@ -55,16 +50,16 @@ public class ManualExperimentJob extends ExperimentJob {
 	public WebSocket socket;
 
 	/** The params. */
-	public GamaJsonList params;
+	// public GamaJsonList params;
 
 	/** The end cond. */
-	public String endCond = "";
+	// public String endCond = "";
 
 	/** The controller. */
-	public ServerExperimentController controller;
+	public GamaServerExperimentController controller;
 
 	/** The play command. */
-	public IMap<String, Object> playCommand;
+	// public IMap<String, Object> playCommand;
 
 	/**
 	 * Instantiates a new manual experiment job.
@@ -86,16 +81,16 @@ public class ManualExperimentJob extends ExperimentJob {
 	 * @param dialog
 	 *            the dialog
 	 */
-	public ManualExperimentJob(final String sourcePath, final String exp, final GamaWebSocketServer gamaWebSocketServer,
-			final WebSocket sk, final GamaJsonList p, final boolean console, final boolean status, final boolean dialog,
-			final boolean runtime) {
+	public GamaServerExperimentJob(final String sourcePath, final String exp,
+			final GamaWebSocketServer gamaWebSocketServer, final WebSocket sk, final GamaJsonList p, final String end,
+			final boolean console, final boolean status, final boolean dialog, final boolean runtime) {
 		// (final String sourcePath, final String exp, final long max, final String untilCond,
 		// final double s)
 		super(sourcePath, exp, 0, "", 0);
 		server = gamaWebSocketServer;
 		socket = sk;
-		params = p;
-		controller = new ServerExperimentController(this, socket, console, status, dialog, runtime);
+		// params = p;
+		controller = new GamaServerExperimentController(this, p, end, socket, console, status, dialog, runtime);
 	}
 
 	@Override
@@ -112,7 +107,7 @@ public class ManualExperimentJob extends ExperimentJob {
 	public void load() throws IOException, GamaHeadlessException {
 		System.setProperty("user.dir", this.sourcePath);
 		final List<GamlCompilationError> errors = new ArrayList<>();
-		final IModel mdl = HeadlessSimulationLoader.loadModel(new File(this.sourcePath), errors);
+		final IModel mdl = GamlModelBuilder.getDefaultInstance().compile(new File(this.sourcePath), errors, null);
 		this.modelName = mdl.getName();
 		this.simulator = new RichExperiment(mdl);
 	}
@@ -131,41 +126,13 @@ public class ManualExperimentJob extends ExperimentJob {
 	 * @throws GamaHeadlessException
 	 *             the gama headless exception
 	 */
-	public void loadAndBuildWithJson() throws InstantiationException, IllegalAccessException, ClassNotFoundException,
-			IOException, GamaHeadlessException {
-
+	public void loadAndBuildWithJson(final GamaJsonList params, final String endCond)
+			throws IOException, GamaHeadlessException {
 		this.load();
 		this.setup();
 		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
-		initEndContion(endCond);
-	}
-	
-	/**
-	 * Checks that the parameters follow the proper format asked. 
-	 * @param parameters
-	 * @param commandMap
-	 * @return If the parameters are properly formatted or null, returns null. Else returns a CommandResponse with a more precise error message.
-	 */
-	public static CommandResponse checkLoadParameters(GamaJsonList parameters, IMap<String, Object> commandMap) {
-		if (parameters != null) {
-			int i = 1;
-			for (var param : parameters.listValue(null, Types.MAP, false)) {
-				@SuppressWarnings("unchecked")
-				IMap<String, Object> m = (IMap<String, Object>) param;
-				// field "type" is optional, "name" and "value" are mandatory
-				var name = m.get("name");
-				var value = m.get("value");
-				if (name == null) {
-					return new CommandResponse(GamaServerMessageType.MalformedRequest, "Parameter number " + i + " is missing its `name` field. Parameter received: " + Jsoner.serialize(m) , commandMap, false);
-				}
-				if (value == null) {
-					return new CommandResponse(GamaServerMessageType.MalformedRequest, "Parameter number " + i + " is missing its `value` field. Parameter received: " + Jsoner.serialize(m) , commandMap, false);
-				}
-				i++;
-			}			
-		}
-		return null;
+		simulator.getExperimentPlan().setStopCondition(endCond);
 	}
 
 	/**
@@ -176,7 +143,7 @@ public class ManualExperimentJob extends ExperimentJob {
 	 */
 	@SuppressWarnings ("unchecked")
 	public void initParam(final GamaJsonList p) {
-		params = p;
+		GamaJsonList params = p;
 		if (params != null) {
 			final ExperimentPlan curExperiment = (ExperimentPlan) simulator.getExperimentPlan();
 			for (var param : params.listValue(null, Types.MAP, false)) {
@@ -198,33 +165,13 @@ public class ManualExperimentJob extends ExperimentJob {
 		}
 	}
 
-	/**
-	 * Inits the end condition.
-	 *
-	 * @param cond
-	 *            the cond
-	 */
-	// Initialize the enCondition
-	public void initEndContion(final String cond) {
-		if (cond == null || "".equals(cond)) {
-			endCondition = IExpressionFactory.FALSE_EXPR;
-		} else {
-			endCondition = GAML.getExpressionFactory().createExpr(cond, simulator.getModel().getDescription());
-			// endCondition = GAML.compileExpression(untilCond, simulator.getSimulation(),
-			// true);
-		}
-		if (endCondition.getGamlType() != Types.BOOL)
-			throw GamaRuntimeException.error("The until condition of the experiment should be a boolean",
-					simulator.getSimulation().getScope());
-	}
-
 	@Override
 	public void exportVariables() {
 		final int size = this.listenedVariables.length;
 		if (size == 0) return;
 		for (int i = 0; i < size; i++) {
 			final ListenedVariable v = this.listenedVariables[i];
-			if (this.step % v.frameRate == 0) {
+			if (this.step % v.getFrameRate() == 0) {
 				final RichOutput out = simulator.getRichOutput(v);
 				if (out == null || out.getValue() == null) {} else if (out.getValue() instanceof BufferedImage) {
 					try (ByteArrayOutputStream out1 = new ByteArrayOutputStream()) {

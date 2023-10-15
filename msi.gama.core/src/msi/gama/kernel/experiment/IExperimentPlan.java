@@ -19,10 +19,16 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.GamaJsonList;
+import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 31 mai 2011
@@ -292,4 +298,49 @@ public interface IExperimentPlan extends ISpecies {
 	 */
 	IExpression shouldRecord();
 
+	/**
+	 * Gets the stop condition.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the stop condition
+	 * @date 15 oct. 2023
+	 */
+	IExpression getStopCondition();
+
+	/**
+	 * Sets the stop condition.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param expression
+	 *            the new stop condition
+	 * @date 15 oct. 2023
+	 */
+	void setStopCondition(IExpression expression);
+
+	/**
+	 * Sets the stop condition.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param cond
+	 *            the new stop condition
+	 * @date 15 oct. 2023
+	 */
+	default void setStopCondition(final String cond) {
+		IExpression exp = IExpressionFactory.FALSE_EXPR;
+		if (cond != null && !cond.isBlank()) {
+			setStopCondition(GAML.getExpressionFactory().createExpr(cond, getModel().getDescription()));
+		}
+		if (exp.getGamlType() != Types.BOOL) throw GamaRuntimeException
+				.error("The until condition of the experiment should be a boolean", GAMA.getRuntimeScope());
+	}
+
+	/**
+	 * Sets the parameter values.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param params
+	 *            the new parameter values
+	 * @date 15 oct. 2023
+	 */
+	void setParameterValues(GamaJsonList params);
 }

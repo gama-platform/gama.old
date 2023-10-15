@@ -10,7 +10,7 @@
             thread="main"
             visible="true">
          <run
-               class="msi.gama.headless.runtime.Application">
+               class="msi.gama.headless.runtime.HeadlessApplication">
          </run>
       </application>
    </extension>

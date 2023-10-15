@@ -25,7 +25,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
 import msi.gama.headless.core.Experiment;
-import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.runtime.HeadlessApplication;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
@@ -51,7 +51,7 @@ public class ModelLibraryRunner extends AbstractModelLibraryRunner {
 
 	@Override
 	public int start() throws IOException {
-		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final Injector injector = HeadlessApplication.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 		final int[] count = { 0 };
 		final int[] code = { 0, 0 };

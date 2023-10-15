@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
@@ -25,7 +24,7 @@ import org.osgi.framework.Bundle;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 
-import msi.gama.headless.core.HeadlessSimulationLoader;
+import msi.gama.headless.runtime.HeadlessApplication;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.experiment.TestAgent;
@@ -60,7 +59,7 @@ public class ModelLibraryTester extends AbstractModelLibraryRunner {
 
 	@Override
 	public int start() throws IOException {
-		final Injector injector = HeadlessSimulationLoader.getInjector();
+		final Injector injector = HeadlessApplication.getInjector();
 		final GamlModelBuilder builder = createBuilder(injector);
 
 		original = System.out;

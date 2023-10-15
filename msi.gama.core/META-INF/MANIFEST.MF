@@ -228,6 +228,7 @@ Export-Package: msi.gama.common,
  msi.gama.runtime.benchmark,
  msi.gama.runtime.concurrent,
  msi.gama.runtime.exceptions;uses:="msi.gama.common.interfaces",
+ msi.gama.runtime.server,
  msi.gama.util;
   uses:="org.jgrapht,
    msi.gama.runtime,
