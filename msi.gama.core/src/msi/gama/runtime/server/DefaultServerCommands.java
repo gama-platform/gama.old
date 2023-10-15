@@ -29,7 +29,7 @@ import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlIdiomsProvider;
 
 /**
- * The Class GuiCommands.
+ * The Class DefaultServerCommands.
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 15 oct. 2023
