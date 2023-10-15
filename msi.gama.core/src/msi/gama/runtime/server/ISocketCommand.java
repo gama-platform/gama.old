@@ -12,6 +12,7 @@ package msi.gama.runtime.server;
 
 import org.java_websocket.WebSocket;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.IMap;
 
 /**
@@ -21,6 +22,45 @@ import msi.gama.util.IMap;
  * @date 15 oct. 2023
  */
 public interface ISocketCommand {
+
+	/** The play. */
+	String PLAY = "play";
+
+	/** The pause. */
+	String PAUSE = "pause";
+
+	/** The step. */
+	String STEP = IKeyword.STEP;
+
+	/** The back. */
+	String BACK = "back"; // synonym to stepBack
+
+	/** The stepback. */
+	String STEPBACK = "stepBack";
+
+	/** The load. */
+	String LOAD = "load";
+
+	/** The stop. */
+	String STOP = "stop";
+
+	/** The reload. */
+	String RELOAD = "reload";
+
+	/** The expression. */
+	String EXPRESSION = "expression";
+
+	/** The evaluate. */
+	String EVALUATE = "evaluate"; // synonym to expression
+
+	/** The exit. */
+	String EXIT = "exit";
+
+	/** The download. */
+	String DOWNLOAD = "download";
+
+	/** The upload. */
+	String UPLOAD = "upload";
 
 	/**
 	 * Execute.

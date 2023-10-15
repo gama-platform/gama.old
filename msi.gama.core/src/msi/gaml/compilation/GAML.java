@@ -122,6 +122,9 @@ public class GAML {
 	/** The gaml ecore utils. */
 	private static IGamlEcoreUtils gamlEcoreUtils = null;
 
+	/** The gaml model builer. */
+	private static IGamlModelBuilder gamlModelBuilder = null;
+
 	/**
 	 * Not null.
 	 *
@@ -318,6 +321,19 @@ public class GAML {
 	}
 
 	/**
+	 * Register gaml model builder.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param defaultInstance
+	 *            the default instance
+	 * @date 15 oct. 2023
+	 */
+	public static void registerGamlModelBuilder(final IGamlModelBuilder builder) {
+		gamlModelBuilder = builder;
+
+	}
+
+	/**
 	 * Gets the ecore utils.
 	 *
 	 * @return the ecore utils
@@ -497,5 +513,14 @@ public class GAML {
 			return true;
 		};
 	}
+
+	/**
+	 * Gets the model builder.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the model builder
+	 * @date 15 oct. 2023
+	 */
+	public static IGamlModelBuilder getModelBuilder() { return gamlModelBuilder; }
 
 }

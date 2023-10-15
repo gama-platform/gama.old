@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
@@ -52,6 +51,7 @@ import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IGamaApplication;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.server.CommandExecutor;
 import msi.gama.runtime.server.ISocketCommand;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
@@ -287,7 +287,7 @@ public class Application implements IGamaApplication {
 	public static OpenDocumentEventProcessor getOpenDocumentProcessor() { return OPEN_DOCUMENT_PROCESSOR; }
 
 	@Override
-	public Map<String, ISocketCommand> getServerCommands() { return Collections.EMPTY_MAP; }
+	public Map<String, ISocketCommand> getServerCommands() { return CommandExecutor.getDefaultCommands(); }
 
 	@Override
 	public boolean isHeadless() { return false; }

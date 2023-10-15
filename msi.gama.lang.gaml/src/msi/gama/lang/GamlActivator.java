@@ -18,6 +18,7 @@ import org.osgi.framework.BundleContext;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
 import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
 import ummisco.gama.dev.utils.DEBUG;
@@ -35,6 +36,7 @@ public class GamlActivator implements BundleActivator {
 				GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
 				GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
 				GAML.registerGamlEcoreUtils(EGaml.getInstance());
+				GAML.registerGamlModelBuilder(GamlModelBuilder.getDefaultInstance());
 			});
 		});
 

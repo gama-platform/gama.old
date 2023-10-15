@@ -49,8 +49,6 @@ import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
-import msi.gama.headless.listener.DownloadCommand;
-import msi.gama.headless.listener.ExitCommand;
 import msi.gama.headless.listener.ExpressionCommand;
 import msi.gama.headless.listener.LoadCommand;
 import msi.gama.headless.listener.PauseCommand;
@@ -59,7 +57,6 @@ import msi.gama.headless.listener.ReloadCommand;
 import msi.gama.headless.listener.StepBackCommand;
 import msi.gama.headless.listener.StepCommand;
 import msi.gama.headless.listener.StopCommand;
-import msi.gama.headless.listener.UploadCommand;
 import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.server.GamaServerGUIHandler;
 import msi.gama.headless.xml.ConsoleReader;
@@ -73,6 +70,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.DefaultServerCommands;
 import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gama.runtime.server.ISocketCommand;
 import msi.gaml.compilation.GamlCompilationError;
@@ -735,18 +733,19 @@ public class HeadlessApplication implements IGamaApplication {
 	@Override
 	public Map<String, ISocketCommand> getServerCommands() {
 		final Map<String, ISocketCommand> cmds = new HashMap<>();
-		cmds.put("load", new LoadCommand());
-		cmds.put("play", new PlayCommand());
-		cmds.put("step", new StepCommand());
-		cmds.put("stepBack", new StepBackCommand());
-		cmds.put("pause", new PauseCommand());
-		cmds.put("stop", new StopCommand());
-		cmds.put("reload", new ReloadCommand());
-		cmds.put("expression", new ExpressionCommand());
-		cmds.put("exit", new ExitCommand());
-		cmds.put("download", new DownloadCommand());
-		cmds.put("upload", new UploadCommand());
-
+		cmds.put(ISocketCommand.LOAD, new LoadCommand());
+		cmds.put(ISocketCommand.PLAY, new PlayCommand());
+		cmds.put(ISocketCommand.STEP, new StepCommand());
+		cmds.put(ISocketCommand.STEPBACK, new StepBackCommand());
+		cmds.put(ISocketCommand.BACK, new StepBackCommand());
+		cmds.put(ISocketCommand.PAUSE, new PauseCommand());
+		cmds.put(ISocketCommand.STOP, new StopCommand());
+		cmds.put(ISocketCommand.RELOAD, new ReloadCommand());
+		cmds.put(ISocketCommand.EXPRESSION, new ExpressionCommand());
+		cmds.put(ISocketCommand.EVALUATE, new ExpressionCommand());
+		cmds.put(ISocketCommand.EXIT, DefaultServerCommands::EXIT);
+		cmds.put(ISocketCommand.DOWNLOAD, DefaultServerCommands::DOWNLOAD);
+		cmds.put(ISocketCommand.UPLOAD, DefaultServerCommands::UPLOAD);
 		return Collections.unmodifiableMap(cmds);
 	}
 

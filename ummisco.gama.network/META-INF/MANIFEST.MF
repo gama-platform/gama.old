@@ -8,7 +8,6 @@ Export-Package:
  com.fazecast.jSerialComm,
  org.eclipse.paho.client.mqttv3,
  org.eclipse.paho.client.mqttv3.persist,
- org.slf4j,
  ummisco.gama.network.common;
   uses:="msi.gama.extensions.messaging,
    msi.gama.metamodel.agent,
@@ -41,8 +40,7 @@ Require-Bundle: msi.gama.core,
 Bundle-ClassPath: .,
  ext/arduino.jar,
  ext/jSerialComm-2.9.3.jar,
- ext/org.eclipse.paho.client.mqttv3-1.2.5.jar,
- ext/slf4j-api-2.0.0-alpha1.jar
+ ext/org.eclipse.paho.client.mqttv3-1.2.5.jar
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: ummisco.gama.network
  

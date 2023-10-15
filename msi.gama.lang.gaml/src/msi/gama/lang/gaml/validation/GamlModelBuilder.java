@@ -28,6 +28,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.IGamlModelBuilder;
 import msi.gaml.descriptions.ModelDescription;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
@@ -39,7 +40,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @since 8 avr. 2014
  *
  */
-public class GamlModelBuilder {
+public class GamlModelBuilder implements IGamlModelBuilder {
 
 	/** The default instance. */
 	private static GamlModelBuilder defaultInstance = new GamlModelBuilder();
@@ -79,6 +80,7 @@ public class GamlModelBuilder {
 	 *            the errors
 	 * @return the i model
 	 */
+	@Override
 	public IModel compile(final URL url, final List<GamlCompilationError> errors) {
 		try {
 			final java.net.URI uri = new java.net.URI(url.getProtocol(), url.getPath(), null).normalize();
@@ -108,6 +110,7 @@ public class GamlModelBuilder {
 	 *             Signals that errors occured
 	 * @date 15 oct. 2023
 	 */
+	@Override
 	public synchronized IModel compile(final File myFile, final List<GamlCompilationError> errors,
 			final GamlProperties metaProperties) throws IOException, IllegalArgumentException {
 		if (myFile == null) throw new IOException("Model file is null");
@@ -135,6 +138,7 @@ public class GamlModelBuilder {
 	 *            the errors
 	 * @return the i model
 	 */
+	@Override
 	public IModel compile(final URI uri, final List<GamlCompilationError> errors) {
 		// We build the description and fill the errors list
 		final ModelDescription model = buildModelDescription(uri, errors);
@@ -187,6 +191,7 @@ public class GamlModelBuilder {
 	 * @param URLs
 	 *            the UR ls
 	 */
+	@Override
 	public void loadURLs(final List<URL> URLs) {
 		for (final URL url : URLs) {
 			java.net.URI uri;

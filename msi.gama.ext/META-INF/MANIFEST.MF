@@ -636,6 +636,7 @@ Export-Package: com.conversantmedia.util.collection,
  org.postgresql.translation,
  org.postgresql.util,
  org.postgresql.xa,
+ org.slf4j,
  org.sqlite,
  org.sqlite.core,
  org.sqlite.javax,
@@ -805,6 +806,7 @@ Bundle-ClassPath: .,
  streamex/streamex-0.8.1.jar,
  geotools/activation.jar,
  jfreechart/jfreechart-1.5.4.jar,
- Java-WebSocket-1.5.3.jar
+ Java-WebSocket-1.5.3.jar,
+ slf4j-api-2.0.0-alpha1.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.ext

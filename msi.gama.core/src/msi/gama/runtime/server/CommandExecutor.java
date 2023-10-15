@@ -10,6 +10,21 @@
  ********************************************************************************************************/
 package msi.gama.runtime.server;
 
+import static java.util.Map.entry;
+import static msi.gama.runtime.server.ISocketCommand.BACK;
+import static msi.gama.runtime.server.ISocketCommand.DOWNLOAD;
+import static msi.gama.runtime.server.ISocketCommand.EVALUATE;
+import static msi.gama.runtime.server.ISocketCommand.EXIT;
+import static msi.gama.runtime.server.ISocketCommand.EXPRESSION;
+import static msi.gama.runtime.server.ISocketCommand.LOAD;
+import static msi.gama.runtime.server.ISocketCommand.PAUSE;
+import static msi.gama.runtime.server.ISocketCommand.PLAY;
+import static msi.gama.runtime.server.ISocketCommand.RELOAD;
+import static msi.gama.runtime.server.ISocketCommand.STEP;
+import static msi.gama.runtime.server.ISocketCommand.STEPBACK;
+import static msi.gama.runtime.server.ISocketCommand.STOP;
+import static msi.gama.runtime.server.ISocketCommand.UPLOAD;
+
 import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -33,6 +48,9 @@ import msi.gaml.types.Types;
  * @date 15 oct. 2023
  */
 public class CommandExecutor {
+
+	/** The Constant DEFAULT_COMMANDS. */
+	private static Map<String, ISocketCommand> DEFAULT_COMMANDS = null;
 
 	/** The commands. */
 	protected final Map<String, ISocketCommand> commands;
@@ -58,9 +76,7 @@ public class CommandExecutor {
 	 */
 
 	public CommandExecutor() {
-
 		commands = GAMA.getApplication().getServerCommands();
-
 		commandQueue = new LinkedList<>();
 		commandExecutionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandExecutionThread.start();
@@ -133,6 +149,27 @@ public class CommandExecutor {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Gets the default commands.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the default commands
+	 * @date 15 oct. 2023
+	 */
+	public static Map<String, ISocketCommand> getDefaultCommands() {
+		if (DEFAULT_COMMANDS == null) {
+
+			DEFAULT_COMMANDS = Map.ofEntries(entry(LOAD, DefaultServerCommands::LOAD), entry(PLAY, DefaultServerCommands::PLAY),
+					entry(PAUSE, DefaultServerCommands::PAUSE), entry(STEP, DefaultServerCommands::STEP), entry(BACK, DefaultServerCommands::BACK),
+					entry(STEPBACK, DefaultServerCommands::BACK), entry(STOP, DefaultServerCommands::STOP),
+					entry(RELOAD, DefaultServerCommands::RELOAD), entry(EXPRESSION, DefaultServerCommands::EVAL),
+					entry(EVALUATE, DefaultServerCommands::EVAL), entry(EXIT, DefaultServerCommands::EXIT),
+					entry(DOWNLOAD, DefaultServerCommands::DOWNLOAD), entry(UPLOAD, DefaultServerCommands::UPLOAD));
+
+		}
+		return DEFAULT_COMMANDS;
 	}
 
 }

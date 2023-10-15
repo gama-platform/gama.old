@@ -105,8 +105,6 @@ public class LoadCommand implements ISocketCommand {
 		final String argExperimentName = map.get("experiment").toString();
 
 		// we check if the experiment is present in the file
-		// var listExperimentsInFile = getExperimentsInFile(ff.getAbsolutePath().toString());
-		// if (!listExperimentsInFile.stream().anyMatch(jb -> jb.getExperimentName().equals(argExperimentName)))
 		if (!hasExperiment(ff.getAbsolutePath().toString(), argExperimentName))
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"'" + argExperimentName + "' is not an experiment present in '" + ff.getAbsolutePath() + "'", map,
