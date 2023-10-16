@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * GamaWebSocketServer.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.3).
+ * GamaWebSocketServer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -127,6 +127,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 				e.printStackTrace();
 			}
 		}
+		start();
 		// app = a;
 		System.out.println("Gama Listener started on port: " + getPort());
 
@@ -139,6 +140,16 @@ public class GamaWebSocketServer extends WebSocketServer {
 			}
 		};
 		System.setErr(errorStream);
+
+	}
+
+	/**
+	 * Infinite loop.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 16 oct. 2023
+	 */
+	public void infiniteLoop() {
 
 		try {
 

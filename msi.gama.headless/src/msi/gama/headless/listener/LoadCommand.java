@@ -141,43 +141,6 @@ public class LoadCommand implements ISocketCommand {
 				map, false);
 	}
 
-	// /**
-	// * Gets the experiments in file.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param modelPath
-	// * the model path
-	// * @return the experiments in file
-	// * @throws IOException
-	// * Signals that an I/O exception has occurred.
-	// * @throws GamaHeadlessException
-	// * the gama headless exception
-	// * @date 15 oct. 2023
-	// */
-	// List<IExperimentJob> getExperimentsInFile(final String modelPath) throws IOException, GamaHeadlessException {
-	// IModel model = HeadlessSimulationLoader.loadModel(new File(modelPath), null);
-	// Map<JobPlanExperimentID, IExperimentJob> originalJobs = new LinkedHashMap<>();
-	// for (final ExperimentDescription expD : model.getDescription().getExperiments()) {
-	// final IExperimentJob tj = ExperimentJob.loadAndBuildJob(expD, model.getFilePath(), model);
-	// // TODO AD Why 12 ??
-	// tj.setSeed(12);
-	// originalJobs.put(new JobPlanExperimentID(tj.getModelName(), tj.getExperimentName()), tj);
-	// }
-	// final List<IExperimentJob> jobs = new ArrayList<>();
-	// final long[] seeds = { ExperimentationPlanFactory.DEFAULT_SEED };
-	// for (final IExperimentJob locJob : originalJobs.values()) {
-	// final List<IExperimentJob> res = new ArrayList<>();
-	// for (final long sd : seeds) {
-	// final IExperimentJob job = new ExperimentJob((ExperimentJob) locJob);
-	// job.setSeed(sd);
-	// job.setFinalStep(ExperimentationPlanFactory.DEFAULT_FINAL_STEP);
-	// res.add(job);
-	// }
-	// jobs.addAll(res);
-	// }
-	// return jobs;
-	// }
-
 	/**
 	 * Checks for experiment.
 	 *

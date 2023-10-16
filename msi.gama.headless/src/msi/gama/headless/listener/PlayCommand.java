@@ -12,7 +12,6 @@ package msi.gama.headless.listener;
 
 import org.java_websocket.WebSocket;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaWebSocketServer;
@@ -31,11 +30,10 @@ public class PlayCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
 
-		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final boolean sync = map.get("sync") != null ? Boolean.parseBoolean("" + map.get("sync")) : false;
-		final String socket_id =
-				map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
-		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
+		final String exp_id = map.get(EXP_ID) != null ? map.get(EXP_ID).toString() : "";
+		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
+		final String socket_id = map.get(SOCKET_ID) != null ? map.get(SOCKET_ID).toString() : "" + socket.hashCode();
+		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get(SERVER);
 		DEBUG.OUT("play");
 		DEBUG.OUT(map.get("model"));
 		DEBUG.OUT(map.get("experiment"));
@@ -49,7 +47,7 @@ public class PlayCommand implements ISocketCommand {
 					"Unable to find the experiment or simulation", map, false);
 		gama_exp.getAgent().setAttribute("%%playCommand%%", map);
 		gama_exp.getController().userStart();
-		boolean hasEndCond = map.containsKey(IKeyword.UNTIL) && !map.get(IKeyword.UNTIL).toString().isBlank();
+		boolean hasEndCond = map.containsKey(UNTIL) && !map.get(UNTIL).toString().isBlank();
 		if (hasEndCond && sync) return null;
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}

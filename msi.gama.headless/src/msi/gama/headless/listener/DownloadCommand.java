@@ -33,7 +33,7 @@ public class DownloadCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
 
-		final String filepath = map.containsKey("file") ? map.get("file").toString() : null;
+		final String filepath = map.containsKey(FILE) ? map.get(FILE).toString() : null;
 
 		if (filepath == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
 				"For 'upload', mandatory parameter is: 'file'", map, false);

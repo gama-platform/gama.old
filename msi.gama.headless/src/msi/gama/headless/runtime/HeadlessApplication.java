@@ -430,13 +430,13 @@ public class HeadlessApplication implements IGamaApplication {
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
-			new GamaWebSocketServer(this.socket, processorQueue, false, "", "", "", this.ping_interval).start();
+			new GamaWebSocketServer(this.socket, processorQueue, false, "", "", "", this.ping_interval).infiniteLoop();
 		} else if (args.contains(SSOCKET_PARAMETER)) {
 			final String jks = args.contains(SSOCKET_PARAMETER_JKSPATH) ? after(args, SSOCKET_PARAMETER_JKSPATH) : "";
 			final String spwd = args.contains(SSOCKET_PARAMETER_SPWD) ? after(args, SSOCKET_PARAMETER_SPWD) : "";
 			final String kpwd = args.contains(SSOCKET_PARAMETER_KPWD) ? after(args, SSOCKET_PARAMETER_KPWD) : "";
 			// System.out.println(jks+" "+spwd+" "+kpwd);
-			new GamaWebSocketServer(this.socket, processorQueue, true, jks, spwd, kpwd, ping_interval).start();
+			new GamaWebSocketServer(this.socket, processorQueue, true, jks, spwd, kpwd, ping_interval).infiniteLoop();
 		} else {
 			runSimulation(args);
 		}

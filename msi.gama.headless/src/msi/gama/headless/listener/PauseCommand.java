@@ -30,10 +30,9 @@ public class PauseCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
 
-		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final String socket_id =
-				map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
-		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
+		final String exp_id = map.get(EXP_ID) != null ? map.get(EXP_ID).toString() : "";
+		final String socket_id = map.get(SOCKET_ID) != null ? map.get(SOCKET_ID).toString() : "" + socket.hashCode();
+		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get(SERVER);
 		DEBUG.OUT("pause");
 		DEBUG.OUT(exp_id);
 		DEBUG.OUT(socket_id);

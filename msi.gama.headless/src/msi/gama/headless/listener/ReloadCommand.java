@@ -33,10 +33,9 @@ public class ReloadCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
 
-		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final String socket_id =
-				map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
-		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
+		final String exp_id = map.get(EXP_ID) != null ? map.get(EXP_ID).toString() : "";
+		final String socket_id = map.get(SOCKET_ID) != null ? map.get(SOCKET_ID).toString() : "" + socket.hashCode();
+		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get(SERVER);
 		DEBUG.OUT("reload");
 		DEBUG.OUT(exp_id);
 
@@ -47,9 +46,9 @@ public class ReloadCommand implements ISocketCommand {
 		if (gama_exp == null || gama_exp.getCurrentSimulation() == null)
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);
-		GamaJsonList params = (GamaJsonList) map.get("parameters");
+		GamaJsonList params = (GamaJsonList) map.get(PARAMETERS);
 		gama_exp.setParameterValues(params);
-		gama_exp.setStopCondition((String) map.get("until"));
+		gama_exp.setStopCondition((String) map.get(UNTIL));
 
 		// checking the parameters' format
 		var parametersError = CommandExecutor.checkLoadParameters(params, map);

@@ -30,12 +30,11 @@ public class StepBackCommand implements ISocketCommand {
 	@Override
 	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
 
-		final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
-		final int nb_step = map.get("nb_step") != null ? Integer.parseInt(map.get("nb_step").toString()) : 1;
-		final String socket_id =
-				map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
-		final boolean sync = map.get("sync") != null ? Boolean.parseBoolean("" + map.get("sync")) : false;
-		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
+		final String exp_id = map.get(EXP_ID) != null ? map.get(EXP_ID).toString() : "";
+		final int nb_step = map.get(NB_STEP) != null ? Integer.parseInt(map.get(NB_STEP).toString()) : 1;
+		final String socket_id = map.get(SOCKET_ID) != null ? map.get(SOCKET_ID).toString() : "" + socket.hashCode();
+		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
+		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get(SERVER);
 		DEBUG.OUT("stepBack");
 		DEBUG.OUT(exp_id);
 

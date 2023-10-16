@@ -23,6 +23,35 @@ import msi.gama.util.IMap;
  */
 public interface ISocketCommand {
 
+	/** The file. */
+	String FILE = "file";
+	/** The Constant ESCAPED. */
+	String ESCAPED = "escaped";
+
+	/** The Constant EXPR. */
+	String EXPR = "expr";
+
+	/** The Constant PARAMETERS. */
+	String PARAMETERS = "parameters";
+
+	/** The Constant UNTIL. */
+	String UNTIL = "until";
+
+	/** The Constant SERVER. */
+	String SERVER = "server";
+
+	/** The Constant SYNC. */
+	String SYNC = "sync";
+
+	/** The Constant SOCKET_ID. */
+	String SOCKET_ID = "socket_id";
+
+	/** The Constant EXP_ID. */
+	String EXP_ID = "exp_id";
+
+	/** The Constant NB_STEP. */
+	String NB_STEP = "nb_step";
+
 	/** The play. */
 	String PLAY = "play";
 
