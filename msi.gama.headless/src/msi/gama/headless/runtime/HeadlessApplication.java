@@ -186,7 +186,7 @@ public class HeadlessApplication implements IGamaApplication {
 
 	/** The ping interval. */
 	// the interval between each ping sent by the server, -1 to deactivate this behaviour
-	public int ping_interval = 10000;
+	public int ping_interval = GamaWebSocketServer.DEFAULT_PING_INTERVAL;
 
 	/** The console mode. */
 	public boolean consoleMode = false;
@@ -405,24 +405,6 @@ public class HeadlessApplication implements IGamaApplication {
 		if (args.contains(RUN_LIBRARY_PARAMETER)) return ModelLibraryRunner.getInstance().start();
 		if (args.contains(CHECK_MODEL_PARAMETER)) {
 			ModelLibraryGenerator.start(this, args);
-			// else if (args.contains(WRITE_XMI)) {
-			// String outputDir = "all-resources";
-			// DEBUG.ON();
-			// DEBUG.LOG("Writing xmi files to " + outputDir);
-			// IMap<EClass, Resource> resources = BuiltinGlobalScopeProvider.getResources();
-			// resources.forEach((k, res) -> {
-			// String out = k.getName() + ".xmi";
-			// OutputStream outf;
-			// try {
-			// outf = new FileOutputStream(out);
-			// res.save(outf, null);
-			// DEBUG.LOG("Resource written to " + out);
-			// } catch (Exception e1) {
-			// e1.printStackTrace();
-			// }
-			// });
-			// DEBUG.LOG("Done");
-			// }
 		} else if (args.contains(BATCH_PARAMETER)) {
 			runBatchSimulation(args.get(args.size() - 2), args.get(args.size() - 1));
 		} else if (args.contains(GAML_PARAMETER)) {
@@ -430,13 +412,12 @@ public class HeadlessApplication implements IGamaApplication {
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
-			new GamaWebSocketServer(this.socket, processorQueue, false, "", "", "", this.ping_interval).infiniteLoop();
+			GamaWebSocketServer.StartForHeadless(socket, processorQueue, ping_interval);
 		} else if (args.contains(SSOCKET_PARAMETER)) {
 			final String jks = args.contains(SSOCKET_PARAMETER_JKSPATH) ? after(args, SSOCKET_PARAMETER_JKSPATH) : "";
 			final String spwd = args.contains(SSOCKET_PARAMETER_SPWD) ? after(args, SSOCKET_PARAMETER_SPWD) : "";
 			final String kpwd = args.contains(SSOCKET_PARAMETER_KPWD) ? after(args, SSOCKET_PARAMETER_KPWD) : "";
-			// System.out.println(jks+" "+spwd+" "+kpwd);
-			new GamaWebSocketServer(this.socket, processorQueue, true, jks, spwd, kpwd, ping_interval).infiniteLoop();
+			GamaWebSocketServer.StartForSecureHeadless(socket, processorQueue, true, jks, spwd, kpwd, ping_interval);
 		} else {
 			runSimulation(args);
 		}

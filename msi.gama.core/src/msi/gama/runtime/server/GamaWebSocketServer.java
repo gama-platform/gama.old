@@ -28,7 +28,6 @@ import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.java_websocket.WebSocket;
-import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.SSLParametersWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
@@ -46,91 +45,158 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamaWebSocketServer extends WebSocketServer {
 
+	/** The Constant DEFAULT_PING_INTERVAL. */
+	public static final int DEFAULT_PING_INTERVAL = 10000;
+
+	/**
+	 * Start for headless with SSL security on
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param port
+	 *            the port to which to listen to
+	 * @param runner
+	 *            the runner a ThreadPoolExecutor to launch concurrent experiments
+	 * @param ssl
+	 *            the ssl wether to use ssl or no
+	 * @param jksPath
+	 *            the jks path the store path
+	 * @param spwd
+	 *            the spwd the store password
+	 * @param kpwd
+	 *            the kpwd the key password
+	 * @param pingInterval
+	 *            the ping interval
+	 * @return the gama web socket server
+	 * @date 16 oct. 2023
+	 */
+	public static GamaWebSocketServer StartForSecureHeadless(final int port, final ThreadPoolExecutor runner,
+			final boolean ssl, final String jksPath, final String spwd, final String kpwd, final int pingInterval) {
+		GamaWebSocketServer server = new GamaWebSocketServer(port, runner, ssl, jksPath, spwd, kpwd, pingInterval);
+		try {
+			server.start();
+			return server;
+		} finally {
+			server.infiniteLoop();
+		}
+	}
+
+	/**
+	 * Start for headless without SSL
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param port
+	 *            the port to listen to
+	 * @param runner
+	 *            the runner
+	 * @param pingInterval
+	 *            the ping interval
+	 * @return the gama web socket server
+	 * @date 16 oct. 2023
+	 */
+	public static GamaWebSocketServer StartForHeadless(final int port, final ThreadPoolExecutor runner,
+			final int pingInterval) {
+		GamaWebSocketServer server = new GamaWebSocketServer(port, runner, false, "", "", "", pingInterval);
+		try {
+			server.start();
+			return server;
+		} finally {
+			server.infiniteLoop();
+		}
+	}
+
+	/**
+	 * Start for GUI. No SSL and a default ping interval
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param port
+	 *            the port
+	 * @return the gama web socket server
+	 * @date 16 oct. 2023
+	 */
+	public static GamaWebSocketServer StartForGUI(final int port) {
+		return StartForGUI(port, DEFAULT_PING_INTERVAL);
+	}
+
+	/**
+	 * Start for GUI.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param port
+	 *            the port to which to listen to
+	 * @param ssl
+	 *            the ssl wether to use ssl or no
+	 * @param jksPath
+	 *            the jks path the store path
+	 * @param spwd
+	 *            the spwd the store password
+	 * @param kpwd
+	 *            the kpwd the key password
+	 * @param pingInterval
+	 *            the ping interval
+	 * @return the gama web socket server
+	 * @date 16 oct. 2023
+	 */
+	public static GamaWebSocketServer StartForGUI(final int port, final int pingInterval) {
+		GamaWebSocketServer server = new GamaWebSocketServer(port, null, false, "", "", "", pingInterval);
+		server.start();
+		return server;
+	}
+
 	/** The executor. */
 	private final ThreadPoolExecutor executor;
 
-	/** The simulations. */
-	final private ConcurrentHashMap<String, ConcurrentHashMap<String, IExperimentPlan>> launchedExperiments =
-			new ConcurrentHashMap<>();
-
-	/** The app. */
-	// private final Application app;
+	/** The experiments. Only used in the headless version */
+	private final Map<String, Map<String, IExperimentPlan>> launchedExperiments = new ConcurrentHashMap<>();
 
 	/** The cmd helper. */
-	CommandExecutor cmdHelper;
+	private final CommandExecutor cmdHelper = new CommandExecutor();
 
-	/** The can ping. */
-	// variables for the keepalive pings
-	public final boolean canPing; // false if pingInterval is negative
+	/** The can ping. false if pingInterval is negative */
+	public final boolean canPing;
 
-	/** The ping interval. */
-	public final int pingInterval; // the time interval between two ping requests in ms
+	/** The ping interval. the time interval between two ping requests in ms */
+	public final int pingInterval;
 
-	/** The ping timers. */
-	protected Map<WebSocket, Timer> pingTimers; // map of all connected clients and their associated timers running ping
-												// requests
+	/** The ping timers. map of all connected clients and their associated timers running ping requests */
+	protected final Map<WebSocket, Timer> pingTimers = new HashMap<>();
 
 	/**
 	 * Instantiates a new gama web socket server.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param port
-	 *            the port
-	 * @param a
-	 *            the a
-	 * @param l
-	 *            the l
+	 *            the port to listen to
+	 * @param runner
+	 *            the runner
 	 * @param ssl
 	 *            the ssl
+	 * @param jksPath
+	 *            the jks path
+	 * @param spwd
+	 *            the spwd
+	 * @param kpwd
+	 *            the kpwd
+	 * @param interval
+	 *            the interval
+	 * @date 16 oct. 2023
 	 */
-	public GamaWebSocketServer(final int port, final ThreadPoolExecutor runner, final boolean ssl, final String jksPath,
-			final String spwd, final String kpwd, final int ping_interval) {
+	private GamaWebSocketServer(final int port, final ThreadPoolExecutor runner, final boolean ssl,
+			final String jksPath, final String spwd, final String kpwd, final int interval) {
 		super(new InetSocketAddress(port));
 		executor = runner;
-		canPing = ping_interval >= 0;
-		pingInterval = ping_interval;
-		pingTimers = new HashMap<>();
+		canPing = interval >= 0;
+		pingInterval = interval;
+		if (ssl) { configureWebSocketFactoryWithSSL(jksPath, spwd, kpwd); }
+		configureErrorStream();
+	}
 
-		// if (a.verbose) { DEBUG.ON(); }
-		cmdHelper = new CommandExecutor();
-		if (ssl) {
-			// load up the key store
-			String STORETYPE = "JKS";
-			// File currentJavaJarFile =
-			// new File(GamaListener.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-			// String currentJavaJarFilePath = currentJavaJarFile.getAbsolutePath();
-			// String KEYSTORE = currentJavaJarFilePath.replace(currentJavaJarFile.getName(), "") + "/../keystore.jks";
-			String KEYSTORE = jksPath;// "/Users/hqn88/git/gama.client/server/.cert/cert.jks";
-			String STOREPASSWORD = spwd;// "abcdef";
-			String KEYPASSWORD = kpwd;// "abcdef";
-
-			KeyStore ks;
-			try (FileInputStream fis = new FileInputStream(new File(KEYSTORE))) {
-				ks = KeyStore.getInstance(STORETYPE);
-
-				ks.load(fis, STOREPASSWORD.toCharArray());
-
-				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-				kmf.init(ks, KEYPASSWORD.toCharArray());
-				TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-				tmf.init(ks);
-
-				SSLContext sslContext = null;
-				sslContext = SSLContext.getInstance("TLS");
-				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-				SSLParameters sslParameters = new SSLParameters();
-
-				sslParameters.setNeedClientAuth(false);
-				this.setWebSocketFactory(new SSLParametersWebSocketServerFactory(sslContext, sslParameters));
-				// this.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
-			} catch (Exception e) {
-
-				e.printStackTrace();
-			}
-		}
-		start();
-		// app = a;
-		System.out.println("Gama Listener started on port: " + getPort());
-
+	/**
+	 * Configure error stream so as to broadcast errors
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 16 oct. 2023
+	 */
+	private void configureErrorStream() {
 		PrintStream errorStream = new PrintStream(System.err) {
 
 			@Override
@@ -140,7 +206,40 @@ public class GamaWebSocketServer extends WebSocketServer {
 			}
 		};
 		System.setErr(errorStream);
+	}
 
+	/**
+	 * Configure web socket factory.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param keyStore
+	 *            the jks path
+	 * @param spwd
+	 *            the spwd
+	 * @param kpwd
+	 *            the kpwd
+	 * @date 16 oct. 2023
+	 */
+	private void configureWebSocketFactoryWithSSL(final String keyStore, final String storePassword,
+			final String keyPassword) {
+		// load up the key store
+		KeyStore ks;
+		try (FileInputStream fis = new FileInputStream(new File(keyStore))) {
+			ks = KeyStore.getInstance("JKS");
+			ks.load(fis, storePassword.toCharArray());
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+			kmf.init(ks, keyPassword.toCharArray());
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+			tmf.init(ks);
+			SSLContext sslContext = null;
+			sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+			SSLParameters sslParameters = new SSLParameters();
+			sslParameters.setNeedClientAuth(false);
+			this.setWebSocketFactory(new SSLParametersWebSocketServerFactory(sslContext, sslParameters));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -150,12 +249,9 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @date 16 oct. 2023
 	 */
 	public void infiniteLoop() {
-
 		try {
-
 			// empty loop to keep alive the server and catch exceptions
 			while (true) {}
-
 		} catch (Exception ex) {
 			ex.printStackTrace(); // will be broadcasted to every client
 		}
@@ -163,15 +259,9 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onOpen(final WebSocket conn, final ClientHandshake handshake) {
-		// conn.send("Welcome " +
-		// conn.getRemoteSocketAddress().getAddress().getHostAddress() + " to the
-		// server!");
-		// broadcast("new connection: " + handshake.getResourceDescriptor()); // This
-		// method sends a message to all clients connected
 		// DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
 		conn.send(Jsoner
 				.serialize(new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, "" + conn.hashCode())));
-
 		if (canPing) {
 			var timer = new Timer();
 			timer.scheduleAtFixedRate(new TimerTask() {
@@ -182,33 +272,12 @@ public class GamaWebSocketServer extends WebSocketServer {
 			}, 0, pingInterval);
 			pingTimers.put(conn, timer);
 		}
-		// String path = URI.create(handshake.getResourceDescriptor()).getPath();
-	}
-
-	/**
-	 * Gets the default app.
-	 *
-	 * @return the default app
-	 */
-	// public Application getDefaultApp() { return app; }
-
-	@Override
-	public void onWebsocketPing(final WebSocket conn, final Framedata f) {
-		// TODO Auto-generated method stub
-		super.onWebsocketPing(conn, f);
-	}
-
-	@Override
-	public void onWebsocketPong(final WebSocket conn, final Framedata f) {
-		super.onWebsocketPong(conn, f);
 	}
 
 	@Override
 	public void onClose(final WebSocket conn, final int code, final String reason, final boolean remote) {
-
 		var timer = pingTimers.remove(conn);
 		if (timer != null) { timer.cancel(); }
-
 		if (getLaunched_experiments().get("" + conn.hashCode()) != null) {
 			for (IExperimentPlan e : getLaunched_experiments().get("" + conn.hashCode()).values()) {
 				e.getController().directPause();
@@ -232,7 +301,6 @@ public class GamaWebSocketServer extends WebSocketServer {
 	public IMap<String, Object> extractParam(final WebSocket socket, final String message) {
 		IMap<String, Object> map = null;
 		try {
-
 			// DEBUG.OUT(socket + ": " + Jsoner.deserialize(message));
 			final Object o = Jsoner.deserialize(message);
 			if (o instanceof IMap) {
@@ -241,9 +309,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 				map = GamaMapFactory.create();
 				map.put(IKeyword.CONTENTS, o);
 			}
-
 		} catch (Exception e1) {
-			// e1.printStackTrace();
 			DEBUG.OUT(e1.toString());
 			socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessage.Type.MalformedRequest, e1)));
 		}
@@ -252,10 +318,8 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onMessage(final WebSocket socket, final String message) {
-		// server.broadcast(message);
 		// DEBUG.OUT(socket + ": " + message);
 		try {
-
 			IMap<String, Object> map = extractParam(socket, message);
 			map.put("server", this);
 			DEBUG.OUT(map.get("type"));
@@ -265,7 +329,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 					map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
 			IExperimentPlan exp = getExperiment(socket_id, exp_id);
 			SimulationAgent sim = exp != null && exp.getAgent() != null ? exp.getAgent().getSimulation() : null;
-			if (sim != null && !exp.getController().isPaused()) {
+			if (sim != null && exp != null && !exp.getController().isPaused()) {
 				sim.postOneShotAction(scope1 -> {
 					cmdHelper.pushCommand(socket, map);
 					return null;
@@ -276,7 +340,6 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 		} catch (Exception e1) {
 			DEBUG.OUT(e1);
-			// e1.printStackTrace();
 			socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, e1)));
 
 		}
@@ -286,16 +349,13 @@ public class GamaWebSocketServer extends WebSocketServer {
 	public void onError(final WebSocket conn, final Exception ex) {
 		ex.printStackTrace();
 		if (conn != null) {
-			// some errors like port binding failed may not be assignable to a specific
-			// websocket
+			// some errors like port binding failed may not be assignable to a specific websocket
 		}
 	}
 
 	@Override
 	public void onStart() {
-		DEBUG.OUT("Gama Listener started on port: " + getPort());
-		// setConnectionLostTimeout(0);
-		// setConnectionLostTimeout(100);
+		DEBUG.LOG("Gama server started on port: " + getPort());
 	}
 
 	/**
@@ -305,9 +365,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @return the all experiments
 	 * @date 15 oct. 2023
 	 */
-	public ConcurrentHashMap<String, ConcurrentHashMap<String, IExperimentPlan>> getAllExperiments() {
-		return launchedExperiments;
-	}
+	public Map<String, Map<String, IExperimentPlan>> getAllExperiments() { return launchedExperiments; }
 
 	/**
 	 * Gets the experiments of.
@@ -318,7 +376,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @return the experiments of
 	 * @date 15 oct. 2023
 	 */
-	public ConcurrentHashMap<String, IExperimentPlan> getExperimentsOf(final String socket) {
+	public Map<String, IExperimentPlan> getExperimentsOf(final String socket) {
 		return launchedExperiments.get(socket);
 	}
 
@@ -347,7 +405,6 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @date 15 oct. 2023
 	 */
 	public void execute(final Runnable command) {
-		// TODO executor should not be null
 		if (executor == null) { command.run(); }
 		executor.execute(command);
 	}
@@ -357,8 +414,6 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 *
 	 * @return the simulations
 	 */
-	public ConcurrentHashMap<String, ConcurrentHashMap<String, IExperimentPlan>> getLaunched_experiments() {
-		return launchedExperiments;
-	}
+	public Map<String, Map<String, IExperimentPlan>> getLaunched_experiments() { return launchedExperiments; }
 
 }
