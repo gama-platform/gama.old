@@ -104,11 +104,6 @@ public class LoadCommand implements ISocketCommand {
 
 		final String argExperimentName = map.get("experiment").toString();
 
-		// we check if the experiment is present in the file
-		if (!hasExperiment(ff.getAbsolutePath().toString(), argExperimentName))
-			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
-					"'" + argExperimentName + "' is not an experiment present in '" + ff.getAbsolutePath() + "'", map,
-					false);
 
 		GamaServerExperimentJob selectedJob = null;
 
@@ -123,8 +118,13 @@ public class LoadCommand implements ISocketCommand {
 
 		selectedJob = new GamaServerExperimentJob(ff.getAbsoluteFile().toString(), argExperimentName,
 				gamaWebSocketServer, socket, params, end, console, status, dialog, runtime);
-
-		Globals.OUTPUT_PATH = ".";// TODO: why ?
+		selectedJob.load();
+		// we check if the experiment is present in the file
+		if (selectedJob.simulator.getModel().getExperiment(argExperimentName)==null)
+			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+					"'" + argExperimentName + "' is not an experiment present in '" + ff.getAbsolutePath() + "'", map,
+					false);
+//		Globals.OUTPUT_PATH = ".";// TODO: why ?
 
 		selectedJob.controller.directOpenExperiment();
 		selectedJob.controller.getExperiment().setStopCondition(end);
@@ -139,26 +139,6 @@ public class LoadCommand implements ISocketCommand {
 		gamaWebSocketServer.execute(selectedJob.controller.executionThread);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, selectedJob.getExperimentID(),
 				map, false);
-	}
-
-	/**
-	 * Checks for experiment.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param modelPath
-	 *            the model path
-	 * @param exp
-	 *            the exp
-	 * @return true, if successful
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws GamaHeadlessException
-	 *             the gama headless exception
-	 * @date 15 oct. 2023
-	 */
-	boolean hasExperiment(final String modelPath, final String exp) throws IOException, GamaHeadlessException {
-		IModel model = GamlModelBuilder.getDefaultInstance().compile(new File(modelPath), null, null);
-		return model.getDescription().hasExperiment(exp);
-	}
+	} 
 
 }

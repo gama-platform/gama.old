@@ -127,8 +127,9 @@ public class GamaServerExperimentJob extends ExperimentJob {
 	 *             the gama headless exception
 	 */
 	public void loadAndBuildWithJson(final GamaJsonList params, final String endCond)
-			throws IOException, GamaHeadlessException {
-		this.load();
+			throws IOException, GamaHeadlessException { 
+		if (this.simulator == null)
+			this.load();
 		this.setup();
 		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
