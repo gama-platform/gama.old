@@ -1113,7 +1113,7 @@ public class Colors {
 			concept = {})
 	@doc (
 			see = "gradient",
-			value = "Similar to gradient(map<rgb, float>) but reorders the colors based on their weight and does not normalize them, so as to effectively represent a color scale (i.e. a correspondance between a range of value and a color that implicitly begins with the lowest value)"
+			value = "Similar to gradient(map<rgb, float>) but reorders the colors based on their weight and does not normalize them, so as to effectively represent a color scale (i.e. a correspondance between a range of value and a color that implicitly begins with the lowest value). "
 					+ "For instance scale([#red::10, #green::0, #blue::30]) would produce the reverse map and associate #green to the interval 0-10, #red to 10-30, and #blue above 30. The main difference in usages is that, for instance in the definition of a "
 					+ "mesh to display, a gradient will produce interpolated colors to accomodate for the intermediary values, while a scale will stick to the colors defined.")
 	@no_test
@@ -1148,7 +1148,7 @@ public class Colors {
 	@doc (
 			see = "gradient",
 			value = "Expects a gradient, i.e. a map<rgb,float>, where values represent the different stops of the colors. "
-					+ "First normalizes the passed gradient, and then applies the resulting weights to the interval represented by min and max, so as to return a scale (i.e. absolute values instead of the stops")
+					+ "First normalizes the passed gradient, and then applies the resulting weights to the interval represented by min and max, so as to return a scale (i.e. absolute values instead of the stops)")
 	@no_test
 	public static GamaScale scale(final IScope scope, final IMap<GamaColor, Object> colors, final double min,
 			final double max) {

@@ -10,7 +10,7 @@ model FlappyBird
 global {
 	
 	
-	float step <- 10#ms;
+	float step <- 65#ms;
 	float g <- 9.81 #m/(#s^2);
 	float tuyau_speed <- 0.5 #m/#s;
 	file pipe <- image_file("../includes/pipe9.png");
@@ -176,18 +176,16 @@ species texts {
 
 experiment main {
 	
+	float minimum_cycle_time <- step;
+	
 	bool has_started<-false;
-	float minimum_cycle_duration <- 10#ms;
-	output {
+	
+	output synchronized:true{
+		
+		layout consoles:false editors:false navigator:false parameters:false toolbars:false tray:false;
 		
 		
-		layout consoles:false controls:false editors:false navigator:false parameters:false toolbars:false tray:false;
-		
-		
-		
-		
-		
-		display main fullscreen:true{
+		display main fullscreen:true type:2d {
 			
 			image_layer "../includes/background.png";
 			species bird aspect:png;
