@@ -245,7 +245,7 @@ public class GamaSqlConnection extends GamaGisFile {
 			// reader = store.getFeatureReader();
 			// final int i = 0;
 			while (reader.hasNext()) {
-				scope.getGui().getStatus().setSubStatusCompletion(index++ / (double) size);
+				scope.getGui().getStatus().setSubStatusCompletion(scope, index++ / (double) size);
 				final Feature feature = reader.next();
 
 				// DEBUG.LOG("Record " + i++ + ": " +
@@ -264,7 +264,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			scope.getGui().getStatus().endSubStatus("Reading table " + tableName);
+			scope.getGui().getStatus().endSubStatus(scope, "Reading table " + tableName);
 		}
 	}
 

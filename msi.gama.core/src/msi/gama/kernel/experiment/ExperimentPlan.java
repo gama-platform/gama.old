@@ -722,7 +722,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		if (isBatch()) {
 			myScope.getGui().getStatus()
-					.informStatus(isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
+					.informStatus(scope, isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
 			myScope.getGui().updateExperimentState(scope);
 		}
 

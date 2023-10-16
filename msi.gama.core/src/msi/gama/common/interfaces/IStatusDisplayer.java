@@ -11,6 +11,7 @@
 package msi.gama.common.interfaces;
 
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 
 /**
@@ -34,7 +35,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	/**
 	 * Resume status.
 	 */
-	default void resumeStatus() {}
+	default void resumeStatus(final IScope scope) {}
 
 	/**
 	 * Wait status.
@@ -42,7 +43,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param string
 	 *            the string
 	 */
-	default void waitStatus(final String string) {}
+	default void waitStatus(final IScope scope, final String string) {}
 
 	/**
 	 * Inform status.
@@ -50,7 +51,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param string
 	 *            the string
 	 */
-	default void informStatus(final String message) {}
+	default void informStatus(final IScope scope, final String message) {}
 
 	/**
 	 * Error status.
@@ -58,7 +59,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param message
 	 *            the message
 	 */
-	default void errorStatus(final String message) {}
+	default void errorStatus(final IScope scope, final String message) {}
 
 	/**
 	 * Sets the sub status completion.
@@ -66,7 +67,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param status
 	 *            the new sub status completion
 	 */
-	default void setSubStatusCompletion(final double status) {}
+	default void setSubStatusCompletion(final IScope scope, final double status) {}
 
 	/**
 	 * Sets the status.
@@ -76,7 +77,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param color
 	 *            the color
 	 */
-	default void setStatus(final String msg, final GamaColor color) {}
+	default void setStatus(final IScope scope, final String msg, final GamaColor color) {}
 
 	/**
 	 * Inform status.
@@ -86,7 +87,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param icon
 	 *            the icon
 	 */
-	default void informStatus(final String message, final String icon) {}
+	default void informStatus(final IScope scope, final String message, final String icon) {}
 
 	/**
 	 * Sets the status.
@@ -96,7 +97,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param icon
 	 *            the icon
 	 */
-	default void setStatus(final String msg, final String icon) {}
+	default void setStatus(final IScope scope, final String msg, final String icon) {}
 
 	/**
 	 * Begin sub status.
@@ -104,7 +105,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param name
 	 *            the name
 	 */
-	default void beginSubStatus(final String name) {}
+	default void beginSubStatus(final IScope scope, final String name) {}
 
 	/**
 	 * End sub status.
@@ -112,7 +113,7 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param name
 	 *            the name
 	 */
-	default void endSubStatus(final String name) {}
+	default void endSubStatus(final IScope scope, final String name) {}
 
 	/**
 	 * Neutral status.
@@ -120,6 +121,6 @@ public interface IStatusDisplayer extends ITopLevelAgentChangeListener {
 	 * @param string
 	 *            the string
 	 */
-	default void neutralStatus(final String string) {}
+	default void neutralStatus(final IScope scope, final String string) {}
 
 }

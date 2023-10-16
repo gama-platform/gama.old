@@ -388,7 +388,7 @@ public class GamaServerExperimentController implements IExperimentController {
 	 */
 	public void closeExperiment(final Exception e) {
 		disposing = true;
-		if (e != null) { getScope().getGui().getStatus().errorStatus(e.getMessage()); }
+		if (e != null) { getScope().getGui().getStatus().errorStatus(getScope(), e.getMessage()); }
 		experiment.dispose(); // will call own dispose() later
 	}
 

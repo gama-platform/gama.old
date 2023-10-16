@@ -18,6 +18,7 @@ import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.interfaces.IStatusMessage;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.StatusControlContribution;
 import ummisco.gama.ui.utils.ThreadedUpdater;
@@ -60,7 +61,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void waitStatus(final String string) {
+	public void waitStatus(final IScope scope, final String string) {
 		setStatus(string, IGui.WAIT);
 	}
 
@@ -73,7 +74,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void informStatus(final String string) {
+	public void informStatus(final IScope scope, final String string) {
 		setStatus(string, IGui.INFORM);
 	}
 
@@ -86,7 +87,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void errorStatus(final String error) {
+	public void errorStatus(final IScope scope, final String error) {
 		setStatus(error, IGui.ERROR);
 	}
 
@@ -99,7 +100,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 *            the scope
 	 */
 	@Override
-	public void neutralStatus(final String message) {
+	public void neutralStatus(final IScope scope, final String message) {
 		setStatus(message, IGui.NEUTRAL);
 	}
 
@@ -126,7 +127,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void setStatus(final String msg, final String icon) {
+	public void setStatus(final IScope scope, final String msg, final String icon) {
 		setStatusInternal(msg, null, icon);
 	}
 
@@ -137,7 +138,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void resumeStatus() {
+	public void resumeStatus(final IScope scope) {
 		status.resume();
 	}
 
@@ -150,7 +151,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void setSubStatusCompletion(final double s) {
+	public void setSubStatusCompletion(final IScope scope, final double s) {
 		status.updateWith(new SubTaskMessage(s));
 	}
 
@@ -165,7 +166,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void informStatus(final String string, final String icon) {
+	public void informStatus(final IScope scope, final String string, final String icon) {
 		status.updateWith(new StatusMessage(string, IGui.INFORM, icon));
 	}
 
@@ -178,7 +179,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void beginSubStatus(final String name) {
+	public void beginSubStatus(final IScope scope, final String name) {
 		status.updateWith(new SubTaskMessage(name, true));
 	}
 
@@ -191,7 +192,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void endSubStatus(final String name) {
+	public void endSubStatus(final IScope scope, final String name) {
 		status.updateWith(new SubTaskMessage(name, false));
 	}
 
@@ -220,9 +221,9 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 * @date 14 août 2023
 	 */
 	@Override
-	public void setStatus(final String message, final GamaColor color) {
+	public void setStatus(final IScope scope, final String message, final GamaColor color) {
 		if (message == null) {
-			resumeStatus();
+			resumeStatus(scope);
 		} else {
 			setStatusInternal(message, color, null);
 		}
