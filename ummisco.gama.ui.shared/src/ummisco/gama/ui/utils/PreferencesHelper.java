@@ -35,8 +35,8 @@ public class PreferencesHelper {
 
 	/** The Constant CORE_EDITORS_HIGHLIGHT. */
 	public static final Pref<Boolean> CORE_EDITORS_HIGHLIGHT =
-			create("pref_editors_highligth", "Highlight in yellow the title of value editors when they change", true,
-					IType.BOOL, true).in(NAME, APPEARANCE);
+			create("pref_editors_highlight", "Highlight in yellow the title of value editors when they change", true,
+					IType.BOOL, false).in(NAME, APPEARANCE);
 
 	/** The Constant SHAPEFILE_VIEWER_FILL. */
 	public static final Pref<GamaColor> SHAPEFILE_VIEWER_FILL = create("pref_shapefile_background_color",
@@ -48,12 +48,12 @@ public class PreferencesHelper {
 
 	/** The Constant ERROR_TEXT_COLOR. */
 	public static final Pref<GamaColor> ERROR_TEXT_COLOR = create("pref_error_text_color", "Text color of errors",
-			() -> GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR, true)
+			() -> GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR, false)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
 	/** The Constant WARNING_TEXT_COLOR. */
 	public static final Pref<GamaColor> WARNING_TEXT_COLOR = create("pref_warning_text_color", "Text color of warnings",
-			() -> GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR, true)
+			() -> GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR, false)
 					.in(GamaPreferences.Runtime.NAME, GamaPreferences.Runtime.ERRORS);
 
 	/** The Constant IMAGE_VIEWER_BACKGROUND. */

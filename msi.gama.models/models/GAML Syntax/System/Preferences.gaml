@@ -1,4 +1,4 @@
-// GAMA 1.9.1 Preferences saved on 2023-04-15T12:30:39.234417
+// GAMA 1.9.3 Preferences saved on 2023-10-17T22:21:26.704717
 
 model preferences
 
@@ -24,6 +24,12 @@ init {
 
 	//Wrap long lines (can slow down output)
 	write sample(gama.pref_console_wrap);
+
+	//Default separator for fields
+	write sample(gama.pref_csv_separator);
+
+	//Default separator for strings
+	write sample(gama.pref_csv_string_qualifier);
 
 	//Custom date pattern (https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)
 	write sample(gama.pref_date_custom_formatter);
@@ -133,11 +139,8 @@ init {
 	//Set the zoom factor (0 for slow, 1 fast)
 	write sample(gama.pref_display_zoom_factor);
 
-	//Highlight in yellow the title of value editors when they change
-	write sample(gama.pref_editors_highligth);
-
-	//Text color of errors
-	write sample(gama.pref_error_text_color);
+	//Enables GAMA Server mode
+	write sample(gama.pref_enable_server);
 
 	//Show execution errors
 	write sample(gama.pref_errors_display);
@@ -214,7 +217,7 @@ init {
 	//Display monitors in the parameters view
 	write sample(gama.pref_monitors_in_parameters);
 
-	//Add a small increment to the z ordinate of objects to fight visual artefacts
+	//Add a small increment to the z ordinate of objects and layers to fight visual artefacts
 	write sample(gama.pref_opengl_z_fighting);
 
 	//Optimize the 'at_distance' operator
@@ -259,18 +262,26 @@ init {
 	//Default random number generator
 	write sample(gama.pref_rng_name);
 
+	//Interval between two pings (-1 to disable)
+	write sample(gama.pref_server_ping);
+
+	//Port to which GAMA Server is listening
+	write sample(gama.pref_server_port);
+
 	//In-memory shapefile mapping (optimizes access to shapefile data in exchange for increased memory usage)
 	write sample(gama.pref_shapefiles_in_memory);
 
+	//Pivot color of simulations
+	write sample(gama.pref_simulation_color);
+
+	//Default color scheme for simulations in UI
+	write sample(gama.pref_simulation_colors);
 
 	//Forces the spatial index to synchronize its operations. Useful for interactive models where the users interfere or parallel models with concurrency errors. Note that it may slow down simulations with a lot of mobile agents
 	write sample(gama.pref_synchronize_quadtree);
 
 	//Orient the textures according to the geometry on which they are displayed (may create visual oddities)
 	write sample(gama.pref_texture_orientation);
-
-	//Text color of warnings
-	write sample(gama.pref_warning_text_color);
 
 }
 }
@@ -288,7 +299,7 @@ init {
 	gama.pref_chart_quality <- 0.865;
 
 	//Monitor memory and emit a warning if it is low
-	gama.pref_check_memory <- true;
+	gama.pref_check_memory <- false;
 
 	//Max. number of characters to keep when paused (-1 = unlimited)
 	gama.pref_console_buffer <- 20000;
@@ -298,6 +309,12 @@ init {
 
 	//Wrap long lines (can slow down output)
 	gama.pref_console_wrap <- false;
+
+	//Default separator for fields
+	gama.pref_csv_separator <- ';';
+
+	//Default separator for strings
+	gama.pref_csv_string_qualifier <- '"';
 
 	//Custom date pattern (https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)
 	gama.pref_date_custom_formatter <- 'yyyy-MM-dd HH:mm:ss';
@@ -327,10 +344,10 @@ init {
 	gama.pref_display_continue_drawing <- false;
 
 	//Default rendering method
-	gama.pref_display_default <- '3d';
+	gama.pref_display_default <- '2d';
 
 	//Default color of agents
-	gama.pref_display_default_color <- #yellow;
+	gama.pref_display_default_color <- #gold;
 
 	//Default font to use in 'draw'
 	gama.pref_display_default_font <- font('Andale Mono',12.0,#plain);
@@ -384,7 +401,7 @@ init {
 	gama.pref_display_show_referential <- true;
 
 	//Draw rotation axes
-	gama.pref_display_show_rotation <- false;
+	gama.pref_display_show_rotation <- true;
 
 	//Show the display top toolbar
 	gama.pref_display_show_toolbar <- true;
@@ -399,7 +416,7 @@ init {
 	gama.pref_display_use_cache <- true;
 
 	//Default layout of display views
-	gama.pref_display_view_layout <- 'None';
+	gama.pref_display_view_layout <- 'Split';
 
 	//Only display visible agents (faster, may create visual oddities)
 	gama.pref_display_visible_agents <- false;
@@ -407,11 +424,8 @@ init {
 	//Set the zoom factor (0 for slow, 1 fast)
 	gama.pref_display_zoom_factor <- 0.68;
 
-	//Highlight in yellow the title of value editors when they change
-	gama.pref_editors_highligth <- true;
-
-	//Text color of errors
-	gama.pref_error_text_color <- rgb (210, 155, 156, 255);
+	//Enables GAMA Server mode
+	gama.pref_enable_server <- true;
 
 	//Show execution errors
 	gama.pref_errors_display <- true;
@@ -488,7 +502,7 @@ init {
 	//Display monitors in the parameters view
 	gama.pref_monitors_in_parameters <- true;
 
-	//Add a small increment to the z ordinate of objects to fight visual artefacts
+	//Add a small increment to the z ordinate of objects and layers to fight visual artefacts
 	gama.pref_opengl_z_fighting <- true;
 
 	//Optimize the 'at_distance' operator
@@ -533,17 +547,26 @@ init {
 	//Default random number generator
 	gama.pref_rng_name <- 'parallel';
 
+	//Interval between two pings (-1 to disable)
+	gama.pref_server_ping <- 10000;
+
+	//Port to which GAMA Server is listening
+	gama.pref_server_port <- 1000;
+
 	//In-memory shapefile mapping (optimizes access to shapefile data in exchange for increased memory usage)
 	gama.pref_shapefiles_in_memory <- true;
+
+	//Pivot color of simulations
+	gama.pref_simulation_color <- #mediumblue;
+
+	//Default color scheme for simulations in UI
+	gama.pref_simulation_colors <- 'Qualitative (9 colors)';
 
 	//Forces the spatial index to synchronize its operations. Useful for interactive models where the users interfere or parallel models with concurrency errors. Note that it may slow down simulations with a lot of mobile agents
 	gama.pref_synchronize_quadtree <- true;
 
 	//Orient the textures according to the geometry on which they are displayed (may create visual oddities)
 	gama.pref_texture_orientation <- true;
-
-	//Text color of warnings
-	gama.pref_warning_text_color <- rgb (255, 201, 162, 255);
 
 }
 }
