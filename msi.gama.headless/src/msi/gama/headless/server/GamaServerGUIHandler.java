@@ -10,17 +10,30 @@
  ********************************************************************************************************/
 package msi.gama.headless.server;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IStatusDisplayer;
+import msi.gama.headless.listener.ExpressionCommand;
+import msi.gama.headless.listener.LoadCommand;
+import msi.gama.headless.listener.PauseCommand;
+import msi.gama.headless.listener.PlayCommand;
+import msi.gama.headless.listener.ReloadCommand;
+import msi.gama.headless.listener.StepBackCommand;
+import msi.gama.headless.listener.StepCommand;
+import msi.gama.headless.listener.StopCommand;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.ITopLevelAgent;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.DefaultServerCommands;
 import msi.gama.runtime.server.GamaServerMessage;
+import msi.gama.runtime.server.ISocketCommand;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.json.DeserializationException;
 import msi.gama.util.file.json.Jsoner;
@@ -181,8 +194,8 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 
 					try {
 						sendMessage(
-								scope.getExperiment(), Jsoner.deserialize("{" + "\"message\": \"" + msg
-										+ "\"," + "\"color\": " + Jsoner.serialize(color) + "" + "}"),
+								scope.getExperiment(), Jsoner.deserialize("{" + "\"message\": \"" + msg + "\","
+										+ "\"color\": " + Jsoner.serialize(color) + "" + "}"),
 								GamaServerMessage.Type.SimulationStatus);
 					} catch (DeserializationException e) {
 						// If for some reason we cannot deserialize, we send it as text
@@ -308,6 +321,25 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 		}
 		return console;
 
+	}
+
+	@Override
+	public Map<String, ISocketCommand> getServerCommands() {
+		final Map<String, ISocketCommand> cmds = new HashMap<>();
+		cmds.put(ISocketCommand.LOAD, new LoadCommand());
+		cmds.put(ISocketCommand.PLAY, new PlayCommand());
+		cmds.put(ISocketCommand.STEP, new StepCommand());
+		cmds.put(ISocketCommand.STEPBACK, new StepBackCommand());
+		cmds.put(ISocketCommand.BACK, new StepBackCommand());
+		cmds.put(ISocketCommand.PAUSE, new PauseCommand());
+		cmds.put(ISocketCommand.STOP, new StopCommand());
+		cmds.put(ISocketCommand.RELOAD, new ReloadCommand());
+		cmds.put(ISocketCommand.EXPRESSION, new ExpressionCommand());
+		cmds.put(ISocketCommand.EVALUATE, new ExpressionCommand());
+		cmds.put(ISocketCommand.EXIT, DefaultServerCommands::EXIT);
+		cmds.put(ISocketCommand.DOWNLOAD, DefaultServerCommands::DOWNLOAD);
+		cmds.put(ISocketCommand.UPLOAD, DefaultServerCommands::UPLOAD);
+		return Collections.unmodifiableMap(cmds);
 	}
 
 }

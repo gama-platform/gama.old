@@ -28,6 +28,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.ISocketCommand;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
@@ -755,5 +756,14 @@ public interface IGui {
 	 * @date 17 août 2023
 	 */
 	default void updateParameters() {}
+
+	/**
+	 * Gets the server commands.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the server commands
+	 * @date 17 oct. 2023
+	 */
+	Map<String, ISocketCommand> getServerCommands();
 
 }

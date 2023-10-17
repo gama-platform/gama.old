@@ -582,6 +582,23 @@ public class GamaPreferences {
 				"Automatically open an editor and point at the faulty part of the model if an error or a warning is thrown",
 				true, IType.BOOL, true).in(NAME, ERRORS);
 
+		/** The Constant SERVER. */
+		public final static String SERVER = "Server mode";
+
+		/** The Constant CORE_SERVER_MODE. */
+		public static final Pref<Boolean> CORE_SERVER_MODE =
+				create("pref_enable_server", "Enables GAMA Server mode", true, IType.BOOL, true).in(NAME, SERVER)
+						.activates("pref_server_port", "pref_server_ping");
+
+		/** The Constant CORE_SERVER_PORT. */
+		public static final Pref<Integer> CORE_SERVER_PORT =
+				create("pref_server_port", "Port to which GAMA Server is listening", 1000, IType.INT, true).in(NAME,
+						SERVER);
+
+		/** The Constant CORE_SERVER_PORT. */
+		public static final Pref<Integer> CORE_SERVER_PING =
+				create("pref_server_ping", "Interval between two pings (-1 to disable)", 10000, IType.INT, true)
+						.in(NAME, SERVER);
 	}
 
 	/**

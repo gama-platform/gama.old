@@ -18,8 +18,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,13 +30,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.w3c.dom.Document;
 
 import com.google.inject.Injector;
 
 import msi.gama.common.GamlFileExtension;
-import msi.gama.common.interfaces.IGamaApplication;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.headless.batch.ModelLibraryRunner;
 import msi.gama.headless.batch.ModelLibraryTester;
@@ -49,14 +47,6 @@ import msi.gama.headless.common.HeadLessErrors;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
-import msi.gama.headless.listener.ExpressionCommand;
-import msi.gama.headless.listener.LoadCommand;
-import msi.gama.headless.listener.PauseCommand;
-import msi.gama.headless.listener.PlayCommand;
-import msi.gama.headless.listener.ReloadCommand;
-import msi.gama.headless.listener.StepBackCommand;
-import msi.gama.headless.listener.StepCommand;
-import msi.gama.headless.listener.StopCommand;
 import msi.gama.headless.script.ExperimentationPlanFactory;
 import msi.gama.headless.server.GamaServerGUIHandler;
 import msi.gama.headless.xml.ConsoleReader;
@@ -70,16 +60,14 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.runtime.server.DefaultServerCommands;
 import msi.gama.runtime.server.GamaWebSocketServer;
-import msi.gama.runtime.server.ISocketCommand;
 import msi.gaml.compilation.GamlCompilationError;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class Application.
  */
-public class HeadlessApplication implements IGamaApplication {
+public class HeadlessApplication implements IApplication {
 
 	/** The injector. */
 	static Injector INJECTOR;
@@ -367,6 +355,17 @@ public class HeadlessApplication implements IGamaApplication {
 		return false;
 	}
 
+	/**
+	 * Start.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param context
+	 *            the context
+	 * @return the object
+	 * @throws Exception
+	 *             the exception
+	 * @date 17 oct. 2023
+	 */
 	@SuppressWarnings ("unused")
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
@@ -376,7 +375,6 @@ public class HeadlessApplication implements IGamaApplication {
 
 		// Check and apply parameters
 		if (!checkParameters(args)) { System.exit(-1); }
-		register();
 		// ========================
 		// No GAMA run
 		// ========================
@@ -602,6 +600,12 @@ public class HeadlessApplication implements IGamaApplication {
 		}
 	}
 
+	/**
+	 * Stop.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 17 oct. 2023
+	 */
 	@Override
 	public void stop() {}
 
@@ -710,30 +714,5 @@ public class HeadlessApplication implements IGamaApplication {
 			System.exit(-1);
 		}
 	}
-
-	@Override
-	public Map<String, ISocketCommand> getServerCommands() {
-		final Map<String, ISocketCommand> cmds = new HashMap<>();
-		cmds.put(ISocketCommand.LOAD, new LoadCommand());
-		cmds.put(ISocketCommand.PLAY, new PlayCommand());
-		cmds.put(ISocketCommand.STEP, new StepCommand());
-		cmds.put(ISocketCommand.STEPBACK, new StepBackCommand());
-		cmds.put(ISocketCommand.BACK, new StepBackCommand());
-		cmds.put(ISocketCommand.PAUSE, new PauseCommand());
-		cmds.put(ISocketCommand.STOP, new StopCommand());
-		cmds.put(ISocketCommand.RELOAD, new ReloadCommand());
-		cmds.put(ISocketCommand.EXPRESSION, new ExpressionCommand());
-		cmds.put(ISocketCommand.EVALUATE, new ExpressionCommand());
-		cmds.put(ISocketCommand.EXIT, DefaultServerCommands::EXIT);
-		cmds.put(ISocketCommand.DOWNLOAD, DefaultServerCommands::DOWNLOAD);
-		cmds.put(ISocketCommand.UPLOAD, DefaultServerCommands::UPLOAD);
-		return Collections.unmodifiableMap(cmds);
-	}
-
-	@Override
-	public boolean isHeadless() { return true; }
-
-	@Override
-	public boolean isServer() { return isServer; }
 
 }

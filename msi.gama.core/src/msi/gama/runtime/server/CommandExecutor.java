@@ -76,7 +76,7 @@ public class CommandExecutor {
 	 */
 
 	public CommandExecutor() {
-		commands = GAMA.getApplication().getServerCommands();
+		commands = GAMA.getGui().getServerCommands();
 		commandQueue = new LinkedList<>();
 		commandExecutionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandExecutionThread.start();
@@ -161,8 +161,9 @@ public class CommandExecutor {
 	public static Map<String, ISocketCommand> getDefaultCommands() {
 		if (DEFAULT_COMMANDS == null) {
 
-			DEFAULT_COMMANDS = Map.ofEntries(entry(LOAD, DefaultServerCommands::LOAD), entry(PLAY, DefaultServerCommands::PLAY),
-					entry(PAUSE, DefaultServerCommands::PAUSE), entry(STEP, DefaultServerCommands::STEP), entry(BACK, DefaultServerCommands::BACK),
+			DEFAULT_COMMANDS = Map.ofEntries(entry(LOAD, DefaultServerCommands::LOAD),
+					entry(PLAY, DefaultServerCommands::PLAY), entry(PAUSE, DefaultServerCommands::PAUSE),
+					entry(STEP, DefaultServerCommands::STEP), entry(BACK, DefaultServerCommands::BACK),
 					entry(STEPBACK, DefaultServerCommands::BACK), entry(STOP, DefaultServerCommands::STOP),
 					entry(RELOAD, DefaultServerCommands::RELOAD), entry(EXPRESSION, DefaultServerCommands::EVAL),
 					entry(EVALUATE, DefaultServerCommands::EVAL), entry(EXIT, DefaultServerCommands::EXIT),

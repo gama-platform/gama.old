@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
@@ -48,16 +47,13 @@ import msi.gama.application.workbench.ApplicationWorkbenchAdvisor;
 import msi.gama.application.workspace.PickWorkspaceDialog;
 import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
-import msi.gama.common.interfaces.IGamaApplication;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.server.CommandExecutor;
-import msi.gama.runtime.server.ISocketCommand;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.FLAGS;
 
 /** This class controls all aspects of the application's execution */
-public class Application implements IGamaApplication {
+public class Application implements IApplication {
 
 	static {
 		DEBUG.OFF();
@@ -128,7 +124,6 @@ public class Application implements IGamaApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 		FLAGS.load();
-		register();
 		setDefaultUncaughtExceptionHandler((t, e) -> {
 			if (e instanceof OutOfMemoryError) {
 				final boolean close = openConfirm(null, "Out of memory",
@@ -285,14 +280,5 @@ public class Application implements IGamaApplication {
 	 * @return the open document processor
 	 */
 	public static OpenDocumentEventProcessor getOpenDocumentProcessor() { return OPEN_DOCUMENT_PROCESSOR; }
-
-	@Override
-	public Map<String, ISocketCommand> getServerCommands() { return CommandExecutor.getDefaultCommands(); }
-
-	@Override
-	public boolean isHeadless() { return false; }
-
-	@Override
-	public boolean isServer() { return true; }
 
 }

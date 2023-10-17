@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.runtime;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.ISocketCommand;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMapFactory;
@@ -185,5 +187,8 @@ public class NullGuiHandler implements IGui {
 	public void displayTestsResults(final IScope scope, final CompoundSummary<?, ?> summary) {
 		logger.log(summary.toString());
 	}
+
+	@Override
+	public Map<String, ISocketCommand> getServerCommands() { return Collections.EMPTY_MAP; }
 
 }

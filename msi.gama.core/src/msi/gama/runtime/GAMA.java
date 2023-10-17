@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import msi.gama.common.interfaces.IBenchmarkable;
-import msi.gama.common.interfaces.IGamaApplication;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ISnapshotMaker;
 import msi.gama.common.interfaces.ITopLevelAgentChangeListener;
@@ -54,9 +53,6 @@ public class GAMA {
 	static {
 		DEBUG.OFF();
 	}
-
-	/** The current application. */
-	private static IGamaApplication CURRENT_APPLICATION;
 
 	/** The Constant VERSION_NUMBER. */
 	public static final String VERSION_NUMBER = "1.9.3";
@@ -100,27 +96,6 @@ public class GAMA {
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
 	private static final List<IExperimentController> controllers = new CopyOnWriteArrayList<>();
-
-	/**
-	 * Sets the application. TODO use this gateway to fix a number of properties GUI/Headless ?
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param app
-	 *            the new application
-	 * @date 15 oct. 2023
-	 */
-	public static void setApplication(final IGamaApplication app) { CURRENT_APPLICATION = app; }
-
-	/**
-	 * Gets the application.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param app
-	 *            the app
-	 * @return the application
-	 * @date 15 oct. 2023
-	 */
-	public static IGamaApplication getApplication() { return CURRENT_APPLICATION; }
 
 	/**
 	 * Gets the controllers.
