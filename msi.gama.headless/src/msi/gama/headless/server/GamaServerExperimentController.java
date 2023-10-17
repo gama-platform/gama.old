@@ -110,7 +110,7 @@ public class GamaServerExperimentController implements IExperimentController {
 						}
 						break;
 					}
-					directStep();
+					step();
 				}
 			} catch (Exception e) {
 				DEBUG.OUT(e);
@@ -444,11 +444,21 @@ public class GamaServerExperimentController implements IExperimentController {
 		lock.release();
 	}
 
+
+	/**
+	 * Direct step.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 15 oct. 2023
+	 */
+	public void directStep() {
+		processUserCommand(_STEP);
+	}
+
 	/**
 	 * Step.
-	 */
-	@Override
-	public void directStep() {
+	 */ 
+	public void step() {
 		if (paused) {
 			try {
 				lock.acquire();
