@@ -71,9 +71,7 @@ jobs:
           token: ${{ secrets.BOT_TOKEN }}
 
       - name: Publish Pre release to Winget 👷
-        # if: needs.get-tag-info.outputs.prerelease == 'true'
-        # Remove this line after https://github.com/microsoft/winget-pkgs/pull/121764 gets merged
-        if: false
+        if: needs.get-tag-info.outputs.prerelease == 'true'
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: GamaPlatform.GamaAlpha
