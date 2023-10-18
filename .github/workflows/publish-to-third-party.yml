@@ -44,7 +44,7 @@ jobs:
       - name: Get tag data 
         id: tag_data
         run: |
-          "commit_hash=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+          echo "commit_hash=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Get release data
         uses: cardinalby/git-get-release-action@1.2.4
@@ -104,12 +104,12 @@ jobs:
               issue_number: ${{ steps.get-pr.outputs.number }},
               owner: "microsoft",
               repo: "winget-pkgs",
-              body: 'Poke :point_right: @${{ github.triggering_actor }}'
+              body: 'Poke :point_right: @${{ github.triggering_actor }} @WoodenMaiden @lesquoyb'
             })
 
             core.summary.
               addHeading(
-                `Release ${{ inputs.tag }} ${(is_pre_release)? "" : "-${{ needs.get-tag-info.outputs.commit_hash }} alpha" } published to Winget 🚀`
+                `Release ${{ inputs.tag }}${(is_pre_release)? "" : "-${{ needs.get-tag-info.outputs.commit_hash }} alpha" } published to Winget 🚀`
               )
               .addLink("Link to the Winget PR", "https://github.com/microsoft/winget-pkgs/pull/${{ steps.get-pr.outputs.number }}")
               .write()
