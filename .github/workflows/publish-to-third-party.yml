@@ -69,6 +69,7 @@ jobs:
           release-tag: ${{ inputs.tag }}
           installers-regex: ^GAMA.+JDK.*\.exe$
           token: ${{ secrets.BOT_TOKEN }}
+          fork-user: gama-platform
 
       - name: Publish Pre release to Winget 👷
         if: needs.get-tag-info.outputs.prerelease == 'true'
@@ -80,6 +81,7 @@ jobs:
           installers-regex: ^GAMA.+JDK.*\.exe$
           token: ${{ secrets.BOT_TOKEN }}
           max-versions-to-keep: 1
+          fork-user: gama-platform
         
       - name: Get PR created for the release
         id: get-pr
