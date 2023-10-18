@@ -20,6 +20,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.preferences.GamaPreferenceStore;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.common.util.RandomUtils;
@@ -43,6 +44,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.MemoryUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
@@ -170,6 +172,12 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			stopPollingMemory();
 			startPollingMemory();
 		});
+
+		if (GamaPreferences.Runtime.CORE_SERVER_MODE.getValue()) {
+			final int port=GamaPreferences.Runtime.CORE_SERVER_PORT.getValue();
+			final int ping=GamaPreferences.Runtime.CORE_SERVER_PING.getValue();
+			GamaWebSocketServer.StartForGUI(port, ping);
+		 }
 	}
 
 	/**

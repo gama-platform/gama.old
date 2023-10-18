@@ -71,7 +71,9 @@ public class DefaultServerCommands {
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"'" + nameOfExperiment + "' is not an experiment present in '" + ff.getAbsolutePath() + "'", map,
 					false);
-		GAMA.runGuiExperiment(nameOfExperiment, model);
+		final IModel mm=model;
+		GAMA.getGui().run("openExp", ()->GAMA.runGuiExperiment(nameOfExperiment, mm), false);
+		
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, nameOfExperiment, map, false);
 	}
 
