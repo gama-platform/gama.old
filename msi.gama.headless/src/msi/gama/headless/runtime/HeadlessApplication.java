@@ -90,7 +90,7 @@ public class HeadlessApplication implements IApplication {
 		if (INJECTOR != null) return INJECTOR;
 		DEBUG.LOG("GAMA configuring and loading...");
 		System.setProperty("java.awt.headless", "true");
-
+		GAMA.setHeadLessMode(isServer);
 		GAMA.setHeadlessGui(isServer ? new GamaServerGUIHandler() : new NullGuiHandler());
 		try {
 			// We initialize XText and Gaml.
