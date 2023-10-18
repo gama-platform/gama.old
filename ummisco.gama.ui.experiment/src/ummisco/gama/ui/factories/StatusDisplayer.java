@@ -49,7 +49,7 @@ public class StatusDisplayer implements IStatusDisplayer {
 	 */
 	@Override
 	public void topLevelAgentChanged(final ITopLevelAgent agent) {
-		informStatus(null, "overlays/status.clock");
+		informStatus(agent.getScope(), null, "overlays/status.clock");
 	}
 
 	/**

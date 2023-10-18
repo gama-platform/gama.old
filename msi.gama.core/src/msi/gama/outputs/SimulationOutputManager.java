@@ -150,7 +150,7 @@ public class SimulationOutputManager extends AbstractOutputManager {
 		scope.getGui().getStatus().waitStatus(scope, " Building outputs ");
 		final boolean result = super.init(scope);
 		updateDisplayOutputsName(scope.getSimulation());
-		scope.getGui().getStatus().informStatus(scope, "overlays/status.clock");
+		scope.getGui().getStatus().informStatus(scope, null, "overlays/status.clock");
 		// scope.getGui().getStatus().informStatus(scope, " " + scope.getRoot().getName() + " ready");
 		return result;
 	}

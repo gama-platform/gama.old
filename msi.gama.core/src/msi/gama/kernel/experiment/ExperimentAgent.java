@@ -919,7 +919,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private void informStatus() {
 		// TODO: should we keep that condition as we have specific IStatusDisplayer implementations ?
 		if (isHeadless() || isBatch() || getSimulation() == null) return;
-		ownScope.getGui().getStatus().informStatus(null, "overlays/status.clock");
+		ownScope.getGui().getStatus().informStatus(ownScope, null, "overlays/status.clock");
 	}
 
 	/**
