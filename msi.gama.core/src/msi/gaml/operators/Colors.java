@@ -661,7 +661,7 @@ public class Colors {
 	 * @return the gama color
 	 */
 	@operator (
-			value = "blend",
+			value =  "blend",
 			can_be_const = true,
 			category = { IOperatorCategory.COLOR },
 			concept = { IConcept.COLOR })
@@ -1043,12 +1043,14 @@ public class Colors {
 			category = { IOperatorCategory.COLOR },
 			concept = {})
 	@doc (
-			value = "returns the definition of a linear gradient between n colors, represented internally as a color map [c1::1/n,c2::1/n, ... cn::1/n]")
+			value = "returns the definition of a linear gradient between n colors, represented internally as a color map [c1::0,c2::1/n-1, ... cn::n-1/n-1]")
 	@no_test
-	public static GamaGradient gradient(final IList<GamaColor> colors) {
+	public static GamaGradient gradient(IScope scope, final IList<GamaColor> colors) {
 		GamaGradient cm = new GamaGradient();
+		if (colors.size() < 2) throw GamaRuntimeException.error("A gradient must at least propose 2 colors", scope);
 		int nb = colors.size();
-		for (GamaColor c : colors) { cm.put(c, 1d / nb); }
+		int i = 1;
+		for (GamaColor c : colors) { cm.put(c, i++ - 1d / nb - 1);  }
 		return cm;
 	}
 
@@ -1165,32 +1167,30 @@ public class Colors {
 		return new GamaScale(scope, map);
 	}
 
-	/**
-	 * Palette.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param colors
-	 *            the colors
-	 * @param nb
-	 *            the nb
-	 * @return the gama palette
-	 */
-	@operator (
-			value = "palette",
-			can_be_const = true,
-			type = IType.LIST,
-			content_type = IType.COLOR,
-			category = { IOperatorCategory.COLOR },
-			concept = {})
-	@doc (
-			value = "returns a list of n colors chosen in the gradient provided. Colors are chosen by interpolating the stops of the gradient (the colors) using their weight, in the order described in the gradient. In case the map<rgb, float> passed in argument is not a gradient but a scale, the colors will be chosen in the set of colors and might appear duplicated in the palette")
-	@no_test
-	public static GamaPalette palette(final IScope scope, final IMap<GamaColor, Number> colors, final int nb) {
-		// var cm = gradient(scope, colors); // to make sure it is normalized
-		// Not yet ready...
-		return null;
-	}
+//	/**
+//	 * Palette.
+//	 *
+//	 * @param scope
+//	 *            the scope
+//	 * @param colors
+//	 *            the colors
+//	 * @param nb
+//	 *            the nb
+//	 * @return the gama palette
+//	 */
+//	@operator (
+//			value = "palette",
+//			can_be_const = true,
+//			type = IType.LIST,
+//			content_type = IType.COLOR,
+//			category = { IOperatorCategory.COLOR },
+//			concept = {})
+//	@doc (
+//			value = "returns a list of n colors chosen in the gradient (map<rgb,float>) provided. Colors are chosen by interpolating the stops of the gradient (the colors and their position between 0 and 1), in the order described in the gradient")
+//	@no_test
+//	public static GamaPalette palette(final IScope scope, final IMap<GamaColor, Number> colors, final int nb) {
+//		
+//	}
 
 	/**
 	 * Palette.
