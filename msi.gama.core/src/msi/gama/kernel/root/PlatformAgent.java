@@ -180,7 +180,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			final int ping = GamaPreferences.Runtime.CORE_SERVER_PING.getValue();
 			myServer = GamaWebSocketServer.StartForGUI(port, ping);
 		}
-		GamaPreferences.Runtime.CORE_MEMORY_POLLING.onChange(newValue -> {
+		GamaPreferences.Runtime.CORE_SERVER_MODE.onChange(newValue -> {
 			if(myServer!=null) {
 				try {
 					myServer.stop();
@@ -191,18 +191,9 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 				}
 			}
 			if (newValue) {
-				if(myServer!=null) {
-					try {
-						myServer.stop();
-						myServer=null;
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					final int port = GamaPreferences.Runtime.CORE_SERVER_PORT.getValue();
-					final int ping = GamaPreferences.Runtime.CORE_SERVER_PING.getValue();
-					myServer = GamaWebSocketServer.StartForGUI(port, ping);
-				}
+				final int port = GamaPreferences.Runtime.CORE_SERVER_PORT.getValue();
+				final int ping = GamaPreferences.Runtime.CORE_SERVER_PING.getValue();
+				myServer = GamaWebSocketServer.StartForGUI(port, ping);
 			} 
 		});
 	}
