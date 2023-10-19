@@ -12,6 +12,7 @@ package msi.gama.headless.listener;
 
 import org.java_websocket.WebSocket;
 
+import msi.gama.headless.server.GamaServerExperimentController;
 import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaWebSocketServer;
@@ -45,10 +46,13 @@ public class StepCommand implements ISocketCommand {
 		if (gama_exp == null || gama_exp.getAgent() == null || gama_exp.getCurrentSimulation() == null)
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);
+		gama_exp.getController().directPause();
 		for (int i = 0; i < nb_step; i++) {
 			try {
 				if (sync) {
-					gama_exp.getController().directStep();
+					((GamaServerExperimentController)gama_exp.getController())._job.doStep();
+
+//					gama_exp.getController().directStep();
 				} else {
 					gama_exp.getController().userStep();
 				}
