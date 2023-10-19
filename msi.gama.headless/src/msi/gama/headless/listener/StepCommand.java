@@ -46,7 +46,12 @@ public class StepCommand implements ISocketCommand {
 		if (gama_exp == null || gama_exp.getAgent() == null || gama_exp.getCurrentSimulation() == null)
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);
-		gama_exp.getController().directPause();
+		((GamaServerExperimentController)gama_exp.getController()).pause();
+
+		if (sync) {
+			while (!gama_exp.getController().isPaused()) {
+			}
+		}
 		for (int i = 0; i < nb_step; i++) {
 			try {
 				if (sync) {

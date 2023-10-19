@@ -476,7 +476,7 @@ public class GamaServerExperimentController implements IExperimentController {
 	/**
 	 * Pause.
 	 */
-	private void pause() {
+	public void pause() {
 		paused = true;
 	}
 
