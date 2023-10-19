@@ -255,7 +255,8 @@ public class GamaServerExperimentController implements IExperimentController {
 				// scope.getGui().updateExperimentState(scope, IGui.PAUSED);
 				// stepBack();
 				pause();
-				getExperiment().getAgent().backward(getScope());// ?? scopes[0]);
+				experiment.getAgent().backward(getScope());// ?? scopes[0]);
+//				getExperiment().getAgent().backward(getScope());// ?? scopes[0]);
 				break;
 			case _RELOAD:
 

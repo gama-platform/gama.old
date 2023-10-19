@@ -12,6 +12,7 @@ package msi.gama.headless.listener;
 
 import org.java_websocket.WebSocket;
 
+import msi.gama.headless.server.GamaServerExperimentController;
 import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaWebSocketServer;
@@ -45,13 +46,29 @@ public class StepBackCommand implements ISocketCommand {
 		if (gama_exp == null || gama_exp.getCurrentSimulation() == null)
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);
-		for (int i = 0; i < nb_step; i++) {
-			if (sync) {
-				gama_exp.getController().back();
-			} else {
-				gama_exp.getController().userStepBack();
+	
+
+		((GamaServerExperimentController)gama_exp.getController()).pause();
+
+		if (sync) {
+			while (!gama_exp.getController().isPaused()) {
 			}
 		}
+		for (int i = 0; i < nb_step; i++) {
+			try {
+				if (sync) {
+					((GamaServerExperimentController)gama_exp.getController())._job.doBackStep();
+//					gama_exp.getController().back();
+				} else {
+					gama_exp.getController().userStepBack();
+				}
+			} catch (RuntimeException e) {
+				DEBUG.OUT(e.getStackTrace());
+				return new CommandResponse(GamaServerMessage.Type.GamaServerError, e, map, false);
+			}
+
+		}
+		
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 }
