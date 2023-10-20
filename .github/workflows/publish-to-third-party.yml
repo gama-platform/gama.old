@@ -71,16 +71,36 @@ jobs:
           token: ${{ secrets.BOT_TOKEN }}
           fork-user: gama-platform
 
+      - name: Get Previous Release info 
+        # This version incementation shall be removed when winget-releaser will be able to delete older releases again cf. https://github.com/gama-platform/gama/issues/3917
+        if: needs.get-tag-info.outputs.prerelease == 'true'
+        id: get-prev-release
+        run: |
+          curl -L -G \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/g/GamaPlatform/GamaAlpha" > ${{ runner.temp }}/prev_release.json
+          
+            new_version_counter="$(jq -r '.[] | select(.type == "dir") | select(.name | test("^${{ inputs.tag }}-[0-9]+$")) | .name' ${{ runner.temp }}/prev_release.json | cut -d '-' -f 2 | sort -nuz | head -n1)"
+
+            if [ -n "$new_version_counter" ]; then
+              new_version_counter=$(($new_version_counter + 1))
+            else 
+              new_version_counter=1
+            fi
+
+            echo "new_version_counter=$new_version_counter" >> $GITHUB_OUTPUT
+
       - name: Publish Pre release to Winget 👷
         if: needs.get-tag-info.outputs.prerelease == 'true'
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: GamaPlatform.GamaAlpha
-          version: ${{ inputs.tag }}-${{ needs.get-tag-info.outputs.commit_hash }}
+          version: ${{ inputs.tag }}-${{ steps.get-prev-release.outputs.new_version_counter }}
           release-tag: ${{ inputs.tag }}
           installers-regex: ^GAMA.+JDK.*\.exe$
           token: ${{ secrets.BOT_TOKEN }}
-          max-versions-to-keep: 1
+          # max-versions-to-keep: 1
           fork-user: gama-platform
         
       - name: Get PR created for the release
@@ -91,9 +111,9 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.BOT_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             --data-urlencode "q=is:pr author:gama-bot state:open repo:microsoft/winget-pkgs" \
-            "https://api.github.com/search/issues?sort=created&order=desc&per_page=1" > ${{ runner.temp }}/a.json
+            "https://api.github.com/search/issues?sort=created&order=desc&per_page=1" > ${{ runner.temp }}/pr.json
             
-          echo "number=$(jq -r '.items[0].number' ${{ runner.temp }}/a.json)" >> $GITHUB_ENV
+          echo "number=$(jq -r '.items[0].number' ${{ runner.temp }}/pr.json)" >> $GITHUB_OUTPUT
 
       - name: Mention developpers
         uses: actions/github-script@v3
