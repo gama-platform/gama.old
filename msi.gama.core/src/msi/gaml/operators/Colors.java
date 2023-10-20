@@ -782,7 +782,7 @@ public class Colors {
 			value = "Build a list of colors of a given type (see website http://colorbrewer2.org/). The list of palettes can be obtained by calling brewer_palettes. "
 					+ "This list can be safely modified afterwards (adding or removing colors)",
 			examples = { @example (
-					value = "list<rgb> colors <- brewer_colors(\"OrRd\");",
+					value = "list<rgb> colors <- brewer_colors(\"OrRd\")",
 					equals = "a list of 6 blue colors",
 					isExecutable = false) },
 			see = { "brewer_palettes" })
@@ -818,7 +818,7 @@ public class Colors {
 	@doc (
 			value = "Build a list of colors of a given type (see website http://colorbrewer2.org/) with a given number of classes",
 			examples = { @example (
-					value = "list<rgb> colors <- brewer_colors(\"Pastel1\", 5);",
+					value = "list<rgb> colors <- brewer_colors(\"Pastel1\", 5)",
 					equals = "a list of 5 sequential colors in the palette named 'Pastel1'. The list of palettes can be obtained by calling brewer_palettes",
 					isExecutable = false) },
 			see = { "brewer_palettes" })
@@ -848,9 +848,9 @@ public class Colors {
 			category = { IOperatorCategory.COLOR },
 			concept = { IConcept.COLOR })
 	@doc (
-			value = "returns the list a palette with a given min number of classes and max number of classes)",
+			value = "Returns the list of palettes with a given min number of classes and max number of classes)",
 			examples = { @example (
-					value = "list<string> palettes <- brewer_palettes(5,10);",
+					value = "list<string> palettes <- brewer_palettes(5,10)",
 					equals = "a list of palettes that are composed of a min of 5 colors and a max of 10 colors",
 					isExecutable = false) },
 			see = { "brewer_colors" })
@@ -877,9 +877,9 @@ public class Colors {
 			category = { IOperatorCategory.COLOR },
 			concept = {})
 	@doc (
-			value = "returns the list a palette with a given min number of classes)",
+			value = "Returns the list of palettes with a given min number of classes)",
 			examples = { @example (
-					value = "list<string> palettes <- brewer_palettes(3);",
+					value = "list<string> palettes <- brewer_palettes(3)",
 					equals = "a list of palettes that are composed of a min of 3 colors",
 					isExecutable = false) },
 			see = { "brewer_colors" })
