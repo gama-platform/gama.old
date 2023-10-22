@@ -20,8 +20,6 @@ import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.runtime.IScope;
-import msi.gama.util.tree.GamaNode;
-import msi.gama.util.tree.GamaTree;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -38,6 +36,19 @@ public class SerialisedAgentFactory implements ISerialisationConstants {
 	}
 
 	/**
+	 * Should serialize history.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param sim
+	 *            the sim
+	 * @return true, if successful
+	 * @date 22 oct. 2023
+	 */
+	static boolean shouldSerializeHistory(final SimulationAgent sim) {
+		return sim.hasAttribute(SERIALISE_HISTORY) && (Boolean) sim.getAttribute(SERIALISE_HISTORY);
+	}
+
+	/**
 	 * Save simulation.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
@@ -49,10 +60,7 @@ public class SerialisedAgentFactory implements ISerialisationConstants {
 	public static SerialisedAgent createFor(final SimulationAgent sim) {
 		SerialisedAgent result = new SerialisedAgent(sim);
 		result.attributes().put(HEADER_KEY, new SerialisedSimulationHeader(sim));
-		if (sim.serializeHistory()) {
-			result.attributes().put(HISTORY_KEY, sim.getHistory());
-			result.attributes().put(NODE_KEY, sim.getCurrentHistoryNode());
-		}
+		if (!shouldSerializeHistory(sim)) { result.attributes().remove(HISTORY_KEY); }
 		return result;
 	}
 
@@ -94,6 +102,7 @@ public class SerialisedAgentFactory implements ISerialisationConstants {
 		}
 		// The remaining agents in the map are killed
 		agents.forEach((i, a) -> { a.primDie(scope); });
+		scope.getAndClearDeathStatus();
 	}
 
 	/**
@@ -165,11 +174,6 @@ public class SerialisedAgentFactory implements ISerialisationConstants {
 			// Update Clock
 			final Integer cycle = (Integer) sim.getAttribute(SimulationAgent.CYCLE);
 			sim.getClock().setCycleNoCheck(cycle);
-			// Retrieve history
-			if (attr.containsKey(HISTORY_KEY)) {
-				sim.setHistory((GamaTree<byte[]>) attr.remove(HISTORY_KEY));
-				sim.setCurrentHistoryNode((GamaNode<byte[]>) attr.remove(NODE_KEY));
-			}
 
 		}
 	}

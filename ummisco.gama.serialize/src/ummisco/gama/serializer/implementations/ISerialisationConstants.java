@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * SerialisationConstants.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
+ * ISerialisationConstants.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -31,7 +31,7 @@ public interface ISerialisationConstants {
 	String HISTORY_KEY = "**history**";
 
 	/** The node key. */
-	String NODE_KEY = "**node**";
+	String SERIALISE_HISTORY = "**serialise_history**";
 
 	/** The serialisation string. */
 	String SERIALISATION_STRING = "serialisation_string";

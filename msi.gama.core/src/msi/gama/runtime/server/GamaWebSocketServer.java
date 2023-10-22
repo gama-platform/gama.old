@@ -355,7 +355,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onStart() {
-		DEBUG.LOG("Gama server started on port: " + getPort());
+		DEBUG.BANNER("GAMA: Gama Server started", "at port", "" + this.getPort());
 	}
 
 	/**

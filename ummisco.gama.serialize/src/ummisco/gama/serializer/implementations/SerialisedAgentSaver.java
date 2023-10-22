@@ -78,9 +78,9 @@ public class SerialisedAgentSaver implements ISerialisationConstants {
 	public final void saveToFile(final IScope scope, final SimulationAgent sim, final String path,
 			final boolean withHistory, final String format, final boolean zip) {
 		try (FileOutputStream fos = new FileOutputStream(path, true)) {
-			sim.serializeHistory(withHistory);
+			sim.setAttribute(SERIALISE_HISTORY, withHistory);
 			fos.write(saveToBytes(scope, sim, format, zip));
-			sim.serializeHistory(false);
+			sim.setAttribute(SERIALISE_HISTORY, false);
 		} catch (IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}

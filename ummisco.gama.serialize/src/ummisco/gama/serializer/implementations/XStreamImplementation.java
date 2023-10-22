@@ -71,7 +71,7 @@ public class XStreamImplementation extends AbstractSerialisationProcessor<SavedA
 		SavedAgent sa = new SavedAgent(scope, agent);
 		if (agent instanceof SimulationAgent sim) {
 			sa.put(HEADER_KEY, new SerialisedSimulationHeader(sim));
-			if (sim.serializeHistory()) { sa.put(HISTORY_KEY, sim.getHistory()); }
+			if ((!sa.containsKey(SERIALISE_HISTORY) || !((Boolean) sa.get(SERIALISE_HISTORY)))) { sa.remove(HISTORY_KEY); }
 		}
 		return sa;
 	}

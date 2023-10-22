@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SimulationRunner.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * SimulationRunner.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.runtime.concurrent;
 
@@ -36,23 +36,24 @@ import msi.gama.runtime.concurrent.GamaExecutorService.Caller;
  * The Class SimulationRunner.
  */
 public class SimulationRunner {
-	
+
 	/** The executor. */
 	public volatile ExecutorService executor;
-	
+
 	/** The runnables. */
 	final Map<IScopedStepable, Callable<Boolean>> runnables;
-	
+
 	/** The concurrency. */
 	final int concurrency;
-	
+
 	/** The active threads. */
 	volatile int activeThreads;
 
 	/**
 	 * Of.
 	 *
-	 * @param pop the pop
+	 * @param pop
+	 *            the pop
 	 * @return the simulation runner
 	 */
 	public static SimulationRunner of(final SimulationPopulation pop) {
@@ -69,7 +70,8 @@ public class SimulationRunner {
 	/**
 	 * With concurrency.
 	 *
-	 * @param concurrency the concurrency
+	 * @param concurrency
+	 *            the concurrency
 	 * @return the simulation runner
 	 */
 	public static SimulationRunner withConcurrency(final int concurrency) {
@@ -79,7 +81,8 @@ public class SimulationRunner {
 	/**
 	 * Instantiates a new simulation runner.
 	 *
-	 * @param concurrency the concurrency
+	 * @param concurrency
+	 *            the concurrency
 	 */
 	private SimulationRunner(final int concurrency) {
 		this.concurrency = concurrency;
@@ -89,7 +92,8 @@ public class SimulationRunner {
 	/**
 	 * Removes the.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 */
 	public void remove(final IScopedStepable agent) {
 		runnables.remove(agent);
@@ -98,7 +102,8 @@ public class SimulationRunner {
 	/**
 	 * Adds the.
 	 *
-	 * @param agent the agent
+	 * @param agent
+	 *            the agent
 	 */
 	public void add(final IScopedStepable agent) {
 		add(agent, () -> {
@@ -110,8 +115,10 @@ public class SimulationRunner {
 	/**
 	 * Adds the.
 	 *
-	 * @param agent the agent
-	 * @param callable the callable
+	 * @param agent
+	 *            the agent
+	 * @param callable
+	 *            the callable
 	 */
 	public void add(final IScopedStepable agent, final Callable<Boolean> callable) {
 		runnables.put(agent, callable);
@@ -124,7 +131,7 @@ public class SimulationRunner {
 		try {
 			getExecutor().invokeAll(runnables.values());
 		} catch (final InterruptedException e) {
-			
+
 		}
 
 	}
@@ -135,10 +142,7 @@ public class SimulationRunner {
 	 * @return the int
 	 */
 	private int computeNumberOfThreads() {
-		final ExecutorService executor = getExecutor();
-		if (executor instanceof ThreadPoolExecutor)
-			return Math.min(concurrency, ((ThreadPoolExecutor) executor).getActiveCount());
-		return 1;
+		return getExecutor() instanceof ThreadPoolExecutor tpe ? Math.min(concurrency, tpe.getActiveCount()) : 1;
 	}
 
 	/**
@@ -147,10 +151,9 @@ public class SimulationRunner {
 	 * @return the executor
 	 */
 	protected ExecutorService getExecutor() {
-		if (executor == null) {
-			executor = concurrency == 0 ? newSingleThreadExecutor() : new Executor(THREADS_NUMBER.getValue());
-		}
-		return executor;
+		return executor == null
+				? executor = concurrency == 0 ? newSingleThreadExecutor() : new Executor(THREADS_NUMBER.getValue())
+				: executor;
 	}
 
 	/**
@@ -160,24 +163,20 @@ public class SimulationRunner {
 		runnables.clear();
 		if (executor != null) { executor.shutdownNow(); }
 	}
-	
+
 	/**
 	 * Gets the active stepables.
 	 *
 	 * @return the active stepables
 	 */
-	public Set<IScopedStepable> getStepable() {
-		return runnables.keySet();
-	}
+	public Set<IScopedStepable> getStepable() { return runnables.keySet(); }
 
 	/**
 	 * Gets the active threads.
 	 *
 	 * @return the active threads
 	 */
-	public int getActiveThreads() {
-		return activeThreads;
-	}
+	public int getActiveThreads() { return activeThreads; }
 
 	/**
 	 * Checks for simulations.
@@ -192,14 +191,15 @@ public class SimulationRunner {
 	 * The Class Executor.
 	 */
 	static class Executor extends ThreadPoolExecutor {
-		
+
 		/**
 		 * Instantiates a new executor.
 		 *
-		 * @param nb the nb
+		 * @param nb
+		 *            the nb
 		 */
 		Executor(final int nb) {
-			super(nb, nb, 0L, MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+			super(nb, nb, 0L, MILLISECONDS, new LinkedBlockingQueue<>());
 		}
 
 		@Override
@@ -222,6 +222,5 @@ public class SimulationRunner {
 		}
 
 	}
-	
 
 }
