@@ -779,14 +779,14 @@ public class ChartDataSeries {
 		history.append(this.getName() + ",");
 		if (mysource.isByCategory()) {
 			if (this.cvalues.size() > 0) {
-				if (this.getMysource().isCumulative) {
+				if (this.getMysource().isCumulative()) {
 					history.append(this.cvalues.get(this.cvalues.size() - 1) + ",");
 				} else {
 					savelists(scope, history, this.cvalues);
 				}
 			}
 		} else if (this.xvalues.size() > 0) {
-			if (this.getMysource().isCumulative) {
+			if (this.getMysource().isCumulative()) {
 				history.append(this.xvalues.get(this.xvalues.size() - 1) + ",");
 			} else {
 				savelistd(scope, history, this.xvalues);
@@ -794,7 +794,7 @@ public class ChartDataSeries {
 
 		}
 		if (this.yvalues.size() > 0) {
-			if (this.getMysource().isCumulative) {
+			if (this.getMysource().isCumulative()) {
 				history.append(this.yvalues.get(this.yvalues.size() - 1) + ",");
 			} else {
 				savelistd(scope, history, this.yvalues);
@@ -802,7 +802,7 @@ public class ChartDataSeries {
 
 		}
 		if (this.svalues.size() > 0 && this.svalues.size() >= this.yvalues.size()) {
-			if (this.getMysource().isCumulative) {
+			if (this.getMysource().isCumulative()) {
 				history.append(this.svalues.get(this.svalues.size() - 1) + ",");
 			} else {
 				savelistd(scope, history, this.svalues);

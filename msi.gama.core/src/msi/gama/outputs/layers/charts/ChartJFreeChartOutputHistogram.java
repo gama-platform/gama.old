@@ -63,6 +63,7 @@ import msi.gaml.expressions.IExpression;
  */
 public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
+	/** The Constant XAXIS. */
 	private static final String XAXIS = "xaxis";
 
 	/** The use sub axis. */
@@ -139,7 +140,6 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final int type_val) {
-		
 
 		switch (type_val) {
 			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
@@ -260,7 +260,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 				newr.setDefaultItemLabelsVisible(true);
 			}
 
-			if ((newr instanceof BarRenderer) && (gap >= 0)) {
+			if (newr instanceof BarRenderer && gap >= 0) {
 				((BarRenderer) newr).setMaximumBarWidth(1 - gap);
 
 			}
@@ -270,7 +270,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	protected void clearDataSet(final IScope scope) {
-		
+
 		super.clearDataSet(scope);
 		final CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
 		for (int i = plot.getDatasetCount() - 1; i >= 1; i--) {
@@ -319,19 +319,18 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+"
 		// jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse
 		// "+nbseries);
-		
+
 	}
 
 	@Override
 	public void removeSerie(final IScope scope, final String serieid) {
-		
+
 		super.removeSerie(scope, serieid);
 		this.clearDataSet(scope);
 	}
 
 	@Override
 	protected void resetSerie(final IScope scope, final String serieid) {
-		
 
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		// DefaultCategoryDataset serie=((DefaultCategoryDataset)
@@ -444,7 +443,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	 *            the scope
 	 */
 	public void resetDomainAxis(final IScope scope) {
-		
+
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 		if (this.useSubAxis) {
 			final SubCategoryAxis newAxis = new SubCategoryAxis(pp.getDomainAxis().getLabel());
@@ -504,7 +503,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	public void initChart_post_data_init(final IScope scope) {
-		
+
 		super.initChart_post_data_init(scope);
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 
@@ -520,7 +519,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 				if ("default".equals(this.series_label_position)) {
 					if (this.getChartdataset().getSources().size() > 0) {
 						final ChartDataSource onesource = this.getChartdataset().getSources().get(0);
-						if (onesource.isCumulative) {
+						if (onesource.isCumulative()) {
 							this.series_label_position = "legend";
 						} else {
 							this.series_label_position = XAXIS;
@@ -578,7 +577,6 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 		// final BarRenderer renderer = (BarRenderer) pp.getRenderer();
 
-		
 		// CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
 		// defaultrenderer = new BarRenderer();
 		// plot.setRenderer((BarRenderer)defaultrenderer);

@@ -479,7 +479,7 @@ public class ChartDataSet {
 		final ArrayList<ChartDataSource> sourcestoremove = new ArrayList<>();
 		final ArrayList<ChartDataSource> sourcestoadd = new ArrayList<>();
 		for (final ChartDataSource source : sources) {
-			if (source.isCumulative || source.isCumulativeY) {
+			if (source.isCumulative() || source.isCumulativeY) {
 
 				final ChartDataSource newsource = source.getClone(scope, chartCycle);
 				newsource.createInitialSeries(scope);

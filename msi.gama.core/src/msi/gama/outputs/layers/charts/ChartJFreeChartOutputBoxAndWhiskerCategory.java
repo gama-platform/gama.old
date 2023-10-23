@@ -406,7 +406,7 @@ public class ChartJFreeChartOutputBoxAndWhiskerCategory extends ChartJFreeChartO
 		} else if ("default".equals(this.series_label_position)) {
 			if (!this.getChartdataset().getSources().isEmpty()) {
 				final ChartDataSource onesource = this.getChartdataset().getSources().get(0);
-				if (onesource.isCumulative) {
+				if (onesource.isCumulative()) {
 					this.series_label_position = "legend";
 				} else {
 					this.series_label_position = XAXIS;
