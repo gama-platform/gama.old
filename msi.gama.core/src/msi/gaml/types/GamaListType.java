@@ -67,9 +67,9 @@ public class GamaListType extends GamaContainerType<IList> {
 		final IType contentsType = ct == null ? Types.NO_TYPE : ct;
 		// BG fix issue ##2338
 		// if (obj == null) { return GamaListFactory.create(Types.NO_TYPE, 0); }
-		if (obj == null) return GamaListFactory.create(ct, 0);
+		if (obj == null) return GamaListFactory.create(contentsType, 0);
 
-		if (obj instanceof GamaDate) return ((GamaDate) obj).listValue(scope, ct);
+		if (obj instanceof GamaDate) return ((GamaDate) obj).listValue(scope, contentsType);
 		if (obj instanceof IContainer) {
 			if (obj instanceof IPopulation) // Explicitly set copy to true if we deal with a population
 				return ((IPopulation) obj).listValue(scope, contentsType, true);
