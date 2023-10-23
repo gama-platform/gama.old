@@ -841,8 +841,10 @@ public class Variable extends Symbol implements IVariable {
 		if (getter != null) return getter.run(scope, agent, gSkill == null ? agent : gSkill);
 		if (functionExpression != null) return scope.evaluate(functionExpression, agent).getValue();
 		// Var not yet initialized. May happen when asking for its value while initializing an editor
-		// See Issue #2781
-		if (!agent.hasAttribute(name) && isNotModifiable && !description.isBuiltIn()) return getInitialValue(scope);
+		// See Issue #2781 + Issue #3920
+		if (!agent.hasAttribute(name) && (isNotModifiable || initExpression != null && initExpression.isConst())
+				&& !description.isBuiltIn())
+			return getInitialValue(scope);
 		return agent.getAttribute(name);
 	}
 
