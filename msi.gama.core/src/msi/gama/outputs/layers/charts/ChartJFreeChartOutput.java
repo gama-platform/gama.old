@@ -58,7 +58,7 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 	final List<Dataset> jfreedataset = new ArrayList<>();
 
 	/** The chart. */
-	JFreeChart chart, snapshot = null;
+	JFreeChart chart = null;
 
 	/** The area. */
 	final Rectangle2D area = new Rectangle2D.Double();
@@ -77,9 +77,6 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	/** The nbseries. */
 	int nbseries = 0;
-	/** The ready. */
-	// ChartProgressListener
-	private volatile boolean ready = true;
 
 	/**
 	 * Instantiates a new chart J free chart output.
@@ -127,28 +124,40 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 	@Override
 	public BufferedImage getImage(final int sizeX, final int sizeY, final boolean antiAlias) {
-		// if (GAMA.isSynchronized()) { while (!ready) { DEBUG.WAIT(20); } }
-		// if (!ready) return frontImage;
 		adjustImage(sizeX, sizeY, antiAlias);
 
 		final Graphics2D g2D = backImage.createGraphics();
 		try {
+
 			synchronized (lock) {
-				snapshot = (JFreeChart) chart.clone();
-				snapshot.addProgressListener(this);
-				snapshot.draw(g2D, area, info);
+				chart.draw(g2D, area, info);
 			}
-		} catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException
-				| CloneNotSupportedException e) {
+		} catch (IndexOutOfBoundsException | IllegalArgumentException | NullPointerException e) {
 			// Do nothing. See #1605
 			// e.printStackTrace();
-			// To force redrawing in case of error. See #3442
-			ready = true;
+			// Should we force redrawing in case of error ? See #3442
 		} finally {
 			g2D.dispose();
 		}
 		return frontImage;
 
+	}
+
+	/**
+	 * Chart progress.
+	 *
+	 * @param event
+	 *            the event
+	 */
+	@Override
+	public void chartProgress(final ChartProgressEvent event) {
+		if (event.getType() == ChartProgressEvent.DRAWING_FINISHED) {
+			synchronized (lock) {
+				BufferedImage bi = backImage;
+				backImage = frontImage;
+				frontImage = bi;
+			}
+		}
 	}
 
 	/**
@@ -174,22 +183,6 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 		}
 	}
 
-	/**
-	 * Chart progress.
-	 *
-	 * @param event
-	 *            the event
-	 */
-	@Override
-	public void chartProgress(final ChartProgressEvent event) {
-		ready = event.getType() == ChartProgressEvent.DRAWING_FINISHED;
-		if (ready) {
-			BufferedImage bi = backImage;
-			backImage = frontImage;
-			frontImage = bi;
-		}
-	}
-
 	@Override
 	public void step(final IScope scope) {
 		synchronized (lock) {
@@ -211,7 +204,7 @@ public class ChartJFreeChartOutput extends ChartOutput implements ChartProgressL
 
 		initRenderer(scope);
 		final Plot plot = chart.getPlot();
-
+		chart.addProgressListener(this);
 		chart.setBorderVisible(false);
 		plot.setOutlineVisible(false);
 		chart.setTitle(this.getName());
