@@ -26,10 +26,9 @@ import static msi.gama.runtime.server.ISocketCommand.STOP;
 import static msi.gama.runtime.server.ISocketCommand.UPLOAD;
 
 import java.util.AbstractMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.enums.ReadyState;
@@ -56,14 +55,17 @@ public class CommandExecutor {
 	protected final Map<String, ISocketCommand> commands;
 
 	/** The command queue. */
-	protected volatile Queue<Entry<WebSocket, IMap<String, Object>>> commandQueue;
+	protected volatile LinkedBlockingQueue<Entry<WebSocket, IMap<String, Object>>> commandQueue;
 
 	/** The command execution thread. */
 	protected final Thread commandExecutionThread = new Thread(() -> {
 		while (true) {
-			while (!commandQueue.isEmpty()) {
-				var cmd = commandQueue.poll();
+			Entry<WebSocket, IMap<String, Object>> cmd;
+			try {
+				cmd = commandQueue.take();
 				process(cmd.getKey(), cmd.getValue());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	});
@@ -77,7 +79,7 @@ public class CommandExecutor {
 
 	public CommandExecutor() {
 		commands = GAMA.getGui().getServerCommands();
-		commandQueue = new LinkedList<>();
+		commandQueue = new LinkedBlockingQueue<>();
 		commandExecutionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandExecutionThread.start();
 	}
@@ -93,7 +95,7 @@ public class CommandExecutor {
 	 * @date 15 oct. 2023
 	 */
 	public void pushCommand(final WebSocket socket, final IMap<String, Object> map) {
-		commandQueue.add(new AbstractMap.SimpleEntry<>(socket, map));
+		commandQueue.offer(new AbstractMap.SimpleEntry<>(socket, map));
 	}
 
 	/**
