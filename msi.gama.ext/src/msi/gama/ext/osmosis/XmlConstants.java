@@ -46,5 +46,5 @@ public final class XmlConstants {
 	/**
 	 * The default URL for the production API.
 	 */
-	public static final String DEFAULT_URL = "http://www.openstreetmap.org/api/0.6";
+	public static final String DEFAULT_URL = "https://api.openstreetmap.org/api/0.6";
 }
