@@ -280,7 +280,7 @@ public class GamaWebSocketServer extends WebSocketServer {
 		if (timer != null) { timer.cancel(); }
 		if (getLaunched_experiments().get("" + conn.hashCode()) != null) {
 			for (IExperimentPlan e : getLaunched_experiments().get("" + conn.hashCode()).values()) {
-				e.getController().directPause();
+				e.getController().processPause(true);
 				e.getController().dispose();
 			}
 			getLaunched_experiments().get("" + conn.hashCode()).clear();

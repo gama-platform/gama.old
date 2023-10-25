@@ -58,7 +58,30 @@ public class HeadlessExperimentController implements IExperimentController {
 	}
 
 	@Override
-	public void userStart() {
+	public void dispose() {
+		agent = null;
+	}
+
+	@Override
+	public void processOpen(final boolean andWait) {}
+
+	@Override
+	public void processPause(final boolean andWait) {}
+
+	@Override
+	public void processReload(final boolean andWait) {}
+
+	@Override
+	public void processStep(final boolean andWait) {}
+
+	@Override
+	public void processBack(final boolean andWait) {}
+
+	@Override
+	public void processStartPause(final boolean andWait) {}
+
+	@Override
+	public void processStart(final boolean andWait) {
 		if (agent == null) return;
 		IScope scope = agent.getScope();
 		try {
@@ -68,11 +91,6 @@ public class HeadlessExperimentController implements IExperimentController {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 			}
 		}
-	}
-
-	@Override
-	public void dispose() {
-		agent = null;
 	}
 
 }

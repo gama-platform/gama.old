@@ -46,21 +46,17 @@ public class StepBackCommand implements ISocketCommand {
 		if (gama_exp == null || gama_exp.getCurrentSimulation() == null)
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);
-	
 
-		((GamaServerExperimentController)gama_exp.getController()).pause();
+		((GamaServerExperimentController) gama_exp.getController()).pause();
 
-		if (sync) {
-			while (!gama_exp.getController().isPaused()) {
-			}
-		}
+		if (sync) { while (!gama_exp.getController().isPaused()) {} }
 		for (int i = 0; i < nb_step; i++) {
 			try {
 				if (sync) {
-					((GamaServerExperimentController)gama_exp.getController())._job.doBackStep();
-//					gama_exp.getController().back();
+					((GamaServerExperimentController) gama_exp.getController())._job.doBackStep();
+					// gama_exp.getController().back();
 				} else {
-					gama_exp.getController().userStepBack();
+					gama_exp.getController().processBack(false);
 				}
 			} catch (RuntimeException e) {
 				DEBUG.OUT(e.getStackTrace());
@@ -68,7 +64,7 @@ public class StepBackCommand implements ISocketCommand {
 			}
 
 		}
-		
+
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 }

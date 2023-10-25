@@ -79,6 +79,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @since 14 mai 2013
  *
  */
+@SuppressWarnings ("unchecked")
 public class GridPopulation implements IPopulation<IGridAgent> {
 
 	static {

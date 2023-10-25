@@ -41,7 +41,7 @@ public class PauseCommand implements ISocketCommand {
 				"For 'pause', mandatory parameter is: 'exp_id'", map, false);
 		var exp = gamaWebSocketServer.getExperiment(socket_id, exp_id);
 		if (exp != null && exp.getCurrentSimulation() != null) {
-			exp.getController().directPause();
+			exp.getController().processPause(true);
 			return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 		}
 		return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,

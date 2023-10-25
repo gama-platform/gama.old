@@ -1025,7 +1025,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public IExperimentController getController() {
 		if (controller == null) {
-			controller = isHeadless ? new HeadlessExperimentController(this) : new ExperimentController(this);
+			controller = isHeadless ? new HeadlessExperimentController(this) : new DefaultExperimentController(this);
 		}
 		return controller;
 	}

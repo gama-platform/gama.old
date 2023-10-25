@@ -26,17 +26,13 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gama.util.IMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gaml.compilation.GAML;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -240,40 +236,6 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 		// GAMA.addGuiExperiment(exp);
 
 		return exp;
-	}
-
-	/**
-	 * Execute.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param with_exp
-	 *            the with exp
-	 * @param param_input
-	 *            the param input
-	 * @param param_output
-	 *            the param output
-	 * @param reset
-	 *            the reset
-	 * @param repeat
-	 *            the repeat
-	 * @param stopCondition
-	 *            the stop condition
-	 * @param share
-	 *            the share
-	 */
-	public void execute(final IScope scope, final IExpression with_exp, final IExpression param_input,
-			final IExpression param_output, final IExpression reset, final IExpression repeat,
-			final IExpression stopCondition, final IExpression share) {
-		final IExperimentPlan experiment = createExperiment(experimentName);
-
-		if (param_input != null) {
-			final IMap in = Cast.asMap(scope, param_input.value(scope), true);
-			for (int i = 0; i < in.getKeys().size(); i++) {
-				experiment.getModel().getVar(in.getKeys().get(i).toString()).setValue(null, in.getValues().get(i));
-			}
-		}
-		GAMA.openExperimentFromGamlFile(experiment);
 	}
 
 	/**

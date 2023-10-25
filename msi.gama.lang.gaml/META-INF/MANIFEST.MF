@@ -32,7 +32,6 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.scoping,
  msi.gama.lang.gaml.serializer,
  msi.gama.lang.gaml.services,
- msi.gama.lang.gaml.statements,
  msi.gama.lang.gaml.validation,
  msi.gama.lang.gaml.gaml.impl,
  msi.gama.lang.gaml.gaml.util

@@ -761,11 +761,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// if (!GAMA.isPaused()) { GAMA.pauseFrontmostExperiment(); }
 		final IExperimentController controller = scope.getExperiment().getSpecies().getController();
 		if (controller != null && !controller.isPaused()) {
-			if (GAMA.getGui().isInDisplayThread()) {
-				controller.userPause();
-			} else {
-				controller.directPause();
-			}
+			controller.processPause(!GAMA.getGui().isInDisplayThread());
 		}
 		return null;
 	}
@@ -784,7 +780,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public Object resume(final IScope scope) {
 		// if (GAMA.isPaused()) { GAMA.resumeFrontmostExperiment(); }
 		final IExperimentController controller = scope.getExperiment().getSpecies().getController();
-		if (controller != null && controller.isPaused()) { controller.userStart(); }
+		if (controller != null && controller.isPaused()) { controller.processStart(false); }
 		return null;
 	}
 

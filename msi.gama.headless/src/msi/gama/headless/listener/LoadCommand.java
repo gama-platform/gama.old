@@ -17,12 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.GamlFileExtension;
-import msi.gama.headless.common.Globals;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.server.GamaServerExperimentJob;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.server.CommandExecutor;
 import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
@@ -104,7 +101,6 @@ public class LoadCommand implements ISocketCommand {
 
 		final String argExperimentName = map.get("experiment").toString();
 
-
 		GamaServerExperimentJob selectedJob = null;
 
 		var console = map.get("console") != null ? Boolean.parseBoolean("" + map.get("console")) : true;
@@ -120,13 +116,13 @@ public class LoadCommand implements ISocketCommand {
 				gamaWebSocketServer, socket, params, end, console, status, dialog, runtime);
 		selectedJob.load();
 		// we check if the experiment is present in the file
-		if (selectedJob.simulator.getModel().getExperiment(argExperimentName)==null)
+		if (selectedJob.simulator.getModel().getExperiment(argExperimentName) == null)
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"'" + argExperimentName + "' is not an experiment present in '" + ff.getAbsolutePath() + "'", map,
 					false);
-//		Globals.OUTPUT_PATH = ".";// TODO: why ?
+		// Globals.OUTPUT_PATH = ".";// TODO: why ?
 
-		selectedJob.controller.directOpenExperiment();
+		selectedJob.controller.processOpen(true);
 		selectedJob.controller.getExperiment().setStopCondition(end);
 		// If the client has not ran any experiment yet, we initialize its experiments map
 		if (gamaWebSocketServer.getExperimentsOf(socket_id) == null) {
@@ -139,6 +135,6 @@ public class LoadCommand implements ISocketCommand {
 		gamaWebSocketServer.execute(selectedJob.controller.executionThread);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, selectedJob.getExperimentID(),
 				map, false);
-	} 
+	}
 
 }

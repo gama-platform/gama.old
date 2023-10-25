@@ -55,7 +55,7 @@ public class ReloadCommand implements ISocketCommand {
 		if (parametersError != null) return parametersError;
 
 		// actual reload
-		gama_exp.getController().userReload();
+		gama_exp.getController().processReload(false);
 
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}

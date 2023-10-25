@@ -40,7 +40,7 @@ public class StopCommand implements ISocketCommand {
 				"For 'stop', mandatory parameter is: 'exp_id'", map, false);
 		var gama_exp = gamaWebSocketServer.getExperiment(socket_id, exp_id);
 		if (gama_exp != null && gama_exp.getAgent() != null && gama_exp.getCurrentSimulation() != null) {
-			gama_exp.getController().directPause();
+			gama_exp.getController().processPause(true);
 			gama_exp.getController().dispose();
 			return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 		}

@@ -103,7 +103,7 @@ public class TestView extends ExpandableItemsView<AbstractSummary<?>> implements
 		WorkbenchHelper.run(() -> {
 			if (toolbar != null) {
 				toolbar.status(null, "Run experiment to see the tests results",
-						e -> { GAMA.startFrontmostExperiment(); }, IGamaColors.BLUE, SWT.LEFT);
+						e -> { GAMA.startFrontmostExperiment(false); }, IGamaColors.BLUE, SWT.LEFT);
 			}
 		});
 		super.reset();

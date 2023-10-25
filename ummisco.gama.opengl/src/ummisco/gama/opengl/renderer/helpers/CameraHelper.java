@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * CameraHelper.java, in ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gama.opengl.renderer.helpers;
@@ -865,9 +865,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			case 'P':
 				if (isControlDown(e)) {
 					if (e.isShiftDown()) {
-						GAMA.stepFrontmostExperiment();
+						GAMA.stepFrontmostExperiment(false);
 					} else {
-						GAMA.startPauseFrontmostExperiment();
+						GAMA.startPauseFrontmostExperiment(false);
 					}
 					return;
 				}
@@ -878,7 +878,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 					if (e.isShiftDown()) {
 						GAMA.relaunchFrontmostExperiment();
 					} else {
-						GAMA.reloadFrontmostExperiment();
+						GAMA.reloadFrontmostExperiment(false);
 					}
 					return;
 				}

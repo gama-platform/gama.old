@@ -10,6 +10,10 @@
  ********************************************************************************************************/
 package msi.gama.kernel.experiment;
 
+import java.io.Closeable;
+
+import msi.gama.common.interfaces.IDisposable;
+
 /**
  * Class IExperimentController.
  *
@@ -17,96 +21,41 @@ package msi.gama.kernel.experiment;
  * @since 6 déc. 2015
  *
  */
-public interface IExperimentController {
-
-	/** The open. */
-	int _OPEN = 0;
-
-	/** The start. */
-	int _START = 1;
-
-	/** The step. */
-	int _STEP = 2;
-
-	/** The pause. */
-	int _PAUSE = 3;
-
-	/** The reload. */
-	int _RELOAD = 6;
-
-	/** The back. */
-	int _BACK = 8;
-
-	/** The close. */
-	int _CLOSE = -1;
+public interface IExperimentController extends IDisposable, Closeable {
 
 	/**
-	 * @return
-	 */
-	IExperimentPlan getExperiment();
-
-	/**
-	 *
-	 */
-	default void userStep() {}
-
-	/**
-	 *
-	 */
-	default void userStepBack() {}
-
-	/**
-	 *
-	 */
-	default void startPause() {}
-
-	/**
-	 *
-	 */
-	default void close() {}
-
-	/**
-	 *
-	 */
-	default void userStart() {}
-
-	/**
-	 *
-	 */
-	default void directPause() {}
-
-	/**
-	 * Back.
+	 * The Enum ExperimentCommand.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 15 oct. 2023
+	 * @date 24 oct. 2023
 	 */
-	default void back() {}
+	enum ExperimentCommand {
+
+		/** The open. */
+		_OPEN(),
+		/** The start. */
+		_START(),
+		/** The step. */
+		_STEP(),
+		/** The pause. */
+		_PAUSE(),
+		/** The reload. */
+		_RELOAD(),
+		/** The back. */
+		_BACK(),
+		/** The close. */
+		_CLOSE();
+
+	}
 
 	/**
+	 * Gets the experiment.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the experiment
+	 * @date 24 oct. 2023
 	 */
-	default void dispose() {}
-
-	/**
-	 *
-	 */
-	default void directOpenExperiment() {}
-
-	/**
-	 *
-	 */
-	default void userReload() {}
-
-	/**
-	 *
-	 */
-	default void userPause() {}
-
-	/**
-	 *
-	 */
-	default void userOpen() {}
+	IExperimentPlan getExperiment();
 
 	/**
 	 * Checks if is disposing.
@@ -133,11 +82,88 @@ public interface IExperimentController {
 	default void schedule(final ExperimentAgent agent) {}
 
 	/**
-	 * Direct step.
+	 * Process open.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 15 oct. 2023
+	 * @param andWait
+	 *            the and wait
+	 * @date 23 oct. 2023
 	 */
-	default void directStep() {}
+	void processOpen(final boolean andWait);
+
+	/**
+	 * Process pause.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param andWait
+	 *            the and wait
+	 * @date 23 oct. 2023
+	 */
+	void processPause(final boolean andWait);
+
+	/**
+	 * Process reload.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param andWait
+	 *            the and wait
+	 * @date 23 oct. 2023
+	 */
+	void processReload(final boolean andWait);
+
+	/**
+	 * Process step.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param andWait
+	 *            the and wait
+	 * @date 23 oct. 2023
+	 */
+	void processStep(final boolean andWait);
+
+	/**
+	 * Process back.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param andWait
+	 *            the and wait
+	 * @date 23 oct. 2023
+	 */
+	void processBack(final boolean andWait);
+
+	/**
+	 * Process start pause.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param andWait
+	 *            the and wait
+	 * @date 24 oct. 2023
+	 */
+	default void processStartPause(final boolean andWait) {
+		if (isPaused()) {
+			processStart(andWait);
+		} else {
+			processPause(andWait);
+		}
+	}
+
+	/**
+	 * Process start.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param andWait
+	 *            the and wait
+	 * @date 24 oct. 2023
+	 */
+	void processStart(final boolean andWait);
+
+	/**
+	 * Close.Getting rid of the IO execption inherited from Closeable
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 25 oct. 2023
+	 */
+	@Override
+	void close();
 
 }

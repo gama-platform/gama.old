@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PlayPauseSimulationHandler.java, in ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * PlayPauseSimulationHandler.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.commands;
 
@@ -28,17 +28,18 @@ public class PlayPauseSimulationHandler extends AbstractHandler implements IElem
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.startPauseFrontmostExperiment();
+		GAMA.startPauseFrontmostExperiment(false);
 		return this;
 	}
 
 	@Override
 	public void updateElement(final UIElement element, final Map parameters) {
 		element.setTooltip("Runs or pauses the current experiment (" + GamaKeyBindings.PLAY_STRING + ")");
-		if (GAMA.isPaused())
+		if (GAMA.isPaused()) {
 			element.setText("Run Experiment (" + GamaKeyBindings.PLAY_STRING + ")");
-		else
+		} else {
 			element.setText("Pause Experiment (" + GamaKeyBindings.PLAY_STRING + ")");
+		}
 
 	}
 }

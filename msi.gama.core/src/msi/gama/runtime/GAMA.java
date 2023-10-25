@@ -60,9 +60,6 @@ public class GAMA {
 	/** The Constant VERSION. */
 	public static final String VERSION = "GAMA " + VERSION_NUMBER;
 
-	/** The Constant _WARNINGS. */
-	// public static final String _WARNINGS = "warnings";
-
 	/** The agent. */
 	private static volatile PlatformAgent agent;
 
@@ -132,7 +129,7 @@ public class GAMA {
 		if (controller != null) {
 			final IExperimentPlan existingExperiment = controller.getExperiment();
 			if (existingExperiment != null) {
-				controller.directPause();
+				controller.processPause(true);
 				if (!getGui().confirmClose(existingExperiment)) return;
 			}
 		}
@@ -142,32 +139,12 @@ public class GAMA {
 		if (getGui().openSimulationPerspective(model, id)) {
 			controllers.add(controller);
 			startBenchmark(newExperiment);
-			controller.userOpen();
+			controller.processOpen(false);
 		} else {
 			// we are unable to launch the perspective.
 			DEBUG.ERR("Unable to launch simulation perspective for experiment " + id + " of model "
 					+ model.getFilePath());
 		}
-	}
-
-	// /**
-	// * Add a sub-experiment to the current GUI experiment
-	// *
-	// * @param id
-	// * @param model
-	// */
-	// public static void addGuiExperiment(final IExperimentPlan experiment) {
-	//
-	// }
-
-	/**
-	 * Open experiment from gaml file.
-	 *
-	 * @param experiment
-	 *            the experiment
-	 */
-	public static void openExperimentFromGamlFile(final IExperimentPlan experiment) {
-		experiment.getController().directOpenExperiment();
 	}
 
 	/**
@@ -194,7 +171,6 @@ public class GAMA {
 				currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
 						entry.getValue());
 			}
-
 		}
 		currentExperiment.open(seed);
 		controllers.add(currentExperiment.getController());
@@ -360,7 +336,7 @@ public class GAMA {
 		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if (shouldStop) {
 			if (isInHeadLessMode() && !isInServerMode()) throw g;
-			pauseFrontmostExperiment();
+			pauseFrontmostExperiment(false);
 			throw g;
 		}
 	}
@@ -368,59 +344,55 @@ public class GAMA {
 	/**
 	 * Start pause frontmost experiment.
 	 */
-	public static void startPauseFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) { controller.startPause(); }
+	public static void startPauseFrontmostExperiment(final boolean andWait) {
+		for (final IExperimentController controller : controllers) { controller.processStartPause(andWait); }
 	}
 
 	/**
 	 * Step frontmost experiment.
 	 */
-	public static void stepFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) { controller.userStep(); }
+	public static void stepFrontmostExperiment(final boolean andWait) {
+		for (final IExperimentController controller : controllers) { controller.processStep(andWait); }
 	}
 
 	/**
 	 * Step back frontmost experiment.
 	 */
-	public static void stepBackFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) { controller.userStepBack(); }
+	public static void stepBackFrontmostExperiment(final boolean andWait) {
+		for (final IExperimentController controller : controllers) { controller.processBack(andWait); }
 	}
 
 	/**
 	 * Pause frontmost experiment.
 	 */
-	public static void pauseFrontmostExperiment() {
+	public static void pauseFrontmostExperiment(final boolean andWait) {
 		for (final IExperimentController controller : controllers) {
 			// Dont block display threads (see #
-			if (getGui().isInDisplayThread()) {
-				controller.userPause();
-			} else {
-				controller.directPause();
-			}
+			controller.processPause(!getGui().isInDisplayThread() && andWait);
 		}
 	}
 
 	/**
 	 * Resume frontmost experiment.
 	 */
-	public static void resumeFrontmostExperiment() {
-		for (final IExperimentController controller : controllers) { controller.userStart(); }
+	public static void resumeFrontmostExperiment(final boolean andWait) {
+		for (final IExperimentController controller : controllers) { controller.processStart(andWait); }
 	}
 
 	/**
 	 * Reload frontmost experiment.
 	 */
-	public static void reloadFrontmostExperiment() {
+	public static void reloadFrontmostExperiment(final boolean andWait) {
 		final IExperimentController controller = getFrontmostController();
-		if (controller != null) { controller.userReload(); }
+		if (controller != null) { controller.processReload(andWait); }
 	}
 
 	/**
 	 * Start frontmost experiment.
 	 */
-	public static void startFrontmostExperiment() {
+	public static void startFrontmostExperiment(final boolean andWait) {
 		final IExperimentController controller = getFrontmostController();
-		if (controller != null) { controller.userStart(); }
+		if (controller != null) { controller.processStart(andWait); }
 	}
 
 	/**

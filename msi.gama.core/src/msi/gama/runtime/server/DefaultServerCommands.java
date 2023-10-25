@@ -71,9 +71,9 @@ public class DefaultServerCommands {
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"'" + nameOfExperiment + "' is not an experiment present in '" + ff.getAbsolutePath() + "'", map,
 					false);
-		final IModel mm=model;
-		GAMA.getGui().run("openExp", ()->GAMA.runGuiExperiment(nameOfExperiment, mm), false);
-		
+		final IModel mm = model;
+		GAMA.getGui().run("openExp", () -> GAMA.runGuiExperiment(nameOfExperiment, mm), false);
+
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, nameOfExperiment, map, false);
 	}
 
@@ -89,7 +89,7 @@ public class DefaultServerCommands {
 	 * @date 15 oct. 2023
 	 */
 	public static GamaServerMessage PLAY(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.startFrontmostExperiment();
+		GAMA.startFrontmostExperiment(true);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -105,7 +105,7 @@ public class DefaultServerCommands {
 	 * @date 15 oct. 2023
 	 */
 	public static GamaServerMessage PAUSE(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.pauseFrontmostExperiment();
+		GAMA.pauseFrontmostExperiment(true);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -121,7 +121,7 @@ public class DefaultServerCommands {
 	 * @date 15 oct. 2023
 	 */
 	public static GamaServerMessage STEP(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.stepFrontmostExperiment();
+		GAMA.stepFrontmostExperiment(false);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -137,7 +137,7 @@ public class DefaultServerCommands {
 	 * @date 15 oct. 2023
 	 */
 	public static GamaServerMessage BACK(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.stepBackFrontmostExperiment();
+		GAMA.stepBackFrontmostExperiment(false);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -169,7 +169,7 @@ public class DefaultServerCommands {
 	 * @date 15 oct. 2023
 	 */
 	public static GamaServerMessage RELOAD(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.reloadFrontmostExperiment();
+		GAMA.reloadFrontmostExperiment(true);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 

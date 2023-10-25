@@ -151,17 +151,18 @@ public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProv
 					} else {
 						item.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
 					}
-					GAMA.startPauseFrontmostExperiment();
+					GAMA.startPauseFrontmostExperiment(false);
 
 				});
 		stepExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_STEP,
-				STRINGS.PAD("Step experiment", pad) + GamaKeyBindings.STEP_STRING, e -> GAMA.stepFrontmostExperiment());
+				STRINGS.PAD("Step experiment", pad) + GamaKeyBindings.STEP_STRING,
+				e -> GAMA.stepFrontmostExperiment(false));
 		closeExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_STOP,
 				STRINGS.PAD("Closes experiment", pad) + GamaKeyBindings.QUIT_STRING,
 				e -> new Thread(() -> GAMA.closeAllExperiments(true, false)).start());
 		relaunchExperiment = new GamaCommand(IGamaIcons.EXPERIMENT_RELOAD,
 				STRINGS.PAD("Reload experiment", pad) + GamaKeyBindings.RELOAD_STRING,
-				e -> GAMA.reloadFrontmostExperiment());
+				e -> GAMA.reloadFrontmostExperiment(false));
 	}
 
 	/** The overlay listener. */

@@ -112,10 +112,10 @@ public class GamaKeyBindings implements Listener {
 			case 'p':
 				if (ctrl(event) && shift(event)) {
 					consume(event);
-					GAMA.stepFrontmostExperiment();
+					GAMA.stepFrontmostExperiment(false);
 				} else if (ctrl(event)) {
 					consume(event);
-					GAMA.startPauseFrontmostExperiment();
+					GAMA.startPauseFrontmostExperiment(false);
 				}
 				break;
 			// Handles RELOAD & RELAUNCH
@@ -131,7 +131,7 @@ public class GamaKeyBindings implements Listener {
 				} else if (ctrl(event)) {
 					// DEBUG.OUT("CONTROL R Pressed");
 					consume(event);
-					GAMA.reloadFrontmostExperiment();
+					GAMA.reloadFrontmostExperiment(false);
 				}
 				break;
 			}

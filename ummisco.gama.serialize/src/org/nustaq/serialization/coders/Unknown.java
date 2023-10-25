@@ -12,6 +12,7 @@ package org.nustaq.serialization.coders;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.Map;
  * fieldnames in their outputstream, this can only be supported for fieldname containing (but slow) codec's.
  *
  */
+@SuppressWarnings ("unchecked")
 public class Unknown implements Serializable {
 
 	/** The fields. */
@@ -120,9 +122,9 @@ public class Unknown implements Serializable {
 	public <T> T ddot(final Object... propPath) {
 		List res = new ArrayList(propPath.length * 2);
 		for (Object o : propPath) {
-			if ((o instanceof String) && (((String) o).indexOf('.') >= 0)) {
+			if (o instanceof String && ((String) o).indexOf('.') >= 0) {
 				String split[] = ((String) o).split("\\.");
-				for (String s : split) { res.add(s); }
+				res.addAll(Arrays.asList(split));
 			} else {
 				res.add(o);
 			}

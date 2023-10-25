@@ -46,7 +46,7 @@ public class PlayCommand implements ISocketCommand {
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);
 		gama_exp.getAgent().setAttribute("%%playCommand%%", map);
-		gama_exp.getController().userStart();
+		gama_exp.getController().processStart(false);
 		boolean hasEndCond = map.containsKey(UNTIL) && !map.get(UNTIL).toString().isBlank();
 		if (hasEndCond && sync) return null;
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);

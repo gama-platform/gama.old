@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * ExperimentController.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * DefaultExperimentController.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -11,7 +11,6 @@
 package msi.gama.kernel.experiment;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Semaphore;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
@@ -23,52 +22,17 @@ import ummisco.gama.dev.utils.DEBUG;
 /**
  * The Class ExperimentController.
  */
-public class ExperimentController implements IExperimentController {
-
-	/** The scope. */
-	IScope scope;
-
-	/**
-	 * Alive. Flag indicating that the scheduler is running (it should be alive unless the application is shutting down)
-	 */
-	protected volatile boolean experimentAlive = true;
-
-	/**
-	 * Paused. Flag indicating that the experiment is set to pause (used in stepping the experiment)
-	 **/
-	protected volatile boolean paused = true;
-
-	/** AcceptingCommands. A flag indicating that the command thread is accepting commands */
-	protected volatile boolean acceptingCommands = true;
-
-	/** The lock. Used to pause the experiment */
-	protected final Semaphore lock = new Semaphore(1);
+public class DefaultExperimentController extends AbstractExperimentController {
 
 	/** The execution thread. */
-	private final Thread executionThread = new Thread(() -> {
-		while (experimentAlive) { step(); }
-	}, "Front end scheduler");
-
-	/** The experiment. */
-	private final IExperimentPlan experiment;
 
 	/** The agent. */
 	private IExperimentAgent agent;
 
-	/** The disposing. */
-	private boolean disposing;
-
-	/** The commands. */
-	protected volatile ArrayBlockingQueue<Integer> commands;
+	/** The r. */
 
 	/** The command thread. */
-	private final Thread commandThread = new Thread(() -> {
-		while (acceptingCommands) {
-			try {
-				processUserCommand(commands.take());
-			} catch (final Exception e) {}
-		}
-	}, "Front end controller");
+	private final Thread executionThread;
 
 	/**
 	 * Instantiates a new experiment controller.
@@ -76,9 +40,10 @@ public class ExperimentController implements IExperimentController {
 	 * @param experiment
 	 *            the experiment
 	 */
-	public ExperimentController(final IExperimentPlan experiment) {
+	public DefaultExperimentController(final IExperimentPlan experiment) {
 		commands = new ArrayBlockingQueue<>(10);
 		this.experiment = experiment;
+		executionThread = new Thread(() -> { while (experimentAlive) { step(); } }, "Front end scheduler");
 		executionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
 		try {
@@ -88,30 +53,14 @@ public class ExperimentController implements IExperimentController {
 		executionThread.start();
 	}
 
-	@Override
-	public boolean isDisposing() { return disposing; }
-
-	@Override
-	public IExperimentPlan getExperiment() { return experiment; }
-
-	/**
-	 * Offer.
-	 *
-	 * @param command
-	 *            the command
-	 */
-	private void offer(final int command) {
-		if (experiment == null || isDisposing()) return;
-		commands.offer(command);
-	}
-
 	/**
 	 * Process user command.
 	 *
 	 * @param command
 	 *            the command
 	 */
-	private void processUserCommand(final int command) {
+	@Override
+	protected void processUserCommand(final ExperimentCommand command) {
 		final IScope scope = getScope();
 		switch (command) {
 			case _CLOSE:
@@ -128,7 +77,8 @@ public class ExperimentController implements IExperimentController {
 				break;
 			case _START:
 				try {
-					start();
+					paused = false;
+					lock.release();
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
 				} finally {
@@ -136,26 +86,28 @@ public class ExperimentController implements IExperimentController {
 				}
 				break;
 			case _PAUSE:
-				pause();
+				paused = true;
 				if (!disposing) { scope.getGui().updateExperimentState(scope, IGui.STATE_PAUSED); }
 				break;
 			case _STEP:
 				scope.getGui().updateExperimentState(scope, IGui.STATE_PAUSED);
-				stepByStep();
+				paused = true;
+				lock.release();
 				break;
 			case _BACK:
 				scope.getGui().updateExperimentState(scope, IGui.STATE_PAUSED);
-				stepBack();
+				paused = true;
+				experiment.getAgent().backward(getScope());// ?? scopes[0]);
 				break;
 			case _RELOAD:
 				scope.getGui().updateExperimentState(scope, IGui.STATE_NOTREADY);
 				try {
 					final boolean wasRunning = !isPaused() && !experiment.isAutorun();
-					pause();
+					paused = true;
 					scope.getGui().getStatus().waitStatus(scope, "Reloading...");
 					experiment.reload();
 					if (wasRunning) {
-						processUserCommand(_START);
+						processUserCommand(ExperimentCommand._START);
 					} else {
 						scope.getGui().getStatus().informStatus(scope, "Experiment reloaded");
 					}
@@ -171,64 +123,12 @@ public class ExperimentController implements IExperimentController {
 	}
 
 	@Override
-	public void userPause() {
-		// TODO Should maybe be done directly (so as to pause immediately)
-		offer(_PAUSE);
-	}
-
-	@Override
-	public void directPause() {
-		processUserCommand(_PAUSE);
-	}
-
-	/**
-	 * Direct step.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 15 oct. 2023
-	 */
-	public void directStep() {
-		processUserCommand(_STEP);
-	}
-
-	@Override
-	public void userStep() {
-		offer(_STEP);
-	}
-
-	@Override
-	public void userStepBack() {
-		offer(_BACK);
-	}
-
-	@Override
-	public void userReload() {
-		// TODO Should maybe be done directly (so as to reload immediately)
-		offer(_RELOAD);
-	}
-
-	@Override
-	public void directOpenExperiment() {
-		processUserCommand(_OPEN);
-	}
-
-	@Override
-	public void userStart() {
-		offer(_START);
-	}
-
-	@Override
-	public void userOpen() {
-		offer(_OPEN);
-	}
-
-	@Override
 	public void dispose() {
 		scope = null;
 		agent = null;
 		if (experiment != null) {
 			try {
-				pause();
+				paused = true;
 				getScope().getGui().updateExperimentState(getScope(), IGui.STATE_NOTREADY);
 				getScope().getGui().closeDialogs(getScope());
 				// Dec 2015 This method is normally now called from
@@ -238,20 +138,8 @@ public class ExperimentController implements IExperimentController {
 				acceptingCommands = false;
 				experimentAlive = false;
 				lock.release();
-				if (commandThread != null && commandThread.isAlive()) {
-					commands.offer(_CLOSE);
-					// processUserCommand(_CLOSE);
-				}
+				if (commandThread != null && commandThread.isAlive()) { commands.offer(ExperimentCommand._CLOSE); }
 			}
-		}
-	}
-
-	@Override
-	public void startPause() {
-		if (isPaused()) {
-			userStart();
-		} else {
-			userPause();
 		}
 	}
 
@@ -295,28 +183,12 @@ public class ExperimentController implements IExperimentController {
 		try {
 			if (!scope.init(agent).passed()) {
 				scope.setDisposeStatus();
-			} else if (agent instanceof TestAgent || agent.getSpecies().isAutorun()) { userStart(); }
+			} else if (agent instanceof TestAgent || agent.getSpecies().isAutorun()) { asynchronousStart(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 			}
 		}
-	}
-
-	/**
-	 * Step by step.
-	 */
-	public void stepByStep() {
-		pause();
-		lock.release();
-	}
-
-	/**
-	 * Start.
-	 */
-	public void start() {
-		paused = false;
-		lock.release();
 	}
 
 	/**
@@ -334,34 +206,11 @@ public class ExperimentController implements IExperimentController {
 			if (scope == null) return;
 			if (!scope.step(agent).passed()) {
 				scope.setDisposeStatus();
-				this.pause();
+				paused = true;
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Pause.
-	 */
-	private void pause() {
-		paused = true;
-	}
-
-	/**
-	 * Step back.
-	 */
-	// TODO : c'est moche .....
-	private void stepBack() {
-		pause();
-		experiment.getAgent().backward(getScope());// ?? scopes[0]);
-	}
-
-	/**
-	 * Gets the scope.
-	 *
-	 * @return the scope
-	 */
-	IScope getScope() { return scope == null ? experiment.getExperimentScope() : scope; }
 
 }

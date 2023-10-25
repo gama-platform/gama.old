@@ -31,6 +31,7 @@ import org.nustaq.serialization.util.FSTUtil;
  *
  * @author Jakub Kubrynski
  */
+@SuppressWarnings ("unchecked")
 public class FSTJSonUnmodifiableCollectionSerializer extends FSTCollectionSerializer {
 
 	/** The Constant UNMODIFIABLE_LIST_CLASS. */
