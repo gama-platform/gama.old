@@ -120,10 +120,9 @@ public class GamlModelBuilder implements IGamlModelBuilder {
 
 		final IModel model = GamlModelBuilder.getDefaultInstance().compile(URI.createFileURI(fileName), errors);
 		if (model == null) {
-			DEBUG.LOG("Model compiled with following indications: \n"
+			DEBUG.LOG("Model not compiled because of the following compilation errors: \n"
 					+ (errors == null ? "" : StreamEx.of(errors).joining("\n")));
-			throw new IllegalArgumentException(
-					"Model cannot be compiled. See list of attached errors \n" + StreamEx.of(errors).joining("\n"));
+			throw new IllegalArgumentException("Compilation errors: \n" + StreamEx.of(errors).joining("\n"));
 		}
 		if (metaProperties != null) { model.getDescription().collectMetaInformation(metaProperties); }
 		return model;

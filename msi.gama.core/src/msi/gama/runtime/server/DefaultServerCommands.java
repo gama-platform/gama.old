@@ -16,6 +16,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.java_websocket.WebSocket;
 
@@ -26,6 +28,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.GamlIdiomsProvider;
 
 /**
@@ -62,10 +65,11 @@ public class DefaultServerCommands {
 					"'" + ff.getAbsolutePath() + "' is not a gaml file", map, false);
 		IModel model = null;
 		try {
-			model = GAML.getModelBuilder().compile(ff, null, null);
+			List<GamlCompilationError> errors = new ArrayList<>();
+			model = GAML.getModelBuilder().compile(ff, errors, null);
 		} catch (IllegalArgumentException | IOException e) {
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
-					"Impossible to compile '" + ff.getAbsolutePath() + "'", map, false);
+					"Impossible to compile '" + ff.getAbsolutePath() + "' because of " + e.getMessage(), map, false);
 		}
 		if (!model.getDescription().hasExperiment(nameOfExperiment))
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
@@ -73,7 +77,6 @@ public class DefaultServerCommands {
 					false);
 		final IModel mm = model;
 		GAMA.getGui().run("openExp", () -> GAMA.runGuiExperiment(nameOfExperiment, mm), false);
-
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, nameOfExperiment, map, false);
 	}
 
