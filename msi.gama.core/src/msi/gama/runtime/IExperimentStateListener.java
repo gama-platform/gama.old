@@ -30,20 +30,47 @@ public interface IExperimentStateListener {
 	/** The Constant SIMULATION_STEPBACK. */
 	String EXPERIMENT_STEPBACK = "ummisco.gama.ui.experiment.SimulationStepBack";
 
-	/** The paused. */
-	String STATE_PAUSED = "STOPPED";
+	/**
+	 * The Enum State.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 26 oct. 2023
+	 */
+	public enum State {
 
-	/** The finished. */
-	String STATE_FINISHED = "FINISHED";
+		/** The paused. */
+		PAUSED("STOPPED"),
+		/** The finished. */
+		FINISHED("FINISHED"),
+		/** The running. */
+		RUNNING("RUNNING"),
+		/** The notready. */
+		NOTREADY("NOTREADY"),
+		/** The none. */
+		NONE("NONE");
 
-	/** The running. */
-	String STATE_RUNNING = "RUNNING";
+		/** The name. */
+		String name;
 
-	/** The notready. */
-	String STATE_NOTREADY = "NOTREADY";
+		/**
+		 * Gets the name.
+		 *
+		 * @return the name
+		 */
+		public String getName() { return name; }
 
-	/** The none. */
-	String STATE_NONE = "NONE";
+		/**
+		 * Instantiates a new state.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param n
+		 *            the n
+		 * @date 26 oct. 2023
+		 */
+		State(final String n) {
+			name = n;
+		}
+	}
 
 	/** The none. */
 	String TYPE_NONE = "NONE";
@@ -66,6 +93,6 @@ public interface IExperimentStateListener {
 	/**
 	 * Change the UI state based on the state of the simulation (none, stopped, running or notready)
 	 */
-	void updateStateTo(IExperimentPlan experiment, final String state);
+	void updateStateTo(IExperimentPlan experiment, final State state);
 
 }

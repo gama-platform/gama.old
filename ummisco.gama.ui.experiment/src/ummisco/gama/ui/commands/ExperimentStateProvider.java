@@ -34,8 +34,8 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 	final static String[] SOURCE_NAMES = { EXPERIMENT_RUNNING_STATE, EXPERIMENT_TYPE, EXPERIMENT_STEPBACK };
 
 	/** The Constant map. */
-	private final Map<String, String> states = new HashMap<>(of(EXPERIMENT_RUNNING_STATE, STATE_NONE, EXPERIMENT_TYPE,
-			TYPE_NONE, EXPERIMENT_STEPBACK, CANNOT_STEP_BACK));
+	private final Map<String, String> states = new HashMap<>(of(EXPERIMENT_RUNNING_STATE, State.NONE.getName(),
+			EXPERIMENT_TYPE, TYPE_NONE, EXPERIMENT_STEPBACK, CANNOT_STEP_BACK));
 
 	@Override
 	public void initialize(final IServiceLocator locator) {
@@ -61,9 +61,9 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 	 * Change the UI state based on the state of the experiment (see variables STATE_XXX in iGui)
 	 */
 	@Override
-	public void updateStateTo(final IExperimentPlan exp, final String state) {
+	public void updateStateTo(final IExperimentPlan exp, final State state) {
 		if (!Objects.equals(states.get(EXPERIMENT_RUNNING_STATE), state)) {
-			states.put(EXPERIMENT_RUNNING_STATE, state);
+			states.put(EXPERIMENT_RUNNING_STATE, state.getName());
 			WorkbenchHelper.run(() -> fireSourceChanged(ISources.WORKBENCH, EXPERIMENT_RUNNING_STATE, state));
 		}
 		String simulationType =

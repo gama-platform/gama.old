@@ -426,7 +426,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	public Map<String, Map<String, IExperimentPlan>> getLaunched_experiments() { return launchedExperiments; }
 
 	@Override
-	public void updateStateTo(final IExperimentPlan experiment, final String state) {
+	public void updateStateTo(final IExperimentPlan experiment, final State state) {
 
 	}
 

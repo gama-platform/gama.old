@@ -227,7 +227,7 @@ public class GamaServerExperimentController extends AbstractExperimentController
 		if (experiment != null) {
 			try {
 				paused = true;
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_NOTREADY);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NOTREADY);
 				getScope().getGui().closeDialogs(getScope());
 				// Dec 2015 This method is normally now called from
 				// ExperimentPlan.dispose()
@@ -235,7 +235,7 @@ public class GamaServerExperimentController extends AbstractExperimentController
 				acceptingCommands = false;
 				experimentAlive = false;
 				lock.release();
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_NONE);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NONE);
 				if (commandThread != null && commandThread.isAlive()) { commands.offer(ExperimentCommand._CLOSE); }
 			}
 		}

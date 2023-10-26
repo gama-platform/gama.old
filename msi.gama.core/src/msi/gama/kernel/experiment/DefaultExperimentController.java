@@ -64,10 +64,10 @@ public class DefaultExperimentController extends AbstractExperimentController {
 		final IScope scope = getScope();
 		switch (command) {
 			case _CLOSE:
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_NONE);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NONE);
 				break;
 			case _OPEN:
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_NOTREADY);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NOTREADY);
 				try {
 					new Thread(() -> experiment.open()).start();
 				} catch (final Exception e) {
@@ -82,25 +82,25 @@ public class DefaultExperimentController extends AbstractExperimentController {
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
 				} finally {
-					GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_RUNNING);
+					GAMA.updateExperimentState(experiment, IExperimentStateListener.State.RUNNING);
 				}
 				break;
 			case _PAUSE:
 				paused = true;
-				if (!disposing) { GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_PAUSED); }
+				if (!disposing) { GAMA.updateExperimentState(experiment, IExperimentStateListener.State.PAUSED); }
 				break;
 			case _STEP:
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_PAUSED);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.PAUSED);
 				paused = true;
 				lock.release();
 				break;
 			case _BACK:
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_PAUSED);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.PAUSED);
 				paused = true;
 				experiment.getAgent().backward(getScope());// ?? scopes[0]);
 				break;
 			case _RELOAD:
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_NOTREADY);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NOTREADY);
 				try {
 					final boolean wasRunning = !isPaused() && !experiment.isAutorun();
 					paused = true;
@@ -129,11 +129,11 @@ public class DefaultExperimentController extends AbstractExperimentController {
 		if (experiment != null) {
 			try {
 				paused = true;
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_NOTREADY);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NOTREADY);
 				getScope().getGui().closeDialogs(getScope());
 				// Dec 2015 This method is normally now called from
 				// ExperimentPlan.dispose()
-				GAMA.updateExperimentState(experiment, IExperimentStateListener.STATE_NONE);
+				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NONE);
 			} finally {
 				acceptingCommands = false;
 				experimentAlive = false;

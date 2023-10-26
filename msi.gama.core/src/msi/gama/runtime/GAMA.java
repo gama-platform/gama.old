@@ -32,6 +32,7 @@ import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.runtime.IExperimentStateListener.State;
 import msi.gama.runtime.benchmark.Benchmark;
 import msi.gama.runtime.benchmark.StopWatch;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -782,13 +783,13 @@ public class GAMA {
 	 * @return the experiment state
 	 * @date 26 oct. 2023
 	 */
-	public static String getExperimentState(final IExperimentPlan exp) {
+	public static State getExperimentState(final IExperimentPlan exp) {
 		final IExperimentController controller = exp == null ? GAMA.getFrontmostController() : exp.getController();
 		if (controller != null) {
-			if (controller.isPaused()) return IExperimentStateListener.STATE_PAUSED;
-			return IExperimentStateListener.STATE_RUNNING;
+			if (controller.isPaused()) return State.PAUSED;
+			return State.RUNNING;
 		}
-		return IExperimentStateListener.STATE_NONE;
+		return State.NONE;
 	}
 
 	/**
@@ -801,7 +802,7 @@ public class GAMA {
 	 *            the state
 	 * @date 26 oct. 2023
 	 */
-	public static void updateExperimentState(final IExperimentPlan exp, final String state) {
+	public static void updateExperimentState(final IExperimentPlan exp, final IExperimentStateListener.State state) {
 		for (IExperimentStateListener listener : experimentStateListeners) { listener.updateStateTo(exp, state); }
 	}
 

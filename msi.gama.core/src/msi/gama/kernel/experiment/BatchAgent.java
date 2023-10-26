@@ -240,7 +240,7 @@ public class BatchAgent extends ExperimentAgent {
 		// Issue #2426: the agent is killed too soon
 		getScope().setDisposeStatus();
 		// dispose();
-		GAMA.updateExperimentState(getSpecies(), IExperimentStateListener.STATE_FINISHED);
+		GAMA.updateExperimentState(getSpecies(), IExperimentStateListener.State.FINISHED);
 		// If we immediately replace the agent, the parameters view disappears
 		// GAMA.changeCurrentTopLevelAgent(GAMA.getPlatformAgent(), false);
 		return true;
