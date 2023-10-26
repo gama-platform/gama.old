@@ -17,7 +17,7 @@ package msi.gama.runtime;
  * @since 14 d�c. 2011
  *
  */
-public interface IExperimentStateProvider {
+public interface IExperimentStateListener {
 
 	/** The Constant SIMULATION_RUNNING_STATE. */
 	String EXPERIMENT_RUNNING_STATE = "ummisco.gama.ui.experiment.SimulationRunningState";

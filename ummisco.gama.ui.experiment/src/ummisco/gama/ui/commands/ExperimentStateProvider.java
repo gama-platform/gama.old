@@ -20,13 +20,13 @@ import org.eclipse.ui.ISources;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IExperimentStateProvider;
+import msi.gama.runtime.IExperimentStateListener;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The Class SimulationStateProvider.
  */
-public class ExperimentStateProvider extends AbstractSourceProvider implements IExperimentStateProvider {
+public class ExperimentStateProvider extends AbstractSourceProvider implements IExperimentStateListener {
 
 	/** The Constant map. */
 	private final static Map<String, String> map = new HashMap<>(3);

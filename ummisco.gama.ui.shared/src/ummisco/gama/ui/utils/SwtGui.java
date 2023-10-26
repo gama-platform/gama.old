@@ -62,7 +62,7 @@ import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IExperimentStateProvider;
+import msi.gama.runtime.IExperimentStateListener;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.server.CommandExecutor;
@@ -666,8 +666,8 @@ public class SwtGui implements IGui {
 	public void updateExperimentState(final IScope scope, final String forcedState) {
 		// DEBUG.OUT("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
-		final IExperimentStateProvider stateProvider =
-				(IExperimentStateProvider) service.getSourceProvider(IExperimentStateProvider.EXPERIMENT_RUNNING_STATE);
+		final IExperimentStateListener stateProvider =
+				(IExperimentStateListener) service.getSourceProvider(IExperimentStateListener.EXPERIMENT_RUNNING_STATE);
 		if (stateProvider != null) { stateProvider.updateStateTo(forcedState); }
 	}
 
@@ -677,7 +677,7 @@ public class SwtGui implements IGui {
 	public static void listenToExperimentState(final ISourceProviderListener listener) {
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final AbstractSourceProvider stateProvider =
-				(AbstractSourceProvider) service.getSourceProvider(IExperimentStateProvider.EXPERIMENT_RUNNING_STATE);
+				(AbstractSourceProvider) service.getSourceProvider(IExperimentStateListener.EXPERIMENT_RUNNING_STATE);
 		stateProvider.addSourceProviderListener(listener);
 	}
 
