@@ -392,41 +392,6 @@ public class SwtGui implements IGui {
 	}
 
 	/**
-	 * Show and update parameter view.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param scope
-	 *            the scope
-	 * @param exp
-	 *            the exp
-	 * @param previousAndNew
-	 *            the previous and new
-	 * @date 12 août 2023
-	 */
-	// @Override
-	// public void updateParametersStatusAndConsoleFor(final ITopLevelAgent listeningAgent) {
-	// IScope scope = listeningAgent == null ? GAMA.getRuntimeScope() : listeningAgent.getScope();
-	//
-	// WorkbenchHelper.run(() -> {
-	// GAMA.changeCurrentTopLevelAgent(current);
-	// getStatus().topLevelAgentChanged(listeningAgent);
-	// final Interactive icv = (Interactive) ViewsHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
-	// if (icv != null) { icv.topLevelAgentChanged(listeningAgent); }
-	// if (!GAMA.getExperiment().hasParametersOrUserCommands()) return;
-	// boolean showIt = !PerspectiveHelper.isModelingPerspective() && PerspectiveHelper.showParameters();
-	// if (showIt) {
-	// parametersView[0] = (Parameters) showView(scope, PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-	// } else {
-	// parametersView[0] = (Parameters) ViewsHelper.findView(PARAMETER_VIEW_ID, null, false);
-	// }
-	// if (parametersView[0] != null) {
-	// parametersView[0].topLevelAgentChanged(listeningAgent);
-	// parametersView[0].updateItemValues(false);
-	// }
-	// });
-	// }
-
-	/**
 	 * Update parameters.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
