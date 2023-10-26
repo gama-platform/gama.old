@@ -68,7 +68,8 @@ public class Operators {
 					+ "  <li> min dist obstacle : minimal distance to obstacles to keep a path (float; if 0.0, no filtering) </li>"
 					+ "  <li> simplification : simplification distance for the final geometries</li>"
 					+ "  <li> square size : size of squares for decomposition (optimization) </li>"
-					+ " </ol> ",
+					+ " </ol> "
+					+ "</p>",
 			returns = "A Graph, i.e. the generated pedestrian network",
 			examples = { @example (
 					value = "generate_pedestrian_network([wall], [world],true,false,3.0,0.1, true,0.1,0.0,0.0,0.0,50.0)",
@@ -123,7 +124,8 @@ public class Operators {
 							+ "  <li> tolerance : tolerance for the triangulation (float) </li>"
 							+ "  <li> min dist obstacle : minimal distance to obstacles to keep a path (float; if 0.0, no filtering) </li>"
 							+ "  <li> simplification : simplification distance for the final geometries</li>"
-							+ " </ol> " ) },
+							+ " </ol> "
+							+ "</p>" ) },
 			examples = { @example (
 					value = "generate_pedestrian_network([wall], [world],true,false,3.0,0.1, true,0.1,0.0,0.0,0.0,0.0)",
 					equals = "a list of polylines corresponding to the pedestrian paths",
@@ -182,7 +184,8 @@ public class Operators {
 							+ "  <li> tolerance : tolerance for the triangulation (float) </li>"
 							+ "  <li> min dist obstacle : minimal distance to obstacles to keep a path (float; if 0.0, no filtering) </li>"
 							+ "  <li> simplification : simplification distance for the final geometries</li>"
-							+ " </ol> " ) },
+							+ " </ol> " 
+							+ "</p>") },
 			examples = { @example (
 					value = "generate_pedestrian_network([wall], [world], [road], true,false,3.0,0.1, true,0.1,0.0,0.0,0.0,50.0)",
 					equals = "a list of polylines corresponding to the pedestrian paths",
@@ -240,7 +243,8 @@ public class Operators {
 							+ "  <li> cliping : tolerance for the cliping in triangulation (float; distance) - see skeletonize operator </li>"
 							+ "  <li> tolerance : tolerance for the triangulation (float) </li>"
 							+ "  <li> min dist obstacle : minimal distance to obstacles to keep a path (float; if 0.0, no filtering) </li>"
-							+ " </ol> " ) },
+							+ " </ol> "
+							+ "</p>" ) },
 			examples = { @example (
 					value = "generate_pedestrian_network([wall], [world], [road], true,false,3.0,0.1, true,0.1,0.0,0.0,0.0)",
 					equals = "a list of polylines corresponding to the pedestrian paths",
