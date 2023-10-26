@@ -404,7 +404,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) { outputs.step(scope); }
 		ownClock.step();
 		informStatus();
-		scope.getGui().updateExperimentState(scope);
+		GAMA.updateExperimentState(getSpecies());
 	}
 
 	/**
@@ -446,7 +446,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) { outputs.init(scope); }
 
 		// scope.getGui().getStatus().informStatus(scope, "Experiment ready");
-		scope.getGui().updateExperimentState(scope);
+		GAMA.updateExperimentState(getSpecies());
 		return true;
 	}
 
@@ -946,7 +946,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			});
 		} finally {
 			informStatus();
-			scope.getGui().updateExperimentState(scope);
+			GAMA.updateExperimentState(getSpecies());
 		}
 		return result;
 	}

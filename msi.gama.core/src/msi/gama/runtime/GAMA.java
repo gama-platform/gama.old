@@ -90,6 +90,9 @@ public class GAMA {
 	/** The top level agent listeners. */
 	private static List<ITopLevelAgentChangeListener> topLevelAgentListeners = new CopyOnWriteArrayList<>();
 
+	/** The experiment state listeners. */
+	private static List<IExperimentStateListener> experimentStateListeners = new CopyOnWriteArrayList<>();
+
 	/** The Constant controllers. */
 	// hqnghi: add several controllers to have multi-thread experiments
 	private static final List<IExperimentController> controllers = new CopyOnWriteArrayList<>();
@@ -745,4 +748,73 @@ public class GAMA {
 		if (snapshotAgent == null) return IGui.NULL_SNAPSHOT_MAKER;
 		return snapshotAgent;
 	}
+
+	/**
+	 * Adds an IExperimentStateListener
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param listener
+	 *            the listener
+	 * @date 26 oct. 2023
+	 */
+	public static void addExperimentStateListener(final IExperimentStateListener listener) {
+		if (!experimentStateListeners.contains(listener)) { experimentStateListeners.add(listener); }
+	}
+
+	/**
+	 * Removes an IExperimentStateListener.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param listener
+	 *            the listener
+	 * @date 26 oct. 2023
+	 */
+	public static void removeExperimentStateListener(final IExperimentStateListener listener) {
+		experimentStateListeners.remove(listener);
+	}
+
+	/**
+	 * Gets the experiment state.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param exp
+	 *            the exp
+	 * @return the experiment state
+	 * @date 26 oct. 2023
+	 */
+	public static String getExperimentState(final IExperimentPlan exp) {
+		final IExperimentController controller = exp == null ? GAMA.getFrontmostController() : exp.getController();
+		if (controller != null) {
+			if (controller.isPaused()) return IExperimentStateListener.STATE_PAUSED;
+			return IExperimentStateListener.STATE_RUNNING;
+		}
+		return IExperimentStateListener.STATE_NONE;
+	}
+
+	/**
+	 * Update experiment state.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param exp
+	 *            the exp
+	 * @param state
+	 *            the state
+	 * @date 26 oct. 2023
+	 */
+	public static void updateExperimentState(final IExperimentPlan exp, final String state) {
+		for (IExperimentStateListener listener : experimentStateListeners) { listener.updateStateTo(exp, state); }
+	}
+
+	/**
+	 * Update experiment state.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param exp
+	 *            the exp
+	 * @date 26 oct. 2023
+	 */
+	public static void updateExperimentState(final IExperimentPlan exp) {
+		updateExperimentState(exp, getExperimentState(exp));
+	}
+
 }

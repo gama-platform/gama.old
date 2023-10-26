@@ -18,7 +18,6 @@ import static ummisco.gama.ui.resources.IGamaIcons.EXPERIMENT_RUN;
 import static ummisco.gama.ui.resources.IGamaIcons.TOGGLE_ANTIALIAS;
 import static ummisco.gama.ui.resources.IGamaIcons.TOGGLE_OVERLAY;
 
-import java.util.Map;
 import java.util.function.Function;
 
 import org.eclipse.swt.SWT;
@@ -34,7 +33,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 
@@ -42,9 +40,11 @@ import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.outputs.LayeredDisplayData.Changes;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IExperimentStateListener;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.STRINGS;
@@ -55,7 +55,6 @@ import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.SwtGui;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
@@ -66,7 +65,7 @@ import ummisco.gama.ui.views.toolbar.Selector;
 /**
  * The Class LayeredDisplayDecorator.
  */
-public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProviderListener {
+public class LayeredDisplayDecorator implements DisplayDataListener, IExperimentStateListener {
 
 	static {
 		DEBUG.OFF();
@@ -119,7 +118,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProv
 		this.view = view;
 		createCommands();
 		WorkbenchHelper.getPage().addPartListener(overlayListener);
-		SwtGui.listenToExperimentState(this);
+		GAMA.addExperimentStateListener(this);
 	}
 
 	/**
@@ -595,7 +594,7 @@ public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProv
 	 */
 	public void dispose() {
 
-		SwtGui.stopListeningToExperimentState(this);
+		GAMA.removeExperimentStateListener(this);
 		// FIXME Remove the listeners
 		try {
 			WorkbenchHelper.getWindow().removePerspectiveListener(perspectiveListener);
@@ -642,39 +641,79 @@ public class LayeredDisplayDecorator implements DisplayDataListener, ISourceProv
 
 	}
 
+	// /**
+	// * Source changed.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param sourcePriority
+	// * the source priority
+	// * @param sourceName
+	// * the source name
+	// * @param sourceValue
+	// * the source value
+	// * @date 26 oct. 2023
+	// */
+	// @Override
+	// public void sourceChanged(final int sourcePriority, final String sourceName, final Object sourceValue) {
+	// // DEBUG.OUT("Source changed " + sourceName + " " + sourceValue);
+	// if (!isFullScreen() || toolbar == null || !toolbar.isVisible()) return;
+	//
+	// if ("STOPPED".equals(sourceValue)) {
+	// WorkbenchHelper.asyncRun(() -> {
+	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+	// toolbar.update();
+	// });
+	// } else if ("RUNNING".equals(sourceValue)) {
+	// WorkbenchHelper.asyncRun(() -> {
+	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+	// toolbar.update();
+	// });
+	// }
+	// }
+
+	// /**
+	// * Source changed.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param sourcePriority
+	// * the source priority
+	// * @param sourceValuesByName
+	// * the source values by name
+	// * @date 26 oct. 2023
+	// */
+	// @Override
+	// public void sourceChanged(final int sourcePriority, final Map sourceValuesByName) {
+	// // DEBUG.OUT("Source changed " + sourceValuesByName);
+	// if (isFullScreen() && toolbar != null && toolbar.isVisible()) {
+	// if (GAMA.isPaused()) {
+	// WorkbenchHelper.asyncRun(() -> {
+	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
+	// toolbar.update();
+	// });
+	// } else {
+	// WorkbenchHelper.asyncRun(() -> {
+	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
+	// toolbar.update();
+	// });
+	// }
+	// }
+	// }
+
 	@Override
-	public void sourceChanged(final int sourcePriority, final String sourceName, final Object sourceValue) {
-		// DEBUG.OUT("Source changed " + sourceName + " " + sourceValue);
+	public void updateStateTo(final IExperimentPlan experiment, final String state) {
+		// DEBUG.OUT("Source changed " + state );
 		if (!isFullScreen() || toolbar == null || !toolbar.isVisible()) return;
 
-		if ("STOPPED".equals(sourceValue)) {
+		if (IExperimentStateListener.STATE_PAUSED.equals(state)) {
 			WorkbenchHelper.asyncRun(() -> {
 				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
 				toolbar.update();
 			});
-		} else if ("RUNNING".equals(sourceValue)) {
+		} else if (IExperimentStateListener.STATE_RUNNING.equals(state)) {
 			WorkbenchHelper.asyncRun(() -> {
 				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
 				toolbar.update();
 			});
-		}
-	}
-
-	@Override
-	public void sourceChanged(final int sourcePriority, final Map sourceValuesByName) {
-		// DEBUG.OUT("Source changed " + sourceValuesByName);
-		if (isFullScreen() && toolbar != null && toolbar.isVisible()) {
-			if (GAMA.isPaused()) {
-				WorkbenchHelper.asyncRun(() -> {
-					runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
-					toolbar.update();
-				});
-			} else {
-				WorkbenchHelper.asyncRun(() -> {
-					runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
-					toolbar.update();
-				});
-			}
 		}
 	}
 

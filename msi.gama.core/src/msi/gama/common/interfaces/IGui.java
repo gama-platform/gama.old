@@ -251,16 +251,6 @@ public interface IGui {
 	void openErrorDialog(IScope scope, String error);
 
 	/**
-	 * Show parameter view. Updates it and optionally passes the previous and new simulation in case of switch
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param exp
-	 *            the exp
-	 */
-	// default void updateParametersStatusAndConsoleFor(final ITopLevelAgent listeningAgent) {}
-
-	/**
 	 * Clear errors.
 	 *
 	 * @param scope
@@ -496,33 +486,6 @@ public interface IGui {
 	 * @return the display description for
 	 */
 	DisplayDescription getDisplayDescriptionFor(final String name);
-
-	/**
-	 * Gets the experiment state.
-	 *
-	 * @param uid
-	 *            the uid
-	 * @return the experiment state
-	 */
-	String getExperimentState();
-
-	/**
-	 * Update experiment state.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param state
-	 *            the state
-	 */
-	default void updateExperimentState(final IScope scope, final String state) {}
-
-	/**
-	 * Update experiment state.
-	 *
-	 * @param scope
-	 *            the scope
-	 */
-	default void updateExperimentState(final IScope scope) {}
 
 	/**
 	 * Update view title.

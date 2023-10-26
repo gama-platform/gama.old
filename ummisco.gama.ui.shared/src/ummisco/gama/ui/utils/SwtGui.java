@@ -23,15 +23,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.AbstractSourceProvider;
-import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.services.ISourceProviderService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.SimulationPerspectiveDescriptor;
@@ -48,7 +45,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -62,7 +58,6 @@ import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IExperimentStateListener;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.server.CommandExecutor;
@@ -650,53 +645,6 @@ public class SwtGui implements IGui {
 			// getStatus().neutralStatus("No simulation running");
 		});
 
-	}
-
-	@Override
-	public String getExperimentState() {
-		final IExperimentController controller = GAMA.getFrontmostController();
-		if (controller != null) {
-			if (controller.isPaused()) return IExperimentStateListener.STATE_PAUSED;
-			return IExperimentStateListener.STATE_RUNNING;
-		}
-		return IExperimentStateListener.STATE_NONE;
-	}
-
-	@Override
-	public void updateExperimentState(final IScope scope, final String forcedState) {
-		// DEBUG.OUT("STATE: " + forcedState);
-		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
-		final IExperimentStateListener stateProvider =
-				(IExperimentStateListener) service.getSourceProvider(IExperimentStateListener.EXPERIMENT_RUNNING_STATE);
-		if (stateProvider != null) { stateProvider.updateStateTo(GAMA.getExperiment(), forcedState); }
-	}
-
-	/**
-	 * Listen to experiment state.
-	 */
-	public static void listenToExperimentState(final ISourceProviderListener listener) {
-		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
-		final AbstractSourceProvider stateProvider =
-				(AbstractSourceProvider) service.getSourceProvider(IExperimentStateListener.EXPERIMENT_RUNNING_STATE);
-		stateProvider.addSourceProviderListener(listener);
-	}
-
-	/**
-	 * Stop listening to experiment state.
-	 *
-	 * @param listener
-	 *            the listener
-	 */
-	public static void stopListeningToExperimentState(final ISourceProviderListener listener) {
-		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
-		final AbstractSourceProvider stateProvider =
-				(AbstractSourceProvider) service.getSourceProvider(IExperimentStateListener.EXPERIMENT_RUNNING_STATE);
-		stateProvider.removeSourceProviderListener(listener);
-	}
-
-	@Override
-	public void updateExperimentState(final IScope scope) {
-		updateExperimentState(scope, getExperimentState());
 	}
 
 	@Override

@@ -122,16 +122,6 @@ public class NullGuiHandler implements IGui {
 		return new DisplayDescription(null, "display", "msi.gama.core");
 	}
 
-	/**
-	 * Method getFrontmostSimulationState()
-	 *
-	 * @see msi.gama.common.interfaces.IGui#getExperimentState()
-	 */
-	@Override
-	public String getExperimentState() {
-		return IExperimentStateListener.STATE_RUNNING; // ???
-	}
-
 	/** The console. */
 	protected IConsoleDisplayer console = null;
 

@@ -721,9 +721,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		// showParameters();
 
 		if (isBatch()) {
-			myScope.getGui().getStatus()
-					.informStatus(scope, isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
-			myScope.getGui().updateExperimentState(scope);
+			myScope.getGui().getStatus().informStatus(scope,
+					isTest() ? "Tests ready. Click run to begin." : " Batch ready. Click run to begin.");
+			GAMA.updateExperimentState(this);
+
 		}
 
 	}
@@ -1135,6 +1136,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 *            the new parameter values
 	 * @date 15 oct. 2023
 	 */
+	@Override
 	public void setParameterValues(final GamaJsonList p) {
 		if (p != null) {
 			for (var param : p.listValue(null, Types.MAP, false)) {

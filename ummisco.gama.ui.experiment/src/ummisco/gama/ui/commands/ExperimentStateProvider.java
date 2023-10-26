@@ -18,8 +18,10 @@ import java.util.Objects;
 
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.services.IServiceLocator;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExperimentStateListener;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -36,7 +38,15 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 			TYPE_NONE, EXPERIMENT_STEPBACK, CANNOT_STEP_BACK));
 
 	@Override
-	public void dispose() {}
+	public void initialize(final IServiceLocator locator) {
+		super.initialize(locator);
+		GAMA.addExperimentStateListener(this);
+	}
+
+	@Override
+	public void dispose() {
+		GAMA.removeExperimentStateListener(this);
+	}
 
 	@Override
 	public String[] getProvidedSourceNames() { return SOURCE_NAMES; }
