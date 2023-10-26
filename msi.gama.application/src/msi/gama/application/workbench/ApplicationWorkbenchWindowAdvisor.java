@@ -26,9 +26,9 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 
-import msi.gama.common.interfaces.IGui;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IExperimentStateListener;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -148,7 +148,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public void postWindowOpen() {
 		PerspectiveHelper.cleanPerspectives();
 		GAMA.getGui().openWelcomePage(true);
-		GAMA.getGui().updateExperimentState(null, IGui.STATE_NONE);
+		//GAMA.updateExperimentState(null, IExperimentStateListener.STATE_NONE);
 	}
 
 }
