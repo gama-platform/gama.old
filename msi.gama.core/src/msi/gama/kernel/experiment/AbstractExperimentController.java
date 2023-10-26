@@ -182,7 +182,7 @@ public abstract class AbstractExperimentController implements IExperimentControl
 	 * @date 25 oct. 2023
 	 */
 	protected void asynchronousReload() {
-		processUserCommand(ExperimentCommand._RELOAD);
+		offer(ExperimentCommand._RELOAD);
 	}
 
 	/**
