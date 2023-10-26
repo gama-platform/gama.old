@@ -17,7 +17,6 @@ import java.util.Objects;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 
-import msi.gama.common.interfaces.IGui;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExperimentStateListener;
@@ -64,14 +63,15 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 			WorkbenchHelper.run(() -> fireSourceChanged(ISources.WORKBENCH, EXPERIMENT_RUNNING_STATE, state));
 		}
 		final IExperimentPlan exp = GAMA.getExperiment();
-		String simulationType = exp == null ? IGui.TYPE_NONE : exp.isBatch() ? IGui.TYPE_BATCH
-				: exp.isMemorize() ? IGui.TYPE_MEMORIZE : IGui.TYPE_REGULAR;
+		String simulationType = exp == null ? IExperimentStateListener.TYPE_NONE
+				: exp.isBatch() ? IExperimentStateListener.TYPE_BATCH
+				: exp.isMemorize() ? IExperimentStateListener.TYPE_MEMORIZE : IExperimentStateListener.TYPE_REGULAR;
 		if (!Objects.equals(currentType, simulationType)) {
 			currentType = simulationType;
 			WorkbenchHelper.run(() -> fireSourceChanged(ISources.WORKBENCH, EXPERIMENT_TYPE, currentType));
 		}
-		String canStepBack = exp != null && exp.getAgent() != null && exp.getAgent().canStepBack() ? "CAN_STEP_BACK"
-				: "CANNOT_STEP_BACK";
+		String canStepBack = exp != null && exp.getAgent() != null && exp.getAgent().canStepBack() ? CAN_STEP_BACK
+				: CANNOT_STEP_BACK;
 		if (!Objects.equals(currentStepBack, canStepBack)) {
 			currentStepBack = canStepBack;
 			WorkbenchHelper.run(() -> fireSourceChanged(ISources.WORKBENCH, EXPERIMENT_STEPBACK, currentStepBack));

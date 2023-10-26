@@ -21,7 +21,6 @@ import java.util.stream.DoubleStream;
 
 import org.jfree.data.statistics.Statistics;
 
-import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IScopedStepable;
 import msi.gama.kernel.batch.exploration.AExplorationAlgorithm;
@@ -36,6 +35,7 @@ import msi.gama.outputs.FileOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IExperimentStateListener;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -240,7 +240,7 @@ public class BatchAgent extends ExperimentAgent {
 		// Issue #2426: the agent is killed too soon
 		getScope().setDisposeStatus();
 		// dispose();
-		GAMA.getGui().updateExperimentState(scope, IGui.STATE_FINISHED);
+		GAMA.getGui().updateExperimentState(scope, IExperimentStateListener.STATE_FINISHED);
 		// If we immediately replace the agent, the parameters view disappears
 		// GAMA.changeCurrentTopLevelAgent(GAMA.getPlatformAgent(), false);
 		return true;
@@ -477,7 +477,7 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 				if (!dead) {
-					getScope().getGui().getStatus().setStatus(getScope(), 
+					getScope().getGui().getStatus().setStatus(getScope(),
 							"Run " + runNumber + " | " + repeatIndex + "/" + seeds.length + " simulations (using "
 									+ pop.getNumberOfActiveThreads() + " threads)",
 							"overlays/small.exp.batch.white" + suffix);

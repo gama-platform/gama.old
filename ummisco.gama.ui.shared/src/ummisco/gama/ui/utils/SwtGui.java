@@ -656,10 +656,10 @@ public class SwtGui implements IGui {
 	public String getExperimentState() {
 		final IExperimentController controller = GAMA.getFrontmostController();
 		if (controller != null) {
-			if (controller.isPaused()) return STATE_PAUSED;
-			return STATE_RUNNING;
+			if (controller.isPaused()) return IExperimentStateListener.STATE_PAUSED;
+			return IExperimentStateListener.STATE_RUNNING;
 		}
-		return STATE_NONE;
+		return IExperimentStateListener.STATE_NONE;
 	}
 
 	@Override

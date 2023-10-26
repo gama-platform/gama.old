@@ -129,7 +129,7 @@ public class NullGuiHandler implements IGui {
 	 */
 	@Override
 	public String getExperimentState() {
-		return STATE_RUNNING; // ???
+		return IExperimentStateListener.STATE_RUNNING; // ???
 	}
 
 	/** The console. */
