@@ -35,6 +35,8 @@ import org.java_websocket.server.WebSocketServer;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IExperimentStateListener;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Jsoner;
@@ -43,7 +45,7 @@ import ummisco.gama.dev.utils.DEBUG;
 /**
  * The Class GamaWebSocketServer.
  */
-public class GamaWebSocketServer extends WebSocketServer {
+public class GamaWebSocketServer extends WebSocketServer implements IExperimentStateListener {
 
 	/** The Constant DEFAULT_PING_INTERVAL. */
 	public static final int DEFAULT_PING_INTERVAL = 10000;
@@ -355,7 +357,14 @@ public class GamaWebSocketServer extends WebSocketServer {
 
 	@Override
 	public void onStart() {
+		GAMA.addExperimentStateListener(this);
 		DEBUG.BANNER("GAMA: Gama Server started", "at port", "" + this.getPort());
+	}
+
+	@Override
+	public void stop() throws InterruptedException {
+		super.stop();
+		GAMA.removeExperimentStateListener(this);
 	}
 
 	/**
@@ -415,5 +424,10 @@ public class GamaWebSocketServer extends WebSocketServer {
 	 * @return the simulations
 	 */
 	public Map<String, Map<String, IExperimentPlan>> getLaunched_experiments() { return launchedExperiments; }
+
+	@Override
+	public void updateStateTo(final IExperimentPlan experiment, final String state) {
+
+	}
 
 }

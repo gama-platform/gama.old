@@ -595,7 +595,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener, IExperiment
 	public void dispose() {
 
 		GAMA.removeExperimentStateListener(this);
-		// FIXME Remove the listeners
 		try {
 			WorkbenchHelper.getWindow().removePerspectiveListener(perspectiveListener);
 			WorkbenchHelper.getPage().removePartListener(overlayListener);
@@ -620,7 +619,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener, IExperiment
 
 		fs = null;
 		normalParentOfToolbar = null;
-		// sidePanel = null;
 		normalParentOfFullScreenControl = null;
 		if (fullScreenShell != null && !fullScreenShell.isDisposed()) {
 			fullScreenShell.dispose();
@@ -640,64 +638,6 @@ public class LayeredDisplayDecorator implements DisplayDataListener, IExperiment
 		}
 
 	}
-
-	// /**
-	// * Source changed.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param sourcePriority
-	// * the source priority
-	// * @param sourceName
-	// * the source name
-	// * @param sourceValue
-	// * the source value
-	// * @date 26 oct. 2023
-	// */
-	// @Override
-	// public void sourceChanged(final int sourcePriority, final String sourceName, final Object sourceValue) {
-	// // DEBUG.OUT("Source changed " + sourceName + " " + sourceValue);
-	// if (!isFullScreen() || toolbar == null || !toolbar.isVisible()) return;
-	//
-	// if ("STOPPED".equals(sourceValue)) {
-	// WorkbenchHelper.asyncRun(() -> {
-	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
-	// toolbar.update();
-	// });
-	// } else if ("RUNNING".equals(sourceValue)) {
-	// WorkbenchHelper.asyncRun(() -> {
-	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
-	// toolbar.update();
-	// });
-	// }
-	// }
-
-	// /**
-	// * Source changed.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param sourcePriority
-	// * the source priority
-	// * @param sourceValuesByName
-	// * the source values by name
-	// * @date 26 oct. 2023
-	// */
-	// @Override
-	// public void sourceChanged(final int sourcePriority, final Map sourceValuesByName) {
-	// // DEBUG.OUT("Source changed " + sourceValuesByName);
-	// if (isFullScreen() && toolbar != null && toolbar.isVisible()) {
-	// if (GAMA.isPaused()) {
-	// WorkbenchHelper.asyncRun(() -> {
-	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
-	// toolbar.update();
-	// });
-	// } else {
-	// WorkbenchHelper.asyncRun(() -> {
-	// runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
-	// toolbar.update();
-	// });
-	// }
-	// }
-	// }
 
 	@Override
 	public void updateStateTo(final IExperimentPlan experiment, final String state) {

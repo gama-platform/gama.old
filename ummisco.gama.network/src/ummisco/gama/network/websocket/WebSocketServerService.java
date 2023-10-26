@@ -26,7 +26,7 @@ import ummisco.gama.network.tcp.TCPConnector;
 public class WebSocketServerService extends ServerService {
 
 	/** The server socket. */
-	protected GamaServer serverSocket;
+	protected GamaServer gamaServer;
 
 	public WebSocketServerService(IAgent agent, int port, IConnector conn) {
 		super(agent, port, conn);
@@ -34,11 +34,11 @@ public class WebSocketServerService extends ServerService {
 
 	@Override
 	public void startService() throws UnknownHostException, IOException {
-		this.serverSocket = new GamaServer(port, this);
+		this.gamaServer = new GamaServer(port, this);
 		this.isAlive = true;
 		this.isOnline = true;
 		this.start();
-		this.serverSocket.start();
+		this.gamaServer.start();
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class WebSocketServerService extends ServerService {
 		}
 		// DEBUG.OUT("closed ");
 		try {
-			myAgent.setAttribute(TCPConnector._TCP_SERVER + serverSocket.getPort(), null);
+			myAgent.setAttribute(TCPConnector._TCP_SERVER + gamaServer.getPort(), null);
 		} catch (final Exception e) {
 			
 			e.printStackTrace();
@@ -59,12 +59,12 @@ public class WebSocketServerService extends ServerService {
 	@Override
 	public void sendMessage(final String msg) throws IOException {
 		String message = msg;
-		if (serverSocket == null || !isOnline()) return;
+		if (gamaServer == null || !isOnline()) return;
 		if (!connector.isRaw()) {
 			message = message.replace("\n", "@n@");
 			message = message.replace("\b\r", "@b@@r@");			
 		}
-		serverSocket.broadcast(message);
+		gamaServer.broadcast(message);
 	}
 
 	@Override
@@ -85,9 +85,9 @@ public class WebSocketServerService extends ServerService {
 		if (sender != null) {
 			sender.close();
 		}
-		if (serverSocket != null) {
+		if (gamaServer != null) {
 			try {
-				serverSocket.stop(1000);
+				gamaServer.stop(1000);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
