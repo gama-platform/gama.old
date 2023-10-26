@@ -668,7 +668,7 @@ public class SwtGui implements IGui {
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final IExperimentStateListener stateProvider =
 				(IExperimentStateListener) service.getSourceProvider(IExperimentStateListener.EXPERIMENT_RUNNING_STATE);
-		if (stateProvider != null) { stateProvider.updateStateTo(forcedState); }
+		if (stateProvider != null) { stateProvider.updateStateTo(GAMA.getExperiment(), forcedState); }
 	}
 
 	/**
@@ -690,7 +690,7 @@ public class SwtGui implements IGui {
 	public static void stopListeningToExperimentState(final ISourceProviderListener listener) {
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final AbstractSourceProvider stateProvider =
-				(AbstractSourceProvider) service.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
+				(AbstractSourceProvider) service.getSourceProvider(IExperimentStateListener.EXPERIMENT_RUNNING_STATE);
 		stateProvider.removeSourceProviderListener(listener);
 	}
 

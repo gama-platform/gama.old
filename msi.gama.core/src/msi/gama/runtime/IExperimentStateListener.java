@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.runtime;
 
+import msi.gama.kernel.experiment.IExperimentPlan;
+
 /**
  * The class ISimulationStateProvider.
  *
@@ -64,6 +66,6 @@ public interface IExperimentStateListener {
 	/**
 	 * Change the UI state based on the state of the simulation (none, stopped, running or notready)
 	 */
-	void updateStateTo(final String state);
+	void updateStateTo(IExperimentPlan experiment, final String state);
 
 }
