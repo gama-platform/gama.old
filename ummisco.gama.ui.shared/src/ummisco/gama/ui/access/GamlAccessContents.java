@@ -37,8 +37,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.quickaccess.QuickAccessEntry;
 
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import msi.gaml.interfaces.IGamlDescription;
 import ummisco.gama.ui.controls.IPopupProvider;
 import ummisco.gama.ui.controls.Popup2;
 import ummisco.gama.ui.resources.IGamaColors;

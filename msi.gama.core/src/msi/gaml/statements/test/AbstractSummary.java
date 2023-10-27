@@ -15,10 +15,10 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.interfaces.IColored;
-import msi.gama.common.interfaces.INamed;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import msi.gaml.interfaces.INamed;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.COUNTER;
 

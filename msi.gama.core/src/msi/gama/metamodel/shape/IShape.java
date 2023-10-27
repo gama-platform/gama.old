@@ -17,7 +17,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTWriter;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.IEnvelopeProvider;
 import msi.gama.common.interfaces.ILocated;
 import msi.gama.common.interfaces.IValue;
@@ -30,6 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gaml.interfaces.IAttributed;
 import msi.gaml.types.IType;
 
 /**

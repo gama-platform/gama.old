@@ -34,7 +34,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IDocManager;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
@@ -47,6 +46,7 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
+import msi.gaml.interfaces.IGamlDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**

@@ -8,9 +8,11 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.common.interfaces;
+package msi.gaml.interfaces;
 
 import java.util.Map;
+
+import msi.gama.common.interfaces.BiConsumerWithPruning;
 
 /**
  * Represents objects that are provided with attributes (collection of string-value pairs)

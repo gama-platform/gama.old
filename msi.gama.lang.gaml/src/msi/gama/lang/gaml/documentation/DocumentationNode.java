@@ -12,7 +12,7 @@ package msi.gama.lang.gaml.documentation;
 
 import java.io.IOException;
 
-import msi.gama.common.interfaces.IGamlDescription;
+import msi.gaml.interfaces.IGamlDescription;
 
 /**
  * The Class DocumentationNode.
@@ -61,7 +61,7 @@ public class DocumentationNode implements IGamlDescription {
 	/**
 	 * Method serialize()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+	 * @see msi.gaml.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {

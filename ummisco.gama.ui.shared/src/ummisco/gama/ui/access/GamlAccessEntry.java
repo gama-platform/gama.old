@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import msi.gama.application.workbench.ThemeHelper;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import msi.gaml.interfaces.IGamlDescription;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 

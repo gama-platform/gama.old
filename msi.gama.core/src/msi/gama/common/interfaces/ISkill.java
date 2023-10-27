@@ -11,6 +11,7 @@
 package msi.gama.common.interfaces;
 
 import msi.gaml.descriptions.SkillDescription;
+import msi.gaml.interfaces.IGamlDescription;
 
 /**
  * SkillInterface - convenience interface for any object that might be used as a "skill" for an agent.

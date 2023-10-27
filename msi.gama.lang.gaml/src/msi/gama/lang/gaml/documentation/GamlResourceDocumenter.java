@@ -20,11 +20,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
 import msi.gama.common.interfaces.IDocManager;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
+import msi.gaml.interfaces.IGamlDescription;
 import msi.gaml.descriptions.ModelDescription;
 import ummisco.gama.dev.utils.DEBUG;
 

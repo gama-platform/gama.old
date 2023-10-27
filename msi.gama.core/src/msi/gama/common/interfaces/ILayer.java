@@ -28,6 +28,7 @@ import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.interfaces.INamed;
 
 /**
  * Represents the concrete layers that are displayed on IDisplaySurface's and managed by its ILayerManager

@@ -65,7 +65,7 @@ public class TypeExpression extends AbstractExpression {
 	/**
 	 * Method getDocumentation()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
+	 * @see msi.gaml.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
 	public Doc getDocumentation() { return new ConstantDoc("Represents the data type " + type.getTitle()); }

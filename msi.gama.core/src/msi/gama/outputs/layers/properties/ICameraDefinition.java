@@ -12,12 +12,12 @@ package msi.gama.outputs.layers.properties;
 
 import java.util.List;
 
-import msi.gama.common.interfaces.INamed;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
+import msi.gaml.interfaces.INamed;
 
 /**
  * The Interface ICameraDefinition. Defines the minimal set of information needed for cameras. All other attributes

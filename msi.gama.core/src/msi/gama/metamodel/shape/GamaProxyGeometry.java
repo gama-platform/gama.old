@@ -127,7 +127,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	/**
 	 * Method toGaml()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
+	 * @see msi.gaml.interfaces.IGamlable#toGaml()
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
@@ -138,7 +138,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	/**
 	 * Method getAttributes(). Maintain a map of attributes in each translated shape, which is costly.
 	 *
-	 * @see msi.gama.common.interfaces.IAttributed#getAttributes()
+	 * @see msi.gaml.interfaces.IAttributed#getAttributes()
 	 */
 	@Override
 	public IMap<String, Object> getAttributes(final boolean createIfNeeded) {

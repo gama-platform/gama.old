@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  * 
  ********************************************************************************************************/
-package msi.gama.common.interfaces;
+package msi.gaml.interfaces;
 
 /**
  * Interface INamed. Represents objects that can be provided with a name.

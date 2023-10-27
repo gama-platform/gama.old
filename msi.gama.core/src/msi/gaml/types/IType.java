@@ -11,13 +11,13 @@ package msi.gaml.types;
 
 import java.util.Map;
 
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlDescription;
 
 /**
  * Written by drogoul Modified on 9 juin 2010

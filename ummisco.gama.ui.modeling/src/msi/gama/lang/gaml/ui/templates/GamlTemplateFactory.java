@@ -21,7 +21,6 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import msi.gama.common.interfaces.INamed;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
@@ -32,6 +31,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.interfaces.INamed;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.Types;
 

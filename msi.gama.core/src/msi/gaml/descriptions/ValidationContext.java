@@ -21,13 +21,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IDocManager;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.Collector;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
+import msi.gaml.interfaces.IGamlDescription;
 import one.util.streamex.StreamEx;
 
 /**

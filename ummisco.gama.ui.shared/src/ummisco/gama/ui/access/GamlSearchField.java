@@ -52,7 +52,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.swt.IFocusService;
 
-import msi.gama.common.interfaces.IGamlDescription;
+import msi.gaml.interfaces.IGamlDescription;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;

@@ -13,6 +13,7 @@ package msi.gama.common.interfaces;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gaml.interfaces.IGamlDescription;
 
 /**
  * The Interface IExperimentAgentCreator.
@@ -61,7 +62,7 @@ public interface IExperimentAgentCreator {
 		/**
 		 * Method getName()
 		 *
-		 * @see msi.gama.common.interfaces.INamed#getName()
+		 * @see msi.gaml.interfaces.INamed#getName()
 		 */
 		@Override
 		public String getName() { return name; }
@@ -69,7 +70,7 @@ public interface IExperimentAgentCreator {
 		/**
 		 * Method setName()
 		 *
-		 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
+		 * @see msi.gaml.interfaces.INamed#setName(java.lang.String)
 		 */
 		@Override
 		public void setName(final String newName) {}
@@ -77,7 +78,7 @@ public interface IExperimentAgentCreator {
 		/**
 		 * Method serialize()
 		 *
-		 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+		 * @see msi.gaml.interfaces.IGamlable#serialize(boolean)
 		 */
 		@Override
 		public String serialize(final boolean includingBuiltIn) {
@@ -87,7 +88,7 @@ public interface IExperimentAgentCreator {
 		/**
 		 * Method getTitle()
 		 *
-		 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
+		 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 		 */
 		@Override
 		public String getTitle() { return "Experiment Agent supported by " + getName() + " technology"; }
@@ -95,7 +96,7 @@ public interface IExperimentAgentCreator {
 		/**
 		 * Method getDefiningPlugin()
 		 *
-		 * @see msi.gama.common.interfaces.IGamlDescription#getDefiningPlugin()
+		 * @see msi.gaml.interfaces.IGamlDescription#getDefiningPlugin()
 		 */
 		@Override
 		public String getDefiningPlugin() { return plugin; }

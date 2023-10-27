@@ -176,7 +176,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	/**
 	 * Method toGaml()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlable#toGaml()
+	 * @see msi.gaml.interfaces.IGamlable#toGaml()
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {

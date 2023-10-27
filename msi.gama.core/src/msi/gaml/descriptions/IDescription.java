@@ -20,7 +20,6 @@ import msi.gama.common.interfaces.BiConsumerWithPruning;
 import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IDisposable;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
@@ -31,6 +30,7 @@ import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlDescription;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 

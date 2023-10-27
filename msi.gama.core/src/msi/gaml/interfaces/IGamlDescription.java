@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.common.interfaces;
+package msi.gaml.interfaces;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

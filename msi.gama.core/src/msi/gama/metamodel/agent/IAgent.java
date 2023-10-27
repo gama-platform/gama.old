@@ -14,9 +14,7 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.interfaces.IAttributed;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.INamed;
 import msi.gama.common.interfaces.IScoped;
 import msi.gama.common.interfaces.IStepable;
 import msi.gama.common.interfaces.IVarAndActionSupport;
@@ -40,6 +38,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gaml.interfaces.IAttributed;
+import msi.gaml.interfaces.INamed;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;

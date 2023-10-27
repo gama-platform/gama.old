@@ -14,9 +14,9 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.Collections;
 
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gaml.interfaces.IGamlDescription;
 
 /**
  * Class AbstractProto.
@@ -112,7 +112,7 @@ public abstract class AbstractProto implements IGamlDescription {
 	/**
 	 * Method getTitle()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
+	 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() { return ""; }
@@ -120,7 +120,7 @@ public abstract class AbstractProto implements IGamlDescription {
 	/**
 	 * Method setName()
 	 *
-	 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
+	 * @see msi.gaml.interfaces.INamed#setName(java.lang.String)
 	 */
 	@Override
 	public void setName(final String newName) {}

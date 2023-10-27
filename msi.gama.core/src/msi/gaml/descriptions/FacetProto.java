@@ -13,10 +13,10 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gaml.interfaces.IGamlDescription;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -149,7 +149,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	/**
 	 * Method getTitle()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
+	 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() {
@@ -197,7 +197,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	/**
 	 * Method getDocumentation()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
+	 * @see msi.gaml.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
 	public Doc getDocumentation() {
@@ -219,7 +219,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	/**
 	 * Method getName()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getName()
+	 * @see msi.gaml.interfaces.IGamlDescription#getName()
 	 */
 	@Override
 	public String getName() { return name; }
@@ -242,7 +242,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	/**
 	 * Method serialize()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+	 * @see msi.gaml.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {

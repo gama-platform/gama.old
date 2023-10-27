@@ -13,13 +13,13 @@ package msi.gaml.expressions;
 import java.util.function.Predicate;
 
 import msi.gama.common.interfaces.IDisposable;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.expressions.types.TypeExpression;
+import msi.gaml.interfaces.IGamlDescription;
 import msi.gaml.types.IType;
 
 /**

@@ -469,7 +469,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/**
 	 * Method getTitle()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
+	 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() { return toString().replace('<', '[').replace('>', ']'); }
@@ -477,7 +477,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/**
 	 * Method getDocumentation()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
+	 * @see msi.gaml.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
 	public Doc getDocumentation() { return type.getDocumentation(); }
@@ -485,7 +485,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/**
 	 * Method getName()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#getName()
+	 * @see msi.gaml.interfaces.IGamlDescription#getName()
 	 */
 	@Override
 	public String getName() { return toString(); }

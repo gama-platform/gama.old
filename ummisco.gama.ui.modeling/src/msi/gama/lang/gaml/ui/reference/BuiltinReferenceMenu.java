@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Menu;
 
 import com.google.common.collect.Lists;
 
-import msi.gama.common.interfaces.INamed;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
@@ -33,6 +32,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.VariableDescription;
+import msi.gaml.interfaces.INamed;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;

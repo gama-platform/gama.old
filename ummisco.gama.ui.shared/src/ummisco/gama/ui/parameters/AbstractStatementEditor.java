@@ -16,11 +16,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.interfaces.IColored;
-import msi.gama.common.interfaces.INamed;
 import msi.gama.kernel.experiment.InputParameter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gaml.interfaces.INamed;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaColors;

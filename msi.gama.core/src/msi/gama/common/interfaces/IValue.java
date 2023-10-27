@@ -11,6 +11,7 @@ package msi.gama.common.interfaces;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.interfaces.IGamlable;
 
 /**
  * Represents a 'value' in GAML (a Java object that can provide a GAML type, be serializable into a GAML expression, and

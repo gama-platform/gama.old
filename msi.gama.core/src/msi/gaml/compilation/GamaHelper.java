@@ -10,10 +10,10 @@
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
-import msi.gama.common.interfaces.INamed;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gaml.interfaces.INamed;
 
 /**
  * Written by drogoul Modified on 14 ao�t 2010. Modified on 23 Apr. 2013. A general purpose helper that can be

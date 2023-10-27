@@ -82,7 +82,7 @@ public class GamaFont extends Font implements IValue {
 	/**
 	 * Method serialize()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+	 * @see msi.gaml.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {

@@ -18,8 +18,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.INamed;
 import msi.gaml.descriptions.IDescription.IFacetVisitor;
+import msi.gaml.interfaces.INamed;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;

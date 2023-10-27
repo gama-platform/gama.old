@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.interfaces.IGamlDescription;
 
 /**
  * The Interface IDocManager.

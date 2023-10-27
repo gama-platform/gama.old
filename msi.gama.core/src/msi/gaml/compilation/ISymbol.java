@@ -12,10 +12,10 @@ package msi.gaml.compilation;
 import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.interfaces.IDisposable;
-import msi.gama.common.interfaces.INamed;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.INamed;
 
 /**
  * Written by drogoul Modified on 19 mars 2010

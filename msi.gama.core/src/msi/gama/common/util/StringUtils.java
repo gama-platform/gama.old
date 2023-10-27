@@ -16,10 +16,10 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import msi.gama.common.interfaces.IGamlable;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gaml.interfaces.IGamlable;
 import msi.gaml.types.Types;
 
 /**

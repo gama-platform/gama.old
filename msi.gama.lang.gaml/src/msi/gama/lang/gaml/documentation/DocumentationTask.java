@@ -12,9 +12,9 @@ package msi.gama.lang.gaml.documentation;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.util.IMap;
+import msi.gaml.interfaces.IGamlDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**

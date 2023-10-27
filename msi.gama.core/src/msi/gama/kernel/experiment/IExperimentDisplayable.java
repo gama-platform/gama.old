@@ -13,8 +13,8 @@ package msi.gama.kernel.experiment;
 import com.google.common.primitives.Ints;
 
 import msi.gama.common.interfaces.IColored;
-import msi.gama.common.interfaces.INamed;
 import msi.gama.runtime.IScope;
+import msi.gaml.interfaces.INamed;
 
 /**
  * The Interface IExperimentDisplayable.

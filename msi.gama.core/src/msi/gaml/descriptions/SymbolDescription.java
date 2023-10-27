@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
@@ -31,6 +30,7 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlDescription;
 import msi.gaml.statements.Facets;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaType;

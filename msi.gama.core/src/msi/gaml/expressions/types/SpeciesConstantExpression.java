@@ -86,7 +86,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	/**
 	 * Method collectPlugins()
 	 *
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
+	 * @see msi.gaml.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {

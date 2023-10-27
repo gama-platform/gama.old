@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import msi.gama.common.interfaces.BiConsumerWithPruning;
-import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.util.StringUtils;
 import msi.gama.util.Collector;
 import msi.gaml.descriptions.BasicExpressionDescription;
@@ -23,6 +22,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlable;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 

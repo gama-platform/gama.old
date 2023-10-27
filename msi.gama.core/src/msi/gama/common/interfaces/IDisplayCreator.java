@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
+import msi.gaml.interfaces.IGamlDescription;
 
 /**
  * The Interface IDisplayCreator.
@@ -78,7 +79,7 @@ public interface IDisplayCreator {
 		/**
 		 * Method getName()
 		 *
-		 * @see msi.gama.common.interfaces.INamed#getName()
+		 * @see msi.gaml.interfaces.INamed#getName()
 		 */
 		@Override
 		public String getName() { return name; }
@@ -86,7 +87,7 @@ public interface IDisplayCreator {
 		/**
 		 * Method setName()
 		 *
-		 * @see msi.gama.common.interfaces.INamed#setName(java.lang.String)
+		 * @see msi.gaml.interfaces.INamed#setName(java.lang.String)
 		 */
 		@Override
 		public void setName(final String newName) {}
@@ -94,7 +95,7 @@ public interface IDisplayCreator {
 		/**
 		 * Method serialize()
 		 *
-		 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
+		 * @see msi.gaml.interfaces.IGamlable#serialize(boolean)
 		 */
 		@Override
 		public String serialize(final boolean includingBuiltIn) {
@@ -104,7 +105,7 @@ public interface IDisplayCreator {
 		/**
 		 * Method getTitle()
 		 *
-		 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
+		 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 		 */
 		@Override
 		public String getTitle() { return "Display supported by " + getName() + ""; }
@@ -112,7 +113,7 @@ public interface IDisplayCreator {
 		/**
 		 * Method getDefiningPlugin()
 		 *
-		 * @see msi.gama.common.interfaces.IGamlDescription#getDefiningPlugin()
+		 * @see msi.gaml.interfaces.IGamlDescription#getDefiningPlugin()
 		 */
 		@Override
 		public String getDefiningPlugin() { return plugin; }
