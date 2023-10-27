@@ -58,7 +58,7 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 	public Map<String, String> getCurrentState() { return states; }
 
 	/**
-	 * Change the UI state based on the state of the experiment (see variables STATE_XXX in iGui)
+	 * Change the UI state based on the state of the experiment (see IExperimentStateListener.State)
 	 */
 	@Override
 	public void updateStateTo(final IExperimentPlan exp, final State state) {

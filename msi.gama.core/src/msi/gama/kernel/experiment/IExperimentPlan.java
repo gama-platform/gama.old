@@ -206,7 +206,7 @@ public interface IExperimentPlan extends ISpecies {
 	void setHeadless(boolean headless);
 
 	/**
-	 * Gets the experiment type.
+	 * Gets the experiment type. TODO : make it coherent with IExperimentStateListener.Type
 	 *
 	 * @return the experiment type
 	 */
