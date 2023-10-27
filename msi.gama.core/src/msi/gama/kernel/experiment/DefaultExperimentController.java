@@ -69,7 +69,11 @@ public class DefaultExperimentController extends AbstractExperimentController {
 			case _OPEN:
 				GAMA.updateExperimentState(experiment, IExperimentStateListener.State.NOTREADY);
 				try {
-					new Thread(() -> experiment.open()).start();
+					experiment.open();
+					// Following a comment made here: #3925 and in
+					// https://github.com/gama-platform/gama/commit/8068457d11d25289bf001bb6f29553e4037f1cda#r130876638,
+					// removes the thread
+					// new Thread(() -> experiment.open()).start();
 				} catch (final Exception e) {
 					DEBUG.ERR("Error when opening the experiment: " + e.getMessage());
 					closeExperiment(e);
