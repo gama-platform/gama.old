@@ -18,6 +18,7 @@ import java.util.Arrays;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.ByteArrayZipper;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**

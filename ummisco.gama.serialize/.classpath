@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="ext/xstream 1.4.20/jettison-1.5.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/xstream 1.4.20/mxparser-1.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/xstream 1.4.20/xmlpull-1.1.3.4d_b4_min.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/xstream 1.4.20/xstream-1.4.20.jar"/>

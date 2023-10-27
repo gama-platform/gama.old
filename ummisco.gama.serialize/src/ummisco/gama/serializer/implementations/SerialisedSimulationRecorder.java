@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import msi.gama.kernel.experiment.ISimulationRecorder;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.util.ByteArrayZipper;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**

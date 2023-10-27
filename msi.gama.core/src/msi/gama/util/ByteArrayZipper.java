@@ -1,14 +1,14 @@
 /*******************************************************************************************************
  *
- * ByteArrayZipper.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.3).
+ * ByteArrayZipper.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.serializer.implementations;
+package msi.gama.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +40,7 @@ public abstract class ByteArrayZipper {
 	 *             Signals that an I/O exception has occurred.
 	 * @date 7 août 2023
 	 */
-	static byte[] zip(final byte[] input) {
+	public static byte[] zip(final byte[] input) {
 		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				GZIPOutputStream zos = new GZIPOutputStream(baos);) {
 			zos.write(input);
@@ -61,7 +61,7 @@ public abstract class ByteArrayZipper {
 	 * @return the byte[]
 	 * @date 7 août 2023
 	 */
-	static byte[] unzip(final byte[] input) {
+	public static byte[] unzip(final byte[] input) {
 		try (ByteArrayInputStream bais = new ByteArrayInputStream(input);
 				GZIPInputStream zos = new GZIPInputStream(bais);) {
 			return zos.readAllBytes();

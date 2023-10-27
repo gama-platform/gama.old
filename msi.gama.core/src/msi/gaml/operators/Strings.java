@@ -9,11 +9,11 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
+import java.nio.charset.StandardCharsets;
 import java.util.StringTokenizer;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -25,6 +25,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.ByteArrayZipper;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.types.IType;
@@ -423,8 +424,7 @@ public class Strings {
 			return target.contains(pattern) ? GamaListFactory.createWithoutCasting(Types.STRING, pattern)
 					: GamaListFactory.create();
 		}
-		return GamaListFactory.wrap(Types.STRING,
-				p.matcher(target).results().map(MatchResult::group).toList());
+		return GamaListFactory.wrap(Types.STRING, p.matcher(target).results().map(MatchResult::group).toList());
 	}
 
 	/**
@@ -789,9 +789,59 @@ public class Strings {
 					value = "capitalize(\"abc\")",
 					equals = "'Abc'"),
 			see = { "lower_case", "upper_case" })
-	public static String capitalize(final String str) {
-		if (str == null || str.isEmpty()) return str;
+	public static String capitalize(final IScope scope, final String str) {
+		if (str == null) throw GamaRuntimeException.error("String cannot be null", scope);
+		if (str.isEmpty()) return str;
 		return str.substring(0, 1).toUpperCase().concat(str.substring(1));
+	}
+
+	/**
+	 * Zip.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param str
+	 *            the str
+	 * @return the string
+	 * @date 28 oct. 2023
+	 */
+	@operator (
+			value = { "compress", "zip" },
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Returns a string that represents the compressed (using gzip) form of the argument",
+			see = { "uncompress" })
+	public static String zip(final IScope scope, final String str) {
+		if (str == null) throw GamaRuntimeException.error("String cannot be null", scope);
+		if (str.isEmpty()) return str;
+		return new String(ByteArrayZipper.zip(str.getBytes()), StandardCharsets.ISO_8859_1);
+	}
+
+	/**
+	 * Unzip.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param str
+	 *            the str
+	 * @return the string
+	 * @date 28 oct. 2023
+	 */
+	@operator (
+			value = { "uncompress", "decompress", "unzip" },
+			can_be_const = true,
+			category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc (
+			value = "Returns a string that represents the uncompressed (using gzip) form of the argument",
+			see = { "compress" })
+	public static String unzip(final IScope scope, final String str) {
+		if (str == null) throw GamaRuntimeException.error("String cannot be null", scope);
+		if (str.isEmpty()) return str;
+		return new String(ByteArrayZipper.unzip(str.getBytes(StandardCharsets.ISO_8859_1)),
+				StandardCharsets.ISO_8859_1);
 	}
 
 }
