@@ -61,9 +61,10 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 	 * Change the UI state based on the state of the experiment (see IExperimentStateListener.State)
 	 */
 	@Override
-	public void updateStateTo(final IExperimentPlan exp, final State state) {
+	public void updateStateTo(final IExperimentPlan exp, final State newState) {
+		String state = newState.getName();
 		if (!Objects.equals(states.get(EXPERIMENT_RUNNING_STATE), state)) {
-			states.put(EXPERIMENT_RUNNING_STATE, state.getName());
+			states.put(EXPERIMENT_RUNNING_STATE, state);
 			WorkbenchHelper.run(() -> fireSourceChanged(ISources.WORKBENCH, EXPERIMENT_RUNNING_STATE, state));
 		}
 		String simulationType =
