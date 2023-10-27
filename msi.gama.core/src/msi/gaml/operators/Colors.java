@@ -25,7 +25,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -49,6 +48,7 @@ import msi.gaml.compilation.IOperatorValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.types.GamaColorType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;

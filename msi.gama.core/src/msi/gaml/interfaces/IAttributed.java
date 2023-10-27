@@ -12,7 +12,7 @@ package msi.gaml.interfaces;
 
 import java.util.Map;
 
-import msi.gama.common.interfaces.BiConsumerWithPruning;
+import msi.gama.util.BiConsumerWithPruning;
 
 /**
  * Represents objects that are provided with attributes (collection of string-value pairs)

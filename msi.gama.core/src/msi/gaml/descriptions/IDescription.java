@@ -16,13 +16,13 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
 
-import msi.gama.common.interfaces.BiConsumerWithPruning;
-import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.common.interfaces.IBenchmarkable;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
+import msi.gama.util.BiConsumerWithPruning;
+import msi.gama.util.ConsumerWithPruning;
 import msi.gama.util.ICollector;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;

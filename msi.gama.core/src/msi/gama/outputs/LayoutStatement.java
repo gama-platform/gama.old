@@ -14,7 +14,6 @@ import static msi.gama.common.interfaces.IKeyword.LAYOUT;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.LayoutStatement.LayoutValidator;
@@ -34,6 +33,7 @@ import msi.gaml.compilation.Symbol;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 

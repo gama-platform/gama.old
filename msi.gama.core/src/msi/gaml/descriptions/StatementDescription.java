@@ -11,10 +11,10 @@
 package msi.gaml.descriptions;
 
 import static java.util.Collections.EMPTY_LIST;
-import static msi.gama.common.interfaces.IGamlIssue.GENERAL;
-import static msi.gama.common.interfaces.IGamlIssue.MISSING_NAME;
-import static msi.gama.common.interfaces.IGamlIssue.SHOULD_CAST;
-import static msi.gama.common.interfaces.IGamlIssue.UNKNOWN_ARGUMENT;
+import static msi.gaml.interfaces.IGamlIssue.GENERAL;
+import static msi.gaml.interfaces.IGamlIssue.MISSING_NAME;
+import static msi.gaml.interfaces.IGamlIssue.SHOULD_CAST;
+import static msi.gaml.interfaces.IGamlIssue.UNKNOWN_ARGUMENT;
 import static msi.gaml.statements.DoStatement.DO_FACETS;
 import static msi.gaml.types.Types.NO_TYPE;
 

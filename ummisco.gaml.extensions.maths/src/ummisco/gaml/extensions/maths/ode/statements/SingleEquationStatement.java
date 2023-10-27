@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -50,6 +49,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.operators.AbstractNAryOperator;
 import msi.gaml.expressions.operators.IOperator;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;

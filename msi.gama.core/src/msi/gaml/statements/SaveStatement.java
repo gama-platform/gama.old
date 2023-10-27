@@ -21,7 +21,6 @@ import java.util.Set;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeMultimap;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISaveDelegate;
 import msi.gama.common.util.FileUtils;
@@ -47,6 +46,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.MapExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.GamaFileType;

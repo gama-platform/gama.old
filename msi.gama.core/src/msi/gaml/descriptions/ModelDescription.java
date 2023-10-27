@@ -24,12 +24,12 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.ConsumerWithPruning;
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.util.ConsumerWithPruning;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;

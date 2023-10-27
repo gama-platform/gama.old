@@ -12,7 +12,6 @@ package msi.gaml.statements;
 
 import java.util.Set;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -39,6 +38,7 @@ import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.DoStatement.DoSerializer;

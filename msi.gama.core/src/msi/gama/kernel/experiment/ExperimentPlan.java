@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.batch.BatchOutput;
@@ -61,6 +60,7 @@ import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;

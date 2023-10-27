@@ -45,7 +45,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.EGaml;
@@ -114,6 +113,7 @@ import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.expressions.variables.EachExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;

@@ -12,7 +12,6 @@ package msi.gaml.species;
 
 import java.util.Collection;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -37,6 +36,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.species.GamlSpecies.SpeciesValidator;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;

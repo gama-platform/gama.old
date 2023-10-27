@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -31,6 +30,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.AddStatement.AddSerializer;
 import msi.gaml.statements.AddStatement.AddValidator;
 import msi.gaml.types.IType;

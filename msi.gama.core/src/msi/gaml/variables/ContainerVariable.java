@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.variables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -24,6 +23,7 @@ import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.types.IType;
 import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 

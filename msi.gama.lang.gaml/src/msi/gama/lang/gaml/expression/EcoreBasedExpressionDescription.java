@@ -15,7 +15,6 @@ import java.util.Collections;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Expression;
@@ -26,6 +25,7 @@ import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.BasicExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.interfaces.IGamlIssue;
 
 /**
  * The class EcoreBasedExpressionDescription.

@@ -40,7 +40,6 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.Collector;
@@ -55,6 +54,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;

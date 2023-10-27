@@ -13,7 +13,6 @@ package msi.gama.outputs.layers;
 import java.util.ArrayList;
 import java.util.List;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.AgentLayerStatement.AgentLayerValidator;
@@ -37,6 +36,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;

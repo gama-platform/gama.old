@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.ImmutableSet;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -38,6 +37,7 @@ import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaIntegerType;
 import msi.gaml.types.IType;

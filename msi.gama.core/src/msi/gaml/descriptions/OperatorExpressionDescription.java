@@ -12,9 +12,9 @@ package msi.gaml.descriptions;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 
 /**
  * The Class OperatorExpressionDescription.

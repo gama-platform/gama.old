@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IExecutionContext;
@@ -48,6 +47,7 @@ import msi.gaml.expressions.variables.SelfExpression;
 import msi.gaml.expressions.variables.SuperExpression;
 import msi.gaml.expressions.variables.TempVariableExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;

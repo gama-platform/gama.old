@@ -23,13 +23,13 @@ import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.IGamlModelBuilder;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.interfaces.IGamlIssue;
 import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 

@@ -69,7 +69,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
@@ -115,6 +114,7 @@ import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.descriptions.OperatorExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 
 /**

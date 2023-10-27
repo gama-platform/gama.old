@@ -15,7 +15,6 @@ import java.util.List;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -35,6 +34,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.IStatement.Breakable;
 import msi.gaml.statements.SwitchStatement.SwitchValidator;
 import msi.gaml.types.IType;

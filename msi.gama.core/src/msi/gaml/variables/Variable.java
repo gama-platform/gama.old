@@ -20,7 +20,6 @@ import java.util.Set;
 
 import com.google.common.base.Objects;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.IVarAndActionSupport;
@@ -54,6 +53,7 @@ import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.ListExpression;
 import msi.gaml.expressions.units.TimeUnitConstantExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.AbstractSpecies;
 import msi.gaml.statements.IExecutable;

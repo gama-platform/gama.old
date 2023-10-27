@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
@@ -28,6 +27,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.operators.BinaryOperator;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractContainerStatement.ContainerValidator;
 import msi.gaml.types.IType;

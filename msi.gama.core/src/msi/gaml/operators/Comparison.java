@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import org.locationtech.jts.index.quadtree.IntervalSize;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -29,6 +28,7 @@ import msi.gaml.compilation.IOperatorValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.types.IType;
 
 /**

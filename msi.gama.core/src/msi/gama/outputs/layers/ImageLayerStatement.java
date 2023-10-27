@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ImageLayerStatement.ImageLayerValidator;
@@ -30,6 +29,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 

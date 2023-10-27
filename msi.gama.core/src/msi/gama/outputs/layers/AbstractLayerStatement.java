@@ -12,7 +12,6 @@ package msi.gama.outputs.layers;
 
 import com.google.common.primitives.Ints;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.outputs.IDisplayOutput;
@@ -27,6 +26,7 @@ import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import one.util.streamex.StreamEx;
 
 /**

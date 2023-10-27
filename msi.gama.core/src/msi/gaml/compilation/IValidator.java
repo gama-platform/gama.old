@@ -12,10 +12,10 @@ package msi.gaml.compilation;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 
 /**
  * 'Tagging' interface for IExpression and IDescription validators

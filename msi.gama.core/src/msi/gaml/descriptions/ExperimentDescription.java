@@ -10,8 +10,8 @@
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
-import static msi.gama.common.interfaces.IGamlIssue.DUPLICATE_DEFINITION;
-import static msi.gama.common.interfaces.IGamlIssue.REDEFINES;
+import static msi.gaml.interfaces.IGamlIssue.DUPLICATE_DEFINITION;
+import static msi.gaml.interfaces.IGamlIssue.REDEFINES;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ExperimentAgent;
@@ -30,6 +29,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 
 /**

@@ -33,7 +33,6 @@ import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
 import msi.gama.common.interfaces.IDrawDelegate;
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -55,6 +54,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.statements.draw.DrawStatement.DrawValidator;

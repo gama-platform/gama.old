@@ -13,7 +13,6 @@ package msi.gama.outputs;
 import java.util.HashMap;
 import java.util.Map;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.SimulationOutputManager.SimulationOutputValidator;
@@ -32,6 +31,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.types.IType;
 
 /**

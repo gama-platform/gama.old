@@ -14,7 +14,6 @@ import static msi.gama.util.Collector.getOrderedSet;
 import static msi.gaml.compilation.GAML.getExpressionFactory;
 import static msi.gaml.types.Types.intFloatCase;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -39,6 +38,7 @@ import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.ActionStatement.ActionSerializer;
 import msi.gaml.statements.ActionStatement.ActionValidator;
 import msi.gaml.types.IType;

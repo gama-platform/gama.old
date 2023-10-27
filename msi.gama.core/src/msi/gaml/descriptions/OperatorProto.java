@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.ImmutableSet;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -45,6 +44,7 @@ import msi.gaml.expressions.operators.NAryOperator;
 import msi.gaml.expressions.operators.TypeFieldExpression;
 import msi.gaml.expressions.operators.UnaryOperator;
 import msi.gaml.expressions.types.TypeExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;

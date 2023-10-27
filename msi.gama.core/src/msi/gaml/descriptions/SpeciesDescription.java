@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -45,6 +44,7 @@ import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.expressions.types.SkillConstantExpression;
 import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;

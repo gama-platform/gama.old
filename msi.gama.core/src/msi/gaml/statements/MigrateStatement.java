@@ -10,7 +10,6 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -34,6 +33,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.MigrateStatement.MigrateValidator;
 import msi.gaml.types.IType;

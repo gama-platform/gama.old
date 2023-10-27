@@ -13,7 +13,6 @@ package msi.gama.outputs.layers;
 import static msi.gama.common.interfaces.IKeyword.EMPTY;
 import static msi.gaml.expressions.IExpressionFactory.TRUE_EXPR;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.GridLayerStatement.GridLayerSerializer;
@@ -40,6 +39,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 

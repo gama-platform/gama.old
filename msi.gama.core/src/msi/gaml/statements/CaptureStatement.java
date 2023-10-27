@@ -13,7 +13,6 @@ package msi.gaml.statements;
 import java.util.ArrayList;
 import java.util.List;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -41,6 +40,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CaptureStatement.CaptureValidator;
 import msi.gaml.types.IType;

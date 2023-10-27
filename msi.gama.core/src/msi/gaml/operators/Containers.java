@@ -35,7 +35,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulationSet;
@@ -74,6 +73,7 @@ import msi.gaml.compilation.annotations.validator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.operators.BinaryOperator;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;

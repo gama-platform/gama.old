@@ -21,8 +21,6 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 
-import msi.gama.common.interfaces.BiConsumerWithPruning;
-import msi.gama.common.interfaces.ConsumerWithPruning;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;

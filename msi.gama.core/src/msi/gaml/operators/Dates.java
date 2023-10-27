@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
@@ -69,6 +68,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.units.TimeUnitConstantExpression;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;

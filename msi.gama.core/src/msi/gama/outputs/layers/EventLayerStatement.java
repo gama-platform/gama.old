@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.common.interfaces.IEventLayerDelegate;
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -38,6 +37,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;

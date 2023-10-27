@@ -13,14 +13,14 @@ package msi.gama.lang.gaml.resource;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 import static java.util.Collections.singleton;
-import static msi.gama.common.interfaces.IGamlIssue.GENERAL;
-import static msi.gama.common.interfaces.IGamlIssue.IMPORT_ERROR;
 import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.collectMultipleImportsOf;
 import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.getImportObject;
 import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.updateImports;
 import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
 import static msi.gama.lang.gaml.resource.GamlResourceServices.updateState;
 import static msi.gaml.compilation.GAML.getModelFactory;
+import static msi.gaml.interfaces.IGamlIssue.GENERAL;
+import static msi.gaml.interfaces.IGamlIssue.IMPORT_ERROR;
 import static org.eclipse.emf.ecore.util.EcoreUtil.resolveAll;
 import static org.eclipse.xtext.diagnostics.Severity.ERROR;
 
