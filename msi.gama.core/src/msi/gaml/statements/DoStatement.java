@@ -177,9 +177,9 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 			final String name = arg.getName();
 			final IExpressionDescription value = arg.getFacet(VALUE);
 			if (Strings.isGamaNumber(name)) {
-				sb.append(value.serialize(includingBuiltIn));
+				sb.append(value.serializeToGaml(includingBuiltIn));
 			} else {
-				sb.append(name).append(":").append(value.serialize(includingBuiltIn));
+				sb.append(name).append(":").append(value.serializeToGaml(includingBuiltIn));
 			}
 
 		}

@@ -199,7 +199,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
 		parallel = getFacet("parallel");
-		if (target != null) { setName("ask " + target.serialize(false)); }
+		if (target != null) { setName("ask " + target.serializeToGaml(false)); }
 		// targetsSimulations = targetsSimulations();
 	}
 

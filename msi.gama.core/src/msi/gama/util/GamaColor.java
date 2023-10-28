@@ -313,7 +313,7 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 		}
 
 		@Override
-		public String serialize(final boolean includingBuiltIn) {
+		public String serializeToGaml(final boolean includingBuiltIn) {
 			return "#" + name;
 		}
 
@@ -376,11 +376,11 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 
 	@Override
 	public String toString() {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "rgb (" + red() + ", " + green() + ", " + blue() + ", " + getAlpha() + ")";
 	}
 

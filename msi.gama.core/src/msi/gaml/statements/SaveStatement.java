@@ -332,7 +332,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			} else {
 				with.forEachFacet((name, exp) -> {
 					if (!species.hasAttribute(name)) {
-						desc.error("Attribute " + name + " is not defined for the agents of " + data.serialize(false),
+						desc.error("Attribute " + name + " is not defined for the agents of " + data.serializeToGaml(false),
 								IGamlIssue.UNKNOWN_VAR, WITH);
 						return false;
 					}

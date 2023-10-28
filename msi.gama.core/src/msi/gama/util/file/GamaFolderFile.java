@@ -69,7 +69,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String> {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return IKeyword.FOLDER + "('" + /* StringUtils.toGamlString(getPath()) */getPath(null) + "')";
 	}
 

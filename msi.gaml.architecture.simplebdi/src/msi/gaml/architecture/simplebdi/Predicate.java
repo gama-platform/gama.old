@@ -416,11 +416,11 @@ public class Predicate implements IValue {
 
 	@Override
 	public String toString() {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "predicate(" + name + (values == null ? "" : "," + values) + (agentCause == null ? "" : "," + agentCause)
 				+ "," + is_true + ")";
 	}

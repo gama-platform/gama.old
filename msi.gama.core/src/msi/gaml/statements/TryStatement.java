@@ -90,7 +90,7 @@ public class TryStatement extends AbstractStatementSequence {
 			final String[] catchString = { null };
 			desc.visitChildren(s -> {
 				if (IKeyword.CATCH.equals(s.getKeyword())) {
-					catchString[0] = s.serialize(false) + Strings.LN;
+					catchString[0] = s.serializeToGaml(false) + Strings.LN;
 				} else {
 					serializeChild(s, sb, includingBuiltIn);
 				}

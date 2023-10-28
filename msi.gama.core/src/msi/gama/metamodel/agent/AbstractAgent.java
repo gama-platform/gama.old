@@ -144,7 +144,7 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public abstract class AbstractAgent implements IAgent {
 	 * @date 17 sept. 2023
 	 */
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(30);
 		// AD. See issue #3053
 		sb.append(getSpeciesName()).append('(').append(getIndex()).append(')');

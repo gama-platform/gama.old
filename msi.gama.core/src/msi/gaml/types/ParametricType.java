@@ -442,17 +442,17 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	@Override
 	public String asPattern() {
 		final boolean vowel = StringUtils.startsWithAny(type.getName(), vowels);
-		return "${" + (vowel ? "an_" : "a_") + serialize(true) + "}";
+		return "${" + (vowel ? "an_" : "a_") + serializeToGaml(true) + "}";
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		if (type.id() == IType.LIST || type.id() == IType.MATRIX
 				|| type.id() == IType.CONTAINER && keyType == Types.NO_TYPE)
 			return type.toString() + "<" + contentsType.toString() + ">";
 		if (type.id() == IType.SPECIES) return type.toString() + "<" + contentsType.toString() + ">";
-		return type.toString() + "<" + keyType.serialize(includingBuiltIn) + ", "
-				+ contentsType.serialize(includingBuiltIn) + ">";
+		return type.toString() + "<" + keyType.serializeToGaml(includingBuiltIn) + ", "
+				+ contentsType.serializeToGaml(includingBuiltIn) + ">";
 	}
 
 	@Override

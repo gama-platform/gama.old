@@ -76,7 +76,7 @@ public class BDIPlan implements IValue {
 	 */
 	@getter ("todo")
 	public String getWhen() {
-		return this.planstatement._when.serialize(true);
+		return this.planstatement._when.serializeToGaml(true);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class BDIPlan implements IValue {
 	 */
 	@getter (SimpleBdiArchitecture.FINISHEDWHEN)
 	public String getFinishedWhen() {
-		return this.planstatement._executedwhen.serialize(true);
+		return this.planstatement._executedwhen.serializeToGaml(true);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class BDIPlan implements IValue {
 	 */
 	@getter (SimpleBdiArchitecture.INSTANTANEAOUS)
 	public String getInstantaneous() {
-		return this.planstatement._instantaneous.serialize(true);
+		return this.planstatement._instantaneous.serializeToGaml(true);
 	}
 
 	/**
@@ -148,11 +148,11 @@ public class BDIPlan implements IValue {
 
 	@Override
 	public String toString() {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "BDIPlan(" + planstatement.getName()
 		// +(values == null ? "" : "," + values) +
 				+ ")";

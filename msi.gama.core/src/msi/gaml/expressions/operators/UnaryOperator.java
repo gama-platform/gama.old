@@ -68,7 +68,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression child) {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
-			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
+			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
 		return u;
 	}
 
@@ -117,13 +117,13 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final String s = literalValue();
 		final StringBuilder sb = new StringBuilder(s);
 		if (OperatorProto.noMandatoryParenthesis.contains(s)) {
 			parenthesize(sb, child);
 		} else {
-			sb.append("(").append(child.serialize(includingBuiltIn)).append(")");
+			sb.append("(").append(child.serializeToGaml(includingBuiltIn)).append(")");
 		}
 		return sb.toString();
 	}

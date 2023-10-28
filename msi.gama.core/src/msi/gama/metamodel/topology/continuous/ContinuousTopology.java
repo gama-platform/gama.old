@@ -53,7 +53,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 */
 	@Override
 	protected String _toGaml(final boolean includingBuiltIn) {
-		return IKeyword.TOPOLOGY + "(" + environment.serialize(includingBuiltIn) + ")";
+		return IKeyword.TOPOLOGY + "(" + environment.serializeToGaml(includingBuiltIn) + ")";
 	}
 
 	/**

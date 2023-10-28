@@ -158,7 +158,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 */
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return serialize(false);
+		return serializeToGaml(false);
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 * @see msi.gaml.interfaces.IGamlable#toGaml()
 	 */
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(populationSets.size() * 10);
 		sb.append('[');
 		for (int i = 0; i < populationSets.size(); i++) {

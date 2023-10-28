@@ -65,7 +65,7 @@ public interface IOperator extends IExpression, IBenchmarkable {
 	 */
 	@Override
 	default String getNameForBenchmarks() {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 }

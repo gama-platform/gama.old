@@ -314,7 +314,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				if (t != null) {
 					// Emits an info when a float is truncated. See Issue 735.
 					if (t.id() == IType.INT) {
-						context.info("'" + args[i].serialize(false) + "' will be  truncated to int.",
+						context.info("'" + args[i].serializeToGaml(false) + "' will be  truncated to int.",
 								IGamlIssue.UNMATCHED_OPERANDS, eObject);
 					}
 					args[i] = createAs(context, args[i], createTypeExpression(t));

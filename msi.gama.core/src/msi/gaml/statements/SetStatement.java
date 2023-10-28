@@ -82,7 +82,7 @@ public class SetStatement extends AbstractStatement {
 			if (desc == null) return;
 			final IExpressionDescription ed = desc.getFacet(VALUE);
 			if (ed == null) return;
-			final String exp = ed.serialize(includingBuiltIn);
+			final String exp = ed.serializeToGaml(includingBuiltIn);
 			if (exp == null) return;
 			sb.append(desc.getName());
 			sb.append(" <- ");
@@ -118,14 +118,14 @@ public class SetStatement extends AbstractStatement {
 
 			// AD 19/1/13: test of the constants
 			if (var.getVar().isNotModifiable()) {
-				cd.error("The variable " + expr.serialize(false)
+				cd.error("The variable " + expr.serializeToGaml(false)
 						+ " is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
 			}
 
 			if (IKeyword.SHAPE.equals(var.getName()) && (cd.getSpeciesContext() instanceof ModelDescription)) {
 				cd.warning(
 						"Dynamically changing the shape of the world can lead to unexpected results. It is advised to redefine the attribute instead (e.g. 'geometry shape <- "
-								+ (assigned == null ? "..." : assigned.serialize(false)) + "')",
+								+ (assigned == null ? "..." : assigned.serializeToGaml(false)) + "')",
 						IKeyword.NAME);
 			}
 

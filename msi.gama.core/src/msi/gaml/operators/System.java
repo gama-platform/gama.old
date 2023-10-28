@@ -452,14 +452,14 @@ public class System {
 			throws GamaRuntimeException {
 		if (a == null) {
 			if (!scope.interrupted()) throw GamaRuntimeException
-					.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is nil", scope);
+					.warning("Cannot evaluate " + s.serializeToGaml(false) + " as the target agent is nil", scope);
 			return null;
 		}
 		if (a.dead()) {
 			// scope.getGui().debug("System.opGetValue");
 			if (!scope.interrupted()) // scope.getGui().debug("System.opGetValue error");
 				throw GamaRuntimeException
-						.warning("Cannot evaluate " + s.serialize(false) + " as the target agent is dead", scope);
+						.warning("Cannot evaluate " + s.serializeToGaml(false) + " as the target agent is dead", scope);
 			return null;
 		}
 		return scope.evaluate(s, a).getValue();

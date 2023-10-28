@@ -339,7 +339,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return getName() + "(" + signature.toString() + ")";
 	}
 

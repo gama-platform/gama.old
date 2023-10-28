@@ -297,14 +297,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public int getMembersSize(final IScope scope) {
 		return getMembers(scope).length(scope);
-		// final int[] result = { 0 };
-		// forEachAttribute((s, pop) -> {
-		// if (pop instanceof IPopulation) {
-		// result[0] += ((IPopulation<? extends IAgent>) pop).length(scope);
-		// }
-		// return true;
-		// });
-		// return result[0];
 	}
 
 	@Override

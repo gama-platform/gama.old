@@ -97,7 +97,7 @@ public class Norm implements IValue {
 	 * @return the when
 	 */
 	@getter ("when")
-	public String getWhen() { return this.normStatement._when.serialize(true); }
+	public String getWhen() { return this.normStatement._when.serializeToGaml(true); }
 
 	/**
 	 * Gets the intention.
@@ -135,7 +135,7 @@ public class Norm implements IValue {
 	@getter (SimpleBdiArchitecture.FINISHEDWHEN)
 	public String getFinishedWhen() {
 		if (this.normStatement != null && this.normStatement._executedwhen != null)
-			return this.normStatement._executedwhen.serialize(true);
+			return this.normStatement._executedwhen.serializeToGaml(true);
 		return null;
 	}
 
@@ -147,7 +147,7 @@ public class Norm implements IValue {
 	@getter (SimpleBdiArchitecture.INSTANTANEAOUS)
 	public String getInstantaneous() {
 		if (this.normStatement != null && this.normStatement._instantaneous != null)
-			return this.normStatement._instantaneous.serialize(true);
+			return this.normStatement._instantaneous.serializeToGaml(true);
 		return null;
 	}
 
@@ -296,7 +296,7 @@ public class Norm implements IValue {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "Norm(" + normStatement + ")";
 	}
 

@@ -251,7 +251,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 				// is emitted)
 				if (Types.intFloatCase(matchType, switchType)) {
 					match.warning(
-							"The value " + value.serialize(false) + " of type " + matchType
+							"The value " + value.serializeToGaml(false) + " of type " + matchType
 									+ " is compared to a value of type " + switchType + ", which will never match ",
 							IGamlIssue.SHOULD_CAST, IKeyword.VALUE, switchType.toString());
 					continue;
@@ -259,7 +259,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 
 				if (matchType.isTranslatableInto(switchType)) { continue; }
 				match.warning(
-						"The value " + value.serialize(false) + " of type " + matchType
+						"The value " + value.serializeToGaml(false) + " of type " + matchType
 								+ " is compared to a value of type " + switchType + ", which will never match ",
 						IGamlIssue.SHOULD_CAST, IKeyword.VALUE, switchType.toString());
 			}
@@ -286,7 +286,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 	public SwitchStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
-		setName("switch" + value.serialize(false));
+		setName("switch" + value.serializeToGaml(false));
 
 	}
 

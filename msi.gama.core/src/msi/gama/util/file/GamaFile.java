@@ -576,7 +576,7 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "file('" + getPath(GAMA.getRuntimeScope()) + "')";
 	}
 

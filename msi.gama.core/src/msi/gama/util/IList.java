@@ -122,7 +122,7 @@ public interface IList<E>
 	 */
 	@Override
 	default String stringValue(final IScope scope) throws GamaRuntimeException {
-		return serialize(false);
+		return serializeToGaml(false);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public interface IList<E>
 	 * @return the string
 	 */
 	@Override
-	default String serialize(final boolean includingBuiltIn) {
+	default String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(size() * 10);
 		sb.append('[');
 		for (int i = 0; i < size(); i++) {

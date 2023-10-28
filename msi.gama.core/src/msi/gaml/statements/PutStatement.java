@@ -173,12 +173,12 @@ public class PutStatement extends AddStatement {
 			final IExpression list = cd.getFacetExpr(TO);
 			// IExpression allFacet = f.getExpr(ALL);
 			final IExpression at = cd.getFacetExpr(AT);
-			sb.append(list.serialize(includingBuiltIn));
+			sb.append(list.serializeToGaml(includingBuiltIn));
 			sb.append('[');
-			if (at != null) { sb.append(at.serialize(includingBuiltIn)); }
+			if (at != null) { sb.append(at.serializeToGaml(includingBuiltIn)); }
 			sb.append(']');
 			sb.append(" <- ");
-			sb.append(item.serialize(includingBuiltIn)).append(';');
+			sb.append(item.serializeToGaml(includingBuiltIn)).append(';');
 		}
 	}
 
@@ -213,7 +213,7 @@ public class PutStatement extends AddStatement {
 	 */
 	public PutStatement(final IDescription desc) {
 		super(desc);
-		setName("put in " + list.serialize(false));
+		setName("put in " + list.serializeToGaml(false));
 	}
 
 	@Override

@@ -237,7 +237,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		if (file.isConst()) {
 			setName(Cast.asString(scope, file.value(scope)));
 		} else {
-			setName(file.serialize(false));
+			setName(file.serializeToGaml(false));
 		}
 		return true;
 	}

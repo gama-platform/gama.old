@@ -130,7 +130,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "#" + name;
 	}
 
@@ -153,7 +153,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 		} else {
 			prefix = "Mutable value ";
 		}
-		StringBuilder s = new StringBuilder().append(prefix).append(serialize(false));
+		StringBuilder s = new StringBuilder().append(prefix).append(serializeToGaml(false));
 		if (alternateNames.size() > 1) { s.append(" (").append(alternateNames).append(")"); }
 		return s.toString();
 	}

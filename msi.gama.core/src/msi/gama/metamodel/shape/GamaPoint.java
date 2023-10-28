@@ -348,7 +348,7 @@ public class GamaPoint extends Coordinate implements IShape, IIntersectable {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "{" + x + "," + y + "," + z + "}";
 	}
 

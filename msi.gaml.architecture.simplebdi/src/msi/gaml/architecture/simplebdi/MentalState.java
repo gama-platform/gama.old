@@ -741,11 +741,11 @@ public class MentalState implements IValue {
 
 	@Override
 	public String toString() {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return modality + "(" + (predicate == null ? "" : predicate) + (mental == null ? "" : mental)
 				+ (emo == null ? "" : emo) + "," + (owner == null ? "" : owner) + "," + strength + "," + lifetime + ")";
 	}

@@ -70,9 +70,9 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		if (description == null) return "";
-		return description.serialize(includingBuiltIn);
+		return description.serializeToGaml(includingBuiltIn);
 	}
 
 	@Override

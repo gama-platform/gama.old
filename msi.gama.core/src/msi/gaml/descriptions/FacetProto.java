@@ -242,10 +242,10 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	/**
 	 * Method serialize()
 	 *
-	 * @see msi.gaml.interfaces.IGamlable#serialize(boolean)
+	 * @see msi.gaml.interfaces.IGamlable#serializeToGaml(boolean)
 	 */
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		if (getDeprecated() != null || SymbolSerializer.uselessFacets.contains(name)) return "";
 		return name + (optional ? ": optional" : ": required") + " ("
 				+ (types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";

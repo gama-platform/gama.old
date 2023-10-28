@@ -297,7 +297,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			typeInfo = ((TypeRef) typeObject).getParameter();
 		} else if (typeObject instanceof Function) { typeInfo = ((Function) typeObject).getType(); }
 		if (isSuperType && typeInfo == null) {
-			getContext().info("Unneeded casting: '" + toCast.serialize(true) + "' is already of type " + type,
+			getContext().info("Unneeded casting: '" + toCast.serializeToGaml(true) + "' is already of type " + type,
 					IGamlIssue.UNUSED, typeObject);
 			// Issue #2521: indicate but don't skip the casting
 			// return toCast;
@@ -317,7 +317,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IType result = GamaType.from(castingType, keyType, contentsType);
 		// If there is no casting to do, just return the expression unchanged.
 		if (result.isAssignableFrom(toCast.getGamlType())) {
-			getContext().info("Unneeded casting: '" + toCast.serialize(true) + "' is already of type " + type,
+			getContext().info("Unneeded casting: '" + toCast.serializeToGaml(true) + "' is already of type " + type,
 					IGamlIssue.UNUSED, typeObject);
 			// Issue #2521: indicate but don't skip the casting
 			// return toCast;

@@ -180,14 +180,14 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 			final IExpressionDescription type = arg.getFacet(TYPE);
 			final IExpressionDescription def = arg.getFacet(DEFAULT);
 
-			sb.append(type == null ? "unknown" : type.serialize(includingBuiltIn)).append(" ").append(name);
-			if (def != null) { sb.append(" <- ").append(def.serialize(includingBuiltIn)); }
+			sb.append(type == null ? "unknown" : type.serializeToGaml(includingBuiltIn)).append(" ").append(name);
+			if (def != null) { sb.append(" <- ").append(def.serializeToGaml(includingBuiltIn)); }
 		}
 
 		@Override
 		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
-			String type = desc.getGamlType().serialize(includingBuiltIn);
+			String type = desc.getGamlType().serializeToGaml(includingBuiltIn);
 			if (UNKNOWN.equals(type)) { type = ACTION; }
 			sb.append(type).append(" ");
 		}

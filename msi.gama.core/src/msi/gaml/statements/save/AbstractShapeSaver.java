@@ -152,7 +152,7 @@ public abstract class AbstractShapeSaver extends AbstractSaver {
 		} else if (value instanceof IList) {
 			agents = (IList<? extends IShape>) value;
 		} else
-			throw GamaRuntimeException.error(item.serialize(true) + " is not a list of agents or geometries", scope);
+			throw GamaRuntimeException.error(item.serializeToGaml(true) + " is not a list of agents or geometries", scope);
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = GeometryUtils.getGeometryStringType(agents);
 		specs.append("geometry:" + geomType);

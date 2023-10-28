@@ -69,7 +69,7 @@ public class ReverseOperators {
 	@operator (
 			value = "serialize")
 	@doc (
-			value = "Serializes any object/agent/simulation into a string, using the format passed in parameter (either 'binary', 'xml' or 'json'). The result is not compressed."
+			value = "Serializes any object/agent/simulation into a string, using the format passed in parameter (either 'binary' or 'json'). The result is not compressed."
 					+ "The result of this operator can be then used in the `from:` facet of `restore` or `create` statements in case of agents, or using `deserialize` for other items",
 			see = "")
 	@no_test ()
@@ -91,7 +91,7 @@ public class ReverseOperators {
 	@operator (
 			value = "serialize")
 	@doc (
-			value = "Serializes any object/agent/simulation into a string, using the format passed in parameter (either 'binary', 'xml' or 'json'). The result is compressed if the last parameter is true."
+			value = "Serializes any object/agent/simulation into a string, using the format passed in parameter (either 'binary' or 'json'). The result is compressed if the last parameter is true."
 					+ "The result of this operator can be then used in the `from:` facet of `restore` or `create` statements in case of agents, or using `deserialize` for other items",
 			see = "")
 	@no_test ()

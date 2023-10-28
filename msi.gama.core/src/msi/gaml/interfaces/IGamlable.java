@@ -30,7 +30,7 @@ public interface IGamlable {
 	 *            species within a model)
 	 * @return a string that can be reinterpreted in GAML to reproduce the object
 	 */
-	default String serialize(final boolean includingBuiltIn) {
+	default String serializeToGaml(final boolean includingBuiltIn) {
 		return toString();
 	}
 
@@ -44,7 +44,7 @@ public interface IGamlable {
 	 * @return the object
 	 * @date 27 oct. 2023
 	 */
-	default Object deserialize(final IScope scope, final String gaml) {
+	default Object deserializeFromGaml(final IScope scope, final String gaml) {
 		return GAML.evaluateExpression(gaml, scope.getAgent());
 	}
 }

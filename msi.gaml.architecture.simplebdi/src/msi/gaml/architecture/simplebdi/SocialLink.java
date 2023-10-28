@@ -290,11 +290,11 @@ public class SocialLink implements IValue {
 
 	@Override
 	public String toString() {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "(" + agent + "," + liking + "," + dominance + "," + solidarity + "," + familiarity + "," + trust + ")";
 	}
 

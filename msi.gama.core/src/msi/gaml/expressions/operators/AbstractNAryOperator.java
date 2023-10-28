@@ -274,7 +274,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(literalValue());
 		parenthesize(sb, exprs);

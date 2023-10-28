@@ -91,7 +91,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 			for (final OperatorProto proto : protos) {
 				final Template t = GamlTemplateFactory.from(proto);
 				final MenuItem item = action(name_menu,
-						"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serialize(true),
+						"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serializeToGaml(true),
 						new SelectionAdapter() {
 
 							@Override
@@ -144,7 +144,7 @@ public class OperatorsReferenceMenu extends GamlReferenceMenu {
 				for (final OperatorProto proto : protos) {
 					final Template t = categories.get(category).get(name).get(proto);
 					final MenuItem item = action(name_menu,
-							"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serialize(true),
+							"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serializeToGaml(true),
 							new SelectionAdapter() {
 
 								@Override

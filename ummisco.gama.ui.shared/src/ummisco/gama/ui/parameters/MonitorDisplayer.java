@@ -110,7 +110,7 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 			action(m, "Copy value", ex -> {
 				final Object v = getStatement().getLastValue();
 				WorkbenchHelper
-						.copy(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
+						.copy(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serializeToGaml(true) : v.toString());
 			});
 			final IExpression exp = getStatement().getValue();
 			final IType<?> type = exp == null ? Types.NO_TYPE : exp.getGamlType();

@@ -220,7 +220,7 @@ public class GamaRuntimeException extends RuntimeException {
 	 *            the s
 	 */
 	public void addContext(final ISymbol s) {
-		addContext("in " + s.serialize(false));
+		addContext("in " + s.serializeToGaml(false));
 		final EObject e = s.getDescription().getUnderlyingElement();
 		if (e != null) { editorContext = e; }
 	}

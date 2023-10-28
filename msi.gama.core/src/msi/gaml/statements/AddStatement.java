@@ -260,10 +260,10 @@ public class AddStatement extends AbstractContainerStatement {
 			final IExpression allFacet = cd.getFacetExpr(ALL);
 			final IExpression at = cd.getFacetExpr(AT);
 			final boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
-			sb.append(list.serialize(false));
-			if (at != null) { sb.append('[').append(at.serialize(includingBuiltIn)).append(']'); }
+			sb.append(list.serializeToGaml(false));
+			if (at != null) { sb.append('[').append(at.serializeToGaml(includingBuiltIn)).append(']'); }
 			sb.append(isAll ? " <<+ " : " <+ ");
-			sb.append(item.serialize(includingBuiltIn)).append(';');
+			sb.append(item.serializeToGaml(includingBuiltIn)).append(';');
 		}
 	}
 
@@ -282,8 +282,8 @@ public class AddStatement extends AbstractContainerStatement {
 			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())) {
 				if (!item.getGamlType().isContainer()) {
 					cd.warning(
-							"The use of 'all' will have no effect here, as " + item.serialize(false)
-									+ " is not a container. Only this value will be added to " + list.serialize(false),
+							"The use of 'all' will have no effect here, as " + item.serializeToGaml(false)
+									+ " is not a container. Only this value will be added to " + list.serializeToGaml(false),
 							IGamlIssue.WRONG_CONTEXT, ALL);
 					cd.removeFacets(ALL);
 				}
@@ -295,13 +295,13 @@ public class AddStatement extends AbstractContainerStatement {
 				final IType<?> pairKeyType = item.getGamlType().getKeyType();
 				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)) {
 					cd.warning(
-							"The type of the contents of " + list.serialize(false) + " (" + contentType
-									+ ") does not match with the type of the value of " + item.serialize(false),
+							"The type of the contents of " + list.serializeToGaml(false) + " (" + contentType
+									+ ") does not match with the type of the value of " + item.serializeToGaml(false),
 							IGamlIssue.SHOULD_CAST, IKeyword.ITEM, contentType.toString());
 				}
 				if (mapKeyType != Types.NO_TYPE && !mapKeyType.isTranslatableInto(pairKeyType)) {
-					cd.warning("The type of the index of " + list.serialize(false) + " (" + mapKeyType
-							+ ") does not match with that of the key of " + item.serialize(false) + " (" + pairKeyType
+					cd.warning("The type of the index of " + list.serializeToGaml(false) + " (" + mapKeyType
+							+ ") does not match with that of the key of " + item.serializeToGaml(false) + " (" + pairKeyType
 							+ ")", IGamlIssue.SHOULD_CAST, IKeyword.ITEM, mapKeyType.toString());
 				}
 			} else {
@@ -317,7 +317,7 @@ public class AddStatement extends AbstractContainerStatement {
 	 */
 	public AddStatement(final IDescription desc) {
 		super(desc);
-		setName("add to " + list.serialize(false));
+		setName("add to " + list.serializeToGaml(false));
 	}
 
 	// @Override

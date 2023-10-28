@@ -96,8 +96,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public final String serialize(final boolean includingBuiltIn) {
-		return this.getGamlType().serialize(true) + "(" + getColumnsList().serialize(includingBuiltIn) + ")";
+	public final String serializeToGaml(final boolean includingBuiltIn) {
+		return this.getGamlType().serializeToGaml(true) + "(" + getColumnsList().serializeToGaml(includingBuiltIn) + ")";
 	}
 
 	/**

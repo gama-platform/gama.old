@@ -297,7 +297,7 @@ public class Variable extends Symbol implements IVariable {
 						vd.warning(
 								"The initial value of " + vd.getName()
 										+ " does not belong to the list of possible values. It will be initialized to "
-										+ list.getElements()[0].serialize(true) + " instead.",
+										+ list.getElements()[0].serializeToGaml(true) + " instead.",
 								IGamlIssue.WRONG_VALUE, INIT, String.valueOf(list.getElements()[0].getConstValue()));
 					}
 				}
@@ -333,7 +333,7 @@ public class Variable extends Symbol implements IVariable {
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
 			if (amongExpression != null && !vType.isAssignableFrom(amongExpression.getGamlType().getContentType())) {
 				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "
-						+ amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
+						+ amongExpression.serializeToGaml(false), IGamlIssue.NOT_AMONG, AMONG);
 			}
 			// AD 6/2/22 Restriction removed:
 			// if (!amongExpression.isContextIndependant()) {
@@ -439,7 +439,7 @@ public class Variable extends Symbol implements IVariable {
 			for (String f : VariableDescription.INIT_DEPENDENCIES_FACETS) {
 				IExpression initExpr = cd.getFacetExpr(f);
 				if (initExpr != null && !initExpr.isAllowedInParameters()) {
-					cd.error(initExpr.serialize(true)
+					cd.error(initExpr.serializeToGaml(true)
 							+ " cannot be used in the context of experiments. Please use a constant expression or redeclare this parameter in the experiments",
 							IGamlIssue.WRONG_CONTEXT, f);
 				}

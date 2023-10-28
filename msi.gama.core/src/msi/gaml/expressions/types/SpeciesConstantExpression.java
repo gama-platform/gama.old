@@ -71,7 +71,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	public boolean isConst() { return false; }
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		// if ( computed ) { return super.serialize(includingBuiltIn); }
 		return (String) value;
 	}

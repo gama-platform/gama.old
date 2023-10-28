@@ -428,7 +428,7 @@ public class Pref<T> implements IParameter {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return StringUtils.toGaml(value, includingBuiltIn);
 	}
 

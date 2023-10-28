@@ -47,7 +47,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 			final IExpression... child) {
 		final BinaryOperator u = new BinaryOperator(proto, context, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
-			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
+			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
 		return u;
 	}
 
@@ -115,19 +115,19 @@ public class BinaryOperator extends AbstractNAryOperator {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		final String name = getName();
 		if ("internal_at".equals(name)) {
 			// '[' and ']' included
-			sb.append(exprs[0].serialize(includingBuiltIn)).append(exprs[1].serialize(includingBuiltIn));
+			sb.append(exprs[0].serializeToGaml(includingBuiltIn)).append(exprs[1].serializeToGaml(includingBuiltIn));
 		} else if (OperatorProto.binaries.contains(name)) {
 			parenthesize(sb, exprs[0]);
 			sb.append(' ').append(name).append(' ');
 			parenthesize(sb, exprs[1]);
 		} else if (IKeyword.AS.equals(name)) {
 			// Special case for the "as" operator
-			sb.append(exprs[1].serialize(false)).append("(").append(exprs[0].serialize(includingBuiltIn)).append(")");
+			sb.append(exprs[1].serializeToGaml(false)).append("(").append(exprs[0].serializeToGaml(includingBuiltIn)).append(")");
 		} else {
 			sb.append(name);
 			parenthesize(sb, exprs[0], exprs[1]);
@@ -210,11 +210,11 @@ public class BinaryOperator extends AbstractNAryOperator {
 		public boolean isNotModifiable() { return ((IVarExpression) exprs[1]).isNotModifiable(); }
 
 		@Override
-		public String serialize(final boolean includingBuiltIn) {
+		public String serializeToGaml(final boolean includingBuiltIn) {
 			final StringBuilder sb = new StringBuilder();
 			parenthesize(sb, exprs[0]);
 			sb.append('.');
-			sb.append(exprs[1].serialize(includingBuiltIn));
+			sb.append(exprs[1].serializeToGaml(includingBuiltIn));
 			return sb.toString();
 		}
 

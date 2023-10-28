@@ -122,7 +122,7 @@ public class MatchStatement extends AbstractStatementSequence {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
 		final String keyword = desc.getKeyword();
-		setName(keyword + " " + (value == null ? "" : value.serialize(false)));
+		setName(keyword + " " + (value == null ? "" : value.serializeToGaml(false)));
 		executer = IKeyword.MATCH.equals(keyword) ? new SimpleMatch()
 				: IKeyword.MATCH_ONE.equals(keyword) ? new MatchOne() : IKeyword.MATCH_BETWEEN.equals(keyword)
 						? new MatchBetween() : IKeyword.MATCH_REGEX.equals(keyword) ? new MatchRegex() : null;

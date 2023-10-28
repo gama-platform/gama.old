@@ -141,7 +141,7 @@ public class CSVSaver extends AbstractSaver {
 				}
 			} else {
 				if (header) {
-					fw.write(item.serialize(true).replace("]", "").replace("[", "").replace(',', del));
+					fw.write(item.serializeToGaml(true).replace("]", "").replace("[", "").replace(',', del));
 					fw.write(Strings.LN);
 				}
 				if (itemType.id() == IType.MATRIX) {

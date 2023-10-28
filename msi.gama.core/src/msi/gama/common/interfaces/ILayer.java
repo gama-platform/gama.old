@@ -305,8 +305,8 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	 * Returns a textual description of the layer that can be reinterpreted by GAML
 	 */
 	@Override
-	default String serialize(final boolean includingBuiltIn) {
-		return getDefinition().serialize(includingBuiltIn);
+	default String serializeToGaml(final boolean includingBuiltIn) {
+		return getDefinition().serializeToGaml(includingBuiltIn);
 	}
 
 	/**

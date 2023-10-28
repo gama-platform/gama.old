@@ -217,7 +217,7 @@ public class FIPAMessage extends GamaMessage {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return StringUtils.toGaml(getData().getContent(), includingBuiltIn);
 	}
 

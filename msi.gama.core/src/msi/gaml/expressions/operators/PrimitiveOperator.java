@@ -172,7 +172,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	public String getDefiningPlugin() { return action.getDefiningPlugin(); }
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		if (target != null) {
 			AbstractExpression.parenthesize(sb, target);
@@ -197,9 +197,9 @@ public class PrimitiveOperator implements IExpression, IOperator {
 		if (parameters == null || parameters.isEmpty()) return "";
 		parameters.forEachFacet((name, expr) -> {
 			if (Strings.isGamaNumber(name)) {
-				sb.append(expr.serialize(false));
+				sb.append(expr.serializeToGaml(false));
 			} else {
-				sb.append(name).append(":").append(expr.serialize(includingBuiltIn));
+				sb.append(name).append(":").append(expr.serializeToGaml(includingBuiltIn));
 			}
 			sb.append(", ");
 			return true;

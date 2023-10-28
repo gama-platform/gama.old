@@ -212,7 +212,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	public AgentLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setAgentsExpr(getFacet(IKeyword.VALUE));
-		if (name == null && agentsExpr != null) { setName(agentsExpr.serialize(false)); }
+		if (name == null && agentsExpr != null) { setName(agentsExpr.serializeToGaml(false)); }
 		aspectExpr = getFacet(IKeyword.ASPECT);
 		if (aspectExpr != null && aspectExpr.isConst()) { constantAspectName = aspectExpr.literalValue(); }
 	}

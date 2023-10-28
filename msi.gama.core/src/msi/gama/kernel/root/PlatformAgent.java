@@ -252,7 +252,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public String getName() { return "gama"; }
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "gama";
 	}
 

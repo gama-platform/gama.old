@@ -350,7 +350,7 @@ public class Conversation extends GamaList<FIPAMessage> {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: "
 				+ this.getParticipants();
 	}

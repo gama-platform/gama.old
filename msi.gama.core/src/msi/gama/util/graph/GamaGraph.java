@@ -1427,8 +1427,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return mapValue(null, Types.NO_TYPE, Types.NO_TYPE, false).serialize(includingBuiltIn) + " as graph";
+	public String serializeToGaml(final boolean includingBuiltIn) {
+		return mapValue(null, Types.NO_TYPE, Types.NO_TYPE, false).serializeToGaml(includingBuiltIn) + " as graph";
 	}
 
 	@Override

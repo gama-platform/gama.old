@@ -119,7 +119,7 @@ public class ValuedDisplayOutputFactory {
 		final SpeciesDescription species = expr.getGamlType().isContainer()
 				? expr.getGamlType().getContentType().getSpecies() : expr.getGamlType().getSpecies();
 		if (species == null) {
-			GamaRuntimeException.error("Expression '" + expr.serialize(true) + "' does not reference agents",
+			GamaRuntimeException.error("Expression '" + expr.serializeToGaml(true) + "' does not reference agents",
 					root.getScope());
 			return;
 		}

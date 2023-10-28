@@ -108,7 +108,7 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 */
 	@Override
 	default String stringValue(final IScope scope) {
-		return serialize(false);
+		return serializeToGaml(false);
 	}
 
 	/**
@@ -446,8 +446,8 @@ public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>,
 	 * @return the string
 	 */
 	@Override
-	default String serialize(final boolean includingBuiltIn) {
-		return "map(" + getPairs().serialize(includingBuiltIn) + ")";
+	default String serializeToGaml(final boolean includingBuiltIn) {
+		return "map(" + getPairs().serializeToGaml(includingBuiltIn) + ")";
 	}
 
 	/**

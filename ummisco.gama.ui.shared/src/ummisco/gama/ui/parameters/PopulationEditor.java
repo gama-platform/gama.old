@@ -66,7 +66,7 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 		final String s = currentValue instanceof IPopulation ? ((IPopulation) currentValue).getName()
 				: currentValue == null ? "nil"
 				: currentValue instanceof ISpecies ? currentValue.getGamlType().toString()
-				: currentValue.serialize(true);
+				: currentValue.serializeToGaml(true);
 		populationDisplayer.setText(s);
 		populationDisplayer.setToolTipText(s);
 		internalModification = false;

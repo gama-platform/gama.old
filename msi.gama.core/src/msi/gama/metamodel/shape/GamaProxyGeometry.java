@@ -130,9 +130,9 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gaml.interfaces.IGamlable#toGaml()
 	 */
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return getReferenceGeometry().serialize(includingBuiltIn) + " at_location "
-				+ absoluteLocation.serialize(includingBuiltIn);
+	public String serializeToGaml(final boolean includingBuiltIn) {
+		return getReferenceGeometry().serializeToGaml(includingBuiltIn) + " at_location "
+				+ absoluteLocation.serializeToGaml(includingBuiltIn);
 	}
 
 	/**

@@ -63,7 +63,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 		return new AbstractExpression() {
 
 			@Override
-			public String serialize(final boolean includingBuiltIn) {
+			public String serializeToGaml(final boolean includingBuiltIn) {
 				return "cycle = 1";
 			}
 
@@ -114,7 +114,7 @@ public class TestAgent extends BatchAgent implements WithTestSummary<TestExperim
 
 			@Override
 			public String value() {
-				return stopCondition != null ? stopCondition.serialize(false) : "none";
+				return stopCondition != null ? stopCondition.serializeToGaml(false) : "none";
 			}
 
 		});

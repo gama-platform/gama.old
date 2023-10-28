@@ -103,7 +103,7 @@ public class PrimitiveDescription extends ActionDescription {
 				String name = arg.getName();
 				sb1.append(arg.getGamlType());
 				if (arg.hasFacet(DEFAULT) && arg.getFacetExpr(DEFAULT) != null) {
-					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serialize(false)).append(")</i>");
+					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serializeToGaml(false)).append(")</i>");
 				}
 				arg a = argAnnotations.get(name);
 				if (a != null && a.doc().length > 0) { sb1.append("; ").append(a.doc()[0].value()); }

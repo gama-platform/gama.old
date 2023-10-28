@@ -216,7 +216,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public String stringValue(final IScope scope) {
-		return serialize(false);
+		return serializeToGaml(false);
 	}
 
 	@Override
@@ -313,8 +313,8 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return "(" + getEdgeList().serialize(includingBuiltIn) + ") as path";
+	public String serializeToGaml(final boolean includingBuiltIn) {
+		return "(" + getEdgeList().serializeToGaml(includingBuiltIn) + ") as path";
 	}
 
 	@Override

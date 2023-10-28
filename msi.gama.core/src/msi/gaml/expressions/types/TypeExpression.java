@@ -55,8 +55,8 @@ public class TypeExpression extends AbstractExpression {
 	public boolean isConst() { return type.canCastToConst(); }
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return type.serialize(includingBuiltIn);
+	public String serializeToGaml(final boolean includingBuiltIn) {
+		return type.serializeToGaml(includingBuiltIn);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class TypeExpression extends AbstractExpression {
 
 	@Override
 	public String literalValue() {
-		return type.serialize(false);
+		return type.serializeToGaml(false);
 	}
 
 	@Override

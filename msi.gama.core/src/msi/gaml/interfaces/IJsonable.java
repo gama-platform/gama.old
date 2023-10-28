@@ -25,7 +25,7 @@ import msi.gama.util.file.json.Jsoner;
 public interface IJsonable {
 
 	/**
-	 * Returns the serialization in JSON of this object, taking into account (or not) built-in structures
+	 * Returns the serialization in JSON of this object
 	 *
 	 * @return a string that can be reinterpreted to reproduce the object
 	 */
@@ -34,7 +34,7 @@ public interface IJsonable {
 	}
 
 	/**
-	 * Deserialize. Returns the Object represented by this string in GAML. A scope is necessary to know how to interpret
+	 * Deserialize. Returns the Object represented by this string in JSON. A scope is necessary to know how to interpret
 	 * it.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)

@@ -134,8 +134,8 @@ public class SingleEquationStatement extends AbstractStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
-			sb.append(desc.getFacet(EQUATION_LEFT).serialize(includingBuiltIn)).append(" = ")
-					.append(desc.getFacet(EQUATION_RIGHT).serialize(includingBuiltIn)).append(";");
+			sb.append(desc.getFacet(EQUATION_LEFT).serializeToGaml(includingBuiltIn)).append(" = ")
+					.append(desc.getFacet(EQUATION_RIGHT).serializeToGaml(includingBuiltIn)).append(";");
 		}
 	}
 

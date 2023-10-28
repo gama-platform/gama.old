@@ -39,7 +39,7 @@ public abstract class AbstractValuedDisplayOutput extends AbstractDisplayOutput 
 	public AbstractValuedDisplayOutput(final IDescription desc) {
 		super(desc);
 		setValue(getFacet(IKeyword.VALUE));
-		expressionText = getValue() == null ? "" : getValue().serialize(false);
+		expressionText = getValue() == null ? "" : getValue().serializeToGaml(false);
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public abstract class AbstractValuedDisplayOutput extends AbstractDisplayOutput 
 	 *             the gama runtime exception
 	 */
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
-		expressionText = expr == null ? "" : expr.serialize(false);
+		expressionText = expr == null ? "" : expr.serializeToGaml(false);
 		setValue(expr);
 		getScope().step(this);
 	}

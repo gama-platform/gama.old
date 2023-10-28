@@ -203,7 +203,7 @@ public abstract class AOptimizationAlgorithm extends Symbol implements IExplorat
 				@SuppressWarnings ("rawtypes") final List<Class> classes = Arrays.asList(CLASSES);
 				final String methodName = IKeyword.METHODS[classes.indexOf(AOptimizationAlgorithm.this.getClass())];
 				final String fit = fitnessExpression == null ? "" : "fitness = "
-						+ (isMaximize ? " maximize " : " minimize ") + fitnessExpression.serialize(false);
+						+ (isMaximize ? " maximize " : " minimize ") + fitnessExpression.serializeToGaml(false);
 				final String sim = fitnessExpression == null ? ""
 						: (combination == C_MAX ? " max " : combination == C_MIN ? " min " : " average ") + "of "
 								+ agent.getSeeds().length + " simulations";

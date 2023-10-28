@@ -43,7 +43,7 @@ public class TypeFieldExpression extends UnaryOperator {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		parenthesize(sb, child);
 		sb.append(".").append(getName());
@@ -53,7 +53,7 @@ public class TypeFieldExpression extends UnaryOperator {
 	@Override
 	public String toString() {
 		if (child == null) return prototype.signature.toString() + "." + getName();
-		return child.serialize(false) + "." + getName();
+		return child.serializeToGaml(false) + "." + getName();
 	}
 
 	@Override

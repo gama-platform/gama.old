@@ -292,7 +292,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return getSerializer().serialize(this, includingBuiltIn);
 	}
 

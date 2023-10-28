@@ -308,7 +308,7 @@ public class Signature {
 	public String asPattern(final boolean withVariables) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < list.length; i++) {
-			sb.append(withVariables ? list[i].asPattern() : list[i].serialize(true));
+			sb.append(withVariables ? list[i].asPattern() : list[i].serializeToGaml(true));
 			if (i < list.length - 1) { sb.append(','); }
 		}
 		return sb.toString();

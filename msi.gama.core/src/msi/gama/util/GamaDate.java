@@ -453,7 +453,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "date ('" + toString() + "')";
 	}
 

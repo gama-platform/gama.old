@@ -436,13 +436,13 @@ public class SymbolProto extends AbstractProto {
 	/**
 	 * Method serialize()
 	 *
-	 * @see msi.gaml.interfaces.IGamlable#serialize(boolean)
+	 * @see msi.gaml.interfaces.IGamlable#serializeToGaml(boolean)
 	 */
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		for (final FacetProto f : possibleFacets.values()) {
-			final String s = f.serialize(includingBuiltIn);
+			final String s = f.serializeToGaml(includingBuiltIn);
 			if (!s.isEmpty()) { sb.append(s).append(" "); }
 		}
 		return getName() + " " + sb.toString();

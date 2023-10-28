@@ -160,7 +160,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	 */
 	public String getValueAsString(final MonitorOutput o) {
 		final Object v = o.getLastValue();
-		return v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString();
+		return v == null ? "nil" : v instanceof IValue ? ((IValue) v).serializeToGaml(true) : v.toString();
 	}
 
 	@Override

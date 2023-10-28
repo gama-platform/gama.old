@@ -233,7 +233,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				String name = arg.getName();
 				sb1.append(arg.getGamlType());
 				if (arg.hasFacet(DEFAULT) && arg.getFacetExpr(DEFAULT) != null) {
-					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serialize(false)).append(")</i>");
+					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serializeToGaml(false)).append(")</i>");
 				}
 				documentation.set("Arguments accepted: ", name, new ConstantDoc(sb1.toString()));
 			});

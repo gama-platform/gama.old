@@ -252,8 +252,8 @@ public final class GamaDateInterval implements IList<GamaDate> {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return "(" + start.serialize(includingBuiltIn) + " to " + end.serialize(includingBuiltIn) + ") every ("
+	public String serializeToGaml(final boolean includingBuiltIn) {
+		return "(" + start.serializeToGaml(includingBuiltIn) + " to " + end.serializeToGaml(includingBuiltIn) + ") every ("
 				+ (double) step.get(ChronoUnit.SECONDS) + ")";
 	}
 	//

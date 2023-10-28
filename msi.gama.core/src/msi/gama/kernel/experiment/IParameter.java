@@ -100,7 +100,7 @@ public interface IParameter extends IExperimentDisplayable {
 	 * @return the string
 	 */
 	@Override
-	String serialize(boolean includingBuiltIn);
+	String serializeToGaml(boolean includingBuiltIn);
 
 	/**
 	 * Gets the initial value.

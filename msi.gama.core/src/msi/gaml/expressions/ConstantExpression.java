@@ -78,7 +78,7 @@ public class ConstantExpression extends AbstractExpression {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return StringUtils.toGaml(value, includingBuiltIn);
 	}
 

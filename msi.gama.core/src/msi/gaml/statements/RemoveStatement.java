@@ -244,13 +244,13 @@ public class RemoveStatement extends AbstractContainerStatement {
 			final IExpression allFacet = cd.getFacetExpr(ALL);
 			final IExpression at = cd.getFacetExpr(AT);
 			final boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
-			sb.append(list.serialize(includingBuiltIn));
+			sb.append(list.serializeToGaml(includingBuiltIn));
 			if (at != null) {
 				sb.append('[');
 				sb.append(']');
 			}
 			sb.append(isAll ? " >>- " : " >- ");
-			sb.append(at == null ? item.serialize(includingBuiltIn) : at.serialize(includingBuiltIn)).append(';');
+			sb.append(at == null ? item.serializeToGaml(includingBuiltIn) : at.serializeToGaml(includingBuiltIn)).append(';');
 		}
 	}
 
@@ -261,7 +261,7 @@ public class RemoveStatement extends AbstractContainerStatement {
 	 */
 	public RemoveStatement(final IDescription desc) {
 		super(desc);
-		setName("remove from " + list.serialize(false));
+		setName("remove from " + list.serializeToGaml(false));
 	}
 
 	@SuppressWarnings ("rawtypes")

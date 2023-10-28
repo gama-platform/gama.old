@@ -301,7 +301,7 @@ public class MonitorOutput extends AbstractValuedDisplayOutput implements IExper
 		final StringBuilder sb = new StringBuilder(100);
 		sb.append(getName()).append(": ");
 		final Object v = getLastValue();
-		sb.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
+		sb.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serializeToGaml(true) : v.toString());
 		if (isPaused()) { sb.append(" (paused)"); }
 		return sb.toString();
 

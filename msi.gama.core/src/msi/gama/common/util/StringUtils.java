@@ -369,7 +369,7 @@ public class StringUtils {
 	 */
 	public static String toGaml(final Object val, final boolean includingBuiltIn) {
 		if (val == null) return "nil";
-		if (val instanceof IGamlable g) return g.serialize(includingBuiltIn);
+		if (val instanceof IGamlable g) return g.serializeToGaml(includingBuiltIn);
 		if (val instanceof String s) return toGamlString(s);
 		if (val instanceof Double d) return DEFAULT_DECIMAL_FORMAT.format(d);
 		if (val instanceof Collection c) return toGaml(GamaListFactory.wrap(Types.STRING, c), includingBuiltIn);

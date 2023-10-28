@@ -30,7 +30,7 @@ public class NAryOperator extends AbstractNAryOperator {
 	public static IExpression create(final OperatorProto proto, final IExpression... child) {
 		final NAryOperator u = new NAryOperator(proto, child);
 		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) {
-			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serialize(false));
+			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
 		}
 		return u;
 	}

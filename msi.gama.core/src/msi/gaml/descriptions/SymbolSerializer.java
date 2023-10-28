@@ -56,7 +56,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				final boolean includingBuiltIn) {
 			String k = desc.getKeyword(); // desc.getFacets().getLabel(IKeyword.KEYWORD);
 			if (!PARAMETER.equals(k)) {
-				final String type = desc.getGamlType().serialize(false);
+				final String type = desc.getGamlType().serializeToGaml(false);
 				if (!UNKNOWN.equals(type)) { k = type; }
 			}
 			sb.append(k).append(' ');
@@ -66,7 +66,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (TYPE.equals(key) || OF.equals(key) || INDEX.equals(key)) return null;
-			if (CONST.equals(key) && s.hasFacet(CONST) && FALSE.equals(s.getFacet(key).serialize(includingBuiltIn)))
+			if (CONST.equals(key) && s.hasFacet(CONST) && FALSE.equals(s.getFacet(key).serializeToGaml(includingBuiltIn)))
 				return null;
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
@@ -255,9 +255,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				sb.append("(");
 				passedArgs.forEachFacet((name, value) -> {
 					if (Strings.isGamaNumber(name)) {
-						sb.append(value.serialize(includingBuiltIn));
+						sb.append(value.serializeToGaml(includingBuiltIn));
 					} else {
-						sb.append(name).append(":").append(value.serialize(includingBuiltIn));
+						sb.append(name).append(":").append(value.serializeToGaml(includingBuiltIn));
 					}
 					sb.append(", ");
 					return true;
@@ -295,7 +295,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	/**
 	 * Method serialize()
 	 *
-	 * @see msi.gaml.descriptions.IDescriptionSerializer#serialize(msi.gaml.descriptions.IDescription)
+	 * @see msi.gaml.descriptions.IDescriptionSerializer#serializeToGaml(msi.gaml.descriptions.IDescription)
 	 */
 	public final String serialize(final SymbolDescription symbolDescription, final boolean includingBuiltIn) {
 		if (symbolDescription.isBuiltIn() && !includingBuiltIn) return "";
@@ -391,9 +391,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 *            the including built in
 	 */
 	protected void serializeChild(final IDescription s, final StringBuilder sb, final boolean includingBuiltIn) {
-		final String gaml = s.serialize(false);
+		final String gaml = s.serializeToGaml(false);
 		if (gaml != null && gaml.length() > 0) {
-			sb.append(Strings.indent(s.serialize(includingBuiltIn), 1)).append(Strings.LN);
+			sb.append(Strings.indent(s.serializeToGaml(includingBuiltIn), 1)).append(Strings.LN);
 		}
 	}
 
@@ -452,7 +452,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		if (uselessFacets.contains(key)) return null;
 		final IExpressionDescription ed = symbolDescription.getFacet(key);
 		if (ed == null) return null;
-		String exprString = ed.serialize(includingBuiltIn);
+		String exprString = ed.serializeToGaml(includingBuiltIn);
 		if (exprString.startsWith(INTERNAL)) return null;
 		if (ed instanceof LabelExpressionDescription) {
 			final boolean isId = symbolDescription.getMeta().isId(key);

@@ -41,7 +41,7 @@ public abstract class AbstractExpression implements IExpression {
 	 */
 	public static void parenthesize(final StringBuilder sb, final IExpression... exp) {
 		if (exp.length == 1 && !exp[0].shouldBeParenthesized()) {
-			sb.append(exp[0].serialize(false));
+			sb.append(exp[0].serializeToGaml(false));
 		} else {
 			surround(sb, '(', ')', exp);
 		}
@@ -60,7 +60,7 @@ public abstract class AbstractExpression implements IExpression {
 		sb.append(first);
 		for (int i = 0; i < exp.length; i++) {
 			if (i > 0) { sb.append(','); }
-			sb.append(exp[i] == null ? "nil" : exp[i].serialize(false));
+			sb.append(exp[i] == null ? "nil" : exp[i].serializeToGaml(false));
 		}
 		final int length = sb.length();
 		if (length > 2 && sb.charAt(length - 1) == ' ') { sb.setLength(length - 1); }
@@ -72,7 +72,7 @@ public abstract class AbstractExpression implements IExpression {
 	@Override
 	public String getTitle() {
 		// Serialized version by default
-		return serialize(false);
+		return serializeToGaml(false);
 	}
 
 	@Override

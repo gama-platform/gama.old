@@ -211,7 +211,7 @@ public class GamaMessage implements IValue {
 	public int getReceptionTimestamp() { return emissionTimeStamp; }
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return StringUtils.toGaml(contents, includingBuiltIn);
 	}
 

@@ -270,7 +270,7 @@ public class BuiltinReferenceMenu extends GamlReferenceMenu {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					getEditor().insertText(v.serialize(true));
+					getEditor().insertText(v.serializeToGaml(true));
 				}
 
 			});

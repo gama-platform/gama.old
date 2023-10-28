@@ -75,7 +75,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.interfaces.IValue#toGaml()
 	 */
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "topology({0,0})";
 	}
 

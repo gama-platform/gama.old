@@ -803,7 +803,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public IType getType() { return type; }
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return GAMA.run(scope -> StringUtils.toGaml(getValue(scope), includingBuiltIn));
 
 	}

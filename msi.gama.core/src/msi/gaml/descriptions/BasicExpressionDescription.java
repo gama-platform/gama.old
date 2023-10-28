@@ -61,7 +61,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public String toString() {
-		return serialize(false);
+		return serializeToGaml(false);
 	}
 
 	/**
@@ -74,8 +74,8 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		return expression == null ? toOwnString() : expression.serialize(includingBuiltIn);
+	public String serializeToGaml(final boolean includingBuiltIn) {
+		return expression == null ? toOwnString() : expression.serializeToGaml(includingBuiltIn);
 	}
 
 	@Override

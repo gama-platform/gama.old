@@ -65,7 +65,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return value;
 		// return StringUtils.toGamlString(value);
 	}

@@ -40,7 +40,7 @@ public class ColorReferenceMenu extends GamlReferenceMenu {
 	/** The runnable. */
 	IColorRunnable runnable = (r, g, b) -> {
 		final GamaColor c = GamaColor.get(r, g, b, 255);
-		applyText(c.serialize(true));
+		applyText(c.serializeToGaml(true));
 	};
 
 	/** The color inserter. */

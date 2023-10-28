@@ -164,7 +164,7 @@ public class IfStatement extends AbstractStatementSequence {
 			final String[] elseString = { null };
 			desc.visitChildren(s -> {
 				if (IKeyword.ELSE.equals(s.getKeyword())) {
-					elseString[0] = s.serialize(false) + Strings.LN;
+					elseString[0] = s.serializeToGaml(false) + Strings.LN;
 				} else {
 					serializeChild(s, sb, includingBuiltIn);
 				}
@@ -197,7 +197,7 @@ public class IfStatement extends AbstractStatementSequence {
 	public IfStatement(final IDescription desc) {
 		super(desc);
 		cond = getFacet(IKeyword.CONDITION);
-		if (cond != null) { setName("if " + cond.serialize(false)); }
+		if (cond != null) { setName("if " + cond.serializeToGaml(false)); }
 
 	}
 
@@ -211,7 +211,7 @@ public class IfStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final Object condition = cond.value(scope);
 		if (!(condition instanceof Boolean))
-			throw GamaRuntimeException.error("Impossible to evaluate condition " + cond.serialize(true), scope);
+			throw GamaRuntimeException.error("Impossible to evaluate condition " + cond.serializeToGaml(true), scope);
 		return (Boolean) condition ? super.privateExecuteIn(scope) : alt != null ? scope.execute(alt).getValue() : null;
 	}
 

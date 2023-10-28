@@ -17,7 +17,6 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -62,18 +61,6 @@ public class Jsoner {
 	/** The grid non serialisable. */
 	public static Set<String> GRID_NON_SERIALISABLE = Set.of(IKeyword.GRID_X, IKeyword.GRID_Y, IKeyword.NEIGHBORS);
 
-	/** Flags to tweak the behavior of the primary deserialization method. */
-	private enum DeserializationOptions {
-		/** Whether multiple JSON values can be deserialized as a root element. */
-		ALLOW_CONCATENATED_JSON_VALUES,
-		/** Whether a JsonArray can be deserialized as a root element. */
-		ALLOW_JSON_ARRAYS,
-		/** Whether a boolean, null, Number, or String can be deserialized as a root element. */
-		ALLOW_JSON_DATA,
-		/** Whether a JsonObject can be deserialized as a root element. */
-		ALLOW_JSON_OBJECTS;
-	}
-
 	/** The stream converter. */
 	public static ILastResortJSonConverter streamConverter;
 
@@ -99,21 +86,6 @@ public class Jsoner {
 	private Jsoner() {}
 
 	/**
-	 * Deserializes a readable stream according to the RFC 4627 JSON specification.
-	 *
-	 * @param readableDeserializable
-	 *            representing content to be deserialized as JSON.
-	 * @return either a boolean, null, Number, String, JsonObject, or JsonArray that best represents the deserializable.
-	 * @throws DeserializationException
-	 *             if an unexpected token is encountered in the deserializable. To recover from a
-	 *             DeserializationException: fix the deserializable to no longer have an unexpected token and try again.
-	 */
-	public static Object deserialize(final Reader readableDeserializable) throws DeserializationException {
-		return Jsoner.deserialize(readableDeserializable, EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS,
-				DeserializationOptions.ALLOW_JSON_OBJECTS, DeserializationOptions.ALLOW_JSON_DATA)).get(0);
-	}
-
-	/**
 	 * Deserialize a stream with all deserialized JSON values are wrapped in a JsonArray.
 	 *
 	 * @param deserializable
@@ -126,8 +98,7 @@ public class Jsoner {
 	 *             DeserializationException: fix the deserializable to no longer have a disallowed or unexpected token
 	 *             and try again.
 	 */
-	private static GamaJsonList deserialize(final Reader deserializable, final Set<DeserializationOptions> flags)
-			throws DeserializationException {
+	public static Object deserialize(final Reader deserializable) throws DeserializationException {
 		final Yylex lexer = new Yylex(deserializable);
 		Yytoken token;
 		States currentState;
@@ -142,8 +113,7 @@ public class Jsoner {
 			switch (currentState) {
 				case DONE:
 					/* The parse has finished a JSON value. */
-					if (!flags.contains(DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES)
-							|| Yytoken.Types.END.equals(token.getType())) {
+					if (Yytoken.Types.END.equals(token.getType())) {
 						/* Break if concatenated values are not allowed or if an END token is read. */
 						break;
 					}
@@ -156,25 +126,16 @@ public class Jsoner {
 					switch (token.getType()) {
 						case DATUM:
 							/* A boolean, null, Number, or String could be detected. */
-							if (!flags.contains(DeserializationOptions.ALLOW_JSON_DATA))
-								throw new DeserializationException(lexer.getPosition(),
-										DeserializationException.Problems.DISALLOWED_TOKEN, token);
 							valueStack.addLast(token.getValue());
 							stateStack.addLast(States.DONE);
 							break;
 						case LEFT_BRACE:
 							/* An object is detected. */
-							if (!flags.contains(DeserializationOptions.ALLOW_JSON_OBJECTS))
-								throw new DeserializationException(lexer.getPosition(),
-										DeserializationException.Problems.DISALLOWED_TOKEN, token);
 							valueStack.addLast(new GamaJsonMap());
 							stateStack.addLast(States.PARSING_OBJECT);
 							break;
 						case LEFT_SQUARE:
 							/* An array is detected. */
-							if (!flags.contains(DeserializationOptions.ALLOW_JSON_ARRAYS))
-								throw new DeserializationException(lexer.getPosition(),
-										DeserializationException.Problems.DISALLOWED_TOKEN, token);
 							valueStack.addLast(new GamaJsonList());
 							stateStack.addLast(States.PARSING_ARRAY);
 							break;
@@ -321,7 +282,7 @@ public class Jsoner {
 			}
 			/* If we're not at the END and DONE then do the above again. */
 		} while (!States.DONE.equals(currentState) || !Yytoken.Types.END.equals(token.getType()));
-		return new GamaJsonList(valueStack);
+		return valueStack.get(0);
 	}
 
 	/**
@@ -348,34 +309,6 @@ public class Jsoner {
 			returnable = null;
 		}
 		return returnable;
-	}
-
-	/**
-	 * A convenience method that assumes multiple RFC 4627 JSON values (except numbers) have been concatenated together
-	 * for deserilization which will be collectively returned in a JsonArray wrapper. There may be numbers included,
-	 * they just must not be concatenated together as it is prone to NumberFormatExceptions (thus causing a
-	 * DeserializationException) or the numbers no longer represent their respective values. Examples: "123null321"
-	 * returns [123, null, 321] "nullnullnulltruefalse\"\"{}[]" returns [null, null, null, true, false, "", {}, []]
-	 * "123" appended to "321" returns [123321] "12.3" appended to "3.21" throws
-	 * DeserializationException(NumberFormatException) "123" appended to "-321" throws
-	 * DeserializationException(NumberFormatException) "123e321" appended to "-1" throws
-	 * DeserializationException(NumberFormatException) "null12.33.21null" throws
-	 * DeserializationException(NumberFormatException)
-	 *
-	 * @param deserializable
-	 *            representing concatenated content to be deserialized as JSON in one reader. Its contents may not
-	 *            contain two numbers concatenated together.
-	 * @return a JsonArray that contains each of the concatenated objects as its elements. Each concatenated element is
-	 *         either a boolean, null, Number, String, JsonArray, or JsonObject that best represents the concatenated
-	 *         content inside deserializable.
-	 * @throws DeserializationException
-	 *             if an unexpected token is encountered in the deserializable. To recover from a
-	 *             DeserializationException: fix the deserializable to no longer have an unexpected token and try again.
-	 */
-	public static GamaJsonList deserializeMany(final Reader deserializable) throws DeserializationException {
-		return Jsoner.deserialize(deserializable,
-				EnumSet.of(DeserializationOptions.ALLOW_JSON_ARRAYS, DeserializationOptions.ALLOW_JSON_OBJECTS,
-						DeserializationOptions.ALLOW_JSON_DATA, DeserializationOptions.ALLOW_CONCATENATED_JSON_VALUES));
 	}
 
 	/**

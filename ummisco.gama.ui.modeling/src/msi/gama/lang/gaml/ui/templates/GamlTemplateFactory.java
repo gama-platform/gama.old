@@ -160,7 +160,7 @@ public class GamlTemplateFactory {
 			final List<INamed> named = Lists.newArrayList(descs);
 			Collections.sort(named, INamed.COMPARATOR);
 			sb.append(title);
-			for (final INamed sd : named) { sb.append(commentLine).append(sd.serialize(true)); }
+			for (final INamed sd : named) { sb.append(commentLine).append(sd.serializeToGaml(true)); }
 			sb.append(Strings.LN);
 		}
 	}

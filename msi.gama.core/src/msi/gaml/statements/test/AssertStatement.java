@@ -130,7 +130,7 @@ public class AssertStatement extends AbstractStatement implements WithTestSummar
 	public AssertionSummary getSummary() { return summary; }
 
 	@Override
-	public String getTitleForSummary() { return value.serialize(true); }
+	public String getTitleForSummary() { return value.serializeToGaml(true); }
 
 	@Override
 	public Collection<? extends WithTestSummary<?>> getSubElements() { return null; }

@@ -175,7 +175,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 		target = getFacet(IKeyword.TARGET);
 		microSpeciesName = getLiteral(IKeyword.AS);
 		returnString = getLiteral(IKeyword.RETURNS);
-		if (hasFacet(IKeyword.TARGET)) { setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).serialize(false)); }
+		if (hasFacet(IKeyword.TARGET)) { setName(IKeyword.CAPTURE + " " + getFacet(IKeyword.TARGET).serializeToGaml(false)); }
 	}
 
 	@Override

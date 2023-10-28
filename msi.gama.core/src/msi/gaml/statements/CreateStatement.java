@@ -330,7 +330,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			if (args == null || args.isEmpty()) return;
 			sb.append("with: [");
 			args.forEachFacet((name, exp) -> {
-				sb.append(name).append("::").append(exp.serialize(false));
+				sb.append(name).append("::").append(exp.serializeToGaml(false));
 				sb.append(", ");
 				return true;
 			});
@@ -422,7 +422,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			if (potentialSpeciesName != null) { s = scope.getModel().getSpecies(potentialSpeciesName); }
 		}
 		if (s == null) throw GamaRuntimeException.error(
-				"No population of " + species.serialize(false) + " is accessible in the context of " + executor + ".",
+				"No population of " + species.serializeToGaml(false) + " is accessible in the context of " + executor + ".",
 				scope);
 		IPopulation pop = executor.getPopulationFor(s);
 		// hqnghi population of micro-model's experiment is not exist, we

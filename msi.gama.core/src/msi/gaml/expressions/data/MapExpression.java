@@ -162,15 +162,15 @@ public class MapExpression extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(' ').append('[');
 		for (int i = 0; i < keys.length; i++) {
 			if (i > 0) { sb.append(','); }
 			if (keys[i] == null || vals[i] == null) { continue; }
-			sb.append(keys[i].serialize(includingBuiltIn));
+			sb.append(keys[i].serializeToGaml(includingBuiltIn));
 			sb.append("::");
-			sb.append(vals[i].serialize(includingBuiltIn));
+			sb.append(vals[i].serializeToGaml(includingBuiltIn));
 		}
 		sb.append(']').append(' ');
 		return sb.toString();

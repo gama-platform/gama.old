@@ -340,7 +340,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 	 * @date 21 sept. 2023
 	 */
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return getName();
 	}
 

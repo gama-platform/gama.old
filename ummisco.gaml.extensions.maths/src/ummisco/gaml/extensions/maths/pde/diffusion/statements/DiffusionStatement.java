@@ -170,7 +170,7 @@ public class DiffusionStatement extends AbstractStatement {
 			if (spec != null && spec.isConst()) {
 				final double min = Cast.asFloat(null, spec.literalValue());
 				if (min < 0) {
-					desc.error("'min_value' facet cannot accept negative values (" + spec.serialize(false) + ")",
+					desc.error("'min_value' facet cannot accept negative values (" + spec.serializeToGaml(false) + ")",
 							IGamlIssue.GENERAL);
 				}
 			}

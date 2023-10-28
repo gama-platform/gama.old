@@ -69,7 +69,7 @@ public class Parameter {
 		final String name = paramDesc.getLitteral(IKeyword.NAME);
 		final String varName = paramDesc.getLitteral(IKeyword.VAR);
 		final IExpression exp = paramDesc.getFacetExpr(IKeyword.INIT);
-		Object val = exp.isConst() ? exp.getConstValue() : exp.serialize(true);
+		Object val = exp.isConst() ? exp.getConstValue() : exp.serializeToGaml(true);
 		if(exp.getGamlType().getParent() instanceof GamaFileType) {
 			val=((BinaryOperator)exp).arg(0);
 		}

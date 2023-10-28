@@ -113,7 +113,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return getName();
 	}
 

@@ -190,7 +190,7 @@ public class FileOutput extends AbstractOutput {
 	 */
 	private void createExpression() {
 		data = getFacet(IKeyword.DATA);
-		expressionText = data.serialize(false);
+		expressionText = data.serializeToGaml(false);
 		if (expressionText == null) return;
 		refreshExpression();
 	}

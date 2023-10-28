@@ -423,11 +423,11 @@ public class Emotion implements IValue {
 
 	@Override
 	public String toString() {
-		return serialize(true);
+		return serializeToGaml(true);
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		if (intensity > 0) {
 			return "emotion(" + name + "," + intensity + "," + about + "," + decay + "," + agentCause + "," + owner
 					+ ")";

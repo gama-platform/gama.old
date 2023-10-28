@@ -42,7 +42,7 @@ public class SymbolTracer {
 				if (ed != null) {
 					expr = ed.getExpression();
 				}
-				final String exprString = expr == null ? "N/A" : expr.serialize(false);
+				final String exprString = expr == null ? "N/A" : expr.serializeToGaml(false);
 				final String exprValue = expr == null ? "nil" : Cast.toGaml(expr.value(scope));
 				sb.append(name).append(": [ ").append(exprString).append(" ] ").append(exprValue).append(" ");
 

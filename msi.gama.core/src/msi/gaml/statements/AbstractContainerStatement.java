@@ -79,7 +79,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			if (ADD.equals(keyword) || REMOVE.equals(keyword)) {
 				final IType containerType = list.getGamlType();
 				if (containerType.isFixedLength()) {
-					cd.error("Impossible to add/remove to/from " + list.serialize(false), IGamlIssue.WRONG_TYPE);
+					cd.error("Impossible to add/remove to/from " + list.serializeToGaml(false), IGamlIssue.WRONG_TYPE);
 					return;
 				}
 			}
@@ -92,7 +92,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				if (sd.hasAttribute(s)) {
 					if (PUT.equals(keyword)) {
 						cd.warning("Attribute '" + s + "' will not be modified by this statement. Use '"
-								+ list.serialize(false) + "." + s + "' instead", IGamlIssue.WRONG_CONTEXT);
+								+ list.serializeToGaml(false) + "." + s + "' instead", IGamlIssue.WRONG_CONTEXT);
 					} else if (REMOVE.equals(keyword)) {
 						cd.warning("Attribute '" + s + "' cannot be removed. ", IGamlIssue.WRONG_CONTEXT);
 					}
@@ -242,7 +242,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
 						&& !Types.isEmptyContainerCase(contentType, item)) {
 					StringBuilder message =
-							new StringBuilder("The type of the elements of ").append(list.serialize(false)).append(" (")
+							new StringBuilder("The type of the elements of ").append(list.serializeToGaml(false)).append(" (")
 									.append(contentType).append(") does not match with the type of the ");
 					if (isAll) {
 						message.append("elements of the argument");
@@ -267,8 +267,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 					if (!Types.MATRIX.isAssignableFrom(list.getGamlType()) || index.getGamlType() != Types.INT
 							&& !index.getGamlType().equals(Types.LIST.of(Types.INT))) {
 						cd.warning(
-								"The type of the index of " + list.serialize(false) + " (" + keyType
-										+ ") does not match with the type of " + index.serialize(false) + " ("
+								"The type of the index of " + list.serializeToGaml(false) + " (" + keyType
+										+ ") does not match with the type of " + index.serializeToGaml(false) + " ("
 										+ index.getGamlType() + "). The latter will be casted to " + keyType,
 								IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
 					}
@@ -403,7 +403,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		final Object cont = list.value(scope);
 		if (isDirect) return (IContainer.Modifiable) cont;
 		if (cont instanceof IShape) return ((IShape) cont).getOrCreateAttributes();
-		throw GamaRuntimeException.warning("Cannot use " + list.serialize(false) + ", of type "
+		throw GamaRuntimeException.warning("Cannot use " + list.serializeToGaml(false) + ", of type "
 				+ list.getGamlType().toString() + ", as a container", scope);
 	}
 

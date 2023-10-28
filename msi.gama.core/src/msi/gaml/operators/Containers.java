@@ -1675,7 +1675,7 @@ public class Containers {
 			IType contentType = arguments[0].getGamlType().getContentType();
 			if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
 					&& !Types.isEmptyContainerCase(contentType, item)) {
-				StringBuilder message = new StringBuilder("The type of the elements of ").append(list.serialize(false))
+				StringBuilder message = new StringBuilder("The type of the elements of ").append(list.serializeToGaml(false))
 						.append(" (").append(contentType).append(") does not match with the type of the ");
 				message.append("argument");
 				message.append(" (").append(valueType).append("). ");
@@ -2028,7 +2028,7 @@ public class Containers {
 			case IType.POINT -> ((Stream<GamaPoint>) s).reduce(new GamaPoint(), GamaPoint::plus);
 			case IType.COLOR -> ((Stream<GamaColor>) s).reduce(GamaColor.get(0, 0, 0, 0), GamaColor::merge);
 			case IType.STRING -> ((Stream<String>) s).reduce("", String::concat);
-			default -> GamaRuntimeException.error("No sum can be computed for " + container.serialize(true), scope);
+			default -> GamaRuntimeException.error("No sum can be computed for " + container.serializeToGaml(true), scope);
 		};
 	}
 

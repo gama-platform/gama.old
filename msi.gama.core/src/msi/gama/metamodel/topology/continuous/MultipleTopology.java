@@ -56,7 +56,7 @@ public class MultipleTopology extends ContinuousTopology {
 	 */
 	@Override
 	protected String _toGaml(final boolean includingBuiltIn) {
-		return IKeyword.TOPOLOGY + "(" + places.serialize(includingBuiltIn) + ")";
+		return IKeyword.TOPOLOGY + "(" + places.serializeToGaml(includingBuiltIn) + ")";
 	}
 
 	/**

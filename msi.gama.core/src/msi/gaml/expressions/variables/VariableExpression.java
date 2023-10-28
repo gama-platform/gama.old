@@ -62,7 +62,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return getName();
 	}
 

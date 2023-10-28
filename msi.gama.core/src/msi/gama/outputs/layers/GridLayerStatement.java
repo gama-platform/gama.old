@@ -228,7 +228,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 				d.setFacet(IKeyword.WIREFRAME, empty);
 				d.removeFacets(EMPTY);
 			}
-			final String name = d.getFacet(SPECIES).serialize(true);
+			final String name = d.getFacet(SPECIES).serializeToGaml(true);
 			final SpeciesDescription sd = d.getModelDescription().getSpeciesDescription(name);
 			if (sd == null || !sd.isGrid()) {
 				d.error(name + " is not a grid species", IGamlIssue.WRONG_TYPE, SPECIES);
@@ -243,7 +243,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			if (lines != null) { d.setFacet(BORDER, lines); }
 			final IExpression tx = d.getFacetExpr(TEXTURE);
 			final IExpression el = d.getFacetExpr(ELEVATION);
-			if ((el == null || FALSE.equals(el.serialize(true))) && tx != null) {
+			if ((el == null || FALSE.equals(el.serializeToGaml(true))) && tx != null) {
 				// if texture is defined and elevation no, we need to set a fake elevation otherwise texture will
 				// not be drawn
 				d.setFacet(ELEVATION, GAML.getExpressionFactory().createConst(0.0, Types.FLOAT));

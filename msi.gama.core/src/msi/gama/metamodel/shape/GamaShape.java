@@ -365,18 +365,18 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
-		if (isPoint()) return getLocation().serialize(includingBuiltIn) + " as geometry";
-		if (isMultiple()) return getGeometries().serialize(includingBuiltIn) + " as geometry";
+	public String serializeToGaml(final boolean includingBuiltIn) {
+		if (isPoint()) return getLocation().serializeToGaml(includingBuiltIn) + " as geometry";
+		if (isMultiple()) return getGeometries().serializeToGaml(includingBuiltIn) + " as geometry";
 		final IList<GamaShape> holes = getHoles();
 		String result = "";
 		if (getInnerGeometry() instanceof LineString) {
-			result = "polyline (" + getPoints().serialize(includingBuiltIn) + ")";
+			result = "polyline (" + getPoints().serializeToGaml(includingBuiltIn) + ")";
 		} else {
-			result = "polygon (" + getPoints().serialize(includingBuiltIn) + ")";
+			result = "polygon (" + getPoints().serializeToGaml(includingBuiltIn) + ")";
 		}
 		if (holes.isEmpty()) return result;
-		for (final GamaShape g : holes) { result = "(" + result + ") - (" + g.serialize(includingBuiltIn) + ")"; }
+		for (final GamaShape g : holes) { result = "(" + result + ") - (" + g.serializeToGaml(includingBuiltIn) + ")"; }
 		return result;
 	}
 

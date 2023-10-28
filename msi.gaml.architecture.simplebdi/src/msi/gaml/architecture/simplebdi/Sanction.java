@@ -83,7 +83,7 @@ public class Sanction implements IValue {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return "Sanction( " + sanctionStatement + ")";
 	}
 

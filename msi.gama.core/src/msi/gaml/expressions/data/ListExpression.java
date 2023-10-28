@@ -175,7 +175,7 @@ public class ListExpression extends AbstractExpression implements IOperator {
 	// return true;
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
 		surround(sb, '[', ']', elements);
 		return sb.toString();

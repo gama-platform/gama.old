@@ -141,7 +141,7 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		super(desc);
 		if (getValue() == null) {
 			value = getFacet(IKeyword.NAME);
-			expressionText = getValue() == null ? "" : getValue().serialize(false);
+			expressionText = getValue() == null ? "" : getValue().serializeToGaml(false);
 		}
 		type = getLiteral(IKeyword.TYPE);
 		if (type == null) {

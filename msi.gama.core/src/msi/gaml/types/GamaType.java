@@ -153,7 +153,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return name;
 	}
 

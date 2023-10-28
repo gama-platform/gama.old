@@ -124,7 +124,7 @@ public class WriteStatement extends AbstractStatement {
 			category = { IOperatorCategory.STRING })
 	@test ("sample('a' in ['a', 'b']) = \"'a' in (['a','b']) -: true\"")
 	public static String sample(final IScope scope, final IExpression expr) {
-		return sample(scope, expr == null ? "nil" : expr.serialize(false), expr);
+		return sample(scope, expr == null ? "nil" : expr.serializeToGaml(false), expr);
 	}
 
 	/**

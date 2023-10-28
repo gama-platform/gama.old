@@ -46,7 +46,7 @@ public class Skill implements ISkill {
 	public SkillDescription getDescription() { return description; }
 
 	@Override
-	public String serialize(final boolean includingBuiltIn) {
+	public String serializeToGaml(final boolean includingBuiltIn) {
 		return getName();
 	}
 

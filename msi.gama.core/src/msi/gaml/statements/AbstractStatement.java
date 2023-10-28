@@ -70,7 +70,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	@Override
 	public String toString() {
-		return description.serialize(true);
+		return description.serializeToGaml(true);
 	}
 
 	@Override

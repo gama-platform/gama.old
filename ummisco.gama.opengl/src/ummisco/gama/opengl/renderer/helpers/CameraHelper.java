@@ -1058,7 +1058,7 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 			getRenderer().getKeystoneHelper().startDrawHelper();
 		} else {
 			String def = IKeyword.KEYSTONE + ": " + GamaListFactory
-					.createWithoutCasting(Types.POINT, data.getKeystone().toCoordinateArray()).serialize(false);
+					.createWithoutCasting(Types.POINT, data.getKeystone().toCoordinateArray()).serializeToGaml(false);
 			getRenderer().getKeystoneHelper().stopDrawHelper();
 			WorkbenchHelper.copy(def);
 		}
@@ -1223,9 +1223,9 @@ public class CameraHelper extends AbstractRendererHelper implements IMultiListen
 	@Override
 	public String getCameraDefinition() {
 		StringBuilder text = new StringBuilder(IKeyword.CAMERA).append(" 'default' ").append(IKeyword.LOCATION)
-				.append(": ").append(new GamaPoint(data.getCameraPos()).yNegated().withPrecision(4).serialize(false));
+				.append(": ").append(new GamaPoint(data.getCameraPos()).yNegated().withPrecision(4).serializeToGaml(false));
 		text.append(" ").append(IKeyword.TARGET).append(": ")
-				.append(new GamaPoint(data.getCameraTarget()).yNegated().withPrecision(4).serialize(false)).append(";");
+				.append(new GamaPoint(data.getCameraTarget()).yNegated().withPrecision(4).serializeToGaml(false)).append(";");
 		return text.toString();
 	}
 
