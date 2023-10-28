@@ -1,18 +1,18 @@
 /*******************************************************************************************************
  *
- * GamaMap.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamaMap.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
 import java.util.LinkedHashMap;
 
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.json.Jsoner;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -26,10 +26,10 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IMap<K, V> {
 
 	/** The Constant KEYS. */
 	public static final String KEYS = "keys";
-	
+
 	/** The Constant VALUES. */
 	public static final String VALUES = "values";
-	
+
 	/** The Constant PAIRS. */
 	public static final String PAIRS = "pairs";
 
@@ -39,9 +39,12 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IMap<K, V> {
 	/**
 	 * Instantiates a new gama map.
 	 *
-	 * @param capacity the capacity
-	 * @param key the key
-	 * @param content the content
+	 * @param capacity
+	 *            the capacity
+	 * @param key
+	 *            the key
+	 * @param content
+	 *            the content
 	 */
 	public GamaMap(final int capacity, final IType key, final IType content) {
 		super(capacity);
@@ -49,14 +52,12 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IMap<K, V> {
 	}
 
 	@Override
-	public IContainerType getGamlType() {
-		return type;
-	}
+	public IContainerType getGamlType() { return type; }
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o == this) { return true; }
-		if (!(o instanceof IMap)) { return false; }
+		if (o == this) return true;
+		if (!(o instanceof IMap)) return false;
 		return GamaMapFactory.equals(this, (IMap) o);
 	}
 
@@ -70,21 +71,43 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IMap<K, V> {
 	/**
 	 * Builds the indexes.
 	 *
-	 * @param scope the scope
-	 * @param value the value
+	 * @param scope
+	 *            the scope
+	 * @param value
+	 *            the value
 	 * @return the i container
 	 */
 	protected IContainer<?, K> buildIndexes(final IScope scope, final IContainer value) {
 		final IList<K> result = GamaListFactory.create(getGamlType().getContentType());
-		for (final Object o : value.iterable(scope)) {
-			result.add(buildIndex(scope, o));
-		}
+		for (final Object o : value.iterable(scope)) { result.add(buildIndex(scope, o)); }
 		return result;
 	}
 
 	@Override
-	public boolean isOrdered() {
-		return true;
+	public boolean isOrdered() { return true; }
+
+	/**
+	 * To json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 28 oct. 2023
+	 */
+	@Override
+	public String serializeToJson() {
+		final StringBuilder writable = new StringBuilder();
+		boolean isFirstEntry = true;
+		writable.append('{');
+		for (java.util.Map.Entry<K, V> entry : this.entrySet()) {
+			if (isFirstEntry) {
+				isFirstEntry = false;
+			} else {
+				writable.append(',');
+			}
+			writable.append(Jsoner.serialize(entry.getKey())).append(':').append(Jsoner.serialize(entry.getValue()));
+		}
+		writable.append('}');
+		return writable.toString();
 	}
 
 }

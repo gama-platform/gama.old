@@ -35,8 +35,8 @@ import org.java_websocket.enums.ReadyState;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import msi.gama.util.file.json.Jsoner;
 import msi.gaml.types.Types;
 
@@ -130,8 +130,7 @@ public class CommandExecutor {
 	 * @return If the parameters are properly formatted or null, returns null. Else returns a CommandResponse with a
 	 *         more precise error message.
 	 */
-	public static CommandResponse checkLoadParameters(final GamaJsonList parameters,
-			final IMap<String, Object> commandMap) {
+	public static CommandResponse checkLoadParameters(final IList parameters, final IMap<String, Object> commandMap) {
 		if (parameters != null) {
 			int i = 1;
 			for (var param : parameters.listValue(null, Types.MAP, false)) {

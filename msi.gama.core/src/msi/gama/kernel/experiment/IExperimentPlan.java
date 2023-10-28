@@ -22,7 +22,7 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.json.GamaJsonList;
+import msi.gama.util.IList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.expressions.IExpression;
@@ -342,5 +342,5 @@ public interface IExperimentPlan extends ISpecies {
 	 *            the new parameter values
 	 * @date 15 oct. 2023
 	 */
-	void setParameterValues(GamaJsonList params);
+	void setParameterValues(IList params);
 }

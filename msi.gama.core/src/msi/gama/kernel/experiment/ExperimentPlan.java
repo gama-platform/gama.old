@@ -51,7 +51,6 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
@@ -1137,7 +1136,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 * @date 15 oct. 2023
 	 */
 	@Override
-	public void setParameterValues(final GamaJsonList p) {
+	public void setParameterValues(final IList p) {
 		if (p != null) {
 			for (var param : p.listValue(null, Types.MAP, false)) {
 				@SuppressWarnings ("unchecked") IMap<String, Object> m = (IMap<String, Object>) param;

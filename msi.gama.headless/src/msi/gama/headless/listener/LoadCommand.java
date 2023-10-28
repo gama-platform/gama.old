@@ -25,8 +25,8 @@ import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gama.runtime.server.ISocketCommand;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -49,7 +49,7 @@ public class LoadCommand implements ISocketCommand {
 		if (model == null || experiment == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
 				"For 'load', mandatory parameters are: 'model' and 'experiment'", map, false);
 		try {
-			return launchGamlSimulation(gamaWebSocketServer, socket, (GamaJsonList) map.get("parameters"),
+			return launchGamlSimulation(gamaWebSocketServer, socket, (IList) map.get("parameters"),
 					map.get("until") != null ? map.get("until").toString() : "", map);
 		} catch (Exception e) {
 			DEBUG.OUT(e);
@@ -79,7 +79,7 @@ public class LoadCommand implements ISocketCommand {
 	 * @date 15 oct. 2023
 	 */
 	public CommandResponse launchGamlSimulation(final GamaWebSocketServer gamaWebSocketServer, final WebSocket socket,
-			final GamaJsonList params, final String end, final IMap<String, Object> map)
+			final IList params, final String end, final IMap<String, Object> map)
 			throws IOException, GamaHeadlessException {
 
 		final String pathToModel = map.get("model").toString();

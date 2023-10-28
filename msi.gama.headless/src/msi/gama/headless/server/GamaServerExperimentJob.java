@@ -33,8 +33,8 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.server.GamaWebSocketServer;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.types.Types;
 
@@ -82,7 +82,7 @@ public class GamaServerExperimentJob extends ExperimentJob {
 	 *            the dialog
 	 */
 	public GamaServerExperimentJob(final String sourcePath, final String exp,
-			final GamaWebSocketServer gamaWebSocketServer, final WebSocket sk, final GamaJsonList p, final String end,
+			final GamaWebSocketServer gamaWebSocketServer, final WebSocket sk, final IList p, final String end,
 			final boolean console, final boolean status, final boolean dialog, final boolean runtime) {
 		// (final String sourcePath, final String exp, final long max, final String untilCond,
 		// final double s)
@@ -126,10 +126,9 @@ public class GamaServerExperimentJob extends ExperimentJob {
 	 * @throws GamaHeadlessException
 	 *             the gama headless exception
 	 */
-	public void loadAndBuildWithJson(final GamaJsonList params, final String endCond)
-			throws IOException, GamaHeadlessException { 
-		if (this.simulator == null)
-			this.load();
+	public void loadAndBuildWithJson(final IList params, final String endCond)
+			throws IOException, GamaHeadlessException {
+		if (this.simulator == null) { this.load(); }
 		this.setup();
 		controller.setExperiment(simulator.getModel().getExperiment(experimentName));
 		simulator.setup(experimentName, this.seed, params, this);
@@ -143,8 +142,8 @@ public class GamaServerExperimentJob extends ExperimentJob {
 	 *            the p
 	 */
 	@SuppressWarnings ("unchecked")
-	public void initParam(final GamaJsonList p) {
-		GamaJsonList params = p;
+	public void initParam(final IList p) {
+		IList params = p;
 		if (params != null) {
 			final ExperimentPlan curExperiment = (ExperimentPlan) simulator.getExperimentPlan();
 			for (var param : params.listValue(null, Types.MAP, false)) {

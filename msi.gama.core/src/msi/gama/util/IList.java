@@ -19,6 +19,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.interfaces.IJsonable;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaIntegerType;
 import msi.gaml.types.GamaMatrixType;
@@ -35,8 +36,8 @@ import msi.gaml.types.Types;
  *
  */
 @SuppressWarnings ("unchecked")
-public interface IList<E>
-		extends IModifiableContainer<Integer, E, Integer, E>, IAddressableContainer<Integer, E, Integer, E>, List<E> {
+public interface IList<E> extends IModifiableContainer<Integer, E, Integer, E>,
+		IAddressableContainer<Integer, E, Integer, E>, List<E>, IJsonable {
 
 	/**
 	 * Contains key.
@@ -49,10 +50,7 @@ public interface IList<E>
 	 */
 	@Override
 	default boolean containsKey(final IScope scope, final Object o) {
-		if (o instanceof Integer) {
-			final Integer i = (Integer) o;
-			return i >= 0 && i < this.size();
-		}
+		if (o instanceof final Integer i) return i >= 0 && i < this.size();
 		return false;
 	}
 
@@ -164,8 +162,7 @@ public interface IList<E>
 		// Allows to build sets with the idiom: list <- map(list).values;
 		final IType myCt = getGamlType().getContentType();
 		final IType kt, ct;
-		if (myCt.isParametricFormOf(Types.PAIR) || myCt.equals(Types.PAIR)
-				) {
+		if (myCt.isParametricFormOf(Types.PAIR) || myCt.equals(Types.PAIR)) {
 			// Issue #2607: specific treatment of lists of pairs
 			kt = GamaType.findSpecificType(keyType, myCt.getKeyType());
 			ct = GamaType.findSpecificType(contentsType, myCt.getContentType());

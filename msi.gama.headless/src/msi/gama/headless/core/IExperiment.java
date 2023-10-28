@@ -14,7 +14,7 @@ import msi.gama.headless.server.GamaServerExperimentJob;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.util.file.json.GamaJsonList;
+import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -62,7 +62,7 @@ public interface IExperiment {
 	 *            the seed
 	 * @param manualExperimentJob
 	 */
-	void setup(final String experimentName, final double seed, final GamaJsonList params,
+	void setup(final String experimentName, final double seed, final IList params,
 			GamaServerExperimentJob manualExperimentJob);
 
 	/**
@@ -72,14 +72,13 @@ public interface IExperiment {
 	 */
 	long step();
 
-
 	/**
 	 * BackStep.
 	 *
 	 * @return the long
 	 */
 	long backStep();
-	
+
 	/**
 	 * Checks if is interrupted.
 	 *

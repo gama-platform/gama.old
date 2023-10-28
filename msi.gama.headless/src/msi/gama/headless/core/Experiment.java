@@ -22,7 +22,7 @@ import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.json.GamaJsonList;
+import msi.gama.util.IList;
 import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 
@@ -83,8 +83,22 @@ public class Experiment implements IExperiment {
 		this.loadCurrentExperiment(expName);
 	}
 
+	/**
+	 * Setup.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param expName
+	 *            the exp name
+	 * @param sd
+	 *            the sd
+	 * @param params
+	 *            the params
+	 * @param ec
+	 *            the ec
+	 * @date 28 oct. 2023
+	 */
 	@Override
-	public void setup(final String expName, final double sd, final GamaJsonList params, final GamaServerExperimentJob ec) {
+	public void setup(final String expName, final double sd, final IList params, final GamaServerExperimentJob ec) {
 		this.seed = sd;
 		this.loadCurrentExperiment(expName, params, ec);
 	}
@@ -95,7 +109,7 @@ public class Experiment implements IExperiment {
 	 * @param expName
 	 *            the exp name
 	 */
-	private synchronized void loadCurrentExperiment(final String expName, final GamaJsonList p,
+	private synchronized void loadCurrentExperiment(final String expName, final IList p,
 			final GamaServerExperimentJob ec) {
 		this.experimentName = expName;
 		this.currentStep = 0;

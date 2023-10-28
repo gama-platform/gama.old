@@ -18,8 +18,8 @@ import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gama.runtime.server.ISocketCommand;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -46,7 +46,7 @@ public class ReloadCommand implements ISocketCommand {
 		if (gama_exp == null || gama_exp.getCurrentSimulation() == null)
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"Unable to find the experiment or simulation", map, false);
-		GamaJsonList params = (GamaJsonList) map.get(PARAMETERS);
+		IList params = (IList) map.get(PARAMETERS);
 		gama_exp.setParameterValues(params);
 		gama_exp.setStopCondition((String) map.get(UNTIL));
 

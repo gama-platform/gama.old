@@ -38,10 +38,16 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
+import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.serialize.ILastResortJSonConverter;
 import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.interfaces.IJsonable;
 import msi.gaml.statements.save.AbstractShapeSaver;
+import msi.gaml.types.Types;
 
 /**
  * Jsoner provides JSON utilities for escaping strings to be JSON compatible, thread safe parsing (RFC 4627) JSON
@@ -131,12 +137,12 @@ public class Jsoner {
 							break;
 						case LEFT_BRACE:
 							/* An object is detected. */
-							valueStack.addLast(new GamaJsonMap());
+							valueStack.addLast(GamaMapFactory.create(Types.STRING, Types.NO_TYPE));
 							stateStack.addLast(States.PARSING_OBJECT);
 							break;
 						case LEFT_SQUARE:
 							/* An array is detected. */
-							valueStack.addLast(new GamaJsonList());
+							valueStack.addLast(GamaListFactory.create());
 							stateStack.addLast(States.PARSING_ARRAY);
 							break;
 						default:
@@ -157,14 +163,14 @@ public class Jsoner {
 							break;
 						case DATUM:
 							/* The parse found an element of the array. */
-							GamaJsonList val = (GamaJsonList) valueStack.getLast();
+							IList val = (IList) valueStack.getLast();
 							val.add(token.getValue());
 							stateStack.addLast(currentState);
 							break;
 						case LEFT_BRACE:
 							/* The parse found an object in the array. */
-							val = (GamaJsonList) valueStack.getLast();
-							final GamaJsonMap object = new GamaJsonMap();
+							val = (IList) valueStack.getLast();
+							final IMap object = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 							val.add(object);
 							valueStack.addLast(object);
 							stateStack.addLast(currentState);
@@ -172,8 +178,8 @@ public class Jsoner {
 							break;
 						case LEFT_SQUARE:
 							/* The parse found another array in the array. */
-							val = (GamaJsonList) valueStack.getLast();
-							final GamaJsonList array = new GamaJsonList();
+							val = (IList) valueStack.getLast();
+							final IList array = GamaListFactory.create();
 							val.add(array);
 							valueStack.addLast(array);
 							stateStack.addLast(currentState);
@@ -250,14 +256,14 @@ public class Jsoner {
 						case DATUM:
 							/* The parse has found a value for the parsed pair key. */
 							String key = (String) valueStack.removeLast();
-							GamaJsonMap parent = (GamaJsonMap) valueStack.getLast();
+							IMap parent = (IMap) valueStack.getLast();
 							parent.put(key, token.getValue());
 							break;
 						case LEFT_BRACE:
 							/* The parse has found an object for the parsed pair key. */
 							key = (String) valueStack.removeLast();
-							parent = (GamaJsonMap) valueStack.getLast();
-							final GamaJsonMap object = new GamaJsonMap();
+							parent = (IMap) valueStack.getLast();
+							final IMap object = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
 							parent.put(key, object);
 							valueStack.addLast(object);
 							stateStack.addLast(States.PARSING_OBJECT);
@@ -265,8 +271,8 @@ public class Jsoner {
 						case LEFT_SQUARE:
 							/* The parse has found an array for the parsed pair key. */
 							key = (String) valueStack.removeLast();
-							parent = (GamaJsonMap) valueStack.getLast();
-							final GamaJsonList array = new GamaJsonList();
+							parent = (IMap) valueStack.getLast();
+							final IList array = GamaListFactory.create();
 							parent.put(key, array);
 							valueStack.addLast(array);
 							stateStack.addLast(States.PARSING_ARRAY);
@@ -528,234 +534,118 @@ public class Jsoner {
 	 * any Jsonables it serializes and serializes Enums that don't implement Jsonable as a string of their fully
 	 * qualified name.
 	 *
-	 * @param jsonSerializable
+	 * @param object
 	 *            represents the object that should be serialized in JSON format.
-	 * @param writableDestination
+	 * @param writer
 	 *            represents where the resulting JSON text is written to.
 	 * @throws IOException
 	 *             if the writableDestination encounters an I/O problem, like being closed while in use.
 	 * @throws IllegalArgumentException
 	 *             if the jsonSerializable isn't serializable in JSON.
 	 */
-	public static void serialize(final Object jsonSerializable, final Writer writableDestination) throws IOException {
-		if (jsonSerializable == null) {
+	public static void serialize(final Object object, final Writer writer) throws IOException {
+		if (object == null) {
 			/* When a null is passed in the word null is supported in JSON. */
-			writableDestination.write("null");
-		} else if (jsonSerializable instanceof Jsonable j) {
+			writer.write("null");
+		} else if (object instanceof IJsonable j) {
 			/* Writes the writable as defined by the writable. */
-			writableDestination.write(j.toJson());
-		} else if (jsonSerializable instanceof Enum e) {
-			writableDestination.write('"');
-			writableDestination.write(e.getDeclaringClass().getName());
-			writableDestination.write('.');
-			writableDestination.write(e.name());
-			writableDestination.write('"');
-		} else if (jsonSerializable instanceof String s) {
+			writer.write(j.serializeToJson());
+		} else if (object instanceof String s) {
 			/* Make sure the string is properly escaped. */
-			writableDestination.write('"');
-			writableDestination.write(Jsoner.escape(s));
-			writableDestination.write('"');
-		} else if (jsonSerializable instanceof Character) {
+			writer.write('"');
+			writer.write(Jsoner.escape(s));
+			writer.write('"');
+		} else if (object instanceof Character) {
 			/* Make sure the string is properly escaped. */
-			writableDestination.write(Jsoner.escape(jsonSerializable.toString()));
-		} else if (jsonSerializable instanceof Double d) {
-			if (((Double) jsonSerializable).isInfinite() || d.isNaN()) {
+			writer.write(Jsoner.escape(object.toString()));
+		} else if (object instanceof Double d) {
+			if (((Double) object).isInfinite() || d.isNaN()) {
 				/* Infinite and not a number are not supported by the JSON specification, so null is used instead. */
-				writableDestination.write("null");
+				writer.write("null");
 			} else {
-				writableDestination.write(jsonSerializable.toString());
+				writer.write(object.toString());
 			}
-		} else if (jsonSerializable instanceof Float f) {
+		} else if (object instanceof Float f) {
 			if (f.isInfinite() || f.isNaN()) {
 				/* Infinite and not a number are not supported by the JSON specification, so null is used instead. */
-				writableDestination.write("null");
+				writer.write("null");
 			} else {
-				writableDestination.write(f.toString());
+				writer.write(f.toString());
 			}
-		} else if (jsonSerializable instanceof Number || jsonSerializable instanceof Boolean) {
-			writableDestination.write(jsonSerializable.toString());
-		} else if (jsonSerializable instanceof GamaColor col) {
-			writableDestination.write('{');
-			writableDestination.write('"' + "r" + '"' + ":");
-			Jsoner.serialize(col.red(), writableDestination);
-			writableDestination.write("," + '"' + "g" + '"' + ":");
-			Jsoner.serialize(col.blue(), writableDestination);
-			writableDestination.write("," + '"' + "b" + '"' + ":");
-			Jsoner.serialize(col.green(), writableDestination);
-			writableDestination.write('}');
-		} else if (jsonSerializable instanceof Map m) {
+		} else if (object instanceof Number || object instanceof Boolean) {
+			writer.write(object.toString());
+		} else if (object instanceof GamaColor col) {
+			writer.write('{');
+			writer.write('"' + "r" + '"' + ":");
+			Jsoner.serialize(col.red(), writer);
+			writer.write("," + '"' + "g" + '"' + ":");
+			Jsoner.serialize(col.blue(), writer);
+			writer.write("," + '"' + "b" + '"' + ":");
+			Jsoner.serialize(col.green(), writer);
+			writer.write('}');
+		} else if (object instanceof Map m) {
 			/* Writes the map in JSON object format. */
 			boolean isFirstEntry = true;
 			@SuppressWarnings ("rawtypes") final Iterator entries = m.entrySet().iterator();
-			writableDestination.write('{');
+			writer.write('{');
 			while (entries.hasNext()) {
 				if (isFirstEntry) {
 					isFirstEntry = false;
 				} else {
-					writableDestination.write(',');
+					writer.write(',');
 				}
 				@SuppressWarnings ("rawtypes") final Map.Entry entry = (Map.Entry) entries.next();
-				Jsoner.serialize(entry.getKey(), writableDestination);
-				writableDestination.write(':');
-				Jsoner.serialize(entry.getValue(), writableDestination);
+				Jsoner.serialize(entry.getKey(), writer);
+				writer.write(':');
+				Jsoner.serialize(entry.getValue(), writer);
 			}
-			writableDestination.write('}');
-		} else if (jsonSerializable instanceof Collection c) {
+			writer.write('}');
+		} else if (object instanceof Collection c) {
 			/* Writes the collection in JSON array format. */
 			boolean isFirstElement = true;
 			@SuppressWarnings ("rawtypes") final Iterator elements = c.iterator();
-			writableDestination.write('[');
+			writer.write('[');
 			while (elements.hasNext()) {
 				if (isFirstElement) {
 					isFirstElement = false;
 				} else {
-					writableDestination.write(',');
+					writer.write(',');
 				}
-				Jsoner.serialize(elements.next(), writableDestination);
+				Jsoner.serialize(elements.next(), writer);
 			}
-			writableDestination.write(']');
-
-		} else if (jsonSerializable instanceof GamaPair p) {
+			writer.write(']');
+		} else if (object instanceof GamaPair p) {
 			// Considers gamapairs as json
-			writableDestination.write('{');
-			Jsoner.serialize(p.key, writableDestination);
-			writableDestination.write(':');
-			Jsoner.serialize(p.value, writableDestination);
-			writableDestination.write('}');
+			writer.write('{');
+			Jsoner.serialize(p.key, writer);
+			writer.write(':');
+			Jsoner.serialize(p.value, writer);
+			writer.write('}');
 
-		} else if (jsonSerializable instanceof byte[] bw) {
-			final int numberOfElements = bw.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(bw[i], writableDestination);
-				} else {
-					Jsoner.serialize(bw[i], writableDestination);
-					writableDestination.write(',');
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof short[] sw) {
-			final int numberOfElements = sw.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(sw[i], writableDestination);
-				} else {
-					Jsoner.serialize(sw[i], writableDestination);
-					writableDestination.write(',');
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof int[] iw) {
-			final int numberOfElements = iw.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(iw[i], writableDestination);
-				} else {
-					Jsoner.serialize(iw[i], writableDestination);
-					writableDestination.write(',');
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof long[] lw) {
-			final int numberOfElements = lw.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(lw[i], writableDestination);
-				} else {
-					Jsoner.serialize(lw[i], writableDestination);
-					writableDestination.write(',');
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof float[] fw) {
-			final int numberOfElements = fw.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(fw[i], writableDestination);
-				} else {
-					Jsoner.serialize(fw[i], writableDestination);
-					writableDestination.write(',');
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof double[] dw) {
-			final int numberOfElements = dw.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(dw[i], writableDestination);
-				} else {
-					Jsoner.serialize(dw[i], writableDestination);
-					writableDestination.write(',');
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof boolean[] bw) {
-			final int numberOfElements = bw.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(bw[i], writableDestination);
-				} else {
-					Jsoner.serialize(bw[i], writableDestination);
-					writableDestination.write(',');
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof char[] cw) {
-			final int numberOfElements = cw.length;
-			writableDestination.write("[\"");
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(cw[i], writableDestination);
-				} else {
-					Jsoner.serialize(cw[i], writableDestination);
-					writableDestination.write("\",\"");
-				}
-			}
-			writableDestination.write("\"]");
-		} else if (jsonSerializable instanceof Object[] ow) {
-			final int numberOfElements = ow.length;
-			writableDestination.write('[');
-			for (int i = 0; i < numberOfElements; i++) {
-				if (i == numberOfElements - 1) {
-					Jsoner.serialize(ow[i], writableDestination);
-				} else {
-					Jsoner.serialize(ow[i], writableDestination);
-					writableDestination.write(",");
-				}
-			}
-			writableDestination.write(']');
-		} else if (jsonSerializable instanceof IAgent agent) {
+		} else if (object instanceof IAgent agent) {
 			final SpeciesDescription species = agent.getSpecies().getDescription();
 
-			writableDestination.write('{');
-			writableDestination.write('"' + "species" + '"' + ":");
-			Jsoner.serialize(species.getSpeciesExpr().getName(), writableDestination);
+			writer.write('{');
+			writer.write('"' + "species" + '"' + ":");
+			Jsoner.serialize(species.getSpeciesExpr().getName(), writer);
 			boolean isGrid = agent instanceof IGridAgent;
 			for (final String theVar : species.getAttributeNames()) {
 				if (NON_SERIALISABLE.contains(theVar) || isGrid && GRID_NON_SERIALISABLE.contains(theVar)) { continue; }
 				if (!NON_SERIALISABLE.contains(theVar)) {
-					writableDestination.write(',');
-					writableDestination.write('"' + theVar + '"');
-					writableDestination.write(":");
+					writer.write(',');
+					writer.write('"' + theVar + '"');
+					writer.write(":");
 
 					Object attrValue = species.getVarExpr(theVar, false).value(agent.getScope());
 					if (attrValue instanceof IAgent ia) {
-						Jsoner.serialize(ia.getName(), writableDestination);
+						Jsoner.serialize(ia.getName(), writer);
 					} else {
-						Jsoner.serialize(attrValue, writableDestination);
+						Jsoner.serialize(attrValue, writer);
 					}
 				}
 			}
-			writableDestination.write('}');
-
-		} else if (jsonSerializable instanceof IShape agentOrIShape) {
+			writer.write('}');
+		} else if (object instanceof IShape agentOrIShape) {
 			final StringBuilder specs = new StringBuilder(1 * 20);
 			final String geomType = GeometryUtils.getGeometryStringType(Arrays.asList(agentOrIShape));
 			specs.append("geometry:" + geomType);
@@ -763,38 +653,31 @@ public class Jsoner {
 				final SimpleFeatureType type = DataUtilities.createType("geojson", specs.toString());
 				final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
 				final SimpleFeature ff = builder.buildFeature("");
-
 				AbstractShapeSaver.buildFeature(null, ff, agentOrIShape, null, Collections.emptyList());
-
 				final FeatureJSON io = new FeatureJSON(new GeometryJSON(20));
-				writableDestination.write(io.toString(ff));
+				writer.write(io.toString(ff));
 			} catch (ClassCastException | SchemaException e) {
 				e.printStackTrace();
 			}
-		} else if (jsonSerializable instanceof Exception ex) {
-			writableDestination.write('{');
-
-			writableDestination.write("\"exception\": \"" + ex.getClass().getName() + "\",");
-			writableDestination.write("\"message\": \"" + escape(ex.getMessage()) + "\",");
-			writableDestination.write("\"stack\": [");
+		} else if (object instanceof Exception ex) {
+			writer.write('{');
+			writer.write("\"exception\": \"" + ex.getClass().getName() + "\",");
+			writer.write("\"message\": \"" + escape(ex.getMessage()) + "\",");
+			writer.write("\"stack\": [");
 			int i = 0;
 			for (var trace : ex.getStackTrace()) {
-				writableDestination
-						.write("\"" + escape(trace.toString()) + "\"" + (i < ex.getStackTrace().length - 1 ? "," : "") // add
-																														// trailing
-																														// comma
-						);
+				writer.write("\"" + escape(trace.toString()) + "\"" + (i < ex.getStackTrace().length - 1 ? "," : ""));
 				i++;
 			}
-			writableDestination.write("]");
-			writableDestination.write("}");
+			writer.write("]");
+			writer.write("}");
 		} else {
 			try {
-				writableDestination.write(streamConverter.toJSon(null, jsonSerializable));
+				writer.write(streamConverter.toJSon(null, object));
 			} catch (Exception e) {
 				/* Can be helpful for debugging how it isn't valid. */
-				writableDestination.write(jsonSerializable.toString());
-				throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName()
+				writer.write(object.toString());
+				throw new IllegalArgumentException("Encountered a: " + object.getClass().getName()
 						+ " that isn't JSON serializable because of " + e.getMessage());
 			}
 		}
@@ -813,4 +696,43 @@ public class Jsoner {
 		return obj != null && obj.getClass().isArray() && obj.getClass().getComponentType() != null
 				&& obj.getClass().getComponentType().isPrimitive();
 	}
+
+	/**
+	 * else if (jsonSerializable instanceof byte[] bw) { final int numberOfElements = bw.length;
+	 * writableDestination.write('['); for (int i = 0; i < numberOfElements; i++) { if (i == numberOfElements - 1) {
+	 * Jsoner.serialize(bw[i], writableDestination); } else { Jsoner.serialize(bw[i], writableDestination);
+	 * writableDestination.write(','); } } writableDestination.write(']'); } else if (jsonSerializable instanceof
+	 * short[] sw) { final int numberOfElements = sw.length; writableDestination.write('['); for (int i = 0; i <
+	 * numberOfElements; i++) { if (i == numberOfElements - 1) { Jsoner.serialize(sw[i], writableDestination); } else {
+	 * Jsoner.serialize(sw[i], writableDestination); writableDestination.write(','); } } writableDestination.write(']');
+	 * } else if (jsonSerializable instanceof int[] iw) { final int numberOfElements = iw.length;
+	 * writableDestination.write('['); for (int i = 0; i < numberOfElements; i++) { if (i == numberOfElements - 1) {
+	 * Jsoner.serialize(iw[i], writableDestination); } else { Jsoner.serialize(iw[i], writableDestination);
+	 * writableDestination.write(','); } } writableDestination.write(']'); } else if (jsonSerializable instanceof long[]
+	 * lw) { final int numberOfElements = lw.length; writableDestination.write('['); for (int i = 0; i <
+	 * numberOfElements; i++) { if (i == numberOfElements - 1) { Jsoner.serialize(lw[i], writableDestination); } else {
+	 * Jsoner.serialize(lw[i], writableDestination); writableDestination.write(','); } } writableDestination.write(']');
+	 * } else if (jsonSerializable instanceof float[] fw) { final int numberOfElements = fw.length;
+	 * writableDestination.write('['); for (int i = 0; i < numberOfElements; i++) { if (i == numberOfElements - 1) {
+	 * Jsoner.serialize(fw[i], writableDestination); } else { Jsoner.serialize(fw[i], writableDestination);
+	 * writableDestination.write(','); } } writableDestination.write(']'); } else if (jsonSerializable instanceof
+	 * double[] dw) { final int numberOfElements = dw.length; writableDestination.write('['); for (int i = 0; i <
+	 * numberOfElements; i++) { if (i == numberOfElements - 1) { Jsoner.serialize(dw[i], writableDestination); } else {
+	 * Jsoner.serialize(dw[i], writableDestination); writableDestination.write(','); } } writableDestination.write(']');
+	 * } else if (jsonSerializable instanceof boolean[] bw) { final int numberOfElements = bw.length;
+	 * writableDestination.write('['); for (int i = 0; i < numberOfElements; i++) { if (i == numberOfElements - 1) {
+	 * Jsoner.serialize(bw[i], writableDestination); } else { Jsoner.serialize(bw[i], writableDestination);
+	 * writableDestination.write(','); } } writableDestination.write(']'); } else if (jsonSerializable instanceof char[]
+	 * cw) { final int numberOfElements = cw.length; writableDestination.write("[\""); for (int i = 0; i <
+	 * numberOfElements; i++) { if (i == numberOfElements - 1) { Jsoner.serialize(cw[i], writableDestination); } else {
+	 * Jsoner.serialize(cw[i], writableDestination); writableDestination.write("\",\""); } }
+	 * writableDestination.write("\"]"); } else if (jsonSerializable instanceof Object[] ow) { final int
+	 * numberOfElements = ow.length; writableDestination.write('['); for (int i = 0; i < numberOfElements; i++) { if (i
+	 * == numberOfElements - 1) { Jsoner.serialize(ow[i], writableDestination); } else { Jsoner.serialize(ow[i],
+	 * writableDestination); writableDestination.write(","); } } writableDestination.write(']'); }
+	 */
+	/**
+	 * else if (object instanceof Enum e) { writer.write('"'); writer.write(e.getDeclaringClass().getName());
+	 * writer.write('.'); writer.write(e.name()); writer.write('"'); }
+	 */
 }

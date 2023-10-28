@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * CommandResponse.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
+ * CommandResponse.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -49,14 +49,11 @@ public class CommandResponse extends GamaServerMessage {
 	}
 
 	@Override
-	public String toJson() {
+	public String serializeToJson() {
 		var params = commandParameters.copy(null);
 		params.remove("server");
 		return "{ " + "\"type\": \"" + type + "\"," + "\"content\": " + (isJson ? content : Jsoner.serialize(content))
-				+ ","
-
-				// + "\"content\": " + ((isJson) ? (content!=""?content:"\"\"") : Jsoner.serialize(content)) + ","
-				+ "\"command\": " + Jsoner.serialize(params) + "}";
+				+ "," + "\"command\": " + Jsoner.serialize(params) + "}";
 	}
 
 }

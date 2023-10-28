@@ -10,8 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.runtime.server;
 
-import msi.gama.util.file.json.Jsonable;
 import msi.gama.util.file.json.Jsoner;
+import msi.gaml.interfaces.IJsonable;
 
 /**
  * The Class GamaServerMessage.
@@ -19,7 +19,7 @@ import msi.gama.util.file.json.Jsoner;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 15 oct. 2023
  */
-public class GamaServerMessage implements Jsonable {
+public class GamaServerMessage implements IJsonable {
 
 	/**
 	 * The Enum Type.
@@ -154,8 +154,15 @@ public class GamaServerMessage implements Jsonable {
 		this(t, content, null);
 	}
 
+	/**
+	 * Serialize to json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 28 oct. 2023
+	 */
 	@Override
-	public String toJson() {
+	public String serializeToJson() {
 		return "{ " + "\"type\": \"" + type + "\"," + "\"content\": " + Jsoner.serialize(content)
 				+ (exp_id != null ? ",\"exp_id\":\"" + exp_id + "\"" : "") + "}";
 	}

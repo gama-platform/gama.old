@@ -26,8 +26,8 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.GamaJsonList;
 import msi.gama.util.file.json.Jsoner;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
@@ -38,7 +38,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamaServerExperimentController extends AbstractExperimentController {
 
 	/** The parameters. */
-	final GamaJsonList parameters;
+	final IList parameters;
 
 	/** The stop condition. */
 	final String stopCondition;
@@ -122,7 +122,7 @@ public class GamaServerExperimentController extends AbstractExperimentController
 	 * @param experiment
 	 *            the experiment
 	 */
-	public GamaServerExperimentController(final GamaServerExperimentJob j, final GamaJsonList parameters,
+	public GamaServerExperimentController(final GamaServerExperimentJob j, final IList parameters,
 			final String stopCondition, final WebSocket sock, final boolean console, final boolean status,
 			final boolean dialog, final boolean runtime) {
 		_job = j;

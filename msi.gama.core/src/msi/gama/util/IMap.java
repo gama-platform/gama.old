@@ -36,6 +36,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.interfaces.IJsonable;
 import msi.gaml.types.GamaMapType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -66,7 +67,8 @@ import msi.gaml.types.Types;
 				doc = { @doc ("Returns the list of pairs (key, value) that compose this map") }) })
 @SuppressWarnings ("unchecked")
 
-public interface IMap<K, V> extends Map<K, V>, IModifiableContainer<K, V, K, V>, IAddressableContainer<K, V, K, V> {
+public interface IMap<K, V>
+		extends Map<K, V>, IModifiableContainer<K, V, K, V>, IAddressableContainer<K, V, K, V>, IJsonable {
 
 	/**
 	 * The Interface IPairList.
