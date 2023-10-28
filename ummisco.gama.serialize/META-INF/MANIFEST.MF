@@ -5,24 +5,9 @@ Bundle-SymbolicName: ummisco.gama.serialize;singleton:=true
 Bundle-Version: 1.9.3.qualifier
 Require-Bundle: msi.gama.core,
  msi.gama.ext
-Bundle-ClassPath: .,
- ext/xstream 1.4.20/mxparser-1.2.2.jar,
- ext/xstream 1.4.20/xmlpull-1.1.3.4d_b4_min.jar,
- ext/xstream 1.4.20/xstream-1.4.20.jar,
- ext/xstream 1.4.20/jettison-1.5.4.jar
-Export-Package: com.thoughtworks.xstream.converters,
- com.thoughtworks.xstream.io,
- org.codehaus.jettison,
- org.codehaus.jettison.badgerfish,
- org.codehaus.jettison.json,
- org.codehaus.jettison.mapped,
- org.codehaus.jettison.util,
- ummisco.gama.serializer,
- ummisco.gama.serializer.factory,
+Bundle-ClassPath: .
+Export-Package: ummisco.gama.serializer,
  ummisco.gama.serializer.gamaType,
- ummisco.gama.serializer.gamaType.converters,
- ummisco.gama.serializer.gamaType.reduced,
- ummisco.gama.serializer.gamaType.reference,
  ummisco.gama.serializer.gaml,
  ummisco.gama.serializer.implementations,
  ummisco.gama.serializer.inject

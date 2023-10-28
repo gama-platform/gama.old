@@ -54,7 +54,7 @@ public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISer
 
 	@Override
 	public byte[] saveObjectToBytes(final IScope scope, final Object obj) {
-		return write(null, obj);
+		return write(scope, obj);
 	}
 
 	/**

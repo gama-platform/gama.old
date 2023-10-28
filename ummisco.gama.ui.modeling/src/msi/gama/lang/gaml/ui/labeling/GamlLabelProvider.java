@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
@@ -67,7 +66,6 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	public GamlLabelProvider(final AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
-
 
 	/**
 	 * Image.
@@ -177,7 +175,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 
 		}
 		String first = "Attribute ";
-		if (Types.get(type) == Types.NO_TYPE) { first = Strings.capitalize(type) + " "; }
+		if (Types.get(type) == Types.NO_TYPE) { first = Strings.capitalize(null, type) + " "; }
 
 		return first + (name == null ? "" : name)
 				+ (type == null ? "" : " (" + type + ") " + (key == null ? "" : "(" + key + ") "));
@@ -360,7 +358,8 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	public ImageDescriptor getImageDescriptor(final ISyntacticElement element) {
 		return this.getImageDescriptor(element.getElement());
 	}
-	
+
+	@Override
 	public ImageDescriptor convertToImageDescriptor(final Object obj) {
 		return super.convertToImageDescriptor(obj);
 	}

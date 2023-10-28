@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -34,11 +33,14 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.root.PlatformAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaPair;
-import msi.gama.util.serialize.IStreamConverter;
+import msi.gama.util.serialize.ILastResortJSonConverter;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.statements.save.AbstractShapeSaver;
 
@@ -47,9 +49,19 @@ import msi.gaml.statements.save.AbstractShapeSaver;
  * strings, and serializing data to strings in JSON format.
  *
  * @author A. Drogoul; adapted for GAMA from json-simple library
- * @since 2.0.0
+ * @since 1.8.2
  */
 public class Jsoner {
+
+	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
+	public static Set<String> NON_SERIALISABLE = Set.of(IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.LOCATION,
+			IKeyword.HOST, IKeyword.PEERS, IKeyword.EXPERIMENT, IKeyword.WORLD_AGENT_NAME, SimulationAgent.TIME,
+			PlatformAgent.MACHINE_TIME, SimulationAgent.DURATION, SimulationAgent.AVERAGE_DURATION,
+			SimulationAgent.TOTAL_DURATION, IKeyword.INDEX);
+
+	/** The grid non serialisable. */
+	public static Set<String> GRID_NON_SERIALISABLE = Set.of(IKeyword.GRID_X, IKeyword.GRID_Y, IKeyword.NEIGHBORS);
+
 	/** Flags to tweak the behavior of the primary deserialization method. */
 	private enum DeserializationOptions {
 		/** Whether multiple JSON values can be deserialized as a root element. */
@@ -63,41 +75,7 @@ public class Jsoner {
 	}
 
 	/** The stream converter. */
-	public static IStreamConverter streamConverter;
-
-	/** Flags to tweak the behavior of the primary serialization method. */
-	private enum SerializationOptions {
-		/**
-		 * Instead of aborting serialization on non-JSON values that are Enums it will continue serialization with the
-		 * Enums' "${PACKAGE}.${DECLARING_CLASS}.${NAME}".
-		 *
-		 * @see Enum
-		 * @deprecated 2.3.0 the enum should implement Jsonable instead.
-		 */
-		@Deprecated
-		ALLOW_FULLY_QUALIFIED_ENUMERATIONS,
-		/**
-		 * Instead of aborting serialization on non-JSON values it will continue serialization by serializing the
-		 * non-JSON value directly into the now invalid JSON. Be mindful that invalid JSON will not successfully
-		 * deserialize.
-		 */
-		ALLOW_INVALIDS,
-		/**
-		 * Instead of aborting serialization on non-JSON values that implement Jsonable it will continue serialization
-		 * by deferring serialization to the Jsonable.
-		 *
-		 * @see Jsonable
-		 */
-		ALLOW_JSONABLES,
-		/**
-		 * Instead of aborting serialization on non-JSON values it will continue serialization by using reflection to
-		 * best describe the value as a JsonObject.
-		 *
-		 * @deprecated 2.3.0 there is no passive way to accomplish this contract and so will be abandoned.
-		 */
-		@Deprecated
-		ALLOW_UNDEFINEDS;
-	}
+	public static ILastResortJSonConverter streamConverter;
 
 	/** The possible States of a JSON deserializer. */
 	private enum States {
@@ -107,12 +85,10 @@ public class Jsoner {
 		INITIAL,
 		/** Parsing error, ParsingException should be thrown. */
 		PARSED_ERROR,
-
 		/** The parsing array. */
 		PARSING_ARRAY,
 		/** Parsing a key-value pair inside of an object. */
 		PARSING_ENTRY,
-
 		/** The parsing object. */
 		PARSING_OBJECT;
 	}
@@ -120,9 +96,7 @@ public class Jsoner {
 	/**
 	 * Instantiates a new jsoner.
 	 */
-	private Jsoner() {
-		/* Keeping it classy. */
-	}
+	private Jsoner() {}
 
 	/**
 	 * Deserializes a readable stream according to the RFC 4627 JSON specification.
@@ -161,7 +135,6 @@ public class Jsoner {
 		final LinkedList<States> stateStack = new LinkedList<>();
 		final LinkedList<Object> valueStack = new LinkedList<>();
 		stateStack.addLast(States.INITIAL);
-		// System.out.println("//////////DESERIALIZING//////////");
 		do {
 			/* Parse through the parsable string's tokens. */
 			currentState = Jsoner.popNextState(stateStack);
@@ -272,10 +245,10 @@ public class Jsoner {
 							break;
 						case DATUM:
 							/* The token ought to be a key. */
-							if (!(token.getValue() instanceof String)) /*
-																		 * Abort! JSON keys are always strings and it
-																		 * wasn't a string.
-																		 */
+							if (!(token.getValue() instanceof String))
+								/*
+								 * Abort! JSON keys are always strings and it wasn't a string.
+								 */
 								throw new DeserializationException(lexer.getPosition(),
 										DeserializationException.Problems.UNEXPECTED_TOKEN, token);
 							/*
@@ -346,14 +319,8 @@ public class Jsoner {
 				default:
 					break;
 			}
-			// System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-			// System.out.println(currentState);
-			// System.out.println(token);
-			// System.out.println(valueStack);
-			// System.out.println(stateStack);
 			/* If we're not at the END and DONE then do the above again. */
 		} while (!States.DONE.equals(currentState) || !Yytoken.Types.END.equals(token.getType()));
-		// System.out.println("!!!!!!!!!!DESERIALIZED!!!!!!!!!!");
 		return new GamaJsonList(valueStack);
 	}
 
@@ -596,15 +563,11 @@ public class Jsoner {
 						}
 						break;
 				}
-				// System.out.println(lexed);
 			} while (!Yytoken.Types.END.equals(lexed.getType()));
 		} catch (final DeserializationException caught) {
 			/* This is according to the method's contract. */
 			return null;
 		}
-		// System.out.println(printable);
-		// System.out.println(returnable);
-		// System.out.println(Jsoner.escape(returnable.toString()));
 		return returnable.toString();
 	}
 
@@ -623,9 +586,7 @@ public class Jsoner {
 		final StringWriter writableDestination = new StringWriter();
 		try {
 			Jsoner.serialize(jsonSerializable, writableDestination);
-		} catch (final IOException caught) {
-			/* See StringWriter. */
-		}
+		} catch (final IOException caught) {}
 		return writableDestination.toString();
 	}
 
@@ -644,37 +605,13 @@ public class Jsoner {
 	 *             if the jsonSerializable isn't serializable in JSON.
 	 */
 	public static void serialize(final Object jsonSerializable, final Writer writableDestination) throws IOException {
-		Jsoner.serialize(jsonSerializable, writableDestination, EnumSet.of(SerializationOptions.ALLOW_JSONABLES,
-				SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS));
-	}
-
-	/**
-	 * Serialize values to JSON and write them to the provided writer based on behavior flags.
-	 *
-	 * @param jsonSerializable
-	 *            represents the object that should be serialized to a string in JSON format.
-	 * @param writableDestination
-	 *            represents where the resulting JSON text is written to.
-	 * @param replacement
-	 *            represents what is serialized instead of a non-JSON value when replacements are allowed.
-	 * @param flags
-	 *            represents the allowances and restrictions on serialization.
-	 * @throws IOException
-	 *             if the writableDestination encounters an I/O problem.
-	 * @throws IllegalArgumentException
-	 *             if the jsonSerializable isn't serializable in JSON.
-	 * @see SerializationOptions
-	 */
-	private static void serialize(final Object jsonSerializable, final Writer writableDestination,
-			final Set<SerializationOptions> flags) throws IOException {
 		if (jsonSerializable == null) {
 			/* When a null is passed in the word null is supported in JSON. */
 			writableDestination.write("null");
-		} else if (jsonSerializable instanceof Jsonable j && flags.contains(SerializationOptions.ALLOW_JSONABLES)) {
+		} else if (jsonSerializable instanceof Jsonable j) {
 			/* Writes the writable as defined by the writable. */
 			writableDestination.write(j.toJson());
-		} else if (jsonSerializable instanceof Enum e
-				&& flags.contains(SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS)) {
+		} else if (jsonSerializable instanceof Enum e) {
 			writableDestination.write('"');
 			writableDestination.write(e.getDeclaringClass().getName());
 			writableDestination.write('.');
@@ -687,9 +624,7 @@ public class Jsoner {
 			writableDestination.write('"');
 		} else if (jsonSerializable instanceof Character) {
 			/* Make sure the string is properly escaped. */
-			// writableDestination.write('"');
 			writableDestination.write(Jsoner.escape(jsonSerializable.toString()));
-			// writableDestination.write('"');
 		} else if (jsonSerializable instanceof Double d) {
 			if (((Double) jsonSerializable).isInfinite() || d.isNaN()) {
 				/* Infinite and not a number are not supported by the JSON specification, so null is used instead. */
@@ -698,22 +633,22 @@ public class Jsoner {
 				writableDestination.write(jsonSerializable.toString());
 			}
 		} else if (jsonSerializable instanceof Float f) {
-			if (((Float) jsonSerializable).isInfinite() || f.isNaN()) {
+			if (f.isInfinite() || f.isNaN()) {
 				/* Infinite and not a number are not supported by the JSON specification, so null is used instead. */
 				writableDestination.write("null");
 			} else {
-				writableDestination.write(jsonSerializable.toString());
+				writableDestination.write(f.toString());
 			}
 		} else if (jsonSerializable instanceof Number || jsonSerializable instanceof Boolean) {
 			writableDestination.write(jsonSerializable.toString());
 		} else if (jsonSerializable instanceof GamaColor col) {
 			writableDestination.write('{');
 			writableDestination.write('"' + "r" + '"' + ":");
-			Jsoner.serialize(col.red(), writableDestination, flags);
+			Jsoner.serialize(col.red(), writableDestination);
 			writableDestination.write("," + '"' + "g" + '"' + ":");
-			Jsoner.serialize(col.blue(), writableDestination, flags);
+			Jsoner.serialize(col.blue(), writableDestination);
 			writableDestination.write("," + '"' + "b" + '"' + ":");
-			Jsoner.serialize(col.green(), writableDestination, flags);
+			Jsoner.serialize(col.green(), writableDestination);
 			writableDestination.write('}');
 		} else if (jsonSerializable instanceof Map m) {
 			/* Writes the map in JSON object format. */
@@ -727,9 +662,9 @@ public class Jsoner {
 					writableDestination.write(',');
 				}
 				@SuppressWarnings ("rawtypes") final Map.Entry entry = (Map.Entry) entries.next();
-				Jsoner.serialize(entry.getKey(), writableDestination, flags);
+				Jsoner.serialize(entry.getKey(), writableDestination);
 				writableDestination.write(':');
-				Jsoner.serialize(entry.getValue(), writableDestination, flags);
+				Jsoner.serialize(entry.getValue(), writableDestination);
 			}
 			writableDestination.write('}');
 		} else if (jsonSerializable instanceof Collection c) {
@@ -743,16 +678,16 @@ public class Jsoner {
 				} else {
 					writableDestination.write(',');
 				}
-				Jsoner.serialize(elements.next(), writableDestination, flags);
+				Jsoner.serialize(elements.next(), writableDestination);
 			}
 			writableDestination.write(']');
 
 		} else if (jsonSerializable instanceof GamaPair p) {
 			// Considers gamapairs as json
 			writableDestination.write('{');
-			Jsoner.serialize(p.key, writableDestination, flags);
+			Jsoner.serialize(p.key, writableDestination);
 			writableDestination.write(':');
-			Jsoner.serialize(p.value, writableDestination, flags);
+			Jsoner.serialize(p.value, writableDestination);
 			writableDestination.write('}');
 
 		} else if (jsonSerializable instanceof byte[] bw) {
@@ -760,9 +695,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(bw[i], writableDestination, flags);
+					Jsoner.serialize(bw[i], writableDestination);
 				} else {
-					Jsoner.serialize(bw[i], writableDestination, flags);
+					Jsoner.serialize(bw[i], writableDestination);
 					writableDestination.write(',');
 				}
 			}
@@ -772,9 +707,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(sw[i], writableDestination, flags);
+					Jsoner.serialize(sw[i], writableDestination);
 				} else {
-					Jsoner.serialize(sw[i], writableDestination, flags);
+					Jsoner.serialize(sw[i], writableDestination);
 					writableDestination.write(',');
 				}
 			}
@@ -784,9 +719,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(iw[i], writableDestination, flags);
+					Jsoner.serialize(iw[i], writableDestination);
 				} else {
-					Jsoner.serialize(iw[i], writableDestination, flags);
+					Jsoner.serialize(iw[i], writableDestination);
 					writableDestination.write(',');
 				}
 			}
@@ -796,9 +731,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(lw[i], writableDestination, flags);
+					Jsoner.serialize(lw[i], writableDestination);
 				} else {
-					Jsoner.serialize(lw[i], writableDestination, flags);
+					Jsoner.serialize(lw[i], writableDestination);
 					writableDestination.write(',');
 				}
 			}
@@ -808,9 +743,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(fw[i], writableDestination, flags);
+					Jsoner.serialize(fw[i], writableDestination);
 				} else {
-					Jsoner.serialize(fw[i], writableDestination, flags);
+					Jsoner.serialize(fw[i], writableDestination);
 					writableDestination.write(',');
 				}
 			}
@@ -820,9 +755,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(dw[i], writableDestination, flags);
+					Jsoner.serialize(dw[i], writableDestination);
 				} else {
-					Jsoner.serialize(dw[i], writableDestination, flags);
+					Jsoner.serialize(dw[i], writableDestination);
 					writableDestination.write(',');
 				}
 			}
@@ -832,9 +767,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(bw[i], writableDestination, flags);
+					Jsoner.serialize(bw[i], writableDestination);
 				} else {
-					Jsoner.serialize(bw[i], writableDestination, flags);
+					Jsoner.serialize(bw[i], writableDestination);
 					writableDestination.write(',');
 				}
 			}
@@ -844,9 +779,9 @@ public class Jsoner {
 			writableDestination.write("[\"");
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(cw[i], writableDestination, flags);
+					Jsoner.serialize(cw[i], writableDestination);
 				} else {
-					Jsoner.serialize(cw[i], writableDestination, flags);
+					Jsoner.serialize(cw[i], writableDestination);
 					writableDestination.write("\",\"");
 				}
 			}
@@ -856,9 +791,9 @@ public class Jsoner {
 			writableDestination.write('[');
 			for (int i = 0; i < numberOfElements; i++) {
 				if (i == numberOfElements - 1) {
-					Jsoner.serialize(ow[i], writableDestination, flags);
+					Jsoner.serialize(ow[i], writableDestination);
 				} else {
-					Jsoner.serialize(ow[i], writableDestination, flags);
+					Jsoner.serialize(ow[i], writableDestination);
 					writableDestination.write(",");
 				}
 			}
@@ -868,19 +803,20 @@ public class Jsoner {
 
 			writableDestination.write('{');
 			writableDestination.write('"' + "species" + '"' + ":");
-			Jsoner.serialize(species.getSpeciesExpr().getName(), writableDestination, flags);
-
+			Jsoner.serialize(species.getSpeciesExpr().getName(), writableDestination);
+			boolean isGrid = agent instanceof IGridAgent;
 			for (final String theVar : species.getAttributeNames()) {
-				if (!NON_JSONABLE_ATTRIBUTE_NAMES.contains(theVar)) {
+				if (NON_SERIALISABLE.contains(theVar) || isGrid && GRID_NON_SERIALISABLE.contains(theVar)) { continue; }
+				if (!NON_SERIALISABLE.contains(theVar)) {
 					writableDestination.write(',');
 					writableDestination.write('"' + theVar + '"');
 					writableDestination.write(":");
 
 					Object attrValue = species.getVarExpr(theVar, false).value(agent.getScope());
 					if (attrValue instanceof IAgent ia) {
-						Jsoner.serialize(ia.getName(), writableDestination, flags);
+						Jsoner.serialize(ia.getName(), writableDestination);
 					} else {
-						Jsoner.serialize(attrValue, writableDestination, flags);
+						Jsoner.serialize(attrValue, writableDestination);
 					}
 				}
 			}
@@ -921,78 +857,27 @@ public class Jsoner {
 			writableDestination.write("}");
 		} else {
 			try {
-				writableDestination.write(streamConverter.convertObjectToJSONStream(null, jsonSerializable));
+				writableDestination.write(streamConverter.toJSon(null, jsonSerializable));
 			} catch (Exception e) {
-				/* It cannot by any measure be safely serialized according to specification. */
-				if (!flags.contains(SerializationOptions.ALLOW_INVALIDS)) /*
-																			 * Notify the caller the cause of failure
-																			 * for the serialization.
-																			 */
-					throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName()
-							+ " as: " + jsonSerializable.toString()
-							+ "  that isn't JSON serializable.\n  Try:\n    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
 				/* Can be helpful for debugging how it isn't valid. */
 				writableDestination.write(jsonSerializable.toString());
+				throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName()
+						+ " that isn't JSON serializable because of " + e.getMessage());
 			}
 		}
-
-		// else {
-		// /* It cannot by any measure be safely serialized according to specification. */
-		// if (flags.contains(SerializationOptions.ALLOW_INVALIDS)) {
-		// /* Can be helpful for debugging how it isn't valid. */
-		// writableDestination.write(jsonSerializable.toString());
-		// } else {
-		// /* Notify the caller the cause of failure for the serialization. */
-		// throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName() + " as: "
-		// + jsonSerializable.toString()
-		// + " that isn't JSON serializable.\n Try:\n 1) Implementing the Jsonable interface for the object to return
-		// valid JSON. If it already does it probably has a bug.\n 2) If you cannot edit the source of the object or
-		// couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n 3)
-		// Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing
-		// it.\n 4) If you feel it should have serialized you could use a more tolerant serialization for debugging
-		// purposes.");
-		// }
-		// }
-		// System.out.println(writableDestination.toString());
-	}
-
-	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
-	private static final Set<String> NON_JSONABLE_ATTRIBUTE_NAMES =
-			new HashSet<>(Arrays.asList(IKeyword.PEERS, IKeyword.HOST, IKeyword.AGENTS, IKeyword.MEMBERS));
-
-	/**
-	 * Serializes like the first version of this library. It has been adapted to use Jsonable for serializing custom
-	 * objects, but otherwise works like the old JSON string serializer. It will allow non-JSON values in its output
-	 * like the old one. It can be helpful for last resort log statements and debugging errors in self generated JSON.
-	 * Anything serialized using this method isn't guaranteed to be deserializable.
-	 *
-	 * @param jsonSerializable
-	 *            represents the object that should be serialized in JSON format.
-	 * @param writableDestination
-	 *            represents where the resulting JSON text is written to.
-	 * @throws IOException
-	 *             if the writableDestination encounters an I/O problem, like being closed while in use.
-	 */
-	public static void serializeCarelessly(final Object jsonSerializable, final Writer writableDestination)
-			throws IOException {
-		Jsoner.serialize(jsonSerializable, writableDestination,
-				EnumSet.of(SerializationOptions.ALLOW_JSONABLES, SerializationOptions.ALLOW_INVALIDS));
 	}
 
 	/**
-	 * Serializes JSON values and only JSON values according to the RFC 4627 JSON specification.
+	 * Checks if is primitive array.
 	 *
-	 * @param jsonSerializable
-	 *            represents the object that should be serialized in JSON format.
-	 * @param writableDestination
-	 *            represents where the resulting JSON text is written to.
-	 * @throws IOException
-	 *             if the writableDestination encounters an I/O problem, like being closed while in use.
-	 * @throws IllegalArgumentException
-	 *             if the jsonSerializable isn't serializable in raw JSON.
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param obj
+	 *            the obj
+	 * @return true, if is primitive array
+	 * @date 28 oct. 2023
 	 */
-	public static void serializeStrictly(final Object jsonSerializable, final Writer writableDestination)
-			throws IOException {
-		Jsoner.serialize(jsonSerializable, writableDestination, EnumSet.noneOf(SerializationOptions.class));
+	public static boolean isPrimitiveArray(final Object obj) {
+		return obj != null && obj.getClass().isArray() && obj.getClass().getComponentType() != null
+				&& obj.getClass().getComponentType().isPrimitive();
 	}
 }

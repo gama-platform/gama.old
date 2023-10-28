@@ -17,7 +17,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
-import ummisco.gama.serializer.gamaType.converter;
 
 /**
  * The Class BDIPlanType.
@@ -29,7 +28,7 @@ import ummisco.gama.serializer.gamaType.converter;
 		wraps = { BDIPlan.class },
 		concept = { IConcept.TYPE, IConcept.BDI })
 @doc ("a type representing a plan for the BDI engine")
-@converter (GamaBDIPlanConverter.class)
+// @converter (GamaBDIPlanConverter.class)
 public class BDIPlanType extends GamaType<BDIPlan> {
 
 	/** The Constant id. */

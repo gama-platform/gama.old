@@ -1,44 +1,46 @@
 /*******************************************************************************************************
  *
- * NetworkMessage.java, in ummisco.gama.network, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * NetworkMessage.java, in ummisco.gama.network, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.network.common;
 
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.runtime.IScope;
-import ummisco.gama.serializer.factory.StreamConverter;
+import ummisco.gama.serializer.implementations.SerialisedObjectReader;
 
 /**
  * The Class NetworkMessage.
  */
 public class NetworkMessage implements ConnectorMessage {
-	
+
 	/** The Constant UNDEFINED. */
 	public static final String UNDEFINED = "undefined";
-	
+
 	/** The from. */
 	private final String from;
-	
+
 	/** The to. */
 	private final String to;
-	
+
 	/** The content. */
 	private final String content;
-	
+
 	/** The is plain message. */
 	protected boolean isPlainMessage = false;
-	
+
 	/**
 	 * Instantiates a new network message.
 	 *
-	 * @param to the to
-	 * @param data the data
+	 * @param to
+	 *            the to
+	 * @param data
+	 *            the data
 	 */
 	protected NetworkMessage(final String to, final String data) {
 		this.content = data;
@@ -50,8 +52,10 @@ public class NetworkMessage implements ConnectorMessage {
 	/**
 	 * Instantiates a new network message.
 	 *
-	 * @param to the to
-	 * @param data the data
+	 * @param to
+	 *            the to
+	 * @param data
+	 *            the data
 	 */
 	protected NetworkMessage(final String from, final String to, final String data, final boolean isPlain) {
 		this.from = from;
@@ -59,12 +63,16 @@ public class NetworkMessage implements ConnectorMessage {
 		this.content = data;
 		isPlainMessage = isPlain;
 	}
+
 	/**
 	 * Instantiates a new network message.
 	 *
-	 * @param from the from
-	 * @param to the to
-	 * @param data the data
+	 * @param from
+	 *            the from
+	 * @param to
+	 *            the to
+	 * @param data
+	 *            the data
 	 */
 	protected NetworkMessage(final String from, final String to, final String data) {
 		this.from = from;
@@ -74,23 +82,16 @@ public class NetworkMessage implements ConnectorMessage {
 	}
 
 	@Override
-	public String getSender() {
-		return from;
-	}
+	public String getSender() { return from; }
 
 	@Override
-	public String getReceiver() {
-		return to;
-	}
+	public String getReceiver() { return to; }
 
-	public String getPlainContents() {
-		return content;
-	}
-	
 	@Override
-	public boolean isPlainMessage() {
-		return isPlainMessage;
-	}
+	public String getPlainContents() { return content; }
+
+	@Override
+	public boolean isPlainMessage() { return isPlainMessage; }
 
 	@Override
 	public GamaMessage getContents(final IScope scope) {
@@ -100,7 +101,8 @@ public class NetworkMessage implements ConnectorMessage {
 	/**
 	 * Gets the plain content.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the plain content
 	 */
 	public GamaMessage getPlainContent(final IScope scope) {
@@ -112,24 +114,23 @@ public class NetworkMessage implements ConnectorMessage {
 	/**
 	 * Gets the composite content.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the composite content
 	 */
 	public GamaMessage getCompositeContent(final IScope scope) {
-		final Object messageContent = StreamConverter.convertStreamToObject(scope, content);
+		final Object messageContent = SerialisedObjectReader.getInstance().restoreFromString(scope, content); // StreamConverter.convertStreamToObject(scope,
+																												// content);
 		GamaMessage message = null;
-		if (messageContent instanceof CompositeGamaMessage)
+		if (messageContent instanceof CompositeGamaMessage) {
 			message = (GamaMessage) messageContent;
-		else
+		} else {
 			message = new GamaMessage(scope, from, to, messageContent);
+		}
 		message.hasBeenReceived(scope);
 		return message;
 	}
 
-
-
 	@Override
-	public boolean isCommandMessage() {
-		return false;
-	}
+	public boolean isCommandMessage() { return false; }
 }

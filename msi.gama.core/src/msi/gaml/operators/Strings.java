@@ -18,6 +18,7 @@ import java.util.regex.PatternSyntaxException;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.test;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -810,8 +811,9 @@ public class Strings {
 			category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
 	@doc (
-			value = "Returns a string that represents the compressed (using gzip) form of the argument",
+			value = "Returns a string that represents the compressed form (using gzip) of the argument",
 			see = { "uncompress" })
+	@no_test
 	public static String zip(final IScope scope, final String str) {
 		if (str == null) throw GamaRuntimeException.error("String cannot be null", scope);
 		if (str.isEmpty()) return str;
@@ -835,8 +837,9 @@ public class Strings {
 			category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
 	@doc (
-			value = "Returns a string that represents the uncompressed (using gzip) form of the argument",
+			value = "Returns a string that represents the uncompressed form (using gzip) of the argument",
 			see = { "compress" })
+	@no_test
 	public static String unzip(final IScope scope, final String str) {
 		if (str == null) throw GamaRuntimeException.error("String cannot be null", scope);
 		if (str.isEmpty()) return str;

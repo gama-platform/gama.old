@@ -15,8 +15,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import ummisco.gama.serializer.gamaType.converters.IGamaConverter;
-
 /**
  * The Annotation converter.
  */
@@ -26,5 +24,5 @@ import ummisco.gama.serializer.gamaType.converters.IGamaConverter;
 public @interface converter {
 
 	/** The class to use as converter. */
-	Class<? extends IGamaConverter> value();
+	// Class<? extends IGamaConverter> value();
 }

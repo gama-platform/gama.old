@@ -12,16 +12,15 @@ package ummisco.gama.serializer.implementations;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.ISerialisedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.metamodel.topology.grid.IGridAgent;
+import msi.gama.util.file.json.Jsoner;
 
 /**
  * The Class SerialisedAgent.
@@ -32,15 +31,6 @@ import msi.gama.metamodel.topology.grid.IGridAgent;
 public record SerialisedAgent(/* AgentReference ref */ int index, Map<String, Object> attributes)
 		implements ISerialisedAgent {
 
-	/** The non serialisable. */
-	static Set<String> NON_SERIALISABLE = Set.of(IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.LOCATION, IKeyword.HOST,
-			IKeyword.PEERS, IKeyword.EXPERIMENT, IKeyword.WORLD_AGENT_NAME, SimulationAgent.TIME,
-			PlatformAgent.MACHINE_TIME, SimulationAgent.DURATION, SimulationAgent.AVERAGE_DURATION,
-			SimulationAgent.TOTAL_DURATION, IKeyword.INDEX);
-
-	/** The grid non serialisable. */
-	static Set<String> GRID_NON_SERIALISABLE = Set.of(IKeyword.GRID_X, IKeyword.GRID_Y, IKeyword.NEIGHBORS);
-
 	/**
 	 * Instantiates a new agent proxy.
 	 *
@@ -50,8 +40,7 @@ public record SerialisedAgent(/* AgentReference ref */ int index, Map<String, Ob
 	 * @date 31 juil. 2023
 	 */
 	public SerialisedAgent(final IAgent target) {
-		this(/* new AgentReference(target), */target.getIndex(),
-				filterAttributes(target, target instanceof IGridAgent, target.getAttributes(true)));
+		this(target.getIndex(), filterAttributes(target, target instanceof IGridAgent, target.getAttributes(true)));
 	}
 
 	/**
@@ -79,7 +68,7 @@ public record SerialisedAgent(/* AgentReference ref */ int index, Map<String, Ob
 		Map<String, Object> map = new HashMap<>();
 		for (Map.Entry<String, Object> entry : m.entrySet()) {
 			String k = entry.getKey();
-			if (NON_SERIALISABLE.contains(k) || isGrid && GRID_NON_SERIALISABLE.contains(k)) { continue; }
+			if (Jsoner.NON_SERIALISABLE.contains(k) || isGrid && Jsoner.GRID_NON_SERIALISABLE.contains(k)) { continue; }
 			Object v = entry.getValue();
 			map.put(k, v instanceof IPopulation p
 					? p.isGrid() ? new SerialisedGrid((GridPopulation) p) : new SerialisedPopulation(p) : v);

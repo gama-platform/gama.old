@@ -21,7 +21,8 @@ import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import ummisco.gama.network.skills.INetworkSkill;
-import ummisco.gama.serializer.factory.StreamConverter;
+import ummisco.gama.serializer.implementations.ISerialisationConstants;
+import ummisco.gama.serializer.implementations.SerialisedObjectSaver;
 
 /**
  * The Class Connector.
@@ -75,7 +76,7 @@ public abstract class Connector implements IConnector {
 	 */
 	protected Connector() {
 		boxFollower = new HashMap<>();
-		topicSuscribingPending = Collections.synchronizedList(new ArrayList<String>());
+		topicSuscribingPending = Collections.synchronizedList(new ArrayList<>());
 		connectionParameter = new HashMap<>();
 		receivedMessage = new HashMap<>();
 		localMemberNames = new HashMap<>();
@@ -113,7 +114,7 @@ public abstract class Connector implements IConnector {
 	@Override
 	public List<ConnectorMessage> fetchMessageBox(final IAgent agent) {
 		final List<ConnectorMessage> currentMessage = receivedMessage.get(agent);
-		this.receivedMessage.put(agent, new LinkedList<ConnectorMessage>());
+		this.receivedMessage.put(agent, new LinkedList<>());
 		return currentMessage;
 	}
 
@@ -127,7 +128,8 @@ public abstract class Connector implements IConnector {
 	 * @throws GamaNetworkException
 	 *             the gama network exception
 	 */
-	public void storeMessage(final String sender, final String topic, final String content) throws GamaNetworkException {
+	public void storeMessage(final String sender, final String topic, final String content)
+			throws GamaNetworkException {
 		// final ArrayList<IAgent> bb = this.boxFollower.get(receiver);
 		final ConnectorMessage msg = MessageFactory.unPackNetworkMessage(sender, topic, content);
 		if (!this.localMemberNames.containsKey(msg.getSender())) {
@@ -153,14 +155,15 @@ public abstract class Connector implements IConnector {
 				case FETCH_ALL_MESSAGE_THREAD_SAFE_ACTION: {
 					final Map<IAgent, LinkedList<ConnectorMessage>> newBox = new HashMap<>();
 					for (final IAgent agt : this.receivedMessage.keySet()) {
-						newBox.put(agt, new LinkedList<ConnectorMessage>());
+						newBox.put(agt, new LinkedList<>());
 					}
 					final Map<IAgent, LinkedList<ConnectorMessage>> allMessage = this.receivedMessage;
 					this.receivedMessage = newBox;
 					return allMessage;
 				}
 				case PUSH_RECEIVED_MESSAGE_THREAD_SAFE_ACTION: {
-					final ArrayList<IAgent> bb = this.boxFollower.get(groupName)==null? this.boxFollower.get("ALL"): this.boxFollower.get(groupName);
+					final ArrayList<IAgent> bb = this.boxFollower.get(groupName) == null ? this.boxFollower.get("ALL")
+							: this.boxFollower.get(groupName);
 					for (final IAgent agt : bb) {
 						final LinkedList<ConnectorMessage> messages = receivedMessage.get(agt);
 						if (messages != null) { messages.add(message); }
@@ -188,9 +191,11 @@ public abstract class Connector implements IConnector {
 				if (cmsg.getSender() instanceof IAgent) {
 					cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
 				}
-				final NetworkMessage msg =
-						MessageFactory.buildNetworkMessage((String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME),
-								receiver, StreamConverter.convertObjectToStream(sender.getScope(), cmsg));
+				final NetworkMessage msg = MessageFactory.buildNetworkMessage(
+						(String) sender.getAttribute(INetworkSkill.NET_AGENT_NAME), receiver,
+						SerialisedObjectSaver.getInstance().saveToString(sender.getScope(), cmsg,
+								ISerialisationConstants.BINARY_FORMAT,
+								true) /* StreamConverter.convertObjectToStream(sender.getScope(), cmsg) */);
 				this.sendMessage(sender, receiver, MessageFactory.packMessage(msg));
 			} else {
 				this.sendMessage(sender, receiver, content.getContents(sender.getScope()).toString());
@@ -224,9 +229,9 @@ public abstract class Connector implements IConnector {
 
 	@Override
 	public void joinAGroup(final IAgent agt, final String groupName) {
-//		if (isRaw) return;
+		// if (isRaw) return;
 		if (!this.receivedMessage.containsKey(agt)) {
-			this.receivedMessage.put(agt, new LinkedList<ConnectorMessage>());
+			this.receivedMessage.put(agt, new LinkedList<>());
 		}
 
 		ArrayList<IAgent> agentBroadcast = this.boxFollower.get(groupName);
@@ -252,16 +257,12 @@ public abstract class Connector implements IConnector {
 
 		if (this.receivedMessage.get(agent) == null && !isRaw()) { joinAGroup(agent, netAgent); }
 	}
-	
+
 	@Override
-	public boolean isRaw() {
-		return isRaw;
-	}
-	
+	public boolean isRaw() { return isRaw; }
+
 	@Override
-	public void setRaw(boolean isRaw) {
-		this.isRaw = isRaw;
-	}
+	public void setRaw(final boolean isRaw) { this.isRaw = isRaw; }
 
 	/**
 	 * Connect to server.
@@ -332,6 +333,5 @@ public abstract class Connector implements IConnector {
 	 */
 	protected abstract void sendMessage(final IAgent sender, final String receiver, final String content)
 			throws GamaNetworkException;
-
 
 }
