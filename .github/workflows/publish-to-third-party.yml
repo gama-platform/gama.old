@@ -59,6 +59,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish to windows 🪟
 
+    # we will disable this as long as komac is not working
+    # the author is working on a full rewrite
+    if: false 
+
     steps:
       - name: Publish Gama to Winget 🚀
         if: needs.get-tag-info.outputs.prerelease == 'false'
