@@ -81,6 +81,23 @@ public class GamaMapFactory {
 	/**
 	 * Wrap.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param <K>
+	 *            the key type
+	 * @param <V>
+	 *            the value type
+	 * @param wrapped
+	 *            the wrapped
+	 * @return the i map
+	 * @date 29 oct. 2023
+	 */
+	public static <K, V> IMap<K, V> wrap(final Map<K, V> wrapped) {
+		return new GamaMapWrapper(wrapped, Types.NO_TYPE, Types.NO_TYPE, true);
+	}
+
+	/**
+	 * Wrap.
+	 *
 	 * @param <K>
 	 *            the key type
 	 * @param <V>

@@ -22,13 +22,20 @@ import org.nustaq.serialization.FSTObjectOutput;
 import msi.gama.common.geometry.GamaCoordinateSequenceFactory;
 import msi.gama.common.geometry.GamaGeometryFactory;
 import msi.gama.common.geometry.GeometryUtils;
+import msi.gama.metamodel.agent.AgentReference;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.ISerialisedAgent;
+import msi.gama.metamodel.agent.SerialisedAgent;
+import msi.gama.metamodel.population.ISerialisedPopulation;
+import msi.gama.metamodel.population.SerialisedGrid;
+import msi.gama.metamodel.population.SerialisedPopulation;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.GamaShapeFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -187,13 +194,16 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			@Override
 			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
 				out.writeInt(o.index());
+				out.writeStringUTF(o.species());
 				out.writeObject(o.attributes());
+				out.writeObject(o.innerPopulations());
 			}
 
 			@SuppressWarnings ("unchecked")
 			@Override
 			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedAgent(in.readInt(), (Map<String, Object>) in.readObject());
+				return new SerialisedAgent(in.readInt(), in.readStringUTF(), (Map<String, Object>) in.readObject(),
+						(Map<String, ISerialisedPopulation>) in.readObject());
 			}
 		});
 
@@ -208,7 +218,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			@SuppressWarnings ("unchecked")
 			@Override
 			public SerialisedPopulation deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedPopulation(in.readStringUTF(), (List<SerialisedAgent>) in.readObject());
+				return new SerialisedPopulation(in.readStringUTF(), (List<ISerialisedAgent>) in.readObject());
 			}
 		});
 
@@ -224,7 +234,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			@SuppressWarnings ("unchecked")
 			@Override
 			public SerialisedGrid deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedGrid(in.readStringUTF(), (List<SerialisedAgent>) in.readObject(),
+				return new SerialisedGrid(in.readStringUTF(), (List<ISerialisedAgent>) in.readObject(),
 						(IGrid) in.readObject());
 			}
 		});
@@ -367,7 +377,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 	@Override
 	protected SerialisedAgent encodeToSerialisedForm(final IAgent agent) {
-		return SerialisedAgentFactory.createFor(agent);
+		return SerialisedAgent.createFor(agent);
 	}
 
 	/**
@@ -400,10 +410,25 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 * @date 29 sept. 2023
 	 */
 	@Override
-	public Object restoreObjectFromBytes(final IScope scope, final byte[] input) {
+	public Object createObjectFromBytes(final IScope scope, final byte[] input) {
 		try {
 			fst.setScope(scope);
 			return fst.asObject(input);
+		} finally {
+			fst.setScope(null);
+		}
+
+	}
+
+	@Override
+	public IAgent createAgentFromBytes(final IScope scope, final byte[] input) {
+		try {
+			fst.setScope(scope);
+			Object o = fst.asObject(input);
+			if (o instanceof SerialisedAgent sa) return sa.recreateIn(scope);
+			return null;
+		} catch (Exception e) {
+			throw GamaRuntimeException.create(e, scope);
 		} finally {
 			fst.setScope(null);
 		}
@@ -440,7 +465,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 */
 	@Override
 	public void restoreFromSerialisedForm(final IAgent sim, final SerialisedAgent image) {
-		SerialisedAgentFactory.restoreAgent(sim.getScope(), sim, image);
+		image.restoreAs(sim.getScope(), sim);
 	}
 
 }

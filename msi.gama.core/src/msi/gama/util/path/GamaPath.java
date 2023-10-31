@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * GamaPath.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
+ * GamaPath.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.util.path;
@@ -20,6 +20,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -40,6 +42,12 @@ import msi.gaml.types.Types;
 // Si
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, GraphPath<V, E>, IPath<V, E, G> {
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "source", source, "target", target, "edges", json.array(edges), "weight",
+				weight).add("graph", graph).add("graphVersion", graphVersion);
+	}
 
 	/** The target. */
 	V source, target;
@@ -224,46 +232,16 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		return new GamaPath(graph, source, target, edges);
 	}
 
-	// /////////////////////////////////////////////////
-	// Implements methods from IPath
-
-	// @Override
-	// public IList<IShape> getAgentList() {
-	// GamaList<IShape> ags = GamaListFactory.create(Types.GEOMETRY);
-	// ags.addAll(new HashSet<IShape>(realObjects.values()));
-	// return ags;
-	// }
-
 	@Override
 	public IList<V> getVertexList() {
 		if (graph == null) return GamaListFactory.EMPTY_LIST;
 		return GamaListFactory.<V> wrap(getGamlType().getKeyType(), GraphPath.super.getVertexList());
 	}
 
-	// TODO :to check
 	@Override
 	public double getWeight(final IShape line) throws GamaRuntimeException {
 		return line.getGeometry().getPerimeter(); // workaround for the moment
 	}
-
-	/**
-	 * Private method intended to compute the geometry of the path (a polyline) from the list of segments. While the
-	 * path is not invalidated, this list of segments should not be changed and the geometry can be cached.
-	 */
-	// FIXME BEN
-	// private void computeGeometry() {
-	// if ( super.getInnerGeometry() == null ) {
-	// try {
-	// setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); //
-	// Verify null
-	// // parameter
-	// } catch (GamaRuntimeException e) {
-	// GAMA.reportError(e);
-	// e.printStackTrace();
-	// }
-	// // Faire une methode geometriesToPolyline ? linesToPolyline ?
-	// }
-	// }
 
 	@Override
 	public String toString() {
@@ -359,7 +337,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	@Override
 	public void setGraph(final G graph) {
 		this.graph = graph;
-		graphVersion = graph.getVersion();
+		graphVersion = graph.getPathComputer().getVersion();
 
 	}
 

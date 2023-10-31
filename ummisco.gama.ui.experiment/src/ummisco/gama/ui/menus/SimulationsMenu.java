@@ -24,9 +24,8 @@ import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.constants.GamlCoreConstants;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 import ummisco.gama.serializer.implementations.ISerialisationConstants;
-import ummisco.gama.serializer.implementations.SerialisedAgentReader;
-import ummisco.gama.serializer.implementations.SerialisedAgentSaver;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
@@ -58,13 +57,13 @@ public class SimulationsMenu extends ContributionItem {
 	public static GamaCommand duplicateCurrentSimulation =
 			new GamaCommand("experiment/experiment.simulations.duplicate", "Duplicate Simulation",
 					"Duplicate the current simulation and add it to the experiment", e -> {
-						byte[] bytes = SerialisedAgentSaver.getInstance().saveToBytes(GAMA.getRuntimeScope(),
-								GAMA.getSimulation(), ISerialisationConstants.BINARY_FORMAT, true);
+						byte[] bytes = BinarySerialisation.saveToBytes(GAMA.getRuntimeScope(), GAMA.getSimulation(),
+								ISerialisationConstants.BINARY_FORMAT, true);
 						final SimulationAgent sim =
 								GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
 						GAMA.runAndUpdateAll(() -> {
 							try {
-								SerialisedAgentReader.getInstance().restoreFromBytes(sim, bytes);
+								BinarySerialisation.restoreFromBytes(sim, bytes);
 							} catch (IOException e1) {
 								e1.printStackTrace();
 							}
@@ -101,8 +100,8 @@ public class SimulationsMenu extends ContributionItem {
 				// default -> SerialisationConstants.BINARY_FORMAT;
 				// };
 
-				SerialisedAgentSaver.getInstance().saveToFile(sim.getScope(), sim, open, false,
-						ISerialisationConstants.BINARY_FORMAT, true);
+				BinarySerialisation.saveToFile(sim.getScope(), sim, open, ISerialisationConstants.BINARY_FORMAT, true,
+						false);
 			});
 
 	/** The save current simulation and history. */
@@ -118,8 +117,8 @@ public class SimulationsMenu extends ContributionItem {
 						fileSave.setFileName(sim.getModel().getName() + "_" + sim.getCycle(sim.getScope()) + "_cycles"
 								+ ".simulation");
 						String open = fileSave.open();
-						SerialisedAgentSaver.getInstance().saveToFile(sim.getScope(), sim, open, true,
-								ISerialisationConstants.BINARY_FORMAT, true);
+						BinarySerialisation.saveToFile(sim.getScope(), sim, open, ISerialisationConstants.BINARY_FORMAT,
+								true, true);
 					});
 
 	/** The replace current simulation. */
@@ -134,8 +133,7 @@ public class SimulationsMenu extends ContributionItem {
 						fileOpen.setFilterNames(new String[] { "Simulation files" });
 						String open = fileOpen.open();
 						if (open != null) {
-							GAMA.runAndUpdateAll(
-									() -> { SerialisedAgentReader.getInstance().restoreFromFile(sim, open); });
+							GAMA.runAndUpdateAll(() -> { BinarySerialisation.restoreFromFile(sim, open); });
 							GAMA.changeCurrentTopLevelAgent(sim, true);
 						}
 					});
@@ -150,7 +148,7 @@ public class SimulationsMenu extends ContributionItem {
 				if (open != null) {
 					final SimulationAgent sim =
 							GAMA.getExperiment().getAgent().createSimulation(new ParametersSet(), true);
-					SerialisedAgentReader.getInstance().restoreFromFile(sim, open);
+					BinarySerialisation.restoreFromFile(sim, open);
 				}
 
 			});

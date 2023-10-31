@@ -37,7 +37,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
 import msi.gaml.types.Types;
 
 /**
@@ -118,7 +118,9 @@ public class CommandExecutor {
 		// continue with the next one without waiting for it to finish
 		new Thread(() -> {
 			var res = command.execute(socket, map);
-			if (res != null && ReadyState.OPEN.equals(socket.getReadyState())) { socket.send(Jsoner.serialize(res)); }
+			if (res != null && ReadyState.OPEN.equals(socket.getReadyState())) {
+				socket.send(Json.getInstance().valueOf(res).toString());
+			}
 		}).start();
 	}
 
@@ -140,11 +142,11 @@ public class CommandExecutor {
 				var value = m.get("value");
 				if (name == null) return new CommandResponse(
 						GamaServerMessage.Type.MalformedRequest, "Parameter number " + i
-								+ " is missing its `name` field. Parameter received: " + Jsoner.serialize(m),
+								+ " is missing its `name` field. Parameter received: " + Json.getInstance().valueOf(m),
 						commandMap, false);
 				if (value == null) return new CommandResponse(
 						GamaServerMessage.Type.MalformedRequest, "Parameter number " + i
-								+ " is missing its `value` field. Parameter received: " + Jsoner.serialize(m),
+								+ " is missing its `value` field. Parameter received: " + Json.getInstance().valueOf(m),
 						commandMap, false);
 				i++;
 			}

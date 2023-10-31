@@ -21,7 +21,7 @@ import msi.gama.common.interfaces.IScopedStepable;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.SavedAgent;
+import msi.gama.metamodel.agent.ISerialisedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
@@ -183,7 +183,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		final Map<String, Object> firstInitValues = initialValues.isEmpty() ? null : initialValues.get(index);
 		final Object firstValue =
 				firstInitValues != null && !firstInitValues.isEmpty() ? firstInitValues.values().toArray()[0] : null;
-		if (firstValue instanceof SavedAgent sa) {
+		if (firstValue instanceof ISerialisedAgent sa) {
 			sim.updateWith(scope, sa);
 		} else {
 			sim.setExternalInits(firstInitValues);
@@ -191,7 +191,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 		}
 
 		if (toBeScheduled) {
-			if (isRestored || firstValue instanceof SavedAgent) {
+			if (isRestored || firstValue instanceof ISerialisedAgent) {
 				sim.initOutputs();
 			} else {
 				sim.schedule(scope);

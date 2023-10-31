@@ -9,7 +9,8 @@
  ********************************************************************************************************/
 package msi.gaml.interfaces;
 
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 
 /**
  * The interface IJSonable. Represents objects that can represent themselves in terms of JSON descriptions
@@ -22,30 +23,10 @@ import msi.gama.util.file.json.Jsoner;
 public interface IJsonable {
 
 	/**
-	 * Returns the serialization in JSON of this object
+	 * Returns the serialization in JSON of this object. The context of serialization is passed through "json".
 	 *
 	 * @return a string that can be reinterpreted to reproduce the object
 	 */
-	default String serializeToJson() {
-		return Jsoner.serialize(this);
-	}
+	JsonValue serializeToJson(Json json);
 
-	// /**
-	// * Deserialize. Returns the Object represented by this string in JSON. A scope is necessary to know how to
-	// interpret
-	// * it.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param gaml
-	// * the gaml
-	// * @return the object
-	// * @date 27 oct. 2023
-	// */
-	// default Object deserializeFromJson(final IScope scope, final String json) {
-	// try {
-	// return Jsoner.deserialize(json);
-	// } catch (DeserializationException e) {
-	// throw GamaRuntimeException.create(e, scope);
-	// }
-	// }
 }

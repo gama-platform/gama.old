@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * IValue.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
+ * IValue.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
@@ -12,6 +12,7 @@ package msi.gama.common.interfaces;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.interfaces.IGamlable;
+import msi.gaml.interfaces.IJsonable;
 
 /**
  * Represents a 'value' in GAML (a Java object that can provide a GAML type, be serializable into a GAML expression, and
@@ -21,7 +22,7 @@ import msi.gaml.interfaces.IGamlable;
  * @since 19 nov. 2008
  *
  */
-public interface IValue extends IGamlable, ITyped {
+public interface IValue extends IGamlable, ITyped, IJsonable {
 
 	/**
 	 * Returns the string 'value' of this value.

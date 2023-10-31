@@ -24,15 +24,6 @@ import msi.gama.common.interfaces.IKeyword;
  */
 public interface ISerialisationConstants {
 
-	/** The Constant KEY. */
-	String HEADER_KEY = "gama_header";
-
-	/** The Constant KEY. */
-	String HISTORY_KEY = "**history**";
-
-	/** The node key. */
-	String SERIALISE_HISTORY = "**serialise_history**";
-
 	/** The serialisation string. */
 	String SERIALISATION_STRING = "serialisation_string";
 
@@ -41,9 +32,6 @@ public interface ISerialisationConstants {
 
 	/** The json format. */
 	String JSON_FORMAT = "json";
-
-	/** The xml format. */
-	String XML_FORMAT = "xml";
 
 	/** The binary format. */
 	String BINARY_FORMAT = "binary";
@@ -54,14 +42,11 @@ public interface ISerialisationConstants {
 	/** The simulation formation. */
 	String SIMULATION_FILE = IKeyword.SIMULATION;
 
-	/** The gsim format. */
-	String GSIM_FILE = "gsim";
-
 	/** The file formats. */
-	Set<String> FILE_FORMATS = Set.of(JSON_FORMAT, XML_FORMAT, BINARY_FORMAT);
+	Set<String> FILE_FORMATS = Set.of(JSON_FORMAT, BINARY_FORMAT);
 
 	/** The file types. */
-	Set<String> FILE_TYPES = Set.of(AGENT_FILE, SIMULATION_FILE, GSIM_FILE);
+	Set<String> FILE_TYPES = Set.of(AGENT_FILE, SIMULATION_FILE);
 
 	/** The Constant NULL. */
 	byte[] NULL = {};

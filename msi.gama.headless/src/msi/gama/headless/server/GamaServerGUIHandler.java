@@ -35,8 +35,8 @@ import msi.gama.runtime.server.DefaultServerCommands;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.ISocketCommand;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.json.DeserializationException;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.ParseException;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -44,6 +44,9 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  */
 public class GamaServerGUIHandler extends NullGuiHandler {
+
+	/** The json. */
+	Json json = Json.getNew();
 
 	/** The status. */
 	IStatusDisplayer status;
@@ -58,7 +61,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 	 * @param type
 	 *            the type
 	 */
-	private static void sendMessage(final IExperimentAgent exp, final Object m, final GamaServerMessage.Type type) {
+	private void sendMessage(final IExperimentAgent exp, final Object m, final GamaServerMessage.Type type) {
 
 		try {
 
@@ -77,7 +80,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 				DEBUG.OUT("No socket found, maybe the client is already disconnected. Unable to send message: " + m);
 				return;
 			}
-			socket.send(Jsoner.serialize(new GamaServerMessage(type, m, (String) scope.getData("exp_id"))));
+			socket.send(json.valueOf(new GamaServerMessage(type, m, (String) scope.getData("exp_id"))).toString());
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -157,10 +160,9 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					if (!canSendMessage(scope.getExperiment())) return;
 
 					try {
-						sendMessage(scope.getExperiment(),
-								Jsoner.deserialize("{" + "\"message\": \"" + string + "\"" + "}"),
+						sendMessage(scope.getExperiment(), json.parse("{" + "\"message\": \"" + string + "\"" + "}"),
 								GamaServerMessage.Type.SimulationStatusInform);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(scope.getExperiment(), "{" + "\"message\": \"" + string + "\"" + "}",
@@ -175,10 +177,9 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					if (!canSendMessage(scope.getExperiment())) return;
 
 					try {
-						sendMessage(scope.getExperiment(),
-								Jsoner.deserialize("{" + "\"message\": \"" + message + "\"" + "}"),
+						sendMessage(scope.getExperiment(), json.parse("{" + "\"message\": \"" + message + "\"" + "}"),
 								GamaServerMessage.Type.SimulationStatusError);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(scope.getExperiment(), "{" + "\"message\": \"" + message + "\"" + "}",
@@ -193,15 +194,13 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					if (!canSendMessage(scope.getExperiment())) return;
 
 					try {
-						sendMessage(
-								scope.getExperiment(), Jsoner.deserialize("{" + "\"message\": \"" + msg + "\","
-										+ "\"color\": " + Jsoner.serialize(color) + "" + "}"),
+						sendMessage(scope.getExperiment(), json.parse(
+								"{" + "\"message\": \"" + msg + "\"," + "\"color\": " + json.valueOf(color) + "" + "}"),
 								GamaServerMessage.Type.SimulationStatus);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
-						sendMessage(scope.getExperiment(),
-								"{" + "\"message\": \"" + msg + "\"," + "\"color\": " + Jsoner.serialize(color) + "}",
+						sendMessage(scope.getExperiment(), json.object("message", msg, "color", color).toString(),
 								GamaServerMessage.Type.SimulationStatus);
 					}
 				}
@@ -213,14 +212,13 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 
 					try {
 						sendMessage(scope.getExperiment(),
-								Jsoner.deserialize(
+								json.parse(
 										"{" + "\"message\": \"" + message + "\"," + "\"icon\": \"" + icon + "\"" + "}"),
 								GamaServerMessage.Type.SimulationStatusInform);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
-						sendMessage(scope.getExperiment(),
-								"{" + "\"message\": \"" + message + "\"," + "\"icon\": \"" + icon + "\"" + "}",
+						sendMessage(scope.getExperiment(), json.object("message", message, "icon", icon).toString(),
 								GamaServerMessage.Type.SimulationStatusInform);
 					}
 
@@ -233,14 +231,12 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 
 					try {
 						sendMessage(scope.getExperiment(),
-								Jsoner.deserialize(
-										"{" + "\"message\": \"" + msg + "\"," + "\"icon\":\"" + icon + "\"" + "}"),
+								json.parse("{" + "\"message\": \"" + msg + "\"," + "\"icon\":\"" + icon + "\"" + "}"),
 								GamaServerMessage.Type.SimulationStatus);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
-						sendMessage(scope.getExperiment(),
-								"{" + "\"message\": \"" + msg + "\"," + "\"icon\": \"" + icon + "\"" + "}",
+						sendMessage(scope.getExperiment(), json.object("message", msg, "icon", icon).toString(),
 								GamaServerMessage.Type.SimulationStatus);
 					}
 				}
@@ -251,13 +247,12 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					if (!canSendMessage(scope.getExperiment())) return;
 
 					try {
-						sendMessage(scope.getExperiment(),
-								Jsoner.deserialize("{" + "\"message\": \"" + string + "\"" + "}"),
+						sendMessage(scope.getExperiment(), json.parse("{" + "\"message\": \"" + string + "\"" + "}"),
 								GamaServerMessage.Type.SimulationStatusNeutral);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
-						sendMessage(scope.getExperiment(), "{" + "\"message\": \"" + string + "\"" + "}",
+						sendMessage(scope.getExperiment(), json.object("message", string).toString(),
 								GamaServerMessage.Type.SimulationStatusNeutral);
 					}
 
@@ -286,15 +281,14 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					if (!canSendMessage(root.getExperiment())) return;
 
 					try {
-						sendMessage(
-								root.getExperiment(), Jsoner.deserialize("{" + "\"message\": \"" + s + "\","
-										+ "\"color\":" + Jsoner.serialize(color) + "}"),
+						sendMessage(root.getExperiment(),
+								json.parse(
+										"{" + "\"message\": \"" + s + "\"," + "\"color\":" + json.valueOf(color) + "}"),
 								GamaServerMessage.Type.SimulationOutput);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
-						sendMessage(root.getExperiment(),
-								"{" + "\"message\": \"" + s + "\"," + "\"color\":" + Jsoner.serialize(color) + "}",
+						sendMessage(root.getExperiment(), json.object("message", s, "color", color).toString(),
 								GamaServerMessage.Type.SimulationOutput);
 					}
 				}
@@ -305,15 +299,14 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 					if (!canSendMessage(root.getExperiment())) return;
 					try {
 						sendMessage(root.getExperiment(),
-								Jsoner.deserialize("{" + "\"cycle\":" + cycle + "," + "\"message\": \""
-										+ Jsoner.escape(s) + "\"," + "\"color\":" + Jsoner.serialize(color) + "}"),
+								json.parse("{" + "\"cycle\":" + cycle + "," + "\"message\": \"" + json.valueOf(s)
+										+ "\"," + "\"color\":" + json.valueOf(color) + "}"),
 								GamaServerMessage.Type.SimulationDebug);
-					} catch (DeserializationException e) {
+					} catch (ParseException e) {
 						// If for some reason we cannot deserialize, we send it as text
 						e.printStackTrace();
 						sendMessage(root.getExperiment(),
-								"{" + "\"cycle\":" + cycle + "," + "\"message\": \"" + Jsoner.escape(s) + "\","
-										+ "\"color\":" + Jsoner.serialize(color) + "}",
+								json.object("cycle", cycle, "message", s, "color", color).toString(),
 								GamaServerMessage.Type.SimulationDebug);
 					}
 				}

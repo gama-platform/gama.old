@@ -16,7 +16,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.metamodel.agent.SavedAgent;
+import msi.gama.metamodel.agent.ISerialisedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -57,10 +57,10 @@ import msi.gaml.types.Types;
 @facets (
 		value = { @facet (
 				name = IKeyword.TARGET,
-				type = { IType.AGENT, IType.LIST, IType.ATTRIBUTES },
+				type = { IType.AGENT, IType.LIST },
 				of = IType.AGENT,
 				optional = false,
-				doc = @doc ("an expression that is evaluated as an agent/a list of the agents to be released or an agent saved as a map")),
+				doc = @doc ("an expression that is evaluated as an agent/a list of the agents to be released")),
 				@facet (
 						name = IKeyword.AS,
 						type = { IType.SPECIES },
@@ -182,8 +182,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		final Object t = target.value(scope);
 		List<IAgent> releasedMicroAgents;
 		final IAgent macroAgent = scope.getAgent();
-		if (t instanceof SavedAgent) {
-			releasedMicroAgents = releaseAgentPrototype(scope, macroAgent, (SavedAgent) t);
+		if (t instanceof ISerialisedAgent ag) {
+			releasedMicroAgents = releaseAgentPrototype(scope, macroAgent, ag);
 		} else {
 			final IList<IAgent> microAgents = GamaListFactory.create(Types.AGENT);
 			if (t instanceof IContainer) {
@@ -220,7 +220,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	 *            the saved
 	 * @return the list
 	 */
-	private List<IAgent> releaseAgentPrototype(final IScope scope, final IAgent macroAgent, final SavedAgent saved) {
+	private List<IAgent> releaseAgentPrototype(final IScope scope, final IAgent macroAgent,
+			final ISerialisedAgent saved) {
 		if (asExpr == null) {
 			GAMA.reportError(scope, GamaRuntimeException
 					.error("Cannot release agent as its destination species is not specified", scope), true);
@@ -254,7 +255,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			return Collections.EMPTY_LIST;
 		}
 		final IPopulation<? extends IAgent> microSpeciesPopulation = macroAgent.getPopulationFor(microSpecies);
-		final IAgent released = saved.restoreTo(scope, microSpeciesPopulation);
+		final IAgent released = saved.restoreInto(scope, microSpeciesPopulation);
 		return GamaListFactory.create(scope, Types.AGENT, released);
 	}
 

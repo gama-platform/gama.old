@@ -817,8 +817,9 @@ public class MovingSkill extends Skill {
 			} else {
 				path = topo.pathBetween(scope, agent, goal);
 			}
-		} else if (topo instanceof GraphTopology && (((GraphTopology) topo).getPlaces() != path.getGraph()
-				|| recomputePath && ((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion())) {
+		} else if (topo instanceof GraphTopology
+				&& (((GraphTopology) topo).getPlaces() != path.getGraph() || recomputePath && ((GraphTopology) topo)
+						.getPlaces().getPathComputer().getVersion() != path.getGraphVersion())) {
 			path = topo.pathBetween(scope, agent, goal);
 		}
 		if (path == null) {

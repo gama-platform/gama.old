@@ -28,7 +28,7 @@ import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
 import msi.gaml.operators.Cast;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -79,12 +79,13 @@ public class GamaServerExperimentController extends AbstractExperimentController
 					if (Cast.asBool(scope, exp.getStopCondition().value(scope))) {
 						if (!"".equals(stopCondition)) {
 							mexp.socket
-									.send(Jsoner
-											.serialize(
+									.send(Json.getNew()
+											.valueOf(
 													new CommandResponse(GamaServerMessage.Type.SimulationEnded, "",
 															(IMap<String, Object>) mexp.simulator.getExperimentPlan()
 																	.getAgent().getAttribute("%%playCommand%%"),
-															false)));
+															false))
+											.toString());
 						}
 						break;
 					}

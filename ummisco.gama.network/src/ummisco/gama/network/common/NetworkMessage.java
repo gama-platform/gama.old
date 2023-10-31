@@ -12,7 +12,7 @@ package ummisco.gama.network.common;
 
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.runtime.IScope;
-import ummisco.gama.serializer.implementations.SerialisedObjectReader;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 
 /**
  * The Class NetworkMessage.
@@ -119,8 +119,7 @@ public class NetworkMessage implements ConnectorMessage {
 	 * @return the composite content
 	 */
 	public GamaMessage getCompositeContent(final IScope scope) {
-		final Object messageContent = SerialisedObjectReader.getInstance().restoreFromString(scope, content); // StreamConverter.convertStreamToObject(scope,
-																												// content);
+		final Object messageContent = BinarySerialisation.createFromString(scope, content);
 		GamaMessage message = null;
 		if (messageContent instanceof CompositeGamaMessage) {
 			message = (GamaMessage) messageContent;

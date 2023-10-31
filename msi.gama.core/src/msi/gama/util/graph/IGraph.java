@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IGraph.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * IGraph.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -15,7 +14,6 @@ import java.util.Map;
 
 import org.jgrapht.Graph;
 
-import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.variable;
@@ -102,15 +100,6 @@ public interface IGraph<Node, Edge>
 	 *            the weights
 	 */
 	void setWeights(Map<?, Double> weights);
-
-	// /**
-	// * Internal edge set.
-	// *
-	// * @return the collection
-	// */
-	// Collection _internalEdgeSet();
-
-	// Collection _internalNodesSet();
 
 	/**
 	 * Internal edge map.
@@ -203,90 +192,6 @@ public interface IGraph<Node, Edge>
 	Object addEdge(Object p);
 
 	/**
-	 * Sets the shortest path algorithm.
-	 *
-	 * @param optiType
-	 *            the new shortest path algorithm
-	 */
-	void setShortestPathAlgorithm(String optiType);
-
-	/**
-	 * Sets the k shortest path algorithm.
-	 *
-	 * @param optiType
-	 *            the new k shortest path algorithm
-	 */
-	void setKShortestPathAlgorithm(String optiType);
-
-	/**
-	 * Gets the floyd warshall shortest paths.
-	 *
-	 * @return the floyd warshall shortest paths
-	 */
-	FloydWarshallShortestPathsGAMA<Node, Edge> getFloydWarshallShortestPaths();
-
-	/**
-	 * Sets the floyd warshall shortest paths.
-	 *
-	 * @param optimizer
-	 *            the optimizer
-	 */
-	void setFloydWarshallShortestPaths(FloydWarshallShortestPathsGAMA<Node, Edge> optimizer);
-
-	/**
-	 * Gets the version.
-	 *
-	 * @return the version
-	 */
-	int getVersion();
-
-	/**
-	 * Sets the version.
-	 *
-	 * @param version
-	 *            the new version
-	 */
-	void setVersion(int version);
-
-	/**
-	 * Inc version.
-	 */
-	void incVersion();
-
-	// FIXME Patrick: To check
-	// public abstract IPath<V,E> computeShortestPathBetween(final Object
-	// source, final Object target);
-	// public abstract IList<IShape> computeBestRouteBetween(final Object
-	// source, final Object target);
-
-	/**
-	 * Compute shortest path between.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param source
-	 *            the source
-	 * @param target
-	 *            the target
-	 * @return the i path
-	 */
-	IPath<Node, Edge, IGraph<Node, Edge>> computeShortestPathBetween(IScope scope, final Node source,
-			final Node target);
-
-	/**
-	 * Compute best route between.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param source
-	 *            the source
-	 * @param target
-	 *            the target
-	 * @return the i list
-	 */
-	IList<Edge> computeBestRouteBetween(IScope scope, final Node source, final Node target);
-
-	/**
 	 * Compute weight.
 	 *
 	 * @param gamaPath
@@ -301,52 +206,6 @@ public interface IGraph<Node, Edge>
 	 * @return the double
 	 */
 	double computeTotalWeight();
-
-	/**
-	 * Checks if is save computed shortest paths.
-	 *
-	 * @return true, if is save computed shortest paths
-	 */
-	boolean isSaveComputedShortestPaths();
-
-	/**
-	 * Sets the save computed shortest paths.
-	 *
-	 * @param saveComputedShortestPaths
-	 *            the new save computed shortest paths
-	 */
-	void setSaveComputedShortestPaths(boolean saveComputedShortestPaths);
-
-	/**
-	 * Compute K shortest paths between.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param source
-	 *            the source
-	 * @param target
-	 *            the target
-	 * @param k
-	 *            the k
-	 * @return the i list
-	 */
-	IList<IPath<Node, Edge, IGraph<Node, Edge>>> computeKShortestPathsBetween(IScope scope, Node source, Node target,
-			int k);
-
-	/**
-	 * Compute K best routes between.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param source
-	 *            the source
-	 * @param target
-	 *            the target
-	 * @param k
-	 *            the k
-	 * @return the i list
-	 */
-	IList<IList<Edge>> computeKBestRoutesBetween(IScope scope, final Node source, final Node target, int k);
 
 	/**
 	 * Builds the value.
@@ -434,5 +293,14 @@ public interface IGraph<Node, Edge>
 	default boolean containsKey(final IScope scope, final Object o) {
 		return Graphs.containsVertex(scope, this, o);
 	}
+
+	/**
+	 * Gets the path computer.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the path computer
+	 * @date 31 oct. 2023
+	 */
+	PathComputer getPathComputer();
 
 }

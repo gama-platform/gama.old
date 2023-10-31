@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import msi.gama.kernel.experiment.ISimulationRecorder;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.SerialisedAgent;
 import msi.gama.util.ByteArrayZipper;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -121,10 +122,10 @@ public class SerialisedSimulationRecorder implements ISimulationRecorder, ISeria
 	 * @date 22 oct. 2023
 	 */
 	private SimulationHistory getSimulationHistory(final SimulationAgent sim) {
-		SimulationHistory history = (SimulationHistory) sim.getAttribute(HISTORY_KEY);
+		SimulationHistory history = (SimulationHistory) sim.getAttribute(SerialisedAgent.HISTORY_KEY);
 		if (history == null) {
 			history = new SimulationHistory();
-			sim.setAttribute(HISTORY_KEY, history);
+			sim.setAttribute(SerialisedAgent.HISTORY_KEY, history);
 		}
 		return history;
 	}

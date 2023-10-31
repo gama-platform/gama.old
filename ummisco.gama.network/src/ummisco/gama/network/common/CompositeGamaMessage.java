@@ -12,9 +12,8 @@ package ummisco.gama.network.common;
 
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.runtime.IScope;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 import ummisco.gama.serializer.implementations.ISerialisationConstants;
-import ummisco.gama.serializer.implementations.SerialisedObjectReader;
-import ummisco.gama.serializer.implementations.SerialisedObjectSaver;
 
 /**
  * The Class CompositeGamaMessage.
@@ -34,7 +33,7 @@ public class CompositeGamaMessage extends GamaMessage {
 	 */
 	public CompositeGamaMessage(final IScope scope, final GamaMessage message) {
 		super(scope, message.getSender(), message.getReceivers(), message.getContents(scope));
-		this.contents = SerialisedObjectSaver.getInstance().saveToString(scope, message.getContents(scope),
+		this.contents = BinarySerialisation.saveToString(scope, message.getContents(scope),
 				ISerialisationConstants.BINARY_FORMAT, true);
 		// this.contents = StreamConverter.convertNetworkObjectToStream(scope, message.getContents(scope));
 		this.emissionTimeStamp = message.getEmissionTimestamp();
@@ -70,7 +69,7 @@ public class CompositeGamaMessage extends GamaMessage {
 	public Object getContents(final IScope scope) {
 		this.setUnread(false);
 		if (deserializeContent == null) {
-			deserializeContent = SerialisedObjectReader.getInstance().restoreFromString(scope, (String) contents);
+			deserializeContent = BinarySerialisation.createFromString(scope, (String) contents);
 			// deserializeContent = StreamConverter.convertNetworkStreamToObject(scope, (String) contents);//
 
 		}

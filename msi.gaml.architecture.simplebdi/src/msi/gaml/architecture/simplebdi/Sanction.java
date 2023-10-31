@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * Sanction.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * Sanction.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
@@ -19,6 +19,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -32,6 +34,11 @@ import msi.gaml.types.Types;
 
 })
 public class Sanction implements IValue {
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "name", getName());
+	}
 
 	/** The sanction statement. */
 	private SanctionStatement sanctionStatement;
@@ -54,13 +61,13 @@ public class Sanction implements IValue {
 	/**
 	 * Instantiates a new sanction.
 	 */
-	public Sanction() {
-	}
+	public Sanction() {}
 
 	/**
 	 * Instantiates a new sanction.
 	 *
-	 * @param statement the statement
+	 * @param statement
+	 *            the statement
 	 */
 	public Sanction(final SanctionStatement statement) {
 		this.sanctionStatement = statement;
@@ -69,11 +76,9 @@ public class Sanction implements IValue {
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) return true;
-		if ((obj == null) || (getClass() != obj.getClass())) return false;
+		if (obj == null || getClass() != obj.getClass()) return false;
 		final Sanction other = (Sanction) obj;
-		if (!Objects.equals(sanctionStatement, other.sanctionStatement)) {
-			return false;
-		}
+		if (!Objects.equals(sanctionStatement, other.sanctionStatement)) return false;
 		return true;
 	}
 

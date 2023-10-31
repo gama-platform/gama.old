@@ -156,7 +156,7 @@ public class GraphTopology extends AbstractTopology {
 
 		}
 		if (sourceNode && targetNode)
-			return (GamaSpatialPath) graph.computeShortestPathBetween(scope, sourceN, targetN);
+			return (GamaSpatialPath) graph.getPathComputer().computeShortestPathBetween(scope, sourceN, targetN);
 
 		IShape edgeS = null, edgeT = null;
 		final boolean optimization = graph.edgeSet().size() > 1000;
@@ -339,7 +339,7 @@ public class GraphTopology extends AbstractTopology {
 			if (nodeT1 == source) {
 				l1 = lengthEdge(edgeT, target, nodeT2, nodeT1);
 			} else {
-				edges = getPlaces().computeBestRouteBetween(scope, source, nodeT1);
+				edges = getPlaces().getPathComputer().computeBestRouteBetween(scope, source, nodeT1);
 				final boolean isEmpty = edges.isEmpty();
 				l1 = isEmpty ? Double.MAX_VALUE : pathlengthEdges(edges) + lengthEdge(edgeT, target, nodeT2, nodeT1);
 				if (!isEmpty) {
@@ -356,7 +356,7 @@ public class GraphTopology extends AbstractTopology {
 				if (nodeT2 == source) {
 					l2 = lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
-					edges2 = getPlaces().computeBestRouteBetween(scope, source, nodeT2);
+					edges2 = getPlaces().getPathComputer().computeBestRouteBetween(scope, source, nodeT2);
 					l2 = edges2.isEmpty() ? Double.MAX_VALUE
 							: pathlengthEdges(edges2) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				}
@@ -375,7 +375,7 @@ public class GraphTopology extends AbstractTopology {
 			if (nodeS1 == target) {
 				l1 = lengthEdge(edgeS, source, nodeS2, nodeS1);
 			} else {
-				edges = getPlaces().computeBestRouteBetween(scope, nodeS1, target);
+				edges = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS1, target);
 				final boolean isEmpty = edges.isEmpty();
 				l1 = isEmpty ? Double.MAX_VALUE : pathlengthEdges(edges) + lengthEdge(edgeS, source, nodeS2, nodeS1);
 				if (!isEmpty) {
@@ -392,7 +392,7 @@ public class GraphTopology extends AbstractTopology {
 				if (nodeS2 == target) {
 					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2);
 				} else {
-					edges2 = getPlaces().computeBestRouteBetween(scope, nodeS2, target);
+					edges2 = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS2, target);
 					l2 = edges2.isEmpty() ? Double.MAX_VALUE
 							: pathlengthEdges(edges2) + lengthEdge(edgeS, source, nodeS1, nodeS2);
 				}
@@ -417,7 +417,7 @@ public class GraphTopology extends AbstractTopology {
 			if (nodeS1 == nodeT1) {
 				lmin = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeT, target, nodeT2, nodeT1);
 			} else {
-				edges = getPlaces().computeBestRouteBetween(scope, nodeS1, nodeT1);
+				edges = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS1, nodeT1);
 				final boolean isEmpty = edges.isEmpty();
 
 				final double els = lengthEdge(edgeS, source, nodeS2, nodeS1);
@@ -460,7 +460,7 @@ public class GraphTopology extends AbstractTopology {
 				if (nodeS2 == nodeT1) {
 					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT2, nodeT1);
 				} else {
-					edges2 = getPlaces().computeBestRouteBetween(scope, nodeS2, nodeT1);
+					edges2 = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS2, nodeT1);
 					final boolean isEmpty = edges2.isEmpty();
 					final double els = lengthEdge(edgeS, source, nodeS1, nodeS2);
 					final double elt = lengthEdge(edgeT, target, nodeT2, nodeT1);
@@ -504,7 +504,7 @@ public class GraphTopology extends AbstractTopology {
 				if (nodeS1 == nodeT2) {
 					l2 = lengthEdge(edgeS, source, nodeS2, nodeS1) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
-					edges2 = getPlaces().computeBestRouteBetween(scope, nodeS1, nodeT2);
+					edges2 = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS1, nodeT2);
 					final boolean isEmpty = edges2.isEmpty();
 					final double els = lengthEdge(edgeS, source, nodeS2, nodeS1);
 					final double elt = lengthEdge(edgeT, target, nodeT1, nodeT2);
@@ -532,7 +532,7 @@ public class GraphTopology extends AbstractTopology {
 				if (nodeS2 == nodeT2) {
 					l2 = lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				} else {
-					edges2 = getPlaces().computeBestRouteBetween(scope, nodeS2, nodeT2);
+					edges2 = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS2, nodeT2);
 					l2 = edges2.isEmpty() ? Double.MAX_VALUE : pathlengthEdges(edges2)
 							+ lengthEdge(edgeS, source, nodeS1, nodeS2) + lengthEdge(edgeT, target, nodeT1, nodeT2);
 				}
@@ -595,7 +595,7 @@ public class GraphTopology extends AbstractTopology {
 				IList<IShape> edgesbis = null;
 				if (computeOther) {
 					l1 = pathlengthEdges(edges) + lengthEdge(edgeS, source, nodeSbis, nodeS);
-					edgesbis = getPlaces().computeBestRouteBetween(scope, nodeSbis, nodeT);
+					edgesbis = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeSbis, nodeT);
 					l2 = pathlengthEdges(edgesbis) + lengthEdge(edgeS, source, nodeS, nodeSbis);
 				}
 				if (l1 < l2 || edgesbis == null || edgesbis.isEmpty() || edgesbis.get(0) == null) {
@@ -734,7 +734,7 @@ public class GraphTopology extends AbstractTopology {
 			if (edgeT != null) { edges.add(edgeT); }
 			return PathFactory.newInstance(scope, this, source, target, edges);
 		}
-		edges = getPlaces().computeBestRouteBetween(scope, nodeS, nodeT);
+		edges = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS, nodeT);
 		if (edges.isEmpty() || edges.get(0) == null) return null;
 
 		if (!sourceNode) { edges.add(0, edgeS); }
@@ -765,7 +765,7 @@ public class GraphTopology extends AbstractTopology {
 			if (existingEdge != null) { edges.add(existingEdge); }
 			return PathFactory.newInstance(scope, this, source, target, edges);
 		}
-		edges = getPlaces().computeBestRouteBetween(scope, source, target);
+		edges = getPlaces().getPathComputer().computeBestRouteBetween(scope, source, target);
 		if (existingEdge != null) {
 			edges = edges.listValue(scope, Types.NO_TYPE, true);
 			edges.addValueAtIndex(scope, 0, existingEdge);
@@ -919,7 +919,8 @@ public class GraphTopology extends AbstractTopology {
 		final boolean sourceNode = graph.containsVertex(source);
 		final boolean targetNode = graph.containsVertex(target);
 
-		if (sourceNode && targetNode) return graph.computeKShortestPathsBetween(scope, source, target, k);
+		if (sourceNode && targetNode)
+			return graph.getPathComputer().computeKShortestPathsBetween(scope, source, target, k);
 
 		IShape edgeS = null, edgeT = null;
 
@@ -1031,7 +1032,8 @@ public class GraphTopology extends AbstractTopology {
 				nodeSbis = s1;
 			}
 		}
-		final List<IList<IShape>> edgesList = getPlaces().computeKBestRoutesBetween(scope, nodeS, nodeT, k);
+		final List<IList<IShape>> edgesList =
+				getPlaces().getPathComputer().computeKBestRoutesBetween(scope, nodeS, nodeT, k);
 		final IList results = GamaListFactory.create(Types.PATH);
 		for (final IList<IShape> edges : edgesList) {
 			final GamaSpatialPath pp = pathFromEdgesUndirected(scope, edges, edgeS, edgeT, source, target, sourceNode,
@@ -1086,12 +1088,13 @@ public class GraphTopology extends AbstractTopology {
 			results.add(PathFactory.newInstance(scope, this, source, target, edges));
 			return results;
 		}
-		final List<IList<IShape>> edgesList = getPlaces().computeKBestRoutesBetween(scope, nodeS, nodeT, k);
+		final List<IList<IShape>> edgesList =
+				getPlaces().getPathComputer().computeKBestRoutesBetween(scope, nodeS, nodeT, k);
 		for (IList<IShape> edges : edgesList) {
 			/**
 			 * TODO AD: PROBLEM HERE. Why is edges recomputed immediately ?
 			 */
-			edges = getPlaces().computeBestRouteBetween(scope, nodeS, nodeT);
+			edges = getPlaces().getPathComputer().computeBestRouteBetween(scope, nodeS, nodeT);
 			if (edges.isEmpty() || edges.get(0) == null) { continue; }
 
 			if (!sourceNode) { edges.add(0, edgeS); }
@@ -1138,14 +1141,12 @@ public class GraphTopology extends AbstractTopology {
 				searchVertices = filter.getSpecies() == graph.getVertexSpecies();
 			}
 			if (searchEdges) {
-				final Set<IShape> edgs =
-						getNeighborsOfRec(scope, realS, true, distance, graph, new LinkedHashSet<IShape>());
+				final Set<IShape> edgs = getNeighborsOfRec(scope, realS, true, distance, graph, new LinkedHashSet<>());
 				for (final IShape ed : edgs) { agents.add(ed.getAgent()); }
 				return agents.items();
 			}
 			if (searchVertices) {
-				final Set<IShape> nds =
-						getNeighborsOfRec(scope, realS, false, distance, graph, new LinkedHashSet<IShape>());
+				final Set<IShape> nds = getNeighborsOfRec(scope, realS, false, distance, graph, new LinkedHashSet<>());
 				for (final IShape nd : nds) { agents.add(nd.getAgent()); }
 				return agents.items();
 			}
@@ -1155,8 +1156,7 @@ public class GraphTopology extends AbstractTopology {
 			} else {
 				agentsTotest = scope.getSimulation().getAgents(scope);
 			}
-			final Set<IShape> edges =
-					getNeighborsOfRec(scope, realS, true, distance, graph, new LinkedHashSet<IShape>());
+			final Set<IShape> edges = getNeighborsOfRec(scope, realS, true, distance, graph, new LinkedHashSet<>());
 			for (final Object ob : agentsTotest.iterable(scope)) {
 				final IShape ag = (IShape) ob;
 				if (filter.accept(scope, source, ag)) {

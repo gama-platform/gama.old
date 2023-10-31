@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * GamaPair.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamaPair.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util;
 
@@ -24,6 +23,8 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaMatrixType;
@@ -53,26 +54,30 @@ public class GamaPair<K, V>
 
 	/** The Constant KEY. */
 	public static final String KEY = "key";
-	
+
 	/** The Constant VALUE. */
 	public static final String VALUE = "value";
 
 	/** The type. */
 	private final IContainerType type;
-	
+
 	/** The key. */
 	public K key;
-	
+
 	/** The value. */
 	public V value;
 
 	/**
 	 * Instantiates a new gama pair.
 	 *
-	 * @param k the k
-	 * @param v the v
-	 * @param keyType the key type
-	 * @param contentsType the contents type
+	 * @param k
+	 *            the k
+	 * @param v
+	 *            the v
+	 * @param keyType
+	 *            the key type
+	 * @param contentsType
+	 *            the contents type
 	 */
 	public GamaPair(final K k, final V v, final IType keyType, final IType contentsType) {
 		key = k;
@@ -83,11 +88,16 @@ public class GamaPair<K, V>
 	/**
 	 * Instantiates a new gama pair.
 	 *
-	 * @param scope the scope
-	 * @param k the k
-	 * @param v the v
-	 * @param keyType the key type
-	 * @param contentsType the contents type
+	 * @param scope
+	 *            the scope
+	 * @param k
+	 *            the k
+	 * @param v
+	 *            the v
+	 * @param keyType
+	 *            the key type
+	 * @param contentsType
+	 *            the contents type
 	 */
 	public GamaPair(final IScope scope, final K k, final V v, final IType keyType, final IType contentsType) {
 		key = (K) keyType.cast(scope, k, null, false);
@@ -98,7 +108,8 @@ public class GamaPair<K, V>
 	/**
 	 * Equals.
 	 *
-	 * @param p the p
+	 * @param p
+	 *            the p
 	 * @return true, if successful
 	 */
 	public boolean equals(final GamaPair p) {
@@ -119,15 +130,11 @@ public class GamaPair<K, V>
 	}
 
 	@Override
-	public IContainerType getGamlType() {
-		return type;
-	}
+	public IContainerType getGamlType() { return type; }
 
 	@Override
 	@getter (KEY)
-	public K getKey() {
-		return key;
-	}
+	public K getKey() { return key; }
 
 	/**
 	 * First.
@@ -141,9 +148,7 @@ public class GamaPair<K, V>
 
 	@Override
 	@getter (VALUE)
-	public V getValue() {
-		return value;
-	}
+	public V getValue() { return value; }
 
 	/**
 	 * Last.
@@ -329,6 +334,11 @@ public class GamaPair<K, V>
 	@Override
 	public boolean containsKey(final IScope scope, final Object o) throws GamaRuntimeException {
 		return Objects.equals(key, o);
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "key", key, "value", value);
 	}
 
 }

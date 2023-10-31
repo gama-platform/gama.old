@@ -11,7 +11,8 @@
 package msi.gama.runtime.server;
 
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 
 /**
  * The Class CommandResponse.
@@ -49,11 +50,10 @@ public class CommandResponse extends GamaServerMessage {
 	}
 
 	@Override
-	public String serializeToJson() {
+	public JsonValue serializeToJson(final Json json) {
 		var params = commandParameters.copy(null);
 		params.remove("server");
-		return "{ " + "\"type\": \"" + type + "\"," + "\"content\": " + (isJson ? content : Jsoner.serialize(content))
-				+ "," + "\"command\": " + Jsoner.serialize(params) + "}";
+		return json.object("type", type, "content", isJson ? json.parse((String) content) : content, "command", params);
 	}
 
 }

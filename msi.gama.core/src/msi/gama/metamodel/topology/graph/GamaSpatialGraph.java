@@ -63,12 +63,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	private double tolerance = 0;
 
 	/** The vertices built. */
-	private final Map<Integer, IShape> verticesBuilt; // only used for
-														// optimization
-														// purpose of
-														// spatial graph
-
-	// building.
+	private final Map<Integer, IShape> verticesBuilt;
 
 	/**
 	 * Determines the relationship among two polygons.
@@ -431,7 +426,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			e1.addContext("Impossible to create edge from " + StringUtils.toGaml(e, false) + " in graph " + this);
 			throw e1;
 		}
-		// if ( edge == null ) { return false; }
 		edgeMap.put(e, edge);
 		dispatchEvent(scope, new GraphEvent(scope, this, this, e, null, GraphEventType.EDGE_ADDED));
 		return true;
@@ -449,12 +443,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 */
 	protected void init(final IScope scope, final IContainer edges, final IContainer vertices) {
 		this.directed = true;
-		edgeBased = true;
 		vertexRelation = null;
 		edgeSpecies = null;
 		agentEdge = true;
 		buildByEdgeWithNode(scope, edges, vertices);
-		version = 1;
 	}
 
 	/**
@@ -468,7 +460,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		return getScope().getSimulation().getPopulationFor(getSpecies());
-		// return null;// See if we can identify the populations of edges / vertices
 	}
 
 	/**

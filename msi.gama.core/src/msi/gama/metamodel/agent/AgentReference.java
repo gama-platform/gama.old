@@ -1,27 +1,29 @@
 /*******************************************************************************************************
  *
- * AgentReference.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.3).
+ * AgentReference.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.serializer.implementations;
+package msi.gama.metamodel.agent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
+import msi.gaml.interfaces.IJsonable;
 
 /**
  * The Class AgentReference.
  */
-public record AgentReference(String[] species, Integer[] index) {
+public record AgentReference(String[] species, Integer[] index) implements IJsonable {
 
 	/**
 	 * Instantiates a new reference to agent.
@@ -107,6 +109,11 @@ public record AgentReference(String[] species, Integer[] index) {
 			host = host.getHost();
 		}
 		return species.toArray(new Integer[0]);
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.object("ref", species[0], "populations", json.array(species), "indices", json.array(index));
 	}
 
 }

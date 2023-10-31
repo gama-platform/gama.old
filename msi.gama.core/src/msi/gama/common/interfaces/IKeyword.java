@@ -1,7 +1,6 @@
 /*******************************************************************************************************
  *
- * IKeyword.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * IKeyword.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -818,12 +817,6 @@ public interface IKeyword {
 
 	/** The name. */
 	String NAME = "name";
-
-	/** The nb cols. */
-	String NB_COLS = "nb_cols";
-
-	/** The nb rows. */
-	String NB_ROWS = "nb_rows";
 
 	/** The neighbors. */
 	String NEIGHBORS = "neighbors";

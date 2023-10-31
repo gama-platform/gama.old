@@ -22,8 +22,8 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 import ummisco.gama.serializer.implementations.ISerialisationConstants;
-import ummisco.gama.serializer.implementations.SerialisedAgentSaver;
 
 /**
  * The Class SimulationSaveDelegate.
@@ -38,8 +38,8 @@ public class SimulationSaveDelegate implements ISaveDelegate, ISerialisationCons
 			final boolean addHeader, final String type, final Object attributesToSave) throws IOException {
 		Object toSave = item.value(scope);
 		if (toSave instanceof IAgent sa) {
-			boolean zip = !JSON_FORMAT.equals(type) && !XML_FORMAT.equals(type);
-			SerialisedAgentSaver.getInstance().saveToFile(scope, sa, file.getPath(), type, zip);
+			boolean zip = !JSON_FORMAT.equals(type);
+			BinarySerialisation.saveToFile(scope, sa, file.getPath(), type, zip, true);
 		}
 	}
 

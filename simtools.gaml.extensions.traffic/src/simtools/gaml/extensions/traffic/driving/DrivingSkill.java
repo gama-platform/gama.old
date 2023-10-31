@@ -1971,13 +1971,14 @@ public class DrivingSkill extends MovingSkill {
 				source = (IAgent) Queries.closest_to(scope, graph.getVertices(), vehicle);
 			} else if (!graph.vertexSet().contains(source))
 				throw GamaRuntimeException.error(source.getName() + " must be a vertex in the given graph", scope);
-			path = graph.computeShortestPathBetween(scope, source, target);
+			path = graph.getPathComputer().computeShortestPathBetween(scope, source, target);
 		} else if (nodes != null && !nodes.isEmpty()) {
 			source = nodes.firstValue(scope);
 			target = nodes.lastValue(scope);
 			IList edges = GamaListFactory.create();
 			for (int i = 0; i < nodes.size() - 1; i++) {
-				List<Object> interEdges = graph.computeBestRouteBetween(scope, nodes.get(i), nodes.get(i + 1));
+				List<Object> interEdges =
+						graph.getPathComputer().computeBestRouteBetween(scope, nodes.get(i), nodes.get(i + 1));
 				edges.addAll(interEdges);
 			}
 			path = PathFactory.newInstance(graph, source, target, edges);

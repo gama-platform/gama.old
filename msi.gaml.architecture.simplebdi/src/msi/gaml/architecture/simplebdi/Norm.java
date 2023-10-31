@@ -19,6 +19,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -40,7 +42,7 @@ import msi.gaml.types.Types;
 		@variable (
 				name = SimpleBdiArchitecture.FINISHEDWHEN,
 				type = IType.STRING,
-				doc = @doc ("represents the condition whena norm is finished")),
+				doc = @doc ("represents the condition when a norm is finished")),
 		@variable (
 				name = SimpleBdiArchitecture.INSTANTANEAOUS,
 				type = IType.STRING,
@@ -52,6 +54,11 @@ import msi.gaml.types.Types;
 
 // Classe qui permet de définir les normes comme type, contenant le norm statement, sur l'exemple des plans
 public class Norm implements IValue {
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "name", getName());
+	}
 
 	/** The norm statement. */
 	private NormStatement normStatement;

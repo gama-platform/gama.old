@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * IMatrix.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * IMatrix.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.matrix;
 
@@ -29,6 +28,8 @@ import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.IFieldMatrixProvider;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import one.util.streamex.StreamEx;
 
@@ -70,7 +71,8 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Gets the rows.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the rows
 	 */
 	@Override
@@ -80,7 +82,8 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Gets the cols.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the cols
 	 */
 	@Override
@@ -92,16 +95,15 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	 */
 	@Override
 	default double[] getBand(final IScope scope, final int index) {
-		if (index == 0)
-			return getFieldData(scope);
-		else
-			return null;
+		if (index == 0) return getFieldData(scope);
+		return null;
 	}
 
 	/**
 	 * Gets the field data.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the field data
 	 */
 	// Redefined so as to reverse the calling (getBand() now calls it)
@@ -159,7 +161,8 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Gets the row.
 	 *
-	 * @param num_line the num line
+	 * @param num_line
+	 *            the num line
 	 * @return the row
 	 */
 	@operator (
@@ -179,7 +182,8 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Gets the column.
 	 *
-	 * @param num_line the num line
+	 * @param num_line
+	 *            the num line
 	 * @return the column
 	 */
 	@operator (
@@ -199,10 +203,13 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Plus.
 	 *
-	 * @param scope the scope
-	 * @param other the other
+	 * @param scope
+	 *            the scope
+	 * @param other
+	 *            the other
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.PLUS,
@@ -217,10 +224,13 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Times.
 	 *
-	 * @param scope the scope
-	 * @param other the other
+	 * @param scope
+	 *            the scope
+	 * @param other
+	 *            the other
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
@@ -235,10 +245,13 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Divides.
 	 *
-	 * @param scope the scope
-	 * @param other the other
+	 * @param scope
+	 *            the scope
+	 * @param other
+	 *            the other
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -253,10 +266,13 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Minus.
 	 *
-	 * @param scope the scope
-	 * @param other the other
+	 * @param scope
+	 *            the scope
+	 * @param other
+	 *            the other
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.MINUS,
@@ -271,9 +287,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Times.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
@@ -288,9 +306,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Times.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.MULTIPLY,
@@ -305,9 +325,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Divides.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -322,9 +344,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Divides.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.DIVIDE,
@@ -339,9 +363,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Plus.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.PLUS,
@@ -356,9 +382,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Plus.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.PLUS,
@@ -373,9 +401,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Minus.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.MINUS,
@@ -390,9 +420,11 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Minus.
 	 *
-	 * @param val the val
+	 * @param val
+	 *            the val
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@operator (
 			value = IKeyword.MINUS,
@@ -407,9 +439,12 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Gets the.
 	 *
-	 * @param scope the scope
-	 * @param col the col
-	 * @param row the row
+	 * @param scope
+	 *            the scope
+	 * @param col
+	 *            the col
+	 * @param row
+	 *            the row
 	 * @return the t
 	 */
 	T get(IScope scope, final int col, final int row);
@@ -417,18 +452,24 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Sets the.
 	 *
-	 * @param scope the scope
-	 * @param col the col
-	 * @param row the row
-	 * @param obj the obj
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param col
+	 *            the col
+	 * @param row
+	 *            the row
+	 * @param obj
+	 *            the obj
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	void set(IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException;
 
 	/**
 	 * Stream.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the stream ex
 	 */
 	@Override
@@ -437,43 +478,49 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Contains key.
 	 *
-	 * @param scope the scope
-	 * @param o the o
+	 * @param scope
+	 *            the scope
+	 * @param o
+	 *            the o
 	 * @return true, if successful
 	 */
 	@Override
 	default boolean containsKey(final IScope scope, final Object o) {
-		if (o instanceof GamaPoint) {
-			final GamaPoint p = (GamaPoint) o;
-			return p.x >= 0 && p.y >= 0 && p.x < getCols(scope) && p.y < getRows(scope);
-		}
+		if (o instanceof final GamaPoint p) return p.x >= 0 && p.y >= 0 && p.x < getCols(scope) && p.y < getRows(scope);
 		return false;
 	}
 
 	/**
 	 * Removes the.
 	 *
-	 * @param scope the scope
-	 * @param col the col
-	 * @param row the row
+	 * @param scope
+	 *            the scope
+	 * @param col
+	 *            the col
+	 * @param row
+	 *            the row
 	 * @return the object
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	Object remove(IScope scope, final int col, final int row) throws GamaRuntimeException;
 
 	/**
 	 * Shuffle with.
 	 *
-	 * @param randomAgent the random agent
+	 * @param randomAgent
+	 *            the random agent
 	 */
 	void shuffleWith(RandomUtils randomAgent);
 
 	/**
 	 * Copy.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	IMatrix copy(IScope scope) throws GamaRuntimeException;
@@ -481,9 +528,12 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Copy.
 	 *
-	 * @param scope the scope
-	 * @param preferredSize the preferred size
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param preferredSize
+	 *            the preferred size
+	 * @param copy
+	 *            the copy
 	 * @return the i matrix
 	 */
 	IMatrix copy(IScope scope, GamaPoint preferredSize, boolean copy);
@@ -491,11 +541,27 @@ public interface IMatrix<T> extends IModifiableContainer<GamaPoint, T, GamaPoint
 	/**
 	 * Reverse.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the i matrix
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@Override
 	IMatrix<T> reverse(final IScope scope) throws GamaRuntimeException;
+
+	/**
+	 * To json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 28 oct. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "cols", this.getCols(null), "rows", this.getRows(null), "contents",
+				this.listValue(null, this.getGamlType().getContentType(), false));
+
+	}
 
 }

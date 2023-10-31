@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaGraphType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamaGraphType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -49,36 +49,34 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	}
 
 	@Override
-	public int getNumberOfParameters() {
-		return 2;
-	}
+	public int getNumberOfParameters() { return 2; }
 
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param copy
+	 *            the copy
 	 * @return the i graph
 	 */
 	public static IGraph staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		// param = true : spatial.
 
-		if (obj == null) { return null; }
-		if (obj instanceof IGraph) { return (IGraph) obj; }
+		if (obj == null) return null;
+		if (obj instanceof IGraph) return (IGraph) obj;
 		final boolean spatial = param != null && Cast.asBool(scope, param);
 
-		if (obj instanceof IList) { return from(scope, (IList) obj, spatial); }
-		// List of agents, geometries...
+		if (obj instanceof IList) return from(scope, (IList) obj, spatial);
 
-		if (obj instanceof VariableExpression) { // this may be a variable ?
-			// in this case, attempt to decode it !
+		if (obj instanceof VariableExpression) // in this case, attempt to decode it !
 			return (IGraph) ((VariableExpression) obj).value(scope);
-		}
 
-		if (obj instanceof IMap) { return from(scope, (IMap) obj, spatial); }
-		// TODO Matrix, Pair ?
+		if (obj instanceof IMap) return from(scope, (IMap) obj, spatial);
 
 		return null;
 	}
@@ -86,16 +84,19 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	/**
 	 * From.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param spatial the spatial
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param spatial
+	 *            the spatial
 	 * @return the i graph
 	 */
 	public static IGraph from(final IScope scope, final IMap<?, ?> obj, final boolean spatial) {
 		final IGraph result = spatial
-				? new GamaSpatialGraph(GamaListFactory.create(Types.NO_TYPE), false, false, false,null, null, scope,
+				? new GamaSpatialGraph(GamaListFactory.create(Types.NO_TYPE), false, false, false, null, null, scope,
 						obj.getGamlType().getKeyType(), Types.NO_TYPE)
-				: new GamaGraph(scope, GamaListFactory.create(Types.NO_TYPE), false, false,false, null, null,
+				: new GamaGraph(scope, GamaListFactory.create(Types.NO_TYPE), false, false, false, null, null,
 						obj.getGamlType().getKeyType(), Types.NO_TYPE);
 		final GamaPair p = new GamaPair(null, null, Types.NO_TYPE, Types.NO_TYPE);
 		for (final Map.Entry<?, ?> k : obj.entrySet()) {
@@ -109,15 +110,18 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	/**
 	 * From.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param spatial the spatial
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param spatial
+	 *            the spatial
 	 * @return the i graph
 	 */
 	public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
 		final IType nodeType = obj.getGamlType().getContentType();
-		return spatial ? new GamaSpatialGraph(obj, false, false,false, null, null, scope, nodeType, Types.NO_TYPE)
-				: new GamaGraph(scope, obj, false, false, false,null, null, nodeType, Types.NO_TYPE);
+		return spatial ? new GamaSpatialGraph(obj, false, false, false, null, null, scope, nodeType, Types.NO_TYPE)
+				: new GamaGraph(scope, obj, false, false, false, null, null, nodeType, Types.NO_TYPE);
 	}
 
 	// GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
@@ -131,37 +135,34 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	/**
 	 * From.
 	 *
-	 * @param scope the scope
-	 * @param edgesOrVertices the edges or vertices
-	 * @param byEdge the by edge
-	 * @param directed the directed
-	 * @param spatial the spatial
-	 * @param nodeType the node type
-	 * @param edgeType the edge type
+	 * @param scope
+	 *            the scope
+	 * @param edgesOrVertices
+	 *            the edges or vertices
+	 * @param byEdge
+	 *            the by edge
+	 * @param directed
+	 *            the directed
+	 * @param spatial
+	 *            the spatial
+	 * @param nodeType
+	 *            the node type
+	 * @param edgeType
+	 *            the edge type
 	 * @return the i graph
 	 */
 	public static IGraph from(final IScope scope, final IList edgesOrVertices, final boolean byEdge,
 			final boolean directed, final boolean spatial, final IType nodeType, final IType edgeType) {
-		return spatial ? new GamaSpatialGraph(edgesOrVertices, byEdge, directed, false,null, null, scope, nodeType, edgeType)
-				: new GamaGraph(scope, edgesOrVertices, byEdge, directed, false,null, null, nodeType, edgeType);
-	}
-
-	/**
-	 * Use chache for shortest path.
-	 *
-	 * @param source the source
-	 * @param useCache the use cache
-	 * @return the i graph
-	 */
-	public static IGraph useChacheForShortestPath(final IGraph source, final boolean useCache) {
-		source.setSaveComputedShortestPaths(useCache);
-		return source; // TODO Clone ?
+		return spatial
+				? new GamaSpatialGraph(edgesOrVertices, byEdge, directed, false, null, null, scope, nodeType, edgeType)
+				: new GamaGraph(scope, edgesOrVertices, byEdge, directed, false, null, null, nodeType, edgeType);
 	}
 
 	/**
 	 * As directed graph.
 	 *
-	 * @param source the source
+	 * @param source
+	 *            the source
 	 * @return the i graph
 	 */
 	public static IGraph asDirectedGraph(final IGraph source) {
@@ -172,7 +173,8 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	/**
 	 * As undirected graph.
 	 *
-	 * @param source the source
+	 * @param source
+	 *            the source
 	 * @return the i graph
 	 */
 	public static IGraph asUndirectedGraph(final IGraph source) {
@@ -186,8 +188,6 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	}
 
 	@Override
-	public boolean isDrawable() {
-		return true;
-	}
+	public boolean isDrawable() { return true; }
 
 }

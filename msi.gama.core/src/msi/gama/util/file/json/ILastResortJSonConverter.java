@@ -8,7 +8,7 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.util.serialize;
+package msi.gama.util.file.json;
 
 import msi.gama.runtime.IScope;
 

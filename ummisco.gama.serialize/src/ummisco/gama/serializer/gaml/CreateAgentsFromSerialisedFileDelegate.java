@@ -24,7 +24,7 @@ import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.serializer.implementations.SerialisedAgentReader;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 
 /**
  * Class CreateFromSavecSimulationDelegate.
@@ -48,7 +48,7 @@ public class CreateAgentsFromSerialisedFileDelegate implements ICreateDelegate {
 		IList<? extends IAgent> agents = pop.createAgents(scope, 1, inits, false, true, null);
 		IAgent agent = agents.get(0);
 		String path = (String) inits.get(0).get("saved_file");
-		SerialisedAgentReader.getInstance().restoreFromFile(agent, path);
+		BinarySerialisation.restoreFromFile(agent, path);
 		// The sequence is executed only after the restoration
 		scope.execute(sequence, agent, null);
 		return agents;

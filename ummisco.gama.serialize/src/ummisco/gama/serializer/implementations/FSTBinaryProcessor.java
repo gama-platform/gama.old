@@ -21,9 +21,6 @@ import org.nustaq.serialization.FSTConfiguration;
  */
 public class FSTBinaryProcessor extends FSTAbstractProcessor {
 
-	/** A flag to use sun.unsafe.xxx classes. A bit faster, but more subject to depreciation */
-	// static final boolean USE_UNSAFE = true;
-
 	/**
 	 * Instantiates a new gama FST serialiser.
 	 *
@@ -33,9 +30,6 @@ public class FSTBinaryProcessor extends FSTAbstractProcessor {
 	 * @date 5 août 2023
 	 */
 	public FSTBinaryProcessor() {
-		// super(USE_UNSAFE ? FSTConfiguration.createUnsafeBinaryConfiguration()
-		// : FSTConfiguration.createDefaultConfiguration());
-
 		super(FSTConfiguration.createDefaultConfiguration());
 	}
 

@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaRegression.java, in ummisco.gaml.extensions.stats, is part of the source code of the GAMA modeling and simulation
- * platform (v.2.0.0).
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package ummisco.gaml.extensions.stats;
@@ -22,6 +22,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -191,6 +193,12 @@ public class GamaRegression implements IValue {
 	@Override
 	public double floatValue(final IScope scope) {
 		return getRSquare();
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "nb_features", nbFeatures, "parameters", json.array(param), "RSquare",
+				rsquare, "residuals", json.array(error));
 	}
 
 }

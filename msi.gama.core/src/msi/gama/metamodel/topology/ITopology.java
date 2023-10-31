@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * ITopology.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
+ * ITopology.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.metamodel.topology;
@@ -31,6 +31,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gaml.types.IType;
 
@@ -50,10 +52,7 @@ import msi.gaml.types.IType;
 				of = IType.GEOMETRY,
 				doc = { @doc ("Returns the list of discrete places that compose this topology (e.g. the list of cells for a grid topology). The continuous topologies will return a singleton list with their environment") }),
 		// Could be replaced by "geometries"
-		/*
-		 * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type = IType.LIST,
-		 * of = IType.POINT)
-		 */
+
 })
 public interface ITopology extends IValue {
 
@@ -463,6 +462,18 @@ public interface ITopology extends IValue {
 	@Override
 	default double floatValue(final IScope scope) {
 		return this.getEnvironment().floatValue(scope);
+	}
+
+	/**
+	 * Serialize to json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the json value
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), IKeyword.ENVIRONMENT, getEnvironment());
 	}
 
 }

@@ -566,22 +566,6 @@ public class FSTConfiguration {
 		if (intToObjectMapFactory != null) { this.intToObjectMapFactory = intToObjectMapFactory; }
 	}
 
-	// /**
-	// * Creates the unsafe binary configuration.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param shared
-	// * the shared
-	// * @return the FST configuration
-	// * @date 30 sept. 2023
-	// */
-	// public static FSTConfiguration createUnsafeBinaryConfiguration() {
-	// final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
-	// conf.type = ConfType.UNSAFE;
-	// conf.setStreamCoderFactory(new FBinaryStreamCoderFactory(conf));
-	// return conf;
-	// }
-
 	/**
 	 * register a custom serializer for a given class or the class and all of its subclasses. Serializers must be
 	 * configured identical on read/write side and should be set before actually making use of the Configuration.

@@ -39,7 +39,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExperimentStateListener;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -204,7 +204,8 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 			@Override
 			public void println(final String x) {
 				super.println(x);
-				broadcast(Jsoner.serialize(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, x)));
+				broadcast(Json.getInstance().valueOf(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, x))
+						.toString());
 			}
 		};
 		System.setErr(errorStream);
@@ -262,8 +263,9 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	@Override
 	public void onOpen(final WebSocket conn, final ClientHandshake handshake) {
 		// DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-		conn.send(Jsoner
-				.serialize(new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, "" + conn.hashCode())));
+		conn.send(Json.getInstance()
+				.valueOf(new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, "" + conn.hashCode()))
+				.toString());
 		if (canPing) {
 			var timer = new Timer();
 			timer.scheduleAtFixedRate(new TimerTask() {
@@ -304,7 +306,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 		IMap<String, Object> map = null;
 		try {
 			// DEBUG.OUT(socket + ": " + Jsoner.deserialize(message));
-			final Object o = Jsoner.deserialize(message);
+			final Object o = Json.getInstance().parse(message);
 			if (o instanceof IMap) {
 				map = (IMap<String, Object>) o;
 			} else {
@@ -313,7 +315,8 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 			}
 		} catch (Exception e1) {
 			DEBUG.OUT(e1.toString());
-			socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessage.Type.MalformedRequest, e1)));
+			socket.send(Json.getInstance().valueOf(new GamaServerMessage(GamaServerMessage.Type.MalformedRequest, e1))
+					.toString());
 		}
 		return map;
 	}
@@ -342,7 +345,8 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 
 		} catch (Exception e1) {
 			DEBUG.OUT(e1);
-			socket.send(Jsoner.serialize(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, e1)));
+			socket.send(Json.getInstance().valueOf(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, e1))
+					.toString());
 
 		}
 	}

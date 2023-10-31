@@ -29,6 +29,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.annotations.validator;
@@ -506,6 +508,11 @@ public class GamlSpecies extends AbstractSpecies {
 	 */
 	public boolean belongsToAMicroModel() {
 		return getDescription().belongsToAMicroModel();
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "name", getName());
 	}
 
 }

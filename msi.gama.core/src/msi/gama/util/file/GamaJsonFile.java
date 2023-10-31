@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaJsonFile.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamaJsonFile.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.file;
 
@@ -29,8 +29,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.DeserializationException;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.ParseException;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
@@ -52,9 +52,12 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 	/**
 	 * Instantiates a new gama json file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@doc (
 			value = "This file constructor allows to read a json file",
@@ -69,9 +72,12 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 	/**
 	 * Instantiates a new gama json file.
 	 *
-	 * @param scope the scope
-	 * @param pathName the path name
-	 * @param container the container
+	 * @param scope
+	 *            the scope
+	 * @param pathName
+	 *            the path name
+	 * @param container
+	 *            the container
 	 */
 	@doc (
 			value = "This constructor allows to  store a map in a json file (it does not save it). The file can then be saved later using the `save` statement",
@@ -89,16 +95,14 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 	}
 
 	@Override
-	public IContainerType getGamlType() {
-		return Types.MAP.of(Types.STRING, Types.NO_TYPE);
-	}
+	public IContainerType getGamlType() { return Types.MAP.of(Types.STRING, Types.NO_TYPE); }
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) { return; }
+		if (getBuffer() != null) return;
 		try (FileReader reader = new FileReader(getFile(scope))) {
 			final IMap<String, Object> map;
-			final Object o = /* convertToGamaStructures(scope, */ Jsoner.deserialize(reader)/* ) */;
+			final Object o = Json.getInstance().parse(reader);
 			if (o instanceof IMap) {
 				map = (IMap<String, Object>) o;
 			} else {
@@ -106,61 +110,26 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 				map.put(IKeyword.CONTENTS, o);
 			}
 			setBuffer(map);
-		} catch (final IOException | DeserializationException e) {
+		} catch (final IOException | ParseException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
 	}
 
-	// AD : To remove at one point, as it should be handled by the casting
-	// mechanism
-	// private Object convertToGamaStructures(final IScope scope, final Object o) {
-	// Object result;
-	// if (o instanceof JSONArray) {
-	// final IList array = (JSONArray) o;
-	// final IList list = GamaListFactory.create(Types.NO_TYPE, array.size());
-	// for (final Object object : array) {
-	// list.add(convertToGamaStructures(scope, object));
-	// }
-	// result = list;
-	// } else if (o instanceof JSONObject) {
-	// final JSONObject json = (JSONObject) o;
-	// final IMap map = GamaMapFactory.create();
-	// for (final Map.Entry entry : json.entrySet()) {
-	// map.put(Cast.asString(scope, entry.getKey()), convertToGamaStructures(scope, entry.getValue()));
-	// }
-	// result = map;
-	// } else // we assume we have strings, bool, ints or floats
-	// {
-	// if (o instanceof Long) {
-	// result = Integer.valueOf(((Long) o).intValue());
-	// } else if (o instanceof Float) {
-	// result = Double.valueOf(((Float) o).doubleValue());
-	// } else {
-	// result = o;
-	// }
-	// }
-	// return result;
-	// }
-
 	@Override
-	protected String getHttpContentType() {
-		return "application/json";
-	}
+	protected String getHttpContentType() { return "application/json"; }
 
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final IMap<String, Object> map = getBuffer();
 		Object toSave = map;
-		if (map.size() == 1 && map.containsKey("contents")) {
-			toSave = map.get("contents");
-		}
+		if (map.size() == 1 && map.containsKey("contents")) { toSave = map.get("contents"); }
 		final File file = getFile(scope);
 		if (file.exists()) {
 			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.warning(file.getName() + " already exists", scope),
 					false);
 		}
 		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-			writer.write(Jsoner.serialize(toSave));
+			writer.write(Json.getNew().valueOf(toSave).toString());
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}

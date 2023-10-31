@@ -12,7 +12,6 @@ package msi.gama.util;
 import java.util.LinkedHashMap;
 
 import msi.gama.runtime.IScope;
-import msi.gama.util.file.json.Jsoner;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -85,29 +84,5 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IMap<K, V> {
 
 	@Override
 	public boolean isOrdered() { return true; }
-
-	/**
-	 * To json.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the string
-	 * @date 28 oct. 2023
-	 */
-	@Override
-	public String serializeToJson() {
-		final StringBuilder writable = new StringBuilder();
-		boolean isFirstEntry = true;
-		writable.append('{');
-		for (java.util.Map.Entry<K, V> entry : this.entrySet()) {
-			if (isFirstEntry) {
-				isFirstEntry = false;
-			} else {
-				writable.append(',');
-			}
-			writable.append(Jsoner.serialize(entry.getKey())).append(':').append(Jsoner.serialize(entry.getValue()));
-		}
-		writable.append('}');
-		return writable.toString();
-	}
 
 }

@@ -524,7 +524,6 @@ Export-Package: msi.gama.common;uses:="org.osgi.framework,msi.gama.common.interf
    msi.gama.metamodel.shape,
    org.jgrapht",
  msi.gama.util.random;uses:="msi.gama.common.util",
- msi.gama.util.serialize;uses:="msi.gama.runtime",
  msi.gama.util.tree,
  msi.gaml.architecture;
   uses:="msi.gaml.species,

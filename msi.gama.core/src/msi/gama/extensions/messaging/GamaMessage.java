@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaMessage.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.extensions.messaging;
@@ -20,6 +20,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -245,5 +247,11 @@ public class GamaMessage implements IValue {
 	 *            the scope
 	 */
 	public void hasBeenReceived(final IScope scope) {}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), SENDER, sender, CONTENTS, contents, RECEPTION_TIMESTAMP,
+				emissionTimeStamp, EMISSION_TIMESTAMP, emissionTimeStamp).add(RECEIVERS, receivers);
+	}
 
 }

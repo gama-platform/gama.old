@@ -10,19 +10,15 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.gaml;
 
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.no_test;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.WriterConfig;
 import ummisco.gama.dev.utils.DEBUG;
-import ummisco.gama.serializer.implementations.SerialisedAgentSaver;
-import ummisco.gama.serializer.implementations.SerialisedObjectReader;
-import ummisco.gama.serializer.implementations.SerialisedObjectSaver;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 
 /**
  * The Class ReverseOperators.
@@ -34,93 +30,65 @@ public class ReverseOperators {
 	}
 
 	/**
-	 * Serialize agents and simulations.
+	 * To json.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param scope
 	 *            the scope
-	 * @param o
-	 *            the o
+	 * @param obj
+	 *            the obj
 	 * @return the string
-	 * @date 9 août 2023
+	 * @date 31 oct. 2023
 	 */
 	@operator (
-			value = "serialize")
+			value = { "to_json" })
 	@doc (
-			value = "Serializes any object/agent/simulation into a string, using the default 'binary' format. The result is not compressed."
-					+ "The result of this operator can be then used in the `from:` facet of `restore` or `create` statements in case of agents, or using `deserialize` for other items",
-			see = "")
-	@no_test ()
-	public static String serialize(final IScope scope, final Object agent) {
-		return serialize(scope, agent, "binary");
+			value = "Serializes any object/agent/simulation into a string, using the 'json' format. A flag can be passed to enable/disable pretty printing (true by default)",
+			see = { "serialize", "to_gaml" })
+	public static String toJson(final IScope scope, final Object obj, final boolean pretty) {
+		return Json.getNew().valueOf(obj).toString(pretty ? WriterConfig.PRETTY_PRINT : WriterConfig.MINIMAL);
 	}
 
 	/**
-	 * Serialize agents and simulation with a format
+	 * To json.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param scope
 	 *            the scope
-	 * @param o
-	 *            the o
+	 * @param obj
+	 *            the obj
 	 * @return the string
-	 * @date 9 août 2023
+	 * @date 31 oct. 2023
 	 */
 	@operator (
-			value = "serialize")
+			value = { "to_json" })
 	@doc (
-			value = "Serializes any object/agent/simulation into a string, using the format passed in parameter (either 'binary' or 'json'). The result is not compressed."
-					+ "The result of this operator can be then used in the `from:` facet of `restore` or `create` statements in case of agents, or using `deserialize` for other items",
-			see = "")
-	@no_test ()
-	public static String serialize(final IScope scope, final Object agent, final String format) {
-		return serialize(scope, agent, format, false);
+			value = "Serializes any object/agent/simulation into a string, using the 'json' format",
+			see = { "serialize", "to_gaml" })
+	public static String toJson(final IScope scope, final Object obj) {
+		return toJson(scope, obj, false);
 	}
 
 	/**
-	 * Serialize agents and simulation with a format, compressed or not
+	 * Serialize.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param scope
 	 *            the scope
-	 * @param o
-	 *            the o
+	 * @param obj
+	 *            the obj
 	 * @return the string
-	 * @date 9 août 2023
+	 * @date 28 oct. 2023
 	 */
 	@operator (
-			value = "serialize")
+			value = { "serialize", "to_binary" })
 	@doc (
-			value = "Serializes any object/agent/simulation into a string, using the format passed in parameter (either 'binary' or 'json'). The result is compressed if the last parameter is true."
+			value = "Serializes any object/agent/simulation into a string, using the 'binary' format"
 					+ "The result of this operator can be then used in the `from:` facet of `restore` or `create` statements in case of agents, or using `deserialize` for other items",
-			see = "")
+			see = { "to_json", "to_gaml" })
 	@no_test ()
-	public static String serialize(final IScope scope, final Object obj, final String format, final boolean compress) {
-		if (obj instanceof IAgent agent) {
-			SerialisedAgentSaver sas = SerialisedAgentSaver.getInstance();
-			return sas.saveToString(scope, agent, format, compress);
-		}
-		SerialisedObjectSaver sas = SerialisedObjectSaver.getInstance();
-		return sas.saveToString(scope, obj, format, compress);
-	}
-
-	/**
-	 * Unserialize.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param s
-	 *            the s
-	 * @return the object
-	 */
-	@operator (
-			value = "deserialize")
-	@doc (
-			value = "Deserializes an object precedently serialized using `serialize`. "
-					+ "Should not be used to deserialize agents nor simulations (use the 'restore' or 'create' statements instead)")
-	@no_test
-	public static Object unserialize(final IScope scope, final String s) {
-		return unserialize(scope, s, Types.NO_TYPE);
+	public static String serialize(final IScope scope, final Object obj) {
+		return BinarySerialisation.saveToString(scope, obj, "binary", true);
 	}
 
 	/**
@@ -137,17 +105,14 @@ public class ReverseOperators {
 	 * @date 29 sept. 2023
 	 */
 	@operator (
-			value = "deserialize",
+			value = { "deserialize", "from_binary" },
 			type = ITypeProvider.DENOTED_TYPE_AT_INDEX + 2)
 	@doc (
 			value = "Deserializes an object precedently serialized using `serialize`. The second argument represents the type expected."
-					+ "Should not be used to deserialize agents nor simulations (use the 'restore' or 'create' statements instead)")
+					+ "It is safer to deserialize agents or simulations with the 'restore' or 'create' statements rather than with this operator.",
+			see = { "from_gaml", "from_json" })
 	@no_test
-	public static Object unserialize(final IScope scope, final String s, final IType t) {
-		if (s == null || s.isBlank()) return null;
-		if (t.isAgentType())
-			throw GamaRuntimeException.error("Use `restore` or `create` to deserialize agents and simulations", scope);
-		SerialisedObjectReader reader = SerialisedObjectReader.getInstance();
-		return t.cast(scope, reader.restoreFromString(scope, s), t.getDefault(), false);
+	public static Object unserialize(final IScope scope, final String s) {
+		return BinarySerialisation.createFromString(scope, s);
 	}
 }

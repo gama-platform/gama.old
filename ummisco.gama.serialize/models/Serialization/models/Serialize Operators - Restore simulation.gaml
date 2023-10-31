@@ -51,12 +51,11 @@ experiment "Repeated Simulations" type: gui {
 	string saved_step <- "";
 
 	init {
-		saved_step <- serialize(self.simulation, 'json', true);
+		saved_step <- serialize(self.simulation);
 	}
 	
 	reflex restore when: (cycle = 4) {
 		write "================ begin restore " + self + " - " + cycle;
-		//write saved_step;
 		restore simulation from: saved_step;
 		write "================ end restore " + self + " - " + cycle;			
 	}

@@ -187,7 +187,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				final GamaPoint falseTarget = _closest_point_to(getEndVertex().getLocation(), lineEnd);
 				pt = start.euclidianDistanceTo(pt0) < falseTarget.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
-			if (graph != null) { graphVersion = graph.getVersion(); }
+			if (graph != null) { graphVersion = graph.getPathComputer().getVersion(); }
 			int cpt = 0;
 			for (final IShape edge : _edges) {
 				if (modify_edges) {
@@ -592,7 +592,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	@Override
 	public void setGraph(final IGraph<IShape, IShape> graph) {
 		this.graph = graph;
-		graphVersion = graph.getVersion();
+		graphVersion = graph.getPathComputer().getVersion();
 
 		for (final IShape edge : edges) {
 			final IAgent ag = edge.getAgent();
@@ -662,10 +662,8 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		final IShape source = g.getEdgeSource(e);
 		final IShape target = g.getEdgeTarget(e);
 		if (v.equals(source)) return target;
-		if (v.equals(target))
-			return source;
-		else
-			return v.euclidianDistanceTo(source) > v.euclidianDistanceTo(target) ? target : source;
+		if (v.equals(target)) return source;
+		return v.euclidianDistanceTo(source) > v.euclidianDistanceTo(target) ? target : source;
 	}
 
 	/**

@@ -9,8 +9,6 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import static one.util.streamex.StreamEx.of;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,8 +51,8 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
-import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.metamodel.topology.graph.ISpatialGraph;
+import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -78,11 +76,10 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.graph.GamaGraph;
-import msi.gama.util.graph.GamaGraph.kShortestPathAlgorithm;
-import msi.gama.util.graph.GamaGraph.shortestPathAlgorithm;
 import msi.gama.util.graph.GraphAlgorithmsHandmade;
 import msi.gama.util.graph.GraphFromAgentContainerSynchronizer;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.PathComputer;
 import msi.gama.util.graph.layout.LayoutCircle;
 import msi.gama.util.graph.layout.LayoutForceDirected;
 import msi.gama.util.graph.layout.LayoutGrid;
@@ -96,6 +93,7 @@ import msi.gaml.types.GamaGraphType;
 import msi.gaml.types.GamaPathType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 13 avr. 2011
@@ -1317,16 +1315,14 @@ public class Graphs {
 				final Object v1 = vertices.get(i);
 				final Object v2 = vertices.get(j);
 				if (v1 == v2) { continue; }
-				final List edges = graph.computeBestRouteBetween(scope, v1, v2);
+				final List edges = graph.getPathComputer().computeBestRouteBetween(scope, v1, v2);
 				if (edges == null) { continue; }
 				Object vc = v1;
 				for (final Object edge : edges) {
 					Object node = graph.getEdgeTarget(edge);
 
 					if (node == vc) { node = graph.getEdgeSource(edge); }
-					if (node != v2 && node != v1) { 
-						mapResult.put(node, (Integer) mapResult.get(node) + 1); 
-					}
+					if (node != v2 && node != v1) { mapResult.put(node, (Integer) mapResult.get(node) + 1); }
 					vc = node;
 				}
 			}
@@ -1371,7 +1367,7 @@ public class Graphs {
 				final Object v1 = vertices.get(i);
 				final Object v2 = vertices.get(j);
 				if (v1 == v2) { continue; }
-				final List edges = graph.computeBestRouteBetween(scope, v1, v2);
+				final List edges = graph.getPathComputer().computeBestRouteBetween(scope, v1, v2);
 				if (edges == null) { continue; }
 				for (final Object edge : edges) { mapResult.put(edge, (Integer) mapResult.get(edge) + 1); }
 			}
@@ -2000,7 +1996,8 @@ public class Graphs {
 			see = { "path_between" })
 	@no_test
 	public static IGraph useCacheForShortestPaths(final IGraph g, final boolean useCache) {
-		return GamaGraphType.useChacheForShortestPath(g, useCache);
+		g.getPathComputer().setSaveComputedShortestPaths(useCache);
+		return g;
 	}
 
 	/**
@@ -2022,7 +2019,7 @@ public class Graphs {
 			see = { "undirected" })
 	@no_test
 	public static IGraph asDirectedGraph(final IGraph g) {
-		g.incVersion();
+		g.getPathComputer().incVersion();
 		return GamaGraphType.asDirectedGraph(g);
 	}
 
@@ -2045,7 +2042,7 @@ public class Graphs {
 			see = { "directed" })
 	@no_test
 	public static IGraph asUndirectedGraph(final IGraph g) {
-		g.incVersion();
+		g.getPathComputer().incVersion();
 		return GamaGraphType.asUndirectedGraph(g);
 	}
 
@@ -2078,8 +2075,8 @@ public class Graphs {
 	@no_test
 	public static IGraph withWeights(final IScope scope, final IGraph graph, final IMap weights) {
 		graph.setWeights(weights);
-		graph.incVersion();
-		if (graph instanceof GamaSpatialGraph) { ((GamaSpatialGraph) graph).reInitPathFinder(); }
+		graph.getPathComputer().incVersion();
+		if (graph instanceof GamaSpatialGraph gsg) { gsg.getPathComputer().reInitPathFinder(); }
 		return graph;
 	}
 
@@ -2112,8 +2109,8 @@ public class Graphs {
 		final int n = edges.size();
 		if (n != weights.size()) return graph;
 		for (int i = 0; i < n; i++) { graph.setEdgeWeight(edges.get(i), Cast.asFloat(scope, weights.get(i))); }
-		graph.incVersion();
-		if (graph instanceof GamaSpatialGraph) { ((GamaSpatialGraph) graph).reInitPathFinder(); }
+		graph.getPathComputer().incVersion();
+		if (graph instanceof GamaSpatialGraph gsg) { gsg.getPathComputer().reInitPathFinder(); }
 		return graph;
 	}
 
@@ -2144,11 +2141,11 @@ public class Graphs {
 	@no_test
 	public static IGraph setKShortestPathAlgorithm(final IScope scope, final IGraph graph,
 			final String shortestpathAlgo) {
-		final List<String> existingAlgo = Arrays.asList(GamaGraph.kShortestPathAlgorithm.values()).stream()
-				.map(kShortestPathAlgorithm::toString).toList();
+		final List<String> existingAlgo = Arrays.asList(PathComputer.kShortestPathAlgorithm.values()).stream()
+				.map(PathComputer.kShortestPathAlgorithm::toString).toList();
 		if (!existingAlgo.contains(shortestpathAlgo)) throw GamaRuntimeException.error("The K shortest paths algorithm "
 				+ shortestpathAlgo + " does not exist. Possible K shortest paths algorithms: " + existingAlgo, scope);
-		graph.setKShortestPathAlgorithm(shortestpathAlgo);
+		graph.getPathComputer().setKShortestPathAlgorithm(shortestpathAlgo);
 		return graph;
 	}
 
@@ -2179,11 +2176,11 @@ public class Graphs {
 	@no_test
 	public static IGraph setShortestPathAlgorithm(final IScope scope, final IGraph graph,
 			final String shortestpathAlgo) {
-		final List<String> existingAlgo = Arrays.asList(GamaGraph.shortestPathAlgorithm.values()).stream()
-				.map(shortestPathAlgorithm::toString).toList();
+		final List<String> existingAlgo = Arrays.asList(PathComputer.shortestPathAlgorithm.values()).stream()
+				.map(PathComputer.shortestPathAlgorithm::toString).toList();
 		if (!existingAlgo.contains(shortestpathAlgo)) throw GamaRuntimeException.error("The shortest path algorithm "
 				+ shortestpathAlgo + " does not exist. Possible shortest path algorithms: " + existingAlgo, scope);
-		graph.setShortestPathAlgorithm(shortestpathAlgo);
+		graph.getPathComputer().setShortestPathAlgorithm(shortestpathAlgo);
 		return graph;
 	}
 
@@ -2309,7 +2306,7 @@ public class Graphs {
 							test = false) })
 	public static IGraph rewireGraph(final IScope scope, final IGraph g, final Integer count) {
 		GraphAlgorithmsHandmade.rewireGraphCount(scope, g, count);
-		g.incVersion();
+		g.getPathComputer().incVersion();
 		return g;
 	}
 
@@ -2340,7 +2337,7 @@ public class Graphs {
 			+ "g <- g add_edge ({40,60}::{50,50}); " + " length(g.edges) = 6")
 	public static IGraph addEdge(final IGraph g, final GamaPair nodes) {
 		g.addEdge(nodes.first(), nodes.last());
-		g.incVersion();
+		g.getPathComputer().incVersion();
 		return g;
 	}
 
@@ -2377,7 +2374,7 @@ public class Graphs {
 			throws GamaRuntimeException {
 		if (graph instanceof GamaSpatialGraph)
 			return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) source, (IShape) target);
-		return graph.computeShortestPathBetween(scope, source, target);
+		return graph.getPathComputer().computeShortestPathBetween(scope, source, target);
 	}
 
 	/**
@@ -2527,7 +2524,7 @@ public class Graphs {
 		if (graph == null) throw GamaRuntimeException
 				.error("In the load_shortest_paths operator, the graph should not be null!", scope);
 		// final int n = graph.vertexSet().size();
-		graph.loadShortestPaths(scope, matrix);
+		graph.getPathComputer().loadShortestPaths(scope, matrix);
 		return graph;
 		// throw GamaRuntimeException.error("not implemented: loading from gama
 		// file");
@@ -2562,7 +2559,7 @@ public class Graphs {
 			throws GamaRuntimeException {
 		if (graph == null) throw GamaRuntimeException
 				.error("In the all_pairs_shortest_paths operator, the graph should not be null!", scope);
-		return graph.saveShortestPaths(scope);
+		return graph.getPathComputer().saveShortestPaths(scope);
 	}
 
 	/**
@@ -2877,7 +2874,7 @@ public class Graphs {
 		if (g.hasCycle()) throw GamaRuntimeException
 				.error("Strahler number can only be computed for Tree (connected graph with no cycle)!", scope);
 
-		List currentEdges = of(g.getEdges()).filter(a -> g.outDegreeOf(g.getEdgeTarget(a)) == 0).toList();
+		List currentEdges = StreamEx.of(g.getEdges()).filter(a -> g.outDegreeOf(g.getEdgeTarget(a)) == 0).toList();
 		while (!currentEdges.isEmpty()) {
 			final List newList = new ArrayList<>();
 			for (final Object e : currentEdges) {
@@ -2891,7 +2888,7 @@ public class Graphs {
 					if (notCompleted) {
 						newList.add(e);
 					} else {
-						final List<Integer> vals = of(nextEdges).map(a -> results.get(a)).toList();
+						final List<Integer> vals = StreamEx.of(nextEdges).map(a -> results.get(a)).toList();
 						final Integer maxVal = Collections.max(vals);
 						final int nbIt = Collections.frequency(vals, maxVal);
 						if (nbIt > 1) {

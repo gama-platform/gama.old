@@ -32,7 +32,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
-import ummisco.gama.serializer.implementations.SerialisedAgentReader;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 
 /**
  * This command is used to restore agents from a file or a string in which they have been saved/serialized
@@ -103,9 +103,9 @@ public class RestoreStatement extends AbstractStatement {
 		if (from == null) return agent;
 		Object source = from.value(scope);
 		if (source instanceof String string) {
-			SerialisedAgentReader.getInstance().restoreFromString(agent, string);
+			BinarySerialisation.restoreFromString(agent, string);
 		} else if (source instanceof IGamaFile file) {
-			SerialisedAgentReader.getInstance().restoreFromFile(agent, file.getPath(scope));
+			BinarySerialisation.restoreFromFile(agent, file.getPath(scope));
 		}
 		return agent;
 	}

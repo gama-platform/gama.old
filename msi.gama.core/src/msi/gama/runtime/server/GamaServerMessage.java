@@ -10,7 +10,9 @@
  ********************************************************************************************************/
 package msi.gama.runtime.server;
 
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonObject;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.interfaces.IJsonable;
 
 /**
@@ -162,9 +164,10 @@ public class GamaServerMessage implements IJsonable {
 	 * @date 28 oct. 2023
 	 */
 	@Override
-	public String serializeToJson() {
-		return "{ " + "\"type\": \"" + type + "\"," + "\"content\": " + Jsoner.serialize(content)
-				+ (exp_id != null ? ",\"exp_id\":\"" + exp_id + "\"" : "") + "}";
+	public JsonValue serializeToJson(final Json json) {
+		JsonObject o = json.object().add("type", type).add("content", content);
+		if (exp_id != null) { o.add("exp_id", exp_id); }
+		return o;
 	}
 
 }

@@ -29,6 +29,8 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -655,8 +657,13 @@ public abstract class GamaFile<Container extends IAddressableContainer & IModifi
 	@Override
 	public URI getURIRelativeToWorkspace() { return FileUtils.getURI(localPath, null); }
 
-	// protected void setPath(final String path) {
-	// this.localPath = path;
-	// }
+	/**
+	 * A basic implementation that shoud be reused to enrich the necessary attributes along the hierarchy using the
+	 * pattern: return super.serializeToJson().add(attr1, value1).add...
+	 */
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "path", originalPath);
+	}
 
 }

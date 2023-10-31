@@ -36,6 +36,19 @@ public interface ISerialisationProcessor<SerialisedForm extends ISerialisedAgent
 	byte[] saveAgentToBytes(final IScope scope, final IAgent sim);
 
 	/**
+	 * Creates the agent from bytes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param bytes
+	 *            the bytes
+	 * @return the i agent
+	 * @date 30 oct. 2023
+	 */
+	IAgent createAgentFromBytes(IScope scope, byte[] bytes);
+
+	/**
 	 * Save object to bytes.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
@@ -69,7 +82,7 @@ public interface ISerialisationProcessor<SerialisedForm extends ISerialisedAgent
 	 * @return the object
 	 * @date 29 sept. 2023
 	 */
-	Object restoreObjectFromBytes(final IScope scope, final byte[] input);
+	Object createObjectFromBytes(final IScope scope, final byte[] input);
 
 	/**
 	 * Gets the format identifier.

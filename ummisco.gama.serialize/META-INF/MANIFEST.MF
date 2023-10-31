@@ -9,8 +9,7 @@ Bundle-ClassPath: .
 Export-Package: ummisco.gama.serializer,
  ummisco.gama.serializer.gamaType,
  ummisco.gama.serializer.gaml,
- ummisco.gama.serializer.implementations,
- ummisco.gama.serializer.inject
+ ummisco.gama.serializer.implementations
 Import-Package: org.osgi.framework;version="1.10.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17

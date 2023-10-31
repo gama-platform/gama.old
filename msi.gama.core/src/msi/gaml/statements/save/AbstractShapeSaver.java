@@ -152,7 +152,8 @@ public abstract class AbstractShapeSaver extends AbstractSaver {
 		} else if (value instanceof IList) {
 			agents = (IList<? extends IShape>) value;
 		} else
-			throw GamaRuntimeException.error(item.serializeToGaml(true) + " is not a list of agents or geometries", scope);
+			throw GamaRuntimeException.error(item.serializeToGaml(true) + " is not a list of agents or geometries",
+					scope);
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
 		final String geomType = GeometryUtils.getGeometryStringType(agents);
 		specs.append("geometry:" + geomType);
@@ -447,7 +448,7 @@ public abstract class AbstractShapeSaver extends AbstractSaver {
 		values.add(g);
 		if (ag instanceof IAgent ia) {
 			for (final IExpression variable : attributeValues) {
-				Object val = scope.evaluate(variable, ia).getValue();
+				Object val = ia.getScope().evaluate(variable, ia).getValue();
 				if (variable.getGamlType().equals(Types.STRING)) {
 					val = val == null ? "" : StringUtils.toJavaString(val.toString());
 				}

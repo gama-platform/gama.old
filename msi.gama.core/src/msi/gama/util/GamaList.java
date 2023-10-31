@@ -15,7 +15,6 @@ import java.util.Objects;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.json.Jsoner;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IContainerType;
@@ -118,31 +117,6 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		// We do not consider the case where multiple indices are used. Maybe
 		// could be used in the
 		// future to return a list of values ?
-	}
-
-	/**
-	 * To json.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the string
-	 * @date 28 oct. 2023
-	 */
-	@Override
-	public String serializeToJson() {
-		final StringBuilder writable = new StringBuilder();
-		boolean isFirstElement = true;
-		final Iterator<E> elements = this.iterator();
-		writable.append('[');
-		while (elements.hasNext()) {
-			if (isFirstElement) {
-				isFirstElement = false;
-			} else {
-				writable.append(',');
-			}
-			writable.append(Jsoner.serialize(elements.next()));
-		}
-		writable.append(']');
-		return writable.toString();
 	}
 
 }

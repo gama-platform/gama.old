@@ -27,6 +27,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.RemoteSequence;
@@ -249,8 +251,6 @@ public interface IPopulation<T extends IAgent>
 	T createAgentAt(final IScope s, int index, Map<String, Object> initialValues, boolean isRestored,
 			boolean toBeScheduled) throws GamaRuntimeException;
 
-	// public abstract Iterator<IAgent> getAgentsList();
-
 	/**
 	 * Gets the name.
 	 *
@@ -297,8 +297,6 @@ public interface IPopulation<T extends IAgent>
 	 */
 	@Override
 	ISpecies getSpecies();
-
-	// public abstract boolean manages(ISpecies s, boolean direct);
 
 	/**
 	 * Gets the var.
@@ -434,5 +432,19 @@ public interface IPopulation<T extends IAgent>
 	 * @date 6 août 2023
 	 */
 	T getOrCreateAgent(final IScope scope, final Integer index);
+
+	/**
+	 * Serialize to json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param json
+	 *            the json
+	 * @return the json value
+	 * @date 31 oct. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		return new SerialisedPopulation(this).serializeToJson(json);
+	}
 
 }

@@ -34,6 +34,9 @@ import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonObject;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.interfaces.IJsonable;
@@ -673,6 +676,22 @@ public interface IMap<K, V>
 	default boolean forEachKey(final ConsumerWithPruning<K> visitor) {
 		for (Entry<K, V> entry : entrySet()) { if (!visitor.process(entry.getKey())) return false; }
 		return true;
+	}
+
+	/**
+	 * To json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 28 oct. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		JsonObject result = json.object();
+		for (java.util.Map.Entry<K, V> entry : this.entrySet()) {
+			result.add(entry.getKey().toString(), json.valueOf(entry.getValue()));
+		}
+		return result;
 	}
 
 }

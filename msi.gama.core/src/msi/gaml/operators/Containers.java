@@ -9,7 +9,6 @@
  ********************************************************************************************************/
 package msi.gaml.operators;
 
-import static com.google.common.collect.Iterables.toArray;
 import static msi.gaml.compilation.GAML.notNull;
 
 import java.util.ArrayDeque;
@@ -64,7 +63,7 @@ import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.GAML;
@@ -573,6 +572,7 @@ public class Containers {
 			category = { IOperatorCategory.CONTAINER },
 			concept = { IConcept.CONTAINER })
 	@doc (
+			deprecated = "Use to_json() instead",
 			value = "Tries to convert the container into a json-formatted string",
 			usages = { @usage (
 					value = "With a map:",
@@ -591,7 +591,7 @@ public class Containers {
 	@test ("as_json_string(map('first value'::1, 'tab'::[1, 2, 3], 'simple string'::'it works', map('very complex'::[1,2,3])::['value linking to very complex'])) = '{\"first value\":1,\"tab\":[1,2,3],\"simple string\":\"it works\",{\"very complex\":[1,2,3]}:[\"value linking to very complex\"]}'")
 
 	public static String asJsonString(final IScope scope, final IContainer container) {
-		return Jsoner.serialize(container);
+		return Json.getNew().valueOf(container).toString();
 	}
 
 	/**
@@ -1675,8 +1675,9 @@ public class Containers {
 			IType contentType = arguments[0].getGamlType().getContentType();
 			if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
 					&& !Types.isEmptyContainerCase(contentType, item)) {
-				StringBuilder message = new StringBuilder("The type of the elements of ").append(list.serializeToGaml(false))
-						.append(" (").append(contentType).append(") does not match with the type of the ");
+				StringBuilder message =
+						new StringBuilder("The type of the elements of ").append(list.serializeToGaml(false))
+								.append(" (").append(contentType).append(") does not match with the type of the ");
 				message.append("argument");
 				message.append(" (").append(valueType).append("). ");
 				message.append("The argument will be casted to ").append(contentType).append(". ");
@@ -2028,7 +2029,8 @@ public class Containers {
 			case IType.POINT -> ((Stream<GamaPoint>) s).reduce(new GamaPoint(), GamaPoint::plus);
 			case IType.COLOR -> ((Stream<GamaColor>) s).reduce(GamaColor.get(0, 0, 0, 0), GamaColor::merge);
 			case IType.STRING -> ((Stream<String>) s).reduce("", String::concat);
-			default -> GamaRuntimeException.error("No sum can be computed for " + container.serializeToGaml(true), scope);
+			default -> GamaRuntimeException.error("No sum can be computed for " + container.serializeToGaml(true),
+					scope);
 		};
 	}
 
@@ -2505,7 +2507,7 @@ public class Containers {
 		final Iterable iterable = notNull(scope, cc).iterable(scope);
 		IType type = cc.getGamlType().getContentType();
 		if (type.isContainer()) { type = type.getContentType(); }
-		final Iterator it = new InterleavingIterator(scope, toArray(iterable, Object.class));
+		final Iterator it = new InterleavingIterator(scope, Iterables.toArray(iterable, Object.class));
 		return GamaListFactory.create(scope, type, it);
 	}
 

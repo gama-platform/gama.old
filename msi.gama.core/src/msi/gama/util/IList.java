@@ -18,8 +18,9 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.interfaces.IJsonable;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaIntegerType;
 import msi.gaml.types.GamaMatrixType;
@@ -36,8 +37,8 @@ import msi.gaml.types.Types;
  *
  */
 @SuppressWarnings ("unchecked")
-public interface IList<E> extends IModifiableContainer<Integer, E, Integer, E>,
-		IAddressableContainer<Integer, E, Integer, E>, List<E>, IJsonable {
+public interface IList<E>
+		extends IModifiableContainer<Integer, E, Integer, E>, IAddressableContainer<Integer, E, Integer, E>, List<E> {
 
 	/**
 	 * Contains key.
@@ -557,6 +558,18 @@ public interface IList<E> extends IModifiableContainer<Integer, E, Integer, E>,
 		final IList<Integer> result = GamaListFactory.create(Types.INT);
 		for (final Object o : value.iterable(scope)) { result.add(buildIndex(scope, o)); }
 		return result;
+	}
+
+	/**
+	 * To json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 28 oct. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		return json.array(this);
 	}
 
 }

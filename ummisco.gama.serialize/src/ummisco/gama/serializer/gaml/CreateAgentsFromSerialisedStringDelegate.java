@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
- * CreateSimulationFromStringDelegate.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling
- * and simulation platform (v.1.9.3).
+ * CreateAgentsFromSerialisedStringDelegate.java, in ummisco.gama.serialize, is part of the source code of the GAMA
+ * modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -24,8 +24,8 @@ import msi.gaml.statements.CreateStatement;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.serializer.implementations.BinarySerialisation;
 import ummisco.gama.serializer.implementations.ISerialisationConstants;
-import ummisco.gama.serializer.implementations.SerialisedAgentReader;
 
 /**
  * Class CreateFromSavecSimulationDelegate.
@@ -49,7 +49,7 @@ public class CreateAgentsFromSerialisedStringDelegate implements ICreateDelegate
 		IList<? extends IAgent> agents = pop.createAgents(scope, 1, inits, false, true, null);
 		IAgent agent = agents.get(0);
 		String path = (String) inits.get(0).get(SERIALISATION_STRING);
-		SerialisedAgentReader.getInstance().restoreFromString(agent, path);
+		BinarySerialisation.restoreFromString(agent, path);
 		// The sequence is executed only after the restoration
 		scope.execute(sequence, agent, null);
 		return agents;

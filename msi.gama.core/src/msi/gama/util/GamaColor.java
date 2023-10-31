@@ -22,6 +22,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.constants.ColorCSS;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -580,6 +582,13 @@ public class GamaColor extends Color implements IValue, Comparable<Color>/* impl
 	@Override
 	public int intValue(final IScope scope) {
 		return super.getRGB();
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "red", getRed(), "green", getGreen(), "blue", getBlue(), "alpha",
+				getAlpha());
+
 	}
 
 }

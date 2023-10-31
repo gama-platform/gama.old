@@ -31,6 +31,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -878,7 +880,9 @@ public class GamaPoint extends Coordinate implements IShape, IIntersectable {
 	 * @see msi.gama.metamodel.shape.IShape#getGeometries()
 	 */
 	@Override
-	public IList<? extends IShape> getGeometries() { return GamaListFactory.wrap(Types.GEOMETRY, GamaShapeFactory.createFrom(this)); }
+	public IList<? extends IShape> getGeometries() {
+		return GamaListFactory.wrap(Types.GEOMETRY, GamaShapeFactory.createFrom(this));
+	}
 
 	/**
 	 * Method isMultiple()
@@ -968,5 +972,10 @@ public class GamaPoint extends Coordinate implements IShape, IIntersectable {
 	 * @return true, if is null
 	 */
 	public boolean isNull() { return x == 0d && y == 0d && z == 0d; }
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "x", x, "y", y, "z", z);
+	}
 
 }

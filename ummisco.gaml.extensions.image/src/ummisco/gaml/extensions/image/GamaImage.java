@@ -31,6 +31,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.file.IFieldMatrixProvider;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.IField;
@@ -369,6 +371,12 @@ public class GamaImage extends BufferedImage implements IImageProvider, IAsset, 
 	@Override
 	public GamaImage copy(final IScope scope) throws GamaRuntimeException {
 		return from(this, this.getAlpha(scope));
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "width", getWidth(), "height", getHeight(), "type", getType(), "pixels",
+				ImageOperators.matrix(null, this));
 	}
 
 }

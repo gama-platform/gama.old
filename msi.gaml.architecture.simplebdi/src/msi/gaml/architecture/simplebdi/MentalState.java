@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MentalState.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * MentalState.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
@@ -20,6 +20,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -56,36 +58,44 @@ import msi.gaml.types.Types;
 				doc = @doc ("the lifetime of the mental state")) })
 public class MentalState implements IValue {
 
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json
+				.typedObject(getGamlType(), "modality", modality, "mental_state", mental, "predicate",
+						predicate == null ? null : predicate.getName(), "emotion", emo == null ? null : emo.name)
+				.add("strength", strength).add("owner", owner).add("lifetime", lifetime);
+	}
+
 	/** The modality. */
 	String modality;
-	
+
 	/** The predicate. */
 	Predicate predicate;
-	
+
 	/** The strength. */
 	Double strength;
-	
+
 	/** The lifetime. */
 	int lifetime = -1;
-	
+
 	/** The is updated. */
 	boolean isUpdated = false;
-	
+
 	/** The mental. */
 	MentalState mental;
-	
+
 	/** The emo. */
 	Emotion emo;
-	
+
 	/** The owner. */
 	IAgent owner;
-	
+
 	/** The on hold until. */
 	List<MentalState> onHoldUntil;
-	
+
 	/** The subintentions. */
 	List<MentalState> subintentions;
-	
+
 	/** The super intention. */
 	MentalState superIntention;
 
@@ -95,9 +105,7 @@ public class MentalState implements IValue {
 	 * @return the modality
 	 */
 	@getter ("modality")
-	public String getModality() {
-		return modality;
-	}
+	public String getModality() { return modality; }
 
 	/**
 	 * Gets the predicate.
@@ -105,9 +113,7 @@ public class MentalState implements IValue {
 	 * @return the predicate
 	 */
 	@getter ("predicate")
-	public Predicate getPredicate() {
-		return predicate;
-	}
+	public Predicate getPredicate() { return predicate; }
 
 	/**
 	 * Gets the mental state.
@@ -115,9 +121,7 @@ public class MentalState implements IValue {
 	 * @return the mental state
 	 */
 	@getter ("mental_state")
-	public MentalState getMentalState() {
-		return mental;
-	}
+	public MentalState getMentalState() { return mental; }
 
 	/**
 	 * Gets the emotion.
@@ -125,9 +129,7 @@ public class MentalState implements IValue {
 	 * @return the emotion
 	 */
 	@getter ("emotion")
-	public Emotion getEmotion() {
-		return emo;
-	}
+	public Emotion getEmotion() { return emo; }
 
 	/**
 	 * Gets the strength.
@@ -135,9 +137,7 @@ public class MentalState implements IValue {
 	 * @return the strength
 	 */
 	@getter ("strength")
-	public Double getStrength() {
-		return strength;
-	}
+	public Double getStrength() { return strength; }
 
 	/**
 	 * Gets the life time.
@@ -145,9 +145,7 @@ public class MentalState implements IValue {
 	 * @return the life time
 	 */
 	@getter ("lifetime")
-	public int getLifeTime() {
-		return lifetime;
-	}
+	public int getLifeTime() { return lifetime; }
 
 	/**
 	 * Gets the owner.
@@ -155,9 +153,7 @@ public class MentalState implements IValue {
 	 * @return the owner
 	 */
 	@getter ("owner")
-	public IAgent getOwner() {
-		return owner;
-	}
+	public IAgent getOwner() { return owner; }
 
 	/**
 	 * Gets the subintentions.
@@ -165,9 +161,7 @@ public class MentalState implements IValue {
 	 * @return the subintentions
 	 */
 	@getter ("subintentions")
-	public List<MentalState> getSubintentions() {
-		return subintentions;
-	}
+	public List<MentalState> getSubintentions() { return subintentions; }
 
 	/**
 	 * Gets the super intention.
@@ -175,108 +169,94 @@ public class MentalState implements IValue {
 	 * @return the super intention
 	 */
 	@getter ("superIntention")
-	public MentalState getSuperIntention() {
-		return superIntention;
-	}
+	public MentalState getSuperIntention() { return superIntention; }
 
 	/**
 	 * Gets the on hold until.
 	 *
 	 * @return the on hold until
 	 */
-	public List<MentalState> getOnHoldUntil() {
-		return onHoldUntil;
-	}
+	public List<MentalState> getOnHoldUntil() { return onHoldUntil; }
 
 	/**
 	 * Sets the modality.
 	 *
-	 * @param mod the new modality
+	 * @param mod
+	 *            the new modality
 	 */
-	public void setModality(final String mod) {
-		this.modality = mod;
-	}
+	public void setModality(final String mod) { this.modality = mod; }
 
 	/**
 	 * Sets the predicate.
 	 *
-	 * @param pred the new predicate
+	 * @param pred
+	 *            the new predicate
 	 */
-	public void setPredicate(final Predicate pred) {
-		this.predicate = pred;
-	}
+	public void setPredicate(final Predicate pred) { this.predicate = pred; }
 
 	/**
 	 * Sets the mental state.
 	 *
-	 * @param ment the new mental state
+	 * @param ment
+	 *            the new mental state
 	 */
-	public void setMentalState(final MentalState ment) {
-		this.mental = ment;
-	}
+	public void setMentalState(final MentalState ment) { this.mental = ment; }
 
 	/**
 	 * Sets the emotion.
 	 *
-	 * @param em the new emotion
+	 * @param em
+	 *            the new emotion
 	 */
-	public void setEmotion(final Emotion em) {
-		this.emo = em;
-	}
+	public void setEmotion(final Emotion em) { this.emo = em; }
 
 	/**
 	 * Sets the strength.
 	 *
-	 * @param stre the new strength
+	 * @param stre
+	 *            the new strength
 	 */
-	public void setStrength(final Double stre) {
-		this.strength = stre;
-	}
+	public void setStrength(final Double stre) { this.strength = stre; }
 
 	/**
 	 * Sets the life time.
 	 *
-	 * @param life the new life time
+	 * @param life
+	 *            the new life time
 	 */
-	public void setLifeTime(final int life) {
-		this.lifetime = life;
-	}
+	public void setLifeTime(final int life) { this.lifetime = life; }
 
 	/**
 	 * Sets the owner.
 	 *
-	 * @param ag the new owner
+	 * @param ag
+	 *            the new owner
 	 */
-	public void setOwner(final IAgent ag) {
-		this.owner = ag;
-	}
+	public void setOwner(final IAgent ag) { this.owner = ag; }
 
 	/**
 	 * Sets the subintentions.
 	 *
-	 * @param subintentions the new subintentions
+	 * @param subintentions
+	 *            the new subintentions
 	 */
-	public void setSubintentions(final List<MentalState> subintentions) {
-		this.subintentions = subintentions;
-	}
+	public void setSubintentions(final List<MentalState> subintentions) { this.subintentions = subintentions; }
 
 	/**
 	 * Sets the super intention.
 	 *
-	 * @param superPredicate the new super intention
+	 * @param superPredicate
+	 *            the new super intention
 	 */
-	public void setSuperIntention(final MentalState superPredicate) {
-		this.superIntention = superPredicate;
-	}
+	public void setSuperIntention(final MentalState superPredicate) { this.superIntention = superPredicate; }
 
 	/**
 	 * Sets the on hold until.
 	 *
-	 * @param onHoldUntil the new on hold until
+	 * @param onHoldUntil
+	 *            the new on hold until
 	 */
-	public void setOnHoldUntil(final List<MentalState> onHoldUntil) {
-		this.onHoldUntil = onHoldUntil;
-	}
+	public void setOnHoldUntil(final List<MentalState> onHoldUntil) { this.onHoldUntil = onHoldUntil; }
 
 	/**
 	 * Update lifetime.
@@ -292,7 +272,6 @@ public class MentalState implements IValue {
 	 * Instantiates a new mental state.
 	 */
 	public MentalState() {
-		super();
 		this.modality = "";
 		this.predicate = null;
 		this.mental = null;
@@ -304,10 +283,10 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
+	 * @param mod
+	 *            the mod
 	 */
 	public MentalState(final String mod) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -319,11 +298,12 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
 	 */
 	public MentalState(final String mod, final Predicate pred) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -335,11 +315,12 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
 	 */
 	public MentalState(final String mod, final MentalState ment) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -351,11 +332,12 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
 	 */
 	public MentalState(final String mod, final Emotion em) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -367,12 +349,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Predicate pred, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -384,12 +368,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final MentalState ment, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -401,12 +387,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Emotion em, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -418,12 +406,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
-	 * @param stre the stre
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
+	 * @param stre
+	 *            the stre
 	 */
 	public MentalState(final String mod, final Predicate pred, final Double stre) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -434,12 +424,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
-	 * @param stre the stre
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
+	 * @param stre
+	 *            the stre
 	 */
 	public MentalState(final String mod, final MentalState ment, final Double stre) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -450,12 +442,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
-	 * @param stre the stre
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
+	 * @param stre
+	 *            the stre
 	 */
 	public MentalState(final String mod, final Emotion em, final Double stre) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -466,12 +460,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
-	 * @param life the life
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
 	 */
 	public MentalState(final String mod, final Predicate pred, final int life) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -483,12 +479,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
-	 * @param life the life
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
+	 * @param life
+	 *            the life
 	 */
 	public MentalState(final String mod, final MentalState ment, final int life) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -500,12 +498,14 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
-	 * @param life the life
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
+	 * @param life
+	 *            the life
 	 */
 	public MentalState(final String mod, final Emotion em, final int life) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -517,13 +517,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
-	 * @param stre the stre
-	 * @param life the life
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
+	 * @param stre
+	 *            the stre
+	 * @param life
+	 *            the life
 	 */
 	public MentalState(final String mod, final Predicate pred, final Double stre, final int life) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -535,13 +538,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
-	 * @param stre the stre
-	 * @param life the life
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
+	 * @param stre
+	 *            the stre
+	 * @param life
+	 *            the life
 	 */
 	public MentalState(final String mod, final MentalState ment, final Double stre, final int life) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -553,13 +559,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
-	 * @param stre the stre
-	 * @param life the life
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
+	 * @param stre
+	 *            the stre
+	 * @param life
+	 *            the life
 	 */
 	public MentalState(final String mod, final Emotion em, final Double stre, final int life) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -571,13 +580,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
-	 * @param stre the stre
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
+	 * @param stre
+	 *            the stre
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Predicate pred, final Double stre, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -589,13 +601,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
-	 * @param stre the stre
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
+	 * @param stre
+	 *            the stre
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final MentalState ment, final Double stre, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -607,13 +622,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
-	 * @param stre the stre
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
+	 * @param stre
+	 *            the stre
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Emotion em, final Double stre, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -625,13 +643,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
-	 * @param life the life
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Predicate pred, final int life, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -644,13 +665,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
-	 * @param life the life
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final MentalState ment, final int life, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -663,13 +687,16 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
-	 * @param life the life
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Emotion em, final int life, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -682,14 +709,18 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param pred the pred
-	 * @param stre the stre
-	 * @param life the life
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param pred
+	 *            the pred
+	 * @param stre
+	 *            the stre
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Predicate pred, final Double stre, final int life, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = pred;
 		this.mental = null;
@@ -702,14 +733,18 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param ment the ment
-	 * @param stre the stre
-	 * @param life the life
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param ment
+	 *            the ment
+	 * @param stre
+	 *            the stre
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final MentalState ment, final Double stre, final int life, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = ment;
@@ -722,14 +757,18 @@ public class MentalState implements IValue {
 	/**
 	 * Instantiates a new mental state.
 	 *
-	 * @param mod the mod
-	 * @param em the em
-	 * @param stre the stre
-	 * @param life the life
-	 * @param ag the ag
+	 * @param mod
+	 *            the mod
+	 * @param em
+	 *            the em
+	 * @param stre
+	 *            the stre
+	 * @param life
+	 *            the life
+	 * @param ag
+	 *            the ag
 	 */
 	public MentalState(final String mod, final Emotion em, final Double stre, final int life, final IAgent ag) {
-		super();
 		this.modality = mod;
 		this.predicate = null;
 		this.mental = null;
@@ -751,9 +790,7 @@ public class MentalState implements IValue {
 	}
 
 	@Override
-	public IType<?> getGamlType() {
-		return Types.get(MentalStateType.id);
-	}
+	public IType<?> getGamlType() { return Types.get(MentalStateType.id); }
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
@@ -770,13 +807,10 @@ public class MentalState implements IValue {
 		if (predicate != null) {
 			tempMental.setPredicate(predicate);
 			return tempMental;
-		} else if (mental != null) {
-			tempMental.setMentalState(mental);
-			return tempMental;
-		} else if (emo != null) {
-			tempMental.setEmotion(emo);
-			return tempMental;
 		}
+		if (mental != null) {
+			tempMental.setMentalState(mental);
+		} else if (emo != null) { tempMental.setEmotion(emo); }
 		return tempMental;
 	}
 
@@ -789,26 +823,20 @@ public class MentalState implements IValue {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj) { return true; }
-		if (obj == null) { return false; }
-		if (getClass() != obj.getClass()) { return false; }
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
 		final MentalState other = (MentalState) obj;
 		// if(other.getModality()!=this.modality){return false;}
-		if (this.predicate == null && other.getPredicate() != null) { return false; }
-		if (this.predicate != null && other.getPredicate() == null) { return false; }
-		if (this.predicate != null && other.getPredicate() != null) {
-			if (!other.getPredicate().equals(this.predicate)) { return false; }
-		}
-		if (this.mental == null && other.getMentalState() != null) { return false; }
-		if (this.mental != null && other.getMentalState() == null) { return false; }
-		if (this.mental != null && other.getMentalState() != null) {
-			if (!other.getMentalState().equals(this.mental)) { return false; }
-		}
-		if (this.emo == null && other.getEmotion() != null) { return false; }
-		if (this.emo != null && other.getEmotion() == null) { return false; }
-		if (this.emo != null && other.getEmotion() != null) {
-			if (!other.getEmotion().equals(this.emo)) { return false; }
-		}
+		if ((this.predicate == null && other.getPredicate() != null) || (this.predicate != null && other.getPredicate() == null)) return false;
+		if (this.predicate != null && other.getPredicate() != null && !other.getPredicate().equals(this.predicate))
+			return false;
+		if (this.mental == null && other.getMentalState() != null) return false;
+		if (this.mental != null && other.getMentalState() == null) return false;
+		if (this.mental != null && other.getMentalState() != null && !other.getMentalState().equals(this.mental))
+			return false;
+		if (this.emo == null && other.getEmotion() != null) return false;
+		if (this.emo != null && other.getEmotion() == null) return false;
+		if (this.emo != null && other.getEmotion() != null && !other.getEmotion().equals(this.emo)) return false;
 		// if (subintentions == null) {
 		// if (other.subintentions != null && !other.subintentions.isEmpty()) {
 		// return false;
@@ -823,9 +851,7 @@ public class MentalState implements IValue {
 		// } else if (superIntention.partialEquality(other.superIntention)) {
 		// return false;
 		// }
-		if (this.owner != null && other.getOwner() != null) {
-			if (!other.getOwner().equals(this.owner)) { return false; }
-		}
+		if (this.owner != null && other.getOwner() != null && !other.getOwner().equals(this.owner)) return false;
 		// if(other.getStrength()!=this.strength){return false;}
 		return true;
 	}

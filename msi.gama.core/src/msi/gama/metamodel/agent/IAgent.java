@@ -38,6 +38,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.interfaces.IAttributed;
 import msi.gaml.interfaces.INamed;
 import msi.gaml.species.ISpecies;
@@ -364,29 +366,31 @@ public interface IAgent extends IShape, INamed, IAttributed, Comparable<IAgent>,
 	boolean isInstanceOf(String skill, boolean direct);
 
 	/**
-	 * @throws GamaRuntimeException
-	 *             Finds the corresponding population of a species from the "viewpoint" of this agent.
 	 *
-	 *             An agent can "see" the following populations: 1. populations of its species' direct micro-species; 2.
-	 *             population of its species; populations of its peer species; 3. populations of its direct&in-direct
-	 *             macro-species and of their peers.
+	 * Finds the corresponding population of a species from the "viewpoint" of this agent.
+	 *
+	 * An agent can "see" the following populations: 1. populations of its species' direct micro-species; 2. population
+	 * of its species; populations of its peer species; 3. populations of its direct&in-direct macro-species and of
+	 * their peers.
 	 *
 	 * @param microSpecies
-	 * @return
+	 * @return the corresponding population
+	 * @throws GamaRuntimeException
 	 */
 	IPopulation<? extends IAgent> getPopulationFor(final ISpecies microSpecies);
 
 	/**
-	 * @throws GamaRuntimeException
-	 *             Finds the corresponding population of a species from the "viewpoint" of this agent.
 	 *
-	 *             An agent can "see" the following populations: 1. populations of its species' direct micro-species; 2.
-	 *             population of its species; populations of its peer species; 3. populations of its direct&in-direct
-	 *             macro-species and of their peers.
+	 * Finds the corresponding population of a species from the "viewpoint" of this agent.
+	 *
+	 * An agent can "see" the following populations: 1. populations of its species' direct micro-species; 2. population
+	 * of its species; populations of its peer species; 3. populations of its direct&in-direct macro-species and of
+	 * their peers.
 	 *
 	 * @param speciesName
 	 *            the name of the species
-	 * @return
+	 * @return the corresponding population
+	 * @throws GamaRuntimeException
 	 */
 	IPopulation<? extends IAgent> getPopulationFor(final String speciesName);
 
@@ -398,7 +402,7 @@ public interface IAgent extends IShape, INamed, IAttributed, Comparable<IAgent>,
 	 * @param sa
 	 *            the sa
 	 */
-	void updateWith(final IScope s, final SavedAgent sa);
+	void updateWith(final IScope s, final ISerialisedAgent sa);
 
 	/***
 	 * All the methods of IShape are delegated by default to getGeometry()
@@ -681,5 +685,17 @@ public interface IAgent extends IShape, INamed, IAttributed, Comparable<IAgent>,
 	 * @return the simulation
 	 */
 	default SimulationAgent getSimulation() { return getPopulation().getHost().getSimulation(); }
+
+	/**
+	 * Serialize to json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the json object
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		return json.valueOf(new AgentReference(this));
+	}
 
 }

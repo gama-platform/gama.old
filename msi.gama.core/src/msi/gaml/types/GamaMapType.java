@@ -12,7 +12,6 @@ package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -22,8 +21,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IMap;
-import msi.gama.util.file.json.DeserializationException;
-import msi.gama.util.file.json.Jsoner;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.ParseException;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -63,17 +62,18 @@ public class GamaMapType extends GamaContainerType<IMap> {
 	 */
 	public static IMap staticCast(final IScope scope, final Object obj, final IType keyType, final IType contentsType,
 			final boolean copy) {
-		if (obj instanceof IAgent ia) return new SavedAgent(scope, ia);
+		if (obj instanceof IAgent ia) return ia.getOrCreateAttributes();
 		if (obj instanceof IContainer ic) return ic.mapValue(scope, keyType, contentsType, copy);
+		// TODO Should be removed to privilegiate from_json()
 		if (obj instanceof String s) {
 			final IMap<String, Object> map;
 			try {
-				Object o = Jsoner.deserialize(s);
+				Object o = Json.getInstance().parse(s);
 				if (o instanceof IMap m) return m;
 				map = GamaMapFactory.create();
 				map.put(IKeyword.CONTENTS, o);
 				return map;
-			} catch (DeserializationException e) {
+			} catch (ParseException e) {
 				throw GamaRuntimeException.create(e, scope);
 			}
 		}

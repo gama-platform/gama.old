@@ -25,6 +25,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -64,6 +66,13 @@ import msi.gaml.types.Types;
 				type = IType.AGENT,
 				doc = @doc ("the agent causing the predicate")) })
 public class Predicate implements IValue {
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "name", name, "is_true", is_true, "values", values, "date", date)
+				.add("subintentions", subintentions).add("on_hold_until", onHoldUntil)
+				.add("super_intention", superIntention).add("cause", agentCause);
+	}
 
 	/** The name. */
 	String name;
@@ -268,14 +277,6 @@ public class Predicate implements IValue {
 		this.agentCause = null;
 	}
 
-	// public Predicate(final String name, final int lifetime) {
-	// super();
-	// this.name = name;
-	// everyPossibleValues = true;
-	// this.lifetime = lifetime;
-	// this.agentCause = null;
-	// }
-
 	/**
 	 * Instantiates a new predicate.
 	 *
@@ -323,15 +324,6 @@ public class Predicate implements IValue {
 		everyPossibleValues = values == null;
 		this.agentCause = null;
 	}
-	//
-	// public Predicate(final String name, final Map<String, Object> values, final int lifetime) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.lifetime = lifetime;
-	// everyPossibleValues = values == null;
-	// this.agentCause = null;
-	// }
 
 	/**
 	 * Instantiates a new predicate.
@@ -350,15 +342,6 @@ public class Predicate implements IValue {
 		this.agentCause = ag;
 		this.noAgentCause = ag == null;
 	}
-	//
-	// public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.lifetime = lifetime;
-	// this.is_true = truth;
-	// everyPossibleValues = values == null;
-	// }
 
 	/**
 	 * Instantiates a new predicate.
@@ -380,28 +363,6 @@ public class Predicate implements IValue {
 		this.agentCause = ag;
 		this.noAgentCause = ag == null;
 	}
-	//
-	// public Predicate(final String name, final Map<String, Object> values, final int lifetime, final IAgent ag) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.lifetime = lifetime;
-	// everyPossibleValues = values == null;
-	// this.agentCause = ag;
-	// this.noAgentCause = ag == null;
-	// }
-
-	// public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth,
-	// final IAgent ag) {
-	// super();
-	// this.name = name;
-	// this.values = values;
-	// this.lifetime = lifetime;
-	// this.is_true = truth;
-	// everyPossibleValues = values == null;
-	// this.agentCause = ag;
-	// this.noAgentCause = ag == null;
-	// }
 
 	/**
 	 * Sets the name.
@@ -450,13 +411,6 @@ public class Predicate implements IValue {
 		return new Predicate(name);
 	}
 
-	// public void updateLifetime() {
-	// if (this.lifetime > 0 && !this.isUpdated) {
-	// this.lifetime = this.lifetime - 1;
-	// this.isUpdated = true;
-	// }
-	// }
-
 	/**
 	 * Checks if is similar name.
 	 *
@@ -466,7 +420,7 @@ public class Predicate implements IValue {
 	 */
 	public boolean isSimilarName(final Predicate other) {
 		if (this == other) return true;
-		if ((other == null) || !Objects.equals(name, other.name)) return false;
+		if (other == null || !Objects.equals(name, other.name)) return false;
 		return true;
 	}
 
@@ -480,118 +434,22 @@ public class Predicate implements IValue {
 		if (this == obj) return true;
 		if (obj == null || getClass() != obj.getClass()) return false;
 		final Predicate other = (Predicate) obj;
-		// if (subintentions == null) {
-		// if (other.subintentions != null && !other.subintentions.isEmpty()) {
-		// return false;
-		// }
-		// } else if (!subintentions.equals(other.subintentions)) {
-		// return false;
-		// }
-		// if (superIntention == null) {
-		// if (other.superIntention != null) {
-		// return false;
-		// }
-		// } else if (superIntention.getPredicate() == null) {
-		// if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
-		// return false;
-		// }
-		// } else if (other.superIntention!=null &&
-		// !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-		// return false;
-		// }
-		if (!Objects.equals(name, other.name) || (is_true != other.is_true)) return false;
-		// if(lifetime!=-1 || other.lifetime!=1){
-		// if(lifetime!=other.lifetime){return false;}
-		// }
+		if (!Objects.equals(name, other.name) || is_true != other.is_true) return false;
 		if (everyPossibleValues && noAgentCause || other.everyPossibleValues && other.noAgentCause) return true;
-		/*
-		 * if ( values == null ) { if ( other.values != null ) { return false; } } else //
-		 */ if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty()) {
+		if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty()) {
 			final Set<String> keys = values.keySet();
 			keys.retainAll(other.values.keySet());
 			for (final String k : keys) {
-				if (this.values.get(k) == null && other.values.get(k) != null) return false;
-				if (!values.get(k).equals(other.values.get(k))) return false;
+				if (this.values.get(k) == null && other.values.get(k) != null
+						|| !values.get(k).equals(other.values.get(k)))
+					return false;
 			}
 			return true;
 		}
-		// if (values != null && other.values != null && !values.equals(other.values)) {
-		// return false;
-		// }
 
-		/*
-		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
-		 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) return false;
-
+		if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) return false;
 		return true;
 	}
-
-	// private boolean partialEquality(final Object obj) {
-	// // You don't test the sub-intentions. Used when testing the equality of
-	// // the super-intention
-	// if (this == obj) {
-	// return true;
-	// }
-	// if (obj == null) {
-	// return false;
-	// }
-	// if (getClass() != obj.getClass()) {
-	// return false;
-	// }
-	// final Predicate other = (Predicate) obj;
-	// if (name == null) {
-	// if (other.name != null) {
-	// return false;
-	// }
-	// } else if (!name.equals(other.name)) {
-	// return false;
-	// }
-	//// if (superIntention == null) {
-	//// if (other.superIntention != null) {
-	//// return false;
-	//// }
-	//// } else if (superIntention.getPredicate() == null) {
-	//// if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
-	//// return false;
-	//// }
-	//// } else if (other.superIntention!=null &&
-	// !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-	//// return false;
-	//// }
-	// if (is_true != other.is_true) {
-	// return false;
-	// }
-	// // if(lifetime!=-1 || other.lifetime!=1){
-	// // if(lifetime!=other.lifetime){return false;}
-	// // }
-	// if (everyPossibleValues && noAgentCause || other.everyPossibleValues && other.noAgentCause) {
-	// return true;
-	// }
-	// /*
-	// * if ( values == null ) { if ( other.values != null ) { return false; }
-	// * } else
-	// */
-	// if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty())
-	// {
-	// Set<String> keys = values.keySet();
-	// keys.retainAll(other.values.keySet());
-	// for (String k : keys) {
-	// if (!values.get(k).equals(other.values.get(k)))
-	// return false;
-	// }
-	// return true;
-	// }
-	//// if (values != null && other.values != null && !values.equals(other.values)) {
-	//// return false;
-	//// }
-	// /*
-	// * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
-	// */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
-	// return false;
-	// }
-	//
-	// return true;
-	// }
 
 	/**
 	 * Equals intention plan.
@@ -605,43 +463,19 @@ public class Predicate implements IValue {
 		if (this == obj) return true;
 		if (obj == null || getClass() != obj.getClass()) return false;
 		final Predicate other = (Predicate) obj;
-		// if (subintentions != null) {
-		// if (!subintentions.equals(other.subintentions)) {
-		// return false;
-		// }
-		// }
-		// if (superIntention == null) {
-		// if (other.superIntention!=null && other.superIntention != null) {
-		// return false;
-		// }
-		// } else if (superIntention.getPredicate() != null) {
-		// if (!superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-		// return false;
-		// }
-		// }
-		if (!Objects.equals(name, other.name) || (is_true != other.is_true)) return false;
-		// if(lifetime!=-1 || other.lifetime!=1){
-		// if(lifetime!=other.lifetime){return false;}
-		// }
+		if (!Objects.equals(name, other.name) || is_true != other.is_true) return false;
 		if (everyPossibleValues && noAgentCause || other.everyPossibleValues && other.noAgentCause) return true;
-		/*
-		 * if ( values == null ) { if ( other.values != null ) { return false; } } else
-		 */
 		if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty()) {
 			final Set<String> keys = values.keySet();
 			keys.retainAll(other.values.keySet());
 			for (final String k : keys) {
-				if (this.values.get(k) == null && other.values.get(k) != null) return false;
-				if (!values.get(k).equals(other.values.get(k))) return false;
+				if (this.values.get(k) == null && other.values.get(k) != null
+						|| !values.get(k).equals(other.values.get(k)))
+					return false;
 			}
 			return true;
 		}
-		// if (values != null && other.values != null && !values.equals(other.values)) {
-		// return false;
-		// }
-		/*
-		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
-		 */if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) return false;
+		if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) return false;
 
 		return true;
 	}
@@ -660,48 +494,17 @@ public class Predicate implements IValue {
 		// Used in emotions
 		if (obj == null || getClass() != obj.getClass()) return false;
 		final Predicate other = (Predicate) obj;
-		// if (subintentions == null) {
-		// if (other.subintentions != null && !other.subintentions.isEmpty()) {
-		// return false;
-		// }
-		// } else if (!subintentions.equals(other.subintentions)) {
-		// return false;
-		// }
-		// if (superIntention == null) {
-		// if (other.superIntention != null) {
-		// return false;
-		// }
-		// } else if (superIntention.getPredicate() == null) {
-		// if (other.superIntention != null) {
-		// return false;
-		// }
-		// } else if (other.superIntention!=null &&
-		// !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-		// return false;
-		// }
-		if (!Objects.equals(name, other.name) || (is_true == other.is_true)) return false;
+		if (!Objects.equals(name, other.name) || is_true == other.is_true) return false;
 		if (everyPossibleValues && noAgentCause || other.everyPossibleValues && other.noAgentCause) return true;
-		/*
-		 * if ( values == null ) { if ( other.values != null ) { return false; } } else
-		 */
 		if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty()) {
 			final Set<String> keys = values.keySet();
 			keys.retainAll(other.values.keySet());
 			for (final String k : keys) {
-				if (this.values.get(k) == null && other.values.get(k) != null) return false;
-				if (!values.get(k).equals(other.values.get(k))) return false;
+				if (this.values.get(k) == null && other.values.get(k) != null
+						|| !values.get(k).equals(other.values.get(k)))
+					return false;
 			}
 		}
-		// if (values != null && other.values != null && !values.equals(other.values)) {
-		// return false;
-		// }
-		/*
-		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
-		 */
-		// if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
-		// return false;
-		// }
-
 		return true;
 	}
 
@@ -717,50 +520,17 @@ public class Predicate implements IValue {
 		if (this == obj) return true;
 		if (obj == null || getClass() != obj.getClass()) return false;
 		final Predicate other = (Predicate) obj;
-		// if (subintentions == null) {
-		// if (other.subintentions != null && !other.subintentions.isEmpty()) {
-		// return false;
-		// }
-		// } else if (!subintentions.equals(other.subintentions)) {
-		// return false;
-		// }
-		// if (superIntention == null) {
-		// if (other.superIntention != null) {
-		// return false;
-		// }
-		// } else if (superIntention.getPredicate() == null) {
-		// if (other.superIntention!=null && other.superIntention.getPredicate() != null) {
-		// return false;
-		// }
-		// } else if (other.superIntention!=null &&
-		// !superIntention.getPredicate().partialEquality(other.superIntention.getPredicate())) {
-		// return false;
-		// }
-		if (!Objects.equals(name, other.name) || (is_true != other.is_true)) return false;
-		// if(lifetime!=-1 || other.lifetime!=1){
-		// if(lifetime!=other.lifetime){return false;}
-		// }
+		if (!Objects.equals(name, other.name) || is_true != other.is_true) return false;
 		if (everyPossibleValues && noAgentCause || other.everyPossibleValues && other.noAgentCause) return true;
-		/*
-		 * if ( values == null ) { if ( other.values != null ) { return false; } } else
-		 */
 		if (values != null && other.values != null && !values.isEmpty() && !other.values.isEmpty()) {
 			final Set<String> keys = values.keySet();
 			keys.retainAll(other.values.keySet());
 			for (final String k : keys) {
-				if (this.values.get(k) == null && other.values.get(k) != null) return false;
-				if (!values.get(k).equals(other.values.get(k))) return false;
+				if (this.values.get(k) == null && other.values.get(k) != null
+						|| !values.get(k).equals(other.values.get(k)))
+					return false;
 			}
 		}
-		// if (values != null && other.values != null && !values.equals(other.values)) {
-		// return false;
-		// }
-		/*
-		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
-		 */
-		// if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) {
-		// return false;
-		// }
 
 		return true;
 	}

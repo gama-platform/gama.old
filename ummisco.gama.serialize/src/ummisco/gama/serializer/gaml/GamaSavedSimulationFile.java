@@ -29,7 +29,7 @@ import ummisco.gama.serializer.implementations.ISerialisationConstants;
 		buffer_content = IType.STRING,
 		buffer_index = IType.INT,
 		concept = { IConcept.FILE, IConcept.SAVE_FILE },
-		doc = @doc ("Represents a saved simulation file. The internal contents is a string at index 0 that contains the textual (json, xml) or binary (bytes) representation of the simulation"))
+		doc = @doc ("Represents a saved simulation file. The internal contents is a string at index 0 that contains the binary (bytes) representation of the simulation"))
 // TODO : this type needs to be improved ....
 @SuppressWarnings ({ "unchecked" })
 public class GamaSavedSimulationFile extends GamaSavedAgentFile implements ISerialisationConstants {
@@ -44,7 +44,7 @@ public class GamaSavedSimulationFile extends GamaSavedAgentFile implements ISeri
 	 * @throws GamaRuntimeException
 	 *             the gama runtime exception
 	 */
-	@doc ("File containing 	a saved simulation. Three internal formats are supported: json, xml and java binary serialisation protocol")
+	@doc ("File containing 	a saved simulation in the java binary serialisation protocol")
 	public GamaSavedSimulationFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}

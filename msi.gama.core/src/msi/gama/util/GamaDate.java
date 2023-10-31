@@ -47,6 +47,8 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Dates;
@@ -379,6 +381,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 *            the current scope from which the simulation can be obtained
 	 * @return the duration in seconds since this starting date
 	 */
+	@Override
 	public double floatValue(final IScope scope) {
 		final SimulationAgent sim = scope.getSimulation();
 		if (sim == null) return Dates.DATES_STARTING_DATE.getValue().until(this, ChronoUnit.SECONDS);
@@ -392,6 +395,7 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 *            the scope
 	 * @return the int
 	 */
+	@Override
 	public int intValue(final IScope scope) {
 		return (int) floatValue(scope);
 	}
@@ -937,6 +941,11 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 			//
 		}
 		return new GamaDate(null, s);
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.typedObject(getGamlType(), "iso", toISOString());
 	}
 
 }

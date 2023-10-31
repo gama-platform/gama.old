@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MetaPopulation.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * MetaPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.metamodel.population;
 
@@ -31,6 +31,8 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IContainerType;
@@ -51,11 +53,11 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	/** The population sets. */
 	protected final List<IPopulationSet<? extends IAgent>> populationSets;
-	
+
 	/** The set of populations. */
 	// We cache the value in case.
 	protected IMap<String, IPopulation> setOfPopulations;
-	
+
 	/** The type. */
 	protected IContainerType type = Types.LIST.of(Types.AGENT);
 
@@ -69,7 +71,8 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	/**
 	 * Instantiates a new meta population.
 	 *
-	 * @param pops the pops
+	 * @param pops
+	 *            the pops
 	 */
 	public MetaPopulation(final IPopulation<? extends IAgent>[] pops) {
 		this();
@@ -98,7 +101,8 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	/**
 	 * Adds the population set.
 	 *
-	 * @param pop the pop
+	 * @param pop
+	 *            the pop
 	 */
 	public void addPopulationSet(final IPopulationSet pop) {
 		populationSets.add(pop);
@@ -225,10 +229,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	@Override
 	public boolean containsKey(final IScope scope, final Object o) {
-		if (o instanceof Integer) {
-			final Integer i = (Integer) o;
-			return i > 0 && i < length(scope);
-		}
+		if (o instanceof final Integer i) return i > 0 && i < length(scope);
 		return false;
 	}
 
@@ -371,7 +372,8 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	/**
 	 * Gets the map of populations.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the map of populations
 	 */
 	private Map<String, IPopulation> getMapOfPopulations(final IScope scope) {
@@ -397,6 +399,11 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	@Override
 	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
 		return getMapOfPopulations(scope).values();
+	}
+
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json.array(populationSets);
 	}
 
 }

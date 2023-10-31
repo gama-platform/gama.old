@@ -33,8 +33,9 @@ import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.metamodel.agent.SavedAgent;
+import msi.gama.metamodel.agent.ISerialisedAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.ISerialisedPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.continuous.RootTopology;
@@ -1012,7 +1013,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public void updateWith(final IScope scope, final SavedAgent sa) {
+	public void updateWith(final IScope scope, final ISerialisedAgent sa) {
 
 		Double seedValue = null;
 		String rngValue = null;
@@ -1024,11 +1025,13 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		final List<IReference> list_ref = new ArrayList<>();
 
 		// Update Attribute
-		final Map<String, Object> attr = sa.getVariables();
+		final Map<String, Object> attr = sa.attributes();
 		for (final String varName : attr.keySet()) {
 			final Object attrValue = attr.get(varName);
 
 			final boolean isReference = IReference.isReference(attrValue);
+			final boolean isPopulation = attrValue instanceof ISerialisedPopulation;
+			if (isPopulation) { continue; }
 
 			// if( attrValue instanceof ReferenceAgent) {
 			if (isReference) {
@@ -1057,17 +1060,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		final Object cycle = sa.getAttributeValue(CYCLE);
 		ownClock.setCycleNoCheck((Integer) cycle);
 
-		// TODO
-		// Update GUI of the Experiment
-		// this.getExperiment().
-
-		// Update innerPopulations
-		// TODO tout mettre dans une methode :
-		// Add a boolean to this one :
-		// public void restoreMicroAgents(final IScope scope, final IAgent host)
-		// throws GamaRuntimeException {
-
-		final Map<String, List<SavedAgent>> savedAgentInnerPop = sa.getInnerPopulations();
+		final Map<String, ISerialisedPopulation> savedAgentInnerPop = sa.innerPopulations();
 
 		if (savedAgentInnerPop != null) {
 			for (final String savedAgentMicroPopName : savedAgentInnerPop.keySet()) {
@@ -1077,8 +1070,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 					// Build a map name::innerPopAgentSavedAgt :
 					// For each agent from the simulation innerPop, it will be
 					// updated from the corresponding agent
-					final Map<String, SavedAgent> mapSavedAgtName = GamaMapFactory.createUnordered();
-					for (final SavedAgent localSA : savedAgentInnerPop.get(savedAgentMicroPopName)) {
+					final Map<String, ISerialisedAgent> mapSavedAgtName = GamaMapFactory.createUnordered();
+					for (final ISerialisedAgent localSA : savedAgentInnerPop.get(savedAgentMicroPopName).agents()) {
 						mapSavedAgtName.put((String) localSA.getAttributeValue("name"), localSA);
 					}
 
@@ -1086,7 +1079,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 					for (final IAgent agt : simuMicroPop.toArray()) { mapSimuAgtName.put(agt.getName(), agt); }
 
-					for (final Entry<String, SavedAgent> e : mapSavedAgtName.entrySet()) {
+					for (final Entry<String, ISerialisedAgent> e : mapSavedAgtName.entrySet()) {
 						final IAgent agt = mapSimuAgtName.get(e.getKey());
 						if (agt != null) { // the savedAgent is in the
 											// simulation, update it, and remove
@@ -1097,15 +1090,15 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 						} else { // the SavedAgent is not in the Simulation,
 									// then create it
 
-							simuMicroPop.createAgentAt(scope, e.getValue().getIndex(), e.getValue().getVariables(),
-									true, true);
+							simuMicroPop.createAgentAt(scope, e.getValue().getIndex(), e.getValue().attributes(), true,
+									true);
 						}
 
 						// Find the agt and all the references
 						final IAgent currentAgent = agt == null ? simuMicroPop.getAgent(e.getValue().getIndex()) : agt;
 
-						for (final String name : e.getValue().keySet()) {
-							final Object attrValue = e.getValue().get(name);
+						for (final String name : e.getValue().attributes().keySet()) {
+							final Object attrValue = e.getValue().getAttributeValue(name);
 							final boolean isReference2 = IReference.isReference(attrValue);
 
 							if (isReference2) {

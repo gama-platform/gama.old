@@ -1,14 +1,16 @@
 /*******************************************************************************************************
  *
- * Emotion.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * Emotion.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
+
+import java.util.Objects;
 
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
@@ -18,6 +20,8 @@ import msi.gama.precompiler.GamlAnnotations.variable;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -50,30 +54,38 @@ import msi.gaml.types.Types;
 				doc = @doc ("the agent owning the emotion")) })
 public class Emotion implements IValue {
 
+	@Override
+	public JsonValue serializeToJson(final Json json) {
+		return json
+				.typedObject(getGamlType(), "name", name, "intensity", intensity, "about",
+						about == null ? null : about.getName(), "decay", decay)
+				.add("cause", agentCause).add("owner", owner);
+	}
+
 	/** The name. */
 	String name;
-	
+
 	/** The intensity. */
 	Double intensity = -1.0;
-	
+
 	/** The about. */
 	Predicate about;
-	
+
 	/** The decay. */
 	Double decay = 0.0;
-	
+
 	/** The agent cause. */
 	IAgent agentCause;
-	
+
 	/** The owner. */
 	IAgent owner;
-	
+
 	/** The no agent cause. */
 	private boolean noAgentCause = true;
-	
+
 	/** The no intensity. */
 	private boolean noIntensity = true;
-	
+
 	/** The no about. */
 	private boolean noAbout = true;
 
@@ -83,9 +95,7 @@ public class Emotion implements IValue {
 	 * @return the name
 	 */
 	@getter ("name")
-	public String getName() {
-		return name;
-	}
+	public String getName() { return name; }
 
 	/**
 	 * Gets the intensity.
@@ -93,9 +103,7 @@ public class Emotion implements IValue {
 	 * @return the intensity
 	 */
 	@getter ("intensity")
-	public Double getIntensity() {
-		return intensity;
-	}
+	public Double getIntensity() { return intensity; }
 
 	/**
 	 * Gets the about.
@@ -103,9 +111,7 @@ public class Emotion implements IValue {
 	 * @return the about
 	 */
 	@getter ("about")
-	public Predicate getAbout() {
-		return about;
-	}
+	public Predicate getAbout() { return about; }
 
 	/**
 	 * Gets the decay.
@@ -113,9 +119,7 @@ public class Emotion implements IValue {
 	 * @return the decay
 	 */
 	@getter ("decay")
-	public Double getDecay() {
-		return decay;
-	}
+	public Double getDecay() { return decay; }
 
 	/**
 	 * Gets the agent cause.
@@ -123,9 +127,7 @@ public class Emotion implements IValue {
 	 * @return the agent cause
 	 */
 	@getter ("agentCause")
-	public IAgent getAgentCause() {
-		return agentCause;
-	}
+	public IAgent getAgentCause() { return agentCause; }
 
 	/**
 	 * Gets the owner.
@@ -133,32 +135,28 @@ public class Emotion implements IValue {
 	 * @return the owner
 	 */
 	@getter ("owner")
-	public IAgent getOwner() {
-		return owner;
-	}
+	public IAgent getOwner() { return owner; }
 
 	/**
 	 * Gets the no intensity.
 	 *
 	 * @return the no intensity
 	 */
-	public boolean getNoIntensity() {
-		return this.noIntensity;
-	}
+	public boolean getNoIntensity() { return this.noIntensity; }
 
 	/**
 	 * Sets the name.
 	 *
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
-	public void setName(final String name) {
-		this.name = name;
-	}
+	public void setName(final String name) { this.name = name; }
 
 	/**
 	 * Sets the intensity.
 	 *
-	 * @param intens the new intensity
+	 * @param intens
+	 *            the new intensity
 	 */
 	public void setIntensity(final Double intens) {
 		this.intensity = intens;
@@ -168,7 +166,8 @@ public class Emotion implements IValue {
 	/**
 	 * Sets the about.
 	 *
-	 * @param ab the new about
+	 * @param ab
+	 *            the new about
 	 */
 	public void setAbout(final Predicate ab) {
 		this.about = ab;
@@ -178,16 +177,16 @@ public class Emotion implements IValue {
 	/**
 	 * Sets the decay.
 	 *
-	 * @param de the new decay
+	 * @param de
+	 *            the new decay
 	 */
-	public void setDecay(final Double de) {
-		this.decay = de;
-	}
+	public void setDecay(final Double de) { this.decay = de; }
 
 	/**
 	 * Sets the agent cause.
 	 *
-	 * @param ag the new agent cause
+	 * @param ag
+	 *            the new agent cause
 	 */
 	public void setAgentCause(final IAgent ag) {
 		this.agentCause = ag;
@@ -197,11 +196,10 @@ public class Emotion implements IValue {
 	/**
 	 * Sets the owner.
 	 *
-	 * @param own the new owner
+	 * @param own
+	 *            the new owner
 	 */
-	public void setOwner(final IAgent own) {
-		this.owner = own;
-	}
+	public void setOwner(final IAgent own) { this.owner = own; }
 
 	/**
 	 * Instantiates a new emotion.
@@ -216,7 +214,8 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
+	 * @param name
+	 *            the name
 	 */
 	public Emotion(final String name) {
 		this.name = name;
@@ -228,8 +227,10 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intensity2 the intensity 2
+	 * @param name
+	 *            the name
+	 * @param intensity2
+	 *            the intensity 2
 	 */
 	public Emotion(final String name, final Double intensity2) {
 		this.name = name;
@@ -243,8 +244,10 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param ab the ab
+	 * @param name
+	 *            the name
+	 * @param ab
+	 *            the ab
 	 */
 	public Emotion(final String name, final Predicate ab) {
 		this.name = name;
@@ -257,8 +260,10 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param ag the ag
+	 * @param name
+	 *            the name
+	 * @param ag
+	 *            the ag
 	 */
 	public Emotion(final String name, final IAgent ag) {
 		this.name = name;
@@ -271,9 +276,12 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intens the intens
-	 * @param de the de
+	 * @param name
+	 *            the name
+	 * @param intens
+	 *            the intens
+	 * @param de
+	 *            the de
 	 */
 	public Emotion(final String name, final Double intens, final Double de) {
 		this.name = name;
@@ -289,9 +297,12 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intens the intens
-	 * @param ab the ab
+	 * @param name
+	 *            the name
+	 * @param intens
+	 *            the intens
+	 * @param ab
+	 *            the ab
 	 */
 	public Emotion(final String name, final Double intens, final Predicate ab) {
 		this.name = name;
@@ -306,9 +317,12 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param ab the ab
-	 * @param ag the ag
+	 * @param name
+	 *            the name
+	 * @param ab
+	 *            the ab
+	 * @param ag
+	 *            the ag
 	 */
 	public Emotion(final String name, final Predicate ab, final IAgent ag) {
 		this.name = name;
@@ -322,9 +336,12 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intens the intens
-	 * @param ag the ag
+	 * @param name
+	 *            the name
+	 * @param intens
+	 *            the intens
+	 * @param ag
+	 *            the ag
 	 */
 	public Emotion(final String name, final Double intens, final IAgent ag) {
 		this.name = name;
@@ -339,10 +356,14 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intens the intens
-	 * @param ab the ab
-	 * @param de the de
+	 * @param name
+	 *            the name
+	 * @param intens
+	 *            the intens
+	 * @param ab
+	 *            the ab
+	 * @param de
+	 *            the de
 	 */
 	public Emotion(final String name, final Double intens, final Predicate ab, final Double de) {
 		this.name = name;
@@ -358,10 +379,14 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intens the intens
-	 * @param de the de
-	 * @param ag the ag
+	 * @param name
+	 *            the name
+	 * @param intens
+	 *            the intens
+	 * @param de
+	 *            the de
+	 * @param ag
+	 *            the ag
 	 */
 	public Emotion(final String name, final Double intens, final Double de, final IAgent ag) {
 		this.name = name;
@@ -377,10 +402,14 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intens the intens
-	 * @param ab the ab
-	 * @param ag the ag
+	 * @param name
+	 *            the name
+	 * @param intens
+	 *            the intens
+	 * @param ab
+	 *            the ab
+	 * @param ag
+	 *            the ag
 	 */
 	public Emotion(final String name, final Double intens, final Predicate ab, final IAgent ag) {
 		this.name = name;
@@ -396,11 +425,16 @@ public class Emotion implements IValue {
 	/**
 	 * Instantiates a new emotion.
 	 *
-	 * @param name the name
-	 * @param intens the intens
-	 * @param ab the ab
-	 * @param de the de
-	 * @param ag the ag
+	 * @param name
+	 *            the name
+	 * @param intens
+	 *            the intens
+	 * @param ab
+	 *            the ab
+	 * @param de
+	 *            the de
+	 * @param ag
+	 *            the ag
 	 */
 	public Emotion(final String name, final Double intens, final Predicate ab, final Double de, final IAgent ag) {
 		this.name = name;
@@ -428,10 +462,8 @@ public class Emotion implements IValue {
 
 	@Override
 	public String serializeToGaml(final boolean includingBuiltIn) {
-		if (intensity > 0) {
-			return "emotion(" + name + "," + intensity + "," + about + "," + decay + "," + agentCause + "," + owner
-					+ ")";
-		}
+		if (intensity > 0) return "emotion(" + name + "," + intensity + "," + about + "," + decay + "," + agentCause
+				+ "," + owner + ")";
 		return "emotion(" + name + "," + about + "," + decay + "," + agentCause + "," + owner + ")";
 	}
 
@@ -447,31 +479,26 @@ public class Emotion implements IValue {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj) { return true; }
-		if (obj == null) { return false; }
-		if (getClass() != obj.getClass()) { return false; }
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
 		final Emotion other = (Emotion) obj;
-		if (name == null) {
-			if (other.name != null) { return false; }
-		} else if (!name.equals(other.name)) { return false; }
-		if (noAbout && noAgentCause || other.noAbout && other.noAgentCause) { return true; }
+		if (!Objects.equals(name, other.name)) return false;
+		if (noAbout && noAgentCause || other.noAbout && other.noAgentCause) return true;
 		/*
 		 * if(about==null){ if(other.about!=null){return false;} }else
-		 */if (about != null && other.about != null && !about.equalsEmotions(other.about)) { return false; }
+		 */if (about != null && other.about != null && !about.equalsEmotions(other.about)) return false;
 		/*
 		 * if(agentCause==null){ if(other.agentCause!=null){return false;} }else
 		 */
 		/*
 		 * if (agentCause != null && other.agentCause != null && !agentCause.equals(other.agentCause)) { return false; }
 		 */
-		if (owner != null && other.owner != null && !owner.equals(other.owner)) { return false; }
+		if (owner != null && other.owner != null && !owner.equals(other.owner)) return false;
 		return true;
 	}
 
 	@Override
-	public IType<?> getGamlType() {
-		return Types.get(EmotionType.EMOTIONTYPE_ID);
-	}
+	public IType<?> getGamlType() { return Types.get(EmotionType.EMOTIONTYPE_ID); }
 
 	@Override
 	public int hashCode() {

@@ -53,14 +53,6 @@ public class AmorphousTopology implements ITopology {
 	IShape expandableEnvironment = GamaGeometryType.createPoint(new GamaPoint(0, 0));
 
 	/**
-	 * @see msi.gama.interfaces.IValue#type()
-	 */
-	// @Override
-	// public IType type() {
-	// return Types.TOPOLOGY;
-	// }
-
-	/**
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override

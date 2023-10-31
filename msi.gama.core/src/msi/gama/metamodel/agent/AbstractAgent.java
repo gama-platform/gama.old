@@ -635,9 +635,9 @@ public abstract class AbstractAgent implements IAgent {
 	public void setDefiningPlugin(final String plugin) {}
 
 	@Override
-	public void updateWith(final IScope scope, final SavedAgent sa) {
+	public void updateWith(final IScope scope, final ISerialisedAgent sa) {
 		// Update attributes
-		final Map<String, Object> mapAttr = sa.getVariables();
+		final Map<String, Object> mapAttr = sa.attributes();
 		for (final Entry<String, Object> attr : mapAttr.entrySet()) {
 			this.setDirectVarValue(scope, attr.getKey(), attr.getValue());
 		}

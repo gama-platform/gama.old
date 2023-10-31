@@ -87,6 +87,13 @@ import ummisco.gama.dev.utils.DEBUG;
  * @since 14 dec. 2011
  *
  */
+
+/**
+ * The Class GeometryUtils.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 30 oct. 2023
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GeometryUtils {
 
@@ -1288,6 +1295,42 @@ public class GeometryUtils {
 				}
 			}
 
+		}
+		if ("DynamicLineString".equals(geomType)) { geomType = LineString.class.getSimpleName(); }
+		return geomType;
+	}
+
+	/**
+	 * Gets the geometry string type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param be
+	 *            the be
+	 * @return the geometry string type
+	 * @date 30 oct. 2023
+	 */
+	public static String getGeometryStringType(final IShape be) {
+		String geomType = "";
+		boolean isLine = false;
+		final IShape geom = be.getGeometry();
+		if (geom != null) {
+			Geometry g2 = cleanAndSimplifyGeometryCollection(geom.getInnerGeometry());
+			if (g2 != null) {
+				if (g2.getNumGeometries() > 1) {
+					if (!isLine && g2.getGeometryN(0).getClass() == Point.class) {
+						geomType = Point.class.getSimpleName();
+					} else if (g2.getGeometryN(0).getClass() == LineString.class) {
+						geomType = LineString.class.getSimpleName();
+					} else if (g2.getGeometryN(0).getClass() == Polygon.class) return Polygon.class.getSimpleName();
+				} else {
+					String geomTypeTmp = g2.getClass().getSimpleName();
+					if (geom.getInnerGeometry() instanceof Polygon) return geomTypeTmp;
+					if (!isLine) {
+						if (g2 instanceof LineString) { isLine = true; }
+						geomType = geomTypeTmp;
+					}
+				}
+			}
 		}
 		if ("DynamicLineString".equals(geomType)) { geomType = LineString.class.getSimpleName(); }
 		return geomType;

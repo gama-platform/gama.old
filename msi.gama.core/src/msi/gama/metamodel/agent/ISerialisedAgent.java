@@ -10,13 +10,20 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.agent;
 
+import java.util.Map;
+
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.ISerialisedPopulation;
+import msi.gama.runtime.IScope;
+import msi.gaml.interfaces.IJsonable;
+
 /**
  * The Interface ISerialisedAgent.
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 8 août 2023
  */
-public interface ISerialisedAgent {
+public interface ISerialisedAgent extends IJsonable {
 
 	/**
 	 * Gets the index.
@@ -49,5 +56,47 @@ public interface ISerialisedAgent {
 	 * @date 8 août 2023
 	 */
 	void setAttributeValue(String var, Object val);
+
+	/**
+	 * Gets the variables.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the variables
+	 * @date 29 oct. 2023
+	 */
+	Map<String, Object> attributes();
+
+	/**
+	 * Gets the inner populations.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the inner populations
+	 * @date 29 oct. 2023
+	 */
+	Map<String, ISerialisedPopulation> innerPopulations();
+
+	/**
+	 * Restore to.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param microPop
+	 *            the micro pop
+	 * @date 29 oct. 2023
+	 */
+	IAgent restoreInto(IScope scope, IPopulation<? extends IAgent> microPop);
+
+	/**
+	 * Restore as.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param agent
+	 *            the agent
+	 * @date 31 oct. 2023
+	 */
+	void restoreAs(IScope scope, IAgent agent);
 
 }
