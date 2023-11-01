@@ -56,6 +56,8 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonObject;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.TypeDescription;
@@ -1350,5 +1352,11 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 	 */
 	@Override
 	public void addValue(final IScope scope, final IGridAgent value) {}
+
+	@Override
+	public JsonObject serializeToJson(final Json json) {
+		return IPopulation.super.serializeToJson(json).add("cols", json.valueOf(getNbCols())).add("rows",
+				json.valueOf(getNbRows()));
+	}
 
 }

@@ -47,6 +47,21 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamaWebSocketServer extends WebSocketServer implements IExperimentStateListener {
 
+	/** The Constant SOCKET_ID. */
+	private static final String SOCKET_ID = "socket_id";
+
+	/** The Constant EXP_ID. */
+	private static final String EXP_ID = "exp_id";
+
+	/** The Constant TLS. */
+	private static final String TLS = "TLS";
+
+	/** The Constant JKS. */
+	private static final String JKS = "JKS";
+
+	/** The Constant SUN_X509. */
+	private static final String SUN_X509 = "SunX509";
+
 	/** The Constant DEFAULT_PING_INTERVAL. */
 	public static final int DEFAULT_PING_INTERVAL = 10000;
 
@@ -162,6 +177,9 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	/** The ping timers. map of all connected clients and their associated timers running ping requests */
 	protected final Map<WebSocket, Timer> pingTimers = new HashMap<>();
 
+	/** The json err. */
+	protected Json jsonErr = Json.getNew();
+
 	/**
 	 * Instantiates a new gama web socket server.
 	 *
@@ -204,8 +222,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 			@Override
 			public void println(final String x) {
 				super.println(x);
-				broadcast(Json.getInstance().valueOf(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, x))
-						.toString());
+				broadcast(jsonErr.valueOf(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, x)).toString());
 			}
 		};
 		System.setErr(errorStream);
@@ -228,14 +245,14 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 		// load up the key store
 		KeyStore ks;
 		try (FileInputStream fis = new FileInputStream(new File(keyStore))) {
-			ks = KeyStore.getInstance("JKS");
+			ks = KeyStore.getInstance(JKS);
 			ks.load(fis, storePassword.toCharArray());
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance(SUN_X509);
 			kmf.init(ks, keyPassword.toCharArray());
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(SUN_X509);
 			tmf.init(ks);
 			SSLContext sslContext = null;
-			sslContext = SSLContext.getInstance("TLS");
+			sslContext = SSLContext.getInstance(TLS);
 			sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 			SSLParameters sslParameters = new SSLParameters();
 			sslParameters.setNeedClientAuth(false);
@@ -263,8 +280,8 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	@Override
 	public void onOpen(final WebSocket conn, final ClientHandshake handshake) {
 		// DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-		conn.send(Json.getInstance()
-				.valueOf(new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, "" + conn.hashCode()))
+		conn.send(Json.getNew().valueOf(
+				new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, String.valueOf(conn.hashCode())))
 				.toString());
 		if (canPing) {
 			var timer = new Timer();
@@ -283,7 +300,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 		var timer = pingTimers.remove(conn);
 		if (timer != null) { timer.cancel(); }
 		if (getLaunched_experiments().get("" + conn.hashCode()) != null) {
-			for (IExperimentPlan e : getLaunched_experiments().get("" + conn.hashCode()).values()) {
+			for (IExperimentPlan e : getLaunched_experiments().get(String.valueOf(conn.hashCode())).values()) {
 				e.getController().processPause(true);
 				e.getController().dispose();
 			}
@@ -305,8 +322,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	public IMap<String, Object> extractParam(final WebSocket socket, final String message) {
 		IMap<String, Object> map = null;
 		try {
-			// DEBUG.OUT(socket + ": " + Jsoner.deserialize(message));
-			final Object o = Json.getInstance().parse(message);
+			final Object o = Json.getNew().parse(message);
 			if (o instanceof IMap) {
 				map = (IMap<String, Object>) o;
 			} else {
@@ -315,8 +331,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 			}
 		} catch (Exception e1) {
 			DEBUG.OUT(e1.toString());
-			socket.send(Json.getInstance().valueOf(new GamaServerMessage(GamaServerMessage.Type.MalformedRequest, e1))
-					.toString());
+			socket.send(jsonErr.valueOf(new GamaServerMessage(GamaServerMessage.Type.MalformedRequest, e1)).toString());
 		}
 		return map;
 	}
@@ -329,9 +344,9 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 			map.put("server", this);
 			DEBUG.OUT(map.get("type"));
 			DEBUG.OUT(map.get("expr"));
-			final String exp_id = map.get("exp_id") != null ? map.get("exp_id").toString() : "";
+			final String exp_id = map.get(EXP_ID) != null ? map.get(EXP_ID).toString() : "";
 			final String socket_id =
-					map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
+					map.get(SOCKET_ID) != null ? map.get(SOCKET_ID).toString() : "" + socket.hashCode();
 			IExperimentPlan exp = getExperiment(socket_id, exp_id);
 			SimulationAgent sim = exp != null && exp.getAgent() != null ? exp.getAgent().getSimulation() : null;
 			if (sim != null && exp != null && !exp.getController().isPaused()) {
@@ -345,8 +360,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 
 		} catch (Exception e1) {
 			DEBUG.OUT(e1);
-			socket.send(Json.getInstance().valueOf(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, e1))
-					.toString());
+			socket.send(jsonErr.valueOf(new GamaServerMessage(GamaServerMessage.Type.GamaServerError, e1)).toString());
 
 		}
 	}

@@ -101,7 +101,7 @@ public class Utils {
 				List<String> contentType = mapHeaders.get("content-type");
 				if (contentType != null) {
 					if (contentType.stream().anyMatch(e -> e.contains("json"))) {
-						jsonBody = Json.getInstance().parse(response.body());
+						jsonBody = Json.getNew().parse(response.body());
 					} else {
 						jsonBody = response.body();
 					}

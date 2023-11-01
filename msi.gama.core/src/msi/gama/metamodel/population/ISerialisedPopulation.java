@@ -13,9 +13,6 @@ package msi.gama.metamodel.population;
 import java.util.List;
 
 import msi.gama.metamodel.agent.ISerialisedAgent;
-import msi.gama.util.file.json.Json;
-import msi.gama.util.file.json.JsonObject;
-import msi.gaml.interfaces.IJsonable;
 
 /**
  * The Interface ISerialisedPopulation.
@@ -23,7 +20,7 @@ import msi.gaml.interfaces.IJsonable;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 27 août 2023
  */
-public interface ISerialisedPopulation extends IJsonable {
+public interface ISerialisedPopulation {
 
 	/**
 	 * Checks if is grid.
@@ -50,10 +47,10 @@ public interface ISerialisedPopulation extends IJsonable {
 	 * @return the json object
 	 * @date 29 oct. 2023
 	 */
-	@Override
-	default JsonObject serializeToJson(final Json json) {
-		return json.object("population", speciesName(), "agents", json.array(agents()));
-	}
+	// @Override
+	// default JsonObject serializeToJson(final Json json) {
+	// return json.object("population", speciesName(), "agents", json.array(agents()));
+	// }
 
 	/**
 	 * Species name.

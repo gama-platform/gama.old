@@ -47,6 +47,12 @@ public class SerialisedSimulationRecorder implements ISimulationRecorder, ISeria
 		/** The cycle. */
 		long cycle;
 
+		/** The path to model. */
+		String pathToModel;
+
+		/** The experiment name. */
+		String experimentName;
+
 		/**
 		 * Instantiates a new history node.
 		 *
@@ -55,9 +61,11 @@ public class SerialisedSimulationRecorder implements ISimulationRecorder, ISeria
 		 *            the state
 		 * @date 22 oct. 2023
 		 */
-		public HistoryNode(final byte[] state, final long cycle) {
+		public HistoryNode(final byte[] state, final long cycle, final String path, final String exp) {
 			bytes = state;
 			this.cycle = cycle;
+			pathToModel = path;
+			experimentName = exp;
 		}
 
 	}
@@ -103,8 +111,9 @@ public class SerialisedSimulationRecorder implements ISimulationRecorder, ISeria
 		try {
 			long startTime = System.nanoTime();
 			byte[] state = processor.saveAgentToBytes(sim.getScope(), sim);
-			SimulationHistory history = getSimulationHistory(sim);
-			HistoryNode node = new HistoryNode(state, sim.getClock().getCycle());
+			LinkedList<HistoryNode> history = getSimulationHistory(sim);
+			HistoryNode node = new HistoryNode(state, sim.getClock().getCycle(), sim.getModel().getFilePath(),
+					sim.getExperiment().getSpecies().getName());
 			history.push(node);
 			asyncZip(node, startTime);
 		} catch (Throwable e) {
@@ -121,10 +130,11 @@ public class SerialisedSimulationRecorder implements ISimulationRecorder, ISeria
 	 * @return the simulation history
 	 * @date 22 oct. 2023
 	 */
-	private SimulationHistory getSimulationHistory(final SimulationAgent sim) {
-		SimulationHistory history = (SimulationHistory) sim.getAttribute(SerialisedAgent.HISTORY_KEY);
+	@SuppressWarnings ("unchecked")
+	private LinkedList<HistoryNode> getSimulationHistory(final SimulationAgent sim) {
+		LinkedList<HistoryNode> history = (LinkedList<HistoryNode>) sim.getAttribute(SerialisedAgent.HISTORY_KEY);
 		if (history == null) {
-			history = new SimulationHistory();
+			history = new LinkedList<>();
 			sim.setAttribute(SerialisedAgent.HISTORY_KEY, history);
 		}
 		return history;
@@ -159,7 +169,7 @@ public class SerialisedSimulationRecorder implements ISimulationRecorder, ISeria
 	public void restore(final SimulationAgent sim) {
 		try {
 			synchronized (sim) {
-				SimulationHistory history = getSimulationHistory(sim);
+				LinkedList<HistoryNode> history = getSimulationHistory(sim);
 				HistoryNode node = history.pop();
 				if (node != null && node.cycle == sim.getClock().getCycle()) { node = history.pop(); }
 				if (node != null) {

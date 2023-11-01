@@ -43,7 +43,7 @@ public class ReverseOperators {
 	@operator (
 			value = { "to_json" })
 	@doc (
-			value = "Serializes any object/agent/simulation into a string, using the 'json' format. A flag can be passed to enable/disable pretty printing (true by default)",
+			value = "Serializes any object/agent/simulation into a string, using the 'json' format. A flag can be passed to enable/disable pretty printing (false by default)",
 			see = { "serialize", "to_gaml" })
 	public static String toJson(final IScope scope, final Object obj, final boolean pretty) {
 		return Json.getNew().valueOf(obj).toString(pretty ? WriterConfig.PRETTY_PRINT : WriterConfig.MINIMAL);

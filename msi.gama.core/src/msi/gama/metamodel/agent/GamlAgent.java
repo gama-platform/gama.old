@@ -129,7 +129,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			}
 			final IPopulation<? extends IAgent> microSpeciesPopulation = this.getPopulationFor(microSpecies);
 			for (final IAgent micro : candidates) {
-				final ISerialisedAgent savedMicro = new SerialisedAgent(micro);
+				final ISerialisedAgent savedMicro = SerialisedAgent.of(micro, true);
 				micro.dispose();
 				capturedAgents.add(savedMicro.restoreInto(scope, microSpeciesPopulation));
 			}
@@ -142,7 +142,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			throws GamaRuntimeException {
 		if (this.canCapture(microAgent, microSpecies)) {
 			final IPopulation<? extends IAgent> microSpeciesPopulation = this.getMicroPopulation(microSpecies);
-			final ISerialisedAgent savedMicro = new SerialisedAgent(microAgent);
+			final ISerialisedAgent savedMicro = SerialisedAgent.of(microAgent, true);
 			microAgent.dispose();
 			return savedMicro.restoreInto(scope, microSpeciesPopulation);
 		}
@@ -157,7 +157,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		final IList<IAgent> releasedAgents = GamaListFactory.create(Types.AGENT);
 
 		for (final IAgent micro : microAgents.iterable(scope)) {
-			final ISerialisedAgent savedMicro = new SerialisedAgent(micro);
+			final ISerialisedAgent savedMicro = SerialisedAgent.of(micro, true);
 			originalSpeciesPopulation = micro.getPopulationFor(micro.getSpecies().getParentSpecies());
 			micro.dispose();
 			releasedAgents.add(savedMicro.restoreInto(scope, originalSpeciesPopulation));
@@ -185,7 +185,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if (!immigrantCandidates.isEmpty()) {
 			final IPopulation<? extends IAgent> microSpeciesPopulation = this.getPopulationFor(newMicroSpecies);
 			for (final IAgent micro : immigrantCandidates) {
-				final ISerialisedAgent savedMicro = new SerialisedAgent(micro);
+				final ISerialisedAgent savedMicro = SerialisedAgent.of(micro, true);
 				micro.dispose();
 				immigrants.add(savedMicro.restoreInto(scope, microSpeciesPopulation));
 			}
@@ -212,7 +212,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		while (!oldMicroPop.isEmpty()) {
 			// while (it.hasNext()) {
 			final IAgent m = oldMicroPop.get(0);
-			final ISerialisedAgent savedMicro = new SerialisedAgent(m);
+			final ISerialisedAgent savedMicro = SerialisedAgent.of(m, true);
 			m.dispose();
 			immigrants.add(savedMicro.restoreInto(scope, newMicroPop));
 

@@ -68,7 +68,7 @@ public class GamaMapType extends GamaContainerType<IMap> {
 		if (obj instanceof String s) {
 			final IMap<String, Object> map;
 			try {
-				Object o = Json.getInstance().parse(s);
+				Object o = Json.getNew().parse(s);
 				if (o instanceof IMap m) return m;
 				map = GamaMapFactory.create();
 				map.put(IKeyword.CONTENTS, o);

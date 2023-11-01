@@ -28,6 +28,10 @@ public class SerialisationProcessorFactory implements ISerialisationConstants {
 	/** The processors by format. */
 	static Map<String, ISerialisationProcessor> PROCESSORS_BY_FORMAT = new HashMap<>();
 
+	static {
+		register(new FSTBinaryProcessor());
+	}
+
 	/**
 	 * Register.
 	 *

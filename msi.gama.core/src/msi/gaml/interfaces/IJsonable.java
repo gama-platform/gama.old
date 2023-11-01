@@ -23,7 +23,8 @@ import msi.gama.util.file.json.JsonValue;
 public interface IJsonable {
 
 	/**
-	 * Returns the serialization in JSON of this object. The context of serialization is passed through "json".
+	 * Returns the serialization in JSON of this object. The context of serialization is passed through "json". This
+	 * method should never be called directly (use Json.valueOf() instead);
 	 *
 	 * @return a string that can be reinterpreted to reproduce the object
 	 */

@@ -19,8 +19,6 @@ import msi.gama.metamodel.agent.SerialisedAgent;
 import msi.gama.metamodel.topology.grid.GridPopulation;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.runtime.IScope;
-import msi.gama.util.file.json.Json;
-import msi.gama.util.file.json.JsonObject;
 
 /**
  * The SerialisedGrid.
@@ -41,7 +39,7 @@ public record SerialisedGrid(String speciesName, List<ISerialisedAgent> agents, 
 	 */
 	public SerialisedGrid(final GridPopulation pop) {
 		this(pop.getSpecies().getName(), new ArrayList<>(), pop.getTopology().getPlaces());
-		for (IAgent a : pop) { agents.add(new SerialisedAgent(a)); }
+		for (IAgent a : pop) { agents.add(SerialisedAgent.of(a, true)); }
 	}
 
 	/**
@@ -53,12 +51,12 @@ public record SerialisedGrid(String speciesName, List<ISerialisedAgent> agents, 
 	 */
 	@Override
 	public boolean isGrid() { return true; }
-
-	@Override
-	public JsonObject serializeToJson(final Json json) {
-		return ISerialisedPopulation.super.serializeToJson(json).add("cols", matrix.getCols(null)).add("rows",
-				matrix.getRows(null));
-	}
+	//
+	// @Override
+	// public JsonObject serializeToJson(final Json json) {
+	// return ISerialisedPopulation.super.serializeToJson(json).add("cols", matrix.getCols(null)).add("rows",
+	// matrix.getRows(null));
+	// }
 
 	/**
 	 * Restore as.

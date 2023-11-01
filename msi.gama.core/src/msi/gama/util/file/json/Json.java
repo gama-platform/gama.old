@@ -14,11 +14,9 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Supplier;
 
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.root.PlatformAgent;
-import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.SerialisedAgent;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.interfaces.IJsonable;
@@ -32,24 +30,6 @@ import msi.gaml.types.Types;
  */
 public final class Json {
 
-	/** The Constant NON_SAVEABLE_ATTRIBUTE_NAMES. */
-	public static Set<String> NON_SERIALISABLE = Set.of(IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.LOCATION,
-			IKeyword.HOST, IKeyword.PEERS, IKeyword.EXPERIMENT, IKeyword.WORLD_AGENT_NAME, SimulationAgent.TIME,
-			PlatformAgent.MACHINE_TIME, SimulationAgent.DURATION, SimulationAgent.AVERAGE_DURATION,
-			SimulationAgent.TOTAL_DURATION, IKeyword.INDEX);
-
-	/** The Constant INSTANCE. A stateless instance that can be used for one shot serialisations. */
-	private static final Json INSTANCE = new Json(false);
-
-	/**
-	 * Gets a single instance of Json.A stateless instance that can be used for one shot serialisations.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return single instance of Json
-	 * @date 31 oct. 2023
-	 */
-	public static Json getInstance() { return INSTANCE; }
-
 	/**
 	 * Gets a new stateful instance of Json.
 	 *
@@ -58,9 +38,6 @@ public final class Json {
 	 * @date 31 oct. 2023
 	 */
 	public static Json getNew() { return new Json(); }
-
-	/** The grid non serialisable. */
-	public static Set<String> GRID_NON_SERIALISABLE = Set.of(IKeyword.GRID_X, IKeyword.GRID_Y, IKeyword.NEIGHBORS);
 
 	/** The Constant GAML_TYPE_LABEL. */
 	public static final String GAML_TYPE_LABEL = "gaml_type";
@@ -83,30 +60,11 @@ public final class Json {
 	 */
 	public static final JsonValue FALSE = new JsonLiteral("false");
 
-	/** The stateful. */
-	private final boolean stateful;
+	/** The initial. */
+	boolean firstPass = true;
 
-	/**
-	 * Instantiates a new json.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 31 oct. 2023
-	 */
-	private Json() {
-		this(false);
-	}
-
-	/**
-	 * Instantiates a new json.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param b
-	 *            the b
-	 * @date 31 oct. 2023
-	 */
-	private Json(final boolean b) {
-		stateful = b;
-	}
+	/** The agents. */
+	JsonObject agents = new JsonObject(this);
 
 	/**
 	 * Serialize.
@@ -118,20 +76,48 @@ public final class Json {
 	 * @date 29 oct. 2023
 	 */
 	public JsonValue valueOf(final Object object) {
-		if (object == null) return NULL;
-		if (object instanceof JsonValue jv) return jv;
-		if (object instanceof IJsonable j) return j.serializeToJson(this);
-		if (object instanceof String s) return valueOf(s);
-		if (object instanceof Character c) return valueOf(c);
-		if (object instanceof Double d) return valueOf(d.doubleValue());
-		if (object instanceof Float f) return valueOf(f.doubleValue());
-		if (object instanceof Number n) return new JsonNumber(n.toString());
-		if (object instanceof Boolean b) return valueOf(b.booleanValue());
-		if (object instanceof Collection c) return GamaListFactory.wrap(Types.NO_TYPE, c).serializeToJson(this);
-		if (object instanceof Map m) return GamaMapFactory.wrap(m).serializeToJson(this);
-		if (object instanceof Exception ex) return object("exception", ex.getClass().getName(), "message",
-				ex.getMessage(), "stack", array(Arrays.asList(ex.getStackTrace())));
-		return valueOf(object.toString());
+		boolean initial = firstPass;
+		firstPass = false;
+
+		JsonValue result = NULL;
+
+		try {
+			if (object == null) {
+				result = NULL;
+			} else if (object instanceof JsonValue jv) {
+				result = jv;
+			} else if (object instanceof IJsonable j) {
+				result = j.serializeToJson(this);
+			} else if (object instanceof String s) {
+				result = valueOf(s);
+			} else if (object instanceof Character c) {
+				result = valueOf(c);
+			} else if (object instanceof Double d) {
+				result = valueOf(d.doubleValue());
+			} else if (object instanceof Float f) {
+				result = valueOf(f.doubleValue());
+			} else if (object instanceof Number n) {
+				result = new JsonNumber(n.toString());
+			} else if (object instanceof Boolean b) {
+				result = valueOf(b.booleanValue());
+			} else if (object instanceof Collection<?> c) {
+				result = GamaListFactory.wrap(Types.NO_TYPE, c).serializeToJson(this);
+			} else if (object instanceof Map<?, ?> m) {
+				result = GamaMapFactory.wrap(m).serializeToJson(this);
+			} else if (object instanceof Exception ex) {
+				result = object("exception", ex.getClass().getName(), "message", ex.getMessage(), "stack",
+						array(Arrays.asList(ex.getStackTrace())));
+			} else {
+				result = valueOf(object.toString());
+			}
+		} finally {
+			if (initial) {
+				result = object("value", result);
+				if (!agents.isEmpty()) { ((JsonObject) result).add("references", agents); }
+				firstPass = true; // in case the encoder is reused
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -491,7 +477,7 @@ public final class Json {
 	 */
 	public JsonValue parse(final String string) {
 		if (string == null) throw new NullPointerException("string is null");
-		DefaultHandler handler = new DefaultHandler();
+		DefaultHandler handler = new DefaultHandler(this);
 		new JsonParser(handler).parse(string);
 		return handler.getValue();
 	}
@@ -514,7 +500,7 @@ public final class Json {
 	 */
 	public JsonValue parse(final Reader reader) throws IOException {
 		if (reader == null) throw new NullPointerException("reader is null");
-		DefaultHandler handler = new DefaultHandler();
+		DefaultHandler handler = new DefaultHandler(this);
 		new JsonParser(handler).parse(reader);
 		return handler.getValue();
 	}
@@ -531,6 +517,37 @@ public final class Json {
 	private String cutOffPointZero(final String string) {
 		if (string.endsWith(".0")) return string.substring(0, string.length() - 2);
 		return string;
+	}
+
+	/**
+	 * Checks for ref.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param key
+	 *            the key
+	 * @return true, if successful
+	 * @date 1 nov. 2023
+	 */
+	public boolean hasRef(final String key) {
+		return agents.contains(key);
+	}
+
+	/**
+	 * Adds the ref.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 * @date 1 nov. 2023
+	 */
+	public void addRef(final String key, final Supplier<SerialisedAgent> value) {
+		// We first set it to avoir infinite loops
+		agents.add(key, (Object) null);
+		JsonValue agent = valueOf(value.get());
+		// We now replace it with the agent
+		agents.set(key, agent);
 	}
 
 }

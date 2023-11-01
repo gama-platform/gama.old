@@ -18,17 +18,32 @@ package msi.gama.util.file.json;
  */
 class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 
+	/**
+	 * Instantiates a new default handler.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param json
+	 *            the json
+	 * @date 1 nov. 2023
+	 */
+	DefaultHandler(final Json json) {
+		this.json = json;
+	}
+
+	/** The json. */
+	protected Json json;
+
 	/** The value. */
 	protected JsonValue value;
 
 	@Override
 	public JsonArray startArray() {
-		return new JsonArray(Json.getInstance());
+		return new JsonArray(json);
 	}
 
 	@Override
 	public JsonObject startObject() {
-		return new JsonObject(Json.getInstance());
+		return new JsonObject(json);
 	}
 
 	@Override

@@ -109,7 +109,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IAgent o) throws Exception {
-				out.writeObject(new AgentReference(o));
+				out.writeObject(AgentReference.of(o));
 			}
 
 			@Override
@@ -185,7 +185,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 			@Override
 			public AgentReference deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new AgentReference((String[]) in.readObject(), (Integer[]) in.readObject());
+				return AgentReference.of((String[]) in.readObject(), (Integer[]) in.readObject());
 			}
 		});
 
@@ -377,7 +377,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 	@Override
 	protected SerialisedAgent encodeToSerialisedForm(final IAgent agent) {
-		return SerialisedAgent.createFor(agent);
+		return SerialisedAgent.of(agent, true);
 	}
 
 	/**

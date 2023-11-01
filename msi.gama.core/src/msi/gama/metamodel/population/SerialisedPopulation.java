@@ -38,7 +38,7 @@ public record SerialisedPopulation(String speciesName, List<ISerialisedAgent> ag
 	 */
 	public SerialisedPopulation(final IPopulation<? extends IAgent> pop) {
 		this(pop.getSpecies().getName(), new ArrayList<>());
-		for (IAgent a : pop) { agents.add(new SerialisedAgent(a)); }
+		for (IAgent a : pop) { agents.add(SerialisedAgent.of(a, true)); }
 	}
 
 	/**

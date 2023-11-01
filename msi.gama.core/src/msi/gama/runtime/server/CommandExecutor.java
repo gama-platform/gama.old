@@ -57,6 +57,9 @@ public class CommandExecutor {
 	/** The command queue. */
 	protected volatile LinkedBlockingQueue<Entry<WebSocket, IMap<String, Object>>> commandQueue;
 
+	/** The json encoder. */
+	protected static Json jsonEncoder = Json.getNew();
+
 	/** The command execution thread. */
 	protected final Thread commandExecutionThread = new Thread(() -> {
 		while (true) {
@@ -119,7 +122,7 @@ public class CommandExecutor {
 		new Thread(() -> {
 			var res = command.execute(socket, map);
 			if (res != null && ReadyState.OPEN.equals(socket.getReadyState())) {
-				socket.send(Json.getInstance().valueOf(res).toString());
+				socket.send(jsonEncoder.valueOf(res).toString());
 			}
 		}).start();
 	}
@@ -142,11 +145,11 @@ public class CommandExecutor {
 				var value = m.get("value");
 				if (name == null) return new CommandResponse(
 						GamaServerMessage.Type.MalformedRequest, "Parameter number " + i
-								+ " is missing its `name` field. Parameter received: " + Json.getInstance().valueOf(m),
+								+ " is missing its `name` field. Parameter received: " + jsonEncoder.valueOf(m),
 						commandMap, false);
 				if (value == null) return new CommandResponse(
 						GamaServerMessage.Type.MalformedRequest, "Parameter number " + i
-								+ " is missing its `value` field. Parameter received: " + Json.getInstance().valueOf(m),
+								+ " is missing its `value` field. Parameter received: " + jsonEncoder.valueOf(m),
 						commandMap, false);
 				i++;
 			}

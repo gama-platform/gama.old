@@ -14,8 +14,6 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import msi.gama.kernel.experiment.SimulationRecorderFactory;
-import ummisco.gama.serializer.implementations.FSTBinaryProcessor;
-import ummisco.gama.serializer.implementations.SerialisationProcessorFactory;
 import ummisco.gama.serializer.implementations.SerialisedSimulationRecorder;
 
 /**
@@ -29,7 +27,6 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(final BundleContext context) throws Exception {
 		SimulationRecorderFactory.setRecorderClass(SerialisedSimulationRecorder.class);
-		SerialisationProcessorFactory.register(new FSTBinaryProcessor());
 	}
 
 	@Override

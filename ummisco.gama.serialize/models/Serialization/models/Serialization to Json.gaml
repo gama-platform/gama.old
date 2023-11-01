@@ -12,33 +12,43 @@ global {
 	init {
 		write "Simple values";
 		write "-------------";
-		write (to_json(1));
-		write (to_json(1.24));
-		write (to_json("a string"));
-		write (to_json(date(0)));
-		write (to_json(#blue));
-		write (to_json(font("Helvetica")));
-		write (to_json({20,10}));
+		write (to_json(1,true));
+		write (to_json(1.24,true));
+		write (to_json("a string",true));
+		write (to_json(date(0),true));
+		write (to_json(#blue,true));
+		write (to_json(font("Helvetica"),true));
+		write (to_json({20,10},true));
 		
 		write "Lists";
 		write "-------------";
-		write(to_json([1,2,3,4,5]));
-		write(to_json(["a",2,"aa",4,5.2]));
+		write(to_json([1,2,3,4,5],true));
+		write(to_json(["a",2,"aa",4,5.2],true));
 		
 		write "Maps";
 		write "-------------";
-		write(to_json(["a"::2,"b"::4]));
-		write(to_json([123::43,234::#green]));
+		write(to_json(["a"::2,"b"::4],true));
+		write(to_json([123::43,234::#green],true));
 		
 		write "Other data structures";
 		write "-------------";
-		write(to_json(23::34));
-		write(to_json([123::43,234::#green]));
-		write(to_json({2,2} matrix_with 10));
-		write(to_json(circle(10)));
+		write(to_json(23::34,true));
+		//write(to_json([123::43,234::#green],true));
+		write(to_json({2,2} matrix_with 10,true));
+		//write(to_json(circle(10),true));
 		
-		
+		write "Agents";
+		write "-------------";		
+		create sp number: 2 ;
+		sp[0].friend <- sp[1];
+		sp[1].friend <- sp[0];
+		write(to_json(sp.population,true));
 	}
+}
+
+species sp 
+{
+	sp friend;
 }
 
 experiment "Run me";

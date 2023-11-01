@@ -251,6 +251,36 @@ public class JsonObject extends JsonValue implements Iterable<msi.gama.util.file
 	}
 
 	/**
+	 * Sets the value of the member with the specified name to the specified JSON value. If this object does not contain
+	 * a member with this name, a new member is added at the end of the object. If this object contains multiple members
+	 * with this name, only the last one is changed.
+	 * <p>
+	 * This method should <strong>only be used to modify existing objects</strong>. To fill a new object with members,
+	 * the method <code>add(name, value)</code> should be preferred which is much faster (as it does not need to search
+	 * for existing members).
+	 * </p>
+	 *
+	 * @param name
+	 *            the name of the member to add
+	 * @param value
+	 *            the value of the member to add, must not be <code>null</code>
+	 * @return the object itself, to enable method chaining
+	 */
+	public JsonObject set(final String name, final JsonValue value) {
+		if (name == null) throw new NullPointerException("name is null");
+		if (value == null) throw new NullPointerException("value is null");
+		int index = indexOf(name);
+		if (index != -1) {
+			values.set(index, value);
+		} else {
+			table.add(name, names.size());
+			names.add(name);
+			values.add(value);
+		}
+		return this;
+	}
+
+	/**
 	 * Removes a member with the specified name from this object. If this object contains multiple members with the
 	 * given name, only the last one is removed. If this object does not contain a member with the specified name, the
 	 * object is not modified.

@@ -13,7 +13,7 @@ package msi.gama.metamodel.agent;
 import java.util.ArrayList;
 import java.util.List;
 
-import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.json.Json;
@@ -23,23 +23,44 @@ import msi.gaml.interfaces.IJsonable;
 /**
  * The Class AgentReference.
  */
-public record AgentReference(String[] species, Integer[] index) implements IJsonable {
+public record AgentReference(String[] species, Integer[] index, String ref) implements IJsonable {
 
 	/**
-	 * Instantiates a new reference to agent.
+	 * Of.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param agt
 	 *            the agt
+	 * @return the agent reference
+	 * @date 1 nov. 2023
 	 */
-	public AgentReference(final IAgent agt) {
-		this(buildSpeciesArray(agt), buildIndicesArray(agt));
+	public static AgentReference of(final IAgent agt) {
+		return of(buildSpeciesArray(agt), buildIndicesArray(agt));
+
+	}
+
+	/**
+	 * Of.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param species
+	 *            the species
+	 * @param index
+	 *            the index
+	 * @return the agent reference
+	 * @date 1 nov. 2023
+	 */
+	public static AgentReference of(final String[] species, final Integer[] index) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < species.length; i++) { sb.append(species[i]).append('/').append(index[i]).append('/'); }
+		sb.setLength(sb.length() - 1);
+		String ref = sb.toString();
+		return new AgentReference(species, index, ref);
 	}
 
 	@Override
 	public String toString() {
-		String res = "";
-		for (int i = 0; i < species.length; i++) { res = "/" + species[i] + index[i]; }
-		return res;
+		return ref;
 	}
 
 	/**
@@ -50,13 +71,12 @@ public record AgentReference(String[] species, Integer[] index) implements IJson
 	 * @return the referenced agent
 	 */
 	public IAgent getReferencedAgent(final IScope scope) {
-		SimulationAgent sim = scope.getSimulation();
-		IPopulation<? extends IAgent> pop = sim.getPopulationFor(species[species.length - 1]);
-		if (pop == null) { pop = sim.getPopulation(); }
+		IExperimentAgent sim = scope.getExperiment();
+		IPopulation<? extends IAgent> pop = sim.getSimulationPopulation();
 		IAgent referencedAgt = pop.getOrCreateAgent(scope, index[index.length - 1]);
 
 		for (int i = index.length - 2; i >= 0; i--) {
-			pop = sim.getPopulationFor(species[i]);
+			pop = referencedAgt.getPopulationFor(species[i]);
 			referencedAgt = pop.getOrCreateAgent(scope, index[i]);
 		}
 		return referencedAgt;
@@ -84,7 +104,7 @@ public record AgentReference(String[] species, Integer[] index) implements IJson
 		List<String> species = new ArrayList<>();
 		species.add(a.getSpeciesName());
 		IAgent host = a.getHost();
-		while (host != null && !(host instanceof SimulationAgent)) {
+		while (host != null && !(host instanceof IExperimentAgent)) {
 			species.add(host.getSpeciesName());
 			host = host.getHost();
 		}
@@ -104,7 +124,7 @@ public record AgentReference(String[] species, Integer[] index) implements IJson
 		List<Integer> species = new ArrayList<>();
 		species.add(a.getIndex());
 		IAgent host = a.getHost();
-		while (host != null && !(host instanceof SimulationAgent)) {
+		while (host != null && !(host instanceof IExperimentAgent)) {
 			species.add(host.getIndex());
 			host = host.getHost();
 		}
@@ -113,7 +133,7 @@ public record AgentReference(String[] species, Integer[] index) implements IJson
 
 	@Override
 	public JsonValue serializeToJson(final Json json) {
-		return json.object("ref", species[0], "populations", json.array(species), "indices", json.array(index));
+		return json.object("agent", json.valueOf(toString()));
 	}
 
 }

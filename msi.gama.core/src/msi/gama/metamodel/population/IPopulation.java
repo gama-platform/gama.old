@@ -28,7 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.file.json.Json;
-import msi.gama.util.file.json.JsonValue;
+import msi.gama.util.file.json.JsonObject;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.RemoteSequence;
@@ -443,8 +443,9 @@ public interface IPopulation<T extends IAgent>
 	 * @date 31 oct. 2023
 	 */
 	@Override
-	default JsonValue serializeToJson(final Json json) {
-		return new SerialisedPopulation(this).serializeToJson(json);
+	default JsonObject serializeToJson(final Json json) {
+		return json.object("population", getSpecies().getName(), "agents", this.subList(0, size()));
+		// return json.valueOf(new SerialisedPopulation(this));
 	}
 
 }

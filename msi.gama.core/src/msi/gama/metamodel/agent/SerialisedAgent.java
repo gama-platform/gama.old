@@ -11,12 +11,15 @@
 package msi.gama.metamodel.agent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
+import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.population.ISerialisedPopulation;
@@ -39,6 +42,15 @@ import msi.gama.util.file.json.JsonValue;
 public record SerialisedAgent(int index, String species, Map<String, Object> attributes,
 		Map<String, ISerialisedPopulation> innerPopulations) implements ISerialisedAgent {
 
+	/** All the attributes that are not interesting to serialise for regular agents */
+	public static Set<String> NON_SERIALISABLE = Set.of(IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.LOCATION,
+			IKeyword.HOST, IKeyword.PEERS, IKeyword.EXPERIMENT, IKeyword.WORLD_AGENT_NAME, SimulationAgent.TIME,
+			PlatformAgent.MACHINE_TIME, SimulationAgent.DURATION, SimulationAgent.AVERAGE_DURATION,
+			SimulationAgent.TOTAL_DURATION, IKeyword.INDEX);
+
+	/** All the attributes that are not interesting to serialise for grid agents */
+	public static Set<String> GRID_NON_SERIALISABLE = Set.of(IKeyword.GRID_X, IKeyword.GRID_Y, IKeyword.NEIGHBORS);
+
 	/** The Constant KEY. */
 	public static final String HISTORY_KEY = "**history**";
 
@@ -46,17 +58,26 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 	public static final String SERIALISE_HISTORY = "**serialise_history**";
 
 	/**
-	 * Instantiates a new agent proxy.
+	 * Creates a new SerialisedAgent object.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param target
-	 *            the target
-	 * @date 31 juil. 2023
+	 * @param agent
+	 *            the agent
+	 * @return the serialised agent
+	 * @date 8 août 2023
 	 */
-	public SerialisedAgent(final IAgent target) {
-		this(target.getIndex(), target.getSpeciesName(),
-				filterAttributes(target, target instanceof IGridAgent, target.getAttributes(true)),
-				filterPopulations(target, target instanceof IGridAgent, target.getAttributes(true)));
+	public static SerialisedAgent of(final IAgent target, final boolean serializePopulations) {
+		int index = target.getIndex();
+		String species = target.getSpeciesName();
+		Map<String, Object> attributes = filterAttributes(target, target instanceof IGridAgent,
+				target.getAttributes(true), serializePopulations);
+		Map<String, ISerialisedPopulation> populations = filterPopulations(target, target instanceof IGridAgent,
+				target.getAttributes(true), serializePopulations);
+		SerialisedAgent result = new SerialisedAgent(index, species, attributes, populations);
+		if (target instanceof SimulationAgent sa && !shouldSerializeHistory(sa)) {
+			result.attributes().remove(HISTORY_KEY);
+		}
+		return result;
 	}
 
 	/**
@@ -73,7 +94,8 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 	 * @date 29 oct. 2023
 	 */
 	private static Map<String, ISerialisedPopulation> filterPopulations(final IAgent target, final boolean b,
-			final Map<String, Object> m) {
+			final Map<String, Object> m, final boolean serializePopulations) {
+		if (!serializePopulations) return Collections.EMPTY_MAP;
 		Map<String, ISerialisedPopulation> map = new HashMap<>();
 		for (Map.Entry<String, Object> entry : m.entrySet()) {
 			Object v = entry.getValue();
@@ -106,13 +128,13 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 	 */
 	@SuppressWarnings ("unchecked")
 	public static Map<String, Object> filterAttributes(final IAgent agent, final boolean isGrid,
-			final Map<String, Object> m) {
+			final Map<String, Object> m, final boolean serializePopulations) {
 		Map<String, Object> map = new HashMap<>();
 		for (Map.Entry<String, Object> entry : m.entrySet()) {
 			String k = entry.getKey();
 			Object v = entry.getValue();
-			if (Json.NON_SERIALISABLE.contains(k) || isGrid && Json.GRID_NON_SERIALISABLE.contains(k)
-					|| v instanceof IPopulation) {
+			if (NON_SERIALISABLE.contains(k) || isGrid && GRID_NON_SERIALISABLE.contains(k)
+					|| serializePopulations && v instanceof IPopulation) {
 				continue;
 			}
 			map.put(k, v);
@@ -234,35 +256,6 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 	 */
 	static boolean shouldSerializeHistory(final SimulationAgent sim) {
 		return sim.hasAttribute(SERIALISE_HISTORY) && (Boolean) sim.getAttribute(SERIALISE_HISTORY);
-	}
-
-	/**
-	 * Save simulation.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param sim
-	 *            the sim
-	 * @return the serialised agent
-	 * @date 8 août 2023
-	 */
-	public static SerialisedAgent createFor(final SimulationAgent sim) {
-		SerialisedAgent result = new SerialisedAgent(sim);
-		if (!shouldSerializeHistory(sim)) { result.attributes().remove(HISTORY_KEY); }
-		return result;
-	}
-
-	/**
-	 * Creates a new SerialisedAgent object.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param agent
-	 *            the agent
-	 * @return the serialised agent
-	 * @date 8 août 2023
-	 */
-	public static SerialisedAgent createFor(final IAgent agent) {
-		if (agent instanceof SimulationAgent sa) return createFor(sa);
-		return new SerialisedAgent(agent);
 	}
 
 }
