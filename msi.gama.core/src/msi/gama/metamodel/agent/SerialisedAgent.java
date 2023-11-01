@@ -99,7 +99,7 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 		Map<String, ISerialisedPopulation> map = new HashMap<>();
 		for (Map.Entry<String, Object> entry : m.entrySet()) {
 			Object v = entry.getValue();
-			if (v instanceof IPopulation p) {
+			if (v instanceof IPopulation<?> p) {
 				map.put(entry.getKey(),
 						p.isGrid() ? new SerialisedGrid((GridPopulation) p) : new SerialisedPopulation(p));
 			}
@@ -131,7 +131,7 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 			final Map<String, Object> m, final boolean serializePopulations) {
 		Map<String, Object> map = new HashMap<>();
 		for (Map.Entry<String, Object> entry : m.entrySet()) {
-			String k = entry.getKey();
+			String k = entry.getKey(); //
 			Object v = entry.getValue();
 			if (NON_SERIALISABLE.contains(k) || isGrid && GRID_NON_SERIALISABLE.contains(k)
 					|| serializePopulations && v instanceof IPopulation) {
@@ -239,7 +239,7 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 	 * @date 30 oct. 2023
 	 */
 	public IAgent recreateIn(final IScope scope) {
-		IPopulation p = scope.getSimulation().getPopulationFor(species);
+		IPopulation<?> p = scope.getSimulation().getPopulationFor(species);
 		if (p == null)
 			throw GamaRuntimeException.error("No population named" + species + " exist in this simulation", scope);
 		return restoreInto(scope, p);
