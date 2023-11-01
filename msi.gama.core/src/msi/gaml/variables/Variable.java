@@ -9,8 +9,6 @@
  ********************************************************************************************************/
 package msi.gaml.variables;
 
-import static com.google.common.collect.Iterables.transform;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,11 +17,13 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.common.util.JavaUtils;
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -432,7 +432,7 @@ public class Variable extends Symbol implements IVariable {
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + " must have an initial or minimal value.", IGamlIssue.NO_INIT, cd.getUnderlyingElement(),
-						Cast.toGaml(cd.getGamlType().getDefault()));
+						StringUtils.toGaml(cd.getGamlType().getDefault(), false));
 				return;
 			}
 			// Cf. #3493 && #3622
@@ -582,7 +582,7 @@ public class Variable extends Symbol implements IVariable {
 		Class base = sp.getJavaBase();
 		if (base == null) return;
 		List<GamaHelper> helpers = new ArrayList<>();
-		Iterable<Class<? extends ISkill>> skillClasses = transform(sp.getSkills(), IDescription.TO_CLASS);
+		Iterable<Class<? extends ISkill>> skillClasses = Iterables.transform(sp.getSkills(), IDescription.TO_CLASS);
 		if (GAML.LISTENERS_BY_NAME.containsKey(getName())) {
 			DEBUG.OUT("Listeners found for " + getName());
 			List<Class> classes =

@@ -10,7 +10,6 @@
 package msi.gaml.operators;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -688,52 +687,6 @@ public class Cast {
 	@test ("species([1,5,9,3]) = nil")
 	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (ISpecies) Types.SPECIES.cast(scope, val, null, false);
-	}
-
-	/**
-	 * To gaml.
-	 *
-	 * @param val
-	 *            the val
-	 * @return the string
-	 */
-	@operator (
-			value = "to_gaml",
-			category = { IOperatorCategory.CASTING },
-			concept = { IConcept.CAST })
-	@doc (
-			value = "returns the literal description of an expression or description -- action, behavior, species, aspect, even model -- in gaml",
-			examples = { @example (
-					value = "to_gaml(0)",
-					equals = "'0'"),
-					@example (
-							value = "to_gaml(3.78)",
-							equals = "'3.78'"),
-					@example (
-							value = "to_gaml({23, 4.0})",
-							equals = "'{23.0,4.0,0.0}'"),
-					@example (
-							value = "to_gaml(rgb(255,0,125))",
-							equals = "'rgb (255, 0, 125,255)'"),
-					@example (
-							value = "to_gaml('hello')",
-							equals = "\"'hello'\""),
-					@example (
-							value = "to_gaml(a_graph)",
-							equals = "([((1 as node)::(3 as node))::(5 as edge),((0 as node)::(3 as node))::(3 as edge),((1 as node)::(2 as node))::(1 as edge),((0 as node)::(2 as node))::(2 as edge),((0 as node)::(1 as node))::(0 as edge),((2 as node)::(3 as node))::(4 as edge)] as map ) as graph",
-							isExecutable = false),
-					@example (
-							value = "to_gaml(node1)",
-							equals = " 1 as node",
-							isExecutable = false) },
-			see = {})
-	@test ("to_gaml(true) = 'true'")
-	@test ("to_gaml(5::34) = '5::34'")
-	@test ("to_gaml([1,5,9,3]) = '[1,5,9,3]'")
-	@test ("to_gaml(['a'::345, 'b'::13, 'c'::12]) = \"map([\'a\'::345,\'b\'::13,\'c\'::12])\"")
-	@test ("to_gaml([[3,5,7,9],[2,4,6,8]]) = '[[3,5,7,9],[2,4,6,8]]'")
-	public static String toGaml(final Object val) {
-		return StringUtils.toGaml(val, false);
 	}
 
 }

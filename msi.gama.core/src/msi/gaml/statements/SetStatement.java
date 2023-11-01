@@ -11,6 +11,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -31,7 +32,6 @@ import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.statements.SetStatement.AssignmentSerializer;
 import msi.gaml.statements.SetStatement.AssignmentValidator;
 import msi.gaml.types.IType;
@@ -113,7 +113,8 @@ public class SetStatement extends AbstractStatement {
 			}
 			final IExpressionDescription assigned = cd.getFacet(VALUE);
 			if (assigned != null) {
-				Assert.typesAreCompatibleForAssignment(VALUE, cd, Cast.toGaml(expr), expr.getGamlType(), assigned);
+				Assert.typesAreCompatibleForAssignment(VALUE, cd, StringUtils.toGaml(expr, false), expr.getGamlType(),
+						assigned);
 			}
 
 			// AD 19/1/13: test of the constants
@@ -122,7 +123,7 @@ public class SetStatement extends AbstractStatement {
 						+ " is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
 			}
 
-			if (IKeyword.SHAPE.equals(var.getName()) && (cd.getSpeciesContext() instanceof ModelDescription)) {
+			if (IKeyword.SHAPE.equals(var.getName()) && cd.getSpeciesContext() instanceof ModelDescription) {
 				cd.warning(
 						"Dynamically changing the shape of the world can lead to unexpected results. It is advised to redefine the attribute instead (e.g. 'geometry shape <- "
 								+ (assigned == null ? "..." : assigned.serializeToGaml(false)) + "')",

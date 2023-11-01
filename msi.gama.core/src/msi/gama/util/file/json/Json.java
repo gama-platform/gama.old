@@ -45,6 +45,15 @@ public final class Json {
 	/** The Constant GAML_SPECIES_LABEL. */
 	public static final String GAML_SPECIES_LABEL = "gaml_species";
 
+	/** The Constant GAMA_OBJECT_LABEL. */
+	public static final String GAMA_OBJECT_LABEL = "gama_object";
+
+	/** The Constant AGENT_REFERENCE_LABEL. */
+	public static final String AGENT_REFERENCE_LABEL = "agent_reference";
+
+	/** The Constant REFERENCE_TABLE_LABEL. */
+	public static final String REFERENCE_TABLE_LABEL = "reference_table";
+
 	/**
 	 * Represents the JSON literal <code>null</code>.
 	 */
@@ -112,8 +121,10 @@ public final class Json {
 			}
 		} finally {
 			if (initial) {
-				result = object("value", result);
-				if (!agents.isEmpty()) { ((JsonObject) result).add("references", agents); }
+				if (!agents.isEmpty()) {
+					result = object(GAMA_OBJECT_LABEL, result);
+					((JsonObject) result).add(REFERENCE_TABLE_LABEL, agents);
+				}
 				firstPass = true; // in case the encoder is reused
 			}
 		}
@@ -520,19 +531,6 @@ public final class Json {
 	}
 
 	/**
-	 * Checks for ref.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param key
-	 *            the key
-	 * @return true, if successful
-	 * @date 1 nov. 2023
-	 */
-	public boolean hasRef(final String key) {
-		return agents.contains(key);
-	}
-
-	/**
 	 * Adds the ref.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
@@ -543,6 +541,7 @@ public final class Json {
 	 * @date 1 nov. 2023
 	 */
 	public void addRef(final String key, final Supplier<SerialisedAgent> value) {
+		if (agents.contains(key)) return;
 		// We first set it to avoir infinite loops
 		agents.add(key, (Object) null);
 		JsonValue agent = valueOf(value.get());

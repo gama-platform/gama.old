@@ -11,6 +11,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -144,7 +145,8 @@ public class WriteStatement extends AbstractStatement {
 			category = { IOperatorCategory.STRING })
 	@test ("sample(\"result: \",'a' in ['a', 'b']) = \"result: -: true\"")
 	public static String sample(final IScope scope, final String text, final IExpression expr) {
-		return text == null ? "" : text.trim() + " -: " + (expr == null ? "nil" : Cast.toGaml(expr.value(scope)));
+		return text == null ? ""
+				: text.trim() + " -: " + (expr == null ? "nil" : StringUtils.toGaml(expr.value(scope), false));
 	}
 
 }

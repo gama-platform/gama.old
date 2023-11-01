@@ -35,6 +35,7 @@ import java.util.WeakHashMap;
 import msi.gama.common.interfaces.IDrawDelegate;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -55,7 +56,6 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.interfaces.IGamlIssue;
-import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.statements.draw.DrawStatement.DrawValidator;
 import msi.gaml.types.IType;
@@ -392,7 +392,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				}
 			}
 			if (executer == null)
-				throw GamaRuntimeException.error("No drawer found to draw " + Cast.toGaml(item), scope);
+				throw GamaRuntimeException.error("No drawer found to draw " + StringUtils.toGaml(item, false), scope);
 			DrawingData d = data.get(g);
 			if (d == null) {
 				d = new DrawingData(this);

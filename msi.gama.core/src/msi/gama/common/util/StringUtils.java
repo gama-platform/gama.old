@@ -13,12 +13,14 @@ package msi.gama.common.util;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.interfaces.IGamlable;
 import msi.gaml.types.Types;
 
@@ -373,6 +375,7 @@ public class StringUtils {
 		if (val instanceof String s) return toGamlString(s);
 		if (val instanceof Double d) return DEFAULT_DECIMAL_FORMAT.format(d);
 		if (val instanceof Collection c) return toGaml(GamaListFactory.wrap(Types.STRING, c), includingBuiltIn);
+		if (val instanceof Map m) return toGaml(GamaMapFactory.wrap(Types.NO_TYPE, Types.NO_TYPE, m), includingBuiltIn);
 		return String.valueOf(val);
 	}
 

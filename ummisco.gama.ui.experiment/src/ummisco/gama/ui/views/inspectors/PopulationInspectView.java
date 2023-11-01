@@ -55,6 +55,7 @@ import org.eclipse.ui.PartInitException;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -66,7 +67,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.csv.CsvWriter;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.types.SpeciesConstantExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.operators.Files;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -577,8 +577,9 @@ public class PopulationInspectView extends GamaViewPart
 				if (agent.dead() && !ID_ATTRIBUTE.equals(title)) return "N/A";
 				if (ID_ATTRIBUTE.equals(title)) return String.valueOf(agent.getIndex());
 				// final Object value;
-				if (agent.getSpecies().hasVar(title)) return Cast.toGaml(getScope().getAgentVarValue(agent, title));
-				return Cast.toGaml(agent.getAttribute(title));
+				if (agent.getSpecies().hasVar(title))
+					return StringUtils.toGaml(getScope().getAgentVarValue(agent, title), false);
+				return StringUtils.toGaml(agent.getAttribute(title), false);
 			}
 		};
 	}
@@ -705,7 +706,7 @@ public class PopulationInspectView extends GamaViewPart
 								case IType.FLOAT -> ((Double) v1).compareTo((Double) v2);
 								case IType.STRING -> stringComparator.compare(v1, v2);
 								case IType.POINT -> ((GamaPoint) v1).compareTo((GamaPoint) v2);
-								default -> Cast.toGaml(v1).compareTo(Cast.toGaml(v2));
+								default -> StringUtils.toGaml(v1, false).compareTo(StringUtils.toGaml(v2, false));
 							};
 						}
 					}

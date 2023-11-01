@@ -32,6 +32,7 @@ import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceBeforeCh
 import msi.gama.common.preferences.Pref.ValueProvider;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.RandomUtils;
+import msi.gama.common.util.StringUtils;
 import msi.gama.outputs.layers.properties.ICameraDefinition;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.PlatformHelper;
@@ -43,7 +44,6 @@ import msi.gama.util.file.IGamaFile;
 import msi.gama.util.file.csv.AbstractCSVManipulator;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.kernel.GamaMetaModel;
-import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
 import one.util.streamex.StreamEx;
@@ -1181,7 +1181,8 @@ public class GamaPreferences {
 						.append(Strings.LN).append(Strings.LN);
 				write.append(Strings.TAB).append("//").append(e.getTitle()).append(Strings.LN);
 				write.append(Strings.TAB).append("gama.").append(e.getName()).append(" <- ")
-						.append(Cast.toGaml(e.getValue())).append(";").append(Strings.LN).append(Strings.LN);
+						.append(StringUtils.toGaml(e.getValue(), false)).append(";").append(Strings.LN)
+						.append(Strings.LN);
 			}
 			os.append("// ").append(GAMA.VERSION).append(" Preferences saved on ")
 					.append(LocalDateTime.now().toString()).append(Strings.LN).append(Strings.LN);

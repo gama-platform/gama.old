@@ -84,9 +84,6 @@ public interface IKeyword {
 	/** The at. */
 	String AT = "at";
 
-	/** The as json string. */
-	String AS_JSON_STRING = "as_json_string";
-
 	/** The attributes. */
 	String ATTRIBUTES = "attributes";
 

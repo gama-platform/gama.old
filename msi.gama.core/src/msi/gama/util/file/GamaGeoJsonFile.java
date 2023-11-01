@@ -10,9 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,17 +23,12 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
-import msi.gama.precompiler.GamlAnnotations.no_test;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.save.GeoJSonSaver;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -209,40 +202,6 @@ public class GamaGeoJsonFile extends GamaGisFile {
 			GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 		}
 		return null;
-	}
-
-	/**
-	 * To geojson.
-	 *
-	 * @param val
-	 *            the val
-	 * @return the string
-	 */
-	@operator (
-			value = "to_geojson",
-			category = { IOperatorCategory.CASTING },
-			concept = { IConcept.CAST })
-	@doc (
-			value = "returns geojson of species with crs",
-			examples = { @example (
-					value = "to_geojson(boat,\"EPSG:4326\",[\"color\"])",
-					equals = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[100.51155642068785,3.514781609095577E-4,0.0]},\"properties\":{},\"id\":\"0\"}]}") },
-			see = {})
-	@no_test
-	public static String toGeoJSon(final IScope scope, final IExpression spec, final String epsgCode,
-			final IExpression attributesFacet) {
-
-		final GeoJSonSaver gjsoner = new GeoJSonSaver();
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			gjsoner.save(scope, spec, baos, epsgCode, attributesFacet);
-			return baos.toString(StandardCharsets.UTF_8);
-
-		} catch (final GamaRuntimeException e) {
-			throw e;
-		} catch (final Throwable e) {
-			throw GamaRuntimeException.create(e, scope);
-		}
 	}
 
 }

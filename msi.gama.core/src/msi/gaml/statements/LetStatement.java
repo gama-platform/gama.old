@@ -11,6 +11,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -28,7 +29,6 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.statements.LetStatement.LetSerializer;
 import msi.gaml.statements.LetStatement.LetValidator;
 import msi.gaml.types.IType;
@@ -117,7 +117,8 @@ public class LetStatement extends SetStatement {
 				}
 				final IExpressionDescription assigned = cd.getFacet(VALUE);
 				if (assigned != null) {
-					Assert.typesAreCompatibleForAssignment(VALUE, cd, Cast.toGaml(expr), expr.getGamlType(), assigned);
+					Assert.typesAreCompatibleForAssignment(VALUE, cd, StringUtils.toGaml(expr, false),
+							expr.getGamlType(), assigned);
 				}
 
 			}

@@ -14,10 +14,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.IConstantCategory;
-import msi.gaml.operators.Cast;
 
 /**
  * The Interface IConstantsSupplier.
@@ -65,7 +65,8 @@ public interface IConstantsSupplier {
 						if (deprecated.isEmpty()) { deprecated = null; }
 						isTime = Arrays.asList(annotation.category()).contains(IConstantCategory.TIME);
 					}
-					documentation.append(". Its internal value is <b>").append(Cast.toGaml(value)).append(". </b><p/>");
+					documentation.append(". Its internal value is <b>").append(StringUtils.toGaml(value, false))
+							.append(". </b><p/>");
 					acceptor.accept(annotation.value(), value, documentation.toString(), deprecated, isTime, names);
 				}
 			}

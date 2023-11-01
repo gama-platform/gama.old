@@ -12,6 +12,7 @@ package msi.gaml.expressions.operators;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
@@ -46,8 +47,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 			final IExpression... child) {
 		final BinaryOperator u = new BinaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
-			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
+		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) return GAML.getExpressionFactory()
+				.createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
 		return u;
 	}
 
@@ -127,7 +128,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 			parenthesize(sb, exprs[1]);
 		} else if (IKeyword.AS.equals(name)) {
 			// Special case for the "as" operator
-			sb.append(exprs[1].serializeToGaml(false)).append("(").append(exprs[0].serializeToGaml(includingBuiltIn)).append(")");
+			sb.append(exprs[1].serializeToGaml(false)).append("(").append(exprs[0].serializeToGaml(includingBuiltIn))
+					.append(")");
 		} else {
 			sb.append(name);
 			parenthesize(sb, exprs[0], exprs[1]);
@@ -153,8 +155,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 			throw ge;
 		} catch (final Throwable ex) {
 			final GamaRuntimeException e1 = GamaRuntimeException.create(ex, scope);
-			e1.addContext("when applying the " + literalValue() + " operator on " + Cast.toGaml(leftVal) + " and "
-					+ Cast.toGaml(rightVal));
+			e1.addContext("when applying the " + literalValue() + " operator on " + StringUtils.toGaml(leftVal, false)
+					+ " and " + StringUtils.toGaml(rightVal, false));
 			throw e1;
 		}
 	}

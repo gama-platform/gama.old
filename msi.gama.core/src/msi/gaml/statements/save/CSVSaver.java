@@ -1,10 +1,10 @@
 /*******************************************************************************************************
  *
- * CSVSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.2.0.0).
+ * CSVSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.statements.save;
@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.util.Collection;
 import java.util.Set;
 
+import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -117,7 +118,7 @@ public class CSVSaver extends AbstractSaver {
 				final Collection<String> attributeNames = sd.getAttributeNames();
 				attributeNames.removeAll(SaveStatement.NON_SAVEABLE_ATTRIBUTE_NAMES);
 				if (header) {
-					fw.write("cycle" +del + "name;location.x" + del + "location.y" + del + "location.z");
+					fw.write("cycle" + del + "name;location.x" + del + "location.y" + del + "location.z");
 					for (final String v : attributeNames) { fw.write(del + v); }
 					fw.write(Strings.LN);
 				}
@@ -128,7 +129,7 @@ public class CSVSaver extends AbstractSaver {
 								+ ag.getLocation().getX() + del + ag.getLocation().getY() + del
 								+ ag.getLocation().getZ());
 						for (final String v : attributeNames) {
-							String val = Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ',');
+							String val = StringUtils.toGaml(ag.getDirectVarValue(scope, v), false).replace(';', ',');
 							if (val.startsWith("'") && val.endsWith("'")
 									|| val.startsWith("\"") && val.endsWith("\"")) {
 								val = val.substring(1, val.length() - 1);
@@ -146,8 +147,8 @@ public class CSVSaver extends AbstractSaver {
 				}
 				if (itemType.id() == IType.MATRIX) {
 					GamaMatrix<?> matrix = (GamaMatrix) value;
-					matrix.rowByRow(scope, v -> fw.write(toCleanString(v)),
-							() -> fw.write(del), () -> fw.write(Strings.LN));
+					matrix.rowByRow(scope, v -> fw.write(toCleanString(v)), () -> fw.write(del),
+							() -> fw.write(Strings.LN));
 				} else {
 					final int size = values.size();
 					for (int i = 0; i < size; i++) {
@@ -175,7 +176,7 @@ public class CSVSaver extends AbstractSaver {
 	 */
 	private String toCleanString(final Object o) {
 		// Verify this (shouldn't we use AbstractCSVManipulator.getDefaultDelimiter() ?)
-		String val = Cast.toGaml(o).replace(';', ',');
+		String val = StringUtils.toGaml(o, false).replace(';', ',');
 		if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\"")) {
 			val = val.substring(1, val.length() - 1);
 		}

@@ -42,7 +42,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
@@ -240,8 +239,8 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 			final IExpression attributes) {
 		// Opens a table inspector on the agents of this container
 		IDescription desc = DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
-				StringUtils.toGamlString("Browse(" + COUNTER.COUNT() + ")"), IKeyword.VALUE, Cast.toGaml(agents),
-				IKeyword.TYPE, types.get(INSPECT_TABLE)).validate();
+				StringUtils.toGamlString("Browse(" + COUNTER.COUNT() + ")"), IKeyword.VALUE,
+				StringUtils.toGaml(agents, false), IKeyword.TYPE, types.get(INSPECT_TABLE)).validate();
 		if (attributes != null) { desc.setFacet(IKeyword.ATTRIBUTES, attributes); }
 		InspectDisplayOutput result = new InspectDisplayOutput(desc);
 		result.lastValue = agents;

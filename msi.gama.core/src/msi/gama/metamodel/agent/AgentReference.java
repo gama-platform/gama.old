@@ -133,7 +133,7 @@ public record AgentReference(String[] species, Integer[] index, String ref) impl
 
 	@Override
 	public JsonValue serializeToJson(final Json json) {
-		return json.object("agent", json.valueOf(toString()));
+		return json.object(Json.AGENT_REFERENCE_LABEL, json.valueOf(toString()));
 	}
 
 }

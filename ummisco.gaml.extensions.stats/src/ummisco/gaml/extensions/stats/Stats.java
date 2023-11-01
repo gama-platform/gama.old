@@ -39,6 +39,7 @@ import cern.jet.stat.Descriptive;
 import cern.jet.stat.Gamma;
 import cern.jet.stat.Probability;
 import msi.gama.common.util.FileUtils;
+import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.batch.exploration.morris.Morris;
 import msi.gama.kernel.batch.exploration.sobol.Sobol;
 import msi.gama.kernel.batch.exploration.stochanalysis.Stochanalysis;
@@ -2705,8 +2706,9 @@ public class Stats {
 			result.add(list);
 			return result;
 		}
-		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops)) throw GamaRuntimeException
-				.error("The list " + Cast.toGaml(stops) + " should be ordered and cannot contain duplicates", scope);
+		if (!Ordering.<Comparable> natural().isStrictlyOrdered(stops)) throw GamaRuntimeException.error(
+				"The list " + StringUtils.toGaml(stops, false) + " should be ordered and cannot contain duplicates",
+				scope);
 		final DataSet d = toDataSet(scope, stops);
 		d.addValue(Double.MAX_VALUE);
 		final IType numberType = list.getGamlType().getContentType();

@@ -10,42 +10,10 @@
 package msi.gama.util.file.json;
 
 /**
- * An immutable object that represents a location in the parsed text.
+ * An immutable object that represents a location in the parsed text.The absolute character index, starting at 0.The
+ * line number, starting at 1.The column number, starting at 1.
  */
-public class Location {
-
-	/**
-	 * The absolute character index, starting at 0.
-	 */
-	public final int offset;
-
-	/**
-	 * The line number, starting at 1.
-	 */
-	public final int line;
-
-	/**
-	 * The column number, starting at 1.
-	 */
-	public final int column;
-
-	/**
-	 * Instantiates a new location.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param offset
-	 *            the absolute character index, starting at 0.
-	 * @param line
-	 *            the line number, starting at 1.
-	 * @param column
-	 *            the column number, starting at 1.
-	 * @date 29 oct. 2023
-	 */
-	Location(final int offset, final int line, final int column) {
-		this.offset = offset;
-		this.column = column;
-		this.line = line;
-	}
+public record Location(int offset, int line, int column) {
 
 	@Override
 	public String toString() {
@@ -60,9 +28,7 @@ public class Location {
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) return true;
-		if ((obj == null) || (getClass() != obj.getClass())) return false;
-		Location other = (Location) obj;
-		return offset == other.offset && column == other.column && line == other.line;
+		return obj instanceof Location other && offset == other.offset && column == other.column && line == other.line;
 	}
 
 }
