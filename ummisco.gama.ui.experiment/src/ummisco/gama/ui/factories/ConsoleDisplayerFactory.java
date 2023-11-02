@@ -21,7 +21,7 @@ import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
 import msi.gama.application.workbench.PerspectiveHelper;
-import msi.gama.common.interfaces.IConsoleDisplayer;
+import msi.gama.common.interfaces.IConsoleListener;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Console;
 import msi.gama.common.interfaces.IGui;
@@ -38,12 +38,12 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class ConsoleDisplayerFactory extends AbstractServiceFactory {
 
 	/** The displayer. */
-	IConsoleDisplayer displayer = new ConsoleDisplayer();
+	IConsoleListener displayer = new ConsoleDisplayer();
 
 	/**
 	 * The Class ConsoleDisplayer.
 	 */
-	static class ConsoleDisplayer implements IConsoleDisplayer {
+	static class ConsoleDisplayer implements IConsoleListener {
 
 		/** The console buffers. */
 		Map<GamaColor, StringBuilder> consoleBuffers = new HashMap<>();

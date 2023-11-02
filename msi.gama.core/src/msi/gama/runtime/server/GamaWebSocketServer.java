@@ -32,6 +32,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.SSLParametersWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
 
+import msi.gama.common.interfaces.IConsoleListener;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -180,6 +181,9 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	/** The json err. */
 	protected Json jsonErr = Json.getNew();
 
+	/** The console. */
+	protected IConsoleListener console = new GamaServerConsoleListener();
+
 	/**
 	 * Instantiates a new gama web socket server.
 	 *
@@ -280,6 +284,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	@Override
 	public void onOpen(final WebSocket conn, final ClientHandshake handshake) {
 		// DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+		GAMA.getGui().getConsole().addConsoleListener(console);
 		conn.send(Json.getNew().valueOf(
 				new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, String.valueOf(conn.hashCode())))
 				.toString());
@@ -306,6 +311,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 			}
 			getLaunched_experiments().get("" + conn.hashCode()).clear();
 		}
+		GAMA.getGui().getConsole().removeConsoleListener(console);
 		DEBUG.OUT(conn + " has left the room!");
 	}
 
@@ -322,7 +328,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	public IMap<String, Object> extractParam(final WebSocket socket, final String message) {
 		IMap<String, Object> map = null;
 		try {
-			final Object o = Json.getNew().parse(message);
+			final Object o = Json.getNew().parse(message).toGamlValue(GAMA.getRuntimeScope());
 			if (o instanceof IMap) {
 				map = (IMap<String, Object>) o;
 			} else {

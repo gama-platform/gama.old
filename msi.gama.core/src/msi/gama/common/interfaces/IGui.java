@@ -191,7 +191,7 @@ public interface IGui {
 	 *
 	 * @return the console
 	 */
-	IConsoleDisplayer getConsole();
+	IConsoleListener getConsole();
 
 	/**
 	 * Show view.

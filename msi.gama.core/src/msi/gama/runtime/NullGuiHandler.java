@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.common.interfaces.IConsoleDisplayer;
+import msi.gama.common.interfaces.IConsoleListener;
 import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -123,7 +123,7 @@ public class NullGuiHandler implements IGui {
 	}
 
 	/** The console. */
-	protected IConsoleDisplayer console = null;
+	protected IConsoleListener console = null;
 
 	/** The logger. */
 	private IHeadlessLogger logger = DEBUG::LOG;
@@ -151,7 +151,7 @@ public class NullGuiHandler implements IGui {
 	public void setHeadlessLogger(final IHeadlessLogger logger) { this.logger = logger; }
 
 	@Override
-	public IConsoleDisplayer getConsole() {
+	public IConsoleListener getConsole() {
 
 		if (console == null) { console = (s, root, color) -> logger.log(s); }
 		return console;

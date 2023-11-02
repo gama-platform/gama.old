@@ -32,7 +32,8 @@ import org.eclipse.ui.commands.ICommandService;
 
 import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.application.workbench.SimulationPerspectiveDescriptor;
-import msi.gama.common.interfaces.IConsoleDisplayer;
+import msi.gama.common.CompositeConsoleListener;
+import msi.gama.common.interfaces.IConsoleListener;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
@@ -110,6 +111,9 @@ public class SwtGui implements IGui {
 	/** The parameters view. */
 	private final IGamaView.Parameters[] parametersView = new IGamaView.Parameters[1];
 
+	/** The console. */
+	IConsoleListener console = new CompositeConsoleListener();
+
 	static {
 		PreferencesHelper.initialize();
 		AbstractDisplayGraphics.getCachedGC();
@@ -118,7 +122,9 @@ public class SwtGui implements IGui {
 	/**
 	 * Instantiates a new swt gui.
 	 */
-	public SwtGui() {}
+	public SwtGui() {
+		console.addConsoleListener(WorkbenchHelper.getService(IConsoleListener.class));
+	}
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
@@ -512,14 +518,6 @@ public class SwtGui implements IGui {
 	}
 
 	/**
-	 * Initialize open GL.
-	 */
-	// private static void initializeOpenGL() {
-	// final IOpenGLInitializer initializer = WorkbenchHelper.getService(IOpenGLInitializer.class);
-	// if (initializer != null && !initializer.isDone()) { new Thread(initializer).start(); }
-	// }
-
-	/**
 	 * Method cleanAfterExperiment()
 	 *
 	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentPlan)
@@ -625,7 +623,7 @@ public class SwtGui implements IGui {
 	public IStatusDisplayer getStatus() { return WorkbenchHelper.getService(IStatusDisplayer.class); }
 
 	@Override
-	public IConsoleDisplayer getConsole() { return WorkbenchHelper.getService(IConsoleDisplayer.class); }
+	public IConsoleListener getConsole() { return console; }
 
 	@Override
 	public void run(final String taskName, final Runnable r, final boolean asynchronous) {
