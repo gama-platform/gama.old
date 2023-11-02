@@ -38,8 +38,7 @@ public class SimulationSaveDelegate implements ISaveDelegate, ISerialisationCons
 			final boolean addHeader, final String type, final Object attributesToSave) throws IOException {
 		Object toSave = item.value(scope);
 		if (toSave instanceof IAgent sa) {
-			boolean zip = !JSON_FORMAT.equals(type);
-			BinarySerialisation.saveToFile(scope, sa, file.getPath(), type, zip, true);
+			BinarySerialisation.saveToFile(scope, sa, file.getPath(), type, true, true);
 		}
 	}
 

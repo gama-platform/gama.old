@@ -16,6 +16,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import msi.gama.runtime.IScope;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IMap;
+
 /**
  * Represents a JSON object, a set of name/value pairs, where the names are strings and the values are JSON values.
  * <p>
@@ -786,6 +790,15 @@ public class JsonObject extends JsonValue implements Iterable<msi.gama.util.file
 			return element.hashCode() & hashTable.length - 1;
 		}
 
+	}
+
+	@Override
+	public IMap<String, Object> toGamlValue(final IScope scope) {
+		IMap<String, Object> result = GamaMapFactory.create();
+		Iterator<String> namesIterator = names.iterator();
+		Iterator<JsonValue> valuesIterator = values.iterator();
+		while (namesIterator.hasNext()) { result.put(namesIterator.next(), valuesIterator.next().toGamlValue(scope)); }
+		return result;
 	}
 
 }

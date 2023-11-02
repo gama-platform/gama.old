@@ -1,7 +1,6 @@
 /*******************************************************************************************************
  *
- * JsonLiteral.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.3).
+ * JsonInt.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -12,40 +11,43 @@ package msi.gama.util.file.json;
 
 import java.io.IOException;
 
+import msi.gama.runtime.IScope;
+
 /**
- * The Class JsonLiteral.
+ * The Class JsonNumber.
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 29 oct. 2023
  */
 @SuppressWarnings ("serial") // use default serial UID
-class JsonLiteral extends JsonValue {
+class JsonInt extends JsonValue {
 
-	/** The value. */
-	private final String value;
-
-	/** The is null. */
-	private final boolean isNull;
-
-	/** The is true. */
-	private final boolean isTrue;
-
-	/** The is false. */
-	private final boolean isFalse;
+	/** The string. */
+	private final String string;
 
 	/**
-	 * Instantiates a new json literal.
+	 * Instantiates a new json number.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param value
-	 *            the value
+	 * @param string
+	 *            the string
 	 * @date 29 oct. 2023
 	 */
-	JsonLiteral(final String value) {
-		this.value = value;
-		isNull = "null".equals(value);
-		isTrue = "true".equals(value);
-		isFalse = "false".equals(value);
+	JsonInt(final String string) {
+		if (string == null) throw new NullPointerException("string is null");
+		this.string = string;
+	}
+
+	/**
+	 * To string.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public String toString() {
+		return string;
 	}
 
 	/**
@@ -60,19 +62,65 @@ class JsonLiteral extends JsonValue {
 	 */
 	@Override
 	void write(final JsonWriter writer) throws IOException {
-		writer.writeLiteral(value);
+		writer.writeNumber(string);
 	}
 
 	/**
-	 * To string.
+	 * Checks if is number.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the string
+	 * @return true, if is number
 	 * @date 29 oct. 2023
 	 */
 	@Override
-	public String toString() {
-		return value;
+	public boolean isNumber() { return true; }
+
+	/**
+	 * As int.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the int
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public int asInt() {
+		return Integer.parseInt(string, 10);
+	}
+
+	/**
+	 * As long.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the long
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public long asLong() {
+		return asInt();
+	}
+
+	/**
+	 * As float.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the float
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public float asFloat() {
+		return asInt();
+	}
+
+	/**
+	 * As double.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the double
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public double asDouble() {
+		return asInt();
 	}
 
 	/**
@@ -84,59 +132,7 @@ class JsonLiteral extends JsonValue {
 	 */
 	@Override
 	public int hashCode() {
-		return value.hashCode();
-	}
-
-	/**
-	 * Checks if is null.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return true, if is null
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public boolean isNull() { return isNull; }
-
-	/**
-	 * Checks if is true.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return true, if is true
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public boolean isTrue() { return isTrue; }
-
-	/**
-	 * Checks if is false.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return true, if is false
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public boolean isFalse() { return isFalse; }
-
-	/**
-	 * Checks if is boolean.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return true, if is boolean
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public boolean isBoolean() { return isTrue || isFalse; }
-
-	/**
-	 * As boolean.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return true, if successful
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public boolean asBoolean() {
-		return isNull ? super.asBoolean() : isTrue;
+		return string.hashCode();
 	}
 
 	/**
@@ -151,9 +147,23 @@ class JsonLiteral extends JsonValue {
 	@Override
 	public boolean equals(final Object object) {
 		if (this == object) return true;
-		if ((object == null) || (getClass() != object.getClass())) return false;
-		JsonLiteral other = (JsonLiteral) object;
-		return value.equals(other.value);
+		if (object == null || getClass() != object.getClass()) return false;
+		JsonInt other = (JsonInt) object;
+		return string.equals(other.string);
+	}
+
+	/**
+	 * To gaml value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the object
+	 * @date 2 nov. 2023
+	 */
+	@Override
+	public Number toGamlValue(final IScope scope) {
+		return asInt();
 	}
 
 }

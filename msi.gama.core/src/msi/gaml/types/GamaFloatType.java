@@ -59,9 +59,9 @@ public class GamaFloatType extends GamaType<Double> {
 	public static Double staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
 		if (obj instanceof Double) return (Double) obj;
 		if (obj instanceof Number) return ((Number) obj).doubleValue();
-		if (obj instanceof String) {
+		if (obj instanceof String s) {
 			try {
-				return Double.valueOf((String) obj);
+				return Double.parseDouble(s);
 			} catch (final NumberFormatException e) {
 				return 0d;
 			}
@@ -72,7 +72,7 @@ public class GamaFloatType extends GamaType<Double> {
 	}
 
 	@Override
-	public Double getDefault() { return 0.0; }
+	public Double getDefault() { return 0d; }
 
 	@Override
 	public boolean isTranslatableInto(final IType<?> type) {

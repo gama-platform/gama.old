@@ -57,23 +57,23 @@ public final class Json {
 	/**
 	 * Represents the JSON literal <code>null</code>.
 	 */
-	public static final JsonValue NULL = new JsonLiteral("null");
+	public static final JsonValue NULL = new JsonNull();
 
 	/**
 	 * Represents the JSON literal <code>true</code>.
 	 */
-	public static final JsonValue TRUE = new JsonLiteral("true");
+	public static final JsonValue TRUE = new JsonTrue();
 
 	/**
 	 * Represents the JSON literal <code>false</code>.
 	 */
-	public static final JsonValue FALSE = new JsonLiteral("false");
+	public static final JsonValue FALSE = new JsonFalse();
 
 	/** The initial. */
 	boolean firstPass = true;
 
 	/** The agents. */
-	JsonObject agents = new JsonObject(this);
+	JsonObject agentReferences = new JsonObject(this);
 
 	/**
 	 * Serialize.
@@ -105,8 +105,10 @@ public final class Json {
 				result = valueOf(d.doubleValue());
 			} else if (object instanceof Float f) {
 				result = valueOf(f.doubleValue());
-			} else if (object instanceof Number n) {
-				result = new JsonNumber(n.toString());
+			} else if (object instanceof Integer n) {
+				result = valueOf(n.intValue());
+			} else if (object instanceof Long n) {
+				result = valueOf((int) n.longValue());
 			} else if (object instanceof Boolean b) {
 				result = valueOf(b.booleanValue());
 			} else if (object instanceof Collection<?> c) {
@@ -121,9 +123,9 @@ public final class Json {
 			}
 		} finally {
 			if (initial) {
-				if (!agents.isEmpty()) {
+				if (!agentReferences.isEmpty()) {
 					result = object(GAMA_OBJECT_LABEL, result);
-					((JsonObject) result).add(REFERENCE_TABLE_LABEL, agents);
+					((JsonObject) result).add(REFERENCE_TABLE_LABEL, agentReferences);
 				}
 				firstPass = true; // in case the encoder is reused
 			}
@@ -139,7 +141,7 @@ public final class Json {
 	 * @return a JSON value that represents the given value
 	 */
 	public JsonValue valueOf(final int value) {
-		return new JsonNumber(Integer.toString(value, 10));
+		return new JsonInt(Integer.toString(value, 10));
 	}
 
 	/**
@@ -150,7 +152,7 @@ public final class Json {
 	 * @return a JSON value that represents the given value
 	 */
 	public JsonValue valueOf(final long value) {
-		return new JsonNumber(Long.toString(value, 10));
+		return new JsonInt(Integer.toString((int) value));
 	}
 
 	/**
@@ -161,10 +163,8 @@ public final class Json {
 	 * @return a JSON value that represents the given value
 	 */
 	public JsonValue valueOf(final float value) {
-		if (Float.isInfinite(value) || Float.isNaN(value))
-			// throw new IllegalArgumentException("Infinite and NaN values not permitted in JSON");
-			return NULL;
-		return new JsonNumber(cutOffPointZero(Float.toString(value)));
+		if (Float.isInfinite(value) || Float.isNaN(value)) return NULL;
+		return new JsonFloat(Float.toString(value));
 	}
 
 	/**
@@ -175,10 +175,8 @@ public final class Json {
 	 * @return a JSON value that represents the given value
 	 */
 	public JsonValue valueOf(final double value) {
-		if (Double.isInfinite(value) || Double.isNaN(value))
-			// throw new IllegalArgumentException("Infinite and NaN values not permitted in JSON");
-			return NULL;
-		return new JsonNumber(cutOffPointZero(Double.toString(value)));
+		if (Double.isInfinite(value) || Double.isNaN(value)) return NULL;
+		return new JsonFloat(Double.toString(value));
 	}
 
 	/**
@@ -541,12 +539,12 @@ public final class Json {
 	 * @date 1 nov. 2023
 	 */
 	public void addRef(final String key, final Supplier<SerialisedAgent> value) {
-		if (agents.contains(key)) return;
-		// We first set it to avoir infinite loops
-		agents.add(key, (Object) null);
+		if (agentReferences.contains(key)) return;
+		// We first set it to avoid infinite loops
+		agentReferences.add(key, (Object) null);
 		JsonValue agent = valueOf(value.get());
 		// We now replace it with the agent
-		agents.set(key, agent);
+		agentReferences.set(key, agent);
 	}
 
 }

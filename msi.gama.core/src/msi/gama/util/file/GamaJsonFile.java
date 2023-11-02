@@ -102,7 +102,7 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 		if (getBuffer() != null) return;
 		try (FileReader reader = new FileReader(getFile(scope))) {
 			final IMap<String, Object> map;
-			final Object o = Json.getNew().parse(reader);
+			final Object o = Json.getNew().parse(reader).toGamlValue(scope);
 			if (o instanceof IMap) {
 				map = (IMap<String, Object>) o;
 			} else {

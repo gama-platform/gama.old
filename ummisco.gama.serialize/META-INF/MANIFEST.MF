@@ -7,7 +7,6 @@ Require-Bundle: msi.gama.core,
  msi.gama.ext
 Bundle-ClassPath: .
 Export-Package: ummisco.gama.serializer,
- ummisco.gama.serializer.gamaType,
  ummisco.gama.serializer.gaml,
  ummisco.gama.serializer.implementations
 Import-Package: org.osgi.framework;version="1.10.0"

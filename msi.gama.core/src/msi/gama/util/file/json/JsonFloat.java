@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * JsonString.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
+ * JsonFloat.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -12,30 +12,43 @@ package msi.gama.util.file.json;
 import java.io.IOException;
 
 import msi.gama.runtime.IScope;
+import msi.gaml.operators.Cast;
 
 /**
- * The Class JsonString.
+ * The Class JsonNumber.
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 29 oct. 2023
  */
 @SuppressWarnings ("serial") // use default serial UID
-class JsonString extends JsonValue {
+class JsonFloat extends JsonValue {
 
 	/** The string. */
 	private final String string;
 
 	/**
-	 * Instantiates a new json string.
+	 * Instantiates a new json number.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param string
 	 *            the string
 	 * @date 29 oct. 2023
 	 */
-	JsonString(final String string) {
+	JsonFloat(final String string) {
 		if (string == null) throw new NullPointerException("string is null");
 		this.string = string;
+	}
+
+	/**
+	 * To string.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public String toString() {
+		return string;
 	}
 
 	/**
@@ -50,29 +63,65 @@ class JsonString extends JsonValue {
 	 */
 	@Override
 	void write(final JsonWriter writer) throws IOException {
-		writer.writeString(string);
+		writer.writeNumber(string);
 	}
 
 	/**
-	 * Checks if is string.
+	 * Checks if is number.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return true, if is string
+	 * @return true, if is number
 	 * @date 29 oct. 2023
 	 */
 	@Override
-	public boolean isString() { return true; }
+	public boolean isNumber() { return true; }
 
 	/**
-	 * As string.
+	 * As int.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the string
+	 * @return the int
 	 * @date 29 oct. 2023
 	 */
 	@Override
-	public String asString() {
-		return string;
+	public int asInt() {
+		return (int) asDouble();
+	}
+
+	/**
+	 * As long.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the long
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public long asLong() {
+		return Long.parseLong(string, 10);
+	}
+
+	/**
+	 * As float.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the float
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public float asFloat() {
+		return (float) asDouble();
+	}
+
+	/**
+	 * As double.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the double
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public double asDouble() {
+		return Cast.asFloat(null, string);
 	}
 
 	/**
@@ -100,7 +149,7 @@ class JsonString extends JsonValue {
 	public boolean equals(final Object object) {
 		if (this == object) return true;
 		if (object == null || getClass() != object.getClass()) return false;
-		JsonString other = (JsonString) object;
+		JsonFloat other = (JsonFloat) object;
 		return string.equals(other.string);
 	}
 
@@ -114,8 +163,8 @@ class JsonString extends JsonValue {
 	 * @date 2 nov. 2023
 	 */
 	@Override
-	public String toGamlValue(final IScope scope) {
-		return string;
+	public Number toGamlValue(final IScope scope) {
+		return asDouble();
 	}
 
 }

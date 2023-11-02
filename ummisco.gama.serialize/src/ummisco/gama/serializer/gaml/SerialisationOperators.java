@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.no_test;
@@ -29,7 +30,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.file.json.Json;
 import msi.gama.util.file.json.WriterConfig;
+import msi.gaml.compilation.GAML;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.save.GeoJSonSaver;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.serializer.implementations.BinarySerialisation;
@@ -250,15 +254,75 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = { "deserialize", "from_binary" },
-			type = ITypeProvider.DENOTED_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@doc (
-			value = "Deserializes an object precedently serialized using `serialize`. The second argument represents the type expected."
+			value = "Deserializes an object precedently serialized using `serialize`."
 					+ "It is safer to deserialize agents or simulations with the 'restore' or 'create' statements rather than with this operator.",
 			see = { "from_gaml", "from_json" })
 	@no_test
 	public static Object unserialize(final IScope scope, final String s) {
 		return BinarySerialisation.createFromString(scope, s);
 	}
+
+	/**
+	 * Unserialize.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param s
+	 *            the s
+	 * @param t
+	 *            the t
+	 * @return the object
+	 * @date 29 sept. 2023
+	 */
+	@operator (
+			value = { "from_json" },
+			type = ITypeProvider.DENOTED_TYPE_AT_INDEX + 2,
+			category = { IOperatorCategory.CASTING },
+			concept = { IConcept.SERIALIZE })
+	@doc (
+			value = "Deserializes an object precedently serialized using 'to_json' (or an arbitraty json object obtained elsewhere). Agents and populations are not supported yet (i.e. they will return maps)",
+			see = { "from_gaml", "from_binary" })
+	@no_test
+	public static Object fromJson(final IScope scope, final String s) {
+		return Json.getNew().parse(s).toGamlValue(scope);
+	}
+
+	/**
+	 * Op eval gaml.
+	 *
+	 * @param scope
+	 *            the scope
+	 * @param gaml
+	 *            the gaml
+	 * @return the object
+	 */
+	@operator (
+			value = { "from_gaml", "eval_gaml" },
+			can_be_const = false,
+			category = { IOperatorCategory.SYSTEM, IOperatorCategory.CASTING },
+			concept = { IConcept.SYSTEM, IConcept.SERIALIZE })
+	@doc (
+			value = "Evaluates/deserialises the given GAML string into a value.",
+			examples = { @example (
+					value = "eval_gaml(\"2+3\")",
+					equals = "5") })
+	public static Object opEvalGaml(final IScope scope, final String gaml) {
+		final IAgent agent = scope.getAgent();
+		final IDescription d = agent.getSpecies().getDescription();
+		try {
+			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
+			return scope.evaluate(e, agent).getValue();
+		} catch (final GamaRuntimeException e) {
+			scope.getGui().getConsole().informConsole("Error in evaluating Gaml code : '" + gaml + "' in "
+					+ scope.getAgent() + Strings.LN + "Reason: " + e.getMessage(), scope.getRoot());
+
+			return null;
+		}
+
+	}
+
 }

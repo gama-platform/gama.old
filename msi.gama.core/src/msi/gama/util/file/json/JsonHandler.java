@@ -105,8 +105,9 @@ public abstract class JsonHandler<A, O> {
 	 *
 	 * @param string
 	 *            the parsed number string
+	 * @param isFloat
 	 */
-	public void endNumber(final String string) {}
+	public void endNumber(final String string, final boolean isFloat) {}
 
 	/**
 	 * Indicates the beginning of an array in the JSON input. This method will be called when reading the opening square

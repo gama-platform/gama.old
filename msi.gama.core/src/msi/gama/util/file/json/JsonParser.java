@@ -449,9 +449,9 @@ public class JsonParser {
 		int firstDigit = current;
 		if (!readDigit()) throw expected("digit");
 		if (firstDigit != '0') { while (readDigit()) {} }
-		readFraction();
+		boolean isFloat = readFraction();
 		readExponent();
-		handler.endNumber(endCapture());
+		handler.endNumber(endCapture(), isFloat);
 	}
 
 	/**
@@ -651,7 +651,9 @@ public class JsonParser {
 	 * @return true, if is white space
 	 * @date 29 oct. 2023
 	 */
-	private boolean isWhiteSpace() { return current == ' ' || current == '\t' || current == '\n' || current == '\r'; }
+	private boolean isWhiteSpace() {
+		return current == ' ' || current == '\t' || current == '\n' || current == '\r';
+	}
 
 	/**
 	 * Checks if is digit.

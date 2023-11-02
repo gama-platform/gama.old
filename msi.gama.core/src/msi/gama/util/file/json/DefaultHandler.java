@@ -62,8 +62,8 @@ class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 	}
 
 	@Override
-	public void endNumber(final String string) {
-		value = new JsonNumber(string);
+	public void endNumber(final String string, final boolean isFloat) {
+		value = isFloat ? new JsonFloat(string) : new JsonInt(string);
 	}
 
 	@Override

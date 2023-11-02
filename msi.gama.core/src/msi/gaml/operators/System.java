@@ -47,9 +47,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
-import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.ActionDescription;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -1847,50 +1845,6 @@ public class System {
 	public static IParameter enterValue(final IScope scope, final String title, final IType type, final Object init,
 			final IList among) {
 		return new InputParameter(title, init, type, among);
-	}
-
-	/**
-	 * Op eval gaml.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param gaml
-	 *            the gaml
-	 * @return the object
-	 */
-
-	/**
-	 * Op eval gaml.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param gaml
-	 *            the gaml
-	 * @return the object
-	 */
-	@operator (
-			value = "eval_gaml",
-			can_be_const = false,
-			category = { IOperatorCategory.SYSTEM },
-			concept = { IConcept.SYSTEM })
-	@doc (
-			value = "evaluates the given GAML string.",
-			examples = { @example (
-					value = "eval_gaml(\"2+3\")",
-					equals = "5") })
-	public static Object opEvalGaml(final IScope scope, final String gaml) {
-		final IAgent agent = scope.getAgent();
-		final IDescription d = agent.getSpecies().getDescription();
-		try {
-			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
-			return scope.evaluate(e, agent).getValue();
-		} catch (final GamaRuntimeException e) {
-			scope.getGui().getConsole().informConsole("Error in evaluating Gaml code : '" + gaml + "' in "
-					+ scope.getAgent() + Strings.LN + "Reason: " + e.getMessage(), scope.getRoot());
-
-			return null;
-		}
-
 	}
 
 	/**

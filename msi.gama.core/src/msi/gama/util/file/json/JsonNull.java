@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * JsonNumber.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
+ * JsonNull.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -11,42 +11,16 @@ package msi.gama.util.file.json;
 
 import java.io.IOException;
 
+import msi.gama.runtime.IScope;
+
 /**
- * The Class JsonNumber.
+ * The Class JsonLiteral.
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 29 oct. 2023
  */
 @SuppressWarnings ("serial") // use default serial UID
-class JsonNumber extends JsonValue {
-
-	/** The string. */
-	private final String string;
-
-	/**
-	 * Instantiates a new json number.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param string
-	 *            the string
-	 * @date 29 oct. 2023
-	 */
-	JsonNumber(final String string) {
-		if (string == null) throw new NullPointerException("string is null");
-		this.string = string;
-	}
-
-	/**
-	 * To string.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the string
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public String toString() {
-		return string;
-	}
+class JsonNull extends JsonValue {
 
 	/**
 	 * Write.
@@ -60,65 +34,19 @@ class JsonNumber extends JsonValue {
 	 */
 	@Override
 	void write(final JsonWriter writer) throws IOException {
-		writer.writeNumber(string);
+		writer.writeLiteral("null");
 	}
 
 	/**
-	 * Checks if is number.
+	 * To string.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return true, if is number
+	 * @return the string
 	 * @date 29 oct. 2023
 	 */
 	@Override
-	public boolean isNumber() { return true; }
-
-	/**
-	 * As int.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the int
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public int asInt() {
-		return Integer.parseInt(string, 10);
-	}
-
-	/**
-	 * As long.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the long
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public long asLong() {
-		return Long.parseLong(string, 10);
-	}
-
-	/**
-	 * As float.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the float
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public float asFloat() {
-		return Float.parseFloat(string);
-	}
-
-	/**
-	 * As double.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the double
-	 * @date 29 oct. 2023
-	 */
-	@Override
-	public double asDouble() {
-		return Double.parseDouble(string);
+	public String toString() {
+		return "null";
 	}
 
 	/**
@@ -130,7 +58,59 @@ class JsonNumber extends JsonValue {
 	 */
 	@Override
 	public int hashCode() {
-		return string.hashCode();
+		return "null".hashCode();
+	}
+
+	/**
+	 * Checks if is null.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is null
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public boolean isNull() { return true; }
+
+	/**
+	 * Checks if is true.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is true
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public boolean isTrue() { return false; }
+
+	/**
+	 * Checks if is false.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is false
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public boolean isFalse() { return false; }
+
+	/**
+	 * Checks if is boolean.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is boolean
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public boolean isBoolean() { return false; }
+
+	/**
+	 * As boolean.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 29 oct. 2023
+	 */
+	@Override
+	public boolean asBoolean() {
+		return false;
 	}
 
 	/**
@@ -145,9 +125,13 @@ class JsonNumber extends JsonValue {
 	@Override
 	public boolean equals(final Object object) {
 		if (this == object) return true;
-		if ((object == null) || (getClass() != object.getClass())) return false;
-		JsonNumber other = (JsonNumber) object;
-		return string.equals(other.string);
+		if (object == null || getClass() != object.getClass()) return false;
+		return true;
+	}
+
+	@Override
+	public Object toGamlValue(final IScope scope) {
+		return null;
 	}
 
 }

@@ -14,6 +14,8 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import msi.gama.runtime.IScope;
+
 /**
  * Represents a JSON value. This can be a JSON <strong>object</strong>, an <strong> array</strong>, a
  * <strong>number</strong>, a <strong>string</strong>, or one of the literals <strong>true</strong>,
@@ -47,35 +49,12 @@ import java.io.Writer;
 public abstract class JsonValue implements Serializable {
 
 	/**
-	 * Represents the JSON literal <code>true</code>.
-	 *
-	 * @deprecated Use <code>Json.TRUE</code> instead
-	 */
-	@Deprecated public static final JsonValue TRUE = new JsonLiteral("true");
-
-	/**
-	 * Represents the JSON literal <code>false</code>.
-	 *
-	 * @deprecated Use <code>Json.FALSE</code> instead
-	 */
-	@Deprecated public static final JsonValue FALSE = new JsonLiteral("false");
-
-	/**
-	 * Represents the JSON literal <code>null</code>.
-	 *
-	 * @deprecated Use <code>Json.NULL</code> instead
-	 */
-	@Deprecated public static final JsonValue NULL = new JsonLiteral("null");
-
-	/**
 	 * Instantiates a new json value.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 29 oct. 2023
 	 */
-	JsonValue() {
-		// prevent subclasses outside of this package
-	}
+	JsonValue() {}
 
 	/**
 	 * Detects whether this value represents a JSON object. If this is the case, this value is an instance of
@@ -353,5 +332,14 @@ public abstract class JsonValue implements Serializable {
 	 * @date 29 oct. 2023
 	 */
 	abstract void write(JsonWriter writer) throws IOException;
+
+	/**
+	 * To gaml value.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the object
+	 * @date 2 nov. 2023
+	 */
+	public abstract Object toGamlValue(IScope scope);
 
 }
