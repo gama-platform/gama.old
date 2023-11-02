@@ -31,7 +31,7 @@ public class CompositeConsoleListener implements IConsoleListener {
 
 	@Override
 	public void addConsoleListener(final IConsoleListener console) {
-		if (consoles.contains(console)) return;
+		if (console == null || consoles.contains(console)) return;
 		consoles.add(console);
 	}
 

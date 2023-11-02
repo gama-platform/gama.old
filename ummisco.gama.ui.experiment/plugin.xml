@@ -1293,7 +1293,7 @@
       <serviceFactory
             factoryClass="ummisco.gama.ui.factories.ConsoleDisplayerFactory">
          <service
-               serviceClass="msi.gama.common.interfaces.IConsoleDisplayer">
+               serviceClass="msi.gama.common.interfaces.IConsoleListener">
          </service>
       </serviceFactory>
       <serviceFactory

@@ -112,7 +112,7 @@ public class SwtGui implements IGui {
 	private final IGamaView.Parameters[] parametersView = new IGamaView.Parameters[1];
 
 	/** The console. */
-	IConsoleListener console = new CompositeConsoleListener();
+	IConsoleListener console;
 
 	static {
 		PreferencesHelper.initialize();
@@ -122,9 +122,7 @@ public class SwtGui implements IGui {
 	/**
 	 * Instantiates a new swt gui.
 	 */
-	public SwtGui() {
-		console.addConsoleListener(WorkbenchHelper.getService(IConsoleListener.class));
-	}
+	public SwtGui() {}
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
@@ -623,7 +621,13 @@ public class SwtGui implements IGui {
 	public IStatusDisplayer getStatus() { return WorkbenchHelper.getService(IStatusDisplayer.class); }
 
 	@Override
-	public IConsoleListener getConsole() { return console; }
+	public IConsoleListener getConsole() {
+		if (console == null) {
+			console = new CompositeConsoleListener();
+			console.addConsoleListener(WorkbenchHelper.getService(IConsoleListener.class));
+		}
+		return console;
+	}
 
 	@Override
 	public void run(final String taskName, final Runnable r, final boolean asynchronous) {

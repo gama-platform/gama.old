@@ -182,7 +182,7 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	protected Json jsonErr = Json.getNew();
 
 	/** The console. */
-	protected IConsoleListener console = new GamaServerConsoleListener();
+	protected final IConsoleListener console = new GamaServerConsoleListener();
 
 	/**
 	 * Instantiates a new gama web socket server.
