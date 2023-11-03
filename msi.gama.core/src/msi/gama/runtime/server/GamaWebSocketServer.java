@@ -39,15 +39,6 @@ public abstract class GamaWebSocketServer extends WebSocketServer {
 	/** The Constant SOCKET_ID. */
 	static final String SOCKET_ID = "socket_id";
 
-	/** The Constant TLS. */
-	static final String TLS = "TLS";
-
-	/** The Constant JKS. */
-	static final String JKS = "JKS";
-
-	/** The Constant SUN_X509. */
-	static final String SUN_X509 = "SunX509";
-
 	/** The Constant DEFAULT_PING_INTERVAL. */
 	public static final int DEFAULT_PING_INTERVAL = 10000;
 

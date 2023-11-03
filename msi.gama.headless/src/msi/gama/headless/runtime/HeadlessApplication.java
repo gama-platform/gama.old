@@ -60,7 +60,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.runtime.server.GamaHeadlessWebSocketServer;
 import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gaml.compilation.GamlCompilationError;
 import ummisco.gama.dev.utils.DEBUG;

@@ -1,14 +1,14 @@
 /*******************************************************************************************************
  *
- * GamaHeadlessWebSocketServer.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
- * platform (v.1.9.3).
+ * GamaHeadlessWebSocketServer.java, in msi.gama.headless, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package msi.gama.runtime.server;
+package msi.gama.headless.runtime;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,11 +26,22 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.server.SSLParametersWebSocketServerFactory;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.runtime.server.GamaServerExperimentConfiguration;
+import msi.gama.runtime.server.GamaWebSocketServer;
 
 /**
  * The Class GamaWebSocketServer.
  */
 public class GamaHeadlessWebSocketServer extends GamaWebSocketServer {
+
+	/** The Constant TLS. */
+	static final String TLS = "TLS";
+
+	/** The Constant JKS. */
+	static final String JKS = "JKS";
+
+	/** The Constant SUN_X509. */
+	static final String SUN_X509 = "SunX509";
 
 	/** The executor. */
 	private final ThreadPoolExecutor executor;
