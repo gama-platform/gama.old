@@ -710,9 +710,6 @@ public interface IKeyword {
 	/** The members. */
 	String MEMBERS = "members";
 
-	/** The memorize. */
-	String MEMORIZE = "memorize";
-
 	/** The record. */
 	String RECORD = "record";
 

@@ -651,15 +651,14 @@ public class LayeredDisplayDecorator implements DisplayDataListener, IExperiment
 	 */
 	@Override
 	public void updateStateTo(final IExperimentPlan experiment, final State state) {
-		// DEBUG.OUT("Source changed " + state );
 		if (!isFullScreen() || toolbar == null || !toolbar.isVisible()) return;
 
-		if (IExperimentStateListener.State.PAUSED.getName().equals(state)) {
+		if (IExperimentStateListener.State.PAUSED.name().equals(state)) {
 			WorkbenchHelper.asyncRun(() -> {
 				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.EXPERIMENT_RUN).image());
 				toolbar.update();
 			});
-		} else if (IExperimentStateListener.State.RUNNING.getName().equals(state)) {
+		} else if (IExperimentStateListener.State.RUNNING.name().equals(state)) {
 			WorkbenchHelper.asyncRun(() -> {
 				runExperimentItem.setImage(GamaIcon.named(IGamaIcons.MENU_PAUSE_ACTION).image());
 				toolbar.update();

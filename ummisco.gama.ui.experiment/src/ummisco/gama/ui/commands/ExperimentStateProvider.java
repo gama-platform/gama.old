@@ -34,8 +34,8 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 	final static String[] SOURCE_NAMES = { EXPERIMENT_RUNNING_STATE, EXPERIMENT_TYPE, EXPERIMENT_STEPBACK };
 
 	/** The Constant map. */
-	private final Map<String, String> states = new HashMap<>(of(EXPERIMENT_RUNNING_STATE, State.NONE.getName(),
-			EXPERIMENT_TYPE, TYPE_NONE, EXPERIMENT_STEPBACK, CANNOT_STEP_BACK));
+	private final Map<String, String> states = new HashMap<>(of(EXPERIMENT_RUNNING_STATE, State.NONE.name(),
+			EXPERIMENT_TYPE, Type.NONE.name(), EXPERIMENT_STEPBACK, CANNOT_STEP_BACK));
 
 	@Override
 	public void initialize(final IServiceLocator locator) {
@@ -62,13 +62,13 @@ public class ExperimentStateProvider extends AbstractSourceProvider implements I
 	 */
 	@Override
 	public void updateStateTo(final IExperimentPlan exp, final State newState) {
-		String state = newState.getName();
+		String state = newState.name();
 		if (!Objects.equals(states.get(EXPERIMENT_RUNNING_STATE), state)) {
 			states.put(EXPERIMENT_RUNNING_STATE, state);
 			WorkbenchHelper.run(() -> fireSourceChanged(ISources.WORKBENCH, EXPERIMENT_RUNNING_STATE, state));
 		}
-		String simulationType =
-				exp == null ? TYPE_NONE : exp.isBatch() ? TYPE_BATCH : exp.isMemorize() ? TYPE_MEMORIZE : TYPE_REGULAR;
+		String simulationType = exp == null ? Type.NONE.name() : exp.isBatch() ? Type.BATCH.name()
+				: exp.isMemorize() ? Type.RECORD.name() : Type.REGULAR.name();
 		if (!Objects.equals(states.get(EXPERIMENT_TYPE), simulationType)) {
 			states.put(EXPERIMENT_TYPE, simulationType);
 			WorkbenchHelper.run(() -> fireSourceChanged(ISources.WORKBENCH, EXPERIMENT_TYPE, simulationType));

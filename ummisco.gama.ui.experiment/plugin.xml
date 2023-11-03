@@ -996,7 +996,7 @@
                <with
                      variable="ummisco.gama.ui.experiment.SimulationRunningState">
                   <equals
-                        value="STOPPED">
+                        value="PAUSED">
                   </equals>
                </with>
             </or>
@@ -1025,7 +1025,7 @@
             <with
                   variable="ummisco.gama.ui.experiment.SimulationRunningState">
                <equals
-                     value="STOPPED">
+                     value="PAUSED">
                </equals>
             </with>
          </and>
@@ -1085,7 +1085,7 @@
             <with
                   variable="ummisco.gama.ui.experiment.SimulationType">
                <equals
-                     value="MEMORIZE">
+                     value="RECORD">
                </equals>
             </with>
          </and>

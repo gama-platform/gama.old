@@ -37,52 +37,47 @@ public interface IExperimentStateListener {
 	 * @date 26 oct. 2023
 	 */
 	public enum State {
-
-		/** The paused. */
-		PAUSED("STOPPED"),
-		/** The finished. */
-		FINISHED("FINISHED"),
-		/** The running. */
-		RUNNING("RUNNING"),
-		/** The notready. */
-		NOTREADY("NOTREADY"),
-		/** The none. */
-		NONE("NONE");
-
-		/** The name. */
-		String name;
-
+		/** The PAUSED state. The experiment is open and has been paused. */
+		PAUSED,
+		/** The FINISHED state. The experiment is finished but not closed. Used at the end of batch experiments */
+		FINISHED,
+		/** The RUNNING state. The experiment is open and not paused. */
+		RUNNING,
 		/**
-		 * Gets the name.
-		 *
-		 * @return the name
+		 * The NOTREADY state. The experiment has been opened but is still initializing. If it is set to autorun, the
+		 * next state becomes RUNNING, otherwise PAUSED.
 		 */
-		public String getName() { return name; }
-
-		/**
-		 * Instantiates a new state.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param n
-		 *            the n
-		 * @date 26 oct. 2023
-		 */
-		State(final String n) {
-			name = n;
-		}
+		NOTREADY,
+		/** The NONE state. The experiment has not been launched yet or is already closed. */
+		NONE;
 	}
 
-	/** The none. */
-	String TYPE_NONE = "NONE";
+	/**
+	 * The Enum Type. Used to modify the UI depending on what type of experiment is displayed.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 3 nov. 2023
+	 */
+	public enum Type {
 
-	/** The batch. */
-	String TYPE_BATCH = "BATCH";
+		/**
+		 * The NONE type. This type of experiment is unknown -- indicates that the experiment is not launched yet or
+		 * already closed
+		 */
+		NONE,
 
-	/** The memorize. */
-	String TYPE_MEMORIZE = "MEMORIZE";
+		/**
+		 * The BATCH type. This experiment automatically runs multiple simulations for exploring scenarios or optimizing
+		 * parameters
+		 */
+		BATCH,
 
-	/** The regular. */
-	String TYPE_REGULAR = "REGULAR";
+		/** The RECORD type. This experiment can record its states and play them back. */
+		RECORD,
+
+		/** The REGULAR type. The classical experiment type. */
+		REGULAR
+	}
 
 	/** The Constant CANNOT_STEP_BACK. */
 	String CANNOT_STEP_BACK = "CANNOT_STEP_BACK";
@@ -91,7 +86,7 @@ public interface IExperimentStateListener {
 	String CAN_STEP_BACK = "CAN_STEP_BACK";
 
 	/**
-	 * Change the UI state based on the state of the simulation (none, stopped, running or notready)
+	 * Change the UI state based on the state of the simulation (NONE, PAUSED, RUNNING, FINISHED or NOTREADY)
 	 */
 	void updateStateTo(IExperimentPlan experiment, final State state);
 
