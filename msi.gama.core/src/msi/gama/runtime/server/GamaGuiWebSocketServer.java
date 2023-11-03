@@ -13,13 +13,9 @@ package msi.gama.runtime.server;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExperimentStateListener;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.IMap;
-import msi.gama.util.file.json.Json;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -104,34 +100,6 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 	public void onClose(final WebSocket conn, final int code, final String reason, final boolean remote) {
 		super.onClose(conn, code, reason, remote);
 		GAMA.getGui().getConsole().removeConsoleListener(console);
-	}
-
-	/**
-	 * Extract param.
-	 *
-	 * @param socket
-	 *            the socket
-	 * @param message
-	 *            the message
-	 * @return the i map
-	 */
-	@Override
-	@SuppressWarnings ("unchecked")
-	public IMap<String, Object> extractParam(final WebSocket socket, final String message) {
-		IMap<String, Object> map = null;
-		try {
-			final Object o = Json.getNew().parse(message).toGamlValue(GAMA.getRuntimeScope());
-			if (o instanceof IMap) {
-				map = (IMap<String, Object>) o;
-			} else {
-				map = GamaMapFactory.create();
-				map.put(IKeyword.CONTENTS, o);
-			}
-		} catch (Exception e1) {
-			DEBUG.OUT(e1.toString());
-			socket.send(jsonErr.valueOf(new GamaServerMessage(GamaServerMessage.Type.MalformedRequest, e1)).toString());
-		}
-		return map;
 	}
 
 	@Override
