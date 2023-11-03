@@ -178,6 +178,13 @@ public class SerialisationOperators {
 			value = { "to_json" },
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
+	@test ("to_json(1) = '1'")
+	@test ("to_json(1.24) = '1.24'")
+	@test ("to_json('a string') = '\"a string\"'")
+	@test ("to_json(date(0)) = '{\"gaml_type\":\"date\",\"iso\":\"1970-01-01T07:00:00+07:00\"}'")
+	@test ("to_json(#blue) = '{\"gaml_type\":\"rgb\",\"red\":0,\"green\":0,\"blue\":255,\"alpha\":255}'")
+	@test ("to_json(font('Helvetica')) = '{\"gaml_type\":\"font\",\"name\":\"Helvetica\",\"style\":0,\"size\":12}'")
+	@test ("to_json(point(20,10)) = '{\"gaml_type\":\"point\",\"x\":20.0,\"y\":10.0,\"z\":0.0}'")
 	@doc (
 			value = "Serializes any object/agent/simulation into a string, using the json format. A flag can be passed to enable/disable pretty printing (false by default)."
 					+ "The format used by GAMA follows simple rules. int, float, bool, string values are outputted as they are. nil is outputted as 'null'. A list is outputted as a json array. Any other object or agent is outputted as a json object. If this object possesses the \"gaml_type\" attribute, "
@@ -256,6 +263,8 @@ public class SerialisationOperators {
 			value = { "deserialize", "from_binary" },
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
+	@test ("from_binary(to_binary(25+5)) = 30")
+	@test ("from_binary(to_binary([1,2,4])) = [1,2,4]")
 	@doc (
 			value = "Deserializes an object precedently serialized using `serialize`."
 					+ "It is safer to deserialize agents or simulations with the 'restore' or 'create' statements rather than with this operator.",

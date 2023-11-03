@@ -10,15 +10,18 @@ model Json
 
 global {
 	init {
+		write (from_binary(to_binary([1,2,4])) = [1,2,4]);
+		
+		
 		write "Simple values";
 		write "------------- TO JSON";
-		write (to_json(1,true));
-		write (to_json(1.24,true));
-		write (to_json("a string",true));
-		write (to_json(date(0),true));
-		write (to_json(#blue,true));
-		write (to_json(font("Helvetica"),true));
-		write (to_json({20,10},true));
+		write sample(to_json(1));
+		write sample(to_json(1.24));
+		write sample(to_json("a string"));
+		write sample(to_json(date(0)));
+		write sample(to_json(#blue));
+		write sample(to_json(font("Helvetica")));
+		write sample(to_json({20,10}));
 		write "------------- From JSON";
 		write (from_json(to_json(1,true)));
 		write (from_json(to_json(1.24,true)));
