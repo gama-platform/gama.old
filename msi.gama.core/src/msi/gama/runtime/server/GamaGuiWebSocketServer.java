@@ -16,6 +16,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExperimentStateListener;
+import msi.gama.util.file.json.Json;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -153,7 +154,11 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 
 	@Override
 	public void updateStateTo(final IExperimentPlan experiment, final State state) {
-		// Does nothing for the moment (but could send messages corresponding to the clients ?)
+		WebSocket ws = currentServerConfig.socket();
+		if (ws == null) return;
+		ws.send(Json.getNew()
+				.valueOf(new GamaServerMessage(GamaServerMessage.Type.SimulationStatus, state.getName(), "0"))
+				.toString());
 	}
 
 	/**
