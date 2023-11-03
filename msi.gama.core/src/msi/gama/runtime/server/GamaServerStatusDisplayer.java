@@ -37,7 +37,7 @@ public final class GamaServerStatusDisplayer extends GamaServerMessager implemen
 	public boolean canSendMessage(final IExperimentAgent exp) {
 		if (exp == null) return false;
 		var scope = exp.getScope();
-		return scope != null && scope.getData("status") != null ? (boolean) scope.getData("status") : true;
+		return scope != null && scope.getServerConfiguration().status();
 	}
 
 	@Override

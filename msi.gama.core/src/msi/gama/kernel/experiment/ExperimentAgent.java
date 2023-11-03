@@ -50,6 +50,7 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.GamaServerExperimentConfiguration;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
@@ -963,6 +964,28 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 *
 	 */
 	public class ExperimentAgentScope extends ExecutionScope {
+
+		/** The server config. */
+		GamaServerExperimentConfiguration serverConfig = GamaServerExperimentConfiguration.NULL;
+
+		/**
+		 * Gets the server configuration.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @return the server configuration
+		 * @date 3 nov. 2023
+		 */
+		@Override
+		public GamaServerExperimentConfiguration getServerConfiguration() { return serverConfig; }
+
+		/**
+		 * Sets the server configuration.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @date 3 nov. 2023
+		 */
+		@Override
+		public void setServerConfiguration(final GamaServerExperimentConfiguration config) { serverConfig = config; }
 
 		/**
 		 * Method getRandom()

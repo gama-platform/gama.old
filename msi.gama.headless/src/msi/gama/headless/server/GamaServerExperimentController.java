@@ -25,6 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.server.CommandResponse;
+import msi.gama.runtime.server.GamaServerExperimentConfiguration;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
@@ -100,21 +101,6 @@ public class GamaServerExperimentController extends AbstractExperimentController
 	/** The job. */
 	public GamaServerExperimentJob _job;
 
-	/** The socket. */
-	private final WebSocket socket;
-
-	/** The redirect console. */
-	public final boolean redirectConsole;
-
-	/** The redirect status. */
-	public final boolean redirectStatus;
-
-	/** The redirect dialog. */
-	public final boolean redirectDialog;
-
-	/** The redirect runtime. */
-	public final boolean redirectRuntime;
-
 	/**
 	 * Instantiates a new experiment controller.
 	 *
@@ -127,13 +113,9 @@ public class GamaServerExperimentController extends AbstractExperimentController
 			final String stopCondition, final WebSocket sock, final boolean console, final boolean status,
 			final boolean dialog, final boolean runtime) {
 		_job = j;
-		socket = sock;
-		redirectConsole = console;
+		serverConfiguration = new GamaServerExperimentConfiguration(sock, "Unknown", console, status, dialog, runtime);
 		this.parameters = parameters;
 		this.stopCondition = stopCondition;
-		redirectStatus = status;
-		redirectDialog = dialog;
-		redirectRuntime = runtime;
 		executionThread = new MyRunnable(j);
 
 		commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
@@ -278,15 +260,10 @@ public class GamaServerExperimentController extends AbstractExperimentController
 	@Override
 	public void schedule(final ExperimentAgent agent) {
 		scope = agent.getScope();
-		scope.setData("socket", socket);
-		scope.setData("exp_id", _job.getExperimentID());
-		scope.setData("console", redirectConsole);
-		scope.setData("status", redirectStatus);
-		scope.setData("dialog", redirectDialog);
-		scope.setData("runtime", redirectRuntime);
+		serverConfiguration = serverConfiguration.withExpId(_job.getExperimentID());
+		scope.setServerConfiguration(serverConfiguration);
 		try {
-			if (!scope.init(agent).passed()) { scope.setDisposeStatus(); } // else if (agent.getSpecies().isAutorun()) {
-																			// userStart(); }
+			if (!scope.init(agent).passed()) { scope.setDisposeStatus(); }
 		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {} else if (!(e instanceof GamaRuntimeException)) {
 				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);

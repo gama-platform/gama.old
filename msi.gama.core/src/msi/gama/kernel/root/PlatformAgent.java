@@ -1,7 +1,7 @@
 /*******************************************************************************************************
  *
  * PlatformAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.1.9.2).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
@@ -20,7 +20,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.preferences.GamaPreferenceStore;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.Pref;
 import msi.gama.common.util.RandomUtils;
@@ -140,7 +139,8 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	/** The current task. */
 	private TimerTask currentTask;
-	
+
+	/** The my server. */
 	private GamaWebSocketServer myServer;
 
 	/**
@@ -181,10 +181,10 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			myServer = GamaWebSocketServer.StartForGUI(port, ping);
 		}
 		GamaPreferences.Runtime.CORE_SERVER_MODE.onChange(newValue -> {
-			if(myServer!=null) {
+			if (myServer != null) {
 				try {
 					myServer.stop();
-					myServer=null;
+					myServer = null;
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -194,7 +194,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 				final int port = GamaPreferences.Runtime.CORE_SERVER_PORT.getValue();
 				final int ping = GamaPreferences.Runtime.CORE_SERVER_PING.getValue();
 				myServer = GamaWebSocketServer.StartForGUI(port, ping);
-			} 
+			}
 		});
 	}
 
@@ -377,14 +377,35 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	@getter (PlatformAgent.MACHINE_TIME)
 	public Double getMachineTime() { return (double) System.currentTimeMillis(); }
 
+	/**
+	 * Gets the title.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the title
+	 * @date 3 nov. 2023
+	 */
 	@Override
 	public String getTitle() { return "gama platform agent"; }
 
+	/**
+	 * Gets the documentation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the documentation
+	 * @date 3 nov. 2023
+	 */
 	@Override
 	public Doc getDocumentation() {
 		return new ConstantDoc("The unique instance of the platform species. Used to access GAMA platform properties.");
 	}
 
+	/**
+	 * Gets the defining plugin.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the defining plugin
+	 * @date 3 nov. 2023
+	 */
 	@Override
 	public String getDefiningPlugin() { return "msi.gama.core"; }
 
@@ -445,5 +466,14 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	@Override
 	public boolean isPlatform() { return true; }
+
+	/**
+	 * Gets the server.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the server
+	 * @date 3 nov. 2023
+	 */
+	public GamaWebSocketServer getServer() { return myServer; }
 
 }

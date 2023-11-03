@@ -27,6 +27,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulationFactory;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.GamaServerExperimentConfiguration;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
@@ -919,5 +920,30 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 * @return the population factory
 	 */
 	IPopulationFactory getPopulationFactory();
+
+	/**
+	 * Gets the server configuration. Defaults to asking the experiment scope
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the server configuration
+	 * @date 3 nov. 2023
+	 */
+	default GamaServerExperimentConfiguration getServerConfiguration() {
+		IExperimentAgent agent = getExperiment();
+		if (agent == null) return GamaServerExperimentConfiguration.NULL;
+		return agent.getScope().getServerConfiguration();
+	}
+
+	/**
+	 * Sets the server configuration. Defaults to setting the experiment scope
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 3 nov. 2023
+	 */
+	default void setServerConfiguration(final GamaServerExperimentConfiguration config) {
+		IExperimentAgent agent = getExperiment();
+		if (agent == null) return;
+		agent.getScope().setServerConfiguration(config);
+	}
 
 }

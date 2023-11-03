@@ -12,14 +12,12 @@ package msi.gama.headless.listener;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.GamlFileExtension;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.server.GamaServerExperimentJob;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.server.CommandExecutor;
 import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
@@ -83,8 +81,8 @@ public class LoadCommand implements ISocketCommand {
 			throws IOException, GamaHeadlessException {
 
 		final String pathToModel = map.get("model").toString();
-		final String socket_id =
-				map.get("socket_id") != null ? map.get("socket_id").toString() : "" + socket.hashCode();
+		final String socketId = map.get("socket_id") != null ? map.get("socket_id").toString()
+				: GamaWebSocketServer.getSocketId(socket);
 
 		File ff = new File(pathToModel);
 
@@ -120,18 +118,12 @@ public class LoadCommand implements ISocketCommand {
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 					"'" + argExperimentName + "' is not an experiment present in '" + ff.getAbsolutePath() + "'", map,
 					false);
-		// Globals.OUTPUT_PATH = ".";// TODO: why ?
 
 		selectedJob.controller.processOpen(true);
 		selectedJob.controller.getExperiment().setStopCondition(end);
-		// If the client has not ran any experiment yet, we initialize its experiments map
-		if (gamaWebSocketServer.getExperimentsOf(socket_id) == null) {
-			final ConcurrentHashMap<String, IExperimentPlan> exps = new ConcurrentHashMap<>();
-			gamaWebSocketServer.getAllExperiments().put(socket_id, exps);
-		}
-		gamaWebSocketServer.getExperimentsOf(socket_id).put(selectedJob.getExperimentID(),
-				selectedJob.controller.getExperiment());
 
+		gamaWebSocketServer.addExperiment(socketId, selectedJob.getExperimentID(),
+				selectedJob.controller.getExperiment());
 		gamaWebSocketServer.execute(selectedJob.controller.executionThread);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, selectedJob.getExperimentID(),
 				map, false);

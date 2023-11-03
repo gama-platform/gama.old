@@ -14,6 +14,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.server.GamaServerExperimentConfiguration;
 
 /**
  * The Class AbstractExperimentController.
@@ -28,6 +29,9 @@ public abstract class AbstractExperimentController implements IExperimentControl
 
 	/** The disposing. */
 	protected boolean disposing;
+
+	/** The server configuration. */
+	protected GamaServerExperimentConfiguration serverConfiguration;
 
 	/**
 	 * Alive. Flag indicating that the scheduler is running (it should be alive unless the application is shutting down)

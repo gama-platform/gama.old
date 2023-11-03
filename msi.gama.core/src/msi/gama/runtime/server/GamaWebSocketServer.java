@@ -51,9 +51,6 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	/** The Constant SOCKET_ID. */
 	private static final String SOCKET_ID = "socket_id";
 
-	/** The Constant EXP_ID. */
-	private static final String EXP_ID = "exp_id";
-
 	/** The Constant TLS. */
 	private static final String TLS = "TLS";
 
@@ -65,6 +62,33 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 
 	/** The Constant DEFAULT_PING_INTERVAL. */
 	public static final int DEFAULT_PING_INTERVAL = 10000;
+
+	/** The current server config. */
+	private GamaServerExperimentConfiguration currentServerConfig = GamaServerExperimentConfiguration.NULL;
+
+	/** The executor. */
+	private final ThreadPoolExecutor executor;
+
+	/** The experiments. Only used in the headless version */
+	private final Map<String, Map<String, IExperimentPlan>> launchedExperiments = new ConcurrentHashMap<>();
+
+	/** The cmd helper. */
+	private final CommandExecutor cmdHelper = new CommandExecutor();
+
+	/** The can ping. false if pingInterval is negative */
+	public final boolean canPing;
+
+	/** The ping interval. the time interval between two ping requests in ms */
+	public final int pingInterval;
+
+	/** The ping timers. map of all connected clients and their associated timers running ping requests */
+	protected final Map<WebSocket, Timer> pingTimers = new HashMap<>();
+
+	/** The json err. */
+	protected Json jsonErr = Json.getNew();
+
+	/** The console. */
+	protected final IConsoleListener console = new GamaServerConsoleListener();
 
 	/**
 	 * Start for headless with SSL security on
@@ -156,33 +180,10 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	 */
 	public static GamaWebSocketServer StartForGUI(final int port, final int pingInterval) {
 		GamaWebSocketServer server = new GamaWebSocketServer(port, null, false, "", "", "", pingInterval);
+		server.currentServerConfig = GamaServerExperimentConfiguration.GUI;
 		server.start();
 		return server;
 	}
-
-	/** The executor. */
-	private final ThreadPoolExecutor executor;
-
-	/** The experiments. Only used in the headless version */
-	private final Map<String, Map<String, IExperimentPlan>> launchedExperiments = new ConcurrentHashMap<>();
-
-	/** The cmd helper. */
-	private final CommandExecutor cmdHelper = new CommandExecutor();
-
-	/** The can ping. false if pingInterval is negative */
-	public final boolean canPing;
-
-	/** The ping interval. the time interval between two ping requests in ms */
-	public final int pingInterval;
-
-	/** The ping timers. map of all connected clients and their associated timers running ping requests */
-	protected final Map<WebSocket, Timer> pingTimers = new HashMap<>();
-
-	/** The json err. */
-	protected Json jsonErr = Json.getNew();
-
-	/** The console. */
-	protected final IConsoleListener console = new GamaServerConsoleListener();
 
 	/**
 	 * Instantiates a new gama web socket server.
@@ -281,22 +282,37 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 		}
 	}
 
+	/**
+	 * Gets the socket id.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param socket
+	 *            the socket
+	 * @return the socket id
+	 * @date 3 nov. 2023
+	 */
+	public static String getSocketId(final WebSocket socket) {
+		return String.valueOf(socket.hashCode());
+	}
+
 	@Override
-	public void onOpen(final WebSocket conn, final ClientHandshake handshake) {
+	public void onOpen(final WebSocket socket, final ClientHandshake handshake) {
+		currentServerConfig = currentServerConfig.withSocket(socket);
+
 		// DEBUG.OUT(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
 		GAMA.getGui().getConsole().addConsoleListener(console);
-		conn.send(Json.getNew().valueOf(
-				new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, String.valueOf(conn.hashCode())))
+		socket.send(Json.getNew().valueOf(
+				new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, String.valueOf(socket.hashCode())))
 				.toString());
 		if (canPing) {
 			var timer = new Timer();
 			timer.scheduleAtFixedRate(new TimerTask() {
 				@Override
 				public void run() {
-					if (conn.isOpen()) { conn.sendPing(); }
+					if (socket.isOpen()) { socket.sendPing(); }
 				}
 			}, 0, pingInterval);
-			pingTimers.put(conn, timer);
+			pingTimers.put(socket, timer);
 		}
 	}
 
@@ -304,12 +320,12 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	public void onClose(final WebSocket conn, final int code, final String reason, final boolean remote) {
 		var timer = pingTimers.remove(conn);
 		if (timer != null) { timer.cancel(); }
-		if (getLaunched_experiments().get("" + conn.hashCode()) != null) {
-			for (IExperimentPlan e : getLaunched_experiments().get(String.valueOf(conn.hashCode())).values()) {
+		if (getLaunchedExperiments().get("" + conn.hashCode()) != null) {
+			for (IExperimentPlan e : getLaunchedExperiments().get(String.valueOf(conn.hashCode())).values()) {
 				e.getController().processPause(true);
 				e.getController().dispose();
 			}
-			getLaunched_experiments().get("" + conn.hashCode()).clear();
+			getLaunchedExperiments().get("" + conn.hashCode()).clear();
 		}
 		GAMA.getGui().getConsole().removeConsoleListener(console);
 		DEBUG.OUT(conn + " has left the room!");
@@ -350,10 +366,10 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 			map.put("server", this);
 			DEBUG.OUT(map.get("type"));
 			DEBUG.OUT(map.get("expr"));
-			final String exp_id = map.get(EXP_ID) != null ? map.get(EXP_ID).toString() : "";
-			final String socket_id =
-					map.get(SOCKET_ID) != null ? map.get(SOCKET_ID).toString() : "" + socket.hashCode();
-			IExperimentPlan exp = getExperiment(socket_id, exp_id);
+			final String exp_id =
+					map.get(ISocketCommand.EXP_ID) != null ? map.get(ISocketCommand.EXP_ID).toString() : "";
+			final String socketId = map.get(SOCKET_ID) != null ? map.get(SOCKET_ID).toString() : getSocketId(socket);
+			IExperimentPlan exp = getExperiment(socketId, exp_id);
 			SimulationAgent sim = exp != null && exp.getAgent() != null ? exp.getAgent().getSimulation() : null;
 			if (sim != null && exp != null && !exp.getController().isPaused()) {
 				sim.postOneShotAction(scope1 -> {
@@ -443,15 +459,47 @@ public class GamaWebSocketServer extends WebSocketServer implements IExperimentS
 	}
 
 	/**
-	 * Gets the simulations.
+	 * Gets the launched experiments.
 	 *
-	 * @return the simulations
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the launched experiments
+	 * @date 2 nov. 2023
 	 */
-	public Map<String, Map<String, IExperimentPlan>> getLaunched_experiments() { return launchedExperiments; }
+	public Map<String, Map<String, IExperimentPlan>> getLaunchedExperiments() { return launchedExperiments; }
 
 	@Override
 	public void updateStateTo(final IExperimentPlan experiment, final State state) {
+		// Does nothing for the moment (but could send messages corresponding to the clients ?)
+	}
 
+	/**
+	 * Adds the experiment.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param socketId
+	 *            the socket id
+	 * @param experimentId
+	 *            the experiment id
+	 * @date 3 nov. 2023
+	 */
+	public void addExperiment(final String socketId, final String experimentId, final IExperimentPlan plan) {
+		Map<String, IExperimentPlan> exps = launchedExperiments.get(socketId);
+		if (exps == null) {
+			exps = new ConcurrentHashMap<>();
+			launchedExperiments.put(socketId, exps);
+		}
+		exps.put(experimentId, plan);
+	}
+
+	/**
+	 * Obtain gui server configuration.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the gama server experiment configuration
+	 * @date 3 nov. 2023
+	 */
+	public GamaServerExperimentConfiguration obtainGuiServerConfiguration() {
+		return currentServerConfig;
 	}
 
 }

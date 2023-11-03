@@ -23,8 +23,12 @@ import msi.gama.util.IMap;
  */
 public interface ISocketCommand {
 
+	/** The socket. */
+	String SOCKET = "socket";
+
 	/** The file. */
 	String FILE = "file";
+
 	/** The Constant ESCAPED. */
 	String ESCAPED = "escaped";
 

@@ -37,7 +37,7 @@ public final class GamaServerConsoleListener extends GamaServerMessager implemen
 	@Override
 	public boolean canSendMessage(final IExperimentAgent exp) {
 		var scope = exp.getScope();
-		return scope != null && scope.getData("console") != null ? (boolean) scope.getData("console") : true;
+		return scope != null && scope.getServerConfiguration().console();
 	}
 
 	@Override

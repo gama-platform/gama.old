@@ -52,7 +52,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 		public boolean canSendMessage(final IExperimentAgent exp) {
 			if (exp == null) return false;
 			var scope = exp.getScope();
-			return scope != null && scope.getData("dialog") != null ? (boolean) scope.getData("dialog") : true;
+			return scope != null && scope.getServerConfiguration().dialog();
 		}
 
 	};
@@ -68,8 +68,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 	 */
 	private boolean canSendRuntimeErrors(final IScope scope) {
 		if (scope != null && scope.getExperiment() != null && scope.getExperiment().getScope() != null)
-			return scope.getExperiment().getScope().getData("runtime") != null
-					? (boolean) scope.getExperiment().getScope().getData("runtime") : true;
+			return scope.getExperiment().getScope().getServerConfiguration().runtime();
 		return true;
 	}
 
