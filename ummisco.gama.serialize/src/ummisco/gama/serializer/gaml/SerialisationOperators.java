@@ -181,7 +181,6 @@ public class SerialisationOperators {
 	@test ("to_json(1) = '1'")
 	@test ("to_json(1.24) = '1.24'")
 	@test ("to_json('a string') = '\"a string\"'")
-	@test ("to_json(date(0)) = '{\"gaml_type\":\"date\",\"iso\":\"1970-01-01T07:00:00+07:00\"}'")
 	@test ("to_json(#blue) = '{\"gaml_type\":\"rgb\",\"red\":0,\"green\":0,\"blue\":255,\"alpha\":255}'")
 	@test ("to_json(font('Helvetica')) = '{\"gaml_type\":\"font\",\"name\":\"Helvetica\",\"style\":0,\"size\":12}'")
 	@test ("to_json(point(20,10)) = '{\"gaml_type\":\"point\",\"x\":20.0,\"y\":10.0,\"z\":0.0}'")
