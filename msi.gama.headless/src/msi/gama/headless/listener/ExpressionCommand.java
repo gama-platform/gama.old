@@ -12,9 +12,8 @@ package msi.gama.headless.listener;
 
 import org.java_websocket.WebSocket;
 
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.ExecutionScope;
-import msi.gama.runtime.GAMA;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerMessage;
@@ -22,7 +21,6 @@ import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gama.runtime.server.ISocketCommand;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.GamlIdiomsProvider;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -48,11 +46,11 @@ public class ExpressionCommand implements ISocketCommand {
 		if (exp_id == "" || expr == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
 				"For 'expression', mandatory parameters are: 'exp_id' and 'expr'", map, false);
 
-		var exp = gamaWebSocketServer.getExperiment(socket_id, exp_id);
-		if (exp == null || exp.getCurrentSimulation() == null)
-			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, "Wrong exp_id " + exp_id, map,
-					false);
-		final String res = processInput(exp.getCurrentSimulation(), expr.toString());
+		IExperimentPlan exp = gamaWebSocketServer.getExperiment(socket_id, exp_id);
+		if (exp == null || exp.getAgent() == null || exp.getAgent().dead())
+			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+					"No experiment agent found for experiment " + exp_id, map, false);
+		final String res = processInput(exp.getAgent(), expr.toString());
 		if (res == null || res.length() == 0 || res.startsWith("> Error: "))
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, res, map, false);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, res, map, escaped);
@@ -69,34 +67,18 @@ public class ExpressionCommand implements ISocketCommand {
 	 * @return the string
 	 * @date 15 oct. 2023
 	 */
-	protected String processInput(final IAgent agt, final String s) {
+	protected String processInput(final IExperimentAgent agt, final String s) {
 		String result = null;
-		IAgent agent = agt;// = getListeningAgent();
-		if (agent == null) { agent = GAMA.getPlatformAgent(); }
-		final IScope scope = new ExecutionScope(agent.getScope().getRoot(), " in console");// agent.getScope();
-		if (!agent.dead()) {
-			final var entered = s.trim();
-			// var error = false;
-			if (entered.startsWith("?")) {
-				result = GamlIdiomsProvider.getDocumentationOn(entered.substring(1));
-			} else {
-				try {
-					final var expr = GAML.compileExpression(s, agent, false);
-					if (expr != null) {
-						result = "" + scope.evaluate(expr, agent).getValue();// StringUtils.toGaml(scope.evaluate(expr,
-																				// agent).getValue(), true);
-					}
-				} catch (final Exception e) {
-					// error = true;
-					result = "> Error: " + e.getMessage();
-				} finally {
-					agent.getSpecies().removeTemporaryAction();
-				}
-			}
-			// append(result, error, true);
-			// if (!error && GAMA.getExperiment() != null) {
-			// GAMA.getExperiment().refreshAllOutputs();
-			// }
+		IExperimentAgent agent = agt;
+		final IScope scope = agent.getScope().copy(" in console");
+		final var entered = s.trim();
+		try {
+			final var expr = GAML.compileExpression(entered, agent, false);
+			if (expr != null) { result = String.valueOf(scope.evaluate(expr, agent).getValue()); }
+		} catch (final Exception e) {
+			result = "> Error: " + e.getMessage();
+		} finally {
+			agent.getSpecies().removeTemporaryAction();
 		}
 		return result;
 

@@ -14,7 +14,6 @@ import msi.gama.common.interfaces.IConsoleListener;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.json.ParseException;
 
 /**
  * The listener interface for receiving gamaServerConsole events.
@@ -44,32 +43,14 @@ public final class GamaServerConsoleListener extends GamaServerMessager implemen
 	public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
 		System.out.println(s);
 		if (!canSendMessage(root.getExperiment())) return;
-
-		try {
-			sendMessage(root.getExperiment(),
-					json.parse("{" + "\"message\": \"" + s + "\"," + "\"color\":" + json.valueOf(color) + "}"),
-					GamaServerMessage.Type.SimulationOutput);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(root.getExperiment(), json.object("message", s, "color", color).toString(),
-					GamaServerMessage.Type.SimulationOutput);
-		}
+		sendMessage(root.getExperiment(), json.object("message", s, "color", color),
+				GamaServerMessage.Type.SimulationOutput);
 	}
 
 	@Override
 	public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
 		if (!canSendMessage(root.getExperiment())) return;
-		try {
-			sendMessage(
-					root.getExperiment(), json.parse("{" + "\"cycle\":" + cycle + "," + "\"message\": \""
-							+ json.valueOf(s) + "\"," + "\"color\":" + json.valueOf(color) + "}"),
-					GamaServerMessage.Type.SimulationDebug);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(root.getExperiment(), json.object("cycle", cycle, "message", s, "color", color).toString(),
-					GamaServerMessage.Type.SimulationDebug);
-		}
+		sendMessage(root.getExperiment(), json.object("cycle", cycle, "message", s, "color", color),
+				GamaServerMessage.Type.SimulationDebug);
 	}
 }

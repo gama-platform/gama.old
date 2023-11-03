@@ -14,7 +14,6 @@ import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
-import msi.gama.util.file.json.ParseException;
 
 /**
  * The Class GamaServerStatusDisplayer.
@@ -42,104 +41,44 @@ public final class GamaServerStatusDisplayer extends GamaServerMessager implemen
 
 	@Override
 	public void informStatus(final IScope scope, final String string) {
-
 		if (!canSendMessage(scope.getExperiment())) return;
-
-		try {
-			sendMessage(scope.getExperiment(), json.parse("{" + "\"message\": \"" + string + "\"" + "}"),
-					GamaServerMessage.Type.SimulationStatusInform);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(scope.getExperiment(), "{" + "\"message\": \"" + string + "\"" + "}",
-					GamaServerMessage.Type.SimulationStatusInform);
-		}
-
+		sendMessage(scope.getExperiment(), "{" + "\"message\": \"" + string + "\"" + "}",
+				GamaServerMessage.Type.SimulationStatusInform);
 	}
 
 	@Override
 	public void errorStatus(final IScope scope, final String message) {
-
 		if (!canSendMessage(scope.getExperiment())) return;
-
-		try {
-			sendMessage(scope.getExperiment(), json.parse("{" + "\"message\": \"" + message + "\"" + "}"),
-					GamaServerMessage.Type.SimulationStatusError);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(scope.getExperiment(), "{" + "\"message\": \"" + message + "\"" + "}",
-					GamaServerMessage.Type.SimulationStatusError);
-		}
-
+		sendMessage(scope.getExperiment(), "{" + "\"message\": \"" + message + "\"" + "}",
+				GamaServerMessage.Type.SimulationStatusError);
 	}
 
 	@Override
 	public void setStatus(final IScope scope, final String msg, final GamaColor color) {
-
 		if (!canSendMessage(scope.getExperiment())) return;
-
-		try {
-			sendMessage(scope.getExperiment(),
-					json.parse("{" + "\"message\": \"" + msg + "\"," + "\"color\": " + json.valueOf(color) + "" + "}"),
-					GamaServerMessage.Type.SimulationStatus);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(scope.getExperiment(), json.object("message", msg, "color", color).toString(),
-					GamaServerMessage.Type.SimulationStatus);
-		}
+		sendMessage(scope.getExperiment(), json.object("message", msg, "color", color).toString(),
+				GamaServerMessage.Type.SimulationStatus);
 	}
 
 	@Override
 	public void informStatus(final IScope scope, final String message, final String icon) {
-
 		if (!canSendMessage(scope.getExperiment())) return;
-
-		try {
-			sendMessage(scope.getExperiment(),
-					json.parse("{" + "\"message\": \"" + message + "\"," + "\"icon\": \"" + icon + "\"" + "}"),
-					GamaServerMessage.Type.SimulationStatusInform);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(scope.getExperiment(), json.object("message", message, "icon", icon).toString(),
-					GamaServerMessage.Type.SimulationStatusInform);
-		}
-
+		sendMessage(scope.getExperiment(), json.object("message", message, "icon", icon).toString(),
+				GamaServerMessage.Type.SimulationStatusInform);
 	}
 
 	@Override
 	public void setStatus(final IScope scope, final String msg, final String icon) {
-
 		if (!canSendMessage(scope.getExperiment())) return;
+		sendMessage(scope.getExperiment(), json.object("message", msg, "icon", icon).toString(),
+				GamaServerMessage.Type.SimulationStatus);
 
-		try {
-			sendMessage(scope.getExperiment(),
-					json.parse("{" + "\"message\": \"" + msg + "\"," + "\"icon\":\"" + icon + "\"" + "}"),
-					GamaServerMessage.Type.SimulationStatus);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(scope.getExperiment(), json.object("message", msg, "icon", icon).toString(),
-					GamaServerMessage.Type.SimulationStatus);
-		}
 	}
 
 	@Override
 	public void neutralStatus(final IScope scope, final String string) {
-
 		if (!canSendMessage(scope.getExperiment())) return;
-
-		try {
-			sendMessage(scope.getExperiment(), json.parse("{" + "\"message\": \"" + string + "\"" + "}"),
-					GamaServerMessage.Type.SimulationStatusNeutral);
-		} catch (ParseException e) {
-			// If for some reason we cannot deserialize, we send it as text
-			e.printStackTrace();
-			sendMessage(scope.getExperiment(), json.object("message", string).toString(),
-					GamaServerMessage.Type.SimulationStatusNeutral);
-		}
-
+		sendMessage(scope.getExperiment(), json.object("message", string).toString(),
+				GamaServerMessage.Type.SimulationStatusNeutral);
 	}
 }

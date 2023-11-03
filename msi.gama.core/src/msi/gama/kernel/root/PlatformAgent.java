@@ -33,6 +33,8 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.species;
@@ -43,10 +45,13 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.MemoryUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.GamaGuiWebSocketServer;
+import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.json.Json;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Containers;
@@ -55,6 +60,7 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class PlatformAgent.
@@ -143,6 +149,9 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	/** The my server. */
 	private GamaWebSocketServer myServer;
 
+	/** The json encoder. */
+	private final Json jsonEncoder = Json.getNew();
+
 	/**
 	 * Instantiates a new platform agent.
 	 */
@@ -178,7 +187,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 		if (!GAMA.isInHeadLessMode() && GamaPreferences.Runtime.CORE_SERVER_MODE.getValue()) {
 			final int port = GamaPreferences.Runtime.CORE_SERVER_PORT.getValue();
 			final int ping = GamaPreferences.Runtime.CORE_SERVER_PING.getValue();
-			myServer = GamaWebSocketServer.StartForGUI(port, ping);
+			myServer = GamaGuiWebSocketServer.StartForGUI(port, ping);
 		}
 		GamaPreferences.Runtime.CORE_SERVER_MODE.onChange(newValue -> {
 			if (myServer != null) {
@@ -193,7 +202,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 			if (newValue) {
 				final int port = GamaPreferences.Runtime.CORE_SERVER_PORT.getValue();
 				final int ping = GamaPreferences.Runtime.CORE_SERVER_PING.getValue();
-				myServer = GamaWebSocketServer.StartForGUI(port, ping);
+				myServer = GamaGuiWebSocketServer.StartForGUI(port, ping);
 			}
 		});
 	}
@@ -475,5 +484,52 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	 * @date 3 nov. 2023
 	 */
 	public GamaWebSocketServer getServer() { return myServer; }
+
+	/**
+	 * Send message through server.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @return the object
+	 * @date 3 nov. 2023
+	 */
+	@action (
+			name = "send",
+			args = @arg (
+					name = IKeyword.MESSAGE,
+					optional = false))
+	public Object sendMessageThroughServer(final IScope scope) {
+		Object message = scope.getArg(IKeyword.MESSAGE);
+		sendMessage(scope, message);
+		return message;
+	}
+
+	/**
+	 * Send message.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param message
+	 *            the message
+	 * @date 3 nov. 2023
+	 */
+	private void sendMessage(final IScope scope, final Object message) {
+		try {
+			var socket = scope.getServerConfiguration().socket();
+			if (socket == null) {
+				DEBUG.OUT("No socket found, maybe the client is already disconnected. Unable to send message: "
+						+ message);
+				return;
+			}
+			socket.send(jsonEncoder.valueOf(new GamaServerMessage(GamaServerMessage.Type.SimulationOutput, message,
+					scope.getServerConfiguration().expId())).toString());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			DEBUG.OUT("Unable to send message:" + message);
+			DEBUG.OUT(ex.toString());
+		}
+	}
 
 }

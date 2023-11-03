@@ -60,6 +60,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.GamaHeadlessWebSocketServer;
 import msi.gama.runtime.server.GamaWebSocketServer;
 import msi.gaml.compilation.GamlCompilationError;
 import ummisco.gama.dev.utils.DEBUG;
@@ -410,12 +411,13 @@ public class HeadlessApplication implements IApplication {
 		} else if (args.contains(BUILD_XML_PARAMETER)) {
 			buildXML(args);
 		} else if (args.contains(SOCKET_PARAMETER)) {
-			GamaWebSocketServer.StartForHeadless(socket, processorQueue, ping_interval);
+			GamaHeadlessWebSocketServer.StartForHeadless(socket, processorQueue, ping_interval);
 		} else if (args.contains(SSOCKET_PARAMETER)) {
 			final String jks = args.contains(SSOCKET_PARAMETER_JKSPATH) ? after(args, SSOCKET_PARAMETER_JKSPATH) : "";
 			final String spwd = args.contains(SSOCKET_PARAMETER_SPWD) ? after(args, SSOCKET_PARAMETER_SPWD) : "";
 			final String kpwd = args.contains(SSOCKET_PARAMETER_KPWD) ? after(args, SSOCKET_PARAMETER_KPWD) : "";
-			GamaWebSocketServer.StartForSecureHeadless(socket, processorQueue, true, jks, spwd, kpwd, ping_interval);
+			GamaHeadlessWebSocketServer.StartForSecureHeadless(socket, processorQueue, true, jks, spwd, kpwd,
+					ping_interval);
 		} else {
 			runSimulation(args);
 		}
