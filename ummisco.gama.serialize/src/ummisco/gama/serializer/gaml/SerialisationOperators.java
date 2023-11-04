@@ -265,7 +265,7 @@ public class SerialisationOperators {
 	@test ("from_binary(to_binary(25+5)) = 30")
 	@test ("from_binary(to_binary([1,2,4])) = [1,2,4]")
 	@doc (
-			value = "Deserializes an object precedently serialized using `serialize`."
+			value = "Deserializes an object precedently serialized using `serialize` or `to_binary`."
 					+ "It is safer to deserialize agents or simulations with the 'restore' or 'create' statements rather than with this operator.",
 			see = { "from_gaml", "from_json" })
 	@no_test
@@ -292,7 +292,7 @@ public class SerialisationOperators {
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@doc (
-			value = "Deserializes an object precedently serialized using 'to_json' (or an arbitraty json object obtained elsewhere). Agents and populations are not supported yet (i.e. they will return maps)",
+			value = "Deserializes an object precedently serialized using 'to_json' (or an arbitrary json string obtained elsewhere). Agents and populations are not supported yet (i.e. they will return maps)",
 			see = { "from_gaml", "from_binary" })
 	@no_test
 	public static Object fromJson(final IScope scope, final String s) {

@@ -300,4 +300,17 @@ public interface IGamaFile<C extends IModifiableContainer, Contents>
 		return false;
 	}
 
+	/**
+	 * Ensure contents is compatible.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param contents
+	 *            the contents
+	 * @return the i modifiable container
+	 * @date 4 nov. 2023
+	 */
+	default IModifiableContainer ensureContentsIsCompatible(final IModifiableContainer contents) {
+		return contents;
+	}
+
 }

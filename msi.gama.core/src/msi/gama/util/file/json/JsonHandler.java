@@ -158,8 +158,8 @@ public abstract class JsonHandler<A, O> {
 	 * bracket character (<code>'{'</code>).
 	 * <p>
 	 * This method may return an object to handle subsequent parser events for this object. This object handler will be
-	 * provided in all calls to {@link #startObjectName(Object) startObjectName()},
-	 * {@link #endObjectName(Object, String) endObjectName()}, {@link #startObjectValue(Object, String)
+	 * provided in all calls to {@link #startMemberName(Object) startObjectName()},
+	 * {@link #endMemberName(Object, String) endObjectName()}, {@link #startObjectValue(Object, String)
 	 * startObjectValue()}, {@link #endObjectValue(Object, String) endObjectValue()}, and {@link #endObject(Object)
 	 * endObject()} for this object.
 	 * </p>
@@ -186,7 +186,7 @@ public abstract class JsonHandler<A, O> {
 	 * @param object
 	 *            the object handler returned from {@link #startObject()}, or <code>null</code> if not provided
 	 */
-	public void startObjectName(final O object) {}
+	public void startMemberName(final O object) {}
 
 	/**
 	 * Indicates the end of an object member name in the JSON input. This method will be called after reading the
@@ -197,7 +197,7 @@ public abstract class JsonHandler<A, O> {
 	 * @param name
 	 *            the parsed member name
 	 */
-	public void endObjectName(final O object, final String name) {}
+	public void endMemberName(final O object, final String name) {}
 
 	/**
 	 * Indicates the beginning of the name of an object member in the JSON input. This method will be called when
@@ -221,5 +221,17 @@ public abstract class JsonHandler<A, O> {
 	 *            the parsed member name
 	 */
 	public void endObjectValue(final O object, final String name) {}
+
+	/**
+	 * End gaml object.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param type
+	 *            the type
+	 * @param object
+	 *            the object
+	 * @date 4 nov. 2023
+	 */
+	public void endGamlObject(final String type, final O object) {}
 
 }

@@ -51,7 +51,7 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Json;
-import msi.gama.util.file.json.JsonObject;
+import msi.gama.util.file.json.JsonGamlObject;
 import msi.gama.util.file.json.JsonValue;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.graph.loader.GamaGraphMLEdgeImporter;
@@ -87,7 +87,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public JsonValue serializeToJson(final Json json) {
-		JsonObject object = json.typedObject(getGamlType(), "directed", directed, "vertices", vertexMap, "edges",
+		JsonGamlObject object = json.typedObject(getGamlType(), "directed", directed, "vertices", vertexMap, "edges",
 				edgeMap, "agentEdge", agentEdge);
 		if (edgeSpecies != null) { object.add("edgeSpecies", edgeSpecies); }
 		if (vertexSpecies != null) { object.add("vertexSpecies", vertexSpecies); }

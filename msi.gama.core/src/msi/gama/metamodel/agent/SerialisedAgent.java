@@ -30,7 +30,7 @@ import msi.gama.metamodel.topology.grid.IGridAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.json.Json;
-import msi.gama.util.file.json.JsonObject;
+import msi.gama.util.file.json.JsonGamlAgent;
 import msi.gama.util.file.json.JsonValue;
 
 /**
@@ -224,7 +224,7 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 
 	@Override
 	public JsonValue serializeToJson(final Json json) {
-		JsonObject obj = json.agent(species).add("index", index).add("attributes", attributes);
+		JsonGamlAgent obj = (JsonGamlAgent) json.agent(species, index).add("attributes", attributes);
 		if (innerPopulations != null && !innerPopulations.isEmpty()) { obj.add("populations", innerPopulations); }
 		return obj;
 	}

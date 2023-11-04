@@ -19,7 +19,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -29,8 +28,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
+import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.json.Json;
 import msi.gama.util.file.json.ParseException;
+import msi.gama.util.file.json.WriterConfig;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
@@ -45,7 +46,9 @@ import msi.gaml.types.Types;
 		buffer_type = IType.MAP,
 		buffer_index = IType.STRING,
 		concept = { IConcept.FILE })
-@doc ("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('contents') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
+@doc ("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('"
+		+ Json.CONTENTS_WITH_REFERENCES_LABEL
+		+ "') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 
@@ -107,7 +110,7 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 				map = (IMap<String, Object>) o;
 			} else {
 				map = GamaMapFactory.create();
-				map.put(IKeyword.CONTENTS, o);
+				map.put(Json.CONTENTS_WITH_REFERENCES_LABEL, o);
 			}
 			setBuffer(map);
 		} catch (final IOException | ParseException e) {
@@ -122,17 +125,27 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final IMap<String, Object> map = getBuffer();
 		Object toSave = map;
-		if (map.size() == 1 && map.containsKey("contents")) { toSave = map.get("contents"); }
+		if (map.size() == 1 && map.containsKey(Json.CONTENTS_WITH_REFERENCES_LABEL)) {
+			toSave = map.get(Json.CONTENTS_WITH_REFERENCES_LABEL);
+		}
 		final File file = getFile(scope);
 		if (file.exists()) {
 			GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.warning(file.getName() + " already exists", scope),
 					false);
 		}
 		try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-			writer.write(Json.getNew().valueOf(toSave).toString());
+			writer.write(Json.getNew().valueOf(toSave).toString(WriterConfig.PRETTY_PRINT));
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
+	}
+
+	@Override
+	public IModifiableContainer ensureContentsIsCompatible(final IModifiableContainer contents) {
+		if (contents instanceof IMap) return contents;
+		IMap map = GamaMapFactory.create();
+		map.put(Json.CONTENTS_WITH_REFERENCES_LABEL, contents);
+		return map;
 	}
 
 }

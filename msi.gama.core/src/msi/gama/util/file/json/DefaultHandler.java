@@ -76,6 +76,19 @@ class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 		value = object;
 	}
 
+	/**
+	 * End gaml object.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param object
+	 *            the object
+	 * @date 4 nov. 2023
+	 */
+	@Override
+	public void endGamlObject(final String type, final JsonObject object) {
+		value = new JsonGamlObject(type, object, json);
+	}
+
 	@Override
 	public void endArrayValue(final JsonArray array) {
 		array.add(value);

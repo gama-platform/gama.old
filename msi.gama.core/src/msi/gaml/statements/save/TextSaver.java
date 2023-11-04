@@ -48,7 +48,14 @@ public class TextSaver extends AbstractSaver {
 	public void save(final IScope scope, final IExpression item, final OutputStream os, final boolean header)
 			throws GamaRuntimeException {
 		if (os == null) return;
-		save(scope, new OutputStreamWriter(os), header, item);
+		final Writer fw = new OutputStreamWriter(os);
+		try (fw) {
+			fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
+		} catch (final GamaRuntimeException e) {
+			throw e;
+		} catch (final Exception e) {
+			throw GamaRuntimeException.create(e, scope);
+		}
 	}
 
 	/**
@@ -77,33 +84,13 @@ public class TextSaver extends AbstractSaver {
 	public void save(final IScope scope, final IExpression item, final File file, final String code,
 			final boolean addHeader, final String type, final Object attributesToSave)
 			throws GamaRuntimeException, IOException {
-		save(scope, new FileWriter(file, true), addHeader, item);
-	}
-
-	/**
-	 * Save.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param fw
-	 *            the fw
-	 * @param header
-	 *            the header
-	 * @param item
-	 *            the item
-	 * @throws GamaRuntimeException
-	 *             the gama runtime exception
-	 */
-	private void save(final IScope scope, final Writer fw, final boolean header, final IExpression item)
-			throws GamaRuntimeException {
-		try (fw) {
+		try (final Writer fw = new FileWriter(file, true)) {
 			fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-
 	}
 
 	@Override

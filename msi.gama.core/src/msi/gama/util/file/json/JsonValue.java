@@ -57,6 +57,24 @@ public abstract class JsonValue implements Serializable {
 	JsonValue() {}
 
 	/**
+	 * Checks if is gaml object.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is gaml object
+	 * @date 4 nov. 2023
+	 */
+	public boolean isGamlObject() { return false; }
+
+	/**
+	 * Checks if is gaml agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is gaml agent
+	 * @date 4 nov. 2023
+	 */
+	public boolean isGamlAgent() { return false; }
+
+	/**
 	 * Detects whether this value represents a JSON object. If this is the case, this value is an instance of
 	 * {@link JsonObject}.
 	 *
@@ -229,6 +247,28 @@ public abstract class JsonValue implements Serializable {
 	 */
 	public boolean asBoolean() {
 		throw new UnsupportedOperationException("Not a boolean: " + toString());
+	}
+
+	/**
+	 * As gaml object.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the json gaml object
+	 * @date 4 nov. 2023
+	 */
+	public JsonGamlObject asGamlObject() {
+		throw new UnsupportedOperationException("Not a GAML object: " + toString());
+	}
+
+	/**
+	 * As gaml agent.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the json gaml agent
+	 * @date 4 nov. 2023
+	 */
+	public JsonGamlAgent asGamlAgent() {
+		throw new UnsupportedOperationException("Not a GAML agent: " + toString());
 	}
 
 	/**

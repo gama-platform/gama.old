@@ -60,6 +60,7 @@ global {
 		sp[0].friend <- sp[1];
 		sp[1].friend <- sp[0];
 		write(to_json(sp.population,true));
+		save sp.population to: "../pop.json" rewrite: true;
 	}
 }
 

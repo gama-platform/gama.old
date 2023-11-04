@@ -251,7 +251,7 @@ public class ParametricFileType extends ParametricType {
 		final IGamaFile file = builder.get(scope, path);
 		if (contents != null) {
 			file.setWritable(scope, true);
-			file.setContents(contents);
+			file.setContents(file.ensureContentsIsCompatible(contents));
 		}
 		return file;
 	}

@@ -1355,7 +1355,7 @@ public class GridPopulation implements IPopulation<IGridAgent> {
 
 	@Override
 	public JsonObject serializeToJson(final Json json) {
-		return IPopulation.super.serializeToJson(json).add("cols", json.valueOf(getNbCols())).add("rows",
+		return (JsonObject) IPopulation.super.serializeToJson(json).add("cols", json.valueOf(getNbCols())).add("rows",
 				json.valueOf(getNbRows()));
 	}
 

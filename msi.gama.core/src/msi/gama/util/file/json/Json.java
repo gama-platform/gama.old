@@ -46,13 +46,13 @@ public final class Json {
 	public static final String GAML_SPECIES_LABEL = "gaml_species";
 
 	/** The Constant GAMA_OBJECT_LABEL. */
-	public static final String GAMA_OBJECT_LABEL = "gama_object";
+	public static final String CONTENTS_WITH_REFERENCES_LABEL = "gama_contents";
 
 	/** The Constant AGENT_REFERENCE_LABEL. */
 	public static final String AGENT_REFERENCE_LABEL = "agent_reference";
 
 	/** The Constant REFERENCE_TABLE_LABEL. */
-	public static final String REFERENCE_TABLE_LABEL = "reference_table";
+	public static final String REFERENCE_TABLE_LABEL = "gama_references";
 
 	/**
 	 * Represents the JSON literal <code>null</code>.
@@ -124,7 +124,7 @@ public final class Json {
 		} finally {
 			if (initial) {
 				if (!agentReferences.isEmpty()) {
-					result = object(GAMA_OBJECT_LABEL, result);
+					result = object(CONTENTS_WITH_REFERENCES_LABEL, result);
 					((JsonObject) result).add(REFERENCE_TABLE_LABEL, agentReferences);
 				}
 				firstPass = true; // in case the encoder is reused
@@ -356,7 +356,7 @@ public final class Json {
 	 * @date 29 oct. 2023
 	 */
 	public JsonObject object(final String k1, final Object v1) {
-		return object().add(k1, v1);
+		return (JsonObject) object().add(k1, v1);
 	}
 
 	/**
@@ -368,7 +368,7 @@ public final class Json {
 	 * @date 29 oct. 2023
 	 */
 	public JsonObject object(final String k1, final Object v1, final String k2, final Object v2) {
-		return object(k1, v1).add(k2, v2);
+		return (JsonObject) object(k1, v1).add(k2, v2);
 	}
 
 	/**
@@ -381,7 +381,7 @@ public final class Json {
 	 */
 	public JsonObject object(final String k1, final Object v1, final String k2, final Object v2, final String k3,
 			final Object v3) {
-		return object(k1, v1, k2, v2).add(k3, v3);
+		return (JsonObject) object(k1, v1, k2, v2).add(k3, v3);
 	}
 
 	/**
@@ -394,17 +394,18 @@ public final class Json {
 	 */
 	public JsonObject object(final String k1, final Object v1, final String k2, final Object v2, final String k3,
 			final Object v3, final String k4, final Object v4) {
-		return object(k1, v1, k2, v2, k3, v3).add(k4, v4);
+		return (JsonObject) object(k1, v1, k2, v2, k3, v3).add(k4, v4);
 	}
 
 	/**
-	 * Creates a new empty JsonObject provided with a gaml type. This is equivalent to creating a new JsonObject using
-	 * the constructor and adding a first attribute with the type.
+	 * Creates a new empty JsonGamlObject provided with a gaml type. This is equivalent to creating a new JsonObject
+	 * using the constructor and adding a first attribute with the type, but the interest of JsonGamlObjects is that
+	 * they deserialized into Gaml objects directly.
 	 *
-	 * @return a new empty JSON object with the corresponding type
+	 * @return a new empty JsonGamlObject with the corresponding type
 	 */
-	public JsonObject typedObject(final IType type) {
-		return object(GAML_TYPE_LABEL, type.serializeToGaml(true));
+	public JsonGamlObject typedObject(final IType type) {
+		return new JsonGamlObject(type.getName(), this);
 	}
 
 	/**
@@ -418,8 +419,8 @@ public final class Json {
 	 * @return the json object
 	 * @date 29 oct. 2023
 	 */
-	public JsonObject typedObject(final IType type, final String k1, final Object v1) {
-		return typedObject(type).add(k1, v1);
+	public JsonGamlObject typedObject(final IType type, final String k1, final Object v1) {
+		return (JsonGamlObject) typedObject(type).add(k1, v1);
 	}
 
 	/**
@@ -430,9 +431,9 @@ public final class Json {
 	 * @return the json object
 	 * @date 29 oct. 2023
 	 */
-	public JsonObject typedObject(final IType type, final String k1, final Object v1, final String k2,
+	public JsonGamlObject typedObject(final IType type, final String k1, final Object v1, final String k2,
 			final Object v2) {
-		return typedObject(type, k1, v1).add(k2, v2);
+		return (JsonGamlObject) typedObject(type, k1, v1).add(k2, v2);
 	}
 
 	/**
@@ -443,9 +444,9 @@ public final class Json {
 	 * @return the json object
 	 * @date 29 oct. 2023
 	 */
-	public JsonObject typedObject(final IType type, final String k1, final Object v1, final String k2, final Object v2,
-			final String k3, final Object v3) {
-		return typedObject(type, k1, v1, k2, v2).add(k3, v3);
+	public JsonGamlObject typedObject(final IType type, final String k1, final Object v1, final String k2,
+			final Object v2, final String k3, final Object v3) {
+		return (JsonGamlObject) typedObject(type, k1, v1, k2, v2).add(k3, v3);
 	}
 
 	/**
@@ -456,9 +457,9 @@ public final class Json {
 	 * @return the json object
 	 * @date 29 oct. 2023
 	 */
-	public JsonObject typedObject(final IType type, final String k1, final Object v1, final String k2, final Object v2,
-			final String k3, final Object v3, final String k4, final Object v4) {
-		return typedObject(type, k1, v1, k2, v2, k3, v3).add(k4, v4);
+	public JsonGamlObject typedObject(final IType type, final String k1, final Object v1, final String k2,
+			final Object v2, final String k3, final Object v3, final String k4, final Object v4) {
+		return (JsonGamlObject) typedObject(type, k1, v1, k2, v2, k3, v3).add(k4, v4);
 	}
 
 	/**
@@ -469,8 +470,8 @@ public final class Json {
 	 *            the agent
 	 * @date 29 oct. 2023
 	 */
-	public JsonObject agent(final String species) {
-		JsonObject object = object(GAML_SPECIES_LABEL, species);
+	public JsonGamlAgent agent(final String species, final int index) {
+		JsonGamlAgent object = new JsonGamlAgent(species, index, this);
 		return object;
 	}
 

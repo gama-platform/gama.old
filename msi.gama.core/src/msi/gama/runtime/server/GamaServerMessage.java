@@ -165,7 +165,7 @@ public class GamaServerMessage implements IJsonable {
 	 */
 	@Override
 	public JsonValue serializeToJson(final Json json) {
-		JsonObject o = json.object().add("type", type).add("content", content);
+		JsonObject o = (JsonObject) json.object().add("type", type).add("content", content);
 		if (exp_id != null) { o.add(ISocketCommand.EXP_ID, exp_id); }
 		return o;
 	}

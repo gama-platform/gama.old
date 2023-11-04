@@ -14,7 +14,7 @@ import java.io.IOException;
 import msi.gama.runtime.IScope;
 
 /**
- * The Class JsonLiteral.
+ * The Class JsonFalse. Represents the json literal 'false'
  *
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 29 oct. 2023

@@ -249,22 +249,36 @@ public class JsonParser {
 			handler.endObject(object);
 			return;
 		}
+		boolean isGamlObject = false;
+		String type = null;
 		do {
 			skipWhiteSpace();
-			handler.startObjectName(object);
+			handler.startMemberName(object);
 			String name = readName();
-			handler.endObjectName(object, name);
-			skipWhiteSpace();
-			if (!readChar(':')) throw expected("':'");
-			skipWhiteSpace();
-			handler.startObjectValue(object, name);
-			readValue();
-			handler.endObjectValue(object, name);
+			handler.endMemberName(object, name);
+			if (Json.GAML_TYPE_LABEL.equals(name)) {
+				isGamlObject = true;
+				skipWhiteSpace();
+				if (!readChar(':')) throw expected("':'");
+				skipWhiteSpace();
+				type = readStringInternal();
+			} else {
+				skipWhiteSpace();
+				if (!readChar(':')) throw expected("':'");
+				skipWhiteSpace();
+				handler.startObjectValue(object, name);
+				readValue();
+				handler.endObjectValue(object, name);
+			}
 			skipWhiteSpace();
 		} while (readChar(','));
 		if (!readChar('}')) throw expected("',' or '}'");
 		nestingLevel--;
-		handler.endObject(object);
+		if (isGamlObject) {
+			handler.endGamlObject(type, object);
+		} else {
+			handler.endObject(object);
+		}
 	}
 
 	/**

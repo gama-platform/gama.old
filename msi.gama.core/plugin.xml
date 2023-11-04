@@ -96,6 +96,10 @@
             class="msi.gaml.statements.save.TextSaver"
             description="Saves items in plain text (default saver)">
       </implementation>
+     <implementation
+            class="msi.gaml.statements.save.JsonSaver"
+            description="Saves items in json format">
+      </implementation>
    </extension>
    <extension
          point="gama.draw">
