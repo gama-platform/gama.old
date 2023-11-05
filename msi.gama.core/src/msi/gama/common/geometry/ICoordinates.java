@@ -1,23 +1,26 @@
 /*******************************************************************************************************
  *
- * ICoordinates.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * ICoordinates.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
 import org.locationtech.jts.geom.CoordinateSequence;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonArray;
+import msi.gaml.interfaces.IJsonable;
 
 /**
  * The Interface ICoordinates.
  */
-public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
+public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint>, IJsonable {
 
 	/**
 	 * An interface used to visit pairs of coordinates in a sequence
@@ -27,12 +30,14 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	@FunctionalInterface
 	public interface PairVisitor {
-		
+
 		/**
 		 * Process.
 		 *
-		 * @param p1 the p 1
-		 * @param p2 the p 2
+		 * @param p1
+		 *            the p 1
+		 * @param p2
+		 *            the p 2
 		 */
 		void process(GamaPoint p1, GamaPoint p2);
 	}
@@ -45,14 +50,18 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	@FunctionalInterface
 	public interface IndexedVisitor {
-		
+
 		/**
 		 * Process.
 		 *
-		 * @param i the i
-		 * @param x the x
-		 * @param y the y
-		 * @param z the z
+		 * @param i
+		 *            the i
+		 * @param x
+		 *            the x
+		 * @param y
+		 *            the y
+		 * @param z
+		 *            the z
 		 */
 		void process(final int i, final double x, final double y, final double z);
 	}
@@ -61,11 +70,12 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * The Interface VertexVisitor.
 	 */
 	public interface VertexVisitor {
-		
+
 		/**
 		 * Process.
 		 *
-		 * @param ordinates the ordinates
+		 * @param ordinates
+		 *            the ordinates
 		 */
 		void process(final double... ordinates);
 	}
@@ -73,7 +83,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * The empty coordinate sequence
 	 */
-	ICoordinates EMPTY = new GamaCoordinateSequence(3, new GamaPoint[] {});
+	ICoordinates EMPTY = new GamaCoordinateSequence(3);
 
 	/**
 	 * Returns the geometric center of this sequence of points
@@ -89,7 +99,8 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * Gets the center.
 	 *
-	 * @param center the center
+	 * @param center
+	 *            the center
 	 * @return the center
 	 */
 	default void getCenter(final GamaPoint center) {
@@ -119,7 +130,8 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * Gets the coordinate.
 	 *
-	 * @param i the i
+	 * @param i
+	 *            the i
 	 * @return the coordinate
 	 */
 	@Override
@@ -248,9 +260,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 *
 	 * @return a new Envelope3D containing all the points
 	 */
-	default Envelope3D getEnvelope() {
-		return getEnvelopeInto(Envelope3D.create());
-	}
+	default Envelope3D getEnvelope() { return getEnvelopeInto(Envelope3D.create()); }
 
 	/**
 	 * Compute the average z ordinate of this sequence of points
@@ -291,8 +301,10 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	/**
 	 * Sets the to.
 	 *
-	 * @param begin the begin
-	 * @param ordinates the ordinates
+	 * @param begin
+	 *            the begin
+	 * @param ordinates
+	 *            the ordinates
 	 * @return the i coordinates
 	 */
 	ICoordinates setTo(int begin, double... ordinates);
@@ -392,5 +404,26 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * Makes sure the sequence is ordered in the clockwise orientation. Reverses the array if it is not.
 	 */
 	void ensureClockwiseness();
+
+	/**
+	 * Serialize to json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param json
+	 *            the json
+	 * @return the json value
+	 * @date 4 nov. 2023
+	 */
+	@Override
+	default JsonArray serializeToJson(final Json json) {
+		JsonArray result = json.array();
+		GamaPoint work = new GamaPoint();
+		for (int i = 0; i < size(); i++) {
+			getCoordinate(i, work);
+			result.add(json.array(work.x, work.y, work.z));
+		}
+		return result;
+
+	}
 
 }

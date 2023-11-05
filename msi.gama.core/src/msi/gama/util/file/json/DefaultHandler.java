@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gama.util.file.json;
 
+import msi.gaml.types.Types;
+
 /**
  * The Class DefaultHandler.
  *
@@ -86,7 +88,11 @@ class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 	 */
 	@Override
 	public void endGamlObject(final String type, final JsonObject object) {
-		value = new JsonGamlObject(type, object, json);
+		if (Types.GEOMETRY.getName().equals(type)) {
+			value = new JsonGeometryObject(object, json);
+		} else {
+			value = new JsonGamlObject(type, object, json);
+		}
 	}
 
 	@Override

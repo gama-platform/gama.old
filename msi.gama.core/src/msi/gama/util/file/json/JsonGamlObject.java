@@ -54,9 +54,8 @@ public class JsonGamlObject extends JsonAbstractObject<Object> {
 
 	@Override
 	public Object toGamlValue(final IScope scope) {
-		IType gamlType = scope.getType(type);
-		return toMap(scope);
-		// return gamlType.deserializeFromJson(toMap(scope));
+		IType<?> gamlType = scope.getTypes().decodeType(type);
+		return gamlType.deserializeFromJson(scope, toMap(scope));
 
 	}
 

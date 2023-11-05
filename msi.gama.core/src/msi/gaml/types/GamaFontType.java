@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaFontType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamaFontType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
@@ -24,6 +24,8 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaFont;
+import msi.gama.util.IMap;
+import msi.gaml.operators.Cast;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
@@ -64,16 +66,19 @@ public class GamaFontType extends GamaType<GamaFont> {
 	/**
 	 * Static cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param copy
+	 *            the copy
 	 * @return the gama font
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public static GamaFont staticCast(final IScope scope, final Object obj, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj instanceof Number) {
-			final Number size = (Number) obj;
+		if (obj instanceof final Number size) {
 			final GamaFont font = DEFAULT_DISPLAY_FONT.getValue();
 			return new GamaFont(font.getName(), font.getStyle(), size.intValue());
 		}
@@ -91,6 +96,12 @@ public class GamaFontType extends GamaType<GamaFont> {
 	@Override
 	public boolean canCastToConst() {
 		return true;
+	}
+
+	@Override
+	public GamaFont deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		return new GamaFont(Cast.asString(scope, map2.get("name")), Cast.asInt(scope, map2.get("style")),
+				Cast.asInt(scope, map2.get("size")));
 	}
 
 }

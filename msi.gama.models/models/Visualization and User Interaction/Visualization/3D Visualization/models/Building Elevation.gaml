@@ -107,7 +107,7 @@ species people skills: [moving] {
 		draw sphere(3) color: color;
 	} }
 
-experiment "Road Traffic" type: gui {
+experiment "Road Traffic" type: gui record: true{
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS';
 	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS';
 	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS';

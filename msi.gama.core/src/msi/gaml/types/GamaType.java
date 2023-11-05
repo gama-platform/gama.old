@@ -25,6 +25,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gama.util.IContainer;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -573,5 +574,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public boolean isCompoundType() { return false; }
+
+	@Override
+	public Support deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		throw GamaRuntimeException
+				.error("The deserialization of " + getName() + " objects has not yet been implemented", scope);
+	}
 
 }

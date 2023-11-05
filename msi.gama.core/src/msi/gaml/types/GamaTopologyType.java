@@ -30,6 +30,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 
@@ -142,6 +143,11 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	@Override
 	public boolean canCastToConst() {
 		return false;
+	}
+
+	@Override
+	public ITopology deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		return from(scope, Cast.asGeometry(scope, map2.get("environment")));
 	}
 
 }

@@ -104,4 +104,15 @@ public interface ITypesManager extends IDisposable {
 	 */
 	Set<IType<?>> getAllTypes();
 
+	/**
+	 * Decode type. Expects either a simple type name, or a parametric one with 1 or 2 type parameters
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param type
+	 *            the type
+	 * @return the i type
+	 * @date 4 nov. 2023
+	 */
+	IType decodeType(String type);
+
 }

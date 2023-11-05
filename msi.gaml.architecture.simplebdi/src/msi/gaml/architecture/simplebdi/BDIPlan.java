@@ -46,18 +46,7 @@ import msi.gaml.types.Types;
 		@variable (
 				name = SimpleBdiArchitecture.INSTANTANEAOUS,
 				type = IType.STRING,
-				doc = @doc ("indicates if the plan is instantaneous"))
-		/*
-		 * @var(name = "value", type = IType.NONE),
-		 *
-		 * @var(name = "parameters", type = IType.MAP),
-		 */
-		// @var(name = "values", type = IType.MAP), @var(name = "priority", type
-		// = IType.FLOAT),
-		// @var(name = "date", type = IType.FLOAT), @var(name = "subintentions",
-		// type = IType.LIST),
-		// @var(name = "on_hold_until", type = IType.NONE)
-})
+				doc = @doc ("indicates if the plan is instantaneous")) })
 public class BDIPlan implements IValue {
 
 	@Override
@@ -178,7 +167,7 @@ public class BDIPlan implements IValue {
 	 */
 	public boolean isSimilarName(final BDIPlan other) {
 		if (this == other) return true;
-		if ((other == null) || !Objects.equals(planstatement, other.planstatement)) return false;
+		if (other == null || !Objects.equals(planstatement, other.planstatement)) return false;
 		return true;
 	}
 

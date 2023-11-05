@@ -10,6 +10,9 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -190,6 +193,54 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 	@Override
 	public void dispose() {
 		types.clear();
+	}
+
+	@Override
+	public IType decodeType(final String s) {
+		StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(s));
+		try {
+			tokenizer.nextToken(); // Skip "BOF" token
+			return decode(tokenizer);
+		} catch (IOException e) {
+			throw new RuntimeException();
+		}
+	}
+
+	/**
+	 * Parses the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param tokenizer
+	 *            the tokenizer
+	 * @return the i type
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 * @date 4 nov. 2023
+	 */
+	IType decode(final StreamTokenizer tokenizer) throws IOException {
+		String baseName = tokenizer.sval;
+		IType result = get(baseName);
+		tokenizer.nextToken();
+		if (!(result instanceof IContainerType ic)) return result;
+
+		IType param1 = Types.NO_TYPE;
+		IType param2 = Types.NO_TYPE;
+		boolean first = true;
+		if (tokenizer.ttype == '<') {
+			do {
+				tokenizer.nextToken(); // Skip '<' or ','
+				if (first) {
+					param1 = decode(tokenizer);
+					first = false;
+				} else {
+					param2 = decode(tokenizer);
+					first = true;
+				}
+			} while (tokenizer.ttype == ',');
+			tokenizer.nextToken(); // skip '>'
+		}
+		if (first) return ic.of(param1, param2);
+		return ic.of(param1);
 	}
 
 }

@@ -24,6 +24,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
 import msi.gama.util.IContainer;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 
 /**
@@ -108,5 +109,10 @@ public class GamaDateType extends GamaType<GamaDate> {
 
 	@Override
 	public boolean isCompoundType() { return true; }
+
+	@Override
+	public GamaDate deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		return GamaDate.fromISOString(Cast.asString(scope, map2.get("iso")));
+	}
 
 }

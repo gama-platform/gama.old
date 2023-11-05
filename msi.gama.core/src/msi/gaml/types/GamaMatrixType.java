@@ -24,6 +24,7 @@ import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.IMap;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
@@ -311,6 +312,16 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 	@Override
 	public boolean canCastToConst() {
 		return true;
+	}
+
+	@Override
+	public IMatrix deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		IType requested = (IType) map2.remove("requested_type");
+		IList contents = (IList) map2.get("contents");
+		Integer x = (Integer) map2.get("cols");
+		Integer y = (Integer) map2.get("rows");
+		GamaPoint size = new GamaPoint(x, y);
+		return GamaMatrixType.from(scope, contents, requested.getContentType(), size);
 	}
 
 }

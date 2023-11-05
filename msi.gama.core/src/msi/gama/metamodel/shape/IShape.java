@@ -9,24 +9,14 @@
  ********************************************************************************************************/
 package msi.gama.metamodel.shape;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.geotools.data.DataUtilities;
-import org.geotools.feature.SchemaException;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.geojson.feature.FeatureJSON;
-import org.geotools.geojson.geom.GeometryJSON;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTWriter;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.interfaces.IEnvelopeProvider;
 import msi.gama.common.interfaces.ILocated;
 import msi.gama.common.interfaces.IValue;
@@ -40,9 +30,9 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonGeometryObject;
 import msi.gama.util.file.json.JsonValue;
 import msi.gaml.interfaces.IAttributed;
-import msi.gaml.statements.save.AbstractShapeSaver;
 import msi.gaml.types.IType;
 
 /**
@@ -573,15 +563,16 @@ public interface IShape extends ILocated, IValue, IAttributed, IEnvelopeProvider
 	@SuppressWarnings ("deprecation")
 	@Override
 	default JsonValue serializeToJson(final Json json) {
-		final String geomType = GeometryUtils.getGeometryStringType(this);
+
 		try {
-			final SimpleFeatureType type = DataUtilities.createType("geojson", "geometry:" + geomType);
-			final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(type);
-			final SimpleFeature ff = builder.buildFeature("");
-			AbstractShapeSaver.buildFeature(null, ff, this, null, Collections.emptyList());
-			final FeatureJSON io = new FeatureJSON(new GeometryJSON(20));
-			return json.parse(io.toString(ff));
-		} catch (ClassCastException | SchemaException | IOException e) {
+			JsonGeometryObject result = new JsonGeometryObject(getInnerGeometry(), json);
+			result.add("inner_type", getGeometricalType().name());
+			if (getAgent() != null) { result.add("agent", json.valueOf(getAgent())); }
+			if (getDepth() != null) { result.add("depth", json.valueOf(getDepth())); }
+			// DEBUG.LOG("GAMA: " + result.toString());
+			// DEBUG.LOG("JTS : " + new GeoJsonWriter().write(getInnerGeometry()));
+			return result;
+		} catch (Exception e) {
 			e.printStackTrace();
 			return Json.NULL;
 		}

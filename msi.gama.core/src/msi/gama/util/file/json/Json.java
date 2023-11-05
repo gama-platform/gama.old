@@ -164,7 +164,7 @@ public final class Json {
 	 */
 	public JsonValue valueOf(final float value) {
 		if (Float.isInfinite(value) || Float.isNaN(value)) return NULL;
-		return new JsonFloat(Float.toString(value));
+		return new JsonFloat(value);
 	}
 
 	/**
@@ -176,7 +176,7 @@ public final class Json {
 	 */
 	public JsonValue valueOf(final double value) {
 		if (Double.isInfinite(value) || Double.isNaN(value)) return NULL;
-		return new JsonFloat(Double.toString(value));
+		return new JsonFloat(value);
 	}
 
 	/**

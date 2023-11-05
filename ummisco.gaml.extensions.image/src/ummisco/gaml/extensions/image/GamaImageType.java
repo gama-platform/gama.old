@@ -28,8 +28,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
 import msi.gama.util.matrix.GamaField;
 import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaFileType;
 import msi.gaml.types.GamaType;
@@ -166,6 +168,11 @@ public class GamaImageType extends GamaType<GamaImage> {
 			return null;
 		}
 
+	}
+
+	@Override
+	public GamaImage deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		return GamaImage.from(scope, GamaIntMatrix.from(scope, Cast.asMatrix(scope, map2.get("pixels"))));
 	}
 
 }

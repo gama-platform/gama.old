@@ -34,9 +34,51 @@ class JsonFloat extends JsonValue {
 	 *            the string
 	 * @date 29 oct. 2023
 	 */
+	JsonFloat(final double x) {
+		this(formatOrdinate(x));
+	}
+
+	/**
+	 * Instantiates a new json number.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param string
+	 *            the string
+	 * @date 29 oct. 2023
+	 */
 	JsonFloat(final String string) {
 		if (string == null) throw new NullPointerException("string is null");
 		this.string = string;
+	}
+
+	/**
+	 * Format ordinate.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ordinate
+	 *            the ordinate
+	 * @return the string
+	 * @date 4 nov. 2023
+	 */
+	private static String formatOrdinate(double x) {
+		int decimals = 8;
+		double scale = Math.pow(10, decimals);
+		String result = null;
+
+		if (Math.abs(x) >= Math.pow(10, -3) && x < Math.pow(10, 7)) {
+			x = Math.floor(x * scale + 0.5) / scale;
+			long lx = (long) x;
+			if (lx == x) {
+				result = Long.toString(lx);
+			} else {
+				result = Double.toString(x);
+			}
+		} else {
+			result = Double.toString(x);
+		}
+
+		return result;
+
 	}
 
 	/**

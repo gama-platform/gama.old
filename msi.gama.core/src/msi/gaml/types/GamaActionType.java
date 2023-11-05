@@ -17,6 +17,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -52,8 +53,13 @@ public class GamaActionType extends GamaType<IDescription> {
 
 	@Override
 	public IDescription getDefault() {
-		
+
 		return null;
+	}
+
+	@Override
+	public IDescription deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		return cast(scope, map2.get("name"), null, false);
 	}
 
 }

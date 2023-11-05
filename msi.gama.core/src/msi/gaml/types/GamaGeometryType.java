@@ -76,6 +76,13 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  *
  */
+
+/**
+ * The Class GamaGeometryType.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 4 nov. 2023
+ */
 @type (
 		name = IKeyword.GEOMETRY,
 		id = IType.GEOMETRY,

@@ -1,17 +1,19 @@
 /*******************************************************************************************************
  *
- * IContainerType.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * IContainerType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.types;
 
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -34,7 +36,8 @@ public interface IContainerType<T extends IContainer<?, ?>> extends IType<T> {
 	/**
 	 * Type if casting.
 	 *
-	 * @param exp the exp
+	 * @param exp
+	 *            the exp
 	 * @return the i container type
 	 */
 	@Override
@@ -43,10 +46,14 @@ public interface IContainerType<T extends IContainer<?, ?>> extends IType<T> {
 	/**
 	 * Cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param copy
+	 *            the copy
 	 * @return the t
 	 */
 	@Override
@@ -55,12 +62,18 @@ public interface IContainerType<T extends IContainer<?, ?>> extends IType<T> {
 	/**
 	 * Cast.
 	 *
-	 * @param scope the scope
-	 * @param obj the obj
-	 * @param param the param
-	 * @param keyType the key type
-	 * @param contentType the content type
-	 * @param copy the copy
+	 * @param scope
+	 *            the scope
+	 * @param obj
+	 *            the obj
+	 * @param param
+	 *            the param
+	 * @param keyType
+	 *            the key type
+	 * @param contentType
+	 *            the content type
+	 * @param copy
+	 *            the copy
 	 * @return the t
 	 */
 	@Override
@@ -77,10 +90,27 @@ public interface IContainerType<T extends IContainer<?, ?>> extends IType<T> {
 	/**
 	 * Of.
 	 *
-	 * @param sub1 the sub 1
-	 * @param sub2 the sub 2
+	 * @param sub1
+	 *            the sub 1
+	 * @param sub2
+	 *            the sub 2
 	 * @return the i container type
 	 */
 	IContainerType<?> of(IType<?> sub1, IType<?> sub2);
+
+	/**
+	 * Serialize to json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param json
+	 *            the json
+	 * @return the json value
+	 * @date 4 nov. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		return json.typedObject(Types.TYPE, "name", json.valueOf(getGamlType()), "key", json.valueOf(getKeyType()),
+				"content", json.valueOf(getContentType()));
+	}
 
 }

@@ -128,4 +128,11 @@ public class GamaPairType extends GamaContainerType<GamaPair> {
 		return true;
 	}
 
+	@Override
+	public GamaPair deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		IType requested = (IType) map2.remove("requested_type");
+		return new GamaPair(scope, map2.get("key"), map2.get("value"), requested.getKeyType(),
+				requested.getContentType());
+	}
+
 }

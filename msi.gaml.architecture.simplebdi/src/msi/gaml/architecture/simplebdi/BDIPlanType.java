@@ -15,6 +15,7 @@ import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
@@ -55,5 +56,11 @@ public class BDIPlanType extends GamaType<BDIPlan> {
 
 	@Override
 	public BDIPlan getDefault() { return null; }
+
+	@Override
+	public BDIPlan deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		// See later how to deal with BDI objects
+		return null;
+	}
 
 }

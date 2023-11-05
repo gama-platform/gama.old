@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PredicateType.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * PredicateType.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
@@ -51,7 +51,7 @@ public class PredicateType extends GamaType<Predicate> {
 		if (obj instanceof Map) {
 			final Map<String, Object> map = (Map<String, Object>) obj;
 			final String nm = (String) (map.containsKey("name") ? map.get("name") : "predicate");
-			final IMap values = (IMap) (map.containsKey("name") ? map.get("values") : null);
+			final IMap values = (IMap) (map.containsKey("values") ? map.get("values") : null);
 			return new Predicate(nm, values);
 		}
 		return null;
@@ -59,5 +59,11 @@ public class PredicateType extends GamaType<Predicate> {
 
 	@Override
 	public Predicate getDefault() { return null; }
+
+	@Override
+	public Predicate deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		// See later how to deal with BDI objects
+		return null;
+	}
 
 }

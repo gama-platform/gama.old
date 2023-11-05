@@ -34,6 +34,8 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
+import msi.gaml.types.ITypesManager;
+import msi.gaml.types.Types;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -944,6 +946,19 @@ public interface IScope extends Closeable, IBenchmarkable {
 		IExperimentAgent agent = getExperiment();
 		if (agent == null) return;
 		agent.getScope().setServerConfiguration(config);
+	}
+
+	/**
+	 * Gets the types.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the types
+	 * @date 4 nov. 2023
+	 */
+	default ITypesManager getTypes() {
+		IModel m = getModel();
+		if (m == null) return Types.builtInTypes;
+		return m.getDescription().getTypesManager();
 	}
 
 }

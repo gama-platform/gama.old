@@ -25,6 +25,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -547,12 +548,13 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	@Override
 	public IType<?> getWrappedType() { return Types.NO_TYPE; }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gaml.types.IType#getFieldGetters()
-	 */
 	@Override
 	public Map<String, OperatorProto> getFieldGetters() { return type.getFieldGetters(); }
+
+	@Override
+	public IContainer<?, ?> deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		map2.put("requested_type", this);
+		return type.deserializeFromJson(scope, map2);
+	}
 
 }

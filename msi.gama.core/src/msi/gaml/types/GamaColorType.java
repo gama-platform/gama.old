@@ -12,6 +12,7 @@ package msi.gaml.types;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -22,6 +23,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.IContainer;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 
 /**
@@ -83,6 +85,8 @@ public class GamaColorType extends GamaType<GamaColor> {
 						Cast.asInt(scope, l.get(2)), Cast.asInt(scope, l.get(3)));
 			};
 		}
+		if (obj instanceof final Map m) return GamaColor.get(Cast.asInt(scope, m.get("red")),
+				Cast.asInt(scope, m.get("green")), Cast.asInt(scope, m.get("blue")), Cast.asInt(scope, m.get("alpha")));
 		if (obj instanceof IContainer)
 			return staticCast(scope, ((IContainer) obj).listValue(scope, Types.NO_TYPE, false), param, copy);
 		if (obj instanceof String) {
@@ -143,5 +147,10 @@ public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
 	public boolean isCompoundType() { return true; }
+
+	@Override
+	public GamaColor deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		return cast(scope, map2, null, false);
+	}
 
 }

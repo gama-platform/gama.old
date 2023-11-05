@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaPointType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.types;
@@ -25,6 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaPair;
+import msi.gama.util.IMap;
 import msi.gaml.operators.Cast;
 
 /**
@@ -117,5 +118,11 @@ public class GamaPointType extends GamaType<GamaPoint> {
 
 	@Override
 	public boolean isCompoundType() { return true; }
+
+	@Override
+	public GamaPoint deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		return new GamaPoint(Cast.asFloat(scope, map2.get("x")), Cast.asFloat(scope, map2.get("y")),
+				Cast.asFloat(scope, map2.get("z")));
+	}
 
 }

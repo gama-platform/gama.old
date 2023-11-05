@@ -10,7 +10,7 @@ model Json
 
 global {
 	init {
-		write (from_binary(to_binary([1,2,4])) = [1,2,4]);
+		write sample(from_json(to_json(square(10))));
 		
 		
 		write "Simple values";
@@ -47,12 +47,15 @@ global {
 		write "------------- FROM JSON";
 		write(from_json(to_json(["a"::2,"b"::4],true)));
 		write(from_json(to_json([123::43,234::#green],true)));
+		
+		
 		write "Other data structures";
-		write "-------------";
+		write "------------- TO JSON";
 		write(to_json(23::34,true));
-		//write(to_json([123::43,234::#green],true));
 		write(to_json({2,2} matrix_with 10,true));
-		//write(to_json(circle(10),true));
+		write "------------- FROM JSON";
+		write(from_json(to_json(23::34,true)));
+		write(from_json(to_json({2,2} matrix_with 10,true)));
 		
 		write "Agents";
 		write "-------------";		

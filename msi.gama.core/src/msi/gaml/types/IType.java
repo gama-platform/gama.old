@@ -13,11 +13,15 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
+import msi.gama.util.IMap;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.interfaces.IGamlDescription;
+import msi.gaml.interfaces.IJsonable;
 
 /**
  * Written by drogoul Modified on 9 juin 2010
@@ -25,7 +29,7 @@ import msi.gaml.interfaces.IGamlDescription;
  * @todo Description
  *
  */
-public interface IType<Support> extends IGamlDescription, ITyped {
+public interface IType<Support> extends IGamlDescription, ITyped, IJsonable {
 
 	/** The vowels. */
 	String[] vowels = { "a", "e", "i", "o", "u", "y" };
@@ -494,6 +498,31 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 */
 	default Support copyFromClipboard(final IScope scope) {
 		return cast(scope, scope.getGui().copyTextFromClipboard(), null, false);
+	}
+
+	/**
+	 * Deserialize from json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param map2
+	 *            the map 2
+	 * @return the support
+	 * @date 4 nov. 2023
+	 */
+	Support deserializeFromJson(IScope scope, IMap<String, Object> map2);
+
+	/**
+	 * Serialize to json.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param json
+	 *            the json
+	 * @return the json value
+	 * @date 4 nov. 2023
+	 */
+	@Override
+	default JsonValue serializeToJson(final Json json) {
+		return json.typedObject(Types.TYPE, "name", getName());
 	}
 
 }

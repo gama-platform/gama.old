@@ -17,6 +17,8 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IMap;
+import msi.gaml.operators.Cast;
 
 /**
  * The Class GamaMetaType.
@@ -39,6 +41,7 @@ public class GamaMetaType extends GamaType<IType<?>> {
 	public IType<?> cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		if (obj instanceof IType t) return t;
+		if (obj instanceof String s) return scope.getTypes().decodeType(s);
 		return staticCast(obj);
 	}
 
@@ -90,4 +93,13 @@ public class GamaMetaType extends GamaType<IType<?>> {
 		return staticCast(obj);
 	}
 
+	@Override
+	public IType<?> deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
+		if (!map2.containsKey("name")) return getDefault();
+		IType base = scope.getType(Cast.asString(scope, map2.get("name")));
+		if (base instanceof IContainerType ic && map2.size() > 1)
+			return ic.of(scope.getType(Cast.asString(scope, map2.get("key"))),
+					scope.getType(Cast.asString(scope, map2.get("content"))));
+		return base;
+	}
 }

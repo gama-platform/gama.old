@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * UniqueCoordinateSequence.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * UniqueCoordinateSequence.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.geometry;
 
@@ -29,15 +29,17 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	/** The point. */
 	final GamaPoint point;
-	
+
 	/** The dimension. */
 	final int dimension;
 
 	/**
 	 * Instantiates a new unique coordinate sequence.
 	 *
-	 * @param dimension the dimension
-	 * @param coord the coord
+	 * @param dimension
+	 *            the dimension
+	 * @param coord
+	 *            the coord
 	 */
 	public UniqueCoordinateSequence(final int dimension, final Coordinate coord) {
 		this.dimension = dimension;
@@ -47,9 +49,30 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	/**
 	 * Instantiates a new unique coordinate sequence.
 	 *
-	 * @param dimension the dimension
-	 * @param copy the copy
-	 * @param gamaPoint the gama point
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ordinates
+	 *            the ordinates
+	 * @date 5 nov. 2023
+	 */
+	public UniqueCoordinateSequence(final double... ordinates) {
+		this.dimension = ordinates.length;
+		point = switch (dimension) {
+			case 0 -> new GamaPoint();
+			case 1 -> new GamaPoint(ordinates[0], ordinates[0]);
+			case 2 -> new GamaPoint(ordinates[0], ordinates[1]);
+			default -> new GamaPoint(ordinates[0], ordinates[1], ordinates[2]);
+		};
+	}
+
+	/**
+	 * Instantiates a new unique coordinate sequence.
+	 *
+	 * @param dimension
+	 *            the dimension
+	 * @param copy
+	 *            the copy
+	 * @param gamaPoint
+	 *            the gama point
 	 */
 	public UniqueCoordinateSequence(final int dimension, final boolean copy, final GamaPoint gamaPoint) {
 		this.dimension = dimension;
@@ -57,9 +80,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public int getDimension() {
-		return dimension;
-	}
+	public int getDimension() { return dimension; }
 
 	@Override
 	public GamaPoint getCoordinate(final int i) {
@@ -170,8 +191,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public ICoordinates setTo(final int index, final double... points) {
-		if (index > 0) return this;
-		if (points.length < 3) return this;
+		if (index > 0 || points.length < 3) return this;
 		point.x = points[0];
 		point.y = points[1];
 		point.z = points[2];
@@ -208,14 +228,10 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public boolean isHorizontal() {
-		return true;
-	}
+	public boolean isHorizontal() { return true; }
 
 	@Override
-	public double getLength() {
-		return 0;
-	}
+	public double getLength() { return 0; }
 
 	@Override
 	public void setAllZ(final double elevation) {
@@ -252,9 +268,7 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	// }
 
 	@Override
-	public boolean isClockwise() {
-		return true;
-	}
+	public boolean isClockwise() { return true; }
 
 	@Override
 	public void completeRing() {}
