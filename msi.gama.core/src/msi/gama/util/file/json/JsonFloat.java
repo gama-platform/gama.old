@@ -23,6 +23,8 @@ import msi.gaml.operators.Cast;
 @SuppressWarnings ("serial") // use default serial UID
 class JsonFloat extends JsonValue {
 
+	/** The Constant DEFAULT_NUMBER_OF_DIGITS. */
+	private static final int DEFAULT_NUMBER_OF_DIGITS = 8;
 	/** The string. */
 	private final String string;
 
@@ -35,7 +37,7 @@ class JsonFloat extends JsonValue {
 	 * @date 29 oct. 2023
 	 */
 	JsonFloat(final double x) {
-		this(formatOrdinate(x));
+		this(formatOrdinate(x, DEFAULT_NUMBER_OF_DIGITS));
 	}
 
 	/**
@@ -60,24 +62,10 @@ class JsonFloat extends JsonValue {
 	 * @return the string
 	 * @date 4 nov. 2023
 	 */
-	private static String formatOrdinate(double x) {
-		int decimals = 8;
-		double scale = Math.pow(10, decimals);
-		String result = null;
-
-		if (Math.abs(x) >= Math.pow(10, -3) && x < Math.pow(10, 7)) {
-			x = Math.floor(x * scale + 0.5) / scale;
-			long lx = (long) x;
-			if (lx == x) {
-				result = Long.toString(lx);
-			} else {
-				result = Double.toString(x);
-			}
-		} else {
-			result = Double.toString(x);
-		}
-
-		return result;
+	public static String formatOrdinate(double x, final int numberOfDigits) {
+		double scale = Math.pow(10, numberOfDigits);
+		if (Math.abs(x) >= Math.pow(10, -3) && x < Math.pow(10, 7)) { x = Math.floor(x * scale + 0.5) / scale; }
+		return Double.toString(x);
 
 	}
 

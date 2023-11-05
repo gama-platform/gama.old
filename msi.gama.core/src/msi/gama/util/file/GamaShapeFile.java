@@ -451,11 +451,6 @@ public class GamaShapeFile extends GamaGisFile {
 		try {
 			collection.accepts(feature -> {
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
-				// DEBUG.OUT(
-				// "Geometry #" + indexOfGeometry[0] + " / " + feature.getIdentifier() + " is "
-				// + (g == null ? "nil" : g.isEmpty() ? "empty" : !g.isValid() ? "invalid" : "valid"),
-				// true);
-
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 					if (!with3D && g.getNumPoints() > 2) {
 						try {
