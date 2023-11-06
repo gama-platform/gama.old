@@ -27,6 +27,9 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 	/** The current server config. */
 	private GamaServerExperimentConfiguration currentServerConfig = GamaServerExperimentConfiguration.GUI;
 
+	/** The current state. */
+	private volatile State currentState = State.NONE;
+
 	/**
 	 * Start for GUI. No SSL and a default ping interval
 	 *
@@ -154,10 +157,14 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 
 	@Override
 	public void updateStateTo(final IExperimentPlan experiment, final State state) {
-		WebSocket ws = currentServerConfig.socket();
-		if (ws == null) return;
-		ws.send(Json.getNew().valueOf(new GamaServerMessage(GamaServerMessage.Type.SimulationStatus, state.name(), "0"))
-				.toString());
+		if (state != currentState) {
+			currentState = state;
+			WebSocket ws = currentServerConfig.socket();
+			if (ws == null) return;
+			ws.send(Json.getNew()
+					.valueOf(new GamaServerMessage(GamaServerMessage.Type.SimulationStatus, state.name(), "0"))
+					.toString());
+		}
 	}
 
 	/**
