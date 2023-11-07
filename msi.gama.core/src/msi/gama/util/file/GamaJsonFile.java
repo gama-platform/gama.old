@@ -29,6 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.IModifiableContainer;
+import msi.gama.util.file.json.IJsonConstants;
 import msi.gama.util.file.json.Json;
 import msi.gama.util.file.json.ParseException;
 import msi.gama.util.file.json.WriterConfig;
@@ -47,8 +48,8 @@ import msi.gaml.types.Types;
 		buffer_index = IType.STRING,
 		concept = { IConcept.FILE })
 @doc ("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('"
-		+ Json.CONTENTS_WITH_REFERENCES_LABEL
-		+ "') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
+		+ IJsonConstants.CONTENTS_WITH_REFERENCES_LABEL
+		+ "') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures (map and list) recursively, or into direct GAMA objects when they sport the required tags. ")
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 
@@ -110,7 +111,7 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 				map = (IMap<String, Object>) o;
 			} else {
 				map = GamaMapFactory.create();
-				map.put(Json.CONTENTS_WITH_REFERENCES_LABEL, o);
+				map.put(IJsonConstants.CONTENTS_WITH_REFERENCES_LABEL, o);
 			}
 			setBuffer(map);
 		} catch (final IOException | ParseException e) {
@@ -125,8 +126,8 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final IMap<String, Object> map = getBuffer();
 		Object toSave = map;
-		if (map.size() == 1 && map.containsKey(Json.CONTENTS_WITH_REFERENCES_LABEL)) {
-			toSave = map.get(Json.CONTENTS_WITH_REFERENCES_LABEL);
+		if (map.size() == 1 && map.containsKey(IJsonConstants.CONTENTS_WITH_REFERENCES_LABEL)) {
+			toSave = map.get(IJsonConstants.CONTENTS_WITH_REFERENCES_LABEL);
 		}
 		final File file = getFile(scope);
 		if (file.exists()) {
@@ -144,7 +145,7 @@ public class GamaJsonFile extends GamaFile<IMap<String, Object>, Object> {
 	public IModifiableContainer ensureContentsIsCompatible(final IModifiableContainer contents) {
 		if (contents instanceof IMap) return contents;
 		IMap map = GamaMapFactory.create();
-		map.put(Json.CONTENTS_WITH_REFERENCES_LABEL, contents);
+		map.put(IJsonConstants.CONTENTS_WITH_REFERENCES_LABEL, contents);
 		return map;
 	}
 

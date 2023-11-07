@@ -56,7 +56,7 @@ import msi.gama.util.IMap;
  *
  */
 @SuppressWarnings ("serial") // use default serial UID
-public abstract class JsonAbstractObject<GamlValueType> extends JsonValue implements Iterable<JsonObjectMember> {
+public abstract class JsonAbstractObject extends JsonValue implements Iterable<JsonObjectMember>, IJsonConstants {
 
 	/** The names. */
 	protected final List<String> names;
@@ -620,7 +620,7 @@ public abstract class JsonAbstractObject<GamlValueType> extends JsonValue implem
 	}
 
 	@Override
-	public abstract GamlValueType toGamlValue(final IScope scope);
+	public abstract Object toGamlValue(final IScope scope);
 
 	/**
 	 * To map.

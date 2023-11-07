@@ -11,20 +11,6 @@
 package msi.gama.util.file.json;
 
 import static msi.gama.common.geometry.GeometryUtils.GEOMETRY_FACTORY;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_COORDINATES;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_FEATURE;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_FEATURECOLLECTION;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_FEATURES;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_GEOMETRIES;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_GEOMETRY;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_GEOMETRYCOLLECTION;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_LINESTRING;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_MULTILINESTRING;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_MULTIPOINT;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_MULTIPOLYGON;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_POINT;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_POLYGON;
-import static org.locationtech.jts.io.geojson.GeoJsonConstants.NAME_TYPE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +27,6 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.geojson.GeoJsonConstants;
 import org.opengis.referencing.FactoryException;
 
 import msi.gama.common.geometry.GeometryUtils;
@@ -82,8 +67,8 @@ public class JsonGeometryObject extends JsonGamlObject {
 		this(toGeoJsonObject(geometry, json), json);
 		try {
 			int srid = CRS.lookupEpsgCode(ProjectionFactory.getTargetCRSOrDefault(GAMA.getRuntimeScope()), true);
-			add(GeoJsonConstants.NAME_CRS, json.object(GeoJsonConstants.NAME_TYPE, GeoJsonConstants.NAME_NAME,
-					GeoJsonConstants.NAME_PROPERTIES, json.object(GeoJsonConstants.NAME_NAME, EPSG_PREFIX + srid)));
+			add(NAME_CRS,
+					json.object(NAME_TYPE, NAME_NAME, NAME_PROPERTIES, json.object(NAME_NAME, EPSG_PREFIX + srid)));
 		} catch (FactoryException e) {}
 	}
 
@@ -114,9 +99,9 @@ public class JsonGeometryObject extends JsonGamlObject {
 	 */
 	private static JsonAbstractObject toGeoJsonObject(final Geometry geometry, final Json json) {
 		JsonAbstractObject result = new JsonObject(json);
-		result.add(GeoJsonConstants.NAME_TYPE, geometry.getGeometryType());
+		result.add(NAME_TYPE, geometry.getGeometryType());
 		JsonArray components = json.array();
-		String key = GeoJsonConstants.NAME_COORDINATES;
+		String key = NAME_COORDINATES;
 		if (geometry instanceof Point || geometry instanceof LineString) {
 			components = (JsonArray) json.valueOf(GeometryUtils.getContourCoordinates(geometry));
 		} else if (geometry instanceof Polygon polygon) {
@@ -131,7 +116,7 @@ public class JsonGeometryObject extends JsonGamlObject {
 			for (int i = 0; i < geometryCollection.getNumGeometries(); i++) {
 				components.add(toGeoJsonObject(geometryCollection.getGeometryN(i), json));
 			}
-			key = GeoJsonConstants.NAME_GEOMETRIES;
+			key = NAME_GEOMETRIES;
 		} else
 			throw new IllegalArgumentException("Unable to encode geometry " + geometry.getGeometryType());
 		result.add(key, components);
@@ -409,6 +394,8 @@ public class JsonGeometryObject extends JsonGamlObject {
 	 */
 	private static Geometry buildPoint(final JsonGeometryObject object) {
 		JsonArray c = object.get(NAME_COORDINATES).asArray();
+		if (c.isEmpty()) return null;
+		c = c.get(0).asArray();
 		CoordinateSequence coordinate =
 				new UniqueCoordinateSequence(c.get(0).asDouble(), c.get(1).asDouble(), c.get(2).asDouble());
 		return GEOMETRY_FACTORY.createPoint(coordinate);
@@ -445,10 +432,10 @@ public class JsonGeometryObject extends JsonGamlObject {
 	 * @date 5 nov. 2023
 	 */
 	private static int readSRID(final JsonGeometryObject object) {
-		JsonObject crs = object.get(GeoJsonConstants.NAME_CRS).asObject();
+		JsonObject crs = object.get(NAME_CRS).asObject();
 		if (crs != null) {
-			JsonObject properties = crs.get(GeoJsonConstants.NAME_PROPERTIES).asObject();
-			String name = properties.get(GeoJsonConstants.NAME_NAME).asString();
+			JsonObject properties = crs.get(NAME_PROPERTIES).asObject();
+			String name = properties.get(NAME_NAME).asString();
 			String[] split = name.split(":");
 			String epsg = split[1];
 			return Integer.parseInt(epsg);

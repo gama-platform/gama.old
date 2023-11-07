@@ -41,16 +41,6 @@ package msi.gama.util.file.json;
  */
 public abstract class JsonHandler<A, O> {
 
-	/** The parser. */
-	JsonParser parser;
-
-	/**
-	 * Returns the current parser location.
-	 *
-	 * @return the current parser location
-	 */
-	protected Location getLocation() { return parser.getLocation(); }
-
 	/**
 	 * Indicates the beginning of a <code>null</code> literal in the JSON input. This method will be called when reading
 	 * the first character of the literal.

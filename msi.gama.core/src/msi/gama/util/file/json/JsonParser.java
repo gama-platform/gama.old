@@ -78,7 +78,6 @@ public class JsonParser {
 	public JsonParser(final JsonHandler<?, ?> handler) {
 		if (handler == null) throw new NullPointerException("handler is null");
 		this.handler = (JsonHandler<Object, Object>) handler;
-		handler.parser = this;
 	}
 
 	/**
@@ -256,7 +255,7 @@ public class JsonParser {
 			handler.startMemberName(object);
 			String name = readName();
 			handler.endMemberName(object, name);
-			if (Json.GAML_TYPE_LABEL.equals(name)) {
+			if (IJsonConstants.GAML_TYPE_LABEL.equals(name)) {
 				isGamlObject = true;
 				skipWhiteSpace();
 				if (!readChar(':')) throw expected("':'");

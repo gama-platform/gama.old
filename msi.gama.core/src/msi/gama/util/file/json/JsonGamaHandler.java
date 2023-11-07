@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * DefaultHandler.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * JsonGamaHandler.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.util.file.json;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.types.Types;
 
 /**
@@ -18,7 +19,7 @@ import msi.gaml.types.Types;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 29 oct. 2023
  */
-class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
+class JsonGamaHandler extends JsonHandler<JsonArray, JsonObject> implements IJsonConstants {
 
 	/**
 	 * Instantiates a new default handler.
@@ -28,7 +29,7 @@ class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 	 *            the json
 	 * @date 1 nov. 2023
 	 */
-	DefaultHandler(final Json json) {
+	JsonGamaHandler(final Json json) {
 		this.json = json;
 	}
 
@@ -50,12 +51,12 @@ class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 
 	@Override
 	public void endNull() {
-		value = Json.NULL;
+		value = IJsonConstants.NULL;
 	}
 
 	@Override
 	public void endBoolean(final boolean bool) {
-		value = bool ? Json.TRUE : Json.FALSE;
+		value = bool ? IJsonConstants.TRUE : IJsonConstants.FALSE;
 	}
 
 	@Override
@@ -75,7 +76,17 @@ class DefaultHandler extends JsonHandler<JsonArray, JsonObject> {
 
 	@Override
 	public void endObject(final JsonObject object) {
-		value = object;
+		if (object.contains(GAML_SPECIES_LABEL)) {
+			value = new JsonGamlAgent(object.remove(GAML_SPECIES_LABEL).asString(),
+					object.remove(IKeyword.INDEX).asInt(), object, json);
+		} else if (object.contains(AGENT_REFERENCE_LABEL)) {
+			value = new JsonReferenceObject(object.get(AGENT_REFERENCE_LABEL).asString(), json);
+		} else if (object.contains(CONTENTS_WITH_REFERENCES_LABEL)) {
+			value = new JsonGamaContentsObject(object.get(CONTENTS_WITH_REFERENCES_LABEL),
+					object.get(REFERENCE_TABLE_LABEL).asObject(), json);
+		} else {
+			value = object;
+		}
 	}
 
 	/**

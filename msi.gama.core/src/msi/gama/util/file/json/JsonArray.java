@@ -48,7 +48,7 @@ import msi.gama.util.IList;
  * </p>
  */
 @SuppressWarnings ("serial") // use default serial UID
-public class JsonArray extends JsonValue implements Iterable<JsonValue> {
+public class JsonArray extends JsonValue implements Iterable<JsonValue>, IJsonConstants {
 
 	/** The values. */
 	private final List<JsonValue> values;

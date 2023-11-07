@@ -16,6 +16,7 @@ import java.util.List;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.json.IJsonConstants;
 import msi.gama.util.file.json.Json;
 import msi.gama.util.file.json.JsonValue;
 import msi.gaml.interfaces.IJsonable;
@@ -24,6 +25,9 @@ import msi.gaml.interfaces.IJsonable;
  * The Class AgentReference.
  */
 public record AgentReference(String[] species, Integer[] index, String ref) implements IJsonable {
+
+	/** The Constant SEPARATOR. */
+	final static String SEPARATOR = "/";
 
 	/**
 	 * Of.
@@ -36,7 +40,27 @@ public record AgentReference(String[] species, Integer[] index, String ref) impl
 	 */
 	public static AgentReference of(final IAgent agt) {
 		return of(buildSpeciesArray(agt), buildIndicesArray(agt));
+	}
 
+	/**
+	 * Of.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ref
+	 *            the ref
+	 * @return the agent reference
+	 * @date 5 nov. 2023
+	 */
+	public static AgentReference of(final String ref) {
+		String[] tokens = ref.split(SEPARATOR);
+		int size = tokens.length / 2;
+		String[] species = new String[size];
+		Integer[] index = new Integer[size];
+		for (int i = 0; i < size; i++) {
+			species[i] = tokens[i * 2];
+			index[i] = Integer.decode(tokens[i * 2 + 1]);
+		}
+		return new AgentReference(species, index, ref);
 	}
 
 	/**
@@ -52,7 +76,9 @@ public record AgentReference(String[] species, Integer[] index, String ref) impl
 	 */
 	public static AgentReference of(final String[] species, final Integer[] index) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < species.length; i++) { sb.append(species[i]).append('/').append(index[i]).append('/'); }
+		for (int i = 0; i < species.length; i++) {
+			sb.append(species[i]).append(SEPARATOR).append(index[i]).append(SEPARATOR);
+		}
 		sb.setLength(sb.length() - 1);
 		String ref = sb.toString();
 		return new AgentReference(species, index, ref);
@@ -133,7 +159,7 @@ public record AgentReference(String[] species, Integer[] index, String ref) impl
 
 	@Override
 	public JsonValue serializeToJson(final Json json) {
-		return json.object(Json.AGENT_REFERENCE_LABEL, json.valueOf(toString()));
+		return json.object(IJsonConstants.AGENT_REFERENCE_LABEL, toString());
 	}
 
 }
