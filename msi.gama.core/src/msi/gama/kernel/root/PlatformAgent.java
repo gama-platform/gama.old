@@ -515,7 +515,7 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	 *            the message
 	 * @date 3 nov. 2023
 	 */
-	private void sendMessage(final IScope scope, final Object message) {
+	public void sendMessage(final IScope scope, final Object message) {
 		try {
 			var socket = scope.getServerConfiguration().socket();
 			if (socket == null) {
