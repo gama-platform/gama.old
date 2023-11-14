@@ -16,8 +16,6 @@ import static com.google.common.collect.Iterables.filter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -215,6 +213,24 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return MapExpression.create(elements);
 	}
 
+	/**
+	 * Checks for operator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param op
+	 *            the op
+	 * @param args
+	 *            the args
+	 * @return true, if successful
+	 * @date 14 nov. 2023
+	 */
+	private boolean hasOperator(final String op, final IExpression... args) {
+		// If arguments are invalid or the operator is not known we have no match
+		if (args == null || args.length == 0 || !GAML.OPERATORS.containsKey(op)) return false;
+		for (final IExpression exp : args) { if (exp == null) return false; }
+		return hasOperator(op, new Signature(args));
+	}
+
 	@Override
 	public boolean hasExactOperator(final String op, final IExpression arg) {
 		// If arguments are invalid, we have no match
@@ -235,14 +251,16 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	 */
 	@Override
 	public boolean hasOperator(final String op, final Signature s) {
+		// If arguments are invalid, we have no match
+		// If the operator is not known, we have no match
+		if (s == null || s.size() == 0 || !GAML.OPERATORS.containsKey(op)) return false;
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		Signature sig = s.simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
-		Set<Map.Entry<Signature, OperatorProto>> entrySet = ops == null ? Collections.EMPTY_SET : ops.entrySet();
-		boolean matches = any(entrySet, entry -> sig.matchesDesiredSignature(entry.getKey()));
+		boolean matches = any(ops.keySet(), si -> sig.matchesDesiredSignature(si));
 		if (!matches) {
 			// Check if a varArg is not a possibility
-			matches = any(entrySet, entry -> Signature.varArgFrom(sig).matchesDesiredSignature(entry.getKey()));
+			matches = any(ops.keySet(), si -> Signature.varArgFrom(sig).matchesDesiredSignature(si));
 		}
 		return matches;
 	}
@@ -250,16 +268,14 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
-		if (args == null || args.length == 0) return null;
-		for (IExpression e : args) { if (e == null) return null; }
-		if (!GAML.OPERATORS.containsKey(op)) return null;
-		final Signature originalUserSignature = new Signature(args);
-		if (!hasOperator(op, originalUserSignature)) return emitError(op, context, eObject, originalUserSignature);
+
+		if (!hasOperator(op, args)) return emitError(op, context, eObject, args);
 		// We get the possible sets of types registered in OPERATORS
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		// We create the signature corresponding to the arguments
 		// 19/02/14 Only the simplified signature is used now
-		Signature userSignature = originalUserSignature.simplified();
+		Signature userSignature = new Signature(args).simplified();
+		final Signature originalUserSignature = userSignature;
 		// If the signature is not present in the registry
 		if (!ops.containsKey(userSignature)) {
 			final Signature[] matching = Iterables.toArray(
@@ -290,7 +306,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			// We coerce the types if necessary, by wrapping the original
 			// expressions in a casting expression
 			final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
-			// DEBUG.LOG("Coercing types = " + Arrays.toString(coercingTypes));
+
 			for (int i = 0; i < coercingTypes.length; i++) {
 				final IType t = coercingTypes[i];
 				if (t != null) {
@@ -318,19 +334,19 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	 *            the context
 	 * @param eObject
 	 *            the e object
-	 * @param originalUserSignature
-	 *            the original user signature
+	 * @param args
+	 *            the args
 	 * @return the i expression
-	 * @date 9 nov. 2023
+	 * @date 14 nov. 2023
 	 */
 	private IExpression emitError(final String op, final IDescription context, final EObject eObject,
-			final Signature originalUserSignature) {
+			final IExpression... args) {
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
-		final Signature userSignature = originalUserSignature.simplified();
+		final Signature userSignature = new Signature(args).simplified();
 		StringBuilder msg =
-				new StringBuilder("Operator '").append(op).append("' cannot be applied to ").append(userSignature);
+				new StringBuilder("No operator found for applying '").append(op).append("' to ").append(userSignature);
 		if (ops != null) {
-			msg.append(" (it is only defined for ").append(Arrays.toString(ops.keySet().toArray())).append(")");
+			msg.append(" (operators available for ").append(Arrays.toString(ops.keySet().toArray())).append(")");
 		}
 		context.error(msg.toString(), IGamlIssue.UNMATCHED_OPERANDS, eObject);
 		return null;
