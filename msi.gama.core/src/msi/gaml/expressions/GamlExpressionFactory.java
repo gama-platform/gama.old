@@ -16,6 +16,8 @@ import static com.google.common.collect.Iterables.filter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -236,10 +238,11 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		Signature sig = s.simplified();
 		// Does any known operator signature match with the signatue of the expressions ?
-		boolean matches = any(ops.entrySet(), entry -> sig.matchesDesiredSignature(entry.getKey()));
+		Set<Map.Entry<Signature, OperatorProto>> entrySet = ops == null ? Collections.EMPTY_SET : ops.entrySet();
+		boolean matches = any(entrySet, entry -> sig.matchesDesiredSignature(entry.getKey()));
 		if (!matches) {
 			// Check if a varArg is not a possibility
-			matches = any(ops.entrySet(), entry -> Signature.varArgFrom(sig).matchesDesiredSignature(entry.getKey()));
+			matches = any(entrySet, entry -> Signature.varArgFrom(sig).matchesDesiredSignature(entry.getKey()));
 		}
 		return matches;
 	}
@@ -287,7 +290,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			// We coerce the types if necessary, by wrapping the original
 			// expressions in a casting expression
 			final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
-//			DEBUG.LOG("Coercing types = " + Arrays.toString(coercingTypes));
+			// DEBUG.LOG("Coercing types = " + Arrays.toString(coercingTypes));
 			for (int i = 0; i < coercingTypes.length; i++) {
 				final IType t = coercingTypes[i];
 				if (t != null) {
