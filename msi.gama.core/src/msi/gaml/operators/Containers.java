@@ -1521,7 +1521,7 @@ public class Containers {
 	 * @return the gama pair
 	 */
 	@operator (
-			value = { "::" },
+			value = { "::", "pair" },
 			can_be_const = true,
 			type = IType.PAIR,
 			index_type = ITypeProvider.TYPE_AT_INDEX + 1,

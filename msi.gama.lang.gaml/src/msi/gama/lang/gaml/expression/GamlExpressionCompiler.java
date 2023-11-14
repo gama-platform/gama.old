@@ -119,6 +119,7 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.ParametricType;
+import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
 
 /**
@@ -1242,7 +1243,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// return true;
 
 		// If more than one, we need to check if there are operators that match. If yes, we return false
-		return !getFactory().hasOperator(op, toArray(transform(args, this::compile), IExpression.class));
+		return !getFactory().hasOperator(op, new Signature(toArray(transform(args, this::compile), IExpression.class)));
 	}
 
 	@Override

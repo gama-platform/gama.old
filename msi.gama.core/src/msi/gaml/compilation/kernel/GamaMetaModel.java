@@ -26,6 +26,7 @@ import com.google.common.collect.Multimap;
 import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -292,7 +293,6 @@ public class GamaMetaModel {
 			abstractAgentSpecies = (ISpecies) model.getSpecies().compile();
 		}
 		return abstractAgentSpecies;
-
 	}
 
 	/**
@@ -301,5 +301,18 @@ public class GamaMetaModel {
 	 * @return the experiment types
 	 */
 	public Set<String> getExperimentTypes() { return experimentCreators.keySet(); }
+
+	/**
+	 * Gets the java base for.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the java base for
+	 */
+	public Class<? extends IExperimentAgent> getJavaBaseFor(final String type) {
+		IExperimentAgentCreator creator = experimentCreators.get(type);
+		if (creator == null) return ExperimentAgent.class;
+		return creator.getJavaBase();
+	}
 
 }

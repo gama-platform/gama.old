@@ -23,12 +23,12 @@ import org.eclipse.emf.ecore.resource.Resource;
 import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.BatchAgent;
-import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 
@@ -65,8 +65,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing,
 			final Iterable<IDescription> cp, final EObject source, final Facets facets) {
 		super(keyword, null, enclosing, null, cp, source, facets);
-		String type = getLitteral(IKeyword.TYPE);
-		setIf(Flag.isBatch, IKeyword.BATCH.equals(type));
+		// String type = getLitteral(IKeyword.TYPE);
+		// setIf(Flag.isBatch, IKeyword.BATCH.equals(type));
 		setIf(Flag.isMemorize, facets.containsKey(RECORD));
 	}
 
@@ -273,7 +273,7 @@ public class ExperimentDescription extends SpeciesDescription {
 	/**
 	 * @return
 	 */
-	public Boolean isBatch() { return isSet(Flag.isBatch); }
+	// public Boolean isBatch() { return isSet(Flag.isBatch); }
 
 	/**
 	 * @return
@@ -281,8 +281,10 @@ public class ExperimentDescription extends SpeciesDescription {
 	public Boolean isMemorize() { return isSet(Flag.isMemorize); }
 
 	@Override
-	public Class<? extends ExperimentAgent> getJavaBase() {
-		return isBatch() ? BatchAgent.class : ExperimentAgent.class;
+	public Class<? extends IExperimentAgent> getJavaBase() {
+		String type = getLitteral(IKeyword.TYPE);
+		return GamaMetaModel.INSTANCE.getJavaBaseFor(type);
+		// return IKeyword.BATCH.equals(type) ? BatchAgent.class : ExperimentAgent.class;
 	}
 
 	@Override
@@ -364,17 +366,5 @@ public class ExperimentDescription extends SpeciesDescription {
 	public boolean visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
 		return true;
 	}
-
-	// @Override
-	// protected boolean validateChildren() {
-	// // We verify that parameters have different titles and that the model does not declare attributes with duplicate
-	// // parameter facets
-	// Map<VariableDescription, String> reverse = GamaMapFactory.create();
-	// ListMultimap<String, VariableDescription> mm = MultimapBuilder.linkedHashKeys().arrayListValues().build();
-	// if (parameters != null) {
-	// parameters.forEach((s, v) -> mm.put(v.getTitle(), v));
-	// }
-	// return super.validateChildren();
-	// }
 
 }

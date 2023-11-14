@@ -112,7 +112,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		isFunction,
 
 		/** The is batch. */
-		isBatch,
+		// isBatch,
 
 		/** The is memorize. */
 		isMemorize

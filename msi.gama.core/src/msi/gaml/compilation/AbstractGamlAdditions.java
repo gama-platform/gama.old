@@ -29,6 +29,7 @@ import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IExperimentAgentCreator.ExperimentAgentDescription;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GamaMapFactory;
@@ -82,10 +83,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 * @param d
 	 *            the d
 	 */
-	public void _experiment(final String string, final IExperimentAgentCreator d) {
+	public void _experiment(final String string, final IExperimentAgentCreator d,
+			final Class<? extends IExperimentAgent> clazz) {
 		GAML.CONSTANTS.add(string);
 		GamaMetaModel.INSTANCE.addExperimentAgentCreator(string,
-				new ExperimentAgentDescription(d, string, CURRENT_PLUGIN_NAME));
+				new ExperimentAgentDescription(d, clazz, string, CURRENT_PLUGIN_NAME));
 	}
 
 	/**

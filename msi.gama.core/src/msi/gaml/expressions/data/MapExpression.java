@@ -151,7 +151,7 @@ public class MapExpression extends AbstractExpression implements IOperator {
 
 	@Override
 	public String toString() {
-		return getElements().toString();
+		return serializeToGaml(false);
 	}
 
 	@Override
