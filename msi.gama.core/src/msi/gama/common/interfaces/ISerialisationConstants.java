@@ -8,13 +8,11 @@
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
-package ummisco.gama.serializer.implementations;
+package msi.gama.common.interfaces;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
-
-import msi.gama.common.interfaces.IKeyword;
 
 /**
  * The Interface SerialisedAgentConstants.

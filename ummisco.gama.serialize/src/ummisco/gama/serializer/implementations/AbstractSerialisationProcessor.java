@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package ummisco.gama.serializer.implementations;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.ISerialisedAgent;
 import msi.gama.runtime.IScope;

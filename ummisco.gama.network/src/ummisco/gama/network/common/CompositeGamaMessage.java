@@ -10,10 +10,10 @@
  ********************************************************************************************************/
 package ummisco.gama.network.common;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.implementations.BinarySerialisation;
-import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * The Class CompositeGamaMessage.

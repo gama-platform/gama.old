@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.ParametersSet;
@@ -25,7 +26,6 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.constants.GamlCoreConstants;
 import ummisco.gama.serializer.implementations.BinarySerialisation;
-import ummisco.gama.serializer.implementations.ISerialisationConstants;
 import ummisco.gama.ui.commands.ArrangeDisplayViews;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;

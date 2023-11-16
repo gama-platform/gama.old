@@ -11,13 +11,13 @@
 package ummisco.gama.serializer.gaml;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
-import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * The Class GamaSavedSimulationFile.

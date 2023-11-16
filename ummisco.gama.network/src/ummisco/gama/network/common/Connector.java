@@ -17,12 +17,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.serializer.implementations.BinarySerialisation;
-import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * The Class Connector.

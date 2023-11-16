@@ -17,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
+import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SerialisedAgent;
@@ -46,7 +48,7 @@ public class BinarySerialisation implements ISerialisationConstants {
 	 */
 	public static Object createFromFile(final IScope scope, final String path) {
 		try {
-			byte[] all = Files.readAllBytes(Path.of(path));
+			byte[] all = Files.readAllBytes(Path.of(FileUtils.constructAbsoluteFilePath(scope, path, true)));
 			return createFromBytes(scope, all);
 		} catch (IOException e) {
 			throw GamaRuntimeException.create(e, GAMA.getRuntimeScope());
@@ -70,7 +72,7 @@ public class BinarySerialisation implements ISerialisationConstants {
 			byte[] all = string.getBytes(ISerialisationConstants.STRING_BYTE_ARRAY_CHARSET);
 			return createFromBytes(scope, all);
 		} catch (Throwable e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			try {
 				return createFromFile(scope, string);
 			} catch (Throwable ex) {

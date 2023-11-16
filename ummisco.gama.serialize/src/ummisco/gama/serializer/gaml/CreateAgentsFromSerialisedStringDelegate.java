@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
@@ -25,7 +26,6 @@ import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.serializer.implementations.BinarySerialisation;
-import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * Class CreateFromSavecSimulationDelegate.

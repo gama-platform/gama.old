@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.kernel.experiment.ISimulationRecorder;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.SerialisedAgent;

@@ -15,11 +15,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
@@ -48,9 +51,14 @@ public class TextSaver extends AbstractSaver {
 	public void save(final IScope scope, final IExpression item, final OutputStream os, final boolean header)
 			throws GamaRuntimeException {
 		if (os == null) return;
-		final Writer fw = new OutputStreamWriter(os);
+		String toSave = Cast.asString(scope, item.value(scope));
+		char id = toSave.charAt(0);
+		Charset ch = id == ISerialisationConstants.GAMA_AGENT_IDENTIFIER
+				|| id == ISerialisationConstants.GAMA_OBJECT_IDENTIFIER
+						? ISerialisationConstants.STRING_BYTE_ARRAY_CHARSET : StandardCharsets.UTF_8;
+		final Writer fw = new OutputStreamWriter(os, ch);
 		try (fw) {
-			fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
+			fw.write(toSave);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Exception e) {
@@ -84,7 +92,12 @@ public class TextSaver extends AbstractSaver {
 	public void save(final IScope scope, final IExpression item, final File file, final String code,
 			final boolean addHeader, final String type, final Object attributesToSave)
 			throws GamaRuntimeException, IOException {
-		try (final Writer fw = new FileWriter(file, true)) {
+		String toSave = Cast.asString(scope, item.value(scope));
+		char id = toSave.charAt(0);
+		Charset ch = id == ISerialisationConstants.GAMA_AGENT_IDENTIFIER
+				|| id == ISerialisationConstants.GAMA_OBJECT_IDENTIFIER
+						? ISerialisationConstants.STRING_BYTE_ARRAY_CHARSET : StandardCharsets.UTF_8;
+		try (final Writer fw = new FileWriter(file, ch, true)) {
 			fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
 		} catch (final GamaRuntimeException e) {
 			throw e;
