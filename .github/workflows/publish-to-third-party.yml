@@ -8,6 +8,10 @@ on:
         type: string
         required: true
         default: 1.9.3
+      targets:
+        description: "The targets to publish to separated by spaces"
+        type: string
+        default: "windows linux mac docker"
     secrets:
       BOT_TOKEN:
         required: true
@@ -20,6 +24,10 @@ on:
           type: string
           required: true
           default: 1.9.3
+        targets:
+          description: "The targets to publish to separated by spaces"
+          type: string
+          default: "windows linux mac docker"
 
 
 run-name: Auto publishing ${{ inputs.tag }} to external stores
@@ -58,6 +66,7 @@ jobs:
     needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish to windows 🪟
+    if: contains(inputs.targets, 'windows') == 'true'
 
     steps:
       - name: Publish Gama to Winget 🚀
@@ -141,7 +150,7 @@ jobs:
     needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish pre-release as container 🐳
-    if: needs.get-tag-info.outputs.prerelease == 'true'
+    if: needs.get-tag-info.outputs.prerelease == 'true' && contains(inputs.targets, 'docker') == 'true'
 
     steps:
       - name: Publish Gama to Github Packages 🚀
@@ -157,6 +166,7 @@ jobs:
     needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish to PPA/Debian repo 🐧 🟠🔴 
+    if: contains(inputs.targets, 'linux') == 'true'
 
     steps:
       - name: Publish Gama to https://ppa.gama-platform.org 🚀
