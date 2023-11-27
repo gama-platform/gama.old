@@ -18,16 +18,16 @@ on:
         description: "The token used to authenticate to the Github API"
   
   workflow_dispatch:
-      inputs:
-        tag:
-          description: "The tag of the release to publish"
-          type: string
-          required: true
-          default: 1.9.3
-        targets:
-          description: "The targets to publish to separated by spaces"
-          type: string
-          default: "windows linux mac docker"
+    inputs:
+      tag:
+        description: "The tag of the release to publish"
+        type: string
+        required: true
+        default: 1.9.3
+      targets:
+        description: "The targets to publish to separated by spaces"
+        type: string
+        default: "windows linux mac docker"
 
 
 run-name: Auto publishing ${{ inputs.tag }} to external stores
@@ -66,7 +66,7 @@ jobs:
     needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish to windows 🪟
-    if: contains(inputs.targets, 'windows') == 'true'
+    if: contains(inputs.targets, 'windows')
 
     steps:
       - name: Publish Gama to Winget 🚀
@@ -150,7 +150,7 @@ jobs:
     needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish pre-release as container 🐳
-    if: needs.get-tag-info.outputs.prerelease == 'true' && contains(inputs.targets, 'docker') == 'true'
+    if: needs.get-tag-info.outputs.prerelease == 'true' && contains(inputs.targets, 'docker')
 
     steps:
       - name: Publish Gama to Github Packages 🚀
@@ -166,7 +166,7 @@ jobs:
     needs: get-tag-info
     runs-on: ubuntu-latest
     name: Publish to PPA/Debian repo 🐧 🟠🔴 
-    if: contains(inputs.targets, 'linux') == 'true'
+    if: contains(inputs.targets, 'linux')
 
     steps:
       - name: Publish Gama to https://ppa.gama-platform.org 🚀
