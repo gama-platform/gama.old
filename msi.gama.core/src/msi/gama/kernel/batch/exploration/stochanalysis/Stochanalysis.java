@@ -77,6 +77,10 @@ public class Stochanalysis {
 	// List of methods
 	final static protected List<String> SA = List.of(CV,SE,ES); 
 	
+	// UTILS 
+	final static String SEP = ",";
+	final static String RL = "\n";
+	
 	/**
 	 * Find the median value of a list (Skipping -1 values)
 	 *
@@ -125,15 +129,19 @@ public class Stochanalysis {
 			final int nbsample, final int nbreplicates, final IScope scope) {
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("== STOCHASTICITY ANALYSIS ==\n\n");
+		sb.append("== STOCHASTICITY ANALYSIS ==");
+		sb.append(RL);
 		sb.append(Out.size()+" outputs | "+nbsample+" samples | "+nbreplicates+" max replications");
-		sb.append("\n");
+		sb.append("Thresholds: ").append(STOCHThresholds).append(RL);
+		sb.append("Meaning: threshold represent the delta of marginal decrease of the minimum value of concerned statistic to decide on the number of replicates").append(RL);
+		sb.append("Exemple: focusing on ").append(SE).append(" the corresponding number of replicates is defined when marginal decrease is lower than arg_min(standard error) * threshold").append(RL);
+		sb.append(RL).append(RL);
 
 		for (String outputs : Out.keySet()) {
 			Map<ParametersSet, Map<String, List<Double>>> pso = Out.get(outputs);
 			sb.append("## Output : ");
 			sb.append(outputs);
-			sb.append("\n");
+			sb.append(RL);
 			
 			for (String method : SA) {
 				if (pso.values().stream().noneMatch(m -> m.containsKey(method))) { continue; }
@@ -146,18 +154,18 @@ public class Stochanalysis {
 						for(ParametersSet ps : pso.keySet()) { lres.add(FindWithRelativeThreshold(pso.get(ps).get(method), thresh)); }
 						res.put(thresh, lres);
 					}
-					sb.append(method).append("\n");
+					sb.append(method).append(RL);
 					for (Double threshold : STOCHThresholds) {
 						sb.append(threshold).append(" : ");
 						sb.append("min = ").append(Collections.min(res.get(threshold))).append(" | ");
 						sb.append("max = ").append(Collections.max(res.get(threshold))).append(" | ");
-						sb.append("avr = ").append(Math.round(res.get(threshold).stream().mapToInt(i -> i).average().getAsDouble())).append("\n");
+						sb.append("avr = ").append(Math.round(res.get(threshold).stream().mapToInt(i -> i).average().getAsDouble())).append(RL);
 					}
 				} else {
 					// TODO
 				}
 			}
-			sb.append("\n\n");
+			sb.append(RL).append(RL);
 		}
 		return sb.toString();
 
@@ -174,30 +182,28 @@ public class Stochanalysis {
 	private static String buildStochMap(final Map<String, Map<ParametersSet, Map<String, List<Double>>>> Out, 
 			final int nbsample, final int nbreplicates, final IScope scope) {
 		StringBuilder sb = new StringBuilder();
-		String sep = ",";
-		String rl = "\n";
 		// Header of the csv
-		sb.append("Outputs").append(sep);
+		sb.append("Outputs").append(SEP);
 		
 		// Parameters
 		IList<String> ph = Out.get(Out.keySet().stream().findAny().get()).keySet().stream().findAny().get().getKeys();
-		sb.append(ph.stream().collect(Collectors.joining(","))).append(sep);
+		sb.append(ph.stream().collect(Collectors.joining(","))).append(SEP);
 		
-		sb.append("Indicator").append(sep);
-		sb.append(IntStream.range(1,nbreplicates).boxed().map(i -> String.valueOf(i)).collect(Collectors.joining(",")));
-		sb.append(rl);
+		sb.append("Indicator").append(SEP);
+		sb.append(IntStream.range(1,nbreplicates).boxed().map(i -> String.valueOf(i)).collect(Collectors.joining(SEP)));
+		sb.append(RL);
 		
 		for (String o : Out.keySet()) {
 			Map<ParametersSet, Map<String, List<Double>>> om = Out.get(o);
 			for (ParametersSet p : om.keySet()) {
-				String lineP = ph.stream().map(head -> p.get(head).toString()).collect(Collectors.joining(","));
+				String lineP = ph.stream().map(head -> p.get(head).toString()).collect(Collectors.joining(SEP));
 				Map<String,List<Double>> cr = om.get(p);
 				for (String m : cr.keySet()) {
-					sb.append(o).append(sep);
-					sb.append(lineP).append(sep);
-					sb.append(m).append(sep);
-					sb.append(cr.get(m).stream().skip(1).map(d -> String.valueOf(d)).collect(Collectors.joining(",")));
-					sb.append(rl);
+					sb.append(o).append(SEP);
+					sb.append(lineP).append(SEP);
+					sb.append(m).append(SEP);
+					sb.append(cr.get(m).stream().skip(1).map(d -> String.valueOf(d)).collect(Collectors.joining(SEP)));
+					sb.append(RL);
 				}
 			}
 		}
@@ -404,7 +410,9 @@ public class Stochanalysis {
 	}
 	
 	/**
-	 * Find the minimum replicates size depending on a threshold, when CV[i] > min_arg(CV) * threshold, we keep "i" number of replicates.
+	 * Find the minimum replicates size depending on a threshold, 
+	 * when CV[i-1] - CV[i] >= 0 and CV[i-1] - CV[i] <= min_arg(CV) * threshold, 
+	 * we keep the number of replicates "i".
 	 *
 	 * @param Stat
 	 *            : the statistic given to assess replicates effectiveness
@@ -413,7 +421,8 @@ public class Stochanalysis {
 	private static int FindWithRelativeThreshold(final List<Double> Stat, final double threshold) {
 		Double th = Collections.min(Stat) * threshold;
 		for (int i = 2; i < Stat.size(); i++) {
-			if (Stat.get(i) > th) { return i; }
+			double delta = Stat.get(i-1) - Stat.get(i);
+			if (delta >= 0 &&  delta <= th) { return i; }
 		}
 		return Stat.size();
 	}
