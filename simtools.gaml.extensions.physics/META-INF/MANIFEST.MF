@@ -7,7 +7,7 @@ Require-Bundle: msi.gama.core,
  msi.gama.ext,
  org.eclipse.osgi
 Bundle-ClassPath: .,
- lib/Libbulletjme-18.4.0.jar
+ lib/Libbulletjme-18.6.0.jar
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: simtools.gaml.extensions.physics
