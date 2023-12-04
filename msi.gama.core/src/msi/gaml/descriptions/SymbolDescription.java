@@ -64,7 +64,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected final EObject element;
 
 	/** The enclosing. */
-	protected IDescription enclosing;
+	private IDescription enclosingDescription;
 
 	/** The origin name. */
 	protected String originName;
@@ -302,7 +302,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public boolean isDocumenting() { return enclosing != null && enclosing.isDocumenting(); }
+	public boolean isDocumenting() { return enclosingDescription != null && enclosingDescription.isDocumenting(); }
 
 	@Override
 	public int getKind() { return getMeta().getKind(); }
@@ -465,14 +465,15 @@ public abstract class SymbolDescription implements IDescription {
 		visitOwnChildren(DISPOSING_VISITOR);
 		if (hasFacets()) { facets.dispose(); }
 		facets = null;
-		enclosing = null;
+		enclosingDescription = null;
 		setType(null);
 	}
 
 	@Override
 	public ModelDescription getModelDescription() {
-		if (enclosing == null) return null;
-		final ModelDescription result = enclosing.getModelDescription();
+		IDescription desc = getEnclosingDescription();
+		if (desc == null) return null;
+		final ModelDescription result = desc.getModelDescription();
 		if (result != null) {
 			if (this.isSynthetic()) return result;
 			if (result.isBuiltIn() && !this.isBuiltIn()) return null;
@@ -508,7 +509,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void setEnclosingDescription(final IDescription desc) { enclosing = desc; }
+	public void setEnclosingDescription(final IDescription desc) { enclosingDescription = desc; }
 
 	@Override
 	public EObject getUnderlyingElement(final Object facet, final boolean returnFacet) {
@@ -554,7 +555,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IDescription getEnclosingDescription() { return enclosing; }
+	public IDescription getEnclosingDescription() { return enclosingDescription; }
 
 	@Override
 	public boolean hasAttribute(final String aName) {
@@ -581,12 +582,14 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IVarDescriptionProvider getDescriptionDeclaringVar(final String aName) {
-		return hasAttribute(aName) ? this : enclosing == null ? null : enclosing.getDescriptionDeclaringVar(aName);
+		IDescription enc = getEnclosingDescription();
+		return hasAttribute(aName) ? this : enc == null ? null : enc.getDescriptionDeclaringVar(aName);
 	}
 
 	@Override
 	public IDescription getDescriptionDeclaringAction(final String aName, final boolean superInvocation) {
-		return enclosing == null ? null : enclosing.getDescriptionDeclaringAction(aName, superInvocation);
+		IDescription enc = getEnclosingDescription();
+		return enc == null ? null : enc.getDescriptionDeclaringAction(aName, superInvocation);
 	}
 
 	@Override
@@ -654,8 +657,9 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesContext() {
-		if (enclosing == null) return null;
-		return enclosing.getSpeciesContext();
+		IDescription desc = getEnclosingDescription();
+		if (desc == null) return null;
+		return desc.getSpeciesContext();
 	}
 
 	/**
@@ -722,7 +726,6 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IDescription validate() {
-
 		if (state.contains(Flag.Validated)) return this;
 		set(Flag.Validated);
 
@@ -858,14 +861,12 @@ public abstract class SymbolDescription implements IDescription {
 			exp = createVarWithTypes(facet);
 			expr.setExpression(exp);
 		} else if (!fp.isLabel()) {
-			final boolean isRemote = fp.isRemote && this instanceof StatementRemoteWithChildrenDescription;
-			IDescription previousEnclosingDescription = null;
-			if (isRemote) {
-				previousEnclosingDescription = ((StatementRemoteWithChildrenDescription) this).pushRemoteContext();
-			}
-			exp = expr.compile(SymbolDescription.this);
-			if (isRemote) {
-				((StatementRemoteWithChildrenDescription) this).popRemoteContext(previousEnclosingDescription);
+			if (fp.isRemote && this instanceof StatementRemoteWithChildrenDescription srwc) {
+				IDescription previousEnclosingDescription = srwc.pushRemoteContext();
+				exp = expr.compile(SymbolDescription.this);
+				srwc.popRemoteContext(previousEnclosingDescription);
+			} else {
+				exp = expr.compile(SymbolDescription.this);
 			}
 		} else {
 			exp = expr.getExpression();

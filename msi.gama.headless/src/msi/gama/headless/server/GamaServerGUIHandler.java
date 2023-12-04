@@ -16,6 +16,7 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.IConsoleListener;
 import msi.gama.common.interfaces.IStatusDisplayer;
+import msi.gama.headless.listener.AskCommand;
 import msi.gama.headless.listener.ExpressionCommand;
 import msi.gama.headless.listener.LoadCommand;
 import msi.gama.headless.listener.PauseCommand;
@@ -121,6 +122,7 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 		cmds.put(ISocketCommand.RELOAD, new ReloadCommand());
 		cmds.put(ISocketCommand.EXPRESSION, new ExpressionCommand());
 		cmds.put(ISocketCommand.EVALUATE, new ExpressionCommand());
+		cmds.put(ISocketCommand.ASK, new AskCommand());
 		cmds.put(ISocketCommand.EXIT, DefaultServerCommands::EXIT);
 		cmds.put(ISocketCommand.DOWNLOAD, DefaultServerCommands::DOWNLOAD);
 		cmds.put(ISocketCommand.UPLOAD, DefaultServerCommands::UPLOAD);

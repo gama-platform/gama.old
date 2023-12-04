@@ -11,6 +11,7 @@
 package msi.gama.runtime.server;
 
 import static java.util.Map.entry;
+import static msi.gama.runtime.server.ISocketCommand.ASK;
 import static msi.gama.runtime.server.ISocketCommand.BACK;
 import static msi.gama.runtime.server.ISocketCommand.DOWNLOAD;
 import static msi.gama.runtime.server.ISocketCommand.EVALUATE;
@@ -173,7 +174,8 @@ public class CommandExecutor {
 					entry(STEPBACK, DefaultServerCommands::BACK), entry(STOP, DefaultServerCommands::STOP),
 					entry(RELOAD, DefaultServerCommands::RELOAD), entry(EXPRESSION, DefaultServerCommands::EVAL),
 					entry(EVALUATE, DefaultServerCommands::EVAL), entry(EXIT, DefaultServerCommands::EXIT),
-					entry(DOWNLOAD, DefaultServerCommands::DOWNLOAD), entry(UPLOAD, DefaultServerCommands::UPLOAD));
+					entry(DOWNLOAD, DefaultServerCommands::DOWNLOAD), entry(UPLOAD, DefaultServerCommands::UPLOAD),
+					entry(ASK, DefaultServerCommands::ASK));
 
 		}
 		return DEFAULT_COMMANDS;

@@ -516,7 +516,7 @@ public class Colors {
 	 * @return the gama color
 	 */
 	@operator (
-			value = "rgb",
+			value = {"rgb", "with_alpha"},
 			can_be_const = true,
 			category = { IOperatorCategory.COLOR },
 			concept = {})
@@ -545,7 +545,7 @@ public class Colors {
 	 * @return the gama color
 	 */
 	@operator (
-			value = "rgb",
+			value = {"rgb", "with_alpha"},
 			can_be_const = true,
 			category = { IOperatorCategory.COLOR },
 			concept = {})

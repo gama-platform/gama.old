@@ -95,6 +95,9 @@ public interface ISocketCommand {
 	/** The upload. */
 	String UPLOAD = "upload";
 
+	/** The ask. This action allows to ask an agent to execute an action */
+	String ASK = IKeyword.ASK;
+
 	/**
 	 * Execute.
 	 *

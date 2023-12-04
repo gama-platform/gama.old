@@ -22,14 +22,21 @@ import java.util.List;
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
+import msi.gama.metamodel.agent.AgentReference;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import msi.gaml.operators.Cast;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IExecutable;
 
 /**
  * The Class DefaultServerCommands.
@@ -215,7 +222,36 @@ public class DefaultServerCommands {
 	}
 
 	/**
-	 * Download.
+	 * Ask.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param socket
+	 *            the socket
+	 * @param map
+	 *            the map
+	 * @return the gama server message
+	 * @date 26 nov. 2023
+	 */
+	public static GamaServerMessage ASK(final WebSocket socket, final IMap<String, Object> map) {
+		final String action = map.get(IKeyword.ACTION).toString().trim();
+		final Object ref = map.get(IKeyword.AGENT);
+		final ExperimentAgent exp = GAMA.getExperiment().getAgent();
+		if (exp == null) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+				"Experiment does not exist", map, false);
+		IScope scope = exp.getScope();
+		final IAgent agent = ref == null ? exp : AgentReference.of(ref.toString().trim()).getReferencedAgent(scope);
+		if (agent == null) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+				"Agent does not exist: " + ref, map, false);
+		final IExecutable exec = agent.getSpecies().getAction(action);
+		if (exec == null) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+				"Action " + action + " does not exist in agent " + ref, map, false);
+		// TODO Verify that it is not a JSON string...Otherwise, use Json.getNew().parse(...)
+		final IMap<String, Object> args = Cast.asMap(scope, map.get("args"), false);
+		return (GamaServerMessage) agent.getScope().execute(exec, agent, true, new Arguments(args));
+	}
+
+	/**
+	 * n Download.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param socket
