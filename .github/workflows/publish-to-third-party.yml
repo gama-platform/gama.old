@@ -69,6 +69,24 @@ jobs:
     if: contains(inputs.targets, 'windows')
 
     steps:
+      - name: Get Previous Release info 
+        # This version incementation shall be removed when winget-releaser will be able to delete older releases again cf. https://github.com/gama-platform/gama/issues/3917
+        if: needs.get-tag-info.outputs.prerelease == 'true'
+        id: get-prev-release
+        run: |
+          curl -L -G \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/g/GamaPlatform/GamaAlpha" > ${{ runner.temp }}/prev_release.json
+          
+            new_version_counter="$(jq -r '.[] | select(.type == "dir") | select(.name | test("^${{ inputs.tag }}-[0-9]+$")) | .name' ${{ runner.temp }}/prev_release.json | cut -d '-' -f 2 | sort -nuz | head -n1)"
+            if [ -n "$new_version_counter" ]; then
+              new_version_counter=$(($new_version_counter + 1))
+            else 
+              new_version_counter=1
+            fi
+            echo "new_version_counter=$new_version_counter" >> $GITHUB_OUTPUT
+
       - name: Publish Gama to Winget 🚀
         if: needs.get-tag-info.outputs.prerelease == 'false'
         uses: vedantmgoyal2009/winget-releaser@v2
@@ -85,7 +103,7 @@ jobs:
         uses: vedantmgoyal2009/winget-releaser@v2
         with:
           identifier: GamaPlatform.GamaAlpha
-          version: ${{ inputs.tag }}-${{ needs.get-tag-info.outputs.commit_hash }}
+          version: ${{ inputs.tag }}-${{ steps.get-prev-release.outputs.new_version_counter }}
           release-tag: ${{ inputs.tag }}
           installers-regex: ^GAMA.+JDK.*\.exe$
           token: ${{ secrets.BOT_TOKEN }}
