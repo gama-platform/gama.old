@@ -28,6 +28,7 @@ import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.CommandExecutor;
 import msi.gama.runtime.server.ISocketCommand;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
@@ -700,6 +701,6 @@ public interface IGui {
 	 * @return the server commands
 	 * @date 17 oct. 2023
 	 */
-	Map<String, ISocketCommand> getServerCommands();
+	default Map<String, ISocketCommand> getServerCommands() { return CommandExecutor.getDefaultCommands(); }
 
 }

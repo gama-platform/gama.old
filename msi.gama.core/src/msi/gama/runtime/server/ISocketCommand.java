@@ -21,7 +21,41 @@ import msi.gama.util.IMap;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 15 oct. 2023
  */
+@FunctionalInterface
 public interface ISocketCommand {
+
+	/**
+	 * The Class CommandException.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 5 déc. 2023
+	 */
+	public class CommandException extends Exception {
+
+		/** The response. */
+		final CommandResponse response;
+
+		/**
+		 * Instantiates a new command exception.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param response
+		 *            the response
+		 * @date 5 déc. 2023
+		 */
+		public CommandException(final CommandResponse response) {
+			super(response.exp_id);
+			this.response = response;
+		}
+
+		/**
+		 * Gets the response.
+		 *
+		 * @return the response
+		 */
+		public CommandResponse getResponse() { return response; }
+
+	}
 
 	/** The socket. */
 	String SOCKET = "socket";
@@ -39,7 +73,7 @@ public interface ISocketCommand {
 	String PARAMETERS = "parameters";
 
 	/** The Constant UNTIL. */
-	String UNTIL = "until";
+	String UNTIL = IKeyword.UNTIL;
 
 	/** The Constant SERVER. */
 	String SERVER = "server";
@@ -109,6 +143,6 @@ public interface ISocketCommand {
 	 * @return the gama server message
 	 * @date 15 oct. 2023
 	 */
-	GamaServerMessage execute(final WebSocket socket, final IMap<String, Object> map);
+	GamaServerMessage execute(final GamaWebSocketServer server, final WebSocket socket, final IMap<String, Object> map);
 
 }

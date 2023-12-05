@@ -26,6 +26,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.server.ISocketCommand.CommandException;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gama.util.file.json.Json;
@@ -43,7 +44,7 @@ public abstract class GamaWebSocketServer extends WebSocketServer {
 	public static final int DEFAULT_PING_INTERVAL = 10000;
 
 	/** The cmd helper. */
-	protected final CommandExecutor cmdHelper = new CommandExecutor();
+	protected final CommandExecutor cmdHelper = new CommandExecutor(this);
 
 	/** The can ping. false if pingInterval is negative */
 	public final boolean canPing;
@@ -252,5 +253,23 @@ public abstract class GamaWebSocketServer extends WebSocketServer {
 	 * @date 3 nov. 2023
 	 */
 	public abstract GamaServerExperimentConfiguration obtainGuiServerConfiguration();
+
+	/**
+	 * Retrieve experiment plan.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param name
+	 *            the name
+	 * @param socket
+	 *            the socket
+	 * @param map
+	 *            the map
+	 * @return the i experiment plan
+	 * @throws CommandException
+	 *             the command exception
+	 * @date 5 déc. 2023
+	 */
+	public abstract IExperimentPlan retrieveExperimentPlan(final String name, final WebSocket socket,
+			final IMap<String, Object> map) throws CommandException;
 
 }

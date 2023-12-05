@@ -16,6 +16,8 @@ import org.java_websocket.handshake.ClientHandshake;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExperimentStateListener;
+import msi.gama.runtime.server.ISocketCommand.CommandException;
+import msi.gama.util.IMap;
 import msi.gama.util.file.json.Json;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -181,5 +183,30 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 
 	@Override
 	public void addExperiment(final String socketId, final String experimentId, final IExperimentPlan plan) {}
+
+	/**
+	 * Retrieve experiment plan.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param name
+	 *            the name
+	 * @param socket
+	 *            the socket
+	 * @param map
+	 *            the map
+	 * @return the i experiment plan
+	 * @throws CommandException
+	 *             the command exception
+	 * @date 5 déc. 2023
+	 */
+	@Override
+	public IExperimentPlan retrieveExperimentPlan(final String name, final WebSocket socket,
+			final IMap<String, Object> map) throws CommandException {
+		IExperimentPlan plan = GAMA.getExperiment();
+		if (plan == null || plan.getAgent() == null || plan.getAgent().dead() || plan.getCurrentSimulation() == null)
+			throw new CommandException(new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+					"Unable to find the experiment or simulation", map, false));
+		return plan;
+	}
 
 }

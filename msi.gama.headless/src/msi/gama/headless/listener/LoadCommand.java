@@ -16,6 +16,7 @@ import java.io.IOException;
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.core.GamaHeadlessException;
 import msi.gama.headless.server.GamaServerExperimentJob;
 import msi.gama.runtime.server.CommandExecutor;
@@ -35,20 +36,15 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class LoadCommand implements ISocketCommand {
 	@Override
-	public CommandResponse execute(final WebSocket socket, final IMap<String, Object> map) {
-
-		final GamaWebSocketServer gamaWebSocketServer = (GamaWebSocketServer) map.get("server");
-		final Object model = map.get("model");
-		final Object experiment = map.get("experiment");
-		DEBUG.OUT("launch");
-		DEBUG.OUT(model);
-		DEBUG.OUT(experiment);
-
+	public CommandResponse execute(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		final Object model = map.get(IKeyword.MODEL);
+		final Object experiment = map.get(IKeyword.EXPERIMENT);
 		if (model == null || experiment == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
-				"For 'load', mandatory parameters are: 'model' and 'experiment'", map, false);
+				"For " + LOAD + ", mandatory parameters are: 'model' and 'experiment'", map, false);
 		try {
-			return launchGamlSimulation(gamaWebSocketServer, socket, (IList) map.get("parameters"),
-					map.get("until") != null ? map.get("until").toString() : "", map);
+			return launchGamlSimulation(server, socket, (IList) map.get(PARAMETERS),
+					map.get(UNTIL) != null ? map.get(UNTIL).toString() : "", map);
 		} catch (Exception e) {
 			DEBUG.OUT(e);
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, e, map, false);

@@ -10,26 +10,23 @@
  ********************************************************************************************************/
 package msi.gama.headless.server;
 
+import static msi.gama.runtime.server.ISocketCommand.LOAD;
+import static msi.gama.runtime.server.ISocketCommand.PLAY;
+import static msi.gama.runtime.server.ISocketCommand.STOP;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IConsoleListener;
 import msi.gama.common.interfaces.IStatusDisplayer;
-import msi.gama.headless.listener.AskCommand;
-import msi.gama.headless.listener.ExpressionCommand;
 import msi.gama.headless.listener.LoadCommand;
-import msi.gama.headless.listener.PauseCommand;
 import msi.gama.headless.listener.PlayCommand;
-import msi.gama.headless.listener.ReloadCommand;
-import msi.gama.headless.listener.StepBackCommand;
-import msi.gama.headless.listener.StepCommand;
 import msi.gama.headless.listener.StopCommand;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.NullGuiHandler;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.runtime.server.DefaultServerCommands;
 import msi.gama.runtime.server.GamaServerConsoleListener;
 import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaServerMessager;
@@ -111,21 +108,11 @@ public class GamaServerGUIHandler extends NullGuiHandler {
 
 	@Override
 	public Map<String, ISocketCommand> getServerCommands() {
-		final Map<String, ISocketCommand> cmds = new HashMap<>();
-		cmds.put(ISocketCommand.LOAD, new LoadCommand());
-		cmds.put(ISocketCommand.PLAY, new PlayCommand());
-		cmds.put(ISocketCommand.STEP, new StepCommand());
-		cmds.put(ISocketCommand.STEPBACK, new StepBackCommand());
-		cmds.put(ISocketCommand.BACK, new StepBackCommand());
-		cmds.put(ISocketCommand.PAUSE, new PauseCommand());
-		cmds.put(ISocketCommand.STOP, new StopCommand());
-		cmds.put(ISocketCommand.RELOAD, new ReloadCommand());
-		cmds.put(ISocketCommand.EXPRESSION, new ExpressionCommand());
-		cmds.put(ISocketCommand.EVALUATE, new ExpressionCommand());
-		cmds.put(ISocketCommand.ASK, new AskCommand());
-		cmds.put(ISocketCommand.EXIT, DefaultServerCommands::EXIT);
-		cmds.put(ISocketCommand.DOWNLOAD, DefaultServerCommands::DOWNLOAD);
-		cmds.put(ISocketCommand.UPLOAD, DefaultServerCommands::UPLOAD);
+		final Map<String, ISocketCommand> cmds = new HashMap<>(super.getServerCommands());
+		// We replace some commands by specialized commands
+		cmds.put(LOAD, new LoadCommand());
+		cmds.put(PLAY, new PlayCommand());
+		cmds.put(STOP, new StopCommand());
 		return Collections.unmodifiableMap(cmds);
 	}
 

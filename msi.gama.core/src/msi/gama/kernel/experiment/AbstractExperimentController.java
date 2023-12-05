@@ -13,6 +13,7 @@ package msi.gama.kernel.experiment;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.server.GamaServerExperimentConfiguration;
 
@@ -256,7 +257,8 @@ public abstract class AbstractExperimentController implements IExperimentControl
 	 */
 	@Override
 	public void processPause(final boolean andWait) {
-		if (andWait) {
+		// Dont block display threads (see #
+		if (!GAMA.getGui().isInDisplayThread() && andWait) {
 			synchronousPause();
 		} else {
 			asynchronousPause();

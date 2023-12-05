@@ -47,6 +47,9 @@ public class GamaServerExperimentController extends AbstractExperimentController
 	/** The execution thread. */
 	public MyRunnable executionThread;
 
+	/** The job. */
+	private final GamaServerExperimentJob _job;
+
 	/**
 	 * The Class OwnRunnable.
 	 */
@@ -97,9 +100,6 @@ public class GamaServerExperimentController extends AbstractExperimentController
 			}
 		}
 	}
-
-	/** The job. */
-	public GamaServerExperimentJob _job;
 
 	/**
 	 * Instantiates a new experiment controller.
@@ -201,6 +201,10 @@ public class GamaServerExperimentController extends AbstractExperimentController
 					// scope.getGui().updateExperimentState(scope);
 				}
 				break;
+			case _CLOSE:
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -289,11 +293,24 @@ public class GamaServerExperimentController extends AbstractExperimentController
 		}
 	}
 
-	/**
-	 * Pause.
-	 */
-	public void pause() {
+	@Override
+	public void processStep(final boolean andWait) {
 		paused = true;
+		if (andWait) {
+			_job.doStep();
+		} else {
+			super.processStep(andWait);
+		}
+	}
+
+	@Override
+	public void processBack(final boolean andWait) {
+		paused = true;
+		if (andWait) {
+			_job.doBackStep();
+		} else {
+			super.processBack(andWait);
+		}
 	}
 
 }
