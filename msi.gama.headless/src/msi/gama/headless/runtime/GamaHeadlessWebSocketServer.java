@@ -318,7 +318,7 @@ public class GamaHeadlessWebSocketServer extends GamaWebSocketServer {
 				? map.get(ISocketCommand.SOCKET_ID).toString() : "" + socket.hashCode();
 		IExperimentPlan plan = null;
 		if (exp_id == "") throw new CommandException(new CommandResponse(GamaServerMessage.Type.MalformedRequest,
-				"For " + map.get("") + ", mandatory parameter is: " + ISocketCommand.EXP_ID, map, false));
+				"For " + map.get("type") + ", mandatory parameter is: " + ISocketCommand.EXP_ID, map, false));
 		plan = getExperiment(socket_id, exp_id);
 		if (plan == null || plan.getAgent() == null || plan.getAgent().dead() || plan.getCurrentSimulation() == null)
 			throw new CommandException(new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
