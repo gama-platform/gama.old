@@ -6,6 +6,7 @@
 */
 
 
+@no_warning
 model pacman
 
 global {
