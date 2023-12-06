@@ -269,7 +269,7 @@ public abstract class GamaWebSocketServer extends WebSocketServer {
 	 *             the command exception
 	 * @date 5 déc. 2023
 	 */
-	public abstract IExperimentPlan retrieveExperimentPlan(final String name, final WebSocket socket,
+	public abstract IExperimentPlan retrieveExperimentPlan(final WebSocket socket,
 			final IMap<String, Object> map) throws CommandException;
 
 }

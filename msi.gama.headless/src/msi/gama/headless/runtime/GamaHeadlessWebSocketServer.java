@@ -311,14 +311,14 @@ public class GamaHeadlessWebSocketServer extends GamaWebSocketServer {
 	 * @return the experiment plan
 	 * @date 5 déc. 2023
 	 */
-	public IExperimentPlan retrieveExperimentPlan(final String name, final WebSocket socket,
+	public IExperimentPlan retrieveExperimentPlan(final WebSocket socket,
 			final IMap<String, Object> map) throws CommandException {
 		final String exp_id = map.get(ISocketCommand.EXP_ID) != null ? map.get(ISocketCommand.EXP_ID).toString() : "";
 		final String socket_id = map.get(ISocketCommand.SOCKET_ID) != null
 				? map.get(ISocketCommand.SOCKET_ID).toString() : "" + socket.hashCode();
 		IExperimentPlan plan = null;
 		if (exp_id == "") throw new CommandException(new CommandResponse(GamaServerMessage.Type.MalformedRequest,
-				"For " + name + ", mandatory parameter is: " + ISocketCommand.EXP_ID, map, false));
+				"For " + map.get("") + ", mandatory parameter is: " + ISocketCommand.EXP_ID, map, false));
 		plan = getExperiment(socket_id, exp_id);
 		if (plan == null || plan.getAgent() == null || plan.getAgent().dead() || plan.getCurrentSimulation() == null)
 			throw new CommandException(new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,

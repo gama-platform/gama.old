@@ -32,7 +32,7 @@ public class PlayCommand implements ISocketCommand {
 			final IMap<String, Object> map) {
 		IExperimentPlan plan;
 		try {
-			plan = server.retrieveExperimentPlan(PLAY, socket, map);
+			plan = server.retrieveExperimentPlan(socket, map);
 		} catch (CommandException e) {
 			return e.getResponse();
 		}

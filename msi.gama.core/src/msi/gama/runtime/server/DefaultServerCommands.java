@@ -135,11 +135,11 @@ public class DefaultServerCommands {
 			final IMap<String, Object> map) {
 		IExperimentPlan plan;
 		try {
-			plan = server.retrieveExperimentPlan(ISocketCommand.PAUSE, socket, map);
+			plan = server.retrieveExperimentPlan(socket, map);
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
-		plan.getController().processBack(true);
+		plan.getController().processPause(true);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -158,7 +158,7 @@ public class DefaultServerCommands {
 			final IMap<String, Object> map) {
 		IExperimentPlan plan;
 		try {
-			plan = server.retrieveExperimentPlan(STEP, socket, map);
+			plan = server.retrieveExperimentPlan(socket, map);
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
@@ -190,7 +190,7 @@ public class DefaultServerCommands {
 			final IMap<String, Object> map) {
 		IExperimentPlan plan;
 		try {
-			plan = server.retrieveExperimentPlan(STEPBACK, socket, map);
+			plan = server.retrieveExperimentPlan(socket, map);
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
@@ -239,7 +239,7 @@ public class DefaultServerCommands {
 			final IMap<String, Object> map) {
 		IExperimentPlan plan;
 		try {
-			plan = server.retrieveExperimentPlan(ISocketCommand.RELOAD, socket, map);
+			plan = server.retrieveExperimentPlan(socket, map);
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
@@ -269,7 +269,7 @@ public class DefaultServerCommands {
 			final IMap<String, Object> map) {
 		IExperimentPlan plan;
 		try {
-			plan = server.retrieveExperimentPlan(EVALUATE, socket, map);
+			plan = server.retrieveExperimentPlan(socket, map);
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
@@ -315,7 +315,7 @@ public class DefaultServerCommands {
 			final IMap<String, Object> map) {
 		IExperimentPlan plan;
 		try {
-			plan = server.retrieveExperimentPlan(ISocketCommand.ASK, socket, map);
+			plan = server.retrieveExperimentPlan(socket, map);
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
