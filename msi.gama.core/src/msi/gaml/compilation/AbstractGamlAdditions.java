@@ -243,8 +243,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public void _operator(final String[] keywords, final Executable method, final int[] expectedContentTypes,
 			final Object returnClassOrType, final boolean c, final int t, final int content, final int index,
 			final int contentContentType, final GamaGetter helper, final boolean isIterator) {
+
 		if (isIterator) { Collections.addAll(GAML.ITERATORS, keywords); }
-		final Signature signature = new Signature(method);
+		final Signature signature = method == null ? new Signature(Types.NO_TYPE) : new Signature(method);
 		int nbParameters = signature.size();
 		final String plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
 		final IType rt;
