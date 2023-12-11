@@ -161,31 +161,31 @@ public class GamaServerExperimentController extends AbstractExperimentController
 			case _RELOAD:
 
 				try {
-
-					experiment.dispose();
-					_job.simulator.dispose();
-
-					_job.loadAndBuildWithJson(parameters, stopCondition);
-					executionThread = null;
-					commandThread.interrupt();
-					commandThread = null;
-					executionThread = new MyRunnable(_job);
-					commandThread = new Thread(() -> {
-						while (acceptingCommands) {
-							try {
-								processUserCommand(commands.take());
-							} catch (final Exception e) {}
-						}
-					}, "Front end controller");
-					commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
-					try {
-						lock.acquire();
-					} catch (final InterruptedException e) {}
-					experimentAlive = true;
-					acceptingCommands = true;
-					disposing = false;
-					commandThread.start();
-					_job.server.execute(executionThread);
+					experiment.reload();
+//					experiment.dispose();
+//					_job.simulator.dispose();
+//
+//					_job.loadAndBuildWithJson(parameters, stopCondition);
+//					executionThread = null;
+//					commandThread.interrupt();
+//					commandThread = null;
+//					executionThread = new MyRunnable(_job);
+//					commandThread = new Thread(() -> {
+//						while (acceptingCommands) {
+//							try {
+//								processUserCommand(commands.take());
+//							} catch (final Exception e) {}
+//						}
+//					}, "Front end controller");
+//					commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+//					try {
+//						lock.acquire();
+//					} catch (final InterruptedException e) {}
+//					experimentAlive = true;
+//					acceptingCommands = true;
+//					disposing = false;
+//					commandThread.start();
+//					_job.server.execute(executionThread);
 
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
