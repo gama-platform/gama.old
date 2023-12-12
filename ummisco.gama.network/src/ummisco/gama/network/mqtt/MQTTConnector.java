@@ -63,8 +63,9 @@ public final class MQTTConnector extends Connector {
 	 *
 	 * @param scope the scope
 	 */
-	public MQTTConnector(final IScope scope) {
+	public MQTTConnector(final IScope scope, boolean isRaw) {
 		this.simulationScope = scope;
+		setRaw(isRaw);
 	}
 
 	/**
