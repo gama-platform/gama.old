@@ -115,6 +115,10 @@
             class="msi.gaml.statements.draw.TextDrawer"
             description="Allows to draw text">
       </implementation>
+      <implementation
+            class="msi.gaml.statements.draw.AspectDrawer"
+            description="A drawer to draw other aspects">
+      </implementation>
    </extension>
    <extension
          point="gama.constants">

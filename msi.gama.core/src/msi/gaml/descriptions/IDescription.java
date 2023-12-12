@@ -756,6 +756,22 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	}
 
 	/**
+	 * Gets the parent with keyword.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ancestor
+	 *            the ancestor
+	 * @return the parent with keyword
+	 * @date 12 déc. 2023
+	 */
+	default IDescription getParentWithKeyword(final String ancestor) {
+		IDescription d = this.getEnclosingDescription();
+		if (d == null || d == this) return null;
+		if (d.getKeyword().equals(ancestor)) return d;
+		return d.getParentWithKeyword(ancestor);
+	}
+
+	/**
 	 * Checks if is id.
 	 *
 	 * @return true, if is id

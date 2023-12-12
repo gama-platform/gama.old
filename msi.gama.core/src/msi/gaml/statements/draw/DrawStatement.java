@@ -299,7 +299,19 @@ public class DrawStatement extends AbstractStatementSequence {
 						}
 					}
 				}
-
+				IDrawDelegate executer = null;
+				for (Entry<IType, IDrawDelegate> entry : DELEGATES.entrySet()) {
+					if (entry.getKey().isAssignableFrom(type)) {
+						executer = entry.getValue();
+						break;
+					}
+				}
+				if (executer == null) {
+					description.error("'draw' cannot draw objects of type " + type, IGamlIssue.WRONG_TYPE, GEOMETRY);
+					return;
+				}
+				executer.validate(description, exp);
+				description.setFacet("delegate", GAML.getExpressionFactory().createConst(executer, Types.NO_TYPE));
 			}
 
 		}
@@ -329,6 +341,9 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	/** The Constant DELEGATES. */
 	private static final Map<IType, IDrawDelegate> DELEGATES = new HashMap<>();
+
+	/** The delegate. */
+	private IDrawDelegate delegate;
 
 	/**
 	 * @param createExecutableExtension
@@ -382,15 +397,16 @@ public class DrawStatement extends AbstractStatementSequence {
 		final IGraphics g = scope.getGraphics();
 		if (scope.interrupted() || g == null || scope.getAgent() == null) return null;
 		try {
-			IDrawDelegate executer = null;
+			IDrawDelegate executer = (IDrawDelegate) getFacet("delegate").value(scope);
+
 			final IExpression item = getFacet(IKeyword.GEOMETRY);
-			final IType itemType = item.getGamlType();
-			for (Entry<IType, IDrawDelegate> entry : DELEGATES.entrySet()) {
-				if (entry.getKey().isAssignableFrom(itemType)) {
-					executer = entry.getValue();
-					break;
-				}
-			}
+			// final IType itemType = item.getGamlType();
+			// for (Entry<IType, IDrawDelegate> entry : DELEGATES.entrySet()) {
+			// if (entry.getKey().isAssignableFrom(itemType)) {
+			// executer = entry.getValue();
+			// break;
+			// }
+			// }
 			if (executer == null)
 				throw GamaRuntimeException.error("No drawer found to draw " + StringUtils.toGaml(item, false), scope);
 			DrawingData d = data.get(g);
