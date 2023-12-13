@@ -162,7 +162,7 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 		if (state != currentState) {
 			currentState = state;
 			WebSocket ws = currentServerConfig.socket();
-			if (ws == null) return;
+			if (ws == null || ws.isClosed()) return;
 			ws.send(Json.getNew()
 					.valueOf(new GamaServerMessage(GamaServerMessage.Type.SimulationStatus, state.name(), "0"))
 					.toString());
