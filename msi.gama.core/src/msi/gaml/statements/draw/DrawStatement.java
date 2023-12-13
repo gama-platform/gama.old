@@ -35,7 +35,6 @@ import java.util.WeakHashMap;
 import msi.gama.common.interfaces.IDrawDelegate;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -397,25 +396,15 @@ public class DrawStatement extends AbstractStatementSequence {
 		final IGraphics g = scope.getGraphics();
 		if (scope.interrupted() || g == null || scope.getAgent() == null) return null;
 		try {
-			IDrawDelegate executer = (IDrawDelegate) getFacet("delegate").value(scope);
-
-			final IExpression item = getFacet(IKeyword.GEOMETRY);
-			// final IType itemType = item.getGamlType();
-			// for (Entry<IType, IDrawDelegate> entry : DELEGATES.entrySet()) {
-			// if (entry.getKey().isAssignableFrom(itemType)) {
-			// executer = entry.getValue();
-			// break;
-			// }
-			// }
-			if (executer == null)
-				throw GamaRuntimeException.error("No drawer found to draw " + StringUtils.toGaml(item, false), scope);
+			if (delegate == null) { delegate = (IDrawDelegate) getFacet("delegate").value(scope); }
 			DrawingData d = data.get(g);
 			if (d == null) {
 				d = new DrawingData(this);
 				data.put(g, d);
 			}
 			d.refresh(scope);
-			final Rectangle2D result = executer.executeOn(scope, d, item, getFacet(BEGIN_ARROW), getFacet(END_ARROW));
+			final IExpression item = getFacet(IKeyword.GEOMETRY);
+			final Rectangle2D result = delegate.executeOn(scope, d, item, getFacet(BEGIN_ARROW), getFacet(END_ARROW));
 			if (result != null) { g.accumulateTemporaryEnvelope(result); }
 			return result;
 		} catch (final GamaRuntimeException e) {
