@@ -65,7 +65,16 @@ class JsonGamaHandler extends JsonHandler<JsonArray, JsonObject> implements IJso
 	}
 
 	@Override
-	public void endNumber(final String string, final boolean isFloat) {
+	public void endNumber(final String string, final boolean isStructurallyFloat) {
+		boolean isFloat = isStructurallyFloat;
+		if (!isFloat) {
+			try {
+				Integer.parseInt(string);
+			} catch (NumberFormatException e) {
+				isFloat = true;
+				// see issue #3945
+			}
+		}
 		value = isFloat ? new JsonFloat(string) : new JsonInt(string);
 	}
 

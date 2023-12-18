@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * GamaIntegerType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.types;
@@ -78,10 +78,6 @@ public class GamaIntegerType extends GamaType<Integer> {
 				if (param instanceof Integer) { radix = (Integer) param; }
 				return Integer.parseInt(n, radix);
 			} catch (final NumberFormatException e) {
-				// for ( Character c : n.toCharArray() ) {
-				// System.out.printf("U+%04x ", (int) c);
-				// }
-				// throw GamaRuntimeException.create(e);
 				// Addresses Issue 846 by providing a way to continue the
 				// casting into an int
 				Double d = 0d;
