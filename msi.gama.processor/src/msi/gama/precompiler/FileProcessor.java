@@ -31,17 +31,17 @@ public class FileProcessor extends ElementProcessor<file> {
 
 	@Override
 	public void createElement(final StringBuilder sb, final ProcessorContext context, final Element e, final file f) {
-		verifyDoc(context, e, "file declaration " + f.name(), f);
+		String name = f.name();
+		verifyDoc(context, e, "file declaration " + name, f);
 		final String clazz = rawNameOf(context, e.asType());
-		sb.append(in).append("_file(").append(toJavaString(f.name())).append(',').append(toClassObject(clazz))
-				.append(',');
+		sb.append(in).append("_file(").append(toJavaString(name)).append(',').append(toClassObject(clazz)).append(',');
 		buildUnaryFileConstructor(sb, clazz);
 		sb.append(",").append(f.buffer_type()).append(",").append(f.buffer_index()).append(",")
 				.append(f.buffer_content()).append(",");
 		toArrayOfStrings(f.extensions(), sb).append(");");
-		sb.append(in).append("_operator(S(").append(toJavaString("is_" + f.name()))
-				.append("),null,I(0),B,true,3,0,0,0,").append("(s,o)-> { return GamaFileType.verifyExtension(")
-				.append(toJavaString(f.name())).append(",(String)o[0]);}, false);");
+		sb.append(in).append("_operator(S(").append(toJavaString("is_" + name)).append("),null,I(0),B,true,3,0,0,0,")
+				.append("(s,o)-> { return GamaFileType.verifyExtension(").append(toJavaString(name))
+				.append(",Cast.asString(s, o[0]));}, false);");
 		for (final Element m : e.getEnclosedElements()) {
 			if (m.getKind() == ElementKind.CONSTRUCTOR) {
 				final List<? extends VariableElement> argParams = ((ExecutableElement) m).getParameters();
@@ -50,7 +50,7 @@ public class FileProcessor extends ElementProcessor<file> {
 				// If the first parameter is not IScope, we consider it is not a constructor usable in GAML
 				final String scope = rawNameOf(context, argParams.get(0).asType());
 				if (!scope.contains("IScope")) { continue; }
-				verifyDoc(context, m, "constructor of " + f.name(), null);
+				verifyDoc(context, m, "constructor of " + name, null);
 				final String[] args = new String[n - 1];
 				int indexOfIType = -1;
 				for (int i = 1; i < n; i++) {
@@ -60,8 +60,7 @@ public class FileProcessor extends ElementProcessor<file> {
 				}
 				final int content = indexOfIType == -1 ? ITypeProvider.NONE
 						: ITypeProvider.DENOTED_TYPE_AT_INDEX + indexOfIType + 1;
-				writeCreateFileOperator(context, sb, f.name(), clazz, args, content, f.buffer_content(),
-						f.buffer_index());
+				writeCreateFileOperator(context, sb, name, clazz, args, content, f.buffer_content(), f.buffer_index());
 			}
 		}
 	}

@@ -35,21 +35,12 @@ experiment visu type: gui {
 		display map4 {
 			grid cell4 border:#grey;
 			species dummy;
-			graphics the_graph {
-				draw c_graph4 color:#black;
-			}
 		}	
 		display map6 {
 			grid cell6 border:#grey;
-			graphics the_graph {
-				draw c_graph6 color:#black;
-			}
 		}
 		display map8 {
 			grid cell8 border:#grey;
-			graphics the_graph {
-				draw c_graph8 color:#black;
-			}
 		}
 	}	
 }

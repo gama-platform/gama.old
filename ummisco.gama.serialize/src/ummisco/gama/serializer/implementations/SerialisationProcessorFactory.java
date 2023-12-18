@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
+
 /**
  * A factory for creating SerialisationImplementation objects.
  *

@@ -47,6 +47,9 @@ public class GamaServerExperimentController extends AbstractExperimentController
 	/** The execution thread. */
 	public MyRunnable executionThread;
 
+	/** The job. */
+	private final GamaServerExperimentJob _job;
+
 	/**
 	 * The Class OwnRunnable.
 	 */
@@ -97,9 +100,6 @@ public class GamaServerExperimentController extends AbstractExperimentController
 			}
 		}
 	}
-
-	/** The job. */
-	public GamaServerExperimentJob _job;
 
 	/**
 	 * Instantiates a new experiment controller.
@@ -161,31 +161,31 @@ public class GamaServerExperimentController extends AbstractExperimentController
 			case _RELOAD:
 
 				try {
-
-					experiment.dispose();
-					_job.simulator.dispose();
-
-					_job.loadAndBuildWithJson(parameters, stopCondition);
-					executionThread = null;
-					commandThread.interrupt();
-					commandThread = null;
-					executionThread = new MyRunnable(_job);
-					commandThread = new Thread(() -> {
-						while (acceptingCommands) {
-							try {
-								processUserCommand(commands.take());
-							} catch (final Exception e) {}
-						}
-					}, "Front end controller");
-					commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
-					try {
-						lock.acquire();
-					} catch (final InterruptedException e) {}
-					experimentAlive = true;
-					acceptingCommands = true;
-					disposing = false;
-					commandThread.start();
-					_job.server.execute(executionThread);
+					experiment.reload();
+//					experiment.dispose();
+//					_job.simulator.dispose();
+//
+//					_job.loadAndBuildWithJson(parameters, stopCondition);
+//					executionThread = null;
+//					commandThread.interrupt();
+//					commandThread = null;
+//					executionThread = new MyRunnable(_job);
+//					commandThread = new Thread(() -> {
+//						while (acceptingCommands) {
+//							try {
+//								processUserCommand(commands.take());
+//							} catch (final Exception e) {}
+//						}
+//					}, "Front end controller");
+//					commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+//					try {
+//						lock.acquire();
+//					} catch (final InterruptedException e) {}
+//					experimentAlive = true;
+//					acceptingCommands = true;
+//					disposing = false;
+//					commandThread.start();
+//					_job.server.execute(executionThread);
 
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
@@ -200,6 +200,10 @@ public class GamaServerExperimentController extends AbstractExperimentController
 				} finally {
 					// scope.getGui().updateExperimentState(scope);
 				}
+				break;
+			case _CLOSE:
+				break;
+			default:
 				break;
 		}
 	}
@@ -289,11 +293,24 @@ public class GamaServerExperimentController extends AbstractExperimentController
 		}
 	}
 
-	/**
-	 * Pause.
-	 */
-	public void pause() {
+	@Override
+	public void processStep(final boolean andWait) {
 		paused = true;
+		if (andWait) {
+			_job.doStep();
+		} else {
+			super.processStep(andWait);
+		}
+	}
+
+	@Override
+	public void processBack(final boolean andWait) {
+		paused = true;
+		if (andWait) {
+			_job.doBackStep();
+		} else {
+			super.processBack(andWait);
+		}
 	}
 
 }

@@ -213,13 +213,21 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return MapExpression.create(elements);
 	}
 
-	@Override
-	public boolean hasOperator(final String op, final IExpression... args) {
-		// If arguments are invalid, we have no match
-		if (args == null || args.length == 0) return false;
+	/**
+	 * Checks for operator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param op
+	 *            the op
+	 * @param args
+	 *            the args
+	 * @return true, if successful
+	 * @date 14 nov. 2023
+	 */
+	private boolean hasOperator(final String op, final IExpression... args) {
+		// If arguments are invalid or the operator is not known we have no match
+		if (args == null || args.length == 0 || !GAML.OPERATORS.containsKey(op)) return false;
 		for (final IExpression exp : args) { if (exp == null) return false; }
-		// If the operator is not known, we have no match
-		if (!GAML.OPERATORS.containsKey(op)) return false;
 		return hasOperator(op, new Signature(args));
 	}
 
@@ -261,17 +269,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
 
-		if (!hasOperator(op, args)) {
-			final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
-			final Signature userSignature = new Signature(args).simplified();
-			StringBuilder msg = new StringBuilder("No operator found for applying '").append(op).append("' to ")
-					.append(userSignature);
-			if (ops != null) {
-				msg.append(" (operators available for ").append(Arrays.toString(ops.keySet().toArray())).append(")");
-			}
-			context.error(msg.toString(), IGamlIssue.UNMATCHED_OPERANDS, eObject);
-			return null;
-		}
+		if (!hasOperator(op, args)) return emitError(op, context, eObject, args);
 		// We get the possible sets of types registered in OPERATORS
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		// We create the signature corresponding to the arguments
@@ -324,6 +322,34 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 		final OperatorProto proto = ops.get(userSignature);
 		return createDirectly(context, eObject, proto, args);
+	}
+
+	/**
+	 * Emit error.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param op
+	 *            the op
+	 * @param context
+	 *            the context
+	 * @param eObject
+	 *            the e object
+	 * @param args
+	 *            the args
+	 * @return the i expression
+	 * @date 14 nov. 2023
+	 */
+	private IExpression emitError(final String op, final IDescription context, final EObject eObject,
+			final IExpression... args) {
+		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
+		final Signature userSignature = new Signature(args).simplified();
+		StringBuilder msg =
+				new StringBuilder("No operator found for applying '").append(op).append("' to ").append(userSignature);
+		if (ops != null) {
+			msg.append(" (operators available for ").append(Arrays.toString(ops.keySet().toArray())).append(")");
+		}
+		context.error(msg.toString(), IGamlIssue.UNMATCHED_OPERANDS, eObject);
+		return null;
 	}
 
 	@Override

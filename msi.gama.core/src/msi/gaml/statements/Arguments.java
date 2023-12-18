@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Arguments.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * Arguments.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -14,6 +13,7 @@ import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gama.util.IMap;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.expressions.IExpression;
 
@@ -31,7 +31,8 @@ public class Arguments extends Facets {
 	/**
 	 * Instantiates a new arguments.
 	 *
-	 * @param args the args
+	 * @param args
+	 *            the args
 	 */
 	public Arguments(final Arguments args) {
 		super(args);
@@ -41,8 +42,22 @@ public class Arguments extends Facets {
 	/**
 	 * Instantiates a new arguments.
 	 *
-	 * @param caller the caller
-	 * @param args the args
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param myArgs
+	 *            the my args
+	 * @date 26 nov. 2023
+	 */
+	public Arguments(final IMap<String, Object> myArgs) {
+		myArgs.forEach((k, v) -> put(k, ConstantExpressionDescription.create(v)));
+	}
+
+	/**
+	 * Instantiates a new arguments.
+	 *
+	 * @param caller
+	 *            the caller
+	 * @param args
+	 *            the args
 	 */
 	/*
 	 * A constructor that takes a caller and arguments defined as a map <string, values>. Values are then transformed
@@ -62,16 +77,15 @@ public class Arguments extends Facets {
 	public Arguments cleanCopy() {
 		final Arguments result = new Arguments();
 		result.setCaller(caller.get());
-		for (final Facet f : facets) {
-			result.facets.add(f.cleanCopy());
-		}
+		for (final Facet f : facets) { result.facets.add(f.cleanCopy()); }
 		return result;
 	}
 
 	/**
 	 * Resolve against.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the arguments
 	 */
 	public Arguments resolveAgainst(final IScope scope) {
@@ -87,7 +101,8 @@ public class Arguments extends Facets {
 	/**
 	 * Sets the caller.
 	 *
-	 * @param caller the new caller
+	 * @param caller
+	 *            the new caller
 	 */
 	public void setCaller(final IAgent caller) {
 		this.caller.set(caller);
@@ -98,9 +113,7 @@ public class Arguments extends Facets {
 	 *
 	 * @return the caller
 	 */
-	public IAgent getCaller() {
-		return caller.get();
-	}
+	public IAgent getCaller() { return caller.get(); }
 
 	@Override
 	public void dispose() {

@@ -16,6 +16,7 @@ import java.nio.file.Path;
 
 import msi.gama.common.geometry.Envelope3D;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
@@ -27,7 +28,6 @@ import msi.gama.util.file.GamaFile;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * The Class GamaSavedSimulationFile.

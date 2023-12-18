@@ -252,7 +252,7 @@ public class NetworkSkill extends MessagingSkill {
 			} else // if(protocol.equals( INetworkSkill.MQTT))
 			{
 				DEBUG.OUT("create MQTT serveur " + login + " " + password);
-				connector = new MQTTConnector(scope);
+				connector = new MQTTConnector(scope, raw_package);
 				if (serverURL != null) {
 					connector.configure(IConnector.SERVER_URL, serverURL);
 					if (port == 0) {

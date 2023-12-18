@@ -112,7 +112,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		isFunction,
 
 		/** The is batch. */
-		isBatch,
+		// isBatch,
 
 		/** The is memorize. */
 		isMemorize
@@ -753,6 +753,22 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		if (d == null || d == this) return false;
 		if (d.getKeyword().equals(ancestor)) return true;
 		return d.isIn(ancestor);
+	}
+
+	/**
+	 * Gets the parent with keyword.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ancestor
+	 *            the ancestor
+	 * @return the parent with keyword
+	 * @date 12 déc. 2023
+	 */
+	default IDescription getParentWithKeyword(final String ancestor) {
+		IDescription d = this.getEnclosingDescription();
+		if (d == null || d == this) return null;
+		if (d.getKeyword().equals(ancestor)) return d;
+		return d.getParentWithKeyword(ancestor);
 	}
 
 	/**

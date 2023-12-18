@@ -5987,7 +5987,7 @@ public abstract class Spatial {
 		 *
 		 * @param scope
 		 *            the scope
-		 * @param agent
+		 * @param source
 		 *            the agent
 		 * @param distance
 		 *            the distance
@@ -6009,10 +6009,18 @@ public abstract class Spatial {
 				see = { "neighbors_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 						"agent_closest_to", "at_distance" })
 		@no_test // already done in Spatial tests Models
-		public static IList neighbors_at(final IScope scope, final IShape agent, final Double distance) {
-			return _neighbors(scope,
-					agent instanceof IAgent ? In.list(scope, ((IAgent) agent).getPopulation()) : Different.with(),
-					agent, distance);
+		public static IList neighbors_at(final IScope scope, final IShape source, final Double distance) {
+			ITopology topology;
+			IAgentFilter filter;
+			// See issue #3926 : distinguish when the source is an agent or a simple geometry
+			if (source instanceof IAgent agent) {
+				topology = agent.getTopology();
+				filter = In.list(scope, agent.getPopulation());
+			} else {
+				topology = scope.getTopology();
+				filter = Different.with();
+			}
+			return _neighbors(scope, filter, source, distance, topology);
 		}
 
 		/**

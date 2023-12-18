@@ -81,6 +81,23 @@ public record SerialisedAgent(int index, String species, Map<String, Object> att
 	}
 
 	/**
+	 * Of.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param index
+	 *            the index
+	 * @param species
+	 *            the species
+	 * @param attributes
+	 *            the attributes
+	 * @return the serialised agent
+	 * @date 7 nov. 2023
+	 */
+	public static SerialisedAgent of(final int index, final String species, final Map<String, Object> attributes) {
+		return new SerialisedAgent(index, species, attributes, Collections.EMPTY_MAP);
+	}
+
+	/**
 	 * Filter populations.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)

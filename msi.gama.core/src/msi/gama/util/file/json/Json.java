@@ -28,7 +28,7 @@ import msi.gaml.types.Types;
  * get rid of the static features, become stateful (i.e. add a serialisation context to keep references, be thread safe
  * and compute statistics), and add some useful features for GAMA (typedObject(...), etc.)
  */
-public final class Json {
+public final class Json implements IJsonConstants {
 
 	/**
 	 * Gets a new stateful instance of Json.
@@ -38,36 +38,6 @@ public final class Json {
 	 * @date 31 oct. 2023
 	 */
 	public static Json getNew() { return new Json(); }
-
-	/** The Constant GAML_TYPE_LABEL. */
-	public static final String GAML_TYPE_LABEL = "gaml_type";
-
-	/** The Constant GAML_SPECIES_LABEL. */
-	public static final String GAML_SPECIES_LABEL = "gaml_species";
-
-	/** The Constant GAMA_OBJECT_LABEL. */
-	public static final String CONTENTS_WITH_REFERENCES_LABEL = "gama_contents";
-
-	/** The Constant AGENT_REFERENCE_LABEL. */
-	public static final String AGENT_REFERENCE_LABEL = "agent_reference";
-
-	/** The Constant REFERENCE_TABLE_LABEL. */
-	public static final String REFERENCE_TABLE_LABEL = "gama_references";
-
-	/**
-	 * Represents the JSON literal <code>null</code>.
-	 */
-	public static final JsonValue NULL = new JsonNull();
-
-	/**
-	 * Represents the JSON literal <code>true</code>.
-	 */
-	public static final JsonValue TRUE = new JsonTrue();
-
-	/**
-	 * Represents the JSON literal <code>false</code>.
-	 */
-	public static final JsonValue FALSE = new JsonFalse();
 
 	/** The initial. */
 	boolean firstPass = true;
@@ -123,14 +93,26 @@ public final class Json {
 			}
 		} finally {
 			if (initial) {
-				if (!agentReferences.isEmpty()) {
-					result = object(CONTENTS_WITH_REFERENCES_LABEL, result);
-					((JsonObject) result).add(REFERENCE_TABLE_LABEL, agentReferences);
-				}
+				if (!agentReferences.isEmpty()) { result = contents(result, agentReferences); }
 				firstPass = true; // in case the encoder is reused
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Contents.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param contents
+	 *            the contents
+	 * @param references
+	 *            the references
+	 * @return the json gama contents object
+	 * @date 6 nov. 2023
+	 */
+	public JsonGamaContentsObject contents(final JsonValue contents, final JsonObject references) {
+		return new JsonGamaContentsObject(contents, references, this);
 	}
 
 	/**
@@ -336,6 +318,19 @@ public final class Json {
 	}
 
 	/**
+	 * Reference.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param ref
+	 *            the ref
+	 * @return the json object
+	 * @date 5 nov. 2023
+	 */
+	public JsonReferenceObject reference(final String ref) {
+		return new JsonReferenceObject(ref, this);
+	}
+
+	/**
 	 * Creates a new empty JsonObject. This is equivalent to creating a new JsonObject using the constructor.
 	 *
 	 * @return a new empty JSON object
@@ -487,7 +482,7 @@ public final class Json {
 	 */
 	public JsonValue parse(final String string) {
 		if (string == null) throw new NullPointerException("string is null");
-		DefaultHandler handler = new DefaultHandler(this);
+		JsonGamaHandler handler = new JsonGamaHandler(this);
 		new JsonParser(handler).parse(string);
 		return handler.getValue();
 	}
@@ -510,7 +505,7 @@ public final class Json {
 	 */
 	public JsonValue parse(final Reader reader) throws IOException {
 		if (reader == null) throw new NullPointerException("reader is null");
-		DefaultHandler handler = new DefaultHandler(this);
+		JsonGamaHandler handler = new JsonGamaHandler(this);
 		new JsonParser(handler).parse(reader);
 		return handler.getValue();
 	}

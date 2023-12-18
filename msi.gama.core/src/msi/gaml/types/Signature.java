@@ -19,24 +19,19 @@ import java.util.List;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class Signature.
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 
-public class Signature {
-
-	static {
-		DEBUG.ON();
-	}
+public record Signature(IType[] list) {
 
 	/** The empty classes. */
 	static Class[] EMPTY_CLASSES = {};
 
-	/** The list. */
-	final IType[] list;
+	/** The empty types. */
+	static IType[] EMPTY_TYPES = {};
 
 	/**
 	 * Var arg from.
@@ -56,28 +51,39 @@ public class Signature {
 	 *            the method
 	 */
 	public Signature(final Executable method) {
-		if (method == null) {
-			list = new IType[] {};
-		} else {
-			List<IType<?>> types = new ArrayList();
-			Class[] classes = method.getParameterTypes();
-			boolean isStatic = Modifier.isStatic(method.getModifiers());
-			boolean isConstructor = method instanceof Constructor;
-			if (!isStatic && !isConstructor) { types.add(Types.get(method.getDeclaringClass())); }
-			for (Class c : classes) { if (c != IScope.class) { types.add(Types.get(c)); } }
-			list = types.toArray(new IType[types.size()]);
-		}
-		// DEBUG.OUT("Signature from " + method + " = " + this.toString());
+		this(extractTypesFrom(method));
 	}
 
 	/**
 	 * Instantiates a new signature.
 	 *
-	 * @param types
-	 *            the types
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param t
+	 *            the t
+	 * @date 8 nov. 2023
 	 */
-	public Signature(final IType... types) {
-		list = types;
+	public Signature(final IType t) {
+		this(new IType[] { t });
+	}
+
+	/**
+	 * Extract types from.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param method
+	 *            the method
+	 * @return the i type[]
+	 * @date 8 nov. 2023
+	 */
+	private static IType[] extractTypesFrom(final Executable method) {
+		if (method == null) return EMPTY_TYPES;
+		List<IType<?>> types = new ArrayList();
+		Class[] classes = method.getParameterTypes();
+		boolean isStatic = Modifier.isStatic(method.getModifiers());
+		boolean isConstructor = method instanceof Constructor;
+		if (!isStatic && !isConstructor) { types.add(Types.get(method.getDeclaringClass())); }
+		for (Class c : classes) { if (c != IScope.class) { types.add(Types.get(c)); } }
+		return types.toArray(new IType[types.size()]);
 	}
 
 	/**
@@ -87,7 +93,7 @@ public class Signature {
 	 *            the types
 	 */
 	public Signature(final int[] types) {
-		list = new IType[types.length];
+		this(new IType[types.length]);
 		for (int i = 0; i < list.length; i++) { list[i] = Types.get(types[i]); }
 	}
 
@@ -98,7 +104,7 @@ public class Signature {
 	 *            the objects
 	 */
 	public Signature(final IExpression... objects) {
-		list = new IType[objects.length];
+		this(new IType[objects.length]);
 		for (int i = 0; i < list.length; i++) {
 			final IExpression o = objects[i];
 			list[i] = o == null ? Types.NO_TYPE : o.getGamlType();
@@ -112,7 +118,7 @@ public class Signature {
 	 *            the objects
 	 */
 	public Signature(final List<IExpression> objects) {
-		list = new IType[objects.size()];
+		this(new IType[objects.size()]);
 		for (int i = 0; i < list.length; i++) {
 			final IExpression o = objects.get(i);
 			list[i] = o == null ? Types.NO_TYPE : o.getGamlType();
@@ -126,7 +132,7 @@ public class Signature {
 	 *            the classes
 	 */
 	public Signature(final Class... classes) {
-		list = new IType[classes.length];
+		this(new IType[classes.length]);
 		for (int i = 0; i < list.length; i++) { list[i] = Types.get(classes[i]); }
 
 	}

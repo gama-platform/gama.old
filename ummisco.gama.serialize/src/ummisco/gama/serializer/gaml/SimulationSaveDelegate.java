@@ -17,13 +17,13 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import msi.gama.common.interfaces.ISaveDelegate;
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.serializer.implementations.BinarySerialisation;
-import ummisco.gama.serializer.implementations.ISerialisationConstants;
 
 /**
  * The Class SimulationSaveDelegate.

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * StatementRemoteWithChildrenDescription.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * StatementRemoteWithChildrenDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.descriptions;
 
@@ -18,6 +18,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class StatementRemoteWithChildrenDescription.
@@ -26,34 +27,42 @@ import msi.gaml.types.IType;
 public class StatementRemoteWithChildrenDescription extends StatementWithChildrenDescription {
 
 	/** The previous description. */
-	protected IDescription previousDescription;
+	protected IDescription alternateEnclosingDescription;
 
 	/**
 	 * Instantiates a new statement remote with children description.
 	 *
-	 * @param keyword the keyword
-	 * @param superDesc the super desc
-	 * @param cp the cp
-	 * @param hasArgs the has args
-	 * @param source the source
-	 * @param facets the facets
-	 * @param alreadyComputedArgs the already computed args
+	 * @param keyword
+	 *            the keyword
+	 * @param enclosing
+	 *            the enclosing description
+	 * @param children
+	 *            the children to be added to the description
+	 * @param hasArgs
+	 *            whether the description has arguments
+	 * @param source
+	 *            the source of the description (from XText)
+	 * @param facets
+	 *            the facets of the description
+	 * @param alreadyComputedArgs
+	 *            the args that has already been computed
 	 */
-	public StatementRemoteWithChildrenDescription(final String keyword, final IDescription superDesc,
-			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
+	public StatementRemoteWithChildrenDescription(final String keyword, final IDescription enclosing,
+			final Iterable<IDescription> children, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
-		super(keyword, superDesc, cp, hasArgs, source, facets, alreadyComputedArgs);
+		super(keyword, enclosing, children, hasArgs, source, facets, alreadyComputedArgs);
 	}
 
 	@Override
 	public boolean isDocumenting() {
-		return super.isDocumenting() || previousDescription != null && previousDescription.isDocumenting();
+		return super.isDocumenting()
+				|| alternateEnclosingDescription != null && alternateEnclosingDescription.isDocumenting();
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		previousDescription = null;
+		alternateEnclosingDescription = null;
 	}
 
 	@Override
@@ -91,15 +100,15 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 
 	@Override
 	public void setEnclosingDescription(final IDescription desc) {
-		previousDescription = getEnclosingDescription();
+		alternateEnclosingDescription = getEnclosingDescription();
 		super.setEnclosingDescription(desc);
 	}
 
 	@Override
 	public ModelDescription getModelDescription() {
 		ModelDescription result = super.getModelDescription();
-		if (result == null && previousDescription != null) {
-			result = previousDescription.getModelDescription();
+		if (result == null && alternateEnclosingDescription != null) {
+			result = alternateEnclosingDescription.getModelDescription();
 		}
 		return result;
 	}
@@ -107,8 +116,8 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	@Override
 	public IVarDescriptionProvider getDescriptionDeclaringVar(final String name) {
 		IVarDescriptionProvider result = super.getDescriptionDeclaringVar(name);
-		if (result == null && previousDescription != null) {
-			result = previousDescription.getDescriptionDeclaringVar(name);
+		if (result == null && alternateEnclosingDescription != null) {
+			result = alternateEnclosingDescription.getDescriptionDeclaringVar(name);
 		}
 		return result;
 	}
@@ -116,8 +125,8 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	@Override
 	public IDescription getDescriptionDeclaringAction(final String name, final boolean superInvocation) {
 		IDescription result = super.getDescriptionDeclaringAction(name, superInvocation);
-		if (result == null && previousDescription != null) {
-			result = previousDescription.getDescriptionDeclaringAction(name, superInvocation);
+		if (result == null && alternateEnclosingDescription != null) {
+			result = alternateEnclosingDescription.getDescriptionDeclaringAction(name, superInvocation);
 		}
 		return result;
 	}
@@ -137,25 +146,24 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 				addTemp(this, MYSELF, t);
 				previousEnclosingDescription = getEnclosingDescription();
 				setEnclosingDescription(denotedSpecies);
-
-				// FIXME ===> Model Description is lost if we are
-				// dealing
-				// with a built-in species !
+				// FIXME ===> Model Description is lost if we are dealing with a built-in species !
 			}
 		}
+//		else {
+//			DEBUG.LOG("Impossible to push remote context as the denoted species is null in " + this);
+//		}
 		return previousEnclosingDescription;
 	}
 
 	/**
 	 * Pop remote context.
 	 *
-	 * @param previousEnclosingDescription the previous enclosing description
+	 * @param previousEnclosingDescription
+	 *            the previous enclosing description
 	 */
 	public void popRemoteContext(final IDescription previousEnclosingDescription) {
 
-		if (previousEnclosingDescription != null) {
-			setEnclosingDescription(previousEnclosingDescription);
-		}
+		if (previousEnclosingDescription != null) { setEnclosingDescription(previousEnclosingDescription); }
 
 	}
 

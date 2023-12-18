@@ -153,7 +153,7 @@ public class LegacyMeshDrawer extends ObjectDrawer<MeshObject> {
 		finalizeBuffers();
 		gl.pushMatrix();
 		try {
-			applyTranslation(object);
+			// applyTranslation(object);
 			if (object.getAttributes().getScale() != null) {
 				double zScale = object.getAttributes().getScale();
 				gl.scaleBy(1, 1, zScale);

@@ -14,6 +14,7 @@ import java.awt.geom.Rectangle2D;
 
 import msi.gama.runtime.IScope.IGraphicsScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.draw.DrawingData;
 import msi.gaml.types.IType;
@@ -50,5 +51,17 @@ public interface IDrawDelegate {
 	 * @return a GAML type representing the type of the objects this draw delegate expects
 	 */
 	IType<?> typeDrawn();
+
+	/**
+	 * Validate. Called by the draw statement when it is validated. Can perform checks depending on the type of object
+	 * to draw
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param currentDrawStatement
+	 *            the current draw statement
+	 * @param item
+	 * @date 12 déc. 2023
+	 */
+	default void validate(final IDescription currentDrawStatement, final IExpression item) {}
 
 }

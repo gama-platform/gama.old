@@ -36,6 +36,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
+import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.interfaces.IGamlIssue;
@@ -44,6 +45,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.DoStatement.DoSerializer;
 import msi.gaml.statements.DoStatement.DoValidator;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -206,24 +208,23 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		@Override
 		public void validate(final StatementDescription desc) {
 			final String action = desc.getLitteral(ACTION);
-			final boolean isSuperInvocation = desc.isSuperInvocation();
-			SpeciesDescription sd = desc.getSpeciesContext();
-			if (sd != null && isSuperInvocation) {
-				sd = sd.getParent();
-				// if (sd != null && sd.isBuiltIn()) {
-				// desc.error("Action " + action + " cannot be invoked on " + sd.getName(), IGamlIssue.UNKNOWN_ACTION,
-				// ACTION, action, sd.getName());
-				// return;
-				// }
 
-			}
-			if (sd == null) return;
-			// TODO What about actions defined in a macro species (not the
-			// global one, which is filtered before) ?
-			if (!sd.hasAction(action, false)) {
+//			if ("update_outputs".equals(action)) {
+//				DEBUG.LOG("Validating Do " + desc + " in thread " + Thread.currentThread().getName());
+//				TypeDescription tt = (TypeDescription) desc.getDescriptionDeclaringAction(action, false);
+//				if (tt == null) {
+//
+//					desc.getDescriptionDeclaringAction(action, false);
+//				}
+//
+//			}
+			final boolean isSuperInvocation = desc.isSuperInvocation();
+			TypeDescription sd = desc.getSpeciesContext();
+			if (!sd.hasAction(action, isSuperInvocation)) {
 				desc.error("Action " + action + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_ACTION, ACTION,
 						action, sd.getName());
 			}
+			if (isSuperInvocation) { sd = sd.getParent(); }
 			final ActionDescription ad = sd.getAction(action);
 			if (ad instanceof PrimitiveDescription pd) {
 				final String dep = pd.getDeprecated();

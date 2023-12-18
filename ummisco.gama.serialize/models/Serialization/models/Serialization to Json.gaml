@@ -10,8 +10,6 @@ model Json
 
 global {
 	init {
-		write sample(from_json(to_json(square(10))));
-		
 		
 		write "Simple values";
 		write "------------- TO JSON";
@@ -58,12 +56,26 @@ global {
 		write(from_json(to_json({2,2} matrix_with 10,true)));
 		
 		write "Agents";
-		write "-------------";		
+		write "-------------";	
+		// We create 2 sp's	...
 		create sp number: 2 ;
+		// ... make them friends ...
 		sp[0].friend <- sp[1];
 		sp[1].friend <- sp[0];
+		// ... serialise them ...
+		string s <- (to_json(sp[0]));
+		// ... then kill them ...
+		ask sp {
+			do die;
+		}
+		// ... and finally recreate them while asking to recreate an unknown value. 
+		unknown t <- from_json(s);
+		// We verify that t contains the former agent
+		write t = sp(0);
+		// ... and that all sp's have been recreated (as they were friends)
+		write sp.population;
 		write(to_json(sp.population,true));
-		save sp.population to: "../pop.json" rewrite: true;
+//		save sp.population to: "../pop.json" rewrite: true;
 	}
 }
 

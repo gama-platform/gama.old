@@ -10,6 +10,15 @@
  ********************************************************************************************************/
 package msi.gama.runtime.server;
 
+import static msi.gama.runtime.server.ISocketCommand.ESCAPED;
+import static msi.gama.runtime.server.ISocketCommand.EVALUATE;
+import static msi.gama.runtime.server.ISocketCommand.EXPR;
+import static msi.gama.runtime.server.ISocketCommand.NB_STEP;
+import static msi.gama.runtime.server.ISocketCommand.PARAMETERS;
+import static msi.gama.runtime.server.ISocketCommand.STEP;
+import static msi.gama.runtime.server.ISocketCommand.STEPBACK;
+import static msi.gama.runtime.server.ISocketCommand.SYNC;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,14 +31,27 @@ import java.util.List;
 import org.java_websocket.WebSocket;
 
 import msi.gama.common.GamlFileExtension;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
+import msi.gama.metamodel.agent.AgentReference;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.ExecutionResult;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.server.ISocketCommand.CommandException;
+import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.GamlIdiomsProvider;
+import msi.gaml.operators.Cast;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IExecutable;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class DefaultServerCommands.
@@ -50,7 +72,8 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage LOAD(final WebSocket socket, final IMap<String, Object> map) {
+	public static GamaServerMessage LOAD(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
 		final Object modelPath = map.get("model");
 		final Object experiment = map.get("experiment");
 		if (modelPath == null || experiment == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
@@ -91,7 +114,8 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage PLAY(final WebSocket socket, final IMap<String, Object> map) {
+	public static GamaServerMessage PLAY(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
 		GAMA.startFrontmostExperiment(true);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
@@ -107,8 +131,15 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage PAUSE(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.pauseFrontmostExperiment(true);
+	public static GamaServerMessage PAUSE(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		IExperimentPlan plan;
+		try {
+			plan = server.retrieveExperimentPlan(socket, map);
+		} catch (CommandException e) {
+			return e.getResponse();
+		}
+		plan.getController().processPause(true);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -123,8 +154,24 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage STEP(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.stepFrontmostExperiment(false);
+	public static GamaServerMessage STEP(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		IExperimentPlan plan;
+		try {
+			plan = server.retrieveExperimentPlan(socket, map);
+		} catch (CommandException e) {
+			return e.getResponse();
+		}
+		final int nb_step = map.get(NB_STEP) != null ? Integer.parseInt("" + map.get(NB_STEP)) : 1;
+		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
+		for (int i = 0; i < nb_step; i++) {
+			try {
+				plan.getController().processStep(sync);
+			} catch (RuntimeException e) {
+				DEBUG.OUT(e.getStackTrace());
+				return new CommandResponse(GamaServerMessage.Type.GamaServerError, e, map, false);
+			}
+		}
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -139,8 +186,24 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage BACK(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.stepBackFrontmostExperiment(false);
+	public static GamaServerMessage BACK(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		IExperimentPlan plan;
+		try {
+			plan = server.retrieveExperimentPlan(socket, map);
+		} catch (CommandException e) {
+			return e.getResponse();
+		}
+		final int nb_step = map.get(NB_STEP) != null ? Integer.parseInt(map.get(NB_STEP).toString()) : 1;
+		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
+		for (int i = 0; i < nb_step; i++) {
+			try {
+				plan.getController().processBack(sync);
+			} catch (RuntimeException e) {
+				DEBUG.OUT(e.getStackTrace());
+				return new CommandResponse(GamaServerMessage.Type.GamaServerError, e, map, false);
+			}
+		}
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -155,7 +218,8 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage STOP(final WebSocket socket, final IMap<String, Object> map) {
+	public static GamaServerMessage STOP(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
 		GAMA.closeAllExperiments(true, false);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
@@ -171,8 +235,22 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage RELOAD(final WebSocket socket, final IMap<String, Object> map) {
-		GAMA.reloadFrontmostExperiment(true);
+	public static GamaServerMessage RELOAD(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		IExperimentPlan plan;
+		try {
+			plan = server.retrieveExperimentPlan(socket, map);
+		} catch (CommandException e) {
+			return e.getResponse();
+		}
+		IList params = (IList) map.get(PARAMETERS);
+		// checking the parameters' format
+		var parametersError = CommandExecutor.checkLoadParameters(params, map);
+		if (parametersError != null) return parametersError;
+		plan.setParameterValues(params);
+		plan.setStopCondition((String) map.get(ISocketCommand.UNTIL));
+		// actual reload
+		plan.getController().processReload(true);
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 	}
 
@@ -187,21 +265,28 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage EVAL(final WebSocket socket, final IMap<String, Object> map) {
-		final String entered = map.get("expr").toString().trim();
-		final boolean escaped = map.get("escaped") == null ? false : Boolean.parseBoolean("" + map.get("escaped"));
+	public static GamaServerMessage EVAL(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		IExperimentPlan plan;
+		try {
+			plan = server.retrieveExperimentPlan(socket, map);
+		} catch (CommandException e) {
+			return e.getResponse();
+		}
+		final Object expr = map.get(EXPR);
+		if (expr == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
+				"For " + EVALUATE + ", mandatory parameter is: " + EXPR, map, false);
+		String entered = expr.toString().trim();
 		String res = null;
-		ITopLevelAgent agent = GAMA.getExperimentAgent();
+		ITopLevelAgent agent = plan.getAgent();
 		if (agent == null) { agent = GAMA.getPlatformAgent(); }
-		if (agent.dead()) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
-				"Experiment already closed", map, false);
 		final IScope scope = agent.getScope().copy("in web socket");
 		if (entered.startsWith("?")) {
 			res = GamlIdiomsProvider.getDocumentationOn(entered.substring(1));
 		} else {
 			try {
-				final var expr = GAML.compileExpression(entered, agent, false);
-				if (expr != null) { res = "" + scope.evaluate(expr, agent).getValue(); }
+				final var expression = GAML.compileExpression(entered, agent, false);
+				if (expression != null) { res = "" + scope.evaluate(expression, agent).getValue(); }
 			} catch (final Exception e) {
 				// error = true;
 				res = "> Error: " + e.getMessage();
@@ -211,11 +296,58 @@ public class DefaultServerCommands {
 		}
 		if (res == null || res.length() == 0 || res.startsWith("> Error: "))
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, res, map, false);
+		final boolean escaped = map.get(ESCAPED) == null ? false : Boolean.parseBoolean("" + map.get(ESCAPED));
 		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, res, map, escaped);
 	}
 
 	/**
-	 * Download.
+	 * Ask.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param socket
+	 *            the socket
+	 * @param map
+	 *            the map
+	 * @return the gama server message
+	 * @date 26 nov. 2023
+	 */
+	public static GamaServerMessage ASK(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		IExperimentPlan plan;
+		try {
+			plan = server.retrieveExperimentPlan(socket, map);
+		} catch (CommandException e) {
+			return e.getResponse();
+		}
+		final String action = map.get(IKeyword.ACTION) != null ? map.get(IKeyword.ACTION).toString().trim() : null;
+		if (action == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
+				"For " + ISocketCommand.ASK + ", mandatory parameter is: 'action'", map, false);
+		final String ref = map.get(IKeyword.AGENT) != null ? map.get(IKeyword.AGENT).toString().trim() : null;
+		final ExperimentAgent exp = plan.getAgent();
+		IScope scope = exp.getScope();
+		final IAgent agent = ref == null ? exp : AgentReference.of(ref).getReferencedAgent(scope);
+		if (agent == null) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+				"Agent does not exist: " + ref, map, false);
+		final IExecutable exec = agent.getSpecies().getAction(action);
+		if (exec == null) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+				"Action " + action + " does not exist in agent " + ref, map, false);
+		// TODO Verify that it is not a JSON string...Otherwise, use Json.getNew().parse(...)
+		final IMap<String, Object> args = Cast.asMap(scope, map.get("args"), false);
+		ExecutionResult er = ExecutionResult.PASSED;
+		try {
+			er = agent.getScope().execute(exec, agent, true, new Arguments(args));
+		} catch (GamaRuntimeException e) {
+			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, e.getMessage(), map, false);
+		}
+		if (!er.passed()) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+				"Error in the execution of " + action, map, false);
+		final boolean escaped = map.get(ISocketCommand.ESCAPED) == null ? false
+				: Boolean.parseBoolean("" + map.get(ISocketCommand.ESCAPED));
+		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, escaped);
+	}
+
+	/**
+	 * n Download.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param socket
@@ -225,8 +357,9 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage DOWNLOAD(final WebSocket socket, final IMap<String, Object> map) {
-		final String filepath = map.containsKey("file") ? map.get("file").toString() : null;
+	public static CommandResponse DOWNLOAD(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		final String filepath = map.containsKey(IKeyword.FILE) ? map.get(IKeyword.FILE).toString() : null;
 		if (filepath == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
 				"For 'download', mandatory parameter is: 'file'", map, false);
 		try (FileInputStream fis = new FileInputStream(new File(filepath));
@@ -255,7 +388,8 @@ public class DefaultServerCommands {
 	 * @return the command response
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage UPLOAD(final WebSocket socket, final IMap<String, Object> map) {
+	public static GamaServerMessage UPLOAD(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
 		final String filepath = map.containsKey("file") ? map.get("file").toString() : null;
 		final String content = map.containsKey("content") ? map.get("content").toString() : null;
 		if (filepath == null || content == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
@@ -280,7 +414,8 @@ public class DefaultServerCommands {
 	 * @return the gama server message
 	 * @date 15 oct. 2023
 	 */
-	public static GamaServerMessage EXIT(final WebSocket socket, final IMap<String, Object> map) {
+	public static GamaServerMessage EXIT(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
 		try {
 			return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, "", map, false);
 		} finally {

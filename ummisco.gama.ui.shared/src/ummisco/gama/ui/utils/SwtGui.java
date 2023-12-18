@@ -61,8 +61,6 @@ import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.runtime.server.CommandExecutor;
-import msi.gama.runtime.server.ISocketCommand;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
@@ -689,8 +687,5 @@ public class SwtGui implements IGui {
 		int zoom = WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().getPrimaryMonitor().getZoom());
 		return zoom > 100;
 	}
-
-	@Override
-	public Map<String, ISocketCommand> getServerCommands() { return CommandExecutor.getDefaultCommands(); }
 
 }

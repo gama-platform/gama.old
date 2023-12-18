@@ -61,6 +61,20 @@ import ummisco.gama.dev.utils.DEBUG;
 /**
  * The Class OperatorProto.
  */
+
+/**
+ * The Class OperatorProto.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 9 déc. 2023
+ */
+
+/**
+ * The Class OperatorProto.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 9 déc. 2023
+ */
 @SuppressWarnings ({ "rawtypes" })
 public class OperatorProto extends AbstractProto implements IVarDescriptionUser {
 
@@ -84,7 +98,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	public final boolean isVarOrField, canBeConst, iterator;
 
 	/** The semantic validator. */
-	private IValidator semanticValidator = null;
+	private IValidator semanticValidator;
 
 	/** The return type. */
 	public final IType returnType;
@@ -269,8 +283,8 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	 *            the expected content type
 	 */
 	public OperatorProto(final String name, final AnnotatedElement method, final GamaGetter helper,
-			final boolean canBeConst, final boolean isVarOrField, /* final int doc, */final int returnType,
-			final Class signature, final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
+			final boolean canBeConst, final boolean isVarOrField, final int returnType, final Class signature,
+			final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
 			final int[] expectedContentType) {
 		this(name, method == null ? signature : method, helper, canBeConst, isVarOrField, Types.get(returnType),
 				new Signature(signature), typeProvider, contentTypeProvider, keyTypeProvider, ITypeProvider.NONE,
@@ -402,8 +416,9 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 			final ICollector<IVarDescriptionUser> alreadyProcessed, final ICollector<VariableDescription> result) {
 		if (alreadyProcessed.contains(this)) return;
 		alreadyProcessed.add(this);
-		for (final String s : getDependencies()) {
-			if (species.hasAttribute(s)) { result.add(species.getAttribute(s)); }
+		String[] deps = getDependencies();
+		if (deps != null) {
+			for (final String s : deps) { if (species.hasAttribute(s)) { result.add(species.getAttribute(s)); } }
 		}
 	}
 
@@ -432,13 +447,17 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	 * @return the validator
 	 */
 	public IValidator getValidator() {
-		if (semanticValidator == null && support != null) {
-			final validator val = support.getAnnotation(validator.class);
-			try {
-				semanticValidator = val != null ? val.value().getConstructor().newInstance() : IValidator.NULL;
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				DEBUG.ERR("Error in creating the validator for operator " + name + " on method " + support);
+		if (semanticValidator == null) {
+			if (support != null) {
+				final validator val = support.getAnnotation(validator.class);
+				try {
+					semanticValidator = val == null ? IValidator.NULL : val.value().getConstructor().newInstance();
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					DEBUG.ERR("Error in creating the validator for operator " + name + " on method " + support);
+				}
+			} else {
+				semanticValidator = IValidator.NULL;
 			}
 		}
 		return semanticValidator;
@@ -450,11 +469,14 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	 * @return the dependencies
 	 */
 	public String[] getDependencies() {
-		if (depends_on == null && support != null) {
-			final depends_on d = support.getAnnotation(depends_on.class);
-			depends_on = d != null ? d.value() : EMPTY_DEPS;
+		if (depends_on == null) {
+			if (support != null) {
+				final depends_on d = support.getAnnotation(depends_on.class);
+				depends_on = d == null ? EMPTY_DEPS : d.value();
+			} else {
+				depends_on = EMPTY_DEPS;
+			}
 		}
 		return depends_on;
 	}
-
 }

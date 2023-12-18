@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -32,6 +33,9 @@ public interface IExperimentAgentCreator {
 		/** The plugin. */
 		private final String name, plugin;
 
+		/** The clazz. */
+		private final Class<? extends IExperimentAgent> clazz;
+
 		/**
 		 * Instantiates a new experiment agent description.
 		 *
@@ -42,8 +46,9 @@ public interface IExperimentAgentCreator {
 		 * @param plugin
 		 *            the plugin
 		 */
-		public ExperimentAgentDescription(final IExperimentAgentCreator original, final String name,
-				final String plugin) {
+		public ExperimentAgentDescription(final IExperimentAgentCreator original,
+				final Class<? extends IExperimentAgent> clazz, final String name, final String plugin) {
+			this.clazz = clazz;
 			this.original = original;
 			this.name = name;
 			this.plugin = plugin;
@@ -101,6 +106,9 @@ public interface IExperimentAgentCreator {
 		@Override
 		public String getDefiningPlugin() { return plugin; }
 
+		@Override
+		public Class<? extends IExperimentAgent> getJavaBase() { return clazz; }
+
 	}
 
 	/**
@@ -113,5 +121,12 @@ public interface IExperimentAgentCreator {
 	 * @return the i experiment agent
 	 */
 	IExperimentAgent create(IPopulation<? extends IAgent> pop, int index);
+
+	/**
+	 * Gets the java base.
+	 *
+	 * @return the java base
+	 */
+	default Class<? extends IExperimentAgent> getJavaBase() { return ExperimentAgent.class; }
 
 }

@@ -57,8 +57,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	static final double[] TRANSPARENT = { 0, 0, 0, 0 };
 
 	// ARRAYS
-	/** The attribute holding the data */
-	// private double[] data;
 
 	/** The attribute holding the position of the vertex indices (in case of no_data) */
 	private int[] realIndexes;
@@ -125,7 +123,6 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	public void dispose() {
 		surface.setTo(0);
 		colorProvider = null;
-		// data = null;
 		realIndexes = null;
 		vertexBuffer = normalBuffer = texBuffer = colorBuffer = lineColorBuffer = null;
 		indexBuffer = null;
@@ -170,7 +167,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		finalizeBuffers();
 		gl.pushMatrix();
 		try {
-			applyTranslation(object);
+			// applyTranslation(object);
 			if (object.getAttributes().getScale() != null) {
 				double zScale = object.getAttributes().getScale();
 				gl.scaleBy(1, 1, zScale);

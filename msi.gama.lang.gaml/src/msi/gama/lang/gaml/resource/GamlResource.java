@@ -53,6 +53,7 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class GamlResource.
@@ -280,6 +281,7 @@ public class GamlResource extends LazyLinkingResource {
 	 *
 	 */
 	public void validate() {
+		//DEBUG.LOG("Resource validating itself");
 		final ModelDescription model = buildCompleteDescription();
 		if (model == null) {
 			updateWith(null, true);

@@ -696,7 +696,7 @@ public interface IAgent extends IShape, INamed, IAttributed, Comparable<IAgent>,
 	@Override
 	default JsonValue serializeToJson(final Json json) {
 		AgentReference ar = AgentReference.of(this);
-		json.addRef(ar.ref(), () -> SerialisedAgent.of(this, false));
+		json.addRef(ar.toString(), () -> SerialisedAgent.of(this, false));
 		return json.valueOf(ar);
 	}
 

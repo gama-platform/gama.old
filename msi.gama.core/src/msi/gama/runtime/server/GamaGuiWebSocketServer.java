@@ -16,6 +16,8 @@ import org.java_websocket.handshake.ClientHandshake;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IExperimentStateListener;
+import msi.gama.runtime.server.ISocketCommand.CommandException;
+import msi.gama.util.IMap;
 import msi.gama.util.file.json.Json;
 import ummisco.gama.dev.utils.DEBUG;
 
@@ -26,6 +28,9 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 
 	/** The current server config. */
 	private GamaServerExperimentConfiguration currentServerConfig = GamaServerExperimentConfiguration.GUI;
+
+	/** The current state. */
+	private volatile State currentState = State.NONE;
 
 	/**
 	 * Start for GUI. No SSL and a default ping interval
@@ -154,10 +159,14 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 
 	@Override
 	public void updateStateTo(final IExperimentPlan experiment, final State state) {
-		WebSocket ws = currentServerConfig.socket();
-		if (ws == null) return;
-		ws.send(Json.getNew().valueOf(new GamaServerMessage(GamaServerMessage.Type.SimulationStatus, state.name(), "0"))
-				.toString());
+		if (state != currentState) {
+			currentState = state;
+			WebSocket ws = currentServerConfig.socket();
+			if (ws == null || ws.isClosed()) return;
+			ws.send(Json.getNew()
+					.valueOf(new GamaServerMessage(GamaServerMessage.Type.SimulationStatus, state.name(), "0"))
+					.toString());
+		}
 	}
 
 	/**
@@ -174,5 +183,30 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 
 	@Override
 	public void addExperiment(final String socketId, final String experimentId, final IExperimentPlan plan) {}
+
+	/**
+	 * Retrieve experiment plan.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param name
+	 *            the name
+	 * @param socket
+	 *            the socket
+	 * @param map
+	 *            the map
+	 * @return the i experiment plan
+	 * @throws CommandException
+	 *             the command exception
+	 * @date 5 déc. 2023
+	 */
+	@Override
+	public IExperimentPlan retrieveExperimentPlan(final WebSocket socket,
+			final IMap<String, Object> map) throws CommandException {
+		IExperimentPlan plan = GAMA.getExperiment();
+		if (plan == null || plan.getAgent() == null || plan.getAgent().dead() || plan.getCurrentSimulation() == null)
+			throw new CommandException(new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+					"Unable to find the experiment or simulation", map, false));
+		return plan;
+	}
 
 }

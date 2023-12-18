@@ -242,21 +242,6 @@ public interface IExpressionFactory {
 	IExpression createTemporaryActionForAgent(IAgent agent, String expression, IExecutionContext tempContext);
 
 	/**
-	 * Checks for operator.
-	 *
-	 * @param op
-	 *            the op
-	 * @param context
-	 *            the context
-	 * @param object
-	 *            the object
-	 * @param compiledArgs
-	 *            the compiled args
-	 * @return true, if successful
-	 */
-	boolean hasOperator(String op, IExpression... compiledArgs);
-
-	/**
 	 * Checks for exact operator. The type must exactly correspond.
 	 *
 	 * @param op

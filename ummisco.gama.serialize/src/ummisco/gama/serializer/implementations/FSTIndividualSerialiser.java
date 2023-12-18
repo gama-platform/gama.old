@@ -18,6 +18,7 @@ import org.nustaq.serialization.FSTClazzInfo.FSTFieldInfo;
 import org.nustaq.serialization.FSTObjectInput;
 import org.nustaq.serialization.FSTObjectOutput;
 
+import msi.gama.common.interfaces.ISerialisationConstants;
 import msi.gama.runtime.IScope;
 
 /**

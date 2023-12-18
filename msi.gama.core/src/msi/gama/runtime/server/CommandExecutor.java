@@ -11,6 +11,7 @@
 package msi.gama.runtime.server;
 
 import static java.util.Map.entry;
+import static msi.gama.runtime.server.ISocketCommand.ASK;
 import static msi.gama.runtime.server.ISocketCommand.BACK;
 import static msi.gama.runtime.server.ISocketCommand.DOWNLOAD;
 import static msi.gama.runtime.server.ISocketCommand.EVALUATE;
@@ -48,6 +49,9 @@ import msi.gaml.types.Types;
  */
 public class CommandExecutor {
 
+	/** The server. */
+	private final GamaWebSocketServer server;
+
 	/** The Constant DEFAULT_COMMANDS. */
 	private static Map<String, ISocketCommand> DEFAULT_COMMANDS = null;
 
@@ -67,7 +71,9 @@ public class CommandExecutor {
 			try {
 				cmd = commandQueue.take();
 				process(cmd.getKey(), cmd.getValue());
-			} catch (InterruptedException e) {
+			} catch (
+			/** The e. */
+			InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -80,7 +86,8 @@ public class CommandExecutor {
 	 * @date 15 oct. 2023
 	 */
 
-	public CommandExecutor() {
+	public CommandExecutor(final GamaWebSocketServer server) {
+		this.server = server;
 		commands = GAMA.getGui().getServerCommands();
 		commandQueue = new LinkedBlockingQueue<>();
 		commandExecutionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
@@ -114,13 +121,12 @@ public class CommandExecutor {
 	protected void process(final WebSocket socket, final IMap<String, Object> map) {
 		final String cmd_type = map.get("type").toString();
 		ISocketCommand command = commands.get(cmd_type);
-
 		if (command == null) throw new IllegalArgumentException("Invalid command type: " + cmd_type);
 
 		// Executes the command in a separate thread so the executor can
 		// continue with the next one without waiting for it to finish
 		new Thread(() -> {
-			var res = command.execute(socket, map);
+			var res = command.execute(server, socket, map);
 			if (res != null && ReadyState.OPEN.equals(socket.getReadyState())) {
 				socket.send(jsonEncoder.valueOf(res).toString());
 			}
@@ -173,8 +179,8 @@ public class CommandExecutor {
 					entry(STEPBACK, DefaultServerCommands::BACK), entry(STOP, DefaultServerCommands::STOP),
 					entry(RELOAD, DefaultServerCommands::RELOAD), entry(EXPRESSION, DefaultServerCommands::EVAL),
 					entry(EVALUATE, DefaultServerCommands::EVAL), entry(EXIT, DefaultServerCommands::EXIT),
-					entry(DOWNLOAD, DefaultServerCommands::DOWNLOAD), entry(UPLOAD, DefaultServerCommands::UPLOAD));
-
+					entry(DOWNLOAD, DefaultServerCommands::DOWNLOAD), entry(UPLOAD, DefaultServerCommands::UPLOAD),
+					entry(ASK, DefaultServerCommands::ASK));
 		}
 		return DEFAULT_COMMANDS;
 	}

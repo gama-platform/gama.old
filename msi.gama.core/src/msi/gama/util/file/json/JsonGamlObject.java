@@ -21,7 +21,7 @@ import msi.gaml.types.IType;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 3 nov. 2023
  */
-public class JsonGamlObject extends JsonAbstractObject<Object> {
+public class JsonGamlObject extends JsonAbstractObject {
 
 	/** The type. */
 	final String type;
@@ -47,7 +47,7 @@ public class JsonGamlObject extends JsonAbstractObject<Object> {
 	 *            the json
 	 * @date 3 nov. 2023
 	 */
-	public JsonGamlObject(final String type, final JsonAbstractObject<?> object, final Json json) {
+	public JsonGamlObject(final String type, final JsonAbstractObject object, final Json json) {
 		this(type, json);
 		for (JsonObjectMember m : object) { add(m.getName(), m.getValue()); }
 	}
@@ -61,7 +61,7 @@ public class JsonGamlObject extends JsonAbstractObject<Object> {
 
 	@Override
 	protected void writeMembers(final JsonWriter writer) throws IOException {
-		writer.writeMemberName(Json.GAML_TYPE_LABEL);
+		writer.writeMemberName(IJsonConstants.GAML_TYPE_LABEL);
 		writer.writeMemberSeparator();
 		writer.writeString(type);
 		writer.writeObjectSeparator();

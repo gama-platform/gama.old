@@ -26,8 +26,13 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.server.SSLParametersWebSocketServerFactory;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.runtime.server.CommandResponse;
 import msi.gama.runtime.server.GamaServerExperimentConfiguration;
+import msi.gama.runtime.server.GamaServerMessage;
 import msi.gama.runtime.server.GamaWebSocketServer;
+import msi.gama.runtime.server.ISocketCommand;
+import msi.gama.runtime.server.ISocketCommand.CommandException;
+import msi.gama.util.IMap;
 
 /**
  * The Class GamaWebSocketServer.
@@ -292,5 +297,33 @@ public class GamaHeadlessWebSocketServer extends GamaWebSocketServer {
 
 	@Override
 	public void onStart() {}
+
+	/**
+	 * Gets the experiment plan from the
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param socket
+	 *            the socket
+	 * @param map
+	 *            the map
+	 * @param error
+	 *            the error
+	 * @return the experiment plan
+	 * @date 5 déc. 2023
+	 */
+	public IExperimentPlan retrieveExperimentPlan(final WebSocket socket,
+			final IMap<String, Object> map) throws CommandException {
+		final String exp_id = map.get(ISocketCommand.EXP_ID) != null ? map.get(ISocketCommand.EXP_ID).toString() : "";
+		final String socket_id = map.get(ISocketCommand.SOCKET_ID) != null
+				? map.get(ISocketCommand.SOCKET_ID).toString() : "" + socket.hashCode();
+		IExperimentPlan plan = null;
+		if (exp_id == "") throw new CommandException(new CommandResponse(GamaServerMessage.Type.MalformedRequest,
+				"For " + map.get("type") + ", mandatory parameter is: " + ISocketCommand.EXP_ID, map, false));
+		plan = getExperiment(socket_id, exp_id);
+		if (plan == null || plan.getAgent() == null || plan.getAgent().dead() || plan.getCurrentSimulation() == null)
+			throw new CommandException(new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
+					"Unable to find the experiment or simulation", map, false));
+		return plan;
+	}
 
 }

@@ -166,6 +166,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 						{ med.getRed() / 255f, med.getGreen() / 255f, med.getBlue() / 255f, med.getAlpha() / 255f },
 						{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
 		final float[] limits = { 0, 0.5f, 1 };
+		if (vmin >= vmax) { return new LookupPaintScale(); } 
 		final LookupPaintScale lut = new LookupPaintScale(vmin, vmax, med);
 		float val;
 		float r, g, b, a;
@@ -204,6 +205,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 				{ { start.getRed() / 255f, start.getGreen() / 255f, start.getBlue() / 255f, start.getAlpha() / 255f },
 						{ end.getRed() / 255f, end.getGreen() / 255f, end.getBlue() / 255f, end.getAlpha() / 255f } };
 		final float[] limits = { 0, 1 };
+		if (vmin >= vmax) { return new LookupPaintScale(); } 
 		final LookupPaintScale lut = new LookupPaintScale(vmin, vmax, start);
 		float val;
 		float r, g, b, a;
@@ -253,7 +255,7 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			scaleAxis.setAxisLinePaint(this.axesColor);
 			scaleAxis.setTickMarkPaint(this.axesColor);
 			scaleAxis.setTickLabelFont(this.getTickFont());
-			scaleAxis.setRange(minval, maxval);
+			scaleAxis.setRange(paintscale.getLowerBound(), paintscale.getUpperBound());
 			scaleAxis.setAxisLinePaint(axesColor);
 			scaleAxis.setLabelFont(getLabelFont());
 			if (textColor != null) {

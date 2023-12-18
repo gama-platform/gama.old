@@ -58,6 +58,9 @@ public class GamaActionType extends GamaType<IDescription> {
 	}
 
 	@Override
+	public boolean isDrawable() { return true; }
+
+	@Override
 	public IDescription deserializeFromJson(final IScope scope, final IMap<String, Object> map2) {
 		return cast(scope, map2.get("name"), null, false);
 	}

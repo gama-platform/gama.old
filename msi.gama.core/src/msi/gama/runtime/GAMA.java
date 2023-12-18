@@ -370,10 +370,7 @@ public class GAMA {
 	 * Pause frontmost experiment.
 	 */
 	public static void pauseFrontmostExperiment(final boolean andWait) {
-		for (final IExperimentController controller : controllers) {
-			// Dont block display threads (see #
-			controller.processPause(!getGui().isInDisplayThread() && andWait);
-		}
+		for (final IExperimentController controller : controllers) { controller.processPause(andWait); }
 	}
 
 	/**
