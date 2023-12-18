@@ -230,7 +230,7 @@ public class WorkspaceManager {
 		// Test whether the product is based on features (we do not consider plugin-based product)
 		NodeList nLProduct = document.getElementsByTagName("product");
 		org.w3c.dom.Element eltProduct = (org.w3c.dom.Element) nLProduct.item(0);
-		if(!eltProduct.getAttribute("useFeatures").equals("true")) throw new IOException("Plugin-based products are not managed");	
+		if(!eltProduct.getAttribute("type").equals("features")) throw new IOException("Plugin-based products are not managed");	
 		
 		// We get the features from the product 
 		NodeList nLFeatures = document.getElementsByTagName("feature");

@@ -60,6 +60,8 @@ public class MainGenerateWiki {
 			XmlTransform.transformXML(Constants.DOCGAMA_GLOBAL_FILE, 
 					Constants.XSL_XML2PRISM_FOLDER + File.separator + "docGama-xml2prism.xsl", 
 					Constants.PRISM_GEN_FOLDER + File.separator + "prism-gaml.js");	
+			System.out.println("DONE");
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
