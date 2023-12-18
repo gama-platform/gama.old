@@ -40,6 +40,11 @@ public interface IConstantCategory {
 	/** The Constant CONSTANT. */
 	// Constants
 	public static final String CONSTANT		= "Constants";
+
+	/** The Constant MATH. */
+	// Math
+	public static final String MATH			= "Math constants";
+	
 	
 	/** The Constant COLOR_CSS. */
 	public static final String COLOR_CSS 	= "Colors";
