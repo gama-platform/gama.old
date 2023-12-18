@@ -3500,7 +3500,7 @@ public class Graphs {
 			concept = { IConcept.ALGORITHM })
 	@doc (
 			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
-			masterDoc = true,
+			masterDoc = false,
 			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
 					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
 					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
@@ -3558,7 +3558,7 @@ public class Graphs {
 			concept = { IConcept.ALGORITHM })
 	@doc (
 			value = "returns a random scale-free network (following Barabasi-Albert (BA) model).",
-			masterDoc = true,
+			masterDoc = false,
 			comment = "The Barabasi-Albert (BA) model is an algorithm for generating random scale-free networks using a preferential attachment mechanism. "
 					+ "A scale-free network is a network whose degree distribution follows a power law, at least asymptotically."
 					+ "Such networks are widely observed in natural and human-made systems, including the Internet, the world wide web, citation networks, and some social networks. [From Wikipedia article]"
@@ -3686,7 +3686,7 @@ public class Graphs {
 			concept = { IConcept.ALGORITHM })
 	@doc (
 			value = "returns a random small-world network (following Watts-Strogatz model).",
-			masterDoc = true,
+			masterDoc = false,
 			comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
 					+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
 					+ "The map operand should includes following elements:",
@@ -3745,7 +3745,7 @@ public class Graphs {
 			concept = { IConcept.ALGORITHM })
 	@doc (
 			value = "returns a random small-world network (following Watts-Strogatz model).",
-			masterDoc = true,
+			masterDoc = false,
 			comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
 					+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
 					+ "The map operand should includes following elements:",
@@ -3800,7 +3800,7 @@ public class Graphs {
 			concept = { IConcept.ALGORITHM })
 	@doc (
 			value = "returns a random small-world network (following Watts-Strogatz model).",
-			masterDoc = true,
+			masterDoc = false,
 			comment = "The Watts-Strogatz model is a random graph generation model that produces graphs with small-world properties, including short average path lengths and high clustering."
 					+ "A small-world network is a type of graph in which most nodes are not neighbors of one another, but most nodes can be reached from every other by a small number of hops or steps. [From Wikipedia article]"
 					+ "The map operand should includes following elements:",
@@ -3866,6 +3866,7 @@ public class Graphs {
 			concept = {})
 	@doc (
 			value = "returns a random graph.",
+			masterDoc = true,			
 			usages = { @usage (
 					value = "`nbNodes`: number of nodes to be created; `nbEdges`: number of edges to be created; `directed`: is the graph has to be directed or not;`node_species`: the species of nodes; `edges_species`: the species of edges ",
 					examples = { @example (
@@ -3993,6 +3994,7 @@ public class Graphs {
 			concept = {})
 	@doc (
 			value = "returns a fully connected graph.",
+			masterDoc = true,			
 			usages = { @usage (
 					value = "\"directed\": is the graph has to be directed or not;\"nodes\": the list of existing nodes; \"edges_species\": the species of edges ",
 					examples = { @example (
