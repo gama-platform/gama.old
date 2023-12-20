@@ -518,6 +518,10 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	public void sendMessage(final IScope scope, final Object message) {
 		try {
 			var socket = scope.getServerConfiguration().socket();
+			//try to get the socket in platformAgent if the request is too soon before agent.schedule()
+			if (socket == null && myServer!=null) {
+				socket = myServer.obtainGuiServerConfiguration().socket();
+			}
 			if (socket == null) {
 				DEBUG.OUT("No socket found, maybe the client is already disconnected. Unable to send message: "
 						+ message);
