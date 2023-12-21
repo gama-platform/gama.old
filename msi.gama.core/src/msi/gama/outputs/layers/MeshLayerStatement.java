@@ -130,7 +130,12 @@ import msi.gaml.types.IType;
 						name = IKeyword.COLOR,
 						type = { IType.COLOR, IType.LIST, IType.MAP },
 						optional = true,
-						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field using the given color or colors. List of colors, palettes (with interpolation), gradients and scales are supported")),
+						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field using the given color or colors. "
+								+ "List of colors, palettes (with interpolation), gradients and scales are supported. "
+								+ "When a list of colors is provided, they are used in a cyclic manner to color each cell, independently from their value. "
+								+ "When this list is casted to a `palette` (using the corresponding operator), it is used to color each cell based on its value (with interpolation between the colors). "
+								+ "When a `gradient` (see the corresponding operator) is passed, the interpolation between the two extreme colors is computed by GAMA"
+								+ "When a `scale` (see the corresponding operator) is passed, cells are colored depending on where their value fits in the scale, with no interpolation")),
 				@facet (
 						name = IKeyword.TRIANGULATION,
 						type = IType.BOOL,
