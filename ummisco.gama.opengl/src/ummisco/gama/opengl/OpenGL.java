@@ -10,29 +10,21 @@
  ********************************************************************************************************/
 package ummisco.gama.opengl;
 
-import static com.jogamp.opengl.glu.GLU.gluTessBeginContour;
-import static com.jogamp.opengl.glu.GLU.gluTessBeginPolygon;
-import static com.jogamp.opengl.glu.GLU.gluTessEndContour;
-import static com.jogamp.opengl.glu.GLU.gluTessEndPolygon;
-import static msi.gama.common.geometry.GeometryUtils.applyToInnerGeometries;
-import static msi.gama.common.geometry.GeometryUtils.getContourCoordinates;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
-import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
@@ -41,6 +33,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import jogamp.opengl.glu.tessellator.GLUtessellatorImpl;
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.geometry.GeometryUtils;
 import msi.gama.common.geometry.ICoordinates;
 import msi.gama.common.geometry.ICoordinates.VertexVisitor;
 import msi.gama.common.geometry.Rotation3D;
@@ -93,8 +86,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	/** The Constant NO_TEXTURE. */
 	public static final int NO_TEXTURE = Integer.MAX_VALUE;
 
-	/** The Constant NO_ANISOTROPY. */
-	public static final float NO_ANISOTROPY = -1f;
+	/** The Constant PROFILE. */
+	public static final GLProfile PROFILE = GLProfile.getMaxFixedFunc(true);
 
 	/** The drawers. */
 	final Map<DrawerType, ObjectDrawer<?>> drawers = new HashMap<>();
@@ -151,7 +144,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	private int alternateTexture = NO_TEXTURE;
 
 	/** The anisotropic level. */
-	private float anisotropicLevel = NO_ANISOTROPY;
+	public static float ANISOTROPIC_LEVEL = 0;
 
 	/** The current color. */
 	// Colors
@@ -297,12 +290,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	public void setGL2(final GL2 gl2) {
 		this.gl = gl2;
 		textureCache.initialize();
-		if (anisotropicLevel == NO_ANISOTROPY && gl2.isExtensionAvailable("GL_EXT_texture_filter_anisotropic")) {
-			final FloatBuffer aniso = Buffers.newDirectFloatBuffer(1);
-			gl.glGetFloatv(GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
-			anisotropicLevel = aniso.get();
-			// DEBUG.OUT("Anisotropic level: " + anisotropicLevel);
-		}
 
 	}
 
@@ -810,16 +797,16 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param drawer
 	 */
 	public void drawPolygon(final Polygon p, final ICoordinates yNegatedVertices, final boolean clockwise) {
-		gluTessBeginPolygon(tobj, null);
-		gluTessBeginContour(tobj);
+		GLU.gluTessBeginPolygon(tobj, null);
+		GLU.gluTessBeginContour(tobj);
 		yNegatedVertices.visitClockwise(glTesselatorDrawer);
-		gluTessEndContour(tobj);
-		applyToInnerGeometries(p, geom -> {
-			gluTessBeginContour(tobj);
-			getContourCoordinates(geom).visitYNegatedCounterClockwise(glTesselatorDrawer);
-			gluTessEndContour(tobj);
+		GLU.gluTessEndContour(tobj);
+		GeometryUtils.applyToInnerGeometries(p, geom -> {
+			GLU.gluTessBeginContour(tobj);
+			GeometryUtils.getContourCoordinates(geom).visitYNegatedCounterClockwise(glTesselatorDrawer);
+			GLU.gluTessEndContour(tobj);
 		});
-		gluTessEndPolygon(tobj);
+		GLU.gluTessEndPolygon(tobj);
 		// }
 	}
 
@@ -1082,9 +1069,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param width
 	 *            the new line width
 	 */
-	public void setLineWidth(final double width) {
-
-		gl.glLineWidth((float) width);
+	public void setLineWidth(final float width) {
+		gl.glLineWidth(width);
 	}
 
 	// ALPHA
@@ -1130,9 +1116,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		final boolean isAntiAlias = getData().isAntialias();
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, isAntiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, isAntiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-		if (isAntiAlias && anisotropicLevel > NO_ANISOTROPY) {
-			gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropicLevel);
-		}
+		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT, isAntiAlias ? ANISOTROPIC_LEVEL : 0);
 	}
 
 	/**
@@ -1485,7 +1469,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	boolean previousObjectWireframe, previousObjectLighting;
 
 	/** The previous object line width. */
-	double previousObjectLineWidth = GamaPreferences.Displays.CORE_LINE_WIDTH.getValue();
+	float previousObjectLineWidth = GamaPreferences.Displays.CORE_LINE_WIDTH.getValue().floatValue();
 
 	/**
 	 * Begin object.
@@ -1500,7 +1484,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		boolean empty = att.isEmpty();
 		previousObjectWireframe = setObjectWireframe(empty);
 		previousObjectLighting = setObjectLighting(att.isLighting());
-		setLineWidth(att.getLineWidth());
+		setLineWidth(att.getLineWidth().floatValue());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		if (isTextured()) { gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA); }
 		setCurrentColor(att.getColor());

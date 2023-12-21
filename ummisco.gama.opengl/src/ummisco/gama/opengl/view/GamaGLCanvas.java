@@ -42,6 +42,7 @@ import com.jogamp.opengl.GLRunnable;
 
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.dev.utils.DEBUG;
+import ummisco.gama.opengl.OpenGL;
 import ummisco.gama.opengl.camera.IMultiListener;
 import ummisco.gama.opengl.renderer.IOpenGLRenderer;
 import ummisco.gama.ui.bindings.IDelegateEventsToParent;
@@ -109,7 +110,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 		this.name = surface.getOutput().getName();
 		parent.setLayout(new FillLayout());
 		this.setLayout(new FillLayout());
-		final var cap = defineCapabilities();
+		final GLCapabilities cap = defineCapabilities();
 
 		drawable = GLWindow.create(cap);
 		drawable.setAutoSwapBufferMode(true);
@@ -165,8 +166,7 @@ public class GamaGLCanvas extends Composite implements GLAutoDrawable, IDelegate
 	 *             the GL exception
 	 */
 	private GLCapabilities defineCapabilities() throws GLException {
-		final var profile = GLProfile.getDefault();
-		final var cap = new GLCapabilities(profile);
+		final GLCapabilities cap = new GLCapabilities(OpenGL.PROFILE);
 		cap.setDepthBits(24);
 		cap.setDoubleBuffered(true);
 		cap.setHardwareAccelerated(true);

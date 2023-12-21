@@ -60,7 +60,7 @@ public class GamaGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCo
 
 	@Override
 	public void resetFPSCounter() {
-		long fpsStartTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()); // overwrite startTime to real init one
+		fpsStartTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime()); // overwrite startTime to real init one
 		fpsLastUpdateTime = fpsStartTime;
 		fpsLastPeriod = 0;
 		fpsTotalFrames = 0;

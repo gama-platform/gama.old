@@ -91,6 +91,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	static {
 		DEBUG.ON();
+
 	}
 
 	/** The animator. */
