@@ -637,6 +637,10 @@ Export-Package: com.conversantmedia.util.collection,
  org.postgresql.util,
  org.postgresql.xa,
  org.slf4j,
+ org.slf4j.event,
+ org.slf4j.helpers,
+ org.slf4j.nop,
+ org.slf4j.spi,
  org.sqlite,
  org.sqlite.core,
  org.sqlite.javax,
@@ -807,6 +811,7 @@ Bundle-ClassPath: .,
  geotools/activation.jar,
  jfreechart/jfreechart-1.5.4.jar,
  Java-WebSocket-1.5.3.jar,
- slf4j-api-2.0.0-alpha1.jar
+ slf4j-api-2.0.9.jar,
+ slf4j-nop-2.0.9.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.ext
