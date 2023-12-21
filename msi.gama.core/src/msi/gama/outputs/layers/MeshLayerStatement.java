@@ -115,26 +115,26 @@ import msi.gaml.types.IType;
 						name = IKeyword.SOURCE,
 						type = { IType.FILE, IType.MATRIX, IType.SPECIES },
 						optional = false,
-						doc = @doc ("Allows to specify the elevation of each cell by passing a grid, a raster, image or csv file or directly a matrix of int/float. The dimensions of the field are those of the file or matrix.")),
+						doc = @doc ("Allows to specify the elevation/value of each cell by passing a grid, a raster, image or csv file or directly a matrix of int/float. The dimensions of the field are those of the file or matrix.")),
 				@facet (
 						name = IKeyword.TEXTURE,
 						type = { IType.FILE },
 						optional = true,
-						doc = @doc ("A file  containing the texture image to be applied to the field. If not specified, the field will be displayed either in color or grayscale, depending on the other facets")),
+						doc = @doc ("A file  containing the texture image to be applied to the field. If not specified, the field will be displayed either in color or grayscale, depending on the other facets. Supersedes both `grayscale` and `color`")),
 				@facet (
 						name = IKeyword.GRAYSCALE,
 						type = IType.BOOL,
 						optional = true,
-						doc = @doc ("if true, gives a grey color to each polygon depending on its elevation (false by default). Supersedes 'color' if it is defined.")),
+						doc = @doc ("if true, paints each cell with a value of grey depending on its value. Supersedes 'color' if it is defined (it is actually equivalent to passing '#gray' to `color:`). False by default")),
 				@facet (
 						name = IKeyword.COLOR,
 						type = { IType.COLOR, IType.LIST, IType.MAP },
 						optional = true,
-						doc = @doc ("if true, and if neither 'grayscale' or 'texture' are specified, displays the field using the given color or colors. "
-								+ "List of colors, palettes (with interpolation), gradients and scales are supported. "
+						doc = @doc ("displays the field using the given color or colors. "
+								+ "When a simple color is provided, paints each cell with this color, with a brightness depending on the value of the cell."
 								+ "When a list of colors is provided, they are used in a cyclic manner to color each cell, independently from their value. "
 								+ "When this list is casted to a `palette` (using the corresponding operator), it is used to color each cell based on its value (with interpolation between the colors). "
-								+ "When a `gradient` (see the corresponding operator) is passed, the interpolation between the two extreme colors is computed by GAMA"
+								+ "When a `gradient` (see the corresponding operator) is passed, the interpolation between the two extreme colors is computed by GAMA."
 								+ "When a `scale` (see the corresponding operator) is passed, cells are colored depending on where their value fits in the scale, with no interpolation")),
 				@facet (
 						name = IKeyword.TRIANGULATION,
