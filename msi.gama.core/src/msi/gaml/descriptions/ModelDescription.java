@@ -35,7 +35,6 @@ import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 import msi.gaml.types.TypesManager;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -324,7 +323,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void setEnclosingDescription(final IDescription desc) {
-		//DEBUG.LOG("Setting enclosing description of model to : " + desc);
+		// DEBUG.LOG("Setting enclosing description of model to : " + desc);
 		super.setEnclosingDescription(desc);
 	}
 
@@ -548,7 +547,6 @@ public class ModelDescription extends SpeciesDescription {
 	 */
 	public IDescription validate(final boolean document) {
 		isDocumenting(document);
-		DEBUG.LOG("Asking the model to validate itself");
 		super.validate();
 		return this;
 	}
