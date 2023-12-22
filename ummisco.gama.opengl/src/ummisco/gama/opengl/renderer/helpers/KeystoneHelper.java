@@ -88,20 +88,14 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	 *
 	 * @return the view width
 	 */
-	int getViewWidth() {
-		return getRenderer().getViewWidth();
-		// return PlatformHelper.scaleDownIfMac(getRenderer().getViewWidth());
-	}
+	int getViewWidth() { return getRenderer().getViewWidth(); }
 
 	/**
 	 * Gets the view height.
 	 *
 	 * @return the view height
 	 */
-	int getViewHeight() {
-		return getRenderer().getViewHeight();
-		// return PlatformHelper.scaleDownIfMac(getRenderer().getViewHeight());
-	}
+	int getViewHeight() { return getRenderer().getViewHeight(); }
 
 	@Override
 	public void initialize() {
@@ -216,7 +210,6 @@ public class KeystoneHelper extends AbstractRendererHelper {
 	private void drawKeystoneMarks() {
 		final OpenGL openGL = getOpenGL();
 		final GL2 gl = getGL();
-
 		//
 		final int displayWidthInPixels = getViewWidth();
 		final int displayHeightInPixels = getViewHeight();
@@ -307,6 +300,8 @@ public class KeystoneHelper extends AbstractRendererHelper {
 			final GL2 gl = getGL();
 			gl.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, 0);
 			theShader.stop();
+			gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+			gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 		}
 
 	}
@@ -385,8 +380,6 @@ public class KeystoneHelper extends AbstractRendererHelper {
 
 		}
 
-		// gl.glActiveTexture(GL.GL_TEXTURE0);
-		// gl.glBindTexture(GL.GL_TEXTURE_2D, fboScene.getFBOTexture());
 		getOpenGL().bindTexture(fboScene.getFBOTexture());
 		// Select the VBO, GPU memory data, to use for colors
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
@@ -416,7 +409,6 @@ public class KeystoneHelper extends AbstractRendererHelper {
 		// compute the total size of the buffer :
 		final int numBytes = data.length * 4;
 		gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, null, GL.GL_STATIC_DRAW);
-
 		final FloatBuffer fbData = Buffers.newDirectFloatBuffer(data);
 		gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, numBytes, fbData);
 		gl.glEnableVertexAttribArray(shaderAttributeType);

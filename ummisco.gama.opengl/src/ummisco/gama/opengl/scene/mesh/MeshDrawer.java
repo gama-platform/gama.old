@@ -78,7 +78,7 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 	private double above;
 
 	// FLAGS
-	/** Flags indicating if the data is to be drawn using triangles or rectangles and with or w/o the value */
+	/** Flags indicating if the data is to be drawn using triangles or rectangles */
 	private boolean triangles;
 
 	/** Flags indicating what to output: textures, colors, lines ? */
@@ -416,15 +416,15 @@ public class MeshDrawer extends ObjectDrawer<MeshObject> {
 		gl.beginDrawing(GL.GL_TRIANGLES);
 		for (var index = 0; index < indexBuffer.limit(); index++) {
 			var i = indexBuffer.get(index);
-			int one = i * 3, two = one + 1, three = one + 2, four = one + 3;
+			int one = i * 3, two = one + 1, three = one + 2;
 			if (!gl.isWireframe() && outputsColors) {
 				// TODO Bug when using a gradient: some color components are outside the range
 				try {
-					gl.setCurrentColor(colorBuffer.get(one), colorBuffer.get(two), colorBuffer.get(three),
-							colorBuffer.get(four));
+					gl.setCurrentColor(colorBuffer.get(i * 4), colorBuffer.get(i * 4 + 1), colorBuffer.get(i * 4 + 2),
+							colorBuffer.get(i * 4 + 3));
 				} catch (IllegalArgumentException e) {
-					DEBUG.OUT("Problem with following colors: " + colorBuffer.get(one) + " " + colorBuffer.get(two)
-							+ " " + colorBuffer.get(three));
+					DEBUG.OUT("Problem with following colors: " + colorBuffer.get(i * 4) + " "
+							+ colorBuffer.get(i * 4 + 1) + " " + colorBuffer.get(i * 4 + 2));
 				}
 			}
 			if (outputsTextures) { gl.outputTexCoord(texBuffer.get(i * 2), texBuffer.get(i * 2 + 1)); }
