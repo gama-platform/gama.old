@@ -172,7 +172,7 @@ public class PickingHelper extends AbstractRendererHelper {
 		glu.gluPickMatrix(camera.getMousePosition().x, viewport[3] - camera.getMousePosition().y, 4, 4, viewport, 0);
 		// JOGLRenderer r = getRenderer();
 		// FIXME Why do we have to call updatePerspective() here ?
-		openGL.updatePerspective(gl);
+		openGL.updatePerspective();
 		openGL.matrixMode(GLMatrixFunc.GL_MODELVIEW);
 	}
 

@@ -102,6 +102,7 @@ public class OpenGLActivator extends AbstractUIPlugin {
 			DEBUG.BANNER(prefix, "Profile initialized", "version", gc.getGLVersionNumber().toString());
 			float fresult[] = { 0.0f, 0.0f };
 			int iresult[] = { 0 };
+
 			property = "Line width range";
 			gl.glGetFloatv(GL.GL_SMOOTH_LINE_WIDTH_RANGE, fresult, 0);
 			DEBUG.BANNER(prefix, property, "between",
@@ -119,6 +120,12 @@ public class OpenGLActivator extends AbstractUIPlugin {
 			gl.glGetFloatv(GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, fresult, 0);
 			OpenGL.ANISOTROPIC_LEVEL = fresult[0];
 			DEBUG.BANNER(prefix, property, "value", String.valueOf(OpenGL.ANISOTROPIC_LEVEL));
+			property = "Non-power of 2 texture size";
+			DEBUG.BANNER(prefix, property, "supported", String.valueOf(gl.isNPOTTextureAvailable()));
+			property = "Framebuffer objects";
+			DEBUG.BANNER(prefix, property, "supported", String.valueOf(gl.hasFullFBOSupport()));
+			property = "Shading language";
+			DEBUG.BANNER(prefix, property, "supported", String.valueOf(gl.hasGLSL()));
 			property = "Max texture size";
 			gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, iresult, 0);
 			DEBUG.BANNER(prefix, property, "value", String.valueOf(iresult[0]) + "x" + String.valueOf(iresult[0]));

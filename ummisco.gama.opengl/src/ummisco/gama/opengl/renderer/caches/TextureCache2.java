@@ -23,12 +23,10 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import msi.gama.common.interfaces.IImageProvider;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.opengl.OpenGL;
 import ummisco.gaml.extensions.image.GamaImage;
@@ -36,7 +34,7 @@ import ummisco.gaml.extensions.image.GamaImage;
 /**
  * The Class TextureCache2.
  */
-public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListener<Boolean> {
+public class TextureCache2 implements ITextureCache/* , IPreferenceAfterChangeListener<Boolean> */ {
 
 	static {
 		DEBUG.OFF();
@@ -56,7 +54,7 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 	final OpenGL gl;
 
 	/** The is non power of 2 textures available. */
-	Boolean isNonPowerOf2TexturesAvailable;
+	// Boolean isNonPowerOf2TexturesAvailable;
 
 	/**
 	 * Instantiates a new texture cache 2.
@@ -76,13 +74,13 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 	 */
 	@Override
 	public void initialize() {
-		if (isNonPowerOf2TexturesAvailable == null) {
-			isNonPowerOf2TexturesAvailable =
-					!GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() && gl.getGL().isNPOTTextureAvailable();
-			GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.onChange(this);
-			TextureIO.setTexRectEnabled(GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
-			// DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
-		}
+		// if (isNonPowerOf2TexturesAvailable == null) {
+		// isNonPowerOf2TexturesAvailable =
+		// !GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.getValue() && gl.getGL().isNPOTTextureAvailable();
+		// GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.onChange(this);
+		// TextureIO.setTexRectEnabled(Gama Preferences.Displays.DISPLAY_POWER_OF_TWO.getValue());
+		// DEBUG.OUT("Non power-of-two textures available: " + isNonPowerOf2TexturesAvailable);
+		// }
 	}
 
 	/*
@@ -108,7 +106,7 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 		staticTextures.asMap().forEach((s, t) -> { t.destroy(gl.getGL()); });
 		staticTextures.invalidateAll();
 		staticTextures.cleanUp();
-		GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.removeChangeListener(this);
+		// GamaPreferences.Displays.DISPLAY_POWER_OF_TWO.removeChangeListener(this);
 	}
 
 	/**
@@ -126,7 +124,7 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 	public void processs(final IImageProvider file) {
 
 		if (!texturesToProcess.containsKey(file.getId())) {
-			DEBUG.OUT("Adding image to process " + file.getId());
+			// DEBUG.OUT("Adding image to process " + file.getId());
 			texturesToProcess.put(file.getId(), file);
 		}
 	}
@@ -139,7 +137,6 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 	@Override
 	public void processUnloaded() {
 		texturesToProcess.forEach((n, i) -> { getTexture(i, false, true); });
-		// texturesToProcess.clear();
 	}
 
 	/*
@@ -232,12 +229,12 @@ public class TextureCache2 implements ITextureCache, IPreferenceAfterChangeListe
 
 	}
 
-	@Override
-	public void afterValueChange(final Boolean newValue) {
-
-		isNonPowerOf2TexturesAvailable = !newValue && gl.getGL().isNPOTTextureAvailable();
-		TextureIO.setTexRectEnabled(newValue);
-
-	}
+	// @Override
+	// public void afterValueChange(final Boolean newValue) {
+	//
+	// isNonPowerOf2TexturesAvailable = !newValue && gl.getGL().isNPOTTextureAvailable();
+	// TextureIO.setTexRectEnabled(newValue);
+	//
+	// }
 
 }

@@ -118,6 +118,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	/** The view height. */
 	private int viewWidth, viewHeight;
 
+	private int currentPolygonMode = GL2.GL_FILL;
+
 	/** The picking state. */
 	// private final PickingHelper pickingState;
 
@@ -152,6 +154,16 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 
 	/** The current object alpha. */
 	private double currentObjectAlpha = 1d;
+
+	/** The previous object lighting. */
+	boolean previousObjectWireframe, previousObjectLighting;
+
+	/** The previous object line width. */
+	float currentObjectLineWidth,
+			previousObjectLineWidth = GamaPreferences.Displays.CORE_LINE_WIDTH.getValue().floatValue();
+
+	/** The previous display lighting. */
+	boolean previousDisplayWireframe, previousDisplayLighting;
 
 	/** The lighted. */
 	private boolean objectIsLighted;
@@ -229,10 +241,8 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		TextDrawer td = new TextDrawer(this);
 		var gd = new GeometryDrawer(this);
 		var rd = new ResourceDrawer(this);
-		drawers.put(DrawerType.STRING, /* FLAGS.USE_LEGACY_DRAWERS ? new LegacyTextDrawer(this) : */ td);
+		drawers.put(DrawerType.STRING, td);
 		drawers.put(DrawerType.GEOMETRY, gd);
-		// drawers.put(DrawerType.MESH,
-		// /* FLAGS.USE_LEGACY_DRAWERS ? new LegacyMeshDrawer(this) : */ new MeshDrawer(this));
 		drawers.put(DrawerType.RESOURCE, rd);
 	}
 
@@ -287,11 +297,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param gl2
 	 *            the new gl2
 	 */
-	public void setGL2(final GL2 gl2) {
-		this.gl = gl2;
-		textureCache.initialize();
-
-	}
+	public void setGL2(final GL2 gl2) { this.gl = gl2; }
 
 	/**
 	 * Gets the glut.
@@ -319,7 +325,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		viewHeight = height;
 		resetMatrix(GLMatrixFunc.GL_MODELVIEW);
 		resetMatrix(GLMatrixFunc.GL_PROJECTION);
-		updatePerspective(newGL);
+		updatePerspective();
 
 		final double[] pixelSize = new double[4];
 		glu.gluProject(getWorldWidth(), 0, 0, mvmatrix, 0, projmatrix, 0, viewport, 0, pixelSize, 0);
@@ -387,7 +393,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param gl
 	 *            the gl
 	 */
-	public void updatePerspective(final GL2 gl) {
+	public void updatePerspective() {
 		final double height = getViewHeight();
 		final double aspect = getViewWidth() / (height == 0d ? 1d : height);
 		final double maxDim = getMaxEnvDim();
@@ -1069,8 +1075,13 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 * @param width
 	 *            the new line width
 	 */
-	public void setLineWidth(final float width) {
-		gl.glLineWidth(width);
+	public float setLineWidth(final float width) {
+		float previous = currentObjectLineWidth;
+		if (width != currentObjectLineWidth) {
+			currentObjectLineWidth = width;
+			gl.glLineWidth(width);
+		}
+		return previous;
 	}
 
 	// ALPHA
@@ -1323,8 +1334,11 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 *            the new polygon mode
 	 */
 	public void updatePolygonMode() {
-		// AD might be a bit costly as setObjectWireFrame() is called for every object...
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, isWireframe() ? GL2GL3.GL_LINE : GL2GL3.GL_FILL);
+		int newPolygonMode = isWireframe() ? GL2GL3.GL_LINE : GL2GL3.GL_FILL;
+		if (newPolygonMode != currentPolygonMode) {
+			currentPolygonMode = newPolygonMode;
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, currentPolygonMode);
+		}
 	}
 
 	/**
@@ -1465,12 +1479,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	 */
 	public boolean isTextured() { return textured && !isWireframe(); }
 
-	/** The previous object lighting. */
-	boolean previousObjectWireframe, previousObjectLighting;
-
-	/** The previous object line width. */
-	float previousObjectLineWidth = GamaPreferences.Displays.CORE_LINE_WIDTH.getValue().floatValue();
-
 	/**
 	 * Begin object.
 	 *
@@ -1484,7 +1492,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		boolean empty = att.isEmpty();
 		previousObjectWireframe = setObjectWireframe(empty);
 		previousObjectLighting = setObjectLighting(att.isLighting());
-		setLineWidth(att.getLineWidth().floatValue());
+		previousObjectLineWidth = setLineWidth(att.getLineWidth().floatValue());
 		setCurrentTextures(object.getPrimaryTexture(this), object.getAlternateTexture(this));
 		if (isTextured()) { gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA); }
 		setCurrentColor(att.getColor());
@@ -1513,9 +1521,6 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		if (isPicking) { renderer.getPickingHelper().tryPick(object.getAttributes()); }
 	}
 
-	/** The previous display lighting. */
-	boolean previousDisplayWireframe, previousDisplayLighting;
-
 	/**
 	 * Begin scene.
 	 *
@@ -1531,7 +1536,7 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		gl.glClearDepth(1.0f);
 		resetMatrix(GLMatrixFunc.GL_PROJECTION);
-		updatePerspective(gl);
+		updatePerspective();
 		resetMatrix(GLMatrixFunc.GL_MODELVIEW);
 		// AD removed from here and put in ModelScene.draw() so that it is inside the keystone drawing. See #3285
 		// rotateModel();
@@ -1563,19 +1568,9 @@ public class OpenGL extends AbstractRendererHelper implements ITesselator {
 	}
 
 	/**
-	 * Checks if is continuous rotation active.
-	 *
-	 * @return true, if is continuous rotation active
-	 */
-	// private boolean isContinuousRotationActive() {
-	// return getData().isContinuousRotationOn() && !getData().isLocked();
-	// }
-
-	/**
 	 * Rotate model.
 	 */
 	public void rotateModel() {
-		// if (!getData().isLocked()) { getData().incrementZRotation(); }
 		if (getData().hasRotation()) {
 			GamaPoint c = getData().getRotationCenter();
 			translateBy(c.x, c.y, c.z);

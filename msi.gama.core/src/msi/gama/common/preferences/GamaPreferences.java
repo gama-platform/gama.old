@@ -783,9 +783,9 @@ public class GamaPreferences {
 						RENDERING);
 
 		/** The Constant DISPLAY_POWER_OF_TWO. */
-		public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
-				"Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)", false,
-				IType.BOOL, true).in(NAME, RENDERING).hidden();
+		// public static final Pref<Boolean> DISPLAY_POWER_OF_TWO = create("pref_display_power_of_2",
+		// "Forces textures dimensions to a power of 2 (e.g. 16x16. Necessary on some configurations)", false,
+		// IType.BOOL, true).in(NAME, RENDERING).hidden();
 
 		/** The Constant OPENGL_NUM_KEYS_CAM. */
 		public static final Pref<Boolean> OPENGL_NUM_KEYS_CAM = create("pref_display_numkeyscam",
