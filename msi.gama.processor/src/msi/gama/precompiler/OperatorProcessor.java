@@ -111,8 +111,7 @@ public class OperatorProcessor extends ElementProcessor<operator> {
 		final String met = isStatic ? declClass + "." + method.getSimpleName() : method.getSimpleName().toString();
 		sb.append(in).append("_operator(");
 		toArrayOfStrings(names, sb).append(',');
-		buildMethodCall(sb, classes, met, isStatic, hasScope).append(',');
-		// toArrayOfClasses(sb, classes).append(',');
+		buildMethodCall(sb, classes, met, isStatic, hasScope).append(",null,"); /* doc */
 		toArrayOfInts(op.expected_content_type(), sb).append(',').append(toClassObject(ret)).append(',')
 				.append(toBoolean(op.can_be_const())).append(',').append(op.type()).append(',')
 				.append(op.content_type()).append(',').append(op.index_type()).append(',')

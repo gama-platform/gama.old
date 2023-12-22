@@ -39,7 +39,8 @@ public class FileProcessor extends ElementProcessor<file> {
 		sb.append(",").append(f.buffer_type()).append(",").append(f.buffer_index()).append(",")
 				.append(f.buffer_content()).append(",");
 		toArrayOfStrings(f.extensions(), sb).append(");");
-		sb.append(in).append("_operator(S(").append(toJavaString("is_" + name)).append("),null,I(0),B,true,3,0,0,0,")
+		sb.append(in).append("_operator(S(").append(toJavaString("is_" + name))
+				.append("),null,\"Returns true if the parameter is a " + name + " file\",I(0),B,true,3,0,0,0,")
 				.append("(s,o)-> { return GamaFileType.verifyExtension(").append(toJavaString(name))
 				.append(",Cast.asString(s, o[0]));}, false);");
 		for (final Element m : e.getEnclosedElements()) {

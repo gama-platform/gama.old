@@ -223,6 +223,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 *            the keywords
 	 * @param method
 	 *            the method
+	 * @param doc
+	 *            an optional string that contains the constant doc of the operator (can be null)
 	 * @param expectedContentTypes
 	 *            the expected content types
 	 * @param returnClassOrType
@@ -240,9 +242,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 * @param helper
 	 *            the helper
 	 */
-	public void _operator(final String[] keywords, final Executable method, final int[] expectedContentTypes,
-			final Object returnClassOrType, final boolean c, final int t, final int content, final int index,
-			final int contentContentType, final GamaGetter helper, final boolean isIterator) {
+	public void _operator(final String[] keywords, final Executable method, final String doc,
+			final int[] expectedContentTypes, final Object returnClassOrType, final boolean c, final int t,
+			final int content, final int index, final int contentContentType, final GamaGetter helper,
+			final boolean isIterator) {
 
 		if (isIterator) { Collections.addAll(GAML.ITERATORS, keywords); }
 		final Signature signature = method == null ? new Signature(Types.NO_TYPE) : new Signature(method);
@@ -261,10 +264,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			if (!map.containsKey(signature)) {
 				OperatorProto proto;
 				if (nbParameters == 2 && (OF.equals(kw) || _DOT.equals(kw)) && signature.get(0).isAgentType()) {
-					proto = new OperatorProto(kw, method, helper, c, true, rt, signature, t, content, index,
+					proto = new OperatorProto(kw, method, null, helper, c, true, rt, signature, t, content, index,
 							contentContentType, expectedContentTypes, plugin);
 				} else {
-					proto = new OperatorProto(kw, method, helper, c, false, rt, signature, t, content, index,
+					proto = new OperatorProto(kw, method, doc, helper, c, false, rt, signature, t, content, index,
 							contentContentType, expectedContentTypes, plugin);
 				}
 				map.put(signature, proto);
@@ -314,7 +317,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final int[] expectedContentTypes, final Class ret, final boolean c, final String typeAlias,
 			final GamaGetter helper) {
 		final ParametricFileType fileType = GamaFileType.getTypeFromAlias(typeAlias);
-		this._operator(keywords, method, expectedContentTypes, fileType, c, ITypeProvider.NONE, content,
+		this._operator(keywords, method, null, expectedContentTypes, fileType, c, ITypeProvider.NONE, content,
 				ITypeProvider.NONE, ITypeProvider.NONE, helper, false);
 	}
 

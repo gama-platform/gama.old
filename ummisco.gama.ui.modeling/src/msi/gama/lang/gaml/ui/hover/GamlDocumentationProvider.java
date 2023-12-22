@@ -233,7 +233,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			return comment + Strings.LN + "No documentation.";
 		}
 
-		return comment + description.getDocumentation();
+		return comment + description.getDocumentation().get();
 	}
 
 }

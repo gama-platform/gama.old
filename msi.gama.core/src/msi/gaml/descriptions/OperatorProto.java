@@ -210,13 +210,13 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	 * @param plugin
 	 *            the plugin
 	 */
-	public OperatorProto(final String name, final AnnotatedElement method, final GamaGetter helper,
-			final boolean canBeConst, final boolean isVarOrField, final IType returnType, final Signature signature,
-			final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
+	public OperatorProto(final String name, final AnnotatedElement method, final String constantDoc,
+			final GamaGetter helper, final boolean canBeConst, final boolean isVarOrField, final IType returnType,
+			final Signature signature, final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
 			final int contentTypeContentTypeProvider, final int[] expectedContentType, final String plugin) {
 		super(name, method, plugin);
 		iterator = GAML.ITERATORS.contains(name);
-
+		if (constantDoc != null) { documentation = new ConstantDoc(constantDoc); }
 		if (IKeyword.AS.equals(name)) { AS = this; }
 
 		this.returnType = returnType;
@@ -286,7 +286,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 			final boolean canBeConst, final boolean isVarOrField, final int returnType, final Class signature,
 			final int typeProvider, final int contentTypeProvider, final int keyTypeProvider,
 			final int[] expectedContentType) {
-		this(name, method == null ? signature : method, helper, canBeConst, isVarOrField, Types.get(returnType),
+		this(name, method == null ? signature : method, null, helper, canBeConst, isVarOrField, Types.get(returnType),
 				new Signature(signature), typeProvider, contentTypeProvider, keyTypeProvider, ITypeProvider.NONE,
 				expectedContentType, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
@@ -300,7 +300,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	 *            the gama type
 	 */
 	private OperatorProto(final OperatorProto op, final IType gamaType) {
-		this(op.name, op.support, op.getHelper(), op.canBeConst, op.isVarOrField, op.returnType,
+		this(op.name, op.support, null, op.getHelper(), op.canBeConst, op.isVarOrField, op.returnType,
 				new Signature(gamaType), op.typeProvider, op.contentTypeProvider, op.keyTypeProvider,
 				op.contentTypeContentTypeProvider, op.expectedContentType, op.plugin);
 	}

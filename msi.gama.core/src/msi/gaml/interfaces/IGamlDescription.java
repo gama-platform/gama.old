@@ -152,11 +152,6 @@ public interface IGamlDescription extends INamed {
 			return sb.toString();
 		}
 
-		@Override
-		public String toString() {
-			return get();
-		}
-
 		/**
 		 * Sets a sub-documentation
 		 *
