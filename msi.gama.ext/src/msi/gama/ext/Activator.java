@@ -66,7 +66,7 @@ public class Activator implements BundleActivator {
 		String log = System.getProperty("enable_logging");
 		if (log == null || "true".equals(log)) {
 			BANNER("JAI", "ImageIO extensions", "loaded for",
-					StreamEx.of(ImageIO.getReaderFileSuffixes()).joining("|"));
+					StreamEx.of(ImageIO.getReaderFileSuffixes()).remove(String::isBlank).sorted().joining("|"));
 		}
 	}
 

@@ -67,7 +67,7 @@ public class OpenGLActivator extends AbstractUIPlugin {
 					return;
 				}
 				while (!GLProfile.isInitialized()) { THREADS.WAIT(100, null, "Impossible to initialize OpenGL"); }
-				initializeGLPreferences();
+				gatherOpenGLProperties();
 				// }).start();
 			});
 
@@ -80,7 +80,7 @@ public class OpenGLActivator extends AbstractUIPlugin {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 21 déc. 2023
 	 */
-	private void initializeGLPreferences() {
+	private void gatherOpenGLProperties() {
 		GL gl = null;
 		GLOffscreenAutoDrawable offscreen = null;
 		String property = "Loading";
