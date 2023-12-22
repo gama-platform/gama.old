@@ -679,7 +679,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if (started) return;
 		started = true;
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		DEBUG.TIMER("GAMA: Retrieving workspace metadata", "done in", () -> {
+		DEBUG.TIMER("GAMA", "Retrieving workspace metadata", "done in", () -> {
 			try {
 				workspace.getRoot().accept(resource -> {
 					if (resource.isAccessible()) {
@@ -719,7 +719,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			public void saving(final ISaveContext context) throws CoreException {
 				if (context.getKind() != ISaveContext.FULL_SAVE) return;
 
-				TIMER_WITH_EXCEPTIONS("GAMA: workspace metadata ", "saved in", () -> {
+				TIMER_WITH_EXCEPTIONS("GAMA", "workspace metadata ", "saved in", () -> {
 					ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
 						String toSave = null;
 						try {

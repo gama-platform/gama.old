@@ -21,6 +21,7 @@ import org.osgi.framework.BundleContext;
 
 import it.geosolutions.jaiext.ConcurrentOperationRegistry;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.STRINGS;
 
 /**
  * The Class Activator.
@@ -64,7 +65,8 @@ public class Activator implements BundleActivator {
 		// See FLAGS.java
 		String log = System.getProperty("enable_logging");
 		if (log == null || "true".equals(log)) {
-			BANNER("JAI : ImageIO extensions", "loaded for", StreamEx.of(ImageIO.getReaderFileSuffixes()).joining("|"));
+			BANNER("JAI", "ImageIO extensions", "loaded for",
+					StreamEx.of(ImageIO.getReaderFileSuffixes()).joining("|"));
 		}
 	}
 
@@ -108,8 +110,9 @@ public class Activator implements BundleActivator {
 	 * @param result
 	 *            the result
 	 */
-	public static void BANNER(final String title, final String state, final String result) {
-		System.out.println(PAD("> " + title + " ", 55, ' ') + PAD(" " + state, 15, '_') + " " + result);
+	public static void BANNER(final String category, final String title, final String state, final String result) {
+		String cat = STRINGS.PAD("> " + category, 8, ' ') + ": ";
+		System.out.println(STRINGS.PAD(cat + title + " ", 55, ' ') + STRINGS.PAD(" " + state, 15, '_') + " " + result);
 	}
 
 }

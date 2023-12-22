@@ -53,27 +53,16 @@ public class NativeLoader {
 		if (NATIVE_BULLET_LIBRARY_LOADED == null) {
 			NATIVE_BULLET_LIBRARY_LOADED = false;
 			if (LOAD_NATIVE_BULLET_LIBRARY) {
-				TIMER_WITH_EXCEPTIONS("GAMA: native Bullet library", "loaded in", () -> {
+				TIMER_WITH_EXCEPTIONS("GAMA", "Native Bullet library", "loaded in", () -> {
 					try {
 						Platform platform = JmeSystem.getPlatform();
-						String name;
-						switch (platform) {
-							case Windows64:
-								name = WIN_NATIVE_LIBRARY_NAME;
-								break;
-							case Linux64:
-								name = LIN_NATIVE_LIBRARY_NAME;
-								break;
-							case MacOSX64:
-								name = MAC_NATIVE_LIBRARY_NAME;
-								break;
-							case MacOSX_ARM64:
-								name = MAC_ARM_NATIVE_LIBRARY_NAME;
-								break;
-							default:
-								throw new RuntimeException("Platform " + platform + " is not supported");
-						}
-
+						String name = switch (platform) {
+							case Windows64 -> WIN_NATIVE_LIBRARY_NAME;
+							case Linux64 -> LIN_NATIVE_LIBRARY_NAME;
+							case MacOSX64 -> MAC_NATIVE_LIBRARY_NAME;
+							case MacOSX_ARM64 -> MAC_ARM_NATIVE_LIBRARY_NAME;
+							default -> throw new RuntimeException("Platform " + platform + " is not supported");
+						};
 						NativeUtils.loadLibraryFromJar(NATIVE_LIBRARY_LOCATION + name);
 						NATIVE_BULLET_LIBRARY_LOADED = true;
 					} catch (Throwable e) {

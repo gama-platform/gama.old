@@ -291,7 +291,7 @@ public class ExperimentJob implements IExperimentJob {
 
 	@Override
 	public void playAndDispose() {
-		DEBUG.TIMER("Simulation running ", "for: ", () -> {
+		DEBUG.TIMER("GAMA", "Simulation running ", "for: ", () -> {
 			play();
 			dispose();
 		});

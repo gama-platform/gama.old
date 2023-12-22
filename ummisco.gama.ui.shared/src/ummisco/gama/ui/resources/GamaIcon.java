@@ -95,7 +95,7 @@ public class GamaIcon {
 	 * @throws IOException
 	 */
 	public static void preloadAllIcons() throws IOException {
-		TIMER_WITH_EXCEPTIONS("GAMA: Preloading icons", "done in",
+		TIMER_WITH_EXCEPTIONS("GAMA", "Preloading icons", "done in",
 				() -> walk(PATH_TO_ICONS).map(f -> PATH_TO_ICONS.relativize(f).toString())
 						.filter(n -> n.endsWith(".png") && !n.contains("@") && !n.contains(DISABLED_SUFFIX))
 						.forEach(f -> GamaIcon.named(f.replace(".png", ""))));

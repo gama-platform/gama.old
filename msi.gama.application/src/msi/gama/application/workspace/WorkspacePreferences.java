@@ -169,7 +169,7 @@ public class WorkspacePreferences {
 			LocalDateTime localDateTime = Files.getLastModifiedTime(modelsRep.toPath()).toInstant()
 					.atZone(ZoneId.systemDefault()).toLocalDateTime();
 			String date = localDateTime.format(DateTimeFormatter.ofPattern("MMM dd,yyyy HH:mm:ss"));
-			DEBUG.BANNER("GAMA: Checking date of models library", "modified", "" + date);
+			DEBUG.BANNER("GAMA", "Checking date of models library", "modified", "" + date);
 		} catch (final IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -278,7 +278,7 @@ public class WorkspacePreferences {
 	 */
 	public static boolean testWorkspaceSanity(final Path workspacePath) {
 
-		return DEBUG.TIMER("GAMA: Checking the workspace ", "done in", () -> {
+		return DEBUG.TIMER("GAMA", "Workspace checked", "in", () -> {
 			File workspace = workspacePath.toFile();
 			// In light of issue #3445, allows a .rebuild file to trigger the rebuild
 			File[] files = workspace.listFiles((FileFilter) file -> ".rebuild".equals(file.getName()));

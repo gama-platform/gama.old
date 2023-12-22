@@ -48,7 +48,7 @@ public class Activator implements BundleActivator {
 			mode = "(gui mode)";
 			GAMA.setSnapshotMaker(SnapshotMaker.getInstance());
 		}
-		DEBUG.BANNER("GAMA: Snapshot services", message, mode);
+		DEBUG.BANNER("GAMA", "Snapshot services", message, mode);
 	}
 
 	@Override

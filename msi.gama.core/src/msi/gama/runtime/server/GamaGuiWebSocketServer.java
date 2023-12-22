@@ -119,7 +119,7 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 	@Override
 	public void onStart() {
 		GAMA.addExperimentStateListener(this);
-		DEBUG.BANNER("GAMA: Gama Server started", "at port", "" + this.getPort());
+		DEBUG.BANNER("GAMA", "Server started", "at port", "" + this.getPort());
 	}
 
 	@Override
@@ -200,8 +200,8 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 	 * @date 5 déc. 2023
 	 */
 	@Override
-	public IExperimentPlan retrieveExperimentPlan(final WebSocket socket,
-			final IMap<String, Object> map) throws CommandException {
+	public IExperimentPlan retrieveExperimentPlan(final WebSocket socket, final IMap<String, Object> map)
+			throws CommandException {
 		IExperimentPlan plan = GAMA.getExperiment();
 		if (plan == null || plan.getAgent() == null || plan.getAgent().dead() || plan.getCurrentSimulation() == null)
 			throw new CommandException(new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,

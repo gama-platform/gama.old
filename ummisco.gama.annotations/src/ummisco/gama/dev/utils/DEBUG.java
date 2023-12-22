@@ -119,14 +119,14 @@ public class DEBUG {
 	 * @throws Exception
 	 */
 
-	public static void TIMER(final String begin, final String end, final Runnable runnable) {
+	public static void TIMER(final String category, final String begin, final String end, final Runnable runnable) {
 		if (!ENABLE_LOGGING) {
 			runnable.run();
 			return;
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		BANNER(begin, end, currentTimeMillis() - start + "ms");
+		BANNER(category, begin, end, currentTimeMillis() - start + "ms");
 	}
 
 	/**
@@ -141,15 +141,15 @@ public class DEBUG {
 	 * @throws T
 	 *             the t
 	 */
-	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String begin, final String end,
-			final RunnableWithException<T> runnable) throws T {
+	public static <T extends Throwable> void TIMER_WITH_EXCEPTIONS(final String category, final String begin,
+			final String end, final RunnableWithException<T> runnable) throws T {
 		if (!ENABLE_LOGGING) {
 			runnable.run();
 			return;
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		BANNER(begin, end, currentTimeMillis() - start + "ms");
+		BANNER(category, begin, end, currentTimeMillis() - start + "ms");
 	}
 
 	/**
@@ -171,11 +171,11 @@ public class DEBUG {
 	 * @return The result of the supplier passed in argument
 	 */
 
-	public static <T> T TIMER(final String title, final String end, final Supplier<T> supplier) {
+	public static <T> T TIMER(final String category, final String title, final String end, final Supplier<T> supplier) {
 		if (!ENABLE_LOGGING) return supplier.get();
 		final long start = System.currentTimeMillis();
 		final T result = supplier.get();
-		BANNER(title, end, currentTimeMillis() - start + "ms");
+		BANNER(category, title, end, currentTimeMillis() - start + "ms");
 		return result;
 	}
 
@@ -251,7 +251,12 @@ public class DEBUG {
 	 *            the result
 	 */
 	public static void BANNER(final String title, final String state, final String result) {
-		LOG(STRINGS.PAD("> " + title + " ", 55, ' ') + STRINGS.PAD(" " + state, 15, '_') + " " + result);
+		BANNER("GAMA", title, state, result);
+	}
+
+	public static void BANNER(final String category, final String title, final String state, final String result) {
+		String cat = STRINGS.PAD("> " + category, 8, ' ') + ": ";
+		LOG(STRINGS.PAD(cat + title + " ", 55, ' ') + STRINGS.PAD(" " + state, 15, '_') + " " + result);
 	}
 
 	/**

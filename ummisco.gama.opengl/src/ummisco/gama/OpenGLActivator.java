@@ -47,7 +47,7 @@ public class OpenGLActivator extends AbstractUIPlugin {
 		// //
 		// http://forum.jogamp.org/Return-of-the-quot-java-lang-UnsatisfiedLinkError-Can-t-load-library-System-Library-Frameworks-glueg-td4034549.html)
 		CompletableFuture.runAsync(() -> {
-			DEBUG.TIMER("GAMA: Preloading OpenGL subsystem", "done in", () -> {
+			DEBUG.TIMER("OpenGL", "Subsystem preloaded", "in", () -> {
 
 				JarUtil.setResolver(url -> {
 					try {
@@ -81,43 +81,54 @@ public class OpenGLActivator extends AbstractUIPlugin {
 	 * @date 21 déc. 2023
 	 */
 	private void initializeGLPreferences() {
-		GLOffscreenAutoDrawable offscreenDrawable;
-		GLCapabilities cap = new GLCapabilities(OpenGL.PROFILE);
-		cap.setDepthBits(24);
-		cap.setDoubleBuffered(true);
-		cap.setHardwareAccelerated(true);
-		cap.setSampleBuffers(true);
-		cap.setAlphaBits(8);
-		cap.setNumSamples(8);
-		offscreenDrawable =
-				GLDrawableFactory.getFactory(OpenGL.PROFILE).createOffscreenAutoDrawable(null, cap, null, 10, 10);
-		offscreenDrawable.display();
-		GLContext gc = offscreenDrawable.getContext();
-		gc.makeCurrent();
-		GL gl = gc.getGL();
-		DEBUG.BANNER("GAMA: OpenGL initialized", "version", gc.getGLVersionNumber().toString());
-		float fresult[] = { 0.0f, 0.0f };
-		int iresult[] = { 0 };
-		gl.glGetFloatv(GL.GL_SMOOTH_LINE_WIDTH_RANGE, fresult, 0);
-		DEBUG.BANNER("GAMA: OpenGL line width range", "between",
-				String.valueOf(fresult[0]) + " and " + String.valueOf(fresult[1]));
-		GamaPreferences.Displays.CORE_LINE_WIDTH.between(fresult[0], fresult[1]);
-
-		gl.glGetFloatv(GL2GL3.GL_SMOOTH_LINE_WIDTH_GRANULARITY, fresult, 0);
-		DEBUG.BANNER("GAMA: OpenGL line width granularity", "value", String.valueOf(fresult[0]));
-		GamaPreferences.Displays.CORE_LINE_WIDTH.step(fresult[0]);
-
-		gl.glGetFloatv(GL.GL_POINT_SIZE, fresult, 0);
-		DEBUG.BANNER("GAMA: OpenGL point size range", "between",
-				String.valueOf(fresult[0]) + " and " + String.valueOf(fresult[1]));
-		gl.glGetFloatv(GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, fresult, 0);
-		OpenGL.ANISOTROPIC_LEVEL = fresult[0];
-		DEBUG.BANNER("GAMA: OpenGL max anisotropy level", "value", String.valueOf(OpenGL.ANISOTROPIC_LEVEL));
-		gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, iresult, 0);
-		DEBUG.BANNER("GAMA: OpenGL max texture size", "value",
-				String.valueOf(iresult[0]) + "x" + String.valueOf(iresult[0]));
-		gl.getContext().destroy();
-		offscreenDrawable.destroy();
+		GL gl = null;
+		GLOffscreenAutoDrawable offscreen = null;
+		String property = "Loading";
+		String prefix = "OpenGL";
+		try {
+			GLCapabilities cap = new GLCapabilities(OpenGL.PROFILE);
+			cap.setDepthBits(24);
+			cap.setDoubleBuffered(true);
+			cap.setHardwareAccelerated(true);
+			cap.setSampleBuffers(true);
+			cap.setAlphaBits(8);
+			cap.setNumSamples(8);
+			offscreen =
+					GLDrawableFactory.getFactory(OpenGL.PROFILE).createOffscreenAutoDrawable(null, cap, null, 10, 10);
+			offscreen.display();
+			GLContext gc = offscreen.getContext();
+			gc.makeCurrent();
+			gl = gc.getGL();
+			DEBUG.BANNER(prefix, "Profile initialized", "version", gc.getGLVersionNumber().toString());
+			float fresult[] = { 0.0f, 0.0f };
+			int iresult[] = { 0 };
+			property = "Line width range";
+			gl.glGetFloatv(GL.GL_SMOOTH_LINE_WIDTH_RANGE, fresult, 0);
+			DEBUG.BANNER(prefix, property, "between",
+					String.valueOf(fresult[0]) + " and " + String.valueOf(fresult[1]));
+			GamaPreferences.Displays.CORE_LINE_WIDTH.between(fresult[0], fresult[1]);
+			property = "Line width granularity";
+			gl.glGetFloatv(GL2GL3.GL_SMOOTH_LINE_WIDTH_GRANULARITY, fresult, 0);
+			DEBUG.BANNER(prefix, property, "value", String.valueOf(fresult[0]));
+			GamaPreferences.Displays.CORE_LINE_WIDTH.step(fresult[0]);
+			property = "Point size range";
+			gl.glGetFloatv(GL.GL_POINT_SIZE, fresult, 0);
+			DEBUG.BANNER(prefix, property, "between",
+					String.valueOf(fresult[0]) + " and " + String.valueOf(fresult[1]));
+			property = "Max anisotropy level";
+			gl.glGetFloatv(GL.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, fresult, 0);
+			OpenGL.ANISOTROPIC_LEVEL = fresult[0];
+			DEBUG.BANNER(prefix, property, "value", String.valueOf(OpenGL.ANISOTROPIC_LEVEL));
+			property = "Max texture size";
+			gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, iresult, 0);
+			DEBUG.BANNER(prefix, property, "value", String.valueOf(iresult[0]) + "x" + String.valueOf(iresult[0]));
+		} catch (Exception e) {
+			// do not interrupt the thread if something goes wrong and simply report problem
+			DEBUG.BANNER(prefix, "Properties", "error on", property);
+		} finally {
+			if (gl != null) { gl.getContext().destroy(); }
+			if (offscreen != null) { offscreen.destroy(); }
+		}
 
 	}
 

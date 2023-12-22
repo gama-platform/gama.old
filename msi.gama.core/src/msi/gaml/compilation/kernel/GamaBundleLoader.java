@@ -187,10 +187,10 @@ public class GamaBundleLoader {
 	 */
 	public static void preBuildContributions() throws Exception {
 
-		DEBUG.BANNER("GAMA: version " + GAMA.VERSION_NUMBER, "loading on",
+		DEBUG.BANNER("GAMA", "version " + GAMA.VERSION_NUMBER, "loading on",
 				SYS_NAME + " " + SYS_VERS + ", " + SYS_ARCH + ", JDK " + SYS_JAVA);
 
-		TIMER("GAML: Plugins with language additions", "loaded in", () -> {
+		TIMER("GAML", "Plugins with language additions", "loaded in", () -> {
 			final IExtensionRegistry registry = Platform.getExtensionRegistry();
 			// We retrieve the elements declared as extensions to the GAML language,
 			// either with the new or the deprecated extension, and add their contributor plugin to GAMA_PLUGINS
@@ -237,12 +237,13 @@ public class GamaBundleLoader {
 				}
 			}
 			CURRENT_PLUGIN_NAME = null;
-			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'create'", "done in",
+			TIMER_WITH_EXCEPTIONS("GAMA", "Loading extensions to 'create'", "done in",
 					() -> { loadCreateExt(registry); });
-			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'save'", "done in", () -> { loadSaveExt(registry); });
-			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'draw'", "done in", () -> { loadDrawExt(registry); });
-			TIMER_WITH_EXCEPTIONS("GAMA: Loading extensions to 'event'", "done in", () -> { loadEventExt(registry); });
-			TIMER_WITH_EXCEPTIONS("GAMA: Gathering built-in models", "done in", () -> { loadModels(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA", "Loading extensions to 'save'", "done in", () -> { loadSaveExt(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA", "Loading extensions to 'draw'", "done in", () -> { loadDrawExt(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA", "Loading extensions to 'event'", "done in",
+					() -> { loadEventExt(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA", "Gathering built-in models", "done in", () -> { loadModels(registry); });
 			loadContentExtensions(registry);
 
 			// CRUCIAL INITIALIZATIONS
@@ -251,7 +252,7 @@ public class GamaBundleLoader {
 			GamaMetaModel.INSTANCE.build();
 			// We init the type hierarchy, the units and the agent representing the GAMA platform
 			Types.init();
-			TIMER_WITH_EXCEPTIONS("GAMA: Loading constants", "done in", () -> { loadConstants(registry); });
+			TIMER_WITH_EXCEPTIONS("GAMA", "Loading constants", "done in", () -> { loadConstants(registry); });
 			GamaMetaModel.INSTANCE.getPlatformSpeciesDescription().validate();
 		});
 
@@ -450,7 +451,7 @@ public class GamaBundleLoader {
 	 */
 	@SuppressWarnings ("unchecked")
 	public static void preBuild(final Bundle bundle) throws Exception {
-		TIMER_WITH_EXCEPTIONS("GAMA: Plugin " + bundle.getSymbolicName(), "loaded in", () -> {
+		TIMER_WITH_EXCEPTIONS("GAMA", "Plugin " + bundle.getSymbolicName(), "loaded in", () -> {
 			String shortcut = bundle.getSymbolicName();
 			GAMA_PLUGINS_NAMES.add(shortcut);
 			shortcut = shortcut.substring(shortcut.lastIndexOf('.') + 1);

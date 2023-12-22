@@ -173,18 +173,18 @@ public class Application implements IApplication {
 		Display.setAppVersion(GAMA.VERSION_NUMBER);
 
 		Monitor primary = display.getPrimaryMonitor();
-		DEBUG.BANNER("GAMA: Primary monitor resolution", "defined as",
+		DEBUG.BANNER("GAMA", "Primary monitor resolution", "defined as",
 				"" + primary.getBounds().width + "x" + primary.getBounds().height);
-		DEBUG.BANNER("GAMA: Primary monitor zoom ", "defined as", "" + primary.getZoom() + "%");
+		DEBUG.BANNER("GAMA", "Primary monitor zoom ", "defined as", "" + primary.getZoom() + "%");
 		Monitor[] monitors = display.getMonitors();
 		if (monitors.length > 1) {
 			int i = 0;
 			for (Monitor m : monitors) {
 				if (m == primary) { continue; }
 				i++;
-				DEBUG.BANNER("GAMA: Monitor #" + i + " resolution ", "defined as",
+				DEBUG.BANNER("GAMA", "Monitor #" + i + " resolution ", "defined as",
 						"" + m.getBounds().width + "x" + m.getBounds().height);
-				DEBUG.BANNER("GAMA: Monitor #" + i + " zoom", "defined as", "" + m.getZoom() + "%");
+				DEBUG.BANNER("GAMA", "Monitor #" + i + " zoom", "defined as", "" + m.getZoom() + "%");
 			}
 		}
 
