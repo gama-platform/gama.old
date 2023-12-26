@@ -53,7 +53,6 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class GamlResource.
@@ -281,7 +280,7 @@ public class GamlResource extends LazyLinkingResource {
 	 *
 	 */
 	public void validate() {
-		//DEBUG.LOG("Resource validating itself");
+		// DEBUG.LOG("Resource validating itself");
 		final ModelDescription model = buildCompleteDescription();
 		if (model == null) {
 			updateWith(null, true);
@@ -392,22 +391,6 @@ public class GamlResource extends LazyLinkingResource {
 	@Override
 	public void clearCache() {
 		super.clearCache();
-		// imports = null;
 	}
-
-	// /**
-	// * Gets the imports.
-	// *
-	// * @return the imports
-	// */
-	// public Map<URI, String> getImports() { return imports; }
-	//
-	// /**
-	// * Sets the imports.
-	// *
-	// * @param imports
-	// * the new imports
-	// */
-	// public void setImports(final Map<URI, String> imports) { this.imports = imports; }
 
 }

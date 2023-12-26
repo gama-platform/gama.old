@@ -60,18 +60,18 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	public static final int NOT_FOUND = -1;
 
 	/** The Constant SPECIES. */
-	public final static GamlIdiomsProvider<SpeciesDescription> SPECIES = new GamlIdiomsProvider<>(
-			"species", IKeyword.SPECIES, "Built-in species", Types.getBuiltInSpecies());
+	public final static GamlIdiomsProvider<SpeciesDescription> SPECIES = new GamlIdiomsProvider<>("species",
+			IKeyword.SPECIES, "Built-in species", Types.getBuiltInSpecies().values());
 
 	/** The Constant SPECIES_ATTRIBUTES. */
-	public final static GamlIdiomsProvider<VariableDescription> SPECIES_ATTRIBUTES = new GamlIdiomsProvider<>(
-			"variables", "species_attribute", "Built-in species attribute",
-			Iterables.concat(Iterables.transform(Types.getBuiltInSpecies(), SpeciesDescription::getOwnAttributes)));
+	public final static GamlIdiomsProvider<VariableDescription> SPECIES_ATTRIBUTES =
+			new GamlIdiomsProvider<>("variables", "species_attribute", "Built-in species attribute", Iterables.concat(
+					Iterables.transform(Types.getBuiltInSpecies().values(), SpeciesDescription::getOwnAttributes)));
 
 	/** The Constant SPECIES_ACTIONS. */
-	public final static GamlIdiomsProvider<ActionDescription> SPECIES_ACTIONS = new GamlIdiomsProvider<>("actions",
-			"species_action", "Built-in species action",
-			Iterables.concat(Iterables.transform(Types.getBuiltInSpecies(), SpeciesDescription::getOwnActions)));
+	public final static GamlIdiomsProvider<ActionDescription> SPECIES_ACTIONS =
+			new GamlIdiomsProvider<>("actions", "species_action", "Built-in species action", Iterables.concat(
+					Iterables.transform(Types.getBuiltInSpecies().values(), SpeciesDescription::getOwnActions)));
 
 	/** The Constant SKILLS. */
 	public final static GamlIdiomsProvider<SkillDescription> SKILLS = new GamlIdiomsProvider<>("skills", IKeyword.SKILL,

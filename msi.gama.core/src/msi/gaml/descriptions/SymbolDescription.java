@@ -744,7 +744,7 @@ public abstract class SymbolDescription implements IDescription {
 			// If it is supposed to be unique, we verify this
 			if (proto.isUniqueInContext()) {
 				final boolean hasError = !sd.visitOwnChildren(child -> {
-					if (child.getKeyword().equals(getKeyword()) && child != SymbolDescription.this) {
+					if (child != SymbolDescription.this && child.getKeyword().equals(getKeyword())) {
 						final String error = getKeyword() + " is defined twice. Only one definition is allowed in "
 								+ sd.getKeyword();
 						child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(), getKeyword());

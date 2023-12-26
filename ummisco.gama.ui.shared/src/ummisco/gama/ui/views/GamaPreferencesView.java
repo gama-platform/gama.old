@@ -115,9 +115,11 @@ public class GamaPreferencesView {
 				if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
 					instance = new GamaPreferencesView(WorkbenchHelper.getShell());
 				}
-
+				for (final IParameterEditor ed : instance.editors.values()) {
+					ed.updateWithValueOfParameter(false, false);
+				}
 			});
-			for (final IParameterEditor ed : instance.editors.values()) { ed.updateWithValueOfParameter(false, false); }
+
 		});
 
 	}

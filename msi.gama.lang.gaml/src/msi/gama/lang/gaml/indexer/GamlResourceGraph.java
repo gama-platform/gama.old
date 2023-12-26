@@ -18,8 +18,8 @@ import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.AbstractBaseGraph;
-import org.jgrapht.graph.DefaultGraphSpecificsStrategy;
 import org.jgrapht.graph.DefaultGraphType;
+import org.jgrapht.graph.FastLookupGraphSpecificsStrategy;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -45,10 +45,8 @@ public class GamlResourceGraph {
 		 * Instantiates a new graph.
 		 */
 		public Imports() {
-			super(null, null,
-					new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
-							.weighted(false).allowCycles(true).build(),
-					new DefaultGraphSpecificsStrategy<>());
+			super(null, null, new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
+					.weighted(false).allowCycles(true).build(), new FastLookupGraphSpecificsStrategy<>());
 		}
 
 	}
@@ -207,7 +205,7 @@ public class GamlResourceGraph {
 		if (!result.containsKey(uri)) {
 			result.put(uri, currentLabel);
 			if (imports.containsVertex(uri)) {
-				Set<LabeledEdge> ee = new HashSet<>(imports.outgoingEdgesOf(uri));
+				Set<LabeledEdge> ee = Collections.unmodifiableSet(imports.outgoingEdgesOf(uri));
 				for (LabeledEdge edge : ee) {
 					searchImports(edge.target, edge.label == null ? currentLabel : edge.label, result);
 				}

@@ -434,7 +434,7 @@ public class GAML {
 			return true;
 		};
 
-		for (final TypeDescription desc : Types.getBuiltInSpecies()) {
+		for (final TypeDescription desc : Types.getBuiltInSpecies().values()) {
 			desc.visitOwnAttributes(varVisitor);
 			desc.visitOwnActions(actionVisitor);
 
@@ -477,7 +477,7 @@ public class GAML {
 			return true;
 		};
 
-		for (final TypeDescription s : getBuiltInSpecies()) { s.visitOwnActions(visitor); }
+		for (final TypeDescription s : getBuiltInSpecies().values()) { s.visitOwnActions(visitor); }
 		GamaSkillRegistry.INSTANCE.visitSkills(desc -> {
 			((SkillDescription) desc).visitOwnActions(visitor);
 			return true;

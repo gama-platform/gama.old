@@ -14,7 +14,6 @@ import static com.google.common.collect.Iterables.transform;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +34,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.data.ListExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.factories.DescriptionFactory;
+import one.util.streamex.StreamEx;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -60,6 +60,8 @@ public class Types {
 
 	/** The Constant builtInTypes. */
 	public final static ITypesManager builtInTypes = new TypesManager(null);
+
+	private static volatile Map<String, SpeciesDescription> builtInSpeciesMap;
 
 	/** The Constant NO_TYPE. */
 	public final static IType NO_TYPE = new GamaNoType();
@@ -348,22 +350,18 @@ public class Types {
 		}
 	}
 
-	/** The built in species. */
-	private static volatile List<SpeciesDescription> builtInSpecies;
-
 	/**
 	 * Gets the built in species.
 	 *
 	 * @return the built in species
 	 */
-	public static Collection<? extends SpeciesDescription> getBuiltInSpecies() {
-		if (builtInSpecies != null) return builtInSpecies;
+	public static Map<String, ? extends SpeciesDescription> getBuiltInSpecies() {
+		if (builtInSpeciesMap != null) return builtInSpeciesMap;
 		final ModelDescription root = ModelDescription.ROOT;
-		final List<SpeciesDescription> result = new ArrayList<>();
+		List<SpeciesDescription> result = new ArrayList();
 		root.getAllSpecies(result);
-		builtInSpecies = result;
-		return builtInSpecies;
-
+		builtInSpeciesMap = StreamEx.of(result).toMap(SpeciesDescription::getName, sd -> sd);
+		return builtInSpeciesMap;
 	}
 
 	/**

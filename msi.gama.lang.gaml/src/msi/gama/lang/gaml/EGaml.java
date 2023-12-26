@@ -20,12 +20,14 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.Access;
+import msi.gama.lang.gaml.gaml.ActionDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.Block;
+import msi.gama.lang.gaml.gaml.EquationDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
@@ -47,13 +49,17 @@ import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Reflex;
+import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TerminalExpression;
+import msi.gama.lang.gaml.gaml.TypeDefinition;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.Unary;
+import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
+import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ActionArgumentsImpl;
 import msi.gama.lang.gaml.gaml.impl.BlockImpl;
@@ -68,6 +74,7 @@ import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.IGamlEcoreUtils;
 import msi.gaml.compilation.ast.SyntacticFactory;
+import msi.gaml.descriptions.ModelDescription;
 import ummisco.gama.dev.utils.COUNTER;
 
 /**
@@ -344,8 +351,10 @@ public class EGaml implements IGamlEcoreUtils {
 			case GamlPackage.FUNCTION -> getKeyOf(((Function) object).getLeft());
 			case GamlPackage.TYPE_REF -> getKeyOfTypeRef((TypeRef) object);
 			case GamlPackage.IF -> "?";
-			case GamlPackage.VARIABLE_REF, GamlPackage.UNIT_NAME, GamlPackage.ACTION_REF, GamlPackage.SKILL_REF, GamlPackage.EQUATION_REF -> this.getNameOfRef(object);
-			case GamlPackage.INT_LITERAL, GamlPackage.STRING_LITERAL, GamlPackage.DOUBLE_LITERAL, GamlPackage.RESERVED_LITERAL, GamlPackage.BOOLEAN_LITERAL, GamlPackage.TERMINAL_EXPRESSION -> ((TerminalExpression) object).getOp();
+			case GamlPackage.VARIABLE_REF, GamlPackage.UNIT_NAME, GamlPackage.ACTION_REF, GamlPackage.SKILL_REF, GamlPackage.EQUATION_REF -> this
+					.getNameOfRef(object);
+			case GamlPackage.INT_LITERAL, GamlPackage.STRING_LITERAL, GamlPackage.DOUBLE_LITERAL, GamlPackage.RESERVED_LITERAL, GamlPackage.BOOLEAN_LITERAL, GamlPackage.TERMINAL_EXPRESSION -> ((TerminalExpression) object)
+					.getOp();
 			default -> {
 				final List<EClass> eSuperTypes = clazz.getESuperTypes();
 				yield eSuperTypes.isEmpty() ? null : getKeyOf(object, eSuperTypes.get(0));
@@ -443,15 +452,38 @@ public class EGaml implements IGamlEcoreUtils {
 	 */
 	@Override
 	public String getNameOfRef(final EObject o) {
-		final ICompositeNode n = NodeModelUtils.getNode(o);
-		if (n != null) return NodeModelUtils.getTokenText(n);
-		if (o instanceof VariableRef) return ((VariableRef) o).getRef().getName();
-		if (o instanceof UnitName) return ((UnitName) o).getRef().getName();
-		if (o instanceof ActionRef) return ((ActionRef) o).getRef().getName();
-		if (o instanceof SkillRef) return ((SkillRef) o).getRef().getName();
-		if (o instanceof EquationRef) return ((EquationRef) o).getRef().getName();
-		if (o instanceof TypeRef) return ((TypeRef) o).getRef().getName();
-		return "";
+
+		String result = "";
+		if (o instanceof VariableRef v) {
+			VarDefinition ref = v.getRef();
+			if (ref != null) {
+				if (ref instanceof ModelImpl) {
+					result = ref.getName() + ModelDescription.MODEL_SUFFIX;
+				} else {
+					result = ref.getName();
+				}
+			}
+		} else if (o instanceof UnitName u) {
+			UnitFakeDefinition ref = u.getRef();
+			if (ref != null) { result = ref.getName(); }
+		} else if (o instanceof ActionRef a) {
+			ActionDefinition ref = a.getRef();
+			if (ref != null) { result = ref.getName(); }
+		} else if (o instanceof SkillRef s) {
+			SkillFakeDefinition ref = s.getRef();
+			if (ref != null) { result = ref.getName(); }
+		} else if (o instanceof EquationRef e) {
+			EquationDefinition ref = e.getRef();
+			if (ref != null) { result = ref.getName(); }
+		} else if (o instanceof TypeRef t) {
+			TypeDefinition ref = t.getRef();
+			if (ref != null) { result = t.getRef().getName(); }
+		}
+		if (result.isBlank()) {
+			final ICompositeNode cn = NodeModelUtils.getNode(o);
+			if (cn != null) { result = NodeModelUtils.getTokenText(cn); }
+		}
+		return result;
 	}
 
 	/**
@@ -658,6 +690,11 @@ public class EGaml implements IGamlEcoreUtils {
 		GamlDefinition stub = (GamlDefinition) getFactory().create(eClass);
 		stub.setName(t);
 		return stub;
+	}
+
+	@Override
+	public boolean hasImports(final EObject statement) {
+		return statement instanceof ModelImpl m && !m.getImports().isEmpty();
 	}
 
 }

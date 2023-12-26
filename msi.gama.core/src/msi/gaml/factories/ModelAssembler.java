@@ -42,16 +42,16 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
+import msi.gaml.compilation.ast.SyntacticSpeciesElement;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
-import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolDescription;
-import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.ValidationContext;
+import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.DEBUG;
@@ -90,10 +90,11 @@ public class ModelAssembler {
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 			final Iterable<ISyntacticElement> allModels, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
+		// DEBUG.OUT("ModelAssembler running in thread " + Thread.currentThread().getName());
 		// DEBUG.OUT("All models passed to ModelAssembler: "
 		// + Iterables.transform(allModels, @Nullable ISyntacticElement::getName));
 		final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
-		final IMap<String, ISyntacticElement> speciesNodes = GamaMapFactory.create();
+		final IMap<String, SyntacticSpeciesElement> speciesNodes = GamaMapFactory.create();
 		final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes = new IMap[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
@@ -167,7 +168,19 @@ public class ModelAssembler {
 
 	}
 
-	private void complementSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
+	/**
+	 * Complement species and experiments.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param speciesNodes
+	 *            the species nodes
+	 * @param experimentNodes
+	 *            the experiment nodes
+	 * @param model
+	 *            the model
+	 * @date 26 déc. 2023
+	 */
+	private void complementSpeciesAndExperiments(final IMap<String, SyntacticSpeciesElement> speciesNodes,
 			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes, final ModelDescription model) {
 		speciesNodes.forEachValue(speciesNode -> {
 			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
@@ -185,7 +198,21 @@ public class ModelAssembler {
 		}
 	}
 
-	private void addSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
+	/**
+	 * Adds the species and experiments.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param speciesNodes
+	 *            the species nodes
+	 * @param experimentNodes
+	 *            the experiment nodes
+	 * @param tempSpeciesCache
+	 *            the temp species cache
+	 * @param model
+	 *            the model
+	 * @date 26 déc. 2023
+	 */
+	private void addSpeciesAndExperiments(final IMap<String, SyntacticSpeciesElement> speciesNodes,
 			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
 			final IMap<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
 		speciesNodes.forEachValue(speciesNode -> {
@@ -203,7 +230,21 @@ public class ModelAssembler {
 		}
 	}
 
-	private void parentSpeciesAndExperiments(final IMap<String, ISyntacticElement> speciesNodes,
+	/**
+	 * Parent species and experiments.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param speciesNodes
+	 *            the species nodes
+	 * @param experimentNodes
+	 *            the experiment nodes
+	 * @param tempSpeciesCache
+	 *            the temp species cache
+	 * @param model
+	 *            the model
+	 * @date 26 déc. 2023
+	 */
+	private void parentSpeciesAndExperiments(final IMap<String, SyntacticSpeciesElement> speciesNodes,
 			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
 			final IMap<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
 		speciesNodes.forEachValue(speciesNode -> {
@@ -222,6 +263,31 @@ public class ModelAssembler {
 		}
 	}
 
+	/**
+	 * Builds the primary model.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param projectPath
+	 *            the project path
+	 * @param modelPath
+	 *            the model path
+	 * @param collector
+	 *            the collector
+	 * @param document
+	 *            the document
+	 * @param models
+	 *            the models
+	 * @param source
+	 *            the source
+	 * @param globalFacets
+	 *            the global facets
+	 * @param modelName
+	 *            the model name
+	 * @param absoluteAlternatePathAsStrings
+	 *            the absolute alternate path as strings
+	 * @return the model description
+	 * @date 26 déc. 2023
+	 */
 	private ModelDescription buildPrimaryModel(final String projectPath, final String modelPath,
 			final ValidationContext collector, final boolean document, final ImmutableList<ISyntacticElement> models,
 			final ISyntacticElement source, final Facets globalFacets, final String modelName,
@@ -285,7 +351,7 @@ public class ModelAssembler {
 	 * @return the facets
 	 */
 	private Facets extractAndAssembleElementsOf(final ValidationContext collector,
-			final IMap<String, ISyntacticElement> speciesNodes,
+			final IMap<String, SyntacticSpeciesElement> speciesNodes,
 			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes, final ISyntacticElement globalNodes,
 			Facets globalFacets, final ISyntacticElement cm) {
 		final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
@@ -391,9 +457,9 @@ public class ModelAssembler {
 			model.removeFacets(SCHEDULES);
 		}
 		if (model.hasFacet(FREQUENCY)) {
-			model.warning(
-					"'frequency' is deprecated in global. Define a dedicated species instead and add the facet to it",
-					IGamlIssue.DEPRECATED, NAME);
+			// model.warning(
+			// "'frequency' is deprecated in global. Define a dedicated species instead and add the facet to it",
+			// IGamlIssue.DEPRECATED, NAME);
 			sd.setFacet(FREQUENCY, model.getFacet(FREQUENCY));
 			model.removeFacets(FREQUENCY);
 		}
@@ -497,8 +563,9 @@ public class ModelAssembler {
 	 * @param collector
 	 *            the collector
 	 */
-	void addSpeciesNode(final ISyntacticElement element, final Map<String, ISyntacticElement> speciesNodes,
+	void addSpeciesNode(final ISyntacticElement sse, final Map<String, SyntacticSpeciesElement> speciesNodes,
 			final ValidationContext collector) {
+		if (!(sse instanceof SyntacticSpeciesElement element)) return;
 		final String name = element.getName();
 		if (speciesNodes.containsKey(name)) {
 			collector.add(new GamlCompilationError("Species " + name + " is declared twice",
@@ -588,14 +655,7 @@ public class ModelAssembler {
 	 */
 	SpeciesDescription lookupSpecies(final String name, final Map<String, SpeciesDescription> cache) {
 		SpeciesDescription result = cache.get(name);
-		if (result == null) {
-			for (final TypeDescription td : Types.getBuiltInSpecies()) {
-				if (td.getName().equals(name)) {
-					result = (SpeciesDescription) td;
-					break;
-				}
-			}
-		}
+		if (result == null) { result = Types.getBuiltInSpecies().get(name); }
 		return result;
 	}
 

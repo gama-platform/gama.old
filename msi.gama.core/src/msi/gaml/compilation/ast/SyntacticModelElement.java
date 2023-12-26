@@ -85,8 +85,8 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	 * @param imports
 	 *            the imports
 	 */
-	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement, final String path,
-			final Object... imports) {
+	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement,
+			final String path) {
 		super(keyword, facets, statement);
 		if (path != null) {
 			final String p = path;
@@ -141,6 +141,7 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	 *
 	 * @return the pragmas
 	 */
+	@Override
 	@SuppressWarnings ("unchecked")
 	public Map<String, List<String>> getPragmas() {
 		if (hasFacet(IKeyword.PRAGMA))

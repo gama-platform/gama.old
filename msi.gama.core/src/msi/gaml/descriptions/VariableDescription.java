@@ -93,9 +93,9 @@ public class VariableDescription extends SymbolDescription {
 			final Facets facets) {
 		super(keyword, superDesc, source, /* null, */facets);
 		if (facets != null) {
+			setIf(Flag.isContextualType, computesContextualType());
 			if (!hasFacet(TYPE) && !isExperimentParameter()) { facets.putAsLabel(TYPE, keyword); }
 			setIf(Flag.isFunction, hasFacet(FUNCTION));
-			setIf(Flag.isContextualType, computesContextualType());
 			setIf(Flag.IsParameter, isExperimentParameter() || hasFacet(PARAMETER) && !facets.equals(PARAMETER, FALSE));
 			setIf(Flag.Global, superDesc instanceof ModelDescription);
 			setIf(Unmodifiable, (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE)) && !isParameter());
@@ -199,11 +199,9 @@ public class VariableDescription extends SymbolDescription {
 	 */
 	private boolean computesContextualType() {
 		String type = getLitteral(TYPE);
-		int provider = GamaIntegerType.staticCast(null, type, null, false);
-		if (provider < 0) return true;
+		if (type != null && type.charAt(0) == '-') return true;
 		type = getLitteral(OF);
-		provider = GamaIntegerType.staticCast(null, type, null, false);
-		return provider < 0;
+		return type != null && type.charAt(0) == '-';
 	}
 
 	/**
