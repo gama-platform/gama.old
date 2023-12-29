@@ -161,42 +161,42 @@ public class Files {
 		return f.exists() && !f.isDirectory();
 	}
 
-	/**
-	 * Zip files.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param zipfile
-	 *            the zipfile
-	 * @param s
-	 *            the s
-	 * @return true, if successful
-	 */
-	@operator (
-			value = "folder_exists",
-			can_be_const = false,
-			category = IOperatorCategory.FILE,
-			concept = { IConcept.FILE })
-	@doc (
-			value = "Test whether the parameter is the path to an existing folder. False if it doesnt exist or if it is a file",
-			examples = { @example (
-					value = "string file_name <-\"../includes/\";",
-					isExecutable = false),
-					@example (
-							value = "if folder_exists(file_name){",
-							isExecutable = false),
-					@example (
-							value = "	write \"Folder exists in the computer\";",
-							isExecutable = false),
-					@example (
-							value = "}",
-							isExecutable = false) })
-	@no_test
-	public static boolean zip_files(final IScope scope, final String zipfile, final IList<String> s) {
-		if (s == null || s.isEmpty() || scope == null) return false;
-
-		return true;
-	}
+//	/**
+//	 * Zip files.
+//	 *
+//	 * @param scope
+//	 *            the scope
+//	 * @param zipfile
+//	 *            the zipfile
+//	 * @param s
+//	 *            the s
+//	 * @return true, if successful
+//	 */
+//	@operator (
+//			value = "folder_exists",
+//			can_be_const = false,
+//			category = IOperatorCategory.FILE,
+//			concept = { IConcept.FILE })
+//	@doc (
+//			value = "Test whether the parameter is the path to an existing folder. False if it doesnt exist or if it is a file",
+//			examples = { @example (
+//					value = "string file_name <-\"../includes/\";",
+//					isExecutable = false),
+//					@example (
+//							value = "if folder_exists(file_name){",
+//							isExecutable = false),
+//					@example (
+//							value = "	write \"Folder exists in the computer\";",
+//							isExecutable = false),
+//					@example (
+//							value = "}",
+//							isExecutable = false) })
+//	@no_test
+//	public static boolean zip_files(final IScope scope, final String zipfile, final IList<String> s) {
+//		if (s == null || s.isEmpty() || scope == null) return false;
+//
+//		return true;
+//	}
 
 	/**
 	 * Extract folder.
