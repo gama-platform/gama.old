@@ -954,7 +954,6 @@ public class System {
 			concept = {})
 	@doc (
 			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is to specify the parameters the user can enter",
-			masterDoc = true,
 			examples = {
 					@example ("map<string,unknown> values2 <- user_input_dialog('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})]);"),
 					@example (
@@ -1036,7 +1035,6 @@ public class System {
 			concept = {})
 	@doc (
 			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is used to specify the parameters the user can enter. Finally, the font of the title can be specified",
-			masterDoc = true,
 			examples = {
 					@example ("map<string,unknown> values2 <- user_input_dialog('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18));"),
 					@example (
@@ -1086,7 +1084,6 @@ public class System {
 			concept = {})
 	@doc (
 			value = "Asks the user for some values and returns a map containing these values. Takes a string and a list of calls to the `enter()` or `choose()` operators as arguments. The string is used to specify the message of the dialog box. The list is used to specify the parameters the user can enter. Finally, the font of the title can be specified as well as the background color",
-			masterDoc = true,
 			examples = {
 					@example ("map<string,unknown> values2 <- user_input_dialog('Enter number of agents and locations',[enter('Number',100), enter('Location',point, {10, 10})], font('Helvetica', 18));"),
 					@example (
