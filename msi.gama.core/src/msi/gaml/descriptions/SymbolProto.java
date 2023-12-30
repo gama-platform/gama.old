@@ -326,11 +326,7 @@ public class SymbolProto extends AbstractProto {
 	/**
 	 * @return
 	 */
-	public boolean isBreakable() {
-		return isBreakable;
-		// final String name = getName();
-		// return IKeyword.ASK.equals(name) || IKeyword.LOOP.equals(name) || IKeyword.SWITCH.equals(name);
-	}
+	public boolean isBreakable() { return isBreakable; }
 
 	/**
 	 * Checks if is continuable.

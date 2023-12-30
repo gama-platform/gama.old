@@ -28,9 +28,6 @@ import msi.gaml.statements.Facets;
  * @todo Description
  *
  */
-// @factory (
-// handles = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.BEHAVIOR,
-// ISymbolKind.ACTION, ISymbolKind.LAYER, ISymbolKind.BATCH_METHOD, ISymbolKind.OUTPUT })
 public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override

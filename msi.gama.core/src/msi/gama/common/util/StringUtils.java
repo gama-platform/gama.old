@@ -96,8 +96,7 @@ public class StringUtils {
 		if (s == null) return null;
 		final String t = s.trim();
 		if (!isGamaString(t)) return s;
-		if (t.length() >= 2) return t.substring(1, t.length() - 1);
-		return s;
+		return t.substring(1, t.length() - 1);
 	}
 
 	/*
@@ -357,7 +356,12 @@ public class StringUtils {
 	 * @return true, if is gama string
 	 */
 	static public boolean isGamaString(final String s) {
-		return s != null && GAMA_STRING_PATTERN.test(s);
+		if (s == null) return false;
+		int length = s.length();
+		if (length < 2 || s.charAt(0) != '\'' || s.charAt(length - 1) != '\'') return false;
+		return true;
+
+		// return s != null && GAMA_STRING_PATTERN.test(s);
 	}
 
 	/**

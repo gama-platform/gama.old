@@ -208,16 +208,15 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	@Override
 	protected String getFirstLine(final EObject o) {
-		if (o instanceof Import) {
-			String uri = ((Import) o).getImportURI();
+		if (o instanceof Import imp) {
+			String uri = imp.getImportURI();
 			uri = uri.substring(uri.lastIndexOf('/') + 1);
-			final String model = ((Import) o).getName() != null ? "micro-model" : "model";
+			final String model = imp.getName() != null ? "micro-model" : "model";
 			return "<b>Import of the " + model + " defined in <i>" + uri + "</i></b>";
 		}
 		if (o instanceof S_Global) return "<b>Global definitions of </b>" + getFirstLine(o.eContainer().eContainer());
 		final Statement s = EGaml.getInstance().getStatement(o);
-		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o)
-			return getFirstLine(s);
+		if (o instanceof TypeRef && s instanceof S_Definition sd && sd.getTkey() == o) return getFirstLine(s);
 
 		// All the cases corresponding to #3495 -- arguments to actions and primitives
 		// CASE do run_thread interval: 2#s;

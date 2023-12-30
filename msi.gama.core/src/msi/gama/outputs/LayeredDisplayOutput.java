@@ -51,9 +51,9 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
+import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
@@ -433,7 +433,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			IExpressionDescription type = d.getFacet(TYPE);
 			final boolean isOpenGLDefault = !IKeyword._2D.equals(GamaPreferences.Displays.CORE_DISPLAY.getValue());
 			if (type == null) {
-				type = LabelExpressionDescription.create(isOpenGLDefault ? IKeyword._3D : IKeyword._2D);
+				type = ConstantExpressionDescription.create(isOpenGLDefault ? IKeyword._3D : IKeyword._2D);
 				d.setFacet(TYPE, type);
 			}
 			String cand = "";
@@ -448,7 +448,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 								+ ". Gama will fallback to first valid type (" + cand + ")",
 						IGamlIssue.UNKNOWN_KEYWORD, TYPE);
 
-				d.setFacet(TYPE, LabelExpressionDescription.create(cand));
+				d.setFacet(TYPE, ConstantExpressionDescription.create(cand));
 			}
 
 			// Addressing problems with charts in OpenGL

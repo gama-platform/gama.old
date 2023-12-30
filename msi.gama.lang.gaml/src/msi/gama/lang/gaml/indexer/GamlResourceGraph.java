@@ -14,11 +14,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.eclipse.emf.common.util.URI;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultGraphType;
+import org.jgrapht.graph.EdgeSetFactory;
 import org.jgrapht.graph.FastLookupGraphSpecificsStrategy;
 
 import com.google.common.collect.Iterables;
@@ -45,8 +47,16 @@ public class GamlResourceGraph {
 		 * Instantiates a new graph.
 		 */
 		public Imports() {
-			super(null, null, new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
-					.weighted(false).allowCycles(true).build(), new FastLookupGraphSpecificsStrategy<>());
+			super(null, null,
+					new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
+							.weighted(false).allowCycles(true).build(),
+					new FastLookupGraphSpecificsStrategy<URI, LabeledEdge>() {
+						@Override
+						public EdgeSetFactory<URI, LabeledEdge> getEdgeSetFactory() {
+							// return vertex -> new HashSet<>(2, 1f);
+							return vertex -> new ConcurrentSkipListSet<>();
+						}
+					});
 		}
 
 	}
@@ -64,7 +74,7 @@ public class GamlResourceGraph {
 	/**
 	 * The Class Edge.
 	 */
-	class LabeledEdge {
+	class LabeledEdge implements Comparable<LabeledEdge> {
 
 		/** The label. */
 		String label;
@@ -83,6 +93,11 @@ public class GamlResourceGraph {
 		LabeledEdge(final String l, final URI target) {
 			this.label = l;
 			this.target = target;
+		}
+
+		@Override
+		public int compareTo(final LabeledEdge o) {
+			return target.toString().compareTo(o.target.toString());
 		}
 
 	}
@@ -205,8 +220,7 @@ public class GamlResourceGraph {
 		if (!result.containsKey(uri)) {
 			result.put(uri, currentLabel);
 			if (imports.containsVertex(uri)) {
-				Set<LabeledEdge> ee = Collections.unmodifiableSet(imports.outgoingEdgesOf(uri));
-				for (LabeledEdge edge : ee) {
+				for (LabeledEdge edge : imports.outgoingEdgesOf(uri)) {
 					searchImports(edge.target, edge.label == null ? currentLabel : edge.label, result);
 				}
 			}

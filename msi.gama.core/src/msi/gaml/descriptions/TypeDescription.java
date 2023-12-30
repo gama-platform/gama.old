@@ -499,7 +499,6 @@ public abstract class TypeDescription extends SymbolDescription {
 			final ActionDescription existing = actions.get(actionName);
 			if (existing != null) {
 				assertActionsAreCompatible(newAction, existing, existing.getOriginName());
-
 				duplicateInfo(newAction, existing);
 			}
 		} else {

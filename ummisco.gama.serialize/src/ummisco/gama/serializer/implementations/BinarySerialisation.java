@@ -238,4 +238,36 @@ public class BinarySerialisation implements ISerialisationConstants {
 		}
 	}
 
+	/**
+	 * Save to bytes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param scope
+	 *            the scope
+	 * @param object
+	 *            the agent
+	 * @param zip
+	 *            the zip
+	 * @return the byte[]
+	 * @date 29 déc. 2023
+	 */
+	public static final byte[] saveToBytes(final IScope scope, final Object object, final boolean zip) {
+		return saveToBytes(scope, object, BINARY_FORMAT, zip);
+	}
+
+	/**
+	 * Save to bytes.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param object
+	 *            the object
+	 * @param zip
+	 *            the zip
+	 * @return the byte[]
+	 * @date 29 déc. 2023
+	 */
+	public static final byte[] saveToBytes(final Object object, final boolean zip) {
+		return saveToBytes(null, object, BINARY_FORMAT, zip);
+	}
+
 }
