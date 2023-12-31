@@ -30,7 +30,6 @@ import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.EquationDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
-import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
@@ -119,8 +118,8 @@ public class EGaml implements IGamlEcoreUtils {
 	 */
 	@Override
 	public List<Expression> getExprsOf(final EObject o) {
-		if (o instanceof ExpressionList && ((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS))
-			return ((ExpressionList) o).getExprs();
+		if (o instanceof ExpressionListImpl eli && eli.eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS))
+			return eli.getExprs();
 		return Collections.EMPTY_LIST;
 	}
 
@@ -351,8 +350,8 @@ public class EGaml implements IGamlEcoreUtils {
 			case GamlPackage.FUNCTION -> getKeyOf(((Function) object).getLeft());
 			case GamlPackage.TYPE_REF -> getKeyOfTypeRef((TypeRef) object);
 			case GamlPackage.IF -> "?";
-			case GamlPackage.VARIABLE_REF, GamlPackage.UNIT_NAME, GamlPackage.ACTION_REF, GamlPackage.SKILL_REF, GamlPackage.EQUATION_REF -> this
-					.getNameOfRef(object);
+			case GamlPackage.VARIABLE_REF, GamlPackage.UNIT_NAME, GamlPackage.ACTION_REF, GamlPackage.SKILL_REF, GamlPackage.EQUATION_REF -> getNameOfRef(
+					object, id);
 			case GamlPackage.INT_LITERAL, GamlPackage.STRING_LITERAL, GamlPackage.DOUBLE_LITERAL, GamlPackage.RESERVED_LITERAL, GamlPackage.BOOLEAN_LITERAL, GamlPackage.TERMINAL_EXPRESSION -> ((TerminalExpression) object)
 					.getOp();
 			default -> {
@@ -369,7 +368,7 @@ public class EGaml implements IGamlEcoreUtils {
 	 *            the object
 	 * @return the key of argument pair
 	 */
-	private String getKeyOfArgumentPair(final ArgumentPair object) {
+	public String getKeyOfArgumentPair(final ArgumentPair object) {
 		String s = object.getOp();
 		return s.endsWith(":") ? s.substring(0, s.length() - 1) : s;
 	}
@@ -394,21 +393,13 @@ public class EGaml implements IGamlEcoreUtils {
 	 * @return the key of type ref
 	 */
 	private String getKeyOfTypeRef(final TypeRef object) {
-		String s = getNameOfRef(object);
+		String s = getNameOfRef(object, GamlPackage.TYPE_REF);
 		if (s.contains("<")) {
 			s = s.split("<")[0];
 			// Special case for the 'species<xxx>' case
 			if ("species".equals(s)) { s = SyntacticFactory.SPECIES_VAR; }
 		}
 		return s;
-
-		// s = getNameOfRef(object);
-		// if (s.contains("<")) {
-		// s = s.split("<")[0];
-		// // Special case for the 'species<xxx>' case
-		// if ("species".equals(s)) { s = SyntacticFactory.SPECIES_VAR; }
-		// }
-		// return s;
 	}
 
 	/**
@@ -418,7 +409,7 @@ public class EGaml implements IGamlEcoreUtils {
 	 *            the object
 	 * @return the key of parameter
 	 */
-	private String getKeyOfParameter(final Parameter object) {
+	public String getKeyOfParameter(final Parameter object) {
 		String s;
 		final Parameter p = object;
 		s = getKeyOf(p.getLeft());
@@ -452,33 +443,61 @@ public class EGaml implements IGamlEcoreUtils {
 	 */
 	@Override
 	public String getNameOfRef(final EObject o) {
+		return getNameOfRef(o, o.eClass().getClassifierID());
+	}
 
+	/**
+	 * Gets the name of ref.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @param id
+	 *            the id
+	 * @return the name of ref
+	 * @date 27 déc. 2023
+	 */
+	private String getNameOfRef(final EObject o, final int id) {
 		String result = "";
-		if (o instanceof VariableRef v) {
-			VarDefinition ref = v.getRef();
-			if (ref != null) {
-				if (ref instanceof ModelImpl) {
-					result = ref.getName() + ModelDescription.MODEL_SUFFIX;
-				} else {
-					result = ref.getName();
-				}
+		switch (id) {
+			case GamlPackage.UNIT_NAME: {
+				UnitFakeDefinition ref = ((UnitName) o).getRef();
+				if (ref != null) { result = ref.getName(); }
+				break;
 			}
-		} else if (o instanceof UnitName u) {
-			UnitFakeDefinition ref = u.getRef();
-			if (ref != null) { result = ref.getName(); }
-		} else if (o instanceof ActionRef a) {
-			ActionDefinition ref = a.getRef();
-			if (ref != null) { result = ref.getName(); }
-		} else if (o instanceof SkillRef s) {
-			SkillFakeDefinition ref = s.getRef();
-			if (ref != null) { result = ref.getName(); }
-		} else if (o instanceof EquationRef e) {
-			EquationDefinition ref = e.getRef();
-			if (ref != null) { result = ref.getName(); }
-		} else if (o instanceof TypeRef t) {
-			TypeDefinition ref = t.getRef();
-			if (ref != null) { result = t.getRef().getName(); }
+			case GamlPackage.VARIABLE_REF: {
+				VarDefinition ref = ((VariableRef) o).getRef();
+				if (ref != null) {
+					if (ref instanceof ModelImpl) {
+						result = ref.getName() + ModelDescription.MODEL_SUFFIX;
+					} else {
+						result = ref.getName();
+					}
+				}
+				break;
+			}
+			case GamlPackage.ACTION_REF: {
+				ActionDefinition ref = ((ActionRef) o).getRef();
+				if (ref != null) { result = ref.getName(); }
+				break;
+			}
+			case GamlPackage.SKILL_REF: {
+				SkillFakeDefinition ref = ((SkillRef) o).getRef();
+				if (ref != null) { result = ref.getName(); }
+				break;
+			}
+			case GamlPackage.EQUATION_REF: {
+				EquationDefinition ref = ((EquationRef) o).getRef();
+				if (ref != null) { result = ref.getName(); }
+				break;
+			}
+			case GamlPackage.TYPE_REF: {
+				TypeDefinition ref = ((TypeRef) o).getRef();
+				if (ref != null) { result = ref.getName(); }
+				break;
+			}
 		}
+
 		if (result.isBlank()) {
 			final ICompositeNode cn = NodeModelUtils.getNode(o);
 			if (cn != null) { result = NodeModelUtils.getTokenText(cn); }

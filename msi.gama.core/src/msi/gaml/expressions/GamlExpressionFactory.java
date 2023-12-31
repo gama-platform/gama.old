@@ -1,3 +1,4 @@
+
 /*******************************************************************************************************
  *
  * GamlExpressionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
@@ -11,15 +12,13 @@
 package msi.gaml.expressions;
 
 import static com.google.common.collect.Iterables.any;
-import static com.google.common.collect.Iterables.filter;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
-
-import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -53,14 +52,26 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The static class ExpressionFactory.
  *
  * @author drogoul
  */
+
+/**
+ * A factory for creating GamlExpression objects.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 28 déc. 2023
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlExpressionFactory implements IExpressionFactory {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/**
 	 * The Interface ParserProvider.
@@ -213,31 +224,15 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return MapExpression.create(elements);
 	}
 
-	/**
-	 * Checks for operator.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param op
-	 *            the op
-	 * @param args
-	 *            the args
-	 * @return true, if successful
-	 * @date 14 nov. 2023
-	 */
-	private boolean hasOperator(final String op, final IExpression... args) {
-		// If arguments are invalid or the operator is not known we have no match
-		if (args == null || args.length == 0 || !GAML.OPERATORS.containsKey(op)) return false;
-		for (final IExpression exp : args) { if (exp == null) return false; }
-		return hasOperator(op, new Signature(args));
-	}
-
 	@Override
 	public boolean hasExactOperator(final String op, final IExpression arg) {
 		// If arguments are invalid, we have no match
 		// If the operator is not known, we have no match
-		if (arg == null || !GAML.OPERATORS.containsKey(op)) return false;
-		Signature sig = new Signature(arg).simplified();
-		return any(GAML.OPERATORS.get(op).keySet(), si -> sig.equals(si));
+		IMap<Signature, OperatorProto> variants = GAML.OPERATORS.get(op);
+		if (arg == null || variants == null) return false;
+		return variants.containsKey(new Signature(arg).simplified());
+		// Signature sig = new Signature(arg).simplified();
+		// return any(variants.keySet(), si -> sig.equals(si));
 	}
 
 	/**
@@ -268,31 +263,26 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createOperator(final String op, final IDescription context, final EObject eObject,
 			final IExpression... args) {
-
-		if (!hasOperator(op, args)) return emitError(op, context, eObject, args);
+		if (args == null || args.length == 0 || !GAML.OPERATORS.containsKey(op))
+			return emitError(op, context, eObject, args);
+		for (final IExpression exp : args) { if (exp == null) return emitError(op, context, eObject, args); }
+		// if (!hasOperator(op, userSignature)) return emitError(op, context, eObject, args);
 		// We get the possible sets of types registered in OPERATORS
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		// We create the signature corresponding to the arguments
 		// 19/02/14 Only the simplified signature is used now
 		Signature userSignature = new Signature(args).simplified();
-		final Signature originalUserSignature = userSignature;
 		// If the signature is not present in the registry
 		if (!ops.containsKey(userSignature)) {
-			final Signature[] matching = Iterables.toArray(
-					filter(ops.keySet(), s -> originalUserSignature.matchesDesiredSignature(s)), Signature.class);
-			final int size = matching.length;
-			if (size == 0)
-				// It is a varArg, we call recursively the method
-				return createOperator(op, context, eObject, createList(args));
-			if (size == 1) {
-				// Only one choice
-				userSignature = matching[0];
-			} else {
-				// Several choices, we take the closest
-				int distance = Integer.MAX_VALUE;
-				for (final Signature s : matching) {
+			final Signature originalUserSignature = userSignature;
+			int distance = Integer.MAX_VALUE;
+			// We browse all the entries of the operators with this name
+			for (Map.Entry<Signature, OperatorProto> entry : ops.entrySet()) {
+				Signature s = entry.getKey();
+				if (originalUserSignature.matchesDesiredSignature(s)) {
 					final int dist = s.distanceTo(originalUserSignature);
 					if (dist == 0) {
+						distance = 0;
 						userSignature = s;
 						break;
 					}
@@ -303,25 +293,49 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				}
 			}
 
+			if (distance == Integer.MAX_VALUE) { // Not found - try varArg
+				Signature varArg = Signature.varArgFrom(originalUserSignature);
+				for (Map.Entry<Signature, OperatorProto> entry : ops.entrySet()) {
+					Signature s = entry.getKey();
+					if (varArg.matchesDesiredSignature(s))
+						return createOperator(op, context, eObject, createList(args));
+				}
+				return emitError(op, context, eObject, args);
+			}
+
 			// We coerce the types if necessary, by wrapping the original
 			// expressions in a casting expression
-			final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
-
-			for (int i = 0; i < coercingTypes.length; i++) {
-				final IType t = coercingTypes[i];
-				if (t != null) {
-					// Emits an info when a float is truncated. See Issue 735.
-					if (t.id() == IType.INT) {
-						context.info("'" + args[i].serializeToGaml(false) + "' will be  truncated to int.",
-								IGamlIssue.UNMATCHED_OPERANDS, eObject);
+			if (originalUserSignature.mightNeedCoercionWith(userSignature)) {
+				final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
+				// DEBUG.OUT("Coercing types " + STRINGS.TO_STRING(coercingTypes) + " to convert " + op
+				// + originalUserSignature + " to " + op + userSignature);
+				for (int i = 0; i < coercingTypes.length; i++) {
+					final IType t = coercingTypes[i];
+					if (t != null) {
+						// Emits an info when a float is truncated. See Issue 735.
+						if (t.id() == IType.INT) {
+							context.info("'" + args[i].serializeToGaml(false) + "' will be  truncated to int.",
+									IGamlIssue.UNMATCHED_OPERANDS, eObject);
+						}
+						args[i] = createAs(context, args[i], createTypeExpression(t));
 					}
-					args[i] = createAs(context, args[i], createTypeExpression(t));
+
 				}
 			}
+
 		}
 
 		final OperatorProto proto = ops.get(userSignature);
-		return createDirectly(context, eObject, proto, args);
+		// We finally make an instance of the operator and init it with the arguments
+		final IExpression operator = proto.create(context, eObject, args);
+		if (operator != null) {
+			// We verify that it is not deprecated
+			final String ged = proto.getDeprecated();
+			if (ged != null) {
+				context.warning(proto.getName() + " is deprecated: " + ged, IGamlIssue.DEPRECATED, eObject);
+			}
+		}
+		return operator;
 	}
 
 	/**
@@ -355,33 +369,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createAs(final IDescription context, final IExpression toCast, final IExpression type) {
 		return OperatorProto.AS.create(context, null, toCast, type);
-	}
-
-	/**
-	 * Creates a new GamlExpression object.
-	 *
-	 * @param context
-	 *            the context
-	 * @param eObject
-	 *            the e object
-	 * @param proto
-	 *            the proto
-	 * @param args
-	 *            the args
-	 * @return the i expression
-	 */
-	private IExpression createDirectly(final IDescription context, final EObject eObject, final OperatorProto proto,
-			final IExpression... args) {
-		// We finally make an instance of the operator and init it with the arguments
-		final IExpression copy = proto.create(context, eObject, args);
-		if (copy != null) {
-			// We verify that it is not deprecated
-			final String ged = proto.getDeprecated();
-			if (ged != null) {
-				context.warning(proto.getName() + " is deprecated: " + ged, IGamlIssue.DEPRECATED, eObject);
-			}
-		}
-		return copy;
 	}
 
 	@Override

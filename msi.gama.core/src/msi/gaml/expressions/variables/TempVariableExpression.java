@@ -52,7 +52,7 @@ public class TempVariableExpression extends VariableExpression {
 	}
 
 	@Override
-	public String getTitle() { return "temporary variable " + getName() + " of type " + getGamlType().getTitle(); }
+	public String getTitle() { return "temporary variable " + getName() + " of type " + getGamlType().getName(); }
 
 	/**
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
@@ -60,7 +60,7 @@ public class TempVariableExpression extends VariableExpression {
 	@Override
 	public Doc getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
-		return new ConstantDoc("temporary variable " + getName() + " of type " + getGamlType().getTitle()
+		return new ConstantDoc("temporary variable " + getName() + " of type " + getGamlType().getName()
 				+ (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle()));
 	}
 

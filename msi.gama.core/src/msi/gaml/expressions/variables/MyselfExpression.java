@@ -43,12 +43,12 @@ public class MyselfExpression extends TempVariableExpression {
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {}
 
 	@Override
-	public String getTitle() { return "pseudo variable " + getName() + " of type " + getGamlType().getTitle(); }
+	public String getTitle() { return "pseudo variable " + getName() + " of type " + getGamlType().getName(); }
 
 	@Override
 	public Doc getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
-		return new ConstantDoc("pseudo variable " + getName() + " of type " + getGamlType().getTitle()
+		return new ConstantDoc("pseudo variable " + getName() + " of type " + getGamlType().getName()
 				+ (desc == null ? "<br>Built in" : "<br>Defined in " + desc.getTitle()));
 	}
 

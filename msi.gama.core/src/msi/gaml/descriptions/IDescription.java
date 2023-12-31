@@ -54,9 +54,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		/** The Validated. */
 		Validated,
 
-		/** The Documenting. */
-		Documenting,
-
 		/** The Synthetic. */
 		Synthetic,
 
@@ -110,9 +107,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		/** The is function. */
 		isFunction,
-
-		/** The is batch. */
-		// isBatch,
 
 		/** The is memorize. */
 		isMemorize
@@ -719,20 +713,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 *            the array
 	 */
 	void replaceChildrenWith(Iterable<IDescription> array);
-
-	/**
-	 * Checks if is documenting.
-	 *
-	 * @return true, if is documenting
-	 */
-	boolean isDocumenting();
-
-	/**
-	 * Gets the order.
-	 *
-	 * @return the order
-	 */
-	int getOrder();
 
 	/**
 	 * Gets the serializer.

@@ -19,17 +19,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.interfaces.IGamlIssue;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class TypesManager.
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
-public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDescription>, ITypesManager {
+public class TypesManager implements ITypesManager {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The current index. */
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
@@ -65,12 +69,6 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 	public void alias(final String existingTypeName, final String otherTypeName) {
 		final IType t = types.get(existingTypeName);
 		if (t != null) { types.put(otherTypeName, t); }
-	}
-
-	@Override
-	public boolean process(final SpeciesDescription species) {
-		addSpeciesType(species);
-		return true;
 	}
 
 	/*
@@ -150,11 +148,14 @@ public class TypesManager implements IDescription.DescriptionVisitor<SpeciesDesc
 	@Override
 	public void init(final ModelDescription model) {
 		// We first add the species as types
-		model.visitAllSpecies(this);
+		model.visitAllSpecies(entry -> {
+			addSpeciesType(entry);
+			return true;
+		});
 		// Then we parent the types
 		model.visitAllSpecies(entry -> {
 			final IType type = get(entry.getName());
-			if (!type.isParented() && !IKeyword.AGENT.equals(type.getName())) {
+			if (!IKeyword.AGENT.equals(type.getName())) {
 				final TypeDescription parent = entry.getParent();
 				// Takes care of invalid species (see Issue 711)
 				type.setParent(parent == null || parent == entry ? get(IKeyword.AGENT) : get(parent.getName()));

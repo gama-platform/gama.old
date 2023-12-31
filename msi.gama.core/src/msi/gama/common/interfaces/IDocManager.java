@@ -1,18 +1,22 @@
 /*******************************************************************************************************
  *
- * IDocManager.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * IDocManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gaml.descriptions.IDescription;
+import msi.gama.util.ByteArrayZipper;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.interfaces.IGamlDescription;
 
@@ -22,85 +26,143 @@ import msi.gaml.interfaces.IGamlDescription;
 // Internal interface instantiated by XText
 public interface IDocManager {
 
+	/** The null. */
+	IDocManager NULL = new NullImpl();
+
+	/**
+	 * The Class DocumentationNode.
+	 */
+	record DocumentationNode(String title, byte[] doc) implements IGamlDescription {
+
+		/**
+		 * Instantiates a new documentation node.
+		 *
+		 * @param desc
+		 *            the desc
+		 * @throws IOException
+		 *             Signals that an I/O exception has occurred.
+		 */
+		public DocumentationNode(final IGamlDescription desc) {
+			this(desc.getTitle(), ByteArrayZipper.zip(desc.getDocumentation().toString().getBytes()));
+		}
+
+		/**
+		 * Gets the documentation.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @return the documentation
+		 * @date 30 déc. 2023
+		 */
+		@Override
+		public Doc getDocumentation() {
+			return new SimpleDoc() {
+
+				@Override
+				public String get() {
+					return new String(ByteArrayZipper.unzip(doc));
+				}
+
+			};
+		}
+
+		/**
+		 * Gets the title.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @return the title
+		 * @date 30 déc. 2023
+		 */
+		@Override
+		public String getTitle() { return title; }
+
+	}
+
 	/**
 	 * The Class NullImpl.
 	 */
 	public static class NullImpl implements IDocManager {
 
+		/**
+		 * Do document.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param description
+		 *            the description
+		 * @date 31 déc. 2023
+		 */
 		@Override
-		public void document(final IDescription description) {}
+		public void doDocument(final URI uri, final ModelDescription description,
+				final Map<EObject, IGamlDescription> additionalExpressions) {}
 
 		@Override
 		public IGamlDescription getGamlDocumentation(final EObject o) {
 			return null;
 		}
 
+		/**
+		 * Sets the gaml documentation.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param object
+		 *            the object
+		 * @param description
+		 *            the description
+		 * @param replace
+		 *            the replace
+		 * @param force
+		 *            the force
+		 * @date 29 déc. 2023
+		 */
 		@Override
-		public IGamlDescription getGamlDocumentation(final IGamlDescription o) {
-			return null;
-		}
+		public void setGamlDocumentation(final URI openResource, final EObject object,
+				final IGamlDescription description) {}
 
 		@Override
-		public void addCleanupTask(final ModelDescription model) {}
-
-		@Override
-		public void setGamlDocumentation(final EObject object, final IGamlDescription description,
-				final boolean replace, final boolean force) {}
+		public void invalidate(final URI key) {}
 
 	}
 
 	/**
-	 * Document.
+	 * Document. Should be called after validation. Validates both the statements (from ModelDescription) and the
+	 * expressions (Map)
 	 *
-	 * @param description the description
+	 * @param description
+	 *            the description
+	 * @param additionalExpressions
 	 */
-	void document(IDescription description);
+	void doDocument(URI resource, ModelDescription description, Map<EObject, IGamlDescription> additionalExpressions);
 
 	/**
 	 * Gets the gaml documentation.
 	 *
-	 * @param o the o
+	 * @param o
+	 *            the o
 	 * @return the gaml documentation
 	 */
 	IGamlDescription getGamlDocumentation(EObject o);
 
 	/**
-	 * Gets the gaml documentation.
-	 *
-	 * @param o the o
-	 * @return the gaml documentation
-	 */
-	IGamlDescription getGamlDocumentation(IGamlDescription o);
-
-	/**
 	 * Sets the gaml documentation.
 	 *
-	 * @param object the object
-	 * @param description the description
-	 * @param replace the replace
-	 * @param force the force
+	 * @param object
+	 *            the object
+	 * @param description
+	 *            the description
+	 * @param replace
+	 *            the replace
+	 * @param force
+	 *            the force
 	 */
-	void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace, boolean force);
+	void setGamlDocumentation(URI openResource, final EObject object, final IGamlDescription description);
 
 	/**
-	 * Sets the gaml documentation.
+	 * Invalidate.
 	 *
-	 * @param object the object
-	 * @param description the description
-	 * @param replace the replace
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param key
+	 *            the key
+	 * @date 29 déc. 2023
 	 */
-	default void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
-		setGamlDocumentation(object, description, replace, false);
-	}
-
-	/**
-	 * Adds the cleanup task.
-	 *
-	 * @param model the model
-	 */
-	void addCleanupTask(ModelDescription model);
-
-	/** The null. */
-	IDocManager NULL = new NullImpl();
+	void invalidate(URI key);
 
 }

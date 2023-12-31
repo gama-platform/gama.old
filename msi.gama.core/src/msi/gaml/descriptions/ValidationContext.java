@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 import org.eclipse.emf.common.util.URI;
@@ -29,14 +30,22 @@ import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.interfaces.IGamlDescription;
 import msi.gaml.interfaces.IGamlIssue;
 import one.util.streamex.StreamEx;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ValidationContext.
  */
-public class ValidationContext extends Collector.AsList<GamlCompilationError> implements IDocManager {
+public class ValidationContext extends Collector.AsList<GamlCompilationError> {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The Constant MAX_SIZE. */
 	final static int MAX_SIZE = 1000;
+
+	/** The should document. */
+	boolean shouldDocument;
 
 	/** The Constant NULL. */
 	public static final ValidationContext NULL = new ValidationContext(null, false, IDocManager.NULL);
@@ -52,6 +61,9 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 
 	/** The doc delegate. */
 	private final IDocManager docDelegate;
+
+	/** The expressions to document. */
+	private final Map<EObject, IGamlDescription> expressionsToDocument = new ConcurrentHashMap<>();
 
 	/**
 	 * Instantiates a new validation context.
@@ -218,30 +230,60 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 
 	}
 
-	@Override
-	public void document(final IDescription description) {
-		docDelegate.document(description);
+	/**
+	 * Do document.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param description
+	 *            the description
+	 * @date 31 déc. 2023
+	 */
+	public void doDocument(final ModelDescription description) {
+		if (shouldDocument) {
+			docDelegate.doDocument(resourceURI, description, expressionsToDocument);
+			expressionsToDocument.forEach((e, d) -> {
+				// DEBUG.OUT("Documenting Eobject " + e + " in resource "
+				// + (e.eResource() == null ? "null" : e.eResource().getURI().lastSegment()) + " with description "
+				// + d);
+				docDelegate.setGamlDocumentation(resourceURI, e, d);
+			});
+		}
+		expressionsToDocument.clear();
 	}
 
-	@Override
-	public IGamlDescription getGamlDocumentation(final EObject o) {
-		return docDelegate.getGamlDocumentation(o);
-	}
+	// /**
+	// * Gets the gaml documentation.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param o
+	// * the o
+	// * @return the gaml documentation
+	// * @date 31 déc. 2023
+	// */
+	// public IGamlDescription getGamlDocumentation(final EObject o) {
+	// return docDelegate.getGamlDocumentation(o);
+	// }
 
-	@Override
-	public IGamlDescription getGamlDocumentation(final IGamlDescription o) {
-		return docDelegate.getGamlDocumentation(o);
-	}
+	/**
+	 * Sets the gaml documentation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param e
+	 *            the e
+	 * @param d
+	 *            the d
+	 * @date 31 déc. 2023
+	 */
+	public void setGamlDocumentation(final EObject e, final IGamlDescription d) {
+		// Called by SymbolDescription to document individual expressions -- they are kept in a Map<EObject,
+		// IGamlDescription> and done when the whole model is documented
+		if (shouldDocument) {
+			// DEBUG.OUT("Queuing for documentation Eobject " + e + " in resource "
+			// + (e.eResource() == null ? "null" : e.eResource().getURI().lastSegment()) + " with description "
+			// + d);
 
-	@Override
-	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace,
-			final boolean force) {
-		docDelegate.setGamlDocumentation(object, description, replace, force);
-	}
-
-	@Override
-	public void addCleanupTask(final ModelDescription model) {
-		docDelegate.addCleanupTask(model);
+			expressionsToDocument.put(e, d);
+		}
 	}
 
 	/**
@@ -280,7 +322,7 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 	public boolean verifyPlugins(final List<String> list) {
 		for (String s : list) {
 			if (!GamaBundleLoader.gamlPluginExists(s)) {
-				if ((!GAMA.isInHeadLessMode() || !GamaBundleLoader.isDisplayPlugin(s))) {
+				if (!GAMA.isInHeadLessMode() || !GamaBundleLoader.isDisplayPlugin(s)) {
 					add(new GamlCompilationError("Missing plugin: " + s, IGamlIssue.MISSING_PLUGIN, resourceURI,
 							GamaBundleLoader.isDisplayPlugin(s), false));
 				}
@@ -288,5 +330,42 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> im
 			}
 		}
 		return true;
+	}
+
+	// /**
+	// * Invalidate.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param key
+	// * the key
+	// * @date 31 déc. 2023
+	// */
+	// public void invalidate(final URI key) {
+	// docDelegate.invalidate(key);
+	// }
+
+	/**
+	 * Should document. True by default
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param document
+	 * @return true, if successful
+	 * @date 30 déc. 2023
+	 */
+	public boolean shouldDocument() {
+		return shouldDocument;
+	}
+
+	/**
+	 * Should document. Do nothing by default.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param document
+	 *            the document
+	 * @return true, if successful
+	 * @date 30 déc. 2023
+	 */
+	public void shouldDocument(final boolean document) {
+		shouldDocument = document;
 	}
 }

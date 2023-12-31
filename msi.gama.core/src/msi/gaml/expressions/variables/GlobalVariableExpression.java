@@ -131,7 +131,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 			isParameter = false;
 		}
 		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName()
-				+ " of type " + getGamlType().getTitle();
+				+ " of type " + getGamlType().getName();
 	}
 
 	@Override

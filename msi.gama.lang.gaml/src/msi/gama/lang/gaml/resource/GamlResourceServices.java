@@ -28,12 +28,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
@@ -46,7 +42,6 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
-import msi.gaml.interfaces.IGamlDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -63,7 +58,7 @@ public class GamlResourceServices {
 	private static int resourceCount = 0;
 
 	/** The documenter. */
-	private static IDocManager documenter = new GamlResourceDocumenter();
+	private static GamlResourceDocumenter documenter = new GamlResourceDocumenter();
 
 	/** The converter. */
 	private static GamlSyntacticConverter converter = new GamlSyntacticConverter();
@@ -76,27 +71,6 @@ public class GamlResourceServices {
 
 	/** The pool set. */
 	private static volatile XtextResourceSet poolSet;
-
-	/** The Constant documentationCache. */
-	private static final LoadingCache<URI, IMap<EObject, IGamlDescription>> documentationCache =
-			CacheBuilder.newBuilder().build(new CacheLoader<URI, IMap<EObject, IGamlDescription>>() {
-
-				@Override
-				public IMap load(final URI key) throws Exception {
-					return GamaMapFactory.createUnordered();
-				}
-			});
-
-	/**
-	 * Gets the documentation cache.
-	 *
-	 * @param r
-	 *            the r
-	 * @return the documentation cache
-	 */
-	public static IMap<EObject, IGamlDescription> getDocumentationCache(final Resource r) {
-		return documentationCache.getUnchecked(r.getURI());
-	}
 
 	/**
 	 * Properly encodes and partially verifies the uri passed in parameter. In the case of an URI that does not use the
@@ -188,41 +162,35 @@ public class GamlResourceServices {
 	}
 
 	/**
-	 * Removes the resource listener.
+	 * Removes the resource listener (happens when a file ceases being edited). Invalidates both the documentation
+	 * already collected and the collection of this documentation by the validation context if it exists
 	 *
 	 * @param listener
 	 *            the listener
 	 */
 	public static void removeResourceListener(final IGamlBuilderListener listener) {
-		// URI toRemove = null;
 		final Iterator<Map.Entry<URI, IGamlBuilderListener>> it = resourceListeners.entrySet().iterator();
 		while (it.hasNext()) {
 			final Map.Entry<URI, IGamlBuilderListener> entry = it.next();
 			if (entry.getValue() == listener) {
+				getResourceDocumenter().invalidate(entry.getKey());
+				ValidationContext vc = GamlResourceServices.getValidationContext(entry.getKey());
+				if (vc != null) { vc.shouldDocument(false); }
 				it.remove();
+
 				return;
 			}
 		}
-		// for (final Map.Entry<URI, IGamlBuilderListener> entry : resourceListeners.entrySet()) {
-		// if (entry.getValue() == listener) {
-		// toRemove = properlyEncodedURI(entry.getKey());
-		// }
-		// }
-		// if (toRemove != null) {
-		// resourceListeners.remove(toRemove);
-		// documentationCache.invalidate(toRemove);
-		// }
-
 	}
 
 	/**
-	 * Gets the validation context.
+	 * Gets the validation context or creates it for the specified resource
 	 *
 	 * @param r
 	 *            the r
 	 * @return the validation context
 	 */
-	public static ValidationContext getValidationContext(final GamlResource r) {
+	public static ValidationContext getOrCreateValidationContext(final GamlResource r) {
 		final URI newURI = r.getURI();
 		if (!resourceErrors.containsKey(newURI)) {
 			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), getResourceDocumenter()));
@@ -230,6 +198,19 @@ public class GamlResourceServices {
 		final ValidationContext result = resourceErrors.get(newURI);
 		result.hasInternalSyntaxErrors(r.hasErrors());
 		return result;
+	}
+
+	/**
+	 * Gets the validation context of an URI or null if not already created
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param newURI
+	 *            the new URI
+	 * @return the validation context
+	 * @date 30 déc. 2023
+	 */
+	public static ValidationContext getValidationContext(final URI newURI) {
+		return resourceErrors.get(newURI);
 	}
 
 	/**
@@ -375,7 +356,7 @@ public class GamlResourceServices {
 	 *
 	 * @return the resource documenter
 	 */
-	public static IDocManager getResourceDocumenter() { return documenter; }
+	public static GamlResourceDocumenter getResourceDocumenter() { return documenter; }
 
 	/**
 	 * Builds the syntactic contents.

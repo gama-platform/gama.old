@@ -61,6 +61,7 @@ public class Types {
 	/** The Constant builtInTypes. */
 	public final static ITypesManager builtInTypes = new TypesManager(null);
 
+	/** The built in species map. */
 	private static volatile Map<String, SpeciesDescription> builtInSpeciesMap;
 
 	/** The Constant NO_TYPE. */
@@ -324,7 +325,7 @@ public class Types {
 		}
 		for (IType t1 : types) {
 			for (IType t2 : types) {
-				if (t1 != t2 && t1.isAssignableFrom(t2)) {
+				if (t1 != t2 && t1.toClass().isAssignableFrom(t2.toClass())) {
 					outgoing.get(t1).add(t2);
 					incoming.get(t2).add(t1);
 				}
@@ -342,6 +343,7 @@ public class Types {
 				incoming.get(t).remove(parent);
 				if (incoming.get(t).isEmpty()) {
 					toProcess.push(t);
+					//DEBUG.OUT("Parenting " + t.getName() + " with " + parent.getName());
 					t.setParent(parent);
 					DescriptionFactory.addNewTypeName(t.toString(), t.getVarKind());
 					t.setFieldGetters(GAML.getAllFields(t.toClass()));

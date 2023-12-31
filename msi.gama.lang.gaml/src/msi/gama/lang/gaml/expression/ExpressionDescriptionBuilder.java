@@ -10,10 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
-import java.util.Set;
-
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.diagnostics.Diagnostic;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
@@ -35,33 +32,16 @@ import msi.gaml.descriptions.IExpressionDescription;
  */
 public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescription> {
 
-	// private Set<Diagnostic> currentErrors;
-
-	/**
-	 * Sets the errors.
-	 *
-	 * @param errors
-	 *            the new errors
-	 */
-	void setErrors(final Set<Diagnostic> errors) {
-		// currentErrors = errors;
-	}
-
 	@Override
 	public IExpressionDescription caseIntLiteral(final IntLiteral object) {
 		IExpressionDescription ed = null;
 		try {
 			ed = ConstantExpressionDescription.create(Integer.parseInt(object.getOp()));
 		} catch (final NumberFormatException e) {
-			// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING,
-			// "",
-			// "Impossible to parse this int value, automatically set to 0",
-			// object, null, 0, null);
-			// if (currentErrors != null)
-			// currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0);
 		}
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object, ed.getExpression(), true);
+		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+				ed.getExpression());
 		return ed;
 	}
 
@@ -71,33 +51,26 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		try {
 			ed = ConstantExpressionDescription.create(Double.parseDouble(object.getOp()));
 		} catch (final NumberFormatException e) {
-			// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING,
-			// "",
-			// "Impossible to parse this float value, automatically set to 0.0",
-			// object, null, 0, null);
-			// if (currentErrors != null)
-			// currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0d);
 		}
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object, ed.getExpression(), true);
+		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+				ed.getExpression());
 		return ed;
 	}
 
 	@Override
 	public IExpressionDescription caseStringLiteral(final StringLiteral object) {
 		final IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp());
-
-		// AD: Change 14/11/14
-		// IExpressionDescription ed =
-		// LabelExpressionDescription.create(object.getOp());
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object, ed.getExpression(), true);
+		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+				ed.getExpression());
 		return ed;
 	}
 
 	@Override
 	public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
 		final IExpressionDescription ed = ConstantExpressionDescription.create(IKeyword.TRUE.equals(object.getOp()));
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object, ed.getExpression(), true);
+		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+				ed.getExpression());
 		return ed;
 	}
 
@@ -129,7 +102,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	 *            the errors
 	 * @return the i expression description
 	 */
-	public static IExpressionDescription create(final ISyntacticElement e, final Set<Diagnostic> errors) {
+	public IExpressionDescription createBlock(final ISyntacticElement e) {
 		return new BlockExpressionDescription(e);
 	}
 
@@ -140,15 +113,10 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	 *            the expr
 	 * @return the i expression description
 	 */
-	public IExpressionDescription create(final EObject expr/* , final Set<Diagnostic> errors */) {
-		try {
-			// setErrors(errors);
-			final IExpressionDescription result = doSwitch(expr);
-			result.setTarget(expr);
-			return result;
-		} finally {
-			// setErrors(null);
-		}
+	public IExpressionDescription create(final EObject expr) {
+		final IExpressionDescription result = doSwitch(expr);
+		result.setTarget(expr);
+		return result;
 	}
 
 }

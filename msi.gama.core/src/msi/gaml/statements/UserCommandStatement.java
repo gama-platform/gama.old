@@ -74,7 +74,7 @@ import msi.gaml.types.IType;
 						doc = @doc ("The color of the button to display")),
 				@facet (
 						name = IKeyword.CATEGORY,
-						type = IType.LABEL,
+						type = IType.STRING,
 						optional = true,
 						doc = @doc ("a category label, used to group parameters in the interface")),
 				@facet (
@@ -264,6 +264,7 @@ public class UserCommandStatement extends AbstractStatementSequence
 	 *            the scope
 	 * @return the color
 	 */
+	@Override
 	public GamaColor getColor(final IScope scope) {
 		final IExpression exp = getFacet(IKeyword.COLOR);
 		if (exp == null) return null;

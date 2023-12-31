@@ -215,10 +215,10 @@ global skills: [moving] control: fsm {
 
 		// IN FUNCTIONAL MODE (i.e. as part of expressions)
 		// The "classic" way of calling actions. Note that in that case, dummy1 is used like a binary operator (callee on the left, argument map on the right)
-		list d1 <- self dummy1 [a::10, b::100.0];
+		//list d1 <- self dummy1 [a::10, b::100.0];
 
 		// First improvement, argument maps can now be simplified, which results in a functional syntax with named arguments
-		list d2 <- self dummy1 (b: 100.0); // a is not passed as it has a default value.
+		//list d2 <- self dummy1 (b: 100.0); // a is not passed as it has a default value.
 
 		// To improve the readability of this way of calling actions, the dotted notation is now allowed as well 
 		list d3 <- self.dummy1(a: 100, b: 100.0);
@@ -243,7 +243,7 @@ global skills: [moving] control: fsm {
 		// but also to pass them in any order
 		do wander(speed: 100, amplitude: 10);
 		path p1 <- path(self.wander(amplitude: 10, speed: 100));
-		path p2 <- path(self wander (speed: 100, bounds: square(10)));
+		//path p2 <- path(self wander (speed: 100, bounds: square(10)));
 		path p3 <- path(wander(speed: 100));
 		path p4 <- path(wander());
 
@@ -251,7 +251,7 @@ global skills: [moving] control: fsm {
 		// This method is convenient as it follows the functional syntax of operators and then allows to declare "quasi-operators" in species, even to redefine existing ones.
 		do wander(100, 100, self.shape); // speed, amplitude, bounds as defined in primitive wander
 		int d5 <- self.max(10, 100);
-		int d6 <- self max (10, 100);
+		//int d6 <- self max (10, 100);
 		int d7 <- max(10, 100);
 		list others <- filter(species1);
 

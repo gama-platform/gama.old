@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * Symbol.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * Symbol.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation;
 
@@ -31,10 +30,10 @@ public abstract class Symbol implements ISymbol {
 
 	/** The name. */
 	protected String name;
-	
+
 	/** The description. */
 	protected final IDescription description;
-	
+
 	/** The order. */
 	protected int order;
 
@@ -57,16 +56,17 @@ public abstract class Symbol implements ISymbol {
 	/**
 	 * Instantiates a new symbol.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public Symbol(final IDescription desc) {
 		description = desc;
-		if (desc != null) {
-			order = desc.getOrder();
-		} else {
-			order = COUNTER.GET_UNIQUE();
-			// DEBUG.LOG("Order of " + desc.getName() + " = " + order);
-		}
+		// if (desc != null) {
+		// order = desc.getOrder();
+		// } else {
+		order = COUNTER.GET_UNIQUE();
+		// DEBUG.LOG("Order of " + desc.getName() + " = " + order);
+		// }
 	}
 
 	@Override
@@ -90,10 +90,13 @@ public abstract class Symbol implements ISymbol {
 	/**
 	 * Gets the facet value.
 	 *
-	 * @param scope the scope
-	 * @param key the key
+	 * @param scope
+	 *            the scope
+	 * @param key
+	 *            the key
 	 * @return the facet value
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public Object getFacetValue(final IScope scope, final String key) throws GamaRuntimeException {
 		return getFacetValue(scope, key, null);
@@ -102,12 +105,17 @@ public abstract class Symbol implements ISymbol {
 	/**
 	 * Gets the facet value.
 	 *
-	 * @param <T> the generic type
-	 * @param scope the scope
-	 * @param key the key
-	 * @param defaultValue the default value
+	 * @param <T>
+	 *            the generic type
+	 * @param scope
+	 *            the scope
+	 * @param key
+	 *            the key
+	 * @param defaultValue
+	 *            the default value
 	 * @return the facet value
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	@SuppressWarnings ("unchecked")
 	public final <T> T getFacetValue(final IScope scope, final String key, final T defaultValue)
@@ -119,7 +127,8 @@ public abstract class Symbol implements ISymbol {
 	/**
 	 * Gets the literal.
 	 *
-	 * @param key the key
+	 * @param key
+	 *            the key
 	 * @return the literal
 	 */
 	public String getLiteral(final String key) {
@@ -129,8 +138,10 @@ public abstract class Symbol implements ISymbol {
 	/**
 	 * Gets the literal.
 	 *
-	 * @param key the key
-	 * @param defaultValue the default value
+	 * @param key
+	 *            the key
+	 * @param defaultValue
+	 *            the default value
 	 * @return the literal
 	 */
 	public String getLiteral(final String key, final String defaultValue) {
@@ -141,8 +152,10 @@ public abstract class Symbol implements ISymbol {
 	/**
 	 * Sets the facet.
 	 *
-	 * @param key the key
-	 * @param expr the expr
+	 * @param key
+	 *            the key
+	 * @param expr
+	 *            the expr
 	 */
 	protected void setFacet(final String key, final IExpressionDescription expr) {
 		if (description == null) return;

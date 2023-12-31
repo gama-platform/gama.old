@@ -320,4 +320,17 @@ public record Signature(IType[] list) {
 		return sb.toString();
 	}
 
+	/**
+	 * Checks for int or float. Assuming both signatures have the same size
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 27 déc. 2023
+	 */
+	public boolean mightNeedCoercionWith(final Signature other) {
+		for (int i = 0; i < list.length; i++)
+			if (Types.intFloatCase(list[i], other.list[i])) return true;
+		return false;
+	}
+
 }

@@ -18,7 +18,6 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class StatementRemoteWithChildrenDescription.
@@ -54,12 +53,6 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	}
 
 	@Override
-	public boolean isDocumenting() {
-		return super.isDocumenting()
-				|| alternateEnclosingDescription != null && alternateEnclosingDescription.isDocumenting();
-	}
-
-	@Override
 	public void dispose() {
 		super.dispose();
 		alternateEnclosingDescription = null;
@@ -91,7 +84,8 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 
 	@Override
 	public StatementRemoteWithChildrenDescription copy(final IDescription into) {
-		final Iterable<IDescription> children = Iterables.transform(this.children, each -> each.copy(into));
+		final Iterable<IDescription> children =
+				this.children != null ? Iterables.transform(this.children, each -> each.copy(into)) : null;
 		final StatementRemoteWithChildrenDescription desc = new StatementRemoteWithChildrenDescription(getKeyword(),
 				into, children, false, element, getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
@@ -149,9 +143,9 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 				// FIXME ===> Model Description is lost if we are dealing with a built-in species !
 			}
 		}
-//		else {
-//			DEBUG.LOG("Impossible to push remote context as the denoted species is null in " + this);
-//		}
+		// else {
+		// DEBUG.LOG("Impossible to push remote context as the denoted species is null in " + this);
+		// }
 		return previousEnclosingDescription;
 	}
 

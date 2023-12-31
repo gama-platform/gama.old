@@ -152,12 +152,12 @@ import ummisco.gama.dev.utils.DEBUG;
 						doc = @doc ("Indicates whether this attribute can be subsequently modified or not")),
 				@facet (
 						name = IKeyword.CATEGORY,
-						type = IType.LABEL,
+						type = { IType.STRING },
 						optional = true,
 						doc = @doc ("Soon to be deprecated. Declare the parameter in an experiment instead")),
 				@facet (
 						name = IKeyword.PARAMETER,
-						type = IType.LABEL,
+						type = { IType.STRING, IType.BOOL },
 						optional = true,
 						doc = @doc ("Soon to be deprecated. Declare the parameter in an experiment instead")),
 				@facet (

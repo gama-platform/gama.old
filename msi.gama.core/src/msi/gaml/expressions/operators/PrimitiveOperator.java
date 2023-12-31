@@ -160,7 +160,7 @@ public class PrimitiveOperator implements IExpression, IOperator {
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
 		sb.append("action ").append(getName()).append(" defined in species ")
-				.append(target.getGamlType().getSpeciesName()).append(" returns ").append(getGamlType().getTitle());
+				.append(target.getGamlType().getSpeciesName()).append(" returns ").append(getGamlType().getName());
 		return sb.toString();
 
 	}

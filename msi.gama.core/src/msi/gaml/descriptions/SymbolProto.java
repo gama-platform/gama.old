@@ -287,7 +287,7 @@ public class SymbolProto extends AbstractProto {
 
 	@Override
 	public String getTitle() {
-		return isVar ? ISymbolKind.Variable.KINDS_AS_STRING.get(kind) + " declaration" : "statement " + getName();
+		return isVar ? ISymbolKind.Variable.KINDS_AS_STRING.get(kind) + " declaration" : "Statement " + getName();
 	}
 
 	@Override

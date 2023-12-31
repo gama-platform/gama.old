@@ -220,7 +220,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		public void validate(final StatementDescription description) {
 
 			final StatementDescription desc = description;
-			final Facets with = desc.getPassedArgs();
+			final Arguments with = desc.getPassedArgs();
 			final IExpression att = desc.getFacetExpr(ATTRIBUTES);
 			final IExpressionDescription type = desc.getFacet(FORMAT, TYPE);
 			desc.removeFacets(TYPE);

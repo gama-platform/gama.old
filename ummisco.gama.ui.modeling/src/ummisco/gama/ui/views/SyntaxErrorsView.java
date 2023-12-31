@@ -31,6 +31,8 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -162,16 +164,9 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	 */
 	static private void doBuild(final IProgressMonitor monitor) {
 		try {
+			GamlResourceServices.getResourceDocumenter().invalidateAll();
+			GamlResourceIndexer.eraseIndex();
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-
-			// monitor.beginTask("Cleaning and building entire workspace", size);
-			// for (final IProject p : projects) {
-			// if (p.exists() && p.isAccessible()) {
-			// monitor.subTask("Building " + p.getName());
-			// p.build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-			// monitor.worked(1);
-			// }
-			// }
 
 		} catch (final CoreException e) {
 			e.printStackTrace();

@@ -40,7 +40,7 @@ public class EachExpression extends VariableExpression {
 	}
 
 	@Override
-	public String getTitle() { return "pseudo-variable " + getName() + " of type " + getGamlType().getTitle(); }
+	public String getTitle() { return "pseudo-variable " + getName() + " of type " + getGamlType().getName(); }
 
 	/**
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()

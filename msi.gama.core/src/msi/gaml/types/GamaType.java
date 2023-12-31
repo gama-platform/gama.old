@@ -31,6 +31,7 @@ import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 25 aout 2010
@@ -48,6 +49,10 @@ import msi.gaml.expressions.IExpression;
  */
 public abstract class GamaType<Support> implements IType<Support> {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The id. */
 	protected int id;
 
@@ -64,7 +69,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	protected IType<? super Support> parent;
 
 	/** The parented. */
-	protected boolean parented;
+	// protected boolean parented;
 
 	/** The var kind. */
 	protected int varKind;
@@ -73,7 +78,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	protected String plugin;
 
 	@Override
-	public String getTitle() { return getName(); }
+	public String getTitle() { return "Data type " + getName(); }
 
 	@Override
 	public int getNumberOfParameters() { return 0; }
@@ -93,12 +98,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 				if (docs != null && docs.length > 0) { documentation = docs[0]; }
 			}
 		}
-		if (documentation == null) {
-			result.append("Datatype " + getName() + getSupportName());
-		} else {
-			result.append("Datatype ").append(getName()).append(getSupportName()).append("<br/>")
-					.append(documentation.value());
-		}
+		result.append("<i>").append("Wraps Java objects of type ").append(getSupportName()).append("</i>");
+		if (documentation != null) { result.append("<p>").append(documentation.value()).append("</p>"); }
 
 		documentFields(result);
 
@@ -108,10 +109,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@Override
 	public void documentFields(final Doc result) {
 		if (getters != null) {
+			if (getters.isEmpty()) { result.append("<p>").append("No fields accessible").append("</p>"); }
 			// sb.append("<b><br/>Fields :</b><ul>");
 			for (final OperatorProto f : getters.values()) { getFieldDocumentation(result, f); }
 
-			result.append("</ul>");
+			// result.append("</ul>");
 		}
 	}
 
@@ -120,7 +122,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 *
 	 * @return the support name
 	 */
-	public String getSupportName() { return ", wraps Java objects of class " + support.getSimpleName(); }
+	public String getSupportName() { return support.getSimpleName(); }
 
 	/**
 	 * Gets the field documentation.
@@ -178,7 +180,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public void setParent(final IType<? super Support> p) {
-		parented = true;
+		// parented = true;
 		parent = p;
 	}
 
@@ -267,9 +269,6 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@Override
 	public SpeciesDescription getDenotedSpecies() { return getSpecies(); }
 
-	@Override
-	public boolean isParented() { return parented; }
-
 	/**
 	 * Checks if is super type of.
 	 *
@@ -279,14 +278,13 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 */
 	protected boolean isSuperTypeOf(final IType<?> type) {
 		if (type == null) return false;
-		if (parented && type.isParented()) return type == this || isSuperTypeOf(type.getParent());
-		final Class<?> remote = type.toClass();
-		return support.isAssignableFrom(remote);
+		IType t = type.getParent();
+		return this == t || isSuperTypeOf(t);
 	}
 
 	@Override
 	public boolean isAssignableFrom(final IType<?> t) {
-		return t == null ? false : this == t || isSuperTypeOf(t);
+		return this == t || isSuperTypeOf(t);
 	}
 
 	@Override
@@ -325,12 +323,10 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public int distanceTo(final IType<?> type) {
 		if (type == this) return 0;
 		if (type == null) return Integer.MAX_VALUE;
-		if (parented) {
-			if (isSuperTypeOf(type)) return 1 + distanceTo(type.getParent());
-			return 1 + getParent().distanceTo(type);
-		}
-		if (isTranslatableInto(type) || isAssignableFrom(type)) return 1;
-		return Integer.MAX_VALUE;
+		if (isSuperTypeOf(type)) return 1 + distanceTo(type.getParent());
+		return 1 + getParent().distanceTo(type);
+		// if (isTranslatableInto(type) || isAssignableFrom(type)) return 1;
+		// return Integer.MAX_VALUE;
 	}
 
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
@@ -441,6 +437,20 @@ public abstract class GamaType<Support> implements IType<Support> {
 	 * @param contentType
 	 *            the content type
 	 * @return the i type
+	 */
+
+	/**
+	 * From.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param t
+	 *            the t
+	 * @param keyType
+	 *            the key type
+	 * @param contentType
+	 *            the content type
+	 * @return the i type
+	 * @date 27 déc. 2023
 	 */
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public static IType<?> from(final IType<?> t, final IType<?> keyType, final IType<?> contentType) {

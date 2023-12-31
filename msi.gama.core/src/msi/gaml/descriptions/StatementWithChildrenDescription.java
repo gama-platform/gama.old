@@ -12,16 +12,17 @@ package msi.gaml.descriptions;
 
 import static msi.gaml.compilation.GAML.getExpressionFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.util.Collector;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.IMap;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.interfaces.IGamlIssue;
@@ -35,10 +36,10 @@ import msi.gaml.types.IType;
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	/** The temps. */
-	protected IMap<String, IVarExpression> temps;
+	protected Map<String, IVarExpression> temps;
 
 	/** The children. */
-	protected final Collector.AsList<IDescription> children = Collector.getList();
+	protected List<IDescription> children;
 
 	/**
 	 * Instantiates a new statement with children description.
@@ -61,22 +62,25 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
-		super(keyword, superDesc, hasArgs, /* cp, */source, facets, alreadyComputedArgs);
+		super(keyword, superDesc, hasArgs, source, facets, alreadyComputedArgs);
 		setIf(Flag.Breakable, getMeta().isBreakable());
 		setIf(Flag.Continuable, getMeta().isContinuable());
+		children = cp == null ? null : new ArrayList<>();
 		addChildren(cp);
 	}
 
 	@Override
 	public boolean visitChildren(final DescriptionVisitor<IDescription> visitor) {
-		for (final IDescription d : children) { if (!visitor.process(d)) return false; }
+		if (children != null) { for (final IDescription d : children) { if (!visitor.process(d)) return false; } }
 		return true;
 	}
 
 	@Override
 	public boolean visitOwnChildrenRecursively(final DescriptionVisitor<IDescription> visitor) {
-		for (final IDescription d : children) {
-			if (!visitor.process(d) || !d.visitOwnChildrenRecursively(visitor)) return false;
+		if (children != null) {
+			for (final IDescription d : children) {
+				if (!visitor.process(d) || !d.visitOwnChildrenRecursively(visitor)) return false;
+			}
 		}
 		return true;
 
@@ -84,23 +88,24 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor<IDescription> visitor) {
-		for (final IDescription d : children) { if (!visitor.process(d)) return false; }
+		if (children != null) { for (final IDescription d : children) { if (!visitor.process(d)) return false; } }
 		return true;
 	}
 
 	@Override
-	public Iterable<IDescription> getOwnChildren() { return children; }
+	public Iterable<IDescription> getOwnChildren() {
+		if (children != null) return children;
+		return Collections.EMPTY_LIST;
+	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		Collector.release(children);
-		if (temps != null) {
-			temps.forEachValue(object -> {
-				object.dispose();
-				return true;
-			});
+		if (children != null) {
+			children.clear();
+			children = null;
 		}
+		if (temps != null) { temps.forEach((s, object) -> { object.dispose(); }); }
 		temps = null;
 	}
 
@@ -147,7 +152,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		}
 		final String kw = getKeyword();
 		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
-		if (temps == null) { temps = GamaMapFactory.create(); }
+		if (temps == null) { temps = new LinkedHashMap<>(); }
 		if (!MYSELF.equals(name)) {
 			IVarDescriptionProvider description = getDescriptionDeclaringVar(name);
 			if (description != null) {
@@ -190,19 +195,27 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 		final IDescription d = super.addChild(child);
-		if (d != null) { children.add(child); }
+		if (d != null) {
+			if (children == null) { children = new ArrayList<>(); }
+			children.add(child);
+		}
 		return d;
 	}
-	
-	
 
-	public Collector.AsList<IDescription> getChildren() {
-		return children;
+	/**
+	 * Gets the children.
+	 *
+	 * @return the children
+	 */
+	public List<IDescription> getChildren() {
+		if (children != null) return children;
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override
 	public StatementWithChildrenDescription copy(final IDescription into) {
-		final Iterable<IDescription> children = Iterables.transform(this.children, each -> each.copy(into));
+		final Iterable<IDescription> children =
+				this.children == null ? null : Iterables.transform(this.children, each -> each.copy(into));
 		final StatementWithChildrenDescription desc = new StatementWithChildrenDescription(getKeyword(), into, children,
 				false, element, getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
@@ -212,7 +225,11 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public void replaceChildrenWith(final Iterable<IDescription> array) {
 		final List<IDescription> descs = Arrays.asList(Iterables.toArray(array, IDescription.class));
-		children.clear();
+		if (children == null) {
+			children = new ArrayList<>();
+		} else {
+			children.clear();
+		}
 		children.addAll(descs);
 	}
 

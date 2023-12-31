@@ -309,7 +309,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	public String getTitle() {
 		if (isVarOrField) return "field " + getName() + " of type " + returnType + ", for values of type "
 				+ signature.asPattern(false);
-		return "operator " + getName() + "(" + signature.asPattern(false) + "), returns " + returnType;
+		return "Operator " + getName() + "(" + signature.asPattern(false) + "), returns " + returnType;
 	}
 
 	@Override

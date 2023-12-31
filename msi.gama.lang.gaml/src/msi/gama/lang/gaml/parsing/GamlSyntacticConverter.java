@@ -40,13 +40,13 @@ import static msi.gama.common.interfaces.IKeyword.MODEL;
 import static msi.gama.common.interfaces.IKeyword.NAME;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT;
 import static msi.gama.common.interfaces.IKeyword.OUTPUT_FILE;
-import static msi.gama.common.interfaces.IKeyword.SPECIES_LAYER;
 import static msi.gama.common.interfaces.IKeyword.PUT;
 import static msi.gama.common.interfaces.IKeyword.REMOVE;
 import static msi.gama.common.interfaces.IKeyword.SAVE;
 import static msi.gama.common.interfaces.IKeyword.SAVE_BATCH;
 import static msi.gama.common.interfaces.IKeyword.SET;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
+import static msi.gama.common.interfaces.IKeyword.SPECIES_LAYER;
 import static msi.gama.common.interfaces.IKeyword.SYNTHETIC;
 import static msi.gama.common.interfaces.IKeyword.TITLE;
 import static msi.gama.common.interfaces.IKeyword.TO;
@@ -356,7 +356,7 @@ public class GamlSyntacticConverter {
 			final ISyntacticElement blockElt =
 					SyntacticFactory.create(ACTION, new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
 			convertBlock(blockElt, b, errors);
-			IExpressionDescription fexpr = convExpr(blockElt, errors);
+			IExpressionDescription fexpr = createBlockExpr(blockElt);
 			addFacet(elt, IKeyword.ON_CHANGE, fexpr, errors);
 		}
 	}
@@ -758,7 +758,7 @@ public class GamlSyntacticConverter {
 	 */
 	private final IExpressionDescription convExpr(final EObject expr, final Set<Diagnostic> errors) {
 		if (expr == null) return null;
-		return builder.create(expr/* , errors */);
+		return builder.create(expr);
 	}
 
 	/**
@@ -770,9 +770,9 @@ public class GamlSyntacticConverter {
 	 *            the errors
 	 * @return the i expression description
 	 */
-	private final IExpressionDescription convExpr(final ISyntacticElement expr, final Set<Diagnostic> errors) {
+	private final IExpressionDescription createBlockExpr(final ISyntacticElement expr) {
 		if (expr == null) return null;
-		return ExpressionDescriptionBuilder.create(expr, errors);
+		return builder.createBlock(expr);
 	}
 
 	/**
@@ -795,7 +795,7 @@ public class GamlSyntacticConverter {
 				final ISyntacticElement elt =
 						SyntacticFactory.create(ACTION, new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
 				convertBlock(elt, b, errors);
-				return convExpr(elt, errors);
+				return createBlockExpr(elt);
 			}
 			if (expr != null)
 				return label ? convertToLabel(expr, EGaml.getInstance().getKeyOf(expr)) : convExpr(expr, errors);

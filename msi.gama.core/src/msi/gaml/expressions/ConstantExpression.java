@@ -86,7 +86,7 @@ public class ConstantExpression extends AbstractExpression {
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
 	 */
 	@Override
-	public Doc getDocumentation() { return new ConstantDoc("Literal expression of type " + getGamlType().getTitle()); }
+	public Doc getDocumentation() { return new ConstantDoc("Literal expression of type " + getGamlType().getName()); }
 
 	@Override
 	public String getTitle() { return literalValue(); }

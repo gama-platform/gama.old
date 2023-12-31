@@ -62,13 +62,18 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	 *            the proto
 	 * @param expressions
 	 *            the expressions
+	 * @see #copy()
 	 */
 	public AbstractNAryOperator(final OperatorProto proto, final IExpression... expressions) {
-		// Copy introduced in order to circumvent issue 1060
 		if (expressions.length == 0 || expressions[0] == null) {
 			exprs = null;
 		} else {
-			exprs = Arrays.copyOf(expressions, expressions.length);
+			exprs = expressions;
+			/**
+			 * Copy introduced in order to circumvent issue 1060: still necessary ? It is supposed that the copy should
+			 * occur before, for instance in the implementations of {@link #copy()}.
+			 */
+			// Arrays.copyOf(expressions,expressions.length);
 		}
 		this.prototype = proto;
 		type = computeType();
@@ -236,7 +241,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	/**
-	 * Copy.
+	 * Copy. Only called by {@link #resolveAgainst(IScope)}, provides a clean copy of the operator and a copy of its
+	 * expressions too
 	 *
 	 * @return the abstract N ary operator
 	 */
@@ -302,13 +308,13 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		sb.append("operator ").append(getName()).append(" (");
 		if (exprs != null) {
 			for (final IExpression expr : exprs) {
-				sb.append(expr == null ? "nil" : expr.getGamlType().getTitle());
+				sb.append(expr == null ? "nil" : expr.getGamlType().getName());
 				sb.append(',');
 			}
 			sb.setLength(sb.length() - 1);
 		} else if (prototype.signature != null) { sb.append("Argument types: " + prototype.signature.toString()); }
 		sb.append(") returns ");
-		sb.append(type.getTitle());
+		sb.append(type.getName());
 		return sb.toString();
 	}
 

@@ -95,7 +95,7 @@ import msi.gaml.variables.Variable;
 						doc = @doc ("the maximum value")),
 				@facet (
 						name = IKeyword.CATEGORY,
-						type = IType.LABEL,
+						type = { IType.STRING },
 						optional = true,
 						doc = @doc ("a category label, used to group parameters in the interface")),
 				@facet (
@@ -105,7 +105,7 @@ import msi.gaml.variables.Variable;
 						doc = @doc ("the name of the variable (that should be declared in global)")),
 				@facet (
 						name = IKeyword.UNIT,
-						type = IType.LABEL,
+						type = { IType.STRING },
 						optional = true,
 						doc = @doc ("the variable unit")),
 				@facet (

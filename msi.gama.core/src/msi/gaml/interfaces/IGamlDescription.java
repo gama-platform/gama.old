@@ -187,7 +187,26 @@ public interface IGamlDescription extends INamed {
 	}
 
 	/** The empty. */
-	Doc EMPTY_DOC = () -> "";
+	SimpleDoc EMPTY_DOC = new SimpleDoc() {
+
+		@Override
+		public String get() {
+			return "";
+		}
+	};
+
+	/**
+	 * The Class SimpleDoc.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 31 déc. 2023
+	 */
+	public static abstract class SimpleDoc implements Doc {
+		@Override
+		public String toString() {
+			return get();
+		}
+	}
 
 	/**
 	 * Returns the title of this object (ie. the first line in the online documentation)

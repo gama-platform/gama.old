@@ -7,10 +7,16 @@
 model URLImageImport
 
 global {
+	
+	int essai(int a) {
+		return 100;
+	}
+	
 	image_file im <- image_file("https://raw.githubusercontent.com/wiki/gama-platform/gama/resources/images/general/GamaPlatform.png");
 	geometry shape <- envelope(im);
 	// We modify a bit the image 
-	matrix<int> shuffle <- shuffle(im.contents);
+	matrix<int> shuffle <- shuffle(im.contents); 
+	int c <- essai(100);
 	// We create a file with the new contents
 	image_file copy <- image_file("../images/local_copy.png", shuffle);
 	init {

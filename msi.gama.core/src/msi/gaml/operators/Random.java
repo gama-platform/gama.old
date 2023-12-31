@@ -476,7 +476,7 @@ public class Random {
 			category = { IOperatorCategory.RANDOM, IOperatorCategory.CONTAINER },
 			concept = { IConcept.RANDOM })
 	@doc (
-			value = "The elements of the operand in random order.",
+			value = "Returns a new list containing the randomly shuffled elements of the container.",
 			usages = { @usage (
 					value = "if the operand is empty, returns an empty list (or string, matrix)") },
 			examples = { @example (
@@ -520,6 +520,7 @@ public class Random {
 			category = { IOperatorCategory.RANDOM, IOperatorCategory.MATRIX },
 			concept = { IConcept.RANDOM })
 	@doc (
+			value = "Returns a new matrix of the same size as the operand, with randomly shuffled elements",
 			examples = { @example (
 					value = "shuffle (matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))",
 					equals = "matrix([[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]) (for example)",
@@ -546,6 +547,7 @@ public class Random {
 			category = { IOperatorCategory.RANDOM, IOperatorCategory.STRING },
 			concept = { IConcept.RANDOM })
 	@doc (
+			value = "Returns a new string with randomly shuffled letters",
 			examples = { @example (
 					value = "shuffle ('abc')",
 					equals = "'bac' (for example)",

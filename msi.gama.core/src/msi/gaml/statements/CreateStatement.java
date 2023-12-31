@@ -66,7 +66,6 @@ import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.CreateStatement.CreateSerializer;
 import msi.gaml.statements.CreateStatement.CreateValidator;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -306,13 +305,14 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 							WRONG_TYPE, FROM);
 				}
 			}
-			final Facets facets = cd.getPassedArgs();
-			for (final Facet att : facets.getFacets()) {
-				if (!sd.isExperiment() && !sd.hasAttribute(att.key)) {
-					cd.error("Attribute " + att + " is not defined in species " + species.getName(), UNKNOWN_VAR);
-					return;
+			final Arguments facets = cd.getPassedArgs();
+			facets.forEachFacet((s, e) -> {
+				boolean error = !sd.isExperiment() && !sd.hasAttribute(s);
+				if (error) {
+					cd.error("Attribute " + s + " is not defined in species " + species.getName(), UNKNOWN_VAR);
 				}
-			}
+				return !error;
+			});
 
 		}
 
@@ -326,7 +326,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		@Override
 		protected void serializeArgs(final SymbolDescription s, final StringBuilder sb, final boolean ncludingBuiltIn) {
 			final StatementDescription desc = (StatementDescription) s;
-			final Facets args = desc.getPassedArgs();
+			final Arguments args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) return;
 			sb.append("with: [");
 			args.forEachFacet((name, exp) -> {
@@ -421,9 +421,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			final String potentialSpeciesName = species.getDenotedType().getSpeciesName();
 			if (potentialSpeciesName != null) { s = scope.getModel().getSpecies(potentialSpeciesName); }
 		}
-		if (s == null) throw GamaRuntimeException.error(
-				"No population of " + species.serializeToGaml(false) + " is accessible in the context of " + executor + ".",
-				scope);
+		if (s == null) throw GamaRuntimeException.error("No population of " + species.serializeToGaml(false)
+				+ " is accessible in the context of " + executor + ".", scope);
 		IPopulation pop = executor.getPopulationFor(s);
 		// hqnghi population of micro-model's experiment is not exist, we
 		// must create the new one

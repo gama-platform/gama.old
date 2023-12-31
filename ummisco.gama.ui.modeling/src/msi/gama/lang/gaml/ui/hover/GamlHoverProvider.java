@@ -21,6 +21,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.xtext.Keyword;
+import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.nodemodel.ILeafNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
@@ -34,37 +35,14 @@ import org.eclipse.xtext.util.ITextRegion;
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 
-import msi.gama.lang.gaml.EGaml;
-import msi.gama.lang.gaml.gaml.ActionDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
-import msi.gama.lang.gaml.gaml.ArgumentPair;
-import msi.gama.lang.gaml.gaml.Array;
-import msi.gama.lang.gaml.gaml.ExpressionList;
-import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
-import msi.gama.lang.gaml.gaml.Import;
-import msi.gama.lang.gaml.gaml.Parameter;
-import msi.gama.lang.gaml.gaml.S_Definition;
-import msi.gama.lang.gaml.gaml.S_Do;
-import msi.gama.lang.gaml.gaml.S_Global;
-import msi.gama.lang.gaml.gaml.Statement;
-import msi.gama.lang.gaml.gaml.TypeRef;
-import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
-import msi.gama.lang.gaml.gaml.UnitName;
-import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
-import msi.gama.lang.gaml.resource.GamlResourceServices;
-import msi.gaml.compilation.GAML;
-import msi.gaml.compilation.kernel.GamaSkillRegistry;
-import msi.gaml.descriptions.FacetProto;
-import msi.gaml.descriptions.SkillDescription;
-import msi.gaml.descriptions.SymbolProto;
-import msi.gaml.expressions.units.UnitConstantExpression;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gama.lang.gaml.ui.hover.GamlHoverDocumentationProvider.Result;
 import msi.gaml.interfaces.IGamlDescription;
-import msi.gaml.statements.DoStatement;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -151,7 +129,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 			@Override
 			public void setSize(final int width, final int height) {
-				super.setSize(width, height);
+				super.setSize(width, height + 30);
 				final org.eclipse.swt.graphics.Point p = WorkbenchHelper.getDisplay().getCursorLocation();
 				p.x -= 5;
 				p.y += 15;
@@ -195,6 +173,12 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	/** The creator. */
 	private IInformationControlCreator creator;
 
+	/** The decorated provider. */
+	@Inject private IEObjectDocumentationProvider decoratedProvider;
+
+	/** The provider. */
+	@Inject private GamlHoverDocumentationProvider provider;
+
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (creator == null) { creator = new GamlHoverControlCreator(getInformationPresenterControlCreator()); }
@@ -202,164 +186,23 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	}
 
 	@Override
-	protected boolean hasHover(final EObject o) {
-		return true;
+	protected String getHoverInfoAsHtml(final EObject o) {
+		StringBuilder buffer = new StringBuilder();
+		IGamlDescription doc = provider.getDoc(o);
+		if (doc == null) {
+			doc = new Result("Unknow object of type " + o.getClass().getSimpleName(),
+					"File an issue at https://github.com/gama-platform/gama/issues to document it");
+		}
+		String title = doc.getTitle();
+		String documentation = doc.getDocumentation().get();
+		String comment = decoratedProvider.getDocumentation(o);
+		if (Strings.isNullOrEmpty(comment)) if (o instanceof VariableRef) {
+			comment = super.getDocumentation(((VariableRef) o).getRef());
+		} else if (o instanceof ActionRef) { comment = super.getDocumentation(((ActionRef) o).getRef()); }
+		if (!Strings.isNullOrEmpty(title)) { buffer.append("<b>").append(title).append("</b><hr>"); }
+		if (!Strings.isNullOrEmpty(comment)) { buffer.append("<p><i>").append(comment).append("</i></p><hr>"); }
+		if (!Strings.isNullOrEmpty(documentation)) { buffer.append("<p>").append(documentation).append("</p>"); }
+		return buffer.toString();
 	}
 
-	@Override
-	protected String getFirstLine(final EObject o) {
-		if (o instanceof Import imp) {
-			String uri = imp.getImportURI();
-			uri = uri.substring(uri.lastIndexOf('/') + 1);
-			final String model = imp.getName() != null ? "micro-model" : "model";
-			return "<b>Import of the " + model + " defined in <i>" + uri + "</i></b>";
-		}
-		if (o instanceof S_Global) return "<b>Global definitions of </b>" + getFirstLine(o.eContainer().eContainer());
-		final Statement s = EGaml.getInstance().getStatement(o);
-		if (o instanceof TypeRef && s instanceof S_Definition sd && sd.getTkey() == o) return getFirstLine(s);
-
-		// All the cases corresponding to #3495 -- arguments to actions and primitives
-		// CASE do run_thread interval: 2#s;
-		if (o instanceof Facet f && f.eContainer() instanceof S_Do sdo) {
-			String key = EGaml.getInstance().getKeyOf(f);
-			if (!DoStatement.DO_FACETS.contains(key)) {
-				String result = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
-				return "<b>" + result + "</b>";
-			}
-		}
-
-		// CASE do run_thread with: [interval::2#s];
-		if (o instanceof ArgumentPair pair && pair.eContainer() instanceof ExpressionList el
-				&& el.eContainer() instanceof Array array && array.eContainer() instanceof Facet facet) {
-			if (facet.eContainer() instanceof S_Do sdo) {
-				String key = pair.getOp();
-				if (!DoStatement.DO_FACETS.contains(key)) {
-					String result = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
-					return "<b>" + result + "</b>";
-				}
-
-			}
-		}
-
-		// CASE create xxx with: [var::yyy]
-		if (o instanceof ArgumentPair pair && pair.eContainer() instanceof ExpressionList el
-				&& el.eContainer() instanceof Array array && array.eContainer() instanceof Facet facet) {
-			if (facet.eContainer() instanceof Statement sdo && "create".equals(sdo.getKey())) {
-				String key = pair.getOp();
-				IGamlDescription species =
-						GamlResourceServices.getResourceDocumenter().getGamlDocumentation(sdo.getExpr());
-				if (species != null) return "<b>" + "Attribute " + key + " defined in " + species.getTitle() + "</b>";
-
-			}
-		}
-
-		// CASE do run_thread with: (interval::2#s);
-		if (o instanceof VariableRef vr && vr.eContainer() instanceof Parameter pair
-				&& pair.eContainer() instanceof ExpressionList el && el.eContainer() instanceof Facet facet
-				&& facet.eContainer() instanceof S_Do sdo) {
-			String key = EGaml.getInstance().getKeyOf(pair);
-			if (!DoStatement.DO_FACETS.contains(key)) {
-				String result = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
-				return "<b>" + result + "</b>";
-			}
-
-		}
-
-		// CASE do run_thread (interval: 2#s); unknown aa <- self.run_thread (interval: 2#s); aa <- run_thread
-		// (interval: 2#s);
-		if (o instanceof VariableRef) {
-
-			if (o.eContainer() instanceof Parameter param && param.eContainer() instanceof ExpressionList el
-					&& el.eContainer() instanceof Function function) {
-				final IGamlDescription description =
-						GamlResourceServices.getResourceDocumenter().getGamlDocumentation(function);
-				if (description != null) {
-					VarDefinition vd = ((VariableRef) o).getRef();
-					String result = "Argument " + vd.getName() + " of action "
-							+ EGaml.getInstance().getNameOfRef(function.getLeft());
-					return "<b>" + result + "</b>";
-				}
-			}
-
-			// Case of species xxx skills: [skill]
-			if (o.eContainer() instanceof ExpressionList el && el.eContainer() instanceof Array array
-					&& array.eContainer() instanceof Facet facet && facet.getKey().startsWith("skills")) {
-				VarDefinition vd = ((VariableRef) o).getRef();
-				String name = vd.getName();
-				SkillDescription skill = GamaSkillRegistry.INSTANCE.get(name);
-				if (skill != null) return "<b>" + skill.getTitle() + "</b>";
-
-			}
-
-			VarDefinition vd = ((VariableRef) o).getRef();
-			IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(vd);
-			if (description != null) {
-				String result = description.getTitle();
-				if (result == null) return "";
-				return "<b>" + result + "</b>";
-			}
-		}
-
-		if (o instanceof Function) {
-			final ActionRef ref = getActionFrom((Function) o);
-			if (ref != null) {
-				final ActionDefinition def = ref.getRef();
-				if (def != null) {
-					final String temp = getFirstLine(def);
-					if (!temp.isEmpty()) return temp;
-				}
-			}
-		} else if (o instanceof UnitName) {
-			final UnitFakeDefinition fake = ((UnitName) o).getRef();
-			if (fake == null) return "<b> Unknown unit or constant </b>";
-			final UnitConstantExpression unit = GAML.UNITS.get(fake.getName());
-			if (unit == null) return "<b> Unknown unit or constant </b>";
-			return "<b>" + unit.getTitle() + "</b>";
-		}
-
-		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
-		if (description != null) {
-			String result = description.getTitle();
-			if (result == null || result.isEmpty()) return "";
-			return "<b>" + result + "</b>";
-		}
-		if (o instanceof Facet) return "<b>" + getFirstLineOf((Facet) o) + "</b>";
-
-		if (s != null && DescriptionFactory.isStatementProto(EGaml.getInstance().getKeyOf(o))) {
-			if (s == o) return "";
-			return getFirstLine(s);
-		}
-		if (o instanceof TypeRef) return "<b>Type " + EGaml.getInstance().getKeyOf(o) + "</b>";
-		return "";
-	}
-
-	/**
-	 * Gets the action from.
-	 *
-	 * @param f
-	 *            the f
-	 * @return the action from
-	 */
-	private ActionRef getActionFrom(final Function f) {
-		if (f.getLeft() instanceof ActionRef) return (ActionRef) f.getLeft();
-		return null;
-	}
-
-	/**
-	 * @param o
-	 * @return
-	 */
-	private String getFirstLineOf(final Facet o) {
-		String facetName = o.getKey();
-		if (facetName.endsWith(":")) { facetName = facetName.substring(0, facetName.length() - 1); }
-		final EObject cont = o.eContainer();
-		final String key = EGaml.getInstance().getKeyOf(cont);
-		final SymbolProto p = DescriptionFactory.getProto(key, null);
-		if (p != null) {
-			final FacetProto f = p.getPossibleFacets().get(facetName);
-			if (f != null) return f.getTitle();
-		}
-		return "Facet " + o.getKey();
-
-	}
 }

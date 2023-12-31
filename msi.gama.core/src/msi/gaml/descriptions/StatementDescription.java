@@ -24,6 +24,7 @@ import msi.gaml.compilation.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.operators.IOperator;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
@@ -182,7 +183,7 @@ public class StatementDescription extends SymbolDescription {
 	 *
 	 * @return the passed args
 	 */
-	public Facets getPassedArgs() { return passedArgs == null ? Facets.NULL : passedArgs; }
+	public Arguments getPassedArgs() { return passedArgs == null ? Arguments.NULL : passedArgs; }
 
 	@Override
 	public String getName() {
@@ -209,7 +210,12 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public String getTitle() {
-		final String kw = getKeyword();
+		String kw = getKeyword();
+		if (LET.equals(kw)) {
+			kw = "Declaration of temporary variable ";
+		} else {
+			kw = Strings.capitalize(null, kw);
+		}
 		String nm = getName();
 		if (nm.contains(INTERNAL)) {
 			nm = getLitteral(ACTION);

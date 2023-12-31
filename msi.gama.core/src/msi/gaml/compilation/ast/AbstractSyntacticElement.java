@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractSyntacticElement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * AbstractSyntacticElement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -19,7 +19,6 @@ import msi.gaml.descriptions.IDescription.IFacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Class AbstractSyntacticElement.
@@ -67,9 +66,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#getElement()
 	 */
 	@Override
-	public EObject getElement() {
-		return element;
-	}
+	public EObject getElement() { return element; }
 
 	/*
 	 * (non-Javadoc)
@@ -78,7 +75,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 */
 	@Override
 	public String toString() {
-		return getKeyword() + " " + getName() + " " + (facets == null ? "" : facets.getFacets().toString());
+		return getKeyword() + " " + getName() + " " + (facets == null ? "" : facets.toString());
 	}
 
 	/*
@@ -97,9 +94,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#setKeyword(java.lang.String)
 	 */
 	@Override
-	public void setKeyword(final String name) {
-		keyword = name;
-	}
+	public void setKeyword(final String name) { keyword = name; }
 
 	/*
 	 * (non-Javadoc)
@@ -107,9 +102,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#getKeyword()
 	 */
 	@Override
-	public String getKeyword() {
-		return keyword;
-	}
+	public String getKeyword() { return keyword; }
 
 	/*
 	 * (non-Javadoc)
@@ -204,9 +197,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#isSpecies()
 	 */
 	@Override
-	public boolean isSpecies() {
-		return false;
-	}
+	public boolean isSpecies() { return false; }
 
 	/*
 	 * (non-Javadoc)
@@ -214,9 +205,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	 * @see msi.gaml.compilation.ast.ISyntacticElement#isExperiment()
 	 */
 	@Override
-	public boolean isExperiment() {
-		return false;
-	}
+	public boolean isExperiment() { return false; }
 
 	/*
 	 * (non-Javadoc)

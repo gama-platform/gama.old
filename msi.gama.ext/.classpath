@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="fastutil-core-8.5.12.jar" sourcepath="fastutil-core-8.5.12-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="streamex/streamex-0.8.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="slf4j-api-2.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="slf4j-nop-2.0.9.jar"/>

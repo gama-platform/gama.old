@@ -59,7 +59,7 @@ public class TypeFieldExpression extends UnaryOperator {
 	@Override
 	public Doc getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
-		if (child != null) { sb.append("Defined on objects of type " + child.getGamlType().getTitle()); }
+		if (child != null) { sb.append("Defined on objects of type " + child.getGamlType().getName()); }
 		final vars annot = prototype.getSupport().getAnnotation(vars.class);
 		if (annot != null) {
 			final variable[] allVars = annot.value();
@@ -74,7 +74,7 @@ public class TypeFieldExpression extends UnaryOperator {
 	}
 
 	@Override
-	public String getTitle() { return "field <b>" + getName() + "</b> of type " + getGamlType().getTitle(); }
+	public String getTitle() { return "field <b>" + getName() + "</b> of type " + getGamlType().getName(); }
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {

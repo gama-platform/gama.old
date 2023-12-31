@@ -45,10 +45,8 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 		DEBUG.OFF();
 	}
 
-	// static int savedTypes = 0;
-
 	/** The cache2. */
-	static Cache<Integer, ParametricType> CACHE2 = newBuilder().expireAfterAccess(30, MINUTES).build();
+	static Cache<Integer, ParametricType> CACHE2 = newBuilder().expireAfterAccess(5, MINUTES).build();
 
 	/** The use cache. */
 	static boolean USE_CACHE = true;
@@ -78,14 +76,14 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 */
 	public static ParametricType createParametricType(final IContainerType<IContainer<?, ?>> t, final IType<?> kt,
 			final IType<?> ct) {
-		if (USE_CACHE && useCacheFor(t) && useCacheFor(kt) && useCacheFor(ct)) {
+		if (USE_CACHE) {
 			final Integer key = 31 * (31 * (31 + t.hashCode()) + kt.hashCode()) + ct.hashCode();
 			ParametricType p = CACHE2.getIfPresent(key);
-			if (p != null) // DEBUG.OUT("Saved creations : " + savedTypes++);
+			if (p == null && useCacheFor(t) && useCacheFor(kt) && useCacheFor(ct)) {
+				p = new ParametricType(t, kt, ct);
+				CACHE2.put(key, p);
 				return p;
-			p = new ParametricType(t, kt, ct);
-			CACHE2.put(key, p);
-			// DEBUG.OUT("Size: " + CACHE2.size() + " | Saved Type = " + p);
+			}
 		}
 		return new ParametricType(t, kt, ct);
 	}
@@ -403,17 +401,6 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 		return type.findCommonSupertypeWith(iType);
 	}
 
-	/**
-	 * Method isParented()
-	 *
-	 * @see msi.gaml.types.IType#isParented()
-	 */
-	@Override
-	public boolean isParented() {
-		return true;
-		// return type != null; // ??
-	}
-
 	@Override
 	public boolean isDrawable() { return type.isDrawable(); }
 
@@ -473,7 +460,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
-	public String getTitle() { return toString().replace('<', '[').replace('>', ']'); }
+	public String getTitle() { return "Parametric data type " + toString().replace('<', '[').replace('>', ']'); }
 
 	/**
 	 * Method getDocumentation()

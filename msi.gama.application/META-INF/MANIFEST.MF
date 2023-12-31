@@ -24,8 +24,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.workbench.addons.swt,
  org.eclipse.e4.ui.workbench.renderers.swt,
  org.eclipse.e4.ui.workbench.swt,
- org.eclipse.e4.ui.css.core,
- org.w3c.css.sac
+ org.eclipse.e4.ui.css.core
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.9.3.qualifier
 Bundle-ManifestVersion: 2
@@ -34,6 +33,7 @@ Export-Package: msi.gama.application;uses:="org.eclipse.ui,org.eclipse.equinox.a
  msi.gama.application.projects,
  msi.gama.application.workbench,
  msi.gama.application.workspace
+Import-Package: org.w3c.css.sac
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.application

@@ -41,17 +41,16 @@ import msi.gaml.types.IType;
  */
 
 @facets (
-		value = { /* @facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true), */
-				@facet (
-						name = IKeyword.NAME,
-						type = IType.NEW_TEMP_ID,
-						optional = false,
-						doc = @doc ("The name of the variable declared ")),
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.NEW_TEMP_ID,
+				optional = false,
+				doc = @doc ("The name of the temporary variable")),
 				@facet (
 						name = IKeyword.VALUE,
 						type = { IType.NONE },
 						optional = /* AD change false */true,
-						doc = @doc ("The value assigned to this variable")),
+						doc = @doc ("The value assigned to the temporary variable")),
 
 				@facet (
 						name = IKeyword.OF,
@@ -67,19 +66,18 @@ import msi.gaml.types.IType;
 						name = IKeyword.TYPE,
 						type = { IType.TYPE_ID },
 						optional = true,
-						doc = @doc ("The type of the variable")) },
+						doc = @doc ("The type of the temporary variable")) },
 		omissible = IKeyword.NAME)
 @symbol (
 		name = { IKeyword.LET },
 		kind = ISymbolKind.SINGLE_STATEMENT,
 		concept = { IConcept.SYSTEM },
-		with_sequence = false,
-		doc = @doc ("Allows to declare a temporary variable and to initialize it with a value. The type can be provided, otherwise it is inferred from the right-hand expression. "))
+		with_sequence = false)
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @validator (LetValidator.class)
 @serializer (LetSerializer.class)
-@doc ("Allows to declare a temporary variable of the specified type and to initialize it with a value")
+@doc ("Declaration and initialization of a temporary variable.")
 public class LetStatement extends SetStatement {
 
 	/**

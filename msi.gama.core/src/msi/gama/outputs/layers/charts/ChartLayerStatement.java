@@ -102,12 +102,12 @@ import msi.gaml.types.Types;
 						doc = @doc ("for series charts, change the default common x serie (simulation cycle) for an other value (list or numerical).")),
 				@facet (
 						name = IKeyword.X_LABELS,
-						type = { IType.LIST, IType.FLOAT, IType.INT, IType.LABEL },
+						type = { IType.LIST, IType.FLOAT, IType.INT, IType.STRING },
 						optional = true,
 						doc = @doc ("change the default common x series labels (replace x value or categories) for an other value (string or numerical).")),
 				@facet (
 						name = IKeyword.Y_LABELS,
-						type = { IType.LIST, IType.FLOAT, IType.INT, IType.LABEL },
+						type = { IType.LIST, IType.FLOAT, IType.INT, IType.STRING },
 						optional = true,
 						doc = @doc ("for heatmaps/3d charts, change the default y serie for an other value (string or numerical in a list or cumulative).")),
 				@facet (

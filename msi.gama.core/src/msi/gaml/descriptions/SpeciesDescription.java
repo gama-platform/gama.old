@@ -45,6 +45,7 @@ import msi.gaml.expressions.types.SkillConstantExpression;
 import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.interfaces.IGamlIssue;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -350,7 +351,8 @@ public class SpeciesDescription extends TypeDescription {
 				if (existing == null || !existing.getOriginName().equals(v.getOriginName())) { toAdd = true; }
 			}
 			if (toAdd) {
-				v.setEnclosingDescription(this);
+
+				// v.setEnclosingDescription(this);
 				addAction((ActionDescription) v);
 			}
 		}
@@ -650,7 +652,7 @@ public class SpeciesDescription extends TypeDescription {
 	public boolean isGrid() { return isSet(Flag.isGrid); }
 
 	@Override
-	public String getTitle() { return getKeyword() + " " + getName(); }
+	public String getTitle() { return Strings.capitalize(null, getKeyword()) + " " + getName(); }
 
 	@Override
 	public Doc getDocumentation() {

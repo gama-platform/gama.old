@@ -38,8 +38,8 @@ import msi.gaml.types.Types;
 public interface IDescriptionValidator<T extends IDescription> extends IValidator {
 
 	/** The reserved. */
-	ImmutableSet<String> RESERVED = ImmutableSet
-			.copyOf(new String[] { IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF });
+	ImmutableSet<String> RESERVED =
+			ImmutableSet.copyOf(new String[] { IKeyword.FALSE, IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF });
 
 	/**
 	 * Called at the end of the validation process. The enclosing description, the children and the facets of the
@@ -129,6 +129,26 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 			}
 		}
 
+		/**
+		 * Verify int float and empty containers.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param facetName
+		 *            the facet name
+		 * @param context
+		 *            the context
+		 * @param receiverDescription
+		 *            the receiver description
+		 * @param receiverType
+		 *            the receiver type
+		 * @param assigned
+		 *            the assigned
+		 * @param value
+		 *            the value
+		 * @param assignedType
+		 *            the assigned type
+		 * @date 28 déc. 2023
+		 */
 		private static void verifyIntFloatAndEmptyContainers(final String facetName, final IDescription context,
 				final String receiverDescription, final IType<?> receiverType, final IExpressionDescription assigned,
 				final IExpression value, final IType assignedType) {

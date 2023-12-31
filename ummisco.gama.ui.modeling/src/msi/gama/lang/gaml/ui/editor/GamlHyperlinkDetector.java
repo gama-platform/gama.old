@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlHyperlinkDetector.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamlHyperlinkDetector.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
  * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
@@ -37,7 +37,7 @@ import ummisco.gama.ui.commands.FileOpener;
 /**
  * Represents an implementation of interface <code>{@link IHyperlinkDetector}</code> to find and convert
  * {@link CrossReference elements}, at a given location, to {@code IHyperlink}.
- * 
+ *
  * @author Alexis Drogoul
  */
 public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
@@ -49,15 +49,17 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 
 		/** The import uri. */
 		private final URI importUri;
-		
+
 		/** The region. */
 		private final IRegion region;
 
 		/**
 		 * Instantiates a new import hyperlink.
 		 *
-		 * @param importUri the import uri
-		 * @param region the region
+		 * @param importUri
+		 *            the import uri
+		 * @param region
+		 *            the region
 		 */
 		ImportHyperlink(final URI importUri, final IRegion region) {
 			this.importUri = importUri;
@@ -70,19 +72,13 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 		}
 
 		@Override
-		public String getTypeLabel() {
-			return null;
-		}
+		public String getTypeLabel() { return null; }
 
 		@Override
-		public IRegion getHyperlinkRegion() {
-			return region;
-		}
+		public IRegion getHyperlinkRegion() { return region; }
 
 		@Override
-		public String getHyperlinkText() {
-			return null;
-		}
+		public String getHyperlinkText() { return null; }
 	}
 
 	/** The Constant NO_HYPERLINKS. */
@@ -96,7 +92,7 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 			final boolean canShowMultipleHyperlinks) {
 		final IXtextDocument document = (IXtextDocument) textViewer.getDocument();
 		final IHyperlink[] importHyperlinks = importHyperlinks(document, region);
-		if (importHyperlinks != NO_HYPERLINKS) { return importHyperlinks; }
+		if (importHyperlinks != NO_HYPERLINKS) return importHyperlinks;
 		return document.readOnly(new CancelableUnitOfWork<IHyperlink[], XtextResource>() {
 
 			@Override
@@ -109,18 +105,23 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 	/**
 	 * Gets the uri.
 	 *
-	 * @param resolved the resolved
+	 * @param resolved
+	 *            the resolved
 	 * @return the uri
 	 */
 	public URI getURI(final StringLiteral resolved) {
-		return FileUtils.getURI(resolved.getOp(), resolved.eResource().getURI());
+		String path = resolved.getOp();
+		if (path == null || path.isBlank()) return null;
+		return FileUtils.getURI(path, resolved.eResource().getURI());
 	}
 
 	/**
 	 * Import hyperlinks.
 	 *
-	 * @param document the document
-	 * @param region the region
+	 * @param document
+	 *            the document
+	 * @param region
+	 *            the region
 	 * @return the i hyperlink[]
 	 */
 	private IHyperlink[] importHyperlinks(final IXtextDocument document, final IRegion region) {
@@ -136,7 +137,7 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 					} catch (final BadLocationException e1) {
 						return NO_HYPERLINKS;
 					}
-					if (hRegion == null) { return NO_HYPERLINKS; }
+					if (hRegion == null) return NO_HYPERLINKS;
 					final IHyperlink hyperlink1 = new ImportHyperlink(iu1, hRegion);
 					return new IHyperlink[] { hyperlink1 };
 				}
@@ -147,7 +148,7 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 			} else if (resolved instanceof HeadlessExperiment) {
 				importUri = ((HeadlessExperiment) resolved).getImportURI();
 			}
-			if (importUri == null) { return NO_HYPERLINKS; }
+			if (importUri == null) return NO_HYPERLINKS;
 			final URI iu2 = URI.createURI(importUri, false).resolve(resource.getURI());
 			IRegion importUriRegion;
 			try {
@@ -155,7 +156,7 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 			} catch (final BadLocationException e2) {
 				return NO_HYPERLINKS;
 			}
-			if (importUriRegion == null) { return NO_HYPERLINKS; }
+			if (importUriRegion == null) return NO_HYPERLINKS;
 			final IHyperlink hyperlink2 = new ImportHyperlink(iu2, importUriRegion);
 			return new IHyperlink[] { hyperlink2 };
 		});
@@ -164,11 +165,15 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 	/**
 	 * Import uri region.
 	 *
-	 * @param document the document
-	 * @param offset the offset
-	 * @param importUri the import uri
+	 * @param document
+	 *            the document
+	 * @param offset
+	 *            the offset
+	 * @param importUri
+	 *            the import uri
 	 * @return the i region
-	 * @throws BadLocationException the bad location exception
+	 * @throws BadLocationException
+	 *             the bad location exception
 	 */
 	private IRegion importUriRegion(final IXtextDocument document, final int offset, final String importUri)
 			throws BadLocationException {

@@ -10,22 +10,31 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.documentation;
 
+import static it.unimi.dsi.fastutil.ints.Int2ObjectMaps.synchronize;
+
+import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.EcoreUtil2;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntConsumer;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
-import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IDescription.DescriptionVisitor;
-import msi.gaml.interfaces.IGamlDescription;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.interfaces.IGamlDescription;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -38,11 +47,28 @@ import ummisco.gama.dev.utils.DEBUG;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlResourceDocumenter implements IDocManager {
 
-	/** The cleanup tasks. */
-	final ConcurrentLinkedQueue<ModelDescription> cleanupTasks = new ConcurrentLinkedQueue();
+	static {
+		DEBUG.OFF();
+	}
+
+	/** The documentations from EObject to DocumentationNode. Key is the hashcode of the complete URI of the object */
+	final Int2ObjectMap<DocumentationNode> docIndexedByObjects = synchronize(new Int2ObjectOpenHashMap());
+	/**
+	 * The references from Eobject to resources. Key is the hashcode of the complete URI of the object, value is the set
+	 * of hashcodes of the URIs of open resources using this object
+	 */
+	final Int2ObjectMap<IntSet> resourcesIndexedByObjects = synchronize(new Int2ObjectOpenHashMap());
+	/**
+	 * The references from resources to EObjets. Key is the hashcode of the URI of the resource, value is the set of
+	 * hashcodes of the complete URIs of objects present in this resource (they might belong to other resources)
+	 */
+	final Int2ObjectMap<IntSet> objectsIndexedByResources = synchronize(new Int2ObjectOpenHashMap());
+
+	/** The resource names. */
+	final Int2ObjectMap<String> resourceNames = synchronize(new Int2ObjectOpenHashMap());
 
 	/** The documentation queue. */
-	final ConcurrentLinkedQueue<DocumentationTask> documentationQueue = new ConcurrentLinkedQueue();
+	final ConcurrentLinkedQueue<Consumer<GamlResourceDocumenter>> documentationQueue = new ConcurrentLinkedQueue();
 
 	/** The documentation job. */
 	final Job documentationJob = new Job("Documentation") {
@@ -53,95 +79,193 @@ public class GamlResourceDocumenter implements IDocManager {
 
 		@Override
 		protected IStatus run(final IProgressMonitor monitor) {
-			DocumentationTask task = documentationQueue.poll();
+			Consumer<GamlResourceDocumenter> task = documentationQueue.poll();
 			while (task != null) {
-				task.process();
+				task.accept(GamlResourceDocumenter.this);
 				task = documentationQueue.poll();
-			}
-			ModelDescription r = cleanupTasks.poll();
-			while (r != null) {
-				r.dispose();
-				r = cleanupTasks.poll();
 			}
 			return Status.OK_STATUS;
 		}
 	};
 
-	/** The documenting visitor. */
-	final DescriptionVisitor<IDescription> documentingVisitor = desc -> {
-		document(desc);
-		return true;
-	};
-
-	@Override
-	public void addCleanupTask(final ModelDescription model) {
-		cleanupTasks.add(model);
-	}
-
-	@Override
-	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace,
-			final boolean force) {
-		if (!force && !shouldDocument(object)) return;
-
-		documentationQueue.add(new DocumentationTask(object, description, this));
+	/**
+	 * Adds the arbitrary documentation task.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param task
+	 *            the task
+	 * @date 30 déc. 2023
+	 */
+	public void addDocumentationTask(final Consumer<GamlResourceDocumenter> task) {
+		documentationQueue.add(task);
 		documentationJob.schedule(50);
 	}
 
 	/**
-	 * Gets the documentation cache.
+	 * Sets the gaml documentation.
 	 *
-	 * @param resource
-	 *            the resource
-	 * @return the documentation cache
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param object
+	 *            the object
+	 * @param desc
+	 *            the description
+	 * @param replace
+	 *            the replace
+	 * @param force
+	 *            the force
+	 * @date 29 déc. 2023
 	 */
-	IMap<EObject, IGamlDescription> getDocumentationCache(final Resource resource) {
-		if (resource == null) return null;
-		return GamlResourceServices.getDocumentationCache(resource);
+	@Override
+	public void setGamlDocumentation(final URI res, final EObject object, final IGamlDescription desc) {
+		if (object == null) return;
+		if (!GamlResourceServices.isEdited(res)) {
+			if (DEBUG.IS_ON()) {
+				DEBUG.OUT("Refusing to document " + desc.getTitle() + " in " + (res == null ? "" : res.lastSegment()));
+			}
+			return;
+		}
+		addDocumentationTask(d -> internalSetGamlDocumentation(res, object, desc));
+	}
+
+	/**
+	 * Internal set gaml documentation.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param openResource
+	 *            the open resource
+	 * @param object
+	 *            the object
+	 * @param description
+	 *            the description
+	 * @date 31 déc. 2023
+	 */
+	void internalSetGamlDocumentation(final URI openResource, final EObject object,
+			final IGamlDescription description) {
+		try {
+			int fragment = getResourceURIPlusURIFragmentHashCode(object);
+			int uri = openResource.hashCode();
+			resourceNames.put(uri, openResource.lastSegment());
+			docIndexedByObjects.put(fragment, new DocumentationNode(description));
+			resourcesIndexedByObjects.computeIfAbsent(fragment, i -> new IntOpenHashSet()).add(uri);
+			objectsIndexedByResources.computeIfAbsent(uri, i -> new IntOpenHashSet()).add(fragment);
+		} catch (final RuntimeException e) {
+			DEBUG.ERR("Error in documenting " + openResource.lastSegment(), e);
+		}
 	}
 
 	// To be called once the validation has been done
 	@Override
-	public void document(final IDescription desc) {
+	public void doDocument(final URI resource, final ModelDescription desc,
+			final Map<EObject, IGamlDescription> additionalExpressions) {
+		addDocumentationTask(s -> {
+			internalDoDocument(resource, desc);
+			additionalExpressions.forEach((e, d) -> internalSetGamlDocumentation(resource, e, d));
+			if (DEBUG.IS_ON()) { debugStatistics("Documentation of " + resource.lastSegment()); }
+		});
+	}
+
+	/**
+	 * Internal do document.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param resource
+	 *            the resource
+	 * @param desc
+	 *            the desc
+	 * @date 31 déc. 2023
+	 */
+	private void internalDoDocument(final URI resource, final IDescription desc) {
 		if (desc == null) return;
 		final EObject e = desc.getUnderlyingElement();
 		if (e == null) return;
-		setGamlDocumentation(e, desc, true);
-		desc.visitOwnChildren(documentingVisitor);
-
-	}
-
-	@Override
-	public IGamlDescription getGamlDocumentation(final IGamlDescription o) {
-		if (o == null || o instanceof DocumentationNode) return o;
-		try {
-			return new DocumentationNode(o);
-		} catch (final Exception e) {
-			DEBUG.ERR("GamlResourceDocumenter.getGamlDocumentation(): " + e.getMessage() + " for " + o.getTitle());
-			return null;
-		}
+		internalSetGamlDocumentation(resource, e, desc);
+		desc.visitOwnChildren(d -> {
+			internalDoDocument(resource, d);
+			return true;
+		});
 	}
 
 	@Override
 	public IGamlDescription getGamlDocumentation(final EObject object) {
 		if (object == null) return null;
-		Resource r = object.eResource();
-		final IMap<EObject, IGamlDescription> map = getDocumentationCache(r);
-		if (map == null) return null;
-		return map.get(object);
+		int key = getResourceURIPlusURIFragmentHashCode(object);
+		IGamlDescription doc = docIndexedByObjects.get(key);
+		if (doc == null && DEBUG.IS_ON()) {
+			DEBUG.OUT("EObject " + object + " in resource "
+					+ (object.eResource() == null ? "null" : object.eResource().getURI().lastSegment())
+					+ " is not documented ");
+		}
+		return doc;
+	}
+
+	@Override
+	public void invalidate(final URI uri) {
+		if (uri == null) return;
+		addDocumentationTask(d -> {
+			int resource = uri.hashCode();
+			IntSet objects = objectsIndexedByResources.remove(resource);
+			resourceNames.remove(resource);
+			if (objects != null) {
+				objects.forEach((IntConsumer) object -> {
+					IntSet resources = resourcesIndexedByObjects.get(object);
+					if (resources != null) {
+						resources.remove(resource);
+						if (resources.isEmpty()) {
+							docIndexedByObjects.remove(object);
+							resourcesIndexedByObjects.remove(object);
+						}
+					}
+				});
+			}
+			if (DEBUG.IS_ON()) { debugStatistics("Invalidation of " + uri.lastSegment()); }
+		});
+
 	}
 
 	/**
-	 * Should document.
+	 * Debug statistics.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param title
+	 *            the title
+	 * @date 31 déc. 2023
+	 */
+	private void debugStatistics(final String title) {
+		DEBUG.SECTION(title);
+		DEBUG.BANNER("DOC", "docIndexedByObjects", "size", String.valueOf(docIndexedByObjects.size()));
+		DEBUG.BANNER("DOC", "eObjectsIndexedByResources", "size", String.valueOf(objectsIndexedByResources.size()));
+		DEBUG.BANNER("DOC", "Opened Resources", "names", new HashSet(resourceNames.values()).toString());
+		DEBUG.BANNER("DOC", "resourcesIndexedByEObjects", "size", String.valueOf(resourcesIndexedByObjects.size()));
+		DEBUG.LINE();
+	}
+
+	/**
+	 * Invalidate all.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 30 déc. 2023
+	 */
+	public void invalidateAll() {
+		addDocumentationTask(d -> {
+			docIndexedByObjects.clear();
+			resourcesIndexedByObjects.clear();
+			objectsIndexedByResources.clear();
+		});
+	}
+
+	/**
+	 * Gets the resource URI plus URI fragment hash code.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param object
 	 *            the object
-	 * @return true, if successful
+	 * @return the resource URI plus URI fragment hash code
+	 * @date 31 déc. 2023
 	 */
-	private static boolean shouldDocument(final EObject object) {
-		if (object == null) return false;
-		final Resource r = object.eResource();
-		if (r == null || !GamlResourceServices.isEdited(r)) return false;
-		return true;
+	private static int getResourceURIPlusURIFragmentHashCode(final EObject object) {
+		if (object == null) return -1;
+		if (object.eResource() == null) return object.hashCode();
+		return object.eResource().getURI().appendFragment(EcoreUtil2.getURIFragment(object)).toString().hashCode();
 	}
 
 }

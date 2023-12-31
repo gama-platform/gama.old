@@ -23,7 +23,7 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
-import msi.gaml.statements.Facets;
+import msi.gaml.statements.Arguments;
 
 /**
  * Class IDescriptionSerializer.
@@ -66,7 +66,8 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (TYPE.equals(key) || OF.equals(key) || INDEX.equals(key)) return null;
-			if (CONST.equals(key) && s.hasFacet(CONST) && FALSE.equals(s.getFacet(key).serializeToGaml(includingBuiltIn)))
+			if (CONST.equals(key) && s.hasFacet(CONST)
+					&& FALSE.equals(s.getFacet(key).serializeToGaml(includingBuiltIn)))
 				return null;
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
@@ -250,7 +251,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 					sb.append(", ");
 				}
 			} else {
-				final Facets passedArgs = desc.getPassedArgs();
+				final Arguments passedArgs = desc.getPassedArgs();
 				if (passedArgs.isEmpty()) return;
 				sb.append("(");
 				passedArgs.forEachFacet((name, value) -> {
@@ -462,6 +463,16 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
+	/**
+	 * Collect meta information.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param desc
+	 *            the desc
+	 * @param plugins
+	 *            the plugins
+	 * @date 27 déc. 2023
+	 */
 	protected void collectMetaInformation(final SymbolDescription desc, final GamlProperties plugins) {
 		collectMetaInformationInSymbol(desc, plugins);
 		collectMetaInformationInFacets(desc, plugins);
@@ -469,6 +480,16 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		desc.getGamlType().collectMetaInformation(plugins);
 	}
 
+	/**
+	 * Collect meta information in symbol.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param desc
+	 *            the desc
+	 * @param plugins
+	 *            the plugins
+	 * @date 27 déc. 2023
+	 */
 	protected void collectMetaInformationInSymbol(final SymbolDescription desc, final GamlProperties plugins) {
 		plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
 		plugins.put(GamlProperties.STATEMENTS, desc.getKeyword());

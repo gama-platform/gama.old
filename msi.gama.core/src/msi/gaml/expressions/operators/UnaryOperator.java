@@ -67,8 +67,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression child) {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue())
-			return GAML.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
+		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) return GAML.getExpressionFactory()
+				.createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
 		return u;
 	}
 
@@ -142,8 +142,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
 		sb.append("operator ").append(getName()).append(" (");
-		sb.append(child == null ? prototype.signature : child.getGamlType().getTitle());
-		sb.append(") returns ").append(getGamlType().getTitle());
+		sb.append(child == null ? prototype.signature : child.getGamlType().getName());
+		sb.append(") returns ").append(getGamlType().getName());
 		return sb.toString();
 	}
 

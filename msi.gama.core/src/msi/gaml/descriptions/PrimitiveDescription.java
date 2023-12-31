@@ -24,9 +24,10 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gaml.compilation.IGamaHelper;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
- * The Class PrimitiveDescription.
+ * The Class PrimitiveDescription. Singleton throughout the simulation
  */
 
 /**
@@ -34,6 +35,10 @@ import msi.gaml.statements.Facets;
  */
 @SuppressWarnings ({ "rawtypes" })
 public class PrimitiveDescription extends ActionDescription {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The helper. */
 	private IGamaHelper helper;
@@ -64,6 +69,7 @@ public class PrimitiveDescription extends ActionDescription {
 	public PrimitiveDescription(final IDescription superDesc, final EObject source,
 			final Iterable<IDescription> children, final Facets facets, final String plugin) {
 		super(IKeyword.PRIMITIVE, superDesc, children, source, facets);
+		// DEBUG.OUT("Primitive " + name + " created");
 		this.plugin = plugin;
 	}
 
@@ -199,10 +205,8 @@ public class PrimitiveDescription extends ActionDescription {
 
 	@Override
 	public PrimitiveDescription copy(final IDescription into) {
-		final PrimitiveDescription desc = new PrimitiveDescription(into, element, children, getFacetsCopy(), plugin);
-		desc.originName = getOriginName();
-		desc.setHelper(helper, method);
-		return desc;
+		// DEBUG.OUT("Primitive " + name + " copied");
+		return this;
 	}
 
 	/**
@@ -213,7 +217,8 @@ public class PrimitiveDescription extends ActionDescription {
 	public void setDefiningPlugin(final String plugin) { this.plugin = plugin; }
 
 	@Override
-	public void dispose() {
-		setEnclosingDescription(null);
-	}
+	public void dispose() {}
+
+	@Override
+	public void setEnclosingDescription(final IDescription desc) {}
 }

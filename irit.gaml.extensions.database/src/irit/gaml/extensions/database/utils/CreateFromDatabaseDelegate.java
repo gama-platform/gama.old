@@ -25,7 +25,6 @@ import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.CreateStatement;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -105,25 +104,23 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 			final IList<Object> colTypes, final IList<Object> colNames, final Arguments init)
 			throws GamaRuntimeException {
 		if (init == null) return;
-		for (final Facet f : init.getFacets()) {
-			if (f != null) {
-				final IExpression valueExpr = f.value.getExpression();
-				// get parameter
-				final String columnName = valueExpr.value(scope).toString().toUpperCase();
-				// get column number of parameter
-				final int val = colNames.indexOf(columnName);
-				if (val == -1) throw GamaRuntimeException.error(
-						"Create from DB: " + columnName + " is not a correct column name in the DB query results",
-						scope);
-				if (SqlConnection.GEOMETRYTYPE.equalsIgnoreCase((String) colTypes.get(val))) {
-					final Geometry geom = (Geometry) rowList.get(val);
-					values.put(f.key, GamaShapeFactory.createFrom(geom));
-				} else {
-					values.put(f.key, rowList.get(val));
-				}
-
+		init.forEachFacet((s, e) -> {
+			final IExpression valueExpr = e.getExpression();
+			// get parameter
+			final String columnName = valueExpr.value(scope).toString().toUpperCase();
+			// get column number of parameter
+			final int val = colNames.indexOf(columnName);
+			if (val == -1) throw GamaRuntimeException.error(
+					"Create from DB: " + columnName + " is not a correct column name in the DB query results", scope);
+			if (SqlConnection.GEOMETRYTYPE.equalsIgnoreCase((String) colTypes.get(val))) {
+				final Geometry geom = (Geometry) rowList.get(val);
+				values.put(s, GamaShapeFactory.createFrom(geom));
+			} else {
+				values.put(s, rowList.get(val));
 			}
-		}
+			return true;
+		});
+
 	}
 
 	/**

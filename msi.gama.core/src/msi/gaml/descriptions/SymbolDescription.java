@@ -36,7 +36,6 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import ummisco.gama.dev.utils.COUNTER;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -47,6 +46,10 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public abstract class SymbolDescription implements IDescription {
 
+	static {
+		DEBUG.OFF();
+	}
+
 	/** The type provider facets. */
 	protected static Set<String> typeProviderFacets = ImmutableSet
 			.copyOf(Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX, FUNCTION, UPDATE, INIT, DEFAULT));
@@ -55,7 +58,7 @@ public abstract class SymbolDescription implements IDescription {
 	private final EnumSet<Flag> state = EnumSet.noneOf(Flag.class);
 
 	/** The order. */
-	private final int order = COUNTER.GET_UNIQUE();
+	// private final int order = COUNTER.GET_UNIQUE();
 
 	/** The facets. */
 	private Facets facets;
@@ -77,9 +80,6 @@ public abstract class SymbolDescription implements IDescription {
 
 	/** The type. */
 	private IType<?> type;
-
-	/** The validated. */
-	// protected boolean validated;
 
 	/** The proto. */
 	final SymbolProto proto;
@@ -160,8 +160,15 @@ public abstract class SymbolDescription implements IDescription {
 		return state.contains(flag);
 	}
 
-	@Override
-	public int getOrder() { return order; }
+	/**
+	 * Gets the order.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the order
+	 * @date 28 déc. 2023
+	 */
+	// @Override
+	// public int getOrder() { return order; }
 
 	/**
 	 * Checks for facets.
@@ -245,6 +252,12 @@ public abstract class SymbolDescription implements IDescription {
 		return facets.forEachFacetIn(names, visitor);
 	}
 
+	@Override
+	public final boolean visitFacets(final IFacetVisitor visitor) {
+		if (!hasFacets()) return true;
+		return facets.forEachFacet(visitor);
+	}
+
 	/**
 	 * Gets the type denoted by facet.
 	 *
@@ -300,9 +313,6 @@ public abstract class SymbolDescription implements IDescription {
 	public void collectMetaInformation(final GamlProperties meta) {
 		getSerializer().collectMetaInformation(this, meta);
 	}
-
-	@Override
-	public boolean isDocumenting() { return enclosingDescription != null && enclosingDescription.isDocumenting(); }
 
 	@Override
 	public int getKind() { return getMeta().getKind(); }
@@ -383,12 +393,13 @@ public abstract class SymbolDescription implements IDescription {
 		c.add(new GamlCompilationError(s, code, e, warning, info, data));
 	}
 
+	/**
+	 * Documents an expression within this context
+	 */
 	@Override
 	public void document(final EObject e, final IGamlDescription desc) {
-		if (!isDocumenting()) return;
 		final ValidationContext c = getValidationContext();
-		if (c == null) return;
-		c.setGamlDocumentation(e, desc, true);
+		if (c != null) { c.setGamlDocumentation(e, desc); }
 	}
 
 	@Override
@@ -490,7 +501,7 @@ public abstract class SymbolDescription implements IDescription {
 	 */
 	// @Override
 	public final void addChildren(final Iterable<? extends IDescription> originalChildren) {
-		if (originalChildren == null /* || !getMeta().hasSequence() */) return;
+		if (originalChildren == null) return;
 		for (final IDescription c : originalChildren) { addChild(c); }
 	}
 
@@ -681,7 +692,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public String getTitle() { return "statement " + getKeyword(); }
+	public String getTitle() { return "Statement " + getKeyword(); }
 
 	@Override
 	public Doc getDocumentation() { return getMeta().getDocumentation(); }
@@ -726,7 +737,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IDescription validate() {
-		if (state.contains(Flag.Validated)) return this;
+		if (isSet(Flag.Validated)) return this;
 		set(Flag.Validated);
 
 		if (isBuiltIn()) {
@@ -734,21 +745,22 @@ public abstract class SymbolDescription implements IDescription {
 			validateFacets();
 			return this;
 		}
-		final IDescription sd = getEnclosingDescription();
-		if (sd != null) {
+		final IDescription enclosing = getEnclosingDescription();
+		if (enclosing != null) {
+			String kw = getKeyword();
+			String ekw = enclosing.getKeyword();
 			// We first verify that the description is at the right place
-			if (!canBeDefinedIn(sd)) {
-				error(getKeyword() + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT);
+			if (!proto.canBeDefinedIn(enclosing)) {
+				error(kw + " cannot be defined in " + ekw, IGamlIssue.WRONG_CONTEXT);
 				return null;
 			}
 			// If it is supposed to be unique, we verify this
 			if (proto.isUniqueInContext()) {
-				final boolean hasError = !sd.visitOwnChildren(child -> {
-					if (child != SymbolDescription.this && child.getKeyword().equals(getKeyword())) {
-						final String error = getKeyword() + " is defined twice. Only one definition is allowed in "
-								+ sd.getKeyword();
-						child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(), getKeyword());
-						error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(), getKeyword());
+				final boolean hasError = !enclosing.visitOwnChildren(child -> {
+					if (child != SymbolDescription.this && child.getKeyword().equals(kw)) {
+						final String error = kw + " is defined twice. Only one definition is allowed in " + ekw;
+						child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(), kw);
+						error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(), kw);
 						return false;
 					}
 					return true;
@@ -770,24 +782,14 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	/**
-	 * Can be defined in.
-	 *
-	 * @param sd
-	 *            the sd
-	 * @return true, if successful
-	 */
-	protected boolean canBeDefinedIn(final IDescription sd) {
-		return getMeta().canBeDefinedIn(sd);
-	}
-
-	/**
 	 * Validate facets.
 	 *
 	 * @return true, if successful
 	 */
 	private final boolean validateFacets() {
+		String kw = getKeyword();
 		// Special case for "do", which can accept (at parsing time) any facet
-		final boolean isDo = DO.equals(getKeyword()) || INVOKE.equals(getKeyword());
+		final boolean isDo = DO.equals(kw) || INVOKE.equals(kw);
 		final boolean isBuiltIn = isBuiltIn();
 		final Iterable<String> missingFacets = proto.getMissingMandatoryFacets(facets);
 		if (missingFacets != null && !Iterables.isEmpty(missingFacets)) {
@@ -816,7 +818,6 @@ public abstract class SymbolDescription implements IDescription {
 					if (!compatible) {
 						emitFacetTypesIncompatibilityWarning(facet, fp, actualType, contentType, keyType);
 					}
-					// verifyFacetExprEnclosingContext(facet, fp, exp);
 				}
 			}
 			return true;
@@ -859,6 +860,7 @@ public abstract class SymbolDescription implements IDescription {
 		IExpression exp;
 		if (fp.isNewTemp) {
 			exp = createVarWithTypes(facet);
+			// DEBUG.OUT("Type of IExpressionDescription is " + expr.getClass().getSimpleName());
 			expr.setExpression(exp);
 		} else if (!fp.isLabel()) {
 			if (fp.isRemote && this instanceof StatementRemoteWithChildrenDescription srwc) {

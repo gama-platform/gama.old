@@ -97,7 +97,7 @@ import msi.gaml.variables.IVariable;
 				doc = @doc ("identifier of the experiment")),
 				@facet (
 						name = IKeyword.TITLE,
-						type = IType.LABEL,
+						type = IType.STRING,
 						optional = false,
 						doc = @doc (""),
 						internal = true),

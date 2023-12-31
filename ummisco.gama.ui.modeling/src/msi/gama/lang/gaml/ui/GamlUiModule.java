@@ -19,6 +19,7 @@ import org.eclipse.xtext.builder.builderState.IMarkerUpdater;
 import org.eclipse.xtext.builder.resourceloader.IResourceLoader;
 import org.eclipse.xtext.builder.resourceloader.ResourceLoaderProviders;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 import org.eclipse.xtext.ide.LexerIdeBindings;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.parser.IEncodingProvider;
@@ -76,7 +77,6 @@ import msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration;
 import msi.gama.lang.gaml.ui.highlight.GamlReconciler;
 import msi.gama.lang.gaml.ui.highlight.GamlSemanticHighlightingCalculator;
 import msi.gama.lang.gaml.ui.highlight.GamlTextAttributeProvider;
-import msi.gama.lang.gaml.ui.hover.GamlDocumentationProvider;
 import msi.gama.lang.gaml.ui.hover.GamlElementLinks;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
@@ -256,7 +256,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	 * @return the class<? extends IE object documentation provider>
 	 */
 	public Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProviderr() {
-		return GamlDocumentationProvider.class;
+		return MultiLineCommentDocumentationProvider.class;
 	}
 
 	@Override

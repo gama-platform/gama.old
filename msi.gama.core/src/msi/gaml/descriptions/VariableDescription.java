@@ -351,7 +351,7 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public String getTitle() {
 		final String title = (isParameter() ? "Parameter " : isNotModifiable() ? "Constant " : "Attribute ") + getName()
-				+ ", of type " + getGamlType().getTitle() + ", ";
+				+ ", of type " + getGamlType().getName() + ", ";
 		if (getEnclosingDescription() == null) return title;
 		return title + "defined in " + this.getEnclosingDescription().getTitle() + "<br/>";
 	}
@@ -363,8 +363,8 @@ public class VariableDescription extends SymbolDescription {
 		StringBuilder s = new StringBuilder();
 		if (doc != null) { s.append(doc).append("<br/>"); }
 		Doc result = new RegularDoc(s).append(getMeta().getDocumentation().get());
-		result.append("<hr/>").append("<b>").append("Datatype ").append(getGamlType().getTitle()).append("</b>")
-				.append("<br/>").append(getGamlType().getDocumentation().get());
+		result.append("<hr/>").append("<b><p>").append(getGamlType().getTitle()).append("</p></b>").append("<br/>")
+				.append(getGamlType().getDocumentation().get());
 		return result;
 	}
 
@@ -375,7 +375,7 @@ public class VariableDescription extends SymbolDescription {
 	 */
 	public Doc getShortDocumentation() {
 		Doc result = new RegularDoc(isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ")
-				.append("of type ").append(getGamlType().getTitle());
+				.append("of type ").append(getGamlType().getName());
 		final String doc = getBuiltInDoc();
 		if (doc != null) { result.append(". ").append(doc).append("<br/>"); }
 		return result;

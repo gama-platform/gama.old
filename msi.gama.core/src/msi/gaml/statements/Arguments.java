@@ -9,18 +9,26 @@
  ********************************************************************************************************/
 package msi.gaml.statements;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.IMap;
 import msi.gaml.descriptions.ConstantExpressionDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
  * @author drogoul
  */
 public class Arguments extends Facets {
+
+	/** The null. */
+	public static Arguments NULL = new Arguments();
+
+	/** The keys. */
+	List<String> keys;
 
 	/** The caller. */
 	/*
@@ -47,7 +55,7 @@ public class Arguments extends Facets {
 	 *            the my args
 	 * @date 26 nov. 2023
 	 */
-	public Arguments(final IMap<String, Object> myArgs) {
+	public Arguments(final Map<String, Object> myArgs) {
 		myArgs.forEach((k, v) -> put(k, ConstantExpressionDescription.create(v)));
 	}
 
@@ -64,8 +72,8 @@ public class Arguments extends Facets {
 	 * into a constant expression
 	 */
 	public Arguments(final IAgent caller, final Map<String, Object> args) {
+		this(args);
 		setCaller(caller);
-		args.forEach((k, v) -> put(k, ConstantExpressionDescription.create(v)));
 	}
 
 	/**
@@ -77,7 +85,7 @@ public class Arguments extends Facets {
 	public Arguments cleanCopy() {
 		final Arguments result = new Arguments();
 		result.setCaller(caller.get());
-		for (final Facet f : facets) { result.facets.add(f.cleanCopy()); }
+		forEach((s, e) -> result.put(s, e.cleanCopy()));
 		return result;
 	}
 
@@ -91,11 +99,35 @@ public class Arguments extends Facets {
 	public Arguments resolveAgainst(final IScope scope) {
 		final Arguments result = new Arguments();
 		result.setCaller(caller.get());
-		for (final Facet f : facets) {
-			final IExpression exp = getExpr(f.key);
-			if (exp != null) { result.put(f.key, exp.resolveAgainst(scope)); }
-		}
+		forEach((s, e) -> {
+			final IExpression exp = getExpr(s);
+			if (exp != null) { result.put(s, exp.resolveAgainst(scope)); }
+		});
+
 		return result;
+	}
+
+	@Override
+	public IExpressionDescription put(final String s, final IExpressionDescription e) {
+		if (keys == null || !keys.contains(s)) {
+			if (keys == null) { keys = new ArrayList<>(); }
+			keys.add(s);
+		}
+		return super.put(s, e);
+	}
+
+	/**
+	 * Removes the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param s
+	 *            the s
+	 * @return the i expression description
+	 * @date 27 déc. 2023
+	 */
+	public IExpressionDescription remove(final String s) {
+		if (keys != null) { keys.remove(s); }
+		return super.remove(s);
 	}
 
 	/**
@@ -121,4 +153,16 @@ public class Arguments extends Facets {
 		caller.set(null);
 	}
 
+	/**
+	 * Gets the expr.
+	 *
+	 * @param index
+	 *            the index
+	 * @return the expr
+	 */
+	public IExpression getExpr(final int index) {
+		if (index > size() || index < 0) return null;
+		String key = keys.get(index);
+		return get(key).getExpression();
+	}
 }

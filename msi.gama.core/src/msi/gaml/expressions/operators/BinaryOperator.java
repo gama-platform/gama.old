@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gaml.expressions.operators;
 
+import java.util.Arrays;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.StringUtils;
@@ -163,7 +165,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 	@Override
 	public BinaryOperator copy() {
-		return new BinaryOperator(prototype, null, exprs);
+		if (exprs == null) return new BinaryOperator(prototype, null);
+		return new BinaryOperator(prototype, null, Arrays.copyOf(exprs, exprs.length));
 	}
 
 	/**

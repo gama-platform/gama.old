@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gaml.factories;
 
+import static com.google.common.collect.Iterables.get;
 import static msi.gama.common.interfaces.IKeyword.FREQUENCY;
 import static msi.gama.common.interfaces.IKeyword.GLOBAL;
 import static msi.gama.common.interfaces.IKeyword.NAME;
@@ -21,6 +22,8 @@ import static msi.gaml.descriptions.ModelDescription.ROOT;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,15 +31,11 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.jgrapht.graph.DirectedAcyclicGraph;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.IMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
@@ -88,25 +87,25 @@ public class ModelAssembler {
 	 * @return the model description
 	 */
 	public ModelDescription assemble(final String projectPath, final String modelPath,
-			final Iterable<ISyntacticElement> allModels, final ValidationContext collector, final boolean document,
+			final Iterable<ISyntacticElement> models, final ValidationContext collector,
 			final Map<String, ModelDescription> mm) {
 		// DEBUG.OUT("ModelAssembler running in thread " + Thread.currentThread().getName());
 		// DEBUG.OUT("All models passed to ModelAssembler: "
 		// + Iterables.transform(allModels, @Nullable ISyntacticElement::getName));
-		final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
-		final IMap<String, SyntacticSpeciesElement> speciesNodes = GamaMapFactory.create();
-		final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes = new IMap[1];
+		// final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
+		final Map<String, SyntacticSpeciesElement> speciesNodes = new LinkedHashMap();
+		final Map<String, Map<String, ISyntacticElement>>[] experimentNodes = new Map[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
-		final ISyntacticElement source = models.get(0);
+		final ISyntacticElement source = get(models, 0);
 
 		if (!applyPragmas(collector, source)) return null;
 
-		final IMap<String, SpeciesDescription> tempSpeciesCache = GamaMapFactory.create();
+		final Map<String, SpeciesDescription> tempSpeciesCache = new LinkedHashMap();
 
 		Facets globalFacets = null;
-		for (final ISyntacticElement cm : models.reverse()) {
+		for (int i = Iterables.size(models); i-- > 0;) {
 			globalFacets = extractAndAssembleElementsOf(collector, speciesNodes, experimentNodes, globalNodes,
-					globalFacets, cm);
+					globalFacets, get(models, i));
 		}
 
 		final String modelName = buildModelName(source.getName());
@@ -117,7 +116,7 @@ public class ModelAssembler {
 
 		Set<String> absoluteAlternatePathAsStrings = buildWorkingPaths(mm, models);
 
-		final ModelDescription model = buildPrimaryModel(projectPath, modelPath, collector, document, models, source,
+		final ModelDescription model = buildPrimaryModel(projectPath, modelPath, collector, models, source,
 				globalFacets, modelName, absoluteAlternatePathAsStrings);
 
 		// hqnghi add micro-models
@@ -163,7 +162,6 @@ public class ModelAssembler {
 
 		if (!model.finalizeDescription()) return null;
 
-		if (document) { collector.document(model); }
 		return model;
 
 	}
@@ -180,20 +178,16 @@ public class ModelAssembler {
 	 *            the model
 	 * @date 26 déc. 2023
 	 */
-	private void complementSpeciesAndExperiments(final IMap<String, SyntacticSpeciesElement> speciesNodes,
-			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes, final ModelDescription model) {
-		speciesNodes.forEachValue(speciesNode -> {
+	private void complementSpeciesAndExperiments(final Map<String, SyntacticSpeciesElement> speciesNodes,
+			final Map<String, Map<String, ISyntacticElement>>[] experimentNodes, final ModelDescription model) {
+		speciesNodes.forEach((s, speciesNode) -> {
 			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
-			return true;
 		});
-
 		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachPair((s, b) -> {
-				b.forEachValue(experimentNode -> {
+			experimentNodes[0].forEach((s, b) -> {
+				b.forEach((x, experimentNode) -> {
 					complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
-					return true;
 				});
-				return true;
 			});
 		}
 	}
@@ -212,20 +206,13 @@ public class ModelAssembler {
 	 *            the model
 	 * @date 26 déc. 2023
 	 */
-	private void addSpeciesAndExperiments(final IMap<String, SyntacticSpeciesElement> speciesNodes,
-			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
-			final IMap<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
-		speciesNodes.forEachValue(speciesNode -> {
-			addMicroSpecies(model, speciesNode, tempSpeciesCache);
-			return true;
-		});
+	private void addSpeciesAndExperiments(final Map<String, SyntacticSpeciesElement> speciesNodes,
+			final Map<String, Map<String, ISyntacticElement>>[] experimentNodes,
+			final Map<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
+		speciesNodes.forEach((s, speciesNode) -> { addMicroSpecies(model, speciesNode, tempSpeciesCache); });
 		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachPair((s, b) -> {
-				b.forEachValue(experimentNode -> {
-					addExperiment(s, model, experimentNode, tempSpeciesCache);
-					return true;
-				});
-				return true;
+			experimentNodes[0].forEach((s, b) -> {
+				b.forEach((x, experimentNode) -> { addExperiment(s, model, experimentNode, tempSpeciesCache); });
 			});
 		}
 	}
@@ -244,22 +231,13 @@ public class ModelAssembler {
 	 *            the model
 	 * @date 26 déc. 2023
 	 */
-	private void parentSpeciesAndExperiments(final IMap<String, SyntacticSpeciesElement> speciesNodes,
-			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes,
-			final IMap<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
-		speciesNodes.forEachValue(speciesNode -> {
-			parentSpecies(model, speciesNode, model, tempSpeciesCache);
-			return true;
-		});
-
+	private void parentSpeciesAndExperiments(final Map<String, SyntacticSpeciesElement> speciesNodes,
+			final Map<String, Map<String, ISyntacticElement>>[] experimentNodes,
+			final Map<String, SpeciesDescription> tempSpeciesCache, final ModelDescription model) {
+		speciesNodes.forEach((s, speciesNode) -> { parentSpecies(model, speciesNode, model, tempSpeciesCache); });
 		if (experimentNodes[0] != null) {
-			experimentNodes[0].forEachPair((s, b) -> {
-				b.forEachValue(experimentNode -> {
-					parentExperiment(model, experimentNode);
-					return true;
-				});
-				return true;
-			});
+			experimentNodes[0].forEach(
+					(s, b) -> { b.forEach((x, experimentNode) -> { parentExperiment(model, experimentNode); }); });
 		}
 	}
 
@@ -289,9 +267,8 @@ public class ModelAssembler {
 	 * @date 26 déc. 2023
 	 */
 	private ModelDescription buildPrimaryModel(final String projectPath, final String modelPath,
-			final ValidationContext collector, final boolean document, final ImmutableList<ISyntacticElement> models,
-			final ISyntacticElement source, final Facets globalFacets, final String modelName,
-			final Set<String> absoluteAlternatePathAsStrings) {
+			final ValidationContext collector, final Iterable<ISyntacticElement> models, final ISyntacticElement source,
+			final Facets globalFacets, final String modelName, final Set<String> absoluteAlternatePathAsStrings) {
 		ModelDescription parent = ROOT;
 		if (globalFacets != null && globalFacets.containsKey(PARENT)) {
 			String parentModel = globalFacets.getLabel(PARENT);
@@ -300,11 +277,9 @@ public class ModelAssembler {
 		final ModelDescription model =
 				new ModelDescription(modelName, null, projectPath, modelPath, source.getElement(), null, parent, null,
 						globalFacets, collector, absoluteAlternatePathAsStrings, parent.getAgentConstructor());
-
-		final Collection<String> allModelNames = models.size() == 1 ? null : ImmutableSet
+		final Collection<String> allModelNames = Iterables.size(models) == 1 ? null : ImmutableSet
 				.copyOf(Iterables.transform(Iterables.skip(models, 1), each -> buildModelName(each.getName())));
 		model.setImportedModelNames(allModelNames);
-		model.isDocumenting(document);
 		return model;
 	}
 
@@ -318,16 +293,16 @@ public class ModelAssembler {
 	 * @return the sets the
 	 */
 	private Set<String> buildWorkingPaths(final Map<String, ModelDescription> mm,
-			final ImmutableList<ISyntacticElement> models) {
-		Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null : ImmutableSet
-				.copyOf(Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
+			final Iterable<ISyntacticElement> models) {
+
+		Set<String> absoluteAlternatePathAsStrings = new LinkedHashSet();
+		for (int i = Iterables.size(models); i-- > 0;) {
+			absoluteAlternatePathAsStrings.add(((SyntacticModelElement) get(models, i)).getPath());
+		}
 
 		if (mm != null) {
 			for (final ModelDescription m1 : mm.values()) {
-				for (final String im : m1.getAlternatePaths()) {
-					absoluteAlternatePathAsStrings =
-							Sets.union(absoluteAlternatePathAsStrings, Collections.singleton(im));
-				}
+				absoluteAlternatePathAsStrings.addAll(m1.getAlternatePaths());
 			}
 		}
 		return absoluteAlternatePathAsStrings;
@@ -351,8 +326,8 @@ public class ModelAssembler {
 	 * @return the facets
 	 */
 	private Facets extractAndAssembleElementsOf(final ValidationContext collector,
-			final IMap<String, SyntacticSpeciesElement> speciesNodes,
-			final IMap<String, IMap<String, ISyntacticElement>>[] experimentNodes, final ISyntacticElement globalNodes,
+			final Map<String, SyntacticSpeciesElement> speciesNodes,
+			final Map<String, Map<String, ISyntacticElement>>[] experimentNodes, final ISyntacticElement globalNodes,
 			Facets globalFacets, final ISyntacticElement cm) {
 		final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
 		if (currentModel != null) {
@@ -374,7 +349,7 @@ public class ModelAssembler {
 			// (see DiffusionStatement)
 			currentModel.visitGrids(visitor);
 			visitor = element -> {
-				if (experimentNodes[0] == null) { experimentNodes[0] = GamaMapFactory.create(); }
+				if (experimentNodes[0] == null) { experimentNodes[0] = new LinkedHashMap(); }
 				addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
 
 			};
@@ -502,7 +477,7 @@ public class ModelAssembler {
 	 *            the collector
 	 */
 	void addExperimentNode(final ISyntacticElement element, final String modelName,
-			final Map<String, IMap<String, ISyntacticElement>> experimentNodes, final ValidationContext collector) {
+			final Map<String, Map<String, ISyntacticElement>> experimentNodes, final ValidationContext collector) {
 		// First we verify that this experiment has not been declared previously
 		final String experimentName = element.getName();
 		for (final String otherModel : experimentNodes.keySet()) {
@@ -518,7 +493,7 @@ public class ModelAssembler {
 			}
 		}
 
-		if (!experimentNodes.containsKey(modelName)) { experimentNodes.put(modelName, GamaMapFactory.create()); }
+		if (!experimentNodes.containsKey(modelName)) { experimentNodes.put(modelName, new LinkedHashMap()); }
 		final Map<String, ISyntacticElement> nodes = experimentNodes.get(modelName);
 		if (nodes.containsKey(experimentName)) {
 			collector.add(new GamlCompilationError("Experiment " + element.getName() + " is declared twice",

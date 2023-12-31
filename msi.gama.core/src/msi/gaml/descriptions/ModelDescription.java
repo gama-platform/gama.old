@@ -228,24 +228,20 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public String getTitle() { return getName().replace(MODEL_SUFFIX, ""); }
 
-	@Override
-	public boolean isDocumenting() { return isSet(Flag.Documenting); }
-
-	/**
-	 * Checks if is documenting.
-	 *
-	 * @param b
-	 *            the b
-	 */
-	public void isDocumenting(final boolean b) {
-		setIf(Flag.Documenting, b);
-	}
-
-	@Override
-	protected boolean canBeDefinedIn(final IDescription sd) {
-		// By convention, a model can be defined everywhere
-		return true;
-	}
+	// /**
+	// * Can be defined in.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param sd
+	// * the sd
+	// * @return true, if successful
+	// * @date 31 déc. 2023
+	// */
+	// @Override
+	// protected boolean canBeDefinedIn(final IDescription sd) {
+	// // By convention, a model can be defined everywhere
+	// return true;
+	// }
 
 	// hqnghi does it need to verify parent of micro-model??
 	@Override
@@ -533,21 +529,11 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public IDescription validate() {
-		if (isSet(Flag.Validated)) return this;
-		return validate(false);
-	}
-
-	/**
-	 * Validate.
-	 *
-	 * @param document
-	 *            the document
-	 * @return the i description
-	 */
-	public IDescription validate(final boolean document) {
-		isDocumenting(document);
-		super.validate();
+	public ModelDescription validate() {
+		if (!isSet(Flag.Validated)) {
+			super.validate();
+			validationContext.doDocument(this);
+		}
 		return this;
 	}
 

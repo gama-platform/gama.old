@@ -21,7 +21,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -111,38 +110,38 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 		if (formalArgs != null && !verifyMandatoryArgs(caller, names, formalArgs)) return false;
 
-		for (final Facet arg : names.getFacets()) {
+		return names.forEachFacet((s, e) -> {
 			// A null value indicates a previous compilation error in the
 			// arguments
-			if (arg != null) {
-				final String the_name = arg.key;
-				if (!allArgs.contains(the_name)) {
-					caller.error("Unknown argument " + the_name + " in call to " + getName(),
-							IGamlIssue.UNKNOWN_ARGUMENT, arg.value.getTarget(), arg.key);
+			if (e != null) {
+				if (!allArgs.contains(s)) {
+					caller.error("Unknown argument " + s + " in call to " + getName(), IGamlIssue.UNKNOWN_ARGUMENT,
+							e.getTarget(), s);
 					return false;
 				}
-				if (arg.value != null && arg.value.getExpression() != null) {
-					final IDescription formalArg =
-							Iterables.find(formalArgs, input -> input.getName().equals(the_name));
-					if (formalArg.isID()) { continue; }
+				if (e.getExpression() != null) {
+					final IDescription formalArg = Iterables.find(formalArgs, input -> input.getName().equals(s));
+					if (formalArg.isID()) return true;
 					final IType<?> formalType = formalArg.getGamlType();
-					final IType<?> callerType = arg.value.getExpression().getGamlType();
-					if (Types.intFloatCase(formalType, callerType)) {
-						caller.warning("The argument " + the_name + " (of type " + callerType + ") will be casted to "
-								+ formalType, IGamlIssue.WRONG_TYPE, arg.value.getTarget());
-					} else {
+					final IType<?> callerType = e.getExpression().getGamlType();
+					if (!Types.intFloatCase(formalType, callerType)) {
 						boolean accepted = formalType == Types.NO_TYPE || callerType.isTranslatableInto(formalType);
 						accepted = accepted || callerType == Types.NO_TYPE && formalType.getDefault() == null;
 						if (!accepted) {
-							caller.error("The type of argument " + the_name + " should be " + formalType,
-									IGamlIssue.WRONG_TYPE, arg.value.getTarget());
+							caller.error("The type of argument " + s + " should be " + formalType,
+									IGamlIssue.WRONG_TYPE, e.getTarget());
 							return false;
 						}
+						return true;
 					}
+					caller.warning(
+							"The argument " + s + " (of type " + callerType + ") will be casted to " + formalType,
+							IGamlIssue.WRONG_TYPE, e.getTarget());
 				}
+				return true;
 			}
-		}
-		return true;
+			return false;
+		});
 	}
 
 	/**
@@ -233,7 +232,8 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				String name = arg.getName();
 				sb1.append(arg.getGamlType());
 				if (arg.hasFacet(DEFAULT) && arg.getFacetExpr(DEFAULT) != null) {
-					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serializeToGaml(false)).append(")</i>");
+					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serializeToGaml(false))
+							.append(")</i>");
 				}
 				documentation.set("Arguments accepted: ", name, new ConstantDoc(sb1.toString()));
 			});
@@ -263,7 +263,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			result.append("no arguments");
 		}
 		final String returns = getGamlType().equals(Types.NO_TYPE) ? ", no value returned"
-				: ", returns a result of type " + getGamlType().getTitle();
+				: ", returns a result of type " + getGamlType().getName();
 		result.append(returns);
 		final String doc = getBuiltInDoc();
 		if (doc != null && !doc.isBlank()) { result.append(". ").append(doc); }

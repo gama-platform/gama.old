@@ -134,13 +134,13 @@ public class GamlResource extends LazyLinkingResource {
 		 * @return the map
 		 */
 		public Map<String, ModelDescription> computeMicroModels(final String project, final String model,
-				final ValidationContext context, final boolean edited) {
+				final ValidationContext context) {
 			if (micromodels == null) return null;
 			Map<String, ModelDescription> result = Maps.newHashMap();
 
 			for (final String aliasName : micromodels.keySet()) {
 				final ModelDescription mic = getModelFactory().createModelDescription(project, model,
-						transform(micromodels.get(aliasName), TO_SYNTACTIC_CONTENTS), context, edited, null);
+						transform(micromodels.get(aliasName), TO_SYNTACTIC_CONTENTS), context, null);
 				mic.setAlias(aliasName);
 				result.put(aliasName, mic);
 			}
@@ -159,7 +159,9 @@ public class GamlResource extends LazyLinkingResource {
 	 *
 	 * @return the validation context
 	 */
-	public ValidationContext getValidationContext() { return GamlResourceServices.getValidationContext(this); }
+	public ValidationContext getValidationContext() {
+		return GamlResourceServices.getOrCreateValidationContext(this);
+	}
 
 	/**
 	 * Checks for semantic errors.
@@ -217,13 +219,13 @@ public class GamlResource extends LazyLinkingResource {
 		GAML.getExpressionFactory().resetParser();
 		final String model = GamlResourceServices.getModelPathOf(this);
 		final String project = GamlResourceServices.getProjectPathOf(this);
-		final boolean edited = GamlResourceServices.isEdited(this);
 		final ValidationContext context = getValidationContext();
+		context.shouldDocument(GamlResourceServices.isEdited(this));
 		if (resources == null) return getModelFactory().createModelDescription(project, model,
-				singleton(getSyntacticContents()), getValidationContext(), edited, null);
+				singleton(getSyntacticContents()), getValidationContext(), null);
 		Iterable<ISyntacticElement> imports = resources.computeDirectImports(getSyntacticContents());
-		return getModelFactory().createModelDescription(project, model, imports, context, edited,
-				resources.computeMicroModels(project, model, context, edited));
+		return getModelFactory().createModelDescription(project, model, imports, context,
+				resources.computeMicroModels(project, model, context));
 	}
 
 	/**
@@ -286,17 +288,13 @@ public class GamlResource extends LazyLinkingResource {
 			updateWith(null, true);
 			return;
 		}
-
-		// We then validate it and get rid of the description. The
-		// documentation is produced only if the resource is
-		// marked as 'edited'
-		final boolean edited = GamlResourceServices.isEdited(this.getURI());
+		// We then validate it and get rid of the description.
 		try {
-			model.validate(edited);
-			updateWith(model, true);
+			updateWith(model.validate(), true);
 		} finally {
-			if (edited) {
-				GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
+			// make sure to get rid of the model only after its documentation has been produced
+			if (GamlResourceServices.isEdited(this.getURI())) {
+				GamlResourceServices.getResourceDocumenter().addDocumentationTask(d -> model.dispose());
 			} else {
 				model.dispose();
 			}

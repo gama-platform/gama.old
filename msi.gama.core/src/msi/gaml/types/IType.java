@@ -378,13 +378,6 @@ public interface IType<Support> extends IGamlDescription, ITyped, IJsonable {
 	IType<? super Support> findCommonSupertypeWith(IType<?> iType);
 
 	/**
-	 * Checks if is parented.
-	 *
-	 * @return true, if is parented
-	 */
-	boolean isParented();
-
-	/**
 	 * Sets the support.
 	 *
 	 * @param clazz
