@@ -207,25 +207,30 @@ public class GamlResourceDocumenter implements IDocManager {
 
 	@Override
 	public void invalidate(final URI uri) {
+
 		if (uri == null) return;
-		addDocumentationTask(d -> {
-			int resource = uri.hashCode();
-			IntSet objects = objectsIndexedByResources.remove(resource);
-			resourceNames.remove(resource);
-			if (objects != null) {
-				objects.forEach((IntConsumer) object -> {
-					IntSet resources = resourcesIndexedByObjects.get(object);
-					if (resources != null) {
-						resources.remove(resource);
-						if (resources.isEmpty()) {
-							docIndexedByObjects.remove(object);
-							resourcesIndexedByObjects.remove(object);
-						}
+		// Should we do it immediately ? with the following reasoning:
+		// 1/ If called from closing the editor, no reason to do it at the end and not immediately
+		// 2/ If called from the erasing of cache in GamlResource, it must be done immediately to allow the new Eobjects
+		// to not be mixed with the "old" ones
+		// addDocumentationTask(d -> {
+		int resource = uri.hashCode();
+		IntSet objects = objectsIndexedByResources.remove(resource);
+		resourceNames.remove(resource);
+		if (objects != null) {
+			objects.forEach((IntConsumer) object -> {
+				IntSet resources = resourcesIndexedByObjects.get(object);
+				if (resources != null) {
+					resources.remove(resource);
+					if (resources.isEmpty()) {
+						docIndexedByObjects.remove(object);
+						resourcesIndexedByObjects.remove(object);
 					}
-				});
-			}
-			if (DEBUG.IS_ON()) { debugStatistics("Invalidation of " + uri.lastSegment()); }
-		});
+				}
+			});
+		}
+		if (DEBUG.IS_ON()) { debugStatistics("Invalidation of " + uri.lastSegment()); }
+		// });
 
 	}
 
