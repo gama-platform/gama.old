@@ -71,7 +71,7 @@ public class Facets extends HashMap<String, IExpressionDescription> implements I
 	 *            the size
 	 */
 	protected Facets(final int size) {
-		super(size, 1.0f);
+		super(size, 0.8f);
 	}
 
 	/**
@@ -220,13 +220,13 @@ public class Facets extends HashMap<String, IExpressionDescription> implements I
 	 * @param expr
 	 *            the expr
 	 */
-	@Override
-	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
-		final IExpressionDescription existing = get(key);
-		if (existing != null) return replace(key, expr);
-		return super.put(key, expr);
-
-	}
+	// @Override
+	// public IExpressionDescription put(final String key, final IExpressionDescription expr) {
+	// //final IExpressionDescription existing = get(key);
+	// //if (existing != null) return replace(key, expr);
+	// return super.put(key, expr);
+	//
+	// }
 
 	/**
 	 * Equals.

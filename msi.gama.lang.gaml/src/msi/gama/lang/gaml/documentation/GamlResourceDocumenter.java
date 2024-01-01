@@ -3,7 +3,7 @@
  * GamlResourceDocumenter.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -48,7 +48,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamlResourceDocumenter implements IDocManager {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/** The documentations from EObject to DocumentationNode. Key is the hashcode of the complete URI of the object */
@@ -74,7 +74,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	final Job documentationJob = new Job("Documentation") {
 		{
 			setUser(false);
-			setPriority(Job.SHORT);
+			setPriority(Job.LONG);
 		}
 
 		@Override
@@ -118,9 +118,10 @@ public class GamlResourceDocumenter implements IDocManager {
 	@Override
 	public void setGamlDocumentation(final URI res, final EObject object, final IGamlDescription desc) {
 		if (object == null) return;
-		if (!GamlResourceServices.isEdited(res)) {
+		if (!isTaskValid(res)) {
 			if (DEBUG.IS_ON()) {
-				DEBUG.OUT("Refusing to document " + desc.getTitle() + " in " + (res == null ? "" : res.lastSegment()));
+				// DEBUG.OUT("Refusing to document " + desc.getTitle() + " in " + (res == null ? "" :
+				// res.lastSegment()));
 			}
 			return;
 		}
@@ -139,17 +140,25 @@ public class GamlResourceDocumenter implements IDocManager {
 	 *            the description
 	 * @date 31 déc. 2023
 	 */
-	void internalSetGamlDocumentation(final URI openResource, final EObject object,
-			final IGamlDescription description) {
+	boolean internalSetGamlDocumentation(final URI res, final EObject object, final IGamlDescription desc) {
 		try {
+			if (!isTaskValid(res)) {
+				if (DEBUG.IS_ON()) {
+					// DEBUG.OUT("Skipping documenting " + desc.getTitle() + " of "
+					// + (res == null ? "" : res.lastSegment()));
+				}
+				return false;
+			}
 			int fragment = getResourceURIPlusURIFragmentHashCode(object);
-			int uri = openResource.hashCode();
-			resourceNames.put(uri, openResource.lastSegment());
-			docIndexedByObjects.put(fragment, new DocumentationNode(description));
+			int uri = res.hashCode();
+			resourceNames.put(uri, res.lastSegment());
+			docIndexedByObjects.put(fragment, new DocumentationNode(desc));
 			resourcesIndexedByObjects.computeIfAbsent(fragment, i -> new IntOpenHashSet()).add(uri);
 			objectsIndexedByResources.computeIfAbsent(uri, i -> new IntOpenHashSet()).add(fragment);
+			return true;
 		} catch (final RuntimeException e) {
-			DEBUG.ERR("Error in documenting " + openResource.lastSegment(), e);
+			DEBUG.ERR("Error in documenting " + res.lastSegment(), e);
+			return false;
 		}
 	}
 
@@ -174,15 +183,13 @@ public class GamlResourceDocumenter implements IDocManager {
 	 *            the desc
 	 * @date 31 déc. 2023
 	 */
-	private void internalDoDocument(final URI resource, final IDescription desc) {
-		if (desc == null) return;
+	private boolean internalDoDocument(final URI resource, final IDescription desc) {
+		if (desc == null) return false;
 		final EObject e = desc.getUnderlyingElement();
-		if (e == null) return;
-		internalSetGamlDocumentation(resource, e, desc);
-		desc.visitOwnChildren(d -> {
-			internalDoDocument(resource, d);
-			return true;
-		});
+		if (e == null) return false;
+		if (internalSetGamlDocumentation(resource, e, desc))
+			return desc.visitOwnChildren(d -> internalDoDocument(resource, d));
+		return false;
 	}
 
 	@Override
@@ -266,6 +273,19 @@ public class GamlResourceDocumenter implements IDocManager {
 		if (object == null) return -1;
 		if (object.eResource() == null) return object.hashCode();
 		return object.eResource().getURI().appendFragment(EcoreUtil2.getURIFragment(object)).toString().hashCode();
+	}
+
+	/**
+	 * Checks if is task valid.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param resource
+	 *            the resource
+	 * @return true, if is task valid
+	 * @date 1 janv. 2024
+	 */
+	boolean isTaskValid(final URI resource) {
+		return resource != null && GamlResourceServices.isEdited(resource);
 	}
 
 }
