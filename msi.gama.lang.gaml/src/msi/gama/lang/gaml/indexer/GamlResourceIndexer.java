@@ -3,7 +3,7 @@
  * GamlResourceIndexer.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -33,8 +33,7 @@ import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.resource.GamlResource.ImportedResources;
-import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.lang.gaml.resource.ImportedResources;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import ummisco.gama.dev.utils.DEBUG;
@@ -87,7 +86,7 @@ public class GamlResourceIndexer {
 					} catch (Exception e1) {
 						DEBUG.LOG("Error in resolving " + uri + " against base " + baseURI);
 					}
-					uri = GamlResourceServices.properlyEncodedURI(uri);
+					uri = properlyEncodedURI(uri);
 					result.put(uri, e.getName());
 				}
 			}
@@ -95,7 +94,7 @@ public class GamlResourceIndexer {
 			final String u = ((ExperimentFileStructure) m).getExp().getImportURI();
 			if (u != null) {
 				URI uri = URI.createURI(u, true);
-				uri = GamlResourceServices.properlyEncodedURI(uri.resolve(baseURI));
+				uri = properlyEncodedURI(uri.resolve(baseURI));
 				result = Collections.singletonMap(uri, null);
 			}
 		}
@@ -118,7 +117,7 @@ public class GamlResourceIndexer {
 			final String u = e.getImportURI();
 			if (u != null) {
 				URI uri = URI.createURI(u, true);
-				uri = GamlResourceServices.properlyEncodedURI(uri.resolve(modelURI));
+				uri = properlyEncodedURI(uri.resolve(modelURI));
 				if (uri.equals(importUri)) return e;
 			}
 		}
