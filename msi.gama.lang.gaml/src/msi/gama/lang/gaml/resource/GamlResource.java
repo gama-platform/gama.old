@@ -3,15 +3,13 @@
  * GamlResource.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.transform;
 import static java.util.Collections.singleton;
 import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.collectMultipleImportsOf;
 import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.getImportObject;
@@ -27,7 +25,6 @@ import static org.eclipse.xtext.diagnostics.Severity.ERROR;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
@@ -39,10 +36,6 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Model;
@@ -53,6 +46,7 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class GamlResource.
@@ -67,92 +61,8 @@ import msi.gaml.descriptions.ValidationContext;
  */
 public class GamlResource extends LazyLinkingResource {
 
-	/**
-	 * The Class ImportedResources.
-	 */
-	public static class ImportedResources {
-		/** The micromodels. */
-		public ListMultimap<String, GamlResource> micromodels;
-		/** The imports. */
-		public Set<GamlResource> imports;
-
-		/**
-		 * Adds the.
-		 *
-		 * @param alias
-		 *            the alias
-		 * @param resource
-		 *            the resource
-		 */
-		public void add(final String alias, final GamlResource resource) {
-			if (alias == null) {
-				addOwnImport(resource);
-			} else {
-				addMicroModel(alias, resource);
-			}
-		}
-
-		/**
-		 * Adds the micro model.
-		 *
-		 * @param alias
-		 *            the alias
-		 * @param resource
-		 *            the resource
-		 */
-		private void addMicroModel(final String alias, final GamlResource resource) {
-			if (micromodels == null) { micromodels = ArrayListMultimap.create(); }
-			micromodels.put(alias, resource);
-		}
-
-		/**
-		 * Adds the own import.
-		 *
-		 * @param resource
-		 *            the resource
-		 */
-		private void addOwnImport(final GamlResource resource) {
-			if (imports == null) { imports = Sets.newLinkedHashSet(); }
-			imports.add(resource);
-		}
-
-		/**
-		 * Compute direct imports.
-		 *
-		 * @param syntacticContents
-		 *            the syntactic contents
-		 * @return the iterable
-		 */
-		public Iterable<ISyntacticElement> computeDirectImports(final ISyntacticElement syntacticContents) {
-			return imports == null ? singleton(syntacticContents)
-					: concat(singleton(syntacticContents), transform(imports, TO_SYNTACTIC_CONTENTS));
-		}
-
-		/**
-		 * Compute micro models.
-		 *
-		 * @return the map
-		 */
-		public Map<String, ModelDescription> computeMicroModels(final String project, final String model,
-				final ValidationContext context) {
-			if (micromodels == null) return null;
-			Map<String, ModelDescription> result = Maps.newHashMap();
-
-			for (final String aliasName : micromodels.keySet()) {
-				final ModelDescription mic = getModelFactory().createModelDescription(project, model,
-						transform(micromodels.get(aliasName), TO_SYNTACTIC_CONTENTS), context, null);
-				mic.setAlias(aliasName);
-				result.put(aliasName, mic);
-			}
-			return result;
-		}
-	}
-
 	/** The element. */
 	ISyntacticElement element;
-
-	/** The imports. */
-	// Map<URI, String> imports;
 
 	/**
 	 * Gets the validation context.
@@ -203,7 +113,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	/** The Constant TO_SYNTACTIC_CONTENTS. */
-	private final static Function<GamlResource, ISyntacticElement> TO_SYNTACTIC_CONTENTS = input -> {
+	final static Function<GamlResource, ISyntacticElement> TO_SYNTACTIC_CONTENTS = input -> {
 		input.getResourceSet().getResource(input.getURI(), true);
 		return input.getSyntacticContents();
 	};
@@ -388,6 +298,9 @@ public class GamlResource extends LazyLinkingResource {
 
 	@Override
 	public void clearCache() {
+		//DEBUG.LINE();
+		//DEBUG.TITLE("CLEARING CACHE OF " + uri.lastSegment());
+		// GamlResourceServices.getResourceDocumenter().invalidate(getURI());
 		super.clearCache();
 	}
 
