@@ -3,7 +3,7 @@
  * WrappedGamaFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -33,6 +33,7 @@ import one.util.streamex.StreamEx;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PreferencesHelper;
 
 /**
  * The Class WrappedGamaFile.
@@ -137,14 +138,18 @@ public class WrappedGamaFile extends WrappedFile {
 		final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(getResource(), false, false);
 		if (metaData instanceof GamlFileInfo info) {
 			final List<VirtualContent<?>> l = new ArrayList<>();
-			final String path = getResource().getFullPath().toOSString();
-			final ISyntacticElement element = GAML.getContents(URI.createPlatformResourceURI(path, true));
-			if (element != null) {
-				if (!GamlFileExtension.isExperiment(path)) { l.add(new WrappedModelContent(this, element)); }
-				element.visitExperiments(exp -> {
-					final IExpressionDescription d = exp.getExpressionAt(IKeyword.VIRTUAL);
-					if (d == null || !d.equalsString("true")) { l.add(new WrappedExperimentContent(this, exp)); }
-				});
+			if (PreferencesHelper.NAVIGATOR_OUTLINE.getValue()) {
+				final String path = getResource().getFullPath().toOSString();
+				final ISyntacticElement element = GAML.getContents(URI.createPlatformResourceURI(path, true));
+				if (element != null) {
+					if (!GamlFileExtension.isExperiment(path)) { l.add(new WrappedModelContent(this, element)); }
+					element.visitExperiments(exp -> {
+						final IExpressionDescription d = exp.getExpressionAt(IKeyword.VIRTUAL);
+						if (d == null || !d.equalsString("true")) { l.add(new WrappedExperimentContent(this, exp)); }
+					});
+				}
+			} else {
+				for (String exp : info.getExperiments()) { l.add(new WrappedExperimentContent(this, exp)); }
 			}
 			if (!info.getImports().isEmpty()) {
 				final Category wf = new Category(this, info.getImports(), "Imports");

@@ -48,7 +48,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamlResourceDocumenter implements IDocManager {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The documentations from EObject to DocumentationNode. Key is the hashcode of the complete URI of the object */
@@ -74,7 +74,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	final Job documentationJob = new Job("Documentation") {
 		{
 			setUser(false);
-			setPriority(Job.LONG);
+			setPriority(Job.SHORT);
 		}
 
 		@Override
@@ -117,14 +117,10 @@ public class GamlResourceDocumenter implements IDocManager {
 	 */
 	@Override
 	public void setGamlDocumentation(final URI res, final EObject object, final IGamlDescription desc) {
-		if (object == null) return;
-		if (!isTaskValid(res)) {
-			if (DEBUG.IS_ON()) {
-				// DEBUG.OUT("Refusing to document " + desc.getTitle() + " in " + (res == null ? "" :
-				// res.lastSegment()));
-			}
-			return;
-		}
+		if (object == null || !isTaskValid(res)) return;
+		// if (DEBUG.IS_ON()) {
+		// DEBUG.OUT("Refuse documenting " + desc.getTitle() + " in " + (res == null ? "" : res.lastSegment()));
+		// }
 		addDocumentationTask(d -> internalSetGamlDocumentation(res, object, desc));
 	}
 
@@ -141,23 +137,20 @@ public class GamlResourceDocumenter implements IDocManager {
 	 * @date 31 déc. 2023
 	 */
 	boolean internalSetGamlDocumentation(final URI res, final EObject object, final IGamlDescription desc) {
+		String name = res == null ? "unknown" : res.lastSegment();
+		int uri = res == null ? -1 : res.hashCode();
 		try {
-			if (!isTaskValid(res)) {
-				if (DEBUG.IS_ON()) {
-					// DEBUG.OUT("Skipping documenting " + desc.getTitle() + " of "
-					// + (res == null ? "" : res.lastSegment()));
-				}
+			if (!isTaskValid(res)) // if (DEBUG.IS_ON()) { DEBUG.OUT("Skip documenting " + desc.getTitle() + " in " +
+									// name); }
 				return false;
-			}
 			int fragment = getResourceURIPlusURIFragmentHashCode(object);
-			int uri = res.hashCode();
-			resourceNames.put(uri, res.lastSegment());
+			resourceNames.put(uri, name);
 			docIndexedByObjects.put(fragment, new DocumentationNode(desc));
 			resourcesIndexedByObjects.computeIfAbsent(fragment, i -> new IntOpenHashSet()).add(uri);
 			objectsIndexedByResources.computeIfAbsent(uri, i -> new IntOpenHashSet()).add(fragment);
 			return true;
 		} catch (final RuntimeException e) {
-			DEBUG.ERR("Error in documenting " + res.lastSegment(), e);
+			DEBUG.ERR("Error in documenting " + name, e);
 			return false;
 		}
 	}
@@ -186,10 +179,10 @@ public class GamlResourceDocumenter implements IDocManager {
 	private boolean internalDoDocument(final URI resource, final IDescription desc) {
 		if (desc == null) return false;
 		final EObject e = desc.getUnderlyingElement();
-		if (e == null) return false;
-		if (internalSetGamlDocumentation(resource, e, desc))
-			return desc.visitOwnChildren(d -> internalDoDocument(resource, d));
-		return false;
+		if (e == null) // DEBUG.OUT("No element to document for " + desc.getClass().getSimpleName() + " " + desc);
+			return true; // We return true to continue exploring if other descriptions should be documented
+		if (!internalSetGamlDocumentation(resource, e, desc)) return false;
+		return desc.visitOwnChildren(d -> internalDoDocument(resource, d));
 	}
 
 	@Override
@@ -207,7 +200,6 @@ public class GamlResourceDocumenter implements IDocManager {
 
 	@Override
 	public void invalidate(final URI uri) {
-
 		if (uri == null) return;
 		// Should we do it immediately ? with the following reasoning:
 		// 1/ If called from closing the editor, no reason to do it at the end and not immediately
@@ -258,6 +250,7 @@ public class GamlResourceDocumenter implements IDocManager {
 	 * @date 30 déc. 2023
 	 */
 	public void invalidateAll() {
+		if (DEBUG.IS_ON()) { debugStatistics("Before clean build"); }
 		addDocumentationTask(d -> {
 			docIndexedByObjects.clear();
 			resourcesIndexedByObjects.clear();

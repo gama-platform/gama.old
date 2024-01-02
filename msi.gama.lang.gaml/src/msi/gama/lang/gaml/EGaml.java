@@ -2,7 +2,7 @@
  *
  * EGaml.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -650,7 +650,8 @@ public class EGaml implements IGamlEcoreUtils {
 	}
 
 	/**
-	 * Gets the statement equal to or including this eObject
+	 * Gets the statement equal to or based on this object (if the object is a type ref and the statement the definition
+	 * beginning with this type ref)
 	 *
 	 * @param o
 	 *            the o
@@ -663,7 +664,21 @@ public class EGaml implements IGamlEcoreUtils {
 				&& ((S_Definition) o.eContainer()).getTkey() == o)
 			return (Statement) o.eContainer();
 		return null;
+	}
 
+	/**
+	 * Gets the first surrounding statement that includes this object (or the object itself if it is a statement)
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param o
+	 *            the o
+	 * @return the surrounding statement
+	 * @date 2 janv. 2024
+	 */
+	public Statement getSurroundingStatement(final EObject o) {
+		if (o == null) return null;
+		if (o instanceof Statement) return (Statement) o;
+		return getSurroundingStatement(o.eContainer());
 	}
 
 	/**

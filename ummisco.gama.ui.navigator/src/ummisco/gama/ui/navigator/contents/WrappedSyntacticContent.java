@@ -3,7 +3,7 @@
  * WrappedSyntacticContent.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.runtime.GAMA;
@@ -72,7 +71,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public boolean hasChildren() {
-		if (!element.hasChildren()) return false;
+		if (element == null || !element.hasChildren()) return false;
 		if (element.isSpecies()) return true;
 		return false;
 	}
@@ -86,9 +85,11 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 	}
 
 	@Override
-	public ImageDescriptor getImageDescriptor() { return  (ImageDescriptor) WorkbenchHelper.getService(IGamlLabelProvider.class).getImageDescriptor(element); }
+	public ImageDescriptor getImageDescriptor() {
+		return (ImageDescriptor) WorkbenchHelper.getService(IGamlLabelProvider.class).getImageDescriptor(element);
+	}
 
-	@Override 
+	@Override
 	public boolean handleDoubleClick() {
 		GAMA.getGui().editModel(null, element.getElement());
 		return true;
@@ -96,7 +97,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public boolean handleSingleClick() {
-
+		if (element == null) return false;
 		GAMA.getGui().editModel(null, element.getElement());
 		return true;
 	}
@@ -110,6 +111,7 @@ public class WrappedSyntacticContent extends VirtualContent<VirtualContent<?>>
 
 	@Override
 	public int compareTo(final WrappedSyntacticContent o) {
+		if (element == null || o.element == null) return -1;
 		final var e = o.element;
 		if (element.isSpecies()) {
 			if (e.isSpecies()) return getName().compareTo(o.getName());

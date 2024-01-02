@@ -3,7 +3,7 @@
  * PreferencesHelper.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -13,6 +13,7 @@ package ummisco.gama.ui.utils;
 import static msi.gama.common.preferences.GamaPreferences.create;
 import static msi.gama.common.preferences.GamaPreferences.Interface.APPEARANCE;
 import static msi.gama.common.preferences.GamaPreferences.Interface.NAME;
+import static msi.gama.common.preferences.GamaPreferences.Interface.NAVIGATOR;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -94,7 +95,7 @@ public class PreferencesHelper {
 	/** The Constant NAVIGATOR_METADATA. */
 	public static final Pref<Boolean> NAVIGATOR_METADATA =
 			create("pref_navigator_display_metadata", "Display metadata in navigator", true, IType.BOOL, false)
-					.in(NAME, APPEARANCE).onChange(newValue -> {
+					.in(NAME, NAVIGATOR).onChange(newValue -> {
 						final var mgr = WorkbenchHelper.getWorkbench().getDecoratorManager();
 						try {
 							mgr.setEnabled(IGui.NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
@@ -103,11 +104,20 @@ public class PreferencesHelper {
 						}
 
 					});
-
+	/** The keep navigator state. */
+	public static final Pref<Boolean> KEEP_NAVIGATOR_STATE = create("pref_keep_navigator_state",
+			"Maintain the state of the navigator across sessions", true, IType.BOOL, false).in(NAME, NAVIGATOR);
 	/** The Constant NAVIGATOR_HIDDEN. */
 	public static final Pref<Boolean> NAVIGATOR_HIDDEN =
 			create("pref_navigator_display_hidden", "Display hidden files in navigator", false, IType.BOOL, false)
-					.in(NAME, APPEARANCE).onChange(newValue -> {
+					.in(NAME, NAVIGATOR).onChange(newValue -> {
+						GAMA.getGui().refreshNavigator();
+					});
+
+	/** The Constant NAVIGATOR_OUTLINE. */
+	public static final Pref<Boolean> NAVIGATOR_OUTLINE =
+			create("pref_navigator_display_outline", "Display the outline of GAML files in navigator", false,
+					IType.BOOL, false).in(NAME, NAVIGATOR).onChange(newValue -> {
 						GAMA.getGui().refreshNavigator();
 					});
 

@@ -61,6 +61,10 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamlResource extends LazyLinkingResource {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The element. */
 	ISyntacticElement element;
 
@@ -108,7 +112,9 @@ public class GamlResource extends LazyLinkingResource {
 	 * @return the syntactic contents
 	 */
 	public ISyntacticElement getSyntacticContents() {
-		if (element == null) { setElement(GamlResourceServices.buildSyntacticContents(this)); }
+		if (element != null) // DEBUG.OUT("Reusing existing contents for " + uri.lastSegment());
+			return element;
+		setElement(GamlResourceServices.buildSyntacticContents(this));
 		return element;
 	}
 
@@ -298,9 +304,9 @@ public class GamlResource extends LazyLinkingResource {
 
 	@Override
 	public void clearCache() {
-		//DEBUG.LINE();
-		//DEBUG.TITLE("CLEARING CACHE OF " + uri.lastSegment());
-		// GamlResourceServices.getResourceDocumenter().invalidate(getURI());
+		// DEBUG.LINE();
+		// DEBUG.TITLE("CLEARING CACHE OF " + uri.lastSegment());
+		GamlResourceServices.getResourceDocumenter().invalidate(getURI());
 		super.clearCache();
 	}
 

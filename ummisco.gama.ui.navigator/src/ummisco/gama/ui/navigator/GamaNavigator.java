@@ -3,7 +3,7 @@
  * GamaNavigator.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -43,7 +43,6 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.CommonViewer;
 
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.runtime.PlatformHelper;
 import ummisco.gama.ui.navigator.contents.NavigatorRoot;
 import ummisco.gama.ui.navigator.contents.Tag;
@@ -54,6 +53,7 @@ import ummisco.gama.ui.navigator.contents.WrappedFile;
 import ummisco.gama.ui.navigator.contents.WrappedResource;
 import ummisco.gama.ui.navigator.contents.WrappedSyntacticContent;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.views.toolbar.GamaCommand;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -127,7 +127,7 @@ public class GamaNavigator extends CommonNavigator
 
 	@Override
 	public void saveState(final IMemento newMemento) {
-		if (GamaPreferences.Interface.KEEP_NAVIGATOR_STATE.getValue()) {
+		if (PreferencesHelper.KEEP_NAVIGATOR_STATE.getValue()) {
 			final StringBuilder sb = new StringBuilder();
 			for (final Object o : getCommonViewer().getExpandedElements()) {
 				final String name =
@@ -151,7 +151,7 @@ public class GamaNavigator extends CommonNavigator
 		if (memento == null) return;
 		final String saved = memento.getString("EXPANDED_STATE");
 		if (saved == null) return;
-		if (GamaPreferences.Interface.KEEP_NAVIGATOR_STATE.getValue()) {
+		if (PreferencesHelper.KEEP_NAVIGATOR_STATE.getValue()) {
 			final List<VirtualContent<?>> contents = new ArrayList<>();
 			final String[] names = saved.split("@@");
 			for (final String s : names) {

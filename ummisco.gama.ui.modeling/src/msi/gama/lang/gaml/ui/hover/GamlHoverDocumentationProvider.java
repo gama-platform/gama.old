@@ -3,7 +3,7 @@
  * GamlHoverDocumentationProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,7 +16,9 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.inject.Inject;
 
+import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDocManager;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.lang.gaml.EGaml;
@@ -29,6 +31,7 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Do;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
@@ -38,6 +41,7 @@ import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
+import msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
@@ -122,9 +126,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 		int id = o.eClass().getClassifierID();
 		IGamlDescription result = doSwitch(id, o);
 		if (result == null) {
-			if (o instanceof Facet facet) {
-				result = specialCaseFacet(facet);
-			} else if (o instanceof VariableRef vr) {
+			if (o instanceof VariableRef vr) {
 				result = specialCaseVariableRef(vr);
 			} else if (o instanceof TypeRef type) {
 				result = specialCaseTypeRef(type);
@@ -199,6 +201,25 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 		// final IGamlDescription gd = documenter.getGamlDocumentation(s);
 		// if (gd != null) return gd;
 		// }
+		// Case for the type of displays
+		final Statement s = EGaml.getInstance().getSurroundingStatement(type);
+		String name = EGaml.getInstance().getKeyOf(type);
+		if (s instanceof S_Display) {
+			DisplayDescription dc = IGui.DISPLAYS.get(name);
+			if (dc != null) return dc;
+			return new IGamlDescription() {
+
+				@Override
+				public String getTitle() { return "Unknown type of display " + name; }
+
+				@Override
+				public Doc getDocumentation() {
+					return new ConstantDoc(name
+							+ " is not a registered display type. Please visit https://gama-platform.org to get more information");
+				}
+
+			};
+		}
 		return null;
 	}
 
@@ -214,6 +235,20 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 				return new Result(title, doc);
 			}
 		}
+		String facetName = facet.getKey();
+		if (facetName.endsWith(":")) { facetName = facetName.substring(0, facetName.length() - 1); }
+		final EObject cont = facet.eContainer();
+		String key = EGaml.getInstance().getKeyOf(cont);
+		if (cont instanceof speciesOrGridDisplayStatement ds) {
+			String layerName = ds.getKey();
+			if (IKeyword.SPECIES.equals(layerName)) {
+				key = IKeyword.SPECIES_LAYER;
+			} else {
+				key = IKeyword.GRID_LAYER;
+			}
+		}
+		final SymbolProto p = DescriptionFactory.getProto(key, null);
+		if (p != null) return p.getPossibleFacets().get(facetName);
 		return null;
 	}
 
@@ -319,22 +354,6 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 	private IGamlDescription specialCaseVariableRef(final VariableRef vr) {
 		VarDefinition vd = vr.getRef();
 		return documenter.getGamlDocumentation(vd);
-	}
-
-	/**
-	 * Last chance to build a documentation in case the facet has not correctly been documented
-	 *
-	 * @param facet
-	 * @return
-	 */
-	private IGamlDescription specialCaseFacet(final Facet facet) {
-		String facetName = facet.getKey();
-		if (facetName.endsWith(":")) { facetName = facetName.substring(0, facetName.length() - 1); }
-		final EObject cont = facet.eContainer();
-		final String key = EGaml.getInstance().getKeyOf(cont);
-		final SymbolProto p = DescriptionFactory.getProto(key, null);
-		if (p != null) return p.getPossibleFacets().get(facetName);
-		return null;
 	}
 
 	/**

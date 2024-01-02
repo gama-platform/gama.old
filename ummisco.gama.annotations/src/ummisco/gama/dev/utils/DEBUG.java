@@ -3,7 +3,7 @@
  * DEBUG.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -254,6 +254,20 @@ public class DEBUG {
 		BANNER("GAMA", title, state, result);
 	}
 
+	/**
+	 * Banner.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param category
+	 *            the category
+	 * @param title
+	 *            the title
+	 * @param state
+	 *            the state
+	 * @param result
+	 *            the result
+	 * @date 1 janv. 2024
+	 */
 	public static void BANNER(final String category, final String title, final String state, final String result) {
 		String cat = STRINGS.PAD("> " + category, 8, ' ') + ": ";
 		LOG(STRINGS.PAD(cat + title + " ", 55, ' ') + STRINGS.PAD(" " + state, 15, '_') + " " + result);
@@ -362,17 +376,28 @@ public class DEBUG {
 	}
 
 	/**
-	 * A utility method to output a "section" (i.e. a title padded with dashes between two lines of 80 chars
+	 * A utility method to output a "section" (i.e. a title padded with dashes between two lines of 80 chars).
+	 * Equivalent to LINE();TITLE(s);LINE()
 	 *
 	 */
 	public static final void SECTION(final String s) {
 		if (s == null) return;
 		LINE();
-		LOG(STRINGS.PAD("---------- " + s.toUpperCase() + " ", 80, '-'));
+		TITLE(s);
 		LINE();
 	}
 
 	/**
+	 * A utility method to output a "title" (i.e. a title centered and padded with dashes to form a line of 80 chars)
+	 *
+	 */
+	public static final void TITLE(final String s) {
+		if (s == null) return;
+		LOG(STRINGS.PAD("---------- " + s.toUpperCase() + " ", 80, '-'));
+	}
+
+	/**
+	 *
 	 * Stack.
 	 */
 	public static void STACK() {

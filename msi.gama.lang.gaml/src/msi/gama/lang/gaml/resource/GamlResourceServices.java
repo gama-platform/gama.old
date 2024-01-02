@@ -3,7 +3,7 @@
  * GamlResourceServices.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.common.collect.Iterables;
@@ -69,8 +70,14 @@ public class GamlResourceServices {
 	/** The Constant resourceErrors. */
 	private static final Map<URI, ValidationContext> resourceErrors = GamaMapFactory.createUnordered();
 
+	/** The Constant cachedResourceContents. */
+	private static final Map<URI, ISyntacticElement> cachedResourceContents = GamaMapFactory.concurrentMap();
+
 	/** The pool set. */
 	private static volatile XtextResourceSet poolSet;
+
+	/** The resource set. */
+	private static volatile XtextResourceSet resourceSet;
 
 	/**
 	 * Properly encodes and partially verifies the uri passed in parameter. In the case of an URI that does not use the
@@ -366,6 +373,7 @@ public class GamlResourceServices {
 	 * @return the i syntactic element
 	 */
 	public static ISyntacticElement buildSyntacticContents(final GamlResource r) {
+		// DEBUG.OUT("Building contents for " + r.getURI().lastSegment());
 		return converter.buildSyntacticContents(r.getParseResult().getRootASTElement(), null);
 	}
 
@@ -399,6 +407,69 @@ public class GamlResourceServices {
 		if (uri1 == null) return uri2 == null;
 		if (uri2 == null) return false;
 		return properlyEncodedURI(uri1).equals(properlyEncodedURI(uri2));
+	}
+
+	/**
+	 * Gets the or create syntactic contents.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param uri
+	 *            the uri
+	 * @return the or create syntactic contents
+	 * @date 1 janv. 2024
+	 */
+	public static ISyntacticElement getOrCreateSyntacticContents(final URI uri) {
+		// ISyntacticElement existing = cachedResourceContents.get(uri);
+		// if (existing != null) return existing;
+		try {
+			final GamlResource r = (GamlResource) getResourceSet().getResource(uri, true);
+			ISyntacticElement result = buildSyntacticContents(r);
+			// cachedResourceContents.put(uri, result);
+			return result;
+		} finally {
+			clearResourceSet(getResourceSet());
+		}
+	}
+
+	/**
+	 * Invalidate syntactic contents.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param uri
+	 *            the uri
+	 * @date 2 janv. 2024
+	 */
+	public static void invalidateSyntacticContents(final URI uri) {
+		ISyntacticElement existing = cachedResourceContents.remove(uri);
+		if (existing != null) { existing.dispose(); }
+	}
+
+	/**
+	 * Clear resource set.
+	 *
+	 * @param resourceSet
+	 *            the resource set
+	 */
+	protected static void clearResourceSet(final ResourceSet resourceSet) {
+		final boolean wasDeliver = resourceSet.eDeliver();
+		try {
+			resourceSet.eSetDeliver(false);
+			resourceSet.getResources().clear();
+		} catch (final Exception e) {}
+
+		finally {
+			resourceSet.eSetDeliver(wasDeliver);
+		}
+	}
+
+	/**
+	 * Gets the resource set.
+	 *
+	 * @return the resource set
+	 */
+	static XtextResourceSet getResourceSet() {
+		if (resourceSet == null) { resourceSet = new SynchronizedXtextResourceSet(); }
+		return resourceSet;
 	}
 
 }
