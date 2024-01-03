@@ -315,7 +315,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	@Override
 	public Doc getDocumentation() {
 		if (!isVarOrField) return super.getDocumentation();
-		final vars annot = getSupport().getAnnotation(vars.class);
+		final vars annot = getJavaBase().getAnnotation(vars.class);
 		if (annot != null) {
 			final variable[] allVars = annot.value();
 			for (final variable v : allVars) {

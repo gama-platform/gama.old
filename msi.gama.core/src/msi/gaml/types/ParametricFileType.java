@@ -304,7 +304,7 @@ public class ParametricFileType extends ParametricType {
 	 */
 	void getFieldDocumentation(final Doc sb, final OperatorProto prototype) {
 
-		final vars annot = prototype.getSupport().getAnnotation(vars.class);
+		final vars annot = prototype.getJavaBase().getAnnotation(vars.class);
 		if (annot != null) {
 			final variable[] allVars = annot.value();
 			for (final variable v : allVars) {

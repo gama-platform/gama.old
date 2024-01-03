@@ -220,8 +220,12 @@ public class GamlResource extends LazyLinkingResource {
 
 	@Override
 	protected void updateInternalState(final IParseResult oldParseResult, final IParseResult newParseResult) {
-		super.updateInternalState(oldParseResult, newParseResult);
-		setElement(null);
+		if (oldParseResult != newParseResult) {
+			// if (oldParseResult != newParseResult) { DEBUG.OUT("===> Creating a new contents for " +
+			// uri.lastSegment()); }
+			super.updateInternalState(oldParseResult, newParseResult);
+			setElement(null);
+		}
 	}
 
 	@Override

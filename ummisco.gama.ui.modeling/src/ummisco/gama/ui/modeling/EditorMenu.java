@@ -3,7 +3,7 @@
  * EditorMenu.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,10 +11,11 @@
 package ummisco.gama.ui.modeling;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
@@ -156,7 +157,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 * @return the map
 	 */
 	private static Map<URI, List<String>> grabProjectModelsAndExperiments(final GamlEditor editor) {
-		final Map<URI, List<String>> map = new LinkedHashMap<>();
+		final Map<URI, List<String>> map = new TreeMap<>(Comparator.comparing(URI::lastSegment));
 		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
@@ -266,9 +267,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 
 				@Override
 				public void process(final XtextResource resource) throws Exception {
-					final String platformString = resource.getURI().toPlatformString(true);
-					final URI uri = URI.createPlatformResourceURI(platformString, false);
-					map.addAll(GamlResourceIndexer.directImportersOf(uri));
+					map.addAll(GamlResourceIndexer.directImportersOf(((GamlResource) resource).getURI()));
 				}
 			});
 			return map.items();

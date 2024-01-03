@@ -458,6 +458,8 @@ public class EGaml implements IGamlEcoreUtils {
 	 * @date 27 déc. 2023
 	 */
 	private String getNameOfRef(final EObject o, final int id) {
+		// final ICompositeNode cn = NodeModelUtils.getNode(o);
+		// if (cn != null) return NodeModelUtils.getTokenText(cn);
 		String result = "";
 		switch (id) {
 			case GamlPackage.UNIT_NAME: {
@@ -499,8 +501,8 @@ public class EGaml implements IGamlEcoreUtils {
 		}
 
 		if (result.isBlank()) {
-			final ICompositeNode cn = NodeModelUtils.getNode(o);
-			if (cn != null) { result = NodeModelUtils.getTokenText(cn); }
+			final ICompositeNode cc = NodeModelUtils.getNode(o);
+			if (cc != null) { result = NodeModelUtils.getTokenText(cc); }
 		}
 		return result;
 	}
@@ -675,6 +677,7 @@ public class EGaml implements IGamlEcoreUtils {
 	 * @return the surrounding statement
 	 * @date 2 janv. 2024
 	 */
+	@Override
 	public Statement getSurroundingStatement(final EObject o) {
 		if (o == null) return null;
 		if (o instanceof Statement) return (Statement) o;

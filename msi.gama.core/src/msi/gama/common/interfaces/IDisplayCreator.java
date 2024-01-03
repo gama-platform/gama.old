@@ -12,9 +12,7 @@ package msi.gama.common.interfaces;
 
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gaml.interfaces.IGamlDescription;
+import msi.gaml.compilation.GamlAddition;
 
 /**
  * The Interface IDisplayCreator.
@@ -25,19 +23,10 @@ public interface IDisplayCreator {
 	/**
 	 * The Class DisplayDescription.
 	 */
-	public static class DisplayDescription implements IDisplayCreator, IGamlDescription {
+	public static class DisplayDescription extends GamlAddition implements IDisplayCreator {
 
 		/** The original. */
 		private final IDisplayCreator delegate;
-
-		/** The plugin. */
-		private final String name, plugin;
-
-		/** The documentation. */
-		Doc documentation;
-
-		/** The support. */
-		private final Class<? extends IDisplaySurface> support;
 
 		/**
 		 * Instantiates a new display description.
@@ -51,10 +40,8 @@ public interface IDisplayCreator {
 		 */
 		public DisplayDescription(final IDisplayCreator original, final Class<? extends IDisplaySurface> support,
 				final String name, final String plugin) {
+			super(name, support, plugin);
 			this.delegate = original;
-			this.name = name;
-			this.plugin = plugin;
-			this.support = support;
 		}
 
 		/**
@@ -85,76 +72,12 @@ public interface IDisplayCreator {
 		}
 
 		/**
-		 * Method getName()
-		 *
-		 * @see msi.gaml.interfaces.INamed#getName()
-		 */
-		@Override
-		public String getName() { return name; }
-
-		/**
-		 * Method setName()
-		 *
-		 * @see msi.gaml.interfaces.INamed#setName(java.lang.String)
-		 */
-		@Override
-		public void setName(final String newName) {}
-
-		/**
-		 * Method serialize()
-		 *
-		 * @see msi.gaml.interfaces.IGamlable#serializeToGaml(boolean)
-		 */
-		@Override
-		public String serializeToGaml(final boolean includingBuiltIn) {
-			return getName();
-		}
-
-		/**
 		 * Method getTitle()
 		 *
 		 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 		 */
 		@Override
 		public String getTitle() { return "Display supported by " + getName() + ""; }
-
-		/**
-		 * Gets the doc annotation.
-		 *
-		 * @return the doc annotation
-		 */
-		public doc getDocAnnotation() {
-			return support != null && support.isAnnotationPresent(doc.class) ? support.getAnnotation(doc.class) : null;
-		}
-
-		@Override
-		public Doc getDocumentation() {
-			if (documentation == null) {
-				final doc d = getDocAnnotation();
-				if (d == null) {
-					documentation = EMPTY_DOC;
-				} else {
-					documentation = new RegularDoc(new StringBuilder(200));
-					String s = d.value();
-					if (s != null && !s.isEmpty()) { documentation.append(s).append("<br/>"); }
-					usage[] usages = d.usages();
-					for (usage u : usages) { documentation.append(u.value()).append("<br/>"); }
-					s = d.deprecated();
-					if (s != null && !s.isEmpty()) {
-						documentation.append("<b>Deprecated</b>: ").append("<i>").append(s).append("</i><br/>");
-					}
-				}
-			}
-			return documentation;
-		}
-
-		/**
-		 * Method getDefiningPlugin()
-		 *
-		 * @see msi.gaml.interfaces.IGamlDescription#getDefiningPlugin()
-		 */
-		@Override
-		public String getDefiningPlugin() { return plugin; }
 
 	}
 

@@ -3,18 +3,17 @@
  * IExperimentAgentCreator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
-import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gaml.interfaces.IGamlDescription;
+import msi.gaml.compilation.GamlAddition;
 
 /**
  * The Interface IExperimentAgentCreator.
@@ -25,16 +24,10 @@ public interface IExperimentAgentCreator {
 	/**
 	 * The Class ExperimentAgentDescription.
 	 */
-	public static class ExperimentAgentDescription implements IExperimentAgentCreator, IGamlDescription {
+	public static class ExperimentAgentDescription extends GamlAddition implements IExperimentAgentCreator {
 
 		/** The original. */
-		private final IExperimentAgentCreator original;
-
-		/** The plugin. */
-		private final String name, plugin;
-
-		/** The clazz. */
-		private final Class<? extends IExperimentAgent> clazz;
+		private final IExperimentAgentCreator delegate;
 
 		/**
 		 * Instantiates a new experiment agent description.
@@ -47,11 +40,9 @@ public interface IExperimentAgentCreator {
 		 *            the plugin
 		 */
 		public ExperimentAgentDescription(final IExperimentAgentCreator original,
-				final Class<? extends IExperimentAgent> clazz, final String name, final String plugin) {
-			this.clazz = clazz;
-			this.original = original;
-			this.name = name;
-			this.plugin = plugin;
+				final Class<? extends IExperimentAgent> support, final String name, final String plugin) {
+			super(name, support, plugin);
+			this.delegate = original;
 		}
 
 		/**
@@ -61,33 +52,7 @@ public interface IExperimentAgentCreator {
 		 */
 		@Override
 		public IExperimentAgent create(final IPopulation<? extends IAgent> pop, final int index) {
-			return original.create(pop, index);
-		}
-
-		/**
-		 * Method getName()
-		 *
-		 * @see msi.gaml.interfaces.INamed#getName()
-		 */
-		@Override
-		public String getName() { return name; }
-
-		/**
-		 * Method setName()
-		 *
-		 * @see msi.gaml.interfaces.INamed#setName(java.lang.String)
-		 */
-		@Override
-		public void setName(final String newName) {}
-
-		/**
-		 * Method serialize()
-		 *
-		 * @see msi.gaml.interfaces.IGamlable#serializeToGaml(boolean)
-		 */
-		@Override
-		public String serializeToGaml(final boolean includingBuiltIn) {
-			return getName();
+			return delegate.create(pop, index);
 		}
 
 		/**
@@ -96,18 +61,7 @@ public interface IExperimentAgentCreator {
 		 * @see msi.gaml.interfaces.IGamlDescription#getTitle()
 		 */
 		@Override
-		public String getTitle() { return "Experiment Agent supported by " + getName() + " technology"; }
-
-		/**
-		 * Method getDefiningPlugin()
-		 *
-		 * @see msi.gaml.interfaces.IGamlDescription#getDefiningPlugin()
-		 */
-		@Override
-		public String getDefiningPlugin() { return plugin; }
-
-		@Override
-		public Class<? extends IExperimentAgent> getJavaBase() { return clazz; }
+		public String getTitle() { return "Experiment type " + getName(); }
 
 	}
 
@@ -121,12 +75,5 @@ public interface IExperimentAgentCreator {
 	 * @return the i experiment agent
 	 */
 	IExperimentAgent create(IPopulation<? extends IAgent> pop, int index);
-
-	/**
-	 * Gets the java base.
-	 *
-	 * @return the java base
-	 */
-	default Class<? extends IExperimentAgent> getJavaBase() { return ExperimentAgent.class; }
 
 }

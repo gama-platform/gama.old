@@ -3,20 +3,23 @@
  * IDocManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
-import msi.gama.util.ByteArrayZipper;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.interfaces.IGamlDescription;
 
@@ -35,6 +38,47 @@ public interface IDocManager {
 	record DocumentationNode(String title, byte[] doc) implements IGamlDescription {
 
 		/**
+		 * Compress.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param data
+		 *            the data
+		 * @return the byte[]
+		 * @throws IOException
+		 *             Signals that an I/O exception has occurred.
+		 * @date 3 janv. 2024
+		 */
+		public static byte[] compress(final String data) {
+			try (ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+					GZIPOutputStream gzip = new GZIPOutputStream(bos)) {
+				gzip.write(data.getBytes());
+				return bos.toByteArray();
+			} catch (IOException e) {
+				return null;
+			}
+		}
+
+		/**
+		 * Decompress.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @param data
+		 *            the data
+		 * @return the string
+		 * @throws IOException
+		 *             Signals that an I/O exception has occurred.
+		 * @date 3 janv. 2024
+		 */
+		public static String decompress(final byte[] data) {
+			try (ByteArrayInputStream bos = new ByteArrayInputStream(data);
+					GZIPInputStream gzip = new GZIPInputStream(bos)) {
+				return new String(gzip.readAllBytes());
+			} catch (IOException e) {
+				return null;
+			}
+		}
+
+		/**
 		 * Instantiates a new documentation node.
 		 *
 		 * @param desc
@@ -43,7 +87,7 @@ public interface IDocManager {
 		 *             Signals that an I/O exception has occurred.
 		 */
 		public DocumentationNode(final IGamlDescription desc) {
-			this(desc.getTitle(), ByteArrayZipper.zip(desc.getDocumentation().toString().getBytes()));
+			this(desc.getTitle(), compress(desc.getDocumentation().toString()));
 		}
 
 		/**
@@ -59,7 +103,7 @@ public interface IDocManager {
 
 				@Override
 				public String get() {
-					return new String(ByteArrayZipper.unzip(doc));
+					return decompress(doc);
 				}
 
 			};

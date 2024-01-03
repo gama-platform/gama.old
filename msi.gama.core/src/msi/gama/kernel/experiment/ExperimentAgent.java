@@ -3,7 +3,7 @@
  * ExperimentAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -151,9 +151,7 @@ import ummisco.gama.dev.utils.DEBUG;
 						comment = "Always terminated with a trailing separator")) })
 @experiment (
 		value = IKeyword.GUI_)
-@doc ("An experiment is a declaration of the way to conduct simulations on a model. Any experiment attached to a model is a species (introduced by the keyword 'experiment' which directly or indirectly inherits from an abstract species called 'experiment' itself. This abstract species (sub-species of 'agent') defines several attributes and actions that can then be used in any experiment."
-		+ "\n"
-		+ " 'experiment' defines several attributes, which, in addition to the attributes inherited from agent, form the minimal set of knowledge any experiment will have access to.")
+@doc ("GUI experiments are experiments used to visualise and interact with simulations through the regular user interface of GAMA. They can declare, parameters, used to populate the Parameters view, outputs like displays or monitors")
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	static {

@@ -69,6 +69,9 @@ public abstract class SymbolDescription implements IDescription {
 	/** The enclosing. */
 	private IDescription enclosingDescription;
 
+	/** The model description. */
+	private ModelDescription modelDescription;
+
 	/** The origin name. */
 	protected String originName;
 
@@ -477,20 +480,12 @@ public abstract class SymbolDescription implements IDescription {
 		if (hasFacets()) { facets.dispose(); }
 		facets = null;
 		enclosingDescription = null;
+		modelDescription = null;
 		setType(null);
 	}
 
 	@Override
-	public ModelDescription getModelDescription() {
-		IDescription desc = getEnclosingDescription();
-		if (desc == null) return null;
-		final ModelDescription result = desc.getModelDescription();
-		if (result != null) {
-			if (this.isSynthetic()) return result;
-			if (result.isBuiltIn() && !this.isBuiltIn()) return null;
-		}
-		return result;
-	}
+	public ModelDescription getModelDescription() { return modelDescription; }
 
 	// To add children from outside
 	/**
@@ -520,7 +515,12 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void setEnclosingDescription(final IDescription desc) { enclosingDescription = desc; }
+	public void setEnclosingDescription(final IDescription desc) {
+		enclosingDescription = desc;
+		if (enclosingDescription == null) return;
+		modelDescription = enclosingDescription.getModelDescription();
+		if (modelDescription != null && modelDescription.isBuiltIn() && !this.isBuiltIn()) { modelDescription = null; }
+	}
 
 	@Override
 	public EObject getUnderlyingElement(final Object facet, final boolean returnFacet) {
@@ -594,7 +594,7 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public IVarDescriptionProvider getDescriptionDeclaringVar(final String aName) {
 		IDescription enc = getEnclosingDescription();
-		return hasAttribute(aName) ? this : enc == null ? null : enc.getDescriptionDeclaringVar(aName);
+		return enc == null ? null : enc.getDescriptionDeclaringVar(aName);
 	}
 
 	@Override

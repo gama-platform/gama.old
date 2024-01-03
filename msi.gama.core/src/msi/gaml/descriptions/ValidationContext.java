@@ -3,7 +3,7 @@
  * ValidationContext.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -12,14 +12,20 @@ package msi.gaml.descriptions;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.preferences.GamaPreferences;
@@ -54,7 +60,7 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	final URI resourceURI;
 
 	/** The imported errors. */
-	final Collector.AsList<GamlCompilationError> importedErrors = Collector.getList();
+	Set<GamlCompilationError> importedErrors;
 
 	/** The no experiment. */
 	private boolean noWarning, noInfo, hasSyntaxErrors, noExperiment;
@@ -90,6 +96,7 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 		final boolean sameResource = uri.equals(resourceURI);
 		if (sameResource) return super.add(error);
 		if (error.isError()) {
+			if (importedErrors == null) { importedErrors = new LinkedHashSet<>(); }
 			importedErrors.add(error);
 			return true;
 		}
@@ -139,7 +146,8 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 * @return true, if successful
 	 */
 	public boolean hasInternalErrors() {
-		return !isEmpty() && StreamEx.of(items()).filter(IS_ERROR).count() > 0;
+		return Iterables.any(items(), IS_ERROR);
+		// return !isEmpty() && StreamEx.of(items()).filter(IS_ERROR).count() > 0;
 	}
 
 	/**
@@ -148,7 +156,7 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 * @return true, if successful
 	 */
 	public boolean hasImportedErrors() {
-		return !importedErrors.isEmpty();
+		return importedErrors != null && !importedErrors.isEmpty();
 	}
 
 	/**
@@ -156,33 +164,44 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 *
 	 * @return the internal errors
 	 */
-	public List<GamlCompilationError> getInternalErrors() { return StreamEx.of(items()).filter(IS_ERROR).toList(); }
+	public Iterable<GamlCompilationError> getInternalErrors() {
+		return Iterables.filter(items(), IS_ERROR);
+		// return StreamEx.of(items()).filter(IS_ERROR).toList();
+	}
 
 	/**
 	 * Gets the imported errors.
 	 *
 	 * @return the imported errors
 	 */
-	public Collection<GamlCompilationError> getImportedErrors() { return importedErrors.items(); }
+	public Collection<GamlCompilationError> getImportedErrors() {
+		return importedErrors == null ? Collections.EMPTY_LIST : importedErrors;
+	}
 
 	/**
 	 * Gets the warnings.
 	 *
 	 * @return the warnings
 	 */
-	public Iterable<GamlCompilationError> getWarnings() { return StreamEx.of(items()).filter(IS_WARNING).toList(); }
+	public Iterable<GamlCompilationError> getWarnings() {
+		return Iterables.filter(items(), IS_WARNING);
+		// return StreamEx.of(items()).filter(IS_WARNING).toList();
+	}
 
 	/**
 	 * Gets the infos.
 	 *
 	 * @return the infos
 	 */
-	public Iterable<GamlCompilationError> getInfos() { return StreamEx.of(items()).filter(IS_INFO).toList(); }
+	public Iterable<GamlCompilationError> getInfos() {
+		return Iterables.filter(items(), IS_INFO);
+		// return StreamEx.of(items()).filter(IS_INFO).toList();
+	}
 
 	@Override
 	public void clear() {
 		super.clear();
-		Collector.release(importedErrors);
+		importedErrors.clear();
 		hasSyntaxErrors = false;
 	}
 
@@ -193,7 +212,8 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 */
 	@Override
 	public Iterator<GamlCompilationError> iterator() {
-		return StreamEx.of(items()).append(getImportedErrors()).limit(MAX_SIZE).toList().iterator();
+		return Iterables.limit(Iterables.concat(items(), getImportedErrors()), MAX_SIZE).iterator();
+		// return StreamEx.of(items()).append(getImportedErrors()).limit(MAX_SIZE).toList().iterator();
 	}
 
 	/**
@@ -202,8 +222,13 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 * @return the imported errors as strings
 	 */
 	public Map<String, URI> getImportedErrorsAsStrings() {
-		return StreamEx.of(importedErrors).toMap(e -> e.toString() + " (" + URI.decode(e.getURI().lastSegment()) + ")",
-				GamlCompilationError::getURI, (t, u) -> t);
+		if (importedErrors == null) return Collections.EMPTY_MAP;
+		Map<String, URI> result = new LinkedHashMap<>();
+		importedErrors.forEach(
+				e -> result.put(e.toString() + " (in " + URI.decode(e.getURI().lastSegment()) + ")", e.getURI()));
+		return result;
+		// StreamEx.of(importedErrors).toMap(e -> e.toString() + " (" + URI.decode(e.getURI().lastSegment()) + ")",
+		// GamlCompilationError::getURI, (t, u) -> t);
 	}
 
 	/**
@@ -331,18 +356,6 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 		}
 		return true;
 	}
-
-	// /**
-	// * Invalidate.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param key
-	// * the key
-	// * @date 31 déc. 2023
-	// */
-	// public void invalidate(final URI key) {
-	// docDelegate.invalidate(key);
-	// }
 
 	/**
 	 * Should document. True by default

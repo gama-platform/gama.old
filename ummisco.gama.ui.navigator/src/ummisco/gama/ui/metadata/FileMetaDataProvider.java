@@ -3,7 +3,7 @@
  * FileMetaDataProvider.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -56,6 +56,7 @@ import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.GAML;
+import msi.gaml.operators.Strings;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.dev.utils.THREADS;
 
@@ -67,45 +68,6 @@ import ummisco.gama.dev.utils.THREADS;
  *
  */
 public class FileMetaDataProvider implements IFileMetaDataProvider {
-
-	// static Gzip GZIP = new Gzip();
-
-	// public static class Gzip {
-	//
-	// public String compress(final String data) throws IOException {
-	// if (data == null) { return null; }
-	// final ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
-	// final GZIPOutputStream gzip = new GZIPOutputStream(bos);
-	// gzip.write(data.getBytes());
-	// gzip.close();
-	// final byte[] compressed = bos.toByteArray();
-	// bos.close();
-	// final StringBuffer retString = new StringBuffer();
-	// for (final byte element : compressed) {
-	// retString.append(Integer.toHexString(0x0100 + (element & 0x00FF)).substring(1));
-	// }
-	// return retString.toString();
-	// }
-	//
-	// public String decompress(final String hex) throws IOException {
-	// final byte[] bts = new byte[hex.length() / 2];
-	// for (int i = 0; i < bts.length; i++) {
-	// bts[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
-	// }
-	// final ByteArrayInputStream bis = new ByteArrayInputStream(bts);
-	// final GZIPInputStream gis = new GZIPInputStream(bis);
-	// final BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-	// final StringBuilder sb = new StringBuilder();
-	// String line;
-	// while ((line = br.readLine()) != null) {
-	// sb.append(line);
-	// }
-	// br.close();
-	// gis.close();
-	// bis.close();
-	// return sb.toString();
-	// }
-	// }
 
 	/** The processing. */
 	private static volatile Set<Object> processing = Collections.<Object> synchronizedSet(new HashSet<>());
@@ -400,9 +362,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							case SHAPEFILE_SUPPORT_CT_ID:
 								data[0] = createShapeFileSupportMetaData(theFile);
 								break;
-							// BEN case GSIM_CT_ID:
-							// BEN data[0] = createSacedSimulationFileMetaData(theFile);
-							// BEN break;
 						}
 						// Last chance: we generate a generic info
 						if (data[0] == null) { data[0] = createGenericFileMetaData(theFile); }
@@ -608,10 +567,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}
 
-	// BEN private GamaSavedSimulationFile.SavedSimulationInfo createSacedSimulationFileMetaData(final IFile file) {
-	// BEN return new SavedSimulationInfo(file.getLocation().toOSString(), file.getModificationStamp());
-	// BEN }
-
 	/**
 	 * Gets the content type id.
 	 *
@@ -683,7 +638,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			try {
 				workspace.getRoot().accept(resource -> {
 					if (resource.isAccessible()) {
-						resource.setSessionProperty(CACHE_KEY, resource.getPersistentProperty(CACHE_KEY));
+						String toRead = resource.getPersistentProperty(CACHE_KEY);
+						if (toRead != null) { resource.setSessionProperty(CACHE_KEY, Strings.unzip(null, toRead)); }
 					}
 					return true;
 				});
@@ -726,12 +682,14 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 							if (resource.isAccessible()) {
 								toSave = (String) resource.getSessionProperty(CACHE_KEY);
-								resource.setPersistentProperty(CACHE_KEY, toSave);
+								if (toSave != null) {
+									resource.setPersistentProperty(CACHE_KEY, Strings.zip(null, toSave));
+								}
 							}
 							return true;
 						} catch (final Exception e) {
-							DEBUG.ERR("Error for resource " + resource.getName());
-							if (toSave != null) { DEBUG.ERR("Trying to save " + toSave.length() + " bytes "); }
+							DEBUG.ERR("Error when saving metadata of " + resource.getName() + ": " + e.getMessage());
+							if (toSave != null) { DEBUG.ERR("Trying to save " + toSave); }
 							return true;
 						}
 

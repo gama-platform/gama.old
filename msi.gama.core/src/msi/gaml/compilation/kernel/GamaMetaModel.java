@@ -3,7 +3,7 @@
  * GamaMetaModel.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -24,6 +24,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import msi.gama.common.interfaces.IExperimentAgentCreator;
+import msi.gama.common.interfaces.IExperimentAgentCreator.ExperimentAgentDescription;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentAgent;
@@ -311,8 +312,21 @@ public class GamaMetaModel {
 	 */
 	public Class<? extends IExperimentAgent> getJavaBaseFor(final String type) {
 		IExperimentAgentCreator creator = experimentCreators.get(type);
-		if (creator == null) return ExperimentAgent.class;
-		return creator.getJavaBase();
+		if (!(creator instanceof ExperimentAgentDescription desc)) return ExperimentAgent.class;
+		return (Class<? extends IExperimentAgent>) desc.getJavaBase();
+	}
+
+	/**
+	 * Gets the experiment creator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param type
+	 *            the type
+	 * @return the experiment creator
+	 * @date 2 janv. 2024
+	 */
+	public IExperimentAgentCreator getExperimentCreator(final String type) {
+		return experimentCreators.get(type);
 	}
 
 }

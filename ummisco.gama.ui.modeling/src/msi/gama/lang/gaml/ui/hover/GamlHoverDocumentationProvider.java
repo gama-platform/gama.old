@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDocManager;
+import msi.gama.common.interfaces.IExperimentAgentCreator.ExperimentAgentDescription;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
@@ -33,6 +34,7 @@ import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Do;
+import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -48,6 +50,7 @@ import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.GAML;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SymbolProto;
@@ -169,7 +172,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 				final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 				if (data == null) {
 					final String ext = file.getFileExtension();
-					doc = "This workspace " + ext + " file has no metadata associated with it";
+					doc = "This " + ext + " file has no metadata associated with it";
 				} else {
 					String s = data.getDocumentation();
 					if (s != null) { doc = s.replace(Strings.LN, "<br/>"); }
@@ -215,11 +218,52 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 				@Override
 				public Doc getDocumentation() {
 					return new ConstantDoc(name
-							+ " is not a registered display type. Please visit https://gama-platform.org to get more information");
+							+ " is not a registered display type. Please visit <a href=\"https://gama-platform.org/wiki/Displays\"> https://gama-platform.org/wiki/Displays</a> for more information.");
 				}
 
 			};
 		}
+		if (s instanceof S_Experiment) {
+			ExperimentAgentDescription ead =
+					(ExperimentAgentDescription) GamaMetaModel.INSTANCE.getExperimentCreator(name);
+			if (ead != null) return ead;
+			return new IGamlDescription() {
+
+				@Override
+				public String getTitle() { return "Unknown type of experiment " + name; }
+
+				@Override
+				public Doc getDocumentation() {
+					return new ConstantDoc(name
+							+ " is not a registered experiment type. Please visit <a=href=\"https://gama-platform.org/wiki/DefiningGUIExperiment#types-of-experiments\">https://gama-platform.org/wiki/DefiningGUIExperiment#types-of-experiments</a> for more information.");
+				}
+
+			};
+		}
+		if (IKeyword.METHOD.equals(name)) return new IGamlDescription() {
+
+			@Override
+			public String getTitle() { return "Definition of the exploration method to use in this experiment "; }
+
+			@Override
+			public Doc getDocumentation() {
+				return new ConstantDoc(
+						"The facets that can be defined to specify the exploration are specific to each method. Please visit <a href=\"https://gama-platform.org/wiki/ExplorationMethods\">https://gama-platform.org/wiki/ExplorationMethods</a> for more information.");
+			}
+
+		};
+		if (IKeyword.CHART.equals(EGaml.getInstance().getKeyOf(s))) return new IGamlDescription() {
+
+			@Override
+			public String getTitle() { return "The type (" + name + ") of charts to draw"; }
+
+			@Override
+			public Doc getDocumentation() {
+				return new ConstantDoc(
+						"Several types of charts are available (pie, series, histogram, xy...). Please visit <a href=\"https://gama-platform.org/wiki/DefiningCharts\">https://gama-platform.org/wiki/DefiningCharts </a> for more information.");
+			}
+
+		};
 		return null;
 	}
 
@@ -246,7 +290,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 			} else {
 				key = IKeyword.GRID_LAYER;
 			}
-		}
+		} else if (cont instanceof S_Definition sd && IKeyword.METHOD.equals(key)) { key = sd.getName(); }
 		final SymbolProto p = DescriptionFactory.getProto(key, null);
 		if (p != null) return p.getPossibleFacets().get(facetName);
 		return null;
@@ -316,6 +360,10 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 			SkillDescription skill = GamaSkillRegistry.INSTANCE.get(name);
 			if (skill != null) return skill;
 		}
+		// case of style: in chart
+		if (var.eContainer() instanceof Facet f && IKeyword.STYLE.equals(EGaml.getInstance().getKeyOf(f))
+				&& f.eContainer() instanceof Statement s && IKeyword.CHART.equals(EGaml.getInstance().getKeyOf(s)))
+			return getDoc(f);
 		return null;
 	}
 

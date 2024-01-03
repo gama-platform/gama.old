@@ -3,7 +3,7 @@
  * ExperimentPlan.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -88,7 +88,10 @@ import msi.gaml.variables.IVariable;
 		kind = ISymbolKind.EXPERIMENT,
 		with_sequence = true,
 		concept = { IConcept.EXPERIMENT })
-@doc ("Declaration of a particular type of agent that can manage simulations. If the experiment directly imports a model using the 'model:' facet, this facet *must* be the first one after the name of the experiment")
+@doc ("Declaration of a particular type of agent that can manage simulations. If the experiment directly imports a model using the 'model:' facet, this facet *must* be the first one after the name of the experiment. "
+		+ "Any experiment attached to a model is a species (introduced by the keyword 'experiment' which directly or indirectly inherits from an abstract species called 'experiment' itself. This abstract species (sub-species of 'agent') defines several attributes and actions that can then be used in any experiment. "
+		+ "Experiments also define several attributes, which, in addition to the attributes inherited from agent, form the minimal set of knowledge any experiment will have access to.")
+
 @facets (
 		value = { @facet (
 				name = IKeyword.NAME,

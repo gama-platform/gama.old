@@ -60,7 +60,7 @@ public class TypeFieldExpression extends UnaryOperator {
 	public Doc getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
 		if (child != null) { sb.append("Defined on objects of type " + child.getGamlType().getName()); }
-		final vars annot = prototype.getSupport().getAnnotation(vars.class);
+		final vars annot = prototype.getJavaBase().getAnnotation(vars.class);
 		if (annot != null) {
 			final variable[] allVars = annot.value();
 			for (final variable v : allVars) {

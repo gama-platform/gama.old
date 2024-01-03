@@ -10,7 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
+import java.net.URL;
+
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
@@ -18,6 +22,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.xtext.Keyword;
@@ -27,10 +32,13 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.EObjectAtOffsetHelper;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 import org.eclipse.xtext.ui.editor.hover.DispatchingEObjectTextHover;
 import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.hover.html.IXtextBrowserInformationControl;
 import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControl;
+import org.eclipse.xtext.ui.editor.hover.html.XtextBrowserInformationControlInput;
+import org.eclipse.xtext.ui.editor.hover.html.XtextElementLinks;
 import org.eclipse.xtext.util.ITextRegion;
 import org.eclipse.xtext.util.Pair;
 import org.eclipse.xtext.util.Tuples;
@@ -43,6 +51,7 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.ui.hover.GamlHoverDocumentationProvider.Result;
 import msi.gaml.interfaces.IGamlDescription;
+import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -183,6 +192,69 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	public IInformationControlCreator getHoverControlCreator() {
 		if (creator == null) { creator = new GamlHoverControlCreator(getInformationPresenterControlCreator()); }
 		return creator;
+	}
+
+	/**
+	 * @since 2.3
+	 */
+	@Override
+	protected void addLinkListener(final IXtextBrowserInformationControl control) {
+		control.addLocationListener(getElementLinks().createLocationListener(new XtextElementLinks.ILinkHandler() {
+
+			/** The uri editor opener. */
+			@Inject private IURIEditorOpener uriEditorOpener;
+
+			@Override
+			public void handleXtextdocViewLink(final URI linkTarget) {
+				// TODO: enable when XtextDoc view available
+				// control.notifyDelayedInputChange(null);
+				// control.setVisible(false);
+				// control.dispose(); //FIXME: should have protocol to hide, rather than dispose
+				// try {
+				// JavadocView view= (JavadocView) JavaPlugin.getActivePage().showView(JavaUI.ID_JAVADOC_VIEW);
+				// view.setInput(linkTarget);
+				// } catch (PartInitException e) {
+				// JavaPlugin.log(e);
+				// }
+			}
+
+			@Override
+			public void handleInlineXtextdocLink(final URI linkTarget) {
+				XtextBrowserInformationControlInput hoverInfo = getHoverInfo(getTarget(linkTarget), null,
+						(XtextBrowserInformationControlInput) control.getInput());
+				if (control.hasDelayedInputChangeListener()) {
+					control.notifyDelayedInputChange(hoverInfo);
+				} else {
+					control.setInput(hoverInfo);
+				}
+			}
+
+			@Override
+			public void handleDeclarationLink(final URI linkTarget) {
+				control.notifyDelayedInputChange(null);
+				control.dispose(); // FIXME: should have protocol to hide, rather than dispose
+				if (uriEditorOpener != null) { uriEditorOpener.open(linkTarget, true); }
+			}
+
+			@Override
+			public boolean handleExternalLink(final URL url, final Display display) {
+				control.notifyDelayedInputChange(null);
+				control.dispose(); // FIXME: should have protocol to hide, rather than dispose
+
+				// open external links in real browser:
+				WebHelper.openPage(url.toString());
+				return true;
+			}
+
+			@Override
+			public void handleTextSet() {}
+
+			EObject getTarget(final URI uri) {
+				ResourceSet rs = ((XtextBrowserInformationControlInput) control.getInput()).getElement().eResource()
+						.getResourceSet();
+				return rs.getEObject(uri, true);
+			}
+		}));
 	}
 
 	@Override
