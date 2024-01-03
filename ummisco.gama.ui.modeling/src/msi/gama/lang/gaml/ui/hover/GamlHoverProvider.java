@@ -266,7 +266,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 					"File an issue at https://github.com/gama-platform/gama/issues to document it");
 		}
 		String title = doc.getTitle();
-		String documentation = doc.getDocumentation().get();
+		String documentation = doc.getDocumentation().toString();
 		String comment = decoratedProvider.getDocumentation(o);
 		if (Strings.isNullOrEmpty(comment)) if (o instanceof VariableRef) {
 			comment = super.getDocumentation(((VariableRef) o).getRef());

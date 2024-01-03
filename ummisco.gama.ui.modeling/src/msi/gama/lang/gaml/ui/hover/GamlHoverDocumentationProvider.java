@@ -92,17 +92,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 		 * @date 30 déc. 2023
 		 */
 		@Override
-		public Doc getDocumentation() {
-
-			return new SimpleDoc() {
-
-				@Override
-				public String get() {
-					return doc;
-				}
-
-			};
-		}
+		public Doc getDocumentation() { return new ConstantDoc(doc); }
 
 		/**
 		 * Gets the title.
@@ -275,7 +265,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 			if (!DoStatement.DO_FACETS.contains(key)) {
 				String title = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
 				IGamlDescription action = documenter.getGamlDocumentation(vr);
-				String doc = action == null ? "" : action.getDocumentation().get(key).get();
+				String doc = action == null ? "" : action.getDocumentation().get(key).toString();
 				return new Result(title, doc);
 			}
 		}
@@ -306,7 +296,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 				if (!DoStatement.DO_FACETS.contains(key)) {
 					String title = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(vr);
 					IGamlDescription action = documenter.getGamlDocumentation(vr);
-					String doc = action == null ? "" : action.getDocumentation().get(key).get();
+					String doc = action == null ? "" : action.getDocumentation().get(key).toString();
 					return new Result(title, doc);
 				}
 			} else
@@ -316,7 +306,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 				IGamlDescription species = documenter.getGamlDocumentation(sdo.getExpr());
 				if (species != null) {
 					String title = "Attribute " + key + " defined in " + species.getTitle();
-					String doc = species.getDocumentation().get(key).get();
+					String doc = species.getDocumentation().get(key).toString();
 					return new Result(title, doc);
 				}
 
@@ -335,7 +325,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 			if (!DoStatement.DO_FACETS.contains(key)) {
 				String title = "Argument " + key + " of action " + EGaml.getInstance().getNameOfRef(sdo.getExpr());
 				IGamlDescription action = documenter.getGamlDocumentation(v);
-				String doc = action == null ? "" : action.getDocumentation().get(key).get();
+				String doc = action == null ? "" : action.getDocumentation().get(key).toString();
 				return new Result(title, doc);
 			}
 		}
@@ -348,7 +338,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 				VarDefinition vd = var.getRef();
 				String title = "Argument " + vd.getName() + " of action "
 						+ EGaml.getInstance().getNameOfRef(function.getLeft());
-				String doc = description.getDocumentation().get(vd.getName()).get();
+				String doc = description.getDocumentation().get(vd.getName()).toString();
 				return new Result(title, doc);
 			}
 		}

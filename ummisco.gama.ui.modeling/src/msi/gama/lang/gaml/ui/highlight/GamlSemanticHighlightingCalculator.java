@@ -3,7 +3,7 @@
  * GamlSemanticHighlightingCalculator.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling
  * and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -57,6 +57,7 @@ import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  *
@@ -86,7 +87,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		final var root = resource.getAllContents();
 		while (root.hasNext()) { process(root.next()); }
 		done.clear();
-		highlightTasks(resource, acceptor);
+		highlightTasks(resource);
 	}
 
 	/**
@@ -97,7 +98,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	 * @param acceptor
 	 *            the acceptor
 	 */
-	protected void highlightTasks(final XtextResource resource, final IHighlightedPositionAcceptor acceptor) {
+	protected void highlightTasks(final XtextResource resource) {
 		final var tasks = taskFinder.findTasks(resource);
 		for (final Task task : tasks) { acceptor.addPosition(task.getOffset(), task.getTagLength(), TASK_ID); }
 	}
@@ -123,7 +124,11 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	 */
 	void process(final EObject object, final EClass clazz) {
 		final var id = clazz.getClassifierID();
+		if ("envelope".equals(EGaml.getInstance().getKeyOf(object))) {
 
+			DEBUG.OUT("");
+
+		}
 		switch (id) {
 			case GamlPackage.PRAGMA:
 				setStyle(object, PRAGMA_ID, ((Pragma) object).getName(), false);
@@ -272,6 +277,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	private final boolean setStyle(final EObject obj, final String s, final String text, final boolean all) {
 		if (text == null) return false;
 		if (obj != null && s != null) {
+			boolean b = true;
 			INode n = NodeModelUtils.getNode(obj);
 			if (n == null) return false;
 			for (final ILeafNode node : n.getLeafNodes()) {
@@ -279,11 +285,12 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 					final var sNode = StringUtils.toJavaString(NodeModelUtils.getTokenText(node));
 					if (equalsFacetOrString(text, sNode)) {
 						n = node;
+						b = setStyle(s, n);
 						if (!all) { break; }
 					}
 				}
 			}
-			return setStyle(s, n);
+			return b;
 		}
 		return false;
 	}

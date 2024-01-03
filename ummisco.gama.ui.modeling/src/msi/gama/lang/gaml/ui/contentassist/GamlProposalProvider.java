@@ -3,7 +3,7 @@
  * GamlProposalProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -293,7 +293,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 				final String title = " (Statement)";
 				final BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + title), null);
 				proposals.add(cp);
-				cp.setDoc(s.getDocumentation().get());
+				cp.setDoc(s.getDocumentation().toString());
 			}
 
 			for (final String t : DescriptionFactory.getVarProtoNames()) {
@@ -302,7 +302,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 				final String title = " (Declaration)";
 				final BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + title), null);
 				proposals.add(cp);
-				cp.setDoc(s.getDocumentation().get());
+				cp.setDoc(s.getDocumentation().toString());
 
 			}
 			// for ( String t : AbstractGamlAdditions.getAllSkills() ) {

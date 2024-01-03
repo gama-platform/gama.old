@@ -3,7 +3,7 @@
  * GamlIdiomsProvider.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -183,7 +183,7 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	 */
 	@SuppressWarnings ("unchecked")
 	public String document(final IGamlDescription element) {
-		return documenter.apply((T) element).get();
+		return documenter.apply((T) element).toString();
 	}
 
 	/**

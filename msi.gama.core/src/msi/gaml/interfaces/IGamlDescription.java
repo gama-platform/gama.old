@@ -3,7 +3,7 @@
  * IGamlDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -35,7 +35,8 @@ public interface IGamlDescription extends INamed {
 		 *
 		 * @return the string
 		 */
-		String get();
+		@Override
+		String toString();
 
 		/**
 		 * Gets the string value of the documentation of the sub-element corresponding to the key.
@@ -87,11 +88,6 @@ public interface IGamlDescription extends INamed {
 	record ConstantDoc(String value) implements Doc {
 
 		@Override
-		public String get() {
-			return value;
-		}
-
-		@Override
 		public String toString() {
 			return value;
 		}
@@ -138,8 +134,15 @@ public interface IGamlDescription extends INamed {
 			return this;
 		}
 
+		/**
+		 * Gets the.
+		 *
+		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+		 * @return the string
+		 * @date 3 janv. 2024
+		 */
 		@Override
-		public String get() {
+		public String toString() {
 			if (subdocs.isEmpty()) return builder.toString();
 			StringBuilder sb = new StringBuilder(builder.toString());
 			for (String header : subdocs.keySet()) {
@@ -150,11 +153,6 @@ public interface IGamlDescription extends INamed {
 				sb.append("</ul><br/>");
 			}
 			return sb.toString();
-		}
-
-		@Override
-		public String toString() {
-			return get();
 		}
 
 		/**
@@ -187,26 +185,7 @@ public interface IGamlDescription extends INamed {
 	}
 
 	/** The empty. */
-	SimpleDoc EMPTY_DOC = new SimpleDoc() {
-
-		@Override
-		public String get() {
-			return "";
-		}
-	};
-
-	/**
-	 * The Class SimpleDoc.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 31 déc. 2023
-	 */
-	public static abstract class SimpleDoc implements Doc {
-		@Override
-		public String toString() {
-			return get();
-		}
-	}
+	Doc EMPTY_DOC = new ConstantDoc("");
 
 	/**
 	 * Returns the title of this object (ie. the first line in the online documentation)
