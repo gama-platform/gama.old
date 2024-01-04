@@ -116,6 +116,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 	 * @date 30 déc. 2023
 	 */
 	IGamlDescription getDoc(final EObject o) {
+		if (o == null) return null;
 		int id = o.eClass().getClassifierID();
 		IGamlDescription result = doSwitch(id, o);
 		if (result == null) {
@@ -210,7 +211,6 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 					return new ConstantDoc(name
 							+ " is not a registered display type. Please visit <a href=\"https://gama-platform.org/wiki/Displays\"> https://gama-platform.org/wiki/Displays</a> for more information.");
 				}
-
 			};
 		}
 		if (s instanceof S_Experiment) {
