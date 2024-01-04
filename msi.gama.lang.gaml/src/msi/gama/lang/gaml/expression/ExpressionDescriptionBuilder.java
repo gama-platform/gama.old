@@ -3,7 +3,7 @@
  * ExpressionDescriptionBuilder.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,6 +11,7 @@
 package msi.gama.lang.gaml.expression;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
@@ -40,8 +41,11 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		} catch (final NumberFormatException e) {
 			ed = ConstantExpressionDescription.create(0);
 		}
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-				ed.getExpression());
+		Resource r = object.eResource();
+		if (r != null) {
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+					ed.getExpression());
+		}
 		return ed;
 	}
 
@@ -53,24 +57,33 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		} catch (final NumberFormatException e) {
 			ed = ConstantExpressionDescription.create(0d);
 		}
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-				ed.getExpression());
+		Resource r = object.eResource();
+		if (r != null) {
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+					ed.getExpression());
+		}
 		return ed;
 	}
 
 	@Override
 	public IExpressionDescription caseStringLiteral(final StringLiteral object) {
 		final IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp());
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-				ed.getExpression());
+		Resource r = object.eResource();
+		if (r != null) {
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+					ed.getExpression());
+		}
 		return ed;
 	}
 
 	@Override
 	public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
 		final IExpressionDescription ed = ConstantExpressionDescription.create(IKeyword.TRUE.equals(object.getOp()));
-		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-				ed.getExpression());
+		Resource r = object.eResource();
+		if (r != null) {
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
+					ed.getExpression());
+		}
 		return ed;
 	}
 
