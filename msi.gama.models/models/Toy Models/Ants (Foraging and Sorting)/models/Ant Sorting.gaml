@@ -37,7 +37,7 @@ global  {
 		colors_to_use <- number_of_different_colors among all_colors;
 		create ant number: ants;
 		
-		ask ant_grid{
+		ask ((density_percent / 100)* (width_and_height_of_grid * width_and_height_of_grid)) among ant_grid{
 			color <- one_of(colors_to_use);
 		}
 	} 
@@ -55,7 +55,7 @@ species ant skills: [ moving ] control: fsm {
 	//Initial state that will change to full
 	state empty initial: true {
 		transition 	to: full 
-					when: 			place.color != #black 
+					when: 	place.color != #black 
 							and ( (place.neighbors count (each.color = place.color)) < number_of_objects_around) {
 			color <- place.color ;
 			place.color <- #black ; 
@@ -83,7 +83,7 @@ species ant skills: [ moving ] control: fsm {
 }
 //Grid that will use the density to determine the color
 grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbors: 8 use_regular_agents: false frequency: 0{
-	rgb color <- #white;
+	rgb color <- #black;
 	
 	
 }
@@ -91,6 +91,8 @@ grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid n
 
 	
 experiment "Color sort" type: gui{
+	
+	
 	parameter "Number of colors:" var: number_of_different_colors category: "Environment" ;
 	parameter "Density of colors:" var: density_percent category: "Environment" ;
 	parameter "Number of similar colors in memory necessary to put down:" var: number_of_objects_in_history category: "Agents" ;
