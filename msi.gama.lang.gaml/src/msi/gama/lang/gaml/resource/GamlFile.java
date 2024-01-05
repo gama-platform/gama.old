@@ -3,7 +3,7 @@
  * GamlFile.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,10 +15,7 @@ import java.io.File;
 import org.eclipse.emf.common.util.URI;
 
 import msi.gama.common.geometry.Envelope3D;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.validation.GamlModelBuilder;
-import msi.gama.outputs.IOutput;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -80,12 +77,6 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 
 	/** The mymodel. */
 	private IModel model;
-	/**
-	 * @throws GamaRuntimeException
-	 * @param scope
-	 * @param pathName
-	 */
-	private final String experimentName;
 
 	/** The alias name. */
 	private final String aliasName;
@@ -107,40 +98,12 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 					isExecutable = false) })
 	public GamlFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
-		experimentName = "";
 		aliasName = "";
 
 	}
 
 	@Override
 	public IContainerType getGamlType() { return Types.FILE.of(Types.INT, Types.SPECIES); }
-
-	/**
-	 * Instantiates a new gaml file.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @param pathName
-	 *            the path name
-	 * @param expName
-	 *            the exp name
-	 * @param cName
-	 *            the c name
-	 * @throws GamaRuntimeException
-	 *             the gama runtime exception
-	 */
-	@doc (
-			value = "This file constructor allows to compile a gaml file and run an experiment",
-			examples = { @example (
-					value = "file f <- gaml_file(\"file.gaml\", \"my_experiment\", \"my_model\");",
-					isExecutable = false) })
-	public GamlFile(final IScope scope, final String pathName, final String expName, final String cName)
-			throws GamaRuntimeException {
-		super(scope, pathName);
-		experimentName = expName;
-		aliasName = cName;
-
-	}
 
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
@@ -222,50 +185,14 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel> {
 	}
 
 	/**
-	 * Creates the experiment.
-	 *
-	 * @param expName
-	 *            the exp name
-	 * @return the i experiment plan
-	 */
-	public IExperimentPlan createExperiment(final String expName) {
-		final IExperimentPlan exp = getModel(null).getExperiment("Experiment " + expName);
-		for (final IOutput o : exp.getOriginalSimulationOutputs()) { o.setName(o.getName() + "#" + aliasName); }
-		for (final IOutput o : exp.getExperimentOutputs()) { o.setName(o.getName() + "#" + aliasName); }
-
-		// GAMA.addGuiExperiment(exp);
-
-		return exp;
-	}
-
-	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
-	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) return;
-		setBuffer(GamaListFactory.<IModel> create(Types.SPECIES));
-		((IList) getBuffer()).add(getModel(scope).getSpecies());
-	}
+	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {}
 
 	@Override
 	public Envelope3D computeEnvelope(final IScope scope) {
 		return null;
-	}
-
-	/**
-	 * Gets the model.
-	 *
-	 * @param scope
-	 *            the scope
-	 * @return the model
-	 */
-	private IModel getModel(final IScope scope) {
-		if (model == null) {
-			model = GamlModelBuilder.getDefaultInstance().compile(getURIRelativeToWorkspace(), null);
-			if (aliasName != null && !aliasName.isBlank()) { getModel(scope).getDescription().setAlias(aliasName); }
-		}
-		return model;
 	}
 
 }

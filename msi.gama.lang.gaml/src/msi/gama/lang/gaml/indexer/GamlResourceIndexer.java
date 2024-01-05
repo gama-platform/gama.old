@@ -247,7 +247,7 @@ public class GamlResourceIndexer {
 	}
 
 	/**
-	 * Checks if is imported.
+	 * Checks if the first argument, 'imported', is imported by the second one, 'importer'
 	 *
 	 * @param imported
 	 *            the imported URI - supposed to be clean
@@ -256,7 +256,7 @@ public class GamlResourceIndexer {
 	 * @return true, if is imported
 	 */
 	public static boolean isImported(final URI imported, final URI importer) {
-		return allImportsOfProperlyEncoded(imported).containsKey(properlyEncodedURI(importer));
+		return allImportsOfProperlyEncoded(imported).containsKey(importer);
 	}
 
 	/**
@@ -285,7 +285,6 @@ public class GamlResourceIndexer {
 	 * @return the i map
 	 */
 	public static Map<URI, String> allImportsOf(final URI uri) {
-		// DEBUG.OUT("Computing all labeled imports for " + uri.lastSegment());
 		return allImportsOfProperlyEncoded(properlyEncodedURI(uri));
 	}
 

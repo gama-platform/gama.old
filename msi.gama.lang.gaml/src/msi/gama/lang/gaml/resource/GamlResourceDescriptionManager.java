@@ -3,14 +3,13 @@
  * GamlResourceDescriptionManager.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.isImported;
 import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
 
 import java.util.Collection;
@@ -75,9 +74,10 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 		if (imports.isEmpty()) return false;
 		for (Delta d : deltas) {
 			URI uri = properlyEncodedURI(d.getUri());
-			if (isImported(uri, candidateURI) || imports.containsKey(uri)) return true;
+			if (/* isImported(uri, candidateURI) || */ imports.containsKey(uri)) return true;
 		}
-		return super.isAffected(deltas, candidate, context);
+		return false;
+		// return super.isAffected(deltas, candidate, context);
 	}
 
 	@Override

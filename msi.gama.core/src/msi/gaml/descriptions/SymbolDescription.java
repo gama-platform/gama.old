@@ -770,7 +770,7 @@ public abstract class SymbolDescription implements IDescription {
 			}
 		}
 
-		// We then validate its facets
+		// We then validate its facets and children
 		if (!validateFacets() || !validateChildren()) return null;
 		if (proto.getDeprecated() != null) {
 			warning("'" + getKeyword() + "' is deprecated. " + proto.getDeprecated(), IGamlIssue.DEPRECATED);

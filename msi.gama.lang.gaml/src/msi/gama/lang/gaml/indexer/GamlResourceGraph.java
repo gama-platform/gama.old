@@ -3,27 +3,28 @@
  * GamlResourceGraph.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.indexer;
 
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.newHashSet;
+
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.emf.common.util.URI;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultGraphType;
 import org.jgrapht.graph.EdgeSetFactory;
-import org.jgrapht.graph.FastLookupGraphSpecificsStrategy;
+import org.jgrapht.opt.graph.fastutil.FastutilFastLookupGSS;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import msi.gama.util.GamaMapFactory;
@@ -47,16 +48,21 @@ public class GamlResourceGraph {
 		 * Instantiates a new graph.
 		 */
 		public Imports() {
-			super(null, null,
-					new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
-							.weighted(false).allowCycles(true).build(),
-					new FastLookupGraphSpecificsStrategy<URI, LabeledEdge>() {
+			super(null, null, new DefaultGraphType.Builder().directed().allowMultipleEdges(false).allowSelfLoops(false)
+					.weighted(false).allowCycles(true).build(), new FastutilFastLookupGSS<URI, LabeledEdge>() {
 						@Override
 						public EdgeSetFactory<URI, LabeledEdge> getEdgeSetFactory() {
-							// return vertex -> new HashSet<>(2, 1f);
-							return vertex -> new ConcurrentSkipListSet<>();
+							return vertex -> new CopyOnWriteArraySet<>();
 						}
 					});
+		}
+
+		@Override
+		public boolean addEdge(final URI sourceVertex, final URI targetVertex, final LabeledEdge e) {
+			addVertex(sourceVertex);
+			addVertex(targetVertex);
+			removeEdge(sourceVertex, targetVertex);
+			return super.addEdge(sourceVertex, targetVertex, e);
 		}
 
 	}
@@ -122,12 +128,9 @@ public class GamlResourceGraph {
 	 */
 	public Set<URI> predecessorsOf(final URI uri) {
 		if (!imports.containsVertex(uri)) return Collections.EMPTY_SET;
-		Set<URI> successors = null;
-		Iterable<LabeledEdge> incoming = imports.iterables().incomingEdgesOf(uri);
-		if (Iterables.isEmpty(incoming)) return Collections.EMPTY_SET;
-		successors = new HashSet<>();
-		for (LabeledEdge e : incoming) { successors.add(Graphs.getOppositeVertex(imports, e, uri)); }
-		return successors;
+		Set<LabeledEdge> incoming = imports.incomingEdgesOf(uri);
+		if (incoming.isEmpty()) return Collections.EMPTY_SET;
+		return newHashSet(transform(incoming, e -> Graphs.getOppositeVertex(imports, e, uri)));
 	}
 
 	/**
@@ -139,12 +142,9 @@ public class GamlResourceGraph {
 	 */
 	public Set<URI> successorsOf(final URI uri) {
 		if (!imports.containsVertex(uri)) return Collections.EMPTY_SET;
-		Set<URI> successors = null;
-		Iterable<LabeledEdge> outgoing = imports.iterables().outgoingEdgesOf(uri);
-		if (Iterables.isEmpty(outgoing)) return Collections.EMPTY_SET;
-		successors = new HashSet<>();
-		for (LabeledEdge e : outgoing) { successors.add(Graphs.getOppositeVertex(imports, e, uri)); }
-		return successors;
+		Set<LabeledEdge> outgoing = imports.outgoingEdgesOf(uri);
+		if (outgoing.isEmpty()) return Collections.EMPTY_SET;
+		return newHashSet(transform(outgoing, e -> Graphs.getOppositeVertex(imports, e, uri)));
 	}
 
 	/**
@@ -158,9 +158,6 @@ public class GamlResourceGraph {
 	 *            the label
 	 */
 	public void addEdge(final URI from, final URI to, final String label) {
-		imports.addVertex(from);
-		imports.addVertex(to);
-		imports.removeEdge(from, to);
 		imports.addEdge(from, to, new LabeledEdge(label, to));
 	}
 

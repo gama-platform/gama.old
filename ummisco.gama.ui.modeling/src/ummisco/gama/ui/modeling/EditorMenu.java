@@ -12,6 +12,7 @@ package ummisco.gama.ui.modeling;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,8 +45,8 @@ import msi.gama.lang.gaml.ui.reference.ColorReferenceMenu;
 import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.lang.gaml.ui.reference.TemplateReferenceMenu;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.Collector;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.access.ModelsFinder;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaIcon;
@@ -56,6 +57,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * The Class EditorMenu.
  */
 public class EditorMenu extends ContributionItem implements IWorkbenchContribution {
+
+	static {
+		DEBUG.ON();
+	}
 
 	@Override
 	public void initialize(final IServiceLocator serviceLocator) {}
@@ -245,7 +250,7 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 			return parentMenu;
 		}
 		for (final URI uri : importers) {
-			final MenuItem modelItem = new MenuItem(parentMenu, SWT.CASCADE);
+			final MenuItem modelItem = new MenuItem(parentMenu, SWT.PUSH);
 			modelItem.setText(URI.decode(uri.lastSegment()));
 			modelItem.setImage(GamaIcon.named(IGamaIcons.FILE_ICON).image());
 			modelItem.setData("uri", uri);
@@ -262,16 +267,17 @@ public class EditorMenu extends ContributionItem implements IWorkbenchContributi
 	 * @return the importers
 	 */
 	private static Set<URI> getImporters(final GamlEditor editor) {
-		try (final Collector.AsOrderedSet<URI> map = Collector.getOrderedSet()) {
-			editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+		final Set<URI> result = new HashSet<>();
+		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
-				@Override
-				public void process(final XtextResource resource) throws Exception {
-					map.addAll(GamlResourceIndexer.directImportersOf(((GamlResource) resource).getURI()));
-				}
-			});
-			return map.items();
-		}
+			@Override
+			public void process(final XtextResource resource) throws Exception {
+				Set<URI> uris = GamlResourceIndexer.directImportersOf(((GamlResource) resource).getURI());
+				DEBUG.OUT("Importers of " + resource.getURI().lastSegment() + ": " + uris);
+				result.addAll(uris);
+			}
+		});
+		return result;
 	}
 
 	/**

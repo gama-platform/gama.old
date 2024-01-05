@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -41,6 +40,48 @@ import ummisco.gama.dev.utils.DEBUG;
  * @author drogoul
  * @since 23 fevr. 2013
  *
+ */
+
+/**
+ * The Class TypeDescription.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 5 janv. 2024
+ */
+
+/**
+ * The Class TypeDescription.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 5 janv. 2024
+ */
+
+/**
+ * The Class TypeDescription.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 5 janv. 2024
+ */
+
+/**
+ * The Class TypeDescription.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 5 janv. 2024
+ */
+
+/**
+ * The Class TypeDescription.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 5 janv. 2024
+ */
+
+/**
+ * The Class TypeDescription.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 5 janv. 2024
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class TypeDescription extends SymbolDescription {
@@ -435,10 +476,15 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected boolean verifyAttributeCycles() {
 		if (attributes == null || attributes.size() <= 1) return true;
 		final VariableDescription shape = attributes.get(SHAPE);
+
+		// AD Not really useful -- kept here for reference
+		// final DirectedAcyclicGraph<VariableDescription, Object> graph = new DirectedAcyclicGraph<>(null, Object::new,
+		// false, false, new FastLookupGraphSpecificsStrategy<VariableDescription, Object>());
+
 		final DirectedAcyclicGraph<VariableDescription, Object> graph = new DirectedAcyclicGraph<>(Object.class);
 		final Collection<VariableDescription> shapeDeps =
 				shape == null ? Collections.EMPTY_SET : shape.getDependencies(INIT_DEPENDENCIES_FACETS, false, true);
-		Set<VariableDescription> varSet = new LinkedHashSet<>(attributes.values());
+		Collection<VariableDescription> varSet = attributes.values();
 		for (VariableDescription var : varSet) {
 			if (shape != null && var.isSyntheticSpeciesContainer() && !add(graph, shape, var, INIT)) return false;
 			final Collection<VariableDescription> varDeps =

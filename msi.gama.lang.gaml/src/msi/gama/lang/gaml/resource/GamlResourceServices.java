@@ -384,14 +384,25 @@ public class GamlResourceServices {
 	 */
 	private static XtextResourceSet getPoolSet() {
 		if (poolSet == null) {
-			poolSet = new XtextResourceSet() {
+			// AD Synchronized necessary for Gama Server messages that necessitate the compilation of expressions
+			poolSet = new SynchronizedXtextResourceSet() {
 				{
 					setClasspathURIContext(GamlResourceServices.class);
 				}
-
 			};
 		}
 		return poolSet;
+	}
+
+	/**
+	 * Gets the resource set.
+	 *
+	 * @return the resource set
+	 */
+	static XtextResourceSet getResourceSet() {
+		// AD synchronized as a measure of precaution against parallel compilation
+		if (resourceSet == null) { resourceSet = new SynchronizedXtextResourceSet(); }
+		return resourceSet;
 	}
 
 	/**
@@ -460,16 +471,6 @@ public class GamlResourceServices {
 		finally {
 			resourceSet.eSetDeliver(wasDeliver);
 		}
-	}
-
-	/**
-	 * Gets the resource set.
-	 *
-	 * @return the resource set
-	 */
-	static XtextResourceSet getResourceSet() {
-		if (resourceSet == null) { resourceSet = new SynchronizedXtextResourceSet(); }
-		return resourceSet;
 	}
 
 }
