@@ -680,7 +680,6 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-
 		super.dispose();
 		if (isBuiltIn()) return;
 		actions = null;

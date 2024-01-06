@@ -864,17 +864,6 @@ public class GamaPreferences {
 		 */
 		public static final String OPTIMIZATIONS = "Optimizations";
 
-		/** The Constant CONSTANT_OPTIMIZATION. */
-		public static final Pref<Boolean> CONSTANT_OPTIMIZATION = create("pref_optimize_constant_expressions",
-				"Optimize constant expressions (experimental, performs a rebuild of models)", false, IType.BOOL, true)
-						.in(NAME, OPTIMIZATIONS).onChange(v -> {
-							try {
-								ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-							} catch (
-										/** The e. */
-							CoreException e) {}
-						}).hidden();
-
 		/** The Constant AT_DISTANCE_OPTIMIZATION. */
 		public static final Pref<Boolean> AT_DISTANCE_OPTIMIZATION =
 				create("pref_optimize_at_distance", "Optimize the 'at_distance' operator", true, IType.BOOL, true)
@@ -884,11 +873,6 @@ public class GamaPreferences {
 		public static final Pref<Boolean> PATH_COMPUTATION_OPTIMIZATION = create("pref_optimize_path_computation",
 				"Optimize the path computation operators and goto action (but with possible 'jump' issues)", false,
 				IType.BOOL, true).in(NAME, OPTIMIZATIONS);
-
-		/** The Constant USE_POOLING. */
-		public static final Pref<Boolean> USE_POOLING =
-				create("pref_use_pooling", "Use object pooling to reduce memory usage (still experimental)", false,
-						IType.BOOL, true).in(NAME, OPTIMIZATIONS).hidden();
 
 		/** The Constant TOLERANCE_POINTS. */
 		public static final Pref<Double> TOLERANCE_POINTS =
@@ -994,6 +978,22 @@ public class GamaPreferences {
 		public static final Pref<Boolean> QUADTREE_SYNCHRONIZATION = create("pref_synchronize_quadtree",
 				"Forces the spatial index to synchronize its operations. Useful for interactive models where the users interfere or parallel models with concurrency errors. Note that it may slow down simulations with a lot of mobile agents",
 				true, IType.BOOL, true).in(NAME, CATEGORY);
+
+		/** The Constant CONSTANT_OPTIMIZATION. */
+		public static final Pref<Boolean> CONSTANT_OPTIMIZATION = create("pref_optimize_constant_expressions",
+				"Optimize constant expressions (experimental, performs a rebuild of models)", false, IType.BOOL, true)
+						.in(NAME, CATEGORY).onChange(v -> {
+							try {
+								ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+							} catch (
+										/** The e. */
+							CoreException e) {}
+						});
+
+		/** The Constant USE_POOLING. */
+		public static final Pref<Boolean> USE_POOLING =
+				create("pref_use_pooling", "Use object pooling to reduce memory usage (still experimental)", false,
+						IType.BOOL, true).in(NAME, CATEGORY).hidden();
 
 	}
 

@@ -3,7 +3,7 @@
  * SerialisationOperators.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -92,6 +92,7 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = "to_gaml",
+			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@doc (
@@ -138,6 +139,7 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = "to_geojson",
+			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@doc (
@@ -176,6 +178,7 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = { "to_json" },
+			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@test ("to_json(1) = '1'")
@@ -208,6 +211,7 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = { "to_json" },
+			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@doc (
@@ -234,6 +238,7 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = { "serialize", "to_binary" },
+			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@doc (
@@ -260,6 +265,7 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = { "deserialize", "from_binary" },
+			can_be_const = true,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })
 	@test ("from_binary(to_binary(25+5)) = 30")
@@ -288,6 +294,7 @@ public class SerialisationOperators {
 	 */
 	@operator (
 			value = { "from_json" },
+			can_be_const = true,
 			type = ITypeProvider.DENOTED_TYPE_AT_INDEX + 2,
 			category = { IOperatorCategory.CASTING },
 			concept = { IConcept.SERIALIZE })

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * SyntacticComposedElement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * SyntacticComposedElement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -66,7 +66,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 	@Override
 	public void addChild(final ISyntacticElement e) {
 
-		if (e == null) { return; }
+		if (e == null) return;
 		if (children == null) {
 			children = new ISyntacticElement[] { e };
 		} else {
@@ -86,9 +86,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 	public void visitThisAndAllChildrenRecursively(final SyntacticVisitor visitor) {
 		visitor.visit(this);
 		if (children != null) {
-			for (final ISyntacticElement child : children) {
-				child.visitThisAndAllChildrenRecursively(visitor);
-			}
+			for (final ISyntacticElement child : children) { child.visitThisAndAllChildrenRecursively(visitor); }
 		}
 	}
 
@@ -113,11 +111,7 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 	 */
 	protected void visitAllChildren(final SyntacticVisitor visitor, final Predicate<ISyntacticElement> filter) {
 		if (children != null) {
-			for (final ISyntacticElement e : children) {
-				if (filter.test(e)) {
-					visitor.visit(e);
-				}
-			}
+			for (final ISyntacticElement e : children) { if (filter.test(e)) { visitor.visit(e); } }
 		}
 	}
 
@@ -139,11 +133,12 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 	@Override
 	public void dispose() {
 		super.dispose();
-		if (children != null) {
-			for (final ISyntacticElement e : children) {
-				e.dispose();
-			}
-		}
+		if (children != null) { for (final ISyntacticElement e : children) { e.dispose(); } }
+		clear();
+	}
+
+	@Override
+	public void clear() {
 		children = null;
 	}
 

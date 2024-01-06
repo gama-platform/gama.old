@@ -147,19 +147,15 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	 * @return the i expression
 	 */
 	public IExpression addTemp(final IDescription declaration, final String name, final IType<?> type) {
-		// TODO Should separate validation from execution, here.
-
-		if (!getMeta().hasScope() /* canHaveTemps */) {
-			if (getEnclosingDescription() == null
-					|| !(getEnclosingDescription() instanceof StatementWithChildrenDescription))
-				return null;
-
-			return ((StatementWithChildrenDescription) getEnclosingDescription()).addTemp(declaration, name, type);
-		}
+		// TODO Should separate validation from creation, here.
+		IDescription enclosing = getEnclosingDescription();
+		if (!getMeta().hasScope()) return enclosing instanceof StatementWithChildrenDescription sc
+				? sc.addTemp(declaration, name, type) : null;
 		final String kw = getKeyword();
 		final String facet = LET.equals(kw) || LOOP.equals(kw) ? NAME : RETURNS;
 		if (temps == null) { temps = new LinkedHashMap<>(); }
-		if (!MYSELF.equals(name)) {
+		boolean isMyself = MYSELF.equals(name);
+		if (!isMyself) {
 			IVarDescriptionProvider description = getDescriptionDeclaringVar(name);
 			if (description != null) {
 				if (description instanceof SpeciesDescription) {
@@ -176,24 +172,8 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			}
 		}
 
-		// if (temps.containsKey(name) && !name.equals(MYSELF)) {
-		// declaration.warning("This declaration of " + name + " shadows a previous declaration",
-		// IGamlIssue.SHADOWS_NAME, facet);
-		// }
-		// final SpeciesDescription sd = declaration.getSpeciesContext();
-		// final ModelDescription md = declaration.getModelDescription();
-		// if (sd != null && sd != md && sd.hasAttribute(name)) {
-		// declaration.warning(
-		// "This declaration of " + name + " shadows the declaration of an attribute of " + sd.getName(),
-		// IGamlIssue.SHADOWS_NAME, facet);
-		// }
-		// if (md != null && md.hasAttribute(name)) {
-		// declaration.warning("This declaration of " + name + " shadows the declaration of a global attribute",
-		// IGamlIssue.SHADOWS_NAME, facet);
-		// }
-		final IExpression result =
-				MYSELF.equals(name) ? getExpressionFactory().createVar(name, type, false, IVarExpression.MYSELF, this)
-						: getExpressionFactory().createVar(name, type, false, IVarExpression.TEMP, this);
+		final IExpression result = getExpressionFactory().createVar(name, type, false,
+				isMyself ? IVarExpression.MYSELF : IVarExpression.TEMP, this);
 		temps.put(name, (IVarExpression) result);
 		return result;
 	}

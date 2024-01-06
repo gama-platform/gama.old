@@ -3,7 +3,7 @@
  * AgentReference.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -12,6 +12,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentAgent;
@@ -22,6 +23,7 @@ import msi.gama.util.file.json.IJsonConstants;
 import msi.gama.util.file.json.Json;
 import msi.gama.util.file.json.JsonValue;
 import msi.gaml.interfaces.IJsonable;
+import one.util.streamex.StreamEx;
 
 /**
  * The Class AgentReference. A unique way to reference agents inside experiments.
@@ -62,6 +64,7 @@ public record AgentReference(String[] species, Integer[] index, String cached_re
 	 */
 	public static AgentReference of(final String ref) {
 		String[] tokens = ref.split("[\\[\\]\\.]");
+		tokens = StreamEx.of(tokens).filter(s -> !s.isEmpty()).toArray(String.class);
 		int size = tokens.length / 2;
 		String[] species = new String[size];
 		Integer[] index = new Integer[size];

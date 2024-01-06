@@ -3,7 +3,7 @@
  * ISyntacticElement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,9 +19,9 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.IDescription.IFacetVisitor;
-import msi.gaml.interfaces.INamed;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.interfaces.INamed;
 import msi.gaml.statements.Facets;
 
 /**
@@ -253,5 +253,13 @@ public interface ISyntacticElement extends INamed, IDisposable {
 	 * @return the pragmas
 	 */
 	default Map<String, List<String>> getPragmas() { return null; }
+
+	/**
+	 * Clear.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 5 janv. 2024
+	 */
+	default void clear() {}
 
 }

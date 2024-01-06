@@ -29,6 +29,8 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
+import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
@@ -59,7 +61,7 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  * @since 24 avr. 2012
  */
-public class GamlResource extends LazyLinkingResource {
+public class GamlResource extends LazyLinkingResource implements IDiagnosticConsumer {
 
 	static {
 		DEBUG.ON();
@@ -138,7 +140,7 @@ public class GamlResource extends LazyLinkingResource {
 		final ValidationContext context = getValidationContext();
 		context.shouldDocument(GamlResourceServices.isEdited(this));
 		if (resources == null) return getModelFactory().createModelDescription(project, model,
-				singleton(getSyntacticContents()), getValidationContext(), null);
+				singleton(getSyntacticContents()), context, null);
 		Iterable<ISyntacticElement> imports = resources.computeDirectImports(getSyntacticContents());
 		return getModelFactory().createModelDescription(project, model, imports, context,
 				resources.computeMicroModels(project, model, context));
@@ -286,7 +288,7 @@ public class GamlResource extends LazyLinkingResource {
 					attribute, -1, null));
 			return;
 		}
-		super.doLinking();
+		getLinker().linkModel(getParseResult().getRootASTElement(), this);
 	}
 
 	/**
@@ -312,6 +314,27 @@ public class GamlResource extends LazyLinkingResource {
 		// DEBUG.TITLE("CLEARING CACHE OF " + uri.lastSegment());
 		GamlResourceServices.getResourceDocumenter().invalidate(getURI());
 		super.clearCache();
+	}
+
+	@Override
+	public void consume(final org.eclipse.xtext.diagnostics.Diagnostic diagnostic, final Severity severity) {
+		if (isValidationDisabled()) return;
+		switch (severity) {
+			case ERROR:
+				getErrors().add(diagnostic);
+				break;
+			case WARNING:
+				getWarnings().add(diagnostic);
+				break;
+			default:
+				;
+		}
+
+	}
+
+	@Override
+	public boolean hasConsumedDiagnostics(final Severity severity) {
+		return !getErrors().isEmpty() && !getWarnings().isEmpty();
 	}
 
 }

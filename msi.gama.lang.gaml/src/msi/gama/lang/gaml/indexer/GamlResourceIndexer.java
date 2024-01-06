@@ -246,18 +246,18 @@ public class GamlResourceIndexer {
 		return !directImportersOf(r.getURI()).isEmpty();
 	}
 
-	/**
-	 * Checks if the first argument, 'imported', is imported by the second one, 'importer'
-	 *
-	 * @param imported
-	 *            the imported URI - supposed to be clean
-	 * @param importer
-	 *            the importer URI - supposed to be clean
-	 * @return true, if is imported
-	 */
-	public static boolean isImported(final URI imported, final URI importer) {
-		return allImportsOfProperlyEncoded(imported).containsKey(importer);
-	}
+	// /**
+	// * Checks if the first argument, 'imported', is imported by the second one, 'importer'
+	// *
+	// * @param imported
+	// * the imported URI - supposed to be clean
+	// * @param importer
+	// * the importer URI - supposed to be clean
+	// * @return true, if is imported
+	// */
+	// public static boolean isImported(final URI imported, final URI importer) {
+	// return allImportsOfProperlyEncoded(imported).containsKey(importer);
+	// }
 
 	/**
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#directImportersOf(org.eclipse.emf.common.util.URI)

@@ -3,7 +3,7 @@
  * UnaryOperator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -67,8 +67,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression child) {
 		final UnaryOperator u = new UnaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.External.CONSTANT_OPTIMIZATION.getValue()) return GAML.getExpressionFactory()
-				.createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
+		if (u.isConst() && GamaPreferences.Experimental.CONSTANT_OPTIMIZATION.getValue()) return GAML
+				.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
 		return u;
 	}
 

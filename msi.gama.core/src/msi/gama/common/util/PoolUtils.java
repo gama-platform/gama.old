@@ -1,12 +1,11 @@
 /*******************************************************************************************************
  *
- * PoolUtils.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * PoolUtils.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.common.util;
 
@@ -27,12 +26,12 @@ public class PoolUtils {
 
 	/** The pools. */
 	static Set<ObjectPool> POOLS = new LinkedHashSet<>();
-	
+
 	/** The pool. */
-	static public boolean POOL = GamaPreferences.External.USE_POOLING.getValue();
+	static public boolean POOL = GamaPreferences.Experimental.USE_POOLING.getValue();
 	static {
 		DEBUG.OFF();
-		GamaPreferences.External.USE_POOLING.onChange(v -> {
+		GamaPreferences.Experimental.USE_POOLING.onChange(v -> {
 			POOLS.forEach(ObjectPool::dispose);
 			POOL = v;
 		});
@@ -54,27 +53,33 @@ public class PoolUtils {
 	/**
 	 * A factory for creating Object objects.
 	 *
-	 * @param <T> the generic type
+	 * @param <T>
+	 *            the generic type
 	 */
-	public interface ObjectFactory<T> { /**
-  * Creates a new Object object.
-  *
-  * @return the t
-  */
- T createNew(); }
+	public interface ObjectFactory<T> {
+		/**
+		 * Creates a new Object object.
+		 *
+		 * @return the t
+		 */
+		T createNew();
+	}
 
 	/**
 	 * The Interface ObjectCopy.
 	 *
-	 * @param <T> the generic type
+	 * @param <T>
+	 *            the generic type
 	 */
 	public interface ObjectCopy<T> {
 
 		/**
 		 * Creates the new.
 		 *
-		 * @param copyFrom the copy from
-		 * @param copyTo the copy to
+		 * @param copyFrom
+		 *            the copy from
+		 * @param copyTo
+		 *            the copy to
 		 */
 		void createNew(T copyFrom, T copyTo);
 	}
@@ -82,49 +87,57 @@ public class PoolUtils {
 	/**
 	 * The Interface ObjectCleaner.
 	 *
-	 * @param <T> the generic type
+	 * @param <T>
+	 *            the generic type
 	 */
-	public interface ObjectCleaner<T> { /**
-  * Clean.
-  *
-  * @param object the object
-  */
- void clean(T object); }
+	public interface ObjectCleaner<T> {
+		/**
+		 * Clean.
+		 *
+		 * @param object
+		 *            the object
+		 */
+		void clean(T object);
+	}
 
 	/**
 	 * The Class ObjectPool.
 	 *
-	 * @param <T> the generic type
+	 * @param <T>
+	 *            the generic type
 	 */
 	public static class ObjectPool<T> implements IDisposable {
 
 		/** The name. */
 		private String name;
-		
+
 		/** The created. */
 		private long accessed, released, created;
-		
+
 		/** The factory. */
 		private final ObjectFactory<T> factory;
-		
+
 		/** The copy. */
 		private final ObjectCopy<T> copy;
-		
+
 		/** The cleaner. */
 		private final ObjectCleaner<T> cleaner;
-		
+
 		/** The objects. */
 		private final Queue<T> objects;
-		
+
 		/** The active. */
 		public boolean active;
 
 		/**
 		 * Instantiates a new object pool.
 		 *
-		 * @param factory the factory
-		 * @param copy the copy
-		 * @param cleaner the cleaner
+		 * @param factory
+		 *            the factory
+		 * @param copy
+		 *            the copy
+		 * @param cleaner
+		 *            the cleaner
 		 */
 		private ObjectPool(final ObjectFactory<T> factory, final ObjectCopy<T> copy, final ObjectCleaner<T> cleaner) {
 			this.factory = factory;
@@ -153,7 +166,8 @@ public class PoolUtils {
 		/**
 		 * Gets the.
 		 *
-		 * @param from the from
+		 * @param from
+		 *            the from
 		 * @return the t
 		 */
 		public T get(final T from) {
@@ -165,7 +179,8 @@ public class PoolUtils {
 		/**
 		 * Release.
 		 *
-		 * @param tt the tt
+		 * @param tt
+		 *            the tt
 		 */
 		public void release(@SuppressWarnings ("unchecked") final T... tt) {
 			if (tt == null) return;

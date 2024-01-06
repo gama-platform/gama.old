@@ -10,13 +10,11 @@
  ********************************************************************************************************/
 package msi.gama.lang.gaml.indexer;
 
-import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Sets.newHashSet;
-
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.common.util.URI;
 import org.jgrapht.Graphs;
@@ -52,7 +50,7 @@ public class GamlResourceGraph {
 					.weighted(false).allowCycles(true).build(), new FastutilFastLookupGSS<URI, LabeledEdge>() {
 						@Override
 						public EdgeSetFactory<URI, LabeledEdge> getEdgeSetFactory() {
-							return vertex -> new CopyOnWriteArraySet<>();
+							return vertex -> Collections.newSetFromMap(new ConcurrentHashMap<LabeledEdge, Boolean>());
 						}
 					});
 		}
@@ -130,7 +128,9 @@ public class GamlResourceGraph {
 		if (!imports.containsVertex(uri)) return Collections.EMPTY_SET;
 		Set<LabeledEdge> incoming = imports.incomingEdgesOf(uri);
 		if (incoming.isEmpty()) return Collections.EMPTY_SET;
-		return newHashSet(transform(incoming, e -> Graphs.getOppositeVertex(imports, e, uri)));
+		Set<URI> result = new HashSet<>();
+		for (LabeledEdge edge : incoming) { result.add(Graphs.getOppositeVertex(imports, edge, uri)); }
+		return result;
 	}
 
 	/**
@@ -144,7 +144,9 @@ public class GamlResourceGraph {
 		if (!imports.containsVertex(uri)) return Collections.EMPTY_SET;
 		Set<LabeledEdge> outgoing = imports.outgoingEdgesOf(uri);
 		if (outgoing.isEmpty()) return Collections.EMPTY_SET;
-		return newHashSet(transform(outgoing, e -> Graphs.getOppositeVertex(imports, e, uri)));
+		Set<URI> result = new HashSet<>();
+		for (LabeledEdge edge : outgoing) { result.add(Graphs.getOppositeVertex(imports, edge, uri)); }
+		return result;
 	}
 
 	/**

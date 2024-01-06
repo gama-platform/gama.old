@@ -3,7 +3,7 @@
  * GamlExpressionCompiler.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -337,7 +337,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	IType fromTypeRef(final TypeRef object) {
 		if (object == null) return null;
 		String primary = EGaml.getInstance().getKeyOf(object);
-
 		if (primary == null) {
 			primary = object.getRef().getName();
 		} else if (SyntacticFactory.SPECIES_VAR.equals(primary)) { primary = SPECIES; }
@@ -692,11 +691,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				ModelDescription md = getContext().getModelDescription();
 				if (md != null) { expr = getFactory().createAs(currentContext, expr, Types.LIST.of(md.getGamlType())); }
 			}
-			// else if (IKeyword.EXPERIMENT.equals(var) && GAMA.getExperiment() != null) {
-			// ExperimentDescription md = GAMA.getExperiment().getDescription();
-			// expr = getFactory().createAs(currentContext, expr, md.getGamlType());
-			// }
-
 			getContext().document(fieldExpr, expr);
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
 		}
@@ -1100,7 +1094,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// We nevertheless emit a warning if the operator name contains parametric type information
 			if (object.getType() != null) {
 				getContext().warning(
-						op + " is not a type name: key and contents types are not expected and will not be evaluated",
+						op + " is not a type name: parameter types are not expected and will not be evaluated",
 						IGamlIssue.UNKNOWN_ARGUMENT, object.getType());
 			}
 			return null;
@@ -1132,17 +1126,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 * @return the i expression
 	 */
 	private IExpression tryActionCall(final String op, final Function object) {
-		SpeciesDescription sd = getContext().getSpeciesContext();
-		if (sd == null) return null;
-		final boolean isSuper = getContext() instanceof StatementDescription
-				&& ((StatementDescription) getContext()).isSuperInvocation();
-		ActionDescription action = isSuper ? sd.getParent().getAction(op) : sd.getAction(op);
+		SpeciesDescription species = getContext().getSpeciesContext();
+		if (species == null) return null;
+		final boolean isSuper = getContext() instanceof StatementDescription st && st.isSuperInvocation();
+		ActionDescription action = isSuper ? species.getParent().getAction(op) : species.getAction(op);
 		if (action == null) {
 			// Not found: see #3530
-			if (sd instanceof ExperimentDescription && getContext().isIn(IKeyword.OUTPUT)) {
-				sd = sd.getModelDescription();
+			if (species instanceof ExperimentDescription && getContext().isIn(IKeyword.OUTPUT)) {
+				species = species.getModelDescription();
 			}
-			action = isSuper ? sd.getParent().getAction(op) : sd.getAction(op);
+			action = isSuper ? species.getParent().getAction(op) : species.getAction(op);
 		}
 		if (action == null) return null;
 		final EObject params = object.getRight();

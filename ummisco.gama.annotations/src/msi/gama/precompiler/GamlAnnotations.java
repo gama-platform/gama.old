@@ -3,7 +3,7 @@
  * GamlAnnotations.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -841,17 +841,13 @@ public final class GamlAnnotations {
 		 *         used inside)
 		 */
 
-		boolean iterator()
-
-		default false;
+		boolean iterator() default false;
 
 		/**
 		 * @return whether or not the operator can be evaluated as a constant if its child (resp. children) is (resp.
 		 *         are) constant.
 		 */
-		boolean can_be_const()
-
-		default false;
+		boolean can_be_const() default false;
 
 		/**
 		 * @return the type of the content if the returned value is a container. Can be directly a type in IType or one
@@ -860,9 +856,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type()
-
-		default ITypeProvider.NONE;
+		int content_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return the content type of the content if the returned value is a container of container (ex. a list of
@@ -871,9 +865,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int content_type_content_type()
-
-		default ITypeProvider.NONE;
+		int content_type_content_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return the type of the index if the returned value is a container. Can be directly a type in IType or one of
@@ -882,9 +874,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int index_type()
-
-		default ITypeProvider.NONE;
+		int index_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents. Should be an array of
@@ -902,18 +892,14 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		int type()
-
-		default ITypeProvider.NONE;
+		int type() default ITypeProvider.NONE;
 
 		/**
 		 * internal.
 		 *
 		 * @return whether this operator is for internal use only.
 		 */
-		boolean internal()
-
-		default false;
+		boolean internal() default false;
 
 		/**
 		 * Doc.
