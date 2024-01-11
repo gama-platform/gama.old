@@ -334,13 +334,10 @@ public class DefaultServerCommands {
 		ExecutionResult er = ExecutionResult.PASSED;
 		IScope newScope = agent.getScope().copy("Ask command of gama-server");
 		try {
-			newScope.push(agent);
-			er = newScope.execute(exec, agent, true, new Arguments(args));
-			// er = agent.getScope().execute(exec, agent, true, new Arguments(args));
+			er = newScope.execute(exec, agent, new Arguments(args));
 		} catch (GamaRuntimeException e) {
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, e.getMessage(), map, false);
 		} finally {
-			newScope.pop(agent);
 			GAMA.releaseScope(newScope);
 		}
 		if (!er.passed()) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
