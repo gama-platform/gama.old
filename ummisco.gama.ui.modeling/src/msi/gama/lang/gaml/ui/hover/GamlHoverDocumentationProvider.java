@@ -122,14 +122,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 		if (result == null) {
 			if (o instanceof VariableRef vr) {
 				result = specialCaseVariableRef(vr);
-			} else if (o instanceof TypeRef type) {
-				result = specialCaseTypeRef(type);
-			} else {
-				final Statement s = EGaml.getInstance().getStatement(o);
-				if (s != null && s != o && DescriptionFactory.isStatementProto(EGaml.getInstance().getKeyOf(o))) {
-					result = getDoc(s);
-				}
-			}
+			} else if (o instanceof TypeRef type) { result = specialCaseTypeRef(type); }
 		}
 		return result;
 	}
@@ -395,15 +388,18 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 	}
 
 	/**
-	 * If the type is not correctly documented
+	 * If the type is not correctly documented, it can mean it masks a statement
 	 *
 	 * @param type
 	 * @return
 	 */
 	private IGamlDescription specialCaseTypeRef(final TypeRef type) {
 		String name = EGaml.getInstance().getKeyOf(type);
-		IGamlDescription result = Types.get(name);
-		return result;
+		// Can happen with statements that "look like" var declarations and which are not treated specially in the
+		// grammar
+		if (DescriptionFactory.isStatementProto(name)) return DescriptionFactory.getStatementProto(name);
+		if (Types.hasType(name)) return Types.get(name);
+		return null;
 	}
 
 }

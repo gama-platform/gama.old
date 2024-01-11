@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlOutlineTreeProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamlOutlineTreeProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.outline;
 
@@ -50,7 +50,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 	@Override
 	public void createChildren(final IOutlineNode parentNode, final EObject stm) {
 		if (stm != null && parentNode.hasChildren()) {
-			new GamlSwitch<Object>() {
+			new GamlSwitch<>() {
 
 				@Override
 				public Object caseModel(final Model stm) {
@@ -60,9 +60,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 						for (final Statement s : EGaml.getInstance().getStatementsOf(block)) {
 							if (s instanceof S_Global) {
 								block = s.getBlock();
-								if (block != null) {
-									ownCreateChildren(parentNode, block);
-								}
+								if (block != null) { ownCreateChildren(parentNode, block); }
 							} else {
 								createNode(parentNode, s);
 							}
@@ -101,8 +99,10 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 	/**
 	 * Own create children.
 	 *
-	 * @param parentNode the parent node
-	 * @param block the block
+	 * @param parentNode
+	 *            the parent node
+	 * @param block
+	 *            the block
 	 */
 	protected void ownCreateChildren(final IOutlineNode parentNode, final Block block) {
 
@@ -113,20 +113,20 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 			for (final Statement s : EGaml.getInstance().getStatementsOf(block)) {
 				if (isAttribute(s)) {
 					if (attributesNode == null) {
-						attributesNode = new AbstractOutlineNode(parentNode, provider.convertToImageDescriptor("_attributes.png"),
-								"Attributes", false) {};
+						attributesNode = new AbstractOutlineNode(parentNode,
+								provider.convertToImageDescriptor("_attributes.png"), "Attributes", false) {};
 					}
 					createNode(attributesNode, s);
 				} else if (IKeyword.PARAMETER.equals(s.getKey())) {
 					if (parametersNode == null) {
-						parametersNode = new AbstractOutlineNode(parentNode, provider.convertToImageDescriptor("_parameter.png"),
-								"Parameters", false) {};
+						parametersNode = new AbstractOutlineNode(parentNode,
+								provider.convertToImageDescriptor("_parameter.png"), "Parameters", false) {};
 					}
 					createNode(parametersNode, s);
 				} else if (isAction(s)) {
 					if (actionsNode == null) {
-						actionsNode = new AbstractOutlineNode(parentNode, provider.convertToImageDescriptor("_action.png"),
-								"Actions", false) {};
+						actionsNode = new AbstractOutlineNode(parentNode,
+								provider.convertToImageDescriptor("_action.png"), "Actions", false) {};
 					}
 					createNode(actionsNode, s);
 
@@ -144,44 +144,45 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 	 * @return
 	 */
 	public static boolean isAttribute(final Statement s) {
-		if (!(s instanceof S_Definition)) { return false; }
+		if (!(s instanceof S_Definition)) return false;
 		final String key = EGaml.getInstance().getKeyOf(s);
-		if (IKeyword.ACTION.equals(key)) { return false; }
+		if (IKeyword.ACTION.equals(key)) return false;
 		// if (s.getBlock() != null && s.getBlock().getFunction() == null) { return false; }
-		final SymbolProto p = DescriptionFactory.getStatementProto(key, null);
-		if (p != null && p.getKind() == ISymbolKind.BATCH_METHOD) { return false; }
+		final SymbolProto p = DescriptionFactory.getStatementProto(key);
+		if (p != null && p.getKind() == ISymbolKind.BATCH_METHOD) return false;
 		return true;
 	}
 
 	/**
 	 * Checks if is action.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return true, if is action
 	 */
 	public static boolean isAction(final Statement s) {
-		if (!(s instanceof S_Definition)) { return false; }
-		if (s instanceof S_Action) { return true; }
+		if (!(s instanceof S_Definition)) return false;
+		if (s instanceof S_Action) return true;
 		final String key = EGaml.getInstance().getKeyOf(s);
-		final SymbolProto p = DescriptionFactory.getStatementProto(key, null);
-		if (p != null && p.isTopLevel()) { return false; }
-		if (s.getKey() == null) { return true; }
+		final SymbolProto p = DescriptionFactory.getStatementProto(key);
+		if (p != null && p.isTopLevel()) return false;
+		if (s.getKey() == null) return true;
 		return false;
 	}
 
 	@Override
 	protected Object getText(final Object modelElement) {
-		if (modelElement instanceof S_Global) { return null; }
+		if (modelElement instanceof S_Global) return null;
 		return super.getText(modelElement);
 	}
 
 	@Override
 	protected boolean isLeaf(final EObject s) {
-		if (s instanceof S_Experiment) {
+		if (s instanceof S_Experiment)
 			return ((S_Experiment) s).getBlock() == null || ((S_Experiment) s).getBlock().getStatements().isEmpty();
-		} else if (s instanceof S_Species) {
+		if (s instanceof S_Species)
 			return ((S_Species) s).getBlock() == null || ((S_Species) s).getBlock().getStatements().isEmpty();
-		} else if (s instanceof Model) { return ((Model) s).getBlock() == null; }
+		if (s instanceof Model) return ((Model) s).getBlock() == null;
 		return true;
 	}
 }
