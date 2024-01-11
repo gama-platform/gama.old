@@ -15,7 +15,6 @@ import java.util.Map;
 
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.types.Types;
 
 /**
  * The Class ExecutionContext.
@@ -75,7 +74,11 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void dispose() {
-		local = null;
+		if (local != null) {
+			synchronized (local) {
+				local = null;
+			}
+		}
 		outer = null;
 		scope = null;
 	}
@@ -123,9 +126,8 @@ public class ExecutionContext implements IExecutionContext {
 		final ExecutionContext r = create(scope, outer, command);
 		if (local != null) {
 			synchronized (local) {
-				// Necessary to retest local ?
-				r.local = local == null ? null : Collections.synchronizedMap(
-						GamaMapFactory.createWithoutCasting(Types.NO_TYPE, Types.NO_TYPE, local, false));
+				r.local = GamaMapFactory.createSynchronizedUnordered();
+				r.local.putAll(local);
 			}
 		}
 		return r;
