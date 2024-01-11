@@ -2,7 +2,7 @@
  *
  * GAML.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -16,6 +16,7 @@ import static msi.gaml.factories.DescriptionFactory.getStatementProto;
 import static msi.gaml.factories.DescriptionFactory.getStatementProtoNames;
 import static msi.gaml.types.Types.getBuiltInSpecies;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -124,6 +126,9 @@ public class GAML {
 
 	/** The gaml model builer. */
 	private static IGamlModelBuilder gamlModelBuilder = null;
+
+	/** The gaml text validator. */
+	private static IGamlTextValidator gamlTextValidator = null;
 
 	/**
 	 * Not null.
@@ -330,7 +335,18 @@ public class GAML {
 	 */
 	public static void registerGamlModelBuilder(final IGamlModelBuilder builder) {
 		gamlModelBuilder = builder;
+	}
 
+	/**
+	 * Register gaml text validator.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param validator
+	 *            the validator
+	 * @date 11 janv. 2024
+	 */
+	public static void registerGamlTextValidator(final IGamlTextValidator validator) {
+		gamlTextValidator = validator;
 	}
 
 	/**
@@ -522,5 +538,30 @@ public class GAML {
 	 * @date 15 oct. 2023
 	 */
 	public static IGamlModelBuilder getModelBuilder() { return gamlModelBuilder; }
+
+	/**
+	 * Validate. Based on a best guess regarding the contents provided (model, species, statements or expression).
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param entered
+	 *            the entered
+	 * @param b
+	 *            the b
+	 * @return the list
+	 * @date 11 janv. 2024
+	 */
+	public static List<String> validate(final String entered, final boolean syntaxOnly) {
+		List<GamlCompilationError> errors = new ArrayList<>();
+		if (entered.startsWith(IKeyword.MODEL)) {
+			gamlTextValidator.validateModel(entered, errors, syntaxOnly);
+		} else if (entered.startsWith(IKeyword.SPECIES) || entered.startsWith(IKeyword.GRID)) {
+			gamlTextValidator.validateSpecies(entered, errors, syntaxOnly);
+		} else if (entered.lines().count() > 1) {
+			gamlTextValidator.validateStatements(entered, errors, syntaxOnly);
+		} else {
+			gamlTextValidator.validateExpression(entered, errors, syntaxOnly);
+		}
+		return errors.stream().map(e -> e.message).toList();
+	}
 
 }
