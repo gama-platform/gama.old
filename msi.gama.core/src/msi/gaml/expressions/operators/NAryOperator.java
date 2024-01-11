@@ -12,8 +12,6 @@ package msi.gaml.expressions.operators;
 
 import java.util.Arrays;
 
-import msi.gama.common.preferences.GamaPreferences;
-import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpression;
 
@@ -32,10 +30,7 @@ public class NAryOperator extends AbstractNAryOperator {
 	 * @return the i expression
 	 */
 	public static IExpression create(final OperatorProto proto, final IExpression... child) {
-		final NAryOperator u = new NAryOperator(proto, child);
-		if (GamaPreferences.Experimental.CONSTANT_OPTIMIZATION.getValue() && u.isConst()) return GAML
-				.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
-		return u;
+		return new NAryOperator(proto, child).optimized();
 	}
 
 	/**

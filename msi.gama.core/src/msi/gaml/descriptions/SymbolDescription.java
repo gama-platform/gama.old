@@ -231,7 +231,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void setFacet(final String name, final IExpressionDescription desc) {
+	public void setFacetExprDescription(final String name, final IExpressionDescription desc) {
 		if (!hasFacets()) { facets = new Facets(); }
 		facets.put(name, desc);
 	}
@@ -239,7 +239,7 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public void setFacet(final String string, final IExpression exp) {
 		if (!hasFacets()) { facets = new Facets(); }
-		facets.put(string, exp);
+		facets.putExpression(string, exp);
 	}
 
 	@Override
@@ -468,7 +468,7 @@ public abstract class SymbolDescription implements IDescription {
 	public void setName(final String name) {
 		this.name = name;
 		if (getMeta().getPossibleFacets().containsKey(NAME)) {
-			setFacet(NAME, LabelExpressionDescription.create(name));
+			setFacetExprDescription(NAME, LabelExpressionDescription.create(name));
 		}
 	}
 
@@ -787,15 +787,17 @@ public abstract class SymbolDescription implements IDescription {
 	 * @return true, if successful
 	 */
 	private final boolean validateFacets() {
-		String kw = getKeyword();
 		// Special case for "do", which can accept (at parsing time) any facet
-		final boolean isDo = DO.equals(kw) || INVOKE.equals(kw);
+		final boolean isDo = isSet(Flag.IsInvocation);
 		final boolean isBuiltIn = isBuiltIn();
-		final Iterable<String> missingFacets = proto.getMissingMandatoryFacets(facets);
-		if (missingFacets != null && !Iterables.isEmpty(missingFacets)) {
-			error("Missing facets " + ImmutableSet.copyOf(missingFacets), IGamlIssue.MISSING_FACET,
-					getUnderlyingElement(), Iterables.getFirst(missingFacets, ""), "nil");
-			return false;
+		List<String> mandatory = proto.getMandatoryFacets();
+		if (mandatory != null) {
+			for (String facet : mandatory) {
+				if (!facets.containsKey(facet)) {
+					error("Missing facet " + facet, IGamlIssue.MISSING_FACET, getUnderlyingElement(), facet, "nil");
+					return false;
+				}
+			}
 		}
 
 		return visitFacets((facet, expr) -> {
@@ -807,11 +809,19 @@ public abstract class SymbolDescription implements IDescription {
 			if (fp.values != null) {
 				if (!processMultiValuedFacet(facet, expr, fp)) return false;
 			} else {
+				// Some expresssions might not be compiled
 				IExpression exp = compileExpression(facet, expr, fp);
 				if (exp != null && !isBuiltIn) {
-					// Some expresssions might not be compiled
 					final IType<?> actualType = exp.getGamlType();
-					if (specialCaseForPointAndDate(fp, actualType)) return true;
+					// Special case for init. Temporary solution before we can pass ITypeProvider.OWNER_TYPE to the init
+					// facet. Concerned types are point and date, which belong to "NumberVariable" and can accept nil,
+					// while int and float cannot
+					if (INIT.equals(fp.name)) {
+						IType<?> requestedType = SymbolDescription.this.getGamlType();
+						if ((Types.POINT == requestedType || Types.DATE == requestedType)
+								&& actualType == Types.NO_TYPE)
+							return true;
+					}
 					final IType<?> contentType = fp.contentType;
 					final IType<?> keyType = fp.keyType;
 					boolean compatible = verifyFacetTypesCompatibility(fp, exp, actualType, contentType, keyType);
@@ -823,26 +833,6 @@ public abstract class SymbolDescription implements IDescription {
 			return true;
 		});
 
-	}
-
-	/**
-	 * Special case for point and date.
-	 *
-	 * @param fp
-	 *            the fp
-	 * @param actualType
-	 *            the actual type
-	 */
-	private boolean specialCaseForPointAndDate(final FacetProto fp, final IType<?> actualType) {
-		// Special case for init. Temporary solution before we can pass ITypeProvider.OWNER_TYPE to the init
-		// facet. Concerned types are point and date, which belong to "NumberVariable" and can accept nil,
-		// while int and float cannot
-		if (INIT.equals(fp.name)) {
-			IType<?> requestedType = SymbolDescription.this.getGamlType();
-			if ((Types.POINT == requestedType || Types.DATE == requestedType) && actualType == Types.NO_TYPE)
-				return true;
-		}
-		return false;
 	}
 
 	/**
@@ -906,6 +896,7 @@ public abstract class SymbolDescription implements IDescription {
 	/**
 	 * Verify facet types compatibility.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @param fp
 	 *            the fp
 	 * @param exp
@@ -917,18 +908,29 @@ public abstract class SymbolDescription implements IDescription {
 	 * @param keyType
 	 *            the key type
 	 * @return true, if successful
+	 * @date 10 janv. 2024
 	 */
 	private boolean verifyFacetTypesCompatibility(final FacetProto fp, final IExpression exp, final IType<?> actualType,
 			final IType<?> contentType, final IType<?> keyType) {
 		boolean compatible = false;
-		for (final IType<?> type : fp.types) {
-			IType<?> requestedType1 = type;
-			if (requestedType1.isContainer()) { requestedType1 = GamaType.from(requestedType1, keyType, contentType); }
-			compatible = compatible || actualType.equals(requestedType1) || requestedType1.id() == IType.NONE
-					|| actualType.id() != IType.NONE && actualType.isTranslatableInto(requestedType1)
-					|| Types.isEmptyContainerCase(requestedType1, exp);
+		for (final IType<?> definedType : fp.types) {
+			if (definedType == Types.NO_TYPE) return true;
+			boolean isNone = actualType == Types.NO_TYPE;
+
+			if (definedType.isContainer()) {
+				compatible = actualType.equals(definedType) && actualType.getKeyType().equals(keyType)
+						&& actualType.getContentType().equals(contentType)
+						|| !isNone && actualType.isTranslatableInto(definedType)
+								&& actualType.getKeyType().isTranslatableInto(keyType)
+								&& actualType.getContentType().isTranslatableInto(contentType);
+			} else {
+				compatible = actualType.equals(definedType) || !isNone && actualType.isTranslatableInto(definedType);
+
+			}
+			compatible |= Types.isEmptyContainerCase(definedType, exp);
 			if (compatible) { break; }
 		}
+
 		return compatible;
 	}
 
@@ -1100,5 +1102,8 @@ public abstract class SymbolDescription implements IDescription {
 	 *            the new type
 	 */
 	private void setType(final IType<?> type) { this.type = type; }
+
+	@Override
+	public boolean isInvocation() { return isSet(Flag.IsInvocation); }
 
 }

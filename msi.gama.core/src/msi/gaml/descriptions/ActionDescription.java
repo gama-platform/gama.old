@@ -3,7 +3,7 @@
  * ActionDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -102,13 +102,27 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		final List<String> allArgs = getArgNames();
 		// If the names were not known at the time of the creation of the
 		// caller, only the order
-		if ((DO.equals(caller.getKeyword()) || INVOKE.equals(caller.getKeyword())) && names.containsKey("0")) {
-			replaceNumberedArgs(names, allArgs);
-		}
+		if (caller.isInvocation() && names.containsKey("0")) { replaceNumberedArgs(names, allArgs); }
 
 		// We compute the list of mandatory args
-
-		if (formalArgs != null && !verifyMandatoryArgs(caller, names, formalArgs)) return false;
+		if (formalArgs != null) {
+			for (final IDescription c : formalArgs) {
+				final String n = c.getName();
+				if (c.hasFacet(DEFAULT)) {
+					// AD: we compile the default (which is, otherwise, not
+					// computed before validation
+					c.getFacet(DEFAULT).compile(this);
+					continue;
+				}
+				if (names.containsKey(n)) { continue; }
+				if (c.hasFacet(OPTIONAL) && c.getFacet(OPTIONAL).equalsString(FALSE) || !c.hasFacet(OPTIONAL)) {
+					caller.error(
+							"Missing argument " + n + " in call to " + getName() + ". Arguments passed are : " + names,
+							IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(), n);
+					return false;
+				}
+			}
+		}
 
 		return names.forEachFacet((s, e) -> {
 			// A null value indicates a previous compilation error in the
@@ -142,37 +156,6 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			}
 			return false;
 		});
-	}
-
-	/**
-	 * Verify mandatory args.
-	 *
-	 * @param caller
-	 *            the caller
-	 * @param names
-	 *            the names
-	 * @param formalArgs
-	 *            the formal args
-	 * @return true, if successful
-	 */
-	private boolean verifyMandatoryArgs(final IDescription caller, final Arguments names,
-			final Iterable<IDescription> formalArgs) {
-		for (final IDescription c : formalArgs) {
-			final String n = c.getName();
-			if (c.hasFacet(DEFAULT)) {
-				// AD: we compile the default (which is, otherwise, not
-				// computed before validation
-				c.getFacet(DEFAULT).compile(this);
-				continue;
-			}
-			if ((c.hasFacet(OPTIONAL) && c.getFacet(OPTIONAL).equalsString(FALSE) || !c.hasFacet(OPTIONAL))
-					&& !names.containsKey(n)) {
-				caller.error("Missing argument " + n + " in call to " + getName() + ". Arguments passed are : " + names,
-						IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(), n);
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -216,7 +199,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			final IDescription superDesc = getEnclosingDescription();
 			final IExpressionDescription ed = sd.getFacet(VALUE, DEFAULT);
 			if (ed != null) { e = ed.compile(superDesc); }
-			ca.put(the_name, e);
+			ca.putExpression(the_name, e);
 		}
 		return ca;
 
@@ -229,13 +212,12 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		if (getArgNames().size() > 0) {
 			getFormalArgs().forEach(arg -> {
 				final StringBuilder sb1 = new StringBuilder(100);
-				String name = arg.getName();
 				sb1.append(arg.getGamlType());
 				if (arg.hasFacet(DEFAULT) && arg.getFacetExpr(DEFAULT) != null) {
 					sb1.append(" <i>(default: ").append(arg.getFacetExpr(DEFAULT).serializeToGaml(false))
 							.append(")</i>");
 				}
-				documentation.set("Arguments accepted: ", name, new ConstantDoc(sb1.toString()));
+				documentation.set("Arguments accepted: ", arg.getName(), new ConstantDoc(sb1.toString()));
 			});
 		}
 		return documentation;

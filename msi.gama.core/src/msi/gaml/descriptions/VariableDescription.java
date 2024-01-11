@@ -165,7 +165,7 @@ public class VariableDescription extends SymbolDescription {
 		v2.visitFacets((facetName, exp) -> {
 			if (isFunction && (INIT.equals(facetName) || UPDATE.equals(facetName) || VALUE.equals(facetName)))
 				return true;
-			if (!hasFacet(facetName)) { setFacet(facetName, exp); }
+			if (!hasFacet(facetName)) { setFacetExprDescription(facetName, exp); }
 			return true;
 		});
 

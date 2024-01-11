@@ -130,6 +130,11 @@ public abstract class TypeDescription extends SymbolDescription {
 		super(keyword, macroDesc, source, /* cp, */ facets);
 		setIf(Flag.Abstract, TRUE.equals(getLitteral(VIRTUAL)));
 		addChildren(cp);
+		for (ActionDescription ad : getActions())
+			if (ad.isAbstract()) {
+				setIf(Flag.Abstract, true);
+				break;
+			}
 		// parent can be null
 		if (parent != null) { setParent(parent); }
 		if (plugin != null && isBuiltIn()) {
@@ -645,11 +650,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	 *
 	 * @return true, if is abstract
 	 */
-	public final boolean isAbstract() {
-		if (isSet(Flag.Abstract)) return true;
-		for (final ActionDescription a : getActions()) { if (a.isAbstract()) return true; }
-		return false;
-	}
+	public final boolean isAbstract() { return isSet(Flag.Abstract); }
 
 	@Override
 	protected IType computeType() {

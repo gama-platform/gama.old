@@ -203,7 +203,7 @@ public class Facets extends HashMap<String, IExpressionDescription> implements I
 	 * @param expr
 	 *            the expr
 	 */
-	public void put(final String key, final IExpression expr) {
+	public void putExpression(final String key, final IExpression expr) {
 		final IExpressionDescription result = get(key);
 		if (result != null) {
 			result.setExpression(expr);

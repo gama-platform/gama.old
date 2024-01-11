@@ -122,16 +122,6 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	}
 
 	/**
-	 * Checks for internal syntax errors.
-	 *
-	 * @param errors
-	 *            the errors
-	 */
-	public void hasInternalSyntaxErrors(final boolean errors) {
-		hasSyntaxErrors = errors;
-	}
-
-	/**
 	 * Checks for errors.
 	 *
 	 * @return true, if successful
@@ -147,7 +137,6 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 */
 	public boolean hasInternalErrors() {
 		return Iterables.any(items(), IS_ERROR);
-		// return !isEmpty() && StreamEx.of(items()).filter(IS_ERROR).count() > 0;
 	}
 
 	/**
@@ -164,10 +153,7 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 *
 	 * @return the internal errors
 	 */
-	public Iterable<GamlCompilationError> getInternalErrors() {
-		return Iterables.filter(items(), IS_ERROR);
-		// return StreamEx.of(items()).filter(IS_ERROR).toList();
-	}
+	public Iterable<GamlCompilationError> getInternalErrors() { return Iterables.filter(items(), IS_ERROR); }
 
 	/**
 	 * Gets the imported errors.
@@ -183,20 +169,14 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	 *
 	 * @return the warnings
 	 */
-	public Iterable<GamlCompilationError> getWarnings() {
-		return Iterables.filter(items(), IS_WARNING);
-		// return StreamEx.of(items()).filter(IS_WARNING).toList();
-	}
+	public Iterable<GamlCompilationError> getWarnings() { return Iterables.filter(items(), IS_WARNING); }
 
 	/**
 	 * Gets the infos.
 	 *
 	 * @return the infos
 	 */
-	public Iterable<GamlCompilationError> getInfos() {
-		return Iterables.filter(items(), IS_INFO);
-		// return StreamEx.of(items()).filter(IS_INFO).toList();
-	}
+	public Iterable<GamlCompilationError> getInfos() { return Iterables.filter(items(), IS_INFO); }
 
 	@Override
 	public void clear() {
@@ -213,7 +193,6 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	@Override
 	public Iterator<GamlCompilationError> iterator() {
 		return Iterables.limit(Iterables.concat(items(), getImportedErrors()), MAX_SIZE).iterator();
-		// return StreamEx.of(items()).append(getImportedErrors()).limit(MAX_SIZE).toList().iterator();
 	}
 
 	/**
@@ -227,8 +206,6 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 		importedErrors.forEach(
 				e -> result.put(e.toString() + " (in " + URI.decode(e.getURI().lastSegment()) + ")", e.getURI()));
 		return result;
-		// StreamEx.of(importedErrors).toMap(e -> e.toString() + " (" + URI.decode(e.getURI().lastSegment()) + ")",
-		// GamlCompilationError::getURI, (t, u) -> t);
 	}
 
 	/**
@@ -381,4 +358,13 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	public void shouldDocument(final boolean document) {
 		shouldDocument = document;
 	}
+
+	/**
+	 * Gets the uri.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the uri
+	 * @date 10 janv. 2024
+	 */
+	public URI getURI() { return resourceURI; }
 }

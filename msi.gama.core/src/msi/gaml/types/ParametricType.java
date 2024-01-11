@@ -3,7 +3,7 @@
  * ParametricType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -30,6 +30,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.types.TypeExpression;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -97,6 +98,9 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/** The key type. */
 	private final IType<?> keyType;
 
+	/** The expression. */
+	private final IExpression expression;
+
 	/**
 	 * Instantiates a new parametric type.
 	 *
@@ -111,6 +115,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 		type = t;
 		contentsType = ct;
 		keyType = kt;
+		expression = new TypeExpression(this);
 	}
 
 	@Override
@@ -543,5 +548,8 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 		map2.put("requested_type", this);
 		return type.deserializeFromJson(scope, map2);
 	}
+
+	@Override
+	public IExpression getExpression() { return expression; }
 
 }

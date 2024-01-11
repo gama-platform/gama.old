@@ -13,14 +13,12 @@ package msi.gaml.expressions.operators;
 import java.util.Arrays;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpression;
@@ -48,10 +46,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context,
 			final IExpression... child) {
-		final BinaryOperator u = new BinaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.Experimental.CONSTANT_OPTIMIZATION.getValue()) return GAML
-				.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
-		return u;
+		return new BinaryOperator(proto, context, child).optimized();
 	}
 
 	@Override

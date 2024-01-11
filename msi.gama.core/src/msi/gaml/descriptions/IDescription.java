@@ -3,7 +3,7 @@
  * IDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -109,7 +109,8 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		isFunction,
 
 		/** The is memorize. */
-		isMemorize
+		isMemorize,
+
 	}
 
 	/**
@@ -571,7 +572,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 * @param exp
 	 *            the exp
 	 */
-	void setFacet(String string, IExpressionDescription exp);
+	void setFacetExprDescription(String string, IExpressionDescription exp);
 
 	/**
 	 * Sets the facet.
@@ -757,5 +758,14 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 * @return true, if is id
 	 */
 	default boolean isID() { return ARG.equals(this.getKeyword()) && "true".equals(getLitteral(ID)); }
+
+	/**
+	 * Checks if is invocation. Either do or invoke
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is invocation
+	 * @date 10 janv. 2024
+	 */
+	boolean isInvocation();
 
 }

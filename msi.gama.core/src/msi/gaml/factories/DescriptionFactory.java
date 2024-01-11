@@ -3,7 +3,7 @@
  * DescriptionFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -30,14 +30,11 @@ import static msi.gama.precompiler.ISymbolKind.Variable.REGULAR;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -72,7 +69,7 @@ public class DescriptionFactory {
 	static Map<Integer, SymbolFactory> FACTORIES = new HashMap();
 
 	/** The statement keywords protos. */
-	static ArrayListMultimap<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = ArrayListMultimap.create();
+	static Map<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = new HashMap();
 
 	/** The var keywords protos. */
 	static Map<String, SymbolProto> VAR_KEYWORDS_PROTOS = new HashMap();
@@ -109,26 +106,6 @@ public class DescriptionFactory {
 	}
 
 	/**
-	 * Visit statement protos.
-	 *
-	 * @param consumer
-	 *            the consumer
-	 */
-	public final static void visitStatementProtos(final BiConsumer<String, SymbolProto> consumer) {
-		STATEMENT_KEYWORDS_PROTOS.forEach(consumer);
-	}
-
-	/**
-	 * Visit var protos.
-	 *
-	 * @param consumer
-	 *            the consumer
-	 */
-	public final static void visitVarProtos(final BiConsumer<String, SymbolProto> consumer) {
-		VAR_KEYWORDS_PROTOS.forEach(consumer);
-	}
-
-	/**
 	 * Gets the proto.
 	 *
 	 * @param keyword
@@ -138,8 +115,7 @@ public class DescriptionFactory {
 	 * @return the proto
 	 */
 	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {
-		final SymbolProto p =
-				getStatementProto(keyword, superDesc == null ? null : superDesc.getSpeciesContext().getControlName());
+		final SymbolProto p = getStatementProto(keyword);
 		// If not a statement, we try to find a var declaration prototype
 		if (p == null) return getVarProto(keyword, superDesc);
 		return p;
@@ -154,14 +130,8 @@ public class DescriptionFactory {
 	 *            the control
 	 * @return the statement proto
 	 */
-	public final static SymbolProto getStatementProto(final String keyword, final String control) {
-		final List<SymbolProto> protos = STATEMENT_KEYWORDS_PROTOS.get(keyword);
-		if (protos == null || protos.isEmpty()) return null;
-		if (protos.size() == 1) return protos.get(0);
-		if (control == null) return protos.get(protos.size() - 1);
-		// DEBUG.OUT("Duplicate keyword: " + keyword + " ; looking for the one defined in " + control);
-		for (final SymbolProto proto : protos) { if (proto.shouldBeDefinedIn(control)) return proto; }
-		return null;
+	public final static SymbolProto getStatementProto(final String keyword) {
+		return STATEMENT_KEYWORDS_PROTOS.get(keyword);
 	}
 
 	/**

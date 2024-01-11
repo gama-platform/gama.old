@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RuleStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * RuleStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.rule_based;
 
@@ -66,17 +66,18 @@ public class RuleStatement extends AbstractStatementSequence {
 
 	/** The Constant PRIORITY. */
 	protected static final String PRIORITY = "priority";
-	
+
 	/** The Constant RULE. */
-	protected static final String RULE = "rule";
-	
+	protected static final String RULE = "do_rule";
+
 	/** The condition. */
 	protected final IExpression priority, condition;
 
 	/**
 	 * Instantiates a new rule statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public RuleStatement(final IDescription desc) {
 		super(desc);
@@ -88,9 +89,11 @@ public class RuleStatement extends AbstractStatementSequence {
 	/**
 	 * Compute priority.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the double
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public Double computePriority(final IScope scope) throws GamaRuntimeException {
 		return priority == null ? 0d : Cast.asFloat(scope, priority.value(scope));
@@ -99,12 +102,14 @@ public class RuleStatement extends AbstractStatementSequence {
 	/**
 	 * Compute condition.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the boolean
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public Boolean computeCondition(final IScope scope) throws GamaRuntimeException {
-		return Cast.asBool(scope, condition.value(scope));
+		return condition == null ? true : Cast.asBool(scope, condition.value(scope));
 	}
 
 }

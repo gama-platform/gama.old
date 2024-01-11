@@ -36,7 +36,6 @@ import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.expressions.operators.PrimitiveOperator;
 import msi.gaml.expressions.types.SkillConstantExpression;
 import msi.gaml.expressions.types.SpeciesConstantExpression;
-import msi.gaml.expressions.types.TypeExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.expressions.variables.AgentVariableExpression;
 import msi.gaml.expressions.variables.EachExpression;
@@ -70,7 +69,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamlExpressionFactory implements IExpressionFactory {
 
 	static {
-		DEBUG.OFF();
+		DEBUG.ON();
 	}
 
 	/**
@@ -191,10 +190,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			case IVarExpression.GLOBAL -> GlobalVariableExpression.create(name, type, isConst,
 					definitionDescription.getModelDescription());
 			case IVarExpression.AGENT -> new AgentVariableExpression(name, type, isConst, definitionDescription);
-			case IVarExpression.TEMP -> /*
-										 * TODO AD possibility to optimize the code if the variable is not changed
-										 * anywhere in the code
-										 */ new TempVariableExpression(name, type, definitionDescription);
+			case IVarExpression.TEMP -> new TempVariableExpression(name, type, definitionDescription);
 			case IVarExpression.EACH -> new EachExpression(name, type);
 			case IVarExpression.SELF -> new SelfExpression(type);
 			case IVarExpression.SUPER -> new SuperExpression(type);
@@ -271,7 +267,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		final IMap<Signature, OperatorProto> ops = GAML.OPERATORS.get(op);
 		// We create the signature corresponding to the arguments
 		// 19/02/14 Only the simplified signature is used now
-		Signature userSignature = new Signature(args).simplified();
+		Signature userSignature = Signature.createSimplified(args);
 		// If the signature is not present in the registry
 		if (!ops.containsKey(userSignature)) {
 			final Signature originalUserSignature = userSignature;
@@ -305,24 +301,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 			// We coerce the types if necessary, by wrapping the original
 			// expressions in a casting expression
-			if (originalUserSignature.mightNeedCoercionWith(userSignature)) {
-				final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
-				// DEBUG.OUT("Coercing types " + STRINGS.TO_STRING(coercingTypes) + " to convert " + op
-				// + originalUserSignature + " to " + op + userSignature);
-				for (int i = 0; i < coercingTypes.length; i++) {
-					final IType t = coercingTypes[i];
-					if (t != null) {
-						// Emits an info when a float is truncated. See Issue 735.
-						if (t.id() == IType.INT) {
-							context.info("'" + args[i].serializeToGaml(false) + "' will be  truncated to int.",
-									IGamlIssue.UNMATCHED_OPERANDS, eObject);
-						}
-						args[i] = createAs(context, args[i], createTypeExpression(t));
-					}
 
-				}
+			for (int i = 0; i < args.length; i++) {
+				IType originalType = originalUserSignature.get(i);
+				IType newType = userSignature.get(i);
+				IType coercingType = findCoercingType(context, eObject, originalType, newType, args[i]);
+				if (coercingType != null) { args[i] = createAs(context, args[i], createTypeExpression(coercingType)); }
 			}
-
 		}
 
 		final OperatorProto proto = ops.get(userSignature);
@@ -336,6 +321,31 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			}
 		}
 		return operator;
+	}
+
+	/**
+	 * Find coercing type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param originalType
+	 *            the original type
+	 * @param newType
+	 *            the new type
+	 * @param argument
+	 *            the argument
+	 * @return the i type
+	 * @date 9 janv. 2024
+	 */
+	private IType findCoercingType(final IDescription context, final EObject eObject, final IType originalType,
+			final IType newType, final IExpression argument) {
+		if (originalType == Types.INT && newType == Types.FLOAT) return Types.FLOAT;
+		if (originalType == Types.FLOAT && newType == Types.INT) {
+			// Emits an info when a float is truncated. See Issue 735.
+			context.info("'" + argument.serializeToGaml(false) + "' will be  truncated to int.",
+					IGamlIssue.UNMATCHED_OPERANDS, eObject);
+			return Types.INT;
+		}
+		return null;
 	}
 
 	/**
@@ -386,7 +396,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	 */
 	@Override
 	public IExpression createTypeExpression(final IType type) {
-		return new TypeExpression(type);
+		return type.getExpression();
 	}
 
 	@Override

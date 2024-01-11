@@ -3,7 +3,7 @@
  * ModelDescription.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -172,7 +172,8 @@ public class ModelDescription extends SpeciesDescription {
 			final Iterable<? extends IDescription> children, final Facets facets,
 			final ValidationContext validationContext, final Set<String> imports, final IAgentConstructor helper,
 			final Set<String> skills) {
-		super(MODEL, clazz, macro, parent, children, source, facets, skills);
+		super(MODEL, clazz, macro == null ? Types.get(EXPERIMENT).getSpecies() : macro, parent, children, source,
+				facets, skills);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
 				: Types.builtInTypes;
@@ -227,21 +228,6 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public String getTitle() { return getName().replace(MODEL_SUFFIX, ""); }
-
-	// /**
-	// * Can be defined in.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param sd
-	// * the sd
-	// * @return true, if successful
-	// * @date 31 déc. 2023
-	// */
-	// @Override
-	// protected boolean canBeDefinedIn(final IDescription sd) {
-	// // By convention, a model can be defined everywhere
-	// return true;
-	// }
 
 	// hqnghi does it need to verify parent of micro-model??
 	@Override
@@ -310,19 +296,6 @@ public class ModelDescription extends SpeciesDescription {
 
 	}
 
-	@Override
-	public IDescription getEnclosingDescription() {
-		IDescription desc = super.getEnclosingDescription();
-		if (desc == null) return Types.get(EXPERIMENT).getSpecies();
-		return desc;
-	}
-
-	@Override
-	public void setEnclosingDescription(final IDescription desc) {
-		// DEBUG.LOG("Setting enclosing description of model to : " + desc);
-		super.setEnclosingDescription(desc);
-	}
-
 	/**
 	 * Gets the model file name.
 	 *
@@ -352,20 +325,10 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public SpeciesDescription getMacroSpecies() {
-
-		SpeciesDescription d = super.getMacroSpecies();
-		if (d == null) { d = Types.get(EXPERIMENT).getSpecies(); }
-		return d;
-
-	}
-
-	@Override
 	public IDescription addChild(final IDescription child) {
 		if (child == null) return null;
-
-		if (child instanceof ModelDescription) {
-			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
+		if (child instanceof ModelDescription md) {
+			md.getTypesManager().setParent(getTypesManager());
 			if (microModels == null) { microModels = GamaMapFactory.create(); }
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
@@ -570,10 +533,6 @@ public class ModelDescription extends SpeciesDescription {
 			}
 		})) return;
 		if (experiments != null) { experiments.forEachValue(visitor); }
-		// if (microModels != null)
-		// for (final ModelDescription md : microModels.values()) {
-		// visitor.visit(md);
-		// }
 	}
 
 	/**

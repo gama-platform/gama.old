@@ -3,7 +3,7 @@
  * IDescriptionValidator.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -76,7 +76,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 	 */
 	default void swap(final IDescription desc, final String oldFacet, final String newFacet) {
 		if (desc.hasFacet(oldFacet)) {
-			desc.setFacet(newFacet, desc.getFacet(oldFacet));
+			desc.setFacetExprDescription(newFacet, desc.getFacet(oldFacet));
 			desc.removeFacets(oldFacet);
 		}
 	}
@@ -255,11 +255,10 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 			}
 			final ModelDescription md = cd.getModelDescription();
 			final ITypesManager manager = md == null ? Types.builtInTypes : md.getTypesManager();
-			final IType t = manager.get(name);
-			if (t != Types.NO_TYPE) {
+			if (manager.containsType(name)) {
 				final String type = "It cannot be used as a "
 						+ (cd instanceof VariableDescription ? "variable" : cd.getKeyword()) + " name.";
-				final String species = t.isAgentType() ? "species" : "type";
+				final String species = manager.get(name).isAgentType() ? "species" : "type";
 				cd.error(name + " is a " + species + " name. " + type, IGamlIssue.IS_A_TYPE, NAME, name);
 				return false;
 			}

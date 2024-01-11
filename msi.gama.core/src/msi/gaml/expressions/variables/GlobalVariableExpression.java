@@ -48,10 +48,9 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 			final IDescription world) {
 		final VariableDescription v = ((SpeciesDescription) world).getAttribute(n);
 		final IExpression exp = v.getFacetExpr(IKeyword.INIT);
-		if (exp != null) {
+		if (exp != null && notModifiable && !v.isFunction()) {
 			// AD Addition of a test on whether the variable is a function or not
-			final boolean isConst = notModifiable && exp.isConst() && !v.isFunction();
-			if (isConst && GamaPreferences.Experimental.CONSTANT_OPTIMIZATION.getValue())
+			if (GamaPreferences.Experimental.CONSTANT_OPTIMIZATION.getValue() && exp.isConst())
 				return GAML.getExpressionFactory().createConst(exp.getConstValue(), type, n);
 		}
 		return new GlobalVariableExpression(n, type, notModifiable, world);

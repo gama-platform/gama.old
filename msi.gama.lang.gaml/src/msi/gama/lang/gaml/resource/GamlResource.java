@@ -11,8 +11,6 @@
 package msi.gama.lang.gaml.resource;
 
 import static java.util.Collections.singleton;
-import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.collectMultipleImportsOf;
-import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.getImportObject;
 import static msi.gama.lang.gaml.indexer.GamlResourceIndexer.updateImports;
 import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
 import static msi.gama.lang.gaml.resource.GamlResourceServices.updateState;
@@ -24,7 +22,6 @@ import static org.eclipse.xtext.diagnostics.Severity.ERROR;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
@@ -179,13 +176,13 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		if (model == null) {
 			invalidate(this, "Impossible to validate " + URI.decode(getURI().lastSegment()) + " (check the logs)");
 		}
-		Map<URI, URI> doubleImports = collectMultipleImportsOf(this);
-		doubleImports.forEach((imported, importer) -> {
-			String s = imported.lastSegment() + " is already imported by " + importer.lastSegment();
-			EObject o = getImportObject(getContents().get(0), getURI(), imported);
-			GamlCompilationError error = new GamlCompilationError(s, GENERAL, o, false, true);
-			getValidationContext().add(error);
-		});
+		// Map<URI, URI> doubleImports = collectMultipleImportsOf(this);
+		// doubleImports.forEach((imported, importer) -> {
+		// String s = imported.lastSegment() + " is already imported by " + importer.lastSegment();
+		// EObject o = getImportObject(getContents().get(0), getURI(), imported);
+		// GamlCompilationError error = new GamlCompilationError(s, GENERAL, o, false, true);
+		// getValidationContext().add(error);
+		// });
 		return model;
 	}
 

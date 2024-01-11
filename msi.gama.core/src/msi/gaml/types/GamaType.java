@@ -2,7 +2,7 @@
  *
  * GamaType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -31,6 +31,7 @@ import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.types.TypeExpression;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -76,6 +77,19 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	/** The plugin. */
 	protected String plugin;
+
+	/** The expression. */
+	final IExpression expression;
+
+	/**
+	 * Instantiates a new gama type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 6 janv. 2024
+	 */
+	public GamaType() {
+		this.expression = new TypeExpression(this);
+	}
 
 	@Override
 	public String getTitle() { return "Data type " + getName(); }
@@ -179,10 +193,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public int getVarKind() { return varKind; }
 
 	@Override
-	public void setParent(final IType<? super Support> p) {
-		// parented = true;
-		parent = p;
-	}
+	public void setParent(final IType<? super Support> p) { parent = p; }
 
 	@Override
 	public IType<? super Support> getParent() { return parent; }
@@ -279,7 +290,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	protected boolean isSuperTypeOf(final IType<?> type) {
 		if (type == null) return false;
 		IType t = type.getParent();
-		return this == t || isSuperTypeOf(t);
+		while (t != null) {
+			if (this == t) return true;
+			t = t.getParent();
+		}
+		return false;
 	}
 
 	@Override
@@ -590,5 +605,8 @@ public abstract class GamaType<Support> implements IType<Support> {
 		throw GamaRuntimeException
 				.error("The deserialization of " + getName() + " objects has not yet been implemented", scope);
 	}
+
+	@Override
+	public IExpression getExpression() { return expression; }
 
 }

@@ -203,7 +203,6 @@ public class GamlResourceServices {
 			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), getResourceDocumenter()));
 		}
 		final ValidationContext result = resourceErrors.get(newURI);
-		result.hasInternalSyntaxErrors(r.hasErrors());
 		return result;
 	}
 

@@ -3,7 +3,7 @@
  * AbstractContainerStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -91,8 +91,10 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				final SpeciesDescription sd = list.getGamlType().getSpecies();
 				if (sd.hasAttribute(s)) {
 					if (PUT.equals(keyword)) {
-						cd.warning("Attribute '" + s + "' will not be modified by this statement. Use '"
-								+ list.serializeToGaml(false) + "." + s + "' instead", IGamlIssue.WRONG_CONTEXT);
+						cd.warning(
+								"Attribute '" + s + "' will not be modified by this statement. Use '"
+										+ list.serializeToGaml(false) + "." + s + "' instead",
+								IGamlIssue.WRONG_CONTEXT);
 					} else if (REMOVE.equals(keyword)) {
 						cd.warning("Attribute '" + s + "' cannot be removed. ", IGamlIssue.WRONG_CONTEXT);
 					}
@@ -125,7 +127,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			final IExpressionDescription wholeDesc = cd.getFacet(ALL);
 			final IExpression whole = wholeDesc == null ? null : wholeDesc.getExpression();
 			if (whole != null && whole.getGamlType().id() != IType.BOOL) {
-				cd.setFacet(ITEM, wholeDesc);
+				cd.setFacetExprDescription(ITEM, wholeDesc);
 				cd.removeFacets(ALL);
 				cd.setFacet(ALL, IExpressionFactory.TRUE_EXPR);
 			}
@@ -143,7 +145,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			final IExpressionDescription indexDesc = cd.getFacet(AT, KEY, INDEX);
 			final IExpression index = indexDesc == null ? null : indexDesc.getExpression();
 			if (index != null) {
-				cd.setFacet(AT, indexDesc);
+				cd.setFacetExprDescription(AT, indexDesc);
 				cd.removeFacets(KEY, INDEX);
 			}
 			return index;
@@ -160,7 +162,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			final IExpressionDescription listDesc = cd.getFacet(TO, FROM, IN);
 			final IExpression list = listDesc == null ? null : listDesc.getExpression();
 			if (list != null) {
-				cd.setFacet(TO, listDesc);
+				cd.setFacetExprDescription(TO, listDesc);
 				cd.removeFacets(FROM, IN);
 			}
 			return list;
@@ -242,8 +244,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
 						&& !Types.isEmptyContainerCase(contentType, item)) {
 					StringBuilder message =
-							new StringBuilder("The type of the elements of ").append(list.serializeToGaml(false)).append(" (")
-									.append(contentType).append(") does not match with the type of the ");
+							new StringBuilder("The type of the elements of ").append(list.serializeToGaml(false))
+									.append(" (").append(contentType).append(") does not match with the type of the ");
 					if (isAll) {
 						message.append("elements of the argument");
 					} else {

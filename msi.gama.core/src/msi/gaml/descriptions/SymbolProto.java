@@ -18,9 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -36,7 +35,6 @@ import msi.gaml.compilation.annotations.serializer;
 import msi.gaml.compilation.annotations.validator;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.SymbolFactory;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
@@ -79,7 +77,7 @@ public class SymbolProto extends AbstractProto {
 	private final Map<String, FacetProto> possibleFacets;
 
 	/** The mandatory facets. */
-	private final ImmutableSet<String> mandatoryFacets;
+	private final ImmutableList<String> mandatoryFacets;
 
 	/** The omissible facet. */
 	private final String omissibleFacet;
@@ -162,7 +160,7 @@ public class SymbolProto extends AbstractProto {
 		this.isVar = ISymbolKind.Variable.KINDS.contains(kind);
 		this.hasScope = !doesNotHaveScope;
 		if (possibleFacets != null) {
-			final Builder<String> builder = ImmutableSet.builder();
+			final ImmutableList.Builder<String> builder = ImmutableList.builder();
 			this.possibleFacets = GamaMapFactory.createUnordered();
 			for (final FacetProto f : possibleFacets) {
 				this.possibleFacets.put(f.name, f);
@@ -418,18 +416,6 @@ public class SymbolProto extends AbstractProto {
 	}
 
 	/**
-	 * @param facets
-	 * @return
-	 */
-	public Iterable<String> getMissingMandatoryFacets(final Facets facets) {
-		if (facets == null || facets.isEmpty()) {
-			if (mandatoryFacets == null || mandatoryFacets.isEmpty()) return null;
-			return mandatoryFacets;
-		}
-		return Iterables.filter(mandatoryFacets, each -> !facets.containsKey(each));
-	}
-
-	/**
 	 * Method serialize()
 	 *
 	 * @see msi.gaml.interfaces.IGamlable#serializeToGaml(boolean)
@@ -448,5 +434,12 @@ public class SymbolProto extends AbstractProto {
 	public void collectMetaInformation(final GamlProperties meta) {
 		meta.put(GamlProperties.STATEMENTS, name);
 	}
+
+	/**
+	 * Gets the mandatory facets.
+	 *
+	 * @return the mandatory facets
+	 */
+	public ImmutableList<String> getMandatoryFacets() { return mandatoryFacets; }
 
 }

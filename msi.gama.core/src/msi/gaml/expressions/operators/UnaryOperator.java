@@ -22,12 +22,10 @@ import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
 import java.util.function.Predicate;
 
-import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
-import msi.gaml.compilation.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IVarDescriptionUser;
 import msi.gaml.descriptions.OperatorProto;
@@ -66,10 +64,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	 * @return the i expression
 	 */
 	public static IExpression create(final OperatorProto proto, final IDescription context, final IExpression child) {
-		final UnaryOperator u = new UnaryOperator(proto, context, child);
-		if (u.isConst() && GamaPreferences.Experimental.CONSTANT_OPTIMIZATION.getValue()) return GAML
-				.getExpressionFactory().createConst(u.getConstValue(), u.getGamlType(), u.serializeToGaml(false));
-		return u;
+		return new UnaryOperator(proto, context, child).optimized();
 	}
 
 	@Override

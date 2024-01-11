@@ -31,6 +31,7 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.dev.utils.COUNTER;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 10 févr. 2010
@@ -40,6 +41,10 @@ import ummisco.gama.dev.utils.COUNTER;
  */
 @SuppressWarnings ({ "rawtypes" })
 public class StatementDescription extends SymbolDescription {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The passed args. */
 	// Corresponds to the "with" facet
@@ -111,13 +116,6 @@ public class StatementDescription extends SymbolDescription {
 	 * @return true, if is super invocation
 	 */
 	public boolean isSuperInvocation() { return isSet(Flag.IsSuperInvocation); }
-
-	/**
-	 * Checks if is invocation.
-	 *
-	 * @return true, if is invocation
-	 */
-	private boolean isInvocation() { return isSet(Flag.IsInvocation); }
 
 	/**
 	 * Gets the action.

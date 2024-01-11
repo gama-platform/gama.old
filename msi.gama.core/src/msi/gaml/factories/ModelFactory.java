@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.jgrapht.graph.DirectedAcyclicGraph;
 
@@ -74,19 +75,38 @@ public class ModelFactory extends SymbolFactory {
 	final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 
 	/** The species nodes. */
-	final Map<String, SyntacticSpeciesElement> speciesNodes = new LinkedHashMap<>();
+	final LinkedHashMap<String, SyntacticSpeciesElement> speciesNodes = new LinkedHashMap<>();
 
 	/** The experiment nodes. */
-	final Map<String, Map<String, ISyntacticElement>> experimentNodes = new LinkedHashMap<>();
+	final LinkedHashMap<String, ISyntacticElement> experimentNodes = new LinkedHashMap<>();
 
 	/** The temp species cache. */
-	final Map<String, SpeciesDescription> tempSpeciesCache = new LinkedHashMap<>();
+	final LinkedHashMap<String, SpeciesDescription> tempSpeciesCache = new LinkedHashMap<>();
 
 	/** The absolute alternate path as strings. */
-	final Set<String> absoluteAlternatePathAsStrings = new LinkedHashSet<>();
+	final LinkedHashSet<String> absoluteAlternatePathAsStrings = new LinkedHashSet<>();
 
 	/** The hierarchy. */
 	DirectedAcyclicGraph<SpeciesDescription, Object> hierarchy = new DirectedAcyclicGraph<>(Object.class);
+
+	/** The hierarchy builder. */
+	final DescriptionVisitor<SpeciesDescription> hierarchyBuilder = desc -> {
+		if (desc instanceof ModelDescription) return true;
+		final SpeciesDescription sd = desc.getParent();
+		if (sd == null || sd == desc) return false;
+		hierarchy.addVertex(desc);
+		if (!sd.isBuiltIn()) {
+			hierarchy.addVertex(sd);
+			try {
+				hierarchy.addEdge(sd, desc);
+			} catch (IllegalArgumentException e) {
+				// denotes the presence of a cycle in the hierarchy
+				desc.error("The hierarchy of " + desc.getName() + " is inconsistent.", IGamlIssue.WRONG_PARENT);
+				return false;
+			}
+		}
+		return true;
+	};
 
 	/**
 	 * Creates a new Model object.
@@ -247,10 +267,8 @@ public class ModelFactory extends SymbolFactory {
 		speciesNodes.forEach((s, speciesNode) -> {
 			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
 		});
-		experimentNodes.forEach((s, b) -> {
-			b.forEach((x, experimentNode) -> {
-				complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
-			});
+		experimentNodes.forEach((s, experimentNode) -> {
+			complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
 		});
 	}
 
@@ -270,9 +288,7 @@ public class ModelFactory extends SymbolFactory {
 	 */
 	private void addSpeciesAndExperiments(final ModelDescription model) {
 		speciesNodes.forEach((s, speciesNode) -> { addMicroSpecies(model, speciesNode, tempSpeciesCache); });
-		experimentNodes.forEach((s, b) -> {
-			b.forEach((x, experimentNode) -> { addExperiment(s, model, experimentNode, tempSpeciesCache); });
-		});
+		experimentNodes.forEach((s, experimentNode) -> { addExperiment(s, model, experimentNode, tempSpeciesCache); });
 	}
 
 	/**
@@ -291,8 +307,7 @@ public class ModelFactory extends SymbolFactory {
 	 */
 	private void parentSpeciesAndExperiments(final ModelDescription model) {
 		speciesNodes.forEach((s, speciesNode) -> { parentSpecies(model, speciesNode, model, tempSpeciesCache); });
-		experimentNodes
-				.forEach((s, b) -> { b.forEach((x, experimentNode) -> { parentExperiment(model, experimentNode); }); });
+		experimentNodes.forEach((s, experimentNode) -> { parentExperiment(model, experimentNode); });
 	}
 
 	/**
@@ -439,25 +454,7 @@ public class ModelFactory extends SymbolFactory {
 	 * @return the species in hierarchical order
 	 */
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
-
-		final DescriptionVisitor<SpeciesDescription> visitor = desc -> {
-			if (desc instanceof ModelDescription) return true;
-			final SpeciesDescription sd = desc.getParent();
-			if (sd == null || sd == desc) return false;
-			hierarchy.addVertex(desc);
-			if (!sd.isBuiltIn()) {
-				hierarchy.addVertex(sd);
-				try {
-					hierarchy.addEdge(sd, desc);
-				} catch (IllegalArgumentException e) {
-					// denotes the presence of a cycle in the hierarchy
-					desc.error("The hierarchy of " + desc.getName() + " is inconsistent.", IGamlIssue.WRONG_PARENT);
-					return false;
-				}
-			}
-			return true;
-		};
-		model.visitAllSpecies(visitor);
+		model.visitAllSpecies(hierarchyBuilder);
 		return () -> hierarchy.iterator();
 	}
 
@@ -476,14 +473,14 @@ public class ModelFactory extends SymbolFactory {
 			// model.warning(
 			// "'schedules' is deprecated in global. Define a dedicated species instead and add the facet to it",
 			// IGamlIssue.DEPRECATED, NAME);
-			sd.setFacet(SCHEDULES, model.getFacet(SCHEDULES));
+			sd.setFacetExprDescription(SCHEDULES, model.getFacet(SCHEDULES));
 			model.removeFacets(SCHEDULES);
 		}
 		if (model.hasFacet(FREQUENCY)) {
 			// model.warning(
 			// "'frequency' is deprecated in global. Define a dedicated species instead and add the facet to it",
 			// IGamlIssue.DEPRECATED, NAME);
-			sd.setFacet(FREQUENCY, model.getFacet(FREQUENCY));
+			sd.setFacetExprDescription(FREQUENCY, model.getFacet(FREQUENCY));
 			model.removeFacets(FREQUENCY);
 		}
 		model.addChild(sd);
@@ -527,26 +524,22 @@ public class ModelFactory extends SymbolFactory {
 	void addExperimentNode(final ISyntacticElement element, final String modelName, final ValidationContext collector) {
 		// First we verify that this experiment has not been declared previously
 		final String experimentName = element.getName();
-		for (final String otherModel : experimentNodes.keySet()) {
-			if (!otherModel.equals(modelName)) {
-				final Map<String, ISyntacticElement> otherExperiments = experimentNodes.get(otherModel);
-				if (otherExperiments.containsKey(experimentName)) {
+		if (experimentNodes.containsKey(experimentName)) {
+			EObject object = experimentNodes.get(experimentName).getElement();
+			if (object != null && object.eResource() != null) {
+				URI other = object.eResource().getURI();
+				URI myself = collector.getURI();
+				if (other.equals(myself)) {
+					collector.add(new GamlCompilationError("Experiment " + element.getName() + " is declared twice",
+							IGamlIssue.DUPLICATE_DEFINITION, element.getElement(), false, false));
+				} else {
 					collector.add(new GamlCompilationError(
-							"Experiment " + experimentName + " supersedes the one declared in " + otherModel,
+							"Experiment " + experimentName + " supersedes the one declared in " + other.lastSegment(),
 							IGamlIssue.DUPLICATE_DEFINITION, element.getElement(), false, true));
-					// We remove the old one
-					otherExperiments.remove(experimentName);
 				}
 			}
 		}
-
-		if (!experimentNodes.containsKey(modelName)) { experimentNodes.put(modelName, new LinkedHashMap<>()); }
-		final Map<String, ISyntacticElement> nodes = experimentNodes.get(modelName);
-		if (nodes.containsKey(experimentName)) {
-			collector.add(new GamlCompilationError("Experiment " + element.getName() + " is declared twice",
-					IGamlIssue.DUPLICATE_DEFINITION, element.getElement(), false, false));
-		}
-		nodes.put(experimentName, element);
+		experimentNodes.put(experimentName, element);
 	}
 
 	/**

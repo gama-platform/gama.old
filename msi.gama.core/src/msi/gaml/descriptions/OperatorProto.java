@@ -137,8 +137,7 @@ public class OperatorProto extends AbstractProto implements IVarDescriptionUser 
 	 */
 	public IExpression create(final IDescription context, final EObject currentEObject, final IExpression... exprs) {
 		try {
-			final boolean semantic = getValidator().validate(context, currentEObject, exprs);
-			if (!semantic) return null;
+			if (!getValidator().validate(context, currentEObject, exprs)) return null;
 			switch (signature.size()) {
 				case 1:
 					if (isVarOrField) return new TypeFieldExpression(this, context, exprs[0]);

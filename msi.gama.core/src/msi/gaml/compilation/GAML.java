@@ -474,7 +474,7 @@ public class GAML {
 	public static Collection<SymbolProto> getStatementsForSkill(final String s) {
 		final Set<SymbolProto> result = new LinkedHashSet<>();
 		for (final String p : getStatementProtoNames()) {
-			final SymbolProto proto = getStatementProto(p, s);
+			final SymbolProto proto = getStatementProto(p);
 			if (proto != null && proto.shouldBeDefinedIn(s)) { result.add(proto); }
 		}
 		return result;

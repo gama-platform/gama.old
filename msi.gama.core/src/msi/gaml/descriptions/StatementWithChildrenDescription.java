@@ -65,7 +65,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		super(keyword, superDesc, hasArgs, source, facets, alreadyComputedArgs);
 		setIf(Flag.Breakable, getMeta().isBreakable());
 		setIf(Flag.Continuable, getMeta().isContinuable());
-		children = cp == null ? null : new ArrayList<>();
 		addChildren(cp);
 	}
 

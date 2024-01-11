@@ -34,24 +34,21 @@ import msi.gaml.descriptions.IExpressionDescription;
 public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescription> {
 
 	@Override
-	public IExpressionDescription caseIntLiteral(final IntLiteral object) {
-		IExpressionDescription ed = null;
+	public ConstantExpressionDescription caseIntLiteral(final IntLiteral object) {
+		ConstantExpressionDescription ed = null;
 		try {
 			ed = ConstantExpressionDescription.create(Integer.parseInt(object.getOp()));
 		} catch (final NumberFormatException e) {
 			ed = ConstantExpressionDescription.create(0);
 		}
 		Resource r = object.eResource();
-		if (r != null) {
-			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-					ed.getExpression());
-		}
+		if (r != null) { GamlResourceServices.getResourceDocumenter().setGamlDocumentation(r.getURI(), object, ed); }
 		return ed;
 	}
 
 	@Override
-	public IExpressionDescription caseDoubleLiteral(final DoubleLiteral object) {
-		IExpressionDescription ed = null;
+	public ConstantExpressionDescription caseDoubleLiteral(final DoubleLiteral object) {
+		ConstantExpressionDescription ed = null;
 		try {
 			ed = ConstantExpressionDescription.create(Double.parseDouble(object.getOp()));
 		} catch (final NumberFormatException e) {
@@ -59,30 +56,28 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		}
 		Resource r = object.eResource();
 		if (r != null) {
-			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-					ed.getExpression());
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(r.getURI(), object, ed.getExpression());
 		}
 		return ed;
 	}
 
 	@Override
-	public IExpressionDescription caseStringLiteral(final StringLiteral object) {
-		final IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp());
+	public ConstantExpressionDescription caseStringLiteral(final StringLiteral object) {
+		final ConstantExpressionDescription ed = ConstantExpressionDescription.create(object.getOp());
 		Resource r = object.eResource();
 		if (r != null) {
-			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-					ed.getExpression());
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(r.getURI(), object, ed.getExpression());
 		}
 		return ed;
 	}
 
 	@Override
-	public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
-		final IExpressionDescription ed = ConstantExpressionDescription.create(IKeyword.TRUE.equals(object.getOp()));
+	public ConstantExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
+		final ConstantExpressionDescription ed =
+				ConstantExpressionDescription.create(IKeyword.TRUE.equals(object.getOp()));
 		Resource r = object.eResource();
 		if (r != null) {
-			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object.eResource().getURI(), object,
-					ed.getExpression());
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(r.getURI(), object, ed.getExpression());
 		}
 		return ed;
 	}
@@ -97,7 +92,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	@Override
 	public IExpressionDescription caseUnary(final Unary object) {
 		final String op = EGaml.getInstance().getKeyOf(object);
-		if ("°".equals(op) || "#".equals(op)) return doSwitch(object.getRight());
+		if ("#".equals(op)) return doSwitch(object.getRight());
 		return null;
 	}
 

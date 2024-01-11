@@ -28,12 +28,12 @@ species simple_rules_statements control: rules {
 		write " Priority of rule a = " + priority_of_a + ", priority of rule b = " + priority_of_b;
 	}
 
-	rule a when: priority_of_a < 50 priority: priority_of_a {
+	do_rule a when: priority_of_a < 50 priority: priority_of_a {
 		write "Rule a fired with priority: " + priority_of_a;
 	}
 	
-	rule b when: priority_of_b > 25 priority: priority_of_b {
-		write "Rule b fired with priority: " + priority_of_b;
+	do_rule b when: priority_of_b > 25 priority: priority_of_b {
+		write "Rule b fired with priority: " + priority_of_b; 
 	}
 }
 

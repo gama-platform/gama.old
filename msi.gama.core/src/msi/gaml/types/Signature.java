@@ -2,7 +2,7 @@
  *
  * Signature.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,7 +14,10 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+
+import com.google.common.collect.Iterators;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -25,7 +28,7 @@ import msi.gaml.expressions.IExpression;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 
-public record Signature(IType[] list) {
+public record Signature(IType[] list) implements Iterable<IType> {
 
 	/** The empty classes. */
 	static Class[] EMPTY_CLASSES = {};
@@ -42,6 +45,21 @@ public record Signature(IType[] list) {
 	 */
 	public static Signature varArgFrom(final Signature sig) {
 		return new Signature(Types.LIST.of(GamaType.findCommonType(sig.list)));
+	}
+
+	/**
+	 * Creates the simplified.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param args
+	 *            the args
+	 * @return the signature
+	 * @date 9 janv. 2024
+	 */
+	public static Signature createSimplified(final IExpression... args) {
+		IType[] copy = new IType[args.length];
+		for (int i = 0; i < args.length; i++) { copy[i] = args[i].getGamlType().getGamlType(); }
+		return new Signature(copy);
 	}
 
 	/**
@@ -331,6 +349,11 @@ public record Signature(IType[] list) {
 		for (int i = 0; i < list.length; i++)
 			if (Types.intFloatCase(list[i], other.list[i])) return true;
 		return false;
+	}
+
+	@Override
+	public Iterator<IType> iterator() {
+		return Iterators.forArray(list);
 	}
 
 }

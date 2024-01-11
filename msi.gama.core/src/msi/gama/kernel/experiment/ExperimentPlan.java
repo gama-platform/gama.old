@@ -213,7 +213,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			if (BATCH.equals(type) && desc.hasFacet(RECORD)) {
 				desc.warning("Batch experiments cannot be recorded and played backwards. 'record' will be ignored",
 						IGamlIssue.CONFLICTING_FACETS, "ignored" + RECORD);
-				desc.setFacet("ignored" + RECORD, desc.getFacet(RECORD));
+				desc.setFacetExprDescription("ignored" + RECORD, desc.getFacet(RECORD));
 				desc.removeFacets(RECORD);
 			}
 

@@ -2,7 +2,7 @@
  *
  * Types.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -68,7 +68,7 @@ public class Types {
 	public final static IType NO_TYPE = new GamaNoType();
 
 	/** The type. */
-	public static IType AGENT, PATH, FONT, SKILL, DATE, MATERIAL, ACTION, TYPE;
+	public static IType AGENT, PATH, FONT, SKILL, DATE, ACTION, TYPE;
 
 	/** The int. */
 	public static GamaIntegerType INT;
@@ -127,9 +127,6 @@ public class Types {
 				break;
 			case IType.DATE:
 				DATE = instance;
-				break;
-			case IType.MATERIAL:
-				MATERIAL = instance;
 				break;
 			case IType.STRING:
 				STRING = (GamaStringType) instance;
@@ -242,8 +239,6 @@ public class Types {
 				return SPECIES;
 			case IType.SKILL:
 				return SKILL;
-			case IType.MATERIAL:
-				return MATERIAL;
 			case IType.ACTION:
 				return ACTION;
 			case IType.TYPE:
@@ -343,7 +338,7 @@ public class Types {
 				incoming.get(t).remove(parent);
 				if (incoming.get(t).isEmpty()) {
 					toProcess.push(t);
-					//DEBUG.OUT("Parenting " + t.getName() + " with " + parent.getName());
+					// DEBUG.OUT("Parenting " + t.getName() + " with " + parent.getName());
 					t.setParent(parent);
 					DescriptionFactory.addNewTypeName(t.toString(), t.getVarKind());
 					t.setFieldGetters(GAML.getAllFields(t.toClass()));
@@ -387,7 +382,6 @@ public class Types {
 		final IType receiver = receiverType.getGamlType();
 		final boolean result = (receiver == MAP || receiver == LIST) && isEmpty(expr2);
 		if (result) return true;
-
 		// One last chance if receiverType is a list of lists/maps and expr2 is a list expression containing empty
 		// lists. This case is treated recursively in case of complex data structures
 		if (expr2 instanceof ListExpression) {
@@ -397,7 +391,6 @@ public class Types {
 			return true;
 		}
 		return false;
-
 	}
 
 	/**
@@ -411,10 +404,6 @@ public class Types {
 		switch (expr2.getGamlType().getGamlType().id()) {
 			case IType.LIST:
 				if (expr2 instanceof ListExpression) return ((ListExpression) expr2).isEmpty();
-				// if (expr2.isConst()) {
-				// final Object o = expr2.getConstValue();
-				// return ((List) o).isEmpty();
-				// }
 				break;
 			case IType.MAP:
 				if (expr2 instanceof MapExpression) return ((MapExpression) expr2).isEmpty();
@@ -429,6 +418,19 @@ public class Types {
 	 */
 	public static Iterable<OperatorProto> getAllFields() {
 		return concat(transform(builtInTypes.getAllTypes(), each -> each.getFieldGetters().values()));
+	}
+
+	/**
+	 * Checks for type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param name
+	 *            the name
+	 * @return true, if successful
+	 * @date 7 janv. 2024
+	 */
+	public static boolean hasType(final String name) {
+		return builtInTypes.containsType(name);
 	}
 
 }
