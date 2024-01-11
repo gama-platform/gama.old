@@ -2,7 +2,7 @@
  *
  * IKeyword.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -17,6 +17,12 @@ package msi.gama.common.interfaces;
  *
  */
 public interface IKeyword {
+
+	/** The Constant JAVA2D. */
+	String _2D = "2d";
+
+	/** The Constant OPENGL. */
+	String _3D = "3d";
 
 	/** The dot. */
 	String _DOT = ".";
@@ -237,9 +243,6 @@ public interface IKeyword {
 	/** The create. */
 	String CREATE = "create";
 
-	/** The restore. */
-	String RESTORE = "restore";
-
 	/** The csv. */
 	String CSV = "csv";
 
@@ -375,11 +378,11 @@ public interface IKeyword {
 	/** The experiment. */
 	String EXPERIMENT = "experiment";
 
-	/** The exploration. */
-	String EXPLORATION = "exploration";
-
 	/** The exploded. */
 	String EXPLODED = "exploded";
+
+	/** The exploration. */
+	String EXPLORATION = "exploration";
 
 	/** The extension. */
 	String EXTENSION = "extension";
@@ -519,11 +522,11 @@ public interface IKeyword {
 	/** The header. */
 	String HEADER = "header";
 
-	/** The heading. */
-	String HEADING = "heading";
-
 	/** The headless ui. */
 	// String HEADLESS_UI = "headless";
+
+	/** The heading. */
+	String HEADING = "heading";
 
 	/** The heatmap. */
 	String HEATMAP = "heatmap";
@@ -618,6 +621,9 @@ public interface IKeyword {
 	/** The java. */
 	String JAVA = "java";
 
+	/** The Constant JAVA2D. */
+	String JAVA2D = "java2D";
+
 	/** The keep. */
 	String KEEP = "keep";
 
@@ -710,9 +716,6 @@ public interface IKeyword {
 	/** The members. */
 	String MEMBERS = "members";
 
-	/** The record. */
-	String RECORD = "record";
-
 	/** The mersenne. */
 	String MERSENNE = "mersenne";
 
@@ -770,6 +773,9 @@ public interface IKeyword {
 	/** The mouse down. */
 	String MOUSE_DOWN = "mouse_down";
 
+	/** The mouse dragged. */
+	String MOUSE_DRAGGED = "mouse_drag";
+
 	/** The mouse entered. */
 	String MOUSE_ENTERED = "mouse_enter";
 
@@ -781,9 +787,6 @@ public interface IKeyword {
 
 	/** The mouse moved. */
 	String MOUSE_MOVED = "mouse_move";
-
-	/** The mouse dragged. */
-	String MOUSE_DRAGGED = "mouse_drag";
 
 	/** The mouse up. */
 	String MOUSE_UP = "mouse_up";
@@ -818,18 +821,6 @@ public interface IKeyword {
 	/** The neighbours. */
 	String NEIGHBOURS = "neighbours";
 
-	/** The no experiment. */
-	String PRAGMA_NO_EXPERIMENT = "no_experiment";
-
-	/** The no info. */
-	String PRAGMA_NO_INFO = "no_info";
-
-	/** The no warning. */
-	String PRAGMA_NO_WARNING = "no_warning";
-
-	/** The pragma requires. */
-	String PRAGMA_REQUIRES = "requires";
-
 	/** The node. */
 	String NODE = "node";
 
@@ -860,6 +851,9 @@ public interface IKeyword {
 	/** The open point. */
 	String OPEN_POINT = "{";
 
+	/** The Constant OPENGL. */
+	String OPENGL = "opengl";
+
 	/** The optional. */
 	String OPTIONAL = "optional";
 
@@ -883,9 +877,9 @@ public interface IKeyword {
 
 	/** The over. */
 	String OVER = "over";
+
 	/** The overlay. */
 	String OVERLAY = "overlay";
-
 	/** The overwrite. */
 	String OVERWRITE = "overwrite";
 
@@ -944,14 +938,23 @@ public interface IKeyword {
 	/** The population. */
 	String POPULATION = "population";
 
-	/** The population. */
-	String SPECIES_LAYER = "species_layer";
-
 	/** The position. */
 	String POSITION = "position";
 
 	/** The pragma. */
 	String PRAGMA = "pragma";
+
+	/** The no experiment. */
+	String PRAGMA_NO_EXPERIMENT = "no_experiment";
+
+	/** The no info. */
+	String PRAGMA_NO_INFO = "no_info";
+
+	/** The no warning. */
+	String PRAGMA_NO_WARNING = "no_warning";
+
+	/** The pragma requires. */
+	String PRAGMA_REQUIRES = "requires";
 
 	/** The primitive. */
 	String PRIMITIVE = "primitive";
@@ -965,11 +968,11 @@ public interface IKeyword {
 	/** The proportion. */
 	String PROPORTION = "proportion";
 
-	/** The pso. */
-	String PSO = "pso";
-
 	/** The proxy. */
 	String PROXY = "proxy";
+
+	/** The pso. */
+	String PSO = "pso";
 
 	/** The put. */
 	String PUT = "put";
@@ -1004,6 +1007,9 @@ public interface IKeyword {
 	/** The real speed. */
 	String REAL_SPEED = "real_speed";
 
+	/** The record. */
+	String RECORD = "record";
+
 	/** The reflectivity. */
 	String REFLECTIVITY = "reflectivity";
 
@@ -1030,6 +1036,9 @@ public interface IKeyword {
 
 	/** The repeat. */
 	String REPEAT = "repeat";
+
+	/** The restore. */
+	String RESTORE = "restore";
 
 	/** The resume sound. */
 	String RESUME_SOUND = "resume_sound";
@@ -1150,6 +1159,9 @@ public interface IKeyword {
 
 	/** The species. */
 	String SPECIES = "species";
+
+	/** The population. */
+	String SPECIES_LAYER = "species_layer";
 
 	/** The speed. */
 	String SPEED = "speed";
@@ -1361,6 +1373,9 @@ public interface IKeyword {
 	/** The warning test. */
 	String WARNING_TEST = "warning";
 
+	/** The Constant WEB. */
+	String WEB = "web";
+
 	/** The weight. */
 	String WEIGHT = "weight";
 
@@ -1430,22 +1445,5 @@ public interface IKeyword {
 	/** The methods. */
 	String[] METHODS =
 			{ GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXPLORATION, PSO, SOBOL, MORRIS, STO, BETAD };
-
-	// DISPLAYS
-
-	/** The Constant JAVA2D. */
-	String _2D = "2d";
-
-	/** The Constant OPENGL. */
-	String _3D = "3d";
-
-	/** The Constant WEB. */
-	String WEB = "web";
-
-	/** The Constant JAVA2D. */
-	String JAVA2D = "java2D";
-
-	/** The Constant OPENGL. */
-	String OPENGL = "opengl";
 
 }
