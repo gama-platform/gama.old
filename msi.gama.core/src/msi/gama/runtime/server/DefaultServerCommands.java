@@ -3,7 +3,7 @@
  * DefaultServerCommands.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,8 +15,6 @@ import static msi.gama.runtime.server.ISocketCommand.EVALUATE;
 import static msi.gama.runtime.server.ISocketCommand.EXPR;
 import static msi.gama.runtime.server.ISocketCommand.NB_STEP;
 import static msi.gama.runtime.server.ISocketCommand.PARAMETERS;
-import static msi.gama.runtime.server.ISocketCommand.STEP;
-import static msi.gama.runtime.server.ISocketCommand.STEPBACK;
 import static msi.gama.runtime.server.ISocketCommand.SYNC;
 
 import java.io.BufferedReader;
@@ -334,10 +332,16 @@ public class DefaultServerCommands {
 		// TODO Verify that it is not a JSON string...Otherwise, use Json.getNew().parse(...)
 		final IMap<String, Object> args = Cast.asMap(scope, map.get("args"), false);
 		ExecutionResult er = ExecutionResult.PASSED;
+		IScope newScope = agent.getScope().copy("Ask command of gama-server");
 		try {
-			er = agent.getScope().execute(exec, agent, true, new Arguments(args));
+			newScope.push(agent);
+			er = newScope.execute(exec, agent, true, new Arguments(args));
+			// er = agent.getScope().execute(exec, agent, true, new Arguments(args));
 		} catch (GamaRuntimeException e) {
 			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, e.getMessage(), map, false);
+		} finally {
+			newScope.pop(agent);
+			GAMA.releaseScope(newScope);
 		}
 		if (!er.passed()) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 				"Error in the execution of " + action, map, false);
