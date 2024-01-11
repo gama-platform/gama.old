@@ -3,7 +3,7 @@
  * EditorToolbar.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -169,17 +169,22 @@ public class EditorToolbar {
 	private void hookToCommands(final ToolItem lastEdit, final ToolItem nextEdit) {
 		WorkbenchHelper.runInUI("Hooking to commands", 0, m -> {
 			final Command nextCommand = getCommand(NAVIGATE_FORWARD_HISTORY);
-			nextEdit.setEnabled(nextCommand.isEnabled());
-			final ICommandListener nextListener = e -> nextEdit.setEnabled(searching || nextCommand.isEnabled());
-			nextCommand.addCommandListener(nextListener);
+			if (!nextEdit.isDisposed()) {
+				nextEdit.setEnabled(nextCommand.isEnabled());
+				final ICommandListener nextListener = e -> nextEdit.setEnabled(searching || nextCommand.isEnabled());
+				nextCommand.addCommandListener(nextListener);
+				nextEdit.addDisposeListener(e -> nextCommand.removeCommandListener(nextListener));
+			}
 			final Command lastCommand = getCommand(NAVIGATE_BACKWARD_HISTORY);
-			final ICommandListener lastListener = e -> lastEdit.setEnabled(searching || lastCommand.isEnabled());
-			lastEdit.setEnabled(lastCommand.isEnabled());
-			lastCommand.addCommandListener(lastListener);
+			if (!lastEdit.isDisposed()) {
+				final ICommandListener lastListener = e -> lastEdit.setEnabled(searching || lastCommand.isEnabled());
+				lastEdit.setEnabled(lastCommand.isEnabled());
+				lastCommand.addCommandListener(lastListener);
+				lastEdit.addDisposeListener(e -> lastCommand.removeCommandListener(lastListener));
+			}
 			// Attaching dispose listeners to the toolItems so that they remove the
 			// command listeners properly
-			lastEdit.addDisposeListener(e -> lastCommand.removeCommandListener(lastListener));
-			nextEdit.addDisposeListener(e -> nextCommand.removeCommandListener(nextListener));
+
 		});
 
 	}
