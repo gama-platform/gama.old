@@ -11,8 +11,8 @@
 package msi.gama.runtime;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import msi.gaml.compilation.ISymbol;
 
@@ -121,7 +121,7 @@ public class ExecutionContext implements IExecutionContext {
 	public ExecutionContext createCopy(final ISymbol command) {
 		final ExecutionContext r = create(scope, outer, command);
 		if (local != null) {
-			r.local = new ConcurrentHashMap<>();
+			r.local = Collections.synchronizedMap(new HashMap<>());
 			r.local.putAll(local);
 		}
 		return r;
@@ -153,7 +153,7 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
-		if (local == null) { local = new ConcurrentHashMap<>(); }
+		if (local == null) { local = Collections.synchronizedMap(new HashMap<>()); }
 		local.put(varName, val);
 	}
 
