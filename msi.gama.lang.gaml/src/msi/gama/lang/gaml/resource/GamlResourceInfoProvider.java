@@ -34,6 +34,7 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.types.GamaFileType;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -44,7 +45,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The find tags. */
@@ -109,13 +110,14 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				while (stringsMatcher.find()) {
 					String s = stringsMatcher.group();
 					// DEBUG.OUT("Strings found = " + s);
-					if (s.length() > 4) {
+					if (s.length() > 6) {
 						s = s.substring(1, s.length() - 1);
 						final URI u = URI.createFileURI(s);
 						final String ext = u.fileExtension();
-						if (ext != null && !ext.isEmpty()) {
+						if (ext != null && !ext.isBlank() && !"gaml".equals(ext)
+								&& GamaFileType.managesExtension(ext)) {
 							if (uses == null) { uses = new LinkedHashSet(); }
-							// DEBUG.OUT(s + " added to uses");
+							DEBUG.OUT("===== Considers in uses : " + s);
 							uses.add(s);
 						}
 					}

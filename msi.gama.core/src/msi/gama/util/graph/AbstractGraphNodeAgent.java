@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AbstractGraphNodeAgent.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * AbstractGraphNodeAgent.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.util.graph;
 
@@ -75,13 +75,12 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		/**
 		 * Gets the action.
 		 *
-		 * @param a1 the a 1
+		 * @param a1
+		 *            the a 1
 		 * @return the action
 		 */
 		IStatement.WithArgs getAction(final AbstractGraphNodeAgent a1) {
-			if (action == null) {
-				action = a1.getAction();
-			}
+			if (action == null) { action = a1.getAction(); }
 			return action;
 		}
 
@@ -90,9 +89,12 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 	/**
 	 * Instantiates a new abstract graph node agent.
 	 *
-	 * @param s the s
-	 * @param index the index
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @param s
+	 *            the s
+	 * @param index
+	 *            the index
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public AbstractGraphNodeAgent(final IPopulation<? extends IAgent> s, final int index) throws GamaRuntimeException {
 		super(s, index);
@@ -103,14 +105,13 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 	 *
 	 * @return the action
 	 */
-	IStatement.WithArgs getAction() {
-		return getSpecies().getAction("related_to");
-	}
+	IStatement.WithArgs getAction() { return getSpecies().getAction("related_to"); }
 
 	/**
 	 * Related to.
 	 *
-	 * @param scope the scope
+	 * @param scope
+	 *            the scope
 	 * @return the boolean
 	 */
 	@action (
@@ -134,7 +135,5 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 	 */
 	@SuppressWarnings ("rawtypes")
 	@getter (IKeyword.MYGRAPH)
-	public GamaGraph getGraph() {
-		return (GamaGraph) getTopology().getPlaces();
-	}
+	public GamaGraph getGraph() { return (GamaGraph) getTopology().getPlaces(); }
 }

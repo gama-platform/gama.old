@@ -409,10 +409,8 @@ public class EGaml implements IGamlEcoreUtils {
 	 *            the object
 	 * @return the key of parameter
 	 */
-	public String getKeyOfParameter(final Parameter object) {
-		String s;
-		final Parameter p = object;
-		s = getKeyOf(p.getLeft());
+	public String getKeyOfParameter(final Parameter p) {
+		String s = getKeyOf(p.getLeft());
 		if (s == null) { s = p.getBuiltInFacetKey(); }
 		return s.endsWith(":") ? s.substring(0, s.length() - 1) : s;
 	}

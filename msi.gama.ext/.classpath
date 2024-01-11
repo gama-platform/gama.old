@@ -8,7 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.2/jgrapht-opt-1.5.2.jar" sourcepath="jgrapht 1.5.2/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.2/jheaps-0.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="fastutil-core-8.5.12.jar" sourcepath="fastutil-core-8.5.12-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="streamex/streamex-0.8.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="streamex/streamex-0.8.2.jar" sourcepath="streamex/streamex-0.8.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="slf4j-api-2.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="slf4j-nop-2.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="Java-WebSocket-1.5.3.jar" sourcepath="Java-WebSocket-1.5.3-sources.jar"/>

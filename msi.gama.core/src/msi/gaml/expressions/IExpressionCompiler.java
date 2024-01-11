@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * IExpressionCompiler.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * IExpressionCompiler.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.expressions;
 
@@ -32,8 +32,10 @@ public interface IExpressionCompiler<T> extends IDisposable {
 	/**
 	 * Compile.
 	 *
-	 * @param s the s
-	 * @param parsingContext the parsing context
+	 * @param s
+	 *            the s
+	 * @param parsingContext
+	 *            the parsing context
 	 * @return the i expression
 	 */
 	IExpression compile(final IExpressionDescription s, final IDescription parsingContext);
@@ -41,9 +43,12 @@ public interface IExpressionCompiler<T> extends IDisposable {
 	/**
 	 * Compile.
 	 *
-	 * @param expression the expression
-	 * @param parsingContext the parsing context
-	 * @param tempContext the temp context
+	 * @param expression
+	 *            the expression
+	 * @param parsingContext
+	 *            the parsing context
+	 * @param tempContext
+	 *            the temp context
 	 * @return the i expression
 	 */
 	IExpression compile(final String expression, final IDescription parsingContext, IExecutionContext tempContext);
@@ -51,10 +56,14 @@ public interface IExpressionCompiler<T> extends IDisposable {
 	/**
 	 * Parses the arguments.
 	 *
-	 * @param action the action
-	 * @param eObject the e object
-	 * @param context the context
-	 * @param compileArgValues the compile arg values
+	 * @param action
+	 *            the action
+	 * @param eObject
+	 *            the e object
+	 * @param context
+	 *            the context
+	 * @param compileArgValues
+	 *            the compile arg values
 	 * @return the arguments
 	 */
 	Arguments parseArguments(ActionDescription action, EObject eObject, IDescription context, boolean compileArgValues);

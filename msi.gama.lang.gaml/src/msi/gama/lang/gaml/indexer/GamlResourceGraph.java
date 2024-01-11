@@ -12,6 +12,7 @@ package msi.gama.lang.gaml.indexer;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -199,7 +200,7 @@ public class GamlResourceGraph {
 	 */
 	@SuppressWarnings ("null")
 	public Map<URI, String> sortedDepthFirstSearchWithLabels(final URI uri) {
-		Map<URI, String> result = Maps.newLinkedHashMap();
+		LinkedHashMap<URI, String> result = Maps.newLinkedHashMap();
 		searchImports(uri, null, result);
 		result.remove(uri);
 		return result;
@@ -215,7 +216,7 @@ public class GamlResourceGraph {
 	 * @param result
 	 *            the result
 	 */
-	private void searchImports(final URI uri, final String currentLabel, final Map<URI, String> result) {
+	private void searchImports(final URI uri, final String currentLabel, final LinkedHashMap<URI, String> result) {
 		if (!result.containsKey(uri)) {
 			result.put(uri, currentLabel);
 			if (imports.containsVertex(uri)) {

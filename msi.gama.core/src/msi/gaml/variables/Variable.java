@@ -2,7 +2,7 @@
  *
  * Variable.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -229,13 +229,12 @@ public class Variable extends Symbol implements IVariable {
 					final IExpression expr = cd.getFacetExpr(INIT);
 					if (expr.findAny(e -> e instanceof TimeUnitConstantExpression tu && !tu.isConst())) {
 						cd.warning(
-								"Time dependent constants used to define the step at initialization are computed once based on the current_date. The resulting durations may be irrelevant after a few cycles. An 'update:' facet should be defined with the same expression to recompute the step every cycle",
+								"Time dependent constants used to define the step at initialization are computed once based on the current_date. "
+										+ "The resulting durations may be irrelevant after a few cycles. "
+										+ "An 'update:' facet should be defined with the same expression to recompute the step every cycle",
 								IGamlIssue.CONFLICTING_FACETS, INIT);
 					}
 				}
-				// if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
-				// cd.setFacet(UPDATE, cd.getFacet(INIT));
-				// }
 			}
 			// The name is ok. Now verifying the logic of facets
 			// Verifying that 'function' is not used in conjunction with other

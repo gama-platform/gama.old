@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * RuleBasedArchitecture.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * RuleBasedArchitecture.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.rule_based;
 
@@ -19,8 +19,8 @@ import java.util.Map;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
-import msi.gama.runtime.IScope;
 import msi.gama.runtime.ExecutionResult;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.reflex.ReflexArchitecture;
 import msi.gaml.statements.IStatement;
@@ -39,12 +39,12 @@ import msi.gaml.statements.IStatement;
 @skill (
 		name = RuleBasedArchitecture.RULES,
 		concept = { IConcept.ARCHITECTURE, IConcept.BEHAVIOR })
-@doc ("A control architecture based on the concept of rules")
+@doc ("A control architecture based on the concept of rules. Allows to declare simple rules with the keyword `do_rule` and to execute them given with respect to their conditions and priority")
 public class RuleBasedArchitecture extends ReflexArchitecture {
 
 	/** The Constant RULES. */
 	public static final String RULES = "rules";
-	
+
 	/** The rules. */
 	List<RuleStatement> rules = new ArrayList<>();
 
@@ -64,7 +64,7 @@ public class RuleBasedArchitecture extends ReflexArchitecture {
 		Object result = null;
 		for (final RuleStatement rule : rulesToRun) {
 			final ExecutionResult er = scope.execute(rule);
-			if (!er.passed()) { return result; }
+			if (!er.passed()) return result;
 			result = er.getValue();
 		}
 		return result;
