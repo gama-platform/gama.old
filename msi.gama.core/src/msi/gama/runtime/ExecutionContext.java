@@ -12,8 +12,8 @@ package msi.gama.runtime;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import msi.gama.util.GamaMapFactory;
 import msi.gaml.compilation.ISymbol;
 
 /**
@@ -74,11 +74,7 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void dispose() {
-		if (local != null) {
-			synchronized (local) {
-				local = null;
-			}
-		}
+		local = null;
 		outer = null;
 		scope = null;
 	}
@@ -125,10 +121,8 @@ public class ExecutionContext implements IExecutionContext {
 	public ExecutionContext createCopy(final ISymbol command) {
 		final ExecutionContext r = create(scope, outer, command);
 		if (local != null) {
-			synchronized (local) {
-				r.local = GamaMapFactory.createSynchronizedUnordered();
-				r.local.putAll(local);
-			}
+			r.local = new ConcurrentHashMap<>();
+			r.local.putAll(local);
 		}
 		return r;
 	}
@@ -154,16 +148,12 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public void clearLocalVars() {
-		if (local != null) {
-			synchronized (local) {
-				local = null;
-			}
-		}
+		local = null;
 	}
 
 	@Override
 	public void putLocalVar(final String varName, final Object val) {
-		if (local == null) { local = GamaMapFactory.createSynchronizedUnordered(); }
+		if (local == null) { local = new ConcurrentHashMap<>(); }
 		local.put(varName, val);
 	}
 
