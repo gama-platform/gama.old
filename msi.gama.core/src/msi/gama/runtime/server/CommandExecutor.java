@@ -3,7 +3,7 @@
  * CommandExecutor.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -25,6 +25,7 @@ import static msi.gama.runtime.server.ISocketCommand.STEP;
 import static msi.gama.runtime.server.ISocketCommand.STEPBACK;
 import static msi.gama.runtime.server.ISocketCommand.STOP;
 import static msi.gama.runtime.server.ISocketCommand.UPLOAD;
+import static msi.gama.runtime.server.ISocketCommand.VALIDATE;
 
 import java.util.AbstractMap;
 import java.util.Map;
@@ -180,7 +181,7 @@ public class CommandExecutor {
 					entry(RELOAD, DefaultServerCommands::RELOAD), entry(EXPRESSION, DefaultServerCommands::EVAL),
 					entry(EVALUATE, DefaultServerCommands::EVAL), entry(EXIT, DefaultServerCommands::EXIT),
 					entry(DOWNLOAD, DefaultServerCommands::DOWNLOAD), entry(UPLOAD, DefaultServerCommands::UPLOAD),
-					entry(ASK, DefaultServerCommands::ASK));
+					entry(ASK, DefaultServerCommands::ASK), entry(VALIDATE, DefaultServerCommands::VALIDATE));
 		}
 		return DEFAULT_COMMANDS;
 	}

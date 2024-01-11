@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.java_websocket.WebSocket;
 
@@ -43,6 +44,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.server.ISocketCommand.CommandException;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
+import msi.gama.util.file.json.Json;
+import msi.gama.util.file.json.JsonValue;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.GamlIdiomsProvider;
@@ -299,6 +302,34 @@ public class DefaultServerCommands {
 	}
 
 	/**
+	 * Validate. Accepts
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param server
+	 *            the server
+	 * @param socket
+	 *            the socket
+	 * @param map
+	 *            the map
+	 * @return the gama server message
+	 * @date 11 janv. 2024
+	 */
+	public static GamaServerMessage VALIDATE(final GamaWebSocketServer server, final WebSocket socket,
+			final IMap<String, Object> map) {
+		final Object expr = map.get(EXPR);
+		final Object syntax = map.get("syntax");
+		boolean syntaxOnly = syntax instanceof Boolean b && b;
+		if (expr == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
+				"For " + ISocketCommand.VALIDATE + ", mandatory parameter is: " + EXPR, map, false);
+		String entered = expr.toString().trim();
+		List<String> errors = GAML.validate(entered, syntaxOnly);
+		if (errors != null && !errors.isEmpty())
+			return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest, errors, map, false);
+		final boolean escaped = map.get(ESCAPED) == null ? false : Boolean.parseBoolean("" + map.get(ESCAPED));
+		return new CommandResponse(GamaServerMessage.Type.CommandExecutedSuccessfully, entered, map, escaped);
+	}
+
+	/**
 	 * Ask.
 	 *
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
@@ -330,7 +361,9 @@ public class DefaultServerCommands {
 		if (exec == null) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 				"Action " + action + " does not exist in agent " + ref, map, false);
 		// TODO Verify that it is not a JSON string...Otherwise, use Json.getNew().parse(...)
-		final IMap<String, Object> args = Cast.asMap(scope, map.get("args"), false);
+		String json = (String) map.get("args");
+		JsonValue object = Json.getNew().parse(json);
+		Map<String, Object> args = Cast.asMap(scope, object.toGamlValue(scope), false);
 		ExecutionResult er = ExecutionResult.PASSED;
 		IScope newScope = agent.getScope().copy("Ask command of gama-server");
 		try {
