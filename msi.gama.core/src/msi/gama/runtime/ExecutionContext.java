@@ -122,7 +122,8 @@ public class ExecutionContext implements IExecutionContext {
 		final ExecutionContext r = create(scope, outer, command);
 		if (local != null) {
 			r.local = Collections.synchronizedMap(new HashMap<>());
-			r.local.putAll(local);
+			if (local != null) 
+				r.local.putAll(local);
 		}
 		return r;
 	}
