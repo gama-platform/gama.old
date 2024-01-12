@@ -18,26 +18,23 @@ import static msi.gaml.compilation.GAML.getModelFactory;
 import static msi.gaml.interfaces.IGamlIssue.GENERAL;
 import static msi.gaml.interfaces.IGamlIssue.IMPORT_ERROR;
 import static org.eclipse.emf.ecore.util.EcoreUtil.resolveAll;
-import static org.eclipse.xtext.diagnostics.Severity.ERROR;
+import static org.eclipse.xtext.nodemodel.util.NodeModelUtils.getNode;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
 import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.xtext.linking.impl.XtextLinkingDiagnostic;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
-import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 import com.google.common.base.Function;
 
-import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.runtime.IExecutionContext;
 import msi.gaml.compilation.GAML;
@@ -61,7 +58,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamlResource extends LazyLinkingResource implements IDiagnosticConsumer {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The element. */
@@ -279,10 +276,8 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		// If the imports are not correctly updated, we cannot proceed
 		final EObject faulty = updateImports(this);
 		if (faulty != null) {
-			final EAttribute attribute = getContents().get(0) instanceof Model ? GamlPackage.Literals.IMPORT__IMPORT_URI
-					: GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI;
-			getErrors().add(new EObjectDiagnosticImpl(ERROR, IMPORT_ERROR, "Impossible to locate import", faulty,
-					attribute, -1, null));
+			getErrors()
+					.add(new XtextLinkingDiagnostic(getNode(faulty), "Impossible to locate import", IMPORT_ERROR, ""));
 			return;
 		}
 		getLinker().linkModel(getParseResult().getRootASTElement(), this);

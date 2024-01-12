@@ -36,7 +36,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class GamlResourceValidator implements IResourceValidator {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The converter. */

@@ -36,11 +36,13 @@ import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 import msi.gaml.types.TypesManager;
 
+
+
 /**
- * Written by drogoul Modified on 16 mai 2010
+ * The Class ModelDescription.
  *
- * @todo Description
- *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 12 janv. 2024
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ModelDescription extends SpeciesDescription {

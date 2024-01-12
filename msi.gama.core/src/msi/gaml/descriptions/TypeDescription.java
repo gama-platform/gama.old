@@ -42,47 +42,6 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  */
 
-/**
- * The Class TypeDescription.
- *
- * @author Alexis Drogoul (alexis.drogoul@ird.fr)
- * @date 5 janv. 2024
- */
-
-/**
- * The Class TypeDescription.
- *
- * @author Alexis Drogoul (alexis.drogoul@ird.fr)
- * @date 5 janv. 2024
- */
-
-/**
- * The Class TypeDescription.
- *
- * @author Alexis Drogoul (alexis.drogoul@ird.fr)
- * @date 5 janv. 2024
- */
-
-/**
- * The Class TypeDescription.
- *
- * @author Alexis Drogoul (alexis.drogoul@ird.fr)
- * @date 5 janv. 2024
- */
-
-/**
- * The Class TypeDescription.
- *
- * @author Alexis Drogoul (alexis.drogoul@ird.fr)
- * @date 5 janv. 2024
- */
-
-/**
- * The Class TypeDescription.
- *
- * @author Alexis Drogoul (alexis.drogoul@ird.fr)
- * @date 5 janv. 2024
- */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class TypeDescription extends SymbolDescription {
 
@@ -266,19 +225,6 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	/**
-	 * Adds the attribute no check.
-	 *
-	 * @param vd
-	 *            the vd
-	 */
-	protected void addAttributeNoCheck(final VariableDescription vd) {
-		if (attributes == null) { attributes = GamaMapFactory.create(); }
-		// synchronized (this) {
-		attributes.put(vd.getName(), vd);
-		// }
-	}
-
-	/**
 	 * Assert attributes are compatible.
 	 *
 	 * @param existingVar
@@ -417,7 +363,8 @@ public abstract class TypeDescription extends SymbolDescription {
 			vd.copyFrom(existing);
 		}
 
-		addAttributeNoCheck(vd);
+		if (attributes == null) { attributes = GamaMapFactory.create(); }
+		attributes.put(vd.getName(), vd);
 	}
 
 	/**

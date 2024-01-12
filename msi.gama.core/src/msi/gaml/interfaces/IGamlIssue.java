@@ -175,4 +175,7 @@ public interface IGamlIssue {
 	/** The syntactic error. */
 	String SYNTACTIC_ERROR = "gaml.syntactic.error";
 
+	/** The linking error. */
+	String LINKING_ERROR = "gaml.linking.error";
+
 }

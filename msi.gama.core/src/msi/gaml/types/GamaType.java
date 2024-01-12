@@ -340,8 +340,6 @@ public abstract class GamaType<Support> implements IType<Support> {
 		if (type == null) return Integer.MAX_VALUE;
 		if (isSuperTypeOf(type)) return 1 + distanceTo(type.getParent());
 		return 1 + getParent().distanceTo(type);
-		// if (isTranslatableInto(type) || isAssignableFrom(type)) return 1;
-		// return Integer.MAX_VALUE;
 	}
 
 	@SuppressWarnings ({ "rawtypes", "unchecked" })
