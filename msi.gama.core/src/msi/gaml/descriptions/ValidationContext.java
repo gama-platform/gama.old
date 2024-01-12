@@ -44,7 +44,7 @@ import ummisco.gama.dev.utils.DEBUG;
 public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 
 	static {
-		DEBUG.ON();
+		DEBUG.OFF();
 	}
 
 	/** The Constant MAX_SIZE. */
@@ -93,7 +93,8 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 			if (!GamaPreferences.Modeling.WARNINGS_ENABLED.getValue() || noWarning) return false;
 		} else if (error.isInfo() && (!GamaPreferences.Modeling.INFO_ENABLED.getValue() || noInfo)) return false;
 		final URI uri = error.getURI();
-		final boolean sameResource = uri.equals(resourceURI);
+		final boolean sameResource =
+				uri == null || uri.equals(resourceURI);/* || uri.toString().startsWith(resourceURI.toString()) */
 		if (sameResource) return super.add(error);
 		if (error.isError()) {
 			if (importedErrors == null) { importedErrors = new LinkedHashSet<>(); }
@@ -243,28 +244,10 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	public void doDocument(final ModelDescription description) {
 		if (shouldDocument) {
 			docDelegate.doDocument(resourceURI, description, expressionsToDocument);
-			expressionsToDocument.forEach((e, d) -> {
-				// DEBUG.OUT("Documenting Eobject " + e + " in resource "
-				// + (e.eResource() == null ? "null" : e.eResource().getURI().lastSegment()) + " with description "
-				// + d);
-				docDelegate.setGamlDocumentation(resourceURI, e, d);
-			});
+			expressionsToDocument.forEach((e, d) -> { docDelegate.setGamlDocumentation(resourceURI, e, d); });
 		}
 		expressionsToDocument.clear();
 	}
-
-	// /**
-	// * Gets the gaml documentation.
-	// *
-	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	// * @param o
-	// * the o
-	// * @return the gaml documentation
-	// * @date 31 déc. 2023
-	// */
-	// public IGamlDescription getGamlDocumentation(final EObject o) {
-	// return docDelegate.getGamlDocumentation(o);
-	// }
 
 	/**
 	 * Sets the gaml documentation.
@@ -279,13 +262,7 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	public void setGamlDocumentation(final EObject e, final IGamlDescription d) {
 		// Called by SymbolDescription to document individual expressions -- they are kept in a Map<EObject,
 		// IGamlDescription> and done when the whole model is documented
-		if (shouldDocument) {
-			// DEBUG.OUT("Queuing for documentation Eobject " + e + " in resource "
-			// + (e.eResource() == null ? "null" : e.eResource().getURI().lastSegment()) + " with description "
-			// + d);
-
-			expressionsToDocument.put(e, d);
-		}
+		if (shouldDocument) { expressionsToDocument.put(e, d); }
 	}
 
 	/**

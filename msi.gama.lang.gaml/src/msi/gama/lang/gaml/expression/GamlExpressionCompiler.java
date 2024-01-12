@@ -293,9 +293,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 *            the type object
 	 * @return the i expression
 	 */
-	private IExpression casting(final String type, final IExpression toCast, final Expression typeObject) {
+	private IExpression casting(final IType type, final IExpression toCast, final Expression typeObject) {
 		if (toCast == null) return null;
-		final IType castingType = currentTypesManager.get(type).typeIfCasting(toCast);
+		final IType castingType = type.typeIfCasting(toCast);
 
 		// final boolean isSuperType = castingType.isAssignableFrom(toCast.getGamlType());
 		TypeInfo typeInfo = null;
@@ -509,7 +509,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// casting type
 			case AS -> {
 				final String type = EGaml.getInstance().getKeyOf(right);
-				if (isTypeName(type)) { yield casting(type, compile(e1), right); }
+				IType t = getType(type);
+				if (t != null) { yield casting(t, compile(e1), right); }
 				getContext().error(
 						"'as' must be followed by a type, species or skill name. " + type + " is neither of these.",
 						IGamlIssue.NOT_A_TYPE, right, type);
@@ -581,11 +582,28 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 * @return true, if is type name
 	 */
 	private boolean isTypeName(final String s) {
-		if (!currentTypesManager.containsType(s)) return false;
-		final IType t = currentTypesManager.get(s);
+		final IType t = currentTypesManager.get(s, null);
+		if (t == null) return false;
 		final SpeciesDescription sd = t.getSpecies();
 		if (sd != null && sd.isExperiment()) return false;
 		return true;
+	}
+
+	/**
+	 * Gets the type.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param s
+	 *            the s
+	 * @return the type
+	 * @date 12 janv. 2024
+	 */
+	private IType getType(final String s) {
+		final IType t = currentTypesManager.get(s, null);
+		if (t == null) return null;
+		final SpeciesDescription sd = t.getSpecies();
+		if (sd != null && sd.isExperiment()) return null;
+		return t;
 	}
 
 	/**
@@ -763,7 +781,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		final Arguments argMap = new Arguments();
 		int index = 0;
-		final List<String> args = !completeArgs || action == null ? null : action.getArgNames();
+
 		for (final Expression exp : parameters) {
 			String arg = null;
 			IExpressionDescription ed = null;
@@ -777,6 +795,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				arg = egaml.getKeyOf(bo.getLeft());
 				ed = builder.create(bo.getRight());
 			} else if (completeArgs) {
+				final List<String> args = action == null ? null : action.getArgNames();
 				if (args != null && action != null && index == args.size()) {
 					command.error("Wrong number of arguments. Action " + action.getName() + " expects " + args);
 					return argMap;
@@ -1065,7 +1084,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 */
 	private IExpression tryCastingFunction(final String op, final Function object) {
 		// If the operator is not a type name, no match
-		if (!isTypeName(op)) {
+		IType t = getType(op);
+		if (t == null) {
 			// We nevertheless emit a warning if the operator name contains parametric type information
 			if (object.getType() != null) {
 				getContext().warning(
@@ -1082,13 +1102,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				// If a unary function has been redefined with the type name as name and this specific argument,
 				// it takes precedence over the regular casting
 				if (getFactory().hasExactOperator(op, expr)) { yield null; }
-				yield casting(op, expr, object);
+				yield casting(t, expr, object);
 			}
 			default -> {
 				Iterable<IExpression> exprs = transform(args, this::compile);
 				// If more than one argument, we need to check if there are operators that match. If yes, we return null
 				if (getFactory().hasOperator(op, new Signature(toArray(exprs, IExpression.class)))) { yield null; }
-				yield casting(op, getFactory().createList(exprs), object);
+				yield casting(t, getFactory().createList(exprs), object);
 			}
 		};
 
@@ -1236,7 +1256,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final SpeciesDescription sd = getSpeciesContext(varName);
 			return sd == null ? null : sd.getSpeciesExpr();
 		}
-		if (isTypeName(varName)) return getFactory().createTypeExpression(currentTypesManager.get(varName));
+		IType t = getType(varName);
+		if (t != null) return getFactory().createTypeExpression(t);
 		if (isSkillName(varName)) return skill(varName);
 		if (context != null) {
 

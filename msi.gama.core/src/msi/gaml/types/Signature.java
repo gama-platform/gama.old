@@ -174,31 +174,6 @@ public record Signature(IType[] list) implements Iterable<IType> {
 	 *            the types
 	 * @return true, if successful
 	 */
-	public boolean matchesDesiredSignature(final IType... types) {
-		if (types.length != list.length) return false;
-		for (int i = 0; i < list.length; i++) {
-			final IType ownType = list[i];
-			final IType desiredType = types[i];
-			if (Types.intFloatCase(ownType, desiredType) || desiredType.isAssignableFrom(ownType)
-					|| !desiredType.isNumber() && ownType == Types.NO_TYPE) {
-				continue;
-			}
-			return false;
-		}
-		return true;
-	}
-
-	// public boolean isCompatibleWith(final IType... types) {
-	// if (types.length != list.length) {
-	// return false;
-	// }
-	// for (int i = 0; i < list.length; i++) {
-	// if (!list[i].isTranslatableInto(types[i])) {
-	// return false;
-	// }
-	// }
-	// return true;
-	// }
 
 	/**
 	 * Matches desired signature.
@@ -220,18 +195,8 @@ public record Signature(IType[] list) implements Iterable<IType> {
 	 */
 	public int distanceTo(final IType... types) {
 		if (types.length != list.length) return Integer.MAX_VALUE;
-		// int dist = 0;
 		int max = 0;
 		int min = Integer.MAX_VALUE;
-		// for (int i = 0; i < list.length; i++) {
-		// // 19/02/14 Now using the maximum distance between two types of the
-		// // signature instead of addition.
-		// final int d = types[i].distanceTo(list[i]);
-		// if (d > dist) {
-		// dist = d;
-		// }
-		// // dist += types[i].distanceTo(list[i]);
-		// }
 		// We now take into account the min and the max (see #2266 and the case where [unknown, geometry, geometry] was
 		// preffered to [topology, geometry, geometry] for an input of [topology, a_species, a_species])
 		for (int i = 0; i < list.length; i++) {
@@ -240,6 +205,29 @@ public record Signature(IType[] list) implements Iterable<IType> {
 			if (min > d) { min = d; }
 		}
 		return min + max;
+	}
+
+	/**
+	 * Matches desired signature.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param types
+	 *            the types
+	 * @return true, if successful
+	 * @date 12 janv. 2024
+	 */
+	public boolean matchesDesiredSignature(final IType... types) {
+		if (types.length != list.length) return false;
+		for (int i = 0; i < list.length; i++) {
+			final IType ownType = list[i];
+			final IType desiredType = types[i];
+			if (Types.intFloatCase(ownType, desiredType)
+					|| desiredType.isAssignableFrom(ownType)  || !desiredType.isNumber() && ownType == Types.NO_TYPE) {
+				continue;
+			}
+			return false;
+		}
+		return true;
 	}
 
 	/**

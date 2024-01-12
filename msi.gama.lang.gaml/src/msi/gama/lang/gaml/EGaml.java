@@ -345,7 +345,7 @@ public class EGaml implements IGamlEcoreUtils {
 			case GamlPackage.ARGUMENT_PAIR -> getKeyOfArgumentPair((ArgumentPair) object);
 			case GamlPackage.PARAMETER -> getKeyOfParameter((Parameter) object);
 			case GamlPackage.MODEL -> IKeyword.MODEL;
-			case GamlPackage.STATEMENT -> getKeyOfStatement(object);
+			case GamlPackage.STATEMENT -> getKeyOfStatement((Statement) object);
 			case GamlPackage.FACET -> getKeyOfFacet((Facet) object);
 			case GamlPackage.FUNCTION -> getKeyOf(((Function) object).getLeft());
 			case GamlPackage.TYPE_REF -> getKeyOfTypeRef((TypeRef) object);
@@ -422,12 +422,11 @@ public class EGaml implements IGamlEcoreUtils {
 	 *            the object
 	 * @return the key of statement
 	 */
-	private String getKeyOfStatement(final EObject object) {
-		String s;
-		s = ((Statement) object).getKey();
-		if (s == null && object instanceof S_Definition) {
-			final TypeRef type = (TypeRef) ((S_Definition) object).getTkey();
-			if (type != null) return getKeyOf(type);
+	private String getKeyOfStatement(final Statement object) {
+		String s = object.getKey();
+		if (s == null && object instanceof S_Definition sd) {
+			final TypeRef type = (TypeRef) sd.getTkey();
+			if (type != null) return getKeyOfTypeRef(type);
 		}
 		return s;
 	}
@@ -456,9 +455,8 @@ public class EGaml implements IGamlEcoreUtils {
 	 * @date 27 déc. 2023
 	 */
 	private String getNameOfRef(final EObject o, final int id) {
-		// final ICompositeNode cn = NodeModelUtils.getNode(o);
-		// if (cn != null) return NodeModelUtils.getTokenText(cn);
 		String result = "";
+
 		switch (id) {
 			case GamlPackage.UNIT_NAME: {
 				UnitFakeDefinition ref = ((UnitName) o).getRef();

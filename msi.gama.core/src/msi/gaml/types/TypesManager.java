@@ -3,7 +3,7 @@
  * TypesManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -80,14 +80,14 @@ public class TypesManager implements ITypesManager {
 	public IType<? extends IAgent> addSpeciesType(final SpeciesDescription species) {
 		final String name = species.getName();
 		if (!IKeyword.AGENT.equals(name)) {
-			if (get(name) != Types.NO_TYPE) {
+			if (containsType(name)) {
 				species.error("Species " + name + " already declared. Species name must be unique",
 						IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(), name);
 			}
 			return addSpeciesType(new GamaAgentType(species, species.getName(), ++CURRENT_INDEX,
 					(Class<IAgent>) species.getJavaBase()), species.getJavaBase());
 		}
-		return get(IKeyword.AGENT);
+		return (IType<? extends IAgent>) get(IKeyword.AGENT);
 	}
 
 	@Override
@@ -178,12 +178,12 @@ public class TypesManager implements ITypesManager {
 	}
 
 	@Override
-	public IType get(final String type) {
-		if (type == null) return Types.NO_TYPE;
+	public IType get(final String type, final IType defaultValue) {
+		if (type == null) return defaultValue;
 		final IType t = types.get(type);
 		if (t != null) return t;
-		if (parent == null) return Types.NO_TYPE;
-		return parent.get(type);
+		if (parent == null) return defaultValue;
+		return parent.get(type, defaultValue);
 	}
 
 	/*
