@@ -56,6 +56,7 @@ import ummisco.gama.dev.utils.DEBUG;
  * @since 24 avr. 2012
  */
 public class GamlResource extends LazyLinkingResource implements IDiagnosticConsumer {
+	/* To allow resources to strore bin files : extends StorageAwareResource */
 
 	static {
 		DEBUG.OFF();
@@ -82,9 +83,23 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		return getValidationContext().hasErrors();
 	}
 
+	/**
+	 * Gets the encoding.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the encoding
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	public String getEncoding() { return "UTF-8"; }
 
+	/**
+	 * To string.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	public String toString() {
 		return "GamlResource[" + getURI().lastSegment() + "]";
@@ -214,6 +229,16 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		}
 	}
 
+	/**
+	 * Update internal state.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param oldParseResult
+	 *            the old parse result
+	 * @param newParseResult
+	 *            the new parse result
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	protected void updateInternalState(final IParseResult oldParseResult, final IParseResult newParseResult) {
 		if (oldParseResult != newParseResult) {
@@ -224,12 +249,24 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		}
 	}
 
+	/**
+	 * Clear internal state.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	protected void clearInternalState() {
 		super.clearInternalState();
 		setElement(null);
 	}
 
+	/**
+	 * Do unload.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	protected void doUnload() {
 		super.doUnload();
@@ -268,9 +305,22 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 
 	}
 
+	/**
+	 * Gets the cache.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the cache
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	public OnChangeEvictingCache getCache() { return (OnChangeEvictingCache) super.getCache(); }
 
+	/**
+	 * Do linking.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	protected void doLinking() {
 		// If the imports are not correctly updated, we cannot proceed
@@ -292,6 +342,14 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		return !getErrors().isEmpty() || getParseResult().hasSyntaxErrors();
 	}
 
+	/**
+	 * Sets the uri.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param uri
+	 *            the new uri
+	 * @date 13 janv. 2024
+	 */
 	/*
 	 * Javadoc copied from interface.
 	 */
@@ -300,6 +358,12 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		super.setURI(properlyEncodedURI(uri));
 	}
 
+	/**
+	 * Clear cache.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 janv. 2024
+	 */
 	@Override
 	public void clearCache() {
 		// DEBUG.LINE();
