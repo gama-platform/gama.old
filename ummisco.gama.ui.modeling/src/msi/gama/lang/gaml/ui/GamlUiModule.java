@@ -3,7 +3,7 @@
  * GamlUiModule.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,11 +15,13 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.builder.builderState.IMarkerUpdater;
 import org.eclipse.xtext.builder.resourceloader.IResourceLoader;
 import org.eclipse.xtext.builder.resourceloader.ResourceLoaderProviders;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
+import org.eclipse.xtext.generator.AbstractFileSystemAccess2;
 import org.eclipse.xtext.ide.LexerIdeBindings;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.parser.IEncodingProvider;
@@ -27,6 +29,8 @@ import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.clustering.DynamicResourceClusteringPolicy;
 import org.eclipse.xtext.resource.clustering.IResourceClusteringPolicy;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
+import org.eclipse.xtext.resource.persistence.IResourceStorageFacade;
+import org.eclipse.xtext.resource.persistence.ResourceStorageFacade;
 import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.IImageHelper;
@@ -147,12 +151,39 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	/**
+	 * Bind I resource storage facade.
+	 *
+	 * @return the class<? extends I resource storage facade>
+	 */
+	public Class<? extends IResourceStorageFacade> bindIResourceStorageFacade() {
+		return ResourceStorageFacade.class;
+	}
+
+	/**
+	 * Bind abstract file system access 2.
+	 *
+	 * @return the class<? extends abstract file system access 2 >
+	 */
+	public Class<? extends AbstractFileSystemAccess2> bindAbstractFileSystemAccess2() {
+		return EclipseResourceFileSystemAccess2.class;
+	}
+
+	/**
 	 * Bind source viewer factory.
 	 *
 	 * @return the class<? extends xtext source viewer. factory>
 	 */
 	public Class<? extends XtextSourceViewer.Factory> bindSourceViewerFactory() {
 		return GamaSourceViewerFactory.class;
+	}
+
+	/**
+	 * Bind I marker updater.
+	 *
+	 * @return the class<? extends I marker updater>
+	 */
+	public Class<? extends IMarkerUpdater> bindIMarkerUpdater() {
+		return GamlMarkerUpdater.class;
 	}
 
 	@Override
