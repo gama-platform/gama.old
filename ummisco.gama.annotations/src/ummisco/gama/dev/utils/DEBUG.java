@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import java.lang.StackWalker.StackFrame;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -119,14 +120,18 @@ public class DEBUG {
 	 * @throws Exception
 	 */
 
-	public static void TIMER(final String category, final String begin, final String end, final Runnable runnable) {
+	@SafeVarargs
+	public static void TIMER(final String category, final String begin, final String end, final Runnable runnable,
+			final Consumer<Long>... followUpWithResult) {
 		if (!ENABLE_LOGGING) {
 			runnable.run();
 			return;
 		}
 		final long start = currentTimeMillis();
 		runnable.run();
-		BANNER(category, begin, end, currentTimeMillis() - start + "ms");
+		long duration = currentTimeMillis() - start;
+		BANNER(category, begin, end, duration + "ms");
+		if (followUpWithResult != null && followUpWithResult.length > 0) { followUpWithResult[0].accept(duration); }
 	}
 
 	/**
