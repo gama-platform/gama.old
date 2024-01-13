@@ -35,6 +35,30 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamlResourceValidator implements IResourceValidator {
 
+	/** The validation duration. */
+	static long VALIDATION_DURATION = 0;
+
+	/**
+	 * Reset.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @date 13 janv. 2024
+	 */
+	public static void RESET() {
+		VALIDATION_DURATION = 0;
+	}
+
+	/**
+	 * Duration.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the long
+	 * @date 13 janv. 2024
+	 */
+	public static long DURATION() {
+		return VALIDATION_DURATION;
+	}
+
 	static {
 		DEBUG.OFF();
 	}
@@ -47,12 +71,13 @@ public class GamlResourceValidator implements IResourceValidator {
 
 	@Override
 	public List<Issue> validate(final Resource resource, final CheckMode mode, final CancelIndicator indicator) {
+
 		// DEBUG.OUT("GamlResourceValidator beginning validation job of " + resource.getURI().lastSegment());
 		String name = org.eclipse.emf.common.util.URI.decode(resource.getURI().lastSegment());
 		ArrayList<Issue> result = new ArrayList<>();
 		DEBUG.TIMER("COMPIL", name, "in", () -> {
 			final IAcceptor<Issue> acceptor =
-					t -> { if (t.getMessage() != null && !t.getMessage().isEmpty()) { result.add(t); } };
+					issue -> { if (issue.getMessage() != null && !issue.getMessage().isEmpty()) { result.add(issue); } };
 			// We resolve the cross references
 			EcoreUtil2.resolveLazyCrossReferences(resource, indicator);
 			// DEBUG.OUT("Cross references resolved for " + resource.getURI().lastSegment());
@@ -71,7 +96,7 @@ public class GamlResourceValidator implements IResourceValidator {
 			}
 			GamlResourceServices.discardValidationContext(r);
 			// DEBUG.OUT("Validation context has been discarded: " + resource.getURI().lastSegment());
-		});
+		}, duration -> VALIDATION_DURATION += duration);
 		return result;
 	}
 

@@ -3,7 +3,7 @@
  * SyntaxErrorsView.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -33,6 +33,8 @@ import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterChangeListener;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.lang.gaml.validation.GamlResourceValidator;
+import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -44,6 +46,10 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * The Class SyntaxErrorsView.
  */
 public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecoratedView {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The parent. */
 	protected Composite parent;
@@ -163,14 +169,22 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	 *            the monitor
 	 */
 	static private void doBuild(final IProgressMonitor monitor) {
-		try {
-			GamlResourceServices.getResourceDocumenter().invalidateAll();
-			GamlResourceIndexer.eraseIndex();
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+		GamlResourceServices.getResourceDocumenter().invalidateAll();
+		GamlResourceIndexer.eraseIndex();
 
-		} catch (final CoreException e) {
+		try {
+			// IWorkspace w = ResourcesPlugin.getWorkspace();
+			// IWorkspaceDescription wd = w.getDescription();
+			// wd.setMaxConcurrentBuilds(5);
+			// w.setDescription(wd);
+			DEBUG.BANNER("COMPIL", "Last compilation of all models", "in",
+					String.valueOf(GamlResourceValidator.DURATION()));
+			GamlResourceValidator.RESET();
+			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -180,10 +194,10 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 
 		final ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
 		dialog.setBlockOnOpen(false);
-		dialog.setCancelable(false);
+		dialog.setCancelable(true);
 		dialog.setOpenOnRun(true);
 		try {
-			dialog.run(true, false, SyntaxErrorsView::doBuild);
+			dialog.run(true, true, SyntaxErrorsView::doBuild);
 		} catch (InvocationTargetException | InterruptedException e1) {
 			e1.printStackTrace();
 		}
