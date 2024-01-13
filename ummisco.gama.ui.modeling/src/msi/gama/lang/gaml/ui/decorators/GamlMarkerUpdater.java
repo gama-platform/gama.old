@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlMarkerUpdater.java, in ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamlMarkerUpdater.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -42,35 +41,29 @@ import ummisco.gama.dev.utils.DEBUG;
  */
 public class GamlMarkerUpdater extends MarkerUpdaterImpl {
 
+	/** The eraser. */
+	final MarkerEraser eraser = new MarkerEraser();
+
 	/** The mapper. */
 	@Inject IStorage2UriMapper mapper;
 
 	@Override
-	public void updateMarkers(final Delta delta, final ResourceSet resourceSet, final IProgressMonitor monitor)
-			throws OperationCanceledException {
+	public void updateMarkers(final Delta delta, final ResourceSet resourceSet, final IProgressMonitor monitor) {
 
 		final URI uri = delta.getUri();
 		final IResourceUIValidatorExtension validatorExtension = getResourceUIValidatorExtension(uri);
 		final IMarkerContributor markerContributor = getMarkerContributor(uri);
 		final CheckMode normalAndFastMode = CheckMode.NORMAL_AND_FAST;
-
 		for (final Pair<IStorage, IProject> pair : mapper.getStorages(uri)) {
-			if (monitor.isCanceled()) { throw new OperationCanceledException(); }
-			if (pair.getFirst() instanceof IFile) {
-				final IFile file = (IFile) pair.getFirst();
-
+			if (monitor.isCanceled()) return;
+			if (pair.getFirst() instanceof IFile file) {
 				if (delta.getNew() != null) {
-					if (resourceSet == null) { throw new IllegalArgumentException(
-							"resourceSet may not be null for changed resources."); }
-
+					if (resourceSet == null) return;
 					final Resource resource = resourceSet.getResource(uri, true);
-
 					if (validatorExtension != null) {
 						validatorExtension.updateValidationMarkers(file, resource, normalAndFastMode, monitor);
 					}
-					if (markerContributor != null) {
-						markerContributor.updateMarkers(file, resource, monitor);
-					}
+					if (markerContributor != null) { markerContributor.updateMarkers(file, resource, monitor); }
 					// GAMA.getGui().getMetaDataProvider().storeMetadata(file,
 					// info.getInfo(resource, file.getModificationStamp()),
 					// true);
@@ -78,44 +71,21 @@ public class GamlMarkerUpdater extends MarkerUpdaterImpl {
 					if (validatorExtension != null) {
 						validatorExtension.deleteValidationMarkers(file, normalAndFastMode, monitor);
 					} else {
-						deleteAllValidationMarker(file, normalAndFastMode, monitor);
+						eraser.deleteValidationMarkers(file, normalAndFastMode, monitor);
 					}
 					if (markerContributor != null) {
 						markerContributor.deleteMarkers(file, monitor);
 					} else {
-						deleteAllContributedMarkers(file, monitor);
+						try {
+							file.deleteMarkers(IMarkerContributor.MARKER_TYPE, true, IResource.DEPTH_ZERO);
+						} catch (final CoreException e) {
+							DEBUG.ERR(e.getMessage());
+						}
 					}
 				}
 			}
 		}
 
-	}
-
-	/**
-	 * Delete all validation marker.
-	 *
-	 * @param file the file
-	 * @param checkMode the check mode
-	 * @param monitor the monitor
-	 */
-	private void deleteAllValidationMarker(final IFile file, final CheckMode checkMode,
-			final IProgressMonitor monitor) {
-		final MarkerEraser markerEraser = new MarkerEraser();
-		markerEraser.deleteValidationMarkers(file, checkMode, monitor);
-	}
-
-	/**
-	 * Delete all contributed markers.
-	 *
-	 * @param file the file
-	 * @param monitor the monitor
-	 */
-	private void deleteAllContributedMarkers(final IFile file, final IProgressMonitor monitor) {
-		try {
-			file.deleteMarkers(IMarkerContributor.MARKER_TYPE, true, IResource.DEPTH_ZERO);
-		} catch (final CoreException e) {
-			DEBUG.ERR(e.getMessage());
-		}
 	}
 
 }
