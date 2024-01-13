@@ -1,5 +1,6 @@
 *.icloud
 *.gamlbin
+*.experimentbin
 *.log
 target/
 *.orig
