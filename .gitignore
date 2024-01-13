@@ -1,4 +1,5 @@
 *.icloud
+*.gamlbin
 *.log
 target/
 *.orig
