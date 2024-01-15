@@ -121,8 +121,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 						&& contentType.id() == IType.PAIR) {
 					contentType = contentType.getContentType();
 				}
-				if (!contentType.isTranslatableInto(receiverContentType)
-						|| Types.intFloatCase(receiverContentType, contentType)) {
+				if (!contentType.isTranslatableInto(receiverContentType)) {
 					emitCastingWarning(facetName, context, receiverDescription, receiverType, assigned,
 							receiverContentType, contentType);
 				}

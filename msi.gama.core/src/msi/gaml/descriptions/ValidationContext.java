@@ -13,13 +13,13 @@ package msi.gaml.descriptions;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -69,7 +69,7 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	private final IDocManager docDelegate;
 
 	/** The expressions to document. */
-	private final Map<EObject, IGamlDescription> expressionsToDocument = new ConcurrentHashMap<>();
+	private final Map<EObject, IGamlDescription> expressionsToDocument = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Instantiates a new validation context.
@@ -112,6 +112,9 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 
 	/** The Constant IS_ERROR. */
 	public static final Predicate<GamlCompilationError> IS_ERROR = GamlCompilationError::isError;
+
+	/** The Constant IMPORTED_FROM. */
+	public static final String IMPORTED_FROM = "imported from";
 
 	/**
 	 * Checks for internal syntax errors.
@@ -204,8 +207,8 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	public Map<String, URI> getImportedErrorsAsStrings() {
 		if (importedErrors == null) return Collections.EMPTY_MAP;
 		Map<String, URI> result = new LinkedHashMap<>();
-		importedErrors.forEach(
-				e -> result.put(e.toString() + " (in " + URI.decode(e.getURI().lastSegment()) + ")", e.getURI()));
+		importedErrors.forEach(e -> result.put(
+				e.toString() + " (" + IMPORTED_FROM + " " + URI.decode(e.getURI().lastSegment()) + ")", e.getURI()));
 		return result;
 	}
 
@@ -244,7 +247,9 @@ public class ValidationContext extends Collector.AsList<GamlCompilationError> {
 	public void doDocument(final ModelDescription description) {
 		if (shouldDocument) {
 			docDelegate.doDocument(resourceURI, description, expressionsToDocument);
-			expressionsToDocument.forEach((e, d) -> { docDelegate.setGamlDocumentation(resourceURI, e, d); });
+			synchronized (expressionsToDocument) {
+				expressionsToDocument.forEach((e, d) -> { docDelegate.setGamlDocumentation(resourceURI, e, d); });
+			}
 		}
 		expressionsToDocument.clear();
 	}

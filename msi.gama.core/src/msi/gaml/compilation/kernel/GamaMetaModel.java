@@ -32,17 +32,24 @@ import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGenericAgentType;
-import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
  * The Class GamaMetaModel.
+ */
+
+/**
+ * The Class GamaMetaModel.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 15 janv. 2024
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMetaModel {
@@ -67,6 +74,54 @@ public class GamaMetaModel {
 
 	/** The is initialized. */
 	public volatile boolean isInitialized;
+
+	/** The experiment. */
+	private SpeciesDescription agent;
+
+	/** The model. */
+	private ModelDescription model;
+
+	/** The experiment. */
+	private ExperimentDescription experiment;
+
+	/** The platform. */
+	private PlatformSpeciesDescription platform;
+
+	/**
+	 * Gets the agent species description.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the agent species description
+	 * @date 15 janv. 2024
+	 */
+	public static SpeciesDescription getAgentSpeciesDescription() { return INSTANCE.agent; }
+
+	/**
+	 * Gets the model description.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the model description
+	 * @date 15 janv. 2024
+	 */
+	public static SpeciesDescription getModelDescription() { return INSTANCE.model; }
+
+	/**
+	 * Gets the experiment description.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the experiment description
+	 * @date 15 janv. 2024
+	 */
+	public static SpeciesDescription getExperimentDescription() { return INSTANCE.experiment; }
+
+	/**
+	 * Gets the platform species description.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the platform species description
+	 * @date 15 janv. 2024
+	 */
+	public static PlatformSpeciesDescription getPlatformSpeciesDescription() { return INSTANCE.platform; }
 
 	/**
 	 * The Class SpeciesProto.
@@ -169,12 +224,12 @@ public class GamaMetaModel {
 		// "model")
 		final SpeciesProto ap = tempSpecies.remove(AGENT);
 		// "agent" has no super-species yet
-		final SpeciesDescription agent = buildSpecies(ap, null, null, false, false);
+		agent = buildSpecies(ap, null, null, false, false);
 		((GamaGenericAgentType) Types.builtInTypes.get(IKeyword.AGENT)).setSpecies(agent);
 
 		// We then build "model", sub-species of "agent"
 		final SpeciesProto wp = tempSpecies.remove(MODEL);
-		final ModelDescription model = (ModelDescription) buildSpecies(wp, null, agent, true, false);
+		model = (ModelDescription) buildSpecies(wp, null, agent, true, false);
 
 		// We close the first loop by putting agent "inside" model
 		agent.setEnclosingDescription(model);
@@ -183,7 +238,7 @@ public class GamaMetaModel {
 		// We create "experiment" as the root of all experiments, sub-species of
 		// "agent"
 		final SpeciesProto ep = tempSpecies.remove(EXPERIMENT);
-		final SpeciesDescription experiment = buildSpecies(ep, null, agent, false, true);
+		experiment = (ExperimentDescription) buildSpecies(ep, null, agent, false, true);
 		experiment.finalizeDescription();
 		// Types.builtInTypes.addSpeciesType(experiment);
 
@@ -228,8 +283,8 @@ public class GamaMetaModel {
 		allSkills.addAll(speciesSkills.get(name));
 		SpeciesDescription desc;
 		if (IKeyword.PLATFORM.equals(proto.name)) {
-			desc = DescriptionFactory.createPlatformSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
-					plugin);
+			platform = (PlatformSpeciesDescription) (desc = DescriptionFactory.createPlatformSpeciesDescription(name,
+					clazz, macro, parent, helper, allSkills, plugin));
 		} else if (!isModel) {
 			if (isExperiment) {
 				desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
@@ -265,22 +320,8 @@ public class GamaMetaModel {
 	 * @return the abstract model species
 	 */
 	public GamlModelSpecies getAbstractModelSpecies() {
-		if (abstractModelSpecies == null) {
-			final IType model = Types.get(IKeyword.MODEL);
-			abstractModelSpecies = (GamlModelSpecies) model.getSpecies().compile();
-		}
+		if (abstractModelSpecies == null) { abstractModelSpecies = (GamlModelSpecies) getModelDescription().compile(); }
 		return abstractModelSpecies;
-	}
-
-	/**
-	 * Gets the platform species description.
-	 *
-	 * @return the platform species description
-	 */
-	public PlatformSpeciesDescription getPlatformSpeciesDescription() {
-		final IType platform = Types.get(IKeyword.PLATFORM);
-		if (platform != null && platform != Types.NO_TYPE) return (PlatformSpeciesDescription) platform.getSpecies();
-		return null;
 	}
 
 	/**
@@ -289,10 +330,7 @@ public class GamaMetaModel {
 	 * @return the abstract agent species
 	 */
 	public ISpecies getAbstractAgentSpecies() {
-		if (abstractAgentSpecies == null) {
-			final IType model = Types.get(IKeyword.AGENT);
-			abstractAgentSpecies = (ISpecies) model.getSpecies().compile();
-		}
+		if (abstractAgentSpecies == null) { abstractAgentSpecies = (ISpecies) getAgentSpeciesDescription().compile(); }
 		return abstractAgentSpecies;
 	}
 

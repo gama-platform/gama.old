@@ -1080,7 +1080,7 @@ public class GamaPreferences {
 		prefs.put(key, gp);
 		getStore().register(gp);
 		// Adds the preferences to the platform species if it is already created
-		final var spec = GamaMetaModel.INSTANCE.getPlatformSpeciesDescription();
+		final var spec = GamaMetaModel.getPlatformSpeciesDescription();
 		if (spec != null && !spec.hasAttribute(key)) {
 			spec.addPref(key, gp);
 			// spec.validate();

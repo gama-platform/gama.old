@@ -3,7 +3,7 @@
  * WrappedFile.java, in ummisco.gama.ui.navigator, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -22,13 +22,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
-import msi.gaml.types.Types;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.NavigatorContentProvider;
 import ummisco.gama.ui.resources.GamaColors;
@@ -79,7 +78,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 			if (isShapeFileSupport) {
 				image = GamaIcon.named(IGamaIcons.FILE_SHAPESUPPORT).descriptor();
 			} else {
-				image =  ImageDescriptor.createFromImage(DEFAULT_LABEL_PROVIDER.getImage(f));
+				image = ImageDescriptor.createFromImage(DEFAULT_LABEL_PROVIDER.getImage(f));
 			}
 		} else {
 			image = GamaIcon.named(IGamaIcons.FILE_TEXT).descriptor();
@@ -149,7 +148,7 @@ public class WrappedFile extends WrappedResource<WrappedResource<?, ?>, IFile> {
 			if (metaData instanceof ShapeInfo info && !(attributes = info.getAttributes()).isEmpty()) {
 				Map<String, String> tags = new LinkedHashMap<>(attributes);
 				attributes.forEach((k, v) -> {
-					if (Types.AGENT.getSpecies().hasAttribute(k)) {
+					if (GamaMetaModel.getAgentSpeciesDescription().hasAttribute(k)) {
 						tags.put(k, tags.get(k) + " <- built-in attribute of agents");
 						color = GamaColors.system(SWT.COLOR_DARK_RED);
 					}

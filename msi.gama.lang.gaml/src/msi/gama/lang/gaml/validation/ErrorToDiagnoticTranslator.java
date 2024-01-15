@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * ErrorToDiagnoticTranslator.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * ErrorToDiagnoticTranslator.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
@@ -52,18 +52,19 @@ public class ErrorToDiagnoticTranslator {
 	/**
 	 * Translate.
 	 *
-	 * @param errors the errors
-	 * @param r the r
-	 * @param mode the mode
+	 * @param errors
+	 *            the errors
+	 * @param r
+	 *            the r
+	 * @param mode
+	 *            the mode
 	 * @return the diagnostic
 	 */
 	public Diagnostic translate(final ValidationContext errors, final GamlResource r, final CheckMode mode) {
 		final BasicDiagnostic chain = new BasicDiagnostic();
 		for (final GamlCompilationError e : errors) {
 			final Diagnostic d = translate(e, r, mode);
-			if (d != null) {
-				chain.add(d);
-			}
+			if (d != null) { chain.add(d); }
 		}
 		return chain;
 	}
@@ -71,25 +72,26 @@ public class ErrorToDiagnoticTranslator {
 	/**
 	 * Translate.
 	 *
-	 * @param e the e
-	 * @param r the r
-	 * @param mode the mode
+	 * @param e
+	 *            the e
+	 * @param r
+	 *            the r
+	 * @param mode
+	 *            the mode
 	 * @return the diagnostic
 	 */
 	public Diagnostic translate(final GamlCompilationError e, final GamlResource r, final CheckMode mode) {
 		final URI errorURI = e.getURI();
 		if (!GamlResourceServices.equals(errorURI, r.getURI())) {
-			//			final String uri = URI.decode(errorURI.toFileString());
 			final String s = URI.decode(errorURI.lastSegment());
 			final EObject m = r.getContents().get(0);
 			final EObject eObject = findImportWith(m, s);
-			final EAttribute feature =
-					eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
-							: eObject instanceof HeadlessExperiment
-							? GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI
-									: GamlPackage.Literals.IMPORT__IMPORT_URI;
-			return createDiagnostic(CheckMode.NORMAL_ONLY, Diagnostic.ERROR, e.toString() + " (in " + s + ")", eObject,
-					feature, ValidationMessageAcceptor.INSIGNIFICANT_INDEX, e.getCode(), e.getData());
+			final EAttribute feature = eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
+					: eObject instanceof HeadlessExperiment ? GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI
+					: GamlPackage.Literals.IMPORT__IMPORT_URI;
+			return createDiagnostic(CheckMode.NORMAL_ONLY, Diagnostic.ERROR,
+					e.toString() + " (" + ValidationContext.IMPORTED_FROM + " " + s + ")", eObject, feature,
+					ValidationMessageAcceptor.INSIGNIFICANT_INDEX, e.getCode(), e.getData());
 		}
 		EStructuralFeature feature = null;
 		final EObject object = e.getStatement();
@@ -100,9 +102,7 @@ public class ErrorToDiagnoticTranslator {
 			} else if (s.eIsSet(GamlPackage.Literals.SDEFINITION__TKEY)) {
 				feature = GamlPackage.Literals.SDEFINITION__TKEY;
 			}
-		} else if (object instanceof Model) {
-			feature = GamlPackage.Literals.GAML_DEFINITION__NAME;
-		}
+		} else if (object instanceof Model) { feature = GamlPackage.Literals.GAML_DEFINITION__NAME; }
 		if (!Arrays.contains(e.getData(), null)) {
 			final int index = ValidationMessageAcceptor.INSIGNIFICANT_INDEX;
 			return createDiagnostic(mode, toDiagnosticSeverity(e), e.toString(), object, feature, index, e.getCode(),
@@ -114,14 +114,22 @@ public class ErrorToDiagnoticTranslator {
 	/**
 	 * Creates the diagnostic.
 	 *
-	 * @param mode the mode
-	 * @param diagnosticSeverity the diagnostic severity
-	 * @param message the message
-	 * @param object the object
-	 * @param feature the feature
-	 * @param index the index
-	 * @param code the code
-	 * @param issueData the issue data
+	 * @param mode
+	 *            the mode
+	 * @param diagnosticSeverity
+	 *            the diagnostic severity
+	 * @param message
+	 *            the message
+	 * @param object
+	 *            the object
+	 * @param feature
+	 *            the feature
+	 * @param index
+	 *            the index
+	 * @param code
+	 *            the code
+	 * @param issueData
+	 *            the issue data
 	 * @return the diagnostic
 	 */
 	private Diagnostic createDiagnostic(final CheckMode mode, final int diagnosticSeverity, final String message,
@@ -135,29 +143,23 @@ public class ErrorToDiagnoticTranslator {
 	/**
 	 * Gets the type.
 	 *
-	 * @param mode the mode
+	 * @param mode
+	 *            the mode
 	 * @return the type
 	 */
 	private CheckType getType(final CheckMode mode) {
-		if (mode == CheckMode.FAST_ONLY) {
+		if (mode == CheckMode.FAST_ONLY) return CheckType.FAST;
+		if (mode == CheckMode.EXPENSIVE_ONLY) return CheckType.EXPENSIVE;
+		if (mode == CheckMode.ALL || mode == CheckMode.NORMAL_AND_FAST || mode != CheckMode.NORMAL_ONLY)
 			return CheckType.FAST;
-		} else if (mode == CheckMode.EXPENSIVE_ONLY) {
-			return CheckType.EXPENSIVE;
-		} else if (mode == CheckMode.ALL) {
-			return CheckType.FAST;
-		} else if (mode == CheckMode.NORMAL_AND_FAST) {
-			return CheckType.FAST;
-		} else if (mode == CheckMode.NORMAL_ONLY) {
-			return CheckType.NORMAL;
-		} else {
-			return CheckType.FAST;
-		}
+		return CheckType.NORMAL;
 	}
 
 	/**
 	 * To diagnostic severity.
 	 *
-	 * @param e the e
+	 * @param e
+	 *            the e
 	 * @return the int
 	 */
 	protected int toDiagnosticSeverity(final GamlCompilationError e) {
@@ -166,9 +168,7 @@ public class ErrorToDiagnoticTranslator {
 			diagnosticSeverity = Diagnostic.ERROR;
 		} else if (e.isWarning()) {
 			diagnosticSeverity = Diagnostic.WARNING;
-		} else if (e.isInfo()) {
-			diagnosticSeverity = Diagnostic.INFO;
-		}
+		} else if (e.isInfo()) { diagnosticSeverity = Diagnostic.INFO; }
 
 		return diagnosticSeverity;
 	}
@@ -176,20 +176,16 @@ public class ErrorToDiagnoticTranslator {
 	/**
 	 * Find import with.
 	 *
-	 * @param m the m
-	 * @param s the s
+	 * @param m
+	 *            the m
+	 * @param s
+	 *            the s
 	 * @return the e object
 	 */
 	private EObject findImportWith(final EObject m, final String s) {
 		if (m instanceof Model) {
-			for (final Import i : ((Model) m).getImports()) {
-				if (i.getImportURI().endsWith(s)) {
-					return i;
-				}
-			}
-		} else if (m instanceof ExperimentFileStructure) {
-			return ((ExperimentFileStructure) m).getExp();
-		}
+			for (final Import i : ((Model) m).getImports()) { if (i.getImportURI().endsWith(s)) return i; }
+		} else if (m instanceof ExperimentFileStructure) return ((ExperimentFileStructure) m).getExp();
 		return m;
 	}
 

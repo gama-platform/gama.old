@@ -13,7 +13,7 @@ package msi.gama.lang.gaml.indexer;
 import static msi.gama.lang.gaml.resource.GamlResourceServices.properlyEncodedURI;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,12 +72,12 @@ public class GamlResourceIndexer {
 	 * @return the imports as absolute URIS
 	 */
 	private static Map<URI, String> getImportsAsAbsoluteURIS(final URI baseURI, final EObject m) {
-		final boolean isModel = m instanceof Model;
-		final boolean isExpe = m instanceof ExperimentFileStructure;
 		Map<URI, String> result = EMPTY_MAP;
-		if (isModel && ((ModelImpl) m).eIsSet(GamlPackage.MODEL__IMPORTS)) {
+		if (m instanceof ModelImpl model && model.eIsSet(GamlPackage.MODEL__IMPORTS)) {
+			List<Import> imports = model.getImports();
+			if (imports.isEmpty()) return result;
 			result = GamaMapFactory.createOrdered();
-			for (final Import e : ((Model) m).getImports()) {
+			for (final Import e : imports) {
 				final String u = e.getImportURI();
 				if (u != null) {
 					URI uri = URI.createURI(u, true);
@@ -90,8 +90,8 @@ public class GamlResourceIndexer {
 					result.put(uri, e.getName());
 				}
 			}
-		} else if (isExpe) {
-			final String u = ((ExperimentFileStructure) m).getExp().getImportURI();
+		} else if (m instanceof ExperimentFileStructure expe) {
+			final String u = expe.getExp().getImportURI();
 			if (u != null) {
 				URI uri = URI.createURI(u, true);
 				uri = properlyEncodedURI(uri.resolve(baseURI));
@@ -102,59 +102,21 @@ public class GamlResourceIndexer {
 	}
 
 	/**
-	 * Gets the import object.
-	 *
-	 * @param m
-	 *            the m
-	 * @param modelURI
-	 *            the model URI
-	 * @param importUri
-	 *            the import uri
-	 * @return the import object
-	 */
-	public static Import getImportObject(final EObject m, final URI modelURI, final URI importUri) {
-		for (final Import e : ((Model) m).getImports()) {
-			final String u = e.getImportURI();
-			if (u != null) {
-				URI uri = URI.createURI(u, true);
-				uri = properlyEncodedURI(uri.resolve(modelURI));
-				if (uri.equals(importUri)) return e;
-			}
-		}
-		return null;
-
-	}
-
-	/**
-	 * Adds the import.
-	 *
-	 * @param from
-	 *            the from
-	 * @param to
-	 *            the to
-	 * @param label
-	 *            the label
-	 */
-	static void addImport(final URI from, final URI to, final String label) {
-		index.addEdge(from, to, label);
-	}
-
-	/**
 	 * Find import.
 	 *
-	 * @param model
+	 * @param contents
 	 *            the model
 	 * @param uri
 	 *            the uri
 	 * @return the e object
 	 */
-	static private EObject findImport(final EObject model, final URI baseURI, final URI uri) {
-		if (model instanceof ExperimentFileStructure) {
-			String m = ((ExperimentFileStructure) model).getExp().getImportURI();
-			if (m.contains(URI.decode(uri.lastSegment())) || uri.equals(baseURI) && m.isEmpty()) return model;
-		} else if (model instanceof Model) {
-			for (final Import e : ((Model) model).getImports()) {
-				if (e.getImportURI().contains(URI.decode(uri.lastSegment()))) return e;
+	static private EObject findImport(final EObject contents, final URI baseURI, final URI uri) {
+		if (contents instanceof ExperimentFileStructure expe) {
+			String u = expe.getExp().getImportURI();
+			if (u.contains(URI.decode(uri.lastSegment())) || uri.equals(baseURI) && u.isEmpty()) return contents;
+		} else if (contents instanceof Model model) {
+			for (final Import imp : model.getImports()) {
+				if (imp.getImportURI().contains(URI.decode(uri.lastSegment()))) return imp;
 			}
 		}
 		return null;
@@ -176,8 +138,10 @@ public class GamlResourceIndexer {
 			String label = entry.getValue();
 			if (!existingEdges.containsKey(uri)) {
 				if (!EcoreUtil2.isValidUri(r, uri)) return findImport(contents, baseURI, uri);
-				final boolean alreadyThere = index.containsVertex(uri);
-				addImport(baseURI, uri, label);
+				final boolean alreadyThere = index.imports.containsVertex(uri);
+				final URI to = uri;
+				final String label1 = label;
+				index.addEdge(baseURI, to, label1);
 				if (!alreadyThere) {
 					// This call should trigger the recursive call to updateImports()
 					r.getResourceSet().getResource(uri, true);
@@ -231,7 +195,6 @@ public class GamlResourceIndexer {
 	 * Erase index.
 	 */
 	public static void eraseIndex() {
-		// DEBUG.OUT("Erasing GAML indexer index");
 		index.reset();
 	}
 
@@ -246,21 +209,14 @@ public class GamlResourceIndexer {
 		return !directImportersOf(r.getURI()).isEmpty();
 	}
 
-	// /**
-	// * Checks if the first argument, 'imported', is imported by the second one, 'importer'
-	// *
-	// * @param imported
-	// * the imported URI - supposed to be clean
-	// * @param importer
-	// * the importer URI - supposed to be clean
-	// * @return true, if is imported
-	// */
-	// public static boolean isImported(final URI imported, final URI importer) {
-	// return allImportsOfProperlyEncoded(imported).containsKey(importer);
-	// }
-
 	/**
-	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#directImportersOf(org.eclipse.emf.common.util.URI)
+	 * Direct importers of.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param uri
+	 *            the uri
+	 * @return the sets the
+	 * @date 14 janv. 2024
 	 */
 	public static Set<URI> directImportersOf(final URI uri) {
 		return index.predecessorsOf(uri);
@@ -297,28 +253,6 @@ public class GamlResourceIndexer {
 	 */
 	public static Map<URI, String> allImportsOfProperlyEncoded(final URI uri) {
 		return index.sortedDepthFirstSearchWithLabels(uri);
-	}
-
-	/**
-	 * Mark multiple imports. Returns the map of imports that are imported several times. Keys are the double imports,
-	 * values the direct import that imports it
-	 *
-	 * @param uri
-	 *            the uri
-	 * @return the list
-	 */
-	public static Map<URI, URI> collectMultipleImportsOf(final GamlResource r) {
-		Map<URI, URI> result = Collections.EMPTY_MAP;
-		Set<URI> uris = directImportsOf(r.getURI());
-		for (URI uri : uris) {
-			for (URI imported : allImportsOf(uri).keySet()) {
-				if (uris.contains(imported)) {
-					if (result == Collections.EMPTY_MAP) { result = new HashMap<>(); }
-					result.put(imported, uri);
-				}
-			}
-		}
-		return result;
 	}
 
 }

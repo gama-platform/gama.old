@@ -4,7 +4,7 @@
  * CompoundSpatialIndex.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
 import msi.gama.common.geometry.Envelope3D;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.preferences.GamaPreferences;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -34,7 +35,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.Collector;
 import msi.gama.util.ICollector;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.Types;
 
 /**
  * The Class CompoundSpatialIndex.
@@ -261,7 +261,7 @@ public class CompoundSpatialIndex implements ISpatialIndex.Compound {
 				(Collection<IPopulation<? extends IAgent>>) ((IPopulationSet) filter).getPopulations(scope),
 				each -> add(each, true));
 		ISpecies species = filter.getSpecies();
-		if (species == null || species.getDescription() == Types.AGENT.getSpecies()) return spatialIndexes.values();
+		if (species == null || IKeyword.AGENT.equals(species.getName())) return spatialIndexes.values();
 		if (!cachedSpeciesIndices.containsKey(species)) {
 			cachedSpeciesIndices.put(species,
 					Lists.newArrayList(com.google.common.collect.Iterables.transform(com.google.common.collect.Iterables

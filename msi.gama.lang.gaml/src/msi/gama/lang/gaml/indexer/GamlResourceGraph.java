@@ -108,17 +108,6 @@ public class GamlResourceGraph {
 	}
 
 	/**
-	 * Contains vertex.
-	 *
-	 * @param uri
-	 *            the uri
-	 * @return true, if successful
-	 */
-	public boolean containsVertex(final URI uri) {
-		return imports.containsVertex(uri);
-	}
-
-	/**
 	 * Predecessors of.
 	 *
 	 * @param newURI
@@ -183,11 +172,11 @@ public class GamlResourceGraph {
 	 * @return the map
 	 */
 	public Map<URI, String> outgoingEdgesOf(final URI uri) {
-		if (!containsVertex(uri)) return Collections.EMPTY_MAP;
+		if (!imports.containsVertex(uri)) return Collections.EMPTY_MAP;
+		Set<LabeledEdge> outgoing = imports.outgoingEdgesOf(uri);
+		if (outgoing.isEmpty()) return Collections.EMPTY_MAP;
 		Map<URI, String> result = GamaMapFactory.createOrdered();
-		if (imports.containsVertex(uri)) {
-			for (LabeledEdge o : imports.outgoingEdgesOf(uri)) { result.put(o.target, o.label); }
-		}
+		for (LabeledEdge o : outgoing) { result.put(o.target, o.label); }
 		return result;
 	}
 

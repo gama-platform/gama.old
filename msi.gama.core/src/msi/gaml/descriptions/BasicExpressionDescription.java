@@ -151,8 +151,8 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public IExpressionDescription cleanCopy() {
-		final IExpressionDescription result = new BasicExpressionDescription(expression);
-		result.setTarget(target);
+		final BasicExpressionDescription result = new BasicExpressionDescription(target);
+		result.expression = expression;
 		return result;
 	}
 
