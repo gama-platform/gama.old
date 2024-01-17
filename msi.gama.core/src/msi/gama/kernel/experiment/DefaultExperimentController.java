@@ -184,7 +184,9 @@ public class DefaultExperimentController extends AbstractExperimentController {
 	public void schedule(final ExperimentAgent agent) {
 		this.agent = agent;
 		scope = agent.getScope();
-		serverConfiguration = GAMA.getPlatformAgent().getServer().obtainGuiServerConfiguration();
+		serverConfiguration = GAMA.getPlatformAgent().getServer() != null
+				? GAMA.getPlatformAgent().getServer().obtainGuiServerConfiguration()
+				: null;
 		scope.setServerConfiguration(serverConfiguration);
 		try {
 			if (!scope.init(agent).passed()) {

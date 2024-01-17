@@ -118,8 +118,8 @@ public class GamaGuiWebSocketServer extends GamaWebSocketServer implements IExpe
 
 	@Override
 	public void onStart() {
-		GAMA.addExperimentStateListener(this);
-		DEBUG.BANNER("GAMA", "Server started", "at port", "" + this.getPort());
+		super.onStart();
+		GAMA.addExperimentStateListener(this); 
 	}
 
 	@Override

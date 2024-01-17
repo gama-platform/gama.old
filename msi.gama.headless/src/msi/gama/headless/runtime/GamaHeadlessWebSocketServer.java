@@ -294,10 +294,7 @@ public class GamaHeadlessWebSocketServer extends GamaWebSocketServer {
 	public GamaServerExperimentConfiguration obtainGuiServerConfiguration() {
 		return GamaServerExperimentConfiguration.NULL;
 	}
-
-	@Override
-	public void onStart() {}
-
+ 
 	/**
 	 * Gets the experiment plan from the
 	 *

@@ -120,6 +120,11 @@ public abstract class GamaWebSocketServer extends WebSocketServer {
 	}
 
 	@Override
+	public void onStart() { 
+		DEBUG.BANNER("GAMA", "Server started", "at port", "" + this.getPort());
+	}
+	
+	@Override
 	public void onOpen(final WebSocket socket, final ClientHandshake handshake) {
 		socket.send(Json.getNew().valueOf(
 				new GamaServerMessage(GamaServerMessage.Type.ConnectionSuccessful, String.valueOf(socket.hashCode())))
