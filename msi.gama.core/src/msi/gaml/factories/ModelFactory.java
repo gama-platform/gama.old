@@ -63,28 +63,11 @@ import ummisco.gama.dev.utils.DEBUG;
  *
  * @todo Description
  */
-// @factory (
-// handles = { ISymbolKind.MODEL })
 public class ModelFactory extends SymbolFactory {
 
 	static {
 		DEBUG.ON();
 	}
-
-	/** The global nodes. */
-	final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
-
-	/** The species nodes. */
-	final LinkedHashMap<String, SyntacticSpeciesElement> speciesNodes = new LinkedHashMap<>();
-
-	/** The experiment nodes. */
-	final LinkedHashMap<String, ISyntacticElement> experimentNodes = new LinkedHashMap<>();
-
-	/** The temp species cache. */
-	final LinkedHashMap<String, SpeciesDescription> tempSpeciesCache = new LinkedHashMap<>();
-
-	/** The absolute alternate path as strings. */
-	final LinkedHashSet<String> absoluteAlternatePathAsStrings = new LinkedHashSet<>();
 
 	/** The hierarchy. */
 	DirectedAcyclicGraph<SpeciesDescription, Object> hierarchy = new DirectedAcyclicGraph<>(Object.class);
@@ -99,7 +82,9 @@ public class ModelFactory extends SymbolFactory {
 			hierarchy.addVertex(sd);
 			try {
 				hierarchy.addEdge(sd, desc);
-			} catch (IllegalArgumentException e) {
+			} catch (
+			/** The e. */
+			IllegalArgumentException e) {
 				// denotes the presence of a cycle in the hierarchy
 				desc.error("The hierarchy of " + desc.getName() + " is inconsistent.", IGamlIssue.WRONG_PARENT);
 				return false;
@@ -176,14 +161,26 @@ public class ModelFactory extends SymbolFactory {
 		// DEBUG.OUT("All models passed to ModelAssembler: "
 		// + Iterables.transform(allModels, @Nullable ISyntacticElement::getName));
 
+		/** The species nodes. */
+		final LinkedHashMap<String, ISyntacticElement> speciesNodes = new LinkedHashMap<>();
+
+		/** The experiment nodes. */
+		final LinkedHashMap<String, ISyntacticElement> experimentNodes = new LinkedHashMap<>();
+
+		/** The temp species cache. */
+		final LinkedHashMap<String, SpeciesDescription> tempSpeciesCache = new LinkedHashMap<>();
+
 		try {
+
 			final ISyntacticElement source = get(models, 0);
 
 			if (!applyPragmas(collector, source)) return null;
 
 			Facets globalFacets = null;
+			ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 			for (int i = Iterables.size(models); i-- > 0;) {
-				globalFacets = extractAndAssembleElementsOf(collector, globalFacets, get(models, i));
+				globalFacets = extractAndAssembleElementsOf(collector, globalFacets, get(models, i), globalNodes,
+						speciesNodes, experimentNodes);
 			}
 
 			final String modelName = buildModelName(source.getName());
@@ -192,10 +189,11 @@ public class ModelFactory extends SymbolFactory {
 			// be able to look for resources. These working paths come from the
 			// imported models
 
-			buildWorkingPaths(mm, models);
+			// DEBUG.OUT("In building " + modelName);
+			Set<String> absoluteAlternatePathAsStrings = buildWorkingPaths(mm, models);
 
-			final ModelDescription model =
-					buildPrimaryModel(projectPath, modelPath, collector, models, source, globalFacets, modelName);
+			final ModelDescription model = buildPrimaryModel(projectPath, modelPath, collector, models, source,
+					globalFacets, modelName, absoluteAlternatePathAsStrings);
 
 			// hqnghi add micro-models
 			if (mm != null) {
@@ -205,11 +203,11 @@ public class ModelFactory extends SymbolFactory {
 			// end-hqnghi
 			// recursively add user-defined species to world and down on to the
 			// hierarchy
-			addSpeciesAndExperiments(model);
+			addSpeciesAndExperiments(model, speciesNodes, experimentNodes, tempSpeciesCache);
 
 			// Parent the species and the experiments of the model (all are now
 			// known).
-			parentSpeciesAndExperiments(model);
+			parentSpeciesAndExperiments(model, speciesNodes, experimentNodes, tempSpeciesCache);
 
 			// Initialize the hierarchy of types
 			model.buildTypes();
@@ -223,7 +221,7 @@ public class ModelFactory extends SymbolFactory {
 			// actions....
 			complementSpecies(model, globalNodes);
 
-			complementSpeciesAndExperiments(model);
+			complementSpeciesAndExperiments(model, speciesNodes, experimentNodes);
 
 			// Complement recursively the different species (incl. the world). The
 			// recursion is hierarchical
@@ -241,11 +239,6 @@ public class ModelFactory extends SymbolFactory {
 			if (!model.finalizeDescription()) return null;
 			return model;
 		} finally {
-			globalNodes.clear();
-			speciesNodes.clear();
-			tempSpeciesCache.clear();
-			experimentNodes.clear();
-			absoluteAlternatePathAsStrings.clear();
 			hierarchy = new DirectedAcyclicGraph<>(Object.class);
 		}
 
@@ -263,7 +256,8 @@ public class ModelFactory extends SymbolFactory {
 	 *            the model
 	 * @date 26 déc. 2023
 	 */
-	private void complementSpeciesAndExperiments(final ModelDescription model) {
+	private void complementSpeciesAndExperiments(final ModelDescription model,
+			final Map<String, ISyntacticElement> speciesNodes, final Map<String, ISyntacticElement> experimentNodes) {
 		speciesNodes.forEach((s, speciesNode) -> {
 			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
 		});
@@ -286,7 +280,9 @@ public class ModelFactory extends SymbolFactory {
 	 *            the model
 	 * @date 26 déc. 2023
 	 */
-	private void addSpeciesAndExperiments(final ModelDescription model) {
+	private void addSpeciesAndExperiments(final ModelDescription model,
+			final Map<String, ISyntacticElement> speciesNodes, final Map<String, ISyntacticElement> experimentNodes,
+			final Map<String, SpeciesDescription> tempSpeciesCache) {
 		speciesNodes.forEach((s, speciesNode) -> { addMicroSpecies(model, speciesNode, tempSpeciesCache); });
 		experimentNodes.forEach((s, experimentNode) -> { addExperiment(s, model, experimentNode, tempSpeciesCache); });
 	}
@@ -305,7 +301,9 @@ public class ModelFactory extends SymbolFactory {
 	 *            the model
 	 * @date 26 déc. 2023
 	 */
-	private void parentSpeciesAndExperiments(final ModelDescription model) {
+	private void parentSpeciesAndExperiments(final ModelDescription model,
+			final Map<String, ISyntacticElement> speciesNodes, final Map<String, ISyntacticElement> experimentNodes,
+			final Map<String, SpeciesDescription> tempSpeciesCache) {
 		speciesNodes.forEach((s, speciesNode) -> { parentSpecies(model, speciesNode, model, tempSpeciesCache); });
 		experimentNodes.forEach((s, experimentNode) -> { parentExperiment(model, experimentNode); });
 	}
@@ -337,7 +335,7 @@ public class ModelFactory extends SymbolFactory {
 	 */
 	private ModelDescription buildPrimaryModel(final String projectPath, final String modelPath,
 			final ValidationContext collector, final Iterable<ISyntacticElement> models, final ISyntacticElement source,
-			final Facets globalFacets, final String modelName) {
+			final Facets globalFacets, final String modelName, final Set<String> absoluteAlternatePathAsStrings) {
 		ModelDescription parent = ROOT;
 		if (globalFacets != null && globalFacets.containsKey(PARENT)) {
 			String parentModel = globalFacets.getLabel(PARENT);
@@ -363,7 +361,9 @@ public class ModelFactory extends SymbolFactory {
 	 */
 	private Set<String> buildWorkingPaths(final Map<String, ModelDescription> mm,
 			final Iterable<ISyntacticElement> models) {
+		LinkedHashSet<String> absoluteAlternatePathAsStrings = new LinkedHashSet<>();
 		for (int i = Iterables.size(models); i-- > 0;) {
+			// DEBUG.OUT("Adding " + ((SyntacticModelElement) get(models, i)).getPath() + " to the paths");
 			absoluteAlternatePathAsStrings.add(((SyntacticModelElement) get(models, i)).getPath());
 		}
 		if (mm != null) {
@@ -371,6 +371,7 @@ public class ModelFactory extends SymbolFactory {
 				absoluteAlternatePathAsStrings.addAll(m1.getAlternatePaths());
 			}
 		}
+		// DEBUG.OUT("Alternate paths " + absoluteAlternatePathAsStrings);
 		return absoluteAlternatePathAsStrings;
 	}
 
@@ -392,7 +393,8 @@ public class ModelFactory extends SymbolFactory {
 	 * @return the facets
 	 */
 	private Facets extractAndAssembleElementsOf(final ValidationContext collector, Facets globalFacets,
-			final ISyntacticElement cm) {
+			final ISyntacticElement cm, final ISyntacticElement globalNodes,
+			final Map<String, ISyntacticElement> speciesNodes, final Map<String, ISyntacticElement> experimentNodes) {
 		final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
 		if (currentModel != null) {
 			if (currentModel.hasFacets()) {
@@ -406,14 +408,14 @@ public class ModelFactory extends SymbolFactory {
 				element.setFacet(IKeyword.ORIGIN, ConstantExpressionDescription.create(currentModel.getName()));
 				globalNodes.addChild(element);
 			});
-			SyntacticVisitor visitor = element -> addSpeciesNode(element, collector);
+			SyntacticVisitor visitor = element -> addSpeciesNode(element, collector, speciesNodes);
 			currentModel.visitSpecies(visitor);
 
 			// We input the species so that grids are always the last ones
 			// (see DiffusionStatement)
 			currentModel.visitGrids(visitor);
 			visitor = element -> {
-				addExperimentNode(element, currentModel.getName(), collector);
+				addExperimentNode(element, currentModel.getName(), collector, experimentNodes);
 
 			};
 			currentModel.visitExperiments(visitor);
@@ -521,7 +523,8 @@ public class ModelFactory extends SymbolFactory {
 	 * @param collector
 	 *            the collector
 	 */
-	void addExperimentNode(final ISyntacticElement element, final String modelName, final ValidationContext collector) {
+	void addExperimentNode(final ISyntacticElement element, final String modelName, final ValidationContext collector,
+			final Map<String, ISyntacticElement> experimentNodes) {
 		// First we verify that this experiment has not been declared previously
 		final String experimentName = element.getName();
 		if (experimentNodes.containsKey(experimentName)) {
@@ -578,7 +581,8 @@ public class ModelFactory extends SymbolFactory {
 	 * @param collector
 	 *            the collector
 	 */
-	void addSpeciesNode(final ISyntacticElement sse, final ValidationContext collector) {
+	void addSpeciesNode(final ISyntacticElement sse, final ValidationContext collector,
+			final Map<String, ISyntacticElement> speciesNodes) {
 		if (!(sse instanceof SyntacticSpeciesElement element)) return;
 		final String name = element.getName();
 		if (speciesNodes.containsKey(name)) {
