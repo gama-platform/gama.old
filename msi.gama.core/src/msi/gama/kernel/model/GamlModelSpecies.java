@@ -3,7 +3,7 @@
  * GamlModelSpecies.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -36,7 +36,6 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
@@ -224,7 +223,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	@Override
-	public ISpecies getSpecies(final String speciesName, final SpeciesDescription specDes) {
+	public ISpecies getSpecies(final String speciesName, final String origin) {
 		if (speciesName == null) return null;
 		if (speciesName.equals(getName())) return this;
 		// hqnghi 11/Oct/13
@@ -233,7 +232,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		if (sp == null) {
 			for (final Map.Entry<String, ISpecies> entry : getAllSpecies().entrySet()) {
 				final ISpecies mm = entry.getValue();
-				if (mm instanceof GamlModelSpecies && specDes.getOriginName().equals(mm.getName())) {
+				if (mm instanceof GamlModelSpecies && origin.equals(mm.getName())) {
 					sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
 					if (sp != null) return sp;
 				}

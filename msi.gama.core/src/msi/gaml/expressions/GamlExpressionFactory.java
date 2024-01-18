@@ -141,7 +141,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		if (type.getGamlType() != Types.SPECIES) return null;
 		final SpeciesDescription sd = type.getContentType().getSpecies();
 		if (sd == null) return null;
-		return new SpeciesConstantExpression(sd.getName(), type);
+		return new SpeciesConstantExpression(sd.getName(), type, sd);
 	}
 
 	@Override
