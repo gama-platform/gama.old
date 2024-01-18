@@ -44,6 +44,7 @@ import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
 import msi.gaml.compilation.ast.SyntacticSpeciesElement;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
@@ -634,7 +635,7 @@ public class ModelFactory extends SymbolFactory {
 		// If no parent is defined, we assume it is "experiment"
 		// No cache needed for experiments ??
 		SpeciesDescription parent = model.getExperiment(p);
-		if (parent == null) { parent = Types.get(IKeyword.EXPERIMENT).getSpecies(); }
+		if (parent == null) { parent = GamaMetaModel.getExperimentDescription(); }
 		mDesc.setParent(parent);
 	}
 

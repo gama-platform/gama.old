@@ -29,14 +29,13 @@ import msi.gama.util.ConsumerWithPruning;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 import msi.gaml.types.TypesManager;
-
-
 
 /**
  * The Class ModelDescription.
@@ -174,7 +173,7 @@ public class ModelDescription extends SpeciesDescription {
 			final Iterable<? extends IDescription> children, final Facets facets,
 			final ValidationContext validationContext, final Set<String> imports, final IAgentConstructor helper,
 			final Set<String> skills) {
-		super(MODEL, clazz, macro == null ? Types.get(EXPERIMENT).getSpecies() : macro, parent, children, source,
+		super(MODEL, clazz, macro == null ? GamaMetaModel.getExperimentDescription() : macro, parent, children, source,
 				facets, skills);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
