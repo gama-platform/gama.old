@@ -3,7 +3,7 @@
  * ValuedDisplayOutputFactory.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -19,7 +19,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 
@@ -116,20 +115,20 @@ public class ValuedDisplayOutputFactory {
 	 *            the expr
 	 */
 	public static void browse(final IMacroAgent root, final IExpression expr, final IExpression attributes) {
-		final SpeciesDescription species = expr.getGamlType().isContainer()
-				? expr.getGamlType().getContentType().getSpecies() : expr.getGamlType().getSpecies();
+		final String species = expr.getGamlType().isContainer() ? expr.getGamlType().getContentType().getSpeciesName()
+				: expr.getGamlType().getSpeciesName();
 		if (species == null) {
 			GamaRuntimeException.error("Expression '" + expr.serializeToGaml(true) + "' does not reference agents",
 					root.getScope());
 			return;
 		}
 		final ISpecies rootSpecies = root.getSpecies();
-		if (rootSpecies.getMicroSpecies(species.getName()) == null) {
+		if (rootSpecies.getMicroSpecies(species) == null) {
 			if (root instanceof ExperimentAgent) {
 				final IMacroAgent realRoot = ((ExperimentAgent) root).getSimulation();
 				browse(realRoot, expr, attributes);
 			} else {
-				GamaRuntimeException.error("Agent " + root + " has no access to populations of " + species.getName(),
+				GamaRuntimeException.error("Agent " + root + " has no access to populations of " + species,
 						root.getScope());
 			}
 			return;

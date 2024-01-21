@@ -88,7 +88,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			 */
 			if (index != null && list.getGamlType().isAgentType() && index.isConst()) {
 				final String s = index.literalValue();
-				final SpeciesDescription sd = list.getGamlType().getSpecies();
+				final SpeciesDescription sd = list.getGamlType().getSpecies(cd);
 				if (sd.hasAttribute(s)) {
 					if (PUT.equals(keyword)) {
 						cd.warning(

@@ -3,7 +3,7 @@
  * GamaGenericAgentType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,6 +18,8 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.kernel.GamaMetaModel;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 
 /**
@@ -51,7 +53,12 @@ public class GamaGenericAgentType extends GamaAgentType {
 	 * @param sd
 	 *            the new species
 	 */
-	public void setSpecies(final SpeciesDescription sd) { species = sd; }
+	// public void setSpecies(final SpeciesDescription sd) { species = sd; }
+
+	@Override
+	public SpeciesDescription getSpecies(final IDescription context) {
+		return GamaMetaModel.getAgentSpeciesDescription();
+	}
 
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final IType<?> keyType,

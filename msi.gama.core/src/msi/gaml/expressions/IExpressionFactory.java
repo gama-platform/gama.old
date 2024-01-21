@@ -83,7 +83,7 @@ public interface IExpressionFactory {
 	 *            the type
 	 * @return the species constant expression
 	 */
-	SpeciesConstantExpression createSpeciesConstant(final IType type);
+	SpeciesConstantExpression createSpeciesConstant(final IType type, IDescription context);
 
 	/**
 	 * Creates a new IExpression object.

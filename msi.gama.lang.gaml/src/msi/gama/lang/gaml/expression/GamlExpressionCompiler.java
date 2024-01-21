@@ -259,7 +259,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				// We are in a remote context, so 'my' refers to the calling
 				// agent
 				final IExpression myself = desc.getVarExpr(MYSELF, false);
-				final IDescription species = myself.getGamlType().getSpecies();
+				final IDescription species = myself.getGamlType().getSpecies(getContext());
 				final IExpression var = species.getVarExpr(EGaml.getInstance().getKeyOf(e), true);
 				return getFactory().createOperator(_DOT, (IDescription) desc, e, myself, var);
 			}
@@ -269,7 +269,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// The unary "unit" operator should let the value of its child pass
 		// through
 		if ("#".equals(op)) return expr;
-		if (isSpeciesName(op)) return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr());
+
 		// if ( isSkillName(op) ) { return factory.createOperator(AS, context,
 		// e, expr, skill(op)); }
 		OperatorProto proto = expr.getGamlType().getGetter(op);
@@ -279,6 +279,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (getContext() != null) { getContext().document(e, expr); }
 			return fieldExpr;
 		}
+		if (isSpeciesName(op)) return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr());
 		return getFactory().createOperator(op, getContext(), e, expr);
 	}
 
@@ -350,19 +351,20 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IType t = currentTypesManager.get(primary);
 
 		if (t == Types.NO_TYPE && !UNKNOWN.equals(primary)) {
-			getContext().error(primary + " is not a valid type name", IGamlIssue.NOT_A_TYPE, object, primary);
+			getContext().error(primary + " is not a valid type name.", IGamlIssue.NOT_A_TYPE, object, primary);
 			return t;
 		}
 
 		// case of model_alias<species>
-		if (t.isAgentType() && t.getSpecies().isModel()) {
+		if (t.isAgentType() && t.getSpecies(getContext()).isModel()) {
+			// in case of NPE, if species == null ??
 			final TypeInfo parameter = object.getParameter();
 			if (parameter == null) return t;
 			final TypeRef first = (TypeRef) parameter.getFirst();
 			if (first == null) return t;
 			final ITypesManager savedTypesManager = currentTypesManager;
 			try {
-				currentTypesManager = t.getSpecies().getModelDescription().getTypesManager();
+				currentTypesManager = t.getSpecies(getContext()).getModelDescription().getTypesManager();
 				return fromTypeRef(first);
 			} finally {
 				currentTypesManager = savedTypesManager;
@@ -584,7 +586,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private boolean isTypeName(final String s) {
 		final IType t = currentTypesManager.get(s, null);
 		if (t == null) return false;
-		final SpeciesDescription sd = t.getSpecies();
+		final SpeciesDescription sd = t.getSpecies(getContext());
 		if (sd != null && sd.isExperiment()) return false;
 		return true;
 	}
@@ -601,7 +603,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IType getType(final String s) {
 		final IType t = currentTypesManager.get(s, null);
 		if (t == null) return null;
-		final SpeciesDescription sd = t.getSpecies();
+		final SpeciesDescription sd = t.getSpecies(getContext());
 		if (sd != null && sd.isExperiment()) return null;
 		return t;
 	}
@@ -620,7 +622,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (owner == null) return null;
 		final IType type = owner.getGamlType();
 		if (type.isParametricFormOf(Types.SPECIES)) {
-			final SpeciesDescription sd = type.getContentType().getSpecies();
+			final SpeciesDescription sd = type.getContentType().getSpecies(getContext());
 			if (sd instanceof ModelDescription md && md.hasExperiment(name))
 				return getFactory().createConst(name, GamaType.from(md.getExperiment(name)));
 		}
@@ -646,11 +648,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IType type = owner.getGamlType();
 		// hqnghi 28-05-14 search input variable from model, not experiment
 		if (type instanceof ParametricType pt && pt.getGamlType().id() == IType.SPECIES
-				&& pt.getContentType().getSpecies() instanceof ModelDescription md && md.hasExperiment(var))
+				&& pt.getContentType().getSpecies(getContext()) instanceof ModelDescription md && md.hasExperiment(var))
 			return getFactory().createConst(var, GamaType.from(md.getExperiment(var)));
 		// end-hqnghi
 		// If the owner has no species...
-		final TypeDescription species = type.getSpecies();
+		final TypeDescription species = type.getSpecies(getContext());
 		if (species == null) {
 			// It can only be a field as 'actions' are not defined on simple objects, except for matrices, where it can
 			// also represent the dot product
@@ -658,7 +660,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (proto == null) {
 				// Special case for matrices
 				if (type.id() == IType.MATRIX) return binary(".", owner, fieldExpr);
-				getContext().error("Unknown field '" + var + "' for type " + type, IGamlIssue.UNKNOWN_FIELD, leftExpr,
+				getContext().error("Unknown field " + var + " for type " + type, IGamlIssue.UNKNOWN_FIELD, leftExpr,
 						var, type.toString());
 				return null;
 			}
@@ -858,7 +860,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression caseTypeRef(final TypeRef object) {
 		final IType t = fromTypeRef(object);
 		if (t == null) return null;
-		if (t.isAgentType()) return t.getSpecies().getSpeciesExpr();
+		if (t.isAgentType()) return t.getSpecies(getContext()).getSpeciesExpr();
 		return getFactory().createTypeExpression(t);
 	}
 

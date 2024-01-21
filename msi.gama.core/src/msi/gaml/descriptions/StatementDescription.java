@@ -263,7 +263,7 @@ public class StatementDescription extends SymbolDescription {
 	 *            the ca
 	 */
 	private void verifyInits(final Arguments ca) {
-		final SpeciesDescription denotedSpecies = getGamlType().getDenotedSpecies();
+		final SpeciesDescription denotedSpecies = getGamlType().getDenotedSpecies(this);
 		if (denotedSpecies == null) {
 			if (!ca.isEmpty()) {
 				warning("Impossible to verify the validity of the arguments. Use them at your own risk.",

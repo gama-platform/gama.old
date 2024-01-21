@@ -30,7 +30,7 @@ experiment SaveSimulation type: gui {
 	
 	reflex serialize_agent when: cycle mod 2 = 1 {
 		write "================ Serialize simulation " + self + " - " + cycle;
-		write serialize(self.simulation, 'json', false);
+		write serialize(simulation, 'json', false);
 		write "================ END Serialize simulation " + self + " - " + cycle;				
 	}
 	

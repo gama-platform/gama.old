@@ -38,8 +38,6 @@ import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGenericAgentType;
-import msi.gaml.types.Types;
 
 /**
  * The Class GamaMetaModel.
@@ -225,7 +223,7 @@ public class GamaMetaModel {
 		final SpeciesProto ap = tempSpecies.remove(AGENT);
 		// "agent" has no super-species yet
 		agent = buildSpecies(ap, null, null, false, false);
-		((GamaGenericAgentType) Types.builtInTypes.get(IKeyword.AGENT)).setSpecies(agent);
+		// ((GamaGenericAgentType) Types.builtInTypes.get(IKeyword.AGENT)).setSpecies(agent);
 
 		// We then build "model", sub-species of "agent"
 		final SpeciesProto wp = tempSpecies.remove(MODEL);

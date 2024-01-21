@@ -317,7 +317,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IType<?> t = dataType.getContentType();
 
 			/** The species. */
-			final SpeciesDescription species = t.getSpecies();
+			final SpeciesDescription species = t.getSpecies(description);
 
 			if (att == null && !with.exists()) return;
 

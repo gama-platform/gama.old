@@ -3,7 +3,7 @@
  * GamaAgentType.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -14,8 +14,11 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The type used to represent an agent of a species. Should be used by the species for all the operations relative to
@@ -29,8 +32,17 @@ import msi.gaml.species.ISpecies;
 @SuppressWarnings ("unchecked")
 public class GamaAgentType extends GamaType<IAgent> {
 
+	static {
+		DEBUG.ON();
+	}
+
 	/** The species. */
-	SpeciesDescription species;
+	// SpeciesDescription species;
+
+	final String alias;
+
+	/** The macro species. */
+	final String macroSpecies;
 
 	/**
 	 * Instantiates a new gama agent type.
@@ -46,7 +58,13 @@ public class GamaAgentType extends GamaType<IAgent> {
 	 */
 	public GamaAgentType(final SpeciesDescription species, final String name, final int speciesId,
 			final Class<IAgent> base) {
-		this.species = species;
+		// this.species = species;
+		DEBUG.OUT("Creating type " + name + " for SpeciesDescription " + species + " in model "
+				+ (species == null ? "null" : species.getModelDescription()));
+		ModelDescription md = species == null ? null : species.getModelDescription();
+		alias = md == null ? null : md.getAlias();
+		macroSpecies = species == null || species.getEnclosingDescription() == null ? null
+				: species.getEnclosingDescription().getName();
 		this.name = name;
 		id = speciesId;
 		support = base;
@@ -60,19 +78,16 @@ public class GamaAgentType extends GamaType<IAgent> {
 		// Hack to circumvent issue #1999. Should be better handled by
 		// letting type managers of comodels inherit from the type managers
 		// of imported models.
-		if (!assignable && t.isAgentType() && t.getSpecies() == getSpecies()) return true;
+		if (!assignable && t.isAgentType() && t.getSpeciesName() == getSpeciesName()) return true;
 		return assignable;
 	}
-
-	@Override
-	public String getDefiningPlugin() { return species.getDefiningPlugin(); }
 
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		if (obj == null || scope == null || scope.getModel() == null) return null;
 		ISpecies species = (ISpecies) param;
-		if (species == null) { species = scope.getModel().getSpecies(this.species.getName()); }
+		if (species == null) { species = scope.getModel().getSpecies(getSpeciesName()); }
 		if (species == null) return (IAgent) Types.AGENT.cast(scope, obj, param, copy);
 		if (obj instanceof IAgent) return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null;
 		if (obj instanceof Integer) return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj);
@@ -91,7 +106,10 @@ public class GamaAgentType extends GamaType<IAgent> {
 	public String getSpeciesName() { return name; }
 
 	@Override
-	public SpeciesDescription getSpecies() { return species; }
+	public SpeciesDescription getSpecies(final IDescription context) {
+		if (alias == null || alias.isBlank()) return context.getSpeciesDescription(getSpeciesName());
+		return context.getModelDescription().getMicroModel(alias).getSpeciesDescription(getSpeciesName());
+	}
 
 	@Override
 	public boolean canCastToConst() {
@@ -110,7 +128,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public String getSupportName() { return ", type of agents instances of species " + species.getName(); }
+	public String getSupportName() { return ", type of agents instances of species " + name; }
 
 	@Override
 	public IType<String> getKeyType() { return Types.STRING; }
@@ -121,4 +139,21 @@ public class GamaAgentType extends GamaType<IAgent> {
 	@Override
 	public boolean isDrawable() { return true; }
 
+	/**
+	 * Gets the alias of micro model.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the alias of micro model
+	 * @date 20 janv. 2024
+	 */
+	public String getAliasOfMicroModel() { return alias; }
+
+	/**
+	 * Gets the name of macro species.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the name of macro species
+	 * @date 20 janv. 2024
+	 */
+	public String getNameOfMacroSpecies() { return macroSpecies; }
 }

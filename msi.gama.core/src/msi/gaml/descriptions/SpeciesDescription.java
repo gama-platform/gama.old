@@ -695,7 +695,7 @@ public class SpeciesDescription extends TypeDescription {
 	public SpeciesConstantExpression getSpeciesExpr() {
 		if (speciesExpr == null) {
 			final IType type = GamaType.from(SpeciesDescription.this);
-			speciesExpr = GAML.getExpressionFactory().createSpeciesConstant(type);
+			speciesExpr = GAML.getExpressionFactory().createSpeciesConstant(type, this);
 		}
 		return speciesExpr;
 	}

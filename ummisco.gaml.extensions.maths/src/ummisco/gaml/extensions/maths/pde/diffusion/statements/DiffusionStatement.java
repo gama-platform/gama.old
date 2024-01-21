@@ -3,7 +3,7 @@
  * DiffusionStatement.java, in ummisco.gaml.extensions.maths, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -158,7 +158,7 @@ public class DiffusionStatement extends AbstractStatement {
 						IGamlIssue.DEPRECATED);
 			}
 			IExpression spec = desc.getFacetExpr(IKeyword.ON);
-			if (spec.getGamlType().isAgentType() && spec.getGamlType().getSpecies().isGrid()) {
+			if (spec.getGamlType().isAgentType() && spec.getGamlType().getSpecies(desc).isGrid()) {
 				desc.error("Diffusions can only be executed on grid species", IGamlIssue.GENERAL);
 			}
 

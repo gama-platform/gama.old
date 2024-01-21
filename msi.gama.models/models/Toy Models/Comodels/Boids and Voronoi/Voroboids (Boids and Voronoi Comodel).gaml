@@ -42,7 +42,7 @@ global
 	}
 
 }
- 
+  
 experiment main type: gui
 {
 	output

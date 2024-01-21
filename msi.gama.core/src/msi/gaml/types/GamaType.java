@@ -274,11 +274,24 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@Override
 	public String getSpeciesName() { return null; }
 
+	/**
+	 * Gets the species.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param context
+	 *            the context
+	 * @return the species
+	 * @date 18 janv. 2024
+	 */
 	@Override
-	public SpeciesDescription getSpecies() { return null; }
+	public SpeciesDescription getSpecies(final IDescription context) {
+		return null;
+	}
 
 	@Override
-	public SpeciesDescription getDenotedSpecies() { return getSpecies(); }
+	public SpeciesDescription getDenotedSpecies(final IDescription context) {
+		return getSpecies(context);
+	}
 
 	/**
 	 * Checks if is super type of.

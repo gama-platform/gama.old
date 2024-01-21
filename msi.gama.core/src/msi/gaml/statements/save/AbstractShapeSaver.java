@@ -3,7 +3,7 @@
  * AbstractShapeSaver.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -159,7 +159,7 @@ public abstract class AbstractShapeSaver extends AbstractSaver {
 		specs.append("geometry:" + geomType);
 		try {
 			final SpeciesDescription species = agents instanceof IPopulation pop ? pop.getSpecies().getDescription()
-					: agents.getGamlType().getContentType().getSpecies();
+					: agents.getGamlType().getContentType().getSpecies(scope.getModel().getDescription());
 
 			final Map<String, IExpression> attributes = computeInits(scope, species, attributesToSave);
 			for (final Entry<String, IExpression> enty : attributes.entrySet()) {

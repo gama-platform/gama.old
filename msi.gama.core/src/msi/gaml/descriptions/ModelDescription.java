@@ -22,8 +22,10 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.util.ConsumerWithPruning;
 import msi.gama.util.GamaMapFactory;
@@ -32,10 +34,12 @@ import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.GamaAgentType;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 import msi.gaml.types.TypesManager;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class ModelDescription.
@@ -43,8 +47,19 @@ import msi.gaml.types.TypesManager;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 12 janv. 2024
  */
+
+/**
+ * The Class ModelDescription.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 19 janv. 2024
+ */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ModelDescription extends SpeciesDescription {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The Constant MODEL_SUFFIX. */
 	// TODO Move elsewhere
@@ -77,18 +92,18 @@ public class ModelDescription extends SpeciesDescription {
 	/** The document. */
 	// protected volatile boolean document;
 
-	/** The micro models. */
+	/** The micro models. Stored using their aliases */
 	// hqnghi new attribute manipulate micro-models
 	private IMap<String, ModelDescription> microModels;
+
+	/** The imported model names. A set of "xxx_model" strings representing imported models (not micro-models) */
+	private Collection<String> importedModelNames;
 
 	/** The alias. */
 	private String alias = "";
 
 	/** The is starting date defined. */
 	// boolean isStartingDateDefined = false;
-
-	/** The imported model names. */
-	private Collection<String> importedModelNames;
 
 	/**
 	 * Gets the alternate paths.
@@ -285,7 +300,8 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public String toString() {
 		if (modelFilePath == null || modelFilePath.isEmpty()) return "abstract model " + getName();
-		return "description of " + modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
+		return "description of model '" + getName() + "' ("
+				+ modelFilePath.substring(modelFilePath.lastIndexOf(File.separator)) + ")";
 	}
 
 	@Override
@@ -380,12 +396,48 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		if (spec.equals(getName()) || importedModelNames != null && importedModelNames.contains(spec)) return this;
-		if (EXPERIMENT.equals(spec) && msi.gama.runtime.GAMA.getExperiment() != null)
-			return msi.gama.runtime.GAMA.getExperiment().getDescription();
-		if (getTypesManager() != null) return getTypesManager().get(spec).getSpecies();
-		if (hasMicroSpecies()) return getMicroSpecies().get(spec);
-		return null;
+		// Is it the model itself or one of the imported models ? In that case we return this.
+		if (spec.equals(getName()) || IKeyword.SIMULATION.equals(spec)
+				|| importedModelNames != null && importedModelNames.contains(spec))
+			return this;
+		// Is it an existing species inside the model ?
+		SpeciesDescription result = getMicroSpecies(spec);
+		// Is it an existing experiment inside the model ?
+		if (result == null) { result = getExperiment(spec); }
+		// Is it the alias to a micromodel inside the model ?
+		if (result == null) { result = getMicroModel(spec); }
+		// Are we facing a specific keyword (gama, experiment, agent, model...) ?
+		if (result == null) {
+			result = switch (spec) {
+				case IKeyword.PLATFORM -> GamaMetaModel.getPlatformSpeciesDescription();
+				case IKeyword.EXPERIMENT -> GamaMetaModel.getExperimentDescription();
+				case IKeyword.AGENT -> GamaMetaModel.getAgentSpeciesDescription();
+				case IKeyword.MODEL -> GamaMetaModel.getModelDescription();
+				default -> null;
+			};
+		}
+
+		// This line causes a problem
+		if (result == null && getTypesManager() != null) {
+			IType type = getTypesManager().get(spec);
+			if (type.isAgentType()) {
+				DEBUG.OUT("Problem with " + spec);
+				GamaAgentType at = (GamaAgentType) type;
+				String microModel = at.getAliasOfMicroModel();
+				if (!Strings.isNullOrEmpty(microModel)) {
+					ModelDescription micro = getMicroModel(microModel);
+					if (micro != null) { result = micro.getSpeciesDescription(spec); }
+				} else {
+					String macroSpecies = at.getNameOfMacroSpecies();
+					if (!Strings.isNullOrEmpty(macroSpecies)) {
+						SpeciesDescription macro = getMicroSpecies(macroSpecies);
+						if (macro != null) { result = macro.getMicroSpecies(spec); }
+					}
+				}
+				// result = type.getSpecies(this);
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -445,7 +497,8 @@ public class ModelDescription extends SpeciesDescription {
 		final ExperimentDescription desc = experiments.get(name);
 		if (desc == null) {
 			for (final ExperimentDescription ed : experiments.values()) {
-				if (ed.getExperimentTitleFacet().equals(name)) return ed;
+				String title = ed.getExperimentTitleFacet();
+				if (title != null && title.equals(name)) return ed;
 			}
 		}
 		return desc;

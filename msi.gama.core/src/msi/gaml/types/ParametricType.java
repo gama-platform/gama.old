@@ -255,18 +255,18 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gaml.types.IType#getSpecies()
 	 */
 	@Override
-	public SpeciesDescription getSpecies() {
+	public SpeciesDescription getSpecies(final IDescription context) {
 
 		// if (result != null)
-		return type.getSpecies();
+		return type.getSpecies(context);
 		// return contentsType.getSpecies();
 	}
 
 	@Override
-	public SpeciesDescription getDenotedSpecies() {
-		final SpeciesDescription result = type.getSpecies();
+	public SpeciesDescription getDenotedSpecies(final IDescription context) {
+		final SpeciesDescription result = type.getSpecies(context);
 		if (result != null) return result;
-		return contentsType.getSpecies();
+		return contentsType.getSpecies(context);
 	}
 
 	/**

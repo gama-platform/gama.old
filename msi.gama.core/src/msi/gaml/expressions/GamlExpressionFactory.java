@@ -137,16 +137,16 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public SpeciesConstantExpression createSpeciesConstant(final IType type) {
+	public SpeciesConstantExpression createSpeciesConstant(final IType type, final IDescription context) {
 		if (type.getGamlType() != Types.SPECIES) return null;
-		final SpeciesDescription sd = type.getContentType().getSpecies();
+		final SpeciesDescription sd = type.getContentType().getSpecies(context);
 		if (sd == null) return null;
 		return new SpeciesConstantExpression(sd.getName(), type, sd);
 	}
 
 	@Override
 	public ConstantExpression createConst(final Object val, final IType type, final String name) {
-		if (type.getGamlType() == Types.SPECIES) return createSpeciesConstant(type);
+		// if (type.getGamlType() == Types.SPECIES) return createSpeciesConstant(type);
 		if (type == Types.SKILL) return new SkillConstantExpression((String) val, type);
 		if (val == null) return NIL_EXPR;
 		if (val instanceof Boolean) return (Boolean) val ? TRUE_EXPR : FALSE_EXPR;

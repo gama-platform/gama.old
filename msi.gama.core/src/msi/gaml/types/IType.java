@@ -269,7 +269,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IJsonable {
 	 *
 	 * @return the species
 	 */
-	SpeciesDescription getSpecies();
+	SpeciesDescription getSpecies(final IDescription context);
 
 	/**
 	 * Checks if is assignable from.
@@ -452,7 +452,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IJsonable {
 	 *
 	 * @return the denoted species
 	 */
-	SpeciesDescription getDenotedSpecies();
+	SpeciesDescription getDenotedSpecies(final IDescription context);
 
 	/**
 	 * Denotes a type that has components which can be exctracted when casting it to a container (for instance, points

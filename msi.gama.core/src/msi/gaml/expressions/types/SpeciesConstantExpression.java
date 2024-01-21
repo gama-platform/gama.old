@@ -45,8 +45,13 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	/** The alias. */
 	final String alias;
 
+	/** The plugin. */
+	final String plugin;
 	/** The belongs to A micro model. */
 	final boolean belongsToAMicroModel;
+
+	/** The is built in. */
+	final boolean isBuiltIn;
 
 	/**
 	 * Instantiates a new species constant expression.
@@ -62,6 +67,9 @@ public class SpeciesConstantExpression extends ConstantExpression {
 		origin = context.getModelDescription().getName();
 		alias = context.getModelDescription().getAlias();
 		belongsToAMicroModel = alias != null && !alias.isEmpty();
+		SpeciesDescription sd = context.getSpeciesDescription(string);
+		plugin = sd.getDefiningPlugin();
+		isBuiltIn = sd.isBuiltIn();
 		// DEBUG.OUT("Creation of species constant expression " + string + " in context of " + origin + " with alias "
 		// + alias);
 	}
@@ -93,7 +101,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	@Override
 	public Doc getDocumentation() {
 		Doc result = new RegularDoc("");
-		getGamlType().getContentType().getSpecies().documentThis(result);
+		// getGamlType().getContentType().getSpecies(null).documentThis(result);
 		return result;
 	}
 
@@ -104,11 +112,8 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		final SpeciesDescription sd = getGamlType().getContentType().getSpecies();
-		if (sd != null) {
-			meta.put(GamlProperties.PLUGINS, sd.getDefiningPlugin());
-			if (sd.isBuiltIn()) { meta.put(GamlProperties.SPECIES, (String) value); }
-		}
+		meta.put(GamlProperties.PLUGINS, plugin);
+		if (isBuiltIn) { meta.put(GamlProperties.SPECIES, (String) value); }
 	}
 
 	@Override

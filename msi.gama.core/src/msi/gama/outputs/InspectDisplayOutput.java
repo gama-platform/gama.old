@@ -3,7 +3,7 @@
  * InspectDisplayOutput.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -39,7 +39,6 @@ import msi.gama.util.IContainer;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.SymbolTracer;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.species.ISpecies;
@@ -349,11 +348,11 @@ public class InspectDisplayOutput extends AbstractValuedDisplayOutput implements
 		final IExpression valueExpr = getValue();
 		if (valueExpr == null) return null;
 		final IType theType = valueExpr.getGamlType().getContentType();
-		if (theType == Types.get(IKeyword.MODEL)) return getScope().getModel().getSpecies();
-		final SpeciesDescription sd = theType.getSpecies();
-		if (sd == null) return getScope().getModel().getSpecies(IKeyword.AGENT);
-		if (sd.equals(getScope().getModel().getDescription())) return getScope().getModel().getSpecies();
-		String speciesName = sd.getName();
+		if (Types.get(IKeyword.MODEL).isAssignableFrom(theType)) return getScope().getModel().getSpecies();
+		// final SpeciesDescription sd = theType.getSpecies();
+		// if (sd == null) return getScope().getModel().getSpecies(IKeyword.AGENT);
+		// if (sd.equals(getScope().getModel().getDescription())) return getScope().getModel().getSpecies();
+		String speciesName = theType.getSpeciesName();
 		if (speciesName == null) { speciesName = IKeyword.AGENT; }
 		return rootAgent.getSpecies().getMicroSpecies(speciesName);
 	}
