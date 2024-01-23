@@ -22,11 +22,11 @@ function load() {
     experiment.modelPath=document.getElementById("model").value;
     experiment.experimentName=document.getElementById("exp_name").value;
 
-    experiment.setParameters([
-        { "name": "Number of people agents", "value": 111, "type": "int" },
-        { "name": "Value of destruction when a people agent takes a road", "value": 0.2, "type": "float" }
-    ]);
-    experiment.setEndCondition("cycle>=15");
+    // experiment.setParameters([
+    //     { "name": "Number of people agents", "value": 111, "type": "int" },
+    //     { "name": "Value of destruction when a people agent takes a road", "value": 0.2, "type": "float" }
+    // ]);
+    // experiment.setEndCondition("cycle>=15");
     experiment.launch(onReceiveMsg);
 }
 function play() {
