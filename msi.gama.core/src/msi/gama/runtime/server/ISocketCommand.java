@@ -69,6 +69,9 @@ public interface ISocketCommand {
 	/** The Constant EXPR. */
 	String EXPR = "expr";
 
+	/** The Constant SYNTAX. */
+	String SYNTAX = "syntax";
+
 	/** The Constant PARAMETERS. */
 	String PARAMETERS = "parameters";
 
@@ -132,6 +135,10 @@ public interface ISocketCommand {
 	/** The ask. This action allows to ask an agent to execute an action */
 	String ASK = IKeyword.ASK;
 
+
+	/** The args. for the arguments of an action to execute*/
+	String ARGS = "args";
+	
 	/** The validate. This action allows to validate a GAML expression passed as a string */
 	String VALIDATE = "validate";
 
