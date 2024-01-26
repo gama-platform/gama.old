@@ -1,0 +1,328 @@
+/* Code fully programmed by Léon Sillano - IRD/ACROSS Lab - 2023/2024 */
+:root {
+    --b-radius: 5px;
+
+    --main-color: #1B1B1D;
+    --background: #1B1B1D;
+    --color-font: #ffffff;
+    --item-color: #282A36;
+    --title-color: #EBEDF0;
+}
+
+
+h1, h2, p {
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 28px;
+    color: #ffffff;
+    margin: 20px 0 0;
+    text-align: center;
+    background-color: var(--background);
+    padding: 20px;
+    width: 100%;
+}
+
+h2 {
+    color: var(--title-color);
+    position: relative;
+    text-align: center;
+    margin-left: 13px;
+    margin-right: 13px;
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
+h2::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--title-color);
+    text-align: center;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    color:var(--color-font);
+    background-color: var(--background);
+}
+
+@media (max-width: 1100px) {
+    .content {
+        display: flex;
+        flex-direction: column;    
+    }
+
+    .content-item {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1101px) {
+    .content {
+        display: flex;
+        flex-direction: row;    
+    }
+
+    .content-item {
+        width: 50%;
+    }
+}
+
+#request-response-timeline {
+    height: 100vh;
+    overflow-y: auto;
+}
+
+
+/* Button styles */
+.round-button {
+    background-color: var(--main-color);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 5px;
+    transition: background-color 0.3s;
+    display: inline-block;
+    border-radius: 20%;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    width:33px;
+    height: 33px;
+}
+
+.round-button:hover {
+    background-color: #D36737;
+}
+
+.control-button {
+    opacity: 0.8;
+    transition: background-color 0.3s;
+}
+
+.control-button:hover {
+    opacity: 1;
+}
+
+.square-button {
+    background-color: var(--main-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.square-button:hover {
+    background-color: #D36737;
+}
+
+.square-button-step {
+    background-color: var(--main-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 3px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: center;
+    align-items: center;
+    width: 30%;
+}
+
+.square-button-step:hover {
+    background-color: #D36737;
+}
+
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: 150px;
+  gap: 10px;
+  margin:10px;
+}
+
+.grid-item {
+  /* border: 1px solid #ddd; */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--b-radius);
+  background-color: var(--item-color);
+}
+
+.name-container {
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  justify-content: space-between;
+}
+
+.content-container-row {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items:center;
+  justify-content: center;
+}
+
+.content-container-buttons {
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0px; /* Ajoutez un espace entre les boutons si nécessaire */
+}
+
+.content-container-column {
+    margin-top: 5px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: center;
+}
+
+.content-container-column-left {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items:left;
+    justify-content: center;
+}
+
+.input-div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 50%; 
+    justify-content: left;
+    align-items: center;
+}
+
+.expr-ask-item{
+    margin: 10px;
+    /* border: 1px solid #ddd; */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--b-radius);
+    background-color: var(--item-color);
+  }
+
+.name-expr-ask  {
+    margin: 10px;
+}
+
+.content-expr-ask-div {
+    margin: 10px;
+    height: 25px;
+}
+input {
+    height: 30px;
+    border-radius: var(--b-radius);
+    border: none;
+    padding-left: 0.4rem;
+}
+
+#gama-address {
+    font-family: 'Courier';
+    text-decoration: underline;
+}
+
+#ask-div {
+    height: 100px;
+
+}
+
+#args-ask-input {
+    border-radius: var(--b-radius);
+    box-sizing: border-box;
+    resize: none; /* Permet à l'utilisateur de redimensionner verticalement */
+    overflow-y: visible; /* Pour cacher la scrollbar de la textarea */
+    border: none;
+    height: 100%;
+}
+
+#request-response-title {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    margin-right: 50px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#request-response-title > *{
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.request {
+    border-radius: var(--b-radius);
+    margin: 10px;
+    padding: 10px;
+    /* border: 2px solid #ccc; */
+    background-color: var(--item-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.response {
+    border-radius: var(--b-radius);
+    margin: 10px;
+    padding: 10px;
+    /* border: 2px solid #ccc; */
+    background-color: var(--item-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.request > * {
+    text-align: left;
+}
+
+.request > * > * {
+    text-align: left;
+}
+
+.response > * {
+    text-align: right;
+}
+
+.response > * > * {
+    text-align: right;
+}
+
+.response > * > * > *{
+    text-align: right;
+}
+
+/* Appliquer un style pour la barre de défilement horizontale */
+pre {
+    overflow-x: auto;
+    white-space: pre-wrap; /* Empêche le retour à la ligne automatique du texte */
+    margin: 0;
+}
+
+code {
+    display:block;
+}
