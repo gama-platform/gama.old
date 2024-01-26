@@ -165,7 +165,13 @@ public class DefaultServerCommands {
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
-		final int nb_step = map.get(NB_STEP) != null ? Integer.parseInt("" + map.get(NB_STEP)) : 1;
+		final int nb_step;
+		if (map.get(NB_STEP) != null && ! ("" + map.get(NB_STEP)).trim().equals("")) {
+			nb_step = Integer.parseInt("" + map.get(NB_STEP));
+		}
+		else {
+			nb_step = 1;
+		}
 		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
 		for (int i = 0; i < nb_step; i++) {
 			try {
@@ -197,7 +203,13 @@ public class DefaultServerCommands {
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
-		final int nb_step = map.get(NB_STEP) != null ? Integer.parseInt(map.get(NB_STEP).toString()) : 1;
+		final int nb_step;
+		if (map.get(NB_STEP) != null && ! ("" + map.get(NB_STEP)).trim().equals("")) {
+			nb_step = Integer.parseInt("" + map.get(NB_STEP));
+		}
+		else {
+			nb_step = 1;
+		}		
 		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
 		for (int i = 0; i < nb_step; i++) {
 			try {
