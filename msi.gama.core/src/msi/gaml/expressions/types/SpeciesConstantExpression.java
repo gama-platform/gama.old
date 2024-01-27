@@ -20,7 +20,6 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.ConstantExpression;
-import msi.gaml.types.GamaType;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -62,7 +61,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 *            the t
 	 */
 	public SpeciesConstantExpression(final SpeciesDescription sd) {
-		super(sd.getName(), GamaType.from(sd));
+		super(sd.getName(), sd.getMetaType());
 		ModelDescription md = sd.getModelDescription();
 		origin = md == null ? "built-in" : md.getName();
 		alias = md == null ? null : md.getAlias();

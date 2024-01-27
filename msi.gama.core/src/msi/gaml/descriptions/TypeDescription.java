@@ -31,7 +31,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.GamaAgentType;
 import msi.gaml.types.IType;
+import msi.gaml.types.ParametricSpeciesType;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -59,6 +61,9 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	/** The parent. */
 	protected TypeDescription parent;
+
+	/** The meta type. */
+	protected ParametricSpeciesType metaType;
 
 	/** The is abstract. */
 	// protected final boolean isAbstract;
@@ -600,8 +605,18 @@ public abstract class TypeDescription extends SymbolDescription {
 	public final boolean isAbstract() { return isSet(Flag.Abstract); }
 
 	@Override
-	protected IType computeType() {
-		return getTypeNamed(getName());
+	protected GamaAgentType computeType() {
+		return (GamaAgentType) getTypeNamed(getName());
+	}
+
+	/**
+	 * Gets the meta type.
+	 *
+	 * @return the meta type
+	 */
+	public ParametricSpeciesType getMetaType() {
+		if (metaType == null) { metaType = new ParametricSpeciesType((GamaAgentType) getGamlType()); }
+		return metaType;
 	}
 
 	/**

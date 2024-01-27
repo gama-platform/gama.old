@@ -29,7 +29,6 @@ import msi.gama.util.IMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.types.TypeExpression;
 import ummisco.gama.dev.utils.DEBUG;
@@ -422,17 +421,17 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return from(this, keyTypeIfCasting(exp), contentsTypeIfCasting(exp));
 	}
 
-	/**
-	 * From.
-	 *
-	 * @param species
-	 *            the species
-	 * @return the i type
-	 */
-	public static IType<?> from(final TypeDescription species) {
-		return new ParametricSpeciesType((GamaAgentType) species.getTypeNamed(species.getName()));
-		// return from(Types.SPECIES, Types.INT, species.getGamlType());
-	}
+	// /**
+	// * From.
+	// *
+	// * @param species
+	// * the species
+	// * @return the i type
+	// */
+	// public static IType<?> from(final TypeDescription species) {
+	// return new ParametricSpeciesType((GamaAgentType) species.getTypeNamed(species.getName()));
+	// // return from(Types.SPECIES, Types.INT, species.getGamlType());
+	// }
 
 	/**
 	 * From.
