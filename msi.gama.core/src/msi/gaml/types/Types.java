@@ -59,7 +59,7 @@ public class Types {
 	}
 
 	/** The Constant builtInTypes. */
-	public final static ITypesManager builtInTypes = new TypesManager(null);
+	private final static TypesManager BUILT_IN_TYPES = new TypesManager("built-in types");
 
 	/** The built in species map. */
 	private static volatile Map<String, SpeciesDescription> builtInSpeciesMap;
@@ -113,6 +113,7 @@ public class Types {
 	 */
 	public static void cache(final int id, final IType instance) {
 		switch (id) {
+
 			case IType.INT:
 				INT = (GamaIntegerType) instance;
 				break;
@@ -244,7 +245,7 @@ public class Types {
 			case IType.TYPE:
 				return TYPE;
 		}
-		return builtInTypes.get(String.valueOf(type));
+		return getBuiltInTypes().get(String.valueOf(type));
 	}
 
 	/**
@@ -255,7 +256,7 @@ public class Types {
 	 * @return the i type
 	 */
 	public static IType get(final String type) {
-		return builtInTypes.get(type);
+		return getBuiltInTypes().get(type);
 	}
 
 	/**
@@ -282,12 +283,12 @@ public class Types {
 	 * @return the i type
 	 */
 	private static <T> IType<T> internalGet(final Class<T> type) {
-		final IType<T>[] t = new IType[] { builtInTypes.get(Types.CLASSES_TYPES_CORRESPONDANCE.get(type)) };
+		final IType<T>[] t = new IType[] { getBuiltInTypes().get(Types.CLASSES_TYPES_CORRESPONDANCE.get(type)) };
 		boolean newEntry = false;
 		if (t[0] == Types.NO_TYPE && !type.isInterface()) {
 			newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE.forEachPair((support, id) -> {
 				if (support != Object.class && support.isAssignableFrom(type)) {
-					t[0] = (IType<T>) builtInTypes.get(id);
+					t[0] = (IType<T>) getBuiltInTypes().get(id);
 					return false;
 				}
 				return true;
@@ -304,7 +305,7 @@ public class Types {
 	 * @return the type names
 	 */
 	public static Iterable<String> getTypeNames() {
-		return Iterables.transform(builtInTypes.getAllTypes(), IType::getName);
+		return Iterables.transform(getBuiltInTypes().getAllTypes(), IType::getName);
 	}
 
 	/**
@@ -313,7 +314,7 @@ public class Types {
 	public static void init() {
 		// We build a graph-type multimap structure
 		Map<IType<?>, ICollector<IType<?>>> outgoing = new HashMap(), incoming = new HashMap();
-		Set<IType<?>> types = builtInTypes.getAllTypes();
+		Set<IType<?>> types = getBuiltInTypes().getAllTypes();
 		for (IType t : types) {
 			outgoing.put(t, Collector.getSet());
 			incoming.put(t, Collector.getSet());
@@ -417,7 +418,7 @@ public class Types {
 	 * @return the all fields
 	 */
 	public static Iterable<OperatorProto> getAllFields() {
-		return concat(transform(builtInTypes.getAllTypes(), each -> each.getFieldGetters().values()));
+		return concat(transform(getBuiltInTypes().getAllTypes(), each -> each.getFieldGetters().values()));
 	}
 
 	/**
@@ -430,7 +431,16 @@ public class Types {
 	 * @date 7 janv. 2024
 	 */
 	public static boolean hasType(final String name) {
-		return builtInTypes.containsType(name);
+		return getBuiltInTypes().containsType(name);
 	}
+
+	/**
+	 * Gets the built in types.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the built in types
+	 * @date 24 janv. 2024
+	 */
+	public static TypesManager getBuiltInTypes() { return BUILT_IN_TYPES; }
 
 }

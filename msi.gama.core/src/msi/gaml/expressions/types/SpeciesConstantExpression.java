@@ -15,12 +15,12 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.util.ICollector;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IVarDescriptionUser;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.ConstantExpression;
-import msi.gaml.types.IType;
+import msi.gaml.types.GamaType;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -61,13 +61,12 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	 * @param t
 	 *            the t
 	 */
-	public SpeciesConstantExpression(final String string, final IType t, final IDescription context) {
-		super(string, t);
-
-		origin = context.getModelDescription().getName();
-		alias = context.getModelDescription().getAlias();
+	public SpeciesConstantExpression(final SpeciesDescription sd) {
+		super(sd.getName(), GamaType.from(sd));
+		ModelDescription md = sd.getModelDescription();
+		origin = md == null ? "built-in" : md.getName();
+		alias = md == null ? null : md.getAlias();
 		belongsToAMicroModel = alias != null && !alias.isEmpty();
-		SpeciesDescription sd = context.getSpeciesDescription(string);
 		plugin = sd.getDefiningPlugin();
 		isBuiltIn = sd.isBuiltIn();
 		// DEBUG.OUT("Creation of species constant expression " + string + " in context of " + origin + " with alias "
@@ -101,6 +100,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	@Override
 	public Doc getDocumentation() {
 		Doc result = new RegularDoc("");
+		// PROBLEME A REGLER
 		// getGamlType().getContentType().getSpecies(null).documentThis(result);
 		return result;
 	}

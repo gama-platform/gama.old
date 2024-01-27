@@ -253,7 +253,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IValidato
 				return false;
 			}
 			final ModelDescription md = cd.getModelDescription();
-			final ITypesManager manager = md == null ? Types.builtInTypes : md.getTypesManager();
+			final ITypesManager manager = md == null ? Types.getBuiltInTypes() : md.getTypesManager();
 			if (manager.containsType(name)) {
 				final String type = "It cannot be used as a "
 						+ (cd instanceof VariableDescription ? "variable" : cd.getKeyword()) + " name.";

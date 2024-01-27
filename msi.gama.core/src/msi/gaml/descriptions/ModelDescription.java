@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,9 @@ public class ModelDescription extends SpeciesDescription {
 
 	/** The alternate paths. */
 	private final Set<String> alternatePaths;
+
+	/** The possible micro species. */
+	private Set<String> possibleMicroSpecies;
 
 	/** The validation context. */
 	private final ValidationContext validationContext;
@@ -191,8 +195,13 @@ public class ModelDescription extends SpeciesDescription {
 		super(MODEL, clazz, macro == null ? GamaMetaModel.getExperimentDescription() : macro, parent, children, source,
 				facets, skills);
 		setName(name);
-		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
-				: Types.builtInTypes;
+
+		if (parent instanceof ModelDescription md) {
+			types = new TypesManager(name);
+			types.setParent(md.getTypesManager());
+		} else {
+			types = Types.getBuiltInTypes();
+		}
 		modelFilePath = modelPath;
 		modelProjectPath = projectPath;
 		this.validationContext = validationContext;
@@ -345,9 +354,10 @@ public class ModelDescription extends SpeciesDescription {
 	public IDescription addChild(final IDescription child) {
 		if (child == null) return null;
 		if (child instanceof ModelDescription md) {
-			md.getTypesManager().setParent(getTypesManager());
+			// md.getTypesManager().setParent(getTypesManager());
 			if (microModels == null) { microModels = GamaMapFactory.create(); }
-			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
+			microModels.put(md.getAlias(), md);
+			types.setParent(md.getTypesManager());
 		} // no else as models are also species, which should be added after.
 
 		if (child instanceof ExperimentDescription) {
@@ -397,9 +407,7 @@ public class ModelDescription extends SpeciesDescription {
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
 		// Is it the model itself or one of the imported models ? In that case we return this.
-		if (spec.equals(getName()) || IKeyword.SIMULATION.equals(spec)
-				|| importedModelNames != null && importedModelNames.contains(spec))
-			return this;
+		if (spec.equals(getName()) || importedModelNames != null && importedModelNames.contains(spec)) return this;
 		// Is it an existing species inside the model ?
 		SpeciesDescription result = getMicroSpecies(spec);
 		// Is it an existing experiment inside the model ?
@@ -421,7 +429,7 @@ public class ModelDescription extends SpeciesDescription {
 		if (result == null && getTypesManager() != null) {
 			IType type = getTypesManager().get(spec);
 			if (type.isAgentType()) {
-				DEBUG.OUT("Problem with " + spec);
+				// DEBUG.OUT("Problem with " + spec);
 				GamaAgentType at = (GamaAgentType) type;
 				String microModel = at.getAliasOfMicroModel();
 				if (!Strings.isNullOrEmpty(microModel)) {
@@ -610,6 +618,27 @@ public class ModelDescription extends SpeciesDescription {
 		if (parent.isBuiltIn()) return true;
 
 		return false;
+	}
+
+	/**
+	 * Sets the all possible micro species names.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param names
+	 *            the new all possible micro species names
+	 * @date 27 janv. 2024
+	 */
+	public void setAllPossibleMicroSpeciesNames(final Set<String> names) {
+		possibleMicroSpecies = new HashSet(names);
+		if (parent instanceof ModelDescription md) { possibleMicroSpecies.addAll(md.possibleMicroSpecies); }
+	}
+
+	@Override
+	public SpeciesDescription getMicroSpecies(final String name) {
+		if (possibleMicroSpecies != null && !possibleMicroSpecies.contains(name)) // DEBUG.OUT(name + " is not a micro
+																					// species of " + this);
+			return null;
+		return super.getMicroSpecies(name);
 	}
 
 }

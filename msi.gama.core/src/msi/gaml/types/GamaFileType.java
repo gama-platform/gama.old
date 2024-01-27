@@ -87,7 +87,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		aliasesToFullType.put(alias, t);
 		for (final String s : aliasesToExtensions.get(alias)) { extensionsToFullType.put(s, t); }
 		t.setParent(Types.FILE);
-		Types.builtInTypes.initType(alias + "_file", t, IType.AVAILABLE_TYPES + ++currentFileTypeIndex,
+		Types.getBuiltInTypes().initType(alias + "_file", t, IType.AVAILABLE_TYPES + ++currentFileTypeIndex,
 				ISymbolKind.Variable.CONTAINER, clazz, plugin);
 
 	}

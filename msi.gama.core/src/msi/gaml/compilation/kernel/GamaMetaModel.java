@@ -64,6 +64,9 @@ public class GamaMetaModel {
 	/** The species skills. */
 	private final Multimap<String, String> speciesSkills = HashMultimap.create();
 
+	/** The all built in species names. */
+	private final Set<String> allBuiltInSpeciesNames = new HashSet();
+
 	/** The abstract model species. */
 	private GamlModelSpecies abstractModelSpecies;
 
@@ -217,6 +220,7 @@ public class GamaMetaModel {
 	 * Builds the.
 	 */
 	public void build() {
+		Set<String> allSpeciesNames = new HashSet(tempSpecies.keySet());
 
 		// We first build "agent" as the root of all other species (incl.
 		// "model")
@@ -228,6 +232,7 @@ public class GamaMetaModel {
 		// We then build "model", sub-species of "agent"
 		final SpeciesProto wp = tempSpecies.remove(MODEL);
 		model = (ModelDescription) buildSpecies(wp, null, agent, true, false);
+		model.setAllPossibleMicroSpeciesNames(allSpeciesNames);
 
 		// We close the first loop by putting agent "inside" model
 		agent.setEnclosingDescription(model);
@@ -246,8 +251,14 @@ public class GamaMetaModel {
 
 		// We then create all other built-in species and attach them to "model"
 		for (final SpeciesProto proto : tempSpecies.values()) {
-			model.addChild(
-					buildSpecies(proto, model, agent, SimulationAgent.class.isAssignableFrom(proto.clazz), false));
+
+			boolean isModel = SimulationAgent.class.isAssignableFrom(proto.clazz);
+			SpeciesDescription sd = buildSpecies(proto, model, agent, isModel, false);
+			if (!isModel) {
+				model.addChild(sd);
+			} else {
+				((ModelDescription) sd).setAllPossibleMicroSpeciesNames(allSpeciesNames);
+			}
 		}
 		tempSpecies.clear();
 		model.buildTypes();
@@ -274,6 +285,7 @@ public class GamaMetaModel {
 			final SpeciesDescription parent, final boolean isModel, final boolean isExperiment) {
 		final Class clazz = proto.clazz;
 		final String name = proto.name;
+		allBuiltInSpeciesNames.add(name);
 		final IAgentConstructor helper = proto.helper;
 		final String[] skills = proto.skills;
 		final String plugin = proto.plugin;

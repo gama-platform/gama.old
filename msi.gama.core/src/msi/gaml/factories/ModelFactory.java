@@ -155,8 +155,8 @@ public class ModelFactory extends SymbolFactory {
 	 *            the mm
 	 * @return the model description
 	 */
-	public ModelDescription createModelDescription(final String projectPath, final String modelPath,
-			final Iterable<ISyntacticElement> models, final ValidationContext collector,
+	public ModelDescription createModelDescription(final String aliasName, final String projectPath,
+			final String modelPath, final Iterable<ISyntacticElement> models, final ValidationContext collector,
 			final Map<String, ModelDescription> mm) {
 		// DEBUG.OUT("ModelAssembler running in thread " + Thread.currentThread().getName());
 		// DEBUG.OUT("All models passed to ModelAssembler: "
@@ -193,52 +193,56 @@ public class ModelFactory extends SymbolFactory {
 			// DEBUG.OUT("In building " + modelName);
 			Set<String> absoluteAlternatePathAsStrings = buildWorkingPaths(mm, models);
 
-			final ModelDescription model = buildPrimaryModel(projectPath, modelPath, collector, models, source,
+			final ModelDescription primaryModel = buildPrimaryModel(projectPath, modelPath, collector, models, source,
 					globalFacets, modelName, absoluteAlternatePathAsStrings);
+			primaryModel.setAlias(aliasName);
 
 			// hqnghi add micro-models
 			if (mm != null) {
 				// model.setMicroModels(mm);
-				model.addChildren(mm.values());
+				primaryModel.addChildren(mm.values());
 			}
 			// end-hqnghi
 			// recursively add user-defined species to world and down on to the
 			// hierarchy
-			addSpeciesAndExperiments(model, speciesNodes, experimentNodes, tempSpeciesCache);
+			addSpeciesAndExperiments(primaryModel, speciesNodes, experimentNodes, tempSpeciesCache);
+			primaryModel.setAllPossibleMicroSpeciesNames(tempSpeciesCache.keySet());
 
 			// Parent the species and the experiments of the model (all are now
 			// known).
-			parentSpeciesAndExperiments(model, speciesNodes, experimentNodes, tempSpeciesCache);
+			parentSpeciesAndExperiments(primaryModel, speciesNodes, experimentNodes, tempSpeciesCache);
 
 			// Initialize the hierarchy of types
-			model.buildTypes();
+			primaryModel.buildTypes();
 			// hqnghi build micro-models as types
 			if (mm != null) {
-				mm.forEach((k, v) -> model.getTypesManager().alias(v.getName(), k));
+				mm.forEach((k, v) -> primaryModel.getTypesManager().alias(v.getName(), k));
 				// end-hqnghi
 			}
 
 			// Make species and experiments recursively create their attributes,
 			// actions....
-			complementSpecies(model, globalNodes);
+			complementSpecies(primaryModel, globalNodes);
 
-			complementSpeciesAndExperiments(model, speciesNodes, experimentNodes);
+			complementSpeciesAndExperiments(primaryModel, speciesNodes, experimentNodes);
 
 			// Complement recursively the different species (incl. the world). The
 			// recursion is hierarchical
 
-			model.inheritFromParent();
+			primaryModel.inheritFromParent();
 
-			for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
+			for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(primaryModel)) {
 				sd.inheritFromParent();
 				if (sd.isExperiment() && !sd.finalizeDescription()) return null;
 			}
 
 			// Issue #1708 (put before the finalization)
-			if (model.hasFacet(SCHEDULES) || model.hasFacet(FREQUENCY)) { createSchedulerSpecies(model); }
+			if (primaryModel.hasFacet(SCHEDULES) || primaryModel.hasFacet(FREQUENCY)) {
+				createSchedulerSpecies(primaryModel);
+			}
 
-			if (!model.finalizeDescription()) return null;
-			return model;
+			if (!primaryModel.finalizeDescription()) return null;
+			return primaryModel;
 		} finally {
 			hierarchy = new DirectedAcyclicGraph<>(Object.class);
 		}

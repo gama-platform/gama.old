@@ -249,10 +249,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				cd.error("The species to instantiate cannot be determined", UNKNOWN_SPECIES, SPECIES);
 				return;
 			}
-
-			final SpeciesDescription sd = species.getGamlType().getDenotedSpecies(cd);
+			IType t = species.getGamlType();
+			final SpeciesDescription sd = t.getDenotedSpecies(cd);
 			if (sd == null) {
 				cd.error("The species to instantiate cannot be determined", UNKNOWN_SPECIES, SPECIES);
+				System.out.println("REMOVE");
 				return;
 			}
 

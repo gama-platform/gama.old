@@ -25,7 +25,7 @@ global
 	{
 		//create experiment from micro-model myFlood with corresponding parameters
 		create Flooding."Adapter";
-	
+	 
 		//create the Evacuation micro-model's experiment
 		create Evacuation."Adapter of Evacuation" number:length(offset);// with:[nb_people::1];
 		ask Evacuation."Adapter of Evacuation"

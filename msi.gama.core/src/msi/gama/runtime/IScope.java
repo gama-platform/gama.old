@@ -957,7 +957,7 @@ public interface IScope extends Closeable, IBenchmarkable {
 	 */
 	default ITypesManager getTypes() {
 		IModel m = getModel();
-		if (m == null) return Types.builtInTypes;
+		if (m == null) return Types.getBuiltInTypes();
 		return m.getDescription().getTypesManager();
 	}
 

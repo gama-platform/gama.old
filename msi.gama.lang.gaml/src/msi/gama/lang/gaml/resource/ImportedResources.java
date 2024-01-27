@@ -1,3 +1,13 @@
+/*******************************************************************************************************
+ *
+ * ImportedResources.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
+ *
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ *
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
+ *
+ ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
 import static com.google.common.collect.Iterables.concat;
@@ -89,9 +99,8 @@ public class ImportedResources {
 		Map<String, ModelDescription> result = Maps.newHashMap();
 
 		for (final String aliasName : micromodels.keySet()) {
-			final ModelDescription mic = getModelFactory().createModelDescription(project, model,
+			final ModelDescription mic = getModelFactory().createModelDescription(aliasName, project, model,
 					transform(micromodels.get(aliasName), GamlResource.TO_SYNTACTIC_CONTENTS), context, null);
-			mic.setAlias(aliasName);
 			result.put(aliasName, mic);
 		}
 		return result;

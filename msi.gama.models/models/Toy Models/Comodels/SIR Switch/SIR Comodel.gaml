@@ -10,7 +10,7 @@
 * Tags: comodel, math, equation
 */
 model Comodel_SIR_Switch
-
+ 
 import "Legacy_models/EBM Adapter.gaml" as SIR_1
 import "Legacy_models/ABM Adapter.gaml" as SIR_2
 
@@ -101,7 +101,7 @@ experiment Simple_exp type: gui
 			}
 
 		}
-		display "EBM Disp"  type: 2d {			
+		display "EBM Disp"  type: 2d {			 
 			chart "SIR_agent" type: series background: #white {
 				data 'S' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).S color: #green ;				
 				data 'I' value: first(first(SIR_1."Adapter").simulation.agent_with_SIR_dynamic).I color: #red ;

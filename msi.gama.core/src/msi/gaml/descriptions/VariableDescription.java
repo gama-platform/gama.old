@@ -42,6 +42,7 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaIntegerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -50,6 +51,10 @@ import msi.gaml.types.Types;
  *
  */
 public class VariableDescription extends SymbolDescription {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The dependencies. */
 	private static Map<String, Collection<String>> dependencies = GamaMapFactory.create();
@@ -286,8 +291,13 @@ public class VariableDescription extends SymbolDescription {
 			});
 			if (isSyntheticSpeciesContainer()) {
 				final SpeciesDescription mySpecies = (SpeciesDescription) getEnclosingDescription();
-				final SpeciesDescription sd = mySpecies.getMicroSpecies(getName());
-				sd.collectUsedVarsOf(mySpecies, alreadyProcessed, result);
+				final SpeciesDescription sd = mySpecies.getSpeciesDescription(getName());
+				if (sd == null) {
+					DEBUG.OUT(
+							"" + this + " is a synthetic species container but the species description cant be found");
+				} else {
+					sd.collectUsedVarsOf(mySpecies, alreadyProcessed, result);
+				}
 			}
 			if (!includingThis) { result.remove(this); }
 			if (!includingSpecies) { result.removeIf(VariableDescription::isSyntheticSpeciesContainer); }

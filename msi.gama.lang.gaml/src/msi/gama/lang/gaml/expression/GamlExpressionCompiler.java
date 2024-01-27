@@ -113,6 +113,7 @@ import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.operators.TypeFieldExpression;
 import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
+import msi.gaml.expressions.variables.CurrentExperimentExpression;
 import msi.gaml.expressions.variables.EachExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.interfaces.IGamlIssue;
@@ -123,6 +124,7 @@ import msi.gaml.types.ITypesManager;
 import msi.gaml.types.ParametricType;
 import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * The Class GamlExpressionCompiler. Transforms Strings or XText Expressions into GAML IExpressions. Normally invoked by
@@ -141,6 +143,10 @@ import msi.gaml.types.Types;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements IExpressionCompiler<Expression> {
+
+	static {
+		DEBUG.OFF();
+	}
 
 	/** The iterator contexts. */
 	private final Deque<IVarExpression> iteratorContexts = new LinkedList();
@@ -279,7 +285,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (getContext() != null) { getContext().document(e, expr); }
 			return fieldExpr;
 		}
-		if (isSpeciesName(op)) return getFactory().createAs(getContext(), expr, getSpeciesContext(op).getSpeciesExpr());
+		SpeciesDescription sd = getContext().getSpeciesDescription(op);
+		if (sd != null && !sd.isExperiment()) return getFactory().createAs(getContext(), expr, sd.getSpeciesExpr());
 		return getFactory().createOperator(op, getContext(), e, expr);
 	}
 
@@ -356,7 +363,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 
 		// case of model_alias<species>
-		if (t.isAgentType() && t.getSpecies(getContext()).isModel()) {
+		if (t.isAgentType()) {
+			SpeciesDescription sd = t.getSpecies(getContext());
+			if (sd != null && !sd.isModel()) return t;
+			// DEBUG.OUT("SPECIES");
 			// in case of NPE, if species == null ??
 			final TypeInfo parameter = object.getParameter();
 			if (parameter == null) return t;
@@ -371,7 +381,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			}
 		}
 
-		if (t.isAgentType()) return t;
+		// if (t.isAgentType()) return t;
 
 		// /
 
@@ -457,7 +467,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				return getFactory().createOperator(op, getContext(), rightMember, compiledArgs);
 			}
 		}
-
 		// Otherwise we can now safely compile the right-hand expression
 		final IExpression right = compile(rightMember);
 		// We make sure to remove any mention of the each expression after the
@@ -535,34 +544,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 						IGamlIssue.NOT_A_TYPE, right, type);
 				yield null;
 			}
-			default -> binary(op, compile(e1), right);
+
+			default -> {
+				IExpression left = compile(e1);
+				yield binary(op, left, right);
+			}
 		};
-	}
-
-	/**
-	 * Gets the species context.
-	 *
-	 * @param e
-	 *            the e
-	 * @return the species context
-	 */
-	private SpeciesDescription getSpeciesContext(final String e) {
-		return getContext().getSpeciesDescription(e);
-	}
-
-	/**
-	 * Checks if is species name.
-	 *
-	 * @param s
-	 *            the s
-	 * @return true, if is species name
-	 */
-	private boolean isSpeciesName(final String s) {
-		final ModelDescription m = getContext().getModelDescription();
-		if (m == null) // can occur when building the kernel
-			return false;
-		final SpeciesDescription sd = m.getSpeciesDescription(s);
-		return sd != null && !(sd instanceof ExperimentDescription);
 	}
 
 	/**
@@ -624,7 +611,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (type.isParametricFormOf(Types.SPECIES)) {
 			final SpeciesDescription sd = type.getContentType().getSpecies(getContext());
 			if (sd instanceof ModelDescription md && md.hasExperiment(name))
-				return getFactory().createConst(name, GamaType.from(md.getExperiment(name)));
+				return md.getExperiment(name).getSpeciesExpr();
+			// return getFactory().createConst(name, GamaType.from(md.getExperiment(name)));
 		}
 		getContext().error("Only experiments can be accessed using their plain name", IGamlIssue.UNKNOWN_FIELD);
 		return null;
@@ -645,11 +633,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (owner == null) return null;
 		// We gather the name of the "field"
 		final String var = EGaml.getInstance().getKeyOf(fieldExpr);
+
 		final IType type = owner.getGamlType();
 		// hqnghi 28-05-14 search input variable from model, not experiment
 		if (type instanceof ParametricType pt && pt.getGamlType().id() == IType.SPECIES
 				&& pt.getContentType().getSpecies(getContext()) instanceof ModelDescription md && md.hasExperiment(var))
-			return getFactory().createConst(var, GamaType.from(md.getExperiment(var)));
+			return md.getExperiment(var).getSpeciesExpr();
+		// return getFactory().createConst(var, GamaType.from(md.getExperiment(var)));
 		// end-hqnghi
 		// If the owner has no species...
 		final TypeDescription species = type.getSpecies(getContext());
@@ -670,11 +660,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		// We are now dealing with an agent. In that case, it can be either an attribute or an action call
 		if (fieldExpr instanceof VariableRef) {
+
 			IExpression expr = species.getVarExpr(var, true);
 			if (expr == null) {
 				if (species instanceof ModelDescription md && md.hasExperiment(var)) {
-					expr = getFactory()
-							.createTypeExpression(GamaType.from(Types.SPECIES, Types.INT, md.getTypeNamed(var)));
+					// expr = getFactory()
+					// .createTypeExpression(GamaType.from(Types.SPECIES, Types.INT, md.getTypeNamed(var)));
+					expr = md.getExperiment(var).getSpeciesExpr();
 				} else if (species instanceof PlatformSpeciesDescription psd && GAMA.isInHeadLessMode())
 					// Special case (see #2259 for headless validation of GUI preferences)
 					return psd.getFakePrefExpression(var);
@@ -682,6 +674,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 					getContext().error(
 							"Unknown variable '" + var + "' in " + species.getKeyword() + " " + species.getName(),
 							IGamlIssue.UNKNOWN_VAR, fieldExpr.eContainer(), var, species.getName());
+					DEBUG.OUT("");
 					return null;
 				}
 				// special case for #3621. We cast the "simulation" and "simulations" variables of "experiment"
@@ -733,7 +726,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IDescription setContext(final IDescription context) {
 		final IDescription previous = currentContext;
 		currentContext = context == null ? GAML.getModelContext() : context;
-		currentTypesManager = Types.builtInTypes;
+		currentTypesManager = Types.getBuiltInTypes();
 		if (currentContext != null) {
 			final ModelDescription md = currentContext.getModelDescription();
 			if (md != null) {
@@ -1215,11 +1208,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			getContext().error("Unknown variable", IGamlIssue.UNKNOWN_VAR, object);
 			return null;
 		}
+
 		switch (varName) {
 			case EXPERIMENT:
 				IExperimentPlan exp = GAMA.getExperiment();
 				if (exp != null) return getFactory().createConst(exp.getAgent(), exp.getDescription().getGamlType());
-				break;
+				return CurrentExperimentExpression.create();
 			case IKeyword.GAMA:
 				return GAMA.getPlatformAgent();
 			case EACH:
@@ -1236,7 +1230,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		for (final IVarExpression it : iteratorContexts) { if (it.getName().equals(varName)) return it; }
 		IDescription context = getContext();
 		final IVarDescriptionProvider temp_sd = context == null ? null : context.getDescriptionDeclaringVar(varName);
-
+		final SpeciesDescription possibleSpecies = getContext().getSpeciesDescription(varName);
 		if (temp_sd != null) {
 			if (!(temp_sd instanceof SpeciesDescription)) return temp_sd.getVarExpr(varName, false);
 			final SpeciesDescription remote_sd = getContext().getSpeciesContext();
@@ -1250,14 +1244,11 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			}
 			// See Issue #3085. We give priority to the variables sporting species names unless they represent the
 			// species within the agents
-			if (!isSpeciesName(varName)) return temp_sd.getVarExpr(varName, false);
+			if (possibleSpecies == null) return temp_sd.getVarExpr(varName, false);
 		}
 
 		// See Issue #3085
-		if (isSpeciesName(varName)) {
-			final SpeciesDescription sd = getSpeciesContext(varName);
-			return sd == null ? null : sd.getSpeciesExpr();
-		}
+		if (possibleSpecies != null) return possibleSpecies.getSpeciesExpr();
 		IType t = getType(varName);
 		if (t != null) return getFactory().createTypeExpression(t);
 		if (isSkillName(varName)) return skill(varName);

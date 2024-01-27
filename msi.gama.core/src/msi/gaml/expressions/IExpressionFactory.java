@@ -19,7 +19,6 @@ import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
@@ -45,8 +44,6 @@ public interface IExpressionFactory {
 
 	/** The temporary action name. */
 	String TEMPORARY_ACTION_NAME = "__synthetic__action__";
-
-	// public void registerParserProvider(IExpressionCompilerProvider parser);
 
 	/**
 	 * Creates a new IExpression object.
@@ -75,15 +72,6 @@ public interface IExpressionFactory {
 	 *             the gama runtime exception
 	 */
 	ConstantExpression createConst(final Object val, final IType type, String name) throws GamaRuntimeException;
-
-	/**
-	 * Creates a new IExpression object.
-	 *
-	 * @param type
-	 *            the type
-	 * @return the species constant expression
-	 */
-	SpeciesConstantExpression createSpeciesConstant(final IType type, IDescription context);
 
 	/**
 	 * Creates a new IExpression object.

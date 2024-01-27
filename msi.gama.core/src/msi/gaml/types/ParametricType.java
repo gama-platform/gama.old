@@ -12,7 +12,7 @@ package msi.gaml.types;
 
 import static com.google.common.cache.CacheBuilder.newBuilder;
 import static java.util.concurrent.TimeUnit.MINUTES;
-import static msi.gaml.types.Types.builtInTypes;
+import static msi.gaml.types.Types.getBuiltInTypes;
 
 import java.util.Map;
 
@@ -60,7 +60,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @return true, if successful
 	 */
 	static boolean useCacheFor(final IType<?> t) {
-		final boolean builtIn = builtInTypes.containsType(t.getName());
+		final boolean builtIn = getBuiltInTypes().containsType(t.getName());
 		return t.isCompoundType() ? builtIn && useCacheFor(t.getContentType()) && useCacheFor(t.getKeyType()) : builtIn;
 	}
 

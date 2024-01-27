@@ -56,7 +56,7 @@ public class JsonGamlObject extends JsonAbstractObject {
 
 	@Override
 	public Object toGamlValue(final IScope scope) {
-		ITypesManager types = scope == null ? Types.builtInTypes : scope.getTypes();
+		ITypesManager types = scope == null ? Types.getBuiltInTypes() : scope.getTypes();
 		IType<?> gamlType = types.decodeType(type);
 		return gamlType.deserializeFromJson(scope, toMap(scope));
 

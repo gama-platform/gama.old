@@ -367,8 +367,8 @@ species cloud {
 		reflex merge_nearby_groups when: false {
 		}
 
-		reflex chase_target when: false {
-		}
+		reflex chase_target when: false { 
+		} 
 
 		reflex self_disaggregate {
 		}

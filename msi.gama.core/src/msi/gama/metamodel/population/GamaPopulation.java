@@ -3,7 +3,7 @@
  * GamaPopulation.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -784,8 +784,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public boolean contains(final IScope scope, final Object o) {
-		if (!(o instanceof IAgent)) return false;
-		return ((IAgent) o).getPopulation() == this;
+		if (!(o instanceof IAgent ia)) return false;
+		return ia.getPopulation() == this;
 	}
 
 	@Override

@@ -375,7 +375,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	IType getTypeNamed(String s);
 
 	/**
-	 * Gets the species description.
+	 * Gets the species description. Now searches in all microspecies
 	 *
 	 * @param actualSpecies
 	 *            the actual species

@@ -57,7 +57,6 @@ import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
-import ummisco.gama.dev.utils.DEBUG;
 
 /**
  *
@@ -124,11 +123,6 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	 */
 	void process(final EObject object, final EClass clazz) {
 		final var id = clazz.getClassifierID();
-		if ("envelope".equals(EGaml.getInstance().getKeyOf(object))) {
-
-			DEBUG.OUT("");
-
-		}
 		switch (id) {
 			case GamlPackage.PRAGMA:
 				setStyle(object, PRAGMA_ID, ((Pragma) object).getName(), false);

@@ -14,7 +14,7 @@ import static msi.gama.common.interfaces.IKeyword.OF;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword._DOT;
 import static msi.gaml.compilation.kernel.GamaBundleLoader.CURRENT_PLUGIN_NAME;
-import static msi.gaml.types.Types.builtInTypes;
+import static msi.gaml.types.Types.getBuiltInTypes;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -123,7 +123,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 */
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,
 			final Class... wraps) {
-		final IType<?> type = builtInTypes.initType(keyword, typeInstance, id, varKind, wraps[0], CURRENT_PLUGIN_NAME);
+		final IType<?> type = getBuiltInTypes().initType(keyword, typeInstance, id, varKind, wraps[0], CURRENT_PLUGIN_NAME);
 		for (final Class cc : wraps) { Types.CLASSES_TYPES_CORRESPONDANCE.put(cc, type.getName()); }
 		Types.cache(id, typeInstance);
 		GAML.VARTYPE2KEYWORDS.put(varKind, keyword);

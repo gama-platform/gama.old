@@ -10,6 +10,8 @@
  ********************************************************************************************************/
 package msi.gaml.types;
 
+import com.google.common.base.Strings;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
@@ -36,9 +38,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 		DEBUG.ON();
 	}
 
-	/** The species. */
-	// SpeciesDescription species;
-
+	/** The alias. */
 	final String alias;
 
 	/** The macro species. */
@@ -58,9 +58,11 @@ public class GamaAgentType extends GamaType<IAgent> {
 	 */
 	public GamaAgentType(final SpeciesDescription species, final String name, final int speciesId,
 			final Class<IAgent> base) {
+
 		// this.species = species;
-		DEBUG.OUT("Creating type " + name + " for SpeciesDescription " + species + " in model "
-				+ (species == null ? "null" : species.getModelDescription()));
+		// DEBUG.OUT("Creating type " + name + " for SpeciesDescription " + species + " in model "
+		// + (species == null ? "null" : species.getModelDescription()));
+
 		ModelDescription md = species == null ? null : species.getModelDescription();
 		alias = md == null ? null : md.getAlias();
 		macroSpecies = species == null || species.getEnclosingDescription() == null ? null
@@ -107,8 +109,18 @@ public class GamaAgentType extends GamaType<IAgent> {
 
 	@Override
 	public SpeciesDescription getSpecies(final IDescription context) {
-		if (alias == null || alias.isBlank()) return context.getSpeciesDescription(getSpeciesName());
-		return context.getModelDescription().getMicroModel(alias).getSpeciesDescription(getSpeciesName());
+		SpeciesDescription sd = context.getSpeciesDescription(getSpeciesName());
+		if (sd != null) return sd;
+		if (!Strings.isNullOrEmpty(alias)) {
+			ModelDescription md = context.getModelDescription().getMicroModel(alias);
+			if (md == null) {
+				DEBUG.OUT(getSpeciesName() + " is supposed to be in a micro-model with alias " + alias
+						+ " but it cannot be found");
+				return null;
+			}
+			return md.getSpeciesDescription(getSpeciesName());
+		}
+		return null;
 	}
 
 	@Override

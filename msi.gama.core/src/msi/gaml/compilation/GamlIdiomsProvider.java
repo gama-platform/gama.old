@@ -100,7 +100,7 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 
 	/** The Constant TYPES. */
 	public final static GamlIdiomsProvider<IType<?>> TYPES =
-			new GamlIdiomsProvider<>("types", "type", "Types", Types.builtInTypes.getAllTypes());
+			new GamlIdiomsProvider<>("types", "type", "Types", Types.getBuiltInTypes().getAllTypes());
 
 	/** The Constant FACETS. */
 	public final static GamlIdiomsProvider<FacetProto> FACETS =

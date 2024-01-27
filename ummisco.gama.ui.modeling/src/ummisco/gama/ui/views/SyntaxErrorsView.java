@@ -18,14 +18,11 @@ import java.util.HashMap;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -33,7 +30,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.views.markers.ConfigureContentsDialogHandler;
 import org.eclipse.ui.internal.views.markers.MarkersTreeViewer;
-import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 
 import msi.gama.common.preferences.GamaPreferences;
@@ -41,7 +37,6 @@ import msi.gama.common.preferences.IPreferenceChangeListener.IPreferenceAfterCha
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.validation.GamlResourceValidator;
-import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.dev.utils.DEBUG;
 import ummisco.gama.ui.commands.TestsRunner;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -86,19 +81,19 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		this.parent = GamaToolbarFactory.createToolbars(this, compo);
 		super.createPartControl(parent);
 		MarkersTreeViewer viewer = this.getAdapter(MarkersTreeViewer.class);
-		viewer.addFilter(new ViewerFilter() {
-
-			@Override
-			public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
-				if (element instanceof MarkerItem item) {
-					IMarker marker = item.getMarker();
-					if (marker == null) return true;
-					String text = marker.getAttribute(IMarker.MESSAGE, "");
-					if (text.contains(ValidationContext.IMPORTED_FROM)) return false;
-				}
-				return true;
-			}
-		});
+		// viewer.addFilter(new ViewerFilter() {
+		//
+		// @Override
+		// public boolean select(final Viewer viewer, final Object parentElement, final Object element) {
+		// if (element instanceof MarkerItem item) {
+		// IMarker marker = item.getMarker();
+		// if (marker == null) return true;
+		// String text = marker.getAttribute(IMarker.MESSAGE, "");
+		// if (text.contains(ValidationContext.IMPORTED_FROM)) return false;
+		// }
+		// return true;
+		// }
+		// });
 	}
 
 	@Override

@@ -35,7 +35,6 @@ import msi.gaml.expressions.data.ListExpression;
 import msi.gaml.expressions.data.MapExpression;
 import msi.gaml.expressions.operators.PrimitiveOperator;
 import msi.gaml.expressions.types.SkillConstantExpression;
-import msi.gaml.expressions.types.SpeciesConstantExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
 import msi.gaml.expressions.variables.AgentVariableExpression;
 import msi.gaml.expressions.variables.EachExpression;
@@ -133,15 +132,11 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public ConstantExpression createConst(final Object val, final IType type) {
-		return createConst(val, type, null);
-	}
+		if (type.id() == IType.SPECIES) {
 
-	@Override
-	public SpeciesConstantExpression createSpeciesConstant(final IType type, final IDescription context) {
-		if (type.getGamlType() != Types.SPECIES) return null;
-		final SpeciesDescription sd = type.getContentType().getSpecies(context);
-		if (sd == null) return null;
-		return new SpeciesConstantExpression(sd.getName(), type, sd);
+			DEBUG.OUT("Species " + type.getName());
+		}
+		return createConst(val, type, null);
 	}
 
 	@Override

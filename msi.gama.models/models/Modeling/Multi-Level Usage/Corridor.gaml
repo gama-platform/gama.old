@@ -124,7 +124,7 @@ experiment "Corridor" type: gui autorun: true {
 	init {
 		button_location <- {simulation.corridor_left_bounds + 100, 100};  
 	}
-	output {
+	output {    
 		display defaut_display type: 2d background: #black fullscreen: true toolbar: false {
 			graphics back {
 				draw shape color: #black wireframe: false;

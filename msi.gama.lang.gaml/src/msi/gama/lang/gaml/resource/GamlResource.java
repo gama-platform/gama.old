@@ -148,10 +148,10 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		final String project = GamlResourceServices.getProjectPathOf(this);
 		final ValidationContext context = getValidationContext();
 		context.shouldDocument(GamlResourceServices.isEdited(this));
-		if (resources == null) return getModelFactory().createModelDescription(project, model,
+		if (resources == null) return getModelFactory().createModelDescription("", project, model,
 				singleton(getSyntacticContents()), context, null);
 		Iterable<ISyntacticElement> imports = resources.computeDirectImports(getSyntacticContents());
-		return getModelFactory().createModelDescription(project, model, imports, context,
+		return getModelFactory().createModelDescription("", project, model, imports, context,
 				resources.computeMicroModels(project, model, context));
 	}
 

@@ -22,7 +22,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
-import msi.gaml.interfaces.IGamlIssue;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -38,8 +37,11 @@ public class TypesManager implements ITypesManager {
 	/** The current index. */
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
 
+	/** The name. */
+	private final String name;
+
 	/** The parent. */
-	private TypesManager parent;
+	private volatile TypesManager parent;
 
 	/** The types. */
 	private final ConcurrentHashMap<String, IType<?>> types = new ConcurrentHashMap(5, 0.75f);
@@ -47,18 +49,45 @@ public class TypesManager implements ITypesManager {
 	/**
 	 * Instantiates a new types manager.
 	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param name
+	 *            the name.
+	 * @date 21 janv. 2024
+	 */
+	public TypesManager(final String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Types manager for " + name;
+	}
+
+	/**
+	 * Instantiates a new types manager.
+	 *
 	 * @param types2
 	 *            the types 2
 	 */
-	public TypesManager(final ITypesManager types2) {
-		setParent(types2);
-	}
+	// public TypesManager(final ITypesManager types2) {
+	// setParent(types2);
+	// }
 
 	@Override
 	public Set<IType<?>> getAllTypes() { return new HashSet(types.values()); }
 
 	@Override
-	public void setParent(final ITypesManager parent) { this.parent = (TypesManager) parent; }
+	public void setParent(final ITypesManager newParent) {
+		// DEBUG.OUT("Trying to parent " + this + " with " + newParent);
+		ITypesManager oldParent = parent;
+		if (newParent == this || newParent == oldParent) return;
+		if (oldParent == null || oldParent == Types.getBuiltInTypes()) {
+			this.parent = (TypesManager) newParent;
+			return;
+		}
+		if (newParent != Types.getBuiltInTypes()) { newParent.setParent(oldParent); }
+		this.parent = (TypesManager) newParent;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -67,7 +96,7 @@ public class TypesManager implements ITypesManager {
 	 */
 	@Override
 	public void alias(final String existingTypeName, final String otherTypeName) {
-		final IType t = types.get(existingTypeName);
+		final IType t = get(existingTypeName, null);
 		if (t != null) { types.put(otherTypeName, t); }
 	}
 
@@ -79,14 +108,12 @@ public class TypesManager implements ITypesManager {
 	@Override
 	public IType<? extends IAgent> addSpeciesType(final SpeciesDescription species) {
 		final String name = species.getName();
-		if (!IKeyword.AGENT.equals(name)) {
-			if (containsType(name)) {
-				species.error("Species " + name + " already declared. Species name must be unique",
-						IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(), name);
-			}
+		if (!IKeyword.AGENT.equals(name) && !containsType(name)) // if (containsType(name)) {
+			// species.error("Species " + name + " already declared. Species name must be unique",
+			// IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(), name);
+			// }
 			return addSpeciesType(new GamaAgentType(species, species.getName(), ++CURRENT_INDEX,
 					(Class<IAgent>) species.getJavaBase()), species.getJavaBase());
-		}
 		return (IType<? extends IAgent>) get(IKeyword.AGENT);
 	}
 
@@ -173,8 +200,8 @@ public class TypesManager implements ITypesManager {
 	public boolean containsType(final String s) {
 		final IType t = types.get(s);
 		if (t != null) return true;
-		if (parent == null) return false;
-		return parent.containsType(s);
+		if (getParent() == null) return false;
+		return getParent().containsType(s);
 	}
 
 	@Override
@@ -182,8 +209,8 @@ public class TypesManager implements ITypesManager {
 		if (type == null) return defaultValue;
 		final IType t = types.get(type);
 		if (t != null) return t;
-		if (parent == null) return defaultValue;
-		return parent.get(type, defaultValue);
+		if (getParent() == null) return defaultValue;
+		return getParent().get(type, defaultValue);
 	}
 
 	/*
@@ -243,5 +270,12 @@ public class TypesManager implements ITypesManager {
 		if (first) return ic.of(param1, param2);
 		return ic.of(param1);
 	}
+
+	/**
+	 * Gets the parent.
+	 *
+	 * @return the parent
+	 */
+	private TypesManager getParent() { return parent; }
 
 }

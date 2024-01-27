@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -47,8 +48,6 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.GamaType;
-import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -546,6 +545,10 @@ public class SpeciesDescription extends TypeDescription {
 		if (hasMicroSpecies()) {
 			final SpeciesDescription retVal = microSpecies.get(name);
 			if (retVal != null) return retVal;
+			for (Map.Entry<String, SpeciesDescription> entry : microSpecies.entrySet()) {
+				SpeciesDescription sd = entry.getValue().getMicroSpecies(name);
+				if (sd != null) return sd;
+			}
 		}
 		// Takes care of invalid species (see Issue 711)
 		if (parent != null && parent != this) return getParent().getMicroSpecies(name);
@@ -693,10 +696,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * Returns the constant expression representing this species
 	 */
 	public SpeciesConstantExpression getSpeciesExpr() {
-		if (speciesExpr == null) {
-			final IType type = GamaType.from(SpeciesDescription.this);
-			speciesExpr = GAML.getExpressionFactory().createSpeciesConstant(type, this);
-		}
+		if (speciesExpr == null) { speciesExpr = new SpeciesConstantExpression(this); }
 		return speciesExpr;
 	}
 
