@@ -16,6 +16,8 @@ import static msi.gama.runtime.server.ISocketCommand.EXPR;
 import static msi.gama.runtime.server.ISocketCommand.NB_STEP;
 import static msi.gama.runtime.server.ISocketCommand.PARAMETERS;
 import static msi.gama.runtime.server.ISocketCommand.SYNC;
+import static msi.gama.runtime.server.ISocketCommand.SYNTAX;
+import static msi.gama.runtime.server.ISocketCommand.ARGS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -163,7 +165,13 @@ public class DefaultServerCommands {
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
-		final int nb_step = map.get(NB_STEP) != null ? Integer.parseInt("" + map.get(NB_STEP)) : 1;
+		final int nb_step;
+		if (map.get(NB_STEP) != null && ! ("" + map.get(NB_STEP)).trim().equals("")) {
+			nb_step = Integer.parseInt("" + map.get(NB_STEP));
+		}
+		else {
+			nb_step = 1;
+		}
 		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
 		for (int i = 0; i < nb_step; i++) {
 			try {
@@ -195,7 +203,13 @@ public class DefaultServerCommands {
 		} catch (CommandException e) {
 			return e.getResponse();
 		}
-		final int nb_step = map.get(NB_STEP) != null ? Integer.parseInt(map.get(NB_STEP).toString()) : 1;
+		final int nb_step;
+		if (map.get(NB_STEP) != null && ! ("" + map.get(NB_STEP)).trim().equals("")) {
+			nb_step = Integer.parseInt("" + map.get(NB_STEP));
+		}
+		else {
+			nb_step = 1;
+		}		
 		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
 		for (int i = 0; i < nb_step; i++) {
 			try {
@@ -317,7 +331,7 @@ public class DefaultServerCommands {
 	public static GamaServerMessage VALIDATE(final GamaWebSocketServer server, final WebSocket socket,
 			final IMap<String, Object> map) {
 		final Object expr = map.get(EXPR);
-		final Object syntax = map.get("syntax");
+		final Object syntax = map.get(SYNTAX);
 		boolean syntaxOnly = syntax instanceof Boolean b && b;
 		if (expr == null) return new CommandResponse(GamaServerMessage.Type.MalformedRequest,
 				"For " + ISocketCommand.VALIDATE + ", mandatory parameter is: " + EXPR, map, false);
@@ -361,7 +375,7 @@ public class DefaultServerCommands {
 		if (exec == null) return new CommandResponse(GamaServerMessage.Type.UnableToExecuteRequest,
 				"Action " + action + " does not exist in agent " + ref, map, false);
 		// TODO Verify that it is not a JSON string...Otherwise, use Json.getNew().parse(...)
-		String json = (String) map.get("args");
+		String json = (String) map.get(ARGS);
 		JsonValue object = Json.getNew().parse(json);
 		Map<String, Object> args = Cast.asMap(scope, object.toGamlValue(scope), false);
 		ExecutionResult er = ExecutionResult.PASSED;

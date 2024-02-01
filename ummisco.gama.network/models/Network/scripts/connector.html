@@ -1,0 +1,122 @@
+<!--Code fully programmed by Léon Sillano - IRD/ACROSS Lab - 2023/2024-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gama Server Connector</title>
+    <link rel="stylesheet" href="connector.css">
+</head>
+<body>
+    <h1>Gama Server Connector</h1>
+
+    <div class="content">
+      <div class="content-item">
+    <h2>General informations</h2>
+    <div class="grid-container">
+        <div class="grid-item">
+            <div class="name-container">Connection information</div>
+            <div class="content-container-column">
+              <div id="connection"></div>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="name-container">Gama Server simulation state</div>
+            <div class="content-container-column">
+              <div id="gama-state"></div>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <div class="name-container">Simulation commands</div>
+            <div class="content-container-buttons">
+                <button onclick="load()" class="square-button control-button" style="background-color:blue;">Load / Reload</button>
+                <button onclick="start()" class="square-button control-button" style="background-color:green;">Start</button>
+                <button onclick="pause()" class="square-button control-button" style="background-color:orange;">Pause</button>
+                <button onclick="end()" class="square-button control-button" style="background-color:red;">Stop</button>
+            </div>
+          </div>
+
+        <div class="grid-item">
+            <div class="name-container"><span>Address: </span><span id="gama-address"></span></div>
+            <div class="content-container-column">
+              <div id="ip-address-input-div" class="input-div">
+                <input type="text" id="ip-address-input" placeholder="Enter the ip address" style="width:90%;">
+              </div>
+              <div id="ws-port-input-div" class="input-div">
+                <input type="text" id="ws-port-input" placeholder="Enter the websocket port" style="width:90%;">
+                <button onclick="setAddress()" class="round-button">&#10004;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-item">
+            <div class="name-container">Load an experiment</div>
+            <div class="content-container-column">
+              <div id="model-file-input-div" class="input-div">
+                <input type="text" id="model-file-input" placeholder="Enter the model file path" style="width:90%;">
+              </div>
+              <div id="experiment-name-input-div" class="input-div">
+                <input type="text" id="experiment-name-input" placeholder="Enter the experiment name" style="width:90%;">
+                <button onclick="setExperiment()" class="round-button">&#10004;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-item">
+            <div class="name-container">Step & step back</div>
+            <div class="content-container-column">
+              <div id="model-file-input-div" class="input-div">
+                <input type="text" id="nb-step-input" placeholder="Number of steps" style="width:60%;">
+                <button onclick="sendStep()" class="square-button-step">Step</button>
+              </div>
+              <div id="experiment-name-input-div" class="input-div">
+                <input type="text" id="nb-step-back-input" placeholder="Number of steps back" style="width:60%;">
+                <button onclick="sendStepBack()" class="square-button-step">Step back</button>
+              </div>
+            </div>
+          </div>
+
+
+        
+      </div>
+      <h2>Sending expressions & asks</h2>
+        <div class="expr-ask-item">
+            <div class="name-expr-ask">Expression</div>
+            <div class="content-expr-ask-div">
+                <input type="text" id="expression-input" placeholder="Enter the expression" style="width:80%;">
+                <button onclick="sendExpression()" class="round-button">&#10138;</button>
+            </div>
+        </div>
+
+        <div class="expr-ask-item">
+            <div class="name-expr-ask">Ask</div>
+            <div class="content-expr-ask-div">
+                <input type="text" id="action-ask-input" placeholder="Enter the action" style="width:80%;">
+            </div>
+            <div class="content-expr-ask-div">
+                <input type="text" id="agent-ask-input" placeholder="Enter the agent" style="width:80%;">
+            </div>
+            <div class="content-expr-ask-div" id="ask-div">
+              <textarea type="text" id="args-ask-input" placeholder="Enter the arguments (JSON format)" style="width:80%;"></textarea>
+              <button onclick="sendAsk()" class="round-button">&#10138;</button>
+          </div>
+        </div>
+      </div>
+      <div class="content-item">
+      <h2>Request - Response timeline</h2>
+      <div id="request-response-title">
+        <span>Request</span>
+        <span>Response</span>
+      </div>
+    
+      <div id="request-response-timeline">
+
+      </div>
+    </div>
+    </div>
+    <script src="connector.js"></script>
+</body>
+</html>
