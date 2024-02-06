@@ -48,52 +48,28 @@ import msi.gaml.types.Types;
 				name = IKeyword.TO,
 				type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY },
 				optional = false,
-				doc = { @doc ("an expression that evaluates to a container") }),
+				doc = { @doc ("the left member of the addition assignment ('cont << expr;') is an expression cont that evaluates to a container (list, map, matrix, graph) ") }),
 				@facet (
 						name = IKeyword.ITEM,
 						type = IType.NONE,
 						optional = true,
-						doc = { @doc ("any expression to add in the container") }),
-				@facet (
-						name = IKeyword.EDGE,
-						type = IType.NONE,
-						optional = true,
-						doc = { @doc (
-								deprecated = "Use 'add edge(...)' instead",
-								value = "a pair that will be added to a graph as an edge (if nodes do not exist, they are also added)") }),
-				@facet (
-						name = IKeyword.VERTEX,
-						type = IType.NONE,
-						optional = true,
-						doc = { @doc (
-								deprecated = "Use 'add node(...)' instead") }),
-				@facet (
-						name = IKeyword.NODE,
-						type = IType.NONE,
-						optional = true,
-						doc = { @doc (
-								deprecated = "Use 'add node(...)' instead",
-								value = "an expression that will be added to a graph as a node.") }),
+						doc = { @doc ("the right member of the addition assignment ('cont << expr;') is an expression expr that evaluates to the element(s) to be added to the container") }),
 				@facet (
 						name = IKeyword.AT,
 						type = IType.NONE,
 						optional = true,
-						doc = { @doc ("position in the container of added element") }),
+						doc = { @doc ("the index at which to add the item can be specified using 'container[index]' and the symbol '+<-' must prefix the item (instead of '<<', which would be ambiguous if the container contains other containers)'") }),
 				@facet (
 						name = IKeyword.ALL,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("Allows to either pass a container so as to add all its element, or 'true', if the item to add is already a container.")),
-				@facet (
-						name = IKeyword.WEIGHT,
-						type = IType.FLOAT,
-						optional = true,
-						doc = @doc (
-								deprecated = "use the 'edge' or 'node' operators with a weight parameter",
-								value = "An optional float value representing the weight to attach to this element in case the container is a graph")) },
+						doc = @doc ("the symbol '<<+' allows to pass a container as item so as to add all its elements to the receiving container")) },
 		omissible = IKeyword.ITEM)
 @doc (
-		value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).Incorrect use: The addition of a new element at a position out of the bounds of the container (list and matrix) will produce a warning and let the container unmodified. If all: is specified, it has no effect if its argument is not a container, or if its argument is 'true' and the item to add is not a container. In that latter case",
+		value = "A statement used to add items to containers. It can be written using the classic syntax (`add ... to: ...`) or a compact one, which is now preferred."
+				+ "\n- To add an element to a container (other than a matrix), use `container << element;` or `container <+ element;` (classic form: `add element to: container;`) "
+				+ "\n- To add all the elements contained in another container, use `container <<+ elements;` (classic form: `add all: elements to: container;`)"
+				+ "\n- To add an element to a container at a certain index, use `container[index] +<- element;` (classic form: `add element at: index to: container;`)",
 		usages = { @usage (
 				value = "The new element can be added either at the end of the container or at a particular position.",
 				examples = { @example (
@@ -103,7 +79,7 @@ import msi.gaml.types.Types;
 								value = "expr_container[index] +<- expr;   // Add expr at position index",
 								isExecutable = false) }),
 				@usage (
-						value = "Case of a list, the expression in the facet at: should be an integer.",
+						value = "For lists, the index can only be integers",
 						examples = { @example ("list<int> workingList <- [];"), @example (
 								value = "workingList[0] +<- 0;",
 								var = "workingList",
@@ -142,7 +118,7 @@ import msi.gaml.types.Types;
 																	// equals
 																	// [10,0,20,50,60,70]
 				@usage (
-						value = "Case of a matrix: this statement can not be used on matrix. Please refer to the statement put."),
+						value = "This statement can not be used on matrix. Please refer to the statement put."),
 				@usage (
 						value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. "
 								+ "It is important to note that the behavior of the statement is slightly different, in particular in the use of the at facet, which denotes the key of the pair.",
@@ -205,7 +181,7 @@ import msi.gaml.types.Types;
 															// val5::value5]
 
 				@usage (
-						value = "In case of a graph, we can use the facets `node`, `edge` and `weight` to add a node, an edge or weights to the graph. However, these facets are now considered as deprecated, and it is advised to use the various edge(), node(), edges(), nodes() operators, which can build the correct objects to add to the graph ",
+						value = "In case of a graph, it is advised to use the various edge(), node(), edges(), nodes() operators, which can build the correct objects to add to the graph ",
 						examples = { @example (
 								value = "graph g <- as_edge_graph([{1,5}::{12,45}]);"),
 								@example (

@@ -49,41 +49,27 @@ import msi.gaml.types.IType;
 				name = IKeyword.AT,
 				type = IType.NONE,
 				optional = true,
-				doc = @doc ("any expression")),
+				doc = @doc ("the key or index at which to put the new value is specified by `container[index]`")),
 				@facet (
 						name = IKeyword.KEY,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("any expression")),
+						doc = @doc ("the key or index at which to put the new value is specified by `container[index]`")),
 				@facet (
 						name = IKeyword.ALL,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("any expression")),
+						doc = @doc ("when no index is specified between the square brackets, the put assignement applies to all elements and changes their value to the one provided")),
 				@facet (
 						name = IKeyword.ITEM,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("any expression")),
-				@facet (
-						name = IKeyword.EDGE,
-						type = IType.NONE,
-						optional = true,
-						doc = @doc (
-								deprecated = "use the 'edge' operator instead (e.g. 'put edge(...) in: g')",
-								value = "Indicates that the item to put should be considered as an edge of the receiving graph. Soon to be deprecated, use 'put edge(item)...' instead")),
-				@facet (
-						name = IKeyword.WEIGHT,
-						type = IType.FLOAT,
-						optional = true,
-						doc = @doc (
-								deprecated = "use the 'edge' or 'node' operators with a weight parameter",
-								value = "an expression that evaluates to a float")),
+						doc = @doc ("the right member of the put assignment ('cont[index] <- expr;') is an expression expr that evaluates to the element(s) to be put in the container")),
 				@facet (
 						name = IKeyword.IN,
 						type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY },
 						optional = false,
-						doc = @doc ("an expression that evaluates to a container")) },
+						doc = @doc ("the left member of the put assignment ('cont[index] <- expr;') is an expression cont that evaluates to a container (list, map, matrix). It makes no sense for graphs ")) },
 		omissible = IKeyword.ITEM)
 @symbol (
 		name = IKeyword.PUT,
@@ -95,11 +81,13 @@ import msi.gaml.types.IType;
 		symbols = IKeyword.CHART)
 @validator (PutValidator.class)
 @doc (
-		value = "Allows the agent to replace a value in a container at a given position (in a list, map or matrix) or for a given key (in a map). Note that the behavior and the type of the attributes depends on the specific kind of container.",
+		value = "A statement used to put items into containers at specific keys or indices. It can be written using the classic syntax (`put ... in: ...`) or a compact one, which is now preferred."
+				+ "\n- To put an element in a container at a given index, use `container[index] <- element;` (classic form: `put element in: container at: index;`) "
+				+ "\n- To put an element in a container at all indices (i.e. replace all values by the element),  use `container[] <- element` (classic form: `put element in: container all: true;`)",
 		usages = { @usage (
 				value = "The allowed  configurations are the following ones:",
 				examples = { @example (
-						value = "expr_container[index] <- expr; // put expr at index in the container",
+						value = "expr_container[index] <- expr; // put or replace expr at index in the container",
 						isExecutable = false),
 						@example (
 								value = "expr_container[] <- expr;  // put expr at every index in the container (replace all values)",
@@ -118,14 +106,9 @@ import msi.gaml.types.IType;
 								@example (
 										value = "putList[] <- 10;",
 										var = "putList",
-										equals = "[10,10,10,10,10]") }), // ,@example(value="put
-																			// 11
-																			// at:7
-																			// in:
-																			// putList;",raises="error",
-																			// isTestOnly=true)}),
+										equals = "[10,10,10,10,10]") }),
 				@usage (
-						value = "In the case of a matrix, the position should be a point in the bounds of the matrix. The facet all: is used to replace all the elements of the matrix by the given value.",
+						value = "In the case of a matrix, the position should be a point in the bounds of the matrix. If no position is provided, it is used to replace all the elements of the matrix by the given value.",
 						examples = { @example (
 								var = "putMatrix",
 								value = "matrix([[0,1],[2,3]])",

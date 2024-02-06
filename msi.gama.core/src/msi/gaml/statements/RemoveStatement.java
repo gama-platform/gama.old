@@ -47,47 +47,27 @@ import msi.gaml.types.IType;
 				name = IKeyword.ITEM,
 				type = IType.NONE,
 				optional = true,
-				doc = @doc ("any expression to remove from the container")),
+				doc = @doc ("the right member of the removal assignment ('cont >> expr;') is an expression expr that evaluates to the element(s) to be removed from the container")),
 				@facet (
 						name = IKeyword.FROM,
 						type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY },
 						optional = false,
-						doc = { @doc ("an expression that evaluates to a container") }),
+						doc = { @doc ("the left member of the removal assignment ('cont >> expr;') is an expression cont that evaluates to a container (list, map, graph) ") }),
 				@facet (
 						name = IKeyword.INDEX,
 						type = IType.NONE,
 						optional = true,
 						doc = @doc ("any expression, the key at which to remove the element from the container ")),
 				@facet (
-						name = IKeyword.EDGE,
-						type = IType.NONE,
-						optional = true,
-						doc = @doc (
-								deprecated = "Use 'remove edge(item)...' instead",
-								value = "Indicates that the item to remove should be considered as an edge of the receiving graph")),
-				@facet (
-						name = IKeyword.VERTEX,
-						type = IType.NONE,
-						optional = true,
-						doc = { @doc (
-								deprecated = "Use 'remove node(item)' instead") }),
-				@facet (
-						name = IKeyword.NODE,
-						type = IType.NONE,
-						optional = true,
-						doc = @doc (
-								deprecated = "Use 'remove node(item)...' instead",
-								value = "Indicates that the item to remove should be considered as a node of the receiving graph")),
-				@facet (
 						name = IKeyword.KEY,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("any expression, the key at which to remove the element from the container ")),
+						doc = @doc ("If a key/index is to be removed (instead of a value), it must be indicated by using `container[]` instead of `container`")),
 				@facet (
 						name = IKeyword.ALL,
 						type = IType.NONE,
 						optional = true,
-						doc = @doc ("an expression that evaluates to a container. If it is true and if the value a list, it removes the first instance of each element of the list. If it is true and the value is not a container, it will remove all instances of this value.")) },
+						doc = @doc ("the symbol '>>-' allows to pass a container as item so as to remove all of its elements from the receiving container. If the item is not a container, all of its occurrences are removed")) },
 		omissible = IKeyword.ITEM)
 @symbol (
 		name = IKeyword.REMOVE,
@@ -99,7 +79,12 @@ import msi.gaml.types.IType;
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER },
 		symbols = IKeyword.CHART)
 @doc (
-		value = "Allows the agent to remove an element from a container (a list, matrix, map...).",
+		value = "A statement used to remove items from containers. It can be written using the classic syntax (`remove ... from: ...`) or a compact one, which is now preferred."
+				+ "\n- To remove an element from a container (other than a matrix), use `container >> element;` or `container >- element;` (classic form: `remove element from: container;`) "
+				+ "\n- To remove an index/key from a container (other than a matrix) use `container[] >> index` or `container[] >- index` (classic form: `remove key: index from: container;`)"
+				+ "\n- To remove all the elements contained in another container, use `container >>- elements;` (classic form: `remove all: elements from: container;`)"
+				+ "\n- To remove all the indexes contained in another container, use `container[] >>- indices;` (classic form: `remove key: indices all: true from: container;`)"
+				+ "\n- To remove all the occurences of an element in the container, use `container >>- element;` (classic form: `remove element from: container all: true;`)",
 		usages = { @usage (
 				value = "This statement should be used in the following ways, depending on the kind of container used and the expected action on it:",
 				examples = { @example (
@@ -112,7 +97,7 @@ import msi.gaml.types.IType;
 								value = "expr_container >>- expr (to remove all occurences of expr), expr_container >>- container_of_expr (to remove all the elements in the passed argument), expr_container[] >>- container_of_expr (to remove all the index/keys in the passed argument)",
 								isExecutable = false) }),
 				@usage (
-						value = "In the case of list, the facet `item:` is used to remove the first occurence of a given expression, whereas `all` is used to remove all the occurrences of the given expression.",
+						value = "In the case of list, `>-` of `>>` is used to remove the first occurence of a given expression, whereas `>>-` is used to remove all its occurrences. Indices can also be removed in the same way",
 						examples = { @example ("list<int> removeList <- [3,2,1,2,3];"), @example (
 								value = "removeList >- 2;",
 								var = "removeList",
@@ -129,7 +114,7 @@ import msi.gaml.types.IType;
 										equals = "[1]",
 										returnType = "null") }),
 				@usage (
-						value = "In the case of map, the facet `key:` is used to remove the pair identified by the given key.",
+						value = "In the case of map, to remove the pair identified by a given key, we have to specify that we are working on the keys. Same for lists",
 						examples = { @example ("map<string,int> removeMap <- [\"x\"::5, \"y\"::7, \"z\"::7];"),
 								@example (
 										value = "removeMap[] >- \"x\";",
@@ -142,7 +127,7 @@ import msi.gaml.types.IType;
 										equals = "map([])",
 										returnType = "null") }),
 				@usage (
-						value = "In addition, a map a be managed as a list with pair key as index. Given that, facets item:, all: and index: can be used in the same way:",
+						value = "A map can be managed as a list of pairs: remove then operates on the values by default",
 						examples = {
 								@example ("map<string,int> removeMapList <- [\"x\"::5, \"y\"::7, \"z\"::7, \"t\"::5];"),
 								@example (
@@ -161,7 +146,7 @@ import msi.gaml.types.IType;
 										equals = "map([])",
 										returnType = "null") }),
 				@usage (
-						value = "In the case of a graph, both edges and nodes can be removes using node: and edge facets. If a node is removed, all edges to and from this node are also removed.",
+						value = "In the case of a graph, if a node is removed, all edges to and from this node are also removed. Note that the use of edge()/node()/edges()/nodes() operators is necessary",
 						examples = { @example ("graph removeGraph <- as_edge_graph([{1,2}::{3,4},{3,4}::{5,6}]);"),
 								@example (
 										value = "removeGraph >> node(1,2);"),
@@ -201,7 +186,7 @@ import msi.gaml.types.IType;
 										value = "      sR['a'] <- 100; 	// sR.a now equals 100",
 										isExecutable = false),
 								@example (
-										value = "      sR[] >> \"a\"; 	// sR.a does not exist anymore and will produce an error",
+										value = "      sR[] >> \"a\"; 	// sR.a does not exist anymore",
 										isExecutable = false),
 								@example (
 										value = "   }",
