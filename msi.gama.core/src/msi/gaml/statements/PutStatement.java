@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * PutStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * PutStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -95,29 +95,28 @@ import msi.gaml.types.IType;
 		symbols = IKeyword.CHART)
 @validator (PutValidator.class)
 @doc (
-		value = "Allows the agent to replace a value in a container at a given position (in a list or a map) or for a given key (in a map). Note that the behavior and the type of the attributes depends on the specific kind of container.",
+		value = "Allows the agent to replace a value in a container at a given position (in a list, map or matrix) or for a given key (in a map). Note that the behavior and the type of the attributes depends on the specific kind of container.",
 		usages = { @usage (
-				value = "The allowed parameters configurations are the following ones:",
+				value = "The allowed  configurations are the following ones:",
 				examples = { @example (
-						value = "put expr at: expr in: expr_container;",
+						value = "expr_container[index] <- expr; // put expr at index in the container",
 						isExecutable = false),
 						@example (
-								value = "put all: expr in: expr_container;",
+								value = "expr_container[] <- expr;  // put expr at every index in the container (replace all values)",
 								isExecutable = false) }),
 				@usage (
-						value = "In the case of a list, the position should be an integer in the bound of the list. The facet all: is used to replace all the elements of the list by the given value.",
-						examples = { 
-								@example (
+						value = "In the case of a list, the position should be an integer in the bounds of the list. The facet all: is used to replace all the elements of the list by the given value.",
+						examples = { @example (
 								var = "putList",
 								value = "[1,2,3,4,5]",
 								returnType = "list<int>",
 								equals = "[1,2,3,4,5]"),
 								@example (
-										value = "put -10 at: 1 in: putList;",
+										value = "putList[1] <- -10;",
 										var = "putList",
 										equals = "[1,-10,3,4,5]"),
 								@example (
-										value = "put 10 all: true in: putList;",
+										value = "putList[] <- 10;",
 										var = "putList",
 										equals = "[10,10,10,10,10]") }), // ,@example(value="put
 																			// 11
@@ -126,37 +125,37 @@ import msi.gaml.types.IType;
 																			// putList;",raises="error",
 																			// isTestOnly=true)}),
 				@usage (
-						value = "In the case of a matrix, the position should be a point in the bound of the matrix. The facet all: is used to replace all the elements of the matrix by the given value.",
+						value = "In the case of a matrix, the position should be a point in the bounds of the matrix. The facet all: is used to replace all the elements of the matrix by the given value.",
 						examples = { @example (
 								var = "putMatrix",
 								value = "matrix([[0,1],[2,3]])",
 								returnType = "matrix<int>",
 								equals = "matrix([[0,1],[2,3]])"),
 								@example (
-										value = "put -10 at: {1,1} in: putMatrix;",
+										value = "putMatrix[{1,1}] <- -10;",
 										var = "putMatrix",
-										equals = "matrix([[0,1],[2,-10]])"),
+										equals = "matrix([[0,1],[2,-10]]);"),
 								@example (
-										value = "put 10 all: true in: putMatrix;",
+										value = "putMatrix[] <- 10;",
 										var = "putMatrix",
 										equals = "matrix([[10,10],[10,10]])") }),
 				@usage (
-						value = "In the case of a map, the position should be one of the key values of the map. Notice that if the given key value does not exist in the map, the given pair key::value will be added to the map. The facet all is used to replace the value of all the pairs of the map.",
+						value = "In the case of a map, the position should be one of the key values of the map. Notice that if the given key value does not exist in the map, a	new pair key::value will be added to the map. The facet all is used to replace the value of all the pairs of the map.",
 						examples = { @example (
 								var = "putMap",
 								value = "[\"x\"::4,\"y\"::7]",
 								returnType = "map<string,int>",
 								equals = "[\"x\"::4,\"y\"::7]"),
 								@example (
-										value = "put -10 key: \"y\" in: putMap;",
+										value = "putMap['y'] <- -10;",
 										var = "putMap",
 										equals = "[\"x\"::4,\"y\"::-10]"),
 								@example (
-										value = "put -20 key: \"z\" in: putMap;",
+										value = "putMap['z'] <- -20;",
 										var = "putMap",
 										equals = "[\"x\"::4,\"y\"::-10, \"z\"::-20]"),
 								@example (
-										value = "put -30 all: true in: putMap;",
+										value = "putMap[] <- -30 ;",
 										var = "putMap",
 										equals = "[\"x\"::-30,\"y\"::-30, \"z\"::-30]") }) })
 @serializer (PutSerializer.class)
@@ -195,7 +194,7 @@ public class PutStatement extends AddStatement {
 				cd.error("Put cannot be used to add several values", IGamlIssue.CONFLICTING_FACETS, ALL);
 				return;
 			}
-			final boolean all = whole == null ? false : !whole.literalValue().equals(FALSE);
+			final boolean all = whole == null ? false : !FALSE.equals(whole.literalValue());
 			if (!all && index == null) {
 				cd.error("Put needs a valid index (facets 'at:' or 'key:') ", IGamlIssue.MISSING_FACET,
 						cd.getUnderlyingElement(), AT, "0");
@@ -209,7 +208,8 @@ public class PutStatement extends AddStatement {
 	/**
 	 * Instantiates a new put statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public PutStatement(final IDescription desc) {
 		super(desc);

@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * AddStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * AddStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -93,29 +93,24 @@ import msi.gaml.types.Types;
 								value = "An optional float value representing the weight to attach to this element in case the container is a graph")) },
 		omissible = IKeyword.ITEM)
 @doc (
-		value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).Incorrect use: The addition of a new element at a position out of the bounds of the container will produce a warning and let the container unmodified. If all: is specified, it has no effect if its argument is not a container, or if its argument is 'true' and the item to add is not a container. In that latter case",
+		value = "Allows to add, i.e. to insert, a new element in a container (a list, matrix, map, ...).Incorrect use: The addition of a new element at a position out of the bounds of the container (list and matrix) will produce a warning and let the container unmodified. If all: is specified, it has no effect if its argument is not a container, or if its argument is 'true' and the item to add is not a container. In that latter case",
 		usages = { @usage (
 				value = "The new element can be added either at the end of the container or at a particular position.",
 				examples = { @example (
-						value = "add expr to: expr_container;    // Add at the end",
+						value = "expr_container << expr;    // Add expr at the end",
 						isExecutable = false),
 						@example (
-								value = "add expr at: expr to: expr_container;   // Add at position expr",
+								value = "expr_container[index] +<- expr;   // Add expr at position index",
 								isExecutable = false) }),
 				@usage (
 						value = "Case of a list, the expression in the facet at: should be an integer.",
-						examples = { 
-								@example ("list<int> workingList <- [];"), 
-								@example (
-								value = "add 0 at: 0 to: workingList ;",
+						examples = { @example ("list<int> workingList <- [];"), @example (
+								value = "workingList[0] +<- 0;",
 								var = "workingList",
 								equals = "[0]",
-								returnType = "null"), // workingList
-														// now
-														// equals
-														// [0]
+								returnType = "null"),
 								@example (
-										value = "add 10 at: 0 to: workingList ;",
+										value = "workingList[0] +<- 10;",
 										var = "workingList",
 										equals = "[10,0]",
 										returnType = "null"), // workingList
@@ -123,7 +118,7 @@ import msi.gaml.types.Types;
 																// equals
 																// [10,0]
 								@example (
-										value = "add 20 at: 2 to: workingList ;",
+										value = "workingList[2] +<- 20;",
 										var = "workingList",
 										equals = "[10,0,20]",
 										returnType = "null"), // workingList
@@ -131,7 +126,7 @@ import msi.gaml.types.Types;
 																// equals
 																// [10,0,20]
 								@example (
-										value = "add 50 to: workingList;",
+										value = "workingList <+ 50; // or workingList << 50;",
 										var = "workingList",
 										equals = "[10,0,20,50]",
 										returnType = "null"), // workingList
@@ -139,7 +134,7 @@ import msi.gaml.types.Types;
 																// equals
 																// [10,0,20,50]
 								@example (
-										value = "add [60,70] all: true to: workingList;",
+										value = "workingList <<+ [60,70]; // Add all the values in the list",
 										var = "workingList",
 										equals = "[10,0,20,50,60,70]",
 										returnType = "null") }), // workingList
@@ -151,9 +146,8 @@ import msi.gaml.types.Types;
 				@usage (
 						value = "Case of a map: As a map is basically a list of pairs key::value, we can also use the add statement on it. "
 								+ "It is important to note that the behavior of the statement is slightly different, in particular in the use of the at facet, which denotes the key of the pair.",
-						examples = { @example ("map<string,string> workingMap <- [];"), 
-								@example (
-								value = "add \"val1\" at: \"x\" to: workingMap;",
+						examples = { @example ("map<string,string> workingMap <- [];"), @example (
+								value = "workingMap['x'] +<- 'val1'; //equivalent to workingMap['x'] <- 'val1'",
 								var = "workingMap",
 								equals = "[\"x\"::\"val1\"]",
 								returnType = "null") }), // workingMap
@@ -161,10 +155,10 @@ import msi.gaml.types.Types;
 															// equals
 															// [x::val1]";
 				@usage (
-						value = "If the at facet is omitted, a pair (expr_item::expr_item) will be added to the map. "
-								+ "An important exception is the case where the expr_item is a pair: in this case the pair is added.",
+						value = "If no index is provided, a pair (expr_item::expr_item) will be added to the map. "
+								+ "An important exception is the case where the expr_item is a pair itself: in this case, the pair is added.",
 						examples = { @example (
-								value = "add \"val2\" to: workingMap;",
+								value = " workingMap << 'val2';",
 								var = "workingMap",
 								equals = "[\"x\"::\"val1\", \"val2\"::\"val2\"]",
 								returnType = "null"), // workingMap
@@ -173,7 +167,7 @@ import msi.gaml.types.Types;
 														// [val2::val2,
 														// x::val1]
 								@example (
-										value = "add \"5\"::\"val4\" to: workingMap; ",
+										value = "workingMap << \"5\"::\"val4\"; ",
 										var = "workingMap",
 										equals = "[\"x\"::\"val1\", \"val2\"::\"val2\", \"5\"::\"val4\"]",
 										returnType = "null") }), // workingMap
@@ -186,7 +180,7 @@ import msi.gaml.types.Types;
 						value = "Notice that, as the key should be unique, the addition of an item at an existing position (i.e. existing key) "
 								+ "will only modify the value associated with the given key.",
 						examples = { @example (
-								value = "add \"val3\" at: \"x\" to: workingMap;",
+								value = "workingMap['x'] +<- \"val3\";",
 								var = "workingMap",
 								equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\"]",
 								returnType = "null") }), // workingMap
@@ -196,9 +190,9 @@ import msi.gaml.types.Types;
 															// val2::value2,
 															// 5::val4]
 				@usage (
-						value = "On a map, the all facet will add all value of a container  in the map (so as pair val_cont::val_cont)",
+						value = "On a map, the all facet will add all the values of a container  in the map: if the argument is a map itself, all its pairs will be added, otherwise a set of pairs <cont_value, cont_value> will be added",
 						examples = { @example (
-								value = "add [\"val4\",\"val5\"] all: true at: \"x\" to: workingMap;",
+								value = "workingMap <<+ [\"val4\",\"val5\"];",
 								var = "workingMap",
 								equals = "[\"x\"::\"val3\", \"val2\"::\"val2\", \"5\"::\"val4\",\"val4\"::\"val4\",\"val5\"::\"val5\"]",
 								returnType = "null") }), // workingMap
@@ -215,7 +209,7 @@ import msi.gaml.types.Types;
 						examples = { @example (
 								value = "graph g <- as_edge_graph([{1,5}::{12,45}]);"),
 								@example (
-										value = "add edge: {1,5}::{2,3} to: g;"),
+										value = "g << edge({1,5}::{2,3});"),
 								@example (
 										value = "g.vertices",
 										returnType = IKeyword.LIST,
@@ -225,7 +219,7 @@ import msi.gaml.types.Types;
 										returnType = IKeyword.LIST,
 										equals = "[polyline({1.0,5.0}::{12.0,45.0}),polyline({1.0,5.0}::{2.0,3.0})]"),
 								@example (
-										value = "add node: {5,5} to: g;"),
+										value = "g << node({5,5});"),
 								@example (
 										value = "g.vertices",
 										returnType = IKeyword.LIST,
@@ -279,14 +273,12 @@ public class AddStatement extends AbstractContainerStatement {
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);
 			if (item == null) return;
-			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())) {
-				if (!item.getGamlType().isContainer()) {
-					cd.warning(
-							"The use of 'all' will have no effect here, as " + item.serializeToGaml(false)
-									+ " is not a container. Only this value will be added to " + list.serializeToGaml(false),
-							IGamlIssue.WRONG_CONTEXT, ALL);
-					cd.removeFacets(ALL);
-				}
+			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())
+					&& !item.getGamlType().isContainer()) {
+				cd.warning("The use of 'all' will have no effect here, as " + item.serializeToGaml(false)
+						+ " is not a container. Only this value will be added to " + list.serializeToGaml(false),
+						IGamlIssue.WRONG_CONTEXT, ALL);
+				cd.removeFacets(ALL);
 			}
 			if (list.getGamlType().id() == IType.MAP && item.getGamlType().id() == IType.PAIR) {
 				final IType<?> contentType = list.getGamlType().getContentType();
@@ -301,8 +293,8 @@ public class AddStatement extends AbstractContainerStatement {
 				}
 				if (mapKeyType != Types.NO_TYPE && !mapKeyType.isTranslatableInto(pairKeyType)) {
 					cd.warning("The type of the index of " + list.serializeToGaml(false) + " (" + mapKeyType
-							+ ") does not match with that of the key of " + item.serializeToGaml(false) + " (" + pairKeyType
-							+ ")", IGamlIssue.SHOULD_CAST, IKeyword.ITEM, mapKeyType.toString());
+							+ ") does not match with that of the key of " + item.serializeToGaml(false) + " ("
+							+ pairKeyType + ")", IGamlIssue.SHOULD_CAST, IKeyword.ITEM, mapKeyType.toString());
 				}
 			} else {
 				super.validateIndexAndContentTypes(keyword, cd, all);
@@ -313,7 +305,8 @@ public class AddStatement extends AbstractContainerStatement {
 	/**
 	 * Instantiates a new adds the statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public AddStatement(final IDescription desc) {
 		super(desc);
@@ -347,11 +340,9 @@ public class AddStatement extends AbstractContainerStatement {
 			} else {
 				container.addValueAtIndex(scope, position, object);
 			}
-		} else {
-			if (object instanceof IContainer) {
-				// AD July 2020: Addition of the position (see #2985)
-				container.addValues(scope, position, (IContainer<?, ?>) object);
-			}
+		} else if (object instanceof IContainer) {
+			// AD July 2020: Addition of the position (see #2985)
+			container.addValues(scope, position, (IContainer<?, ?>) object);
 		}
 	}
 
