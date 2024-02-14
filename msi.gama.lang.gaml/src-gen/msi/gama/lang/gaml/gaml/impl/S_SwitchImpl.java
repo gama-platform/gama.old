@@ -3,26 +3,26 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
-import msi.gama.lang.gaml.gaml.ActionFakeDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.S_Switch;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Action Fake Definition</b></em>'.
+ * An implementation of the model object '<em><b>SSwitch</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class ActionFakeDefinitionImpl extends ActionDefinitionImpl implements ActionFakeDefinition
+public class S_SwitchImpl extends StatementImpl implements S_Switch
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ActionFakeDefinitionImpl()
+  protected S_SwitchImpl()
   {
     super();
   }
@@ -35,7 +35,7 @@ public class ActionFakeDefinitionImpl extends ActionDefinitionImpl implements Ac
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.ACTION_FAKE_DEFINITION;
+    return GamlPackage.Literals.SSWITCH;
   }
 
-} //ActionFakeDefinitionImpl
+} //S_SwitchImpl

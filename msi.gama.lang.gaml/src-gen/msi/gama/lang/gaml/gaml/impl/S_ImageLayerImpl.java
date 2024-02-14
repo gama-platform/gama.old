@@ -4,25 +4,25 @@
 package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.S_Other;
+import msi.gama.lang.gaml.gaml.S_ImageLayer;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>SOther</b></em>'.
+ * An implementation of the model object '<em><b>SImage Layer</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class S_OtherImpl extends StatementImpl implements S_Other
+public class S_ImageLayerImpl extends StatementImpl implements S_ImageLayer
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected S_OtherImpl()
+  protected S_ImageLayerImpl()
   {
     super();
   }
@@ -35,7 +35,7 @@ public class S_OtherImpl extends StatementImpl implements S_Other
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.SOTHER;
+    return GamlPackage.Literals.SIMAGE_LAYER;
   }
 
-} //S_OtherImpl
+} //S_ImageLayerImpl

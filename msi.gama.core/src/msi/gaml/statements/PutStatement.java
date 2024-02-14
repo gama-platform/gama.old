@@ -63,7 +63,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.ITEM,
 						type = IType.NONE,
-						optional = true,
+						optional = false,
 						doc = @doc ("the right member of the put assignment ('cont[index] <- expr;') is an expression expr that evaluates to the element(s) to be put in the container")),
 				@facet (
 						name = IKeyword.IN,

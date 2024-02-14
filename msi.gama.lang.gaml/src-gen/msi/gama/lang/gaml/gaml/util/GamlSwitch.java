@@ -88,28 +88,29 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.STRING_EVALUATOR:
+      case GamlPackage.STANDALONE_EXPRESSION:
       {
-        StringEvaluator stringEvaluator = (StringEvaluator)theEObject;
-        T result = caseStringEvaluator(stringEvaluator);
-        if (result == null) result = caseEntry(stringEvaluator);
+        StandaloneExpression standaloneExpression = (StandaloneExpression)theEObject;
+        T result = caseStandaloneExpression(standaloneExpression);
+        if (result == null) result = caseEntry(standaloneExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.MODEL:
+      case GamlPackage.STANDALONE_EXPERIMENT:
       {
-        Model model = (Model)theEObject;
-        T result = caseModel(model);
-        if (result == null) result = caseEntry(model);
-        if (result == null) result = caseVarDefinition(model);
-        if (result == null) result = caseGamlDefinition(model);
+        StandaloneExperiment standaloneExperiment = (StandaloneExperiment)theEObject;
+        T result = caseStandaloneExperiment(standaloneExperiment);
+        if (result == null) result = caseEntry(standaloneExperiment);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.BLOCK:
+      case GamlPackage.STANDALONE_MODEL:
       {
-        Block block = (Block)theEObject;
-        T result = caseBlock(block);
+        StandaloneModel standaloneModel = (StandaloneModel)theEObject;
+        T result = caseStandaloneModel(standaloneModel);
+        if (result == null) result = caseEntry(standaloneModel);
+        if (result == null) result = caseVarDefinition(standaloneModel);
+        if (result == null) result = caseGamlDefinition(standaloneModel);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -129,18 +130,10 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.EXPERIMENT_FILE_STRUCTURE:
+      case GamlPackage.BLOCK:
       {
-        ExperimentFileStructure experimentFileStructure = (ExperimentFileStructure)theEObject;
-        T result = caseExperimentFileStructure(experimentFileStructure);
-        if (result == null) result = caseEntry(experimentFileStructure);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.HEADLESS_EXPERIMENT:
-      {
-        HeadlessExperiment headlessExperiment = (HeadlessExperiment)theEObject;
-        T result = caseHeadlessExperiment(headlessExperiment);
+        Block block = (Block)theEObject;
+        T result = caseBlock(block);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -217,19 +210,11 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.SOTHER:
+      case GamlPackage.SSWITCH:
       {
-        S_Other s_Other = (S_Other)theEObject;
-        T result = caseS_Other(s_Other);
-        if (result == null) result = caseStatement(s_Other);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.SRETURN:
-      {
-        S_Return s_Return = (S_Return)theEObject;
-        T result = caseS_Return(s_Return);
-        if (result == null) result = caseStatement(s_Return);
+        S_Switch s_Switch = (S_Switch)theEObject;
+        T result = caseS_Switch(s_Switch);
+        if (result == null) result = caseStatement(s_Switch);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -318,19 +303,19 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT:
+      case GamlPackage.SSPECIES_LAYER:
       {
-        speciesOrGridDisplayStatement speciesOrGridDisplayStatement = (speciesOrGridDisplayStatement)theEObject;
-        T result = casespeciesOrGridDisplayStatement(speciesOrGridDisplayStatement);
-        if (result == null) result = caseStatement(speciesOrGridDisplayStatement);
+        S_SpeciesLayer s_SpeciesLayer = (S_SpeciesLayer)theEObject;
+        T result = caseS_SpeciesLayer(s_SpeciesLayer);
+        if (result == null) result = caseStatement(s_SpeciesLayer);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.IMAGE_DISPLAY_STATEMENT:
+      case GamlPackage.SIMAGE_LAYER:
       {
-        imageDisplayStatement imageDisplayStatement = (imageDisplayStatement)theEObject;
-        T result = caseimageDisplayStatement(imageDisplayStatement);
-        if (result == null) result = caseStatement(imageDisplayStatement);
+        S_ImageLayer s_ImageLayer = (S_ImageLayer)theEObject;
+        T result = caseS_ImageLayer(s_ImageLayer);
+        if (result == null) result = caseStatement(s_ImageLayer);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -437,56 +422,56 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.UNIT_FAKE_DEFINITION:
+      case GamlPackage.BUILT_IN_UNIT_DEFINITION:
       {
-        UnitFakeDefinition unitFakeDefinition = (UnitFakeDefinition)theEObject;
-        T result = caseUnitFakeDefinition(unitFakeDefinition);
-        if (result == null) result = caseGamlDefinition(unitFakeDefinition);
+        BuiltInUnitDefinition builtInUnitDefinition = (BuiltInUnitDefinition)theEObject;
+        T result = caseBuiltInUnitDefinition(builtInUnitDefinition);
+        if (result == null) result = caseGamlDefinition(builtInUnitDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.TYPE_FAKE_DEFINITION:
+      case GamlPackage.BUILT_IN_TYPE_DEFINITION:
       {
-        TypeFakeDefinition typeFakeDefinition = (TypeFakeDefinition)theEObject;
-        T result = caseTypeFakeDefinition(typeFakeDefinition);
-        if (result == null) result = caseTypeDefinition(typeFakeDefinition);
-        if (result == null) result = caseActionDefinition(typeFakeDefinition);
-        if (result == null) result = caseGamlDefinition(typeFakeDefinition);
+        BuiltInTypeDefinition builtInTypeDefinition = (BuiltInTypeDefinition)theEObject;
+        T result = caseBuiltInTypeDefinition(builtInTypeDefinition);
+        if (result == null) result = caseTypeDefinition(builtInTypeDefinition);
+        if (result == null) result = caseActionDefinition(builtInTypeDefinition);
+        if (result == null) result = caseGamlDefinition(builtInTypeDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.ACTION_FAKE_DEFINITION:
+      case GamlPackage.BUILT_IN_ACTION_DEFINITION:
       {
-        ActionFakeDefinition actionFakeDefinition = (ActionFakeDefinition)theEObject;
-        T result = caseActionFakeDefinition(actionFakeDefinition);
-        if (result == null) result = caseActionDefinition(actionFakeDefinition);
-        if (result == null) result = caseGamlDefinition(actionFakeDefinition);
+        BuiltInActionDefinition builtInActionDefinition = (BuiltInActionDefinition)theEObject;
+        T result = caseBuiltInActionDefinition(builtInActionDefinition);
+        if (result == null) result = caseActionDefinition(builtInActionDefinition);
+        if (result == null) result = caseGamlDefinition(builtInActionDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.SKILL_FAKE_DEFINITION:
+      case GamlPackage.BUILT_IN_SKILL_DEFINITION:
       {
-        SkillFakeDefinition skillFakeDefinition = (SkillFakeDefinition)theEObject;
-        T result = caseSkillFakeDefinition(skillFakeDefinition);
-        if (result == null) result = caseGamlDefinition(skillFakeDefinition);
+        BuiltInSkillDefinition builtInSkillDefinition = (BuiltInSkillDefinition)theEObject;
+        T result = caseBuiltInSkillDefinition(builtInSkillDefinition);
+        if (result == null) result = caseGamlDefinition(builtInSkillDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.VAR_FAKE_DEFINITION:
+      case GamlPackage.BUILT_IN_VAR_DEFINITION:
       {
-        VarFakeDefinition varFakeDefinition = (VarFakeDefinition)theEObject;
-        T result = caseVarFakeDefinition(varFakeDefinition);
-        if (result == null) result = caseVarDefinition(varFakeDefinition);
-        if (result == null) result = caseGamlDefinition(varFakeDefinition);
+        BuiltInVarDefinition builtInVarDefinition = (BuiltInVarDefinition)theEObject;
+        T result = caseBuiltInVarDefinition(builtInVarDefinition);
+        if (result == null) result = caseVarDefinition(builtInVarDefinition);
+        if (result == null) result = caseGamlDefinition(builtInVarDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.EQUATION_FAKE_DEFINITION:
+      case GamlPackage.BUILT_IN_EQUATION_DEFINITION:
       {
-        EquationFakeDefinition equationFakeDefinition = (EquationFakeDefinition)theEObject;
-        T result = caseEquationFakeDefinition(equationFakeDefinition);
-        if (result == null) result = caseEquationDefinition(equationFakeDefinition);
-        if (result == null) result = caseGamlDefinition(equationFakeDefinition);
+        BuiltInEquationDefinition builtInEquationDefinition = (BuiltInEquationDefinition)theEObject;
+        T result = caseBuiltInEquationDefinition(builtInEquationDefinition);
+        if (result == null) result = caseEquationDefinition(builtInEquationDefinition);
+        if (result == null) result = caseGamlDefinition(builtInEquationDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -718,49 +703,49 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>String Evaluator</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Standalone Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>String Evaluator</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Standalone Expression</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseStringEvaluator(StringEvaluator object)
+  public T caseStandaloneExpression(StandaloneExpression object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Model</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Standalone Experiment</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Model</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Standalone Experiment</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseModel(Model object)
+  public T caseStandaloneExperiment(StandaloneExperiment object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Block</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Standalone Model</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Block</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Standalone Model</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseBlock(Block object)
+  public T caseStandaloneModel(StandaloneModel object)
   {
     return null;
   }
@@ -798,33 +783,17 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Experiment File Structure</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Block</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Experiment File Structure</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Block</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseExperimentFileStructure(ExperimentFileStructure object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Headless Experiment</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Headless Experiment</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseHeadlessExperiment(HeadlessExperiment object)
+  public T caseBlock(Block object)
   {
     return null;
   }
@@ -958,33 +927,17 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>SOther</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>SSwitch</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SOther</em>'.
+   * @return the result of interpreting the object as an instance of '<em>SSwitch</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseS_Other(S_Other object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>SReturn</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SReturn</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseS_Return(S_Return object)
+  public T caseS_Switch(S_Switch object)
   {
     return null;
   }
@@ -1134,33 +1087,33 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>species Or Grid Display Statement</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>SSpecies Layer</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>species Or Grid Display Statement</em>'.
+   * @return the result of interpreting the object as an instance of '<em>SSpecies Layer</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T casespeciesOrGridDisplayStatement(speciesOrGridDisplayStatement object)
+  public T caseS_SpeciesLayer(S_SpeciesLayer object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>image Display Statement</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>SImage Layer</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>image Display Statement</em>'.
+   * @return the result of interpreting the object as an instance of '<em>SImage Layer</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseimageDisplayStatement(imageDisplayStatement object)
+  public T caseS_ImageLayer(S_ImageLayer object)
   {
     return null;
   }
@@ -1374,97 +1327,97 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Unit Fake Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Built In Unit Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Unit Fake Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Built In Unit Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseUnitFakeDefinition(UnitFakeDefinition object)
+  public T caseBuiltInUnitDefinition(BuiltInUnitDefinition object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Type Fake Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Built In Type Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Type Fake Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Built In Type Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseTypeFakeDefinition(TypeFakeDefinition object)
+  public T caseBuiltInTypeDefinition(BuiltInTypeDefinition object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Action Fake Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Built In Action Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Action Fake Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Built In Action Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseActionFakeDefinition(ActionFakeDefinition object)
+  public T caseBuiltInActionDefinition(BuiltInActionDefinition object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Skill Fake Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Built In Skill Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Skill Fake Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Built In Skill Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseSkillFakeDefinition(SkillFakeDefinition object)
+  public T caseBuiltInSkillDefinition(BuiltInSkillDefinition object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Var Fake Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Built In Var Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Var Fake Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Built In Var Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseVarFakeDefinition(VarFakeDefinition object)
+  public T caseBuiltInVarDefinition(BuiltInVarDefinition object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Equation Fake Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Built In Equation Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Equation Fake Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Built In Equation Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseEquationFakeDefinition(EquationFakeDefinition object)
+  public T caseBuiltInEquationDefinition(BuiltInEquationDefinition object)
   {
     return null;
   }

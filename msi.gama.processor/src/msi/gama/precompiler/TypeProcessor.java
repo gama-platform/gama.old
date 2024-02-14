@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TypeProcessor.java, in msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * TypeProcessor.java, in msi.gama.processor, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.precompiler;
 
@@ -54,7 +54,7 @@ public class TypeProcessor extends ElementProcessor<type> {
 		}
 		sb.append(in).append("_type(").append(toJavaString(t.name())).append(",new ")
 				.append(rawNameOf(context, e.asType())).append("(),").append(t.id()).append(',').append(t.kind());
-		types.stream().map((ty) -> rawNameOf(context, ty)).forEach(s -> {
+		types.stream().map(ty -> rawNameOf(context, ty)).forEach(s -> {
 			sb.append(',').append(toClassObject(s));
 			TypeConverter.registerType(s, t.name(), t.id());
 		});
@@ -63,9 +63,7 @@ public class TypeProcessor extends ElementProcessor<type> {
 	}
 
 	@Override
-	protected Class<type> getAnnotationClass() {
-		return type.class;
-	}
+	protected Class<type> getAnnotationClass() { return type.class; }
 
 	@Override
 	protected boolean validateElement(final ProcessorContext context, final Element e) {

@@ -3,7 +3,7 @@
  * GamlSyntacticConverter.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -52,7 +52,6 @@ import static msi.gama.common.interfaces.IKeyword.TITLE;
 import static msi.gama.common.interfaces.IKeyword.TO;
 import static msi.gama.common.interfaces.IKeyword.TYPE;
 import static msi.gama.common.interfaces.IKeyword.VALUE;
-import static msi.gama.common.interfaces.IKeyword.WHEN;
 import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.common.interfaces.IKeyword.ZERO;
 
@@ -76,14 +75,11 @@ import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.Block;
-import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.S_Action;
 import msi.gama.lang.gaml.gaml.S_Assignment;
@@ -96,11 +92,14 @@ import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Solve;
 import msi.gama.lang.gaml.gaml.S_Try;
 import msi.gama.lang.gaml.gaml.StandaloneBlock;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
-import msi.gama.lang.gaml.gaml.impl.ModelImpl;
+import msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.precompiler.GamlAnnotations;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
@@ -167,22 +166,21 @@ public class GamlSyntacticConverter {
 	 * @return the i syntactic element
 	 */
 	public ISyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
-		if (root instanceof StandaloneBlock) {
+		if (root instanceof StandaloneBlock sb) {
 			final SyntacticModelElement elt = SyntacticFactory.createSyntheticModel(root);
-			convertBlock(elt, ((StandaloneBlock) root).getBlock(), errors);
+			convertBlock(elt, sb.getBlock(), errors);
 			return elt;
 		}
-		if (root instanceof ExperimentFileStructure) {
-			final HeadlessExperiment he = ((ExperimentFileStructure) root).getExp();
+		if (root instanceof StandaloneExperiment se) {
 			final String path = getAbsoluteContainerFolderPathOf(root.eResource());
-			final SyntacticExperimentModelElement exp = SyntacticFactory.createExperimentModel(root, he, path);
-			convertFacets(he, exp.getExperiment(), errors);
+			final SyntacticExperimentModelElement exp = SyntacticFactory.createExperimentModel(root, se, path);
+			convertFacets(se, exp.getExperiment(), errors);
 			exp.setFacet(NAME, LabelExpressionDescription.create(exp.getExperiment().getName()));
-			convStatements(exp.getExperiment(), EGaml.getInstance().getStatementsOf(he.getBlock()), errors);
+			convStatements(exp.getExperiment(), EGaml.getInstance().getStatementsOf(se.getBlock()), errors);
 			return exp;
 		}
-		if (!(root instanceof Model)) return null;
-		final ModelImpl m = (ModelImpl) root;
+		if (!(root instanceof StandaloneModel)) return null;
+		final StandaloneModelImpl m = (StandaloneModelImpl) root;
 
 		final String path = getAbsoluteContainerFolderPathOf(root.eResource());
 		final SyntacticModelElement model =
@@ -203,8 +201,8 @@ public class GamlSyntacticConverter {
 	 *            the m
 	 * @return the list
 	 */
-	private Map<String, List<String>> collectPragmas(final ModelImpl m) {
-		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) return null;
+	private Map<String, List<String>> collectPragmas(final StandaloneModelImpl m) {
+		if (!m.eIsSet(GamlPackage.STANDALONE_MODEL__PRAGMAS)) return null;
 		final List<Pragma> pragmas = m.getPragmas();
 		if (pragmas.isEmpty()) return null;
 		Map<String, List<String>> result = GamaMapFactory.create();
@@ -255,14 +253,14 @@ public class GamlSyntacticConverter {
 		keyword = convertKeyword(keyword, upper.getKeyword());
 
 		final boolean upperContainsAttributes = !doesNotDefineAttributes(upper.getKeyword());
-		final boolean isVar = stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword)
+		final boolean isVar = stm instanceof S_Definition sd && !DescriptionFactory.isStatementProto(keyword)
 				&& upperContainsAttributes && !EGaml.getInstance().hasChildren(stm);
 
 		final ISyntacticElement elt = isVar ? SyntacticFactory.createVar(keyword, ((S_Definition) stm).getName(), stm)
 				: SyntacticFactory.create(keyword, stm, EGaml.getInstance().hasChildren(stm));
 
 		if (stm instanceof S_Assignment) {
-			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
+			keyword = convertAssignment((S_Assignment) stm, keyword, elt, EGaml.getInstance().getExprOf(stm), errors);
 		} else if (stm instanceof S_Definition def && !DescriptionFactory.isStatementProto(keyword)) {
 			// If we define a variable with this statement
 			final TypeRef t = (TypeRef) def.getTkey();
@@ -297,7 +295,7 @@ public class GamlSyntacticConverter {
 			// type2}"
 			convertArgs(((S_Action) stm).getArgs(), elt, errors);
 		} else if (stm instanceof S_Reflex ref) {
-			if (ref.getExpr() != null) { addFacet(elt, WHEN, convExpr(ref.getExpr(), errors), errors); }
+			if (ref.getExpr() != null) { addFacet(elt, IKeyword.WHEN, convExpr(ref.getExpr(), errors), errors); }
 		} else if (stm instanceof S_Solve) {
 			final Expression e = stm.getExpr();
 			addFacet(elt, EQUATION, convertToLabel(e, EGaml.getInstance().getKeyOf(e)), errors);
@@ -577,7 +575,7 @@ public class GamlSyntacticConverter {
 			addFacet(elt, FROM, convExpr(expr, errors), errors);
 			addFacet(elt, ITEM, value, errors);
 		}
-		if (">>-".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors); }
+		if (">>-".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION, errors); }
 		return REMOVE;
 	}
 
@@ -601,7 +599,7 @@ public class GamlSyntacticConverter {
 		elt.setKeyword(ADD);
 		addFacet(elt, TO, convExpr(expr, errors), errors);
 		addFacet(elt, ITEM, value, errors);
-		if ("<<+".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors); }
+		if ("<<+".equals(keyword)) { addFacet(elt, ALL, ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION, errors); }
 		return ADD;
 	}
 
@@ -635,7 +633,7 @@ public class GamlSyntacticConverter {
 			final List<Expression> args = EGaml.getInstance().getExprsOf(((Access) expr).getRight());
 			if (args.size() == 0) {
 				// Add facet all: true when no index is provided
-				addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
+				addFacet(elt, ALL, ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION, errors);
 			} else if (args.size() == 1) { // Integer index -- or pair index see #3099
 				addFacet(elt, AT, convExpr(args.get(0), errors), errors);
 			} else { // Point index
@@ -683,13 +681,13 @@ public class GamlSyntacticConverter {
 		}
 
 		// We add the "default" (or omissible) facet to the syntactic element
-		String def = stm.getFirstFacet();
-		if (def != null) {
-			if (def.endsWith(":")) { def = def.substring(0, def.length() - 1); }
-		} else {
-			def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
-		}
-		if (def != null && !def.isEmpty() && !elt.hasFacet(def)) {
+		String def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
+		// if (def != null) {
+		// if (def.endsWith(":")) { def = def.substring(0, def.length() - 1); }
+		// } else {
+		// def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
+		// }
+		if (def != null && !GamlAnnotations.NOT_USED.equals(def) && !def.isEmpty() && !elt.hasFacet(def)) {
 			final IExpressionDescription ed = findExpr(stm, errors);
 			if (ed != null) { elt.setFacet(def, ed); }
 		}
@@ -705,7 +703,7 @@ public class GamlSyntacticConverter {
 	 * @param errors
 	 *            the errors
 	 */
-	private void convertFacets(final HeadlessExperiment stm, final ISyntacticElement elt,
+	private void convertFacets(final StandaloneExperiment stm, final ISyntacticElement elt,
 			final Set<Diagnostic> errors) {
 		final SymbolProto p = DescriptionFactory.getProto(EXPERIMENT, null);
 		for (final Facet f : EGaml.getInstance().getFacetsOf(stm)) {
@@ -876,7 +874,7 @@ public class GamlSyntacticConverter {
 	 *            the errors
 	 * @return the i expression description
 	 */
-	private final IExpressionDescription findExpr(final HeadlessExperiment stm, final Set<Diagnostic> errors) {
+	private final IExpressionDescription findExpr(final StandaloneExperiment stm, final Set<Diagnostic> errors) {
 		if (stm == null) return null;
 		return convertToLabel(stm, EGaml.getInstance().getNameOf(stm));
 

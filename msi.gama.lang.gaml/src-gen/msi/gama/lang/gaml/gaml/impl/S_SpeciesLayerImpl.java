@@ -4,25 +4,25 @@
 package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.S_Return;
+import msi.gama.lang.gaml.gaml.S_SpeciesLayer;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>SReturn</b></em>'.
+ * An implementation of the model object '<em><b>SSpecies Layer</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class S_ReturnImpl extends StatementImpl implements S_Return
+public class S_SpeciesLayerImpl extends StatementImpl implements S_SpeciesLayer
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected S_ReturnImpl()
+  protected S_SpeciesLayerImpl()
   {
     super();
   }
@@ -35,7 +35,7 @@ public class S_ReturnImpl extends StatementImpl implements S_Return
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.SRETURN;
+    return GamlPackage.Literals.SSPECIES_LAYER;
   }
 
-} //S_ReturnImpl
+} //S_SpeciesLayerImpl

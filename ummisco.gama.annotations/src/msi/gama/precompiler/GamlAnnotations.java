@@ -31,6 +31,12 @@ import java.lang.annotation.Target;
 
 public final class GamlAnnotations {
 
+	/** The Constant NOT_USED. */
+	public static final String NOT_USED = "**not used**";
+
+	/** The Constant DO_NOT_INSERT_EXPR. */
+	public static final String DO_NOT_INSERT_EXPR = "**do not insert fake expr**";
+
 	/**
 	 * An annotation for signalling an implementation of msi.gama.common.interfaces.IDisplaySurface as a potential
 	 * display surface for GAMA models
@@ -94,7 +100,7 @@ public final class GamlAnnotations {
 		 * @return the facet that can be safely omitted by the modeler (provided its value is the first following the
 		 *         keyword of the statement).
 		 */
-		String omissible() default "name";
+		String omissible() default NOT_USED;
 
 	}
 

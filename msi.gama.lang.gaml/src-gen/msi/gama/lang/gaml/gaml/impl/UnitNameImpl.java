@@ -3,8 +3,8 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.BuiltInUnitDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -37,7 +37,7 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
    * @generated
    * @ordered
    */
-  protected UnitFakeDefinition ref;
+  protected BuiltInUnitDefinition ref;
 
   /**
    * <!-- begin-user-doc -->
@@ -66,12 +66,12 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
    * @generated
    */
   @Override
-  public UnitFakeDefinition getRef()
+  public BuiltInUnitDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
     {
       InternalEObject oldRef = (InternalEObject)ref;
-      ref = (UnitFakeDefinition)eResolveProxy(oldRef);
+      ref = (BuiltInUnitDefinition)eResolveProxy(oldRef);
       if (ref != oldRef)
       {
         if (eNotificationRequired())
@@ -86,7 +86,7 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
    * <!-- end-user-doc -->
    * @generated
    */
-  public UnitFakeDefinition basicGetRef()
+  public BuiltInUnitDefinition basicGetRef()
   {
     return ref;
   }
@@ -97,9 +97,9 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
    * @generated
    */
   @Override
-  public void setRef(UnitFakeDefinition newRef)
+  public void setRef(BuiltInUnitDefinition newRef)
   {
-    UnitFakeDefinition oldRef = ref;
+    BuiltInUnitDefinition oldRef = ref;
     ref = newRef;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.UNIT_NAME__REF, oldRef, ref));
@@ -133,7 +133,7 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
     switch (featureID)
     {
       case GamlPackage.UNIT_NAME__REF:
-        setRef((UnitFakeDefinition)newValue);
+        setRef((BuiltInUnitDefinition)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -150,7 +150,7 @@ public class UnitNameImpl extends ExpressionImpl implements UnitName
     switch (featureID)
     {
       case GamlPackage.UNIT_NAME__REF:
-        setRef((UnitFakeDefinition)null);
+        setRef((BuiltInUnitDefinition)null);
         return;
     }
     super.eUnset(featureID);

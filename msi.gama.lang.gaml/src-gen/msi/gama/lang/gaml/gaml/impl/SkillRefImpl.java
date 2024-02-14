@@ -3,8 +3,8 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.BuiltInSkillDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -37,7 +37,7 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
    * @generated
    * @ordered
    */
-  protected SkillFakeDefinition ref;
+  protected BuiltInSkillDefinition ref;
 
   /**
    * <!-- begin-user-doc -->
@@ -66,12 +66,12 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
    * @generated
    */
   @Override
-  public SkillFakeDefinition getRef()
+  public BuiltInSkillDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
     {
       InternalEObject oldRef = (InternalEObject)ref;
-      ref = (SkillFakeDefinition)eResolveProxy(oldRef);
+      ref = (BuiltInSkillDefinition)eResolveProxy(oldRef);
       if (ref != oldRef)
       {
         if (eNotificationRequired())
@@ -86,7 +86,7 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public SkillFakeDefinition basicGetRef()
+  public BuiltInSkillDefinition basicGetRef()
   {
     return ref;
   }
@@ -97,9 +97,9 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
    * @generated
    */
   @Override
-  public void setRef(SkillFakeDefinition newRef)
+  public void setRef(BuiltInSkillDefinition newRef)
   {
-    SkillFakeDefinition oldRef = ref;
+    BuiltInSkillDefinition oldRef = ref;
     ref = newRef;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.SKILL_REF__REF, oldRef, ref));
@@ -133,7 +133,7 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
     switch (featureID)
     {
       case GamlPackage.SKILL_REF__REF:
-        setRef((SkillFakeDefinition)newValue);
+        setRef((BuiltInSkillDefinition)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -150,7 +150,7 @@ public class SkillRefImpl extends ExpressionImpl implements SkillRef
     switch (featureID)
     {
       case GamlPackage.SKILL_REF__REF:
-        setRef((SkillFakeDefinition)null);
+        setRef((BuiltInSkillDefinition)null);
         return;
     }
     super.eUnset(featureID);

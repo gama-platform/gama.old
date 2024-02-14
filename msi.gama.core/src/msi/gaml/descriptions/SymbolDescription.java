@@ -531,7 +531,7 @@ public abstract class SymbolDescription implements IDescription {
 			if (result != null) return result;
 		}
 		if (facet instanceof String) {
-			if (getMeta() != null && !returnFacet && facet.equals(getMeta().getOmissible())) {
+			if (getMeta() != null && !returnFacet && facet.equals(getMeta().getDefaultFacetName())) {
 				final EObject o = GAML.getEcoreUtils().getExprOf(element);
 				if (o != null) return o;
 			}
@@ -791,12 +791,10 @@ public abstract class SymbolDescription implements IDescription {
 		final boolean isDo = isSet(Flag.IsInvocation);
 		final boolean isBuiltIn = isBuiltIn();
 		List<String> mandatory = proto.getMandatoryFacets();
-		if (mandatory != null) {
-			for (String facet : mandatory) {
-				if (!facets.containsKey(facet)) {
-					error("Missing facet " + facet, IGamlIssue.MISSING_FACET, getUnderlyingElement(), facet, "nil");
-					return false;
-				}
+		for (String facet : mandatory) {
+			if (facets != null && !facets.containsKey(facet)) {
+				error("Missing facet " + facet, IGamlIssue.MISSING_FACET, getUnderlyingElement(), facet, "nil");
+				return false;
 			}
 		}
 

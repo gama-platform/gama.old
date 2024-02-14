@@ -3,20 +3,45 @@ grammar msi.gama.lang.gaml.Gaml hidden(WS, ML_COMMENT, SL_COMMENT)
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
+/**------------------------------------------------------------------------
+ * Entries of the grammar
+-------------------------------------------------------------------------*/
+
 Entry:
-	->Model | StringEvaluator | StandaloneBlock | ExperimentFileStructure;
+	->StandaloneModel | StandaloneExpression | StandaloneBlock | StandaloneExperiment;
+
+/**------------------------------------------------------------------------
+ * StandaloneBlock -- allows to compile inline actions at runtime
+-------------------------------------------------------------------------*/
 
 StandaloneBlock:
 	'__synthetic__' block=Block;
 
-StringEvaluator:
-	toto=ID "<-" expr=Expression;
+/**------------------------------------------------------------------------
+ * StandaloneExpression -- allows to compile inline expressions at runtime
+-------------------------------------------------------------------------*/
 
-Model:
-	(pragmas+=Pragma)* 'model' name=ID (imports+=Import)* block=ModelBlock;
+StandaloneExpression:
+	name=ID "<-" expr=Expression;
 
-ModelBlock returns Block:
-	{Block} (statements+=(S_Section))*;
+/**------------------------------------------------------------------------
+ * StandaloneExperiment -- allows to compile experiment files
+-------------------------------------------------------------------------*/
+
+StandaloneExperiment:
+	key=K_Experiment name=(Valid_ID | STRING) ('model:' importURI=STRING)? (facets+=Facet)*
+	(block=Block | ';');
+
+/**------------------------------------------------------------------------
+ * StandaloneModel -- allows to compile model files
+-------------------------------------------------------------------------*/
+
+StandaloneModel:
+	(pragmas+=Pragma)* 'model' name=ID (imports+=Import)* block=B_Model;
+
+/**------------------------------------------------------------------------
+ * Models' specific components: imports and pragmas
+-------------------------------------------------------------------------*/
 
 Import:
 	'import' importURI=STRING ("as" name=Valid_ID)?; // must be named importURI
@@ -24,19 +49,40 @@ Import:
 Pragma:
 	'@' (name=ID ('[' plugins=ExpressionList? ']')?);
 
-/**
- * Experiment files
- */
-ExperimentFileStructure:
-	exp=HeadlessExperiment;
 
-HeadlessExperiment:
-	key=_ExperimentKey (firstFacet="name:")? name=(Valid_ID | STRING) ('model:' importURI=STRING)? (facets+=Facet)*
-	(block=Block | ';');
+/**------------------------------------------------------------------------
+ * Blocks. An ordered list of statements inside curly brackets. 
+ * Some are specialized and accept only certain statements
+ -------------------------------------------------------------------------*/
+ 
+Block:
+	{Block} '{' ((statements+=Statement)* '}');
 
-/**
+B_Model returns Block:
+	{Block} (statements+=(S_Section))*;
+
+B_Switch returns Block:
+	{Block} '{' (statements+=(S_Default | S_Match))* '}';
+
+B_Display returns Block:
+	{Block} '{' (statements+=S_DisplayLayer)* '}';
+
+/**------------------------------------------------------------------------
+ * General statements
+-------------------------------------------------------------------------*/
+
+Statement:
+	(=> S_Declaration |
+	((=> S_Assignment |  S_Switch | S_Break | S_Do | S_Return | S_Solve | S_If | S_Try | S_1Expr_Facets_BlockOrEnd /*| S_Other */|  S_Equations)))
+	| S_Display ;
+
+S_1Expr_Facets_BlockOrEnd returns Statement:
+	key=K_1Expr_Facets_BlockOrEnd (expr=Expression) (facets+=Facet)* (block=Block | ";");
+	
+/**------------------------------------------------------------------------
  * Global statements
- */
+-------------------------------------------------------------------------*/
+
 S_Section returns Statement:
 	S_Global | S_Species | S_Experiment;
 
@@ -44,204 +90,220 @@ S_Global:
 	key="global" (facets+=Facet)* (block=Block | ';');
 
 S_Species:
-	key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';');
+	key=K_Species name=ID (facets+=Facet)* (block=Block | ';');
 
 S_Experiment:
-	key=_ExperimentKey (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* (block=Block | ';');
+	key=K_Experiment name=(Valid_ID | STRING) (facets+=Facet)* (block=Block | ';');
 
-/**
- * Statements
- */
-Statement:
-	(=> S_Declaration |
-	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Try | S_Equations)))
-	| S_Display;
-
-S_1Expr_Facets_BlockOrEnd returns Statement:
-	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? (expr=Expression) (facets+=Facet)* (block=Block | ";");
+/**------------------------------------------------------------------------
+ * Special statements: do
+-------------------------------------------------------------------------*/
 
 S_Do:
-	key=_DoKey (firstFacet="action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
+	key=K_Do expr=AbstractRef (facets+=Facet)* (block=Block | ';');
+
+/**------------------------------------------------------------------------
+ * Control statements : loop, if, switch/match/default, try/catch, break, return
+-------------------------------------------------------------------------*/
 
 S_Loop:
-	key="loop" (name=ID)? (facets+=Facet)* block=Block;
+	key="loop" (name=ID) (facets+=Facet)* block=Block;
 
 S_If:
-	key='if' (firstFacet="condition:")? expr=Expression block=Block (->'else' else=(S_If | Block))?;
+	key='if' expr=Expression block=Block (->'else' else=(S_If | Block))?;
 
 S_Try:
 	key='try' block=Block (->'catch' catch=Block)?;
 
-S_Other:
-	key=ID (facets+=Facet)* (block=Block | ';');
+S_Switch:
+	key='switch' expr=Expression block=B_Switch;
 
-S_Return:
-	key='return' (firstFacet="value:")? expr=Expression? ';';
+S_Match returns Statement:
+	key=("match" | "match_one" | "match_between" | "match_regex") expr=Expression block=Block;
 
-/*
- * DECLARATIONS
- */
+S_Default returns Statement:
+	key=K_Default block=Block;
+
+S_Return returns Statement:
+	key='return' expr=Expression ';';
+
+S_Break returns Statement:
+	key='break' ';';
+
+//S_Other:
+//    key=ID (facets+=Facet)* (block=Block | ';');
+
+/**------------------------------------------------------------------------
+ * Declaration statements: reflexes, actions, variables...
+-------------------------------------------------------------------------*/
+
 S_Declaration:
 	->S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop;
 
 S_Reflex:
-	key=_ReflexKey ((firstFacet="name:")? name=Valid_ID)? ("when" ":" expr=Expression)? block=Block;
+	key=K_Reflex (name=Valid_ID)?	 ("when" ":" expr=Expression)? block=Block;
 
 S_Definition:
-	tkey=(TypeRef) (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)*
+	tkey=(TypeRef) name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)*
 	(block=Block | ';');
 
 S_Action returns S_Definition:
-	{S_Action} key="action" (firstFacet='name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)*
+	{S_Action} key="action" name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)*
 	(block=Block | ';');
 
 S_Var returns S_Definition:
-	{S_Var} key=_VarOrConstKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';';
+	{S_Var} key=K_Var name=Valid_ID (facets+=Facet)* ';';
 
-/*
- * ASSIGNMENTS
- */
+/**------------------------------------------------------------------------
+ * Assignment statements: <-, set, single equation
+-------------------------------------------------------------------------*/
+
 S_Assignment:
 	S_DirectAssignment | S_Set;
 
 S_DirectAssignment:
-	(expr=Expression key=(_AssignmentKey) value=Expression (facets+=Facet)*) ';';
+	(expr=Expression key=(K_Assignment) value=Expression (facets+=Facet)*) ';';
 
 S_Set:
 	key="set" expr=Expression ("value:" | "<-") value=Expression ";";
 
-S_Equations:
-	key=_EquationsKey name=Valid_ID (facets+=Facet)* ('{' (equations+=S_Equation ';')* '}' | ';');
-
 S_Equation returns S_Assignment:
 	expr=(Function | VariableRef) key="=" value=Expression;
 
+/**------------------------------------------------------------------------
+ * Equation statements: equations system, solve
+-------------------------------------------------------------------------*/
+
+S_Equations:
+	key=K_Equations name=Valid_ID (facets+=Facet)* ('{' (equations+=S_Equation ';')* '}' | ';');
+
 S_Solve:
-	key=_SolveKey (firstFacet="equation:")? expr=EquationRef (facets+=Facet)* (block=Block | ';');
+	key=K_Solve expr=EquationRef (facets+=Facet)* (block=Block | ';');
 
-/**
- * DISPLAYS
- */
+/**------------------------------------------------------------------------
+ * Display statements: display & layers (species, grid, image)
+-------------------------------------------------------------------------*/
+
 S_Display:
-	key="display" (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* block=displayBlock;
+	key="display" name=(Valid_ID | STRING) (facets+=Facet)* block=B_Display;
 
-displayBlock returns Block:
-	{Block} '{' (statements+=displayStatement)* '}';
+S_DisplayLayer returns Statement:
+	=>S_SpeciesLayer | (=>S_ImageLayer | Statement);
 
-displayStatement returns Statement:
-	=>speciesOrGridDisplayStatement | (=>imageDisplayStatement | Statement);
+S_SpeciesLayer:
+	key=K_Species expr=Expression (facets+=Facet)* (block=B_Display | ";");
 
-speciesOrGridDisplayStatement:
-	key=_SpeciesKey expr=Expression (facets+=Facet)* (block=displayBlock | ";");
-	
-imageDisplayStatement:
-	key = _ImageLayerKey  expr=Expression (facets+=Facet)* ";";
+S_ImageLayer:
+	key=K_ImageLayer expr=Expression (facets+=Facet)* ";";
 
-/**
- * Statement keys
- */
-_EquationsKey:
+/**------------------------------------------------------------------------
+ * Keys of statements
+-------------------------------------------------------------------------*/
+
+K_Equations:
 	"equation";
 
-_SolveKey:
+K_Solve:
 	"solve";
 
-_SpeciesKey:
+K_Species:
 	"species" | "grid";
-	
-_ImageLayerKey: "image";
 
-_ExperimentKey:
+K_ImageLayer:
+	"image";
+
+K_Experiment:
 	"experiment";
 
-_1Expr_Facets_BlockOrEnd_Key:
-	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert"
-	| "inspect" | "browse" | "restore" |
-	"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" |
-	"status" | "highlight" | "focus_on" | "layout";
+K_1Expr_Facets_BlockOrEnd:
+	K_Layer | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert"
+	| "inspect" | "browse" | "restore" | "draw" | "using" | "put" | "add" | "remove" | "parameter"
+	| "status" | "highlight" | "focus_on" | "layout";
 
-_LayerKey:
+K_Layer:
 	"light" | "camera" | "text" | "image_layer" | "data" | "chart" | "agents" | "graphics" | "display_population" |
 	"display_grid" | "event" | "overlay" | "datalist" | "mesh";
 
-_DoKey:
+K_Do:
 	"do" | "invoke";
 
-_VarOrConstKey:
+K_Default:
+	"default";
+
+K_Var:
 	"var" | "const" | "let" | "arg";
 
-_ReflexKey:
+K_Reflex:
 	"init" | "reflex" | "aspect";
 
-_AssignmentKey:
+K_Assignment:
 	"<-" | "<<" | '>' '>' | "<<+" | '>' '>-' | "+<-" | "<+" | ">-";
 
-/**
+/**------------------------------------------------------------------------
  * Parameters and arguments
- */
-//Parameters:
-//	{Parameters} (params=ParameterList)?;
+-------------------------------------------------------------------------*/
+
 ActionArguments:
 	args+=ArgumentDefinition (',' args+=ArgumentDefinition)*;
 
 ArgumentDefinition:
 	type=(TypeRef) name=Valid_ID ('<-' default=Expression)?;
 
-/**
+/**------------------------------------------------------------------------
  * Facets
- */
+-------------------------------------------------------------------------*/
+
 Facet:
-	ActionFacet | DefinitionFacet | ClassicFacet | TypeFacet | VarFacet | FunctionFacet;
+	F_Action | F_Definition | F_Regular | F_Type | F_Var | F_Function;
 
-FirstFacetKey:
-	DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey;
+F_Regular returns Facet:
+	(key=FK_Regular | key='<-' | key=FK_Special) expr=Expression;
 
-ClassicFacetKey:
+F_Definition returns Facet:
+	((->key=FK_Definition) name=(Valid_ID | STRING));
+
+F_Function returns Facet:
+	key='->' (=>(expr=Expression) | ('{' expr=Expression '}'));
+
+F_Type returns Facet:
+	key=FK_Type (->(expr=TypeRef) | expr=Expression);
+
+F_Action returns Facet:
+	key=FK_Action (expr=ActionRef | block=Block);
+
+F_Var returns Facet:
+	key=FK_Var expr=VariableRef;
+	
+/**------------------------------------------------------------------------
+ * Facet keys
+-------------------------------------------------------------------------*/
+
+//FirstFacetKey:
+//	DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey;
+
+FK_Regular:
 	(ID ':');
 
-DefinitionFacetKey:
-	"name:" | "returns:"; 
+FK_Definition:
+	"name:" | "returns:";
 
-TypeFacetKey:
+FK_Type:
 	("as:" | "of:" | "parent:" | "species:" | "type:");
 
-SpecialFacetKey:
+FK_Special:
 	'camera:' | 'data:' | 'when' ':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
 	"layout:" | "environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 
-ActionFacetKey:
+FK_Action:
 	"action:" | "on_change:";
 
-VarFacetKey:
+FK_Var:
 	"var:";
 
-ClassicFacet returns Facet:
-	(key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression;
-
-DefinitionFacet returns Facet:
-	((->key=DefinitionFacetKey) name=(Valid_ID | STRING));
-
-FunctionFacet returns Facet:
-	key='->' (=>(expr=Expression) | ('{' expr=Expression '}'));
-
-TypeFacet returns Facet:
-	key=TypeFacetKey (->(expr=TypeRef) | expr=Expression);
-
-ActionFacet returns Facet:
-	key=ActionFacetKey (expr=ActionRef | block=Block);
-
-VarFacet returns Facet:
-	key=VarFacetKey expr=VariableRef;
-
-/**
- * Blocks. An ordered list of statements inside curly brackets
- */
-Block:
-	{Block} '{' ((statements+=Statement)* '}');
-
-/**
+/**------------------------------------------------------------------------
  * Expressions
- */
+-------------------------------------------------------------------------*/
+
 Expression:
 	ArgumentPair | Pair;
 
@@ -249,7 +311,7 @@ BinaryOperator returns Expression:
 	Or | And | Cast | Comparison | Addition | Multiplication | Exponentiation | Binary | Pair | Unit;
 
 ArgumentPair:
-	=> (op=(Valid_ID) '::' | op=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | VarFacetKey) ':'
+	=> (op=(Valid_ID) '::' | op=(FK_Definition | FK_Type | FK_Special | FK_Action | FK_Var) ':'
 	)? right=Pair;
 
 Pair returns Expression:
@@ -316,8 +378,7 @@ Unary returns Expression:
 	right=Unary));
 
 Access returns Expression:
-	Primary ({Access.left=current} ((op='[' right=ExpressionList? ']') | (op="." right=(AbstractRef | StringLiteral))))*
-;
+	Primary ({Access.left=current} ((op='[' right=ExpressionList? ']') | (op="." right=(AbstractRef | StringLiteral))))*;
 
 Primary returns Expression:
 	TerminalExpression |
@@ -326,8 +387,6 @@ Primary returns Expression:
 	'[' {Array} exprs=ExpressionList? ']' |
 	'{' {Point} left=Expression op=',' right=Expression (',' z=Expression)? '}';
 
-AbstractRef returns Expression:
-	=>Function | VariableRef;
 
 Function returns Expression:
 	{Function} (left=ActionRef) (type=TypeInfo)? '(' right=ExpressionList? ')';
@@ -336,25 +395,33 @@ ExpressionList:
 	(exprs+=Expression (',' exprs+=Expression)*) | (exprs+=Parameter (',' exprs+=Parameter)*);
 
 Parameter returns Expression:
-	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | VarFacetKey))
+	{Parameter} ((builtInFacetKey=(FK_Definition | FK_Type | FK_Special | FK_Action | FK_Var))
 	|
 	(left=VariableRef ':')) right=Expression;
 
+/**------------------------------------------------------------------------
+*  References
+-------------------------------------------------------------------------*/
+
+
+AbstractRef returns Expression:
+	=>Function | VariableRef;
+
 UnitRef returns Expression:
-	{UnitName} ref=[UnitFakeDefinition|ID];
+	{UnitName} ref=[BuiltInUnitDefinition|Valid_ID];
 
 VariableRef:
 	{VariableRef} ref=[VarDefinition|Valid_ID];
 
-// Necessary to add "image" hardcoded here, because of the existence of the "image" layer
 TypeRef returns Expression:
-	{TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) | {TypeRef} ("image");
+	{TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) | {TypeRef}
+	("image"); // Necessary to add "image" hardcoded here, because of the existence of the "image" layer
 
 TypeInfo:
 	('<' first=TypeRef ("," second=TypeRef)? ->'>');
-
+	
 SkillRef returns Expression:
-	{SkillRef} ref=[SkillFakeDefinition|ID];
+	{SkillRef} ref=[BuiltInSkillDefinition|ID];
 
 ActionRef returns Expression:
 	{ActionRef} ref=[ActionDefinition|Valid_ID];
@@ -363,46 +430,55 @@ EquationRef returns Expression:
 	{EquationRef} ref=[EquationDefinition|Valid_ID];
 
 GamlDefinition:
-	TypeDefinition | VarDefinition | UnitFakeDefinition | SkillFakeDefinition | ActionDefinition | EquationDefinition;
+	TypeDefinition | VarDefinition | BuiltInUnitDefinition | BuiltInSkillDefinition | ActionDefinition | EquationDefinition;
 
 EquationDefinition:
-	S_Equations | EquationFakeDefinition;
+	S_Equations | BuiltInEquationDefinition;
 
 TypeDefinition:
-	S_Species | TypeFakeDefinition;
+	S_Species | BuiltInTypeDefinition;
 
 VarDefinition:
-	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition | Import | S_Experiment);
+	=>S_Declaration | (StandaloneModel | ArgumentDefinition | F_Definition | BuiltInVarDefinition | Import |
+	S_Experiment);
 
 ActionDefinition:
-	S_Action | ActionFakeDefinition | S_Definition | TypeDefinition;
+	S_Action | BuiltInActionDefinition | S_Definition | TypeDefinition;
+	
+/**------------------------------------------------------------------------
+ * Built_in Definitions produced by the global scope provider
+-------------------------------------------------------------------------*/
 
-// Fake Definitions produced by the global scope provider
-UnitFakeDefinition:
+BuiltInUnitDefinition:
 	'**unit*' name=ID;
 
-TypeFakeDefinition:
+BuiltInTypeDefinition:
 	'**type*' name=ID;
 
-ActionFakeDefinition:
+BuiltInActionDefinition:
 	'**action*' name=Valid_ID;
 
-SkillFakeDefinition:
+BuiltInSkillDefinition:
 	'**skill*' name=ID;
 
-VarFakeDefinition:
+BuiltInVarDefinition:
 	'**var*' name=Valid_ID;
 
-EquationFakeDefinition:
+BuiltInEquationDefinition:
 	'**equation*' name=Valid_ID;
 
-Valid_ID:
-	_SpeciesKey | _ImageLayerKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID |
-	_ExperimentKey;
+/**------------------------------------------------------------------------
+ * Identifiers
+-------------------------------------------------------------------------*/
 
-/**
+Valid_ID:
+	K_Species | K_ImageLayer | K_Do | K_Reflex | K_Var | K_1Expr_Facets_BlockOrEnd | K_Equations |
+	ID | K_Default | K_Experiment;
+
+/**------------------------------------------------------------------------
  * Terminals
- */
+-------------------------------------------------------------------------*/
+
 TerminalExpression:
 	StringLiteral |
 	{IntLiteral} op=INTEGER |
@@ -421,19 +497,17 @@ terminal INTEGER:
 
 terminal BOOLEAN:
 	'true' | 'false';
-
+	
 terminal ID:
 	"2d" | "3d" | "2D" | "3D" | (('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | '0'..'9')*);
 
 terminal DOUBLE:
 	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+'
-	|
-	'-')? '0'..'9'+)?;
+	| '-')? '0'..'9'+)?;
 
 terminal STRING:
 	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | '\\') | !('\\' | '"'))* '"' | "'" ('\\' ('b' | 't' | 'n' | 'f'
-	|
-	'r' | 'u' | "'" | '\\') | !('\\' | "'"))* "'";
+	| 'r' | 'u' | "'" | '\\') | !('\\' | "'"))* "'";
 
 terminal ML_COMMENT:
 	'/*'->'*/';

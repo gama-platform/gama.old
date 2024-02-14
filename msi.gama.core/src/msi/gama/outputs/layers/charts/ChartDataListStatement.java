@@ -3,7 +3,7 @@
  * ChartDataListStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -73,7 +73,7 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.LEGEND,
 						type = IType.LIST,
-						optional = true,
+						optional = false,
 						doc = @doc ("the name of the series: a list of strings (can be a variable with dynamic names)")),
 				@facet (
 						name = ChartDataStatement.MARKER,
@@ -120,8 +120,8 @@ import msi.gaml.types.IType;
 						name = IKeyword.STYLE,
 						type = IType.ID,
 						values = { IKeyword.LINE, /* IKeyword.WHISKER, */ IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
-								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D,
-								IKeyword.RING, IKeyword.EXPLODED },
+								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
+								IKeyword.EXPLODED },
 						optional = true,
 						doc = @doc ("Style for the serie (if not the default one sepecified on chart statement)")) },
 		omissible = IKeyword.LEGEND)

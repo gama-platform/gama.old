@@ -286,10 +286,11 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 
 	/** The html tags. */
 	private static String[] HTML_TAGS =
-			{ "<br/>", "<br>", "<b>", "</b>", "<i>", "</i>", "<ul>", "</ul>", "<li>", "</li>" };
+			{ "<hr>", "<hr/>", "<br/>", "<br>", "<b>", "</b>", "<i>", "</i>", "<ul>", "</ul>", "<li>", "</li>" };
 
 	/** The replacements. */
-	private static String[] REPLACEMENTS = { Strings.LN, Strings.LN, "", "", "", "", "", "", Strings.LN + "- ", "" };
+	private static String[] REPLACEMENTS =
+			{ Strings.LN, Strings.LN, Strings.LN, Strings.LN, "", "", "", "", "", "", Strings.LN + "- ", "" };
 
 	/**
 	 * To text.
@@ -300,7 +301,7 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	 */
 	public static String toText(final String s) {
 		if (s == null) return "";
-		return breakStringToLines(StringUtils.replaceEach(s, HTML_TAGS, REPLACEMENTS), 120, Strings.LN);
+		return StringUtils.replaceEach(s, HTML_TAGS, REPLACEMENTS);
 	}
 
 	/**
@@ -354,32 +355,33 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	 *            The string to use for line breaking.
 	 * @return The resulting multi-line string.
 	 */
-	public static String breakStringToLines(final String s, final int maxLength, final String newLineString) {
-		String str = s;
-		final StringBuilder result = new StringBuilder();
-		while (str.length() > maxLength) {
-			// Attempt to break on whitespace first,
-			int breakingIndex = lastIndexOfRegex(str, "\\s", maxLength);
-
-			// Then on other non-alphanumeric characters,
-			if (breakingIndex == NOT_FOUND) { breakingIndex = lastIndexOfRegex(str, "[^a-zA-Z0-9]", maxLength); }
-
-			// And if all else fails, break in the middle of the word
-			if (breakingIndex == NOT_FOUND) { breakingIndex = maxLength; }
-
-			// Append each prepared line to the builder
-			result.append(str.substring(0, breakingIndex + 1));
-			result.append(newLineString);
-
-			// And start the next line
-			str = str.substring(breakingIndex + 1);
-		}
-
-		// Check if there are any residual characters left
-		if (str.length() > 0) { result.append(str); }
-
-		// Return the resulting string
-		return result.toString();
-	}
+	// public static String breakStringToLines(final String s, final int maxLength, final String newLineString) {
+	// String str = s;
+	// final StringBuilder result = new StringBuilder();
+	// while (str.length() > maxLength) {
+	// // Attempt to break on whitespace first,
+	// int breakingIndex = lastIndexOfRegex(str, "\\s", maxLength);
+	//
+	// // Then on other non-alphanumeric characters,
+	// if (breakingIndex == NOT_FOUND) { breakingIndex = lastIndexOfRegex(str, "[^a-zA-Z0-9]", maxLength); }
+	//
+	// // And if all else fails, break in the middle of the word
+	// if (breakingIndex == NOT_FOUND) { breakingIndex = maxLength; }
+	//
+	// // Append each prepared line to the builder
+	// result.append(str.substring(0, breakingIndex + 1));
+	// result.append(newLineString);
+	//
+	// // And start the next line
+	// str = str.substring(breakingIndex + 1);
+	// }
+	//
+	// // Check if there are any residual characters left
+	// if (str.length() > 0) { result.append(str); }
+	//
+	// // Return the resulting string
+	// // return result.toString();
+	// return s;
+	// }
 
 }

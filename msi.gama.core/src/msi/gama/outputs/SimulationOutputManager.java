@@ -3,7 +3,7 @@
  * SimulationOutputManager.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -46,23 +46,31 @@ import msi.gaml.types.IType;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 16 sept. 2023
  */
+
+/**
+ * The Class SimulationOutputManager.
+ *
+ * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+ * @date 6 févr. 2024
+ */
 @symbol (
 		name = IKeyword.OUTPUT,
 		kind = ISymbolKind.OUTPUT,
 		with_sequence = true,
 		concept = { IConcept.DISPLAY, IConcept.OUTPUT })
-@facets ({ @facet (
-		name = "synchronized",
-		type = IType.BOOL,
-		optional = true,
-		doc = @doc (
-				value = "Indicates whether the displays that compose this output should be synchronized with the simulation cycles")),
-		@facet (
-				name = IKeyword.AUTOSAVE,
-				type = { IType.BOOL, IType.STRING },
+@facets (
+		value = { @facet (
+				name = "synchronized",
+				type = IType.BOOL,
 				optional = true,
-				doc = @doc ("Allows to save the whole screen on disk. A value of true/false will save it with the resolution of the physical screen. Passing it a string allows to define the filename "
-						+ "Note that setting autosave to true (or to any other value than false) will synchronize all the displays defined in the experiment")) })
+				doc = @doc (
+						value = "Indicates whether the displays that compose this output should be synchronized with the simulation cycles")),
+				@facet (
+						name = IKeyword.AUTOSAVE,
+						type = { IType.BOOL, IType.STRING },
+						optional = true,
+						doc = @doc ("Allows to save the whole screen on disk. A value of true/false will save it with the resolution of the physical screen. Passing it a string allows to define the filename "
+								+ "Note that setting autosave to true (or to any other value than false) will synchronize all the displays defined in the experiment")) })
 
 @inside (
 		kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })

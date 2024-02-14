@@ -88,8 +88,8 @@ import ummisco.gama.dev.utils.DEBUG;
 				@facet (
 						name = IKeyword.DATA,
 						type = IType.NONE,
-						optional = true,
-						doc = @doc ("the data that will be saved to the file or the file itself to save when data is used in its simplest form")),
+						optional = false,
+						doc = @doc ("the data that will be saved to the file or the file itself to save when this statement is used in its simplest form")),
 				@facet (
 						name = IKeyword.REWRITE,
 						type = IType.BOOL,

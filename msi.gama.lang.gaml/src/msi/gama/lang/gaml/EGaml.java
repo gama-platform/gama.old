@@ -27,6 +27,8 @@ import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.Block;
+import msi.gama.lang.gaml.gaml.BuiltInSkillDefinition;
+import msi.gama.lang.gaml.gaml.BuiltInUnitDefinition;
 import msi.gama.lang.gaml.gaml.EquationDefinition;
 import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
@@ -35,9 +37,7 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlFactory;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.If;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.S_Action;
@@ -48,26 +48,26 @@ import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Reflex;
-import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TerminalExpression;
 import msi.gama.lang.gaml.gaml.TypeDefinition;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.Unary;
-import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ActionArgumentsImpl;
 import msi.gama.lang.gaml.gaml.impl.BlockImpl;
 import msi.gama.lang.gaml.gaml.impl.ExpressionListImpl;
-import msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl;
-import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.gaml.impl.S_ActionImpl;
 import msi.gama.lang.gaml.gaml.impl.S_EquationsImpl;
 import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
+import msi.gama.lang.gaml.gaml.impl.StandaloneExperimentImpl;
+import msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.util.GamaMapFactory;
@@ -98,13 +98,13 @@ public class EGaml implements IGamlEcoreUtils {
 
 	@Override
 	public String getNameOf(final EObject o) {
-		if (o instanceof S_Reflex) {
-			String s = ((S_Reflex) o).getName();
+		if (o instanceof S_Reflex sr) {
+			String s = sr.getName();
 			if (s == null) return IKeyword.INTERNAL + getKeyOf(o) + COUNTER.COUNT();
 		}
-		if (o instanceof GamlDefinition) return ((GamlDefinition) o).getName();
+		if (o instanceof GamlDefinition gd) return gd.getName();
 		if (o instanceof S_Display) return ((S_Display) o).getName();
-		if (o instanceof HeadlessExperiment) return ((HeadlessExperiment) o).getName();
+		if (o instanceof StandaloneExperiment se) return se.getName();
 
 		return null;
 	}
@@ -150,9 +150,8 @@ public class EGaml implements IGamlEcoreUtils {
 	public List<Facet> getFacetsOf(final EObject s) {
 		if (s instanceof StatementImpl) {
 			if (((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS)) return ((StatementImpl) s).getFacets();
-		} else if (s instanceof HeadlessExperimentImpl
-				&& ((HeadlessExperimentImpl) s).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS))
-			return ((HeadlessExperimentImpl) s).getFacets();
+		} else if (s instanceof StandaloneExperimentImpl se && se.eIsSet(GamlPackage.STANDALONE_EXPERIMENT__FACETS))
+			return se.getFacets();
 		return Collections.EMPTY_LIST;
 	}
 
@@ -201,7 +200,7 @@ public class EGaml implements IGamlEcoreUtils {
 	@Override
 	public Expression getExpressionAtKey(final EObject s, final String name) {
 		if (s == null || name == null) return null;
-		if ("value".equals(name) && s instanceof S_DirectAssignment) return ((S_DirectAssignment) s).getValue();
+		if ("value".equals(name) && s instanceof S_DirectAssignment sa) return sa.getValue();
 		final List<Facet> list = getFacetsOf(s);
 
 		for (final Facet f : list) {
@@ -226,13 +225,13 @@ public class EGaml implements IGamlEcoreUtils {
 	private final GamlSwitch<Boolean> childrenSwitch = new GamlSwitch<>() {
 
 		@Override
-		public Boolean caseModel(final Model object) {
-			return ((ModelImpl) object).eIsSet(GamlPackage.MODEL__BLOCK);
+		public Boolean caseStandaloneModel(final StandaloneModel object) {
+			return ((StandaloneModelImpl) object).eIsSet(GamlPackage.STANDALONE_MODEL__BLOCK);
 		}
 
 		@Override
 		public Boolean caseS_Action(final S_Action object) {
-			if (((S_ActionImpl) object).eIsSet(GamlPackage.SACTION__ARGS)) return true;
+			if (object instanceof S_ActionImpl sa && sa.eIsSet(GamlPackage.SACTION__ARGS)) return true;
 			return caseStatement(object);
 		}
 
@@ -249,8 +248,8 @@ public class EGaml implements IGamlEcoreUtils {
 		}
 
 		@Override
-		public Boolean caseHeadlessExperiment(final HeadlessExperiment object) {
-			return ((HeadlessExperimentImpl) object).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__BLOCK)
+		public Boolean caseStandaloneExperiment(final StandaloneExperiment object) {
+			return ((StandaloneExperimentImpl) object).eIsSet(GamlPackage.STANDALONE_EXPERIMENT__BLOCK)
 			// && object.getBlock().getFunction() == null
 			;
 		}
@@ -294,9 +293,9 @@ public class EGaml implements IGamlEcoreUtils {
 	@Override
 	public List<Statement> getStatementsOf(final EObject block) {
 
-		if (block instanceof BlockImpl) {
-			if (((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS)) return ((BlockImpl) block).getStatements();
-		} else if (block instanceof Model) return getStatementsOf(((Model) block).getBlock());
+		if (block instanceof BlockImpl br) {
+			if (br.eIsSet(GamlPackage.BLOCK__STATEMENTS)) return br.getStatements();
+		} else if (block instanceof StandaloneModel sm) return getStatementsOf(sm.getBlock());
 		return Collections.EMPTY_LIST;
 	}
 
@@ -309,8 +308,7 @@ public class EGaml implements IGamlEcoreUtils {
 	 */
 	@Override
 	public List<S_Assignment> getEquationsOf(final EObject stm) {
-		if (stm instanceof S_EquationsImpl && ((S_EquationsImpl) stm).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS))
-			return ((S_EquationsImpl) stm).getEquations();
+		if (stm instanceof S_EquationsImpl se && se.eIsSet(GamlPackage.SEQUATIONS__EQUATIONS)) return se.getEquations();
 		return Collections.EMPTY_LIST;
 	}
 
@@ -344,7 +342,7 @@ public class EGaml implements IGamlEcoreUtils {
 			case GamlPackage.BINARY_OPERATOR -> ((BinaryOperator) object).getOp();
 			case GamlPackage.ARGUMENT_PAIR -> getKeyOfArgumentPair((ArgumentPair) object);
 			case GamlPackage.PARAMETER -> getKeyOfParameter((Parameter) object);
-			case GamlPackage.MODEL -> IKeyword.MODEL;
+			case GamlPackage.STANDALONE_MODEL -> IKeyword.MODEL;
 			case GamlPackage.STATEMENT -> getKeyOfStatement((Statement) object);
 			case GamlPackage.FACET -> getKeyOfFacet((Facet) object);
 			case GamlPackage.FUNCTION -> getKeyOf(((Function) object).getLeft());
@@ -459,14 +457,14 @@ public class EGaml implements IGamlEcoreUtils {
 
 		switch (id) {
 			case GamlPackage.UNIT_NAME: {
-				UnitFakeDefinition ref = ((UnitName) o).getRef();
+				BuiltInUnitDefinition ref = ((UnitName) o).getRef();
 				if (ref != null) { result = ref.getName(); }
 				break;
 			}
 			case GamlPackage.VARIABLE_REF: {
 				VarDefinition ref = ((VariableRef) o).getRef();
 				if (ref != null) {
-					if (ref instanceof ModelImpl) {
+					if (ref instanceof StandaloneModelImpl) {
 						result = ref.getName() + ModelDescription.MODEL_SUFFIX;
 					} else {
 						result = ref.getName();
@@ -480,7 +478,7 @@ public class EGaml implements IGamlEcoreUtils {
 				break;
 			}
 			case GamlPackage.SKILL_REF: {
-				SkillFakeDefinition ref = ((SkillRef) o).getRef();
+				BuiltInSkillDefinition ref = ((SkillRef) o).getRef();
 				if (ref != null) { result = ref.getName(); }
 				break;
 			}
@@ -658,8 +656,7 @@ public class EGaml implements IGamlEcoreUtils {
 	@Override
 	public Statement getStatement(final EObject o) {
 		if (o instanceof Statement) return (Statement) o;
-		if (o instanceof TypeRef && o.eContainer() instanceof S_Definition
-				&& ((S_Definition) o.eContainer()).getTkey() == o)
+		if (o instanceof TypeRef && o.eContainer() instanceof S_Definition sd && sd.getTkey() == o)
 			return (Statement) o.eContainer();
 		return null;
 	}
@@ -697,9 +694,9 @@ public class EGaml implements IGamlEcoreUtils {
 					if (IKeyword.BATCH.equals(type) || IKeyword.TEST.equals(type)) return true;
 				}
 			}
-		} else if (e instanceof HeadlessExperimentImpl) {
-			if (!((HeadlessExperimentImpl) e).eIsSet(GamlPackage.HEADLESS_EXPERIMENT__FACETS)) return false;
-			for (final Facet f : ((HeadlessExperimentImpl) e).getFacets()) {
+		} else if (e instanceof StandaloneExperimentImpl se) {
+			if (!se.eIsSet(GamlPackage.STANDALONE_EXPERIMENT__FACETS)) return false;
+			for (final Facet f : se.getFacets()) {
 				if (IKeyword.TYPE.equals(getKeyOf(f))) {
 					final String type = EGaml.getInstance().getKeyOf(f.getExpr());
 					if (IKeyword.BATCH.equals(type)) return true;
@@ -727,7 +724,7 @@ public class EGaml implements IGamlEcoreUtils {
 
 	@Override
 	public boolean hasImports(final EObject statement) {
-		return statement instanceof ModelImpl m && !m.getImports().isEmpty();
+		return statement instanceof StandaloneModelImpl m && !m.getImports().isEmpty();
 	}
 
 }

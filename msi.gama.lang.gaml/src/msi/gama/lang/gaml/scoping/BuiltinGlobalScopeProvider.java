@@ -3,7 +3,7 @@
  * BuiltinGlobalScopeProvider.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -164,9 +164,9 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 	public BuiltinGlobalScopeProvider() {
 		eType = GamlPackage.eINSTANCE.getTypeDefinition();
 		eVar = GamlPackage.eINSTANCE.getVarDefinition();
-		eSkill = GamlPackage.eINSTANCE.getSkillFakeDefinition();
+		eSkill = GamlPackage.eINSTANCE.getBuiltInSkillDefinition();
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
-		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
+		eUnit = GamlPackage.eINSTANCE.getBuiltInUnitDefinition();
 		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
 		DEBUG.TIMER("GAML", "Artifacts", "built in", () -> {
 			scopes.put(eType, new EClassBasedScope("types.xmi"));

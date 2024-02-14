@@ -26,6 +26,7 @@ import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
+import msi.gama.lang.gaml.gaml.BuiltInUnitDefinition;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
@@ -36,14 +37,13 @@ import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Do;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
+import msi.gama.lang.gaml.gaml.S_SpeciesLayer;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeRef;
-import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
-import msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
@@ -137,6 +137,15 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 		return new Result(title, doc);
 	}
 
+	/**
+	 * Case S global.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param global
+	 *            the global
+	 * @return the i gaml description
+	 * @date 12 févr. 2024
+	 */
 	@Override
 	public IGamlDescription caseS_Global(final S_Global global) {
 		EObject model = global.eContainer().eContainer();
@@ -190,6 +199,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 		// }
 		// Case for the type of displays
 		final Statement s = EGaml.getInstance().getSurroundingStatement(type);
+		final String key = s.getKey();
 		String name = EGaml.getInstance().getKeyOf(type);
 		if (s instanceof S_Display) {
 			DisplayDescription dc = IGui.DISPLAYS.get(name);
@@ -266,7 +276,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 		if (facetName.endsWith(":")) { facetName = facetName.substring(0, facetName.length() - 1); }
 		final EObject cont = facet.eContainer();
 		String key = EGaml.getInstance().getKeyOf(cont);
-		if (cont instanceof speciesOrGridDisplayStatement ds) {
+		if (cont instanceof S_SpeciesLayer ds) {
 			String layerName = ds.getKey();
 			if (IKeyword.SPECIES.equals(layerName)) {
 				key = IKeyword.SPECIES_LAYER;
@@ -362,7 +372,7 @@ public class GamlHoverDocumentationProvider extends GamlSwitch<IGamlDescription>
 
 	@Override
 	public IGamlDescription caseUnitName(final UnitName un) {
-		final UnitFakeDefinition fake = un.getRef();
+		final BuiltInUnitDefinition fake = un.getRef();
 		if (fake != null) {
 			final UnitConstantExpression unit = GAML.UNITS.get(fake.getName());
 			if (unit != null) return unit;

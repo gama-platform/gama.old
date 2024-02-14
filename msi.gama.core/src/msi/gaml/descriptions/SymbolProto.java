@@ -36,6 +36,7 @@ import msi.gaml.compilation.annotations.validator;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.SymbolFactory;
 import msi.gaml.types.IType;
+import ummisco.gama.dev.utils.DEBUG;
 
 /**
  * Written by drogoul Modified on 8 févr. 2010
@@ -45,6 +46,10 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SymbolProto extends AbstractProto {
+
+	static {
+		DEBUG.ON();
+	}
 
 	/** The null validator. */
 	static IValidator NULL_VALIDATOR = (d, e, i) -> true;
@@ -77,10 +82,10 @@ public class SymbolProto extends AbstractProto {
 	private final Map<String, FacetProto> possibleFacets;
 
 	/** The mandatory facets. */
-	private final ImmutableList<String> mandatoryFacets;
+	private final List<String> mandatoryFacets;
 
 	/** The omissible facet. */
-	private final String omissibleFacet;
+	private final String defaultFacetName;
 
 	/** The is primitive. */
 	private final boolean isPrimitive;
@@ -154,7 +159,7 @@ public class SymbolProto extends AbstractProto {
 		this.hasSequence = hasSequence;
 		this.isPrimitive = IKeyword.PRIMITIVE.equals(name);
 		this.hasArgs = hasArgs;
-		this.omissibleFacet = omissible;
+		this.defaultFacetName = omissible;
 		this.isUniqueInContext = isUniqueInContext;
 		this.kind = kind;
 		this.isVar = ISymbolKind.Variable.KINDS.contains(kind);
@@ -171,7 +176,10 @@ public class SymbolProto extends AbstractProto {
 			mandatoryFacets = builder.build();
 		} else {
 			this.possibleFacets = null;
-			mandatoryFacets = null;
+			mandatoryFacets = Collections.EMPTY_LIST;
+		}
+		if (defaultFacetName != null && !mandatoryFacets.contains(defaultFacetName)) {
+			DEBUG.OUT("Default facet " + defaultFacetName + " is optional in " + name);
 		}
 		this.contextKeywords = ImmutableSet.copyOf(contextKeywords);
 		Arrays.fill(this.contextKinds, false);
@@ -281,7 +289,7 @@ public class SymbolProto extends AbstractProto {
 	/**
 	 * @return
 	 */
-	public String getOmissible() { return omissibleFacet; }
+	public String getDefaultFacetName() { return defaultFacetName; }
 
 	@Override
 	public String getTitle() {
@@ -314,8 +322,25 @@ public class SymbolProto extends AbstractProto {
 			documentation = new RegularDoc(super.getDocumentation().toString());
 			final List<FacetProto> protos = new ArrayList(getPossibleFacets().values());
 			Collections.sort(protos);
+			if (defaultFacetName != null && !defaultFacetName.isBlank()) {
+				FacetProto f = possibleFacets.get(defaultFacetName);
+				if (f != null) {
+					documentation.set(
+							"Default facet (" + (mandatoryFacets.contains(defaultFacetName) ? "required" : "optional")
+									+ ", does not need to be prefixed by its keyword): ",
+							defaultFacetName, f.getDocumentation());
+				}
+			}
+			for (String m : mandatoryFacets) {
+				FacetProto f = possibleFacets.get(m);
+				if (f != null && !f.name.equals(defaultFacetName)) {
+					documentation.set("Required facets: ", m, f.getDocumentation());
+				}
+			}
 			for (final FacetProto f : protos) {
-				if (!f.internal) { documentation.set("Possible facets: ", f.name, f.getDocumentation()); }
+				if (f != null && !f.name.equals(defaultFacetName) && !mandatoryFacets.contains(f.name)) {
+					documentation.set("Optional facets: ", f.name, f.getDocumentation());
+				}
 			}
 		}
 		return documentation;
@@ -436,10 +461,10 @@ public class SymbolProto extends AbstractProto {
 	}
 
 	/**
-	 * Gets the mandatory facets.
+	 * Gets the mandatory facets. Never null (but maybe empty)
 	 *
 	 * @return the mandatory facets
 	 */
-	public ImmutableList<String> getMandatoryFacets() { return mandatoryFacets; }
+	public List<String> getMandatoryFacets() { return mandatoryFacets; }
 
 }

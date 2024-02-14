@@ -1,17 +1,19 @@
 /*******************************************************************************************************
  *
- * CatchStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * CatchStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.IConcept;
@@ -20,9 +22,9 @@ import msi.gaml.descriptions.IDescription;
 
 /**
  * Written by drogoul Modified on 8 févr. 2010
- * 
+ *
  * @todo Description
- * 
+ *
  */
 @symbol (
 		name = IKeyword.CATCH,
@@ -39,7 +41,8 @@ public class CatchStatement extends AbstractStatementSequence {
 	/**
 	 * Instantiates a new catch statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public CatchStatement(final IDescription desc) {
 		super(desc);

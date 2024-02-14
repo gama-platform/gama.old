@@ -67,13 +67,12 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
     {
       case GamlPackage.ENTRY: return createEntry();
       case GamlPackage.STANDALONE_BLOCK: return createStandaloneBlock();
-      case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
-      case GamlPackage.MODEL: return createModel();
-      case GamlPackage.BLOCK: return createBlock();
+      case GamlPackage.STANDALONE_EXPRESSION: return createStandaloneExpression();
+      case GamlPackage.STANDALONE_EXPERIMENT: return createStandaloneExperiment();
+      case GamlPackage.STANDALONE_MODEL: return createStandaloneModel();
       case GamlPackage.IMPORT: return createImport();
       case GamlPackage.PRAGMA: return createPragma();
-      case GamlPackage.EXPERIMENT_FILE_STRUCTURE: return createExperimentFileStructure();
-      case GamlPackage.HEADLESS_EXPERIMENT: return createHeadlessExperiment();
+      case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.STATEMENT: return createStatement();
       case GamlPackage.SGLOBAL: return createS_Global();
       case GamlPackage.SSPECIES: return createS_Species();
@@ -82,8 +81,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SLOOP: return createS_Loop();
       case GamlPackage.SIF: return createS_If();
       case GamlPackage.STRY: return createS_Try();
-      case GamlPackage.SOTHER: return createS_Other();
-      case GamlPackage.SRETURN: return createS_Return();
+      case GamlPackage.SSWITCH: return createS_Switch();
       case GamlPackage.SDECLARATION: return createS_Declaration();
       case GamlPackage.SREFLEX: return createS_Reflex();
       case GamlPackage.SDEFINITION: return createS_Definition();
@@ -93,8 +91,8 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SEQUATIONS: return createS_Equations();
       case GamlPackage.SSOLVE: return createS_Solve();
       case GamlPackage.SDISPLAY: return createS_Display();
-      case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT: return createspeciesOrGridDisplayStatement();
-      case GamlPackage.IMAGE_DISPLAY_STATEMENT: return createimageDisplayStatement();
+      case GamlPackage.SSPECIES_LAYER: return createS_SpeciesLayer();
+      case GamlPackage.SIMAGE_LAYER: return createS_ImageLayer();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
       case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
       case GamlPackage.FACET: return createFacet();
@@ -108,12 +106,12 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.TYPE_DEFINITION: return createTypeDefinition();
       case GamlPackage.VAR_DEFINITION: return createVarDefinition();
       case GamlPackage.ACTION_DEFINITION: return createActionDefinition();
-      case GamlPackage.UNIT_FAKE_DEFINITION: return createUnitFakeDefinition();
-      case GamlPackage.TYPE_FAKE_DEFINITION: return createTypeFakeDefinition();
-      case GamlPackage.ACTION_FAKE_DEFINITION: return createActionFakeDefinition();
-      case GamlPackage.SKILL_FAKE_DEFINITION: return createSkillFakeDefinition();
-      case GamlPackage.VAR_FAKE_DEFINITION: return createVarFakeDefinition();
-      case GamlPackage.EQUATION_FAKE_DEFINITION: return createEquationFakeDefinition();
+      case GamlPackage.BUILT_IN_UNIT_DEFINITION: return createBuiltInUnitDefinition();
+      case GamlPackage.BUILT_IN_TYPE_DEFINITION: return createBuiltInTypeDefinition();
+      case GamlPackage.BUILT_IN_ACTION_DEFINITION: return createBuiltInActionDefinition();
+      case GamlPackage.BUILT_IN_SKILL_DEFINITION: return createBuiltInSkillDefinition();
+      case GamlPackage.BUILT_IN_VAR_DEFINITION: return createBuiltInVarDefinition();
+      case GamlPackage.BUILT_IN_EQUATION_DEFINITION: return createBuiltInEquationDefinition();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
       case GamlPackage.STRING_LITERAL: return createStringLiteral();
       case GamlPackage.SACTION: return createS_Action();
@@ -171,10 +169,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public StringEvaluator createStringEvaluator()
+  public StandaloneExpression createStandaloneExpression()
   {
-    StringEvaluatorImpl stringEvaluator = new StringEvaluatorImpl();
-    return stringEvaluator;
+    StandaloneExpressionImpl standaloneExpression = new StandaloneExpressionImpl();
+    return standaloneExpression;
   }
 
   /**
@@ -183,10 +181,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public Model createModel()
+  public StandaloneExperiment createStandaloneExperiment()
   {
-    ModelImpl model = new ModelImpl();
-    return model;
+    StandaloneExperimentImpl standaloneExperiment = new StandaloneExperimentImpl();
+    return standaloneExperiment;
   }
 
   /**
@@ -195,10 +193,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public Block createBlock()
+  public StandaloneModel createStandaloneModel()
   {
-    BlockImpl block = new BlockImpl();
-    return block;
+    StandaloneModelImpl standaloneModel = new StandaloneModelImpl();
+    return standaloneModel;
   }
 
   /**
@@ -231,22 +229,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public ExperimentFileStructure createExperimentFileStructure()
+  public Block createBlock()
   {
-    ExperimentFileStructureImpl experimentFileStructure = new ExperimentFileStructureImpl();
-    return experimentFileStructure;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public HeadlessExperiment createHeadlessExperiment()
-  {
-    HeadlessExperimentImpl headlessExperiment = new HeadlessExperimentImpl();
-    return headlessExperiment;
+    BlockImpl block = new BlockImpl();
+    return block;
   }
 
   /**
@@ -351,22 +337,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public S_Other createS_Other()
+  public S_Switch createS_Switch()
   {
-    S_OtherImpl s_Other = new S_OtherImpl();
-    return s_Other;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public S_Return createS_Return()
-  {
-    S_ReturnImpl s_Return = new S_ReturnImpl();
-    return s_Return;
+    S_SwitchImpl s_Switch = new S_SwitchImpl();
+    return s_Switch;
   }
 
   /**
@@ -483,10 +457,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public speciesOrGridDisplayStatement createspeciesOrGridDisplayStatement()
+  public S_SpeciesLayer createS_SpeciesLayer()
   {
-    speciesOrGridDisplayStatementImpl speciesOrGridDisplayStatement = new speciesOrGridDisplayStatementImpl();
-    return speciesOrGridDisplayStatement;
+    S_SpeciesLayerImpl s_SpeciesLayer = new S_SpeciesLayerImpl();
+    return s_SpeciesLayer;
   }
 
   /**
@@ -495,10 +469,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public imageDisplayStatement createimageDisplayStatement()
+  public S_ImageLayer createS_ImageLayer()
   {
-    imageDisplayStatementImpl imageDisplayStatement = new imageDisplayStatementImpl();
-    return imageDisplayStatement;
+    S_ImageLayerImpl s_ImageLayer = new S_ImageLayerImpl();
+    return s_ImageLayer;
   }
 
   /**
@@ -663,10 +637,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public UnitFakeDefinition createUnitFakeDefinition()
+  public BuiltInUnitDefinition createBuiltInUnitDefinition()
   {
-    UnitFakeDefinitionImpl unitFakeDefinition = new UnitFakeDefinitionImpl();
-    return unitFakeDefinition;
+    BuiltInUnitDefinitionImpl builtInUnitDefinition = new BuiltInUnitDefinitionImpl();
+    return builtInUnitDefinition;
   }
 
   /**
@@ -675,10 +649,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public TypeFakeDefinition createTypeFakeDefinition()
+  public BuiltInTypeDefinition createBuiltInTypeDefinition()
   {
-    TypeFakeDefinitionImpl typeFakeDefinition = new TypeFakeDefinitionImpl();
-    return typeFakeDefinition;
+    BuiltInTypeDefinitionImpl builtInTypeDefinition = new BuiltInTypeDefinitionImpl();
+    return builtInTypeDefinition;
   }
 
   /**
@@ -687,10 +661,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public ActionFakeDefinition createActionFakeDefinition()
+  public BuiltInActionDefinition createBuiltInActionDefinition()
   {
-    ActionFakeDefinitionImpl actionFakeDefinition = new ActionFakeDefinitionImpl();
-    return actionFakeDefinition;
+    BuiltInActionDefinitionImpl builtInActionDefinition = new BuiltInActionDefinitionImpl();
+    return builtInActionDefinition;
   }
 
   /**
@@ -699,10 +673,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public SkillFakeDefinition createSkillFakeDefinition()
+  public BuiltInSkillDefinition createBuiltInSkillDefinition()
   {
-    SkillFakeDefinitionImpl skillFakeDefinition = new SkillFakeDefinitionImpl();
-    return skillFakeDefinition;
+    BuiltInSkillDefinitionImpl builtInSkillDefinition = new BuiltInSkillDefinitionImpl();
+    return builtInSkillDefinition;
   }
 
   /**
@@ -711,10 +685,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public VarFakeDefinition createVarFakeDefinition()
+  public BuiltInVarDefinition createBuiltInVarDefinition()
   {
-    VarFakeDefinitionImpl varFakeDefinition = new VarFakeDefinitionImpl();
-    return varFakeDefinition;
+    BuiltInVarDefinitionImpl builtInVarDefinition = new BuiltInVarDefinitionImpl();
+    return builtInVarDefinition;
   }
 
   /**
@@ -723,10 +697,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * @generated
    */
   @Override
-  public EquationFakeDefinition createEquationFakeDefinition()
+  public BuiltInEquationDefinition createBuiltInEquationDefinition()
   {
-    EquationFakeDefinitionImpl equationFakeDefinition = new EquationFakeDefinitionImpl();
-    return equationFakeDefinition;
+    BuiltInEquationDefinitionImpl builtInEquationDefinition = new BuiltInEquationDefinitionImpl();
+    return builtInEquationDefinition;
   }
 
   /**

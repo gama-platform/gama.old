@@ -27,12 +27,12 @@ import org.eclipse.xtext.EcoreUtil2;
 
 import com.google.inject.Singleton;
 
-import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
-import msi.gama.lang.gaml.gaml.Model;
-import msi.gama.lang.gaml.gaml.impl.ModelImpl;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
+import msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
 import msi.gama.lang.gaml.resource.ImportedResources;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IMap;
@@ -73,7 +73,7 @@ public class GamlResourceIndexer {
 	 */
 	private static Map<URI, String> getImportsAsAbsoluteURIS(final URI baseURI, final EObject m) {
 		Map<URI, String> result = EMPTY_MAP;
-		if (m instanceof ModelImpl model && model.eIsSet(GamlPackage.MODEL__IMPORTS)) {
+		if (m instanceof StandaloneModelImpl model && model.eIsSet(GamlPackage.STANDALONE_MODEL__IMPORTS)) {
 			List<Import> imports = model.getImports();
 			if (imports.isEmpty()) return result;
 			result = GamaMapFactory.createOrdered();
@@ -90,8 +90,8 @@ public class GamlResourceIndexer {
 					result.put(uri, e.getName());
 				}
 			}
-		} else if (m instanceof ExperimentFileStructure expe) {
-			final String u = expe.getExp().getImportURI();
+		} else if (m instanceof StandaloneExperiment expe) {
+			final String u = expe.getImportURI();
 			if (u != null) {
 				URI uri = URI.createURI(u, true);
 				uri = properlyEncodedURI(uri.resolve(baseURI));
@@ -111,10 +111,10 @@ public class GamlResourceIndexer {
 	 * @return the e object
 	 */
 	static private EObject findImport(final EObject contents, final URI baseURI, final URI uri) {
-		if (contents instanceof ExperimentFileStructure expe) {
-			String u = expe.getExp().getImportURI();
+		if (contents instanceof StandaloneExperiment expe) {
+			String u = expe.getImportURI();
 			if (u.contains(URI.decode(uri.lastSegment())) || uri.equals(baseURI) && u.isEmpty()) return contents;
-		} else if (contents instanceof Model model) {
+		} else if (contents instanceof StandaloneModelImpl model) {
 			for (final Import imp : model.getImports()) {
 				if (imp.getImportURI().contains(URI.decode(uri.lastSegment()))) return imp;
 			}
@@ -253,6 +253,26 @@ public class GamlResourceIndexer {
 	 */
 	public static Map<URI, String> allImportsOfProperlyEncoded(final URI uri) {
 		return index.sortedDepthFirstSearchWithLabels(uri);
+	}
+
+	/**
+	 * All types declared in.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @param uri
+	 *            the uri
+	 * @return the sets the
+	 * @date 13 févr. 2024
+	 */
+	public static Set<String> allTypesDeclaredIn(final URI uri, final String contents) {
+		Set<String> result;
+		if (contents == null) {
+			result = GamlResourceInfoProvider.INSTANCE.getInfo(uri).getSpecies();
+		} else {
+			result = GamlResourceInfoProvider.INSTANCE.getInfo(uri, contents, 0).getSpecies();
+		}
+		allImportsOf(uri).forEach((u, s) -> result.addAll(allTypesDeclaredIn(u, null)));
+		return result;
 	}
 
 }

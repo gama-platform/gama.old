@@ -3,7 +3,7 @@
  * GamlRuntimeModule.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -15,6 +15,7 @@ import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.IEncodingProvider;
+import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.IResourceDescription;
@@ -30,6 +31,7 @@ import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.naming.GamlNameConverter;
 import msi.gama.lang.gaml.naming.GamlQualifiedNameProvider;
+import msi.gama.lang.gaml.parsing.GamlParser;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.resource.GamlEncodingProvider;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -49,46 +51,14 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		DEBUG.OFF();
 	}
 
-	/** The initialized. */
-	// private static boolean initialized;
-
-	// Disabled for the moment
-	// public static Pref<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
-	//// .create("pref_optimize_fast_compilation",
-	//// "Enable faster validation (but less accurate error reporting in nagivator)", false, IType.BOOL)
-	//// .in(GamaPreferences.Modeling.NAME, GamaPreferences.Modeling.OPTIONS).hidden();
-
-	/**
-	 * Static initialize.
-	 */
-	// public static void staticInitialize() {
-
-	// if (!initialized) {
-	// GamlExpressionFactory.registerParserProvider(GamlExpressionCompiler::new);
-	// GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
-	// GAML.registerGamlEcoreUtils(EGaml.getInstance());
-	// initialized = true;
-	//
-	// }
-
-	// }
-
 	@Override
 	public void configure(final Binder binder) {
 		DEBUG.OUT("Initialization of GAML XText runtime module begins");
 		super.configure(binder);
-		// staticInitialize();
-		// binder.bind(ExpressionDescriptionBuilder.class);
-		// binder.bind(IDocManager.class).to(GamlResourceDocumenter.class);
-		// binder.bind(GamlSyntacticConverter.class);
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
-		// binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		// binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
 		binder.bind(IResourceValidator.class).to(GamlResourceValidator.class);
 		binder.bind(ErrorToDiagnoticTranslator.class);
-		// binder.bind(org.eclipse.xtext.scoping.IGlobalScopeProvider.class)
-		// .toInstance(new msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider());
 		DEBUG.OUT("Initialization of GAML XText runtime module finished");
 	}
 
@@ -142,10 +112,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlResource.class;
 	}
 
-	// @Override
-	// public Class<? extends IParser> bindIParser() {
-	// return GamlSyntacticParser.class;
-	// }
+	@Override
+	public Class<? extends IParser> bindIParser() {
+		return GamlParser.class;
+	}
 
 	@Override
 	public void configureRuntimeEncodingProvider(final Binder binder) {

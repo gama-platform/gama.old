@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * EnforcementStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * EnforcementStatement.java, in msi.gaml.architecture.simplebdi, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.architecture.simplebdi;
 
@@ -40,6 +40,7 @@ import msi.gaml.types.IType;
 @inside (
 		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets (
+		omissible = IKeyword.NAME,
 		value = { @facet (
 				name = IKeyword.NAME,
 				type = IType.ID,
@@ -77,55 +78,55 @@ import msi.gaml.types.IType;
 						doc = @doc ("The positive sanction to apply if the norm has been followed")) })
 @doc (
 		value = "apply a sanction if the norm specified is violated, or a reward if the norm is applied by the perceived agent",
-		examples = {
-				@example ("focus var:speed; //where speed is a variable from a species that is being perceived") })
+		examples = { @example ("focus var:speed; //where speed is a variable from a species that is being perceived") })
 
 // statement servant à controler les normes pour appliquer des sanctions, sur le moodèle du focus
 public class EnforcementStatement extends AbstractStatement {
 
 	/** The Constant ENFORCEMENT. */
 	public static final String ENFORCEMENT = "enforcement";
-	
+
 	/** The Constant NORM. */
 	public static final String NORM = "norm";
-	
+
 	/** The Constant SANCTION. */
 	public static final String SANCTION = "sanction";
-	
+
 	/** The Constant REWARD. */
 	public static final String REWARD = "reward";
-	
+
 	/** The Constant OBLIGATION. */
 	public static final String OBLIGATION = "obligation";
-	
+
 	/** The Constant LAW. */
 	public static final String LAW = "law";
 
 	/** The name expr. */
 	final IExpression nameExpr;
-	
+
 	/** The when. */
 	final IExpression when;
-	
+
 	/** The norm. */
 	final IExpression norm;
-	
+
 	/** The sanction. */
 	final IExpression sanction;
-	
+
 	/** The reward. */
 	final IExpression reward;
-	
+
 	/** The obligation. */
 	final IExpression obligation;
-	
+
 	/** The law. */
 	final IExpression law;
 
 	/**
 	 * Instantiates a new enforcement statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public EnforcementStatement(final IDescription desc) {
 		super(desc);
@@ -154,9 +155,7 @@ public class EnforcementStatement extends AbstractStatement {
 				Norm normToTest = null;
 				// Améliorable en temps de calcul
 				for (final Norm tempNorm : SimpleBdiArchitecture.getNorms(scope)) {
-					if (tempNorm.getName().equals(norm.value(scopeMySelf))) {
-						normToTest = tempNorm;
-					}
+					if (tempNorm.getName().equals(norm.value(scopeMySelf))) { normToTest = tempNorm; }
 				}
 				if (normToTest != null) {
 					if (normToTest.getViolated() && sanction != null) {
@@ -227,29 +226,27 @@ public class EnforcementStatement extends AbstractStatement {
 								retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 							}
 							tempNorm.sanctioned();
-						} else {
-							if (sanction != null/* && tempNorm.getNormStatement()==null) */ || sanction != null
-									&& tempNorm.getViolated()) {// &&
-																// tempNorm.getNormStatement()!=null
-																// &&
-																// tempNorm.getObligation(scope)!=null
-																// &&
-																// !tempNorm.getObligation(scope).equals(tempObligation.getPredicate()))){
-								Sanction sanctionToExecute = null;
-								// Améliorable en temps de calcul
-								for (final Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)) {
-									if (tempSanction.getName().equals(sanction.value(scopeMySelf))) {
-										sanctionToExecute = tempSanction;
-									}
+						} else if (sanction != null/* && tempNorm.getNormStatement()==null) */ || sanction != null
+								&& tempNorm.getViolated()) {// &&
+															// tempNorm.getNormStatement()!=null
+															// &&
+															// tempNorm.getObligation(scope)!=null
+															// &&
+															// !tempNorm.getObligation(scope).equals(tempObligation.getPredicate()))){
+							Sanction sanctionToExecute = null;
+							// Améliorable en temps de calcul
+							for (final Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)) {
+								if (tempSanction.getName().equals(sanction.value(scopeMySelf))) {
+									sanctionToExecute = tempSanction;
 								}
-								// Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est
-								// indirecte contre une norme sociale
-								// return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
-								if (sanctionToExecute != null) {
-									retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
-								}
-								tempNorm.sanctioned();
 							}
+							// Ici, le reward est exécuté dans le contexte de l'agent controleur car la sanction est
+							// indirecte contre une norme sociale
+							// return sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+							if (sanctionToExecute != null) {
+								retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+							}
+							tempNorm.sanctioned();
 						}
 					}
 				}
@@ -258,12 +255,10 @@ public class EnforcementStatement extends AbstractStatement {
 				// on recherche la norme avec le même nom chez l'autre et on regarde si elle est violée
 				LawStatement lawToTest = null;
 				Double obedienceValue = (Double) scope.getAgent().getAttribute("obedience");
-				Boolean isViolated = true;
+				boolean isViolated = true;
 				// Améliorable en temps de calcul
 				for (final LawStatement tempLaw : SimpleBdiArchitecture.getLaws(scope)) {
-					if (tempLaw.getName().equals(law.value(scopeMySelf))) {
-						lawToTest = tempLaw;
-					}
+					if (tempLaw.getName().equals(law.value(scopeMySelf))) { lawToTest = tempLaw; }
 				}
 				if (lawToTest != null) {
 					if (lawToTest.getContextExpression() == null
@@ -276,43 +271,41 @@ public class EnforcementStatement extends AbstractStatement {
 									|| lawToTest.getObligationExpression().value(scope) == null
 									|| SimpleBdiArchitecture.hasObligation(scope, new MentalState("Obligation",
 											(Predicate) lawToTest.getObligationExpression().value(scope)))) {
-								if(lawToTest.getThreshold() == null
-										|| lawToTest.getThreshold().value(scope) == null
-										|| obedienceValue>= (Double) lawToTest.getThreshold().value(scope)) {
+								if (lawToTest.getThreshold() == null || lawToTest.getThreshold().value(scope) == null
+										|| obedienceValue >= (Double) lawToTest.getThreshold().value(scope)) {
 									isViolated = false;
-								if (reward != null) {
-									Sanction rewardToExecute = null;
-									// Améliorable en temps de calcul
-									for (final Sanction tempReward : SimpleBdiArchitecture.getSanctions(scopeMySelf)) {
-										if (tempReward.getName().equals(reward.value(scopeMySelf))) {
-											rewardToExecute = tempReward;
+									if (reward != null) {
+										Sanction rewardToExecute = null;
+										// Améliorable en temps de calcul
+										for (final Sanction tempReward : SimpleBdiArchitecture
+												.getSanctions(scopeMySelf)) {
+											if (tempReward.getName().equals(reward.value(scopeMySelf))) {
+												rewardToExecute = tempReward;
+											}
 										}
-									}
-									if (rewardToExecute != null) {
-										retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
-									}
-								}
-							} 
-						}
-					} 
-					} if(isViolated) {
-								if (sanction != null) {
-									Sanction sanctionToExecute = null;
-									// Améliorable en temps de calcul
-									for (final Sanction tempSanction : SimpleBdiArchitecture
-											.getSanctions(scopeMySelf)) {
-										if (tempSanction.getName().equals(sanction.value(scopeMySelf))) {
-											sanctionToExecute = tempSanction;
+										if (rewardToExecute != null) {
+											retour = rewardToExecute.getSanctionStatement().executeOn(scopeMySelf);
 										}
-									}
-									if (sanctionToExecute != null) {
-										retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
 									}
 								}
 							}
+						}
+					}
+					if (isViolated && (sanction != null)) {
+						Sanction sanctionToExecute = null;
+						// Améliorable en temps de calcul
+						for (final Sanction tempSanction : SimpleBdiArchitecture.getSanctions(scopeMySelf)) {
+							if (tempSanction.getName().equals(sanction.value(scopeMySelf))) {
+								sanctionToExecute = tempSanction;
+							}
+						}
+						if (sanctionToExecute != null) {
+							retour = sanctionToExecute.getSanctionStatement().executeOn(scopeMySelf);
+						}
+					}
 				}
 			}
-		
+
 			GAMA.releaseScope(scopeMySelf);
 		}
 		return retour;

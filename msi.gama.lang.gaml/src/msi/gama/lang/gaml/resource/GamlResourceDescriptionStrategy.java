@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlResourceDescriptionStrategy.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamlResourceDescriptionStrategy.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
@@ -22,7 +22,7 @@ import org.eclipse.xtext.util.IAcceptor;
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.Block;
-import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.Statement;
 
 /**
@@ -37,32 +37,30 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 	/**
 	 * Creates the description.
 	 *
-	 * @param o the o
-	 * @param acceptor the acceptor
+	 * @param o
+	 *            the o
+	 * @param acceptor
+	 *            the acceptor
 	 */
 	private void createDescription(final EObject o, final IAcceptor<IEObjectDescription> acceptor) {
 		final QualifiedName qn = getQualifiedNameProvider().getFullyQualifiedName(o);
-		if (qn != null) {
-			acceptor.accept(EObjectDescription.create(qn, o));
-		}
+		if (qn != null) { acceptor.accept(EObjectDescription.create(qn, o)); }
 	}
 
 	@Override
 	public boolean createEObjectDescriptions(final EObject o, final IAcceptor<IEObjectDescription> acceptor) {
-		if (o instanceof ActionArguments || o instanceof Block || o instanceof Model) { return true; }
+		if (o instanceof ActionArguments || o instanceof Block || o instanceof StandaloneModel) return true;
 		if (o instanceof Statement) {
 			createDescription(o, acceptor);
 			return true;
 		}
-		if (o instanceof ArgumentDefinition) {
-			createDescription(o, acceptor);
-		}
+		if (o instanceof ArgumentDefinition) { createDescription(o, acceptor); }
 		return false;
 	}
 
 	@Override
 	protected boolean isResolvedAndExternal(final EObject from, final EObject to) {
-		if (to == null) { return false; }
+		if (to == null) return false;
 		if (!to.eIsProxy()) {
 			final Resource toR = to.eResource();
 			return toR != null && toR != from.eResource();

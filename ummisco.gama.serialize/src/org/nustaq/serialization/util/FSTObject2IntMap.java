@@ -3,7 +3,7 @@
  * FSTObject2IntMap.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -126,8 +126,8 @@ public class FSTObject2IntMap<K> {
 		int count = 0;
 		while (true) {
 			if (current.mNumberOfElements * GROFAC > current.mKeys.length) {
-				if ((parent != null)
-						&& ((parent.mNumberOfElements + current.mNumberOfElements) * GROFAC > parent.mKeys.length)) {
+				if (parent != null
+						&& (parent.mNumberOfElements + current.mNumberOfElements) * GROFAC > parent.mKeys.length) {
 					parent.resize(parent.mKeys.length * GROFAC);
 					parent.put(key, value);
 					return;
@@ -205,7 +205,7 @@ public class FSTObject2IntMap<K> {
 		if (mKey.equals(key) && (!checkClazzOnEquals || mKeys[idx].getClass() == key.getClass())) // found
 		{
 			// hit++;
-			K val = (K) mKeys[idx];
+			@SuppressWarnings ("unchecked") K val = (K) mKeys[idx];
 			mValues[idx] = 0;
 			mKeys[idx] = null;
 			mNumberOfElements--;
@@ -294,6 +294,7 @@ public class FSTObject2IntMap<K> {
 	 *            the new size
 	 * @date 30 sept. 2023
 	 */
+	@SuppressWarnings ("unchecked")
 	final void resize(int newSize) {
 		newSize = adjustSize(newSize);
 		Object[] oldTabKey = mKeys;
@@ -321,6 +322,7 @@ public class FSTObject2IntMap<K> {
 	 *            the kfst object 2 int map
 	 * @date 30 sept. 2023
 	 */
+	@SuppressWarnings ("unchecked")
 	private void rePut(final FSTObject2IntMap<K> kfstObject2IntMap) {
 		for (int i = 0; i < mKeys.length; i++) {
 			Object mKey = mKeys[i];

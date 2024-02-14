@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamlQualifiedNameProvider.java, in msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamlQualifiedNameProvider.java, in msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.lang.gaml.naming;
 
@@ -17,9 +17,9 @@ import org.eclipse.xtext.naming.QualifiedName;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.S_Reflex;
-import msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement;
+import msi.gama.lang.gaml.gaml.S_SpeciesLayer;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.descriptions.ModelDescription;
 
@@ -31,23 +31,23 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 
 	/** The Constant NULL. */
 	private final static String NULL = "";
-	
+
 	/** The Constant SWITCH. */
-	private final static GamlSwitch<String> SWITCH = new GamlSwitch<String>() {
+	private final static GamlSwitch<String> SWITCH = new GamlSwitch<>() {
 
 		@Override
 		public String caseS_Reflex(final S_Reflex s) {
-			if (s.getKey().equals(IKeyword.ASPECT)) { return s.getName(); }
+			if (IKeyword.ASPECT.equals(s.getKey())) return s.getName();
 			return NULL;
 		}
 
-		@Override
-		public String casespeciesOrGridDisplayStatement(final speciesOrGridDisplayStatement s) {
-			return NULL;
-		}
+		 @Override
+		 public String caseS_SpeciesLayer(final S_SpeciesLayer s) {
+		 return NULL;
+		 }
 
 		@Override
-		public String caseModel(final Model o) {
+		public String caseStandaloneModel(final StandaloneModel o) {
 			return o.getName() + ModelDescription.MODEL_SUFFIX;
 		}
 
@@ -71,7 +71,7 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 	@Override
 	public QualifiedName getFullyQualifiedName(final EObject input) {
 		final String string = SWITCH.doSwitch(input);
-		if (string == null || string.equals(NULL)) { return null; }
+		if (string == null || NULL.equals(string)) return null;
 		return QualifiedName.create(string);
 	}
 

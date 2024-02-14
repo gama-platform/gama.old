@@ -49,12 +49,13 @@ import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Pragma;
 import msi.gama.lang.gaml.gaml.S_Assignment;
+import msi.gama.lang.gaml.gaml.S_Declaration;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Display;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import ummisco.gama.dev.utils.DEBUG;
@@ -85,7 +86,13 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		if (resource == null) return;
 		acceptor = arg1;
 		final var root = resource.getAllContents();
-		while (root.hasNext()) { process(root.next()); }
+		while (root.hasNext()) {
+			try {
+				process(root.next());
+			} catch (Exception e) {
+				DEBUG.OUT("Error in highligthing" + e.getLocalizedMessage());
+			}
+		}
 		done.clear();
 		highlightTasks(resource);
 	}
@@ -202,9 +209,9 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 	 * @return the string
 	 */
 	private String findNameOf(final EObject o) {
-		if (o instanceof GamlDefinition) return ((GamlDefinition) o).getName();
-		if (o instanceof S_Display) return ((S_Display) o).getName();
-		if (o instanceof HeadlessExperiment) return ((HeadlessExperiment) o).getName();
+		if (o instanceof GamlDefinition gd) return (gd).getName();
+		if (o instanceof S_Display sd) return (sd).getName();
+		if (o instanceof StandaloneExperiment se) return (se).getName();
 
 		return null;
 	}

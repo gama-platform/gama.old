@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * XMLUtils.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * XMLUtils.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.precompiler.doc.utils;
 
@@ -39,11 +39,15 @@ public class XMLUtils {
 	/**
 	 * Creates the doc.
 	 *
-	 * @param xml the xml
+	 * @param xml
+	 *            the xml
 	 * @return the document
-	 * @throws ParserConfigurationException the parser configuration exception
-	 * @throws SAXException the SAX exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws SAXException
+	 *             the SAX exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Document createDoc(final String xml) throws ParserConfigurationException, SAXException, IOException {
 		// Creation of the DOM source
@@ -55,11 +59,15 @@ public class XMLUtils {
 	/**
 	 * Creates the doc.
 	 *
-	 * @param XMLFile the XML file
+	 * @param XMLFile
+	 *            the XML file
 	 * @return the document
-	 * @throws ParserConfigurationException the parser configuration exception
-	 * @throws SAXException the SAX exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws SAXException
+	 *             the SAX exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Document createDoc(final File XMLFile)
 			throws ParserConfigurationException, SAXException, IOException {
@@ -74,11 +82,15 @@ public class XMLUtils {
 	/**
 	 * Creates the doc.
 	 *
-	 * @param docFile the doc file
+	 * @param docFile
+	 *            the doc file
 	 * @return the document
-	 * @throws ParserConfigurationException the parser configuration exception
-	 * @throws SAXException the SAX exception
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws ParserConfigurationException
+	 *             the parser configuration exception
+	 * @throws SAXException
+	 *             the SAX exception
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	public static Document createDoc(final InputStream docFile)
 			throws ParserConfigurationException, SAXException, IOException {
@@ -91,9 +103,12 @@ public class XMLUtils {
 	/**
 	 * Transform document.
 	 *
-	 * @param doc the doc
-	 * @param xsl the xsl
-	 * @param targetFile the target file
+	 * @param doc
+	 *            the doc
+	 * @param xsl
+	 *            the xsl
+	 * @param targetFile
+	 *            the target file
 	 */
 	public static void transformDocument(final Document doc, final String xsl, final String targetFile) {
 		try {
@@ -113,8 +128,6 @@ public class XMLUtils {
 
 			// Transformation
 			transformer.transform(source, result);
-		} catch (final TransformerConfigurationException e) {
-			e.printStackTrace();
 		} catch (final TransformerException e) {
 			e.printStackTrace();
 		}

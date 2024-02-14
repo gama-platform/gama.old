@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * MatchStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * MatchStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gaml.statements;
 
@@ -49,7 +49,7 @@ import msi.gaml.types.Types;
 		value = { @facet (
 				name = IKeyword.VALUE,
 				type = IType.NONE,
-				optional = true,
+				optional = false,
 				doc = @doc ("The value or values this statement tries to match")) },
 		omissible = IKeyword.VALUE)
 @doc (
@@ -106,36 +106,41 @@ public class MatchStatement extends AbstractStatementSequence {
 
 	/** The value. */
 	final IExpression value;
-	
+
 	/** The constant value. */
 	Object constantValue;
-	
+
 	/** The executer. */
 	final MatchExecuter executer;
 
 	/**
 	 * Instantiates a new match statement.
 	 *
-	 * @param desc the desc
+	 * @param desc
+	 *            the desc
 	 */
 	public MatchStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
 		final String keyword = desc.getKeyword();
 		setName(keyword + " " + (value == null ? "" : value.serializeToGaml(false)));
-		executer = IKeyword.MATCH.equals(keyword) ? new SimpleMatch()
-				: IKeyword.MATCH_ONE.equals(keyword) ? new MatchOne() : IKeyword.MATCH_BETWEEN.equals(keyword)
-						? new MatchBetween() : IKeyword.MATCH_REGEX.equals(keyword) ? new MatchRegex() : null;
+		executer =
+				IKeyword.MATCH.equals(keyword) ? new SimpleMatch() : IKeyword.MATCH_ONE.equals(keyword) ? new MatchOne()
+						: IKeyword.MATCH_BETWEEN.equals(keyword) ? new MatchBetween()
+						: IKeyword.MATCH_REGEX.equals(keyword) ? new MatchRegex() : null;
 		if (executer != null) { executer.acceptValue(); }
 	}
 
 	/**
 	 * Matches.
 	 *
-	 * @param scope the scope
-	 * @param switchValue the switch value
+	 * @param scope
+	 *            the scope
+	 * @param switchValue
+	 *            the switch value
 	 * @return true, if successful
-	 * @throws GamaRuntimeException the gama runtime exception
+	 * @throws GamaRuntimeException
+	 *             the gama runtime exception
 	 */
 	public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
 		if (executer == null) return false;
@@ -150,10 +155,13 @@ public class MatchStatement extends AbstractStatementSequence {
 		/**
 		 * Matches.
 		 *
-		 * @param scope the scope
-		 * @param switchValue the switch value
+		 * @param scope
+		 *            the scope
+		 * @param switchValue
+		 *            the switch value
 		 * @return true, if successful
-		 * @throws GamaRuntimeException the gama runtime exception
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
 		 */
 		abstract boolean matches(IScope scope, Object switchValue) throws GamaRuntimeException;
 
@@ -167,9 +175,11 @@ public class MatchStatement extends AbstractStatementSequence {
 		/**
 		 * Gets the value.
 		 *
-		 * @param scope the scope
+		 * @param scope
+		 *            the scope
 		 * @return the value
-		 * @throws GamaRuntimeException the gama runtime exception
+		 * @throws GamaRuntimeException
+		 *             the gama runtime exception
 		 */
 		Object getValue(final IScope scope) throws GamaRuntimeException {
 			return constantValue == null ? value.value(scope) : constantValue;

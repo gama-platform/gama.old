@@ -3,7 +3,7 @@
  * FSTCollectionSerializer.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -62,6 +62,7 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
 		}
 	}
 
+	@SuppressWarnings ("unchecked")
 	@Override
 	public Object instantiate(final Class objectClass, final FSTObjectInput in, final FSTClazzInfo serializationInfo,
 			final FSTClazzInfo.FSTFieldInfo referencee, final int streamPosition) throws Exception {
@@ -85,7 +86,7 @@ public class FSTCollectionSerializer extends FSTBasicObjectSerializer {
 				res = objectClass.newInstance();
 			}
 			in.registerObject(res, streamPosition, serializationInfo, referencee);
-			Collection col = (Collection) res;
+			Collection<Object> col = (Collection<Object>) res;
 			if (col instanceof ArrayList) { ((ArrayList) col).ensureCapacity(len); }
 			for (int i = 0; i < len; i++) {
 				final Object o = in.readObjectInternal();

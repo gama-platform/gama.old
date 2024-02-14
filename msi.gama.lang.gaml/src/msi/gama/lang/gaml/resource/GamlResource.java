@@ -22,6 +22,8 @@ import static org.eclipse.xtext.nodemodel.util.NodeModelUtils.getNode;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -30,12 +32,15 @@ import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.linking.impl.XtextLinkingDiagnostic;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import com.google.common.base.Function;
+import com.google.common.io.CharStreams;
 
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
+import msi.gama.lang.gaml.parsing.GamlParser;
 import msi.gama.runtime.IExecutionContext;
 import msi.gaml.compilation.GAML;
 import msi.gaml.compilation.GamlCompilationError;
@@ -65,6 +70,9 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 	/** The element. */
 	ISyntacticElement element;
 
+	/** The string contents. */
+	String stringContents;
+
 	/**
 	 * Gets the validation context.
 	 *
@@ -72,6 +80,12 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 	 */
 	public ValidationContext getValidationContext() {
 		return GamlResourceServices.getOrCreateValidationContext(this);
+	}
+
+	@Override
+	protected void setInjectedParser(final IParser parser) {
+		super.setInjectedParser(parser);
+		if (parser instanceof GamlParser gp) { gp.setResource(this); }
 	}
 
 	/**
@@ -271,6 +285,7 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 	protected void doUnload() {
 		super.doUnload();
 		setElement(null);
+		stringContents = null;
 	}
 
 	/**
@@ -303,6 +318,12 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 		});
 		r.getOrCreate(this).set("linking", null);
 
+	}
+
+	@Override
+	protected void doLoad(final InputStream inputStream, final Map<?, ?> options) throws IOException {
+		stringContents = CharStreams.toString(new InputStreamReader(inputStream));
+		super.doLoad(inputStream, options);
 	}
 
 	/**
@@ -392,5 +413,14 @@ public class GamlResource extends LazyLinkingResource implements IDiagnosticCons
 	public boolean hasConsumedDiagnostics(final Severity severity) {
 		return !getErrors().isEmpty() && !getWarnings().isEmpty();
 	}
+
+	/**
+	 * Gets the string contents.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the string contents
+	 * @date 14 févr. 2024
+	 */
+	public String getStringContents() { return stringContents; }
 
 }

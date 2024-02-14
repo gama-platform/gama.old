@@ -7,23 +7,23 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Model</b></em>'.
+ * A representation of the model object '<em><b>Standalone Model</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.Model#getPragmas <em>Pragmas</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Model#getImports <em>Imports</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Model#getBlock <em>Block</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.StandaloneModel#getPragmas <em>Pragmas</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.StandaloneModel#getImports <em>Imports</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.StandaloneModel#getBlock <em>Block</em>}</li>
  * </ul>
  *
- * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel()
+ * @see msi.gama.lang.gaml.gaml.GamlPackage#getStandaloneModel()
  * @model
  * @generated
  */
-public interface Model extends Entry, VarDefinition
+public interface StandaloneModel extends Entry, VarDefinition
 {
   /**
    * Returns the value of the '<em><b>Pragmas</b></em>' containment reference list.
@@ -31,7 +31,7 @@ public interface Model extends Entry, VarDefinition
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Pragmas</em>' containment reference list.
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel_Pragmas()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStandaloneModel_Pragmas()
    * @model containment="true"
    * @generated
    */
@@ -43,7 +43,7 @@ public interface Model extends Entry, VarDefinition
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Imports</em>' containment reference list.
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel_Imports()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStandaloneModel_Imports()
    * @model containment="true"
    * @generated
    */
@@ -55,14 +55,14 @@ public interface Model extends Entry, VarDefinition
    * <!-- end-user-doc -->
    * @return the value of the '<em>Block</em>' containment reference.
    * @see #setBlock(Block)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getModel_Block()
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStandaloneModel_Block()
    * @model containment="true"
    * @generated
    */
   Block getBlock();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Model#getBlock <em>Block</em>}' containment reference.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.StandaloneModel#getBlock <em>Block</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Block</em>' containment reference.
@@ -71,4 +71,4 @@ public interface Model extends Entry, VarDefinition
    */
   void setBlock(Block value);
 
-} // Model
+} // StandaloneModel

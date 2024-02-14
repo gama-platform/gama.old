@@ -3,26 +3,26 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.BuiltInActionDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.VarFakeDefinition;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Var Fake Definition</b></em>'.
+ * An implementation of the model object '<em><b>Built In Action Definition</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class VarFakeDefinitionImpl extends VarDefinitionImpl implements VarFakeDefinition
+public class BuiltInActionDefinitionImpl extends ActionDefinitionImpl implements BuiltInActionDefinition
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected VarFakeDefinitionImpl()
+  protected BuiltInActionDefinitionImpl()
   {
     super();
   }
@@ -35,7 +35,7 @@ public class VarFakeDefinitionImpl extends VarDefinitionImpl implements VarFakeD
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.VAR_FAKE_DEFINITION;
+    return GamlPackage.Literals.BUILT_IN_ACTION_DEFINITION;
   }
 
-} //VarFakeDefinitionImpl
+} //BuiltInActionDefinitionImpl

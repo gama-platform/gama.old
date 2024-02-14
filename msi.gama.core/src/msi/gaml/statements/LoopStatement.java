@@ -1,11 +1,11 @@
 /*******************************************************************************************************
  *
  * LoopStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
- * (v.2.0.0).
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
- * Visit https://github.com/gama-platform/gama2 for license information and contacts.
+ * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
  ********************************************************************************************************/
 package msi.gaml.statements;
@@ -319,7 +319,12 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			if (to != null) {
 				description.error("'while' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, WHILE, TO);
 			}
-			if (name != null) { description.error("No variable should be declared", IGamlIssue.UNUSED, WHILE, NAME); }
+			if (name != null) {
+				String s = name.getExpression().literalValue();
+				if (s != null && !s.isBlank()) {
+					description.error("No variable should be declared", IGamlIssue.UNUSED, WHILE, NAME);
+				}
+			}
 		}
 
 		/**
@@ -345,7 +350,9 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			} else if (to != null) {
 				description.error("'over' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, OVER, TO);
 			}
-			if (name == null) { description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER); }
+			if (name == null) {
+					description.error("No variable has been declared", IGamlIssue.MISSING_NAME, OVER);
+			}
 		}
 
 		/**
@@ -378,7 +385,12 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			} else if (to != null) {
 				description.error("'times' and 'to' are not compatible", IGamlIssue.CONFLICTING_FACETS, TIMES, TO);
 			}
-			if (name != null) { description.error("No variable should be declared", IGamlIssue.UNUSED, NAME); }
+			if (name != null) {
+				String s = name.getExpression().literalValue();
+				if (s != null && !s.isBlank()) {
+					description.error("No variable should be declared", IGamlIssue.UNUSED, NAME);
+				}
+			}
 		}
 
 	}

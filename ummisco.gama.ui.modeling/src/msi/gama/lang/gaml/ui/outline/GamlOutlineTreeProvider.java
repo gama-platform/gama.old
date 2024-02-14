@@ -20,14 +20,13 @@ import com.google.inject.Inject;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Block;
-import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.S_Action;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.S_Species;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
@@ -53,7 +52,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 			new GamlSwitch<>() {
 
 				@Override
-				public Object caseModel(final Model stm) {
+				public Object caseStandaloneModel(final StandaloneModel stm) {
 
 					Block block = stm.getBlock();
 					if (block != null) {
@@ -70,18 +69,13 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 				}
 
 				@Override
-				public Object caseExperimentFileStructure(final ExperimentFileStructure stm) {
-					return caseHeadlessExperiment(stm.getExp());
-				}
-
-				@Override
 				public Object caseS_Experiment(final S_Experiment stm) {
 					ownCreateChildren(parentNode, stm.getBlock());
 					return FOUND;
 				}
 
 				@Override
-				public Object caseHeadlessExperiment(final HeadlessExperiment stm) {
+				public Object caseStandaloneExperiment(final StandaloneExperiment stm) {
 					ownCreateChildren(parentNode, stm.getBlock());
 					return FOUND;
 				}
@@ -178,11 +172,9 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 
 	@Override
 	protected boolean isLeaf(final EObject s) {
-		if (s instanceof S_Experiment)
-			return ((S_Experiment) s).getBlock() == null || ((S_Experiment) s).getBlock().getStatements().isEmpty();
-		if (s instanceof S_Species)
-			return ((S_Species) s).getBlock() == null || ((S_Species) s).getBlock().getStatements().isEmpty();
-		if (s instanceof Model) return ((Model) s).getBlock() == null;
+		if (s instanceof S_Experiment se) return se.getBlock() == null || se.getBlock().getStatements().isEmpty();
+		if (s instanceof S_Species ss) return ss.getBlock() == null || ss.getBlock().getStatements().isEmpty();
+		if (s instanceof StandaloneModel sm) return sm.getBlock() == null;
 		return true;
 	}
 }

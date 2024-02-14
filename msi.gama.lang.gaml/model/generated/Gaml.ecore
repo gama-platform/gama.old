@@ -6,22 +6,27 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="StringEvaluator" eSuperTypes="#//Entry">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="toto" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StandaloneExpression" eSuperTypes="#//Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//Entry #//VarDefinition">
+  <eClassifiers xsi:type="ecore:EClass" name="StandaloneExperiment" eSuperTypes="#//Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="importURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="facets" upperBound="-1"
+        eType="#//Facet" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StandaloneModel" eSuperTypes="#//Entry #//VarDefinition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="pragmas" upperBound="-1"
         eType="#//Pragma" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
         eType="#//Import" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
         containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Block">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
-        eType="#//Statement" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Import" eSuperTypes="#//VarDefinition">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="importURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -31,23 +36,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="plugins" eType="#//ExpressionList"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ExperimentFileStructure" eSuperTypes="#//Entry">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="exp" eType="#//HeadlessExperiment"
-        containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="HeadlessExperiment">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstFacet" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="importURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="facets" upperBound="-1"
-        eType="#//Facet" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
-        containment="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Block">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
+        eType="#//Statement" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Statement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstFacet" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="facets" upperBound="-1"
@@ -68,8 +62,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="catch" eType="#//Block"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="S_Other" eSuperTypes="#//Statement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="S_Return" eSuperTypes="#//Statement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="S_Switch" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Declaration" eSuperTypes="#//Statement #//VarDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Reflex" eSuperTypes="#//S_Declaration"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Definition" eSuperTypes="#//S_Declaration #//ActionDefinition">
@@ -92,8 +85,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="S_Display" eSuperTypes="#//Statement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="speciesOrGridDisplayStatement" eSuperTypes="#//Statement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="imageDisplayStatement" eSuperTypes="#//Statement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="S_SpeciesLayer" eSuperTypes="#//Statement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="S_ImageLayer" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="ActionArguments">
     <eStructuralFeatures xsi:type="ecore:EReference" name="args" upperBound="-1" eType="#//ArgumentDefinition"
         containment="true"/>
@@ -137,12 +130,12 @@
   <eClassifiers xsi:type="ecore:EClass" name="TypeDefinition" eSuperTypes="#//GamlDefinition #//ActionDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="VarDefinition" eSuperTypes="#//GamlDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="ActionDefinition" eSuperTypes="#//GamlDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="UnitFakeDefinition" eSuperTypes="#//GamlDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="TypeFakeDefinition" eSuperTypes="#//TypeDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ActionFakeDefinition" eSuperTypes="#//ActionDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="SkillFakeDefinition" eSuperTypes="#//GamlDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="VarFakeDefinition" eSuperTypes="#//VarDefinition"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EquationFakeDefinition" eSuperTypes="#//EquationDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BuiltInUnitDefinition" eSuperTypes="#//GamlDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BuiltInTypeDefinition" eSuperTypes="#//TypeDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BuiltInActionDefinition" eSuperTypes="#//ActionDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BuiltInSkillDefinition" eSuperTypes="#//GamlDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BuiltInVarDefinition" eSuperTypes="#//VarDefinition"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BuiltInEquationDefinition" eSuperTypes="#//EquationDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="TerminalExpression" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="op" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -213,7 +206,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="UnitName" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//UnitFakeDefinition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//BuiltInUnitDefinition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypeRef" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//TypeDefinition"/>
@@ -221,7 +214,7 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SkillRef" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//SkillFakeDefinition"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//BuiltInSkillDefinition"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ActionRef" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//ActionDefinition"/>

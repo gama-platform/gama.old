@@ -3,7 +3,7 @@
  * FSTClazzInfoRegistry.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -25,7 +25,7 @@ import org.nustaq.serialization.util.FSTMap;
 public class FSTClazzInfoRegistry {
 
 	/** The m infos. */
-	FSTMap mInfos = new FSTMap(97);
+	FSTMap<Class<?>, FSTClazzInfo> mInfos = new FSTMap<>(97);
 
 	/** The serializer registry. */
 	FSTSerializerRegistry serializerRegistry = new FSTSerializerRegistry();
@@ -51,7 +51,7 @@ public class FSTClazzInfoRegistry {
 	 *            the filter
 	 * @date 30 sept. 2023
 	 */
-	public static void addAllReferencedClasses(final Class cl, final ArrayList<String> names, final String filter) {
+	public static void addAllReferencedClasses(final Class<?> cl, final ArrayList<String> names, final String filter) {
 		HashSet<String> names1 = new HashSet<>();
 		addAllReferencedClasses(cl, names1, new HashSet<>(), filter);
 		names.addAll(names1);
@@ -71,8 +71,8 @@ public class FSTClazzInfoRegistry {
 	 *            the filter
 	 * @date 30 sept. 2023
 	 */
-	static void addAllReferencedClasses(final Class cl, final HashSet<String> names, final HashSet<String> topLevelDone,
-			final String filter) {
+	static void addAllReferencedClasses(final Class<?> cl, final HashSet<String> names,
+			final HashSet<String> topLevelDone, final String filter) {
 		if (cl == null || topLevelDone.contains(cl.getName()) || !cl.getName().startsWith(filter)) return;
 		topLevelDone.add(cl.getName());
 		Field[] declaredFields = cl.getDeclaredFields();
@@ -84,7 +84,7 @@ public class FSTClazzInfoRegistry {
 			}
 		}
 		Class[] declaredClasses = cl.getDeclaredClasses();
-		for (Class declaredClass : declaredClasses) {
+		for (Class<?> declaredClass : declaredClasses) {
 			if (!declaredClass.isPrimitive() && !declaredClass.isArray()) {
 				names.add(declaredClass.getName());
 				addAllReferencedClasses(declaredClass, names, topLevelDone, filter);
@@ -107,14 +107,14 @@ public class FSTClazzInfoRegistry {
 		}
 
 		Class[] classes = cl.getDeclaredClasses();
-		for (Class aClass : classes) {
+		for (Class<?> aClass : classes) {
 			if (!aClass.isPrimitive() && !aClass.isArray()) {
 				names.add(aClass.getName());
 				addAllReferencedClasses(aClass, names, topLevelDone, filter);
 			}
 		}
 
-		Class enclosingClass = cl.getEnclosingClass();
+		Class<?> enclosingClass = cl.getEnclosingClass();
 		if (enclosingClass != null) {
 			names.add(enclosingClass.getName());
 			addAllReferencedClasses(enclosingClass, names, topLevelDone, filter);
@@ -123,7 +123,7 @@ public class FSTClazzInfoRegistry {
 		names.add(cl.getName());
 		addAllReferencedClasses(cl.getSuperclass(), names, topLevelDone, filter);
 		Class[] interfaces = cl.getInterfaces();
-		for (Class anInterface : interfaces) {
+		for (Class<?> anInterface : interfaces) {
 			if (!anInterface.isPrimitive() && !anInterface.isArray()) {
 				names.add(anInterface.getName());
 				addAllReferencedClasses(anInterface, names, topLevelDone, filter);
@@ -151,12 +151,12 @@ public class FSTClazzInfoRegistry {
 	 * @date 30 sept. 2023
 	 */
 	public FSTClazzInfo getCLInfo(final Class<?> c, final FSTConfiguration conf) {
-		while (!rwLock.compareAndSet(false, true)) { ; }
+		while (!rwLock.compareAndSet(false, true)) {}
 		try {
-			FSTClazzInfo res = (FSTClazzInfo) mInfos.get(c);
+			FSTClazzInfo res = mInfos.get(c);
 			if (res == null) {
 				if (c == null) throw new NullPointerException("Class is null");
-				if ((conf.getVerifier() != null) && !conf.getVerifier().allowClassDeserialization(c))
+				if (conf.getVerifier() != null && !conf.getVerifier().allowClassDeserialization(c))
 					throw new RuntimeException("tried to deserialize forbidden class " + c.getName());
 				res = new FSTClazzInfo(conf, c, this, ignoreAnnotations);
 				mInfos.put(c, res);

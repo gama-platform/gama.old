@@ -215,7 +215,7 @@ public class DescriptionFactory {
 	public static String getOmissibleFacetForSymbol(final String keyword) {
 		final SymbolProto md = getProto(keyword, null);
 		if (md == null) return IKeyword.NAME;
-		return md.getOmissible();
+		return md.getDefaultFacetName();
 	}
 
 	/**

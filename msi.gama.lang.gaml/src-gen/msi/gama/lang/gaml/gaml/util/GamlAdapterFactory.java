@@ -86,19 +86,19 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createStandaloneBlockAdapter();
       }
       @Override
-      public Adapter caseStringEvaluator(StringEvaluator object)
+      public Adapter caseStandaloneExpression(StandaloneExpression object)
       {
-        return createStringEvaluatorAdapter();
+        return createStandaloneExpressionAdapter();
       }
       @Override
-      public Adapter caseModel(Model object)
+      public Adapter caseStandaloneExperiment(StandaloneExperiment object)
       {
-        return createModelAdapter();
+        return createStandaloneExperimentAdapter();
       }
       @Override
-      public Adapter caseBlock(Block object)
+      public Adapter caseStandaloneModel(StandaloneModel object)
       {
-        return createBlockAdapter();
+        return createStandaloneModelAdapter();
       }
       @Override
       public Adapter caseImport(Import object)
@@ -111,14 +111,9 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createPragmaAdapter();
       }
       @Override
-      public Adapter caseExperimentFileStructure(ExperimentFileStructure object)
+      public Adapter caseBlock(Block object)
       {
-        return createExperimentFileStructureAdapter();
-      }
-      @Override
-      public Adapter caseHeadlessExperiment(HeadlessExperiment object)
-      {
-        return createHeadlessExperimentAdapter();
+        return createBlockAdapter();
       }
       @Override
       public Adapter caseStatement(Statement object)
@@ -161,14 +156,9 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_TryAdapter();
       }
       @Override
-      public Adapter caseS_Other(S_Other object)
+      public Adapter caseS_Switch(S_Switch object)
       {
-        return createS_OtherAdapter();
-      }
-      @Override
-      public Adapter caseS_Return(S_Return object)
-      {
-        return createS_ReturnAdapter();
+        return createS_SwitchAdapter();
       }
       @Override
       public Adapter caseS_Declaration(S_Declaration object)
@@ -216,14 +206,14 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_DisplayAdapter();
       }
       @Override
-      public Adapter casespeciesOrGridDisplayStatement(speciesOrGridDisplayStatement object)
+      public Adapter caseS_SpeciesLayer(S_SpeciesLayer object)
       {
-        return createspeciesOrGridDisplayStatementAdapter();
+        return createS_SpeciesLayerAdapter();
       }
       @Override
-      public Adapter caseimageDisplayStatement(imageDisplayStatement object)
+      public Adapter caseS_ImageLayer(S_ImageLayer object)
       {
-        return createimageDisplayStatementAdapter();
+        return createS_ImageLayerAdapter();
       }
       @Override
       public Adapter caseActionArguments(ActionArguments object)
@@ -291,34 +281,34 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createActionDefinitionAdapter();
       }
       @Override
-      public Adapter caseUnitFakeDefinition(UnitFakeDefinition object)
+      public Adapter caseBuiltInUnitDefinition(BuiltInUnitDefinition object)
       {
-        return createUnitFakeDefinitionAdapter();
+        return createBuiltInUnitDefinitionAdapter();
       }
       @Override
-      public Adapter caseTypeFakeDefinition(TypeFakeDefinition object)
+      public Adapter caseBuiltInTypeDefinition(BuiltInTypeDefinition object)
       {
-        return createTypeFakeDefinitionAdapter();
+        return createBuiltInTypeDefinitionAdapter();
       }
       @Override
-      public Adapter caseActionFakeDefinition(ActionFakeDefinition object)
+      public Adapter caseBuiltInActionDefinition(BuiltInActionDefinition object)
       {
-        return createActionFakeDefinitionAdapter();
+        return createBuiltInActionDefinitionAdapter();
       }
       @Override
-      public Adapter caseSkillFakeDefinition(SkillFakeDefinition object)
+      public Adapter caseBuiltInSkillDefinition(BuiltInSkillDefinition object)
       {
-        return createSkillFakeDefinitionAdapter();
+        return createBuiltInSkillDefinitionAdapter();
       }
       @Override
-      public Adapter caseVarFakeDefinition(VarFakeDefinition object)
+      public Adapter caseBuiltInVarDefinition(BuiltInVarDefinition object)
       {
-        return createVarFakeDefinitionAdapter();
+        return createBuiltInVarDefinitionAdapter();
       }
       @Override
-      public Adapter caseEquationFakeDefinition(EquationFakeDefinition object)
+      public Adapter caseBuiltInEquationDefinition(BuiltInEquationDefinition object)
       {
-        return createEquationFakeDefinitionAdapter();
+        return createBuiltInEquationDefinitionAdapter();
       }
       @Override
       public Adapter caseTerminalExpression(TerminalExpression object)
@@ -483,46 +473,46 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StringEvaluator <em>String Evaluator</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StandaloneExpression <em>Standalone Expression</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.StringEvaluator
+   * @see msi.gama.lang.gaml.gaml.StandaloneExpression
    * @generated
    */
-  public Adapter createStringEvaluatorAdapter()
+  public Adapter createStandaloneExpressionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Model <em>Model</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StandaloneExperiment <em>Standalone Experiment</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Model
+   * @see msi.gama.lang.gaml.gaml.StandaloneExperiment
    * @generated
    */
-  public Adapter createModelAdapter()
+  public Adapter createStandaloneExperimentAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Block <em>Block</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StandaloneModel <em>Standalone Model</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.Block
+   * @see msi.gama.lang.gaml.gaml.StandaloneModel
    * @generated
    */
-  public Adapter createBlockAdapter()
+  public Adapter createStandaloneModelAdapter()
   {
     return null;
   }
@@ -558,31 +548,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ExperimentFileStructure <em>Experiment File Structure</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Block <em>Block</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ExperimentFileStructure
+   * @see msi.gama.lang.gaml.gaml.Block
    * @generated
    */
-  public Adapter createExperimentFileStructureAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.HeadlessExperiment <em>Headless Experiment</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.HeadlessExperiment
-   * @generated
-   */
-  public Adapter createHeadlessExperimentAdapter()
+  public Adapter createBlockAdapter()
   {
     return null;
   }
@@ -708,31 +683,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Other <em>SOther</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Switch <em>SSwitch</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Other
+   * @see msi.gama.lang.gaml.gaml.S_Switch
    * @generated
    */
-  public Adapter createS_OtherAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Return <em>SReturn</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Return
-   * @generated
-   */
-  public Adapter createS_ReturnAdapter()
+  public Adapter createS_SwitchAdapter()
   {
     return null;
   }
@@ -873,31 +833,31 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement <em>species Or Grid Display Statement</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_SpeciesLayer <em>SSpecies Layer</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement
+   * @see msi.gama.lang.gaml.gaml.S_SpeciesLayer
    * @generated
    */
-  public Adapter createspeciesOrGridDisplayStatementAdapter()
+  public Adapter createS_SpeciesLayerAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.imageDisplayStatement <em>image Display Statement</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_ImageLayer <em>SImage Layer</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.imageDisplayStatement
+   * @see msi.gama.lang.gaml.gaml.S_ImageLayer
    * @generated
    */
-  public Adapter createimageDisplayStatementAdapter()
+  public Adapter createS_ImageLayerAdapter()
   {
     return null;
   }
@@ -1098,91 +1058,91 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.UnitFakeDefinition <em>Unit Fake Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.BuiltInUnitDefinition <em>Built In Unit Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.UnitFakeDefinition
+   * @see msi.gama.lang.gaml.gaml.BuiltInUnitDefinition
    * @generated
    */
-  public Adapter createUnitFakeDefinitionAdapter()
+  public Adapter createBuiltInUnitDefinitionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.TypeFakeDefinition <em>Type Fake Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.BuiltInTypeDefinition <em>Built In Type Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.TypeFakeDefinition
+   * @see msi.gama.lang.gaml.gaml.BuiltInTypeDefinition
    * @generated
    */
-  public Adapter createTypeFakeDefinitionAdapter()
+  public Adapter createBuiltInTypeDefinitionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ActionFakeDefinition <em>Action Fake Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.BuiltInActionDefinition <em>Built In Action Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ActionFakeDefinition
+   * @see msi.gama.lang.gaml.gaml.BuiltInActionDefinition
    * @generated
    */
-  public Adapter createActionFakeDefinitionAdapter()
+  public Adapter createBuiltInActionDefinitionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.SkillFakeDefinition <em>Skill Fake Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.BuiltInSkillDefinition <em>Built In Skill Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.SkillFakeDefinition
+   * @see msi.gama.lang.gaml.gaml.BuiltInSkillDefinition
    * @generated
    */
-  public Adapter createSkillFakeDefinitionAdapter()
+  public Adapter createBuiltInSkillDefinitionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.VarFakeDefinition <em>Var Fake Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.BuiltInVarDefinition <em>Built In Var Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.VarFakeDefinition
+   * @see msi.gama.lang.gaml.gaml.BuiltInVarDefinition
    * @generated
    */
-  public Adapter createVarFakeDefinitionAdapter()
+  public Adapter createBuiltInVarDefinitionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.EquationFakeDefinition <em>Equation Fake Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.BuiltInEquationDefinition <em>Built In Equation Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.EquationFakeDefinition
+   * @see msi.gama.lang.gaml.gaml.BuiltInEquationDefinition
    * @generated
    */
-  public Adapter createEquationFakeDefinitionAdapter()
+  public Adapter createBuiltInEquationDefinitionAdapter()
   {
     return null;
   }

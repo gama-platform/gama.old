@@ -3,7 +3,7 @@
  * ISymbolKind.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -11,7 +11,6 @@
 package msi.gama.precompiler;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,16 +38,14 @@ public interface ISymbolKind {
 		int REGULAR = 104;
 
 		/** The kinds. */
-		Set<Integer> KINDS = new HashSet<>(Arrays.asList(NUMBER, CONTAINER, REGULAR));
 
 		/** The kinds as string. */
-		Map<Integer, String> KINDS_AS_STRING = new HashMap<>() {
-			{
-				put(NUMBER, "Number variable");
-				put(CONTAINER, "Container variable");
-				put(REGULAR, "Variable");
-			}
-		};
+		Map<Integer, String> KINDS_AS_STRING =
+				Map.of(NUMBER, "Number variable", CONTAINER, "Container variable", REGULAR, "Variable");
+
+		/** The kinds. */
+		Set<Integer> KINDS = KINDS_AS_STRING.keySet();
+
 	}
 
 	/** The species. */

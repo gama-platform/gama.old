@@ -34,7 +34,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getKey <em>Key</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFirstFacet <em>First Facet</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFacets <em>Facets</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getBlock <em>Block</em>}</li>
@@ -63,26 +62,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected String key = KEY_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getFirstFacet() <em>First Facet</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFirstFacet()
-   * @generated
-   * @ordered
-   */
-  protected static final String FIRST_FACET_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getFirstFacet() <em>First Facet</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFirstFacet()
-   * @generated
-   * @ordered
-   */
-  protected String firstFacet = FIRST_FACET_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference.
@@ -158,31 +137,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     key = newKey;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__KEY, oldKey, key));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getFirstFacet()
-  {
-    return firstFacet;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setFirstFacet(String newFirstFacet)
-  {
-    String oldFirstFacet = firstFacet;
-    firstFacet = newFirstFacet;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__FIRST_FACET, oldFirstFacet, firstFacet));
   }
 
   /**
@@ -332,8 +286,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     {
       case GamlPackage.STATEMENT__KEY:
         return getKey();
-      case GamlPackage.STATEMENT__FIRST_FACET:
-        return getFirstFacet();
       case GamlPackage.STATEMENT__EXPR:
         return getExpr();
       case GamlPackage.STATEMENT__FACETS:
@@ -357,9 +309,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     {
       case GamlPackage.STATEMENT__KEY:
         setKey((String)newValue);
-        return;
-      case GamlPackage.STATEMENT__FIRST_FACET:
-        setFirstFacet((String)newValue);
         return;
       case GamlPackage.STATEMENT__EXPR:
         setExpr((Expression)newValue);
@@ -388,9 +337,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case GamlPackage.STATEMENT__KEY:
         setKey(KEY_EDEFAULT);
         return;
-      case GamlPackage.STATEMENT__FIRST_FACET:
-        setFirstFacet(FIRST_FACET_EDEFAULT);
-        return;
       case GamlPackage.STATEMENT__EXPR:
         setExpr((Expression)null);
         return;
@@ -416,8 +362,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     {
       case GamlPackage.STATEMENT__KEY:
         return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-      case GamlPackage.STATEMENT__FIRST_FACET:
-        return FIRST_FACET_EDEFAULT == null ? firstFacet != null : !FIRST_FACET_EDEFAULT.equals(firstFacet);
       case GamlPackage.STATEMENT__EXPR:
         return expr != null;
       case GamlPackage.STATEMENT__FACETS:
@@ -441,8 +385,6 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (key: ");
     result.append(key);
-    result.append(", firstFacet: ");
-    result.append(firstFacet);
     result.append(')');
     return result.toString();
   }

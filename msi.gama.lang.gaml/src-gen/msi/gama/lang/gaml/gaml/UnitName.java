@@ -27,12 +27,12 @@ public interface UnitName extends Expression
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Ref</em>' reference.
-   * @see #setRef(UnitFakeDefinition)
+   * @see #setRef(BuiltInUnitDefinition)
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getUnitName_Ref()
    * @model
    * @generated
    */
-  UnitFakeDefinition getRef();
+  BuiltInUnitDefinition getRef();
 
   /**
    * Sets the value of the '{@link msi.gama.lang.gaml.gaml.UnitName#getRef <em>Ref</em>}' reference.
@@ -42,6 +42,6 @@ public interface UnitName extends Expression
    * @see #getRef()
    * @generated
    */
-  void setRef(UnitFakeDefinition value);
+  void setRef(BuiltInUnitDefinition value);
 
 } // UnitName

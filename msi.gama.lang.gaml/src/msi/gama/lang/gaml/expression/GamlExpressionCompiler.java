@@ -57,6 +57,7 @@ import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.BinaryOperator;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
+import msi.gama.lang.gaml.gaml.BuiltInSkillDefinition;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
 import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
@@ -67,9 +68,8 @@ import msi.gama.lang.gaml.gaml.IntLiteral;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.ReservedLiteral;
-import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
-import msi.gama.lang.gaml.gaml.StringEvaluator;
+import msi.gama.lang.gaml.gaml.StandaloneExpression;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeDefinition;
 import msi.gama.lang.gaml.gaml.TypeInfo;
@@ -905,7 +905,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	@Override
-	public IExpression caseSkillFakeDefinition(final SkillFakeDefinition object) {
+	public IExpression caseBuiltInSkillDefinition(final BuiltInSkillDefinition object) {
 		return caseVar(object.getName(), object);
 	}
 
@@ -1342,7 +1342,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				throw GamaRuntimeException.error(d.getMessage(), tempContext.getScope());
 			}
 			final EObject e = resource.getContents().get(0);
-			if (e instanceof StringEvaluator) { result = ((StringEvaluator) e).getExpr(); }
+			if (e instanceof StandaloneExpression se) { result = se.getExpr(); }
 
 			return result;
 		} finally {

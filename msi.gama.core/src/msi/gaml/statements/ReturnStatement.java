@@ -3,7 +3,7 @@
  * ReturnStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -50,7 +50,7 @@ import msi.gaml.types.IType;
 				doc = @doc ("an expression that is returned")) },
 		omissible = IKeyword.VALUE)
 @doc (
-		value = "Allows to immediately stop and tell which value to return from the evaluation of the surrounding action or top-level statement (reflex, init, etc.). Usually used within the declaration of an action. For more details about actions, see the following [Section161 section].",
+		value = "Allows to immediately stop the surrounding action or top-level statement (reflex, init, etc.) and return a value to the caller. Usually used within the declaration of an action.",
 		usages = { @usage (
 				value = "Example:",
 				examples = { @example (
@@ -125,20 +125,5 @@ public class ReturnStatement extends AbstractStatement {
 		scope.setReturnStatus();
 		return result;
 	}
-	//
-	// @Override
-	// public IType getType() {
-	// return value == null ? Types.NO_TYPE : value.getType();
-	// }
-	//
-	// @Override
-	// public IType getContentType() {
-	// return value == null ? Types.NO_TYPE : value.getContentType();
-	// }
-	//
-	// @Override
-	// public IType getKeyType() {
-	// return value == null ? Types.NO_TYPE : value.getKeyType();
-	// }
 
 }

@@ -3,26 +3,26 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.BuiltInTypeDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.speciesOrGridDisplayStatement;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>species Or Grid Display Statement</b></em>'.
+ * An implementation of the model object '<em><b>Built In Type Definition</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class speciesOrGridDisplayStatementImpl extends StatementImpl implements speciesOrGridDisplayStatement
+public class BuiltInTypeDefinitionImpl extends TypeDefinitionImpl implements BuiltInTypeDefinition
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected speciesOrGridDisplayStatementImpl()
+  protected BuiltInTypeDefinitionImpl()
   {
     super();
   }
@@ -35,7 +35,7 @@ public class speciesOrGridDisplayStatementImpl extends StatementImpl implements 
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.SPECIES_OR_GRID_DISPLAY_STATEMENT;
+    return GamlPackage.Literals.BUILT_IN_TYPE_DEFINITION;
   }
 
-} //speciesOrGridDisplayStatementImpl
+} //BuiltInTypeDefinitionImpl

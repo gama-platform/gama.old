@@ -3,7 +3,7 @@
  * GamlCoreConstants.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -276,6 +276,7 @@ public interface GamlCoreConstants {
 			value = "bottom_center",
 			category = { IConstantCategory.GRAPHIC },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
+			altNames = { "bottom" },
 			doc = @doc ("Represents an anchor situated at the center of the bottom side of the text to draw")) GamaPoint bottom_center =
 					new GamaPoint(0.5, 0);
 
@@ -307,6 +308,7 @@ public interface GamlCoreConstants {
 	@constant (
 			value = "top_center",
 			category = { IConstantCategory.GRAPHIC },
+			altNames = { "top" },
 			concept = { IConcept.DISPLAY, IConcept.OUTPUT },
 			doc = @doc ("Represents an anchor situated at the center of the top side of the text to draw")) GamaPoint top_center =
 					new GamaPoint(0.5, 1);
@@ -389,6 +391,7 @@ public interface GamlCoreConstants {
 			doc = @doc ("This unit permanently holds the mouse's location in the world's coordinates. If it is outside a display window, its last position is used.")) GamaPoint user_location =
 					new GamaPoint();
 
+	/** The user location in display. */
 	@constant (
 			value = "user_location_in_display",
 			category = IConstantCategory.GRAPHIC,

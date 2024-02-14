@@ -3,26 +3,26 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.BuiltInSkillDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Skill Fake Definition</b></em>'.
+ * An implementation of the model object '<em><b>Built In Skill Definition</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class SkillFakeDefinitionImpl extends GamlDefinitionImpl implements SkillFakeDefinition
+public class BuiltInSkillDefinitionImpl extends GamlDefinitionImpl implements BuiltInSkillDefinition
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected SkillFakeDefinitionImpl()
+  protected BuiltInSkillDefinitionImpl()
   {
     super();
   }
@@ -35,7 +35,7 @@ public class SkillFakeDefinitionImpl extends GamlDefinitionImpl implements Skill
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.SKILL_FAKE_DEFINITION;
+    return GamlPackage.Literals.BUILT_IN_SKILL_DEFINITION;
   }
 
-} //SkillFakeDefinitionImpl
+} //BuiltInSkillDefinitionImpl

@@ -3,7 +3,7 @@
  * GamlHyperlinkDetector.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -29,8 +29,8 @@ import org.eclipse.xtext.util.concurrent.CancelableUnitOfWork;
 import com.google.inject.Inject;
 
 import msi.gama.common.util.FileUtils;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import ummisco.gama.ui.commands.FileOpener;
 
@@ -128,8 +128,8 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 		return document.readOnly(resource -> {
 			final EObject resolved = eObjectAtOffsetHelper.resolveElementAt(resource, region.getOffset());
 
-			if (resolved instanceof StringLiteral) {
-				final URI iu1 = getURI((StringLiteral) resolved);
+			if (resolved instanceof StringLiteral sl) {
+				final URI iu1 = getURI(sl);
 				if (iu1 != null) {
 					IRegion hRegion;
 					try {
@@ -143,11 +143,9 @@ public class GamlHyperlinkDetector extends DefaultHyperlinkDetector {
 				}
 			}
 			String importUri = null;
-			if (resolved instanceof Import) {
-				importUri = ((Import) resolved).getImportURI();
-			} else if (resolved instanceof HeadlessExperiment) {
-				importUri = ((HeadlessExperiment) resolved).getImportURI();
-			}
+			if (resolved instanceof Import imp) {
+				importUri = imp.getImportURI();
+			} else if (resolved instanceof StandaloneExperiment se) { importUri = se.getImportURI(); }
 			if (importUri == null) return NO_HYPERLINKS;
 			final URI iu2 = URI.createURI(importUri, false).resolve(resource.getURI());
 			IRegion importUriRegion;

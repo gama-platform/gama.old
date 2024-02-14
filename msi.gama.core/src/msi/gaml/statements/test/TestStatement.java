@@ -3,7 +3,7 @@
  * TestStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -49,7 +49,7 @@ import msi.gaml.types.IType;
 		value = { @facet (
 				name = IKeyword.NAME,
 				type = IType.ID,
-				optional = true,
+				optional = false,
 				doc = @doc ("identifier of the test")) },
 		omissible = IKeyword.NAME)
 @doc (
@@ -123,7 +123,7 @@ public class TestStatement extends AbstractStatementSequence implements WithTest
 	public void setEnclosing(final ISymbol enclosing) {
 		super.setEnclosing(enclosing);
 		setup = (SetUpStatement) ((GamlSpecies) enclosing).getBehaviors().stream()
-				.filter(p -> p instanceof SetUpStatement).findAny().orElse(null);
+				.filter(SetUpStatement.class::isInstance).findAny().orElse(null);
 	}
 
 	@Override

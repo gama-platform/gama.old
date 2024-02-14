@@ -3,7 +3,7 @@
  * FSTUtil.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -181,6 +181,7 @@ public class FSTUtil {
 	 *             the t
 	 * @date 1 nov. 2023
 	 */
+	@SuppressWarnings ("unchecked")
 	public static <T extends Throwable> void rethrow(final Throwable exception) throws T {
 		throw (T) exception;
 	}
@@ -195,7 +196,7 @@ public class FSTUtil {
 	 * @date 1 nov. 2023
 	 */
 	// obsolete
-	public static String getPackage(final Class clazz) {
+	public static String getPackage(final Class<?> clazz) {
 		String s = clazz.getName();
 		int i = s.lastIndexOf('[');
 		if (i >= 0) { s = s.substring(i + 2); }
@@ -215,7 +216,7 @@ public class FSTUtil {
 	 * @return true, if is pack eq
 	 * @date 1 nov. 2023
 	 */
-	public static boolean isPackEq(final Class clazz1, final Class clazz2) {
+	public static boolean isPackEq(final Class<?> clazz1, final Class<?> clazz2) {
 		return getPackage(clazz1).equals(getPackage(clazz2));
 	}
 
@@ -234,8 +235,8 @@ public class FSTUtil {
 	 * @return the method
 	 * @date 1 nov. 2023
 	 */
-	public static Method findPrivateMethod(final Class clazz, final String methName, final Class[] clazzArgs,
-			final Class retClazz) {
+	public static Method findPrivateMethod(final Class<?> clazz, final String methName, final Class[] clazzArgs,
+			final Class<?> retClazz) {
 		try {
 			Method m = clazz.getDeclaredMethod(methName, clazzArgs);
 			int modif = m.getModifiers();
@@ -264,10 +265,10 @@ public class FSTUtil {
 	 * @return the method
 	 * @date 1 nov. 2023
 	 */
-	public static Method findDerivedMethod(final Class clazz, final String metnam, final Class[] argClzz,
-			final Class retClz) {
+	public static Method findDerivedMethod(final Class<?> clazz, final String metnam, final Class[] argClzz,
+			final Class<?> retClz) {
 		Method m = null;
-		Class defCl = clazz;
+		Class<?> defCl = clazz;
 		while (defCl != null) {
 			try {
 				m = defCl.getDeclaredMethod(metnam, argClzz);
@@ -315,8 +316,8 @@ public class FSTUtil {
 	 * @return true, if is primitive array
 	 * @date 1 nov. 2023
 	 */
-	public static boolean isPrimitiveArray(final Class c) {
-		Class componentType = c.getComponentType();
+	public static boolean isPrimitiveArray(final Class<?> c) {
+		Class<?> componentType = c.getComponentType();
 		if (componentType == null) return c.isPrimitive();
 		return isPrimitiveArray(c.getComponentType());
 	}
@@ -448,7 +449,7 @@ public class FSTUtil {
 	 * @return the real enum class
 	 * @date 1 nov. 2023
 	 */
-	public static Class getRealEnumClass(final Class enumClass) {
+	public static Class<?> getRealEnumClass(final Class<?> enumClass) {
 		if (enumClass.isAnonymousClass()) return enumClass.getSuperclass();
 		return enumClass;
 	}

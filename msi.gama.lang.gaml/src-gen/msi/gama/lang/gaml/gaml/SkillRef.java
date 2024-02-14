@@ -27,12 +27,12 @@ public interface SkillRef extends Expression
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Ref</em>' reference.
-   * @see #setRef(SkillFakeDefinition)
+   * @see #setRef(BuiltInSkillDefinition)
    * @see msi.gama.lang.gaml.gaml.GamlPackage#getSkillRef_Ref()
    * @model
    * @generated
    */
-  SkillFakeDefinition getRef();
+  BuiltInSkillDefinition getRef();
 
   /**
    * Sets the value of the '{@link msi.gama.lang.gaml.gaml.SkillRef#getRef <em>Ref</em>}' reference.
@@ -42,6 +42,6 @@ public interface SkillRef extends Expression
    * @see #getRef()
    * @generated
    */
-  void setRef(SkillFakeDefinition value);
+  void setRef(BuiltInSkillDefinition value);
 
 } // SkillRef

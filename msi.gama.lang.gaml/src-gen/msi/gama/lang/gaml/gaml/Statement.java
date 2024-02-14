@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getKey <em>Key</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getFirstFacet <em>First Facet</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getExpr <em>Expr</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getFacets <em>Facets</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getBlock <em>Block</em>}</li>
@@ -50,28 +49,6 @@ public interface Statement extends EObject
    * @generated
    */
   void setKey(String value);
-
-  /**
-   * Returns the value of the '<em><b>First Facet</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>First Facet</em>' attribute.
-   * @see #setFirstFacet(String)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_FirstFacet()
-   * @model
-   * @generated
-   */
-  String getFirstFacet();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getFirstFacet <em>First Facet</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>First Facet</em>' attribute.
-   * @see #getFirstFacet()
-   * @generated
-   */
-  void setFirstFacet(String value);
 
   /**
    * Returns the value of the '<em><b>Expr</b></em>' containment reference.

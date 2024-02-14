@@ -3,7 +3,7 @@
  * GamlEditor.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -573,7 +573,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGa
 
 	@Override
 	protected void installFoldingSupport(final ProjectionViewer projectionViewer) {
-		super.installFoldingSupport(projectionViewer);
+		try {
+			super.installFoldingSupport(projectionViewer);
+		} catch (Exception e) {
+			DEBUG.OUT("Problem in folding support" + e.getLocalizedMessage());
+		}
 		if (!isRangeIndicatorEnabled()) { projectionViewer.doOperation(ProjectionViewer.TOGGLE); }
 	}
 

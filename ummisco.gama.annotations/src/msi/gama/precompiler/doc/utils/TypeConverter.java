@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * TypeConverter.java, in ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * TypeConverter.java, in ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.precompiler.doc.utils;
 
@@ -21,16 +21,16 @@ public class TypeConverter {
 
 	/** The Constant properNameTypeMap. */
 	public static final HashMap<String, String> properNameTypeMap = new HashMap<>();
-	
+
 	/** The special cases proper name type map. */
 	HashMap<String, String> specialCasesProperNameTypeMap;
-	
+
 	/** The proper category name map. */
 	HashMap<String, String> properCategoryNameMap;
-	
+
 	/** The Constant typeStringFromIType. */
 	public static final HashMap<Integer, String> typeStringFromIType = new HashMap<>();
-	
+
 	/** The symbol kind string from I symbol kind. */
 	HashMap<Integer, String> symbolKindStringFromISymbolKind;
 
@@ -48,17 +48,16 @@ public class TypeConverter {
 	/**
 	 * Register type.
 	 *
-	 * @param className the class name
-	 * @param type the type
-	 * @param id the id
+	 * @param className
+	 *            the class name
+	 * @param type
+	 *            the type
+	 * @param id
+	 *            the id
 	 */
 	public static void registerType(final String className, final String type, final Integer id) {
-		if (!properNameTypeMap.containsKey(className)) {
-			properNameTypeMap.put(className, type);
-		}
-		if (!typeStringFromIType.containsKey(id)) {
-			typeStringFromIType.put(id, type);
-		}
+		if (!properNameTypeMap.containsKey(className)) { properNameTypeMap.put(className, type); }
+		if (!typeStringFromIType.containsKey(id)) { typeStringFromIType.put(id, type); }
 	}
 
 	/**
@@ -122,9 +121,9 @@ public class TypeConverter {
 
 		// Colors
 		hm.put("msi.gama.util.GamaColor", "rgb");
-		hm.put("msi.gaml.operators.Colors.GamaPalette","list<rgb>");
-		hm.put("msi.gaml.operators.Colors.GamaGradient","map<rgb,float>");	
-		hm.put("msi.gaml.operators.Colors.GamaScale","map<float,rgb>");
+		hm.put("msi.gaml.operators.Colors.GamaPalette", "list<rgb>");
+		hm.put("msi.gaml.operators.Colors.GamaGradient", "map<rgb,float>");
+		hm.put("msi.gaml.operators.Colors.GamaScale", "map<float,rgb>");
 
 		// List
 		hm.put("msi.gama.util.IList", "list");
@@ -175,8 +174,8 @@ public class TypeConverter {
 
 		// FIPA
 		hm.put("msi.gaml.extensions.fipa.Conversation", "conversation");
-		
-		hm.put("msi.gaml.extensions.fipa.Message", "message");	
+
+		hm.put("msi.gaml.extensions.fipa.Message", "message");
 		hm.put("msi.gama.extensions.messaging.GamaMessage", "message");
 		hm.put("msi.gaml.extensions.fipa.FIPAMessage", "message");
 
@@ -187,14 +186,14 @@ public class TypeConverter {
 		hm.put("msi.gama.util.IContainer.Addressable", "container");
 
 		hm.put("msi.gaml.types.GamaKmlExport", "kml");
-		
+
 		hm.put("msi.gama.kernel.experiment.IParameter", "unknown");
-		
+
 		hm.put("msi.gama.util.matrix.GamaField", "field");
-		hm.put("msi.gama.util.matrix.IField","field");
+		hm.put("msi.gama.util.matrix.IField", "field");
 
 		hm.put("msi.gaml.descriptions.ActionDescription", "action");
-		
+
 		return hm;
 	}
 
@@ -253,9 +252,9 @@ public class TypeConverter {
 		hm.put(99, "message");
 		hm.put(100, "species_types");
 
-		hm.put(-27, "agent");		// a simulation agent
-		hm.put(-29, "agent");		// a host agent
-		hm.put(-199, "agent");		// agent / linked road
+		hm.put(-27, "agent"); // a simulation agent
+		hm.put(-29, "agent"); // a host agent
+		hm.put(-199, "agent"); // agent / linked road
 		hm.put(-200, "a label");
 		hm.put(-201, "an identifier");
 		hm.put(-202, "a datatype identifier");
@@ -315,23 +314,24 @@ public class TypeConverter {
 	/**
 	 * Gets the proper type.
 	 *
-	 * @param rawName the raw name
+	 * @param rawName
+	 *            the raw name
 	 * @return the proper type
 	 */
 	public String getProperType(final String rawName) {
-		if (specialCasesProperNameTypeMap.containsKey(rawName)) { return specialCasesProperNameTypeMap.get(rawName); }
+		if (specialCasesProperNameTypeMap.containsKey(rawName)) return specialCasesProperNameTypeMap.get(rawName);
 
 		// Get only the first <
 		final String[] splitByLeftBracket = rawName.split("<", 2);
 
 		// Stop criteria: no bracket
 		if (splitByLeftBracket.length == 1) {
-			if (properNameTypeMap.containsKey(splitByLeftBracket[0])) {
+			if (properNameTypeMap.containsKey(splitByLeftBracket[0]))
 				return properNameTypeMap.get(splitByLeftBracket[0]);
-			} else {
+			else
 				return splitByLeftBracket[0];
-			}
-		} else if (splitByLeftBracket.length == 2) {
+		}
+		if (splitByLeftBracket.length == 2) {
 			final String leftElement = getProperType(splitByLeftBracket[0]);
 
 			final String lastString = splitByLeftBracket[1];
@@ -339,12 +339,11 @@ public class TypeConverter {
 
 			// Get only the first ","
 			final int comaIndex = findCentralComa(splitByLeftBracket[1]);
-			if (comaIndex > 0) {
+			if (comaIndex > 0)
 				return leftElement + "<" + getProperType(splitByLeftBracket[1].substring(0, comaIndex)) + ","
 						+ getProperType(splitByLeftBracket[1].substring(comaIndex + 1)) + ">";
-			} else {
+			else
 				return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";
-			}
 
 			// String[] splitByComa = splitByLeftBracket[1].split(",",2);
 
@@ -354,16 +353,16 @@ public class TypeConverter {
 			// return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";
 			// }
 			// return leftElement + "<" + getProperType(splitByLeftBracket[1]) + ">";
-		} else {
+		} else
 			throw new IllegalArgumentException("getProperType has a not appropriate input");
-		}
 
 	}
 
 	/**
 	 * Find central coma.
 	 *
-	 * @param s the s
+	 * @param s
+	 *            the s
 	 * @return the int
 	 */
 	public static int findCentralComa(final String s) {
@@ -375,14 +374,11 @@ public class TypeConverter {
 			do {
 				final String sLeft = s.substring(0, foundIndex);
 
-				if (sLeft.lastIndexOf("<") == -1 && sLeft.lastIndexOf(">") == -1) {
-					return foundIndex;
-				} else if (sLeft.lastIndexOf(">") > sLeft.lastIndexOf("<")) { return foundIndex; }
+				if ((sLeft.lastIndexOf("<") == -1 && sLeft.lastIndexOf(">") == -1) || (sLeft.lastIndexOf(">") > sLeft.lastIndexOf("<"))) return foundIndex;
 
 				foundIndex = s.indexOf(",", foundIndex + 1);
 
 			} while (foundIndex >= 0);
-			return -1;
 		}
 		return -1;
 	}
@@ -390,7 +386,8 @@ public class TypeConverter {
 	/**
 	 * Gets the proper operator name.
 	 *
-	 * @param opName the op name
+	 * @param opName
+	 *            the op name
 	 * @return the proper operator name
 	 */
 	public String getProperOperatorName(final String opName) {
@@ -401,35 +398,32 @@ public class TypeConverter {
 	/**
 	 * Gets the proper category.
 	 *
-	 * @param rawName the raw name
+	 * @param rawName
+	 *            the raw name
 	 * @return the proper category
 	 */
 	public String getProperCategory(final String rawName) {
-		if (properCategoryNameMap.containsKey(rawName)) {
-			return properCategoryNameMap.get(rawName);
-		} else {
-			return rawName;
-		}
+		if (properCategoryNameMap.containsKey(rawName)) return properCategoryNameMap.get(rawName);
+		return rawName;
 	}
 
 	/**
 	 * Gets the type string.
 	 *
-	 * @param i the i
+	 * @param i
+	 *            the i
 	 * @return the type string
 	 */
 	public String getTypeString(final Integer i) {
-		if (typeStringFromIType.containsKey(i)) {
-			return typeStringFromIType.get(i);
-		} else {
-			return "" + i;
-		}
+		if (typeStringFromIType.containsKey(i)) return typeStringFromIType.get(i);
+		return "" + i;
 	}
 
 	/**
 	 * Gets the type string.
 	 *
-	 * @param types the types
+	 * @param types
+	 *            the types
 	 * @return the type string
 	 */
 	public String getTypeString(final int[] types) {
@@ -438,27 +432,21 @@ public class TypeConverter {
 		for (int i = 0; i < types.length; i++) {
 			s.append(getTypeString(types[i]));
 
-			if (i != types.length - 1) {
-				s.append(", ");
-			}
+			if (i != types.length - 1) { s.append(", "); }
 		}
-		if (types.length >= 2) {
-			s.append("]");
-		}
+		if (types.length >= 2) { s.append("]"); }
 		return s.toString();
 	}
 
 	/**
 	 * Gets the symbol kind string from I symbol kind.
 	 *
-	 * @param i the i
+	 * @param i
+	 *            the i
 	 * @return the symbol kind string from I symbol kind
 	 */
 	public String getSymbolKindStringFromISymbolKind(final Integer i) {
-		if (symbolKindStringFromISymbolKind.containsKey(i)) {
-			return symbolKindStringFromISymbolKind.get(i);
-		} else {
-			return "" + i;
-		}
+		if (symbolKindStringFromISymbolKind.containsKey(i)) return symbolKindStringFromISymbolKind.get(i);
+		return "" + i;
 	}
 }

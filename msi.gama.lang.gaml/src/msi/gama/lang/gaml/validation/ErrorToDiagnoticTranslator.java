@@ -25,12 +25,13 @@ import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import msi.gama.lang.gaml.gaml.ExperimentFileStructure;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
-import msi.gama.lang.gaml.gaml.Model;
+import msi.gama.lang.gaml.gaml.S_Declaration;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.Statement;
+import msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
@@ -86,8 +87,8 @@ public class ErrorToDiagnoticTranslator {
 			final String s = URI.decode(errorURI.lastSegment());
 			final EObject m = r.getContents().get(0);
 			final EObject eObject = findImportWith(m, s);
-			final EAttribute feature = eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
-					: eObject instanceof HeadlessExperiment ? GamlPackage.Literals.HEADLESS_EXPERIMENT__IMPORT_URI
+			final EAttribute feature = eObject instanceof StandaloneModel ? GamlPackage.Literals.GAML_DEFINITION__NAME
+					: eObject instanceof StandaloneExperiment ? GamlPackage.Literals.STANDALONE_EXPERIMENT__IMPORT_URI
 					: GamlPackage.Literals.IMPORT__IMPORT_URI;
 			return createDiagnostic(CheckMode.NORMAL_ONLY, Diagnostic.ERROR,
 					e.toString() + " (" + ValidationContext.IMPORTED_FROM + " " + s + ")", eObject, feature,
@@ -102,7 +103,7 @@ public class ErrorToDiagnoticTranslator {
 			} else if (s.eIsSet(GamlPackage.Literals.SDEFINITION__TKEY)) {
 				feature = GamlPackage.Literals.SDEFINITION__TKEY;
 			}
-		} else if (object instanceof Model) { feature = GamlPackage.Literals.GAML_DEFINITION__NAME; }
+		} else if (object instanceof StandaloneModel) { feature = GamlPackage.Literals.GAML_DEFINITION__NAME; }
 		if (!Arrays.contains(e.getData(), null)) {
 			final int index = ValidationMessageAcceptor.INSIGNIFICANT_INDEX;
 			return createDiagnostic(mode, toDiagnosticSeverity(e), e.toString(), object, feature, index, e.getCode(),
@@ -183,9 +184,9 @@ public class ErrorToDiagnoticTranslator {
 	 * @return the e object
 	 */
 	private EObject findImportWith(final EObject m, final String s) {
-		if (m instanceof Model) {
-			for (final Import i : ((Model) m).getImports()) { if (i.getImportURI().endsWith(s)) return i; }
-		} else if (m instanceof ExperimentFileStructure) return ((ExperimentFileStructure) m).getExp();
+		if (m instanceof StandaloneModelImpl sm) {
+			for (final Import i : sm.getImports()) { if (i.getImportURI().endsWith(s)) return i; }
+		} else if (m instanceof StandaloneExperiment se) return se;
 		return m;
 	}
 

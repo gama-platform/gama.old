@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * OverlayStatement.java, in msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * OverlayStatement.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
+ * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package msi.gama.outputs.layers;
 
@@ -51,6 +51,7 @@ import msi.gaml.types.IType;
 @inside (
 		symbols = IKeyword.DISPLAY)
 @facets (
+		//omissible = IKeyword.POSITION,
 		value = { @facet (
 				name = IKeyword.ROUNDED,
 				type = IType.BOOL,
@@ -64,8 +65,9 @@ import msi.gaml.types.IType;
 				@facet (
 						name = IKeyword.POSITION,
 						type = IType.POINT,
-						optional = true,
-						doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1 for x and y. The z-ordinate can only be defined between 0 and 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer. In case of negative value OpenGl will position the layer out of the environment.")),
+						optional = false,
+						doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greater than 1 for x and y. "
+								+ "The z-ordinate is not taken into account for overlays. In case of negative values, OpenGl will position the layer out of the environment.")),
 				@facet (
 						name = IKeyword.SIZE,
 						type = IType.POINT,
@@ -110,11 +112,12 @@ import msi.gaml.types.IType;
 // ,omissible = IKeyword.LEFT)
 @doc (
 		value = "`" + IKeyword.OVERLAY
-				+ "` allows the modeler to display a line to the already existing bottom overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined.",
+				+ "` allows the modeler to either (1) add a line to the already existing bottom overlay, where the results of 'left', 'center' and 'right' facets, when they are defined, are displayed with the corresponding color if defined or (2) define a layer which will remain fixed whatever the zoom and translation applied to the display. "
+				+ "The default expression is the position of the top-left corner of the overlay -- if '#bottom' is used, it will automatically target the bottom overlay",
 		usages = { @usage (
 				value = "To display information in the bottom overlay, the syntax is:",
 				examples = { @example (
-						value = "overlay \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
+						value = "overlay #bottom \"Cycle: \" + (cycle) center: \"Duration: \" + total_duration + \"ms\" right: \"Model time: \" + as_date(time,\"\") color: [#yellow, #orange, #yellow];",
 						isExecutable = false) }) },
 		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_LAYER,
 				IKeyword.IMAGE, IKeyword.SPECIES_LAYER })

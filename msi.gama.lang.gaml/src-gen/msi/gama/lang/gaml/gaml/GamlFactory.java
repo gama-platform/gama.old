@@ -42,31 +42,31 @@ public interface GamlFactory extends EFactory
   StandaloneBlock createStandaloneBlock();
 
   /**
-   * Returns a new object of class '<em>String Evaluator</em>'.
+   * Returns a new object of class '<em>Standalone Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>String Evaluator</em>'.
+   * @return a new object of class '<em>Standalone Expression</em>'.
    * @generated
    */
-  StringEvaluator createStringEvaluator();
+  StandaloneExpression createStandaloneExpression();
 
   /**
-   * Returns a new object of class '<em>Model</em>'.
+   * Returns a new object of class '<em>Standalone Experiment</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Model</em>'.
+   * @return a new object of class '<em>Standalone Experiment</em>'.
    * @generated
    */
-  Model createModel();
+  StandaloneExperiment createStandaloneExperiment();
 
   /**
-   * Returns a new object of class '<em>Block</em>'.
+   * Returns a new object of class '<em>Standalone Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Block</em>'.
+   * @return a new object of class '<em>Standalone Model</em>'.
    * @generated
    */
-  Block createBlock();
+  StandaloneModel createStandaloneModel();
 
   /**
    * Returns a new object of class '<em>Import</em>'.
@@ -87,22 +87,13 @@ public interface GamlFactory extends EFactory
   Pragma createPragma();
 
   /**
-   * Returns a new object of class '<em>Experiment File Structure</em>'.
+   * Returns a new object of class '<em>Block</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Experiment File Structure</em>'.
+   * @return a new object of class '<em>Block</em>'.
    * @generated
    */
-  ExperimentFileStructure createExperimentFileStructure();
-
-  /**
-   * Returns a new object of class '<em>Headless Experiment</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Headless Experiment</em>'.
-   * @generated
-   */
-  HeadlessExperiment createHeadlessExperiment();
+  Block createBlock();
 
   /**
    * Returns a new object of class '<em>Statement</em>'.
@@ -177,22 +168,13 @@ public interface GamlFactory extends EFactory
   S_Try createS_Try();
 
   /**
-   * Returns a new object of class '<em>SOther</em>'.
+   * Returns a new object of class '<em>SSwitch</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>SOther</em>'.
+   * @return a new object of class '<em>SSwitch</em>'.
    * @generated
    */
-  S_Other createS_Other();
-
-  /**
-   * Returns a new object of class '<em>SReturn</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>SReturn</em>'.
-   * @generated
-   */
-  S_Return createS_Return();
+  S_Switch createS_Switch();
 
   /**
    * Returns a new object of class '<em>SDeclaration</em>'.
@@ -276,22 +258,22 @@ public interface GamlFactory extends EFactory
   S_Display createS_Display();
 
   /**
-   * Returns a new object of class '<em>species Or Grid Display Statement</em>'.
+   * Returns a new object of class '<em>SSpecies Layer</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>species Or Grid Display Statement</em>'.
+   * @return a new object of class '<em>SSpecies Layer</em>'.
    * @generated
    */
-  speciesOrGridDisplayStatement createspeciesOrGridDisplayStatement();
+  S_SpeciesLayer createS_SpeciesLayer();
 
   /**
-   * Returns a new object of class '<em>image Display Statement</em>'.
+   * Returns a new object of class '<em>SImage Layer</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>image Display Statement</em>'.
+   * @return a new object of class '<em>SImage Layer</em>'.
    * @generated
    */
-  imageDisplayStatement createimageDisplayStatement();
+  S_ImageLayer createS_ImageLayer();
 
   /**
    * Returns a new object of class '<em>Action Arguments</em>'.
@@ -411,58 +393,58 @@ public interface GamlFactory extends EFactory
   ActionDefinition createActionDefinition();
 
   /**
-   * Returns a new object of class '<em>Unit Fake Definition</em>'.
+   * Returns a new object of class '<em>Built In Unit Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Unit Fake Definition</em>'.
+   * @return a new object of class '<em>Built In Unit Definition</em>'.
    * @generated
    */
-  UnitFakeDefinition createUnitFakeDefinition();
+  BuiltInUnitDefinition createBuiltInUnitDefinition();
 
   /**
-   * Returns a new object of class '<em>Type Fake Definition</em>'.
+   * Returns a new object of class '<em>Built In Type Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Type Fake Definition</em>'.
+   * @return a new object of class '<em>Built In Type Definition</em>'.
    * @generated
    */
-  TypeFakeDefinition createTypeFakeDefinition();
+  BuiltInTypeDefinition createBuiltInTypeDefinition();
 
   /**
-   * Returns a new object of class '<em>Action Fake Definition</em>'.
+   * Returns a new object of class '<em>Built In Action Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Action Fake Definition</em>'.
+   * @return a new object of class '<em>Built In Action Definition</em>'.
    * @generated
    */
-  ActionFakeDefinition createActionFakeDefinition();
+  BuiltInActionDefinition createBuiltInActionDefinition();
 
   /**
-   * Returns a new object of class '<em>Skill Fake Definition</em>'.
+   * Returns a new object of class '<em>Built In Skill Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Skill Fake Definition</em>'.
+   * @return a new object of class '<em>Built In Skill Definition</em>'.
    * @generated
    */
-  SkillFakeDefinition createSkillFakeDefinition();
+  BuiltInSkillDefinition createBuiltInSkillDefinition();
 
   /**
-   * Returns a new object of class '<em>Var Fake Definition</em>'.
+   * Returns a new object of class '<em>Built In Var Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Var Fake Definition</em>'.
+   * @return a new object of class '<em>Built In Var Definition</em>'.
    * @generated
    */
-  VarFakeDefinition createVarFakeDefinition();
+  BuiltInVarDefinition createBuiltInVarDefinition();
 
   /**
-   * Returns a new object of class '<em>Equation Fake Definition</em>'.
+   * Returns a new object of class '<em>Built In Equation Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Equation Fake Definition</em>'.
+   * @return a new object of class '<em>Built In Equation Definition</em>'.
    * @generated
    */
-  EquationFakeDefinition createEquationFakeDefinition();
+  BuiltInEquationDefinition createBuiltInEquationDefinition();
 
   /**
    * Returns a new object of class '<em>Terminal Expression</em>'.

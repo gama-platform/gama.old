@@ -77,7 +77,7 @@ import ummisco.gama.dev.utils.DEBUG;
 				@facet (
 						name = IKeyword.GEOMETRY,
 						type = IType.NONE,
-						optional = true,
+						optional = false,
 						doc = @doc ("any type of data (it can be geometry, image, text)")),
 				// AD 18/01/13: geometry is now accepting any type of data
 				@facet (

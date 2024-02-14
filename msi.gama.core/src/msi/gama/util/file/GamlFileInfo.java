@@ -16,7 +16,9 @@ import static org.apache.commons.lang3.StringUtils.splitByWholeSeparatorPreserve
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The Class GamlFileInfo.
@@ -41,6 +43,9 @@ public class GamlFileInfo extends GamaFileMetaData {
 	/** The tags. */
 	private final Collection<String> tags;
 
+	/** The species. */
+	private final Set<String> species;
+
 	/** The invalid. */
 	public final boolean invalid;
 
@@ -59,13 +64,14 @@ public class GamlFileInfo extends GamaFileMetaData {
 	 *            the tags
 	 */
 	public GamlFileInfo(final long stamp, final Collection<String> imports, final Collection<String> uses,
-			final Collection<String> exps, final Collection<String> tags) {
+			final Set<String> species, final Collection<String> exps, final Collection<String> tags) {
 		super(stamp);
 		invalid = stamp == Long.MAX_VALUE;
 		this.imports = imports;
 		this.uses = uses;
 		this.experiments = exps;
 		this.tags = tags;
+		this.species = species;
 	}
 
 	/**
@@ -112,18 +118,17 @@ public class GamlFileInfo extends GamaFileMetaData {
 	public GamlFileInfo(final String propertyString) {
 		super(propertyString);
 		final String[] values = split(propertyString);
-		int size = values.length;
 		final List<String> declaredImports = asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
-		this.imports = declaredImports == null || declaredImports.isEmpty() || declaredImports.contains(null) ? null
-				: declaredImports;
+		this.imports = declaredImports.isEmpty() || declaredImports.contains(null) ? null : declaredImports;
 		final List<String> declaredUses = asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
-		this.uses = declaredUses == null || declaredUses.isEmpty() || declaredUses.contains(null) ? null : declaredUses;
+		this.uses = declaredUses.isEmpty() || declaredUses.contains(null) ? null : declaredUses;
 		final List<String> exps = asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
-		this.experiments = exps == null || exps.isEmpty() || exps.contains(null) ? null : exps;
-		final List<String> declaredTags =
-				size < 5 ? null : asList(splitByWholeSeparatorPreserveAllTokens(values[4], SUB_DELIMITER));
-		this.tags = declaredTags == null || declaredTags.isEmpty() || declaredTags.contains(null) ? null : declaredTags;
-		invalid = size > 5 ? "TRUE".equals(values[5]) : "TRUE".equals(values[4]);
+		this.experiments = exps.isEmpty() || exps.contains(null) ? null : exps;
+		final List<String> declaredTags = asList(splitByWholeSeparatorPreserveAllTokens(values[4], SUB_DELIMITER));
+		this.tags = declaredTags.isEmpty() || declaredTags.contains(null) ? null : declaredTags;
+		final List<String> declaredSpecies = asList(splitByWholeSeparatorPreserveAllTokens(values[5], SUB_DELIMITER));
+		this.species = declaredSpecies.isEmpty() || declaredSpecies.contains(null) ? null : new HashSet<>(declaredTags);
+		invalid = "TRUE".equals(values[6]);
 	}
 
 	/**
@@ -163,6 +168,7 @@ public class GamlFileInfo extends GamaFileMetaData {
 		sb.append(uses == null ? "" : join(SUB_DELIMITER, uses)).append(DELIMITER);
 		sb.append(experiments == null ? "" : join(SUB_DELIMITER, experiments)).append(DELIMITER);
 		sb.append(tags == null ? "" : join(SUB_DELIMITER, tags)).append(DELIMITER);
+		sb.append(species == null ? "" : join(SUB_DELIMITER, species)).append(DELIMITER);
 		sb.append(invalid ? "TRUE" : "FALSE").append(DELIMITER);
 		return sb.toString();
 
@@ -170,5 +176,14 @@ public class GamlFileInfo extends GamaFileMetaData {
 
 	@Override
 	public String getDocumentation() { return "GAML model file with " + getSuffix(); }
+
+	/**
+	 * Gets the species.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the species
+	 * @date 13 févr. 2024
+	 */
+	public Set<String> getSpecies() { return species; }
 
 }

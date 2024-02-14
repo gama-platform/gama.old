@@ -8,7 +8,7 @@ import java.util.Collection;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -19,30 +19,28 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Headless Experiment</b></em>'.
+ * An implementation of the model object '<em><b>Standalone Experiment</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl#getKey <em>Key</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl#getFirstFacet <em>First Facet</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl#getName <em>Name</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl#getImportURI <em>Import URI</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl#getFacets <em>Facets</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.HeadlessExperimentImpl#getBlock <em>Block</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneExperimentImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneExperimentImpl#getName <em>Name</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneExperimentImpl#getImportURI <em>Import URI</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneExperimentImpl#getFacets <em>Facets</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneExperimentImpl#getBlock <em>Block</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container implements HeadlessExperiment
+public class StandaloneExperimentImpl extends EntryImpl implements StandaloneExperiment
 {
   /**
    * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
@@ -63,26 +61,6 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected String key = KEY_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getFirstFacet() <em>First Facet</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFirstFacet()
-   * @generated
-   * @ordered
-   */
-  protected static final String FIRST_FACET_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getFirstFacet() <em>First Facet</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFirstFacet()
-   * @generated
-   * @ordered
-   */
-  protected String firstFacet = FIRST_FACET_EDEFAULT;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -149,7 +127,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  protected HeadlessExperimentImpl()
+  protected StandaloneExperimentImpl()
   {
     super();
   }
@@ -162,7 +140,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.HEADLESS_EXPERIMENT;
+    return GamlPackage.Literals.STANDALONE_EXPERIMENT;
   }
 
   /**
@@ -187,32 +165,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
     String oldKey = key;
     key = newKey;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.HEADLESS_EXPERIMENT__KEY, oldKey, key));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getFirstFacet()
-  {
-    return firstFacet;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setFirstFacet(String newFirstFacet)
-  {
-    String oldFirstFacet = firstFacet;
-    firstFacet = newFirstFacet;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.HEADLESS_EXPERIMENT__FIRST_FACET, oldFirstFacet, firstFacet));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_EXPERIMENT__KEY, oldKey, key));
   }
 
   /**
@@ -237,7 +190,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.HEADLESS_EXPERIMENT__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_EXPERIMENT__NAME, oldName, name));
   }
 
   /**
@@ -262,7 +215,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
     String oldImportURI = importURI;
     importURI = newImportURI;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.HEADLESS_EXPERIMENT__IMPORT_URI, oldImportURI, importURI));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_EXPERIMENT__IMPORT_URI, oldImportURI, importURI));
   }
 
   /**
@@ -275,7 +228,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   {
     if (facets == null)
     {
-      facets = new EObjectContainmentEList<Facet>(Facet.class, this, GamlPackage.HEADLESS_EXPERIMENT__FACETS);
+      facets = new EObjectContainmentEList<Facet>(Facet.class, this, GamlPackage.STANDALONE_EXPERIMENT__FACETS);
     }
     return facets;
   }
@@ -302,7 +255,7 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
     block = newBlock;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.HEADLESS_EXPERIMENT__BLOCK, oldBlock, newBlock);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_EXPERIMENT__BLOCK, oldBlock, newBlock);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -320,14 +273,14 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
     {
       NotificationChain msgs = null;
       if (block != null)
-        msgs = ((InternalEObject)block).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.HEADLESS_EXPERIMENT__BLOCK, null, msgs);
+        msgs = ((InternalEObject)block).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STANDALONE_EXPERIMENT__BLOCK, null, msgs);
       if (newBlock != null)
-        msgs = ((InternalEObject)newBlock).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.HEADLESS_EXPERIMENT__BLOCK, null, msgs);
+        msgs = ((InternalEObject)newBlock).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STANDALONE_EXPERIMENT__BLOCK, null, msgs);
       msgs = basicSetBlock(newBlock, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.HEADLESS_EXPERIMENT__BLOCK, newBlock, newBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_EXPERIMENT__BLOCK, newBlock, newBlock));
   }
 
   /**
@@ -340,9 +293,9 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case GamlPackage.HEADLESS_EXPERIMENT__FACETS:
+      case GamlPackage.STANDALONE_EXPERIMENT__FACETS:
         return ((InternalEList<?>)getFacets()).basicRemove(otherEnd, msgs);
-      case GamlPackage.HEADLESS_EXPERIMENT__BLOCK:
+      case GamlPackage.STANDALONE_EXPERIMENT__BLOCK:
         return basicSetBlock(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -358,17 +311,15 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case GamlPackage.HEADLESS_EXPERIMENT__KEY:
+      case GamlPackage.STANDALONE_EXPERIMENT__KEY:
         return getKey();
-      case GamlPackage.HEADLESS_EXPERIMENT__FIRST_FACET:
-        return getFirstFacet();
-      case GamlPackage.HEADLESS_EXPERIMENT__NAME:
+      case GamlPackage.STANDALONE_EXPERIMENT__NAME:
         return getName();
-      case GamlPackage.HEADLESS_EXPERIMENT__IMPORT_URI:
+      case GamlPackage.STANDALONE_EXPERIMENT__IMPORT_URI:
         return getImportURI();
-      case GamlPackage.HEADLESS_EXPERIMENT__FACETS:
+      case GamlPackage.STANDALONE_EXPERIMENT__FACETS:
         return getFacets();
-      case GamlPackage.HEADLESS_EXPERIMENT__BLOCK:
+      case GamlPackage.STANDALONE_EXPERIMENT__BLOCK:
         return getBlock();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -385,23 +336,20 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case GamlPackage.HEADLESS_EXPERIMENT__KEY:
+      case GamlPackage.STANDALONE_EXPERIMENT__KEY:
         setKey((String)newValue);
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__FIRST_FACET:
-        setFirstFacet((String)newValue);
-        return;
-      case GamlPackage.HEADLESS_EXPERIMENT__NAME:
+      case GamlPackage.STANDALONE_EXPERIMENT__NAME:
         setName((String)newValue);
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__IMPORT_URI:
+      case GamlPackage.STANDALONE_EXPERIMENT__IMPORT_URI:
         setImportURI((String)newValue);
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__FACETS:
+      case GamlPackage.STANDALONE_EXPERIMENT__FACETS:
         getFacets().clear();
         getFacets().addAll((Collection<? extends Facet>)newValue);
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__BLOCK:
+      case GamlPackage.STANDALONE_EXPERIMENT__BLOCK:
         setBlock((Block)newValue);
         return;
     }
@@ -418,22 +366,19 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case GamlPackage.HEADLESS_EXPERIMENT__KEY:
+      case GamlPackage.STANDALONE_EXPERIMENT__KEY:
         setKey(KEY_EDEFAULT);
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__FIRST_FACET:
-        setFirstFacet(FIRST_FACET_EDEFAULT);
-        return;
-      case GamlPackage.HEADLESS_EXPERIMENT__NAME:
+      case GamlPackage.STANDALONE_EXPERIMENT__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__IMPORT_URI:
+      case GamlPackage.STANDALONE_EXPERIMENT__IMPORT_URI:
         setImportURI(IMPORT_URI_EDEFAULT);
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__FACETS:
+      case GamlPackage.STANDALONE_EXPERIMENT__FACETS:
         getFacets().clear();
         return;
-      case GamlPackage.HEADLESS_EXPERIMENT__BLOCK:
+      case GamlPackage.STANDALONE_EXPERIMENT__BLOCK:
         setBlock((Block)null);
         return;
     }
@@ -450,17 +395,15 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case GamlPackage.HEADLESS_EXPERIMENT__KEY:
+      case GamlPackage.STANDALONE_EXPERIMENT__KEY:
         return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-      case GamlPackage.HEADLESS_EXPERIMENT__FIRST_FACET:
-        return FIRST_FACET_EDEFAULT == null ? firstFacet != null : !FIRST_FACET_EDEFAULT.equals(firstFacet);
-      case GamlPackage.HEADLESS_EXPERIMENT__NAME:
+      case GamlPackage.STANDALONE_EXPERIMENT__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case GamlPackage.HEADLESS_EXPERIMENT__IMPORT_URI:
+      case GamlPackage.STANDALONE_EXPERIMENT__IMPORT_URI:
         return IMPORT_URI_EDEFAULT == null ? importURI != null : !IMPORT_URI_EDEFAULT.equals(importURI);
-      case GamlPackage.HEADLESS_EXPERIMENT__FACETS:
+      case GamlPackage.STANDALONE_EXPERIMENT__FACETS:
         return facets != null && !facets.isEmpty();
-      case GamlPackage.HEADLESS_EXPERIMENT__BLOCK:
+      case GamlPackage.STANDALONE_EXPERIMENT__BLOCK:
         return block != null;
     }
     return super.eIsSet(featureID);
@@ -479,8 +422,6 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (key: ");
     result.append(key);
-    result.append(", firstFacet: ");
-    result.append(firstFacet);
     result.append(", name: ");
     result.append(name);
     result.append(", importURI: ");
@@ -489,4 +430,4 @@ public class HeadlessExperimentImpl extends MinimalEObjectImpl.Container impleme
     return result.toString();
   }
 
-} //HeadlessExperimentImpl
+} //StandaloneExperimentImpl

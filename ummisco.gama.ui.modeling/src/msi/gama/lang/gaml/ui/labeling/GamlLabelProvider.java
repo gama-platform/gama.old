@@ -3,7 +3,7 @@
  * GamlLabelProvider.java, in ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -29,12 +29,12 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.Facet;
-import msi.gama.lang.gaml.gaml.HeadlessExperiment;
 import msi.gama.lang.gaml.gaml.Import;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.S_Declaration;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Experiment;
+import msi.gama.lang.gaml.gaml.StandaloneExperiment;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.VarDefinition;
@@ -74,7 +74,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 *            the ele
 	 * @return the string
 	 */
-	String image(final Model ele) {
+	String image(final StandaloneModel ele) {
 		return "_model.png";
 	}
 
@@ -100,7 +100,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 *            the e
 	 * @return the string
 	 */
-	String text(final HeadlessExperiment e) {
+	String text(final StandaloneExperiment e) {
 		return "Experiment " + e.getName();
 	}
 
@@ -123,7 +123,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 			if (GamlOutlineTreeProvider.isAction((Statement) ele)) return actionText((Statement) ele);
 			String name = EGaml.getInstance().getNameOf(ele);
 			if (name == null) {
-				final Expression expr = ((Statement) ele).getExpr();
+				final Expression expr = EGaml.getInstance().getExprOf(ele);
 				if (expr != null) { name = EGaml.getInstance().getKeyOf(expr); }
 			}
 			if (name == null) {
@@ -161,7 +161,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		}
 		String name = EGaml.getInstance().getNameOf(ele);
 		if (name == null) {
-			final Expression expr = ((Statement) ele).getExpr();
+			final Expression expr = EGaml.getInstance().getExprOf(ele);
 			if (expr != null) { name = EGaml.getInstance().getKeyOf(expr); }
 		}
 		if (name == null) {
@@ -199,7 +199,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 *            the obj
 	 * @return the string
 	 */
-	String text(final Model obj) {
+	String text(final StandaloneModel obj) {
 		return "Model " + obj.getName();
 	}
 
@@ -228,7 +228,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 		String name = null;
 		f = map.get(IKeyword.NAME);
 		if (f == null) {
-			final Expression e = p.getExpr();
+			final Expression e = EGaml.getInstance().getExprOf(p);
 			if (e instanceof StringLiteral) { name = ((StringLiteral) e).getOp(); }
 		} else {
 			final Expression e = f.getExpr();
@@ -276,7 +276,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IG
 	 *            the ele
 	 * @return the string
 	 */
-	String image(final HeadlessExperiment ele) {
+	String image(final StandaloneExperiment ele) {
 		final List<Facet> facets = EGaml.getInstance().getFacetsOf(ele);
 		Facet type = null;
 		for (final Facet f : facets) {

@@ -9,8 +9,8 @@ import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
-import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Pragma;
+import msi.gama.lang.gaml.gaml.StandaloneModel;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -28,21 +28,21 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Model</b></em>'.
+ * An implementation of the model object '<em><b>Standalone Model</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getName <em>Name</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getPragmas <em>Pragmas</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getImports <em>Imports</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ModelImpl#getBlock <em>Block</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl#getName <em>Name</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl#getPragmas <em>Pragmas</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl#getImports <em>Imports</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StandaloneModelImpl#getBlock <em>Block</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ModelImpl extends EntryImpl implements Model
+public class StandaloneModelImpl extends EntryImpl implements StandaloneModel
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -99,7 +99,7 @@ public class ModelImpl extends EntryImpl implements Model
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ModelImpl()
+  protected StandaloneModelImpl()
   {
     super();
   }
@@ -112,7 +112,7 @@ public class ModelImpl extends EntryImpl implements Model
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.MODEL;
+    return GamlPackage.Literals.STANDALONE_MODEL;
   }
 
   /**
@@ -137,7 +137,7 @@ public class ModelImpl extends EntryImpl implements Model
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_MODEL__NAME, oldName, name));
   }
 
   /**
@@ -150,7 +150,7 @@ public class ModelImpl extends EntryImpl implements Model
   {
     if (pragmas == null)
     {
-      pragmas = new EObjectContainmentEList<Pragma>(Pragma.class, this, GamlPackage.MODEL__PRAGMAS);
+      pragmas = new EObjectContainmentEList<Pragma>(Pragma.class, this, GamlPackage.STANDALONE_MODEL__PRAGMAS);
     }
     return pragmas;
   }
@@ -165,7 +165,7 @@ public class ModelImpl extends EntryImpl implements Model
   {
     if (imports == null)
     {
-      imports = new EObjectContainmentEList<Import>(Import.class, this, GamlPackage.MODEL__IMPORTS);
+      imports = new EObjectContainmentEList<Import>(Import.class, this, GamlPackage.STANDALONE_MODEL__IMPORTS);
     }
     return imports;
   }
@@ -192,7 +192,7 @@ public class ModelImpl extends EntryImpl implements Model
     block = newBlock;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__BLOCK, oldBlock, newBlock);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_MODEL__BLOCK, oldBlock, newBlock);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -210,14 +210,14 @@ public class ModelImpl extends EntryImpl implements Model
     {
       NotificationChain msgs = null;
       if (block != null)
-        msgs = ((InternalEObject)block).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.MODEL__BLOCK, null, msgs);
+        msgs = ((InternalEObject)block).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STANDALONE_MODEL__BLOCK, null, msgs);
       if (newBlock != null)
-        msgs = ((InternalEObject)newBlock).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.MODEL__BLOCK, null, msgs);
+        msgs = ((InternalEObject)newBlock).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STANDALONE_MODEL__BLOCK, null, msgs);
       msgs = basicSetBlock(newBlock, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.MODEL__BLOCK, newBlock, newBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STANDALONE_MODEL__BLOCK, newBlock, newBlock));
   }
 
   /**
@@ -230,11 +230,11 @@ public class ModelImpl extends EntryImpl implements Model
   {
     switch (featureID)
     {
-      case GamlPackage.MODEL__PRAGMAS:
+      case GamlPackage.STANDALONE_MODEL__PRAGMAS:
         return ((InternalEList<?>)getPragmas()).basicRemove(otherEnd, msgs);
-      case GamlPackage.MODEL__IMPORTS:
+      case GamlPackage.STANDALONE_MODEL__IMPORTS:
         return ((InternalEList<?>)getImports()).basicRemove(otherEnd, msgs);
-      case GamlPackage.MODEL__BLOCK:
+      case GamlPackage.STANDALONE_MODEL__BLOCK:
         return basicSetBlock(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -250,13 +250,13 @@ public class ModelImpl extends EntryImpl implements Model
   {
     switch (featureID)
     {
-      case GamlPackage.MODEL__NAME:
+      case GamlPackage.STANDALONE_MODEL__NAME:
         return getName();
-      case GamlPackage.MODEL__PRAGMAS:
+      case GamlPackage.STANDALONE_MODEL__PRAGMAS:
         return getPragmas();
-      case GamlPackage.MODEL__IMPORTS:
+      case GamlPackage.STANDALONE_MODEL__IMPORTS:
         return getImports();
-      case GamlPackage.MODEL__BLOCK:
+      case GamlPackage.STANDALONE_MODEL__BLOCK:
         return getBlock();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -273,18 +273,18 @@ public class ModelImpl extends EntryImpl implements Model
   {
     switch (featureID)
     {
-      case GamlPackage.MODEL__NAME:
+      case GamlPackage.STANDALONE_MODEL__NAME:
         setName((String)newValue);
         return;
-      case GamlPackage.MODEL__PRAGMAS:
+      case GamlPackage.STANDALONE_MODEL__PRAGMAS:
         getPragmas().clear();
         getPragmas().addAll((Collection<? extends Pragma>)newValue);
         return;
-      case GamlPackage.MODEL__IMPORTS:
+      case GamlPackage.STANDALONE_MODEL__IMPORTS:
         getImports().clear();
         getImports().addAll((Collection<? extends Import>)newValue);
         return;
-      case GamlPackage.MODEL__BLOCK:
+      case GamlPackage.STANDALONE_MODEL__BLOCK:
         setBlock((Block)newValue);
         return;
     }
@@ -301,16 +301,16 @@ public class ModelImpl extends EntryImpl implements Model
   {
     switch (featureID)
     {
-      case GamlPackage.MODEL__NAME:
+      case GamlPackage.STANDALONE_MODEL__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case GamlPackage.MODEL__PRAGMAS:
+      case GamlPackage.STANDALONE_MODEL__PRAGMAS:
         getPragmas().clear();
         return;
-      case GamlPackage.MODEL__IMPORTS:
+      case GamlPackage.STANDALONE_MODEL__IMPORTS:
         getImports().clear();
         return;
-      case GamlPackage.MODEL__BLOCK:
+      case GamlPackage.STANDALONE_MODEL__BLOCK:
         setBlock((Block)null);
         return;
     }
@@ -327,13 +327,13 @@ public class ModelImpl extends EntryImpl implements Model
   {
     switch (featureID)
     {
-      case GamlPackage.MODEL__NAME:
+      case GamlPackage.STANDALONE_MODEL__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case GamlPackage.MODEL__PRAGMAS:
+      case GamlPackage.STANDALONE_MODEL__PRAGMAS:
         return pragmas != null && !pragmas.isEmpty();
-      case GamlPackage.MODEL__IMPORTS:
+      case GamlPackage.STANDALONE_MODEL__IMPORTS:
         return imports != null && !imports.isEmpty();
-      case GamlPackage.MODEL__BLOCK:
+      case GamlPackage.STANDALONE_MODEL__BLOCK:
         return block != null;
     }
     return super.eIsSet(featureID);
@@ -351,7 +351,7 @@ public class ModelImpl extends EntryImpl implements Model
     {
       switch (derivedFeatureID)
       {
-        case GamlPackage.MODEL__NAME: return GamlPackage.GAML_DEFINITION__NAME;
+        case GamlPackage.STANDALONE_MODEL__NAME: return GamlPackage.GAML_DEFINITION__NAME;
         default: return -1;
       }
     }
@@ -377,7 +377,7 @@ public class ModelImpl extends EntryImpl implements Model
     {
       switch (baseFeatureID)
       {
-        case GamlPackage.GAML_DEFINITION__NAME: return GamlPackage.MODEL__NAME;
+        case GamlPackage.GAML_DEFINITION__NAME: return GamlPackage.STANDALONE_MODEL__NAME;
         default: return -1;
       }
     }
@@ -408,4 +408,4 @@ public class ModelImpl extends EntryImpl implements Model
     return result.toString();
   }
 
-} //ModelImpl
+} //StandaloneModelImpl

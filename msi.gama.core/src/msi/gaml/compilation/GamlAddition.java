@@ -74,9 +74,10 @@ public abstract class GamlAddition implements IGamlDescription {
 			} else {
 				documentation = new RegularDoc(new StringBuilder(200));
 				String s = d.value();
-				if (s != null && !s.isEmpty()) { documentation.append(s).append("<br/>"); }
+				if (s != null && !s.isEmpty()) { documentation.append(s.replace("\n", "<br/>")).append("<br/>"); }
 				usage[] usages = d.usages();
-				for (usage u : usages) { documentation.append(u.value()).append("<br/>"); }
+				int i = 0;
+				for (usage u : usages) { documentation.set("Usages", String.valueOf(++i), new ConstantDoc(u.value())); }
 				s = d.deprecated();
 				if (s != null && !s.isEmpty()) {
 					documentation.append("<b>Deprecated</b>: ").append("<i>").append(s).append("</i><br/>");

@@ -3,26 +3,26 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.BuiltInUnitDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Unit Fake Definition</b></em>'.
+ * An implementation of the model object '<em><b>Built In Unit Definition</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class UnitFakeDefinitionImpl extends GamlDefinitionImpl implements UnitFakeDefinition
+public class BuiltInUnitDefinitionImpl extends GamlDefinitionImpl implements BuiltInUnitDefinition
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected UnitFakeDefinitionImpl()
+  protected BuiltInUnitDefinitionImpl()
   {
     super();
   }
@@ -35,7 +35,7 @@ public class UnitFakeDefinitionImpl extends GamlDefinitionImpl implements UnitFa
   @Override
   protected EClass eStaticClass()
   {
-    return GamlPackage.Literals.UNIT_FAKE_DEFINITION;
+    return GamlPackage.Literals.BUILT_IN_UNIT_DEFINITION;
   }
 
-} //UnitFakeDefinitionImpl
+} //BuiltInUnitDefinitionImpl
