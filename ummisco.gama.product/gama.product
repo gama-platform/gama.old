@@ -84,9 +84,9 @@
 
    <splash
       location="msi.gama.application"
-      startupProgressRect="25,500,500,12"
-      startupMessageRect="25,450,445,20"
-      startupForegroundColor="000000" />
+      startupProgressRect="12,466,80,12"
+      startupMessageRect="12,450,445,16"
+      startupForegroundColor="B98080" />
    <launcher name="Gama">
       <linux icon="extraresources/launcher/icon.xpm"/>
       <macosx icon="extraresources/launcher/icon.icns"/>
@@ -131,10 +131,10 @@
    </configurations>
 
    <repositories>
-      <repository location="https://updates.gama-platform.org/1.9.3" enabled="true" />
-      <repository location="https://updates.gama-platform.org/experimental/1.9.3" enabled="true" />
-      <repository location="https://anb0s.github.io/EasyShell/release/" enabled="true" />
-      <repository location="https://download.eclipse.org/egit/updates/" enabled="true" />
+      <repository location="https://updates.gama-platform.org/1.9.3" name="" enabled="true" />
+      <repository location="https://updates.gama-platform.org/experimental/1.9.3" name="" enabled="true" />
+      <repository location="https://anb0s.github.io/EasyShell/release/" name="" enabled="true" />
+      <repository location="https://download.eclipse.org/egit/updates/" name="" enabled="true" />
    </repositories>
 
    <preferencesInfo>
