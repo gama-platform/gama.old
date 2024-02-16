@@ -584,7 +584,7 @@ jobs:
 
       - name: Publish alpha to Github
         uses: svenstaro/upload-release-action@2.7.0
-        if: "${{ github.event.inputs.is_release == 'false' }}
+        if: "${{ github.event.inputs.is_release == 'false' }}"
         with:
           body: |
             Alpha release for GAMA 1.9.3, which adds compatibility with JDK 17. Please test and report issues
@@ -600,7 +600,7 @@ jobs:
 
       - name: Publish stable to Github
         uses: svenstaro/upload-release-action@2.7.0
-        if: "${{ github.event.inputs.is_release == 'true' }}
+        if: "${{ github.event.inputs.is_release == 'true' }}"
         with:
           body: |
             Release for GAMA 1.9.3.
