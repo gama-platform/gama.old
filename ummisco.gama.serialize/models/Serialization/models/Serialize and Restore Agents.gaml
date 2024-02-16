@@ -31,13 +31,14 @@ global {
 	}
 	
 	/**
-	 * This action saves all the people in memory, each in its own string, using the uncompressed json format
+	 * This action saves all the people in memory, each in its own string, using the binary format
 	 */
 	action save_people_in_memory {
 		serialized_people <- [];
 		ask people {
-			serialized_people << serialize(self,'json');
+			serialized_people << serialize(self);
 		}
+		write serialized_people;
 	}
 	
 	/**
