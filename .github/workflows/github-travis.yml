@@ -536,18 +536,24 @@ jobs:
           mv *.zip *.deb *.dmg *.exe ${{ runner.temp }}/files
           cd ${{ runner.temp }}/files
 
+          # Add naming file depending on if current file is pre-release or not
+          fileNameExtension=${timestamp}_${commit}
+          if [[ "${{ inputs.is_release }}" == "true" ]]; then
+            fileNameExtension=""
+          fi
+
           # Windows
           for file in *.exe *win32*.zip; do
             if [[ "$(echo $file | awk -F'_' '{print $NF}')" == *"withJDK"* ]]; then
-              mv -v "$file" "GAMA_1.9.3_Windows_with_JDK_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+              mv -v "$file" "GAMA_1.9.3_Windows_with_JDK_${fileNameExtension}.$(echo $file | awk -F'.' '{print $NF}')"
             else
-              mv -v "$file" "GAMA_1.9.3_Windows_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+              mv -v "$file" "GAMA_1.9.3_Windows_${fileNameExtension}.$(echo $file | awk -F'.' '{print $NF}')"
             fi
           done
 
           # Mac
           for file in *.dmg; do
-            prefix="${timestamp}_${commit}.dmg"
+            prefix="${fileNameExtension}.dmg"
             if [[ "$(echo $file | awk -F'_' '{print $NF}')" == *"withJDK"* ]]; then
               prefix="with_JDK_${prefix}"
             fi
@@ -564,9 +570,9 @@ jobs:
           # Linux
           for file in *.deb gama-platform*.zip; do
             if [[ "$(echo $file | awk -F'_' '{print $1}')" == *"jdk"* ]]; then
-              mv -v "$file" "GAMA_1.9.3_Linux_with_JDK_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+              mv -v "$file" "GAMA_1.9.3_Linux_with_JDK_${fileNameExtension}.$(echo $file | awk -F'.' '{print $NF}')"
             else
-              mv -v "$file" "GAMA_1.9.3_Linux_${timestamp}_${commit}.$(echo $file | awk -F'.' '{print $NF}')"
+              mv -v "$file" "GAMA_1.9.3_Linux_${fileNameExtension}.$(echo $file | awk -F'.' '{print $NF}')"
             fi
           done
 
