@@ -9,7 +9,14 @@ on:
     branches: [ GAMA_1.9.3 ]
   schedule:
     - cron: "0 0 * * *"
-  workflow_dispatch:  # For manual trigger
+  workflow_dispatch: # For manual trigger
+    inputs:
+      is_release: 
+        description: 'Is this a stable release ?'
+        required: true
+        default: false 
+        type: boolean
+
 
 jobs:
   # 
@@ -569,8 +576,9 @@ jobs:
           tag: 1.9.3
           token: ${{ secrets.BOT_TOKEN }}
 
-      - name: Publish to Github
+      - name: Publish alpha to Github
         uses: svenstaro/upload-release-action@2.7.0
+        if: inputs.is_release == 'false'
         with:
           body: |
             Alpha release for GAMA 1.9.3, which adds compatibility with JDK 17. Please test and report issues
@@ -581,6 +589,22 @@ jobs:
           promote: false
           prerelease: true
           release_name: Alpha Version 1.9.3 (${{ steps.setup_new_release_data.outputs.commit }})
+          tag: 1.9.3
+          repo_token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Publish stable to Github
+        uses: svenstaro/upload-release-action@2.7.0
+        if: inputs.is_release == 'true'
+        with:
+          body: |
+            Release for GAMA 1.9.3.
+            Published on ${{ steps.setup_new_release_data.outputs.date }}.
+          file: ${{ runner.temp }}/files/*
+          file_glob: true
+          make_latest: true
+          promote: true
+          prerelease: false
+          release_name: Version 1.9.3
           tag: 1.9.3
           repo_token: ${{ secrets.BOT_TOKEN }}
 
