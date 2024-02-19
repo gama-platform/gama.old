@@ -3,7 +3,7 @@
  * EditorFactory.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -240,8 +240,8 @@ public class EditorFactory {
 	 * @return the abstract editor
 	 */
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final IParameter var,
-			final boolean isSubParameter, final boolean dontUseScope) {
-		return create(scope, parent, var, null, isSubParameter, dontUseScope);
+			final boolean isSubParameter) {
+		return create(scope, parent, var, null, isSubParameter);
 	}
 
 	/**
@@ -262,10 +262,9 @@ public class EditorFactory {
 	 * @return the abstract editor
 	 */
 	public static AbstractEditor create(final IScope scope, final EditorsGroup parent, final IParameter var,
-			final EditorListener l, final boolean isSubParameter, final boolean dontUseScope) {
+			final EditorListener l, final boolean isSubParameter) {
 		final AbstractEditor ed = instance.create(scope.getAgent(), var, l);
 		ed.isSubParameter(isSubParameter);
-		ed.dontUseScope(dontUseScope);
 		ed.createControls(parent);
 		return ed;
 	}

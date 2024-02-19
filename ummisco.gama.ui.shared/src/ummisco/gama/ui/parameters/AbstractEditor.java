@@ -3,7 +3,7 @@
  * AbstractEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -65,10 +65,10 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	@Nullable private final EditorListener<T> listener;
 
 	/** The agent. */
-	private IAgent agent;
+	private final IAgent agent;
 
 	/** The scope. */
-	// private final IScope scope;
+	private final IScope scope;
 
 	/** The name. */
 	protected String name;
@@ -127,10 +127,10 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	@SuppressWarnings ("unchecked")
 	public AbstractEditor(@Nonnull final IAgent a, @Nonnull final IParameter parameter,
 			@Nullable final EditorListener<T> l) {
-		// this.scope = scope;
 		param = parameter;
 		agent = a;
 		if (agent == null) throw GamaRuntimeException.error("The parameters view cannot be opened.", a.getScope());
+		scope = agent.getScope().copy("in editor");
 		name = param.getTitle();
 		expectedType = param.getType();
 		computeMaxMinAndStepValues();
@@ -194,7 +194,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 	@Override
 	public IScope getScope() {
-		return agent.getScope();
+		return scope;
 
 		//
 		// if (noScope) return null;
@@ -569,14 +569,6 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		// return scope.getSimulation();
 	}
 
-	/**
-	 * Sets the agent.
-	 *
-	 * @param agent
-	 *            the new agent
-	 */
-	public void setAgent(final IAgent agent) { this.agent = agent; }
-
 	@Override
 	public void modifyText(final ModifyEvent e) {}
 
@@ -657,16 +649,6 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	protected void applyDefine() {}
 
 	/**
-	 * Dont use scope.
-	 *
-	 * @param dont
-	 *            the dont
-	 */
-	public void dontUseScope(final boolean dont) {
-		this.noScope = dont;
-	}
-
-	/**
 	 * Apply save.
 	 */
 	protected void applySave() {}
@@ -687,6 +669,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			composite.dispose();
 			composite = null;
 		}
+		GAMA.releaseScope(scope);
 	}
 
 }

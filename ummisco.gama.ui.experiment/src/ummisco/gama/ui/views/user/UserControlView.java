@@ -3,7 +3,7 @@
  * UserControlView.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -126,9 +126,9 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 				final int nbCol = inputs.size() > 0 ? 1 : 3;
 				GamaUIColor color = GamaColors.get(c.getColor(scope));
 				if (color == null) { color = IGamaColors.BLUE; }
-				final Image image = GamaIcon
-						.named(c.isContinue(scope) ? "overlays/small.continue" : "overlays/small.exp.run.white")
-						.image();
+				final Image image =
+						GamaIcon.named(c.isContinue(scope) ? "overlays/small.continue" : "overlays/small.exp.run.white")
+								.image();
 				final FlatButton b = FlatButton.button(commandComposite, color, c.getName(), image);
 				b.setEnabled(c.isEnabled(scope));
 				final GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, true, nbCol, nbLines);
@@ -148,7 +148,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 					EditorFactory.create(scope, commandComposite, i, newValue -> {
 						i.setValue(scope, newValue);
 						scope.execute(i);
-					}, false, false);
+					}, false);
 				}
 
 			}

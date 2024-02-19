@@ -1,12 +1,12 @@
 /*******************************************************************************************************
  *
- * GamaWizardPage.java, in ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform (v.1.9.3).
+ * GamaWizardPage.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
- * 
+ *
  ********************************************************************************************************/
 package ummisco.gama.ui.parameters;
 
@@ -30,24 +30,29 @@ public class GamaWizardPage extends WizardPage {
 
 	/** The values. */
 	private final IMap<String, Object> values = GamaMapFactory.createUnordered();
-	
+
 	/** The parameters. */
 	private final List<IParameter> parameters;
-	
+
 	/** The font. */
 	private final GamaFont font;
-	
+
 	/** The scope. */
 	private final IScope scope;
 
 	/**
 	 * Instantiates a new gama wizard page.
 	 *
-	 * @param scope the scope
-	 * @param parameters the parameters
-	 * @param title the title
-	 * @param description the description
-	 * @param font the font
+	 * @param scope
+	 *            the scope
+	 * @param parameters
+	 *            the parameters
+	 * @param title
+	 *            the title
+	 * @param description
+	 *            the description
+	 * @param font
+	 *            the font
 	 */
 	public GamaWizardPage(final IScope scope, final List<IParameter> parameters, final String title,
 			final String description, final GamaFont font) {
@@ -73,7 +78,7 @@ public class GamaWizardPage extends WizardPage {
 				param.setValue(scope, newValue);
 				values.put(param.getName(), newValue);
 			};
-			EditorFactory.create(scope, composite, param, listener, false, false);
+			EditorFactory.create(scope, composite, param, listener, false);
 		});
 		composite.layout();
 		setControl(composite);

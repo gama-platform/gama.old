@@ -3,7 +3,7 @@
  * GamaPreferencesView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -272,9 +272,9 @@ public class GamaPreferencesView {
 				}
 
 			});
-			final var isSubParameter = activations.containsKey(e.getKey());
-			final var ed = EditorFactory.create(GAMA.getPlatformAgent().getScope(),
-					comps[(int) (i * ((double) NB_DIVISIONS / list.size()))], e, isSubParameter, true);
+			final boolean isSubParameter = activations.containsKey(e.getKey());
+			final AbstractEditor ed = EditorFactory.create(GAMA.getPlatformAgent().getScope(),
+					comps[(int) (i * ((double) NB_DIVISIONS / list.size()))], e, isSubParameter);
 			if (e.isDisabled()) {
 				ed.setActive(false);
 			} else {

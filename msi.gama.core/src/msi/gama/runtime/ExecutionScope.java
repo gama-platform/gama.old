@@ -3,7 +3,7 @@
  * ExecutionScope.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -373,9 +373,9 @@ public class ExecutionScope implements IScope {
 		synchronized (lock) {
 			final IAgent a = agentContext == null ? null : agentContext.getAgent();
 			if (a == null) {
-				if (agent instanceof ITopLevelAgent) {
+				if (agent instanceof ITopLevelAgent tla) {
 					// Previous context didnt have a root.
-					setRoot((ITopLevelAgent) agent);
+					setRoot(tla);
 				}
 				// get rid of the previous context **important**
 				agentContext = null;

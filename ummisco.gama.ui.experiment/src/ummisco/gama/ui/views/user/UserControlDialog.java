@@ -3,7 +3,7 @@
  * UserControlDialog.java, in ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -185,7 +185,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 					EditorFactory.create(scope, composite, i, newValue -> {
 						i.setValue(scope, newValue);
 						scope.execute(i);
-					}, false, false);
+					}, false);
 				}
 
 				final Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -254,7 +254,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		compo.setLayout(layout);
 		final IAgent agent = scope.getAgent();
 		final AgentAttributesEditorsList editors = new AgentAttributesEditorsList();
-		editors.add(new ArrayList<IParameter>(agent.getSpecies().getVars()), agent);
+		editors.add(new ArrayList<>(agent.getSpecies().getVars()), agent);
 		final Map<String, IParameterEditor<?>> parameters = editors.getSections().get(agent);
 		if (parameters != null) {
 			final List<AbstractEditor> list = new ArrayList(parameters.values());
