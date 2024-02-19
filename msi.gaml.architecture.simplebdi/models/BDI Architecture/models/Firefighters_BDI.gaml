@@ -127,10 +127,10 @@ species firefighter skills: [moving] control: simple_bdi{
 	aspect bdi {
 		draw triangle(2) color:color rotate: 90 + heading;	
 		draw circle(15) color: color wireframe: true;
-		draw ("B:" + length(belief_base) + ":" + belief_base) color:#black size:displatTextSize; 
-		draw ("D:" + length(desire_base) + ":" + desire_base) color:#black size:displatTextSize at:{location.x,location.y+displatTextSize}; 
-		draw ("I:" + length(intention_base) + ":" + intention_base) color:#black size:displatTextSize at:{location.x,location.y+2*displatTextSize}; 
-		draw ("curIntention:" + get_current_intention()) color:#black size:displatTextSize at:{location.x,location.y+3*displatTextSize}; 	
+		draw ("B:" + length(belief_base) + ":" + belief_base) color:#black size:displatTextSize perspective:false; 
+		draw ("D:" + length(desire_base) + ":" + desire_base) color:#black size:displatTextSize at:{location.x,location.y+displatTextSize} perspective:false; 
+		draw ("I:" + length(intention_base) + ":" + intention_base) color:#black size:displatTextSize at:{location.x,location.y+2*displatTextSize} perspective:false;
+		draw ("curIntention:" + get_current_intention()) color:#black size:displatTextSize at:{location.x,location.y+3*displatTextSize} perspective:false; 	
 	}
 }
 
