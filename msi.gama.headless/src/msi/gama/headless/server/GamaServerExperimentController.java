@@ -3,7 +3,7 @@
  * GamaServerExperimentController.java, in msi.gama.headless, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -78,18 +78,14 @@ public class GamaServerExperimentController extends AbstractExperimentController
 				while (experimentAlive) {
 					if (mexp.simulator.isInterrupted()) { break; }
 					final SimulationAgent sim = mexp.simulator.getSimulation();
-					final IExperimentAgent exp = sim == null ? null : sim.getExperiment();
-					final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
+					final IExperimentAgent exp = mexp.simulator.getExperimentPlan().getAgent();
+					final IScope scope = sim == null ? exp.getScope() : sim.getScope();
 					if (Cast.asBool(scope, exp.getStopCondition().value(scope))) {
 						if (!"".equals(stopCondition)) {
-							mexp.socket
-									.send(Json.getNew()
-											.valueOf(
-													new CommandResponse(GamaServerMessage.Type.SimulationEnded, "",
-															(IMap<String, Object>) mexp.simulator.getExperimentPlan()
-																	.getAgent().getAttribute("%%playCommand%%"),
-															false))
-											.toString());
+							mexp.socket.send(Json.getNew()
+									.valueOf(new CommandResponse(GamaServerMessage.Type.SimulationEnded, "",
+											(IMap<String, Object>) exp.getAttribute("%%playCommand%%"), false))
+									.toString());
 						}
 						break;
 					}
@@ -162,30 +158,30 @@ public class GamaServerExperimentController extends AbstractExperimentController
 
 				try {
 					experiment.reload();
-//					experiment.dispose();
-//					_job.simulator.dispose();
-//
-//					_job.loadAndBuildWithJson(parameters, stopCondition);
-//					executionThread = null;
-//					commandThread.interrupt();
-//					commandThread = null;
-//					executionThread = new MyRunnable(_job);
-//					commandThread = new Thread(() -> {
-//						while (acceptingCommands) {
-//							try {
-//								processUserCommand(commands.take());
-//							} catch (final Exception e) {}
-//						}
-//					}, "Front end controller");
-//					commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
-//					try {
-//						lock.acquire();
-//					} catch (final InterruptedException e) {}
-//					experimentAlive = true;
-//					acceptingCommands = true;
-//					disposing = false;
-//					commandThread.start();
-//					_job.server.execute(executionThread);
+					// experiment.dispose();
+					// _job.simulator.dispose();
+					//
+					// _job.loadAndBuildWithJson(parameters, stopCondition);
+					// executionThread = null;
+					// commandThread.interrupt();
+					// commandThread = null;
+					// executionThread = new MyRunnable(_job);
+					// commandThread = new Thread(() -> {
+					// while (acceptingCommands) {
+					// try {
+					// processUserCommand(commands.take());
+					// } catch (final Exception e) {}
+					// }
+					// }, "Front end controller");
+					// commandThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+					// try {
+					// lock.acquire();
+					// } catch (final InterruptedException e) {}
+					// experimentAlive = true;
+					// acceptingCommands = true;
+					// disposing = false;
+					// commandThread.start();
+					// _job.server.execute(executionThread);
 
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();

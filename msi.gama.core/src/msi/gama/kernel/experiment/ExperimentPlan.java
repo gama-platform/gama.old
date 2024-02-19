@@ -59,7 +59,6 @@ import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.interfaces.IGamlIssue;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
@@ -498,8 +497,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		benchmarkable = bm != null && Cast.asBool(myScope, bm.value(myScope));
 		shouldRecord = getFacet(IKeyword.RECORD);
 		stopCondition = getFacet(IKeyword.UNTIL);
-		if(stopCondition == null) stopCondition = IExpressionFactory.FALSE_EXPR;
-
 	}
 
 	/**

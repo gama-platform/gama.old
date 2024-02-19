@@ -3,7 +3,7 @@
  * ExperimentJob.java, in msi.gama.headless, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -31,10 +31,10 @@ import msi.gama.headless.core.RichExperiment;
 import msi.gama.headless.core.RichOutput;
 import msi.gama.headless.xml.Writer;
 import msi.gama.headless.xml.XmlTAG;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.lang.gaml.validation.GamlModelBuilder;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
@@ -310,11 +310,9 @@ public class ExperimentJob implements IExperimentJob {
 				if (step % affDelay == 0) { DEBUG.LOG(".", false); }
 				if (simulator.isInterrupted()) { break; }
 				final SimulationAgent sim = simulator.getSimulation();
-				final IScope scope = sim == null ? GAMA.getRuntimeScope() : sim.getScope();
-				if (sim != null
-						&& Cast.asBool(scope, sim.getExperiment().getSpecies().getStopCondition().value(scope))) {
-					break;
-				}
+				final ExperimentAgent exp = simulator.getExperimentPlan().getAgent();
+				final IScope scope = sim == null ? exp.getScope() : sim.getScope();
+				if (Cast.asBool(scope, exp.getStopCondition().value(scope))) { break; }
 				doStep();
 				step++;
 			}

@@ -238,8 +238,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		} else {
 			reset();
 		}
-		stopCondition =
-				getSpecies().getStopCondition() == null ? defaultStopCondition() : getSpecies().getStopCondition();
+		IExpression condition = getSpecies().getStopCondition();
+		stopCondition = condition == null ? defaultStopCondition() : condition;
 	}
 
 	/**
