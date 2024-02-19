@@ -45,7 +45,7 @@ global
  
 experiment main type: gui
 {
-	output
+	output synchronized: true
 	{
 		display "Comodel Display"  
 		{

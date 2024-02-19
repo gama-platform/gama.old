@@ -41,7 +41,7 @@ global
 		}
 
 		// tell the urban to evolve and interract with the traffic every 30 step = 1 month
-		if(cycle mod 30 = 0 ){			
+		if(cycle mod 10 = 0 ){			
 //			// tell the urban to grow up 
 			ask Urbanization."Adapter" collect each.simulation
 			{
@@ -138,7 +138,7 @@ global
 
 experiment main type: gui
 {
-	output
+	output synchronized: true
 	{
 		display "Comodel Display" type:2d antialias:false
 		{

@@ -84,7 +84,7 @@ global
 
 experiment simple type: gui
 {
-	output
+	output synchronized: true
 	{
 		display "Comodel Display"  type:3d
 		{
