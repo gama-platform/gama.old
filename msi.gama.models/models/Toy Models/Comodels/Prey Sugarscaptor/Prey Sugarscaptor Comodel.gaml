@@ -90,7 +90,7 @@ grid G width: grid_size_Preydator height: grid_size_Preydator
 
 experiment main type: gui
 {
-	output
+	output synchronized: true
 	{
 		display "Co-display" type:2d antialias:false
 		{

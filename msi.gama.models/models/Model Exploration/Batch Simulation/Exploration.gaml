@@ -34,7 +34,7 @@ experiment batch_abstract type:batch virtual:true until:(time > end_cycle) {
 	parameter "Predator energy reproduce:" var: predator_energy_reproduce min: 0.1 max: 1.0 step: 0.1;
 }
 
-// This experiment runs the simulation 5 times.
+// This experiment runs the full factorial experiment (each combination of parameter) 5 times, that is 14k simulations :) see exhaustive exploration
 // At the end of each simulation, the people agents are saved in a shapefile
 experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep_seed: true until: world.stop_sim() or (time > end_cycle){
 	
@@ -52,10 +52,9 @@ experiment 'Run 5 simulations' parent: batch_abstract type: batch repeat: 5 keep
 	}
 }
 
-// This experiment extract the number of replicates that should be made according to three methods:
-// 1. Size effect of one added replicate with student t statistics
-// 2. How increasing the number of replicates dimish the standard error
-// 3. coefficient of variation 
+// This experiment extract the number of replicates that should be made according to two methods:
+// 1. How increasing the number of replicates dimish the standard error
+// 2. coefficient of variation 
 experiment replication_analysis parent: batch_abstract type: batch until: world.stop_sim() or ( time > end_cycle ) 
 	repeat:40 keep_simulations:false {
 	method stochanalyse outputs:["nb_preys", "nb_predators"] report:"Results/stochanalysis.txt" results:"Results/stochanalysis_raw.csv" sample:3;

@@ -131,8 +131,7 @@ public class Stochanalysis {
 		
 		sb.append("== STOCHASTICITY ANALYSIS ==");
 		sb.append(RL);
-		sb.append(Out.size()+" outputs | "+nbsample+" samples | "+nbreplicates+" max replications");
-		sb.append("Thresholds: ").append(STOCHThresholds).append(RL);
+		sb.append(Out.size()+" outputs | "+nbsample+" samples | "+nbreplicates+" max replications | Thresholds: ").append(Arrays.toString(STOCHThresholds)).append(RL);
 		sb.append("Meaning: threshold represent the delta of marginal decrease of the minimum value of concerned statistic to decide on the number of replicates").append(RL);
 		sb.append("Exemple: focusing on ").append(SE).append(" the corresponding number of replicates is defined when marginal decrease is lower than arg_min(standard error) * threshold").append(RL);
 		sb.append(RL).append(RL);
