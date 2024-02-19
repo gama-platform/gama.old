@@ -706,7 +706,8 @@ Require-Bundle: org.eclipse.osgi,
  org.apache.commons.jxpath,
  org.eclipse.xsd,
  ummisco.gama.annotations,
- com.google.guava;visibility:=reexport
+ com.google.guava;visibility:=reexport,
+ org.apache.commons.commons-io;bundle-version="2.15.0"
 Bundle-ClassPath: .,
  compress 1.24/commons-compress-1.24.0.jar,
  protobuf-java-3.6.1.jar,
