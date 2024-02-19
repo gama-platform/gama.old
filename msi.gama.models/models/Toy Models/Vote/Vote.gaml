@@ -338,13 +338,13 @@ experiment vote type: gui {
 	output {
 		
 		layout #split;
-		display main background: #black { 
+		display "Main" background: #black { 
 			species elector aspect: base;
 			species candidate aspect: dynamic;
 			species Group_electors;
 			
 		}
-		display votants  type: 2d {
+		display "Voters"  type: 2d {
 			chart "Distribution of electors" type: pie background: #white  {
 			 	loop cand over: candidate {
 			 		data  cand.name value:cand.percentage_vote color: cand.color ;
@@ -352,7 +352,7 @@ experiment vote type: gui {
 			}
 			
 			}
-		display indicateurs  type: 2d {
+		display "Indicators"  type: 2d {
 			chart "Shannon Entropy" type: series background: #white size: {1,0.5} position: {0, 0} {
 				data "entropy" value: entropy color: #blue ;
 			}

@@ -57,7 +57,7 @@ species DraggedAgent {
 experiment "Mouse Drag" type: gui {
 	/** Insert here the definition of the input and output of the model */
 	output {
-		display "Mouse Drag [OPENGL]" type:opengl {
+		display "Mouse Drag [in OpenGL]" type:opengl {
 			camera #from_above locked:true;
 			event #mouse_down {ask simulation {do mouse_down;}}
 			event #mouse_up {ask simulation {do mouse_up;}}
@@ -70,7 +70,7 @@ experiment "Mouse Drag" type: gui {
 			species DraggedAgent aspect:default;
 		}
 
-		display "Mouse Drag [JAVA2D]" type:java2D {
+		display "In Java2D, one needs to lock the surface first " type:java2D {
 			event #mouse_down {ask simulation {do mouse_down;}}
 			event #mouse_up {ask simulation {do mouse_up;}}
 			event #mouse_drag {ask simulation {do mouse_drag;}}
