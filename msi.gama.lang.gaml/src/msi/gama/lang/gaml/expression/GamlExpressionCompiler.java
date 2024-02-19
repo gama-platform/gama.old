@@ -49,7 +49,6 @@ import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionRef;
@@ -113,6 +112,7 @@ import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.operators.TypeFieldExpression;
 import msi.gaml.expressions.types.DenotedActionExpression;
 import msi.gaml.expressions.units.UnitConstantExpression;
+import msi.gaml.expressions.variables.CurrentExperimentExpression;
 import msi.gaml.expressions.variables.EachExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.interfaces.IGamlIssue;
@@ -1215,9 +1215,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 		switch (varName) {
 			case EXPERIMENT:
-				IExperimentPlan exp = GAMA.getExperiment();
-				if (exp != null) return getFactory().createConst(exp.getAgent(), exp.getDescription().getGamlType());
-				break;
+				// IExperimentPlan exp = GAMA.getExperiment();
+				// if (exp != null) return getFactory().createConst(exp.getAgent(), exp.getDescription().getGamlType());
+				return CurrentExperimentExpression.create();
 			case IKeyword.GAMA:
 				return GAMA.getPlatformAgent();
 			case EACH:

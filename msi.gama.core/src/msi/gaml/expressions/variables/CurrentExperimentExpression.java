@@ -21,6 +21,9 @@ import msi.gaml.types.Types;
  */
 public class CurrentExperimentExpression extends VariableExpression {
 
+	/** The instance. */
+	static CurrentExperimentExpression INSTANCE;
+
 	/**
 	 * Instantiates a new myself expression.
 	 *
@@ -50,6 +53,18 @@ public class CurrentExperimentExpression extends VariableExpression {
 	@Override
 	protected Object _value(final IScope scope) {
 		return scope == null ? null : scope.getExperiment();
+	}
+
+	/**
+	 * Creates the.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return the i expression
+	 * @date 25 janv. 2024
+	 */
+	public static IExpression create() {
+		if (INSTANCE == null) { INSTANCE = new CurrentExperimentExpression(); }
+		return INSTANCE;
 	}
 
 }
