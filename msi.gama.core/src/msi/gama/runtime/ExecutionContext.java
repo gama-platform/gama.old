@@ -57,6 +57,8 @@ public class ExecutionContext implements IExecutionContext {
 		result = new ExecutionContext(command);
 		result.scope = scope;
 		result.outer = outer;
+		// To do to avoid side effects? result.outer = outer == null ? null :
+		// outer.createCopy(outer.getCurrentSymbol());
 		return result;
 	}
 
@@ -122,8 +124,7 @@ public class ExecutionContext implements IExecutionContext {
 		final ExecutionContext r = create(scope, outer, command);
 		if (local != null) {
 			r.local = Collections.synchronizedMap(new HashMap<>());
-			if (local != null) 
-				r.local.putAll(local);
+			if (local != null) { r.local.putAll(local); }
 		}
 		return r;
 	}

@@ -3,7 +3,7 @@
  * InteractiveConsoleView.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -401,16 +401,16 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			if (entered.startsWith("?")) {
 				result = GamlIdiomsProvider.getDocumentationOn(entered.substring(1));
 			} else {
+				IScope scope = agent.getScope().copy("In interactive console");
 				try {
-					final var expr = GAML.compileExpression(s, agent, this, false);
-					if (expr != null) {
-						result = StringUtils.toGaml(agent.getScope().evaluate(expr, agent).getValue(), true);
-					}
+					final IExpression expr = GAML.compileExpression(s, agent, this, false);
+					if (expr != null) { result = StringUtils.toGaml(scope.evaluate(expr, agent).getValue(), true); }
 				} catch (final Exception e) {
 					error = true;
 					result = "> Error: " + e.getMessage();
 				} finally {
 					agent.getSpecies().removeTemporaryAction();
+					GAMA.releaseScope(scope);
 				}
 			}
 			if (result == null) { result = "nil"; }

@@ -10,6 +10,7 @@
  ********************************************************************************************************/
 package msi.gama.runtime.server;
 
+import static msi.gama.runtime.server.ISocketCommand.ARGS;
 import static msi.gama.runtime.server.ISocketCommand.ESCAPED;
 import static msi.gama.runtime.server.ISocketCommand.EVALUATE;
 import static msi.gama.runtime.server.ISocketCommand.EXPR;
@@ -17,7 +18,6 @@ import static msi.gama.runtime.server.ISocketCommand.NB_STEP;
 import static msi.gama.runtime.server.ISocketCommand.PARAMETERS;
 import static msi.gama.runtime.server.ISocketCommand.SYNC;
 import static msi.gama.runtime.server.ISocketCommand.SYNTAX;
-import static msi.gama.runtime.server.ISocketCommand.ARGS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -166,10 +166,9 @@ public class DefaultServerCommands {
 			return e.getResponse();
 		}
 		final int nb_step;
-		if (map.get(NB_STEP) != null && ! ("" + map.get(NB_STEP)).trim().equals("")) {
+		if (map.get(NB_STEP) != null && !"".equals(("" + map.get(NB_STEP)).trim())) {
 			nb_step = Integer.parseInt("" + map.get(NB_STEP));
-		}
-		else {
+		} else {
 			nb_step = 1;
 		}
 		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
@@ -204,12 +203,11 @@ public class DefaultServerCommands {
 			return e.getResponse();
 		}
 		final int nb_step;
-		if (map.get(NB_STEP) != null && ! ("" + map.get(NB_STEP)).trim().equals("")) {
+		if (map.get(NB_STEP) != null && !"".equals(("" + map.get(NB_STEP)).trim())) {
 			nb_step = Integer.parseInt("" + map.get(NB_STEP));
-		}
-		else {
+		} else {
 			nb_step = 1;
-		}		
+		}
 		final boolean sync = map.get(SYNC) != null ? Boolean.parseBoolean("" + map.get(SYNC)) : false;
 		for (int i = 0; i < nb_step; i++) {
 			try {
@@ -307,6 +305,7 @@ public class DefaultServerCommands {
 				res = "> Error: " + e.getMessage();
 			} finally {
 				agent.getSpecies().removeTemporaryAction();
+				GAMA.releaseScope(scope);
 			}
 		}
 		if (res == null || res.length() == 0 || res.startsWith("> Error: "))

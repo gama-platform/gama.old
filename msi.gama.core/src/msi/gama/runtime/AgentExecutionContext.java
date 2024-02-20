@@ -93,8 +93,9 @@ public class AgentExecutionContext implements IDisposable {
 	 * @return the agent execution context
 	 */
 	public AgentExecutionContext createCopy() {
-		return create(agent, outer);
-		// Possible to copy for avoiding side effects ? return create(agent, outer == null ? null : outer.createCopy());
+		// return create(agent, outer);
+		// Possible to copy for avoiding side effects ?
+		return create(agent, outer == null ? null : outer.createCopy());
 	}
 
 	/**
