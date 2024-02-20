@@ -234,6 +234,7 @@ Export-Package: com.conversantmedia.util.collection,
  org.apache.commons.httpclient.params,
  org.apache.commons.httpclient.protocol,
  org.apache.commons.httpclient.util,
+ org.apache.commons.io,
  org.apache.commons.lang3,
  org.apache.commons.lang3.arch,
  org.apache.commons.lang3.builder,
@@ -706,8 +707,7 @@ Require-Bundle: org.eclipse.osgi,
  org.apache.commons.jxpath,
  org.eclipse.xsd,
  ummisco.gama.annotations,
- com.google.guava;visibility:=reexport,
- org.apache.commons.io
+ com.google.guava;visibility:=reexport
 Bundle-ClassPath: .,
  compress 1.24/commons-compress-1.24.0.jar,
  protobuf-java-3.6.1.jar,
@@ -849,6 +849,7 @@ Bundle-ClassPath: .,
  jgrapht 1.5.2/jgrapht-core-1.5.2.jar,
  jgrapht 1.5.2/jgrapht-io-1.5.2.jar,
  jgrapht 1.5.2/jgrapht-opt-1.5.2.jar,
- jgrapht 1.5.2/jheaps-0.14.jar
+ jgrapht 1.5.2/jheaps-0.14.jar,
+ geotools/commons-io-2.6.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: msi.gama.ext
