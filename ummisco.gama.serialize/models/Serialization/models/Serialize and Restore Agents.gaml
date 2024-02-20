@@ -47,7 +47,7 @@ global {
 	action exchange_people_from_disk {
 		if folder_exists("../people/") and !empty(folder("../people")) {
 			ask people {
-				restore self from: '../people/save'+rnd(number_of_people - 1)+'.agent';
+				restore self from: string(folder("../people"))+'/save'+rnd(number_of_people - 1)+'.agent';
 			}
 		}
 	}
@@ -73,7 +73,7 @@ global {
 	
 	action create_clones_from_disk {
 		loop saved over: folder("../people") {
-			create people from: file(saved);
+			create people from: file(string(folder("../people"))+"/"+saved);
 		}
 	}
 
