@@ -2,7 +2,7 @@
  *
  * GAMA.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -426,6 +426,7 @@ public class GAMA {
 	 * @return the i scope
 	 */
 	private static IScope copyRuntimeScope(final String additionalName) {
+		// return getCurrentTopLevelAgent().getScope().copy(additionalName);
 		final IScope scope = getRuntimeScope();
 		if (scope != null) return scope.copy(additionalName);
 		return null;
@@ -439,6 +440,7 @@ public class GAMA {
 	public static IScope getRuntimeScope() {
 		// If GAMA has not yet been loaded, we return null
 		if (!GamaBundleLoader.LOADED) return null;
+		// return getCurrentTopLevelAgent().getScope().copy("(copy)");
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null) return getPlatformAgent().getScope();
 		final ExperimentAgent a = controller.getExperiment().getAgent();
