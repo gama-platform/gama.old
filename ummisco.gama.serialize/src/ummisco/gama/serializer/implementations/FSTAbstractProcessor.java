@@ -3,7 +3,7 @@
  * FSTAbstractProcessor.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -109,15 +109,61 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 			@Override
 			public void serialise(final FSTObjectOutput out, final IAgent o) throws Exception {
-				out.writeObject(AgentReference.of(o));
+				if (inAgent) {
+					out.writeObject(AgentReference.of(o));
+				} else {
+					inAgent = true;
+					try {
+						out.writeObject(encodeToSerialisedForm(o));
+					} finally {
+						inAgent = false;
+					}
+				}
 			}
 
 			@Override
 			public IAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				AgentReference ref = (AgentReference) in.readObject();
-				return ref.getReferencedAgent(scope);
+				Object object = in.readObject();
+				if (object instanceof AgentReference ref) return ref.getReferencedAgent(scope);
+				if (object instanceof SerialisedAgent sa) return sa.recreateIn(scope);
+				return null;
 			}
 
+		});
+
+		register(conf, SerialisedAgent.class, new FSTIndividualSerialiser<SerialisedAgent>() {
+
+			@Override
+			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
+				out.writeInt(o.index());
+				out.writeStringUTF(o.species());
+				out.writeObject(o.attributes());
+				out.writeObject(o.innerPopulations());
+			}
+
+			@SuppressWarnings ("unchecked")
+			@Override
+			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
+				return new SerialisedAgent(in.readInt(), in.readStringUTF(), (Map<String, Object>) in.readObject(),
+						(Map<String, ISerialisedPopulation>) in.readObject());
+			}
+		});
+		register(conf, SerialisedAgent.class, new FSTIndividualSerialiser<SerialisedAgent>() {
+
+			@Override
+			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
+				out.writeInt(o.index());
+				out.writeStringUTF(o.species());
+				out.writeObject(o.attributes());
+				out.writeObject(o.innerPopulations());
+			}
+
+			@SuppressWarnings ("unchecked")
+			@Override
+			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
+				return new SerialisedAgent(in.readInt(), in.readStringUTF(), (Map<String, Object>) in.readObject(),
+						(Map<String, ISerialisedPopulation>) in.readObject());
+			}
 		});
 
 		register(conf, IType.class, new FSTIndividualSerialiser<IType>() {
@@ -186,24 +232,6 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			@Override
 			public AgentReference deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
 				return AgentReference.of((String[]) in.readObject(), (Integer[]) in.readObject());
-			}
-		});
-
-		register(conf, SerialisedAgent.class, new FSTIndividualSerialiser<SerialisedAgent>() {
-
-			@Override
-			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
-				out.writeInt(o.index());
-				out.writeStringUTF(o.species());
-				out.writeObject(o.attributes());
-				out.writeObject(o.innerPopulations());
-			}
-
-			@SuppressWarnings ("unchecked")
-			@Override
-			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedAgent(in.readInt(), in.readStringUTF(), (Map<String, Object>) in.readObject(),
-						(Map<String, ISerialisedPopulation>) in.readObject());
 			}
 		});
 
