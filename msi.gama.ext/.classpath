@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="geotools/commons-io-2.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.2/antlr4-runtime-4.12.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.2/apfloat-1.10.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht 1.5.2/jgrapht-core-1.5.2.jar" sourcepath="jgrapht 1.5.2/src.zip"/>

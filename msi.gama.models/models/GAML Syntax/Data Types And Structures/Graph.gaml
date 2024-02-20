@@ -349,6 +349,8 @@ grid cell8 width: x_cells height: y_cells neighbors: 8 {
 }
 
 experiment Graph type: gui {
+	float minimum_cycle_duration <- 1#s;
+	text "You have to play the simulation model in order to build and play with network";
 	user_command "Accessing/modifying graphs" {
 		ask world {
 			do access_and_modify_edge_and_node;

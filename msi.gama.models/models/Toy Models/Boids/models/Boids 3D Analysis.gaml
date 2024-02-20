@@ -468,7 +468,7 @@ experiment "Multiple views" type: gui {
 		}
 
 		display FirstPerson type: 3d antialias: false {
-			camera "default" dynamic: true location: {int(first(boids).location.x), int(first(boids).location.y), 5} target:
+			camera "default" dynamic: true location: {int(first(boids).location.x), int(first(boids).location.y), 10} target:
 			{cos(first(boids).heading) * first(boids).speed + int(first(boids).location.x), sin(first(boids).heading) * first(boids).speed + int(first(boids).location.y), 5};
 			image file_path_to_ocean;
 			species obstacle;

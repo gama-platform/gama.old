@@ -23,7 +23,7 @@ global{
 
 	action create_server {
 		create Server number: 2 {
-			do connect protocol: "tcp_server" port: 3001 with_name:name;
+			do connect protocol: "tcp_server" port: 3001 with_name:name raw:true;
 			do join_group with_name: "server_group";
 			id <- id + 1;
 			color <- rnd_color(255);
@@ -38,7 +38,7 @@ global{
 	action create_client {
 		create Client number: 2 {
 		// replace the "localhost" address by the IP address of the other computer 
-			do connect to: "localhost" protocol: "tcp_client" port: 3001 with_name: name;
+			do connect to: "localhost" protocol: "tcp_client" port: 3001 with_name: name raw:true;
 			do join_group with_name: "client_group";
 			id <- id + 1;
 			color <- rgb(rnd(255)); 
