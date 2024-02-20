@@ -71,8 +71,11 @@ public class GridAgentLayer extends AgentLayer implements IGridLayer {
 			}
 			return null;
 		};
-
-		for (final IAgent a : getData().getAgentsToDisplay()) {
+		/*20/2/2014 - PT: change getData().getAgentsToDisplay() by getData().getGrid().getAgents()
+			as getData().getAgentsToDisplay() returns a list of null elements for hexagonal grid (casting issue)
+			It can be optimized.
+		*/
+		for (final IAgent a : getData().getGrid().getAgents()){ 
 			if (a != null) {
 				final ExecutionResult result = s.execute(aspect, a, null);
 				final Object r = result.getValue();
