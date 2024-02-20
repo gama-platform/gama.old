@@ -79,6 +79,13 @@ global {
 					cpt <- cpt + 1;
 				}
 			}
+			match "Random" {
+				int cpt <- 0;
+				create candidate number: nb_candidates{
+					color <- rgb ([rnd(255), rnd(255), rnd(255)]); 
+					location <- any_location_in(world);
+				}
+			}
 		}
 		//Initialization of all the active candidates as the list of candidates
 		active_candidates <- list(copy(candidate));	
