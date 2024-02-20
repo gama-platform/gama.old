@@ -7,9 +7,10 @@
 model MapQuestImageImport
 
  
-global
-{
-	string appkey<-"uoJREhBjzEvVR9MYz3QXiAyYfmGWxOkG";
+global {
+	// If you want to use MapQuest data, you need to grab a key from the official MapQuest website:
+	// https://developer.mapquest.com/documentation/
+	string appkey<-"KEY";
 	image_file static_map_request;
 	string map_center <- "48.8566140,2.3522219"; 
 	int map_zoom <- 8 max: 20 min: 0;
@@ -27,12 +28,16 @@ global
  
 	init
 	{
-		map answers <- user_input_dialog("Center of the map can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Center",map_center),enter("Zoom x",map_zoom),enter("Size", map_size)]);
-	    map_center <- answers["Center"]; 
-		map_zoom <- int(answers["Zoom x"]);
-		map_size <- point(answers["Size"]);
-		
-		do load_map;
+		if(appkey = "KEY") {
+			map useless <- user_input_dialog("Please enter your MapQuest key in the model code.", []);			
+		} else {
+			map answers <- user_input_dialog("Center of the map can be a pair lat,lon (e.g; '48.8566140,2.3522219')", [enter("Center",map_center),enter("Zoom x",map_zoom),enter("Size", map_size)]);
+		    map_center <- answers["Center"]; 
+			map_zoom <- int(answers["Zoom x"]);
+			map_size <- point(answers["Size"]);
+			
+			do load_map;			
+		}
 	}
 
 }

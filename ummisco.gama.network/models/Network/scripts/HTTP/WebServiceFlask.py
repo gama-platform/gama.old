@@ -4,12 +4,7 @@
 # https://flask.palletsprojects.com/en/2.2.x/quickstart/
 # 
 # Instructions: 
-#  * In a Terminal, locate in the folder containing this file
-#  * Type the following bash instructions (the last one will launch the server)
-#
-# export FLASK_ENV=development
-# export FLASK_APP=WebServiceFlask.py
-# flask run
+#  * Just run the file, the server URL and port will be displayed
 
 from flask import Flask
 from flask import request
@@ -25,3 +20,6 @@ def index():
     print("request.json ", request.json)
 
     return "true"
+
+if __name__ == '__main__':
+    app.run(debug=True)
