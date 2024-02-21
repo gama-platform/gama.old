@@ -1,11 +1,11 @@
 /**
-* Name: Save to Shapefile
+* Name: Save to GeoJson
 * Author: Patrick Taillandier
 * Description: This is a model that shows how to save agents inside a GeoJSon to reuse it later or to keep it.
 * Tags: save_file, geojson
 */
 
-model Savetoshapefile
+model SavetoGeoJson
 
 global {
 	init {
@@ -17,8 +17,7 @@ global {
 			location <- any_location_in (free_space - 5.0);
 			free_space <- free_space - shape;
 		}
-		//save building geometry into the geojson: add the attribute TYPE which value is set by the type variable of the building agent and the attribute ID 
-		save building to:"../results/buildings.geojson" format: "json" attributes: ["ID"::name, "TYPE"::self.type];
+		save building to:"../results/buildings.geojson" format: "geojson";
 	} 
 } 
   
