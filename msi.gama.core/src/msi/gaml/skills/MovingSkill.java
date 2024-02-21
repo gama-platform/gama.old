@@ -3,7 +3,7 @@
  * MovingSkill.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform
  * (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -1080,8 +1080,8 @@ public class MovingSkill extends Skill {
 					if (graph.isAgentEdge()) {
 						final IAgentFilter filter = In.edgesOf(graph);
 						if (optimization) {
-							final Collection<IAgent> ags = scope.getSimulation().getAgent().getTopology()
-									.getNeighborsOf(scope, currentLocation, dist, filter);
+							final Collection<IAgent> ags = scope.getSimulation().getTopology().getNeighborsOf(scope,
+									currentLocation, dist, filter);
 							if (!ags.isEmpty()) {
 								double distMin = Double.MAX_VALUE;
 								for (final IAgent e : ags) {
@@ -1094,8 +1094,8 @@ public class MovingSkill extends Skill {
 							}
 						}
 						if (line == null) {
-							line = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope,
-									currentLocation, filter);
+							line = scope.getSimulation().getTopology().getAgentClosestTo(scope, currentLocation,
+									filter);
 						}
 						index = edges.indexOf(line);
 					} else {

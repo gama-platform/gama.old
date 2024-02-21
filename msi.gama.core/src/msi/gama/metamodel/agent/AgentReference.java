@@ -12,7 +12,6 @@ package msi.gama.metamodel.agent;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentAgent;
@@ -40,6 +39,9 @@ import one.util.streamex.StreamEx;
  */
 public record AgentReference(String[] species, Integer[] index, String cached_ref) implements IJsonable {
 
+	/** The null. */
+	public static AgentReference NULL = new AgentReference(new String[0], new Integer[0], null);
+
 	/**
 	 * Of.
 	 *
@@ -50,6 +52,7 @@ public record AgentReference(String[] species, Integer[] index, String cached_re
 	 * @date 1 nov. 2023
 	 */
 	public static AgentReference of(final IAgent agt) {
+		if (agt == null) return NULL;
 		return of(buildSpeciesArray(agt), buildIndicesArray(agt));
 	}
 
@@ -87,6 +90,7 @@ public record AgentReference(String[] species, Integer[] index, String cached_re
 	 * @date 1 nov. 2023
 	 */
 	public static AgentReference of(final String[] species, final Integer[] index) {
+		if (species.length == 0) return NULL;
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < species.length; i++) {
 			sb.append(species[i]).append('[').append(index[i]).append(']').append('.');

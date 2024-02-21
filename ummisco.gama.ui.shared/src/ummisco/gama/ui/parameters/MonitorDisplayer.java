@@ -3,7 +3,7 @@
  * MonitorDisplayer.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -109,8 +109,8 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 			separate(m);
 			action(m, "Copy value", ex -> {
 				final Object v = getStatement().getLastValue();
-				WorkbenchHelper
-						.copy(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serializeToGaml(true) : v.toString());
+				WorkbenchHelper.copy(
+						v == null ? "nil" : v instanceof IValue ? ((IValue) v).serializeToGaml(true) : v.toString());
 			});
 			final IExpression exp = getStatement().getValue();
 			final IType<?> type = exp == null ? Types.NO_TYPE : exp.getGamlType();
@@ -142,7 +142,7 @@ public class MonitorDisplayer extends AbstractStatementEditor<MonitorOutput> {
 		try {
 			Runnable run = () -> {
 				internalModification = true;
-				if (!parent.isDisposed() && !textBox.isDisposed()) {
+				if (parent != null && !parent.isDisposed() && !textBox.isDisposed()) {
 					textBox.setText(getStatement().getTitle());
 					composite.update();
 				}
