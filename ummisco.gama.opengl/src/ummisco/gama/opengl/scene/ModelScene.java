@@ -124,8 +124,8 @@ public class ModelScene {
 		// }
 		double maxZ = renderer.getMaxEnvDim() * 0.005;
 		// maxZ = gl.getViewHeight() / gl.getWorldHeight() / (1000d * objectNumber)
-		final double zIncrement =
-				objectNumber < 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue() ? 0d : maxZ / objectNumber;
+		final double zIncrement = objectNumber < 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue() ? 0d
+				: maxZ / objectNumber * GamaPreferences.Displays.OPENGL_Z_FACTOR.getValue();
 
 		gl.push(GLMatrixFunc.GL_MODELVIEW);
 		gl.setZIncrement(renderer.getData().isOrtho() ? 0D : zIncrement);
@@ -156,20 +156,23 @@ public class ModelScene {
 		gl.pop(GLMatrixFunc.GL_MODELVIEW);
 	}
 
-	/**
-	 * Compute visual Z increment.
-	 *
-	 * @return the double
-	 */
-	private double computeVisualZIncrement(final OpenGL gl) {
-		if (objectNumber < 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) return 0d;
-		return gl.getViewHeight() / gl.getWorldHeight() / (1000d * objectNumber);
-
-		// The maximum visual z allowance between the object at the bottom and the one at the top
-
-		// The increment is simply
-		// return maxZ / objectNumber;
-	}
+	// /**
+	// * Compute visual Z increment.
+	// *
+	// * @return the double
+	// */
+	// private double computeVisualZIncrement(final OpenGL gl) {
+	// if (objectNumber < 1 || !GamaPreferences.Displays.OPENGL_Z_FIGHTING.getValue()) return 0d;
+	//
+	//
+	//
+	// return gl.getViewHeight() / gl.getWorldHeight() / (1000d * objectNumber);
+	//
+	// // The maximum visual z allowance between the object at the bottom and the one at the top
+	//
+	// // The increment is simply
+	// // return maxZ / objectNumber;
+	// }
 
 	/**
 	 * Increment.
