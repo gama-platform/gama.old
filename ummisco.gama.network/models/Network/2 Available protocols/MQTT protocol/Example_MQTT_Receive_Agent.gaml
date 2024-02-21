@@ -25,11 +25,14 @@ global skills:[network] {
 	reflex receiveAgent when:has_more_message(){
 		// write "fetch agent on the network";
 		message mess <- fetch_message();
-		// write name + " fecth this message: " + mess.contents;	
 		
-		loop agt over: mess.contents as list{
-			create NetworkingAgent with: [shape::agt["shape"], color::agt["color"]];
-		}
+		// Accessing the content of a message unserialised the received object
+		// In the case of an agent, it is recreated.
+		write name + " fecth this message: " + mess.contents;	
+		
+		//loop agt over: mess.contents as list{
+		//	create NetworkingAgent with: [shape::agt["shape"], color::agt["color"]];
+		//}
 	}
 }
 
