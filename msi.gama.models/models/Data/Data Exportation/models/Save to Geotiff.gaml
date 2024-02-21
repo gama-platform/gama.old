@@ -14,7 +14,7 @@ global {
 	}
 }
 
-//Grid that will be saved in the ASC File
+//Grid that will be saved in the Geotiff File
 grid cell width: 50 height: 50 {
 	float grid_value <- self distance_to world.location * 2;
 	rgb color <- rgb(255 * (1 - grid_value / 50), 0,0);
