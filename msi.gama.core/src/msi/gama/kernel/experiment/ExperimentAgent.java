@@ -58,6 +58,7 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gama.util.IMap;
 import msi.gaml.compilation.Symbol;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.Cast;
@@ -902,10 +903,21 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies species) {
-		if (species == getModel()) return getSimulationPopulation();
+		if (species == getModel())
+			return getSimulationPopulation();
 		final SimulationAgent sim = getSimulation();
-		if (sim == null) return IPopulation.createEmpty(species);
-		return sim.getPopulationFor(species.getName());
+		if (sim == null)
+			return IPopulation.createEmpty(species);
+		//Issue #3983
+		final ModelDescription micro = species.getDescription().getModelDescription();
+		final ModelDescription main = this.getModel().getDescription();
+		if (main.getMicroModel(micro.getAlias()) == null) {
+			return sim.getPopulationFor(species.getName());
+		} else {
+			return sim.getPopulationFor(species);
+		}
+
+//		return sim.getPopulationFor(species.getName());	
 
 	}
 
