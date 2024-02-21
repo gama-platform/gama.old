@@ -192,13 +192,13 @@ public abstract class GamaWebSocketServer extends WebSocketServer {
 				ExperimentAgent agent = exp.getAgent();
 				if (agent != null && !exp.getController().isPaused()) {
 					agent.postOneShotAction(scope1 -> {
-						cmdHelper.pushCommand(socket, map);
+						cmdHelper.process(socket, map);
 						return null;
 					});
 					return;
 				}
 			}
-			cmdHelper.pushCommand(socket, map);
+			cmdHelper.process(socket, map);
 
 		} catch (Exception e1) {
 			DEBUG.OUT(e1);

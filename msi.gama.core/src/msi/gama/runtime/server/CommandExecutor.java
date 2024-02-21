@@ -66,19 +66,19 @@ public class CommandExecutor {
 	protected static Json jsonEncoder = Json.getNew();
 
 	/** The command execution thread. */
-	protected final Thread commandExecutionThread = new Thread(() -> {
-		while (true) {
-			Entry<WebSocket, IMap<String, Object>> cmd;
-			try {
-				cmd = commandQueue.take();
-				process(cmd.getKey(), cmd.getValue());
-			} catch (
-			/** The e. */
-			InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	});
+//	protected final Thread commandExecutionThread = new Thread(() -> {
+//		while (true) {
+//			Entry<WebSocket, IMap<String, Object>> cmd;
+//			try {
+//				cmd = commandQueue.take();
+//				process(cmd.getKey(), cmd.getValue());
+//			} catch (
+//			/** The e. */
+//			InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	});
 
 	/**
 	 * Instantiates a new command executor.
@@ -91,8 +91,8 @@ public class CommandExecutor {
 		this.server = server;
 		commands = GAMA.getGui().getServerCommands();
 		commandQueue = new LinkedBlockingQueue<>();
-		commandExecutionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
-		commandExecutionThread.start();
+//		commandExecutionThread.setUncaughtExceptionHandler(GamaExecutorService.EXCEPTION_HANDLER);
+//		commandExecutionThread.start();
 	}
 
 	/**
@@ -126,12 +126,12 @@ public class CommandExecutor {
 
 		// Executes the command in a separate thread so the executor can
 		// continue with the next one without waiting for it to finish
-		new Thread(() -> {
+//		new Thread(() -> {
 			var res = command.execute(server, socket, map);
 			if (res != null && ReadyState.OPEN.equals(socket.getReadyState())) {
 				socket.send(jsonEncoder.valueOf(res).toString());
 			}
-		}).start();
+//		}).start();
 	}
 
 	/**
