@@ -2,7 +2,7 @@
  *
  * GamaField.java, in msi.gama.core, is part of the source code of the GAMA modeling and simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -417,8 +417,13 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		if (other instanceof GamaFloatMatrix nm) {
-			for (int i = 0; i < matrix.length; i++) { matrix[i] += nm.matrix[i]; }
+		if (other instanceof GamaField gf) {
+			double otherNoDataValue = gf.noDataValue;
+			for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue && gf.matrix[i] != otherNoDataValue) { matrix[i] += gf.matrix[i]; } }
+		} else if (other instanceof GamaFloatMatrix nm) {
+			for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] += nm.matrix[i]; } }
+		} else if (other instanceof GamaIntMatrix nm) {
+				for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] += nm.matrix[i]; } }
 		}
 		return this;
 	}
@@ -436,8 +441,13 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		if (other instanceof GamaFloatMatrix nm) {
-			for (int i = 0; i < matrix.length; i++) { matrix[i] -= nm.matrix[i]; }
+		if (other instanceof GamaField gf) {
+			double otherNoDataValue = gf.noDataValue;
+			for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue && gf.matrix[i] != otherNoDataValue) { matrix[i] -= gf.matrix[i]; } }
+		} else if (other instanceof GamaFloatMatrix nm) {
+			for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] -= nm.matrix[i]; } }
+		} else if (other instanceof GamaIntMatrix nm) {
+				for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] -= nm.matrix[i]; } }
 		}
 		return this;
 	}
@@ -455,7 +465,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField times(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] *= val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] *= val; } }
 		return this;
 	}
 
@@ -472,7 +482,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField times(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] *= val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] *= val; } }
 		return this;
 	}
 
@@ -489,7 +499,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField divides(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] /= val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] /= val; } }
 		return this;
 	}
 
@@ -506,7 +516,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField divides(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] /= val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] /= val; } }
 		return this;
 	}
 
@@ -523,7 +533,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField plus(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] += val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] += val; } }
 		return this;
 	}
 
@@ -540,7 +550,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField plus(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] += val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] += val; } }
 		return this;
 	}
 
@@ -557,7 +567,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField minus(final Double val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] -= val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] -= val; } }
 		return this;
 	}
 
@@ -574,7 +584,7 @@ public class GamaField extends GamaFloatMatrix implements IField {
 	@no_test
 	public GamaField minus(final Integer val) throws GamaRuntimeException {
 		// No check for best performances. Errors will be emitted by the various sub-operations (out of bounds, etc.)
-		for (int i = 0; i < matrix.length; i++) { matrix[i] -= val; }
+		for (int i = 0; i < matrix.length; i++) { if (matrix[i] != noDataValue) { matrix[i] -= val; } }
 		return this;
 	}
 
