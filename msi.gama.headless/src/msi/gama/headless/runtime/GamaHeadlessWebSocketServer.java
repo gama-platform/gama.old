@@ -102,11 +102,32 @@ public class GamaHeadlessWebSocketServer extends GamaWebSocketServer {
 	 */
 	public static GamaHeadlessWebSocketServer StartForHeadless(final int port, final ThreadPoolExecutor runner,
 			final int pingInterval) {
+//		try {
+//			ServerSocketChannel sserver = ServerSocketChannel.open();
+//			ServerSocket socket = sserver.socket();
+//			socket.bind(new InetSocketAddress(port), -1);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		try {
+//			ServerSocketChannel sserver = ServerSocketChannel.open();
+//			ServerSocket socket = sserver.socket();
+//			socket.bind(new InetSocketAddress(port), -1);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
 		GamaHeadlessWebSocketServer server =
 				new GamaHeadlessWebSocketServer(port, runner, false, "", "", "", pingInterval);
+
 		try {
+
+server.setReuseAddr(true);
 			server.start();
-			return server;
+			return server;   
+
 		} finally {
 			server.infiniteLoop();
 		}
