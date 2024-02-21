@@ -1,6 +1,6 @@
 /*******************************************************************************************************
  *
- * FSTBinaryProcessor.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
+ * FSTBinaryProcessor2.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
  * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
@@ -56,7 +56,7 @@ import msi.gaml.types.IType;
  * @author Alexis Drogoul (alexis.drogoul@ird.fr)
  * @date 2 août 2023
  */
-public class FSTBinaryProcessor2 implements ISerialisationProcessor, ISerialisationConstants {
+public class FSTBinaryProcessor2 implements ISerialisationProcessor2, ISerialisationConstants {
 
 	/** The fst. */
 	private final FSTConfiguration fst;
