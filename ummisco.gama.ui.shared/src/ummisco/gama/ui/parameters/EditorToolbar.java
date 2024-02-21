@@ -3,7 +3,7 @@
  * EditorToolbar.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -95,7 +95,8 @@ public class EditorToolbar<T> {
 		void enable(final boolean enable) {
 
 			if (command.getImage() != null) {
-				label.setImage(enable ? GamaIcon.named(command.getImage()).image() : GamaIcon.named(command.getImage()).disabled());
+				label.setImage(enable ? GamaIcon.named(command.getImage()).image()
+						: GamaIcon.named(command.getImage()).disabled());
 			}
 			label.removeMouseListener(listener);
 			if (enable) { label.addMouseListener(listener); }
@@ -284,6 +285,18 @@ public class EditorToolbar<T> {
 	public void setHorizontalAlignment(final int lead) {
 		if (group.isDisposed()) return;
 		((GridData) group.getLayoutData()).horizontalAlignment = lead;
+	}
+
+	/**
+	 * Checks if is disposed.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is disposed
+	 * @date 21 févr. 2024
+	 */
+	public boolean isDisposed() {
+		for (Item i : items) { if ((i != null) && i.isDisposed()) return true; }
+		return false;
 	}
 
 }

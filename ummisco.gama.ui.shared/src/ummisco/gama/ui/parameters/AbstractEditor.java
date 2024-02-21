@@ -555,7 +555,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	 * Update toolbar. Redefined in subclasses
 	 */
 	protected void updateToolbar() {
-		if (editorToolbar != null) { editorToolbar.update(); }
+		if (editorToolbar != null && !editorToolbar.isDisposed()) { editorToolbar.update(); }
 	}
 
 	/**
@@ -670,6 +670,20 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 			composite = null;
 		}
 		GAMA.releaseScope(scope);
+	}
+
+	/**
+	 * Checks if is disposed.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is disposed
+	 * @date 21 févr. 2024
+	 */
+	public boolean isDisposed() {
+		if (editorLabel != null && editorLabel.isDisposed() || editorControl != null && editorControl.isDisposed())
+			return true;
+		if (composite != null && composite.isDisposed()) return true;
+		return false;
 	}
 
 }

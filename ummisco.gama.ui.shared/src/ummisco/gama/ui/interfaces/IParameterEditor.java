@@ -3,7 +3,7 @@
  * IParameterEditor.java, in ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -119,8 +119,18 @@ public interface IParameterEditor<T> extends IScoped, Comparable<IParameterEdito
 	/**
 	 * Creates the controls.
 	 *
-	 * @param compo the compo
+	 * @param compo
+	 *            the compo
 	 */
 	void createControls(EditorsGroup compo);
+
+	/**
+	 * Checks if is disposed.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if is disposed
+	 * @date 21 févr. 2024
+	 */
+	boolean isDisposed();
 
 }
