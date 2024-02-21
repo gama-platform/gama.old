@@ -3,7 +3,7 @@
  * FSTConfiguration.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -18,11 +18,8 @@ import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.AbstractCollection;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -43,25 +40,16 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.nustaq.serialization.coders.FSTJsonDecoder;
-import org.nustaq.serialization.coders.FSTJsonEncoder;
-import org.nustaq.serialization.coders.FSTJsonFieldNames;
 import org.nustaq.serialization.coders.FSTStreamDecoder;
 import org.nustaq.serialization.coders.FSTStreamEncoder;
-import org.nustaq.serialization.coders.Unknown;
 import org.nustaq.serialization.serializers.FSTArrayListSerializer;
 import org.nustaq.serialization.serializers.FSTBigIntegerSerializer;
 import org.nustaq.serialization.serializers.FSTBigNumberSerializers;
 import org.nustaq.serialization.serializers.FSTBitSetSerializer;
-import org.nustaq.serialization.serializers.FSTCPEnumSetSerializer;
-import org.nustaq.serialization.serializers.FSTCPThrowableSerializer;
 import org.nustaq.serialization.serializers.FSTClassSerializer;
 import org.nustaq.serialization.serializers.FSTCollectionSerializer;
 import org.nustaq.serialization.serializers.FSTDateSerializer;
 import org.nustaq.serialization.serializers.FSTEnumSetSerializer;
-import org.nustaq.serialization.serializers.FSTJSonSerializers;
-import org.nustaq.serialization.serializers.FSTJSonUnmodifiableCollectionSerializer;
-import org.nustaq.serialization.serializers.FSTJSonUnmodifiableMapSerializer;
 import org.nustaq.serialization.serializers.FSTMapSerializer;
 import org.nustaq.serialization.serializers.FSTStringBufferSerializer;
 import org.nustaq.serialization.serializers.FSTStringBuilderSerializer;
@@ -72,14 +60,6 @@ import org.nustaq.serialization.util.DefaultFSTInt2ObjectMapFactory;
 import org.nustaq.serialization.util.FSTInputStream;
 import org.nustaq.serialization.util.FSTInt2ObjectMapFactory;
 import org.nustaq.serialization.util.FSTUtil;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.SerializableString;
-import com.fasterxml.jackson.core.io.IOContext;
-import com.fasterxml.jackson.core.json.UTF8JsonGenerator;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import msi.gama.runtime.IScope;
 
@@ -215,28 +195,28 @@ public class FSTConfiguration {
 
 	/** The force clz init. */
 	boolean forceClzInit = false; // always execute default fields init, even if no transients
-
-	/** The json field names. */
-	FSTJsonFieldNames jsonFieldNames = new FSTJsonFieldNames("typ", "obj", "styp", "seq", "enum", "val", "ref");
-
-	/**
-	 * Gets the json field names.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @return the json field names
-	 * @date 30 sept. 2023
-	 */
-	public FSTJsonFieldNames getJsonFieldNames() { return jsonFieldNames; }
-
-	/**
-	 * Sets the json field names.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @param fieldNames
-	 *            the new json field names
-	 * @date 30 sept. 2023
-	 */
-	public void setJsonFieldNames(final FSTJsonFieldNames fieldNames) { this.jsonFieldNames = fieldNames; }
+	//
+	// /** The json field names. */
+	// FSTJsonFieldNames jsonFieldNames = new FSTJsonFieldNames("typ", "obj", "styp", "seq", "enum", "val", "ref");
+	//
+	// /**
+	// * Gets the json field names.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @return the json field names
+	// * @date 30 sept. 2023
+	// */
+	// public FSTJsonFieldNames getJsonFieldNames() { return jsonFieldNames; }
+	//
+	// /**
+	// * Sets the json field names.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param fieldNames
+	// * the new json field names
+	// * @date 30 sept. 2023
+	// */
+	// public void setJsonFieldNames(final FSTJsonFieldNames fieldNames) { this.jsonFieldNames = fieldNames; }
 
 	/**
 	 * Gets the verifier.
@@ -369,139 +349,140 @@ public class FSTConfiguration {
 	 * @param shareReferences
 	 * @return
 	 */
-	public static FSTConfiguration createJsonConfiguration(final boolean prettyPrint, final boolean shareReferences) {
-
-		final FSTConfiguration conf = createDefaultConfiguration();
-		conf.setCrossPlatform(true);
-		// override some serializers
-		FSTSerializerRegistry reg = conf.serializationInfoRegistry.getSerializerRegistry();
-		reg.putSerializer(EnumSet.class, new FSTCPEnumSetSerializer(), true);
-		reg.putSerializer(Throwable.class, new FSTCPThrowableSerializer(), true);
-		// for crossplatform fallback does not work => register default serializers for collections and subclasses
-		reg.putSerializer(AbstractCollection.class, new FSTCollectionSerializer(), true);
-		reg.putSerializer(AbstractMap.class, new FSTMapSerializer(), true); // subclass should register manually
-		conf.registerCrossPlatformClassMapping(new String[][] { { "map", HashMap.class.getName() },
-				{ "list", ArrayList.class.getName() }, { "set", HashSet.class.getName() },
-				{ "long", Long.class.getName() }, { "integer", Integer.class.getName() },
-				{ "short", Short.class.getName() }, { "byte", Byte.class.getName() },
-				{ "char", Character.class.getName() }, { "float", Float.class.getName() },
-				{ "double", Double.class.getName() }, { "date", Date.class.getName() },
-				{ "enumSet", "java.util.RegularEnumSet" }, { "array", "[Ljava.lang.Object;" },
-				{ "String[]", "[Ljava.lang.String;" }, { "Double[]", "[Ljava.lang.Double;" },
-				{ "Float[]", "[Ljava.lang.Float;" }, { "double[]", "[D" }, { "float[]", "[F" } });
-		conf.registerSerializer(BigDecimal.class, new FSTJSonSerializers.BigDecSerializer(), true);
-		reg.putSerializer(FSTJSonUnmodifiableCollectionSerializer.UNMODIFIABLE_COLLECTION_CLASS,
-				new FSTJSonUnmodifiableCollectionSerializer(), true);
-		reg.putSerializer(FSTJSonUnmodifiableMapSerializer.UNMODIFIABLE_MAP_CLASS,
-				new FSTJSonUnmodifiableMapSerializer(), false);
-
-		conf.type = prettyPrint ? ConfType.JSONPRETTY : ConfType.JSON;
-		JsonFactory fac;
-		if (prettyPrint) {
-			fac = new JsonFactory() {
-				@Override
-				protected JsonGenerator _createUTF8Generator(final OutputStream out, final IOContext ctxt)
-						throws IOException {
-					UTF8JsonGenerator gen = new JacksonAccessWorkaround(ctxt, _generatorFeatures, _objectCodec, out);
-					if (_characterEscapes != null) { gen.setCharacterEscapes(_characterEscapes); }
-					SerializableString rootSep = _rootValueSeparator;
-					if (rootSep != DefaultPrettyPrinter.DEFAULT_ROOT_VALUE_SEPARATOR) {
-						gen.setRootValueSeparator(rootSep);
-					}
-					return gen;
-				}
-
-				@Override
-				public JsonGenerator createGenerator(final OutputStream out) throws IOException {
-					return super.createGenerator(out).setPrettyPrinter(new DefaultPrettyPrinter());
-				}
-			}.disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM).disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-		} else {
-			fac = new JsonFactory() {
-				@Override
-				protected JsonGenerator _createUTF8Generator(final OutputStream out, final IOContext ctxt)
-						throws IOException {
-					UTF8JsonGenerator gen = new JacksonAccessWorkaround(ctxt, _generatorFeatures, _objectCodec, out);
-					if (_characterEscapes != null) { gen.setCharacterEscapes(_characterEscapes); }
-					SerializableString rootSep = _rootValueSeparator;
-					if (rootSep != DefaultPrettyPrinter.DEFAULT_ROOT_VALUE_SEPARATOR) {
-						gen.setRootValueSeparator(rootSep);
-					}
-					return gen;
-				}
-			};
-			fac.disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM).disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-		}
-		conf.setCoderSpecific(fac);
-		conf.setStreamCoderFactory(new JSonStreamCoderFactory(conf));
-		conf.setShareReferences(shareReferences);
-		conf.setLastResortResolver(clName -> Unknown.class);
-		return conf;
-
-	}
-
-	/**
-	 * The Class JacksonAccessWorkaround.
-	 *
-	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-	 * @date 30 sept. 2023
-	 */
-	public static class JacksonAccessWorkaround extends UTF8JsonGenerator {
-
-		/**
-		 * Instantiates a new jackson access workaround.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param ctxt
-		 *            the ctxt
-		 * @param features
-		 *            the features
-		 * @param codec
-		 *            the codec
-		 * @param out
-		 *            the out
-		 * @date 30 sept. 2023
-		 */
-		public JacksonAccessWorkaround(final IOContext ctxt, final int features, final ObjectCodec codec,
-				final OutputStream out) {
-			super(ctxt, features, codec, out);
-		}
-
-		/**
-		 * Instantiates a new jackson access workaround.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param ctxt
-		 *            the ctxt
-		 * @param features
-		 *            the features
-		 * @param codec
-		 *            the codec
-		 * @param out
-		 *            the out
-		 * @param outputBuffer
-		 *            the output buffer
-		 * @param outputOffset
-		 *            the output offset
-		 * @param bufferRecyclable
-		 *            the buffer recyclable
-		 * @date 30 sept. 2023
-		 */
-		public JacksonAccessWorkaround(final IOContext ctxt, final int features, final ObjectCodec codec,
-				final OutputStream out, final byte[] outputBuffer, final int outputOffset,
-				final boolean bufferRecyclable) {
-			super(ctxt, features, codec, out, outputBuffer, outputOffset, bufferRecyclable);
-		}
-
-		/**
-		 * Gets the output tail.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @return the output tail
-		 * @date 30 sept. 2023
-		 */
-		public int getOutputTail() { return _outputTail; }
-	}
+	// public static FSTConfiguration createJsonConfiguration(final boolean prettyPrint, final boolean shareReferences)
+	// {
+	//
+	// final FSTConfiguration conf = createDefaultConfiguration();
+	// conf.setCrossPlatform(true);
+	// // override some serializers
+	// FSTSerializerRegistry reg = conf.serializationInfoRegistry.getSerializerRegistry();
+	// reg.putSerializer(EnumSet.class, new FSTCPEnumSetSerializer(), true);
+	// reg.putSerializer(Throwable.class, new FSTCPThrowableSerializer(), true);
+	// // for crossplatform fallback does not work => register default serializers for collections and subclasses
+	// reg.putSerializer(AbstractCollection.class, new FSTCollectionSerializer(), true);
+	// reg.putSerializer(AbstractMap.class, new FSTMapSerializer(), true); // subclass should register manually
+	// conf.registerCrossPlatformClassMapping(new String[][] { { "map", HashMap.class.getName() },
+	// { "list", ArrayList.class.getName() }, { "set", HashSet.class.getName() },
+	// { "long", Long.class.getName() }, { "integer", Integer.class.getName() },
+	// { "short", Short.class.getName() }, { "byte", Byte.class.getName() },
+	// { "char", Character.class.getName() }, { "float", Float.class.getName() },
+	// { "double", Double.class.getName() }, { "date", Date.class.getName() },
+	// { "enumSet", "java.util.RegularEnumSet" }, { "array", "[Ljava.lang.Object;" },
+	// { "String[]", "[Ljava.lang.String;" }, { "Double[]", "[Ljava.lang.Double;" },
+	// { "Float[]", "[Ljava.lang.Float;" }, { "double[]", "[D" }, { "float[]", "[F" } });
+	// conf.registerSerializer(BigDecimal.class, new FSTJSonSerializers.BigDecSerializer(), true);
+	// reg.putSerializer(FSTJSonUnmodifiableCollectionSerializer.UNMODIFIABLE_COLLECTION_CLASS,
+	// new FSTJSonUnmodifiableCollectionSerializer(), true);
+	// reg.putSerializer(FSTJSonUnmodifiableMapSerializer.UNMODIFIABLE_MAP_CLASS,
+	// new FSTJSonUnmodifiableMapSerializer(), false);
+	//
+	// conf.type = prettyPrint ? ConfType.JSONPRETTY : ConfType.JSON;
+	// JsonFactory fac;
+	// if (prettyPrint) {
+	// fac = new JsonFactory() {
+	// @Override
+	// protected JsonGenerator _createUTF8Generator(final OutputStream out, final IOContext ctxt)
+	// throws IOException {
+	// UTF8JsonGenerator gen = new JacksonAccessWorkaround(ctxt, _generatorFeatures, _objectCodec, out);
+	// if (_characterEscapes != null) { gen.setCharacterEscapes(_characterEscapes); }
+	// SerializableString rootSep = _rootValueSeparator;
+	// if (rootSep != DefaultPrettyPrinter.DEFAULT_ROOT_VALUE_SEPARATOR) {
+	// gen.setRootValueSeparator(rootSep);
+	// }
+	// return gen;
+	// }
+	//
+	// @Override
+	// public JsonGenerator createGenerator(final OutputStream out) throws IOException {
+	// return super.createGenerator(out).setPrettyPrinter(new DefaultPrettyPrinter());
+	// }
+	// }.disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM).disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+	// } else {
+	// fac = new JsonFactory() {
+	// @Override
+	// protected JsonGenerator _createUTF8Generator(final OutputStream out, final IOContext ctxt)
+	// throws IOException {
+	// UTF8JsonGenerator gen = new JacksonAccessWorkaround(ctxt, _generatorFeatures, _objectCodec, out);
+	// if (_characterEscapes != null) { gen.setCharacterEscapes(_characterEscapes); }
+	// SerializableString rootSep = _rootValueSeparator;
+	// if (rootSep != DefaultPrettyPrinter.DEFAULT_ROOT_VALUE_SEPARATOR) {
+	// gen.setRootValueSeparator(rootSep);
+	// }
+	// return gen;
+	// }
+	// };
+	// fac.disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM).disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+	// }
+	// conf.setCoderSpecific(fac);
+	// conf.setStreamCoderFactory(new JSonStreamCoderFactory(conf));
+	// conf.setShareReferences(shareReferences);
+	// conf.setLastResortResolver(clName -> Unknown.class);
+	// return conf;
+	//
+	// }
+	//
+	// /**
+	// * The Class JacksonAccessWorkaround.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @date 30 sept. 2023
+	// */
+	// public static class JacksonAccessWorkaround extends UTF8JsonGenerator {
+	//
+	// /**
+	// * Instantiates a new jackson access workaround.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param ctxt
+	// * the ctxt
+	// * @param features
+	// * the features
+	// * @param codec
+	// * the codec
+	// * @param out
+	// * the out
+	// * @date 30 sept. 2023
+	// */
+	// public JacksonAccessWorkaround(final IOContext ctxt, final int features, final ObjectCodec codec,
+	// final OutputStream out) {
+	// super(ctxt, features, codec, out);
+	// }
+	//
+	// /**
+	// * Instantiates a new jackson access workaround.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param ctxt
+	// * the ctxt
+	// * @param features
+	// * the features
+	// * @param codec
+	// * the codec
+	// * @param out
+	// * the out
+	// * @param outputBuffer
+	// * the output buffer
+	// * @param outputOffset
+	// * the output offset
+	// * @param bufferRecyclable
+	// * the buffer recyclable
+	// * @date 30 sept. 2023
+	// */
+	// public JacksonAccessWorkaround(final IOContext ctxt, final int features, final ObjectCodec codec,
+	// final OutputStream out, final byte[] outputBuffer, final int outputOffset,
+	// final boolean bufferRecyclable) {
+	// super(ctxt, features, codec, out, outputBuffer, outputOffset, bufferRecyclable);
+	// }
+	//
+	// /**
+	// * Gets the output tail.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @return the output tail
+	// * @date 30 sept. 2023
+	// */
+	// public int getOutputTail() { return _outputTail; }
+	// }
 
 	/**
 	 * the standard FSTConfiguration. - safe (no unsafe r/w) - platform independent byte order - moderate compression
@@ -1429,10 +1410,10 @@ public class FSTConfiguration {
 	 * @param o
 	 * @return
 	 */
-	public String asJsonString(final Object o) {
-		if (!(getCoderSpecific() instanceof JsonFactory)) return "can be called on JsonConfiguration only";
-		return new String(asByteArray(o), StandardCharsets.UTF_8);
-	}
+	// public String asJsonString(final Object o) {
+	// if (!(getCoderSpecific() instanceof JsonFactory)) return "can be called on JsonConfiguration only";
+	// return new String(asByteArray(o), StandardCharsets.UTF_8);
+	// }
 
 	/**
 	 * helper to write series of objects to streams/files > Integer.MAX_VALUE. it - serializes the object - writes the
@@ -1540,45 +1521,45 @@ public class FSTConfiguration {
 	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
 	 * @date 30 sept. 2023
 	 */
-	protected static class JSonStreamCoderFactory implements StreamCoderFactory {
-
-		/** The conf. */
-		protected final FSTConfiguration conf;
-
-		/**
-		 * Instantiates a new j son stream coder factory.
-		 *
-		 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
-		 * @param conf
-		 *            the conf
-		 * @date 30 sept. 2023
-		 */
-		public JSonStreamCoderFactory(final FSTConfiguration conf) {
-			this.conf = conf;
-		}
-
-		@Override
-		public FSTEncoder createStreamEncoder() {
-			return new FSTJsonEncoder(conf);
-		}
-
-		@Override
-		public FSTDecoder createStreamDecoder() {
-			return new FSTJsonDecoder(conf);
-		}
-
-		/** The input. */
-		static ThreadLocal<FSTObjectInput> input = new ThreadLocal<>();
-
-		/** The output. */
-		static ThreadLocal<FSTObjectOutput> output = new ThreadLocal<>();
-
-		@Override
-		public ThreadLocal<FSTObjectInput> getInput() { return input; }
-
-		@Override
-		public ThreadLocal<FSTObjectOutput> getOutput() { return output; }
-	}
+	// protected static class JSonStreamCoderFactory implements StreamCoderFactory {
+	//
+	// /** The conf. */
+	// protected final FSTConfiguration conf;
+	//
+	// /**
+	// * Instantiates a new j son stream coder factory.
+	// *
+	// * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	// * @param conf
+	// * the conf
+	// * @date 30 sept. 2023
+	// */
+	// public JSonStreamCoderFactory(final FSTConfiguration conf) {
+	// this.conf = conf;
+	// }
+	//
+	// @Override
+	// public FSTEncoder createStreamEncoder() {
+	// return new FSTJsonEncoder(conf);
+	// }
+	//
+	// @Override
+	// public FSTDecoder createStreamDecoder() {
+	// return new FSTJsonDecoder(conf);
+	// }
+	//
+	// /** The input. */
+	// static ThreadLocal<FSTObjectInput> input = new ThreadLocal<>();
+	//
+	// /** The output. */
+	// static ThreadLocal<FSTObjectOutput> output = new ThreadLocal<>();
+	//
+	// @Override
+	// public ThreadLocal<FSTObjectInput> getInput() { return input; }
+	//
+	// @Override
+	// public ThreadLocal<FSTObjectOutput> getOutput() { return output; }
+	// }
 
 	// /**
 	// * A factory for creating FBinaryStreamCoder objects.

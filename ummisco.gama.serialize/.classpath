@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/nustaq/serialization/coders/FSTJsonEncoder.java|org/nustaq/serialization/coders/FSTJsonFieldNames.java|org/nustaq/serialization/coders/FSTJsonDecoder.java|org/nustaq/serialization/serializers/FSTJSonSerializers.java|org/nustaq/serialization/serializers/FSTJSonUnmodifiableCollectionSerializer.java|org/nustaq/serialization/serializers/FSTJSonUnmodifiableMapSerializer.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
