@@ -3,7 +3,7 @@
  * FSTObjectOutput.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -25,6 +25,11 @@ import java.util.Map;
 import org.nustaq.serialization.FSTClazzInfo.FSTFieldInfo;
 import org.nustaq.serialization.util.FSTUtil;
 
+import msi.gama.common.geometry.GamaGeometryFactory;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.util.IList;
+import msi.gaml.types.IType;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -625,13 +630,17 @@ public class FSTObjectOutput implements ObjectOutput {
 	 */
 	protected boolean writeHandleIfApplicable(final Object toWrite, final FSTClazzInfo serializationInfo)
 			throws IOException {
+		if (toWrite instanceof IAgent || toWrite instanceof IShape || toWrite instanceof IList
+				|| toWrite instanceof IType || toWrite instanceof GamaGeometryFactory)
+			return false;
 		int writePos = getCodec().getWritten();
 		int handle = objects.registerObjectForWrite(toWrite, writePos, serializationInfo, tmp);
 		// determine class header
 		if (handle >= 0) {
 			final boolean isIdentical = tmp[0] == 0; // objects.getReadRegisteredObject(handle) == toWrite;
 			if (isIdentical) {
-				// System.out.println("POK writeHandle"+handle+" "+toWrite.getClass().getName());
+				// String s = toWrite.getClass().getSimpleName();
+				// if (!"String".equals(s)) { System.out.println("POK writeHandle" + handle + " " + s); }
 				if (!getCodec().writeTag(HANDLE, null, handle, toWrite, this)) { getCodec().writeFInt(handle); }
 				return true;
 			}

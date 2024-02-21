@@ -3,7 +3,7 @@
  * FSTIndividualSerialiser.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and
  * simulation platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -31,6 +31,17 @@ abstract class FSTIndividualSerialiser<T> extends FSTBasicObjectSerializer {
 
 	/** The short name. */
 	String shortName;
+
+	/**
+	 * Should register.
+	 *
+	 * @author Alexis Drogoul (alexis.drogoul@ird.fr)
+	 * @return true, if successful
+	 * @date 21 févr. 2024
+	 */
+	protected boolean shouldRegister() {
+		return true;
+	}
 
 	/**
 	 * Instantiates a new gama FST serialiser.
@@ -66,7 +77,7 @@ abstract class FSTIndividualSerialiser<T> extends FSTBasicObjectSerializer {
 			final FSTFieldInfo referencee, final int streamPosition) throws Exception {
 
 		T result = deserialise(in.getConf().getScope(), in);
-		in.registerObject(result, streamPosition, serializationInfo, referencee);
+		if (shouldRegister()) { in.registerObject(result, streamPosition, serializationInfo, referencee); }
 		return result;
 	}
 

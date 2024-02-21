@@ -24,9 +24,6 @@ import msi.gama.runtime.IScope;
 public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISerialisedAgent>
 		implements ISerialisationProcessor<SerialisedForm>, ISerialisationConstants {
 
-	/** The in agent. */
-	protected boolean inAgent;
-
 	/**
 	 * Restore simulation from.
 	 *
@@ -53,13 +50,11 @@ public abstract class AbstractSerialisationProcessor<SerialisedForm extends ISer
 	 */
 	@Override
 	public byte[] saveAgentToBytes(final IScope scope, final IAgent sim) {
-		inAgent = true;
-		return write(scope, sim);
+		return write(scope, encodeToSerialisedForm(sim));
 	}
 
 	@Override
 	public byte[] saveObjectToBytes(final IScope scope, final Object obj) {
-		inAgent = false;
 		return write(scope, obj);
 	}
 

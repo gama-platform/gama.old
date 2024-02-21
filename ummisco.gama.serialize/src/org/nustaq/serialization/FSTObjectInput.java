@@ -3,7 +3,7 @@
  * FSTObjectInput.java, in ummisco.gama.serialize, is part of the source code of the GAMA modeling and simulation
  * platform (v.1.9.3).
  *
- * (c) 2007-2023 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
+ * (c) 2007-2024 UMI 209 UMMISCO IRD/SU & Partners (IRIT, MIAT, TLU, CTU)
  *
  * Visit https://github.com/gama-platform/gama for license information and contacts.
  *
@@ -38,6 +38,7 @@ import org.nustaq.serialization.FSTClazzInfo.FSTFieldInfo;
 import org.nustaq.serialization.coders.Unknown;
 import org.nustaq.serialization.util.FSTUtil;
 
+import msi.gama.metamodel.agent.IAgent;
 import ummisco.gama.dev.utils.DEBUG;
 
 /**
@@ -661,8 +662,14 @@ public class FSTObjectInput implements ObjectInput {
 	protected Object instantiateHandle(final FSTClazzInfo.FSTFieldInfo referencee) throws IOException {
 		int handle = getCodec().readFInt();
 		Object res = objects.getReadRegisteredObject(handle);
-		if (res == null) throw new IOException(
-				"unable to ressolve handle " + handle + " " + referencee.getDesc() + " " + getCodec().getInputPos());
+		if (res == null) {
+
+			DEBUG.OUT("");
+			throw new IOException(
+
+					"unable to ressolve handle " + handle + " " + referencee.getDesc() + " "
+							+ getCodec().getInputPos());
+		}
 		return res;
 	}
 
@@ -816,7 +823,11 @@ public class FSTObjectInput implements ObjectInput {
 		final boolean needsRefLookup = conf.shareReferences && !referencee.isFlat() && !clzSerInfo.isFlat();
 		// previously :
 		// final boolean needsRefLookup = !referencee.isFlat() && !clzSerInfo.isFlat();
-		if (needsRefLookup) { objects.registerObjectForRead(newObj, readPos); }
+		if (needsRefLookup) {
+
+			objects.registerObjectForRead(newObj, readPos);
+
+		}
 		if (clzSerInfo.isExternalizable()) {
 			int tmp = readPos;
 			getCodec().ensureReadAhead(readExternalReadAHead);
@@ -1382,6 +1393,11 @@ public class FSTObjectInput implements ObjectInput {
 	 */
 	public void registerObject(final Object o, final int streamPosition, final FSTClazzInfo info,
 			final FSTClazzInfo.FSTFieldInfo referencee) {
+
+		if (o instanceof IAgent) {
+
+			DEBUG.OUT("");
+		}
 		if (!objects.disabled && !referencee.isFlat() && (info == null || !info.isFlat())) {
 			objects.registerObjectForRead(o, streamPosition);
 		}

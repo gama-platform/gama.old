@@ -58,6 +58,9 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	/** The fst. */
 	FSTConfiguration fst;
 
+	/** The in agent. */
+	boolean inAgent;
+
 	/**
 	 * Instantiates a new gama FST serialiser.
 	 *
@@ -80,6 +83,11 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 
 		register(conf, GamaShape.class, new FSTIndividualSerialiser<GamaShape>() {
 
+			@Override
+			protected boolean shouldRegister() {
+				return false;
+			}
+
 			// TODO The inner attributes of the shape should be saved (ie the ones that do not belong to the var names
 			// of the species
 			@Override
@@ -89,7 +97,7 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 				out.writeDouble(d == null ? 0d : d);
 				out.writeInt(t.ordinal());
 				out.writeObject(toWrite.getInnerGeometry());
-				out.writeObject(toWrite.getAgent());
+				out.writeObject(AgentReference.of(toWrite.getAgent()));
 			}
 
 			@Override
@@ -97,8 +105,8 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 				double d = in.readDouble();
 				IShape.Type t = IShape.Type.values()[in.readInt()];
 				GamaShape result = GamaShapeFactory.createFrom((Geometry) in.readObject());
-				IAgent agent = (IAgent) in.readObject();
-				if (agent != null) { result.setAgent(agent); }
+				AgentReference agent = (AgentReference) in.readObject();
+				if (agent != AgentReference.NULL) { result.setAgent(agent.getReferencedAgent(scope)); }
 				if (d > 0d) { result.setDepth(d); }
 				if (t != Type.NULL) { result.setGeometricalType(t); }
 				return result;
@@ -108,62 +116,35 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 		register(conf, IAgent.class, new FSTIndividualSerialiser<IAgent>() {
 
 			@Override
+			protected boolean shouldRegister() {
+				return false;
+			}
+
+			@Override
 			public void serialise(final FSTObjectOutput out, final IAgent o) throws Exception {
+
 				if (inAgent) {
+					out.writeBoolean(true); // isRef
 					out.writeObject(AgentReference.of(o));
 				} else {
 					inAgent = true;
-					try {
-						out.writeObject(encodeToSerialisedForm(o));
-					} finally {
-						inAgent = false;
-					}
+					out.writeBoolean(false); // isRef
+					out.writeObject(SerialisedAgent.of(o, true));
+					inAgent = false;
 				}
 			}
 
 			@Override
 			public IAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				Object object = in.readObject();
-				if (object instanceof AgentReference ref) return ref.getReferencedAgent(scope);
-				if (object instanceof SerialisedAgent sa) return sa.recreateIn(scope);
-				return null;
+				boolean isRef = in.readBoolean();
+				if (isRef) {
+					AgentReference ref = (AgentReference) in.readObject(AgentReference.class);
+					return ref.getReferencedAgent(scope);
+				}
+				SerialisedAgent sa = (SerialisedAgent) in.readObject(SerialisedAgent.class);
+				return sa.recreateIn(scope);
 			}
 
-		});
-
-		register(conf, SerialisedAgent.class, new FSTIndividualSerialiser<SerialisedAgent>() {
-
-			@Override
-			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
-				out.writeInt(o.index());
-				out.writeStringUTF(o.species());
-				out.writeObject(o.attributes());
-				out.writeObject(o.innerPopulations());
-			}
-
-			@SuppressWarnings ("unchecked")
-			@Override
-			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedAgent(in.readInt(), in.readStringUTF(), (Map<String, Object>) in.readObject(),
-						(Map<String, ISerialisedPopulation>) in.readObject());
-			}
-		});
-		register(conf, SerialisedAgent.class, new FSTIndividualSerialiser<SerialisedAgent>() {
-
-			@Override
-			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
-				out.writeInt(o.index());
-				out.writeStringUTF(o.species());
-				out.writeObject(o.attributes());
-				out.writeObject(o.innerPopulations());
-			}
-
-			@SuppressWarnings ("unchecked")
-			@Override
-			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
-				return new SerialisedAgent(in.readInt(), in.readStringUTF(), (Map<String, Object>) in.readObject(),
-						(Map<String, ISerialisedPopulation>) in.readObject());
-			}
 		});
 
 		register(conf, IType.class, new FSTIndividualSerialiser<IType>() {
@@ -232,6 +213,24 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 			@Override
 			public AgentReference deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
 				return AgentReference.of((String[]) in.readObject(), (Integer[]) in.readObject());
+			}
+		});
+
+		register(conf, SerialisedAgent.class, new FSTIndividualSerialiser<SerialisedAgent>() {
+
+			@Override
+			public void serialise(final FSTObjectOutput out, final SerialisedAgent o) throws Exception {
+				out.writeInt(o.index());
+				out.writeStringUTF(o.species());
+				out.writeObject(o.attributes());
+				out.writeObject(o.innerPopulations());
+			}
+
+			@SuppressWarnings ("unchecked")
+			@Override
+			public SerialisedAgent deserialise(final IScope scope, final FSTObjectInput in) throws Exception {
+				return new SerialisedAgent(in.readInt(), in.readStringUTF(), (Map<String, Object>) in.readObject(),
+						(Map<String, ISerialisedPopulation>) in.readObject());
 			}
 		});
 
@@ -330,6 +329,11 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 		register(conf, IList.class, new FSTIndividualSerialiser<IList>() {
 
 			@Override
+			protected boolean shouldRegister() {
+				return false;
+			}
+
+			@Override
 			public void serialise(final FSTObjectOutput out, final IList o) throws Exception {
 				out.writeObject(o.getGamlType().getContentType());
 				out.writeInt(o.size());
@@ -418,11 +422,13 @@ public abstract class FSTAbstractProcessor extends AbstractSerialisationProcesso
 	 */
 	@Override
 	public byte[] write(final IScope scope, final SerialisedAgent sa) {
+		inAgent = false;
 		return fst.asByteArray(sa);
 	}
 
 	@Override
 	public byte[] write(final IScope scope, final Object obj) {
+		inAgent = false;
 		return fst.asByteArray(obj);
 	}
 
