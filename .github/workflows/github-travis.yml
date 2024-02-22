@@ -553,16 +553,16 @@ jobs:
 
           # Mac
           for file in *.dmg; do
-            prefix="${fileNameExtension}.dmg"
+            prefix="_${fileNameExtension}.dmg"
             if [[ "$(echo $file | awk -F'_' '{print $NF}')" == *"withJDK"* ]]; then
-              prefix="with_JDK_${prefix}"
+              prefix="_with_JDK${prefix}"
             fi
 
             if [[ "$file" == *"aarch64"* ]]; then
-              prefix="M1_${prefix}"
+              prefix="_M1${prefix}"
             fi
             
-            prefix="GAMA_1.9.3_MacOS_${prefix}"
+            prefix="GAMA_1.9.3_MacOS${prefix}"
 
             mv -v $file $prefix
           done
