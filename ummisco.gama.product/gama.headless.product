@@ -21,7 +21,7 @@
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.closeTimeout=6000
 -Dorg.eclipse.ecf.provider.filetransfer.retrieve.readTimeout=6000
 -Denable_logging=true 
--Denable_debug=true
+-Denable_debug=false
 -Duse_global_preference_store=true 
 -Dswt.autoScale=exact
 -Dread_only=false 
